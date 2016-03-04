@@ -46,17 +46,17 @@ public:
     static Ref<CapturingInputCursor> create(RefPtr<ReplaySessionSegment>&&);
     virtual ~CapturingInputCursor();
 
-    virtual bool isCapturing() const override { return true; }
-    virtual bool isReplaying() const override { return false; }
+    bool isCapturing() const override { return true; }
+    bool isReplaying() const override { return false; }
 
 protected:
-    virtual NondeterministicInputBase* loadInput(InputQueue, const String& type) override;
+    NondeterministicInputBase* loadInput(InputQueue, const String& type) override;
 
 private:
     CapturingInputCursor(RefPtr<ReplaySessionSegment>&&);
 
-    virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
-    virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
+    NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
+    void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
 
     RefPtr<ReplaySessionSegment> m_segment;
 };

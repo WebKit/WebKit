@@ -42,13 +42,13 @@ private:
     WebConnectionToUIProcess(WebProcess*);
 
     // WebConnection
-    virtual RefPtr<API::Object> transformHandlesToObjects(API::Object*) override;
-    virtual RefPtr<API::Object> transformObjectsToHandles(API::Object*) override;
-    virtual bool hasValidConnection() const override;
+    RefPtr<API::Object> transformHandlesToObjects(API::Object*) override;
+    RefPtr<API::Object> transformObjectsToHandles(API::Object*) override;
+    bool hasValidConnection() const override;
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() override;
-    virtual uint64_t messageSenderDestinationID() override;
+    IPC::Connection* messageSenderConnection() override;
+    uint64_t messageSenderDestinationID() override;
 
     WebProcess* m_process;
 };

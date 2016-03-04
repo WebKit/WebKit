@@ -41,11 +41,11 @@ protected:
     explicit BaseButtonInputType(HTMLInputElement& element) : BaseClickableWithKeyInputType(element) { }
 
 private:
-    virtual bool shouldSaveAndRestoreFormControlState() const override;
-    virtual bool appendFormData(FormDataList&, bool) const override;
-    virtual RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
-    virtual bool storesValueSeparateFromAttribute() override;
-    virtual void setValue(const String&, bool, TextFieldEventBehavior) override;
+    bool shouldSaveAndRestoreFormControlState() const override;
+    bool appendFormData(FormDataList&, bool) const override;
+    RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
+    bool storesValueSeparateFromAttribute() override;
+    void setValue(const String&, bool, TextFieldEventBehavior) override;
 };
 
 } // namespace WebCore

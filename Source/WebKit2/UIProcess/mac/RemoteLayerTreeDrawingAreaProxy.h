@@ -55,35 +55,35 @@ public:
     void didRefreshDisplay(double timestamp);
 
 private:
-    virtual void sizeDidChange() override;
-    virtual void deviceScaleFactorDidChange() override;
-    virtual void didUpdateGeometry() override;
+    void sizeDidChange() override;
+    void deviceScaleFactorDidChange() override;
+    void didUpdateGeometry() override;
     
     // For now, all callbacks are called before committing changes, because that's what the only client requires.
     // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
-    virtual void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
+    void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
 
     WebCore::FloatRect scaledExposedRect() const;
 
 #if PLATFORM(MAC)
-    virtual void setExposedRect(const WebCore::FloatRect&) override;
+    void setExposedRect(const WebCore::FloatRect&) override;
 #endif
 
     float indicatorScale(WebCore::IntSize contentsSize) const;
-    virtual void updateDebugIndicator() override;
+    void updateDebugIndicator() override;
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);
     void updateDebugIndicatorPosition();
     void initializeDebugIndicator();
 
-    virtual void waitForDidUpdateViewState() override;
-    virtual void hideContentUntilPendingUpdate() override;
-    virtual void hideContentUntilAnyUpdate() override;
-    virtual bool hasVisibleContent() const override;
+    void waitForDidUpdateViewState() override;
+    void hideContentUntilPendingUpdate() override;
+    void hideContentUntilAnyUpdate() override;
+    bool hasVisibleContent() const override;
     
     WebCore::FloatPoint indicatorLocation() const;
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     // Message handlers
     void willCommitLayerTree(uint64_t transactionID);

@@ -69,7 +69,7 @@ private:
     Page& m_page;
     GeolocationClient& m_client;
 
-    virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
+    void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
 
     RefPtr<GeolocationPosition> m_lastPosition;
 

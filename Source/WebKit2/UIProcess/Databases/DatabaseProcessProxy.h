@@ -59,15 +59,15 @@ private:
     DatabaseProcessProxy(WebProcessPool*);
 
     // ChildProcessProxy
-    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
-    virtual void processWillShutDown(IPC::Connection&) override;
+    void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
+    void processWillShutDown(IPC::Connection&) override;
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    virtual void didClose(IPC::Connection&) override;
-    virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    virtual IPC::ProcessType localProcessType() override { return IPC::ProcessType::UI; }
-    virtual IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Database; }
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didClose(IPC::Connection&) override;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+    IPC::ProcessType localProcessType() override { return IPC::ProcessType::UI; }
+    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Database; }
 
     void didReceiveDatabaseProcessProxyMessage(IPC::Connection&, IPC::MessageDecoder&);
 
@@ -78,7 +78,7 @@ private:
     void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
 
     // ProcessLauncher::Client
-    virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
+    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
 

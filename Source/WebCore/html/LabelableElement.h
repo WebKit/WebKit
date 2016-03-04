@@ -47,7 +47,7 @@ protected:
     LabelableElement(const QualifiedName& tagName, Document&);
 
 private:
-    virtual bool isLabelable() const override final { return true; }
+    bool isLabelable() const override final { return true; }
 };
 
 } // namespace WebCore

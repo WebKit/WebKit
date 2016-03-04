@@ -93,8 +93,8 @@ public:
     }
     virtual ~CSSComputedStyleDeclaration();
 
-    WEBCORE_EXPORT virtual void ref() override;
-    WEBCORE_EXPORT virtual void deref() override;
+    WEBCORE_EXPORT void ref() override;
+    WEBCORE_EXPORT void deref() override;
 
     String getPropertyValue(CSSPropertyID) const;
 
@@ -102,22 +102,22 @@ private:
     WEBCORE_EXPORT CSSComputedStyleDeclaration(PassRefPtr<Node>, bool allowVisitedStyle, const String&);
 
     // CSSOM functions. Don't make these public.
-    virtual CSSRule* parentRule() const override;
-    virtual unsigned length() const override;
-    virtual String item(unsigned index) const override;
-    virtual RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) override;
-    virtual String getPropertyValue(const String& propertyName) override;
-    virtual String getPropertyPriority(const String& propertyName) override;
-    virtual String getPropertyShorthand(const String& propertyName) override;
-    virtual bool isPropertyImplicit(const String& propertyName) override;
-    virtual void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&) override;
-    virtual String removeProperty(const String& propertyName, ExceptionCode&) override;
-    virtual String cssText() const override;
-    virtual void setCssText(const String&, ExceptionCode&) override;
-    virtual RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override;
-    virtual String getPropertyValueInternal(CSSPropertyID) override;
-    virtual bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) override;
-    virtual Ref<MutableStyleProperties> copyProperties() const override;
+    CSSRule* parentRule() const override;
+    unsigned length() const override;
+    String item(unsigned index) const override;
+    RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) override;
+    String getPropertyValue(const String& propertyName) override;
+    String getPropertyPriority(const String& propertyName) override;
+    String getPropertyShorthand(const String& propertyName) override;
+    bool isPropertyImplicit(const String& propertyName) override;
+    void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&) override;
+    String removeProperty(const String& propertyName, ExceptionCode&) override;
+    String cssText() const override;
+    void setCssText(const String&, ExceptionCode&) override;
+    RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override;
+    String getPropertyValueInternal(CSSPropertyID) override;
+    bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) override;
+    Ref<MutableStyleProperties> copyProperties() const override;
 
     RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
 

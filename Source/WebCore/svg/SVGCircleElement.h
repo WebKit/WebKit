@@ -36,14 +36,14 @@ public:
 private:
     SVGCircleElement(const QualifiedName&, Document&);
 
-    virtual bool isValid() const override { return SVGTests::isValid(); }
+    bool isValid() const override { return SVGTests::isValid(); }
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
 
-    virtual bool selfHasRelativeLengths() const override { return true; }
+    bool selfHasRelativeLengths() const override { return true; }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGCircleElement)
         DECLARE_ANIMATED_LENGTH(Cx, cx)

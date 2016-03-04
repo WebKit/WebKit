@@ -47,7 +47,7 @@ protected:
     ProgressShadowElement(Document&);
 
 private:
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
 };
 
 class ProgressInnerElement final : public ProgressShadowElement {
@@ -57,8 +57,8 @@ public:
 private:
     ProgressInnerElement(Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
 };
 
 inline Ref<ProgressInnerElement> ProgressInnerElement::create(Document& document)

@@ -34,7 +34,7 @@ class JS_EXPORT_PRIVATE FullGCActivityCallback : public GCActivityCallback {
 public:
     FullGCActivityCallback(Heap*);
 
-    virtual void doCollection() override;
+    void doCollection() override;
 
     bool didSyncGCRecently() const { return m_didSyncGCRecently; }
     void setDidSyncGCRecently() { m_didSyncGCRecently = true; }
@@ -47,9 +47,9 @@ protected:
     }
 #endif
 
-    virtual double lastGCLength() override;
-    virtual double gcTimeSlice(size_t bytes) override;
-    virtual double deathRate() override;
+    double lastGCLength() override;
+    double gcTimeSlice(size_t bytes) override;
+    double deathRate() override;
 
     bool m_didSyncGCRecently { false };
 };

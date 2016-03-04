@@ -51,22 +51,22 @@ public:
     RenderBox* embeddedContentBox() const;
     FrameView* frameView() const;
 
-    virtual bool isSVGImage() const override { return true; }
-    virtual FloatSize size() const override { return m_intrinsicSize; }
+    bool isSVGImage() const override { return true; }
+    FloatSize size() const override { return m_intrinsicSize; }
 
     void setURL(const URL& url) { m_url = url; }
 
-    virtual bool hasSingleSecurityOrigin() const override;
+    bool hasSingleSecurityOrigin() const override;
 
-    virtual bool hasRelativeWidth() const override;
-    virtual bool hasRelativeHeight() const override;
+    bool hasRelativeWidth() const override;
+    bool hasRelativeHeight() const override;
 
-    virtual void startAnimation(CatchUpAnimation = CatchUp) override;
-    virtual void stopAnimation() override;
-    virtual void resetAnimation() override;
+    void startAnimation(CatchUpAnimation = CatchUp) override;
+    void stopAnimation() override;
+    void resetAnimation() override;
 
 #if USE(CAIRO)
-    virtual PassNativeImagePtr nativeImageForCurrentFrame() override;
+    PassNativeImagePtr nativeImageForCurrentFrame() override;
 #endif
 
 private:
@@ -75,25 +75,25 @@ private:
 
     virtual ~SVGImage();
 
-    virtual String filenameExtension() const override;
+    String filenameExtension() const override;
 
-    virtual void setContainerSize(const FloatSize&) override;
+    void setContainerSize(const FloatSize&) override;
     IntSize containerSize() const;
-    virtual bool usesContainerSize() const override { return true; }
-    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
+    bool usesContainerSize() const override { return true; }
+    void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
 
-    virtual bool dataChanged(bool allDataReceived) override;
+    bool dataChanged(bool allDataReceived) override;
 
     // FIXME: SVGImages will be unable to prune because this function is not implemented yet.
-    virtual void destroyDecodedData(bool) override { }
+    void destroyDecodedData(bool) override { }
 
     // FIXME: Implement this to be less conservative.
-    virtual bool currentFrameKnownToBeOpaque() override { return false; }
+    bool currentFrameKnownToBeOpaque() override { return false; }
 
-    virtual void dump(TextStream&) const override;
+    void dump(TextStream&) const override;
 
     SVGImage(ImageObserver&, const URL&);
-    virtual void draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator, BlendMode, ImageOrientationDescription) override;
+    void draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator, BlendMode, ImageOrientationDescription) override;
     void drawForContainer(GraphicsContext&, const FloatSize, float, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode);
     void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float zoom, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing,
         CompositeOperator, const FloatRect&, BlendMode);

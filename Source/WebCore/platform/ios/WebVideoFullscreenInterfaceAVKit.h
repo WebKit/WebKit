@@ -71,18 +71,18 @@ public:
     WEBCORE_EXPORT void setWebVideoFullscreenModel(WebVideoFullscreenModel*);
     WEBCORE_EXPORT void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
     
-    WEBCORE_EXPORT virtual void resetMediaState() override;
-    WEBCORE_EXPORT virtual void setDuration(double) override;
-    WEBCORE_EXPORT virtual void setCurrentTime(double currentTime, double anchorTime) override;
-    WEBCORE_EXPORT virtual void setBufferedTime(double bufferedTime) override;
-    WEBCORE_EXPORT virtual void setRate(bool isPlaying, float playbackRate) override;
-    WEBCORE_EXPORT virtual void setVideoDimensions(bool hasVideo, float width, float height) override;
-    WEBCORE_EXPORT virtual void setSeekableRanges(const TimeRanges&) override;
-    WEBCORE_EXPORT virtual void setCanPlayFastReverse(bool) override;
-    WEBCORE_EXPORT virtual void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
-    WEBCORE_EXPORT virtual void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
-    WEBCORE_EXPORT virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) override;
-    WEBCORE_EXPORT virtual void setWirelessVideoPlaybackDisabled(bool) override;
+    WEBCORE_EXPORT void resetMediaState() override;
+    WEBCORE_EXPORT void setDuration(double) override;
+    WEBCORE_EXPORT void setCurrentTime(double currentTime, double anchorTime) override;
+    WEBCORE_EXPORT void setBufferedTime(double bufferedTime) override;
+    WEBCORE_EXPORT void setRate(bool isPlaying, float playbackRate) override;
+    WEBCORE_EXPORT void setVideoDimensions(bool hasVideo, float width, float height) override;
+    WEBCORE_EXPORT void setSeekableRanges(const TimeRanges&) override;
+    WEBCORE_EXPORT void setCanPlayFastReverse(bool) override;
+    WEBCORE_EXPORT void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
+    WEBCORE_EXPORT void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
+    WEBCORE_EXPORT void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) override;
+    WEBCORE_EXPORT void setWirelessVideoPlaybackDisabled(bool) override;
 
     WEBCORE_EXPORT virtual void setupFullscreen(UIView&, const IntRect& initialRect, UIView *, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
     WEBCORE_EXPORT virtual void enterFullscreen();

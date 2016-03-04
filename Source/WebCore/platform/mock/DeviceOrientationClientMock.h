@@ -45,11 +45,11 @@ public:
     WEBCORE_EXPORT DeviceOrientationClientMock();
 
     // DeviceOrientationClient
-    virtual void setController(DeviceOrientationController*) override;
-    virtual void startUpdating() override;
-    virtual void stopUpdating() override;
-    virtual DeviceOrientationData* lastOrientation() const override { return m_orientation.get(); }
-    virtual void deviceOrientationControllerDestroyed() override { }
+    void setController(DeviceOrientationController*) override;
+    void startUpdating() override;
+    void stopUpdating() override;
+    DeviceOrientationData* lastOrientation() const override { return m_orientation.get(); }
+    void deviceOrientationControllerDestroyed() override { }
 
     WEBCORE_EXPORT void setOrientation(PassRefPtr<DeviceOrientationData>);
 

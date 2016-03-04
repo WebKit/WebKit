@@ -45,17 +45,17 @@ public:
     explicit ScrollAnimatorSmooth(ScrollableArea&);
     virtual ~ScrollAnimatorSmooth();
 
-    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
-    virtual void scrollToOffsetWithoutAnimation(const FloatPoint&) override;
+    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
+    void scrollToOffsetWithoutAnimation(const FloatPoint&) override;
 
 #if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    virtual void cancelAnimations() override;
-    virtual void serviceScrollAnimations() override;
+    void cancelAnimations() override;
+    void serviceScrollAnimations() override;
 #endif
 
-    virtual void willEndLiveResize() override;
-    virtual void didAddVerticalScrollbar(Scrollbar*) override;
-    virtual void didAddHorizontalScrollbar(Scrollbar*) override;
+    void willEndLiveResize() override;
+    void didAddVerticalScrollbar(Scrollbar*) override;
+    void didAddHorizontalScrollbar(Scrollbar*) override;
 
 private:
 

@@ -72,83 +72,83 @@ private:
     explicit PluginProxy(uint64_t pluginProcessToken, bool isRestartedProcess);
 
     // Plugin
-    virtual bool initialize(const Parameters&) override;
+    bool initialize(const Parameters&) override;
     bool initializeSynchronously();
 
-    virtual void destroy() override;
-    virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
-    virtual bool supportsSnapshotting() const override;
-    virtual RefPtr<ShareableBitmap> snapshot() override;
+    void destroy() override;
+    void paint(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
+    bool supportsSnapshotting() const override;
+    RefPtr<ShareableBitmap> snapshot() override;
 #if PLATFORM(COCOA)
-    virtual PlatformLayer* pluginLayer() override;
+    PlatformLayer* pluginLayer() override;
 #endif
-    virtual bool isTransparent() override;
-    virtual bool wantsWheelEvents() override;
-    virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) override;
-    virtual void visibilityDidChange(bool isVisible) override;
-    virtual void frameDidFinishLoading(uint64_t requestID) override;
-    virtual void frameDidFail(uint64_t requestID, bool wasCancelled) override;
-    virtual void didEvaluateJavaScript(uint64_t requestID, const String& result) override;
-    virtual void streamWillSendRequest(uint64_t streamID, const WebCore::URL& requestURL, const WebCore::URL& responseURL, int responseStatus) override;
-    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) override;
-    virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) override;
-    virtual void streamDidFinishLoading(uint64_t streamID) override;
-    virtual void streamDidFail(uint64_t streamID, bool wasCancelled) override;
-    virtual void manualStreamDidReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName) override;
-    virtual void manualStreamDidReceiveData(const char* bytes, int length) override;
-    virtual void manualStreamDidFinishLoading() override;
-    virtual void manualStreamDidFail(bool wasCancelled) override;
+    bool isTransparent() override;
+    bool wantsWheelEvents() override;
+    void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) override;
+    void visibilityDidChange(bool isVisible) override;
+    void frameDidFinishLoading(uint64_t requestID) override;
+    void frameDidFail(uint64_t requestID, bool wasCancelled) override;
+    void didEvaluateJavaScript(uint64_t requestID, const String& result) override;
+    void streamWillSendRequest(uint64_t streamID, const WebCore::URL& requestURL, const WebCore::URL& responseURL, int responseStatus) override;
+    void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) override;
+    void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) override;
+    void streamDidFinishLoading(uint64_t streamID) override;
+    void streamDidFail(uint64_t streamID, bool wasCancelled) override;
+    void manualStreamDidReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName) override;
+    void manualStreamDidReceiveData(const char* bytes, int length) override;
+    void manualStreamDidFinishLoading() override;
+    void manualStreamDidFail(bool wasCancelled) override;
     
-    virtual bool handleMouseEvent(const WebMouseEvent&) override;
-    virtual bool handleWheelEvent(const WebWheelEvent&) override;
-    virtual bool handleMouseEnterEvent(const WebMouseEvent&) override;
-    virtual bool handleMouseLeaveEvent(const WebMouseEvent&) override;
-    virtual bool handleContextMenuEvent(const WebMouseEvent&) override;
-    virtual bool handleKeyboardEvent(const WebKeyboardEvent&) override;
-    virtual void setFocus(bool) override;
-    virtual bool handleEditingCommand(const String& commandName, const String& argument) override;
-    virtual bool isEditingCommandEnabled(const String& commandName) override;
-    virtual bool shouldAllowScripting() override { return true; }
-    virtual bool shouldAllowNavigationFromDrags() override { return false; }
+    bool handleMouseEvent(const WebMouseEvent&) override;
+    bool handleWheelEvent(const WebWheelEvent&) override;
+    bool handleMouseEnterEvent(const WebMouseEvent&) override;
+    bool handleMouseLeaveEvent(const WebMouseEvent&) override;
+    bool handleContextMenuEvent(const WebMouseEvent&) override;
+    bool handleKeyboardEvent(const WebKeyboardEvent&) override;
+    void setFocus(bool) override;
+    bool handleEditingCommand(const String& commandName, const String& argument) override;
+    bool isEditingCommandEnabled(const String& commandName) override;
+    bool shouldAllowScripting() override { return true; }
+    bool shouldAllowNavigationFromDrags() override { return false; }
     
-    virtual bool handlesPageScaleFactor() const override;
-    virtual bool requiresUnifiedScaleFactor() const override;
+    bool handlesPageScaleFactor() const override;
+    bool requiresUnifiedScaleFactor() const override;
     
-    virtual NPObject* pluginScriptableNPObject() override;
+    NPObject* pluginScriptableNPObject() override;
 
-    virtual void windowFocusChanged(bool) override;
-    virtual void windowVisibilityChanged(bool) override;
+    void windowFocusChanged(bool) override;
+    void windowVisibilityChanged(bool) override;
 
 #if PLATFORM(COCOA)
-    virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) override;
-    virtual uint64_t pluginComplexTextInputIdentifier() const override;
-    virtual void sendComplexTextInput(const String& textInput) override;
-    virtual void setLayerHostingMode(LayerHostingMode) override;
+    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) override;
+    uint64_t pluginComplexTextInputIdentifier() const override;
+    void sendComplexTextInput(const String& textInput) override;
+    void setLayerHostingMode(LayerHostingMode) override;
 #endif
 
-    virtual void contentsScaleFactorChanged(float) override;
-    virtual void storageBlockingStateChanged(bool) override;
-    virtual void privateBrowsingStateChanged(bool) override;
-    virtual void mutedStateChanged(bool) override;
-    virtual bool getFormValue(String& formValue) override;
-    virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
-    virtual WebCore::Scrollbar* horizontalScrollbar() override;
-    virtual WebCore::Scrollbar* verticalScrollbar() override;
+    void contentsScaleFactorChanged(float) override;
+    void storageBlockingStateChanged(bool) override;
+    void privateBrowsingStateChanged(bool) override;
+    void mutedStateChanged(bool) override;
+    bool getFormValue(String& formValue) override;
+    bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
+    WebCore::Scrollbar* horizontalScrollbar() override;
+    WebCore::Scrollbar* verticalScrollbar() override;
 
-    virtual unsigned countFindMatches(const String&, WebCore::FindOptions, unsigned) override  { return 0; }
-    virtual bool findString(const String&, WebCore::FindOptions, unsigned) override { return false; }
+    unsigned countFindMatches(const String&, WebCore::FindOptions, unsigned) override  { return 0; }
+    bool findString(const String&, WebCore::FindOptions, unsigned) override { return false; }
 
-    virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const override;
+    WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const override;
 
-    virtual RefPtr<WebCore::SharedBuffer> liveResourceData() const override;
-    virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override { return false; }
+    RefPtr<WebCore::SharedBuffer> liveResourceData() const override;
+    bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override { return false; }
 
     String getSelectionString() const override { return String(); }
     String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const override { return String(); }
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override { return false; }
 
 #if PLATFORM(COCOA)
-    virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const override;
+    WebCore::AudioHardwareActivityType audioHardwareActivity() const override;
 #endif
 
     float contentsScaleFactor();

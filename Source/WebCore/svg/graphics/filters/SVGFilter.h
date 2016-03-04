@@ -38,15 +38,15 @@ public:
     static Ref<SVGFilter> create(const AffineTransform&, const FloatRect&, const FloatRect&, const FloatRect&, bool);
 
     FloatRect filterRegionInUserSpace() const { return m_filterRegion; }
-    virtual FloatRect filterRegion() const override { return m_absoluteFilterRegion; }
+    FloatRect filterRegion() const override { return m_absoluteFilterRegion; }
 
-    virtual float applyHorizontalScale(float value) const override;
-    virtual float applyVerticalScale(float value) const override;
+    float applyHorizontalScale(float value) const override;
+    float applyVerticalScale(float value) const override;
 
-    virtual FloatRect sourceImageRect() const override { return m_absoluteSourceDrawingRegion; }
+    FloatRect sourceImageRect() const override { return m_absoluteSourceDrawingRegion; }
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
-    virtual bool isSVGFilter() const override final { return true; }
+    bool isSVGFilter() const override final { return true; }
 
 private:
     SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);

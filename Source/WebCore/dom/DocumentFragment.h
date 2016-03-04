@@ -36,7 +36,7 @@ public:
     void parseHTML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
     bool parseXML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
     
-    virtual bool canContainRangeEndPoint() const override final { return true; }
+    bool canContainRangeEndPoint() const override final { return true; }
     virtual bool isTemplateContent() const { return false; }
 
     // From the NonElementParentNode interface - https://dom.spec.whatwg.org/#interface-nonelementparentnode
@@ -44,12 +44,12 @@ public:
 
 protected:
     DocumentFragment(Document&, ConstructionType = CreateContainer);
-    virtual String nodeName() const override final;
+    String nodeName() const override final;
 
 private:
-    virtual NodeType nodeType() const override final;
-    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
-    virtual bool childTypeAllowed(NodeType) const override;
+    NodeType nodeType() const override final;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    bool childTypeAllowed(NodeType) const override;
 };
 
 } // namespace WebCore

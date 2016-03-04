@@ -52,14 +52,14 @@ public:
     SimpleTypedArrayController();
     virtual ~SimpleTypedArrayController();
     
-    virtual JSArrayBuffer* toJS(ExecState*, JSGlobalObject*, ArrayBuffer*) override;
-    virtual void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) override;
+    JSArrayBuffer* toJS(ExecState*, JSGlobalObject*, ArrayBuffer*) override;
+    void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) override;
 
 private:
     class JSArrayBufferOwner : public WeakHandleOwner {
     public:
-        virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor&) override;
-        virtual void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
+        bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor&) override;
+        void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
     };
 
     JSArrayBufferOwner m_owner;

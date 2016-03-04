@@ -452,7 +452,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
         virtual ~FormClient() { }
 
-        virtual void didFocusTextField(WebPage*, HTMLInputElement* inputElement, WebFrame* frame) override
+        void didFocusTextField(WebPage*, HTMLInputElement* inputElement, WebFrame* frame) override
         {
             auto formDelegate = m_controller->_formDelegate.get();
 
@@ -460,7 +460,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
                 [formDelegate _webProcessPlugInBrowserContextController:m_controller didFocusTextField:wrapper(*InjectedBundleNodeHandle::getOrCreate(inputElement).get()) inFrame:wrapper(*frame)];
         }
 
-        virtual void willSendSubmitEvent(WebPage*, HTMLFormElement* formElement, WebFrame* targetFrame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values) override
+        void willSendSubmitEvent(WebPage*, HTMLFormElement* formElement, WebFrame* targetFrame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values) override
         {
             auto formDelegate = m_controller->_formDelegate.get();
 
@@ -493,7 +493,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             userData = API::Data::createWithoutCopying(WTFMove(data));
         }
 
-        virtual void willSubmitForm(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& values, RefPtr<API::Object>& userData) override
+        void willSubmitForm(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& values, RefPtr<API::Object>& userData) override
         {
             auto formDelegate = m_controller->_formDelegate.get();
 
@@ -507,7 +507,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             }
         }
 
-        virtual void textDidChangeInTextField(WebPage*, HTMLInputElement* inputElement, WebFrame* frame, bool initiatedByUserTyping) override
+        void textDidChangeInTextField(WebPage*, HTMLInputElement* inputElement, WebFrame* frame, bool initiatedByUserTyping) override
         {
             auto formDelegate = m_controller->_formDelegate.get();
 
@@ -515,7 +515,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
                 [formDelegate _webProcessPlugInBrowserContextController:m_controller textDidChangeInTextField:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)) inFrame:wrapper(*frame) initiatedByUserTyping:initiatedByUserTyping];
         }
 
-        virtual void willBeginInputSession(WebPage*, Element* element, WebFrame* frame, RefPtr<API::Object>& userData) override
+        void willBeginInputSession(WebPage*, Element* element, WebFrame* frame, RefPtr<API::Object>& userData) override
         {
             auto formDelegate = m_controller->_formDelegate.get();
 
@@ -526,7 +526,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             encodeUserObject(userObject, userData);
         }
 
-        virtual bool shouldNotifyOnFormChanges(WebKit::WebPage*) override
+        bool shouldNotifyOnFormChanges(WebKit::WebPage*) override
         {
             auto formDelegate = m_controller->_formDelegate.get();
 
@@ -536,7 +536,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             return [formDelegate _webProcessPlugInBrowserContextControllerShouldNotifyOnFormChanges:m_controller];
         }
 
-        virtual void didAssociateFormControls(WebKit::WebPage*, const Vector<RefPtr<WebCore::Element>>& elements) override
+        void didAssociateFormControls(WebKit::WebPage*, const Vector<RefPtr<WebCore::Element>>& elements) override
         {
             auto formDelegate = m_controller->_formDelegate.get();
 

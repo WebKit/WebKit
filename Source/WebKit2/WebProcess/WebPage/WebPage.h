@@ -933,8 +933,8 @@ private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() override;
-    virtual uint64_t messageSenderDestinationID() override;
+    IPC::Connection* messageSenderConnection() override;
+    uint64_t messageSenderDestinationID() override;
 
     void platformInitialize();
     void platformDetach();

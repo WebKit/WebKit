@@ -37,7 +37,7 @@ public:
         return adoptRef(*new SkewTransformOperation(angleX, angleY, type));
     }
 
-    virtual Ref<TransformOperation> clone() const override
+    Ref<TransformOperation> clone() const override
     {
         return adoptRef(*new SkewTransformOperation(m_angleX, m_angleY, m_type));
     }
@@ -46,21 +46,21 @@ public:
     double angleY() const { return m_angleY; }
 
 private:
-    virtual bool isIdentity() const override { return m_angleX == 0 && m_angleY == 0; }
-    virtual bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
+    bool isIdentity() const override { return m_angleX == 0 && m_angleY == 0; }
+    bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
-    virtual OperationType type() const override { return m_type; }
-    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
+    OperationType type() const override { return m_type; }
+    bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
 
-    virtual bool operator==(const TransformOperation&) const override;
+    bool operator==(const TransformOperation&) const override;
 
-    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const override
+    bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {
         transform.skew(m_angleX, m_angleY);
         return false;
     }
 
-    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
     
     SkewTransformOperation(double angleX, double angleY, OperationType type)
         : m_angleX(angleX)

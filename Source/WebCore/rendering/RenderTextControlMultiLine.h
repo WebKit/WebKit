@@ -38,16 +38,16 @@ public:
 private:
     void element() const = delete;
 
-    virtual bool isTextArea() const override { return true; }
+    bool isTextArea() const override { return true; }
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    virtual float getAverageCharWidth() override;
-    virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const override;
-    virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
+    float getAverageCharWidth() override;
+    LayoutUnit preferredContentLogicalWidth(float charWidth) const override;
+    LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
+    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
-    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
+    RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
 };
 
 } // namespace WebCore

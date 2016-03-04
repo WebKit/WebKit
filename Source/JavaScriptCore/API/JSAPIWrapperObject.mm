@@ -36,8 +36,8 @@
 
 class JSAPIWrapperObjectHandleOwner : public JSC::WeakHandleOwner {
 public:
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void*) override;
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&) override;
+    void finalize(JSC::Handle<JSC::Unknown>, void*) override;
+    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&) override;
 };
 
 static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()

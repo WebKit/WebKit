@@ -41,16 +41,16 @@ class SVGAnimatedPreserveAspectRatioAnimator final : public SVGAnimatedTypeAnima
 public:
     SVGAnimatedPreserveAspectRatioAnimator(SVGAnimationElement*, SVGElement*);
 
-    virtual std::unique_ptr<SVGAnimatedType> constructFromString(const String&) override;
-    virtual std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) override;
-    virtual void stopAnimValAnimation(const SVGElementAnimatedPropertyList&) override;
-    virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType&) override;
-    virtual void animValWillChange(const SVGElementAnimatedPropertyList&) override;
-    virtual void animValDidChange(const SVGElementAnimatedPropertyList&) override;
+    std::unique_ptr<SVGAnimatedType> constructFromString(const String&) override;
+    std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) override;
+    void stopAnimValAnimation(const SVGElementAnimatedPropertyList&) override;
+    void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType&) override;
+    void animValWillChange(const SVGElementAnimatedPropertyList&) override;
+    void animValDidChange(const SVGElementAnimatedPropertyList&) override;
 
-    virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) override;
-    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*) override;
-    virtual float calculateDistance(const String& fromString, const String& toString) override;
+    void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) override;
+    void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*) override;
+    float calculateDistance(const String& fromString, const String& toString) override;
 };
 
 } // namespace WebCore

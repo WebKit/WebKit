@@ -49,111 +49,111 @@ public:
     
 private:
     // PageClient
-    virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
-    virtual void setViewNeedsDisplay(const WebCore::IntRect&) override;
-    virtual void displayView() override;
-    virtual bool canScrollView() override;
-    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) override;
-    virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, bool isProgrammaticScroll) override;
-    virtual WebCore::IntSize viewSize() override;
-    virtual bool isViewWindowActive() override;
-    virtual bool isViewFocused() override;
-    virtual bool isViewVisible() override;
-    virtual bool isViewInWindow() override;
-    virtual bool isViewVisibleOrOccluded() override;
-    virtual bool isVisuallyIdle() override;
-    virtual void processDidExit() override;
-    virtual void didRelaunchProcess() override;
-    virtual void pageClosed() override;
-    virtual void preferencesDidChange() override;
-    virtual void toolTipChanged(const String&, const String&) override;
-    virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, API::SecurityOrigin&, GeolocationPermissionRequestProxy&) override;
-    virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
-    virtual void handleDownloadRequest(DownloadProxy*) override;
-    virtual void didChangeContentSize(const WebCore::IntSize&) override;
-    virtual void setCursor(const WebCore::Cursor&) override;
-    virtual void setCursorHiddenUntilMouseMoves(bool) override;
-    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
-    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) override;
-    virtual void clearAllEditCommands() override;
-    virtual bool canUndoRedo(WebPageProxy::UndoOrRedo) override;
-    virtual void executeUndoRedo(WebPageProxy::UndoOrRedo) override;
-    virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&) override;
-    virtual bool executeSavedCommandBySelector(const String& selector) override;
-    virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag) override;
-    virtual void updateSecureInputState() override;
-    virtual void resetSecureInputState() override;
-    virtual void notifyInputContextAboutDiscardedComposition() override;
-    virtual void makeFirstResponder() override;
-    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) override;
-    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
-    virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;
-    virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
-    virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) override;
-    virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
-    virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
+    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
+    void setViewNeedsDisplay(const WebCore::IntRect&) override;
+    void displayView() override;
+    bool canScrollView() override;
+    void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) override;
+    void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, bool isProgrammaticScroll) override;
+    WebCore::IntSize viewSize() override;
+    bool isViewWindowActive() override;
+    bool isViewFocused() override;
+    bool isViewVisible() override;
+    bool isViewInWindow() override;
+    bool isViewVisibleOrOccluded() override;
+    bool isVisuallyIdle() override;
+    void processDidExit() override;
+    void didRelaunchProcess() override;
+    void pageClosed() override;
+    void preferencesDidChange() override;
+    void toolTipChanged(const String&, const String&) override;
+    bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, API::SecurityOrigin&, GeolocationPermissionRequestProxy&) override;
+    void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
+    void handleDownloadRequest(DownloadProxy*) override;
+    void didChangeContentSize(const WebCore::IntSize&) override;
+    void setCursor(const WebCore::Cursor&) override;
+    void setCursorHiddenUntilMouseMoves(bool) override;
+    void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
+    void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) override;
+    void clearAllEditCommands() override;
+    bool canUndoRedo(WebPageProxy::UndoOrRedo) override;
+    void executeUndoRedo(WebPageProxy::UndoOrRedo) override;
+    void accessibilityWebProcessTokenReceived(const IPC::DataReference&) override;
+    bool executeSavedCommandBySelector(const String& selector) override;
+    void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag) override;
+    void updateSecureInputState() override;
+    void resetSecureInputState() override;
+    void notifyInputContextAboutDiscardedComposition() override;
+    void makeFirstResponder() override;
+    WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) override;
+    WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
+    WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;
+    WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
+    WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) override;
+    WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
+    void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 #if ENABLE(TOUCH_EVENTS)
-    virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
+    void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
 #endif
-    virtual RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
+    RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
 #if ENABLE(CONTEXT_MENUS)
-    virtual std::unique_ptr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&) override;
+    std::unique_ptr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&) override;
 #endif
-    virtual void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorWindowLifetime) override;
-    virtual void clearTextIndicator(WebCore::TextIndicatorWindowDismissalAnimation) override;
-    virtual void setTextIndicatorAnimationProgress(float) override;
+    void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorWindowLifetime) override;
+    void clearTextIndicator(WebCore::TextIndicatorWindowDismissalAnimation) override;
+    void setTextIndicatorAnimationProgress(float) override;
 
-    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
-    virtual void exitAcceleratedCompositingMode() override;
-    virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
-    virtual void willEnterAcceleratedCompositingMode() override;
-    virtual void setAcceleratedCompositingRootLayer(LayerOrView *) override;
-    virtual LayerOrView *acceleratedCompositingRootLayer() const override;
-    virtual LayerHostingMode viewLayerHostingMode() override { return LayerHostingMode::OutOfProcess; }
+    void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
+    void exitAcceleratedCompositingMode() override;
+    void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
+    void willEnterAcceleratedCompositingMode() override;
+    void setAcceleratedCompositingRootLayer(LayerOrView *) override;
+    LayerOrView *acceleratedCompositingRootLayer() const override;
+    LayerHostingMode viewLayerHostingMode() override { return LayerHostingMode::OutOfProcess; }
 
-    virtual PassRefPtr<ViewSnapshot> takeViewSnapshot() override;
-    virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
+    PassRefPtr<ViewSnapshot> takeViewSnapshot() override;
+    void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
 
-    virtual void commitPotentialTapFailed() override;
-    virtual void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius) override;
+    void commitPotentialTapFailed() override;
+    void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius) override;
 
-    virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
-    virtual void dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition, uint64_t transactionID) override;
-    virtual void couldNotRestorePageState() override;
-    virtual void restorePageState(const WebCore::FloatRect&, double) override;
-    virtual void restorePageCenterAndScale(const WebCore::FloatPoint&, double) override;
+    void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
+    void dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition, uint64_t transactionID) override;
+    void couldNotRestorePageState() override;
+    void restorePageState(const WebCore::FloatRect&, double) override;
+    void restorePageCenterAndScale(const WebCore::FloatPoint&, double) override;
 
-    virtual void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, API::Object* userData) override;
-    virtual void stopAssistingNode() override;
-    virtual bool isAssistingNode() override;
-    virtual void selectionDidChange() override;
-    virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;
-    virtual void positionInformationDidChange(const InteractionInformationAtPosition&) override;
-    virtual void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>) override;
-    virtual void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold) override;
-    virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) override;
+    void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, API::Object* userData) override;
+    void stopAssistingNode() override;
+    bool isAssistingNode() override;
+    void selectionDidChange() override;
+    bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;
+    void positionInformationDidChange(const InteractionInformationAtPosition&) override;
+    void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>) override;
+    void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold) override;
+    void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) override;
 
-    virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
-    virtual void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID) override;
-    virtual double minimumZoomScale() const override;
-    virtual WebCore::FloatRect documentRect() const override;
+    bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
+    void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID) override;
+    double minimumZoomScale() const override;
+    WebCore::FloatRect documentRect() const override;
 
-    virtual void showInspectorHighlight(const WebCore::Highlight&) override;
-    virtual void hideInspectorHighlight() override;
+    void showInspectorHighlight(const WebCore::Highlight&) override;
+    void hideInspectorHighlight() override;
 
-    virtual void showInspectorIndication() override;
-    virtual void hideInspectorIndication() override;
+    void showInspectorIndication() override;
+    void hideInspectorIndication() override;
 
-    virtual void enableInspectorNodeSearch() override;
-    virtual void disableInspectorNodeSearch() override;
+    void enableInspectorNodeSearch() override;
+    void disableInspectorNodeSearch() override;
 
-    virtual void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) override;
-    virtual void overflowScrollViewWillStartPanGesture() override;
-    virtual void overflowScrollViewDidScroll() override;
-    virtual void overflowScrollWillStartScroll() override;
-    virtual void overflowScrollDidEndScroll() override;
+    void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) override;
+    void overflowScrollViewWillStartPanGesture() override;
+    void overflowScrollViewDidScroll() override;
+    void overflowScrollWillStartScroll() override;
+    void overflowScrollDidEndScroll() override;
 
-    virtual void didFinishDrawingPagesToPDF(const IPC::DataReference&) override;
+    void didFinishDrawingPagesToPDF(const IPC::DataReference&) override;
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
@@ -162,37 +162,37 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     // WebFullScreenManagerProxyClient
-    virtual void closeFullScreenManager() override;
-    virtual bool isFullScreen() override;
-    virtual void enterFullScreen() override;
-    virtual void exitFullScreen() override;
-    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
-    virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
+    void closeFullScreenManager() override;
+    bool isFullScreen() override;
+    void enterFullScreen() override;
+    void exitFullScreen() override;
+    void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
+    void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
 #endif
 
-    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
+    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
 
-    virtual Vector<String> mimeTypesWithCustomContentProviders() override;
+    Vector<String> mimeTypesWithCustomContentProviders() override;
 
-    virtual void navigationGestureDidBegin() override;
-    virtual void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) override;
-    virtual void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&) override;
-    virtual void navigationGestureDidEnd() override;
-    virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) override;
-    virtual void didRemoveNavigationGestureSnapshot() override;
+    void navigationGestureDidBegin() override;
+    void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) override;
+    void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&) override;
+    void navigationGestureDidEnd() override;
+    void willRecordNavigationSnapshot(WebBackForwardListItem&) override;
+    void didRemoveNavigationGestureSnapshot() override;
 
-    virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() override;
-    virtual void didFinishLoadForMainFrame() override;
-    virtual void didFailLoadForMainFrame() override;
-    virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
-    virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
+    void didFirstVisuallyNonEmptyLayoutForMainFrame() override;
+    void didFinishLoadForMainFrame() override;
+    void didFailLoadForMainFrame() override;
+    void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
+    void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
 
-    virtual void didChangeBackgroundColor() override;
+    void didChangeBackgroundColor() override;
 
-    virtual void refView() override;
-    virtual void derefView() override;
+    void refView() override;
+    void derefView() override;
 
-    virtual void didRestoreScrollPosition() override;
+    void didRestoreScrollPosition() override;
 
     WKContentView *m_contentView;
     WKWebView *m_webView;

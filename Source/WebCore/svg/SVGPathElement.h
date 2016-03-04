@@ -91,7 +91,7 @@ public:
 
     void pathSegListChanged(SVGPathSegRole, ListModification = ListModificationUnknown);
 
-    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) override;
+    FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) override;
 
     static const SVGPropertyInfo* dPropertyInfo();
 
@@ -104,12 +104,12 @@ public:
 private:
     SVGPathElement(const QualifiedName&, Document&);
 
-    virtual bool isValid() const override { return SVGTests::isValid(); }
+    bool isValid() const override { return SVGTests::isValid(); }
 
     static bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
-    virtual bool supportsMarkers() const override { return true; }
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    bool supportsMarkers() const override { return true; }
 
     // Custom 'd' property
     static void synchronizeD(SVGElement* contextElement);
@@ -120,10 +120,10 @@ private:
         DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
-    virtual Node::InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
+    Node::InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
 
     void invalidateMPathDependencies();
 

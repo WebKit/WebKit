@@ -47,28 +47,28 @@ public:
 private:
     HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void finishedInsertingSubtree() override;
-    virtual void childrenChanged(const ChildChange&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void finishedInsertingSubtree() override;
+    void childrenChanged(const ChildChange&) override;
 
-    virtual bool isURLAttribute(const Attribute&) const override;
+    bool isURLAttribute(const Attribute&) const override;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
-    virtual String sourceAttributeValue() const override;
-    virtual String charsetAttributeValue() const override;
-    virtual String typeAttributeValue() const override;
-    virtual String languageAttributeValue() const override;
-    virtual String forAttributeValue() const override;
-    virtual String eventAttributeValue() const override;
-    virtual bool asyncAttributeValue() const override;
-    virtual bool deferAttributeValue() const override;
-    virtual bool hasSourceAttribute() const override;
+    String sourceAttributeValue() const override;
+    String charsetAttributeValue() const override;
+    String typeAttributeValue() const override;
+    String languageAttributeValue() const override;
+    String forAttributeValue() const override;
+    String eventAttributeValue() const override;
+    bool asyncAttributeValue() const override;
+    bool deferAttributeValue() const override;
+    bool hasSourceAttribute() const override;
 
-    virtual void dispatchLoadEvent() override;
+    void dispatchLoadEvent() override;
 
-    virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
 };
 
 } //namespace

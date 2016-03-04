@@ -91,20 +91,20 @@ public:
     void setBinaryType(const String&);
 
     // EventTarget functions.
-    virtual EventTargetInterface eventTargetInterface() const override;
-    virtual ScriptExecutionContext* scriptExecutionContext() const override;
+    EventTargetInterface eventTargetInterface() const override;
+    ScriptExecutionContext* scriptExecutionContext() const override;
 
     using RefCounted<WebSocket>::ref;
     using RefCounted<WebSocket>::deref;
 
     // WebSocketChannelClient functions.
-    virtual void didConnect() override;
-    virtual void didReceiveMessage(const String& message) override;
-    virtual void didReceiveBinaryData(Vector<char>&&) override;
-    virtual void didReceiveMessageError() override;
-    virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) override;
-    virtual void didStartClosingHandshake() override;
-    virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) override;
+    void didConnect() override;
+    void didReceiveMessage(const String& message) override;
+    void didReceiveBinaryData(Vector<char>&&) override;
+    void didReceiveMessageError() override;
+    void didUpdateBufferedAmount(unsigned long bufferedAmount) override;
+    void didStartClosingHandshake() override;
+    void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) override;
 
 private:
     explicit WebSocket(ScriptExecutionContext&);
@@ -121,8 +121,8 @@ private:
     void stop() override;
     const char* activeDOMObjectName() const override;
 
-    virtual void refEventTarget() override { ref(); }
-    virtual void derefEventTarget() override { deref(); }
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
 
     size_t getFramingOverhead(size_t payloadSize);
 

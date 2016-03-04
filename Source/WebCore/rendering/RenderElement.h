@@ -66,7 +66,7 @@ public:
     RenderObject* firstChild() const { return m_firstChild; }
     RenderObject* lastChild() const { return m_lastChild; }
 
-    virtual bool isEmpty() const override { return !firstChild(); }
+    bool isEmpty() const override { return !firstChild(); }
 
     bool canContainFixedPositionObjects() const;
     bool canContainAbsolutelyPositionedObjects() const;
@@ -248,9 +248,9 @@ protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    virtual void insertedIntoTree() override;
-    virtual void willBeRemovedFromTree() override;
-    virtual void willBeDestroyed() override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
+    void willBeDestroyed() override;
 
     void setRenderInlineAlwaysCreatesLineBoxes(bool b) { m_renderInlineAlwaysCreatesLineBoxes = b; }
     bool renderInlineAlwaysCreatesLineBoxes() const { return m_renderInlineAlwaysCreatesLineBoxes; }
@@ -286,8 +286,8 @@ private:
     void isText() const = delete;
     void isRenderElement() const = delete;
 
-    virtual RenderObject* firstChildSlow() const override final { return firstChild(); }
-    virtual RenderObject* lastChildSlow() const override final { return lastChild(); }
+    RenderObject* firstChildSlow() const override final { return firstChild(); }
+    RenderObject* lastChildSlow() const override final { return lastChild(); }
 
     // Called when an object that was floating or positioned becomes a normal flow object
     // again.  We have to make sure the render tree updates as needed to accommodate the new
@@ -307,7 +307,7 @@ private:
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
     RenderStyle* cachedFirstLineStyle() const;
 
-    virtual void newImageAnimationFrameAvailable(CachedImage&) final override;
+    void newImageAnimationFrameAvailable(CachedImage&) final override;
 
     bool getLeadingCorner(FloatPoint& output) const;
     bool getTrailingCorner(FloatPoint& output) const;

@@ -45,22 +45,22 @@ public:
     RenderMathMLRoot(Element&, Ref<RenderStyle>&&);
     RenderMathMLRoot(Document&, Ref<RenderStyle>&&);
 
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-    virtual void updateFromElement() override;
+    void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void updateFromElement() override;
     
     RenderMathMLRootWrapper* baseWrapper() const;
     RenderMathMLRootWrapper* indexWrapper() const;
 
 protected:
-    virtual void layout() override;
+    void layout() override;
     
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    void paint(PaintInfo&, const LayoutPoint&) override;
 
 private:
-    virtual bool isRenderMathMLRoot() const override final { return true; }
-    virtual const char* renderName() const override { return "RenderMathMLRoot"; }
-    virtual Optional<int> firstLineBaseline() const override;
+    bool isRenderMathMLRoot() const override final { return true; }
+    const char* renderName() const override { return "RenderMathMLRoot"; }
+    Optional<int> firstLineBaseline() const override;
     void updateStyle();
     void restructureWrappers();
 
@@ -84,10 +84,10 @@ public:
 
 private:
     void removeChildWithoutRestructuring(RenderObject&);
-    virtual void removeChild(RenderObject&) override;
+    void removeChild(RenderObject&) override;
     static RenderPtr<RenderMathMLRootWrapper> createAnonymousWrapper(RenderMathMLRoot* renderObject);
-    virtual bool isRenderMathMLRootWrapper() const override { return true; }
-    virtual const char* renderName() const override { return "RenderMathMLRootWrapper"; }
+    bool isRenderMathMLRootWrapper() const override { return true; }
+    const char* renderName() const override { return "RenderMathMLRootWrapper"; }
 };
 
 } // namespace WebCore

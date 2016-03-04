@@ -59,8 +59,8 @@ public:
 
     virtual void respondToChangedContents();
     virtual void respondToChangedSelection(WebCore::Frame*);
-    virtual void didChangeSelectionAndUpdateLayout() override { }
-    virtual void discardedComposition(WebCore::Frame*) override;
+    void didChangeSelectionAndUpdateLayout() override { }
+    void discardedComposition(WebCore::Frame*) override;
 
     bool shouldDeleteRange(WebCore::Range*);
 
@@ -88,35 +88,35 @@ public:
     void undo();
     void redo();    
     
-    virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting) override;
-    virtual void textFieldDidBeginEditing(WebCore::Element*) override;
-    virtual void textFieldDidEndEditing(WebCore::Element*) override;
-    virtual void textDidChangeInTextField(WebCore::Element*) override;
-    virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) override;
-    virtual void textWillBeDeletedInTextField(WebCore::Element* input) override;
-    virtual void textDidChangeInTextArea(WebCore::Element*) override;
-    virtual void overflowScrollPositionChanged() override { }
+    bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting) override;
+    void textFieldDidBeginEditing(WebCore::Element*) override;
+    void textFieldDidEndEditing(WebCore::Element*) override;
+    void textDidChangeInTextField(WebCore::Element*) override;
+    bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) override;
+    void textWillBeDeletedInTextField(WebCore::Element* input) override;
+    void textDidChangeInTextArea(WebCore::Element*) override;
+    void overflowScrollPositionChanged() override { }
 
     void handleKeyboardEvent(WebCore::KeyboardEvent*);
     void handleInputMethodKeydown(WebCore::KeyboardEvent*);
 
-    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const override;
-    virtual void ignoreWordInSpellDocument(const WTF::String&) override;
-    virtual void learnWord(const WTF::String&) override;
-    virtual void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) override;
-    virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) override;
-    virtual void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override;
-    virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) override;
-    virtual void updateSpellingUIWithMisspelledWord(const WTF::String&) override;
-    virtual void showSpellingUI(bool show) override;
-    virtual bool spellingUIIsShowing() override;
-    virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) override;
+    bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const override;
+    void ignoreWordInSpellDocument(const WTF::String&) override;
+    void learnWord(const WTF::String&) override;
+    void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) override;
+    WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) override;
+    void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override;
+    void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) override;
+    void updateSpellingUIWithMisspelledWord(const WTF::String&) override;
+    void showSpellingUI(bool show) override;
+    bool spellingUIIsShowing() override;
+    void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) override;
 
-    virtual void willSetInputMethodState() override;
-    virtual void setInputMethodState(bool) override;
-    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) override { }
+    void willSetInputMethodState() override;
+    void setInputMethodState(bool) override;
+    void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) override { }
 
-    virtual WebCore::TextCheckerClient* textChecker() override { return this; }
+    WebCore::TextCheckerClient* textChecker() override { return this; }
 
 private:
     WebView* m_webView;

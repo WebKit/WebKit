@@ -51,8 +51,8 @@ public:
         return adoptRef(*new StaticNodeList);
     }
 
-    virtual unsigned length() const override;
-    virtual Node* item(unsigned index) const override;
+    unsigned length() const override;
+    Node* item(unsigned index) const override;
 
 private:
     StaticNodeList() { }
@@ -74,8 +74,8 @@ public:
         return adoptRef(*new StaticElementList);
     }
 
-    virtual unsigned length() const override;
-    virtual Element* item(unsigned index) const override;
+    unsigned length() const override;
+    Element* item(unsigned index) const override;
 
 private:
     StaticElementList()

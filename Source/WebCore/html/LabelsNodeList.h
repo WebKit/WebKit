@@ -38,8 +38,8 @@ public:
     }
     ~LabelsNodeList();
 
-    virtual bool elementMatches(Element&) const override;
-    virtual bool isRootedAtDocument() const override { return true; }
+    bool elementMatches(Element&) const override;
+    bool isRootedAtDocument() const override { return true; }
 
 private:
     explicit LabelsNodeList(LabelableElement& forNode);

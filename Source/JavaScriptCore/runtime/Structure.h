@@ -110,7 +110,7 @@ public:
     {
     }
     
-    virtual void dump(PrintStream& out) const override;
+    void dump(PrintStream& out) const override;
 
 private:
     const Structure* m_structure;

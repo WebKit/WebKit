@@ -46,132 +46,132 @@ public:
 
     virtual ~PlatformCALayerRemote();
 
-    virtual PlatformLayer* platformLayer() const override { return nullptr; }
+    PlatformLayer* platformLayer() const override { return nullptr; }
 
     void recursiveBuildTransaction(RemoteLayerTreeContext&, RemoteLayerTreeTransaction&);
 
-    virtual void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
-    virtual void setNeedsDisplay() override;
+    void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
+    void setNeedsDisplay() override;
 
-    virtual void copyContentsFromLayer(PlatformCALayer*) override;
+    void copyContentsFromLayer(PlatformCALayer*) override;
 
-    virtual WebCore::PlatformCALayer* superlayer() const override;
-    virtual void removeFromSuperlayer() override;
-    virtual void setSublayers(const WebCore::PlatformCALayerList&) override;
-    virtual void removeAllSublayers() override;
-    virtual void appendSublayer(WebCore::PlatformCALayer&) override;
-    virtual void insertSublayer(WebCore::PlatformCALayer&, size_t index) override;
-    virtual void replaceSublayer(WebCore::PlatformCALayer& reference, WebCore::PlatformCALayer&) override;
-    virtual const WebCore::PlatformCALayerList* customSublayers() const override { return nullptr; }
-    virtual void adoptSublayers(WebCore::PlatformCALayer& source) override;
+    WebCore::PlatformCALayer* superlayer() const override;
+    void removeFromSuperlayer() override;
+    void setSublayers(const WebCore::PlatformCALayerList&) override;
+    void removeAllSublayers() override;
+    void appendSublayer(WebCore::PlatformCALayer&) override;
+    void insertSublayer(WebCore::PlatformCALayer&, size_t index) override;
+    void replaceSublayer(WebCore::PlatformCALayer& reference, WebCore::PlatformCALayer&) override;
+    const WebCore::PlatformCALayerList* customSublayers() const override { return nullptr; }
+    void adoptSublayers(WebCore::PlatformCALayer& source) override;
 
-    virtual void addAnimationForKey(const String& key, WebCore::PlatformCAAnimation&) override;
-    virtual void removeAnimationForKey(const String& key) override;
-    virtual PassRefPtr<WebCore::PlatformCAAnimation> animationForKey(const String& key) override;
-    virtual void animationStarted(const String& key, CFTimeInterval beginTime) override;
-    virtual void animationEnded(const String& key) override;
+    void addAnimationForKey(const String& key, WebCore::PlatformCAAnimation&) override;
+    void removeAnimationForKey(const String& key) override;
+    PassRefPtr<WebCore::PlatformCAAnimation> animationForKey(const String& key) override;
+    void animationStarted(const String& key, CFTimeInterval beginTime) override;
+    void animationEnded(const String& key) override;
 
-    virtual void setMask(WebCore::PlatformCALayer*) override;
+    void setMask(WebCore::PlatformCALayer*) override;
 
-    virtual bool isOpaque() const override;
-    virtual void setOpaque(bool) override;
+    bool isOpaque() const override;
+    void setOpaque(bool) override;
 
-    virtual WebCore::FloatRect bounds() const override;
-    virtual void setBounds(const WebCore::FloatRect&) override;
+    WebCore::FloatRect bounds() const override;
+    void setBounds(const WebCore::FloatRect&) override;
 
-    virtual WebCore::FloatPoint3D position() const override;
-    virtual void setPosition(const WebCore::FloatPoint3D&) override;
+    WebCore::FloatPoint3D position() const override;
+    void setPosition(const WebCore::FloatPoint3D&) override;
 
-    virtual WebCore::FloatPoint3D anchorPoint() const override;
-    virtual void setAnchorPoint(const WebCore::FloatPoint3D&) override;
+    WebCore::FloatPoint3D anchorPoint() const override;
+    void setAnchorPoint(const WebCore::FloatPoint3D&) override;
 
-    virtual WebCore::TransformationMatrix transform() const override;
-    virtual void setTransform(const WebCore::TransformationMatrix&) override;
+    WebCore::TransformationMatrix transform() const override;
+    void setTransform(const WebCore::TransformationMatrix&) override;
 
-    virtual WebCore::TransformationMatrix sublayerTransform() const override;
-    virtual void setSublayerTransform(const WebCore::TransformationMatrix&) override;
+    WebCore::TransformationMatrix sublayerTransform() const override;
+    void setSublayerTransform(const WebCore::TransformationMatrix&) override;
 
-    virtual void setHidden(bool) override;
+    void setHidden(bool) override;
 
-    virtual void setBackingStoreAttached(bool) override;
-    virtual bool backingStoreAttached() const override;
-    virtual bool backingContributesToMemoryEstimate() const override { return backingStoreAttached(); }
+    void setBackingStoreAttached(bool) override;
+    bool backingStoreAttached() const override;
+    bool backingContributesToMemoryEstimate() const override { return backingStoreAttached(); }
 
-    virtual bool geometryFlipped() const override;
-    virtual void setGeometryFlipped(bool) override;
+    bool geometryFlipped() const override;
+    void setGeometryFlipped(bool) override;
 
-    virtual bool isDoubleSided() const override;
-    virtual void setDoubleSided(bool) override;
+    bool isDoubleSided() const override;
+    void setDoubleSided(bool) override;
 
-    virtual bool masksToBounds() const override;
-    virtual void setMasksToBounds(bool) override;
+    bool masksToBounds() const override;
+    void setMasksToBounds(bool) override;
 
-    virtual bool acceleratesDrawing() const override;
-    virtual void setAcceleratesDrawing(bool) override;
+    bool acceleratesDrawing() const override;
+    void setAcceleratesDrawing(bool) override;
 
-    virtual CFTypeRef contents() const override;
-    virtual void setContents(CFTypeRef) override;
+    CFTypeRef contents() const override;
+    void setContents(CFTypeRef) override;
 
-    virtual void setContentsRect(const WebCore::FloatRect&) override;
+    void setContentsRect(const WebCore::FloatRect&) override;
 
-    virtual void setMinificationFilter(WebCore::PlatformCALayer::FilterType) override;
-    virtual void setMagnificationFilter(WebCore::PlatformCALayer::FilterType) override;
+    void setMinificationFilter(WebCore::PlatformCALayer::FilterType) override;
+    void setMagnificationFilter(WebCore::PlatformCALayer::FilterType) override;
 
-    virtual WebCore::Color backgroundColor() const override;
-    virtual void setBackgroundColor(const WebCore::Color&) override;
+    WebCore::Color backgroundColor() const override;
+    void setBackgroundColor(const WebCore::Color&) override;
 
-    virtual void setBorderWidth(float) override;
-    virtual void setBorderColor(const WebCore::Color&) override;
+    void setBorderWidth(float) override;
+    void setBorderColor(const WebCore::Color&) override;
 
-    virtual float opacity() const override;
-    virtual void setOpacity(float) override;
+    float opacity() const override;
+    void setOpacity(float) override;
 
-    virtual void setFilters(const WebCore::FilterOperations&) override;
+    void setFilters(const WebCore::FilterOperations&) override;
     static bool filtersCanBeComposited(const WebCore::FilterOperations&);
-    virtual void copyFiltersFrom(const WebCore::PlatformCALayer&) override;
+    void copyFiltersFrom(const WebCore::PlatformCALayer&) override;
 
 #if ENABLE(CSS_COMPOSITING)
-    virtual void setBlendMode(WebCore::BlendMode) override;
+    void setBlendMode(WebCore::BlendMode) override;
 #endif
 
-    virtual void setName(const String&) override;
+    void setName(const String&) override;
 
-    virtual void setSpeed(float) override;
+    void setSpeed(float) override;
 
-    virtual void setTimeOffset(CFTimeInterval) override;
+    void setTimeOffset(CFTimeInterval) override;
 
-    virtual float contentsScale() const override;
-    virtual void setContentsScale(float) override;
+    float contentsScale() const override;
+    void setContentsScale(float) override;
 
-    virtual float cornerRadius() const override;
-    virtual void setCornerRadius(float) override;
+    float cornerRadius() const override;
+    void setCornerRadius(float) override;
 
-    virtual void setEdgeAntialiasingMask(unsigned) override;
+    void setEdgeAntialiasingMask(unsigned) override;
 
     // FIXME: Having both shapeRoundedRect and shapePath is redundant. We could use shapePath for everything.
-    virtual WebCore::FloatRoundedRect shapeRoundedRect() const override;
-    virtual void setShapeRoundedRect(const WebCore::FloatRoundedRect&) override;
+    WebCore::FloatRoundedRect shapeRoundedRect() const override;
+    void setShapeRoundedRect(const WebCore::FloatRoundedRect&) override;
 
-    virtual WebCore::Path shapePath() const override;
-    virtual void setShapePath(const WebCore::Path&) override;
+    WebCore::Path shapePath() const override;
+    void setShapePath(const WebCore::Path&) override;
 
-    virtual WebCore::WindRule shapeWindRule() const override;
-    virtual void setShapeWindRule(WebCore::WindRule) override;
+    WebCore::WindRule shapeWindRule() const override;
+    void setShapeWindRule(WebCore::WindRule) override;
 
-    virtual WebCore::GraphicsLayer::CustomAppearance customAppearance() const override;
-    virtual void updateCustomAppearance(WebCore::GraphicsLayer::CustomAppearance) override;
+    WebCore::GraphicsLayer::CustomAppearance customAppearance() const override;
+    void updateCustomAppearance(WebCore::GraphicsLayer::CustomAppearance) override;
 
-    virtual WebCore::TiledBacking* tiledBacking() override { return nullptr; }
+    WebCore::TiledBacking* tiledBacking() override { return nullptr; }
 
-    virtual PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
+    PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
 
-    virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*) const override;
+    PassRefPtr<PlatformCALayer> createCompatibleLayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*) const override;
 
-    virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) override;
+    void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) override;
 
     virtual uint32_t hostingContextID();
 
-    virtual unsigned backingStoreBytesPerPixel() const override;
+    unsigned backingStoreBytesPerPixel() const override;
 
     void setClonedLayer(const PlatformCALayer*);
 
@@ -190,14 +190,14 @@ protected:
     void updateClonedLayerProperties(PlatformCALayerRemote& clone, bool copyContents = true) const;
 
 private:
-    virtual bool isPlatformCALayerRemote() const override { return true; }
+    bool isPlatformCALayerRemote() const override { return true; }
     void ensureBackingStore();
     void updateBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
-    virtual WebCore::LayerPool& layerPool() override;
+    WebCore::LayerPool& layerPool() override;
 
     RemoteLayerTreeTransaction::LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;

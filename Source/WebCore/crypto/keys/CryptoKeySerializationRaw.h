@@ -51,12 +51,12 @@ public:
 private:
     CryptoKeySerializationRaw(const CryptoOperationData&);
 
-    virtual bool reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>&, std::unique_ptr<CryptoAlgorithmParameters>&) const override;
+    bool reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>&, std::unique_ptr<CryptoAlgorithmParameters>&) const override;
 
-    virtual void reconcileUsages(CryptoKeyUsage&) const override;
-    virtual void reconcileExtractable(bool&) const override;
+    void reconcileUsages(CryptoKeyUsage&) const override;
+    void reconcileExtractable(bool&) const override;
 
-    virtual std::unique_ptr<CryptoKeyData> keyData() const override;
+    std::unique_ptr<CryptoKeyData> keyData() const override;
 
     Vector<uint8_t> m_data;
 };

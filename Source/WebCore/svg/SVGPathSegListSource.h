@@ -33,20 +33,20 @@ public:
     explicit SVGPathSegListSource(const SVGPathSegList&);
 
 private:
-    virtual bool hasMoreData() const override;
-    virtual bool moveToNextToken() override { return true; }
-    virtual bool parseSVGSegmentType(SVGPathSegType&) override;
-    virtual SVGPathSegType nextCommand(SVGPathSegType) override;
+    bool hasMoreData() const override;
+    bool moveToNextToken() override { return true; }
+    bool parseSVGSegmentType(SVGPathSegType&) override;
+    SVGPathSegType nextCommand(SVGPathSegType) override;
 
-    virtual bool parseMoveToSegment(FloatPoint&) override;
-    virtual bool parseLineToSegment(FloatPoint&) override;
-    virtual bool parseLineToHorizontalSegment(float&) override;
-    virtual bool parseLineToVerticalSegment(float&) override;
-    virtual bool parseCurveToCubicSegment(FloatPoint&, FloatPoint&, FloatPoint&) override;
-    virtual bool parseCurveToCubicSmoothSegment(FloatPoint&, FloatPoint&) override;
-    virtual bool parseCurveToQuadraticSegment(FloatPoint&, FloatPoint&) override;
-    virtual bool parseCurveToQuadraticSmoothSegment(FloatPoint&) override;
-    virtual bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&) override;
+    bool parseMoveToSegment(FloatPoint&) override;
+    bool parseLineToSegment(FloatPoint&) override;
+    bool parseLineToHorizontalSegment(float&) override;
+    bool parseLineToVerticalSegment(float&) override;
+    bool parseCurveToCubicSegment(FloatPoint&, FloatPoint&, FloatPoint&) override;
+    bool parseCurveToCubicSmoothSegment(FloatPoint&, FloatPoint&) override;
+    bool parseCurveToQuadraticSegment(FloatPoint&, FloatPoint&) override;
+    bool parseCurveToQuadraticSmoothSegment(FloatPoint&) override;
+    bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&) override;
 
     const SVGPathSegList& m_pathSegList;
     RefPtr<SVGPathSeg> m_segment;

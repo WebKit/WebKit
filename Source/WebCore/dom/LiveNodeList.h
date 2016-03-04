@@ -64,7 +64,7 @@ protected:
     Document& document() const { return m_ownerNode->document(); }
 
 private:
-    virtual bool isLiveNodeList() const override final { return true; }
+    bool isLiveNodeList() const override final { return true; }
 
     ContainerNode& rootNode() const;
 
@@ -91,8 +91,8 @@ public:
     bool collectionCanTraverseBackward() const { return true; }
     void willValidateIndexCache() const { document().registerNodeListForInvalidation(const_cast<CachedLiveNodeList<NodeListType>&>(*this)); }
 
-    virtual void invalidateCache(Document&) const override final;
-    virtual size_t memoryCost() const override final { return m_indexCache.memoryCost(); }
+    void invalidateCache(Document&) const override final;
+    size_t memoryCost() const override final { return m_indexCache.memoryCost(); }
 
 protected:
     CachedLiveNodeList(ContainerNode& rootNode, NodeListInvalidationType);

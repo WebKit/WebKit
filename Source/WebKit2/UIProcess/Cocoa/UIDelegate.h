@@ -63,7 +63,7 @@ private:
 
     private:
         // API::ContextMenuClient
-        virtual RetainPtr<NSMenu> menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *, const WebKit::WebHitTestResultData&, API::Object*) override;
+        RetainPtr<NSMenu> menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *, const WebKit::WebHitTestResultData&, API::Object*) override;
 
         UIDelegate& m_uiDelegate;
     };
@@ -76,26 +76,26 @@ private:
 
     private:
         // API::UIClient
-        virtual PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) override;
-        virtual void close(WebKit::WebPageProxy*) override;
-        virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) override;
-        virtual void didEnterFullscreen(WebKit::WebPageProxy*) override;
-        virtual void didExitFullscreen(WebKit::WebPageProxy*) override;
-        virtual void runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void ()> completionHandler) override;
-        virtual void runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (bool)> completionHandler) override;
-        virtual void runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (const WTF::String&)> completionHandler) override;
-        virtual void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, std::function<void (unsigned long long)>) override;
-        virtual void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, std::function<void (unsigned long long)> completionHandler) override;
-        virtual void printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) override;
+        PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) override;
+        void close(WebKit::WebPageProxy*) override;
+        void fullscreenMayReturnToInline(WebKit::WebPageProxy*) override;
+        void didEnterFullscreen(WebKit::WebPageProxy*) override;
+        void didExitFullscreen(WebKit::WebPageProxy*) override;
+        void runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void ()> completionHandler) override;
+        void runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (bool)> completionHandler) override;
+        void runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (const WTF::String&)> completionHandler) override;
+        void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, std::function<void (unsigned long long)>) override;
+        void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, std::function<void (unsigned long long)> completionHandler) override;
+        void printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) override;
 #if PLATFORM(IOS)
 #if HAVE(APP_LINKS)
-        virtual bool shouldIncludeAppLinkActionsForElement(_WKActivatedElementInfo *) override;
+        bool shouldIncludeAppLinkActionsForElement(_WKActivatedElementInfo *) override;
 #endif
-        virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) override;
-        virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
-        virtual UIViewController *presentingViewController() override;
+        RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) override;
+        void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
+        UIViewController *presentingViewController() override;
 #endif
-        virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) override;
+        void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) override;
 
         UIDelegate& m_uiDelegate;
     };

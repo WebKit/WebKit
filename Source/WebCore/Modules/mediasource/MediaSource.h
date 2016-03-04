@@ -71,10 +71,10 @@ public:
     void streamEndedWithError(const AtomicString& error, ExceptionCode&);
 
     // MediaSourcePrivateClient
-    virtual void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) override;
-    virtual MediaTime duration() const override;
-    virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
-    virtual void seekToTime(const MediaTime&) override;
+    void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) override;
+    MediaTime duration() const override;
+    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    void seekToTime(const MediaTime&) override;
 
     bool attachToElement(HTMLMediaElement*);
     void close();
@@ -100,13 +100,13 @@ public:
     static bool isTypeSupported(const String& type);
 
     // EventTarget interface
-    virtual ScriptExecutionContext* scriptExecutionContext() const override final;
-    virtual void refEventTarget() override final { ref(); }
-    virtual void derefEventTarget() override final { deref(); }
-    virtual EventTargetInterface eventTargetInterface() const override;
+    ScriptExecutionContext* scriptExecutionContext() const override final;
+    void refEventTarget() override final { ref(); }
+    void derefEventTarget() override final { deref(); }
+    EventTargetInterface eventTargetInterface() const override;
 
     // URLRegistrable interface
-    virtual URLRegistry& registry() const override;
+    URLRegistry& registry() const override;
 
     using RefCounted<MediaSourcePrivateClient>::ref;
     using RefCounted<MediaSourcePrivateClient>::deref;

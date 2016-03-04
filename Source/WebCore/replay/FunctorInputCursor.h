@@ -49,16 +49,16 @@ public:
     }
 
     // InputCursor
-    virtual bool isCapturing() const override { return false; }
-    virtual bool isReplaying() const override { return false; }
+    bool isCapturing() const override { return false; }
+    bool isReplaying() const override { return false; }
 
-    virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
-    virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
+    void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
+    NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
 
     template<typename Functor>
     typename Functor::ReturnType forEachInputInQueue(InputQueue, Functor&);
 protected:
-    virtual NondeterministicInputBase* loadInput(InputQueue, const String&) override;
+    NondeterministicInputBase* loadInput(InputQueue, const String&) override;
 private:
     FunctorInputCursor(RefPtr<ReplaySessionSegment>&&);
 

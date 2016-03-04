@@ -116,34 +116,34 @@ private:
 
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
-    virtual void terminate() override;
+    void terminate() override;
     void platformTerminate();
 
     void lowMemoryHandler(WebCore::Critical);
     void platformLowMemoryHandler(WebCore::Critical);
 
     // ChildProcess
-    virtual void initializeProcess(const ChildProcessInitializationParameters&) override;
-    virtual void initializeProcessName(const ChildProcessInitializationParameters&) override;
-    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
-    virtual void initializeConnection(IPC::Connection*) override;
-    virtual bool shouldTerminate() override;
+    void initializeProcess(const ChildProcessInitializationParameters&) override;
+    void initializeProcessName(const ChildProcessInitializationParameters&) override;
+    void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
+    void initializeConnection(IPC::Connection*) override;
+    bool shouldTerminate() override;
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    virtual void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
-    virtual void didClose(IPC::Connection&) override;
-    virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    virtual IPC::ProcessType localProcessType() override { return IPC::ProcessType::Network; }
-    virtual IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::UI; }
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    void didClose(IPC::Connection&) override;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+    IPC::ProcessType localProcessType() override { return IPC::ProcessType::Network; }
+    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::UI; }
 
     // DownloadManager::Client
-    virtual void didCreateDownload() override;
-    virtual void didDestroyDownload() override;
-    virtual IPC::Connection* downloadProxyConnection() override;
-    virtual AuthenticationManager& downloadsAuthenticationManager() override;
+    void didCreateDownload() override;
+    void didDestroyDownload() override;
+    IPC::Connection* downloadProxyConnection() override;
+    AuthenticationManager& downloadsAuthenticationManager() override;
 #if USE(NETWORK_SESSION)
-    virtual void pendingDownloadCanceled(DownloadID) override;
+    void pendingDownloadCanceled(DownloadID) override;
 #endif
 
     // Message Handlers

@@ -46,18 +46,18 @@ public:
     virtual ~NetscapePluginX11();
 
 private:
-    virtual NPWindowType windowType() const override;
-    virtual void* window() const override;
-    virtual NPSetWindowCallbackStruct* windowSystemInfo() override { return &m_setWindowCallbackStruct; }
-    virtual void geometryDidChange() override;
-    virtual void visibilityDidChange() override;
-    virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) override;
-    virtual bool handleMouseEvent(const WebMouseEvent&) override;
-    virtual bool handleWheelEvent(const WebWheelEvent&) override;
-    virtual bool handleMouseEnterEvent(const WebMouseEvent&) override;
-    virtual bool handleMouseLeaveEvent(const WebMouseEvent&) override;
-    virtual bool handleKeyboardEvent(const WebKeyboardEvent&) override;
-    virtual void setFocus(bool) override;
+    NPWindowType windowType() const override;
+    void* window() const override;
+    NPSetWindowCallbackStruct* windowSystemInfo() override { return &m_setWindowCallbackStruct; }
+    void geometryDidChange() override;
+    void visibilityDidChange() override;
+    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) override;
+    bool handleMouseEvent(const WebMouseEvent&) override;
+    bool handleWheelEvent(const WebWheelEvent&) override;
+    bool handleMouseEnterEvent(const WebMouseEvent&) override;
+    bool handleMouseLeaveEvent(const WebMouseEvent&) override;
+    bool handleKeyboardEvent(const WebKeyboardEvent&) override;
+    void setFocus(bool) override;
 
     NetscapePlugin& m_plugin;
     Display* m_pluginDisplay { nullptr };

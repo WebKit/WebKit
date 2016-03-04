@@ -64,8 +64,8 @@ private:
     {
     }
 
-    virtual bool operator==(const EventListener&) override;
-    virtual void handleEvent(ScriptExecutionContext*, Event*) override;
+    bool operator==(const EventListener&) override;
+    void handleEvent(ScriptExecutionContext*, Event*) override;
 
     ImageDocument& m_document;
 };
@@ -86,8 +86,8 @@ private:
 
     ImageDocument& document() const;
 
-    virtual void appendBytes(DocumentWriter&, const char*, size_t) override;
-    virtual void finish() override;
+    void appendBytes(DocumentWriter&, const char*, size_t) override;
+    void finish() override;
 };
 
 class ImageDocumentElement final : public HTMLImageElement {
@@ -102,7 +102,7 @@ private:
     }
 
     virtual ~ImageDocumentElement();
-    virtual void didMoveToNewDocument(Document* oldDocument) override;
+    void didMoveToNewDocument(Document* oldDocument) override;
 
     ImageDocument* m_imageDocument;
 };

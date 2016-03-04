@@ -45,12 +45,12 @@ public:
     DeviceMotionClientMock();
 
     // DeviceMotionClient
-    virtual void setController(DeviceMotionController*) override;
-    virtual void startUpdating() override;
-    virtual void stopUpdating() override;
-    virtual DeviceMotionData* lastMotion() const override { return m_motion.get(); }
+    void setController(DeviceMotionController*) override;
+    void startUpdating() override;
+    void stopUpdating() override;
+    DeviceMotionData* lastMotion() const override { return m_motion.get(); }
     // mock is owned by the testing framework, which should handle deletion
-    virtual void deviceMotionControllerDestroyed() override { }
+    void deviceMotionControllerDestroyed() override { }
 
     void setMotion(PassRefPtr<DeviceMotionData>);
 

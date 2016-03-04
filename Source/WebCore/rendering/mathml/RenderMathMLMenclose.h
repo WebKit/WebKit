@@ -36,11 +36,11 @@ public:
     RenderMathMLMenclose(Element&, Ref<RenderStyle>&&);
 
 private:
-    virtual const char* renderName() const override { return "RenderMathMLMenclose"; }
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
-    virtual void updateLogicalHeight() override;
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = nullptr) override;
-    virtual void computePreferredLogicalWidths() override;
+    const char* renderName() const override { return "RenderMathMLMenclose"; }
+    void paint(PaintInfo&, const LayoutPoint&) override;
+    void updateLogicalHeight() override;
+    void addChild(RenderObject* newChild, RenderObject* beforeChild = nullptr) override;
+    void computePreferredLogicalWidths() override;
     bool checkNotationalValuesValidity(const Vector<String>&) const;
 };
     

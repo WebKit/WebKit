@@ -35,10 +35,10 @@ public:
 private:
     SVGDefsElement(const QualifiedName&, Document&);
 
-    virtual bool isValid() const override;
-    virtual bool supportsFocus() const override { return false; }
+    bool isValid() const override;
+    bool supportsFocus() const override { return false; }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGDefsElement)
         DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)

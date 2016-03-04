@@ -81,8 +81,8 @@ public:
     }
 
 private:
-    virtual bool mediaPlayerNeedsSiteSpecificHacks() const override { return m_needsHacks; }
-    virtual String mediaPlayerDocumentHost() const override { return m_host; }
+    bool mediaPlayerNeedsSiteSpecificHacks() const override { return m_needsHacks; }
+    String mediaPlayerDocumentHost() const override { return m_host; }
 
     bool m_needsHacks;
     String m_host;

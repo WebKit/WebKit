@@ -39,19 +39,19 @@ namespace WebCore {
 class BaseCheckableInputType : public InputType {
 protected:
     explicit BaseCheckableInputType(HTMLInputElement& element) : InputType(element) { }
-    virtual void handleKeydownEvent(KeyboardEvent*) override;
+    void handleKeydownEvent(KeyboardEvent*) override;
 
 private:
-    virtual FormControlState saveFormControlState() const override;
-    virtual void restoreFormControlState(const FormControlState&) override;
-    virtual bool appendFormData(FormDataList&, bool) const override;
-    virtual void handleKeypressEvent(KeyboardEvent*) override;
-    virtual bool canSetStringValue() const override;
-    virtual void accessKeyAction(bool sendMouseEvents) override;
-    virtual String fallbackValue() const override;
-    virtual bool storesValueSeparateFromAttribute() override;
-    virtual void setValue(const String&, bool, TextFieldEventBehavior) override;
-    virtual bool isCheckable() override;
+    FormControlState saveFormControlState() const override;
+    void restoreFormControlState(const FormControlState&) override;
+    bool appendFormData(FormDataList&, bool) const override;
+    void handleKeypressEvent(KeyboardEvent*) override;
+    bool canSetStringValue() const override;
+    void accessKeyAction(bool sendMouseEvents) override;
+    String fallbackValue() const override;
+    bool storesValueSeparateFromAttribute() override;
+    void setValue(const String&, bool, TextFieldEventBehavior) override;
+    bool isCheckable() override;
 };
 
 } // namespace WebCore

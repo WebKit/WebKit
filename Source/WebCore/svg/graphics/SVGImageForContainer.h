@@ -42,28 +42,28 @@ public:
         return adoptRef(*new SVGImageForContainer(image, containerSize, zoom));
     }
 
-    virtual bool isSVGImage() const override { return true; }
+    bool isSVGImage() const override { return true; }
 
-    virtual FloatSize size() const override;
+    FloatSize size() const override;
 
     void setURL(const URL& url) { m_image->setURL(url); }
 
-    virtual bool usesContainerSize() const override { return m_image->usesContainerSize(); }
-    virtual bool hasRelativeWidth() const override { return m_image->hasRelativeWidth(); }
-    virtual bool hasRelativeHeight() const override { return m_image->hasRelativeHeight(); }
-    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override
+    bool usesContainerSize() const override { return m_image->usesContainerSize(); }
+    bool hasRelativeWidth() const override { return m_image->hasRelativeWidth(); }
+    bool hasRelativeHeight() const override { return m_image->hasRelativeHeight(); }
+    void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override
     {
         m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     }
 
-    virtual void draw(GraphicsContext&, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientationDescription) override;
+    void draw(GraphicsContext&, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientationDescription) override;
 
-    virtual void drawPattern(GraphicsContext&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, CompositeOperator, const FloatRect&, BlendMode) override;
+    void drawPattern(GraphicsContext&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, CompositeOperator, const FloatRect&, BlendMode) override;
 
     // FIXME: Implement this to be less conservative.
-    virtual bool currentFrameKnownToBeOpaque() override { return false; }
+    bool currentFrameKnownToBeOpaque() override { return false; }
 
-    virtual PassNativeImagePtr nativeImageForCurrentFrame() override;
+    PassNativeImagePtr nativeImageForCurrentFrame() override;
 
 private:
     SVGImageForContainer(SVGImage* image, const FloatSize& containerSize, float zoom)
@@ -73,7 +73,7 @@ private:
     {
     }
 
-    virtual void destroyDecodedData(bool /*destroyAll*/ = true) override { }
+    void destroyDecodedData(bool /*destroyAll*/ = true) override { }
 
     SVGImage* m_image;
     const FloatSize m_containerSize;

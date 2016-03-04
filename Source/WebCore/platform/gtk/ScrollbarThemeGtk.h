@@ -37,33 +37,33 @@ class ScrollbarThemeGtk final : public ScrollbarThemeComposite {
 public:
     virtual ~ScrollbarThemeGtk();
 
-    virtual bool hasButtons(Scrollbar&) override { return true; }
-    virtual bool hasThumb(Scrollbar&) override;
-    virtual IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool) override;
-    virtual IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool) override;
-    virtual IntRect trackRect(Scrollbar&, bool) override;
+    bool hasButtons(Scrollbar&) override { return true; }
+    bool hasThumb(Scrollbar&) override;
+    IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool) override;
+    IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool) override;
+    IntRect trackRect(Scrollbar&, bool) override;
 
 #ifndef GTK_API_VERSION_2
     ScrollbarThemeGtk();
 
     using ScrollbarThemeComposite::thumbRect;
     IntRect thumbRect(Scrollbar&, const IntRect& unconstrainedTrackRect);
-    virtual bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
-    virtual void paintScrollbarBackground(GraphicsContext&, Scrollbar&) override;
-    virtual void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
-    virtual void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
-    virtual void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
-    virtual ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
-    virtual int scrollbarThickness(ScrollbarControlSize) override;
-    virtual int minimumThumbLength(Scrollbar&) override;
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
+    void paintScrollbarBackground(GraphicsContext&, Scrollbar&) override;
+    void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
+    ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
+    int scrollbarThickness(ScrollbarControlSize) override;
+    int minimumThumbLength(Scrollbar&) override;
 
     // TODO: These are the default GTK+ values. At some point we should pull these from the theme itself.
-    virtual double initialAutoscrollTimerDelay() override { return 0.20; }
-    virtual double autoscrollTimerDelay() override { return 0.02; }
-    virtual void themeChanged() override;
-    virtual bool usesOverlayScrollbars() const override { return m_usesOverlayScrollbars; }
+    double initialAutoscrollTimerDelay() override { return 0.20; }
+    double autoscrollTimerDelay() override { return 0.02; }
+    void themeChanged() override;
+    bool usesOverlayScrollbars() const override { return m_usesOverlayScrollbars; }
     // When using overlay scrollbars, always invalidate the whole scrollbar when entering/leaving.
-    virtual bool invalidateOnMouseEnterExit() override { return m_usesOverlayScrollbars; }
+    bool invalidateOnMouseEnterExit() override { return m_usesOverlayScrollbars; }
 
 private:
     void updateThemeProperties();

@@ -53,28 +53,28 @@ class WebInspectorClient : public WebCore::InspectorClient, public Inspector::Fr
 public:
     explicit WebInspectorClient(WebView *inspectedWebView);
 
-    virtual void inspectedPageDestroyed() override;
+    void inspectedPageDestroyed() override;
 
-    virtual Inspector::FrontendChannel* openLocalFrontend(WebCore::InspectorController*) override;
-    virtual void bringFrontendToFront() override;
-    virtual void didResizeMainFrame(WebCore::Frame*) override;
+    Inspector::FrontendChannel* openLocalFrontend(WebCore::InspectorController*) override;
+    void bringFrontendToFront() override;
+    void didResizeMainFrame(WebCore::Frame*) override;
 
-    virtual void highlight() override;
-    virtual void hideHighlight() override;
+    void highlight() override;
+    void hideHighlight() override;
 
 #if PLATFORM(IOS)
-    virtual void showInspectorIndication() override;
-    virtual void hideInspectorIndication() override;
+    void showInspectorIndication() override;
+    void hideInspectorIndication() override;
 
-    virtual bool overridesShowPaintRects() const override { return true; }
-    virtual void setShowPaintRects(bool) override;
-    virtual void showPaintRect(const WebCore::FloatRect&) override;
+    bool overridesShowPaintRects() const override { return true; }
+    void setShowPaintRects(bool) override;
+    void showPaintRect(const WebCore::FloatRect&) override;
 #endif
 
-    virtual void didSetSearchingForNode(bool) override;
+    void didSetSearchingForNode(bool) override;
 
-    virtual bool sendMessageToFrontend(const String&) override;
-    virtual ConnectionType connectionType() const override { return ConnectionType::Local; }
+    bool sendMessageToFrontend(const String&) override;
+    ConnectionType connectionType() const override { return ConnectionType::Local; }
 
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);
@@ -105,29 +105,29 @@ public:
     void attachAvailabilityChanged(bool);
     bool canAttach();
 
-    virtual void frontendLoaded() override;
+    void frontendLoaded() override;
 
-    virtual void startWindowDrag() override;
+    void startWindowDrag() override;
 
-    virtual String localizedStringsURL() override;
+    String localizedStringsURL() override;
 
-    virtual void bringToFront() override;
-    virtual void closeWindow() override;
+    void bringToFront() override;
+    void closeWindow() override;
 
-    virtual void attachWindow(DockSide) override;
-    virtual void detachWindow() override;
+    void attachWindow(DockSide) override;
+    void detachWindow() override;
 
-    virtual void setAttachedWindowHeight(unsigned height) override;
-    virtual void setAttachedWindowWidth(unsigned height) override;
+    void setAttachedWindowHeight(unsigned height) override;
+    void setAttachedWindowWidth(unsigned height) override;
 
-    virtual void inspectedURLChanged(const String& newURL) override;
+    void inspectedURLChanged(const String& newURL) override;
 
 private:
     void updateWindowTitle() const;
 
-    virtual bool canSave() override { return true; }
-    virtual void save(const String& url, const String& content, bool forceSaveAs, bool base64Encoded) override;
-    virtual void append(const String& url, const String& content) override;
+    bool canSave() override { return true; }
+    void save(const String& url, const String& content, bool forceSaveAs, bool base64Encoded) override;
+    void append(const String& url, const String& content) override;
 
 #if !PLATFORM(IOS)
     WebView *m_inspectedWebView;

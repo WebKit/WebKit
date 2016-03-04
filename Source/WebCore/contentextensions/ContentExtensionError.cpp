@@ -44,7 +44,7 @@ const std::error_category& contentExtensionErrorCategory()
             return "content extension";
         }
 
-        virtual std::string message(int errorCode) const override
+        std::string message(int errorCode) const override
         {
             switch (static_cast<ContentExtensionError>(errorCode)) {
             case ContentExtensionError::JSONInvalid:

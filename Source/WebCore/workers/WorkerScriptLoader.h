@@ -65,11 +65,11 @@ namespace WebCore {
         bool failed() const { return m_failed; }
         unsigned long identifier() const { return m_identifier; }
 
-        virtual void didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&) override;
-        virtual void didReceiveData(const char* data, int dataLength) override;
-        virtual void didFinishLoading(unsigned long identifier, double) override;
-        virtual void didFail(const ResourceError&) override;
-        virtual void didFailRedirectCheck() override;
+        void didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&) override;
+        void didReceiveData(const char* data, int dataLength) override;
+        void didFinishLoading(unsigned long identifier, double) override;
+        void didFail(const ResourceError&) override;
+        void didFailRedirectCheck() override;
 
     private:
         friend class WTF::RefCounted<WorkerScriptLoader>;

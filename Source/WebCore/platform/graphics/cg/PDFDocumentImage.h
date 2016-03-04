@@ -56,25 +56,25 @@ private:
     PDFDocumentImage(ImageObserver*);
     virtual ~PDFDocumentImage();
 
-    virtual bool isPDFDocumentImage() const override { return true; }
+    bool isPDFDocumentImage() const override { return true; }
 
-    virtual String filenameExtension() const override;
+    String filenameExtension() const override;
 
-    virtual bool hasSingleSecurityOrigin() const override { return true; }
+    bool hasSingleSecurityOrigin() const override { return true; }
 
-    virtual bool dataChanged(bool allDataReceived) override;
+    bool dataChanged(bool allDataReceived) override;
 
-    virtual void destroyDecodedData(bool /*destroyAll*/ = true) override;
+    void destroyDecodedData(bool /*destroyAll*/ = true) override;
 
-    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
-    virtual FloatSize size() const override;
+    void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
+    FloatSize size() const override;
 
-    virtual void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientationDescription) override;
+    void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientationDescription) override;
 
     // FIXME: Implement this to be less conservative.
-    virtual bool currentFrameKnownToBeOpaque() override { return false; }
+    bool currentFrameKnownToBeOpaque() override { return false; }
 
-    virtual void dump(TextStream&) const override;
+    void dump(TextStream&) const override;
 
     void createPDFDocument();
     void computeBoundsForCurrentPage();

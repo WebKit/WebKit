@@ -37,23 +37,23 @@ public:
     RenderInline(Element&, Ref<RenderStyle>&&);
     RenderInline(Document&, Ref<RenderStyle>&&);
 
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
+    void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
 
-    virtual LayoutUnit marginLeft() const override final;
-    virtual LayoutUnit marginRight() const override final;
-    virtual LayoutUnit marginTop() const override final;
-    virtual LayoutUnit marginBottom() const override final;
-    virtual LayoutUnit marginBefore(const RenderStyle* otherStyle = 0) const override final;
-    virtual LayoutUnit marginAfter(const RenderStyle* otherStyle = 0) const override final;
-    virtual LayoutUnit marginStart(const RenderStyle* otherStyle = 0) const override final;
-    virtual LayoutUnit marginEnd(const RenderStyle* otherStyle = 0) const override final;
+    LayoutUnit marginLeft() const override final;
+    LayoutUnit marginRight() const override final;
+    LayoutUnit marginTop() const override final;
+    LayoutUnit marginBottom() const override final;
+    LayoutUnit marginBefore(const RenderStyle* otherStyle = 0) const override final;
+    LayoutUnit marginAfter(const RenderStyle* otherStyle = 0) const override final;
+    LayoutUnit marginStart(const RenderStyle* otherStyle = 0) const override final;
+    LayoutUnit marginEnd(const RenderStyle* otherStyle = 0) const override final;
 
-    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override final;
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
+    void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override final;
+    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-    virtual LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override final;
+    LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override final;
 
-    virtual IntRect borderBoundingBox() const override final
+    IntRect borderBoundingBox() const override final
     {
         IntRect boundingBox = linesBoundingBox();
         return IntRect(0, 0, boundingBox.width(), boundingBox.height());
@@ -77,17 +77,17 @@ public:
     InlineBox* lastLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? lastLineBox() : culledInlineLastLineBox(); }
 
 #if PLATFORM(IOS)
-    virtual void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;
+    void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;
 #endif
 
-    virtual RenderBoxModelObject* virtualContinuation() const override final { return continuation(); }
+    RenderBoxModelObject* virtualContinuation() const override final { return continuation(); }
     RenderInline* inlineElementContinuation() const;
 
-    virtual void updateDragState(bool dragOn) override final;
+    void updateDragState(bool dragOn) override final;
     
     LayoutSize offsetForInFlowPositionedInline(const RenderBox* child) const;
 
-    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override final;
+    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override final;
     void paintOutline(PaintInfo&, const LayoutPoint&);
 
     using RenderBoxModelObject::continuation;
@@ -97,22 +97,22 @@ public:
     void setAlwaysCreateLineBoxes() { setRenderInlineAlwaysCreatesLineBoxes(true); }
     void updateAlwaysCreateLineBoxes(bool fullLayout);
 
-    virtual LayoutRect localCaretRect(InlineBox*, int, LayoutUnit* extraWidthToEndOfLine) override final;
+    LayoutRect localCaretRect(InlineBox*, int, LayoutUnit* extraWidthToEndOfLine) override final;
 
     bool hitTestCulledInline(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset);
 
 protected:
-    virtual void willBeDestroyed() override;
+    void willBeDestroyed() override;
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    virtual void updateFromStyle() override;
+    void updateFromStyle() override;
 
 private:
-    virtual const char* renderName() const override;
+    const char* renderName() const override;
 
-    virtual bool canHaveChildren() const override final { return true; }
+    bool canHaveChildren() const override final { return true; }
 
     LayoutRect culledInlineVisualOverflowBoundingBox() const;
     InlineBox* culledInlineFirstLineBox() const;
@@ -124,52 +124,52 @@ private:
     void generateCulledLineBoxRects(GeneratorContext& yield, const RenderInline* container) const;
 
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
-    virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = nullptr) override final;
+    void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = nullptr) override final;
 
     void splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock,
                       RenderObject* beforeChild, RenderBoxModelObject* oldCont);
     void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
                    RenderObject* newChild, RenderBoxModelObject* oldCont);
 
-    virtual void layout() override final { ASSERT_NOT_REACHED(); } // Do nothing for layout()
+    void layout() override final { ASSERT_NOT_REACHED(); } // Do nothing for layout()
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) override final;
+    void paint(PaintInfo&, const LayoutPoint&) override final;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
 
-    virtual bool requiresLayer() const override { return isInFlowPositioned() || createsGroup() || hasClipPath() || willChangeCreatesStackingContext(); }
+    bool requiresLayer() const override { return isInFlowPositioned() || createsGroup() || hasClipPath() || willChangeCreatesStackingContext(); }
 
-    virtual LayoutUnit offsetLeft() const override final;
-    virtual LayoutUnit offsetTop() const override final;
-    virtual LayoutUnit offsetWidth() const override final { return linesBoundingBox().width(); }
-    virtual LayoutUnit offsetHeight() const override final { return linesBoundingBox().height(); }
+    LayoutUnit offsetLeft() const override final;
+    LayoutUnit offsetTop() const override final;
+    LayoutUnit offsetWidth() const override final { return linesBoundingBox().width(); }
+    LayoutUnit offsetHeight() const override final { return linesBoundingBox().height(); }
 
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
-    virtual LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const override final;
-    virtual LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, bool fixed) const override final;
+    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
+    LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const override final;
+    LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, bool fixed) const override final;
 
-    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
-    virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
+    void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
+    const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
 
-    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override final;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override final;
 
-    virtual LayoutRect frameRectForStickyPositioning() const override final { return linesBoundingBox(); }
+    LayoutRect frameRectForStickyPositioning() const override final { return linesBoundingBox(); }
 
     virtual std::unique_ptr<InlineFlowBox> createInlineFlowBox(); // Subclassed by RenderSVGInline
 
-    virtual void dirtyLinesFromChangedChild(RenderObject& child) override final { m_lineBoxes.dirtyLinesFromChangedChild(*this, child); }
+    void dirtyLinesFromChangedChild(RenderObject& child) override final { m_lineBoxes.dirtyLinesFromChangedChild(*this, child); }
 
-    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override final;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override final;
+    LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override final;
+    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override final;
     
-    virtual void childBecameNonInline(RenderElement&) override final;
+    void childBecameNonInline(RenderElement&) override final;
 
-    virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) override final;
+    void updateHitTestResult(HitTestResult&, const LayoutPoint&) override final;
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override final;
+    void imageChanged(WrappedImagePtr, const IntRect* = 0) override final;
 
 #if ENABLE(DASHBOARD_SUPPORT)
-    virtual void addAnnotatedRegions(Vector<AnnotatedRegionValue>&) override final;
+    void addAnnotatedRegions(Vector<AnnotatedRegionValue>&) override final;
 #endif
     
     RenderPtr<RenderInline> clone() const;

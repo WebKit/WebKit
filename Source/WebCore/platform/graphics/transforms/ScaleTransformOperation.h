@@ -42,7 +42,7 @@ public:
         return adoptRef(*new ScaleTransformOperation(sx, sy, sz, type));
     }
 
-    virtual Ref<TransformOperation> clone() const override
+    Ref<TransformOperation> clone() const override
     {
         return adoptRef(*new ScaleTransformOperation(m_x, m_y, m_z, m_type));
     }
@@ -52,21 +52,21 @@ public:
     double z() const { return m_z; }
 
 private:
-    virtual bool isIdentity() const override { return m_x == 1 &&  m_y == 1 &&  m_z == 1; }
-    virtual bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
+    bool isIdentity() const override { return m_x == 1 &&  m_y == 1 &&  m_z == 1; }
+    bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
-    virtual OperationType type() const override { return m_type; }
-    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
+    OperationType type() const override { return m_type; }
+    bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
 
-    virtual bool operator==(const TransformOperation&) const override;
+    bool operator==(const TransformOperation&) const override;
 
-    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const override
+    bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {
         transform.scale3d(m_x, m_y, m_z);
         return false;
     }
 
-    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     ScaleTransformOperation(double sx, double sy, double sz, OperationType type)
         : m_x(sx)

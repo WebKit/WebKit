@@ -785,7 +785,7 @@ public:
     
     void registerFrozenValues();
     
-    virtual void visitChildren(SlotVisitor&) override;
+    void visitChildren(SlotVisitor&) override;
     
     NO_RETURN_DUE_TO_CRASH void handleAssertionFailure(
         std::nullptr_t, const char* file, int line, const char* function,

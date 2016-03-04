@@ -58,7 +58,7 @@ public:
     static void synchronizeStyleAttributeInternal(StyledElement*);
     void synchronizeStyleAttributeInternal() const { StyledElement::synchronizeStyleAttributeInternal(const_cast<StyledElement*>(this)); }
     
-    virtual CSSStyleDeclaration* cssomStyle() override final;
+    CSSStyleDeclaration* cssomStyle() override final;
 
     const StyleProperties* presentationAttributeStyle();
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) { }
@@ -71,7 +71,7 @@ protected:
     {
     }
 
-    virtual void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) override;
+    void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) override;
 
     virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }
 
@@ -79,7 +79,7 @@ protected:
     void addPropertyToPresentationAttributeStyle(MutableStyleProperties&, CSSPropertyID, double value, CSSPrimitiveValue::UnitTypes);
     void addPropertyToPresentationAttributeStyle(MutableStyleProperties&, CSSPropertyID, const String& value);
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
 private:
     void styleAttributeChanged(const AtomicString& newStyleString, AttributeModificationReason);

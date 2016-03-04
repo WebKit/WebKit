@@ -50,7 +50,7 @@ public:
     void advanceCurrentTime();
     void updateDuration(const MediaTime&);
 
-    virtual MediaPlayer::ReadyState readyState() const override;
+    MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
     void waitForSeekCompleted();
@@ -58,33 +58,33 @@ public:
 
 private:
     // MediaPlayerPrivate Overrides
-    virtual void load(const String& url) override;
-    virtual void load(const String& url, MediaSourcePrivateClient*) override;
+    void load(const String& url) override;
+    void load(const String& url, MediaSourcePrivateClient*) override;
 #if ENABLE(MEDIA_STREAM)
-    virtual void load(MediaStreamPrivate&) override { }
+    void load(MediaStreamPrivate&) override { }
 #endif
-    virtual void cancelLoad() override;
-    virtual void play() override;
-    virtual void pause() override;
-    virtual FloatSize naturalSize() const override;
-    virtual bool hasVideo() const override;
-    virtual bool hasAudio() const override;
-    virtual void setVisible(bool) override;
-    virtual bool seeking() const override;
-    virtual bool paused() const override;
-    virtual MediaPlayer::NetworkState networkState() const override;
-    virtual MediaTime maxMediaTimeSeekable() const override;
-    virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
-    virtual bool didLoadingProgress() const override;
-    virtual void setSize(const IntSize&) override;
-    virtual void paint(GraphicsContext&, const FloatRect&) override;
-    virtual MediaTime currentMediaTime() const override;
-    virtual MediaTime durationMediaTime() const override;
-    virtual void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;
-    virtual unsigned long totalVideoFrames() override;
-    virtual unsigned long droppedVideoFrames() override;
-    virtual unsigned long corruptedVideoFrames() override;
-    virtual MediaTime totalFrameDelay() override;
+    void cancelLoad() override;
+    void play() override;
+    void pause() override;
+    FloatSize naturalSize() const override;
+    bool hasVideo() const override;
+    bool hasAudio() const override;
+    void setVisible(bool) override;
+    bool seeking() const override;
+    bool paused() const override;
+    MediaPlayer::NetworkState networkState() const override;
+    MediaTime maxMediaTimeSeekable() const override;
+    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    bool didLoadingProgress() const override;
+    void setSize(const IntSize&) override;
+    void paint(GraphicsContext&, const FloatRect&) override;
+    MediaTime currentMediaTime() const override;
+    MediaTime durationMediaTime() const override;
+    void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;
+    unsigned long totalVideoFrames() override;
+    unsigned long droppedVideoFrames() override;
+    unsigned long corruptedVideoFrames() override;
+    MediaTime totalFrameDelay() override;
 
     MediaPlayer* m_player;
     RefPtr<MockMediaSourcePrivate> m_mediaSourcePrivate;

@@ -73,25 +73,25 @@ public:
     virtual void setVisible(bool);
 
     virtual bool seeking() const;
-    virtual void seekDouble(double) override;
+    void seekDouble(double) override;
 
-    virtual void setRateDouble(double) override;
+    void setRateDouble(double) override;
 
-    virtual double durationDouble() const override;
+    double durationDouble() const override;
 
-    virtual float currentTime() const override;
+    float currentTime() const override;
 
     virtual bool paused() const;
 
-    virtual void setVolume(float) override;
+    void setVolume(float) override;
 
-    virtual bool supportsMuting() const override;
-    virtual void setMuted(bool) override;
+    bool supportsMuting() const override;
+    void setMuted(bool) override;
 
     virtual MediaPlayer::NetworkState networkState() const;
     virtual MediaPlayer::ReadyState readyState() const;
 
-    virtual float maxTimeSeekable() const override;
+    float maxTimeSeekable() const override;
 
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const;
 
@@ -99,7 +99,7 @@ public:
 
     virtual void setSize(const IntSize&);
 
-    virtual void paint(GraphicsContext&, const FloatRect&) override;
+    void paint(GraphicsContext&, const FloatRect&) override;
 
 private:
     MediaPlayer* m_player;
@@ -163,14 +163,14 @@ private:
         AsyncCallback(MediaPlayerPrivateMediaFoundation*, bool event);
         ~AsyncCallback();
 
-        virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) override;
-        virtual ULONG STDMETHODCALLTYPE AddRef() override;
-        virtual ULONG STDMETHODCALLTYPE Release() override;
+        HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) override;
+        ULONG STDMETHODCALLTYPE AddRef() override;
+        ULONG STDMETHODCALLTYPE Release() override;
 
-        virtual HRESULT STDMETHODCALLTYPE GetParameters(__RPC__out DWORD *pdwFlags, __RPC__out DWORD *pdwQueue) override;
-        virtual HRESULT STDMETHODCALLTYPE Invoke(__RPC__in_opt IMFAsyncResult *pAsyncResult) override;
+        HRESULT STDMETHODCALLTYPE GetParameters(__RPC__out DWORD *pdwFlags, __RPC__out DWORD *pdwQueue) override;
+        HRESULT STDMETHODCALLTYPE Invoke(__RPC__in_opt IMFAsyncResult *pAsyncResult) override;
 
-        virtual void onMediaPlayerDeleted() override;
+        void onMediaPlayerDeleted() override;
 
     private:
         ULONG m_refCount;
@@ -317,27 +317,27 @@ private:
         CustomVideoPresenter(MediaPlayerPrivateMediaFoundation*);
         ~CustomVideoPresenter();
 
-        virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) override;
-        virtual ULONG STDMETHODCALLTYPE AddRef() override;
-        virtual ULONG STDMETHODCALLTYPE Release() override;
+        HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) override;
+        ULONG STDMETHODCALLTYPE AddRef() override;
+        ULONG STDMETHODCALLTYPE Release() override;
 
         // IMFClockStateSink
-        virtual HRESULT STDMETHODCALLTYPE OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset) override;
-        virtual HRESULT STDMETHODCALLTYPE OnClockStop(MFTIME hnsSystemTime) override;
-        virtual HRESULT STDMETHODCALLTYPE OnClockPause(MFTIME hnsSystemTime) override;
-        virtual HRESULT STDMETHODCALLTYPE OnClockRestart(MFTIME hnsSystemTime) override;
-        virtual HRESULT STDMETHODCALLTYPE OnClockSetRate(MFTIME hnsSystemTime, float flRate) override;
+        HRESULT STDMETHODCALLTYPE OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset) override;
+        HRESULT STDMETHODCALLTYPE OnClockStop(MFTIME hnsSystemTime) override;
+        HRESULT STDMETHODCALLTYPE OnClockPause(MFTIME hnsSystemTime) override;
+        HRESULT STDMETHODCALLTYPE OnClockRestart(MFTIME hnsSystemTime) override;
+        HRESULT STDMETHODCALLTYPE OnClockSetRate(MFTIME hnsSystemTime, float flRate) override;
 
         // IMFVideoPresenter
-        virtual HRESULT STDMETHODCALLTYPE ProcessMessage(MFVP_MESSAGE_TYPE eMessage, ULONG_PTR ulParam) override;
-        virtual HRESULT STDMETHODCALLTYPE GetCurrentMediaType(_Outptr_  IMFVideoMediaType **ppMediaType) override;
+        HRESULT STDMETHODCALLTYPE ProcessMessage(MFVP_MESSAGE_TYPE eMessage, ULONG_PTR ulParam) override;
+        HRESULT STDMETHODCALLTYPE GetCurrentMediaType(_Outptr_  IMFVideoMediaType **ppMediaType) override;
 
         // IMFVideoDeviceID
-        virtual HRESULT STDMETHODCALLTYPE GetDeviceID(IID* pDeviceID) override;
+        HRESULT STDMETHODCALLTYPE GetDeviceID(IID* pDeviceID) override;
 
         // IMFTopologyServiceLookupClient
-        virtual HRESULT STDMETHODCALLTYPE InitServicePointers(_In_  IMFTopologyServiceLookup *pLookup) override;
-        virtual HRESULT STDMETHODCALLTYPE ReleaseServicePointers(void) override;
+        HRESULT STDMETHODCALLTYPE InitServicePointers(_In_  IMFTopologyServiceLookup *pLookup) override;
+        HRESULT STDMETHODCALLTYPE ReleaseServicePointers(void) override;
 
         // IMFGetService
         virtual HRESULT STDMETHODCALLTYPE GetService(REFGUID guidService, REFIID riid, LPVOID *ppvObject);
@@ -402,7 +402,7 @@ private:
         virtual HRESULT STDMETHODCALLTYPE Invoke(IMFAsyncResult* pAsyncResult);
 
         // MediaPlayerListener
-        virtual void onMediaPlayerDeleted() override;
+        void onMediaPlayerDeleted() override;
 
         void paintCurrentFrame(GraphicsContext&, const FloatRect&);
 

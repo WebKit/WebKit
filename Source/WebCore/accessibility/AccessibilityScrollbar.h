@@ -44,20 +44,20 @@ public:
 private:
     explicit AccessibilityScrollbar(Scrollbar*);
 
-    virtual bool canSetValueAttribute() const override { return true; }
-    virtual bool canSetNumericValue() const override { return true; }
+    bool canSetValueAttribute() const override { return true; }
+    bool canSetNumericValue() const override { return true; }
 
-    virtual bool isAccessibilityScrollbar() const override { return true; }
-    virtual LayoutRect elementRect() const override;
+    bool isAccessibilityScrollbar() const override { return true; }
+    LayoutRect elementRect() const override;
     
-    virtual AccessibilityRole roleValue() const override { return ScrollBarRole; }
-    virtual AccessibilityOrientation orientation() const override;
-    virtual Document* document() const override;
-    virtual bool isEnabled() const override;
+    AccessibilityRole roleValue() const override { return ScrollBarRole; }
+    AccessibilityOrientation orientation() const override;
+    Document* document() const override;
+    bool isEnabled() const override;
     
     // Assumes float [0..1]
-    virtual void setValue(float) override;
-    virtual float valueForRange() const override;
+    void setValue(float) override;
+    float valueForRange() const override;
 
     RefPtr<Scrollbar> m_scrollbar;
 };

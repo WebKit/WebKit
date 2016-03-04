@@ -42,8 +42,8 @@ class PDFPluginChoiceAnnotation : public PDFPluginAnnotation {
 public:
     static Ref<PDFPluginChoiceAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
 
-    virtual void updateGeometry() override;
-    virtual void commit() override;
+    void updateGeometry() override;
+    void commit() override;
 
 private:
     PDFPluginChoiceAnnotation(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
@@ -51,7 +51,7 @@ private:
     {
     }
 
-    virtual PassRefPtr<WebCore::Element> createAnnotationElement() override;
+    PassRefPtr<WebCore::Element> createAnnotationElement() override;
 
     PDFAnnotationChoiceWidget *choiceAnnotation() { return static_cast<PDFAnnotationChoiceWidget *>(annotation()); }
 };

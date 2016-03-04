@@ -67,7 +67,7 @@ public:
     
     virtual ~LinearTimingFunction() { }
     
-    virtual bool operator==(const TimingFunction& other) override
+    bool operator==(const TimingFunction& other) override
     {
         return other.isLinearTimingFunction();
     }
@@ -78,7 +78,7 @@ private:
     {
     }
 
-    virtual PassRefPtr<TimingFunction> clone() const override
+    PassRefPtr<TimingFunction> clone() const override
     {
         return adoptRef(new LinearTimingFunction);
     }
@@ -123,7 +123,7 @@ public:
 
     virtual ~CubicBezierTimingFunction() { }
     
-    virtual bool operator==(const TimingFunction& other) override
+    bool operator==(const TimingFunction& other) override
     {
         if (other.isCubicBezierTimingFunction()) {
             const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(&other);
@@ -173,7 +173,7 @@ private:
     {
     }
 
-    virtual PassRefPtr<TimingFunction> clone() const override
+    PassRefPtr<TimingFunction> clone() const override
     {
         return adoptRef(new CubicBezierTimingFunction(m_timingFunctionPreset, m_x1, m_y1, m_x2, m_y2));
     }
@@ -199,7 +199,7 @@ public:
     
     virtual ~StepsTimingFunction() { }
     
-    virtual bool operator==(const TimingFunction& other) override
+    bool operator==(const TimingFunction& other) override
     {
         if (other.isStepsTimingFunction()) {
             const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(&other);
@@ -222,7 +222,7 @@ private:
     {
     }
 
-    virtual PassRefPtr<TimingFunction> clone() const override
+    PassRefPtr<TimingFunction> clone() const override
     {
         return adoptRef(new StepsTimingFunction(m_steps, m_stepAtStart));
     }

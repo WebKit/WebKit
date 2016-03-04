@@ -42,7 +42,7 @@ public:
     RenderRubyBase(Document&, Ref<RenderStyle>&&);
     virtual ~RenderRubyBase();
     
-    virtual const char* renderName() const override { return "RenderRubyBase (anonymous)"; }
+    const char* renderName() const override { return "RenderRubyBase (anonymous)"; }
     
     RenderRubyRun* rubyRun() const;
 
@@ -57,13 +57,13 @@ public:
         m_isAfterExpansion = true;
     }
     
-    virtual void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) override;
+    void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) override;
 
 private:
-    virtual bool isRubyBase() const override { return true; }
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
-    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const override;
-    virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
+    bool isRubyBase() const override { return true; }
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const override;
+    void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
     void mergeChildrenWithBase(RenderRubyBase* toBlock);
 
     void moveChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);

@@ -82,7 +82,7 @@ public:
     using RefCounted<MediaStream>::deref;
 
     // URLRegistrable
-    virtual URLRegistry& registry() const override;
+    URLRegistry& registry() const override;
 
     void addObserver(Observer*);
     void removeObserver(Observer*);
@@ -92,22 +92,22 @@ protected:
     MediaStream(ScriptExecutionContext&, RefPtr<MediaStreamPrivate>&&);
 
     // ContextDestructionObserver
-    virtual void contextDestroyed() override final;
+    void contextDestroyed() override final;
 
 private:
     enum class StreamModifier { DomAPI, Platform };
 
     // EventTarget
-    virtual void refEventTarget() override final { ref(); }
-    virtual void derefEventTarget() override final { deref(); }
+    void refEventTarget() override final { ref(); }
+    void derefEventTarget() override final { deref(); }
 
     // MediaStreamTrack::Observer
-    virtual void trackDidEnd() override final;
+    void trackDidEnd() override final;
 
     // MediaStreamPrivate::Observer
-    virtual void activeStatusChanged() override final;
-    virtual void didAddTrack(MediaStreamTrackPrivate&) override final;
-    virtual void didRemoveTrack(MediaStreamTrackPrivate&) override final;
+    void activeStatusChanged() override final;
+    void didAddTrack(MediaStreamTrackPrivate&) override final;
+    void didRemoveTrack(MediaStreamTrackPrivate&) override final;
 
     bool internalAddTrack(RefPtr<MediaStreamTrack>&&, StreamModifier);
     bool internalRemoveTrack(RefPtr<MediaStreamTrack>&&, StreamModifier);

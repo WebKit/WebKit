@@ -50,7 +50,7 @@ public:
 
     const String& url() const { return m_url; }
 
-    virtual EventInterface eventInterface() const override { return BeforeLoadEventInterfaceType; }
+    EventInterface eventInterface() const override { return BeforeLoadEventInterfaceType; }
 
 private:
     explicit BeforeLoadEvent(const String& url)

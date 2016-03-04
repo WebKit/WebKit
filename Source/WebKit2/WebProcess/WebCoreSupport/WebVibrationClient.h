@@ -44,9 +44,9 @@ public:
     virtual ~WebVibrationClient() { }
 
 private:
-    virtual void vibrate(const unsigned& vibrationTime) override;
-    virtual void cancelVibration() override;
-    virtual void vibrationDestroyed() override;
+    void vibrate(const unsigned& vibrationTime) override;
+    void cancelVibration() override;
+    void vibrationDestroyed() override;
 
     WebPage* m_page;
 };

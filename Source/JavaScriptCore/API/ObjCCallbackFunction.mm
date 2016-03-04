@@ -57,7 +57,7 @@ CallbackArgument::~CallbackArgument()
 }
 
 class CallbackArgumentBoolean : public CallbackArgument {
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
     {
         bool value = JSValueToBoolean([context JSGlobalContextRef], argument);
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -66,7 +66,7 @@ class CallbackArgumentBoolean : public CallbackArgument {
 
 template<typename T>
 class CallbackArgumentInteger : public CallbackArgument {
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
         T value = (T)JSC::toInt32(JSValueToNumber([context JSGlobalContextRef], argument, exception));
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -75,7 +75,7 @@ class CallbackArgumentInteger : public CallbackArgument {
 
 template<typename T>
 class CallbackArgumentDouble : public CallbackArgument {
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
         T value = (T)JSValueToNumber([context JSGlobalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -83,7 +83,7 @@ class CallbackArgumentDouble : public CallbackArgument {
 };
 
 class CallbackArgumentJSValue : public CallbackArgument {
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
     {
         JSValue *value = [JSValue valueWithJSValueRef:argument inContext:context];
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -91,7 +91,7 @@ class CallbackArgumentJSValue : public CallbackArgument {
 };
 
 class CallbackArgumentId : public CallbackArgument {
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
     {
         id value = valueToObject(context, argument);
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -106,7 +106,7 @@ public:
     }
 
 private:
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
         JSGlobalContextRef contextRef = [context JSGlobalContextRef];
 
@@ -129,7 +129,7 @@ private:
 };
 
 class CallbackArgumentNSNumber : public CallbackArgument {
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
         id value = valueToNumber([context JSGlobalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -137,7 +137,7 @@ class CallbackArgumentNSNumber : public CallbackArgument {
 };
 
 class CallbackArgumentNSString : public CallbackArgument {
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
         id value = valueToString([context JSGlobalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -145,7 +145,7 @@ class CallbackArgumentNSString : public CallbackArgument {
 };
 
 class CallbackArgumentNSDate : public CallbackArgument {
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
         id value = valueToDate([context JSGlobalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -153,7 +153,7 @@ class CallbackArgumentNSDate : public CallbackArgument {
 };
 
 class CallbackArgumentNSArray : public CallbackArgument {
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
         id value = valueToArray([context JSGlobalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -161,7 +161,7 @@ class CallbackArgumentNSArray : public CallbackArgument {
 };
 
 class CallbackArgumentNSDictionary : public CallbackArgument {
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
         id value = valueToDictionary([context JSGlobalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -177,7 +177,7 @@ public:
     }
     
 private:
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
     {
         JSValue *value = [JSValue valueWithJSValueRef:argument inContext:context];
         [m_conversionInvocation invokeWithTarget:value];
@@ -269,14 +269,14 @@ public:
 };
 
 class CallbackResultVoid : public CallbackResult {
-    virtual JSValueRef get(NSInvocation *, JSContext *context, JSValueRef*) override
+    JSValueRef get(NSInvocation *, JSContext *context, JSValueRef*) override
     {
         return JSValueMakeUndefined([context JSGlobalContextRef]);
     }
 };
 
 class CallbackResultId : public CallbackResult {
-    virtual JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
+    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
     {
         id value;
         [invocation getReturnValue:&value];
@@ -286,7 +286,7 @@ class CallbackResultId : public CallbackResult {
 
 template<typename T>
 class CallbackResultNumeric : public CallbackResult {
-    virtual JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
+    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
     {
         T value;
         [invocation getReturnValue:&value];
@@ -295,7 +295,7 @@ class CallbackResultNumeric : public CallbackResult {
 };
 
 class CallbackResultBoolean : public CallbackResult {
-    virtual JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
+    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
     {
         bool value;
         [invocation getReturnValue:&value];
@@ -312,7 +312,7 @@ public:
     }
     
 private:
-    virtual JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
+    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
     {
         [invocation getReturnValue:m_buffer];
 

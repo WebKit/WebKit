@@ -40,8 +40,8 @@ public:
     explicit TelephoneInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 
 private:
-    virtual const AtomicString& formControlType() const override;
-    virtual bool isTelephoneField() const override;
+    const AtomicString& formControlType() const override;
+    bool isTelephoneField() const override;
 };
 
 } // namespace WebCore

@@ -109,19 +109,19 @@ private:
     void fulfillPromise();
 
     // CSSFontFaceSetClient
-    virtual void startedLoading() override;
-    virtual void completedLoading() override;
-    virtual void faceFinished(CSSFontFace&, CSSFontFace::Status) override;
+    void startedLoading() override;
+    void completedLoading() override;
+    void faceFinished(CSSFontFace&, CSSFontFace::Status) override;
 
     // ActiveDOMObject
-    virtual const char* activeDOMObjectName() const override { return "FontFaceSet"; }
-    virtual bool canSuspendForDocumentSuspension() const override;
+    const char* activeDOMObjectName() const override { return "FontFaceSet"; }
+    bool canSuspendForDocumentSuspension() const override;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const override { return FontFaceSetEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
-    virtual void refEventTarget() override { ref(); }
-    virtual void derefEventTarget() override { deref(); }
+    EventTargetInterface eventTargetInterface() const override { return FontFaceSetEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
 
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<CSSFontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;

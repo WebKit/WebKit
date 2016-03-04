@@ -45,13 +45,13 @@ namespace WebCore {
         static Ref<DedicatedWorkerGlobalScope> create(const URL&, const String& userAgent, DedicatedWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin);
         virtual ~DedicatedWorkerGlobalScope();
 
-        virtual bool isDedicatedWorkerGlobalScope() const override { return true; }
+        bool isDedicatedWorkerGlobalScope() const override { return true; }
 
         // Overridden to allow us to check our pending activity after executing imported script.
-        virtual void importScripts(const Vector<String>& urls, ExceptionCode&) override;
+        void importScripts(const Vector<String>& urls, ExceptionCode&) override;
 
         // EventTarget
-        virtual EventTargetInterface eventTargetInterface() const override;
+        EventTargetInterface eventTargetInterface() const override;
 
         void postMessage(PassRefPtr<SerializedScriptValue>, const MessagePortArray*, ExceptionCode&);
         // Needed for Objective-C bindings (see bug 28774).

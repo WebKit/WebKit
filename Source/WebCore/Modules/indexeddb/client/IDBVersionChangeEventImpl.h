@@ -53,9 +53,9 @@ public:
 private:
     IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType);
 
-    virtual uint64_t oldVersion() const override { return m_oldVersion; }
-    virtual Optional<uint64_t> newVersion() const override;
-    virtual EventInterface eventInterface() const override;
+    uint64_t oldVersion() const override { return m_oldVersion; }
+    Optional<uint64_t> newVersion() const override;
+    EventInterface eventInterface() const override;
 
     IDBResourceIdentifier m_requestIdentifier;
     uint64_t m_oldVersion;

@@ -42,25 +42,25 @@ public:
     static Ref<ScrollingTreeIOS> create(AsyncScrollingCoordinator*);
     virtual ~ScrollingTreeIOS();
 
-    virtual void commitNewTreeState(std::unique_ptr<ScrollingStateTree>) override;
+    void commitNewTreeState(std::unique_ptr<ScrollingStateTree>) override;
 
     // No wheel events on iOS
-    virtual void handleWheelEvent(const PlatformWheelEvent&) override { }
-    virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) override { return DidNotHandleEvent; }
+    void handleWheelEvent(const PlatformWheelEvent&) override { }
+    EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) override { return DidNotHandleEvent; }
 
-    virtual void invalidate() override;
+    void invalidate() override;
 
 private:
     explicit ScrollingTreeIOS(AsyncScrollingCoordinator*);
-    virtual bool isScrollingTreeIOS() const override { return true; }
+    bool isScrollingTreeIOS() const override { return true; }
 
-    virtual PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
+    PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
 
-    virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) override;
+    void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) override;
 
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, unsigned horizontal, unsigned vertical) override;
 
-    virtual FloatRect fixedPositionRect() override;
+    FloatRect fixedPositionRect() override;
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
 };

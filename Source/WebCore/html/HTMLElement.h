@@ -42,9 +42,9 @@ class HTMLElement : public StyledElement {
 public:
     static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);
 
-    WEBCORE_EXPORT virtual String title() const override final;
+    WEBCORE_EXPORT String title() const override final;
 
-    virtual short tabIndex() const override;
+    short tabIndex() const override;
 
     void setInnerText(const String&, ExceptionCode&);
     void setOuterText(const String&, ExceptionCode&);
@@ -54,7 +54,7 @@ public:
     void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
 
     virtual bool hasCustomFocusLogic() const;
-    virtual bool supportsFocus() const override;
+    bool supportsFocus() const override;
 
     String contentEditable() const;
     void setContentEditable(const String&, ExceptionCode&);
@@ -72,12 +72,12 @@ public:
 
     void click();
 
-    virtual void accessKeyAction(bool sendMouseEvents) override;
+    void accessKeyAction(bool sendMouseEvents) override;
 
     bool ieForbidsInsertHTML() const;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
     HTMLFormElement* form() const { return virtualForm(); }
 
@@ -91,9 +91,9 @@ public:
     virtual bool isTextControlInnerTextElement() const { return false; }
     virtual bool canHaveUserAgentShadowRoot() const { return false; }
 
-    virtual bool willRespondToMouseMoveEvents() override;
-    virtual bool willRespondToMouseWheelEvents() override;
-    virtual bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseMoveEvents() override;
+    bool willRespondToMouseWheelEvents() override;
+    bool willRespondToMouseClickEvents() override;
 
     virtual bool isLabelable() const { return false; }
     virtual FormNamedItem* asFormNamedItem() { return 0; }
@@ -111,13 +111,13 @@ protected:
     void applyAlignmentAttributeToStyle(const AtomicString&, MutableStyleProperties&);
     void applyBorderAttributeToStyle(const AtomicString&, MutableStyleProperties&);
 
-    virtual bool matchesReadWritePseudoClass() const override;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool isPresentationAttribute(const QualifiedName&) const override;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    bool matchesReadWritePseudoClass() const override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool isPresentationAttribute(const QualifiedName&) const override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
     unsigned parseBorderWidthAttribute(const AtomicString&) const;
 
-    virtual void childrenChanged(const ChildChange&) override;
+    void childrenChanged(const ChildChange&) override;
     void calculateAndAdjustDirectionality();
 
     typedef HashMap<AtomicStringImpl*, AtomicString> EventHandlerNameMap;
@@ -125,7 +125,7 @@ protected:
     static const AtomicString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 
 private:
-    virtual String nodeName() const override final;
+    String nodeName() const override final;
 
     void mapLanguageAttributeToLocale(const AtomicString&, MutableStyleProperties&);
 

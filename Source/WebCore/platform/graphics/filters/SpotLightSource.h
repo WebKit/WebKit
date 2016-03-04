@@ -40,20 +40,20 @@ public:
     float specularExponent() const { return m_specularExponent; }
     float limitingConeAngle() const { return m_limitingConeAngle; }
 
-    virtual bool setX(float) override;
-    virtual bool setY(float) override;
-    virtual bool setZ(float) override;
-    virtual bool setPointsAtX(float) override;
-    virtual bool setPointsAtY(float) override;
-    virtual bool setPointsAtZ(float) override;
+    bool setX(float) override;
+    bool setY(float) override;
+    bool setZ(float) override;
+    bool setPointsAtX(float) override;
+    bool setPointsAtY(float) override;
+    bool setPointsAtZ(float) override;
 
-    virtual bool setSpecularExponent(float) override;
-    virtual bool setLimitingConeAngle(float) override;
+    bool setSpecularExponent(float) override;
+    bool setLimitingConeAngle(float) override;
 
-    virtual void initPaintingData(PaintingData&) override;
-    virtual void updatePaintingData(PaintingData&, int x, int y, float z) override;
+    void initPaintingData(PaintingData&) override;
+    void updatePaintingData(PaintingData&, int x, int y, float z) override;
 
-    virtual TextStream& externalRepresentation(TextStream&) const override;
+    TextStream& externalRepresentation(TextStream&) const override;
 
 private:
     SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& direction,

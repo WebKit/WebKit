@@ -38,7 +38,7 @@ public:
         return adoptRef(*new Matrix3DTransformOperation(matrix));
     }
 
-    virtual Ref<TransformOperation> clone() const override
+    Ref<TransformOperation> clone() const override
     {
         return adoptRef(*new Matrix3DTransformOperation(m_matrix));
     }
@@ -46,21 +46,21 @@ public:
     TransformationMatrix matrix() const {return m_matrix; }
 
 private:    
-    virtual bool isIdentity() const override { return m_matrix.isIdentity(); }
-    virtual bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
+    bool isIdentity() const override { return m_matrix.isIdentity(); }
+    bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
-    virtual OperationType type() const override { return MATRIX_3D; }
-    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == MATRIX_3D; }
+    OperationType type() const override { return MATRIX_3D; }
+    bool isSameType(const TransformOperation& o) const override { return o.type() == MATRIX_3D; }
 
-    virtual bool operator==(const TransformOperation&) const override;
+    bool operator==(const TransformOperation&) const override;
 
-    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const override
+    bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {
         transform.multiply(m_matrix);
         return false;
     }
 
-    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
     
     Matrix3DTransformOperation(const TransformationMatrix& mat)
     {

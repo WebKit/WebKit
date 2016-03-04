@@ -117,14 +117,14 @@ public:
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
     InspectorPageAgent* pageAgent() const { return m_pageAgent; }
 
-    virtual bool developerExtrasEnabled() const override;
-    virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override;
-    virtual Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
-    virtual Inspector::InspectorEvaluateHandler evaluateHandler() const override;
-    virtual void frontendInitialized() override;
-    virtual Ref<WTF::Stopwatch> executionStopwatch() override;
-    virtual PageScriptDebugServer& scriptDebugServer() override;
-    virtual JSC::VM& vm() override;
+    bool developerExtrasEnabled() const override;
+    bool canAccessInspectedScriptState(JSC::ExecState*) const override;
+    Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
+    Inspector::InspectorEvaluateHandler evaluateHandler() const override;
+    void frontendInitialized() override;
+    Ref<WTF::Stopwatch> executionStopwatch() override;
+    PageScriptDebugServer& scriptDebugServer() override;
+    JSC::VM& vm() override;
 
     WEBCORE_EXPORT void didComposite(Frame&);
 

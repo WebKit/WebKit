@@ -48,10 +48,10 @@ private:
     void configure();
 
     // AudioDestination
-    virtual void start() override;
-    virtual void stop() override;
-    virtual bool isPlaying() override { return m_isPlaying; }
-    virtual float sampleRate() const override { return m_sampleRate; }
+    void start() override;
+    void stop() override;
+    bool isPlaying() override { return m_isPlaying; }
+    float sampleRate() const override { return m_sampleRate; }
 
     // DefaultOutputUnit callback
     static OSStatus inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 busNumber, UInt32 numberOfFrames, AudioBufferList* ioData);

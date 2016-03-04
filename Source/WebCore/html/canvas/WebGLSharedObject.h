@@ -53,7 +53,7 @@ public:
     virtual bool isTransformFeedback() const { return false; }
     virtual bool isVertexArrayObject() const { return false; }
 
-    virtual bool validate(const WebGLContextGroup* contextGroup, const WebGLRenderingContextBase*) const override
+    bool validate(const WebGLContextGroup* contextGroup, const WebGLRenderingContextBase*) const override
     {
         return contextGroup == m_contextGroup;
     }
@@ -63,12 +63,12 @@ public:
 protected:
     WebGLSharedObject(WebGLRenderingContextBase*);
 
-    virtual bool hasGroupOrContext() const override
+    bool hasGroupOrContext() const override
     {
         return m_contextGroup;
     }
 
-    virtual GraphicsContext3D* getAGraphicsContext3D() const override;
+    GraphicsContext3D* getAGraphicsContext3D() const override;
 
 private:
     WebGLContextGroup* m_contextGroup;

@@ -65,29 +65,29 @@ public:
     bool send(const char* data, int length);
 
     // ThreadableWebSocketChannel functions.
-    virtual void connect(const URL&, const String& protocol) override;
-    virtual String subprotocol() override;
-    virtual String extensions() override;
-    virtual ThreadableWebSocketChannel::SendResult send(const String& message) override;
-    virtual ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) override;
-    virtual ThreadableWebSocketChannel::SendResult send(Blob&) override;
-    virtual unsigned long bufferedAmount() const override;
-    virtual void close(int code, const String& reason) override; // Start closing handshake.
-    virtual void fail(const String& reason) override;
-    virtual void disconnect() override;
+    void connect(const URL&, const String& protocol) override;
+    String subprotocol() override;
+    String extensions() override;
+    ThreadableWebSocketChannel::SendResult send(const String& message) override;
+    ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) override;
+    ThreadableWebSocketChannel::SendResult send(Blob&) override;
+    unsigned long bufferedAmount() const override;
+    void close(int code, const String& reason) override; // Start closing handshake.
+    void fail(const String& reason) override;
+    void disconnect() override;
 
-    virtual void suspend() override;
-    virtual void resume() override;
+    void suspend() override;
+    void resume() override;
 
     // SocketStreamHandleClient functions.
-    virtual void willOpenSocketStream(SocketStreamHandle*) override;
-    virtual void didOpenSocketStream(SocketStreamHandle*) override;
-    virtual void didCloseSocketStream(SocketStreamHandle*) override;
-    virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char*, int) override;
-    virtual void didUpdateBufferedAmount(SocketStreamHandle*, size_t bufferedAmount) override;
-    virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&) override;
-    virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) override;
-    virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) override;
+    void willOpenSocketStream(SocketStreamHandle*) override;
+    void didOpenSocketStream(SocketStreamHandle*) override;
+    void didCloseSocketStream(SocketStreamHandle*) override;
+    void didReceiveSocketStreamData(SocketStreamHandle*, const char*, int) override;
+    void didUpdateBufferedAmount(SocketStreamHandle*, size_t bufferedAmount) override;
+    void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&) override;
+    void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) override;
+    void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) override;
 
     enum CloseEventCode {
         CloseEventCodeNotSpecified = -1,
@@ -109,17 +109,17 @@ public:
     };
 
     // FileReaderLoaderClient functions.
-    virtual void didStartLoading() override;
-    virtual void didReceiveData() override;
-    virtual void didFinishLoading() override;
-    virtual void didFail(int errorCode) override;
+    void didStartLoading() override;
+    void didReceiveData() override;
+    void didFinishLoading() override;
+    void didFail(int errorCode) override;
 
     using RefCounted<WebSocketChannel>::ref;
     using RefCounted<WebSocketChannel>::deref;
 
 protected:
-    virtual void refThreadableWebSocketChannel() override { ref(); }
-    virtual void derefThreadableWebSocketChannel() override { deref(); }
+    void refThreadableWebSocketChannel() override { ref(); }
+    void derefThreadableWebSocketChannel() override { deref(); }
 
 private:
     WebSocketChannel(Document*, WebSocketChannelClient*);

@@ -36,7 +36,7 @@ public:
     virtual ~WebGLCompressedTexturePVRTC();
 
     static bool supported(WebGLRenderingContextBase*);
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

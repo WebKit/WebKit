@@ -62,17 +62,17 @@ private:
     explicit MockSourceBufferPrivate(MockMediaSourcePrivate*);
 
     // SourceBufferPrivate overrides
-    virtual void setClient(SourceBufferPrivateClient*) override;
-    virtual void append(const unsigned char* data, unsigned length) override;
-    virtual void abort() override;
-    virtual void removedFromMediaSource() override;
-    virtual MediaPlayer::ReadyState readyState() const override;
-    virtual void setReadyState(MediaPlayer::ReadyState) override;
+    void setClient(SourceBufferPrivateClient*) override;
+    void append(const unsigned char* data, unsigned length) override;
+    void abort() override;
+    void removedFromMediaSource() override;
+    MediaPlayer::ReadyState readyState() const override;
+    void setReadyState(MediaPlayer::ReadyState) override;
 
-    virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString) override { }
-    virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString) override;
-    virtual bool isReadyForMoreSamples(AtomicString) override { return true; }
-    virtual void setActive(bool) override;
+    void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString) override { }
+    void enqueueSample(PassRefPtr<MediaSample>, AtomicString) override;
+    bool isReadyForMoreSamples(AtomicString) override { return true; }
+    void setActive(bool) override;
 
     void didReceiveInitializationSegment(const MockInitializationBox&);
     void didReceiveSample(const MockSampleBox&);

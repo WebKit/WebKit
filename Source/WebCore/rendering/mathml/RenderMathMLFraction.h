@@ -42,16 +42,16 @@ public:
     float lineThickness() const { return m_lineThickness; }
 
 private:
-    virtual bool isRenderMathMLFraction() const override { return true; }
-    virtual const char* renderName() const override { return "RenderMathMLFraction"; }
+    bool isRenderMathMLFraction() const override { return true; }
+    const char* renderName() const override { return "RenderMathMLFraction"; }
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild) override;
-    virtual void updateFromElement() override;
-    virtual Optional<int> firstLineBaseline() const override;
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
-    virtual RenderMathMLOperator* unembellishedOperator() override;
-    virtual void layout() override;
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void addChild(RenderObject* child, RenderObject* beforeChild) override;
+    void updateFromElement() override;
+    Optional<int> firstLineBaseline() const override;
+    void paint(PaintInfo&, const LayoutPoint&) override;
+    RenderMathMLOperator* unembellishedOperator() override;
+    void layout() override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void fixChildStyle(RenderObject*);
     

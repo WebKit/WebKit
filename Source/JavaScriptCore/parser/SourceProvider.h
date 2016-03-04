@@ -93,7 +93,7 @@ namespace JSC {
             return m_source.get().hash();
         }
 
-        virtual StringView source() const override
+        StringView source() const override
         {
             return m_source.get();
         }
@@ -121,7 +121,7 @@ namespace JSC {
             return m_source.impl()->hash();
         }
 
-        virtual StringView source() const override
+        StringView source() const override
         {
             return m_source;
         }

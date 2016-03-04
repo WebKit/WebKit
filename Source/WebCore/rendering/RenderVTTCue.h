@@ -43,7 +43,7 @@ public:
     RenderVTTCue(VTTCueBox&, Ref<RenderStyle>&&);
 
 private:
-    virtual void layout() override;
+    void layout() override;
 
     bool isOutside() const;
     bool rectIsWithinContainer(const IntRect&) const;

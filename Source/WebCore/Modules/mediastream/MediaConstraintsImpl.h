@@ -49,11 +49,11 @@ public:
     virtual ~MediaConstraintsImpl();
     bool initialize(const Dictionary&);
 
-    virtual void getMandatoryConstraints(Vector<MediaConstraint>&) const override;
-    virtual void getOptionalConstraints(Vector<MediaConstraint>&) const override;
+    void getMandatoryConstraints(Vector<MediaConstraint>&) const override;
+    void getOptionalConstraints(Vector<MediaConstraint>&) const override;
 
-    virtual bool getMandatoryConstraintValue(const String& name, String& value) const override;
-    virtual bool getOptionalConstraintValue(const String& name, String& value) const override;
+    bool getMandatoryConstraintValue(const String& name, String& value) const override;
+    bool getOptionalConstraintValue(const String& name, String& value) const override;
 
 private:
     MediaConstraintsImpl() { }

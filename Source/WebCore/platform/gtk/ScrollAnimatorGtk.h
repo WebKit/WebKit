@@ -45,23 +45,23 @@ public:
 
 private:
 #if ENABLE(SMOOTH_SCROLLING)
-    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
-    virtual void scrollToOffsetWithoutAnimation(const FloatPoint&) override;
-    virtual void willEndLiveResize() override;
+    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
+    void scrollToOffsetWithoutAnimation(const FloatPoint&) override;
+    void willEndLiveResize() override;
 #endif
 
-    virtual void didAddVerticalScrollbar(Scrollbar*) override;
-    virtual void didAddHorizontalScrollbar(Scrollbar*) override;
-    virtual void willRemoveVerticalScrollbar(Scrollbar*) override;
-    virtual void willRemoveHorizontalScrollbar(Scrollbar*) override;
+    void didAddVerticalScrollbar(Scrollbar*) override;
+    void didAddHorizontalScrollbar(Scrollbar*) override;
+    void willRemoveVerticalScrollbar(Scrollbar*) override;
+    void willRemoveHorizontalScrollbar(Scrollbar*) override;
 
-    virtual void mouseEnteredContentArea() override;
-    virtual void mouseExitedContentArea() override;
-    virtual void mouseMovedInContentArea() override;
-    virtual void contentAreaDidShow() override;
-    virtual void contentAreaDidHide() override;
-    virtual void notifyContentAreaScrolled(const FloatSize& delta) override;
-    virtual void lockOverlayScrollbarStateToHidden(bool) override;
+    void mouseEnteredContentArea() override;
+    void mouseExitedContentArea() override;
+    void mouseMovedInContentArea() override;
+    void contentAreaDidShow() override;
+    void contentAreaDidHide() override;
+    void notifyContentAreaScrolled(const FloatSize& delta) override;
+    void lockOverlayScrollbarStateToHidden(bool) override;
 
     void overlayScrollbarAnimationTimerFired();
     void showOverlayScrollbars();

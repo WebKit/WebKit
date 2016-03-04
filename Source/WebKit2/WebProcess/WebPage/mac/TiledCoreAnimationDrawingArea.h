@@ -57,51 +57,51 @@ public:
 
 private:
     // DrawingArea
-    virtual void setNeedsDisplay() override;
-    virtual void setNeedsDisplayInRect(const WebCore::IntRect&) override;
-    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
+    void setNeedsDisplay() override;
+    void setNeedsDisplayInRect(const WebCore::IntRect&) override;
+    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
 
-    virtual void forceRepaint() override;
-    virtual bool forceRepaintAsync(uint64_t callbackID) override;
-    virtual void setLayerTreeStateIsFrozen(bool) override;
-    virtual bool layerTreeStateIsFrozen() const override;
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
-    virtual void scheduleCompositingLayerFlush() override;
-    virtual void scheduleCompositingLayerFlushImmediately() override;
+    void forceRepaint() override;
+    bool forceRepaintAsync(uint64_t callbackID) override;
+    void setLayerTreeStateIsFrozen(bool) override;
+    bool layerTreeStateIsFrozen() const override;
+    void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    void scheduleCompositingLayerFlush() override;
+    void scheduleCompositingLayerFlushImmediately() override;
 
-    virtual void updatePreferences(const WebPreferencesStore&) override;
-    virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+    void updatePreferences(const WebPreferencesStore&) override;
+    void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
 
-    virtual void setExposedRect(const WebCore::FloatRect&) override;
-    virtual WebCore::FloatRect exposedRect() const override { return m_scrolledExposedRect; }
+    void setExposedRect(const WebCore::FloatRect&) override;
+    WebCore::FloatRect exposedRect() const override { return m_scrolledExposedRect; }
 
-    virtual bool supportsAsyncScrolling() override { return true; }
+    bool supportsAsyncScrolling() override { return true; }
 
-    virtual void dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()>) override;
+    void dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()>) override;
 
-    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) override;
+    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) override;
 
-    virtual void viewStateDidChange(WebCore::ViewState::Flags changed, bool wantsDidUpdateViewState, const Vector<uint64_t>&) override;
+    void viewStateDidChange(WebCore::ViewState::Flags changed, bool wantsDidUpdateViewState, const Vector<uint64_t>&) override;
     void didUpdateViewStateTimerFired();
 
-    virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
+    void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
 
     // WebCore::LayerFlushSchedulerClient
-    virtual bool flushLayers() override;
+    bool flushLayers() override;
 
     // Message handlers.
-    virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition, bool flushSynchronously, const WebCore::MachSendRight& fencePort) override;
-    virtual void setDeviceScaleFactor(float) override;
+    void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition, bool flushSynchronously, const WebCore::MachSendRight& fencePort) override;
+    void setDeviceScaleFactor(float) override;
     void suspendPainting();
     void resumePainting();
     void setLayerHostingMode(LayerHostingMode) override;
-    virtual void setColorSpace(const ColorSpaceData&) override;
-    virtual void addFence(const WebCore::MachSendRight&) override;
+    void setColorSpace(const ColorSpaceData&) override;
+    void addFence(const WebCore::MachSendRight&) override;
 
-    virtual void setShouldScaleViewToFitDocument(bool) override;
+    void setShouldScaleViewToFitDocument(bool) override;
 
-    virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
-    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void applyTransientZoomToPage(double scale, WebCore::FloatPoint origin);
     WebCore::PlatformCALayer* layerForTransientZoom() const;
     WebCore::PlatformCALayer* shadowLayerForTransientZoom() const;

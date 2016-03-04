@@ -41,16 +41,16 @@ public:
     explicit MonthInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
 
 private:
-    virtual const AtomicString& formControlType() const override;
-    virtual DateComponents::Type dateType() const override;
-    virtual double valueAsDate() const override;
-    virtual String serializeWithMilliseconds(double) const override;
-    virtual Decimal parseToNumber(const String&, const Decimal&) const override;
-    virtual Decimal defaultValueForStepUp() const override;
-    virtual StepRange createStepRange(AnyStepHandling) const override;
-    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const override;
-    virtual bool setMillisecondToDateComponents(double, DateComponents*) const override;
-    virtual bool isMonthField() const override;
+    const AtomicString& formControlType() const override;
+    DateComponents::Type dateType() const override;
+    double valueAsDate() const override;
+    String serializeWithMilliseconds(double) const override;
+    Decimal parseToNumber(const String&, const Decimal&) const override;
+    Decimal defaultValueForStepUp() const override;
+    StepRange createStepRange(AnyStepHandling) const override;
+    bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const override;
+    bool setMillisecondToDateComponents(double, DateComponents*) const override;
+    bool isMonthField() const override;
 };
 
 } // namespace WebCore

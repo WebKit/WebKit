@@ -36,7 +36,7 @@ class RenderFullScreen final : public RenderFlexibleBox {
 public:
     RenderFullScreen(Document&, Ref<RenderStyle>&&);
 
-    virtual const char* renderName() const override { return "RenderFullScreen"; }
+    const char* renderName() const override { return "RenderFullScreen"; }
 
     void setPlaceholder(RenderBlock*);
     RenderBlock* placeholder() { return m_placeholder; }
@@ -46,8 +46,8 @@ public:
     void unwrapRenderer(bool& requiresRenderTreeRebuild);
 
 private:
-    virtual bool isRenderFullScreen() const override { return true; }
-    virtual void willBeDestroyed() override;
+    bool isRenderFullScreen() const override { return true; }
+    void willBeDestroyed() override;
     bool isFlexibleBoxImpl() const override { return true; }
 
 protected:

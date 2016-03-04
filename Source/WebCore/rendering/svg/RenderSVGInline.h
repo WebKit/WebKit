@@ -35,34 +35,34 @@ public:
 private:
     void element() const = delete;
 
-    virtual const char* renderName() const override { return "RenderSVGInline"; }
-    virtual bool requiresLayer() const override final { return false; }
-    virtual bool isSVGInline() const override final { return true; }
+    const char* renderName() const override { return "RenderSVGInline"; }
+    bool requiresLayer() const override final { return false; }
+    bool isSVGInline() const override final { return true; }
 
-    virtual void updateFromStyle() override final;
+    void updateFromStyle() override final;
 
     // Chapter 10.4 of the SVG Specification say that we should use the
     // object bounding box of the parent text element.
     // We search for the root text element and take its bounding box.
     // It is also necessary to take the stroke and repaint rect of
     // this element, since we need it for filters.
-    virtual FloatRect objectBoundingBox() const override final;
-    virtual FloatRect strokeBoundingBox() const override final;
-    virtual FloatRect repaintRectInLocalCoordinates() const override final;
+    FloatRect objectBoundingBox() const override final;
+    FloatRect strokeBoundingBox() const override final;
+    FloatRect repaintRectInLocalCoordinates() const override final;
 
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override final;
-    virtual FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const override final;
-    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override final;
-    virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override final;
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override final;
+    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override final;
+    FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const override final;
+    void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override final;
+    const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override final;
+    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override final;
 
-    virtual std::unique_ptr<InlineFlowBox> createInlineFlowBox() override final;
+    std::unique_ptr<InlineFlowBox> createInlineFlowBox() override final;
 
-    virtual void willBeDestroyed() override final;
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
+    void willBeDestroyed() override final;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = nullptr) override final;
-    virtual void removeChild(RenderObject&) override final;
+    void addChild(RenderObject* child, RenderObject* beforeChild = nullptr) override final;
+    void removeChild(RenderObject&) override final;
 };
 
 } // namespace WebCore

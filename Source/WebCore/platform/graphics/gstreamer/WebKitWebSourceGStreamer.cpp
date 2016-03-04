@@ -71,13 +71,13 @@ class CachedResourceStreamingClient final : public PlatformMediaResourceClient, 
     private:
         // PlatformMediaResourceClient virtual methods.
 #if USE(SOUP)
-        virtual char* getOrCreateReadBuffer(PlatformMediaResource&, size_t requestedSize, size_t& actualSize) override;
+        char* getOrCreateReadBuffer(PlatformMediaResource&, size_t requestedSize, size_t& actualSize) override;
 #endif
-        virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
-        virtual void dataReceived(PlatformMediaResource&, const char*, int) override;
-        virtual void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
-        virtual void loadFailed(PlatformMediaResource&, const ResourceError&) override;
-        virtual void loadFinished(PlatformMediaResource&) override;
+        void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
+        void dataReceived(PlatformMediaResource&, const char*, int) override;
+        void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
+        void loadFailed(PlatformMediaResource&, const ResourceError&) override;
+        void loadFinished(PlatformMediaResource&) override;
 };
 
 class ResourceHandleStreamingClient : public ResourceHandleClient, public StreamingClient {

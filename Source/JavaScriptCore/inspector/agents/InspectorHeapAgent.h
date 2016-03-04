@@ -43,17 +43,17 @@ public:
     InspectorHeapAgent(AgentContext&);
     virtual ~InspectorHeapAgent();
 
-    virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
+    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     // HeapBackendDispatcherHandler
-    virtual void enable(ErrorString&) override;
-    virtual void disable(ErrorString&) override;
-    virtual void gc(ErrorString&) override;
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void gc(ErrorString&) override;
 
     // HeapObserver
-    virtual void willGarbageCollect() override;
-    virtual void didGarbageCollect(JSC::HeapOperation) override;
+    void willGarbageCollect() override;
+    void didGarbageCollect(JSC::HeapOperation) override;
 
 private:
     std::unique_ptr<HeapFrontendDispatcher> m_frontendDispatcher;

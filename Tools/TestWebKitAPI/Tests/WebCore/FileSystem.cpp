@@ -39,7 +39,7 @@ const char* FileSystemTestData = "This is a test";
 // FIXME: Refactor FileSystemTest and SharedBufferTest as a single class.
 class FileSystemTest : public testing::Test {
 public:
-    virtual void SetUp() override
+    void SetUp() override
     {
         WTF::initializeMainThread();
         
@@ -53,7 +53,7 @@ public:
         closeFile(handle); 
     }
 
-    virtual void TearDown() override
+    void TearDown() override
     {
         deleteFile(m_tempFilePath);
         deleteFile(m_tempEmptyFilePath);

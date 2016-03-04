@@ -45,26 +45,26 @@ public:
     virtual ~ColorInputType();
 
 private:
-    virtual void didChooseColor(const Color&) override;
-    virtual void didEndChooser() override;
-    virtual IntRect elementRectRelativeToRootView() const override;
-    virtual Color currentColor() override;
-    virtual bool shouldShowSuggestions() const override;
-    virtual Vector<Color> suggestions() const override;
-    virtual bool isColorControl() const override;
-    virtual const AtomicString& formControlType() const override;
-    virtual bool supportsRequired() const override;
-    virtual String fallbackValue() const override;
-    virtual String sanitizeValue(const String&) const override;
-    virtual void createShadowSubtree() override;
-    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
-    virtual void handleDOMActivateEvent(Event*) override;
-    virtual void detach() override;
-    virtual bool shouldRespectListAttribute() override;
-    virtual bool typeMismatchFor(const String&) const override;
-    virtual bool shouldResetOnDocumentActivation() override;
-    virtual Color valueAsColor() const override;
-    virtual void selectColor(const Color&) override;
+    void didChooseColor(const Color&) override;
+    void didEndChooser() override;
+    IntRect elementRectRelativeToRootView() const override;
+    Color currentColor() override;
+    bool shouldShowSuggestions() const override;
+    Vector<Color> suggestions() const override;
+    bool isColorControl() const override;
+    const AtomicString& formControlType() const override;
+    bool supportsRequired() const override;
+    String fallbackValue() const override;
+    String sanitizeValue(const String&) const override;
+    void createShadowSubtree() override;
+    void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
+    void handleDOMActivateEvent(Event*) override;
+    void detach() override;
+    bool shouldRespectListAttribute() override;
+    bool typeMismatchFor(const String&) const override;
+    bool shouldResetOnDocumentActivation() override;
+    Color valueAsColor() const override;
+    void selectColor(const Color&) override;
 
     void endColorChooser();
     void updateColorSwatch();

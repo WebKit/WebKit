@@ -48,7 +48,7 @@ public:
 
     const String& statusMessage() const { return m_statusMessage; }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
 private:
     WebGLContextEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& statusMessage);

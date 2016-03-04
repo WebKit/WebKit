@@ -78,9 +78,9 @@ private:
     NetworkProcessProxy(WebProcessPool&);
 
     // ChildProcessProxy
-    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
-    virtual void connectionWillOpen(IPC::Connection&) override;
-    virtual void processWillShutDown(IPC::Connection&) override;
+    void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
+    void connectionWillOpen(IPC::Connection&) override;
+    void processWillShutDown(IPC::Connection&) override;
 
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
     void networkProcessCrashedOrFailedToLaunch();
@@ -93,12 +93,12 @@ private:
     void didSetAssertionState(AssertionState) override;
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    virtual void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
-    virtual void didClose(IPC::Connection&) override;
-    virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    virtual IPC::ProcessType localProcessType() override { return IPC::ProcessType::UI; }
-    virtual IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Network; }
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    void didClose(IPC::Connection&) override;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+    IPC::ProcessType localProcessType() override { return IPC::ProcessType::UI; }
+    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Network; }
 
     // Message handlers
     void didReceiveNetworkProcessProxyMessage(IPC::Connection&, IPC::MessageDecoder&);
@@ -112,7 +112,7 @@ private:
     void logSampledDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, const String& value);
 
     // ProcessLauncher::Client
-    virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
+    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
     WebProcessPool& m_processPool;
     

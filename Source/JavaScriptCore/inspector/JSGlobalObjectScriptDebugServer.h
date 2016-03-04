@@ -39,18 +39,18 @@ public:
     JSC::JSGlobalObject& globalObject() const { return m_globalObject; }
 
 private:
-    virtual void attachDebugger() override;
-    virtual void detachDebugger(bool isBeingDestroyed) override;
+    void attachDebugger() override;
+    void detachDebugger(bool isBeingDestroyed) override;
 
-    virtual void didPause(JSC::JSGlobalObject*) override { }
-    virtual void didContinue(JSC::JSGlobalObject*) override { }
-    virtual void runEventLoopWhilePaused() override;
-    virtual bool isContentScript(JSC::ExecState*) const override { return false; }
+    void didPause(JSC::JSGlobalObject*) override { }
+    void didContinue(JSC::JSGlobalObject*) override { }
+    void runEventLoopWhilePaused() override;
+    bool isContentScript(JSC::ExecState*) const override { return false; }
 
     // NOTE: Currently all exceptions are reported at the API boundary through reportAPIException.
     // Until a time comes where an exception can be caused outside of the API (e.g. setTimeout
     // or some other async operation in a pure JSContext) we can ignore exceptions reported here.
-    virtual void reportException(JSC::ExecState*, JSC::Exception*) const override { }
+    void reportException(JSC::ExecState*, JSC::Exception*) const override { }
 
     JSC::JSGlobalObject& m_globalObject;
 };

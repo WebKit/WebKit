@@ -64,62 +64,62 @@ class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface
 public:
     virtual ~MediaPlayerPrivateGStreamerBase();
 
-    virtual FloatSize naturalSize() const override;
+    FloatSize naturalSize() const override;
 
-    virtual void setVolume(float) override;
+    void setVolume(float) override;
     virtual float volume() const;
 
 #if USE(GSTREAMER_GL)
     bool ensureGstGLContext();
 #endif
 
-    virtual bool supportsMuting() const override { return true; }
-    virtual void setMuted(bool) override;
+    bool supportsMuting() const override { return true; }
+    void setMuted(bool) override;
     bool muted() const;
 
-    virtual MediaPlayer::NetworkState networkState() const override;
-    virtual MediaPlayer::ReadyState readyState() const override;
+    MediaPlayer::NetworkState networkState() const override;
+    MediaPlayer::ReadyState readyState() const override;
 
-    virtual void setVisible(bool) override { }
-    virtual void setSize(const IntSize&) override;
+    void setVisible(bool) override { }
+    void setSize(const IntSize&) override;
     void sizeChanged();
 
-    virtual void paint(GraphicsContext&, const FloatRect&) override;
+    void paint(GraphicsContext&, const FloatRect&) override;
 
-    virtual bool hasSingleSecurityOrigin() const override { return true; }
+    bool hasSingleSecurityOrigin() const override { return true; }
     virtual float maxTimeLoaded() const { return 0.0; }
 
-    virtual bool supportsFullscreen() const override;
-    virtual PlatformMedia platformMedia() const override;
+    bool supportsFullscreen() const override;
+    PlatformMedia platformMedia() const override;
 
-    virtual MediaPlayer::MovieLoadType movieLoadType() const override;
+    MediaPlayer::MovieLoadType movieLoadType() const override;
     virtual bool isLiveStream() const = 0;
 
     MediaPlayer* mediaPlayer() const { return m_player; }
 
-    virtual unsigned decodedFrameCount() const override;
-    virtual unsigned droppedFrameCount() const override;
-    virtual unsigned audioDecodedByteCount() const override;
-    virtual unsigned videoDecodedByteCount() const override;
+    unsigned decodedFrameCount() const override;
+    unsigned droppedFrameCount() const override;
+    unsigned audioDecodedByteCount() const override;
+    unsigned videoDecodedByteCount() const override;
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
-    virtual PlatformLayer* platformLayer() const override { return const_cast<MediaPlayerPrivateGStreamerBase*>(this); }
+    PlatformLayer* platformLayer() const override { return const_cast<MediaPlayerPrivateGStreamerBase*>(this); }
 #if PLATFORM(WIN_CAIRO)
     // FIXME: Accelerated rendering has not been implemented for WinCairo yet.
-    virtual bool supportsAcceleratedRendering() const override { return false; }
+    bool supportsAcceleratedRendering() const override { return false; }
 #else
-    virtual bool supportsAcceleratedRendering() const override { return true; }
+    bool supportsAcceleratedRendering() const override { return true; }
 #endif
-    virtual void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
+    void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
 #endif
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    virtual PlatformLayer* platformLayer() const override { return const_cast<MediaPlayerPrivateGStreamerBase*>(this); }
-    virtual bool supportsAcceleratedRendering() const override { return true; }
+    PlatformLayer* platformLayer() const override { return const_cast<MediaPlayerPrivateGStreamerBase*>(this); }
+    bool supportsAcceleratedRendering() const override { return true; }
 #endif
 
 #if USE(GSTREAMER_GL)
-    virtual PassNativeImagePtr nativeImageForCurrentTime() override;
+    PassNativeImagePtr nativeImageForCurrentTime() override;
 #endif
 
 protected:
@@ -184,8 +184,8 @@ protected:
 #endif
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    virtual RefPtr<TextureMapperPlatformLayerProxy> proxy() const override { return m_platformLayerProxy.copyRef(); }
-    virtual void swapBuffersIfNeeded() override { };
+    RefPtr<TextureMapperPlatformLayerProxy> proxy() const override { return m_platformLayerProxy.copyRef(); }
+    void swapBuffersIfNeeded() override { };
     void pushTextureToCompositor();
     RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
 #endif

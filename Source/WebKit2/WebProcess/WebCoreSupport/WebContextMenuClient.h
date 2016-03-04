@@ -42,17 +42,17 @@ public:
     }
     
 private:
-    virtual void contextMenuDestroyed() override;
+    void contextMenuDestroyed() override;
 
-    virtual void downloadURL(const WebCore::URL&) override;
-    virtual void searchWithGoogle(const WebCore::Frame*) override;
-    virtual void lookUpInDictionary(WebCore::Frame*) override;
-    virtual bool isSpeaking() override;
-    virtual void speak(const String&) override;
-    virtual void stopSpeaking() override;
+    void downloadURL(const WebCore::URL&) override;
+    void searchWithGoogle(const WebCore::Frame*) override;
+    void lookUpInDictionary(WebCore::Frame*) override;
+    bool isSpeaking() override;
+    void speak(const String&) override;
+    void stopSpeaking() override;
 
 #if PLATFORM(COCOA)
-    virtual void searchWithSpotlight() override;
+    void searchWithSpotlight() override;
 #endif
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)

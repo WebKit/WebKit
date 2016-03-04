@@ -42,7 +42,7 @@ public:
     virtual ~WebDatabaseProvider();
 
 #if ENABLE(INDEXED_DATABASE)
-    virtual WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const WebCore::SessionID&) override;
+    WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const WebCore::SessionID&) override;
 #endif
 
 private:

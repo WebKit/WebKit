@@ -32,62 +32,62 @@ public:
         : WebChromeClient(webView)
         , m_formNotificationSuppressions(0) { }
     
-    virtual void setWindowRect(const WebCore::FloatRect&) override;
-    virtual WebCore::FloatRect windowRect() override;
-    virtual void setStatusbarText(const WTF::String&) override { }
+    void setWindowRect(const WebCore::FloatRect&) override;
+    WebCore::FloatRect windowRect() override;
+    void setStatusbarText(const WTF::String&) override { }
 
-    virtual void focus() override;
-    virtual void takeFocus(WebCore::FocusDirection) override { }
+    void focus() override;
+    void takeFocus(WebCore::FocusDirection) override { }
 
-    virtual void runJavaScriptAlert(WebCore::Frame*, const WTF::String&) override;
-    virtual bool runJavaScriptConfirm(WebCore::Frame*, const WTF::String&) override;
-    virtual bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) override;
+    void runJavaScriptAlert(WebCore::Frame*, const WTF::String&) override;
+    bool runJavaScriptConfirm(WebCore::Frame*, const WTF::String&) override;
+    bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) override;
 
-    virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) override;
+    void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) override;
 
 #if ENABLE(TOUCH_EVENTS)
-    virtual void didPreventDefaultForEvent() override;
+    void didPreventDefaultForEvent() override;
 #endif
-    virtual void didReceiveMobileDocType(bool) override;
-    virtual void setNeedsScrollNotifications(WebCore::Frame*, bool) override;
-    virtual void observedContentChange(WebCore::Frame*) override;
-    virtual void clearContentChangeObservers(WebCore::Frame*) override;
-    virtual WebCore::FloatSize screenSize() const override;
-    virtual WebCore::FloatSize availableScreenSize() const override;
-    virtual void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const override;
-    virtual void notifyRevealedSelectionByScrollingFrame(WebCore::Frame*) override;
-    virtual bool isStopping() override;
-    virtual void didLayout(LayoutType) override;
-    virtual void didStartOverflowScroll() override;
-    virtual void didEndOverflowScroll() override;
+    void didReceiveMobileDocType(bool) override;
+    void setNeedsScrollNotifications(WebCore::Frame*, bool) override;
+    void observedContentChange(WebCore::Frame*) override;
+    void clearContentChangeObservers(WebCore::Frame*) override;
+    WebCore::FloatSize screenSize() const override;
+    WebCore::FloatSize availableScreenSize() const override;
+    void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const override;
+    void notifyRevealedSelectionByScrollingFrame(WebCore::Frame*) override;
+    bool isStopping() override;
+    void didLayout(LayoutType) override;
+    void didStartOverflowScroll() override;
+    void didEndOverflowScroll() override;
 
-    virtual void suppressFormNotifications() override;
-    virtual void restoreFormNotifications() override;
+    void suppressFormNotifications() override;
+    void restoreFormNotifications() override;
     
-    virtual void elementDidFocus(const WebCore::Node*) override;
-    virtual void elementDidBlur(const WebCore::Node*) override;
+    void elementDidFocus(const WebCore::Node*) override;
+    void elementDidBlur(const WebCore::Node*) override;
 
-    virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
+    void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
 
-    virtual void didFlushCompositingLayers() override;
+    void didFlushCompositingLayers() override;
 
-    virtual void updateViewportConstrainedLayers(HashMap<PlatformLayer*, std::unique_ptr<WebCore::ViewportConstraints>>&, HashMap<PlatformLayer*, PlatformLayer*>&) override;
+    void updateViewportConstrainedLayers(HashMap<PlatformLayer*, std::unique_ptr<WebCore::ViewportConstraints>>&, HashMap<PlatformLayer*, PlatformLayer*>&) override;
 
-    virtual bool fetchCustomFixedPositionLayoutRect(WebCore::IntRect&) override;
-    virtual void addOrUpdateScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*, const WebCore::IntSize&, bool allowHorizontalScrollbar, bool allowVerticalScrollbar) override;
-    virtual void removeScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*) override;
+    bool fetchCustomFixedPositionLayoutRect(WebCore::IntRect&) override;
+    void addOrUpdateScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*, const WebCore::IntSize&, bool allowHorizontalScrollbar, bool allowVerticalScrollbar) override;
+    void removeScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*) override;
 
-    virtual bool selectItemWritingDirectionIsNatural() override;
-    virtual bool selectItemAlignmentFollowsMenuWritingDirection() override;
-    virtual RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const override;
-    virtual RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const override;
+    bool selectItemWritingDirectionIsNatural() override;
+    bool selectItemAlignmentFollowsMenuWritingDirection() override;
+    RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const override;
+    RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const override;
 
-    virtual void webAppOrientationsUpdated() override;
-    virtual void focusedElementChanged(WebCore::Element*) override;
-    virtual void showPlaybackTargetPicker(bool hasVideo) override;
+    void webAppOrientationsUpdated() override;
+    void focusedElementChanged(WebCore::Element*) override;
+    void showPlaybackTargetPicker(bool hasVideo) override;
 
 #if ENABLE(ORIENTATION_EVENTS)
-    virtual int deviceOrientation() const override;
+    int deviceOrientation() const override;
 #endif
 
 private:

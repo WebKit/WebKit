@@ -42,20 +42,20 @@ public:
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     
     RenderRubyRun* rubyRun() const;
     
     bool canBreakBefore(const LazyLineBreakIterator&) const;
    
 private:
-    virtual const char* renderName() const override { return "RenderRubyText"; }
-    virtual bool isRubyText() const override { return true; }
+    const char* renderName() const override { return "RenderRubyText"; }
+    bool isRubyText() const override { return true; }
 
-    virtual bool avoidsFloats() const override;
+    bool avoidsFloats() const override;
 
-    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const override;
-    virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
+    ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const override;
+    void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
 };
 
 } // namespace WebCore

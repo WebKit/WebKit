@@ -71,7 +71,7 @@ public:
 
     virtual ~AutoAnimationTrigger() { }
 
-    virtual bool operator==(const AnimationTrigger& other) override
+    bool operator==(const AnimationTrigger& other) override
     {
         return other.isAutoAnimationTrigger();
     }
@@ -82,7 +82,7 @@ private:
     {
     }
 
-    virtual PassRefPtr<AnimationTrigger> clone() const override
+    PassRefPtr<AnimationTrigger> clone() const override
     {
         return adoptRef(new AutoAnimationTrigger);
     }
@@ -97,7 +97,7 @@ public:
 
     virtual ~ScrollAnimationTrigger() { }
 
-    virtual bool operator==(const AnimationTrigger& other) override
+    bool operator==(const AnimationTrigger& other) override
     {
         if (!other.isScrollAnimationTrigger())
             return false;
@@ -133,7 +133,7 @@ private:
             m_endValue = endValue;
     }
 
-    virtual PassRefPtr<AnimationTrigger> clone() const override
+    PassRefPtr<AnimationTrigger> clone() const override
     {
         return adoptRef(new ScrollAnimationTrigger(m_startValue, m_endValue));
     }

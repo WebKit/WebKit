@@ -46,11 +46,11 @@ public:
 private:
     explicit EmptyNodeList(Node& owner) : m_owner(owner) { }
 
-    virtual unsigned length() const override { return 0; }
-    virtual Node* item(unsigned) const override { return nullptr; }
-    virtual size_t memoryCost() const override { return 0; }
+    unsigned length() const override { return 0; }
+    Node* item(unsigned) const override { return nullptr; }
+    size_t memoryCost() const override { return 0; }
 
-    virtual bool isEmptyNodeList() const override { return true; }
+    bool isEmptyNodeList() const override { return true; }
 
     Ref<Node> m_owner;
 };
@@ -80,11 +80,11 @@ public:
 private:
     explicit ChildNodeList(ContainerNode& parent);
 
-    virtual unsigned length() const override;
-    virtual Node* item(unsigned index) const override;
-    virtual size_t memoryCost() const override { return m_indexCache.memoryCost(); }
+    unsigned length() const override;
+    Node* item(unsigned index) const override;
+    size_t memoryCost() const override { return m_indexCache.memoryCost(); }
 
-    virtual bool isChildNodeList() const override { return true; }
+    bool isChildNodeList() const override { return true; }
 
     Ref<ContainerNode> m_parent;
     mutable CollectionIndexCache<ChildNodeList, Node*> m_indexCache;

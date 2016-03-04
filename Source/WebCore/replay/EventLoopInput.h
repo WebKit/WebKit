@@ -57,7 +57,7 @@ private:
 class EventLoopInputBase : public NondeterministicInputBase {
 public:
     virtual ~EventLoopInputBase() { }
-    virtual InputQueue queue() const override final { return InputQueue::EventLoopInput; }
+    InputQueue queue() const override final { return InputQueue::EventLoopInput; }
 
     virtual void dispatch(ReplayController&) = 0;
 };
@@ -65,7 +65,7 @@ public:
 template <typename InputType>
 class EventLoopInput : public EventLoopInputBase {
 public:
-    virtual const String& type() const override final
+    const String& type() const override final
     {
         return InputTraits<InputType>::type();
     }

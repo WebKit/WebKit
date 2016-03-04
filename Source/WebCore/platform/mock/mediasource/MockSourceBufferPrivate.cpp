@@ -54,17 +54,17 @@ private:
     {
     }
 
-    virtual MediaTime presentationTime() const override { return m_box.presentationTimestamp(); }
-    virtual MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
-    virtual MediaTime duration() const override { return m_box.duration(); }
-    virtual AtomicString trackID() const override { return m_id; }
-    virtual size_t sizeInBytes() const override { return sizeof(m_box); }
-    virtual SampleFlags flags() const override;
-    virtual PlatformSample platformSample() override;
-    virtual FloatSize presentationSize() const override { return FloatSize(); }
-    virtual void dump(PrintStream&) const override;
-    virtual void offsetTimestampsBy(const MediaTime& offset) override { m_box.offsetTimestampsBy(offset); }
-    virtual void setTimestamps(const MediaTime& presentationTimestamp, const MediaTime& decodeTimestamp) override { m_box.setTimestamps(presentationTimestamp, decodeTimestamp); }
+    MediaTime presentationTime() const override { return m_box.presentationTimestamp(); }
+    MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
+    MediaTime duration() const override { return m_box.duration(); }
+    AtomicString trackID() const override { return m_id; }
+    size_t sizeInBytes() const override { return sizeof(m_box); }
+    SampleFlags flags() const override;
+    PlatformSample platformSample() override;
+    FloatSize presentationSize() const override { return FloatSize(); }
+    void dump(PrintStream&) const override;
+    void offsetTimestampsBy(const MediaTime& offset) override { m_box.offsetTimestampsBy(offset); }
+    void setTimestamps(const MediaTime& presentationTimestamp, const MediaTime& decodeTimestamp) override { m_box.setTimestamps(presentationTimestamp, decodeTimestamp); }
 
     unsigned generation() const { return m_box.generation(); }
 
@@ -96,10 +96,10 @@ public:
     static RefPtr<MockMediaDescription> create(const MockTrackBox& box) { return adoptRef(new MockMediaDescription(box)); }
     virtual ~MockMediaDescription() { }
 
-    virtual AtomicString codec() const override { return m_box.codec(); }
-    virtual bool isVideo() const override { return m_box.kind() == MockTrackBox::Video; }
-    virtual bool isAudio() const override { return m_box.kind() == MockTrackBox::Audio; }
-    virtual bool isText() const override { return m_box.kind() == MockTrackBox::Text; }
+    AtomicString codec() const override { return m_box.codec(); }
+    bool isVideo() const override { return m_box.kind() == MockTrackBox::Video; }
+    bool isAudio() const override { return m_box.kind() == MockTrackBox::Audio; }
+    bool isText() const override { return m_box.kind() == MockTrackBox::Text; }
 
 protected:
     MockMediaDescription(const MockTrackBox& box) : m_box(box) { }

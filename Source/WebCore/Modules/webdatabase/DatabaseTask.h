@@ -99,9 +99,9 @@ public:
     DatabaseOpenTask(Database&, bool setVersionInNewDatabase, DatabaseTaskSynchronizer&, DatabaseError&, String& errorMessage, bool& success);
 
 private:
-    virtual void doPerformTask() override;
+    void doPerformTask() override;
 #if !LOG_DISABLED
-    virtual const char* debugTaskName() const override;
+    const char* debugTaskName() const override;
 #endif
 
     bool m_setVersionInNewDatabase;
@@ -115,9 +115,9 @@ public:
     DatabaseCloseTask(Database&, DatabaseTaskSynchronizer&);
 
 private:
-    virtual void doPerformTask() override;
+    void doPerformTask() override;
 #if !LOG_DISABLED
-    virtual const char* debugTaskName() const override;
+    const char* debugTaskName() const override;
 #endif
 };
 
@@ -129,9 +129,9 @@ public:
     SQLTransactionBackend* transaction() const { return m_transaction.get(); }
 
 private:
-    virtual void doPerformTask() override;
+    void doPerformTask() override;
 #if !LOG_DISABLED
-    virtual const char* debugTaskName() const override;
+    const char* debugTaskName() const override;
 #endif
 
     RefPtr<SQLTransactionBackend> m_transaction;
@@ -143,9 +143,9 @@ public:
     DatabaseTableNamesTask(Database&, DatabaseTaskSynchronizer&, Vector<String>& names);
 
 private:
-    virtual void doPerformTask() override;
+    void doPerformTask() override;
 #if !LOG_DISABLED
-    virtual const char* debugTaskName() const override;
+    const char* debugTaskName() const override;
 #endif
 
     Vector<String>& m_tableNames;

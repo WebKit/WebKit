@@ -64,7 +64,7 @@ public:
 protected:
     VTTCueBox(Document&, VTTCue&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override final;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override final;
 
     VTTCue& m_cue;
     int m_fontSizeFromCaptionUserPrefs;
@@ -121,7 +121,7 @@ public:
     void setRegionId(const String&);
     void notifyRegionWhenRemovingDisplayTree(bool);
 
-    virtual void setIsActive(bool) override;
+    void setIsActive(bool) override;
 
     bool hasDisplayTree() const { return m_displayTree; }
     VTTCueBox* getDisplayTree(const IntSize& videoSize, int fontSize);
@@ -161,14 +161,14 @@ public:
 
     virtual void setFontSize(int, const IntSize&, bool important);
 
-    virtual bool isEqual(const TextTrackCue&, CueMatchRules) const override;
-    virtual bool cueContentsMatch(const TextTrackCue&) const override;
-    virtual bool doesExtendCue(const TextTrackCue&) const override;
+    bool isEqual(const TextTrackCue&, CueMatchRules) const override;
+    bool cueContentsMatch(const TextTrackCue&) const override;
+    bool doesExtendCue(const TextTrackCue&) const override;
 
-    virtual CueType cueType() const override { return WebVTT; }
-    virtual bool isRenderable() const override final { return true; }
+    CueType cueType() const override { return WebVTT; }
+    bool isRenderable() const override final { return true; }
 
-    virtual void didChange() override;
+    void didChange() override;
 
 protected:
     VTTCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);

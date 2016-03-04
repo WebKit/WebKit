@@ -138,10 +138,10 @@ private:
     String stringValueForRange(const Node&, const Range*);
 
     void appendElement(StringBuilder& out, const Element&, bool addDisplayInline, RangeFullySelectsNode);
-    virtual void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*) override;
+    void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*) override;
 
-    virtual void appendText(StringBuilder& out, const Text&) override;
-    virtual void appendElement(StringBuilder& out, const Element& element, Namespaces*) override
+    void appendText(StringBuilder& out, const Text&) override;
+    void appendElement(StringBuilder& out, const Element& element, Namespaces*) override
     {
         appendElement(out, element, false, DoesFullySelectNode);
     }

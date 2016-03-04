@@ -49,7 +49,7 @@ public:
 
     GCActivityCallback(Heap*);
 
-    virtual void doWork() override;
+    void doWork() override;
 
     virtual void doCollection() = 0;
 

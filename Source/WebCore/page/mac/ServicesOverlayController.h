@@ -83,9 +83,9 @@ private:
         explicit Highlight(ServicesOverlayController&, Type, RetainPtr<DDHighlightRef>, PassRefPtr<Range>);
 
         // GraphicsLayerClient
-        virtual void notifyFlushRequired(const GraphicsLayer*) override;
-        virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& inClip) override;
-        virtual float deviceScaleFactor() const override;
+        void notifyFlushRequired(const GraphicsLayer*) override;
+        void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& inClip) override;
+        float deviceScaleFactor() const override;
 
         void didFinishFadeOutAnimation();
 
@@ -97,12 +97,12 @@ private:
     };
 
     // PageOverlay::Client
-    virtual void pageOverlayDestroyed(PageOverlay&) override;
-    virtual void willMoveToPage(PageOverlay&, Page*) override;
-    virtual void didMoveToPage(PageOverlay&, Page*) override;
-    virtual void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
-    virtual bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
-    virtual void didScrollFrame(PageOverlay&, Frame&) override;
+    void pageOverlayDestroyed(PageOverlay&) override;
+    void willMoveToPage(PageOverlay&, Page*) override;
+    void didMoveToPage(PageOverlay&, Page*) override;
+    void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
+    bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
+    void didScrollFrame(PageOverlay&, Frame&) override;
 
     void createOverlayIfNeeded();
     void handleClick(const IntPoint&, Highlight&);

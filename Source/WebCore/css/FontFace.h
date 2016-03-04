@@ -78,7 +78,7 @@ public:
 
     static RefPtr<CSSValue> parseString(const String&, CSSPropertyID);
 
-    virtual void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
+    void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
 
     WeakPtr<FontFace> createWeakPtr() const;
 

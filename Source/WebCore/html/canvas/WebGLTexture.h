@@ -83,7 +83,7 @@ public:
 private:
     WebGLTexture(WebGLRenderingContextBase*);
 
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
     class LevelInfo {
     public:
@@ -112,7 +112,7 @@ private:
         GC3Denum type;
     };
 
-    virtual bool isTexture() const override { return true; }
+    bool isTexture() const override { return true; }
 
     void update();
 

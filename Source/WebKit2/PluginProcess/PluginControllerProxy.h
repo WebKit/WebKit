@@ -83,41 +83,41 @@ private:
     void paint();
 
     // PluginController
-    virtual void invalidate(const WebCore::IntRect&) override;
-    virtual String userAgent() override;
-    virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
-    virtual void continueStreamLoad(uint64_t streamID) override;
-    virtual void cancelStreamLoad(uint64_t streamID) override;
-    virtual void cancelManualStreamLoad() override;
-    virtual NPObject* windowScriptNPObject() override;
-    virtual NPObject* pluginElementNPObject() override;
-    virtual bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) override;
-    virtual void setPluginIsPlayingAudio(bool) override;
-    virtual void setStatusbarText(const String&) override;
-    virtual bool isAcceleratedCompositingEnabled() override;
-    virtual void pluginProcessCrashed() override;
-    virtual void didInitializePlugin() override;
-    virtual void didFailToInitializePlugin() override;
+    void invalidate(const WebCore::IntRect&) override;
+    String userAgent() override;
+    void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
+    void continueStreamLoad(uint64_t streamID) override;
+    void cancelStreamLoad(uint64_t streamID) override;
+    void cancelManualStreamLoad() override;
+    NPObject* windowScriptNPObject() override;
+    NPObject* pluginElementNPObject() override;
+    bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) override;
+    void setPluginIsPlayingAudio(bool) override;
+    void setStatusbarText(const String&) override;
+    bool isAcceleratedCompositingEnabled() override;
+    void pluginProcessCrashed() override;
+    void didInitializePlugin() override;
+    void didFailToInitializePlugin() override;
 
 #if PLATFORM(COCOA)
-    virtual void pluginFocusOrWindowFocusChanged(bool) override;
-    virtual void setComplexTextInputState(PluginComplexTextInputState) override;
-    virtual const WebCore::MachSendRight& compositingRenderServerPort() override;
+    void pluginFocusOrWindowFocusChanged(bool) override;
+    void setComplexTextInputState(PluginComplexTextInputState) override;
+    const WebCore::MachSendRight& compositingRenderServerPort() override;
 #endif
 
-    virtual float contentsScaleFactor() override;
-    virtual String proxiesForURL(const String&) override;
-    virtual String cookiesForURL(const String&) override;
-    virtual void setCookiesForURL(const String& urlString, const String& cookieString) override;
-    virtual bool isPrivateBrowsingEnabled() override;
-    virtual bool isMuted() const override { return m_isMuted; }
-    virtual bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password) override;
-    virtual void protectPluginFromDestruction() override;
-    virtual void unprotectPluginFromDestruction() override;
+    float contentsScaleFactor() override;
+    String proxiesForURL(const String&) override;
+    String cookiesForURL(const String&) override;
+    void setCookiesForURL(const String& urlString, const String& cookieString) override;
+    bool isPrivateBrowsingEnabled() override;
+    bool isMuted() const override { return m_isMuted; }
+    bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password) override;
+    void protectPluginFromDestruction() override;
+    void unprotectPluginFromDestruction() override;
 #if PLUGIN_ARCHITECTURE(X11)
-    virtual uint64_t createPluginContainer() override;
-    virtual void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID) override;
-    virtual void windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID) override;
+    uint64_t createPluginContainer() override;
+    void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID) override;
+    void windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID) override;
 #endif
     
     // Message handlers.

@@ -62,7 +62,7 @@ public:
 
 protected:
     // CDMClient:
-    virtual MediaPlayer* cdmMediaPlayer(const CDM*) const override;
+    MediaPlayer* cdmMediaPlayer(const CDM*) const override;
 
     MediaKeys(const String& keySystem, std::unique_ptr<CDM>);
 

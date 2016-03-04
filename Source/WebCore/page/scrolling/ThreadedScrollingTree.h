@@ -45,21 +45,21 @@ class ThreadedScrollingTree : public ScrollingTree {
 public:
     virtual ~ThreadedScrollingTree();
 
-    virtual void commitNewTreeState(std::unique_ptr<ScrollingStateTree>) override;
+    void commitNewTreeState(std::unique_ptr<ScrollingStateTree>) override;
 
-    virtual void handleWheelEvent(const PlatformWheelEvent&) override;
+    void handleWheelEvent(const PlatformWheelEvent&) override;
 
     // Can be called from any thread. Will try to handle the wheel event on the scrolling thread.
     // Returns true if the wheel event can be handled on the scrolling thread and false if the
     // event must be sent again to the WebCore event handler.
-    virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) override;
+    EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) override;
 
-    virtual void invalidate() override;
+    void invalidate() override;
 
 protected:
     explicit ThreadedScrollingTree(AsyncScrollingCoordinator*);
 
-    virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) override;
+    void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) override;
     void currentSnapPointIndicesDidChange(ScrollingNodeID, unsigned horizontal, unsigned vertical) override;
 #if PLATFORM(MAC)
     void handleWheelEventPhase(PlatformWheelEventPhase) override;
@@ -69,7 +69,7 @@ protected:
 #endif
 
 private:
-    virtual bool isThreadedScrollingTree() const override { return true; }
+    bool isThreadedScrollingTree() const override { return true; }
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
 };

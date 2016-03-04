@@ -42,16 +42,16 @@ public:
     PageDebuggable(Page&);
     ~PageDebuggable() { }
 
-    virtual Inspector::RemoteControllableTarget::Type type() const override { return Inspector::RemoteControllableTarget::Type::Web; }
+    Inspector::RemoteControllableTarget::Type type() const override { return Inspector::RemoteControllableTarget::Type::Web; }
 
-    virtual String name() const override;
-    virtual String url() const override;
-    virtual bool hasLocalDebugger() const override;
+    String name() const override;
+    String url() const override;
+    bool hasLocalDebugger() const override;
 
-    virtual void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false) override;
-    virtual void disconnect(Inspector::FrontendChannel*) override;
-    virtual void dispatchMessageFromRemote(const String& message) override;
-    virtual void setIndicating(bool) override;
+    void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false) override;
+    void disconnect(Inspector::FrontendChannel*) override;
+    void dispatchMessageFromRemote(const String& message) override;
+    void setIndicating(bool) override;
 
     String nameOverride() const { return m_nameOverride; }
     void setNameOverride(const String&);

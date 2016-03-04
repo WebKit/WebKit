@@ -48,46 +48,46 @@ public:
     virtual ~SubresourceLoader();
 
     void cancelIfNotFinishing();
-    virtual bool isSubresourceLoader() override;
+    bool isSubresourceLoader() override;
     CachedResource* cachedResource();
 
 #if PLATFORM(IOS)
-    virtual bool startLoading() override;
+    bool startLoading() override;
 
     // FIXME: What is an "iOS" original request? Why is it necessary?
-    virtual const ResourceRequest& iOSOriginalRequest() const override { return m_iOSOriginalRequest; }
+    const ResourceRequest& iOSOriginalRequest() const override { return m_iOSOriginalRequest; }
 #endif
 
 private:
     SubresourceLoader(Frame*, CachedResource*, const ResourceLoaderOptions&);
 
-    virtual bool init(const ResourceRequest&) override;
+    bool init(const ResourceRequest&) override;
 
-    virtual void willSendRequestInternal(ResourceRequest&, const ResourceResponse& redirectResponse) override;
-    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
-    virtual void didReceiveResponse(const ResourceResponse&) override;
-    virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
-    virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) override;
-    virtual void didFinishLoading(double finishTime) override;
-    virtual void didFail(const ResourceError&) override;
-    virtual void willCancel(const ResourceError&) override;
-    virtual void didCancel(const ResourceError&) override;
+    void willSendRequestInternal(ResourceRequest&, const ResourceResponse& redirectResponse) override;
+    void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
+    void didReceiveResponse(const ResourceResponse&) override;
+    void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
+    void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) override;
+    void didFinishLoading(double finishTime) override;
+    void didFail(const ResourceError&) override;
+    void willCancel(const ResourceError&) override;
+    void didCancel(const ResourceError&) override;
 
 #if PLATFORM(COCOA) && !USE(CFNETWORK)
-    virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
+    NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
 #endif
 #if PLATFORM(COCOA) && USE(CFNETWORK)
-    virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
+    CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    virtual bool supportsDataArray() override { return true; }
-    virtual void didReceiveDataArray(CFArrayRef) override;
+    bool supportsDataArray() override { return true; }
+    void didReceiveDataArray(CFArrayRef) override;
 #endif
-    virtual void releaseResources() override;
+    void releaseResources() override;
 
 #if USE(SOUP)
-    virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
+    char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
 #endif
 
     bool checkForHTTPStatusCodeError();

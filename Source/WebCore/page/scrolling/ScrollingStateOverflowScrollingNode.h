@@ -36,7 +36,7 @@ class ScrollingStateOverflowScrollingNode : public ScrollingStateScrollingNode {
 public:
     static Ref<ScrollingStateOverflowScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-    virtual Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
+    Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
     virtual ~ScrollingStateOverflowScrollingNode();
 
@@ -48,7 +48,7 @@ public:
     const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
     WEBCORE_EXPORT void setScrolledContentsLayer(const LayerRepresentation&);
     
-    virtual void dumpProperties(TextStream&, int indent) const override;
+    void dumpProperties(TextStream&, int indent) const override;
 
 private:
     ScrollingStateOverflowScrollingNode(ScrollingStateTree&, ScrollingNodeID);

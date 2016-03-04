@@ -44,9 +44,9 @@ public:
     }
     ~WebPopupMenuProxyGtk();
 
-    virtual void showPopupMenu(const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex) override;
-    virtual void hidePopupMenu() override;
-    virtual void cancelTracking() override;
+    void showPopupMenu(const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex) override;
+    void hidePopupMenu() override;
+    void cancelTracking() override;
 
 private:
     WebPopupMenuProxyGtk(GtkWidget*, WebPopupMenuProxy::Client&);

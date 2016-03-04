@@ -136,7 +136,7 @@ public:
 
 private:
     // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     static ViewGestureController* gestureControllerForPage(uint64_t);
 

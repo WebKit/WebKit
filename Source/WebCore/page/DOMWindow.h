@@ -112,10 +112,10 @@ namespace WebCore {
         // the network load. See also SecurityContext::isSecureTransitionTo.
         void didSecureTransitionTo(Document*);
 
-        virtual EventTargetInterface eventTargetInterface() const override { return DOMWindowEventTargetInterfaceType; }
-        virtual ScriptExecutionContext* scriptExecutionContext() const override { return ContextDestructionObserver::scriptExecutionContext(); }
+        EventTargetInterface eventTargetInterface() const override { return DOMWindowEventTargetInterfaceType; }
+        ScriptExecutionContext* scriptExecutionContext() const override { return ContextDestructionObserver::scriptExecutionContext(); }
 
-        virtual DOMWindow* toDOMWindow() override;
+        DOMWindow* toDOMWindow() override;
 
         void registerProperty(DOMWindowProperty*);
         void unregisterProperty(DOMWindowProperty*);
@@ -274,9 +274,9 @@ namespace WebCore {
 
         // Events
         // EventTarget API
-        virtual bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
-        virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
-        virtual void removeAllEventListeners() override;
+        bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
+        bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
+        void removeAllEventListeners() override;
 
         using EventTarget::dispatchEvent;
         bool dispatchEvent(Event&, EventTarget*);
@@ -348,11 +348,11 @@ namespace WebCore {
         Page* page();
         bool allowedToChangeWindowGeometry() const;
 
-        virtual void frameDestroyed() override;
-        virtual void willDetachPage() override;
+        void frameDestroyed() override;
+        void willDetachPage() override;
 
-        virtual void refEventTarget() override { ref(); }
-        virtual void derefEventTarget() override { deref(); }
+        void refEventTarget() override { ref(); }
+        void derefEventTarget() override { deref(); }
 
         static RefPtr<Frame> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, std::function<void (DOMWindow&)> prepareDialogFunction = nullptr);
         bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);

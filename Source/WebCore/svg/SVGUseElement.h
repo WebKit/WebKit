@@ -57,22 +57,22 @@ public:
 private:
     SVGUseElement(const QualifiedName&, Document&);
 
-    virtual bool isValid() const override;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
-    virtual void buildPendingResource() override;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
-    virtual void willAttachRenderers() override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual void toClipPath(Path&) override;
-    virtual bool haveLoadedRequiredResources() override;
-    virtual void finishParsingChildren() override;
-    virtual bool selfHasRelativeLengths() const override;
-    virtual void setHaveFiredLoadEvent(bool) override;
-    virtual bool haveFiredLoadEvent() const override;
-    virtual Timer* svgLoadEventTimer() override;
-    virtual void notifyFinished(CachedResource*) override;
+    bool isValid() const override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
+    void buildPendingResource() override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    void willAttachRenderers() override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    void toClipPath(Path&) override;
+    bool haveLoadedRequiredResources() override;
+    void finishParsingChildren() override;
+    bool selfHasRelativeLengths() const override;
+    void setHaveFiredLoadEvent(bool) override;
+    bool haveFiredLoadEvent() const override;
+    Timer* svgLoadEventTimer() override;
+    void notifyFinished(CachedResource*) override;
 
     Document* externalDocument() const;
     void updateExternalDocument();

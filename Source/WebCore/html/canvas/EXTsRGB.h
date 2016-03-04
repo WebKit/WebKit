@@ -35,7 +35,7 @@ public:
     explicit EXTsRGB(WebGLRenderingContextBase*);
     virtual ~EXTsRGB();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

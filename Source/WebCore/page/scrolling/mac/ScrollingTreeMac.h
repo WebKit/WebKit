@@ -36,7 +36,7 @@ class ScrollingTreeMac : public ThreadedScrollingTree {
 public:
     static Ref<ScrollingTreeMac> create(AsyncScrollingCoordinator*);
 
-    virtual PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
+    PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
 
     
 private:

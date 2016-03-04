@@ -45,11 +45,11 @@ public:
 
 private:
     RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlowThread*, RenderBox* spanner, Ref<RenderStyle>&&);
-    virtual bool isRenderMultiColumnSpannerPlaceholder() const override { return true; }
+    bool isRenderMultiColumnSpannerPlaceholder() const override { return true; }
 
-    virtual bool canHaveChildren() const override { return false; }
-    virtual void paint(PaintInfo&, const LayoutPoint&) override { }
-    virtual const char* renderName() const override;
+    bool canHaveChildren() const override { return false; }
+    void paint(PaintInfo&, const LayoutPoint&) override { }
+    const char* renderName() const override;
 
     RenderBox* m_spanner;
     RenderMultiColumnFlowThread* m_flowThread;

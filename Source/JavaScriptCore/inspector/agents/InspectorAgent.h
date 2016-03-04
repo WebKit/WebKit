@@ -51,12 +51,12 @@ public:
     InspectorAgent(AgentContext&);
     virtual ~InspectorAgent();
 
-    virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
+    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(DisconnectReason) override;
 
-    virtual void enable(ErrorString&) override;
-    virtual void disable(ErrorString&) override;
-    virtual void initialized(ErrorString&) override;
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void initialized(ErrorString&) override;
 
     void inspect(RefPtr<Protocol::Runtime::RemoteObject>&& objectToInspect, RefPtr<InspectorObject>&& hints);
     void evaluateForTestInFrontend(const String& script);

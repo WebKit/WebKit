@@ -51,7 +51,7 @@ private:
     explicit WebUserContentController(uint64_t identifier);
 
     // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void addUserContentWorlds(const Vector<std::pair<uint64_t, String>>&);
     void removeUserContentWorlds(const Vector<uint64_t>&);

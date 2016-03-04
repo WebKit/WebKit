@@ -42,8 +42,8 @@ namespace WebCore {
 
 class BlobURLRegistry final : public URLRegistry {
 public:
-    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) override;
-    virtual void unregisterURL(const URL&) override;
+    void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) override;
+    void unregisterURL(const URL&) override;
 
     static URLRegistry& registry();
 };

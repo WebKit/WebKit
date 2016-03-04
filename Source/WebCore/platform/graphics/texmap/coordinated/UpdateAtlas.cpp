@@ -39,7 +39,7 @@ public:
     {
     }
 
-    virtual void paintToSurfaceContext(GraphicsContext& context) override
+    void paintToSurfaceContext(GraphicsContext& context) override
     {
         if (m_supportsAlpha) {
             context.setCompositeOperation(CompositeCopy);

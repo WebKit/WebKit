@@ -84,7 +84,7 @@ private:
     void enqueueStatementBackend(std::unique_ptr<SQLStatement>);
 
     // State Machine functions:
-    virtual StateFunction stateFunctionFor(SQLTransactionState) override;
+    StateFunction stateFunctionFor(SQLTransactionState) override;
     void computeNextStateAndCleanupIfNeeded();
 
     // State functions:

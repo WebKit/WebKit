@@ -127,7 +127,7 @@ private:
 
     using Base::m_role;
 
-    virtual bool isReadOnly() const override
+    bool isReadOnly() const override
     {
         if (m_role == AnimValRole)
             return true;
@@ -136,20 +136,20 @@ private:
         return false;
     }
 
-    virtual void commitChange() override
+    void commitChange() override
     {
         ASSERT(m_values);
         m_values->commitChange(m_animatedProperty->contextElement(), ListModificationUnknown);
     }
 
-    virtual void commitChange(ListModification listModification) override
+    void commitChange(ListModification listModification) override
     {
         ASSERT(m_values);
         m_values->commitChange(m_animatedProperty->contextElement(), listModification);
     }
 
-    virtual bool processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify) override;
-    virtual bool processIncomingListItemWrapper(RefPtr<ListItemTearOff>&, unsigned*) override
+    bool processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify) override;
+    bool processIncomingListItemWrapper(RefPtr<ListItemTearOff>&, unsigned*) override
     {
         ASSERT_NOT_REACHED();
         return true;

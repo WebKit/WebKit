@@ -51,19 +51,19 @@ public:
 private:
     ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
 
-    virtual void updateBeforeChildren(const WebCore::ScrollingStateNode&) override;
-    virtual void updateAfterChildren(const WebCore::ScrollingStateNode&) override;
+    void updateBeforeChildren(const WebCore::ScrollingStateNode&) override;
+    void updateAfterChildren(const WebCore::ScrollingStateNode&) override;
     
-    virtual WebCore::FloatPoint scrollPosition() const override;
+    WebCore::FloatPoint scrollPosition() const override;
 
-    virtual void setScrollLayerPosition(const WebCore::FloatPoint&) override;
+    void setScrollLayerPosition(const WebCore::FloatPoint&) override;
 
-    virtual void updateLayersAfterViewportChange(const WebCore::FloatRect& fixedPositionRect, double scale) override { }
-    virtual void updateLayersAfterDelegatedScroll(const WebCore::FloatPoint& scrollPosition) override;
+    void updateLayersAfterViewportChange(const WebCore::FloatRect& fixedPositionRect, double scale) override { }
+    void updateLayersAfterDelegatedScroll(const WebCore::FloatPoint& scrollPosition) override;
 
-    virtual void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& fixedPositionRect, const WebCore::FloatSize& cumulativeDelta) override;
+    void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& fixedPositionRect, const WebCore::FloatSize& cumulativeDelta) override;
 
-    virtual void handleWheelEvent(const WebCore::PlatformWheelEvent&) override { }
+    void handleWheelEvent(const WebCore::PlatformWheelEvent&) override { }
 
     void updateChildNodesAfterScroll(const WebCore::FloatPoint&);
     

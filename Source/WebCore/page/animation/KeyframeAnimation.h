@@ -45,8 +45,8 @@ public:
         return adoptRef(*new KeyframeAnimation(animation, renderer, index, compositeAnimation, unanimatedStyle));
     }
 
-    virtual bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;
-    virtual void getAnimatedStyle(RefPtr<RenderStyle>&) override;
+    bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;
+    void getAnimatedStyle(RefPtr<RenderStyle>&) override;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const override;
 
@@ -61,23 +61,23 @@ public:
     void setUnanimatedStyle(PassRefPtr<RenderStyle> style) { m_unanimatedStyle = style; }
     RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
 
-    virtual double timeToNextService() override;
+    double timeToNextService() override;
 
 protected:
-    virtual void onAnimationStart(double elapsedTime) override;
-    virtual void onAnimationIteration(double elapsedTime) override;
-    virtual void onAnimationEnd(double elapsedTime) override;
-    virtual bool startAnimation(double timeOffset) override;
-    virtual void pauseAnimation(double timeOffset) override;
-    virtual void endAnimation() override;
+    void onAnimationStart(double elapsedTime) override;
+    void onAnimationIteration(double elapsedTime) override;
+    void onAnimationEnd(double elapsedTime) override;
+    bool startAnimation(double timeOffset) override;
+    void pauseAnimation(double timeOffset) override;
+    void endAnimation() override;
 
-    virtual void overrideAnimations() override;
-    virtual void resumeOverriddenAnimations() override;
+    void overrideAnimations() override;
+    void resumeOverriddenAnimations() override;
 
     bool shouldSendEventForListener(Document::ListenerType inListenerType) const;
     bool sendAnimationEvent(const AtomicString&, double elapsedTime);
 
-    virtual bool affectsProperty(CSSPropertyID) const override;
+    bool affectsProperty(CSSPropertyID) const override;
 
     bool computeExtentOfAnimationForMatrixAnimation(const FloatRect& rendererBox, LayoutRect&) const;
 

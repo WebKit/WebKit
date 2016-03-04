@@ -38,7 +38,7 @@ public:
     virtual ~WebGLVertexArrayObjectOES();
 private:
     WebGLVertexArrayObjectOES(WebGLRenderingContextBase*, VAOType);
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 };
 
 } // namespace WebCore

@@ -45,12 +45,12 @@ public:
         return adoptRef(new InbandTextTrackPrivateGStreamer(index, pad));
     }
 
-    virtual void disconnect() override;
+    void disconnect() override;
 
-    virtual AtomicString label() const override { return m_label; }
-    virtual AtomicString language() const override { return m_language; }
+    AtomicString label() const override { return m_label; }
+    AtomicString language() const override { return m_language; }
 
-    virtual int trackIndex() const override { return m_index; }
+    int trackIndex() const override { return m_index; }
     String streamId() const { return m_streamId; }
 
     void handleSample(GRefPtr<GstSample>);

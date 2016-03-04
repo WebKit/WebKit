@@ -37,21 +37,21 @@ protected:
 public:
     virtual ~AccessibilityMockObject();
     
-    virtual AccessibilityObject* parentObject() const override { return m_parent; }
+    AccessibilityObject* parentObject() const override { return m_parent; }
     virtual void setParent(AccessibilityObject* parent) { m_parent = parent; }
-    virtual bool isEnabled() const override { return true; }
+    bool isEnabled() const override { return true; }
 
 protected:
     AccessibilityObject* m_parent;
 
     // Must be called when the parent object clears its children.
-    virtual void detachFromParent() override { m_parent = nullptr; }
+    void detachFromParent() override { m_parent = nullptr; }
 
 private:
-    virtual bool isMockObject() const override final { return true; }
-    virtual bool isDetachedFromParent() override { return !m_parent; }
+    bool isMockObject() const override final { return true; }
+    bool isDetachedFromParent() override { return !m_parent; }
 
-    virtual bool computeAccessibilityIsIgnored() const override;
+    bool computeAccessibilityIsIgnored() const override;
 };
 
 } // namespace WebCore 

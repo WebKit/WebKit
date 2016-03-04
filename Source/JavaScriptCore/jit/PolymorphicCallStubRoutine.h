@@ -99,7 +99,7 @@ public:
     bool visitWeak(VM&) override;
 
 protected:
-    virtual void markRequiredObjectsInternal(SlotVisitor&) override;
+    void markRequiredObjectsInternal(SlotVisitor&) override;
 
 private:
     Vector<WriteBarrier<JSCell>, 2> m_variants;

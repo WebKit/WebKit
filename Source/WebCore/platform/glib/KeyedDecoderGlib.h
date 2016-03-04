@@ -38,25 +38,25 @@ namespace WebCore {
 class KeyedDecoderGlib final : public KeyedDecoder {
 public:
     KeyedDecoderGlib(const uint8_t* data, size_t);
-    virtual ~KeyedDecoderGlib() override;
+    ~KeyedDecoderGlib() override;
 
 private:
-    virtual bool decodeBytes(const String& key, const uint8_t*&, size_t&) override;
-    virtual bool decodeBool(const String& key, bool&) override;
-    virtual bool decodeUInt32(const String& key, uint32_t&) override;
-    virtual bool decodeInt32(const String& key, int32_t&) override;
-    virtual bool decodeInt64(const String& key, int64_t&) override;
-    virtual bool decodeFloat(const String& key, float&) override;
-    virtual bool decodeDouble(const String& key, double&) override;
-    virtual bool decodeString(const String& key, String&) override;
+    bool decodeBytes(const String& key, const uint8_t*&, size_t&) override;
+    bool decodeBool(const String& key, bool&) override;
+    bool decodeUInt32(const String& key, uint32_t&) override;
+    bool decodeInt32(const String& key, int32_t&) override;
+    bool decodeInt64(const String& key, int64_t&) override;
+    bool decodeFloat(const String& key, float&) override;
+    bool decodeDouble(const String& key, double&) override;
+    bool decodeString(const String& key, String&) override;
 
-    virtual bool beginObject(const String& key) override;
-    virtual void endObject() override;
+    bool beginObject(const String& key) override;
+    void endObject() override;
 
-    virtual bool beginArray(const String& key) override;
-    virtual bool beginArrayElement() override;
-    virtual void endArrayElement() override;
-    virtual void endArray() override;
+    bool beginArray(const String& key) override;
+    bool beginArrayElement() override;
+    void endArrayElement() override;
+    void endArray() override;
 
     template<typename T, typename F> bool decodeSimpleValue(const String& key, T& result, F getFunction);
     HashMap<String, GRefPtr<GVariant>> dictionaryFromGVariant(GVariant*);

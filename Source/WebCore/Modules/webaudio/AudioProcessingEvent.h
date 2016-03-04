@@ -52,7 +52,7 @@ public:
     AudioBuffer* outputBuffer() { return m_outputBuffer.get(); }
     double playbackTime() const { return m_playbackTime; }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
 private:
     AudioProcessingEvent();

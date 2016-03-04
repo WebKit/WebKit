@@ -69,18 +69,18 @@ private:
     DatabaseProcess();
 
     // ChildProcess
-    virtual void initializeProcess(const ChildProcessInitializationParameters&) override;
-    virtual void initializeProcessName(const ChildProcessInitializationParameters&) override;
-    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
-    virtual void initializeConnection(IPC::Connection*) override;
-    virtual bool shouldTerminate() override;
+    void initializeProcess(const ChildProcessInitializationParameters&) override;
+    void initializeProcessName(const ChildProcessInitializationParameters&) override;
+    void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
+    void initializeConnection(IPC::Connection*) override;
+    bool shouldTerminate() override;
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    virtual void didClose(IPC::Connection&) override;
-    virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    virtual IPC::ProcessType localProcessType() override { return IPC::ProcessType::Database; }
-    virtual IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::UI; }
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didClose(IPC::Connection&) override;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+    IPC::ProcessType localProcessType() override { return IPC::ProcessType::Database; }
+    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::UI; }
     void didReceiveDatabaseProcessMessage(IPC::Connection&, IPC::MessageDecoder&);
 
     // Message Handlers

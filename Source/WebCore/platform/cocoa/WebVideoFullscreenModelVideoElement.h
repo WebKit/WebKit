@@ -56,28 +56,28 @@ public:
     WEBCORE_EXPORT HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*);
     
-    WEBCORE_EXPORT virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
+    WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
     void updateForEventName(const WTF::AtomicString&);
     bool operator==(const EventListener& rhs) override
         {return static_cast<WebCore::EventListener*>(this) == &rhs;}
 
-    WEBCORE_EXPORT virtual void play() override;
-    WEBCORE_EXPORT virtual void pause() override;
-    WEBCORE_EXPORT virtual void togglePlayState() override;
-    WEBCORE_EXPORT virtual void beginScrubbing() override;
-    WEBCORE_EXPORT virtual void endScrubbing() override;
-    WEBCORE_EXPORT virtual void seekToTime(double time) override;
-    WEBCORE_EXPORT virtual void fastSeek(double time) override;
-    WEBCORE_EXPORT virtual void beginScanningForward() override;
-    WEBCORE_EXPORT virtual void beginScanningBackward() override;
-    WEBCORE_EXPORT virtual void endScanning() override;
-    WEBCORE_EXPORT virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) override;
-    WEBCORE_EXPORT virtual void setVideoLayerFrame(FloatRect) override;
-    WEBCORE_EXPORT virtual void setVideoLayerGravity(VideoGravity) override;
-    WEBCORE_EXPORT virtual void selectAudioMediaOption(uint64_t index) override;
-    WEBCORE_EXPORT virtual void selectLegibleMediaOption(uint64_t index) override;
-    WEBCORE_EXPORT virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
-    WEBCORE_EXPORT virtual bool isVisible() const override;
+    WEBCORE_EXPORT void play() override;
+    WEBCORE_EXPORT void pause() override;
+    WEBCORE_EXPORT void togglePlayState() override;
+    WEBCORE_EXPORT void beginScrubbing() override;
+    WEBCORE_EXPORT void endScrubbing() override;
+    WEBCORE_EXPORT void seekToTime(double time) override;
+    WEBCORE_EXPORT void fastSeek(double time) override;
+    WEBCORE_EXPORT void beginScanningForward() override;
+    WEBCORE_EXPORT void beginScanningBackward() override;
+    WEBCORE_EXPORT void endScanning() override;
+    WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) override;
+    WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) override;
+    WEBCORE_EXPORT void setVideoLayerGravity(VideoGravity) override;
+    WEBCORE_EXPORT void selectAudioMediaOption(uint64_t index) override;
+    WEBCORE_EXPORT void selectLegibleMediaOption(uint64_t index) override;
+    WEBCORE_EXPORT void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
+    WEBCORE_EXPORT bool isVisible() const override;
 
 protected:
     WEBCORE_EXPORT WebVideoFullscreenModelVideoElement();

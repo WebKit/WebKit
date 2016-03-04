@@ -36,7 +36,7 @@ public:
 
 private:
     RubyElement(const QualifiedName&, Document&);
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 };
 
 }

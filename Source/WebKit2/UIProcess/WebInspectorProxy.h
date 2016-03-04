@@ -158,7 +158,7 @@ private:
     void eagerlyCreateInspectorPage();
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     WebPageProxy* platformCreateInspectorPage();
     void platformOpen();

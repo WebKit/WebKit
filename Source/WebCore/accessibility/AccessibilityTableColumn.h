@@ -44,22 +44,22 @@ public:
     
     AccessibilityObject* headerObject();
         
-    virtual AccessibilityRole roleValue() const override { return ColumnRole; }
+    AccessibilityRole roleValue() const override { return ColumnRole; }
     
     void setColumnIndex(int columnIndex) { m_columnIndex = columnIndex; }
     int columnIndex() const { return m_columnIndex; }    
     
-    virtual void addChildren() override;
-    virtual void setParent(AccessibilityObject*) override;
+    void addChildren() override;
+    void setParent(AccessibilityObject*) override;
     
-    virtual LayoutRect elementRect() const override;
+    LayoutRect elementRect() const override;
     
 private:
     AccessibilityTableColumn();
     
     AccessibilityObject* headerObjectForSection(RenderTableSection*, bool thTagRequired);
-    virtual bool computeAccessibilityIsIgnored() const override;
-    virtual bool isTableColumn() const override { return true; }
+    bool computeAccessibilityIsIgnored() const override;
+    bool isTableColumn() const override { return true; }
 
     unsigned m_columnIndex;
 };

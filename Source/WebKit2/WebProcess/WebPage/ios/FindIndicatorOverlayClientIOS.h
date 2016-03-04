@@ -45,11 +45,11 @@ public:
     }
 
 private:
-    virtual void pageOverlayDestroyed(WebCore::PageOverlay&) override { }
-    virtual void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override { }
-    virtual void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override { }
-    virtual void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
-    virtual bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override { return false; }
+    void pageOverlayDestroyed(WebCore::PageOverlay&) override { }
+    void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override { }
+    void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override { }
+    void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
+    bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override { return false; }
 
     WebCore::Frame& m_frame;
     RefPtr<WebCore::TextIndicator> m_textIndicator;

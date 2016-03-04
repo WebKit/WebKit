@@ -67,7 +67,7 @@ public:
             m_animVal = nullptr;
     }
 
-    virtual bool isAnimatedListTearOff() const override { return true; }
+    bool isAnimatedListTearOff() const override { return true; }
 
     int findItem(SVGProperty* property)
     {

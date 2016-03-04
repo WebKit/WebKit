@@ -85,7 +85,7 @@ public:
 
     virtual ~InspectorThreadableLoaderClient() { }
 
-    virtual void didReceiveResponse(unsigned long, const ResourceResponse& response) override
+    void didReceiveResponse(unsigned long, const ResourceResponse& response) override
     {
         m_mimeType = response.mimeType();
         m_statusCode = response.httpStatusCode();
@@ -101,7 +101,7 @@ public:
         m_decoder = TextResourceDecoder::create(ASCIILiteral("text/plain"), textEncoding, useDetector);
     }
 
-    virtual void didReceiveData(const char* data, int dataLength) override
+    void didReceiveData(const char* data, int dataLength) override
     {
         if (!dataLength)
             return;
@@ -112,7 +112,7 @@ public:
         m_responseText.append(m_decoder->decode(data, dataLength));
     }
 
-    virtual void didFinishLoading(unsigned long, double) override
+    void didFinishLoading(unsigned long, double) override
     {
         if (m_decoder)
             m_responseText.append(m_decoder->flush());
@@ -121,13 +121,13 @@ public:
         dispose();
     }
 
-    virtual void didFail(const ResourceError&) override
+    void didFail(const ResourceError&) override
     {
         m_callback->sendFailure(ASCIILiteral("Loading resource for inspector failed"));
         dispose();
     }
 
-    virtual void didFailRedirectCheck() override
+    void didFailRedirectCheck() override
     {
         m_callback->sendFailure(ASCIILiteral("Loading resource for inspector failed redirect check"));
         dispose();

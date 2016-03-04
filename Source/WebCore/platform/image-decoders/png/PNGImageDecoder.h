@@ -42,18 +42,18 @@ namespace WebCore {
         virtual ~PNGImageDecoder();
 
         // ImageDecoder
-        virtual String filenameExtension() const override { return "png"; }
+        String filenameExtension() const override { return "png"; }
 #if ENABLE(APNG)
-        virtual size_t frameCount() override { return m_frameCount; }
-        virtual int repetitionCount() const override { return m_playCount-1; }
+        size_t frameCount() override { return m_frameCount; }
+        int repetitionCount() const override { return m_playCount-1; }
 #endif
-        virtual bool isSizeAvailable() override;
-        virtual bool setSize(unsigned width, unsigned height) override;
-        virtual ImageFrame* frameBufferAtIndex(size_t index) override;
+        bool isSizeAvailable() override;
+        bool setSize(unsigned width, unsigned height) override;
+        ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
         // PNGImageReader!
-        virtual bool setFailed() override;
+        bool setFailed() override;
 
         // Callbacks from libpng
         void headerAvailable();
@@ -64,7 +64,7 @@ namespace WebCore {
         void frameHeader();
 
         void init();
-        virtual void clearFrameBufferCache(size_t clearBeforeFrame) override;
+        void clearFrameBufferCache(size_t clearBeforeFrame) override;
 #endif
 
         bool isComplete() const

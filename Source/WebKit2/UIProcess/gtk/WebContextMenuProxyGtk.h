@@ -48,7 +48,7 @@ public:
     GtkMenu* gtkMenu() const { return m_menu; }
 
 private:
-    virtual void show() override;
+    void show() override;
     void append(GtkMenu*, const WebContextMenuItemGtk&);
     void populate(const Vector<RefPtr<WebContextMenuItem>>&);
     static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, WebContextMenuProxyGtk*);

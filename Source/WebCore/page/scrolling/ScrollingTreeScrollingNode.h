@@ -42,10 +42,10 @@ class ScrollingTreeScrollingNode : public ScrollingTreeNode {
 public:
     virtual ~ScrollingTreeScrollingNode();
 
-    WEBCORE_EXPORT virtual void updateBeforeChildren(const ScrollingStateNode&) override;
-    WEBCORE_EXPORT virtual void updateAfterChildren(const ScrollingStateNode&) override;
+    WEBCORE_EXPORT void updateBeforeChildren(const ScrollingStateNode&) override;
+    WEBCORE_EXPORT void updateAfterChildren(const ScrollingStateNode&) override;
 
-    WEBCORE_EXPORT virtual void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta) override;
+    WEBCORE_EXPORT void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta) override;
 
     virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
     WEBCORE_EXPORT virtual void setScrollPosition(const FloatPoint&);

@@ -35,7 +35,7 @@ public:
     explicit EXTFragDepth(WebGLRenderingContextBase*);
     virtual ~EXTFragDepth();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

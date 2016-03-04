@@ -37,8 +37,8 @@ public:
 
     virtual ~CSSPageRule();
 
-    virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase&) override;
+    String cssText() const override;
+    void reattach(StyleRuleBase&) override;
 
     CSSStyleDeclaration& style();
 
@@ -48,7 +48,7 @@ public:
 private:
     CSSPageRule(StyleRulePage&, CSSStyleSheet*);
 
-    virtual CSSRule::Type type() const override { return PAGE_RULE; }
+    CSSRule::Type type() const override { return PAGE_RULE; }
 
     Ref<StyleRulePage> m_pageRule;
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;

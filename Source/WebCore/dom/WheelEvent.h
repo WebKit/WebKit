@@ -90,7 +90,7 @@ public:
     // Needed for Objective-C legacy support
     bool isHorizontal() const { return m_wheelDelta.x(); }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
 #if PLATFORM(MAC)
     PlatformWheelEventPhase phase() const { return m_wheelEvent.phase(); }
@@ -102,7 +102,7 @@ private:
     WheelEvent(const AtomicString&, const WheelEventInit&);
     WheelEvent(const PlatformWheelEvent&, AbstractView*);
 
-    virtual bool isWheelEvent() const override;
+    bool isWheelEvent() const override;
 
     IntPoint m_wheelDelta;
     double m_deltaX;

@@ -34,7 +34,7 @@ class CachedImageClient : public CachedResourceClient {
 public:
     virtual ~CachedImageClient() { }
     static CachedResourceClientType expectedType() { return ImageType; }
-    virtual CachedResourceClientType resourceClientType() const override { return expectedType(); }
+    CachedResourceClientType resourceClientType() const override { return expectedType(); }
 
     // Called whenever a frame of an image changes because we got more data from the network.
     // If not null, the IntRect is the changed rect of the image.

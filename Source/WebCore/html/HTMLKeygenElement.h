@@ -37,22 +37,22 @@ public:
 private:
     HTMLKeygenElement(const QualifiedName&, Document&, HTMLFormElement*);
 
-    virtual bool computeWillValidate() const override { return false; }
-    virtual bool canStartSelection() const override { return false; }
+    bool computeWillValidate() const override { return false; }
+    bool canStartSelection() const override { return false; }
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual bool appendFormData(FormDataList&, bool) override;
-    virtual const AtomicString& formControlType() const override;
-    virtual bool isOptionalFormControl() const override { return false; }
+    bool appendFormData(FormDataList&, bool) override;
+    const AtomicString& formControlType() const override;
+    bool isOptionalFormControl() const override { return false; }
 
-    virtual bool isEnumeratable() const override { return true; }
-    virtual bool supportLabels() const override { return true; }
+    bool isEnumeratable() const override { return true; }
+    bool supportLabels() const override { return true; }
 
-    virtual void reset() override;
-    virtual bool shouldSaveAndRestoreFormControlState() const override;
+    void reset() override;
+    bool shouldSaveAndRestoreFormControlState() const override;
 
-    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+    bool canHaveUserAgentShadowRoot() const override final { return true; }
 
     HTMLSelectElement* shadowSelect() const;
 };

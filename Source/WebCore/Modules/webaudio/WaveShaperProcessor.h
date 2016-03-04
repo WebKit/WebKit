@@ -49,9 +49,9 @@ public:
 
     virtual ~WaveShaperProcessor();
 
-    virtual std::unique_ptr<AudioDSPKernel> createKernel() override;
+    std::unique_ptr<AudioDSPKernel> createKernel() override;
 
-    virtual void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess) override;
+    void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess) override;
 
     void setCurve(Float32Array*);
     Float32Array* curve() { return m_curve.get(); }

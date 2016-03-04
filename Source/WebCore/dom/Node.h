@@ -494,16 +494,16 @@ public:
 
     WEBCORE_EXPORT unsigned short compareDocumentPosition(Node*);
 
-    virtual Node* toNode() override;
+    Node* toNode() override;
 
-    virtual EventTargetInterface eventTargetInterface() const override;
-    virtual ScriptExecutionContext* scriptExecutionContext() const override final; // Implemented in Document.h
+    EventTargetInterface eventTargetInterface() const override;
+    ScriptExecutionContext* scriptExecutionContext() const override final; // Implemented in Document.h
 
-    virtual bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
-    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
+    bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
+    bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(Event&) override;
+    bool dispatchEvent(Event&) override;
 
     void dispatchScopedEvent(Event&);
 
@@ -541,8 +541,8 @@ public:
     bool m_adoptionIsRequired { true };
 #endif
 
-    virtual EventTargetData* eventTargetData() override final;
-    virtual EventTargetData& ensureEventTargetData() override final;
+    EventTargetData* eventTargetData() override final;
+    EventTargetData& ensureEventTargetData() override final;
 
     void getRegisteredMutationObserversOfType(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, MutationObserver::MutationType, const QualifiedName* attributeName);
     void registerMutationObserver(MutationObserver*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
@@ -667,8 +667,8 @@ private:
 
     WEBCORE_EXPORT void removedLastRef();
 
-    virtual void refEventTarget() override;
-    virtual void derefEventTarget() override;
+    void refEventTarget() override;
+    void derefEventTarget() override;
 
     Element* ancestorElement() const;
 

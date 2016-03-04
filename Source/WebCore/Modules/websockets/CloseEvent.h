@@ -59,7 +59,7 @@ public:
     String reason() const { return m_reason; }
 
     // Event function.
-    virtual EventInterface eventInterface() const override { return CloseEventInterfaceType; }
+    EventInterface eventInterface() const override { return CloseEventInterfaceType; }
 
 private:
     CloseEvent(bool wasClean, int code, const String& reason)

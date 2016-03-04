@@ -41,7 +41,7 @@ public:
     {
     }
 
-    virtual void paintToSurfaceContext(GraphicsContext& context) override
+    void paintToSurfaceContext(GraphicsContext& context) override
     {
         context.drawImage(m_image, m_rect, m_rect);
     }

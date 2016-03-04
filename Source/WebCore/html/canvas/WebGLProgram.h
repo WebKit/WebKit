@@ -63,10 +63,10 @@ public:
 protected:
     WebGLProgram(WebGLRenderingContextBase*);
 
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
 private:
-    virtual bool isProgram() const override { return true; }
+    bool isProgram() const override { return true; }
 
     void cacheActiveAttribLocations(GraphicsContext3D*);
     void cacheInfoIfNeeded();

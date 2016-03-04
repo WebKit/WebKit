@@ -42,11 +42,11 @@ private:
     explicit VisitedLinkTableController(uint64_t identifier);
 
     // WebCore::VisitedLinkStore.
-    virtual bool isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
-    virtual void addVisitedLink(WebCore::Page&, WebCore::LinkHash) override;
+    bool isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
+    void addVisitedLink(WebCore::Page&, WebCore::LinkHash) override;
 
     // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void setVisitedLinkTable(const SharedMemory::Handle&);
     void visitedLinkStateChanged(const Vector<WebCore::LinkHash>&);

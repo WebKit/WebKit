@@ -90,7 +90,7 @@ private:
         ASSERT(m_completionHandler);
     }
 
-    virtual void clearCompletionHandler() override
+    void clearCompletionHandler() override
     {
         m_completionHandler = nullptr;
     }

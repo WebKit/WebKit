@@ -46,11 +46,11 @@ public:
     static NotificationCenter* webkitNotifications(DOMWindow&);
     static DOMWindowNotifications* from(DOMWindow*);
 
-    virtual void disconnectFrameForDocumentSuspension() override;
-    virtual void reconnectFrameFromDocumentSuspension(Frame*) override;
-    virtual void willDestroyGlobalObjectInCachedFrame() override;
-    virtual void willDestroyGlobalObjectInFrame() override;
-    virtual void willDetachGlobalObjectFromFrame() override;
+    void disconnectFrameForDocumentSuspension() override;
+    void reconnectFrameFromDocumentSuspension(Frame*) override;
+    void willDestroyGlobalObjectInCachedFrame() override;
+    void willDestroyGlobalObjectInFrame() override;
+    void willDetachGlobalObjectFromFrame() override;
 
 private:
     NotificationCenter* webkitNotifications();

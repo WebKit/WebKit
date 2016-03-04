@@ -116,7 +116,7 @@ public:
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
     String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const;
-    virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const override;
+    WebCore::AudioHardwareActivityType audioHardwareActivity() const override;
 
 private:
     PluginView(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
@@ -153,90 +153,90 @@ private:
 
     // WebCore::PluginViewBase
 #if PLATFORM(COCOA)
-    virtual PlatformLayer* platformLayer() const override;
+    PlatformLayer* platformLayer() const override;
 #endif
-    virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*) override;
-    virtual void storageBlockingStateChanged() override;
-    virtual void privateBrowsingStateChanged(bool) override;
-    virtual bool getFormValue(String&) override;
-    virtual bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
-    virtual WebCore::Scrollbar* horizontalScrollbar() override;
-    virtual WebCore::Scrollbar* verticalScrollbar() override;
-    virtual bool wantsWheelEvents() override;
-    virtual bool shouldAlwaysAutoStart() const override;
-    virtual void beginSnapshottingRunningPlugin() override;
-    virtual bool shouldAllowNavigationFromDrags() const override;
-    virtual bool shouldNotAddLayer() const override;
-    virtual void willDetatchRenderer() override;
+    JSC::JSObject* scriptObject(JSC::JSGlobalObject*) override;
+    void storageBlockingStateChanged() override;
+    void privateBrowsingStateChanged(bool) override;
+    bool getFormValue(String&) override;
+    bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
+    WebCore::Scrollbar* horizontalScrollbar() override;
+    WebCore::Scrollbar* verticalScrollbar() override;
+    bool wantsWheelEvents() override;
+    bool shouldAlwaysAutoStart() const override;
+    void beginSnapshottingRunningPlugin() override;
+    bool shouldAllowNavigationFromDrags() const override;
+    bool shouldNotAddLayer() const override;
+    void willDetatchRenderer() override;
 
     // WebCore::Widget
-    virtual void setFrameRect(const WebCore::IntRect&) override;
-    virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) override;
-    virtual void invalidateRect(const WebCore::IntRect&) override;
-    virtual void setFocus(bool) override;
-    virtual void frameRectsChanged() override;
-    virtual void setParent(WebCore::ScrollView*) override;
-    virtual void handleEvent(WebCore::Event*) override;
-    virtual void notifyWidget(WebCore::WidgetNotification) override;
-    virtual void show() override;
-    virtual void hide() override;
-    virtual void setParentVisible(bool) override;
-    virtual bool transformsAffectFrameRect() override;
-    virtual void clipRectChanged() override;
+    void setFrameRect(const WebCore::IntRect&) override;
+    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) override;
+    void invalidateRect(const WebCore::IntRect&) override;
+    void setFocus(bool) override;
+    void frameRectsChanged() override;
+    void setParent(WebCore::ScrollView*) override;
+    void handleEvent(WebCore::Event*) override;
+    void notifyWidget(WebCore::WidgetNotification) override;
+    void show() override;
+    void hide() override;
+    void setParentVisible(bool) override;
+    bool transformsAffectFrameRect() override;
+    void clipRectChanged() override;
 
     // WebCore::MediaCanStartListener
-    virtual void mediaCanStart() override;
+    void mediaCanStart() override;
 
     // WebCore::MediaProducer
-    virtual MediaProducer::MediaStateFlags mediaState() const override { return m_pluginIsPlayingAudio ? MediaProducer::IsPlayingAudio : MediaProducer::IsNotPlaying; }
-    virtual void pageMutedStateDidChange() override;
+    MediaProducer::MediaStateFlags mediaState() const override { return m_pluginIsPlayingAudio ? MediaProducer::IsPlayingAudio : MediaProducer::IsNotPlaying; }
+    void pageMutedStateDidChange() override;
 
     // PluginController
-    virtual void invalidate(const WebCore::IntRect&) override;
-    virtual String userAgent() override;
-    virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
-    virtual void cancelStreamLoad(uint64_t streamID) override;
-    virtual void continueStreamLoad(uint64_t streamID) override;
-    virtual void cancelManualStreamLoad() override;
+    void invalidate(const WebCore::IntRect&) override;
+    String userAgent() override;
+    void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
+    void cancelStreamLoad(uint64_t streamID) override;
+    void continueStreamLoad(uint64_t streamID) override;
+    void cancelManualStreamLoad() override;
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual NPObject* windowScriptNPObject() override;
-    virtual NPObject* pluginElementNPObject() override;
-    virtual bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) override;
-    virtual void setPluginIsPlayingAudio(bool) override;
-    virtual bool isMuted() const override;
+    NPObject* windowScriptNPObject() override;
+    NPObject* pluginElementNPObject() override;
+    bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) override;
+    void setPluginIsPlayingAudio(bool) override;
+    bool isMuted() const override;
 #endif
-    virtual void setStatusbarText(const String&) override;
-    virtual bool isAcceleratedCompositingEnabled() override;
-    virtual void pluginProcessCrashed() override;
+    void setStatusbarText(const String&) override;
+    bool isAcceleratedCompositingEnabled() override;
+    void pluginProcessCrashed() override;
 #if PLATFORM(COCOA)
-    virtual void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus) override;
-    virtual void setComplexTextInputState(PluginComplexTextInputState) override;
-    virtual const WebCore::MachSendRight& compositingRenderServerPort() override;
+    void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus) override;
+    void setComplexTextInputState(PluginComplexTextInputState) override;
+    const WebCore::MachSendRight& compositingRenderServerPort() override;
 #endif
-    virtual float contentsScaleFactor() override;
-    virtual String proxiesForURL(const String&) override;
-    virtual String cookiesForURL(const String&) override;
-    virtual void setCookiesForURL(const String& urlString, const String& cookieString) override;
-    virtual bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password) override;
-    virtual bool isPrivateBrowsingEnabled() override;
-    virtual bool asynchronousPluginInitializationEnabled() const override;
-    virtual bool asynchronousPluginInitializationEnabledForAllPlugins() const override;
-    virtual bool artificialPluginInitializationDelayEnabled() const override;
-    virtual void protectPluginFromDestruction() override;
-    virtual void unprotectPluginFromDestruction() override;
+    float contentsScaleFactor() override;
+    String proxiesForURL(const String&) override;
+    String cookiesForURL(const String&) override;
+    void setCookiesForURL(const String& urlString, const String& cookieString) override;
+    bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password) override;
+    bool isPrivateBrowsingEnabled() override;
+    bool asynchronousPluginInitializationEnabled() const override;
+    bool asynchronousPluginInitializationEnabledForAllPlugins() const override;
+    bool artificialPluginInitializationDelayEnabled() const override;
+    void protectPluginFromDestruction() override;
+    void unprotectPluginFromDestruction() override;
 #if PLUGIN_ARCHITECTURE(X11)
-    virtual uint64_t createPluginContainer() override;
-    virtual void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID) override;
-    virtual void windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID) override;
+    uint64_t createPluginContainer() override;
+    void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID) override;
+    void windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID) override;
 #endif
 
-    virtual void didInitializePlugin() override;
-    virtual void didFailToInitializePlugin() override;
+    void didInitializePlugin() override;
+    void didFailToInitializePlugin() override;
     void destroyPluginAndReset();
 
     // WebFrame::LoadListener
-    virtual void didFinishLoad(WebFrame*) override;
-    virtual void didFailLoad(WebFrame*, bool wasCancelled) override;
+    void didFinishLoad(WebFrame*) override;
+    void didFailLoad(WebFrame*, bool wasCancelled) override;
 
     std::unique_ptr<WebEvent> createWebEvent(WebCore::MouseEvent*) const;
 

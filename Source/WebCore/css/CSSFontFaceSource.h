@@ -71,7 +71,7 @@ public:
 #endif
 
 private:
-    virtual void fontLoaded(CachedFont&) override;
+    void fontLoaded(CachedFont&) override;
 
     void setStatus(Status);
 

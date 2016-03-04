@@ -49,13 +49,13 @@ public:
     int movementY() const { return m_movementDelta.y(); }
 #endif
     const LayoutPoint& clientLocation() const { return m_clientLocation; }
-    virtual int layerX() override;
-    virtual int layerY() override;
+    int layerX() override;
+    int layerY() override;
     WEBCORE_EXPORT int offsetX();
     WEBCORE_EXPORT int offsetY();
     bool isSimulated() const { return m_isSimulated; }
-    virtual int pageX() const override final;
-    virtual int pageY() const override final;
+    int pageX() const override final;
+    int pageY() const override final;
     virtual const LayoutPoint& pageLocation() const;
     int x() const;
     int y() const;
@@ -77,7 +77,7 @@ protected:
 
     void initCoordinates();
     void initCoordinates(const LayoutPoint& clientLocation);
-    virtual void receivedTarget() override final;
+    void receivedTarget() override final;
 
     void computePageLocation();
     void computeRelativePosition();

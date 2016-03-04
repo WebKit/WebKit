@@ -42,7 +42,7 @@ public:
     void install();
 
 protected:
-    virtual void fireInternal(const FireDetail&) override;
+    void fireInternal(const FireDetail&) override;
 
 private:
     ObjectPropertyCondition m_key;

@@ -45,7 +45,7 @@ public:
 
     void startSweeping();
 
-    JS_EXPORT_PRIVATE virtual void doWork() override;
+    JS_EXPORT_PRIVATE void doWork() override;
     bool sweepNextBlock();
     void willFinishSweeping();
 

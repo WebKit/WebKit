@@ -43,7 +43,7 @@ public:
         return adoptRef(*new NativeNodeFilter());
     }
 
-    virtual uint16_t acceptNode(Node*) override;
+    uint16_t acceptNode(Node*) override;
 
     void setCondition(RefPtr<NodeFilterCondition>&& condition) { ASSERT(!m_condition); m_condition = condition; }
 

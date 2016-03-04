@@ -53,7 +53,7 @@ public:
 
     Gamepad* gamepad() const { return m_gamepad.get(); }
 
-    virtual EventInterface eventInterface() const override { return GamepadEventInterfaceType; }
+    EventInterface eventInterface() const override { return GamepadEventInterfaceType; }
 
 private:
     explicit GamepadEvent(const AtomicString& eventType, Gamepad&);

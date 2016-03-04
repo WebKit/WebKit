@@ -37,25 +37,25 @@ public:
     KeyedEncoderCF();
     ~KeyedEncoderCF();
 
-    virtual PassRefPtr<WebCore::SharedBuffer> finishEncoding() override;
+    PassRefPtr<WebCore::SharedBuffer> finishEncoding() override;
 
 private:
-    virtual void encodeBytes(const String& key, const uint8_t*, size_t) override;
-    virtual void encodeBool(const String& key, bool) override;
-    virtual void encodeUInt32(const String& key, uint32_t) override;
-    virtual void encodeInt32(const String& key, int32_t) override;
-    virtual void encodeInt64(const String& key, int64_t) override;
-    virtual void encodeFloat(const String& key, float) override;
-    virtual void encodeDouble(const String& key, double) override;
-    virtual void encodeString(const String& key, const String&) override;
+    void encodeBytes(const String& key, const uint8_t*, size_t) override;
+    void encodeBool(const String& key, bool) override;
+    void encodeUInt32(const String& key, uint32_t) override;
+    void encodeInt32(const String& key, int32_t) override;
+    void encodeInt64(const String& key, int64_t) override;
+    void encodeFloat(const String& key, float) override;
+    void encodeDouble(const String& key, double) override;
+    void encodeString(const String& key, const String&) override;
 
-    virtual void beginObject(const String& key) override;
-    virtual void endObject() override;
+    void beginObject(const String& key) override;
+    void endObject() override;
 
-    virtual void beginArray(const String& key) override;
-    virtual void beginArrayElement() override;
-    virtual void endArrayElement() override;
-    virtual void endArray() override;
+    void beginArray(const String& key) override;
+    void beginArrayElement() override;
+    void endArrayElement() override;
+    void endArray() override;
 
     RetainPtr<CFMutableDictionaryRef> m_rootDictionary;
 

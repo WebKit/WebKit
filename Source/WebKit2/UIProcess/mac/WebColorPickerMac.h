@@ -62,9 +62,9 @@ public:
     static Ref<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, NSView*);
     ~WebColorPickerMac();
 
-    virtual void endPicker() override;
-    virtual void setSelectedColor(const WebCore::Color&) override;
-    virtual void showColorPicker(const WebCore::Color&) override;
+    void endPicker() override;
+    void setSelectedColor(const WebCore::Color&) override;
+    void showColorPicker(const WebCore::Color&) override;
     
     void didChooseColor(const WebCore::Color&);
 

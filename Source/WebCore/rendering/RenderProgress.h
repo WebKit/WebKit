@@ -37,15 +37,15 @@ public:
     double animationStartTime() const { return m_animationStartTime; }
 
     bool isDeterminate() const;
-    virtual void updateFromElement() override;
+    void updateFromElement() override;
 
     HTMLProgressElement* progressElement() const;
 
 private:
-    virtual const char* renderName() const override { return "RenderProgress"; }
-    virtual bool isProgress() const override { return true; }
-    virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    const char* renderName() const override { return "RenderProgress"; }
+    bool isProgress() const override { return true; }
+    bool requiresForcedStyleRecalcPropagation() const override { return true; }
+    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
     void animationTimerFired();
     void updateAnimationState();

@@ -48,7 +48,7 @@ public:
     bool webkitSupportsFullscreen();
     bool webkitDisplayingFullscreen();
 
-    virtual void ancestorWillEnterFullscreen() override;
+    void ancestorWillEnterFullscreen() override;
     
     // FIXME: Maintain "FullScreen" capitalization scheme for backwards compatibility.
     // https://bugs.webkit.org/show_bug.cgi?id=36081
@@ -78,14 +78,14 @@ public:
     bool shouldDisplayPosterImage() const { return displayMode() == Poster || displayMode() == PosterWaitingForVideo; }
 
     URL posterImageURL() const;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool webkitSupportsPresentationMode(const String&) const;
     void webkitSetPresentationMode(const String&);
     String webkitPresentationMode() const;
     void setFullscreenMode(VideoFullscreenMode);
-    virtual void fullscreenModeChanged(VideoFullscreenMode) override;
+    void fullscreenModeChanged(VideoFullscreenMode) override;
 #endif
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -95,25 +95,25 @@ public:
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool);
 
-    virtual void scheduleResizeEvent() override;
-    virtual void scheduleResizeEventIfSizeChanged() override;
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual void didAttachRenderers() override;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool isPresentationAttribute(const QualifiedName&) const override;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
-    virtual bool isVideo() const override { return true; }
-    virtual bool hasVideo() const override { return player() && player()->hasVideo(); }
-    virtual bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const override;
-    virtual bool isURLAttribute(const Attribute&) const override;
-    virtual const AtomicString& imageSourceURL() const override;
+    void scheduleResizeEvent() override;
+    void scheduleResizeEventIfSizeChanged() override;
+    bool rendererIsNeeded(const RenderStyle&) override;
+    void didAttachRenderers() override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool isPresentationAttribute(const QualifiedName&) const override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    bool isVideo() const override { return true; }
+    bool hasVideo() const override { return player() && player()->hasVideo(); }
+    bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const override;
+    bool isURLAttribute(const Attribute&) const override;
+    const AtomicString& imageSourceURL() const override;
 
     bool hasAvailableVideoFrame() const;
-    virtual void updateDisplayState() override;
-    virtual void didMoveToNewDocument(Document* oldDocument) override;
-    virtual void setDisplayMode(DisplayMode) override;
+    void updateDisplayState() override;
+    void didMoveToNewDocument(Document* oldDocument) override;
+    void setDisplayMode(DisplayMode) override;
 
-    virtual PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::Video; }
+    PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::Video; }
 
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
 

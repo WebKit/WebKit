@@ -170,7 +170,7 @@ protected:
 class CommandDomainBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<CommandDomainBackendDispatcher> create(BackendDispatcher&, CommandDomainBackendDispatcherHandler*);
-    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
     void commandWithEnumReturnValue(long requestId, RefPtr<InspectorObject>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -589,7 +589,7 @@ namespace Inspector {
 class ObjCInspectorCommandDomainBackendDispatcher final : public AlternateCommandDomainBackendDispatcher {
 public:
     ObjCInspectorCommandDomainBackendDispatcher(id<TestProtocolCommandDomainDomainHandler> handler) { m_delegate = handler; }
-    virtual void commandWithEnumReturnValue(long requestId) override;
+    void commandWithEnumReturnValue(long requestId) override;
 private:
     RetainPtr<id<TestProtocolCommandDomainDomainHandler>> m_delegate;
 };

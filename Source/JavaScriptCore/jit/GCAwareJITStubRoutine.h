@@ -63,7 +63,7 @@ public:
     void deleteFromGC();
     
 protected:
-    virtual void observeZeroRefCount() override;
+    void observeZeroRefCount() override;
     
     virtual void markRequiredObjectsInternal(SlotVisitor&);
 
@@ -83,7 +83,7 @@ public:
     virtual ~MarkingGCAwareJITStubRoutineWithOneObject();
     
 protected:
-    virtual void markRequiredObjectsInternal(SlotVisitor&) override;
+    void markRequiredObjectsInternal(SlotVisitor&) override;
 
 private:
     WriteBarrier<JSCell> m_object;

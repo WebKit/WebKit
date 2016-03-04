@@ -49,7 +49,7 @@ public:
     WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> createFromSelection(Frame*);
     WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(Range*);
 
-    virtual Type type() const override;
+    Type type() const override;
 
     WEBCORE_EXPORT RetainPtr<CFDataRef> rawDataRepresentation();
 

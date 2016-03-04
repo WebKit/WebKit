@@ -86,7 +86,7 @@ public:
     unsigned takeOffsetAfterLastTypedCharacter();
 
 private:
-    virtual void fired() override;
+    void fired() override;
     RenderText& m_renderer;
     unsigned m_offsetAfterLastTypedCharacter { 0 };
 };

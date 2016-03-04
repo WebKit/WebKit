@@ -166,7 +166,7 @@ protected:
 class Network1BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<Network1BackendDispatcher> create(BackendDispatcher&, Network1BackendDispatcherHandler*);
-    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
     void loadResource(long requestId, RefPtr<InspectorObject>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -632,7 +632,7 @@ namespace Inspector {
 class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1BackendDispatcher {
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<TestProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
-    virtual void loadResource(long requestId) override;
+    void loadResource(long requestId) override;
 private:
     RetainPtr<id<TestProtocolNetwork1DomainHandler>> m_delegate;
 };

@@ -50,14 +50,14 @@ public:
     bool setScale(float);
 
     void setResultColorSpace(ColorSpace) override;
-    virtual void transformResultColorSpace(FilterEffect*, const int) override;
+    void transformResultColorSpace(FilterEffect*, const int) override;
 
-    virtual void platformApplySoftware() override;
-    virtual void dump() override;
+    void platformApplySoftware() override;
+    void dump() override;
 
-    virtual void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
-    virtual TextStream& externalRepresentation(TextStream&, int indention) const override;
+    TextStream& externalRepresentation(TextStream&, int indention) const override;
 
 private:
     FEDisplacementMap(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);

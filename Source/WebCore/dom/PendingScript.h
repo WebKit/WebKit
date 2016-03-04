@@ -93,7 +93,7 @@ public:
     CachedScript* cachedScript() const;
     void setCachedScript(CachedScript*);
 
-    virtual void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource*) override;
 
 private:
     bool m_watchingForLoad;

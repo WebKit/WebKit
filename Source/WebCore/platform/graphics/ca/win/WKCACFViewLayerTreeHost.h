@@ -54,7 +54,7 @@ private:
     virtual CFTimeInterval lastCommitTime() const;
     virtual void setShouldInvertColors(bool);
 #if USE(AVFOUNDATION)
-    virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const override;
+    GraphicsDeviceAdapter* graphicsDeviceAdapter() const override;
 #endif
 
     RetainPtr<WKCACFViewRef> m_view;

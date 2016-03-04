@@ -74,8 +74,8 @@ public:
     void stop();
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const override { return RTCDataChannelEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override { return m_scriptExecutionContext; }
+    EventTargetInterface eventTargetInterface() const override { return RTCDataChannelEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return m_scriptExecutionContext; }
 
     using RefCounted<RTCDataChannel>::ref;
     using RefCounted<RTCDataChannel>::deref;
@@ -87,16 +87,16 @@ private:
     void scheduledEventTimerFired();
 
     // EventTarget
-    virtual void refEventTarget() override { ref(); }
-    virtual void derefEventTarget() override { deref(); }
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
 
     ScriptExecutionContext* m_scriptExecutionContext;
 
     // RTCDataChannelHandlerClient
-    virtual void didChangeReadyState(ReadyState) override;
-    virtual void didReceiveStringData(const String&) override;
-    virtual void didReceiveRawData(const char*, size_t) override;
-    virtual void didDetectError() override;
+    void didChangeReadyState(ReadyState) override;
+    void didReceiveStringData(const String&) override;
+    void didReceiveRawData(const char*, size_t) override;
+    void didDetectError() override;
 
     std::unique_ptr<RTCDataChannelHandler> m_handler;
 

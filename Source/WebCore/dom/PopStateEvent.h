@@ -53,7 +53,7 @@ public:
     const Deprecated::ScriptValue& state() const { return m_state; }
     History* history() const { return m_history.get(); }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
 private:
     PopStateEvent(const AtomicString&, const PopStateEventInit&);

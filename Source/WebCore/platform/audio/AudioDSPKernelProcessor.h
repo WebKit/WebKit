@@ -55,15 +55,15 @@ public:
     virtual std::unique_ptr<AudioDSPKernel> createKernel() = 0;
 
     // AudioProcessor methods
-    virtual void initialize() override;
-    virtual void uninitialize() override;
-    virtual void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess) override;
-    virtual void reset() override;
-    virtual void setNumberOfChannels(unsigned) override;
-    virtual unsigned numberOfChannels() const override { return m_numberOfChannels; }
+    void initialize() override;
+    void uninitialize() override;
+    void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess) override;
+    void reset() override;
+    void setNumberOfChannels(unsigned) override;
+    unsigned numberOfChannels() const override { return m_numberOfChannels; }
 
-    virtual double tailTime() const override;
-    virtual double latencyTime() const override;
+    double tailTime() const override;
+    double latencyTime() const override;
 
 protected:
     Vector<std::unique_ptr<AudioDSPKernel>> m_kernels;

@@ -446,18 +446,18 @@ private:
     {
     }
 
-    virtual MediaTime presentationTime() const override { return toMediaTime(CMSampleBufferGetPresentationTimeStamp(m_sample.get())); }
-    virtual MediaTime decodeTime() const override { return toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get())); }
-    virtual MediaTime duration() const override { return toMediaTime(CMSampleBufferGetDuration(m_sample.get())); }
-    virtual AtomicString trackID() const override { return m_id; }
-    virtual size_t sizeInBytes() const override { return CMSampleBufferGetTotalSampleSize(m_sample.get()); }
-    virtual FloatSize presentationSize() const override;
+    MediaTime presentationTime() const override { return toMediaTime(CMSampleBufferGetPresentationTimeStamp(m_sample.get())); }
+    MediaTime decodeTime() const override { return toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get())); }
+    MediaTime duration() const override { return toMediaTime(CMSampleBufferGetDuration(m_sample.get())); }
+    AtomicString trackID() const override { return m_id; }
+    size_t sizeInBytes() const override { return CMSampleBufferGetTotalSampleSize(m_sample.get()); }
+    FloatSize presentationSize() const override;
 
-    virtual SampleFlags flags() const override;
-    virtual PlatformSample platformSample() override;
-    virtual void dump(PrintStream&) const override;
-    virtual void offsetTimestampsBy(const MediaTime&) override;
-    virtual void setTimestamps(const MediaTime&, const MediaTime&) override;
+    SampleFlags flags() const override;
+    PlatformSample platformSample() override;
+    void dump(PrintStream&) const override;
+    void offsetTimestampsBy(const MediaTime&) override;
+    void setTimestamps(const MediaTime&, const MediaTime&) override;
 
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomicString m_id;
@@ -561,10 +561,10 @@ public:
     static RefPtr<MediaDescriptionAVFObjC> create(AVAssetTrack* track) { return adoptRef(new MediaDescriptionAVFObjC(track)); }
     virtual ~MediaDescriptionAVFObjC() { }
 
-    virtual AtomicString codec() const override { return m_codec; }
-    virtual bool isVideo() const override { return m_isVideo; }
-    virtual bool isAudio() const override { return m_isAudio; }
-    virtual bool isText() const override { return m_isText; }
+    AtomicString codec() const override { return m_codec; }
+    bool isVideo() const override { return m_isVideo; }
+    bool isAudio() const override { return m_isAudio; }
+    bool isText() const override { return m_isText; }
     
 protected:
     MediaDescriptionAVFObjC(AVAssetTrack* track)

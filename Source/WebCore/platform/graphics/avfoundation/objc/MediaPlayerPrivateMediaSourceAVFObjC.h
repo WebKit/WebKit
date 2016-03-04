@@ -70,8 +70,8 @@ public:
     void addAudioRenderer(AVSampleBufferAudioRenderer*);
     void removeAudioRenderer(AVSampleBufferAudioRenderer*);
 
-    virtual MediaPlayer::NetworkState networkState() const override;
-    virtual MediaPlayer::ReadyState readyState() const override;
+    MediaPlayer::NetworkState networkState() const override;
+    MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
@@ -87,14 +87,14 @@ public:
     void characteristicsChanged();
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    virtual void setVideoFullscreenLayer(PlatformLayer*) override;
-    virtual void setVideoFullscreenFrame(FloatRect) override;
+    void setVideoFullscreenLayer(PlatformLayer*) override;
+    void setVideoFullscreenFrame(FloatRect) override;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     bool hasStreamSession() { return m_streamSession; }
     AVStreamSession *streamSession();
-    virtual void setCDMSession(CDMSession*) override;
+    void setCDMSession(CDMSession*) override;
     CDMSessionMediaSourceAVFObjC* cdmSession() const { return m_session; }
     void keyNeeded(Uint8Array*);
 #endif
@@ -103,88 +103,88 @@ public:
 
 private:
     // MediaPlayerPrivateInterface
-    virtual void load(const String& url) override;
-    virtual void load(const String& url, MediaSourcePrivateClient*) override;
+    void load(const String& url) override;
+    void load(const String& url, MediaSourcePrivateClient*) override;
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override;
 #endif
-    virtual void cancelLoad() override;
+    void cancelLoad() override;
 
-    virtual void prepareToPlay() override;
-    virtual PlatformMedia platformMedia() const override;
-    virtual PlatformLayer* platformLayer() const override;
+    void prepareToPlay() override;
+    PlatformMedia platformMedia() const override;
+    PlatformLayer* platformLayer() const override;
 
-    virtual bool supportsFullscreen() const override { return true; }
+    bool supportsFullscreen() const override { return true; }
 
-    virtual void play() override;
+    void play() override;
     void playInternal();
 
-    virtual void pause() override;
+    void pause() override;
     void pauseInternal();
 
-    virtual bool paused() const override;
+    bool paused() const override;
 
-    virtual void setVolume(float volume) override;
-    virtual bool supportsMuting() const override { return true; }
-    virtual void setMuted(bool) override;
+    void setVolume(float volume) override;
+    bool supportsMuting() const override { return true; }
+    void setMuted(bool) override;
 
-    virtual bool supportsScanning() const override;
+    bool supportsScanning() const override;
 
-    virtual FloatSize naturalSize() const override;
+    FloatSize naturalSize() const override;
 
-    virtual bool hasVideo() const override;
-    virtual bool hasAudio() const override;
+    bool hasVideo() const override;
+    bool hasAudio() const override;
 
-    virtual void setVisible(bool) override;
+    void setVisible(bool) override;
 
-    virtual MediaTime durationMediaTime() const override;
-    virtual MediaTime currentMediaTime() const override;
-    virtual MediaTime startTime() const override;
-    virtual MediaTime initialTime() const override;
+    MediaTime durationMediaTime() const override;
+    MediaTime currentMediaTime() const override;
+    MediaTime startTime() const override;
+    MediaTime initialTime() const override;
 
-    virtual void seekWithTolerance(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) override;
-    virtual bool seeking() const override;
-    virtual void setRateDouble(double) override;
+    void seekWithTolerance(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) override;
+    bool seeking() const override;
+    void setRateDouble(double) override;
 
     void setPreservesPitch(bool) override;
 
-    virtual std::unique_ptr<PlatformTimeRanges> seekable() const override;
-    virtual MediaTime maxMediaTimeSeekable() const override;
-    virtual MediaTime minMediaTimeSeekable() const override;
-    virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    std::unique_ptr<PlatformTimeRanges> seekable() const override;
+    MediaTime maxMediaTimeSeekable() const override;
+    MediaTime minMediaTimeSeekable() const override;
+    std::unique_ptr<PlatformTimeRanges> buffered() const override;
 
-    virtual bool didLoadingProgress() const override;
+    bool didLoadingProgress() const override;
 
-    virtual void setSize(const IntSize&) override;
+    void setSize(const IntSize&) override;
 
-    virtual void paint(GraphicsContext&, const FloatRect&) override;
-    virtual void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
+    void paint(GraphicsContext&, const FloatRect&) override;
+    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
 
-    virtual bool hasAvailableVideoFrame() const override;
+    bool hasAvailableVideoFrame() const override;
 
-    virtual bool supportsAcceleratedRendering() const override;
+    bool supportsAcceleratedRendering() const override;
     // called when the rendering system flips the into or out of accelerated rendering mode.
-    virtual void acceleratedRenderingStateChanged() override;
+    void acceleratedRenderingStateChanged() override;
 
-    virtual MediaPlayer::MovieLoadType movieLoadType() const override;
+    MediaPlayer::MovieLoadType movieLoadType() const override;
 
-    virtual void prepareForRendering() override;
+    void prepareForRendering() override;
 
-    virtual String engineDescription() const override;
+    String engineDescription() const override;
 
-    virtual String languageOfPrimaryAudioTrack() const override;
+    String languageOfPrimaryAudioTrack() const override;
 
-    virtual size_t extraMemoryCost() const override;
+    size_t extraMemoryCost() const override;
 
-    virtual unsigned long totalVideoFrames() override;
-    virtual unsigned long droppedVideoFrames() override;
-    virtual unsigned long corruptedVideoFrames() override;
-    virtual MediaTime totalFrameDelay() override;
+    unsigned long totalVideoFrames() override;
+    unsigned long droppedVideoFrames() override;
+    unsigned long corruptedVideoFrames() override;
+    MediaTime totalFrameDelay() override;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    virtual bool isCurrentPlaybackTargetWireless() const override;
-    virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
-    virtual void setShouldPlayToPlaybackTarget(bool) override;
+    bool isCurrentPlaybackTargetWireless() const override;
+    void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
+    void setShouldPlayToPlaybackTarget(bool) override;
     bool wirelessVideoPlaybackDisabled() const override { return false; }
 #endif
 

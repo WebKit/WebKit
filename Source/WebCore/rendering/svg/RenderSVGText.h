@@ -39,12 +39,12 @@ public:
 
     SVGTextElement& textElement() const;
 
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
     void setNeedsPositioningValuesUpdate() { m_needsPositioningValuesUpdate = true; }
-    virtual void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
+    void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
     void setNeedsTextMetricsUpdate() { m_needsTextMetricsUpdate = true; }
-    virtual FloatRect repaintRectInLocalCoordinates() const override;
+    FloatRect repaintRectInLocalCoordinates() const override;
 
     static RenderSVGText* locateRenderSVGTextAncestor(RenderObject&);
     static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject&);
@@ -58,41 +58,41 @@ public:
     void subtreeStyleDidChange(RenderSVGInlineText*);
     void subtreeTextDidChange(RenderSVGInlineText*);
 
-    virtual FloatRect objectBoundingBox() const override { return frameRect(); }
-    virtual FloatRect strokeBoundingBox() const override;
+    FloatRect objectBoundingBox() const override { return frameRect(); }
+    FloatRect strokeBoundingBox() const override;
 
 private:
     void graphicsElement() const = delete;
 
-    virtual const char* renderName() const override { return "RenderSVGText"; }
-    virtual bool isSVGText() const override { return true; }
+    const char* renderName() const override { return "RenderSVGText"; }
+    bool isSVGText() const override { return true; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
-    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
-    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
+    void paint(PaintInfo&, const LayoutPoint&) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
-    virtual bool requiresLayer() const override { return false; }
-    virtual void layout() override;
+    bool requiresLayer() const override { return false; }
+    void layout() override;
 
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
+    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
-    virtual LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const override;
-    virtual FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const override;
+    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
+    LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const override;
+    FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const override;
 
-    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
-    virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = nullptr) override;
-    virtual void removeChild(RenderObject&) override;
-    virtual void willBeDestroyed() override;
+    void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
+    const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
+    void addChild(RenderObject* child, RenderObject* beforeChild = nullptr) override;
+    void removeChild(RenderObject&) override;
+    void willBeDestroyed() override;
 
-    virtual const AffineTransform& localToParentTransform() const override { return m_localTransform; }
-    virtual AffineTransform localTransform() const override { return m_localTransform; }
-    virtual std::unique_ptr<RootInlineBox> createRootInlineBox() override;
+    const AffineTransform& localToParentTransform() const override { return m_localTransform; }
+    AffineTransform localTransform() const override { return m_localTransform; }
+    std::unique_ptr<RootInlineBox> createRootInlineBox() override;
 
-    virtual RenderBlock* firstLineBlock() const override;
-    virtual void updateFirstLetter() override;
+    RenderBlock* firstLineBlock() const override;
+    void updateFirstLetter() override;
 
     bool shouldHandleSubtreeMutations() const;
 

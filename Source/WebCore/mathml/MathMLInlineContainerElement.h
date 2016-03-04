@@ -36,14 +36,14 @@ class MathMLInlineContainerElement : public MathMLElement {
 public:
     static Ref<MathMLInlineContainerElement> create(const QualifiedName& tagName, Document&);
 
-    virtual bool isPresentationMathML() const override { return true; }
+    bool isPresentationMathML() const override { return true; }
 
 protected:
     MathMLInlineContainerElement(const QualifiedName& tagName, Document&);
-    virtual void childrenChanged(const ChildChange&) override;
+    void childrenChanged(const ChildChange&) override;
 
 private:
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 };
     
 }

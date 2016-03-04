@@ -80,13 +80,13 @@ public:
     void invalidateCueIndex();
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(Event&) override;
+    bool dispatchEvent(Event&) override;
 
     bool isActive();
     virtual void setIsActive(bool);
 
-    virtual EventTargetInterface eventTargetInterface() const override final { return TextTrackCueEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return &m_scriptExecutionContext; }
+    EventTargetInterface eventTargetInterface() const override final { return TextTrackCueEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override final { return &m_scriptExecutionContext; }
 
     virtual bool isOrderedBefore(const TextTrackCue*) const;
     virtual bool isPositionedAbove(const TextTrackCue* cue) const { return isOrderedBefore(cue); }
@@ -122,8 +122,8 @@ protected:
 
 private:
 
-    virtual void refEventTarget() override final { ref(); }
-    virtual void derefEventTarget() override final { deref(); }
+    void refEventTarget() override final { ref(); }
+    void derefEventTarget() override final { deref(); }
 
     String m_id;
     MediaTime m_startTime;

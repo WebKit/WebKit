@@ -49,7 +49,7 @@ public:
     
     RenderPtr<RenderText> createTextRenderer(const RenderStyle&);
     
-    virtual bool canContainRangeEndPoint() const override final { return true; }
+    bool canContainRangeEndPoint() const override final { return true; }
 
     RenderText* renderer() const;
 
@@ -60,15 +60,15 @@ protected:
     }
 
 private:
-    virtual String nodeName() const override;
-    virtual NodeType nodeType() const override;
-    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
-    virtual bool childTypeAllowed(NodeType) const override;
+    String nodeName() const override;
+    NodeType nodeType() const override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    bool childTypeAllowed(NodeType) const override;
 
     virtual Ref<Text> virtualCreate(const String&);
 
 #if ENABLE(TREE_DEBUGGING)
-    virtual void formatForDebugger(char* buffer, unsigned length) const override;
+    void formatForDebugger(char* buffer, unsigned length) const override;
 #endif
 };
 

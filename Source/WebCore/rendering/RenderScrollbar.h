@@ -55,7 +55,7 @@ public:
 
     int minimumThumbLength();
 
-    virtual bool isOverlayScrollbar() const override { return false; }
+    bool isOverlayScrollbar() const override { return false; }
 
     float opacity();
 
@@ -64,15 +64,15 @@ public:
 private:
     RenderScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, Frame*);
 
-    virtual void setParent(ScrollView*) override;
-    virtual void setEnabled(bool) override;
+    void setParent(ScrollView*) override;
+    void setEnabled(bool) override;
 
-    virtual void paint(GraphicsContext&, const IntRect& damageRect) override;
+    void paint(GraphicsContext&, const IntRect& damageRect) override;
 
-    virtual void setHoveredPart(ScrollbarPart) override;
-    virtual void setPressedPart(ScrollbarPart) override;
+    void setHoveredPart(ScrollbarPart) override;
+    void setPressedPart(ScrollbarPart) override;
 
-    virtual void styleChanged() override;
+    void styleChanged() override;
 
     void updateScrollbarParts();
 

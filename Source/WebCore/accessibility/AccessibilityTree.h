@@ -41,8 +41,8 @@ public:
 
 private:
     explicit AccessibilityTree(RenderObject*);
-    virtual bool computeAccessibilityIsIgnored() const override;
-    virtual AccessibilityRole determineAccessibilityRole() override;
+    bool computeAccessibilityIsIgnored() const override;
+    AccessibilityRole determineAccessibilityRole() override;
     bool isTreeValid() const;
 };
     

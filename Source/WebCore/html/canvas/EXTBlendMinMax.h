@@ -35,7 +35,7 @@ public:
     explicit EXTBlendMinMax(WebGLRenderingContextBase*);
     virtual ~EXTBlendMinMax();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

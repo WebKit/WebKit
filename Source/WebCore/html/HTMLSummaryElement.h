@@ -32,22 +32,22 @@ public:
     static Ref<HTMLSummaryElement> create(const QualifiedName&, Document&);
 
     bool isActiveSummary() const;
-    virtual bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() override;
 
 private:
     HTMLSummaryElement(const QualifiedName&, Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual void defaultEventHandler(Event*) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    void defaultEventHandler(Event*) override;
 
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
+    void didAddUserAgentShadowRoot(ShadowRoot*) override;
 
     // FIXME: Shadow DOM spec says we should be able to create shadow root on this element
-    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+    bool canHaveUserAgentShadowRoot() const override final { return true; }
 
     HTMLDetailsElement* detailsElement() const;
 
-    virtual bool supportsFocus() const override;
+    bool supportsFocus() const override;
 };
 
 }

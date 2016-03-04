@@ -42,28 +42,28 @@ public:
     RenderFlexibleBox(Document&, Ref<RenderStyle>&&);
     virtual ~RenderFlexibleBox();
 
-    virtual const char* renderName() const override;
+    const char* renderName() const override;
 
-    virtual bool avoidsFloats() const override final { return true; }
-    virtual bool canDropAnonymousBlockChild() const override final { return false; }
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override final;
+    bool avoidsFloats() const override final { return true; }
+    bool canDropAnonymousBlockChild() const override final { return false; }
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override final;
 
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
-    virtual Optional<int> firstLineBaseline() const override;
-    virtual Optional<int> inlineBlockBaseline(LineDirectionMode) const override;
+    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
+    Optional<int> firstLineBaseline() const override;
+    Optional<int> inlineBlockBaseline(LineDirectionMode) const override;
 
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
+    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
 
     bool isHorizontalFlow() const;
 
-    virtual bool isTopLayoutOverflowAllowed() const override;
-    virtual bool isLeftLayoutOverflowAllowed() const override;
+    bool isTopLayoutOverflowAllowed() const override;
+    bool isLeftLayoutOverflowAllowed() const override;
 
 protected:
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
-    virtual void computePreferredLogicalWidths() override;
+    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    void computePreferredLogicalWidths() override;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
     enum FlexSign {
@@ -85,7 +85,7 @@ private:
     // Use an inline capacity of 8, since flexbox containers usually have less than 8 children.
     typedef Vector<LayoutRect, 8> ChildFrameRects;
 
-    virtual bool isFlexibleBox() const override final { return true; }
+    bool isFlexibleBox() const override final { return true; }
     bool hasOrthogonalFlow(RenderBox& child) const;
     bool isColumnFlow() const;
     bool isLeftToRightFlow() const;

@@ -55,12 +55,12 @@ private:
     
     static PassRefPtr<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
-    virtual bool installReplacement(ShadowRoot*) override;
+    bool installReplacement(ShadowRoot*) override;
     
     String youTubeURL(const String& rawURL);
     
-    virtual bool willCreateRenderer() override { return m_embedShadowElement; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool willCreateRenderer() override { return m_embedShadowElement; }
+    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) override;
     
     HTMLPlugInElement* m_parentElement;
     RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;

@@ -55,8 +55,8 @@ public:
 
     virtual ~MediaRemoteControls();
 
-    virtual EventTargetInterface eventTargetInterface() const override { return MediaRemoteControlsEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override { return &m_scriptExecutionContext; }
+    EventTargetInterface eventTargetInterface() const override { return MediaRemoteControlsEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return &m_scriptExecutionContext; }
 
 private:
     MediaRemoteControls(ScriptExecutionContext&, MediaSession*);
@@ -68,8 +68,8 @@ private:
 
     MediaSession* m_session { nullptr };
 
-    virtual void refEventTarget() override final { ref(); }
-    virtual void derefEventTarget() override final { deref(); }
+    void refEventTarget() override final { ref(); }
+    void derefEventTarget() override final { deref(); }
 };
 
 } // namespace WebCore

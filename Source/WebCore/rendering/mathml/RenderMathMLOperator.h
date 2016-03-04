@@ -52,20 +52,20 @@ public:
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp); }
     bool isVertical() const { return m_isVertical; }
 
-    virtual void updateStyle() override final;
+    void updateStyle() override final;
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    void paint(PaintInfo&, const LayoutPoint&) override;
 
     void updateTokenContent(const String& operatorString);
-    virtual void updateTokenContent() override final;
+    void updateTokenContent() override final;
     void updateOperatorProperties();
     void setOperatorFlagAndScheduleLayoutIfNeeded(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
     LayoutUnit trailingSpaceError();
 
 protected:
     virtual void setOperatorProperties();
-    virtual void computePreferredLogicalWidths() override;
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    void computePreferredLogicalWidths() override;
+    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
     float advanceForGlyph(const GlyphData&) const;
     void setLeadingSpace(LayoutUnit leadingSpace) { m_leadingSpace = leadingSpace; }
     void setTrailingSpace(LayoutUnit trailingSpace) { m_trailingSpace = trailingSpace; }
@@ -127,17 +127,17 @@ private:
         GlyphData m_data[4];
     };
 
-    virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
-    virtual bool isRenderMathMLOperator() const override { return true; }
+    const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
+    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
+    bool isRenderMathMLOperator() const override { return true; }
     // The following operators are invisible: U+2061 FUNCTION APPLICATION, U+2062 INVISIBLE TIMES, U+2063 INVISIBLE SEPARATOR, U+2064 INVISIBLE PLUS.
     bool isInvisibleOperator() const { return 0x2061 <= m_textContent && m_textContent <= 0x2064; }
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
-    virtual Optional<int> firstLineBaseline() const override;
-    virtual RenderMathMLOperator* unembellishedOperator() override { return this; }
+    Optional<int> firstLineBaseline() const override;
+    RenderMathMLOperator* unembellishedOperator() override { return this; }
     void rebuildTokenContent(const String& operatorString);
-    virtual void updateFromElement() override;
+    void updateFromElement() override;
 
     bool shouldAllowStretching() const;
 

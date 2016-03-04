@@ -39,8 +39,8 @@ private:
     {
     }
 
-    virtual unsigned short pathSegType() const override { return PATHSEG_CURVETO_CUBIC_SMOOTH_REL; }
-    virtual String pathSegTypeAsLetter() const override { return "s"; }
+    unsigned short pathSegType() const override { return PATHSEG_CURVETO_CUBIC_SMOOTH_REL; }
+    String pathSegTypeAsLetter() const override { return "s"; }
 };
 
 } // namespace WebCore

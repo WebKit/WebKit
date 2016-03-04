@@ -92,8 +92,8 @@ public:
     void removeObserver(Observer*);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const override final { return MediaStreamTrackEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
+    EventTargetInterface eventTargetInterface() const override final { return MediaStreamTrackEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
 
     using RefCounted<MediaStreamTrack>::ref;
     using RefCounted<MediaStreamTrack>::deref;
@@ -110,8 +110,8 @@ private:
     bool canSuspendForDocumentSuspension() const override final;
 
     // EventTarget
-    virtual void refEventTarget() override final { ref(); }
-    virtual void derefEventTarget() override final { deref(); }
+    void refEventTarget() override final { ref(); }
+    void derefEventTarget() override final { deref(); }
 
     // MediaStreamTrackPrivate::Observer
     void trackEnded(MediaStreamTrackPrivate&) override;

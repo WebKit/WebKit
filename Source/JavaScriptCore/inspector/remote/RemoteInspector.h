@@ -104,9 +104,9 @@ private:
 
     void sendAutomaticInspectionCandidateMessage();
 
-    virtual void xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo) override;
-    virtual void xpcConnectionFailed(RemoteInspectorXPCConnection*) override;
-    virtual void xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection*, xpc_object_t) override;
+    void xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo) override;
+    void xpcConnectionFailed(RemoteInspectorXPCConnection*) override;
+    void xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection*, xpc_object_t) override;
 
     void receivedSetupMessage(NSDictionary *userInfo);
     void receivedDataMessage(NSDictionary *userInfo);

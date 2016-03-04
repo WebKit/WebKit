@@ -39,10 +39,10 @@ public:
 
     virtual ~CachedHTMLCollection();
 
-    virtual unsigned length() const override final { return m_indexCache.nodeCount(collection()); }
-    virtual Element* item(unsigned offset) const override { return m_indexCache.nodeAt(collection(), offset); }
-    virtual Element* namedItem(const AtomicString& name) const override;
-    virtual size_t memoryCost() const override final { return m_indexCache.memoryCost() + HTMLCollection::memoryCost(); }
+    unsigned length() const override final { return m_indexCache.nodeCount(collection()); }
+    Element* item(unsigned offset) const override { return m_indexCache.nodeAt(collection(), offset); }
+    Element* namedItem(const AtomicString& name) const override;
+    size_t memoryCost() const override final { return m_indexCache.memoryCost() + HTMLCollection::memoryCost(); }
 
     // For CollectionIndexCache; do not use elsewhere.
     using CollectionTraversalIterator = typename CollectionTraversal<traversalType>::Iterator;
@@ -54,7 +54,7 @@ public:
     bool collectionCanTraverseBackward() const { return traversalType != CollectionTraversalType::CustomForwardOnly; }
     void willValidateIndexCache() const { document().registerCollection(const_cast<CachedHTMLCollection<HTMLCollectionClass, traversalType>&>(*this)); }
 
-    virtual void invalidateCache(Document&) override;
+    void invalidateCache(Document&) override;
 
     bool elementMatches(Element&) const;
 

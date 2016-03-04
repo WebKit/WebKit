@@ -34,8 +34,8 @@ class WebInjectedScriptHost final : public Inspector::InjectedScriptHost {
 public:
     static Ref<WebInjectedScriptHost> create() { return adoptRef(*new WebInjectedScriptHost); }
 
-    virtual JSC::JSValue subtype(JSC::ExecState*, JSC::JSValue) override;
-    virtual bool isHTMLAllCollection(JSC::JSValue) override;
+    JSC::JSValue subtype(JSC::ExecState*, JSC::JSValue) override;
+    bool isHTMLAllCollection(JSC::JSValue) override;
 };
 
 } // namespace WebCore

@@ -70,30 +70,30 @@ public:
     ChromeClient& client() { return m_client; }
 
     // HostWindow methods.
-    virtual void invalidateRootView(const IntRect&) override;
-    virtual void invalidateContentsAndRootView(const IntRect&) override;
-    virtual void invalidateContentsForSlowScroll(const IntRect&) override;
-    virtual void scroll(const IntSize&, const IntRect&, const IntRect&) override;
+    void invalidateRootView(const IntRect&) override;
+    void invalidateContentsAndRootView(const IntRect&) override;
+    void invalidateContentsForSlowScroll(const IntRect&) override;
+    void scroll(const IntSize&, const IntRect&, const IntRect&) override;
 #if USE(COORDINATED_GRAPHICS)
-    virtual void delegatedScrollRequested(const IntPoint& scrollPoint) override;
+    void delegatedScrollRequested(const IntPoint& scrollPoint) override;
 #endif
-    virtual IntPoint screenToRootView(const IntPoint&) const override;
-    virtual IntRect rootViewToScreen(const IntRect&) const override;
+    IntPoint screenToRootView(const IntPoint&) const override;
+    IntRect rootViewToScreen(const IntRect&) const override;
 #if PLATFORM(IOS)
-    virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const override;
-    virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const override;
+    IntPoint accessibilityScreenToRootView(const IntPoint&) const override;
+    IntRect rootViewToAccessibilityScreen(const IntRect&) const override;
 #endif
-    virtual PlatformPageClient platformPageClient() const override;
-    virtual void scrollbarsModeDidChange() const override;
-    virtual void setCursor(const Cursor&) override;
-    virtual void setCursorHiddenUntilMouseMoves(bool) override;
+    PlatformPageClient platformPageClient() const override;
+    void scrollbarsModeDidChange() const override;
+    void setCursor(const Cursor&) override;
+    void setCursorHiddenUntilMouseMoves(bool) override;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    virtual void scheduleAnimation() override;
+    void scheduleAnimation() override;
 #endif
 
-    virtual PlatformDisplayID displayID() const override;
-    virtual void windowScreenDidChange(PlatformDisplayID) override;
+    PlatformDisplayID displayID() const override;
+    void windowScreenDidChange(PlatformDisplayID) override;
 
     FloatSize screenSize() const override;
     FloatSize availableScreenSize() const override;

@@ -88,12 +88,12 @@ public:
     
     const PlatformKeyboardEvent* keyEvent() const { return m_keyEvent.get(); }
 
-    virtual int keyCode() const override; // key code for keydown and keyup, character for keypress
-    virtual int charCode() const override; // character code for keypress, 0 for keydown and keyup
+    int keyCode() const override; // key code for keydown and keyup, character for keypress
+    int charCode() const override; // character code for keypress, 0 for keydown and keyup
 
-    virtual EventInterface eventInterface() const override;
-    virtual bool isKeyboardEvent() const override;
-    virtual int which() const override;
+    EventInterface eventInterface() const override;
+    bool isKeyboardEvent() const override;
+    int which() const override;
 
 #if PLATFORM(COCOA)
     bool handledByInputMethod() const { return m_handledByInputMethod; }

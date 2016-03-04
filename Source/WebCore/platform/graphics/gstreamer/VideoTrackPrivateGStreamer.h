@@ -41,15 +41,15 @@ public:
         return adoptRef(new VideoTrackPrivateGStreamer(playbin, index, pad));
     }
 
-    virtual void disconnect() override;
+    void disconnect() override;
 
-    virtual void setSelected(bool) override;
-    virtual void setActive(bool enabled) override { setSelected(enabled); }
+    void setSelected(bool) override;
+    void setActive(bool enabled) override { setSelected(enabled); }
 
-    virtual int trackIndex() const override { return m_index; }
+    int trackIndex() const override { return m_index; }
 
-    virtual AtomicString label() const override { return m_label; }
-    virtual AtomicString language() const override { return m_language; }
+    AtomicString label() const override { return m_label; }
+    AtomicString language() const override { return m_language; }
 
 private:
     VideoTrackPrivateGStreamer(GRefPtr<GstElement> playbin, gint index, GRefPtr<GstPad>);

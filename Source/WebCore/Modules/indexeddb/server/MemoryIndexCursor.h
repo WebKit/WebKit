@@ -46,8 +46,8 @@ public:
     void indexValueChanged(const IDBKeyData& indexKey, const IDBKeyData& primaryKey);
 
 private:
-    virtual void currentData(IDBGetResult&) override final;
-    virtual void iterate(const IDBKeyData&, uint32_t count, IDBGetResult&) override final;
+    void currentData(IDBGetResult&) override final;
+    void iterate(const IDBKeyData&, uint32_t count, IDBGetResult&) override final;
 
     MemoryIndex& m_index;
 

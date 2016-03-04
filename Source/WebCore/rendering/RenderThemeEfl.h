@@ -70,33 +70,33 @@ public:
     static PassRefPtr<RenderTheme> create(Page*);
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
-    virtual bool supportsHover(const RenderStyle&) const override { return true; }
+    bool supportsHover(const RenderStyle&) const override { return true; }
 
     // A method Returning whether the control is styled by css or not e.g specifying background-color.
-    virtual bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer&, const Color& backgroundColor) const override;
+    bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer&, const Color& backgroundColor) const override;
 
     // A method asking if the theme is able to draw the focus ring.
-    virtual bool supportsFocusRing(const RenderStyle&) const override;
+    bool supportsFocusRing(const RenderStyle&) const override;
 
     // A method asking if the control changes its tint when the window has focus or not.
-    virtual bool controlSupportsTints(const RenderObject&) const override;
+    bool controlSupportsTints(const RenderObject&) const override;
 
     // A general method asking if any control tinting is supported at all.
-    virtual bool supportsControlTints() const override { return true; }
+    bool supportsControlTints() const override { return true; }
 
     // A general method asking if foreground colors of selection are supported.
-    virtual bool supportsSelectionForegroundColors() const override;
+    bool supportsSelectionForegroundColors() const override;
 
     // A method to obtain the baseline position for a "leaf" control. This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
-    virtual int baselinePosition(const RenderBox&) const override;
+    int baselinePosition(const RenderBox&) const override;
 
-    virtual Color platformActiveSelectionBackgroundColor() const override;
-    virtual Color platformInactiveSelectionBackgroundColor() const override;
-    virtual Color platformActiveSelectionForegroundColor() const override;
-    virtual Color platformInactiveSelectionForegroundColor() const override;
-    virtual Color platformFocusRingColor() const override;
+    Color platformActiveSelectionBackgroundColor() const override;
+    Color platformInactiveSelectionBackgroundColor() const override;
+    Color platformActiveSelectionForegroundColor() const override;
+    Color platformInactiveSelectionForegroundColor() const override;
+    Color platformFocusRingColor() const override;
 
     // Set platform colors; remember to call platformColorDidChange after.
     void setColorFromThemeClass(const char* colorClass);
@@ -108,72 +108,72 @@ public:
 
     void adjustSizeConstraints(RenderStyle&, FormType) const;
 
-    virtual void adjustCheckboxStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void adjustCheckboxStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustRadioStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void adjustRadioStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void adjustButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    void adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    virtual void adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    void adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    virtual void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
+    void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const IntRect&) override;
+    void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) override;
+    void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const IntRect&) override;
+    void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, Element*) const override;
 
-    virtual void adjustSliderThumbSize(RenderStyle&, Element*) const override;
+    void adjustSliderThumbSize(RenderStyle&, Element*) const override;
 
 #if ENABLE(DATALIST_ELEMENT)
-    virtual IntSize sliderTickSize() const override;
-    virtual int sliderTickOffsetFromTrackCenter() const override;
-    virtual LayoutUnit sliderTickSnappingThreshold() const override;
+    IntSize sliderTickSize() const override;
+    int sliderTickOffsetFromTrackCenter() const override;
+    LayoutUnit sliderTickSnappingThreshold() const override;
 #endif
 
-    virtual bool supportsDataListUI(const AtomicString&) const override;
+    bool supportsDataListUI(const AtomicString&) const override;
 
-    virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     static void setDefaultFontSize(int fontsize);
 
-    virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    virtual double animationRepeatIntervalForProgressBar(RenderProgress&) const override;
-    virtual double animationDurationForProgressBar(RenderProgress&) const override;
+    void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    double animationRepeatIntervalForProgressBar(RenderProgress&) const override;
+    double animationDurationForProgressBar(RenderProgress&) const override;
 
 #if ENABLE(VIDEO)
-    virtual String mediaControlsStyleSheet() override;
-    virtual String mediaControlsScript() override;
+    String mediaControlsStyleSheet() override;
+    String mediaControlsScript() override;
 #endif
 #if ENABLE(VIDEO_TRACK)
-    virtual bool supportsClosedCaptioning() const override { return true; }
+    bool supportsClosedCaptioning() const override { return true; }
 #endif
 
     void setThemePath(const String&);
@@ -192,7 +192,7 @@ private:
     }
 
     // System fonts.
-    virtual void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
+    void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
 
     ALWAYS_INLINE Ecore_Evas* canvas() const { return m_canvas.get(); }
     ALWAYS_INLINE Evas_Object* edje() const { return m_edje.get(); }

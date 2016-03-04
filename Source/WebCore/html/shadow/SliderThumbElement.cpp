@@ -117,10 +117,10 @@ public:
     }
 
 public:
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
 private:
-    virtual void layout() override;
+    void layout() override;
     bool isFlexibleBoxImpl() const override { return true; }
 };
 

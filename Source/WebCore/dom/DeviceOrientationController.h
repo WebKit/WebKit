@@ -52,8 +52,8 @@ public:
     void suspendUpdates();
     void resumeUpdates();
 #else
-    virtual bool hasLastData() override;
-    virtual RefPtr<Event> getLastEvent() override;
+    bool hasLastData() override;
+    RefPtr<Event> getLastEvent() override;
 #endif
 
     static const char* supplementName();

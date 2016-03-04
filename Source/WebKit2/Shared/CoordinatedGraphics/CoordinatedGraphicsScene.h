@@ -153,7 +153,7 @@ private:
     void dispatchCommitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    virtual void onNewBufferAvailable() override;
+    void onNewBufferAvailable() override;
 #endif
 
     // Render queue can be accessed ony from main thread or updatePaintNode call stack!

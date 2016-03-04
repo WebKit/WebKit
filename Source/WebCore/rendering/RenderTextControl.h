@@ -40,7 +40,7 @@ public:
     bool canScroll() const;
 
     // Returns the line height of the inner renderer.
-    virtual int innerLineHeight() const override;
+    int innerLineHeight() const override;
 #endif
 
 protected:
@@ -51,7 +51,7 @@ protected:
 
     int scrollbarThickness() const;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void hitInnerTextElement(HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
 
@@ -64,25 +64,25 @@ protected:
     virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const = 0;
     virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const = 0;
 
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
-    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
+    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
 
 private:
     void element() const = delete;
 
-    virtual const char* renderName() const override { return "RenderTextControl"; }
-    virtual bool isTextControl() const override final { return true; }
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
-    virtual void computePreferredLogicalWidths() override;
-    virtual void removeLeftoverAnonymousBlock(RenderBlock*) override { }
-    virtual bool avoidsFloats() const override { return true; }
-    virtual bool canHaveGeneratedChildren() const override { return false; }
+    const char* renderName() const override { return "RenderTextControl"; }
+    bool isTextControl() const override final { return true; }
+    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    void computePreferredLogicalWidths() override;
+    void removeLeftoverAnonymousBlock(RenderBlock*) override { }
+    bool avoidsFloats() const override { return true; }
+    bool canHaveGeneratedChildren() const override { return false; }
     
-    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
+    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
 
-    virtual bool canBeProgramaticallyScrolled() const override { return true; }
+    bool canBeProgramaticallyScrolled() const override { return true; }
 
-    virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
+    bool requiresForcedStyleRecalcPropagation() const override { return true; }
 };
 
 // Renderer for our inner container, for <search> and others.
@@ -96,12 +96,12 @@ public:
     { }
     virtual ~RenderTextControlInnerContainer() { }
 
-    virtual int baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const override
+    int baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const override
     {
         return RenderBlock::baselinePosition(baseline, firstLine, direction, position);
     }
-    virtual Optional<int> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
-    virtual Optional<int> inlineBlockBaseline(LineDirectionMode direction) const override { return RenderBlock::inlineBlockBaseline(direction); }
+    Optional<int> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
+    Optional<int> inlineBlockBaseline(LineDirectionMode direction) const override { return RenderBlock::inlineBlockBaseline(direction); }
 
 private:
     bool isFlexibleBoxImpl() const override { return true; }

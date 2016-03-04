@@ -37,13 +37,13 @@ public:
     float azimuth() const { return m_azimuth; }
     float elevation() const { return m_elevation; }
 
-    virtual bool setAzimuth(float) override;
-    virtual bool setElevation(float) override;
+    bool setAzimuth(float) override;
+    bool setElevation(float) override;
 
-    virtual void initPaintingData(PaintingData&) override;
-    virtual void updatePaintingData(PaintingData&, int x, int y, float z) override;
+    void initPaintingData(PaintingData&) override;
+    void updatePaintingData(PaintingData&, int x, int y, float z) override;
 
-    virtual TextStream& externalRepresentation(TextStream&) const override;
+    TextStream& externalRepresentation(TextStream&) const override;
 
 private:
     DistantLightSource(float azimuth, float elevation)

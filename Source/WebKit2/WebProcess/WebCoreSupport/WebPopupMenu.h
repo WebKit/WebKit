@@ -51,10 +51,10 @@ public:
     WebCore::PopupMenuClient* client() const { return m_popupClient; }
 #endif
 
-    virtual void show(const WebCore::IntRect&, WebCore::FrameView*, int index) override;
-    virtual void hide() override;
-    virtual void updateFromElement() override;
-    virtual void disconnectClient() override;
+    void show(const WebCore::IntRect&, WebCore::FrameView*, int index) override;
+    void hide() override;
+    void updateFromElement() override;
+    void disconnectClient() override;
 
 private:
     WebPopupMenu(WebPage*, WebCore::PopupMenuClient*);

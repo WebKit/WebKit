@@ -33,12 +33,12 @@ public:
     static WebStorageTrackerClient* sharedWebStorageTrackerClient();
     
     virtual ~WebStorageTrackerClient();
-    virtual void dispatchDidModifyOrigin(const String& originIdentifier) override;
+    void dispatchDidModifyOrigin(const String& originIdentifier) override;
     virtual void dispatchDidModifyOrigin(PassRefPtr<SecurityOrigin>);
 
 private:
     WebStorageTrackerClient();
 
     // WebCore::StorageTrackerClient
-    virtual void didFinishLoadingOrigins() override;
+    void didFinishLoadingOrigins() override;
 };

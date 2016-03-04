@@ -39,8 +39,8 @@ public:
     virtual ~JSGlobalObjectConsoleAgent() { }
 
     // FIXME: XHRs and Nodes only makes sense debugging a Web context. Can this be moved to a different agent?
-    virtual void setMonitoringXHREnabled(ErrorString&, bool enabled) override;
-    virtual void addInspectedNode(ErrorString&, int nodeId) override;
+    void setMonitoringXHREnabled(ErrorString&, bool enabled) override;
+    void addInspectedNode(ErrorString&, int nodeId) override;
 };
 
 } // namespace Inspector

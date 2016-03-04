@@ -35,7 +35,7 @@ public:
     explicit OESStandardDerivatives(WebGLRenderingContextBase*);
     virtual ~OESStandardDerivatives();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

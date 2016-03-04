@@ -67,9 +67,9 @@ private:
 
     void deleteCharacter();
 
-    virtual void doApply() override;
+    void doApply() override;
 
-    virtual bool isInsertTextCommand() const override { return true; }
+    bool isInsertTextCommand() const override { return true; }
 
     Position positionInsideTextNode(const Position&);
     Position insertTab(const Position&);

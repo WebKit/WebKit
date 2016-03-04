@@ -157,10 +157,10 @@ private:
     explicit WebProcessProxy(WebProcessPool&);
 
     // From ChildProcessProxy
-    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
+    void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
-    virtual void connectionWillOpen(IPC::Connection&) override;
-    virtual void processWillShutDown(IPC::Connection&) override;
+    void connectionWillOpen(IPC::Connection&) override;
+    void processWillShutDown(IPC::Connection&) override;
 
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.
@@ -194,18 +194,18 @@ private:
 
     // IPC::Connection::Client
     friend class WebConnectionToWebProcess;
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    virtual void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
-    virtual void didClose(IPC::Connection&) override;
-    virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    virtual IPC::ProcessType localProcessType() override { return IPC::ProcessType::UI; }
-    virtual IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Web; }
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    void didClose(IPC::Connection&) override;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+    IPC::ProcessType localProcessType() override { return IPC::ProcessType::UI; }
+    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Web; }
 
     // ResponsivenessTimer::Client
     void didBecomeUnresponsive() override;
     void didBecomeResponsive() override;
-    virtual void willChangeIsResponsive() override;
-    virtual void didChangeIsResponsive() override;
+    void willChangeIsResponsive() override;
+    void didChangeIsResponsive() override;
 
     // ProcessThrottlerClient
     void sendProcessWillSuspendImminently() override;
@@ -215,7 +215,7 @@ private:
     void didSetAssertionState(AssertionState) override;
 
     // ProcessLauncher::Client
-    virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
+    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
     // Implemented in generated WebProcessProxyMessageReceiver.cpp
     void didReceiveWebProcessProxyMessage(IPC::Connection&, IPC::MessageDecoder&);

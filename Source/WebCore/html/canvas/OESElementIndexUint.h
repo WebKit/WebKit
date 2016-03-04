@@ -35,7 +35,7 @@ public:
     explicit OESElementIndexUint(WebGLRenderingContextBase*);
     virtual ~OESElementIndexUint();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

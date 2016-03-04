@@ -66,18 +66,18 @@ public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
-    WEBCORE_EXPORT virtual bool shouldAutocomplete() const override final;
+    WEBCORE_EXPORT bool shouldAutocomplete() const override final;
 
     // For ValidityState
-    virtual bool hasBadInput() const override final;
-    virtual bool patternMismatch() const override final;
-    virtual bool rangeUnderflow() const override final;
-    virtual bool rangeOverflow() const override final;
-    virtual bool stepMismatch() const override final;
-    virtual bool tooLong() const override final;
-    virtual bool typeMismatch() const override final;
-    virtual bool valueMissing() const override final;
-    virtual String validationMessage() const override final;
+    bool hasBadInput() const override final;
+    bool patternMismatch() const override final;
+    bool rangeUnderflow() const override final;
+    bool rangeOverflow() const override final;
+    bool stepMismatch() const override final;
+    bool tooLong() const override final;
+    bool typeMismatch() const override final;
+    bool valueMissing() const override final;
+    String validationMessage() const override final;
 
     // Returns the minimum value for type=date, number, or range.  Don't call this for other types.
     double minimum() const;
@@ -141,8 +141,8 @@ public:
 
     HTMLElement* containerElement() const;
     
-    virtual TextControlInnerTextElement* innerTextElement() const override final;
-    virtual Ref<RenderStyle> createInnerTextStyle(const RenderStyle&) const override;
+    TextControlInnerTextElement* innerTextElement() const override final;
+    Ref<RenderStyle> createInnerTextStyle(const RenderStyle&) const override;
 
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
@@ -151,7 +151,7 @@ public:
     HTMLElement* cancelButtonElement() const;
     HTMLElement* sliderThumbElement() const;
     HTMLElement* sliderTrackElement() const;
-    virtual HTMLElement* placeholderElement() const override final;
+    HTMLElement* placeholderElement() const override final;
     WEBCORE_EXPORT HTMLElement* autoFillButtonElement() const;
 
     bool checked() const { return m_isChecked; }
@@ -162,7 +162,7 @@ public:
     void setIndeterminate(bool);
     // shouldAppearChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
     bool shouldAppearChecked() const;
-    virtual bool shouldAppearIndeterminate() const override final;
+    bool shouldAppearIndeterminate() const override final;
 
     unsigned size() const;
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
@@ -170,7 +170,7 @@ public:
 
     void setType(const AtomicString&);
 
-    WEBCORE_EXPORT virtual String value() const override final;
+    WEBCORE_EXPORT String value() const override final;
     void setValue(const String&, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
     WEBCORE_EXPORT void setValue(const String&, TextFieldEventBehavior = DispatchNoEvent);
     WEBCORE_EXPORT void setValueForUser(const String&);
@@ -200,17 +200,17 @@ public:
 
     bool canHaveSelection() const;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override final;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override final;
-    virtual void willAttachRenderers() override final;
-    virtual void didAttachRenderers() override final;
-    virtual void didDetachRenderers() override final;
+    bool rendererIsNeeded(const RenderStyle&) override final;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override final;
+    void willAttachRenderers() override final;
+    void didAttachRenderers() override final;
+    void didDetachRenderers() override final;
 
     // FIXME: For isActivatedSubmit and setActivatedSubmit, we should use the NVI-idiom here by making
     // it private virtual in all classes and expose a public method in HTMLFormControlElement to call
     // the private virtual method.
-    virtual bool isActivatedSubmit() const override final;
-    virtual void setActivatedSubmit(bool flag) override final;
+    bool isActivatedSubmit() const override final;
+    void setActivatedSubmit(bool flag) override final;
 
     String altText() const;
 
@@ -263,7 +263,7 @@ public:
     void addSearchResult();
     void onSearch();
 
-    virtual bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() override;
 
 #if ENABLE(DATALIST_ELEMENT)
     HTMLElement* list() const;
@@ -299,18 +299,18 @@ public:
     void setHeight(unsigned);
     void setWidth(unsigned);
 
-    virtual void blur() override final;
+    void blur() override final;
     void defaultBlur();
 
-    virtual const AtomicString& name() const override final;
+    const AtomicString& name() const override final;
 
     void endEditing();
 
     static Vector<FileChooserFileInfo> filesFromFileInputFormControlState(const FormControlState&);
 
-    virtual bool matchesReadWritePseudoClass() const override final;
-    virtual void setRangeText(const String& replacement, ExceptionCode&) override final;
-    virtual void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) override final;
+    bool matchesReadWritePseudoClass() const override final;
+    void setRangeText(const String& replacement, ExceptionCode&) override final;
+    void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) override final;
 
     HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
     HTMLImageLoader& ensureImageLoader();
@@ -324,67 +324,67 @@ public:
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 
 private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
 
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override final;
-    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+    void didAddUserAgentShadowRoot(ShadowRoot*) override final;
+    bool canHaveUserAgentShadowRoot() const override final { return true; }
 
-    virtual void willChangeForm() override final;
-    virtual void didChangeForm() override final;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override final;
+    void willChangeForm() override final;
+    void didChangeForm() override final;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override final;
     void finishedInsertingSubtree() override final;
-    virtual void removedFrom(ContainerNode&) override final;
-    virtual void didMoveToNewDocument(Document* oldDocument) override final;
+    void removedFrom(ContainerNode&) override final;
+    void didMoveToNewDocument(Document* oldDocument) override final;
 
-    virtual bool hasCustomFocusLogic() const override final;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const override final;
-    virtual bool isMouseFocusable() const override final;
-    virtual bool isEnumeratable() const override final;
-    virtual bool supportLabels() const override final;
-    virtual void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) override final;
-    virtual bool shouldUseInputMethod() override final;
+    bool hasCustomFocusLogic() const override final;
+    bool isKeyboardFocusable(KeyboardEvent*) const override final;
+    bool isMouseFocusable() const override final;
+    bool isEnumeratable() const override final;
+    bool supportLabels() const override final;
+    void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) override final;
+    bool shouldUseInputMethod() override final;
 
-    virtual bool isTextFormControl() const override final { return isTextField(); }
+    bool isTextFormControl() const override final { return isTextField(); }
 
-    virtual bool canTriggerImplicitSubmission() const override final { return isTextField(); }
+    bool canTriggerImplicitSubmission() const override final { return isTextField(); }
 
-    virtual const AtomicString& formControlType() const override final;
+    const AtomicString& formControlType() const override final;
 
-    virtual bool shouldSaveAndRestoreFormControlState() const override final;
-    virtual FormControlState saveFormControlState() const override final;
-    virtual void restoreFormControlState(const FormControlState&) override final;
+    bool shouldSaveAndRestoreFormControlState() const override final;
+    FormControlState saveFormControlState() const override final;
+    void restoreFormControlState(const FormControlState&) override final;
 
-    virtual bool canStartSelection() const override final;
+    bool canStartSelection() const override final;
 
-    virtual void accessKeyAction(bool sendMouseEvents) override final;
+    void accessKeyAction(bool sendMouseEvents) override final;
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override final;
-    virtual bool isPresentationAttribute(const QualifiedName&) const override final;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override final;
-    virtual void finishParsingChildren() override final;
-    virtual void parserDidSetAttributes() override final;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override final;
+    bool isPresentationAttribute(const QualifiedName&) const override final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override final;
+    void finishParsingChildren() override final;
+    void parserDidSetAttributes() override final;
 
-    virtual void copyNonAttributePropertiesFromElement(const Element&) override final;
+    void copyNonAttributePropertiesFromElement(const Element&) override final;
 
-    virtual bool appendFormData(FormDataList&, bool) override final;
+    bool appendFormData(FormDataList&, bool) override final;
 
-    virtual bool isSuccessfulSubmitButton() const override final;
+    bool isSuccessfulSubmitButton() const override final;
 
-    virtual void reset() override final;
+    void reset() override final;
 
-    virtual bool isURLAttribute(const Attribute&) const override final;
-    virtual bool isInRange() const override final;
-    virtual bool isOutOfRange() const override final;
+    bool isURLAttribute(const Attribute&) const override final;
+    bool isInRange() const override final;
+    bool isOutOfRange() const override final;
 
-    virtual void resumeFromDocumentSuspension() override final;
+    void resumeFromDocumentSuspension() override final;
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual void prepareForDocumentSuspension() override final;
+    void prepareForDocumentSuspension() override final;
 #endif
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override final;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override final;
 
     bool needsSuspensionCallback();
     void registerForSuspensionCallbackIfNeeded();
@@ -394,22 +394,22 @@ private:
     bool isTextType() const;
     bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
 
-    virtual bool supportsPlaceholder() const override final;
-    virtual void updatePlaceholderText() override final;
-    virtual bool isEmptyValue() const override final;
-    virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection) override final;
-    virtual void handleBlurEvent() override final;
+    bool supportsPlaceholder() const override final;
+    void updatePlaceholderText() override final;
+    bool isEmptyValue() const override final;
+    void handleFocusEvent(Node* oldFocusedNode, FocusDirection) override final;
+    void handleBlurEvent() override final;
 
-    virtual bool isOptionalFormControl() const override final { return !isRequiredFormControl(); }
-    virtual bool isRequiredFormControl() const override final;
-    virtual bool computeWillValidate() const override final;
-    virtual void requiredAttributeChanged() override final;
+    bool isOptionalFormControl() const override final { return !isRequiredFormControl(); }
+    bool isRequiredFormControl() const override final;
+    bool computeWillValidate() const override final;
+    void requiredAttributeChanged() override final;
 
     void initializeInputType();
     void updateType();
     void runPostTypeUpdateTasks();
     
-    virtual void subtreeHasChanged() override final;
+    void subtreeHasChanged() override final;
 
 #if ENABLE(DATALIST_ELEMENT)
     void resetListAttributeTargetObserver();

@@ -38,21 +38,21 @@ public:
     static Ref<AccessibilityListBox> create(RenderObject*);
     virtual ~AccessibilityListBox();
     
-    virtual bool canSetSelectedChildrenAttribute() const override;
+    bool canSetSelectedChildrenAttribute() const override;
     void setSelectedChildren(const AccessibilityChildrenVector&);
-    virtual AccessibilityRole roleValue() const override { return ListBoxRole; }
+    AccessibilityRole roleValue() const override { return ListBoxRole; }
         
-    virtual void selectedChildren(AccessibilityChildrenVector&) override;
-    virtual void visibleChildren(AccessibilityChildrenVector&) override;
+    void selectedChildren(AccessibilityChildrenVector&) override;
+    void visibleChildren(AccessibilityChildrenVector&) override;
     
-    virtual void addChildren() override;
+    void addChildren() override;
 
 private:
     explicit AccessibilityListBox(RenderObject*);
 
-    virtual bool isListBox() const override { return true; }
+    bool isListBox() const override { return true; }
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
-    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 };
     
 } // namespace WebCore

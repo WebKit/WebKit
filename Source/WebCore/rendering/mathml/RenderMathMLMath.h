@@ -37,8 +37,8 @@ public:
     RenderMathMLMath(Element&, Ref<RenderStyle>&&);
 
 private:
-    virtual bool isRenderMathMLMath() const override { return true; }
-    virtual const char* renderName() const override { return "RenderMathMLMath"; }
+    bool isRenderMathMLMath() const override { return true; }
+    const char* renderName() const override { return "RenderMathMLMath"; }
 };
     
 }

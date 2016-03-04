@@ -41,50 +41,50 @@ public:
     void setID(uint32_t id) { m_layer.setID(id); }
 
     // GraphicsLayer
-    virtual bool setChildren(const Vector<GraphicsLayer*>&) override;
-    virtual void addChild(GraphicsLayer*) override;
-    virtual void addChildAtIndex(GraphicsLayer*, int index) override;
-    virtual void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling) override;
-    virtual void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling) override;
-    virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild) override;
+    bool setChildren(const Vector<GraphicsLayer*>&) override;
+    void addChild(GraphicsLayer*) override;
+    void addChildAtIndex(GraphicsLayer*, int index) override;
+    void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling) override;
+    void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling) override;
+    bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild) override;
 
-    virtual void setMaskLayer(GraphicsLayer*) override;
-    virtual void setReplicatedByLayer(GraphicsLayer*) override;
-    virtual void setPosition(const FloatPoint&) override;
-    virtual void setAnchorPoint(const FloatPoint3D&) override;
-    virtual void setSize(const FloatSize&) override;
-    virtual void setTransform(const TransformationMatrix&) override;
-    virtual void setChildrenTransform(const TransformationMatrix&) override;
-    virtual void setPreserves3D(bool) override;
-    virtual void setMasksToBounds(bool) override;
-    virtual void setDrawsContent(bool) override;
-    virtual void setContentsVisible(bool) override;
-    virtual void setContentsOpaque(bool) override;
-    virtual void setBackfaceVisibility(bool) override;
-    virtual void setOpacity(float) override;
-    virtual bool setFilters(const FilterOperations&) override;
+    void setMaskLayer(GraphicsLayer*) override;
+    void setReplicatedByLayer(GraphicsLayer*) override;
+    void setPosition(const FloatPoint&) override;
+    void setAnchorPoint(const FloatPoint3D&) override;
+    void setSize(const FloatSize&) override;
+    void setTransform(const TransformationMatrix&) override;
+    void setChildrenTransform(const TransformationMatrix&) override;
+    void setPreserves3D(bool) override;
+    void setMasksToBounds(bool) override;
+    void setDrawsContent(bool) override;
+    void setContentsVisible(bool) override;
+    void setContentsOpaque(bool) override;
+    void setBackfaceVisibility(bool) override;
+    void setOpacity(float) override;
+    bool setFilters(const FilterOperations&) override;
 
-    virtual void setNeedsDisplay() override;
-    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
-    virtual void setContentsNeedsDisplay() override;
-    virtual void setContentsRect(const FloatRect&) override;
+    void setNeedsDisplay() override;
+    void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
+    void setContentsNeedsDisplay() override;
+    void setContentsRect(const FloatRect&) override;
 
-    virtual bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double) override;
-    virtual void pauseAnimation(const String&, double) override;
-    virtual void removeAnimation(const String&) override;
+    bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double) override;
+    void pauseAnimation(const String&, double) override;
+    void removeAnimation(const String&) override;
 
-    virtual void setContentsToImage(Image*) override;
-    virtual void setContentsToSolidColor(const Color&) override;
-    virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
-    virtual bool usesContentsLayer() const override { return m_contentsLayer; }
-    virtual PlatformLayer* platformLayer() const override { return m_contentsLayer; }
+    void setContentsToImage(Image*) override;
+    void setContentsToSolidColor(const Color&) override;
+    void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
+    bool usesContentsLayer() const override { return m_contentsLayer; }
+    PlatformLayer* platformLayer() const override { return m_contentsLayer; }
 
-    virtual void setShowDebugBorder(bool) override;
-    virtual void setDebugBorder(const Color&, float width) override;
-    virtual void setShowRepaintCounter(bool) override;
+    void setShowDebugBorder(bool) override;
+    void setDebugBorder(const Color&, float width) override;
+    void setShowRepaintCounter(bool) override;
 
-    virtual void flushCompositingState(const FloatRect&, bool) override;
-    virtual void flushCompositingStateForThisLayerOnly(bool) override;
+    void flushCompositingState(const FloatRect&, bool) override;
+    void flushCompositingStateForThisLayerOnly(bool) override;
 
     void updateBackingStoreIncludingSubLayers(const FloatRect&);
 
@@ -106,11 +106,11 @@ public:
 
 private:
     // GraphicsLayer
-    virtual bool isGraphicsLayerTextureMapper() const override { return true; }
+    bool isGraphicsLayerTextureMapper() const override { return true; }
 
     // TextureMapperPlatformLayer::Client
-    virtual void platformLayerWillBeDestroyed() override { setContentsToPlatformLayer(0, NoContentsLayer); }
-    virtual void setPlatformLayerNeedsDisplay() override { setContentsNeedsDisplay(); }
+    void platformLayerWillBeDestroyed() override { setContentsToPlatformLayer(0, NoContentsLayer); }
+    void setPlatformLayerNeedsDisplay() override { setContentsNeedsDisplay(); }
 
     void commitLayerChanges();
     void updateDebugBorderAndRepaintCount();

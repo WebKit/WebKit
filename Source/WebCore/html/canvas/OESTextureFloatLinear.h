@@ -35,7 +35,7 @@ public:
     explicit OESTextureFloatLinear(WebGLRenderingContextBase*);
     virtual ~OESTextureFloatLinear();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

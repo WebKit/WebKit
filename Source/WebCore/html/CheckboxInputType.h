@@ -40,14 +40,14 @@ public:
     explicit CheckboxInputType(HTMLInputElement& element) : BaseCheckableInputType(element) { }
 
 private:
-    virtual const AtomicString& formControlType() const override;
-    virtual bool valueMissing(const String&) const override;
-    virtual String valueMissingText() const override;
-    virtual void handleKeyupEvent(KeyboardEvent*) override;
-    virtual void willDispatchClick(InputElementClickState&) override;
-    virtual void didDispatchClick(Event*, const InputElementClickState&) override;
-    virtual bool isCheckbox() const override;
-    virtual bool supportsIndeterminateAppearance() const override;
+    const AtomicString& formControlType() const override;
+    bool valueMissing(const String&) const override;
+    String valueMissingText() const override;
+    void handleKeyupEvent(KeyboardEvent*) override;
+    void willDispatchClick(InputElementClickState&) override;
+    void didDispatchClick(Event*, const InputElementClickState&) override;
+    bool isCheckbox() const override;
+    bool supportsIndeterminateAppearance() const override;
 };
 
 } // namespace WebCore

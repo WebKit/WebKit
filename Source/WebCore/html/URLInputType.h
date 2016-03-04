@@ -40,12 +40,12 @@ public:
     explicit URLInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 
 private:
-    virtual const AtomicString& formControlType() const override;
-    virtual bool typeMismatchFor(const String&) const override;
-    virtual bool typeMismatch() const override;
-    virtual String typeMismatchText() const override;
-    virtual bool isURLField() const override;
-    virtual String sanitizeValue(const String&) const override;
+    const AtomicString& formControlType() const override;
+    bool typeMismatchFor(const String&) const override;
+    bool typeMismatch() const override;
+    String typeMismatchText() const override;
+    bool isURLField() const override;
+    String sanitizeValue(const String&) const override;
 };
 
 } // namespace WebCore

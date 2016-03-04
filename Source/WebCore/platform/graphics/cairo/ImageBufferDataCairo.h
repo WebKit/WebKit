@@ -65,8 +65,8 @@ public:
     void createCairoGLSurface();
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    virtual RefPtr<TextureMapperPlatformLayerProxy> proxy() const override { return m_platformLayerProxy.copyRef(); }
-    virtual void swapBuffersIfNeeded() override;
+    RefPtr<TextureMapperPlatformLayerProxy> proxy() const override { return m_platformLayerProxy.copyRef(); }
+    void swapBuffersIfNeeded() override;
     void createCompositorBuffer();
 
     RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;

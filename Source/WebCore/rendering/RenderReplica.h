@@ -38,18 +38,18 @@ public:
     RenderReplica(Document&, Ref<RenderStyle>&&);
     virtual ~RenderReplica();
 
-    virtual const char* renderName() const override { return "RenderReplica"; }
+    const char* renderName() const override { return "RenderReplica"; }
 
-    virtual bool requiresLayer() const override { return true; }
+    bool requiresLayer() const override { return true; }
 
-    virtual void layout() override;
+    void layout() override;
     
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    void paint(PaintInfo&, const LayoutPoint&) override;
 
 private:
-    virtual bool isReplica() const override { return true; }
-    virtual bool canHaveChildren() const override { return false; }
-    virtual void computePreferredLogicalWidths() override;
+    bool isReplica() const override { return true; }
+    bool canHaveChildren() const override { return false; }
+    void computePreferredLogicalWidths() override;
 
 };
 

@@ -59,15 +59,15 @@ private:
     WebToDatabaseProcessConnection(IPC::Connection::Identifier);
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    virtual void didClose(IPC::Connection&) override;
-    virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    virtual IPC::ProcessType localProcessType() override { return IPC::ProcessType::Web; }
-    virtual IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Database; }
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didClose(IPC::Connection&) override;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+    IPC::ProcessType localProcessType() override { return IPC::ProcessType::Web; }
+    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Database; }
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() override { return m_connection.get(); }
-    virtual uint64_t messageSenderDestinationID() override { return 0; }
+    IPC::Connection* messageSenderConnection() override { return m_connection.get(); }
+    uint64_t messageSenderDestinationID() override { return 0; }
 
     RefPtr<IPC::Connection> m_connection;
 

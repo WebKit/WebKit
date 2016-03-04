@@ -44,12 +44,12 @@ public:
     InspectorMemoryAgent(PageAgentContext&);
     virtual ~InspectorMemoryAgent() { }
 
-    virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // MemoryBackendDispatcherHandler
-    virtual void startTracking(ErrorString&) override;
-    virtual void stopTracking(ErrorString&) override;
+    void startTracking(ErrorString&) override;
+    void stopTracking(ErrorString&) override;
 
 private:
     void collectSample(const ResourceUsageData&);

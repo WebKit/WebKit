@@ -29,13 +29,13 @@ class SVGTextElement final : public SVGTextPositioningElement {
 public:
     static Ref<SVGTextElement> create(const QualifiedName&, Document&);
 
-    virtual AffineTransform animatedLocalTransform() const override;
+    AffineTransform animatedLocalTransform() const override;
 
 private:
     SVGTextElement(const QualifiedName&, Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual bool childShouldCreateRenderer(const Node&) const override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool childShouldCreateRenderer(const Node&) const override;
 };
 
 } // namespace WebCore

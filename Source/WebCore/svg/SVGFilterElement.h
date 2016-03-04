@@ -46,17 +46,17 @@ public:
 private:
     SVGFilterElement(const QualifiedName&, Document&);
 
-    virtual bool needsPendingResourceHandling() const override { return false; }
+    bool needsPendingResourceHandling() const override { return false; }
 
     static bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
-    virtual void childrenChanged(const ChildChange&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    void childrenChanged(const ChildChange&) override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual bool childShouldCreateRenderer(const Node&) const override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool childShouldCreateRenderer(const Node&) const override;
 
-    virtual bool selfHasRelativeLengths() const override { return true; }
+    bool selfHasRelativeLengths() const override { return true; }
 
     static const AtomicString& filterResXIdentifier();
     static const AtomicString& filterResYIdentifier();

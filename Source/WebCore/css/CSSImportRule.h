@@ -37,8 +37,8 @@ public:
     
     virtual ~CSSImportRule();
 
-    virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase&) override;
+    String cssText() const override;
+    void reattach(StyleRuleBase&) override;
 
     String href() const;
     MediaList& media() const;
@@ -47,7 +47,7 @@ public:
 private:
     CSSImportRule(StyleRuleImport&, CSSStyleSheet*);
 
-    virtual CSSRule::Type type() const override { return IMPORT_RULE; }
+    CSSRule::Type type() const override { return IMPORT_RULE; }
 
     Ref<StyleRuleImport> m_importRule;
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;

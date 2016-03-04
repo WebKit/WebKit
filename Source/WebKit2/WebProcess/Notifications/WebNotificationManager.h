@@ -69,11 +69,11 @@ public:
 
 private:
     // WebProcessSupplement
-    virtual void initialize(const WebProcessCreationParameters&) override;
+    void initialize(const WebProcessCreationParameters&) override;
 
     // IPC::MessageReceiver
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
     
     void didShowNotification(uint64_t notificationID);
     void didClickNotification(uint64_t notificationID);

@@ -61,22 +61,22 @@ public:
     }
 
 private:
-    virtual void didFindStringMatches(WebPageProxy* page, const String&, const Vector<Vector<IntRect>>& matchRects, int32_t) override
+    void didFindStringMatches(WebPageProxy* page, const String&, const Vector<Vector<IntRect>>& matchRects, int32_t) override
     {
         [m_textFinderClient didFindStringMatchesWithRects:matchRects];
     }
 
-    virtual void didGetImageForMatchResult(WebPageProxy* page, WebImage* image, int32_t index) override
+    void didGetImageForMatchResult(WebPageProxy* page, WebImage* image, int32_t index) override
     {
         [m_textFinderClient didGetImageForMatchResult:image];
     }
 
-    virtual void didFindString(WebPageProxy*, const String&, const Vector<IntRect>& matchRects, uint32_t, int32_t) override
+    void didFindString(WebPageProxy*, const String&, const Vector<IntRect>& matchRects, uint32_t, int32_t) override
     {
         [m_textFinderClient didFindStringMatchesWithRects:{ matchRects }];
     }
 
-    virtual void didFailToFindString(WebPageProxy*, const String& string) override
+    void didFailToFindString(WebPageProxy*, const String& string) override
     {
         [m_textFinderClient didFindStringMatchesWithRects:{ }];
     }

@@ -40,8 +40,8 @@ public:
 
     virtual ~NameNodeList();
 
-    virtual bool elementMatches(Element&) const override;
-    virtual bool isRootedAtDocument() const override { return false; }
+    bool elementMatches(Element&) const override;
+    bool isRootedAtDocument() const override { return false; }
 
 private:
     NameNodeList(ContainerNode& rootNode, const AtomicString& name);

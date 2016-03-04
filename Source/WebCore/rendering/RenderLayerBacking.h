@@ -190,38 +190,38 @@ public:
     void updateDebugIndicators(bool showBorder, bool showRepaintCounter);
 
     // GraphicsLayerClient interface
-    virtual void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) override;
-    virtual void notifyAnimationStarted(const GraphicsLayer*, const String& animationKey, double startTime) override;
-    virtual void notifyFlushRequired(const GraphicsLayer*) override;
-    virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) override;
+    void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) override;
+    void notifyAnimationStarted(const GraphicsLayer*, const String& animationKey, double startTime) override;
+    void notifyFlushRequired(const GraphicsLayer*) override;
+    void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) override;
 
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clip) override;
+    void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clip) override;
 
-    virtual float deviceScaleFactor() const override;
-    virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
+    float deviceScaleFactor() const override;
+    float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
 
-    virtual bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const override;
+    bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const override;
 
-    virtual float pageScaleFactor() const override;
-    virtual float zoomedOutPageScaleFactor() const override;
-    virtual void didCommitChangesForLayer(const GraphicsLayer*) const override;
-    virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const override;
+    float pageScaleFactor() const override;
+    float zoomedOutPageScaleFactor() const override;
+    void didCommitChangesForLayer(const GraphicsLayer*) const override;
+    bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const override;
 
-    virtual bool isTrackingRepaints() const override;
-    virtual bool shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior) const override;
-    virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName) const override;
+    bool isTrackingRepaints() const override;
+    bool shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior) const override;
+    bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName) const override;
 
-    virtual bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;
-    virtual bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
-    virtual bool useGiantTiles() const override;
-    virtual bool needsPixelAligment() const override { return !m_isMainFrameRenderViewLayer; }
+    bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;
+    bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
+    bool useGiantTiles() const override;
+    bool needsPixelAligment() const override { return !m_isMainFrameRenderViewLayer; }
 
 #if PLATFORM(IOS)
-    virtual bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const override;
+    bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const override;
 #endif
 
 #ifndef NDEBUG
-    virtual void verifyNotPainting() override;
+    void verifyNotPainting() override;
 #endif
 
     WEBCORE_EXPORT LayoutRect contentsBox() const;

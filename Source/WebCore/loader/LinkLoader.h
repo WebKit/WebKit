@@ -52,7 +52,7 @@ public:
     bool loadLink(const LinkRelAttribute&, const URL&, Document&);
 
 private:
-    virtual void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource*) override;
 
     void linkLoadTimerFired();
     void linkLoadingErrorTimerFired();

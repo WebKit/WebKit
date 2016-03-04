@@ -39,13 +39,13 @@ public:
     virtual ~CDMSessionClearKey();
 
     // CDMSessionPrivate
-    virtual CDMSessionType type() override { return CDMSessionTypeClearKey; }
-    virtual void setClient(CDMSessionClient* client) override { m_client = client; }
-    virtual const String& sessionId() const override { return m_sessionId; }
-    virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array*, String&, unsigned short&, uint32_t&) override;
-    virtual void releaseKeys() override;
-    virtual bool update(Uint8Array*, RefPtr<Uint8Array>&, unsigned short&, uint32_t&) override;
-    virtual RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
+    CDMSessionType type() override { return CDMSessionTypeClearKey; }
+    void setClient(CDMSessionClient* client) override { m_client = client; }
+    const String& sessionId() const override { return m_sessionId; }
+    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array*, String&, unsigned short&, uint32_t&) override;
+    void releaseKeys() override;
+    bool update(Uint8Array*, RefPtr<Uint8Array>&, unsigned short&, uint32_t&) override;
+    RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
 
 protected:
     CDMSessionClient* m_client;

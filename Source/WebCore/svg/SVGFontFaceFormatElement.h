@@ -32,8 +32,8 @@ public:
 private:
     SVGFontFaceFormatElement(const QualifiedName&, Document&);
 
-    virtual void childrenChanged(const ChildChange&) override;
-    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    void childrenChanged(const ChildChange&) override;
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
 };
 
 } // namespace WebCore

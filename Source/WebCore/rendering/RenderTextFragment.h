@@ -39,7 +39,7 @@ public:
 
     virtual ~RenderTextFragment();
 
-    virtual bool canBeSelectionLeaf() const override;
+    bool canBeSelectionLeaf() const override;
 
     unsigned start() const { return m_start; }
     unsigned end() const { return m_end; }
@@ -52,17 +52,17 @@ public:
     void setContentString(const String& text);
     StringImpl* contentString() const { return m_contentString.impl(); }
 
-    virtual void setText(const String&, bool force = false) override;
+    void setText(const String&, bool force = false) override;
 
     const String& altText() const { return m_altText; }
     void setAltText(const String& altText) { m_altText = altText; }
     
 private:
-    virtual bool isTextFragment() const override { return true; }
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-    virtual void willBeDestroyed() override;
+    bool isTextFragment() const override { return true; }
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void willBeDestroyed() override;
 
-    virtual UChar previousCharacter() const override;
+    UChar previousCharacter() const override;
 
     unsigned m_start;
     unsigned m_end;

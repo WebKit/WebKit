@@ -63,7 +63,7 @@ public:
     void attachToElement(Element*);
     void detachFromElementWithValue(const AtomicString&);
 
-    virtual const AtomicString& namespaceURI() const override { return m_name.namespaceURI(); }
+    const AtomicString& namespaceURI() const override { return m_name.namespaceURI(); }
 
 private:
     Attr(Element*, const QualifiedName&);
@@ -71,22 +71,22 @@ private:
 
     void createTextChild();
 
-    virtual String nodeName() const override { return name(); }
-    virtual NodeType nodeType() const override { return ATTRIBUTE_NODE; }
+    String nodeName() const override { return name(); }
+    NodeType nodeType() const override { return ATTRIBUTE_NODE; }
 
-    virtual const AtomicString& localName() const override { return m_name.localName(); }
-    virtual const AtomicString& prefix() const override { return m_name.prefix(); }
+    const AtomicString& localName() const override { return m_name.localName(); }
+    const AtomicString& prefix() const override { return m_name.prefix(); }
 
-    virtual void setPrefix(const AtomicString&, ExceptionCode&) override;
+    void setPrefix(const AtomicString&, ExceptionCode&) override;
 
-    virtual String nodeValue() const override { return value(); }
-    virtual void setNodeValue(const String&, ExceptionCode&) override;
-    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    String nodeValue() const override { return value(); }
+    void setNodeValue(const String&, ExceptionCode&) override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
-    virtual bool isAttributeNode() const override { return true; }
-    virtual bool childTypeAllowed(NodeType) const override;
+    bool isAttributeNode() const override { return true; }
+    bool childTypeAllowed(NodeType) const override;
 
-    virtual void childrenChanged(const ChildChange&) override;
+    void childrenChanged(const ChildChange&) override;
 
     Attribute& elementAttribute();
 

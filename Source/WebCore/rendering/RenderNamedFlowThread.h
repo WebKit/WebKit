@@ -66,10 +66,10 @@ public:
 
     void pushDependencies(RenderNamedFlowThreadList&);
 
-    virtual void addRegionToThread(RenderRegion*) override;
-    virtual void removeRegionFromThread(RenderRegion*) override;
+    void addRegionToThread(RenderRegion*) override;
+    void removeRegionFromThread(RenderRegion*) override;
 
-    virtual void regionChangedWritingMode(RenderRegion*) override;
+    void regionChangedWritingMode(RenderRegion*) override;
 
     LayoutRect decorationsClipRectForBoxInNamedFlowFragment(const RenderBox&, RenderNamedFlowFragment&) const;
 
@@ -83,9 +83,9 @@ public:
     bool isMarkedForDestruction() const;
     void getRanges(Vector<RefPtr<Range>>&, const RenderNamedFlowFragment*) const;
 
-    virtual void applyBreakAfterContent(LayoutUnit) override;
+    void applyBreakAfterContent(LayoutUnit) override;
 
-    virtual bool collectsGraphicsLayersUnderRegions() const override;
+    bool collectsGraphicsLayersUnderRegions() const override;
 
     // Check if the content is flown into at least a region with region styling rules.
     bool hasRegionsWithStyling() const { return m_hasRegionsWithStyling; }
@@ -93,25 +93,25 @@ public:
 
     void clearRenderObjectCustomStyle(const RenderObject*);
 
-    virtual void removeFlowChildInfo(RenderObject*) override;
+    void removeFlowChildInfo(RenderObject*) override;
 
     LayoutUnit flowContentBottom() const { return m_flowContentBottom; }
     void dispatchNamedFlowEvents();
 
     void setDispatchRegionOversetChangeEvent(bool value) { m_dispatchRegionOversetChangeEvent = value; }
 
-    virtual bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) const override;
+    bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) const override;
 
 protected:
     void setMarkForDestruction();
     void resetMarkForDestruction();
 
 private:
-    virtual const char* renderName() const override;
-    virtual bool isRenderNamedFlowThread() const override { return true; }
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
-    virtual void computeOverflow(LayoutUnit, bool = false) override;
-    virtual void layout() override;
+    const char* renderName() const override;
+    bool isRenderNamedFlowThread() const override { return true; }
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    void computeOverflow(LayoutUnit, bool = false) override;
+    void layout() override;
 
     void dispatchRegionOversetChangeEventIfNeeded();
 

@@ -43,21 +43,21 @@ public:
 private:
     void frameOwnerElement() const = delete;
 
-    virtual bool shouldComputeSizeAsReplaced() const override;
-    virtual bool isInlineBlockOrInlineTable() const override;
+    bool shouldComputeSizeAsReplaced() const override;
+    bool isInlineBlockOrInlineTable() const override;
 
-    virtual void layout() override;
+    void layout() override;
 
-    virtual bool isRenderIFrame() const override { return true; }
+    bool isRenderIFrame() const override { return true; }
 
 #if PLATFORM(IOS)
     // FIXME: Do we still need this workaround to avoid breaking layout tests?
-    virtual const char* renderName() const override { return "RenderPartObject"; }
+    const char* renderName() const override { return "RenderPartObject"; }
 #else
-    virtual const char* renderName() const override { return "RenderIFrame"; }
+    const char* renderName() const override { return "RenderIFrame"; }
 #endif
 
-    virtual bool requiresLayer() const override;
+    bool requiresLayer() const override;
 
     RenderView* contentRootRenderer() const;
 };

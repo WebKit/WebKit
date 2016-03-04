@@ -76,10 +76,10 @@ public:
 protected:
     SVGComponentTransferFunctionElement(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
     
 private:
     static bool isSupportedAttribute(const QualifiedName&);

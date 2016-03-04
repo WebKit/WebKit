@@ -47,8 +47,8 @@ public:
     virtual ~PageConsoleAgent() { }
 
 private:
-    virtual void clearMessages(ErrorString&) override;
-    virtual void addInspectedNode(ErrorString&, int nodeId) override;
+    void clearMessages(ErrorString&) override;
+    void addInspectedNode(ErrorString&, int nodeId) override;
 
     InspectorDOMAgent* m_inspectorDOMAgent;
 };

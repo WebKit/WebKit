@@ -62,7 +62,7 @@ public:
     const String& oldURL() const { return m_oldURL; }
     const String& newURL() const { return m_newURL; }
 
-    virtual EventInterface eventInterface() const override { return HashChangeEventInterfaceType; }
+    EventInterface eventInterface() const override { return HashChangeEventInterfaceType; }
 
 private:
     HashChangeEvent()

@@ -38,7 +38,7 @@ public:
         ++deletionCount;
     }
 
-    virtual float evaluate(float) const override { return 0; }
+    float evaluate(float) const override { return 0; }
     bool operator==(const CalcExpressionNode&) const override { ASSERT_NOT_REACHED(); return false; }
 };
 

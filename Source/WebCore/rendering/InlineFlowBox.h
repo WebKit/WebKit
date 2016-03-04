@@ -72,8 +72,8 @@ public:
 #endif
 
 #if ENABLE(TREE_DEBUGGING)
-    virtual void showLineTreeAndMark(const InlineBox* markedBox, int depth) const override;
-    virtual const char* boxName() const override;
+    void showLineTreeAndMark(const InlineBox* markedBox, int depth) const override;
+    const char* boxName() const override;
 #endif
 
     RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(InlineBox::renderer()); }
@@ -87,7 +87,7 @@ public:
     InlineBox* firstChild() const { checkConsistency(); return m_firstChild; }
     InlineBox* lastChild() const { checkConsistency(); return m_lastChild; }
 
-    virtual bool isLeaf() const override final { return false; }
+    bool isLeaf() const override final { return false; }
     
     InlineBox* firstLeafChild() const;
     InlineBox* lastLeafChild() const;
@@ -95,7 +95,7 @@ public:
     typedef void (*CustomInlineBoxRangeReverse)(void* userData, Vector<InlineBox*>::iterator first, Vector<InlineBox*>::iterator last);
     void collectLeafBoxesInLogicalOrder(Vector<InlineBox*>&, CustomInlineBoxRangeReverse customReverseImplementation = nullptr, void* userData = nullptr) const;
 
-    virtual void setConstructed() override final
+    void setConstructed() override final
     {
         InlineBox::setConstructed();
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
@@ -103,24 +103,24 @@ public:
     }
 
     void addToLine(InlineBox* child);
-    virtual void deleteLine() override final;
-    virtual void extractLine() override final;
-    virtual void attachLine() override final;
-    virtual void adjustPosition(float dx, float dy) override;
+    void deleteLine() override final;
+    void extractLine() override final;
+    void attachLine() override final;
+    void adjustPosition(float dx, float dy) override;
 
     virtual void extractLineBoxFromRenderObject();
     virtual void attachLineBoxToRenderObject();
     virtual void removeLineBoxFromRenderObject();
 
-    virtual void clearTruncation() override;
+    void clearTruncation() override;
 
     void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
     void paintMask(PaintInfo&, const LayoutPoint&);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(const PaintInfo&, const RenderStyle&, ShadowStyle, const LayoutRect&);
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
+    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
     bool boxShadowCanBeAppliedToBackground(const FillLayer&) const;
 
@@ -202,10 +202,10 @@ public:
     
     void removeChild(InlineBox* child);
 
-    virtual RenderObject::SelectionState selectionState() override;
+    RenderObject::SelectionState selectionState() override;
 
-    virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const override final;
-    virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool&) override;
+    bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const override final;
+    float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool&) override;
 
     bool hasTextChildren() const { return m_hasTextChildren; }
     bool hasTextDescendants() const { return m_hasTextDescendants; }
@@ -303,7 +303,7 @@ public:
     void minLogicalTopForTextDecorationLine(float& minLogicalTop, const RenderElement* decorationRenderer, TextDecoration) const;
 
 private:
-    virtual bool isInlineFlowBox() const override final { return true; }
+    bool isInlineFlowBox() const override final { return true; }
     void boxModelObject() const = delete;
 
     void addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow);

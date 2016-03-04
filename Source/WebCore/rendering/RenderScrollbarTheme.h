@@ -38,47 +38,47 @@ class RenderScrollbarTheme final : public ScrollbarThemeComposite {
 public:
     virtual ~RenderScrollbarTheme() { }
     
-    virtual int scrollbarThickness(ScrollbarControlSize controlSize) override { return ScrollbarTheme::theme().scrollbarThickness(controlSize); }
+    int scrollbarThickness(ScrollbarControlSize controlSize) override { return ScrollbarTheme::theme().scrollbarThickness(controlSize); }
 
-    virtual ScrollbarButtonsPlacement buttonsPlacement() const override { return ScrollbarTheme::theme().buttonsPlacement(); }
+    ScrollbarButtonsPlacement buttonsPlacement() const override { return ScrollbarTheme::theme().buttonsPlacement(); }
 
-    virtual bool supportsControlTints() const override { return true; }
+    bool supportsControlTints() const override { return true; }
 
-    virtual void paintScrollCorner(ScrollView*, GraphicsContext&, const IntRect& cornerRect) override;
+    void paintScrollCorner(ScrollView*, GraphicsContext&, const IntRect& cornerRect) override;
 
-    virtual ScrollbarButtonPressAction handleMousePressEvent(Scrollbar& scrollbar, const PlatformMouseEvent& event, ScrollbarPart pressedPart) override { return ScrollbarTheme::theme().handleMousePressEvent(scrollbar, event, pressedPart); }
+    ScrollbarButtonPressAction handleMousePressEvent(Scrollbar& scrollbar, const PlatformMouseEvent& event, ScrollbarPart pressedPart) override { return ScrollbarTheme::theme().handleMousePressEvent(scrollbar, event, pressedPart); }
 
-    virtual double initialAutoscrollTimerDelay() override { return ScrollbarTheme::theme().initialAutoscrollTimerDelay(); }
-    virtual double autoscrollTimerDelay() override { return ScrollbarTheme::theme().autoscrollTimerDelay(); }
+    double initialAutoscrollTimerDelay() override { return ScrollbarTheme::theme().initialAutoscrollTimerDelay(); }
+    double autoscrollTimerDelay() override { return ScrollbarTheme::theme().autoscrollTimerDelay(); }
 
-    virtual void registerScrollbar(Scrollbar& scrollbar) override { return ScrollbarTheme::theme().registerScrollbar(scrollbar); }
-    virtual void unregisterScrollbar(Scrollbar& scrollbar) override { return ScrollbarTheme::theme().unregisterScrollbar(scrollbar); }
+    void registerScrollbar(Scrollbar& scrollbar) override { return ScrollbarTheme::theme().registerScrollbar(scrollbar); }
+    void unregisterScrollbar(Scrollbar& scrollbar) override { return ScrollbarTheme::theme().unregisterScrollbar(scrollbar); }
 
-    virtual int minimumThumbLength(Scrollbar&) override;
+    int minimumThumbLength(Scrollbar&) override;
 
     void buttonSizesAlongTrackAxis(Scrollbar&, int& beforeSize, int& afterSize);
     
     static RenderScrollbarTheme* renderScrollbarTheme();
 
 protected:
-    virtual bool hasButtons(Scrollbar&) override;
-    virtual bool hasThumb(Scrollbar&) override;
+    bool hasButtons(Scrollbar&) override;
+    bool hasThumb(Scrollbar&) override;
 
-    virtual IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
-    virtual IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
-    virtual IntRect trackRect(Scrollbar&, bool painting = false) override;
+    IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    IntRect trackRect(Scrollbar&, bool painting = false) override;
 
-    virtual void willPaintScrollbar(GraphicsContext&, Scrollbar&) override;
-    virtual void didPaintScrollbar(GraphicsContext&, Scrollbar&) override;
+    void willPaintScrollbar(GraphicsContext&, Scrollbar&) override;
+    void didPaintScrollbar(GraphicsContext&, Scrollbar&) override;
     
-    virtual void paintScrollbarBackground(GraphicsContext&, Scrollbar&) override;
-    virtual void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
-    virtual void paintTrackPiece(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
-    virtual void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
-    virtual void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
-    virtual void paintTickmarks(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintScrollbarBackground(GraphicsContext&, Scrollbar&) override;
+    void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintTrackPiece(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
+    void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
+    void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintTickmarks(GraphicsContext&, Scrollbar&, const IntRect&) override;
 
-    virtual IntRect constrainTrackRectToTrackPieces(Scrollbar&, const IntRect&) override;
+    IntRect constrainTrackRectToTrackPieces(Scrollbar&, const IntRect&) override;
 };
 
 } // namespace WebCore

@@ -77,22 +77,22 @@ private:
     ~PluginProcess();
 
     // ChildProcess
-    virtual void initializeProcess(const ChildProcessInitializationParameters&) override;
-    virtual void initializeProcessName(const ChildProcessInitializationParameters&) override;
-    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
-    virtual bool shouldTerminate() override;
+    void initializeProcess(const ChildProcessInitializationParameters&) override;
+    void initializeProcessName(const ChildProcessInitializationParameters&) override;
+    void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
+    bool shouldTerminate() override;
     void platformInitializeProcess(const ChildProcessInitializationParameters&);
 
 #if USE(APPKIT)
-    virtual void stopRunLoop() override;
+    void stopRunLoop() override;
 #endif
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    virtual void didClose(IPC::Connection&) override;
-    virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    virtual IPC::ProcessType localProcessType() override { return IPC::ProcessType::Plugin; }
-    virtual IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::UI; }
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didClose(IPC::Connection&) override;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+    IPC::ProcessType localProcessType() override { return IPC::ProcessType::Plugin; }
+    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::UI; }
 
     // Message handlers.
     void didReceivePluginProcessMessage(IPC::Connection&, IPC::MessageDecoder&);
@@ -104,9 +104,9 @@ private:
     void deleteWebsiteDataForHostNames(const Vector<String>& hostNames, uint64_t callbackID);
 
     // AudioHardwareListenerClient
-    virtual void audioHardwareDidBecomeActive() override;
-    virtual void audioHardwareDidBecomeInactive() override;
-    virtual void audioOutputDeviceChanged() override { }
+    void audioHardwareDidBecomeActive() override;
+    void audioHardwareDidBecomeInactive() override;
+    void audioOutputDeviceChanged() override { }
 
     void platformInitializePluginProcess(PluginProcessCreationParameters&&);
     

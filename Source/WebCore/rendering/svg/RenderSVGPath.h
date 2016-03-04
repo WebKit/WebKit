@@ -36,21 +36,21 @@ public:
     virtual ~RenderSVGPath();
 
 private:
-    virtual bool isSVGPath() const override { return true; }
-    virtual const char* renderName() const override { return "RenderSVGPath"; }
+    bool isSVGPath() const override { return true; }
+    const char* renderName() const override { return "RenderSVGPath"; }
 
-    virtual void updateShapeFromElement() override;
+    void updateShapeFromElement() override;
     FloatRect calculateUpdatedStrokeBoundingBox() const;
 
-    virtual void strokeShape(GraphicsContext&) const override;
-    virtual bool shapeDependentStrokeContains(const FloatPoint&) override;
+    void strokeShape(GraphicsContext&) const override;
+    bool shapeDependentStrokeContains(const FloatPoint&) override;
 
     bool shouldStrokeZeroLengthSubpath() const;
     Path* zeroLengthLinecapPath(const FloatPoint&) const;
     FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
     void updateZeroLengthSubpaths();
 
-    virtual bool isRenderingDisabled() const override;
+    bool isRenderingDisabled() const override;
 
     Vector<FloatPoint> m_zeroLengthLinecapLocations;
 };

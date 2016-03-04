@@ -42,8 +42,8 @@ friend class RenderMathMLScripts;
 public:
     enum WrapperType { Base, SubSupPair };
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual void removeChild(RenderObject&) override;
+    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
+    void removeChild(RenderObject&) override;
 
 private:
     RenderMathMLScriptsWrapper(Document& document, Ref<RenderStyle>&& style, WrapperType kind)
@@ -57,8 +57,8 @@ private:
     void addChildInternal(bool normalInsertion, RenderObject* child, RenderObject* beforeChild = 0);
     void removeChildInternal(bool normalRemoval, RenderObject& child);
 
-    virtual const char* renderName() const override { return m_kind == Base ? "Base Wrapper" : "SubSupPair Wrapper"; }
-    virtual bool isRenderMathMLScriptsWrapper() const override final { return true; }
+    const char* renderName() const override { return m_kind == Base ? "Base Wrapper" : "SubSupPair Wrapper"; }
+    bool isRenderMathMLScriptsWrapper() const override final { return true; }
 
     RenderMathMLScripts* parentMathMLScripts();
 
@@ -72,26 +72,26 @@ friend class RenderMathMLScriptsWrapper;
 
 public:
     RenderMathMLScripts(Element&, Ref<RenderStyle>&&);
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual void removeChild(RenderObject&) override;
+    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
+    void removeChild(RenderObject&) override;
     
-    virtual RenderMathMLOperator* unembellishedOperator() override;
-    virtual Optional<int> firstLineBaseline() const override;
+    RenderMathMLOperator* unembellishedOperator() override;
+    Optional<int> firstLineBaseline() const override;
 
 protected:
-    virtual void layout() override;
+    void layout() override;
     
 private:
     void addChildInternal(bool normalInsertion, RenderObject* child, RenderObject* beforeChild = 0);
     void removeChildInternal(bool normalRemoval, RenderObject& child);
 
-    virtual bool isRenderMathMLScripts() const override { return true; }
-    virtual const char* renderName() const override { return "RenderMathMLScripts"; }
+    bool isRenderMathMLScripts() const override { return true; }
+    const char* renderName() const override { return "RenderMathMLScripts"; }
 
     void fixAnonymousStyleForSubSupPair(RenderObject* subSupPair, bool isPostScript);
     void fixAnonymousStyles();
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     // Omit our subscript and/or superscript. This may return 0 for a non-MathML base (which
     // won't occur in valid MathML).

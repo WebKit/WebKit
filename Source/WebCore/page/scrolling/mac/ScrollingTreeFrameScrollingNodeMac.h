@@ -48,9 +48,9 @@ private:
     void releaseReferencesToScrollbarPaintersOnTheMainThread();
 
     // ScrollingTreeNode member functions.
-    virtual void updateBeforeChildren(const ScrollingStateNode&) override;
-    virtual void updateAfterChildren(const ScrollingStateNode&) override;
-    virtual void handleWheelEvent(const PlatformWheelEvent&) override;
+    void updateBeforeChildren(const ScrollingStateNode&) override;
+    void updateAfterChildren(const ScrollingStateNode&) override;
+    void handleWheelEvent(const PlatformWheelEvent&) override;
 
     // ScrollController member functions.
     bool allowsHorizontalStretching(const PlatformWheelEvent&) override;

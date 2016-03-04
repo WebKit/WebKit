@@ -77,14 +77,14 @@ private:
     UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::Promise&&);
 
     // MediaStreamCreationClient
-    virtual void constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& audioTracks, const Vector<RefPtr<RealtimeMediaSource>>& videoTracks) override final;
-    virtual void constraintsInvalid(const String& constraintName) override final;
-    virtual void didCreateStream(PassRefPtr<MediaStreamPrivate>) override final;
-    virtual void failedToCreateStreamWithConstraintsError(const String& constraintName) override final;
-    virtual void failedToCreateStreamWithPermissionError() override final;
+    void constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& audioTracks, const Vector<RefPtr<RealtimeMediaSource>>& videoTracks) override final;
+    void constraintsInvalid(const String& constraintName) override final;
+    void didCreateStream(PassRefPtr<MediaStreamPrivate>) override final;
+    void failedToCreateStreamWithConstraintsError(const String& constraintName) override final;
+    void failedToCreateStreamWithPermissionError() override final;
 
     // ContextDestructionObserver
-    virtual void contextDestroyed() override final;
+    void contextDestroyed() override final;
     
     RefPtr<MediaConstraints> m_audioConstraints;
     RefPtr<MediaConstraints> m_videoConstraints;

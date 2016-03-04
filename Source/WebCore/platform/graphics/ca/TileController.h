@@ -84,8 +84,8 @@ public:
     WEBCORE_EXPORT void setTileDebugBorderWidth(float);
     WEBCORE_EXPORT void setTileDebugBorderColor(Color);
 
-    virtual FloatRect visibleRect() const override { return m_visibleRect; }
-    virtual FloatRect coverageRect() const override { return m_coverageRect; }
+    FloatRect visibleRect() const override { return m_visibleRect; }
+    FloatRect coverageRect() const override { return m_coverageRect; }
 
     unsigned blankPixelCount() const;
     static unsigned blankPixelCountForTiles(const PlatformLayerList&, const FloatRect&, const IntPoint&);
@@ -101,23 +101,23 @@ public:
     float tileDebugBorderWidth() const { return m_tileDebugBorderWidth; }
     ScrollingModeIndication indicatorMode() const { return m_indicatorMode; }
 
-    virtual void willStartLiveResize() override;
-    virtual void didEndLiveResize() override;
+    void willStartLiveResize() override;
+    void didEndLiveResize() override;
 
-    virtual IntSize tileSize() const override;
-    virtual IntRect bounds() const override;
-    virtual IntRect boundsWithoutMargin() const override;
-    virtual bool hasMargins() const override;
-    virtual bool hasHorizontalMargins() const override;
-    virtual bool hasVerticalMargins() const override;
-    virtual int topMarginHeight() const override;
-    virtual int bottomMarginHeight() const override;
-    virtual int leftMarginWidth() const override;
-    virtual int rightMarginWidth() const override;
-    virtual TileCoverage tileCoverage() const override { return m_tileCoverage; }
-    virtual void adjustTileCoverageRect(FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) const override;
-    virtual bool unparentsOffscreenTiles() const override { return m_unparentsOffscreenTiles; }
-    virtual bool scrollingPerformanceLoggingEnabled() const override { return m_scrollingPerformanceLoggingEnabled; }
+    IntSize tileSize() const override;
+    IntRect bounds() const override;
+    IntRect boundsWithoutMargin() const override;
+    bool hasMargins() const override;
+    bool hasHorizontalMargins() const override;
+    bool hasVerticalMargins() const override;
+    int topMarginHeight() const override;
+    int bottomMarginHeight() const override;
+    int leftMarginWidth() const override;
+    int rightMarginWidth() const override;
+    TileCoverage tileCoverage() const override { return m_tileCoverage; }
+    void adjustTileCoverageRect(FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) const override;
+    bool unparentsOffscreenTiles() const override { return m_unparentsOffscreenTiles; }
+    bool scrollingPerformanceLoggingEnabled() const override { return m_scrollingPerformanceLoggingEnabled; }
 
     IntRect boundsAtLastRevalidate() const { return m_boundsAtLastRevalidate; }
     IntRect boundsAtLastRevalidateWithoutMargin() const;
@@ -143,31 +143,31 @@ private:
     float topContentInset() const { return m_topContentInset; }
 
     // TiledBacking member functions.
-    virtual void setVisibleRect(const FloatRect&) override;
-    virtual void setCoverageRect(const FloatRect&) override;
-    virtual bool tilesWouldChangeForCoverageRect(const FloatRect&) const override;
-    virtual void setTiledScrollingIndicatorPosition(const FloatPoint&) override;
-    virtual void setTopContentInset(float) override;
-    virtual void setVelocity(const VelocityData&) override;
-    virtual void setScrollability(Scrollability) override;
-    virtual void prepopulateRect(const FloatRect&) override;
-    virtual void setIsInWindow(bool) override;
-    virtual void setTileCoverage(TileCoverage) override;
-    virtual void revalidateTiles() override;
-    virtual void forceRepaint() override;
-    virtual IntRect tileGridExtent() const override;
-    virtual void setScrollingPerformanceLoggingEnabled(bool flag) override { m_scrollingPerformanceLoggingEnabled = flag; }
-    virtual void setUnparentsOffscreenTiles(bool flag) override { m_unparentsOffscreenTiles = flag; }
-    virtual double retainedTileBackingStoreMemory() const override;
-    virtual IntRect tileCoverageRect() const override;
+    void setVisibleRect(const FloatRect&) override;
+    void setCoverageRect(const FloatRect&) override;
+    bool tilesWouldChangeForCoverageRect(const FloatRect&) const override;
+    void setTiledScrollingIndicatorPosition(const FloatPoint&) override;
+    void setTopContentInset(float) override;
+    void setVelocity(const VelocityData&) override;
+    void setScrollability(Scrollability) override;
+    void prepopulateRect(const FloatRect&) override;
+    void setIsInWindow(bool) override;
+    void setTileCoverage(TileCoverage) override;
+    void revalidateTiles() override;
+    void forceRepaint() override;
+    IntRect tileGridExtent() const override;
+    void setScrollingPerformanceLoggingEnabled(bool flag) override { m_scrollingPerformanceLoggingEnabled = flag; }
+    void setUnparentsOffscreenTiles(bool flag) override { m_unparentsOffscreenTiles = flag; }
+    double retainedTileBackingStoreMemory() const override;
+    IntRect tileCoverageRect() const override;
 #if USE(CA)
-    virtual PlatformCALayer* tiledScrollingIndicatorLayer() override;
+    PlatformCALayer* tiledScrollingIndicatorLayer() override;
 #endif
-    virtual void setScrollingModeIndication(ScrollingModeIndication) override;
-    virtual void setHasMargins(bool marginTop, bool marginBottom, bool marginLeft, bool marginRight) override;
-    virtual void setMarginSize(int) override;
-    virtual void setZoomedOutContentsScale(float) override;
-    virtual float zoomedOutContentsScale() const override;
+    void setScrollingModeIndication(ScrollingModeIndication) override;
+    void setHasMargins(bool marginTop, bool marginBottom, bool marginLeft, bool marginRight) override;
+    void setMarginSize(int) override;
+    void setZoomedOutContentsScale(float) override;
+    float zoomedOutContentsScale() const override;
 
     void updateMargins();
     void clearZoomedOutTileGrid();

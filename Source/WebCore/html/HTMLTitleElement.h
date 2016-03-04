@@ -39,9 +39,9 @@ public:
 private:
     HTMLTitleElement(const QualifiedName&, Document&);
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
-    virtual void childrenChanged(const ChildChange&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
+    void childrenChanged(const ChildChange&) override;
 
     StringWithDirection computedTextWithDirection();
 

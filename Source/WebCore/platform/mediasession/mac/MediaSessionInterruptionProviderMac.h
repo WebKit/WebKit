@@ -36,8 +36,8 @@ class MediaSessionInterruptionProviderMac : public MediaSessionInterruptionProvi
 public:
     using MediaSessionInterruptionProvider::MediaSessionInterruptionProvider;
 
-    virtual void beginListeningForInterruptions() override;
-    virtual void stopListeningForInterruptions() override;
+    void beginListeningForInterruptions() override;
+    void stopListeningForInterruptions() override;
 
 protected:
     virtual ~MediaSessionInterruptionProviderMac() { }

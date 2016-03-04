@@ -95,7 +95,7 @@ public:
     bool expectsWheelEventTestTrigger() const { return m_expectsWheelEventTestTrigger; }
     WEBCORE_EXPORT void setExpectsWheelEventTestTrigger(bool);
 
-    virtual void dumpProperties(TextStream&, int indent) const override;
+    void dumpProperties(TextStream&, int indent) const override;
     
 protected:
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);

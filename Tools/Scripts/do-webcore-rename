@@ -204,13 +204,17 @@ for my $file (sort @paths) {
     if ($isDOMTypeRename) {
         for my $from (@sortedRenameKeys) {
             # Handle JavaScript custom bindings.
-            $newContents =~ s/\b(JS|V8|to|)$from/$1$renames{$from}/g;
+            $newContents =~ s/\b(JS|to|)$from/$1$renames{$from}/g;
         }
     } else {
         for my $from (@sortedRenameKeys) {
             $newContents =~ s/\b$from(?!["\w])/$renames{$from}/g; # this " unconfuses Xcode syntax highlighting
         }
     }
+
+    # Remove the "virtual" keyword from virtual/override lines.
+    # Should be a no-op but also OK to remove this any time, now that we have done it once.
+    $newContents =~ s/^(\s*(\w+EXPORT\w*\s+)?)virtual ([^{;]+ override\b)/$1$3/mg;
 
     if ($newContents ne $contents) {
         open FILE, ">", $file or die "Failed to open $file";

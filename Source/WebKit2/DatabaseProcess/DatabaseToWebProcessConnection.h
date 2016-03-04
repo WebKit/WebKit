@@ -48,18 +48,18 @@ private:
     DatabaseToWebProcessConnection(IPC::Connection::Identifier);
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    virtual void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
-    virtual void didClose(IPC::Connection&) override;
-    virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    virtual IPC::ProcessType localProcessType() override { return IPC::ProcessType::Database; }
-    virtual IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Web; }
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    void didClose(IPC::Connection&) override;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+    IPC::ProcessType localProcessType() override { return IPC::ProcessType::Database; }
+    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Web; }
     void didReceiveDatabaseToWebProcessConnectionMessage(IPC::Connection&, IPC::MessageDecoder&);
     void didReceiveSyncDatabaseToWebProcessConnectionMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() override { return m_connection.get(); }
-    virtual uint64_t messageSenderDestinationID() override { return 0; }
+    IPC::Connection* messageSenderConnection() override { return m_connection.get(); }
+    uint64_t messageSenderDestinationID() override { return 0; }
 
 #if ENABLE(INDEXED_DATABASE)
     // Messages handlers (Modern IDB)

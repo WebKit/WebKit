@@ -149,9 +149,9 @@ public:
 
 private:
     // EventLoopInputDispatcherClient API
-    virtual void willDispatchInput(const EventLoopInputBase&) override;
-    virtual void didDispatchInput(const EventLoopInputBase&) override;
-    virtual void didDispatchFinalInput() override;
+    void willDispatchInput(const EventLoopInputBase&) override;
+    void didDispatchInput(const EventLoopInputBase&) override;
+    void didDispatchFinalInput() override;
 
     void createSegment();
     void completeSegment();

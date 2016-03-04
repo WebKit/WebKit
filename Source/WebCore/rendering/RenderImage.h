@@ -56,7 +56,7 @@ public:
     void areaElementFocusChanged(HTMLAreaElement*);
     
 #if PLATFORM(IOS)
-    virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned, unsigned) override;
+    void collectSelectionRects(Vector<SelectionRect>&, unsigned, unsigned) override;
 #endif
 
     void setIsGeneratedContent(bool generated = true) { m_isGeneratedContent = generated; }
@@ -72,42 +72,42 @@ public:
     void setHasShadowControls(bool hasShadowControls) { m_hasShadowControls = hasShadowControls; }
 
 protected:
-    virtual bool needsPreferredWidthsRecalculation() const override final;
-    virtual RenderBox* embeddedContentBox() const override final;
-    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override final;
-    virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
+    bool needsPreferredWidthsRecalculation() const override final;
+    RenderBox* embeddedContentBox() const override final;
+    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override final;
+    bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle*) override;
+    void styleDidChange(StyleDifference, const RenderStyle*) override;
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
+    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
     void paintIntoRect(GraphicsContext&, const FloatRect&);
-    virtual void paint(PaintInfo&, const LayoutPoint&) override final;
-    virtual void layout() override;
+    void paint(PaintInfo&, const LayoutPoint&) override final;
+    void layout() override;
 
-    virtual void intrinsicSizeChanged() override
+    void intrinsicSizeChanged() override
     {
         imageChanged(imageResource().imagePtr());
     }
 
 private:
-    virtual const char* renderName() const override { return "RenderImage"; }
+    const char* renderName() const override { return "RenderImage"; }
 
-    virtual bool canHaveChildren() const override;
+    bool canHaveChildren() const override;
 
-    virtual bool isImage() const override { return true; }
-    virtual bool isRenderImage() const override final { return true; }
+    bool isImage() const override { return true; }
+    bool isRenderImage() const override final { return true; }
 
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
+    void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    virtual bool computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset) override final;
+    bool computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset) override final;
 
-    virtual LayoutUnit minimumReplacedHeight() const override;
+    LayoutUnit minimumReplacedHeight() const override;
 
-    virtual void notifyFinished(CachedResource*) override final;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
+    void notifyFinished(CachedResource*) override final;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
 
-    virtual bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance, InlineFlowBox*) const override final;
+    bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance, InlineFlowBox*) const override final;
 
     virtual bool shadowControlsNeedCustomLayoutMetrics() const { return false; }
 

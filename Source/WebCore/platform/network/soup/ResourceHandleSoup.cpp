@@ -136,17 +136,17 @@ public:
     }
 #endif // SOUP_CHECK_VERSION(2, 49, 91)
 
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse& response) override
+    void didReceiveResponse(ResourceHandle*, const ResourceResponse& response) override
     {
         m_response = response;
     }
 
-    virtual void didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int) override
+    void didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int) override
     {
         ASSERT_NOT_REACHED();
     }
 
-    virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int /* encodedLength */) override
+    void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int /* encodedLength */) override
     {
         // This pattern is suggested by SharedBuffer.h.
         const char* segment;
@@ -157,26 +157,26 @@ public:
         }
     }
 
-    virtual void didFinishLoading(ResourceHandle*, double) override
+    void didFinishLoading(ResourceHandle*, double) override
     {
         if (g_main_loop_is_running(m_mainLoop.get()))
             g_main_loop_quit(m_mainLoop.get());
         m_finished = true;
     }
 
-    virtual void didFail(ResourceHandle* handle, const ResourceError& error) override
+    void didFail(ResourceHandle* handle, const ResourceError& error) override
     {
         m_error = error;
         didFinishLoading(handle, 0);
     }
 
-    virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) override
+    void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) override
     {
         // We do not handle authentication for synchronous XMLHttpRequests.
         challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
     }
 
-    virtual bool shouldUseCredentialStorage(ResourceHandle*) override
+    bool shouldUseCredentialStorage(ResourceHandle*) override
     {
         return m_storedCredentials == AllowStoredCredentials;
     }

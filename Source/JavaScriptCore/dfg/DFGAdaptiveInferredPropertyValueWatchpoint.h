@@ -38,7 +38,7 @@ public:
     AdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, CodeBlock*);
 
 private:
-    virtual void handleFire(const FireDetail&) override;
+    void handleFire(const FireDetail&) override;
 
     CodeBlock* m_codeBlock;
 };

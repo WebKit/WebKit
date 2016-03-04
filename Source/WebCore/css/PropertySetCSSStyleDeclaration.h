@@ -47,27 +47,27 @@ public:
     virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
     StyleSheetContents* contextStyleSheet() const;
     
-    virtual void ref() override;
-    virtual void deref() override;
+    void ref() override;
+    void deref() override;
 
 private:
-    virtual CSSRule* parentRule() const override { return nullptr; }
-    virtual unsigned length() const override final;
-    virtual String item(unsigned index) const override final;
-    virtual RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) override final;
-    virtual String getPropertyValue(const String& propertyName) override final;
-    virtual String getPropertyPriority(const String& propertyName) override final;
-    virtual String getPropertyShorthand(const String& propertyName) override final;
-    virtual bool isPropertyImplicit(const String& propertyName) override final;
-    virtual void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&) override final;
-    virtual String removeProperty(const String& propertyName, ExceptionCode&) override final;
-    virtual String cssText() const override final;
-    virtual void setCssText(const String&, ExceptionCode&) override final;
-    virtual RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override final;
-    virtual String getPropertyValueInternal(CSSPropertyID) override final;
-    virtual bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) override final;
+    CSSRule* parentRule() const override { return nullptr; }
+    unsigned length() const override final;
+    String item(unsigned index) const override final;
+    RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) override final;
+    String getPropertyValue(const String& propertyName) override final;
+    String getPropertyPriority(const String& propertyName) override final;
+    String getPropertyShorthand(const String& propertyName) override final;
+    bool isPropertyImplicit(const String& propertyName) override final;
+    void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&) override final;
+    String removeProperty(const String& propertyName, ExceptionCode&) override final;
+    String cssText() const override final;
+    void setCssText(const String&, ExceptionCode&) override final;
+    RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override final;
+    String getPropertyValueInternal(CSSPropertyID) override final;
+    bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) override final;
     
-    virtual Ref<MutableStyleProperties> copyProperties() const override final;
+    Ref<MutableStyleProperties> copyProperties() const override final;
 
     CSSValue* cloneAndCacheForCSSOM(CSSValue*);
     
@@ -91,20 +91,20 @@ public:
 
     void clearParentRule() { m_parentRule = 0; }
     
-    virtual void ref() override;
-    virtual void deref() override;
+    void ref() override;
+    void deref() override;
 
     void reattach(MutableStyleProperties&);
 
 private:
     StyleRuleCSSStyleDeclaration(MutableStyleProperties&, CSSRule&);
 
-    virtual CSSStyleSheet* parentStyleSheet() const override;
+    CSSStyleSheet* parentStyleSheet() const override;
 
-    virtual CSSRule* parentRule() const override { return m_parentRule;  }
+    CSSRule* parentRule() const override { return m_parentRule;  }
 
-    virtual bool willMutate() override WARN_UNUSED_RETURN;
-    virtual void didMutate(MutationType) override;
+    bool willMutate() override WARN_UNUSED_RETURN;
+    void didMutate(MutationType) override;
 
     unsigned m_refCount;
     CSSRule* m_parentRule;
@@ -120,11 +120,11 @@ public:
     }
     
 private:
-    virtual CSSStyleSheet* parentStyleSheet() const override;
-    virtual StyledElement* parentElement() const override { return m_parentElement; }
-    virtual void clearParentElement() override { m_parentElement = 0; }
+    CSSStyleSheet* parentStyleSheet() const override;
+    StyledElement* parentElement() const override { return m_parentElement; }
+    void clearParentElement() override { m_parentElement = 0; }
 
-    virtual void didMutate(MutationType) override;
+    void didMutate(MutationType) override;
 
     StyledElement* m_parentElement;
 };

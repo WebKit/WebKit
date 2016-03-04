@@ -61,13 +61,13 @@ private:
     WebSoupRequestManagerProxy(WebProcessPool*);
 
     // WebContextSupplement
-    virtual void contextDestroyed() override;
-    virtual void processDidClose(WebProcessProxy*) override;
-    virtual void refWebContextSupplement() override;
-    virtual void derefWebContextSupplement() override;
+    void contextDestroyed() override;
+    void processDidClose(WebProcessProxy*) override;
+    void refWebContextSupplement() override;
+    void derefWebContextSupplement() override;
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     void didFailToLoadURIRequest(uint64_t requestID);
 

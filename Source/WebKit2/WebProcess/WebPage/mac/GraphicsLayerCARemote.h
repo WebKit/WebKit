@@ -43,17 +43,17 @@ public:
 
     virtual ~GraphicsLayerCARemote();
 
-    virtual bool filtersCanBeComposited(const WebCore::FilterOperations& filters) override;
+    bool filtersCanBeComposited(const WebCore::FilterOperations& filters) override;
 
 private:
-    virtual bool isGraphicsLayerCARemote() const override { return true; }
+    bool isGraphicsLayerCARemote() const override { return true; }
 
-    virtual PassRefPtr<WebCore::PlatformCALayer> createPlatformCALayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner) override;
-    virtual PassRefPtr<WebCore::PlatformCALayer> createPlatformCALayer(PlatformLayer*, WebCore::PlatformCALayerClient* owner) override;
-    virtual PassRefPtr<WebCore::PlatformCAAnimation> createPlatformCAAnimation(WebCore::PlatformCAAnimation::AnimationType, const String& keyPath) override;
+    PassRefPtr<WebCore::PlatformCALayer> createPlatformCALayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner) override;
+    PassRefPtr<WebCore::PlatformCALayer> createPlatformCALayer(PlatformLayer*, WebCore::PlatformCALayerClient* owner) override;
+    PassRefPtr<WebCore::PlatformCAAnimation> createPlatformCAAnimation(WebCore::PlatformCAAnimation::AnimationType, const String& keyPath) override;
 
     // PlatformCALayerRemote can't currently proxy directly composited image contents, so opt out of this optimization.
-    virtual bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
+    bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
     
     RemoteLayerTreeContext& m_context;
 };

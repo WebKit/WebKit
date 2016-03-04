@@ -40,33 +40,33 @@ public:
     virtual ~WebIDBConnectionToServer();
 
     WebCore::IDBClient::IDBConnectionToServer& coreConnectionToServer();
-    virtual uint64_t identifier() const override final { return m_identifier; }
-    virtual uint64_t messageSenderDestinationID() override final { return m_identifier; }
+    uint64_t identifier() const override final { return m_identifier; }
+    uint64_t messageSenderDestinationID() override final { return m_identifier; }
 
     // IDBConnectionToServerDelegate
-    virtual void deleteDatabase(WebCore::IDBRequestData&) override final;
-    virtual void openDatabase(WebCore::IDBRequestData&) override final;
-    virtual void abortTransaction(WebCore::IDBResourceIdentifier&) override final;
-    virtual void commitTransaction(WebCore::IDBResourceIdentifier&) override final;
-    virtual void didFinishHandlingVersionChangeTransaction(WebCore::IDBResourceIdentifier&) override final;
-    virtual void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&) override final;
-    virtual void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName) override final;
-    virtual void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier) override final;
-    virtual void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&) override final;
-    virtual void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) override final;
-    virtual void putOrAdd(const WebCore::IDBRequestData&, WebCore::IDBKey*, WebCore::SerializedScriptValue&, const WebCore::IndexedDB::ObjectStoreOverwriteMode) override final;
-    virtual void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) override final;
-    virtual void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) override final;
-    virtual void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) override final;
-    virtual void openCursor(const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&) override final;
-    virtual void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, unsigned long count) override final;
-    virtual void establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo&) override final;
-    virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) override final;
-    virtual void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier) override final;
-    virtual void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier) override final;
+    void deleteDatabase(WebCore::IDBRequestData&) override final;
+    void openDatabase(WebCore::IDBRequestData&) override final;
+    void abortTransaction(WebCore::IDBResourceIdentifier&) override final;
+    void commitTransaction(WebCore::IDBResourceIdentifier&) override final;
+    void didFinishHandlingVersionChangeTransaction(WebCore::IDBResourceIdentifier&) override final;
+    void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&) override final;
+    void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName) override final;
+    void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier) override final;
+    void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&) override final;
+    void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) override final;
+    void putOrAdd(const WebCore::IDBRequestData&, WebCore::IDBKey*, WebCore::SerializedScriptValue&, const WebCore::IndexedDB::ObjectStoreOverwriteMode) override final;
+    void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) override final;
+    void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) override final;
+    void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) override final;
+    void openCursor(const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&) override final;
+    void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, unsigned long count) override final;
+    void establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo&) override final;
+    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) override final;
+    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier) override final;
+    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier) override final;
 
-    virtual void ref() override { RefCounted<WebIDBConnectionToServer>::ref(); }
-    virtual void deref() override { RefCounted<WebIDBConnectionToServer>::deref(); }
+    void ref() override { RefCounted<WebIDBConnectionToServer>::ref(); }
+    void deref() override { RefCounted<WebIDBConnectionToServer>::deref(); }
 
     // Messages received from DatabaseProcess
     void didDeleteDatabase(const WebCore::IDBResultData&);
@@ -93,7 +93,7 @@ public:
 private:
     WebIDBConnectionToServer();
 
-    virtual IPC::Connection* messageSenderConnection() override final;
+    IPC::Connection* messageSenderConnection() override final;
 
     uint64_t m_identifier;
     bool m_isOpenInServer { false };

@@ -56,16 +56,16 @@ public:
     RenderRubyAsInline(Element&, Ref<RenderStyle>&&);
     virtual ~RenderRubyAsInline();
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual void removeChild(RenderObject& child) override;
+    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
+    void removeChild(RenderObject& child) override;
 
 protected:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
-    virtual bool isRubyInline() const override final { return true; }
-    virtual const char* renderName() const override { return "RenderRuby (inline)"; }
-    virtual bool createsAnonymousWrapper() const override { return true; }
+    bool isRubyInline() const override final { return true; }
+    const char* renderName() const override { return "RenderRuby (inline)"; }
+    bool createsAnonymousWrapper() const override { return true; }
 };
 
 // <ruby> when used as 'display:block' or 'display:inline-block'
@@ -76,17 +76,17 @@ public:
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual void removeChild(RenderObject& child) override;
+    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
+    void removeChild(RenderObject& child) override;
 
 protected:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
-    virtual bool isRubyBlock() const override final { return true; }
-    virtual const char* renderName() const override { return "RenderRuby (block)"; }
-    virtual bool createsAnonymousWrapper() const override { return true; }
-    virtual void removeLeftoverAnonymousBlock(RenderBlock*) override { ASSERT_NOT_REACHED(); }
+    bool isRubyBlock() const override final { return true; }
+    const char* renderName() const override { return "RenderRuby (block)"; }
+    bool createsAnonymousWrapper() const override { return true; }
+    void removeLeftoverAnonymousBlock(RenderBlock*) override { ASSERT_NOT_REACHED(); }
 };
 
 

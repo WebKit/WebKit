@@ -89,16 +89,16 @@ private:
     WebPageOverlay(std::unique_ptr<Client>, WebCore::PageOverlay::OverlayType);
 
     // WebCore::PageOverlay::Client
-    virtual void pageOverlayDestroyed(WebCore::PageOverlay&) override;
-    virtual void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
-    virtual void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
-    virtual void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
-    virtual bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
-    virtual void didScrollFrame(WebCore::PageOverlay&, WebCore::Frame&) override;
+    void pageOverlayDestroyed(WebCore::PageOverlay&) override;
+    void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
+    void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
+    void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
+    bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
+    void didScrollFrame(WebCore::PageOverlay&, WebCore::Frame&) override;
 
-    virtual bool copyAccessibilityAttributeStringValueForPoint(WebCore::PageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& value) override;
-    virtual bool copyAccessibilityAttributeBoolValueForPoint(WebCore::PageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& value) override;
-    virtual Vector<String> copyAccessibilityAttributeNames(WebCore::PageOverlay&, bool /* parameterizedNames */) override;
+    bool copyAccessibilityAttributeStringValueForPoint(WebCore::PageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& value) override;
+    bool copyAccessibilityAttributeBoolValueForPoint(WebCore::PageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& value) override;
+    Vector<String> copyAccessibilityAttributeNames(WebCore::PageOverlay&, bool /* parameterizedNames */) override;
 
 
     RefPtr<WebCore::PageOverlay> m_overlay;

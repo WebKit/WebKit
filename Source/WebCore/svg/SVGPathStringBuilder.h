@@ -34,22 +34,22 @@ public:
     String result();
 
 private:
-    virtual void incrementPathSegmentCount() override;
-    virtual bool continueConsuming() override;
+    void incrementPathSegmentCount() override;
+    bool continueConsuming() override;
 
     // Used in UnalteredParsing/NormalizedParsing modes.
-    virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) override;
-    virtual void lineTo(const FloatPoint&, PathCoordinateMode) override;
-    virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode) override;
-    virtual void closePath() override;
+    void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) override;
+    void lineTo(const FloatPoint&, PathCoordinateMode) override;
+    void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode) override;
+    void closePath() override;
 
     // Only used in UnalteredParsing mode.
-    virtual void lineToHorizontal(float, PathCoordinateMode) override;
-    virtual void lineToVertical(float, PathCoordinateMode) override;
-    virtual void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) override;
-    virtual void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) override;
-    virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) override;
-    virtual void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode) override;
+    void lineToHorizontal(float, PathCoordinateMode) override;
+    void lineToVertical(float, PathCoordinateMode) override;
+    void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) override;
+    void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) override;
+    void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) override;
+    void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode) override;
 
     StringBuilder m_stringBuilder;
 };

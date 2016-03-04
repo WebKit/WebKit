@@ -41,10 +41,10 @@ public:
 protected:
     WebGLSampler(WebGLRenderingContextBase*);
 
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
 private:
-    virtual bool isSampler() const override { return true; }
+    bool isSampler() const override { return true; }
 };
 
 } // namespace WebCore

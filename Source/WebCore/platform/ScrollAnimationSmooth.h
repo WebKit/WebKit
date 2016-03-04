@@ -55,12 +55,12 @@ public:
     };
 
 private:
-    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
-    virtual void stop() override;
-    virtual void updateVisibleLengths() override;
-    virtual void setCurrentPosition(const FloatPoint&) override;
+    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
+    void stop() override;
+    void updateVisibleLengths() override;
+    void setCurrentPosition(const FloatPoint&) override;
 #if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    virtual void serviceAnimation() override;
+    void serviceAnimation() override;
 #endif
 
     struct PerAxisData {

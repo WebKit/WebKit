@@ -34,7 +34,7 @@ class JS_EXPORT_PRIVATE EdenGCActivityCallback : public GCActivityCallback {
 public:
     EdenGCActivityCallback(Heap*);
 
-    virtual void doCollection() override;
+    void doCollection() override;
 
 protected:
 #if USE(CF)
@@ -44,9 +44,9 @@ protected:
     }
 #endif
 
-    virtual double lastGCLength() override;
-    virtual double gcTimeSlice(size_t bytes) override;
-    virtual double deathRate() override;
+    double lastGCLength() override;
+    double gcTimeSlice(size_t bytes) override;
+    double deathRate() override;
 };
 
 inline RefPtr<GCActivityCallback> GCActivityCallback::createEdenTimer(Heap* heap)

@@ -39,16 +39,16 @@ public:
     bool containsJavaApplet() const;
 
     bool hasFallbackContent() const;
-    virtual bool useFallbackContent() const override { return m_useFallbackContent; }
+    bool useFallbackContent() const override { return m_useFallbackContent; }
     void renderFallbackContent();
 
-    virtual bool willValidate() const override { return false; }
+    bool willValidate() const override { return false; }
 
     // Implementation of constraint validation API.
     // Note that the object elements are always barred from constraint validation.
     static bool checkValidity() { return true; }
-    virtual void setCustomValidity(const String&) override { }
-    virtual String validationMessage() const override { return String(); }
+    void setCustomValidity(const String&) override { }
+    String validationMessage() const override { return String(); }
 
     using HTMLPlugInImageElement::ref;
     using HTMLPlugInImageElement::deref;
@@ -58,26 +58,26 @@ public:
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool isPresentationAttribute(const QualifiedName&) const override;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool isPresentationAttribute(const QualifiedName&) const override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
     void finishedInsertingSubtree() override final;
-    virtual void removedFrom(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
 
-    virtual void didMoveToNewDocument(Document* oldDocument) override;
+    void didMoveToNewDocument(Document* oldDocument) override;
 
-    virtual void childrenChanged(const ChildChange&) override;
+    void childrenChanged(const ChildChange&) override;
 
-    virtual bool isURLAttribute(const Attribute&) const override;
-    virtual const AtomicString& imageSourceURL() const override;
+    bool isURLAttribute(const Attribute&) const override;
+    const AtomicString& imageSourceURL() const override;
 
-    virtual RenderWidget* renderWidgetLoadingPlugin() const override;
+    RenderWidget* renderWidgetLoadingPlugin() const override;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
-    virtual void updateWidget(PluginCreationOption) override;
+    void updateWidget(PluginCreationOption) override;
     void updateDocNamedItem();
 
     // FIXME: This function should not deal with url or serviceType
@@ -88,20 +88,20 @@ private:
     bool hasValidClassId();
     void clearUseFallbackContent() { m_useFallbackContent = false; }
 
-    virtual void refFormAssociatedElement() override { ref(); }
-    virtual void derefFormAssociatedElement() override { deref(); }
-    virtual HTMLFormElement* virtualForm() const override;
+    void refFormAssociatedElement() override { ref(); }
+    void derefFormAssociatedElement() override { deref(); }
+    HTMLFormElement* virtualForm() const override;
 
-    virtual FormNamedItem* asFormNamedItem() override { return this; }
-    virtual HTMLObjectElement& asHTMLElement() override { return *this; }
-    virtual const HTMLObjectElement& asHTMLElement() const override { return *this; }
+    FormNamedItem* asFormNamedItem() override { return this; }
+    HTMLObjectElement& asHTMLElement() override { return *this; }
+    const HTMLObjectElement& asHTMLElement() const override { return *this; }
 
-    virtual bool isFormControlElement() const override { return false; }
+    bool isFormControlElement() const override { return false; }
 
-    virtual bool isEnumeratable() const override { return true; }
-    virtual bool appendFormData(FormDataList&, bool) override;
+    bool isEnumeratable() const override { return true; }
+    bool appendFormData(FormDataList&, bool) override;
 
-    virtual bool canContainRangeEndPoint() const override;
+    bool canContainRangeEndPoint() const override;
 
     bool m_docNamedItem : 1;
     bool m_useFallbackContent : 1;

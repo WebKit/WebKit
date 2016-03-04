@@ -37,28 +37,28 @@ public:
 
     RenderSVGInlineText& renderer() const { return downcast<RenderSVGInlineText>(InlineTextBox::renderer()); }
 
-    virtual float virtualLogicalHeight() const override { return m_logicalHeight; }
+    float virtualLogicalHeight() const override { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
     int selectionTop() { return top(); }
     int selectionHeight() { return static_cast<int>(ceilf(m_logicalHeight)); }
-    virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const override;
-    virtual float positionForOffset(int offset) const override;
+    int offsetForPosition(float x, bool includePartialGlyphs = true) const override;
+    float positionForOffset(int offset) const override;
 
     void paintSelectionBackground(PaintInfo&);
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
-    virtual LayoutRect localSelectionRect(int startPosition, int endPosition) const override;
+    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
+    LayoutRect localSelectionRect(int startPosition, int endPosition) const override;
 
     bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, int& startPosition, int& endPosition) const;
 
-    virtual FloatRect calculateBoundaries() const override;
+    FloatRect calculateBoundaries() const override;
 
     void clearTextFragments() { m_textFragments.clear(); }
     Vector<SVGTextFragment>& textFragments() { return m_textFragments; }
     const Vector<SVGTextFragment>& textFragments() const { return m_textFragments; }
 
-    virtual void dirtyOwnLineBoxes() override;
-    virtual void dirtyLineBoxes() override;
+    void dirtyOwnLineBoxes() override;
+    void dirtyLineBoxes() override;
 
     bool startsNewTextChunk() const { return m_startsNewTextChunk; }
     void setStartsNewTextChunk(bool newTextChunk) { m_startsNewTextChunk = newTextChunk; }
@@ -67,7 +67,7 @@ public:
     FloatRect selectionRectForTextFragment(const SVGTextFragment&, int fragmentStartPosition, int fragmentEndPosition, RenderStyle*) const;
 
 private:
-    virtual bool isSVGInlineTextBox() const override { return true; }
+    bool isSVGInlineTextBox() const override { return true; }
 
     TextRun constructTextRun(RenderStyle*, const SVGTextFragment&) const;
 
@@ -82,7 +82,7 @@ private:
     void paintTextWithShadows(GraphicsContext&, RenderStyle*, TextRun&, const SVGTextFragment&, int startPosition, int endPosition);
     void paintText(GraphicsContext&, RenderStyle*, RenderStyle* selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
 private:
     float m_logicalHeight;

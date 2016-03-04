@@ -48,10 +48,10 @@ public:
     static bool isAvailable();
 
     // CDMSession
-    virtual CDMSessionType type() override { return CDMSessionTypeAVContentKeySession; }
-    virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
-    virtual void releaseKeys() override;
-    virtual bool update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
+    CDMSessionType type() override { return CDMSessionTypeAVContentKeySession; }
+    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
+    void releaseKeys() override;
+    bool update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
 
     // CDMSessionMediaSourceAVFObjC
     void addParser(AVStreamDataParser *) override;

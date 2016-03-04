@@ -59,7 +59,7 @@ protected:
     }
 
 private:
-    virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) override
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) override
     {
         return create(targetDocument);
     }

@@ -41,10 +41,10 @@ public:
 protected:
     WebGLSync(WebGLRenderingContextBase*);
 
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
 private:
-    virtual bool isSync() const override { return true; }
+    bool isSync() const override { return true; }
 };
 
 } // namespace WebCore

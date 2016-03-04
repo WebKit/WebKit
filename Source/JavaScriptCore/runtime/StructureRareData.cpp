@@ -90,7 +90,7 @@ public:
     ObjectToStringAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, StructureRareData*);
 
 private:
-    virtual void handleFire(const FireDetail&) override;
+    void handleFire(const FireDetail&) override;
 
     StructureRareData* m_structureRareData;
 };
@@ -102,7 +102,7 @@ public:
     void install();
 
 protected:
-    virtual void fireInternal(const FireDetail&) override;
+    void fireInternal(const FireDetail&) override;
     
 private:
     ObjectPropertyCondition m_key;

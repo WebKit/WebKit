@@ -91,8 +91,8 @@ private:
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Override for DisplayRefreshMonitorClient
-    virtual void displayRefreshFired(double timestamp) override;
-    virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
+    void displayRefreshFired(double timestamp) override;
+    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
 
     bool m_isUsingTimer { false };
     bool m_isThrottled { false };

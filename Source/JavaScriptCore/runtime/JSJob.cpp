@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    virtual void run(ExecState*) override;
+    void run(ExecState*) override;
 
     Strong<Unknown> m_job;
     Strong<JSArray> m_arguments;

@@ -326,7 +326,7 @@ class WebGLRenderingContextLostCallback : public GraphicsContext3D::ContextLostC
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebGLRenderingContextLostCallback(WebGLRenderingContextBase* cb) : m_context(cb) { }
-    virtual void onContextLost() override { m_context->forceLostContext(WebGLRenderingContext::RealLostContext); }
+    void onContextLost() override { m_context->forceLostContext(WebGLRenderingContext::RealLostContext); }
     virtual ~WebGLRenderingContextLostCallback() {}
 private:
     WebGLRenderingContextBase* m_context;
@@ -336,7 +336,7 @@ class WebGLRenderingContextErrorMessageCallback : public GraphicsContext3D::Erro
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebGLRenderingContextErrorMessageCallback(WebGLRenderingContextBase* cb) : m_context(cb) { }
-    virtual void onErrorMessage(const String& message, GC3Dint) override
+    void onErrorMessage(const String& message, GC3Dint) override
     {
         if (m_context->m_synthesizedErrorsToConsole)
             m_context->printGLErrorToConsole(message);

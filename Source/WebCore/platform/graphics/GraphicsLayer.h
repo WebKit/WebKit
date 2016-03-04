@@ -99,7 +99,7 @@ public:
     {
     }
 
-    virtual std::unique_ptr<AnimationValue> clone() const override
+    std::unique_ptr<AnimationValue> clone() const override
     {
         return std::make_unique<FloatAnimationValue>(*this);
     }
@@ -126,7 +126,7 @@ public:
     {
     }
 
-    virtual std::unique_ptr<AnimationValue> clone() const override
+    std::unique_ptr<AnimationValue> clone() const override
     {
         return std::make_unique<TransformAnimationValue>(*this);
     }
@@ -154,7 +154,7 @@ public:
     {
     }
 
-    virtual std::unique_ptr<AnimationValue> clone() const override
+    std::unique_ptr<AnimationValue> clone() const override
     {
         return std::make_unique<FilterAnimationValue>(*this);
     }

@@ -43,8 +43,8 @@ class WebKitCSSRegionRule final : public CSSGroupingRule {
 public:
     static Ref<WebKitCSSRegionRule> create(StyleRuleRegion& rule, CSSStyleSheet* sheet) { return adoptRef(*new WebKitCSSRegionRule(rule, sheet)); }
 
-    virtual CSSRule::Type type() const override { return WEBKIT_REGION_RULE; }
-    virtual String cssText() const override;
+    CSSRule::Type type() const override { return WEBKIT_REGION_RULE; }
+    String cssText() const override;
 
 private:
     WebKitCSSRegionRule(StyleRuleRegion&, CSSStyleSheet* parent);

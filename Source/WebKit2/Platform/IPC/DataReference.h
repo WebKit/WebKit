@@ -102,7 +102,7 @@ private:
     const uint8_t* data() const = delete;
     Vector<uint8_t> vector() const = delete;
 
-    virtual void encode(ArgumentEncoder&) const override;
+    void encode(ArgumentEncoder&) const override;
 
     RefPtr<WebCore::SharedBuffer> m_buffer;
 };

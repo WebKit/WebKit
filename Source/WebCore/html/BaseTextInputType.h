@@ -42,10 +42,10 @@ protected:
     explicit BaseTextInputType(HTMLInputElement& element) : TextFieldInputType(element) { }
 
 private:
-    virtual bool isTextType() const override;
-    virtual bool patternMismatch(const String&) const override;
-    virtual bool supportsPlaceholder() const override;
-    virtual bool supportsSelectionAPI() const override;
+    bool isTextType() const override;
+    bool patternMismatch(const String&) const override;
+    bool supportsPlaceholder() const override;
+    bool supportsSelectionAPI() const override;
 };
 
 } // namespace WebCore

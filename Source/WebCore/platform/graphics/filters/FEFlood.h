@@ -45,12 +45,12 @@ public:
     void setResultColorSpace(ColorSpace) override { FilterEffect::setResultColorSpace(ColorSpaceSRGB); }
 #endif
 
-    virtual void platformApplySoftware() override;
-    virtual void dump() override;
+    void platformApplySoftware() override;
+    void dump() override;
 
-    virtual void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
-    virtual TextStream& externalRepresentation(TextStream&, int indention) const override;
+    TextStream& externalRepresentation(TextStream&, int indention) const override;
 
 private:
     FEFlood(Filter&, const Color&, float);

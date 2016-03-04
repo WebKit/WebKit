@@ -39,16 +39,16 @@ public:
 private:
     SVGClipPathElement(const QualifiedName&, Document&);
 
-    virtual bool isValid() const override { return SVGTests::isValid(); }
-    virtual bool supportsFocus() const override { return false; }
-    virtual bool needsPendingResourceHandling() const override { return false; }
+    bool isValid() const override { return SVGTests::isValid(); }
+    bool supportsFocus() const override { return false; }
+    bool needsPendingResourceHandling() const override { return false; }
 
     static bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
-    virtual void childrenChanged(const ChildChange&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    void childrenChanged(const ChildChange&) override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGClipPathElement)
         DECLARE_ANIMATED_ENUMERATION(ClipPathUnits, clipPathUnits, SVGUnitTypes::SVGUnitType)

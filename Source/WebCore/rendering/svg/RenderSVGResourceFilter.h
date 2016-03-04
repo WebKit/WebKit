@@ -67,13 +67,13 @@ public:
 
     SVGFilterElement& filterElement() const { return downcast<SVGFilterElement>(RenderSVGResourceContainer::element()); }
 
-    virtual void removeAllClientsFromCache(bool markForInvalidation = true) override;
-    virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
+    void removeAllClientsFromCache(bool markForInvalidation = true) override;
+    void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
 
-    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
-    virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override;
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
+    void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override;
 
-    virtual FloatRect resourceBoundingBox(const RenderObject&) override;
+    FloatRect resourceBoundingBox(const RenderObject&) override;
 
     std::unique_ptr<SVGFilterBuilder> buildPrimitives(SVGFilter&) const;
 
@@ -82,14 +82,14 @@ public:
 
     void primitiveAttributeChanged(RenderObject*, const QualifiedName&);
 
-    virtual RenderSVGResourceType resourceType() const override { return FilterResourceType; }
+    RenderSVGResourceType resourceType() const override { return FilterResourceType; }
 
     FloatRect drawingRegion(RenderObject*) const;
 private:
     void element() const = delete;
 
-    virtual const char* renderName() const override { return "RenderSVGResourceFilter"; }
-    virtual bool isSVGResourceFilter() const override { return true; }
+    const char* renderName() const override { return "RenderSVGResourceFilter"; }
+    bool isSVGResourceFilter() const override { return true; }
 
     HashMap<RenderObject*, std::unique_ptr<FilterData>> m_filter;
 };

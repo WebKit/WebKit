@@ -40,7 +40,7 @@ public:
         return adoptRef(*new PerspectiveTransformOperation(p));
     }
 
-    virtual Ref<TransformOperation> clone() const override
+    Ref<TransformOperation> clone() const override
     {
         return adoptRef(*new PerspectiveTransformOperation(m_p));
     }
@@ -48,21 +48,21 @@ public:
     Length perspective() const { return m_p; }
     
 private:
-    virtual bool isIdentity() const override { return !floatValueForLength(m_p, 1); }
-    virtual bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
+    bool isIdentity() const override { return !floatValueForLength(m_p, 1); }
+    bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
-    virtual OperationType type() const override { return PERSPECTIVE; }
-    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == PERSPECTIVE; }
+    OperationType type() const override { return PERSPECTIVE; }
+    bool isSameType(const TransformOperation& o) const override { return o.type() == PERSPECTIVE; }
 
-    virtual bool operator==(const TransformOperation&) const override;
+    bool operator==(const TransformOperation&) const override;
 
-    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const override
+    bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {
         transform.applyPerspective(floatValueForLength(m_p, 1));
         return false;
     }
 
-    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     PerspectiveTransformOperation(const Length& p)
         : m_p(p)

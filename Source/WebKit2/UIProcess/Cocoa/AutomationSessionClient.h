@@ -43,8 +43,8 @@ public:
 
 private:
     // From API::AutomationSessionClient
-    virtual void didRequestNewWindow(WebKit::WebAutomationSession*) override;
-    virtual void didDisconnectFromRemote(WebKit::WebAutomationSession *) override;
+    void didRequestNewWindow(WebKit::WebAutomationSession*) override;
+    void didDisconnectFromRemote(WebKit::WebAutomationSession *) override;
 
     WeakObjCPtr<id <_WKAutomationSessionDelegate>> m_delegate;
 

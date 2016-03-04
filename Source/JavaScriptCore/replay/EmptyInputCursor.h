@@ -45,22 +45,22 @@ public:
         return adoptRef(*new EmptyInputCursor());
     }
 
-    virtual bool isCapturing() const override { return false; }
-    virtual bool isReplaying() const override { return false; }
+    bool isCapturing() const override { return false; }
+    bool isReplaying() const override { return false; }
 
-    virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override
+    NondeterministicInputBase* uncheckedLoadInput(InputQueue) override
     {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override
+    void storeInput(std::unique_ptr<NondeterministicInputBase>) override
     {
         ASSERT_NOT_REACHED();
     }
 
 protected:
-    virtual NondeterministicInputBase* loadInput(InputQueue, const String&) override
+    NondeterministicInputBase* loadInput(InputQueue, const String&) override
     {
         ASSERT_NOT_REACHED();
         return nullptr;

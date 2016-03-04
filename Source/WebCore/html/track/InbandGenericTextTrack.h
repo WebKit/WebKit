@@ -68,21 +68,21 @@ public:
 private:
     InbandGenericTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
-    virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) override;
-    virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) override;
-    virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) override;
-    virtual void removeCue(TextTrackCue*, ExceptionCode&) override;
+    void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) override;
+    void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) override;
+    void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) override;
+    void removeCue(TextTrackCue*, ExceptionCode&) override;
 
     PassRefPtr<TextTrackCueGeneric> createCue(PassRefPtr<GenericCueData>);
     void updateCueFromCueData(TextTrackCueGeneric*, GenericCueData*);
 
     WebVTTParser& parser();
-    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) override;
-    virtual void parseWebVTTFileHeader(InbandTextTrackPrivate*, String) override;
+    void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) override;
+    void parseWebVTTFileHeader(InbandTextTrackPrivate*, String) override;
 
-    virtual void newCuesParsed() override;
-    virtual void newRegionsParsed() override;
-    virtual void fileFailedToParse() override;
+    void newCuesParsed() override;
+    void newRegionsParsed() override;
+    void fileFailedToParse() override;
 
     GenericTextTrackCueMap m_cueMap;
     std::unique_ptr<WebVTTParser> m_webVTTParser;

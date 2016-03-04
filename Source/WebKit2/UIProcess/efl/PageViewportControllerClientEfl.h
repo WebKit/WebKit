@@ -38,12 +38,12 @@ public:
     explicit PageViewportControllerClientEfl(EwkView*);
     virtual ~PageViewportControllerClientEfl() { }
 
-    virtual void setViewportPosition(const WebCore::FloatPoint&) override;
-    virtual void setPageScaleFactor(float) override;
+    void setViewportPosition(const WebCore::FloatPoint&) override;
+    void setPageScaleFactor(float) override;
 
-    virtual void didChangeContentsSize(const WebCore::IntSize&) override;
-    virtual void didChangeVisibleContents() override;
-    virtual void didChangeViewportAttributes() override;
+    void didChangeContentsSize(const WebCore::IntSize&) override;
+    void didChangeVisibleContents() override;
+    void didChangeViewportAttributes() override;
 
 private:
     EwkView* m_view;

@@ -58,14 +58,14 @@ public:
     const Vector<RefPtr<SourceBufferPrivateAVFObjC>>& sourceBuffers() const { return m_sourceBuffers; }
     const Vector<SourceBufferPrivateAVFObjC*>& activeSourceBuffers() const { return m_activeSourceBuffers; }
 
-    virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
-    virtual void durationChanged() override;
-    virtual void markEndOfStream(EndOfStreamStatus) override;
-    virtual void unmarkEndOfStream() override;
-    virtual MediaPlayer::ReadyState readyState() const override;
-    virtual void setReadyState(MediaPlayer::ReadyState) override;
-    virtual void waitForSeekCompleted() override;
-    virtual void seekCompleted() override;
+    AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
+    void durationChanged() override;
+    void markEndOfStream(EndOfStreamStatus) override;
+    void unmarkEndOfStream() override;
+    MediaPlayer::ReadyState readyState() const override;
+    void setReadyState(MediaPlayer::ReadyState) override;
+    void waitForSeekCompleted() override;
+    void seekCompleted() override;
 
     MediaTime duration();
     std::unique_ptr<PlatformTimeRanges> buffered();

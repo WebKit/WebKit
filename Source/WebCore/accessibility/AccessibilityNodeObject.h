@@ -65,95 +65,95 @@ public:
     static Ref<AccessibilityNodeObject> create(Node*);
     virtual ~AccessibilityNodeObject();
 
-    virtual void init() override;
+    void init() override;
 
-    virtual bool canvasHasFallbackContent() const override;
+    bool canvasHasFallbackContent() const override;
 
-    virtual bool isControl() const override;
-    virtual bool isFieldset() const override;
-    virtual bool isGroup() const override;
-    virtual bool isHeading() const override;
-    virtual bool isHovered() const override;
-    virtual bool isImage() const override;
-    virtual bool isImageButton() const override;
-    virtual bool isInputImage() const override;
-    virtual bool isLink() const override;
-    virtual bool isMenu() const override;
-    virtual bool isMenuBar() const override;
-    virtual bool isMenuButton() const override;
-    virtual bool isMenuItem() const override;
-    virtual bool isMenuRelated() const override;
-    virtual bool isMultiSelectable() const override;
+    bool isControl() const override;
+    bool isFieldset() const override;
+    bool isGroup() const override;
+    bool isHeading() const override;
+    bool isHovered() const override;
+    bool isImage() const override;
+    bool isImageButton() const override;
+    bool isInputImage() const override;
+    bool isLink() const override;
+    bool isMenu() const override;
+    bool isMenuBar() const override;
+    bool isMenuButton() const override;
+    bool isMenuItem() const override;
+    bool isMenuRelated() const override;
+    bool isMultiSelectable() const override;
     virtual bool isNativeCheckboxOrRadio() const;
-    virtual bool isNativeImage() const override;
-    virtual bool isNativeTextControl() const override;
-    virtual bool isPasswordField() const override;
-    virtual AccessibilityObject* passwordFieldOrContainingPasswordField() override;
-    virtual bool isProgressIndicator() const override;
-    virtual bool isSearchField() const override;
-    virtual bool isSlider() const override;
+    bool isNativeImage() const override;
+    bool isNativeTextControl() const override;
+    bool isPasswordField() const override;
+    AccessibilityObject* passwordFieldOrContainingPasswordField() override;
+    bool isProgressIndicator() const override;
+    bool isSearchField() const override;
+    bool isSlider() const override;
 
-    virtual bool isChecked() const override;
-    virtual bool isEnabled() const override;
-    virtual bool isIndeterminate() const override;
-    virtual bool isPressed() const override;
-    virtual bool isReadOnly() const override;
-    virtual bool isRequired() const override;
-    virtual bool supportsRequiredAttribute() const override;
+    bool isChecked() const override;
+    bool isEnabled() const override;
+    bool isIndeterminate() const override;
+    bool isPressed() const override;
+    bool isReadOnly() const override;
+    bool isRequired() const override;
+    bool supportsRequiredAttribute() const override;
 
-    virtual bool canSetSelectedAttribute() const override;
+    bool canSetSelectedAttribute() const override;
 
     void setNode(Node*);
-    virtual Node* node() const override { return m_node; }
-    virtual Document* document() const override;
+    Node* node() const override { return m_node; }
+    Document* document() const override;
 
-    virtual bool canSetFocusAttribute() const override;
-    virtual int headingLevel() const override;
+    bool canSetFocusAttribute() const override;
+    int headingLevel() const override;
 
-    virtual String valueDescription() const override;
-    virtual float valueForRange() const override;
-    virtual float maxValueForRange() const override;
-    virtual float minValueForRange() const override;
-    virtual float stepValueForRange() const override;
+    String valueDescription() const override;
+    float valueForRange() const override;
+    float maxValueForRange() const override;
+    float minValueForRange() const override;
+    float stepValueForRange() const override;
 
-    virtual AccessibilityObject* selectedRadioButton() override;
-    virtual AccessibilityObject* selectedTabItem() override;
-    virtual AccessibilityButtonState checkboxOrRadioValue() const override;
+    AccessibilityObject* selectedRadioButton() override;
+    AccessibilityObject* selectedTabItem() override;
+    AccessibilityButtonState checkboxOrRadioValue() const override;
 
-    virtual unsigned hierarchicalLevel() const override;
-    virtual String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
-    virtual String accessibilityDescription() const override;
-    virtual String helpText() const override;
-    virtual String title() const override;
-    virtual String text() const override;
-    virtual String stringValue() const override;
-    virtual void colorValue(int& r, int& g, int& b) const override;
-    virtual String ariaLabeledByAttribute() const override;
-    virtual bool hasAttributesRequiredForInclusion() const override final;
-    virtual void setIsExpanded(bool) override;
+    unsigned hierarchicalLevel() const override;
+    String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
+    String accessibilityDescription() const override;
+    String helpText() const override;
+    String title() const override;
+    String text() const override;
+    String stringValue() const override;
+    void colorValue(int& r, int& g, int& b) const override;
+    String ariaLabeledByAttribute() const override;
+    bool hasAttributesRequiredForInclusion() const override final;
+    void setIsExpanded(bool) override;
 
-    virtual Element* actionElement() const override;
+    Element* actionElement() const override;
     Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
-    virtual Element* anchorElement() const override;
+    Element* anchorElement() const override;
     AccessibilityObject* menuForMenuButton() const;
    
     virtual void changeValueByPercent(float percentChange);
  
-    virtual AccessibilityObject* firstChild() const override;
-    virtual AccessibilityObject* lastChild() const override;
-    virtual AccessibilityObject* previousSibling() const override;
-    virtual AccessibilityObject* nextSibling() const override;
-    virtual AccessibilityObject* parentObject() const override;
-    virtual AccessibilityObject* parentObjectIfExists() const override;
+    AccessibilityObject* firstChild() const override;
+    AccessibilityObject* lastChild() const override;
+    AccessibilityObject* previousSibling() const override;
+    AccessibilityObject* nextSibling() const override;
+    AccessibilityObject* parentObject() const override;
+    AccessibilityObject* parentObjectIfExists() const override;
 
-    virtual void detach(AccessibilityDetachmentType, AXObjectCache*) override;
-    virtual void childrenChanged() override;
-    virtual void updateAccessibilityRole() override;
+    void detach(AccessibilityDetachmentType, AXObjectCache*) override;
+    void childrenChanged() override;
+    void updateAccessibilityRole() override;
 
-    virtual void increment() override;
-    virtual void decrement() override;
+    void increment() override;
+    void decrement() override;
 
-    virtual LayoutRect elementRect() const override;
+    LayoutRect elementRect() const override;
 
 protected:
     explicit AccessibilityNodeObject(Node*);
@@ -165,18 +165,18 @@ protected:
     bool m_initialized;
 #endif
 
-    virtual bool isDetached() const override { return !m_node; }
+    bool isDetached() const override { return !m_node; }
 
     virtual AccessibilityRole determineAccessibilityRole();
-    virtual void addChildren() override;
-    virtual void addChild(AccessibilityObject*) override;
-    virtual void insertChild(AccessibilityObject*, unsigned index) override;
+    void addChildren() override;
+    void addChild(AccessibilityObject*) override;
+    void insertChild(AccessibilityObject*, unsigned index) override;
 
-    virtual bool canHaveChildren() const override;
-    virtual AccessibilityRole ariaRoleAttribute() const override;
+    bool canHaveChildren() const override;
+    AccessibilityRole ariaRoleAttribute() const override;
     AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
-    virtual bool isDescendantOfBarrenParent() const override;
+    bool isDescendantOfBarrenParent() const override;
     void alterSliderValue(bool increase);
     void changeValueByStep(bool increase);
     // This returns true if it's focusable but it's not content editable and it's not a control or ARIA control.
@@ -185,23 +185,23 @@ protected:
     String ariaAccessibilityDescription() const;
     void ariaLabeledByElements(Vector<Element*>& elements) const;
     String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
-    virtual LayoutRect boundingBoxRect() const override;
-    virtual String ariaDescribedByAttribute() const override;
+    LayoutRect boundingBoxRect() const override;
+    String ariaDescribedByAttribute() const override;
     
     Element* menuElementForMenuButton() const;
     Element* menuItemElementForMenu() const;
     AccessibilityObject* menuButtonForMenu() const;
 
 private:
-    virtual bool isAccessibilityNodeObject() const override final { return true; }
-    virtual void accessibilityText(Vector<AccessibilityText>&) override;
+    bool isAccessibilityNodeObject() const override final { return true; }
+    void accessibilityText(Vector<AccessibilityText>&) override;
     virtual void titleElementText(Vector<AccessibilityText>&) const;
     void alternativeText(Vector<AccessibilityText>&) const;
     void visibleText(Vector<AccessibilityText>&) const;
     void helpText(Vector<AccessibilityText>&) const;
     String alternativeTextForWebArea() const;
     void ariaLabeledByText(Vector<AccessibilityText>&) const;
-    virtual bool computeAccessibilityIsIgnored() const override;
+    bool computeAccessibilityIsIgnored() const override;
     bool usesAltTagForTextComputation() const;
 
     Node* m_node;

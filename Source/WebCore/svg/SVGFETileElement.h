@@ -33,9 +33,9 @@ public:
 private:
     SVGFETileElement(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
-    virtual RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFETileElement)
         DECLARE_ANIMATED_STRING(In1, in1)

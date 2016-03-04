@@ -39,27 +39,27 @@ public:
 
 private:
     // DrawingAreaProxy
-    virtual void deviceScaleFactorDidChange() override;
-    virtual void sizeDidChange() override;
-    virtual void waitForPossibleGeometryUpdate(std::chrono::milliseconds timeout = didUpdateBackingStoreStateTimeout()) override;
-    virtual void colorSpaceDidChange() override;
-    virtual void minimumLayoutSizeDidChange() override;
+    void deviceScaleFactorDidChange() override;
+    void sizeDidChange() override;
+    void waitForPossibleGeometryUpdate(std::chrono::milliseconds timeout = didUpdateBackingStoreStateTimeout()) override;
+    void colorSpaceDidChange() override;
+    void minimumLayoutSizeDidChange() override;
 
-    virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
-    virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) override;
-    virtual void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+    void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+    void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) override;
+    void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
 
-    virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
-    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
 
-    virtual void waitForDidUpdateViewState() override;
-    virtual void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
+    void waitForDidUpdateViewState() override;
+    void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
 
-    virtual void willSendUpdateGeometry() override;
+    void willSendUpdateGeometry() override;
 
     // Message handlers.
-    virtual void didUpdateGeometry() override;
-    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize&) override;
+    void didUpdateGeometry() override;
+    void intrinsicContentSizeDidChange(const WebCore::IntSize&) override;
 
     void sendUpdateGeometry();
     WebCore::MachSendRight createFenceForGeometryUpdate();

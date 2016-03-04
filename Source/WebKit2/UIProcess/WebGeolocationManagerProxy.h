@@ -60,13 +60,13 @@ private:
     explicit WebGeolocationManagerProxy(WebProcessPool*);
 
     // WebContextSupplement
-    virtual void processPoolDestroyed() override;
-    virtual void processDidClose(WebProcessProxy*) override;
-    virtual void refWebContextSupplement() override;
-    virtual void derefWebContextSupplement() override;
+    void processPoolDestroyed() override;
+    void processDidClose(WebProcessProxy*) override;
+    void refWebContextSupplement() override;
+    void derefWebContextSupplement() override;
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     bool isUpdating() const { return !m_updateRequesters.isEmpty(); }
     bool isHighAccuracyEnabled() const { return !m_highAccuracyRequesters.isEmpty(); }

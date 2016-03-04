@@ -52,7 +52,7 @@ namespace WebCore {
     
         String data() const { return m_data; }
 
-        virtual EventInterface eventInterface() const override;
+        EventInterface eventInterface() const override;
 
         bool isLineBreak() const { return m_inputType == TextEventInputLineBreak; }
         bool isComposition() const { return m_inputType == TextEventInputComposition; }
@@ -74,7 +74,7 @@ namespace WebCore {
         TextEvent(AbstractView*, const String& data, RefPtr<DocumentFragment>&&, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
         TextEvent(AbstractView*, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
-        virtual bool isTextEvent() const override;
+        bool isTextEvent() const override;
 
         TextEventInputType m_inputType;
         String m_data;

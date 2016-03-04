@@ -48,11 +48,11 @@ public:
     HTMLMediaElement* mediaElement() { return m_mediaElement.get(); }                                        
 
     // AudioNode
-    virtual void process(size_t framesToProcess) override;
-    virtual void reset() override;
+    void process(size_t framesToProcess) override;
+    void reset() override;
     
     // AudioSourceProviderClient
-    virtual void setFormat(size_t numberOfChannels, float sampleRate) override;
+    void setFormat(size_t numberOfChannels, float sampleRate) override;
     
     void lock();
     void unlock();
@@ -60,11 +60,11 @@ public:
 private:
     MediaElementAudioSourceNode(AudioContext&, HTMLMediaElement*);
 
-    virtual double tailTime() const override { return 0; }
-    virtual double latencyTime() const override { return 0; }
+    double tailTime() const override { return 0; }
+    double latencyTime() const override { return 0; }
 
     // As an audio source, we will never propagate silence.
-    virtual bool propagatesSilence() const override { return false; }
+    bool propagatesSilence() const override { return false; }
 
     RefPtr<HTMLMediaElement> m_mediaElement;
     Lock m_processMutex;

@@ -57,7 +57,7 @@ public:
     NSWindow *window() const;
 
 private:
-    virtual void show() override;
+    void show() override;
 
     RetainPtr<NSMenuItem> createContextMenuItem(const WebContextMenuItemData&);
     RetainPtr<NSMenu> createContextMenuFromItems(const Vector<WebContextMenuItemData>&);

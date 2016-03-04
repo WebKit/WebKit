@@ -73,7 +73,7 @@ public:
 
     unsigned short truncation() const { return m_truncation; }
 
-    virtual void markDirty(bool dirty = true) override final;
+    void markDirty(bool dirty = true) override final;
 
     using InlineBox::hasHyphen;
     using InlineBox::setHasHyphen;
@@ -88,8 +88,8 @@ public:
 
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
-    virtual int baselinePosition(FontBaseline) const override final;
-    virtual LayoutUnit lineHeight() const override final;
+    int baselinePosition(FontBaseline) const override final;
+    LayoutUnit lineHeight() const override final;
 
     bool emphasisMarkExistsAndIsAbove(const RenderStyle&, bool& isAbove) const;
 
@@ -103,8 +103,8 @@ public:
     virtual void dirtyOwnLineBoxes() { dirtyLineBoxes(); }
 
 #if ENABLE(TREE_DEBUGGING)
-    virtual void showLineBox(bool mark, int depth) const override final;
-    virtual const char* boxName() const override final;
+    void showLineBox(bool mark, int depth) const override final;
+    const char* boxName() const override final;
 #endif
 
 private:
@@ -116,37 +116,37 @@ private:
     TextRun constructTextRun(const RenderStyle&, const FontCascade&, String, unsigned maximumLength, String* hyphenatedStringBuffer = nullptr) const;
 
 public:
-    virtual FloatRect calculateBoundaries() const override { return FloatRect(x(), y(), width(), height()); }
+    FloatRect calculateBoundaries() const override { return FloatRect(x(), y(), width(), height()); }
 
     virtual LayoutRect localSelectionRect(int startPos, int endPos) const;
     bool isSelected(int startPos, int endPos) const;
     void selectionStartEnd(int& sPos, int& ePos);
 
 protected:
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
+    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
 private:
-    virtual void deleteLine() override final;
-    virtual void extractLine() override final;
-    virtual void attachLine() override final;
+    void deleteLine() override final;
+    void extractLine() override final;
+    void attachLine() override final;
 
 public:
-    virtual RenderObject::SelectionState selectionState() override final;
+    RenderObject::SelectionState selectionState() override final;
 
 private:
-    virtual void clearTruncation() override final { m_truncation = cNoTruncation; }
-    virtual float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) override final;
+    void clearTruncation() override final { m_truncation = cNoTruncation; }
+    float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) override final;
 
 public:
-    virtual bool isLineBreak() const override final;
+    bool isLineBreak() const override final;
 
 private:
-    virtual bool isInlineTextBox() const override final { return true; }
+    bool isInlineTextBox() const override final { return true; }
 
 public:
-    virtual int caretMinOffset() const override final;
-    virtual int caretMaxOffset() const override final;
+    int caretMinOffset() const override final;
+    int caretMaxOffset() const override final;
 
 private:
     float textPos() const; // returns the x position relative to the left start of the text line.

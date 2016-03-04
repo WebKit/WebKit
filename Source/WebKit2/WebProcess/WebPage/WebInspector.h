@@ -45,8 +45,8 @@ public:
 
     void updateDockingAvailability();
 
-    virtual bool sendMessageToFrontend(const String& message) override;
-    virtual ConnectionType connectionType() const override { return ConnectionType::Local; }
+    bool sendMessageToFrontend(const String& message) override;
+    ConnectionType connectionType() const override { return ConnectionType::Local; }
 
     // Implemented in generated WebInspectorMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
@@ -54,8 +54,8 @@ public:
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { close(); }
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference) override { close(); }
-    virtual IPC::ProcessType localProcessType() override { return IPC::ProcessType::Web; }
-    virtual IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::UI; }
+    IPC::ProcessType localProcessType() override { return IPC::ProcessType::Web; }
+    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::UI; }
 
     // Called by WebInspector messages
     void connectionEstablished();

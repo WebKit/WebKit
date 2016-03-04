@@ -82,7 +82,7 @@ public:
 #endif
 
     // URLRegistrable
-    virtual URLRegistry& registry() const override;
+    URLRegistry& registry() const override;
 
     Ref<Blob> slice(long long start = 0, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const
     {

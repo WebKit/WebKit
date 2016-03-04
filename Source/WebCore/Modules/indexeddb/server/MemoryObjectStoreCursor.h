@@ -48,8 +48,8 @@ public:
     void keyAdded(std::set<IDBKeyData>::iterator);
 
 private:
-    virtual void currentData(IDBGetResult&) override final;
-    virtual void iterate(const IDBKeyData&, uint32_t count, IDBGetResult&) override final;
+    void currentData(IDBGetResult&) override final;
+    void iterate(const IDBKeyData&, uint32_t count, IDBGetResult&) override final;
 
     void setFirstInRemainingRange(std::set<IDBKeyData>&);
     void setForwardIteratorFromRemainingRange(std::set<IDBKeyData>&);

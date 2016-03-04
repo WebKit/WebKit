@@ -35,7 +35,7 @@ public:
     ThemeCocoa() { }
     virtual ~ThemeCocoa() { }
 
-    virtual void drawNamedImage(const String&, GraphicsContext&, const FloatRect&) const override;
+    void drawNamedImage(const String&, GraphicsContext&, const FloatRect&) const override;
 };
 
 } // namespace WebCore

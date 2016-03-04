@@ -44,20 +44,20 @@ protected:
     ScrollingTreeFrameScrollingNodeIOS(ScrollingTree&, ScrollingNodeID);
 
     // ScrollingTreeNode member functions.
-    virtual void updateBeforeChildren(const ScrollingStateNode&) override;
-    virtual void updateAfterChildren(const ScrollingStateNode&) override;
-    virtual void handleWheelEvent(const PlatformWheelEvent&) override { }
+    void updateBeforeChildren(const ScrollingStateNode&) override;
+    void updateAfterChildren(const ScrollingStateNode&) override;
+    void handleWheelEvent(const PlatformWheelEvent&) override { }
 
-    virtual FloatPoint scrollPosition() const override;
-    virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
+    FloatPoint scrollPosition() const override;
+    void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
 
-    virtual void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override;
-    virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) override;
+    void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override;
+    void updateLayersAfterDelegatedScroll(const FloatPoint&) override;
 
-    virtual void setScrollLayerPosition(const FloatPoint&) override;
+    void setScrollLayerPosition(const FloatPoint&) override;
 
-    virtual FloatPoint minimumScrollPosition() const override;
-    virtual FloatPoint maximumScrollPosition() const override;
+    FloatPoint minimumScrollPosition() const override;
+    FloatPoint maximumScrollPosition() const override;
 
 private:
     void updateChildNodesAfterScroll(const FloatPoint&);

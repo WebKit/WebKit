@@ -57,7 +57,7 @@ public:
     {
     }
     
-    virtual void dump(PrintStream& out) const override;
+    void dump(PrintStream& out) const override;
 
 private:
     const char* m_string;

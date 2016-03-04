@@ -68,10 +68,10 @@ struct HIDGamepadButton : HIDGamepadElement {
 
     uint32_t priority;
 
-    virtual bool isButton() const override { return true; }
+    bool isButton() const override { return true; }
 
     // Buttons normalize to the range (0.0) - (1.0)
-    virtual double normalizedValue() override
+    double normalizedValue() override
     {
         return (rawValue - min) / (max - min);
     }
@@ -83,10 +83,10 @@ struct HIDGamepadAxis : HIDGamepadElement {
     {
     }
 
-    virtual bool isAxis() const override { return true; }
+    bool isAxis() const override { return true; }
 
     // Axes normalize to the range (-1.0) - (1.0)
-    virtual double normalizedValue() override
+    double normalizedValue() override
     {
         return (((rawValue - min) / (max - min)) * 2) - 1;
     }
@@ -100,8 +100,8 @@ public:
 
     void valueChanged(IOHIDValueRef);
 
-    virtual const Vector<double>& axisValues() const override final { return m_axisValues; }
-    virtual const Vector<double>& buttonValues() const override final { return m_buttonValues; }
+    const Vector<double>& axisValues() const override final { return m_axisValues; }
+    const Vector<double>& buttonValues() const override final { return m_buttonValues; }
 
 private:
     void initElements();

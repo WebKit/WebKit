@@ -52,10 +52,10 @@ private:
     OSStatus render(UInt32 numberOfFrames, AudioBufferList* ioData);
     void setIsPlaying(bool);
 
-    virtual void start() override;
-    virtual void stop() override;
-    virtual bool isPlaying() override { return m_isPlaying; }
-    virtual float sampleRate() const override { return m_sampleRate; }
+    void start() override;
+    void stop() override;
+    bool isPlaying() override { return m_isPlaying; }
+    float sampleRate() const override { return m_sampleRate; }
 
     AudioUnit m_outputUnit;
     AudioIOCallback& m_callback;

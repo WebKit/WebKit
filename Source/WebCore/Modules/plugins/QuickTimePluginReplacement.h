@@ -50,11 +50,11 @@ public:
     static PassRefPtr<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
     ~QuickTimePluginReplacement();
 
-    virtual bool installReplacement(ShadowRoot*) override;
-    virtual JSC::JSObject* scriptObject() override { return m_scriptObject; }
+    bool installReplacement(ShadowRoot*) override;
+    JSC::JSObject* scriptObject() override { return m_scriptObject; }
 
-    virtual bool willCreateRenderer() override { return m_mediaElement; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool willCreateRenderer() override { return m_mediaElement; }
+    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
     HTMLVideoElement* parentElement() { return m_mediaElement.get(); }
 

@@ -38,11 +38,11 @@ public:
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
-    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+    void didAddUserAgentShadowRoot(ShadowRoot*) override;
+    bool canHaveUserAgentShadowRoot() const override final { return true; }
 
     bool m_isOpen { false };
     HTMLSlotElement* m_summarySlot { nullptr };

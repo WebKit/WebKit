@@ -40,15 +40,15 @@ public:
 
 private:
     MathMLSelectElement(const QualifiedName& tagName, Document&);
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
-    virtual bool childShouldCreateRenderer(const Node&) const override;
+    bool childShouldCreateRenderer(const Node&) const override;
 
-    virtual void finishParsingChildren() override;
-    virtual void childrenChanged(const ChildChange&) override;
-    virtual void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) override;
-    virtual void defaultEventHandler(Event*) override;
-    virtual bool willRespondToMouseClickEvents() override;
+    void finishParsingChildren() override;
+    void childrenChanged(const ChildChange&) override;
+    void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) override;
+    void defaultEventHandler(Event*) override;
+    bool willRespondToMouseClickEvents() override;
 
     void toggle();
     int getSelectedActionChildAndIndex(Element*& selectedChild);

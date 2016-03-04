@@ -51,7 +51,7 @@ public:
     }
     virtual ~RepaintIndicatorLayerClient() { }
 private:
-    virtual void notifyAnimationEnded(const GraphicsLayer* layer, const String&) override
+    void notifyAnimationEnded(const GraphicsLayer* layer, const String&) override
     {
         m_inspectorClient.animationEndedForLayer(layer);
     }

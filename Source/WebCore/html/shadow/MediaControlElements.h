@@ -50,14 +50,14 @@ public:
     void makeTransparent();
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseMoveEvents() override { return true; }
-    virtual bool willRespondToMouseClickEvents() override { return true; }
+    bool willRespondToMouseMoveEvents() override { return true; }
+    bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
 private:
     explicit MediaControlPanelElement(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 
     void startDrag(const LayoutPoint& eventLocation);
     void continueDrag(const LayoutPoint& eventLocation);
@@ -110,7 +110,7 @@ public:
 private:
     explicit MediaControlTimelineContainerElement(Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 };
 
 // ----------------------------
@@ -120,15 +120,15 @@ public:
     static Ref<MediaControlVolumeSliderContainerElement> create(Document&);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseMoveEvents() override { return true; }
+    bool willRespondToMouseMoveEvents() override { return true; }
 #endif
 
 private:
     explicit MediaControlVolumeSliderContainerElement(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 };
 
 // ----------------------------
@@ -153,13 +153,13 @@ public:
     static Ref<MediaControlPanelMuteButtonElement> create(Document&, MediaControls*);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseMoveEvents() override { return true; }
+    bool willRespondToMouseMoveEvents() override { return true; }
 #endif
 
 private:
     explicit MediaControlPanelMuteButtonElement(Document&, MediaControls*);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 
     MediaControls* m_controls;
 };
@@ -182,15 +182,15 @@ public:
     static Ref<MediaControlPlayButtonElement> create(Document&);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override { return true; }
+    bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
-    virtual void updateDisplayType() override;
+    void updateDisplayType() override;
 
 private:
     explicit MediaControlPlayButtonElement(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 };
 
 // ----------------------------
@@ -199,12 +199,12 @@ class MediaControlOverlayPlayButtonElement final : public MediaControlInputEleme
 public:
     static Ref<MediaControlOverlayPlayButtonElement> create(Document&);
 
-    virtual void updateDisplayType() override;
+    void updateDisplayType() override;
 
 private:
     explicit MediaControlOverlayPlayButtonElement(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 };
 
 // ----------------------------
@@ -216,7 +216,7 @@ public:
 private:
     explicit MediaControlSeekForwardButtonElement(Document&);
 
-    virtual bool isForwardButton() const override { return true; }
+    bool isForwardButton() const override { return true; }
 };
 
 // ----------------------------
@@ -228,7 +228,7 @@ public:
 private:
     explicit MediaControlSeekBackButtonElement(Document&);
 
-    virtual bool isForwardButton() const override { return false; }
+    bool isForwardButton() const override { return false; }
 };
 
 // ----------------------------
@@ -238,13 +238,13 @@ public:
     static Ref<MediaControlRewindButtonElement> create(Document&);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override { return true; }
+    bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
 private:
     explicit MediaControlRewindButtonElement(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 };
 
 // ----------------------------
@@ -254,13 +254,13 @@ public:
     static Ref<MediaControlReturnToRealtimeButtonElement> create(Document&);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override { return true; }
+    bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
 private:
     explicit MediaControlReturnToRealtimeButtonElement(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 };
 
 // ----------------------------
@@ -270,15 +270,15 @@ public:
     static Ref<MediaControlToggleClosedCaptionsButtonElement> create(Document&, MediaControls*);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override { return true; }
+    bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
-    virtual void updateDisplayType() override;
+    void updateDisplayType() override;
 
 private:
     explicit MediaControlToggleClosedCaptionsButtonElement(Document&, MediaControls*);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 
 #if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK)
     MediaControls* m_controls;
@@ -292,7 +292,7 @@ public:
     static Ref<MediaControlClosedCaptionsContainerElement> create(Document&);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override { return true; }
+    bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
 private:
@@ -306,7 +306,7 @@ public:
     static Ref<MediaControlClosedCaptionsTrackListElement> create(Document&, MediaControls*);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override { return true; }
+    bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
     void updateDisplay();
@@ -316,7 +316,7 @@ private:
 
     void rebuildTrackListMenu();
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 
     typedef Vector<RefPtr<Element>> TrackMenuItems;
     TrackMenuItems m_menuItems;
@@ -334,7 +334,7 @@ public:
     static Ref<MediaControlTimelineElement> create(Document&, MediaControls*);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() override;
 #endif
 
     void setPosition(double);
@@ -343,7 +343,7 @@ public:
 private:
     explicit MediaControlTimelineElement(Document&, MediaControls*);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 
     MediaControls* m_controls;
 };
@@ -355,7 +355,7 @@ public:
     static Ref<MediaControlFullscreenButtonElement> create(Document&);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override { return true; }
+    bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
     void setIsFullscreen(bool);
@@ -363,7 +363,7 @@ public:
 private:
     explicit MediaControlFullscreenButtonElement(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 };
 
 // ----------------------------
@@ -392,12 +392,12 @@ public:
     static Ref<MediaControlFullscreenVolumeMinButtonElement> create(Document&);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override { return true; }
+    bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
 private:
     explicit MediaControlFullscreenVolumeMinButtonElement(Document&);
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 };
 
 // ----------------------------
@@ -407,13 +407,13 @@ public:
     static Ref<MediaControlFullscreenVolumeMaxButtonElement> create(Document&);
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override { return true; }
+    bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
 private:
     explicit MediaControlFullscreenVolumeMaxButtonElement(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 };
 
 
@@ -456,10 +456,10 @@ private:
 
     explicit MediaControlTextTrackContainerElement(Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
-    virtual RefPtr<Image> createTextTrackRepresentationImage() override;
-    virtual void textTrackRepresentationBoundsChanged(const IntRect&) override;
+    RefPtr<Image> createTextTrackRepresentationImage() override;
+    void textTrackRepresentationBoundsChanged(const IntRect&) override;
     void updateTextTrackRepresentation();
     void clearTextTrackRepresentation();
     void updateStyleForTextTrackRepresentation();

@@ -39,9 +39,9 @@ public:
     explicit WorkerEventQueue(ScriptExecutionContext&);
     virtual ~WorkerEventQueue();
 
-    virtual bool enqueueEvent(Ref<Event>&&) override;
-    virtual bool cancelEvent(Event&) override;
-    virtual void close() override;
+    bool enqueueEvent(Ref<Event>&&) override;
+    bool cancelEvent(Event&) override;
+    void close() override;
 
 private:
     ScriptExecutionContext& m_scriptExecutionContext;

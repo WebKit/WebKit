@@ -43,8 +43,8 @@ public:
 private:
     explicit AccessibilitySVGRoot(RenderObject*);
     
-    virtual AccessibilityObject* parentObject() const override;
-    virtual bool isAccessibilitySVGRoot() const override { return true; }
+    AccessibilityObject* parentObject() const override;
+    bool isAccessibilitySVGRoot() const override { return true; }
 
     AccessibilityObject* m_parent;
 };

@@ -61,12 +61,12 @@ public:
     static const AtomicString& mainDescKeyword();
     static const AtomicString& translationKeyword();
     static const AtomicString& commentaryKeyword();
-    virtual const AtomicString& defaultKindKeyword() const override { return emptyAtom; }
+    const AtomicString& defaultKindKeyword() const override { return emptyAtom; }
 
-    virtual bool enabled() const override { return m_enabled; }
+    bool enabled() const override { return m_enabled; }
     void setEnabled(const bool);
 
-    virtual void clearClient() override { m_client = nullptr; }
+    void clearClient() override { m_client = nullptr; }
     AudioTrackClient* client() const { return m_client; }
 
     size_t inbandTrackIndex();
@@ -77,7 +77,7 @@ protected:
     AudioTrack(AudioTrackClient*, PassRefPtr<AudioTrackPrivate>);
 
 private:
-    virtual bool isValidKind(const AtomicString&) const override;
+    bool isValidKind(const AtomicString&) const override;
 
     // AudioTrackPrivateClient
     void enabledChanged(AudioTrackPrivate*, bool) override;

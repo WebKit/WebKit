@@ -48,23 +48,23 @@ public:
 
     void scheduleLoad(const URL&);
 
-    virtual void clearClient() override;
+    void clearClient() override;
 
-    virtual AtomicString id() const override;
+    AtomicString id() const override;
 
     size_t trackElementIndex();
     HTMLTrackElement* trackElement() { return m_trackElement; }
     void setTrackElement(HTMLTrackElement*);
-    virtual Element* element() override;
+    Element* element() override;
 
-    virtual bool isDefault() const override { return m_isDefault; }
-    virtual void setIsDefault(bool isDefault) override  { m_isDefault = isDefault; }
+    bool isDefault() const override { return m_isDefault; }
+    void setIsDefault(bool isDefault) override  { m_isDefault = isDefault; }
 
 private:
     // TextTrackLoaderClient
-    virtual void newCuesAvailable(TextTrackLoader*) override;
-    virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) override;
-    virtual void newRegionsAvailable(TextTrackLoader*) override;
+    void newCuesAvailable(TextTrackLoader*) override;
+    void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) override;
+    void newRegionsAvailable(TextTrackLoader*) override;
 
     LoadableTextTrack(HTMLTrackElement*, const String& kind, const String& label, const String& language);
 

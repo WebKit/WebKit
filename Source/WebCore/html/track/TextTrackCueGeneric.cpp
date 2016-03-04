@@ -54,7 +54,7 @@ public:
         return adoptRef(*new TextTrackCueGenericBoxElement(document, cue));
     }
     
-    virtual void applyCSSProperties(const IntSize&) override;
+    void applyCSSProperties(const IntSize&) override;
     
 private:
     TextTrackCueGenericBoxElement(Document&, VTTCue&);

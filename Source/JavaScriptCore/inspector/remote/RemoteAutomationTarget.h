@@ -43,8 +43,8 @@ public:
     void setIsPaired(bool);
 
     virtual String name() const = 0;
-    virtual RemoteControllableTarget::Type type() const override { return RemoteControllableTarget::Type::Automation; }
-    virtual bool remoteControlAllowed() const override { return !m_paired; };
+    RemoteControllableTarget::Type type() const override { return RemoteControllableTarget::Type::Automation; }
+    bool remoteControlAllowed() const override { return !m_paired; };
 
 private:
     bool m_paired { false };

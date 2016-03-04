@@ -39,9 +39,9 @@ class WheelEventDeltaFilterMac final : public WheelEventDeltaFilter {
 public:
     WheelEventDeltaFilterMac();
 
-    virtual void updateFromDelta(const FloatSize&) override;
-    virtual void beginFilteringDeltas() override;
-    virtual void endFilteringDeltas() override;
+    void updateFromDelta(const FloatSize&) override;
+    void beginFilteringDeltas() override;
+    void endFilteringDeltas() override;
 
 private:
     RetainPtr<_NSScrollingPredominantAxisFilter> m_predominantAxisFilter;

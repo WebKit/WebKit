@@ -32,10 +32,10 @@ class SearchPopupMenuIOS : public WebCore::SearchPopupMenu {
 public:
     SearchPopupMenuIOS(WebCore::PopupMenuClient*);
 
-    virtual WebCore::PopupMenu* popupMenu() override;
-    virtual void saveRecentSearches(const AtomicString& name, const Vector<WebCore::RecentSearch>&) override;
-    virtual void loadRecentSearches(const AtomicString& name, Vector<WebCore::RecentSearch>&) override;
-    virtual bool enabled() override;
+    WebCore::PopupMenu* popupMenu() override;
+    void saveRecentSearches(const AtomicString& name, const Vector<WebCore::RecentSearch>&) override;
+    void loadRecentSearches(const AtomicString& name, Vector<WebCore::RecentSearch>&) override;
+    bool enabled() override;
 
 private:
     RefPtr<PopupMenuIOS> m_popup;

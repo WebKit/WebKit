@@ -39,7 +39,7 @@ public:
     static Ref<TextControlInnerContainer> create(Document&);
 protected:
     TextControlInnerContainer(Document&);
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 };
 
 class TextControlInnerElement final : public HTMLDivElement {
@@ -48,54 +48,54 @@ public:
 
 protected:
     TextControlInnerElement(Document&);
-    virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
+    RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
 
 private:
-    virtual bool isMouseFocusable() const override { return false; }
+    bool isMouseFocusable() const override { return false; }
 };
 
 class TextControlInnerTextElement final : public HTMLDivElement {
 public:
     static Ref<TextControlInnerTextElement> create(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 
     RenderTextControlInnerBlock* renderer() const;
 
 private:
     TextControlInnerTextElement(Document&);
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
-    virtual bool isMouseFocusable() const override { return false; }
-    virtual bool isTextControlInnerTextElement() const override { return true; }
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
+    bool isMouseFocusable() const override { return false; }
+    bool isTextControlInnerTextElement() const override { return true; }
 };
 
 class SearchFieldResultsButtonElement final : public HTMLDivElement {
 public:
     static Ref<SearchFieldResultsButtonElement> create(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() override;
 #endif
 
 private:
     SearchFieldResultsButtonElement(Document&);
-    virtual bool isMouseFocusable() const override { return false; }
+    bool isMouseFocusable() const override { return false; }
 };
 
 class SearchFieldCancelButtonElement final : public HTMLDivElement {
 public:
     static Ref<SearchFieldCancelButtonElement> create(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() override;
 #endif
 
 private:
     SearchFieldCancelButtonElement(Document&);
-    virtual bool isMouseFocusable() const override { return false; }
+    bool isMouseFocusable() const override { return false; }
 };
 
 } // namespace WebCore

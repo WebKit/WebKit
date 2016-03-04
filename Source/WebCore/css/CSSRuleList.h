@@ -54,19 +54,19 @@ class StaticCSSRuleList final : public CSSRuleList {
 public:
     static Ref<StaticCSSRuleList> create() { return adoptRef(*new StaticCSSRuleList); }
 
-    virtual void ref() override { ++m_refCount; }
-    virtual void deref() override;
+    void ref() override { ++m_refCount; }
+    void deref() override;
 
     Vector<RefPtr<CSSRule>>& rules() { return m_rules; }
     
-    virtual CSSStyleSheet* styleSheet() const override { return nullptr; }
+    CSSStyleSheet* styleSheet() const override { return nullptr; }
 
 private:    
     StaticCSSRuleList();
     ~StaticCSSRuleList();
 
-    virtual unsigned length() const override { return m_rules.size(); }
-    virtual CSSRule* item(unsigned index) const override { return index < m_rules.size() ? m_rules[index].get() : nullptr; }
+    unsigned length() const override { return m_rules.size(); }
+    CSSRule* item(unsigned index) const override { return index < m_rules.size() ? m_rules[index].get() : nullptr; }
 
     Vector<RefPtr<CSSRule>> m_rules;
     unsigned m_refCount;
@@ -78,13 +78,13 @@ class LiveCSSRuleList final : public CSSRuleList {
 public:
     LiveCSSRuleList(Rule* rule) : m_rule(rule) { }
     
-    virtual void ref() override { m_rule->ref(); }
-    virtual void deref() override { m_rule->deref(); }
+    void ref() override { m_rule->ref(); }
+    void deref() override { m_rule->deref(); }
 
 private:
-    virtual unsigned length() const override { return m_rule->length(); }
-    virtual CSSRule* item(unsigned index) const override { return m_rule->item(index); }
-    virtual CSSStyleSheet* styleSheet() const override { return m_rule->parentStyleSheet(); }
+    unsigned length() const override { return m_rule->length(); }
+    CSSRule* item(unsigned index) const override { return m_rule->item(index); }
+    CSSStyleSheet* styleSheet() const override { return m_rule->parentStyleSheet(); }
     
     Rule* m_rule;
 };

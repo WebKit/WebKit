@@ -42,7 +42,7 @@ public:
         return adoptRef(*new RotateTransformOperation(x, y, z, angle, type));
     }
 
-    virtual Ref<TransformOperation> clone() const override
+    Ref<TransformOperation> clone() const override
     {
         return adoptRef(*new RotateTransformOperation(m_x, m_y, m_z, m_angle, m_type));
     }
@@ -53,21 +53,21 @@ public:
     double angle() const { return m_angle; }
 
 private:
-    virtual bool isIdentity() const override { return m_angle == 0; }
-    virtual bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
+    bool isIdentity() const override { return m_angle == 0; }
+    bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
-    virtual OperationType type() const override { return m_type; }
-    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
+    OperationType type() const override { return m_type; }
+    bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
 
-    virtual bool operator==(const TransformOperation&) const override;
+    bool operator==(const TransformOperation&) const override;
 
-    virtual bool apply(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const override
+    bool apply(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const override
     {
         transform.rotate3d(m_x, m_y, m_z, m_angle);
         return false;
     }
 
-    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     RotateTransformOperation(double x, double y, double z, double angle, OperationType type)
         : m_x(x)

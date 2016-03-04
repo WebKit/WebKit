@@ -114,7 +114,7 @@ public:
     {
     }
 
-    virtual void strokeStyle(GraphicsContext* c) override
+    void strokeStyle(GraphicsContext* c) override
     {
         c->setStrokeThickness(m_canvasContext->lineWidth());
         c->setLineCap(m_canvasContext->getLineCap());

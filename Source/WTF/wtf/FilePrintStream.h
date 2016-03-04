@@ -45,8 +45,8 @@ public:
     
     FILE* file() { return m_file; }
     
-    virtual void vprintf(const char* format, va_list) override WTF_ATTRIBUTE_PRINTF(2, 0);
-    virtual void flush() override;
+    void vprintf(const char* format, va_list) override WTF_ATTRIBUTE_PRINTF(2, 0);
+    void flush() override;
 
 private:
     FILE* m_file;

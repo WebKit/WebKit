@@ -130,18 +130,18 @@ private:
     SVGSVGElement(const QualifiedName&, Document&);
     virtual ~SVGSVGElement();
 
-    virtual bool isValid() const override;
-    virtual void didMoveToNewDocument(Document* oldDocument) override;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
-    virtual bool selfHasRelativeLengths() const override;
-    virtual void prepareForDocumentSuspension() override;
-    virtual void resumeFromDocumentSuspension() override;
-    virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override;
+    bool isValid() const override;
+    void didMoveToNewDocument(Document* oldDocument) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    bool selfHasRelativeLengths() const override;
+    void prepareForDocumentSuspension() override;
+    void resumeFromDocumentSuspension() override;
+    AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override;
 
     Frame* frameForCurrentScale() const;
     void inheritViewAttributes(const SVGViewElement&);

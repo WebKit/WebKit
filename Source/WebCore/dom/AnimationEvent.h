@@ -52,7 +52,7 @@ public:
     const String& animationName() const;
     double elapsedTime() const;
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
 private:
     AnimationEvent(const AtomicString& type, const String& animationName, double elapsedTime);

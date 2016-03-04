@@ -36,16 +36,16 @@ class RenderMathMLUnderOver final : public RenderMathMLBlock {
 public:
     RenderMathMLUnderOver(Element&, Ref<RenderStyle>&&);
     
-    virtual RenderMathMLOperator* unembellishedOperator() override;
+    RenderMathMLOperator* unembellishedOperator() override;
 
-    virtual Optional<int> firstLineBaseline() const override;
+    Optional<int> firstLineBaseline() const override;
     
 protected:
-    virtual void layout() override;
+    void layout() override;
 
 private:
-    virtual bool isRenderMathMLUnderOver() const override { return true; }
-    virtual const char* renderName() const override { return "RenderMathMLUnderOver"; }
+    bool isRenderMathMLUnderOver() const override { return true; }
+    const char* renderName() const override { return "RenderMathMLUnderOver"; }
 
     enum UnderOverType { Under, Over, UnderOver };
     UnderOverType m_kind;

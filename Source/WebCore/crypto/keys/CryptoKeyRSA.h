@@ -69,10 +69,10 @@ public:
 private:
     CryptoKeyRSA(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType, PlatformRSAKey, bool extractable, CryptoKeyUsage);
 
-    virtual CryptoKeyClass keyClass() const override { return CryptoKeyClass::RSA; }
+    CryptoKeyClass keyClass() const override { return CryptoKeyClass::RSA; }
 
-    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const override;
-    virtual std::unique_ptr<CryptoKeyData> exportData() const override;
+    void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const override;
+    std::unique_ptr<CryptoKeyData> exportData() const override;
 
     PlatformRSAKey m_platformKey;
 

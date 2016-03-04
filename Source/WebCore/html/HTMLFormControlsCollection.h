@@ -39,7 +39,7 @@ public:
     static Ref<HTMLFormControlsCollection> create(ContainerNode&, CollectionType);
     virtual ~HTMLFormControlsCollection();
 
-    virtual HTMLElement* item(unsigned offset) const override;
+    HTMLElement* item(unsigned offset) const override;
 
     // For CachedHTMLCollection.
     HTMLElement* customElementAfter(Element*) const;
@@ -47,8 +47,8 @@ public:
 private:
     explicit HTMLFormControlsCollection(ContainerNode&);
 
-    virtual void invalidateCache(Document&) override;
-    virtual void updateNamedElementCache() const override;
+    void invalidateCache(Document&) override;
+    void updateNamedElementCache() const override;
 
     const Vector<FormAssociatedElement*>& formControlElements() const;
     const Vector<HTMLImageElement*>& formImageElements() const;

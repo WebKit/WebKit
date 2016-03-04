@@ -111,8 +111,8 @@ public:
     using RefCounted<Notification>::deref;
 
     // EventTarget interface
-    virtual EventTargetInterface eventTargetInterface() const override { return NotificationEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
+    EventTargetInterface eventTargetInterface() const override { return NotificationEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     void stopLoadingIcon();
 
@@ -143,8 +143,8 @@ private:
     bool canSuspendForDocumentSuspension() const override;
 
     // EventTarget API.
-    virtual void refEventTarget() override { ref(); }
-    virtual void derefEventTarget() override { deref(); }
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
 
     void startLoadingIcon();
     void finishLoadingIcon();

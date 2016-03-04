@@ -38,7 +38,7 @@ public:
     // The hash algorithm to use.
     CryptoAlgorithmIdentifier hash;
 
-    virtual Class parametersClass() const override { return Class::RsaSsaParams; }
+    Class parametersClass() const override { return Class::RsaSsaParams; }
 };
 
 } // namespace WebCore

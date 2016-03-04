@@ -93,7 +93,7 @@ public:
     String primaryAudioTrackLanguageOverride() const;
 
     virtual bool testingMode() const { return m_testingMode; }
-    virtual void setTestingMode(bool override) { m_testingMode = override; }
+    void setTestingMode(bool override) { m_testingMode = override; }
     
     PageGroup& pageGroup() const { return m_pageGroup; }
 

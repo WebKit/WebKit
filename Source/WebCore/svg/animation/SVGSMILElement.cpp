@@ -76,7 +76,7 @@ public:
             : nullptr;
     }
 
-    virtual bool operator==(const EventListener& other) override;
+    bool operator==(const EventListener& other) override;
     
     void disconnectAnimation()
     {
@@ -91,7 +91,7 @@ private:
     {
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event*) override;
+    void handleEvent(ScriptExecutionContext*, Event*) override;
 
     SVGSMILElement* m_animation;
     SVGSMILElement::Condition* m_condition;

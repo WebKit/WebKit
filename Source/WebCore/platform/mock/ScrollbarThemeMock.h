@@ -33,23 +33,23 @@ namespace WebCore {
 // Scrollbar theme used in image snapshots, to eliminate appearance differences between platforms.
 class ScrollbarThemeMock : public ScrollbarThemeComposite {
 public:
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override;
+    int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override;
 
 protected:
-    virtual bool hasButtons(Scrollbar&) override { return false; }
-    virtual bool hasThumb(Scrollbar&) override  { return true; }
+    bool hasButtons(Scrollbar&) override { return false; }
+    bool hasThumb(Scrollbar&) override  { return true; }
 
-    virtual IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool /*painting*/ = false) override { return IntRect(); }
-    virtual IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool /*painting*/ = false) override { return IntRect(); }
-    virtual IntRect trackRect(Scrollbar&, bool painting = false) override;
+    IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool /*painting*/ = false) override { return IntRect(); }
+    IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool /*painting*/ = false) override { return IntRect(); }
+    IntRect trackRect(Scrollbar&, bool painting = false) override;
     
-    virtual void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
-    virtual void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
-    virtual int maxOverlapBetweenPages() override { return 40; }
+    void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    int maxOverlapBetweenPages() override { return 40; }
 
-    virtual bool usesOverlayScrollbars() const override;
+    bool usesOverlayScrollbars() const override;
 private:
-    virtual bool isMockTheme() const override { return true; }
+    bool isMockTheme() const override { return true; }
 };
 
 }

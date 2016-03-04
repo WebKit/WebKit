@@ -41,18 +41,18 @@ public:
 
     MathMLTextElement& element() { return static_cast<MathMLTextElement&>(nodeForNonAnonymous()); }
 
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override { return true; };
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild) override;
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override { return true; };
+    void addChild(RenderObject* newChild, RenderObject* beforeChild) override;
     virtual void updateTokenContent();
-    virtual void updateFromElement() override;
+    void updateFromElement() override;
 
 protected:
     void createWrapperIfNeeded();
 
 private:
-    virtual bool isRenderMathMLToken() const override final { return true; }
-    virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLToken (anonymous)" : "RenderMathMLToken"; }
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    bool isRenderMathMLToken() const override final { return true; }
+    const char* renderName() const override { return isAnonymous() ? "RenderMathMLToken (anonymous)" : "RenderMathMLToken"; }
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void updateStyle();
 
     // This boolean indicates whether the token element contains some RenderElement descendants, other than the anonymous renderers created for layout purpose.

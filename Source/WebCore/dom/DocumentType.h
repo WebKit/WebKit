@@ -49,9 +49,9 @@ public:
 private:
     DocumentType(Document&, const String& name, const String& publicId, const String& systemId);
 
-    virtual String nodeName() const override;
-    virtual NodeType nodeType() const override;
-    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    String nodeName() const override;
+    NodeType nodeType() const override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     String m_name;
     String m_publicId;

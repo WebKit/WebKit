@@ -41,12 +41,12 @@ public:
     virtual ~SerializedPlatformRepresentationMac();
     static Ref<SerializedPlatformRepresentation> create(id);
 
-    virtual JSC::JSValue deserialize(JSC::ExecState*) const override;
-    virtual PassRefPtr<ArrayBuffer> data() const override;
+    JSC::JSValue deserialize(JSC::ExecState*) const override;
+    PassRefPtr<ArrayBuffer> data() const override;
 
-    virtual bool isEqual(const SerializedPlatformRepresentation&) const override;
+    bool isEqual(const SerializedPlatformRepresentation&) const override;
 
-    virtual PlatformType platformType() const override { return SerializedPlatformRepresentation::ObjC; }
+    PlatformType platformType() const override { return SerializedPlatformRepresentation::ObjC; }
 
     id nativeValue() const { return m_nativeValue.get(); }
 

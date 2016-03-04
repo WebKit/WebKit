@@ -43,8 +43,8 @@ public:
     static RenderPtr<RenderMathMLSquareRoot> createAnonymousWithParentRenderer(RenderMathMLMenclose&);
     
 private:
-    virtual bool isRenderMathMLSquareRoot() const override { return true; }
-    virtual const char* renderName() const override { return "RenderMathMLSquareRoot"; }
+    bool isRenderMathMLSquareRoot() const override { return true; }
+    const char* renderName() const override { return "RenderMathMLSquareRoot"; }
 };
     
 } // namespace WebCore

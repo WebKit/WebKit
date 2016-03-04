@@ -43,8 +43,8 @@ public:
     explicit WebSQLiteDatabaseTracker(WebProcess&);
 
     // WebCore::SQLiteDatabaseTrackerClient
-    virtual void willBeginFirstTransaction() override;
-    virtual void didFinishLastTransaction() override;
+    void willBeginFirstTransaction() override;
+    void didFinishLastTransaction() override;
 
 private:
     void hysteresisUpdated(WebCore::HysteresisState);

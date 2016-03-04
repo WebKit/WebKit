@@ -43,22 +43,22 @@ public:
     static Ref<StorageAreaImpl> create(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
     virtual ~StorageAreaImpl();
 
-    virtual unsigned length() override;
-    virtual String key(unsigned index) override;
-    virtual String item(const String& key) override;
-    virtual void setItem(Frame* sourceFrame, const String& key, const String& value, bool& quotaException) override;
-    virtual void removeItem(Frame* sourceFrame, const String& key) override;
-    virtual void clear(Frame* sourceFrame) override;
-    virtual bool contains(const String& key) override;
+    unsigned length() override;
+    String key(unsigned index) override;
+    String item(const String& key) override;
+    void setItem(Frame* sourceFrame, const String& key, const String& value, bool& quotaException) override;
+    void removeItem(Frame* sourceFrame, const String& key) override;
+    void clear(Frame* sourceFrame) override;
+    bool contains(const String& key) override;
 
-    virtual bool canAccessStorage(Frame* sourceFrame) override;
-    virtual StorageType storageType() const override;
+    bool canAccessStorage(Frame* sourceFrame) override;
+    StorageType storageType() const override;
 
-    virtual size_t memoryBytesUsedByCache() override;
+    size_t memoryBytesUsedByCache() override;
 
-    virtual void incrementAccessCount() override;
-    virtual void decrementAccessCount() override;
-    virtual void closeDatabaseIfIdle() override;
+    void incrementAccessCount() override;
+    void decrementAccessCount() override;
+    void closeDatabaseIfIdle() override;
 
     SecurityOrigin& securityOrigin() override { return *m_securityOrigin; }
 

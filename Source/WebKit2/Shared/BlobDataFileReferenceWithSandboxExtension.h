@@ -43,8 +43,8 @@ private:
     BlobDataFileReferenceWithSandboxExtension(const String& path, PassRefPtr<SandboxExtension>);
     virtual ~BlobDataFileReferenceWithSandboxExtension();
 
-    virtual void prepareForFileAccess() override;
-    virtual void revokeFileAccess() override;
+    void prepareForFileAccess() override;
+    void revokeFileAccess() override;
 
     RefPtr<SandboxExtension> m_sandboxExtension;
 };

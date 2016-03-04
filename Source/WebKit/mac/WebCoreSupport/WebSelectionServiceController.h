@@ -50,7 +50,7 @@ public:
     bool hasRelevantSelectionServices(bool isTextOnly) const;
 
     // WebSharingServicePickerClient
-    virtual void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &) override;
+    void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &) override;
 
 private:
     RetainPtr<WebSharingServicePickerController> m_sharingServicePickerController;

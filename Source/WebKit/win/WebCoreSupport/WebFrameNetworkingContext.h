@@ -47,9 +47,9 @@ private:
     {
     }
 
-    virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
+    WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
 #if USE(CFNETWORK)
-    virtual WebCore::NetworkStorageSession& storageSession() const override;
+    WebCore::NetworkStorageSession& storageSession() const override;
 #endif
 };
 

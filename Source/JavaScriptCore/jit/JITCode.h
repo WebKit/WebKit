@@ -212,11 +212,11 @@ protected:
 public:
     virtual ~JITCodeWithCodeRef();
 
-    virtual void* executableAddressAtOffset(size_t offset) override;
-    virtual void* dataAddressAtOffset(size_t offset) override;
-    virtual unsigned offsetOf(void* pointerIntoCode) override;
-    virtual size_t size() override;
-    virtual bool contains(void*) override;
+    void* executableAddressAtOffset(size_t offset) override;
+    void* dataAddressAtOffset(size_t offset) override;
+    unsigned offsetOf(void* pointerIntoCode) override;
+    size_t size() override;
+    bool contains(void*) override;
 
 protected:
     CodeRef m_ref;
@@ -230,7 +230,7 @@ public:
     
     void initializeCodeRef(CodeRef, CodePtr withArityCheck);
 
-    virtual CodePtr addressForCall(ArityCheckMode) override;
+    CodePtr addressForCall(ArityCheckMode) override;
 
 private:
     CodePtr m_withArityCheck;
@@ -244,7 +244,7 @@ public:
     
     void initializeCodeRef(CodeRef);
 
-    virtual CodePtr addressForCall(ArityCheckMode) override;
+    CodePtr addressForCall(ArityCheckMode) override;
 };
 
 } // namespace JSC

@@ -56,12 +56,12 @@ public:
     void screenDidChange(PlatformDisplayID);
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
+    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
 #endif
 
 private:
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    virtual void displayRefreshFired(double timestamp) override;
+    void displayRefreshFired(double timestamp) override;
     GraphicsLayerUpdaterClient& m_client;
 #endif
     bool m_scheduled { false };

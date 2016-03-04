@@ -46,8 +46,8 @@ public:
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
-    virtual bool supportsMIMEType(const String& mimeType) override;
-    virtual std::unique_ptr<CDMSession> createSession(CDMSessionClient*) override;
+    bool supportsMIMEType(const String& mimeType) override;
+    std::unique_ptr<CDMSession> createSession(CDMSessionClient*) override;
 
     CDM* cdm() const { return m_cdm; }
 

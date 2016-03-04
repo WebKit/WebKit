@@ -70,16 +70,16 @@ public:
     bool checkLinesConsistency(const RenderBlockFlow*) const;
 #endif
     
-    virtual void deleteLines() override;
+    void deleteLines() override;
 
     virtual void addRegionToThread(RenderRegion*) = 0;
     virtual void removeRegionFromThread(RenderRegion*);
     const RenderRegionList& renderRegionList() const { return m_regionList; }
 
-    virtual void updateLogicalWidth() override final;
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    void updateLogicalWidth() override final;
+    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     bool hasRegions() const { return m_regionList.size(); }
     virtual void regionChangedWritingMode(RenderRegion*) { }
@@ -101,7 +101,7 @@ public:
 
     static Ref<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void repaintRectangleInRegions(const LayoutRect&) const;
     
@@ -222,14 +222,14 @@ public:
 
     virtual bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) const { return false; }
 
-    virtual void layout() override;
+    void layout() override;
 
     void setCurrentRegionMaintainer(CurrentRenderRegionMaintainer* currentRegionMaintainer) { m_currentRegionMaintainer = currentRegionMaintainer; }
     RenderRegion* currentRegion() const;
 
     ContainingRegionMap& containingRegionMap();
 
-    virtual bool cachedFlowThreadContainingBlockNeedsUpdate() const override { return false; }
+    bool cachedFlowThreadContainingBlockNeedsUpdate() const override { return false; }
 
     // FIXME: Eventually as column and region flow threads start nesting, this may end up changing.
     virtual bool shouldCheckColumnBreaks() const { return false; }
@@ -237,23 +237,23 @@ public:
 private:
     // Always create a RenderLayer for the RenderFlowThread so that we
     // can easily avoid drawing the children directly.
-    virtual bool requiresLayer() const override final { return true; }
+    bool requiresLayer() const override final { return true; }
 
 protected:
     RenderFlowThread(Document&, Ref<RenderStyle>&&);
 
-    virtual RenderFlowThread* locateFlowThreadContainingBlock() const override { return const_cast<RenderFlowThread*>(this); }
+    RenderFlowThread* locateFlowThreadContainingBlock() const override { return const_cast<RenderFlowThread*>(this); }
 
-    virtual const char* renderName() const override = 0;
+    const char* renderName() const override = 0;
 
     // Overridden by columns/pages to set up an initial logical width of the page width even when
     // no regions have been generated yet.
     virtual LayoutUnit initialLogicalWidth() const { return 0; };
     
     void clearLinesToRegionMap();
-    virtual void willBeDestroyed() override;
+    void willBeDestroyed() override;
 
-    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
+    void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
 
     void updateRegionsFlowThreadPortionRect(const RenderRegion* = nullptr);
     bool shouldRepaint(const LayoutRect&) const;

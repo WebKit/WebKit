@@ -40,10 +40,10 @@ public:
 private:
     void frameOwnerElement() const = delete;
 
-    virtual const char* renderName() const override { return "RenderFrame"; }
-    virtual bool isFrame() const override { return true; }
+    const char* renderName() const override { return "RenderFrame"; }
+    bool isFrame() const override { return true; }
 
-    virtual void updateFromElement() override;
+    void updateFromElement() override;
 };
 
 } // namespace WebCore

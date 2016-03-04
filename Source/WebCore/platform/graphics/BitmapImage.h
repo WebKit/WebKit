@@ -121,63 +121,63 @@ public:
 #endif
     virtual ~BitmapImage();
     
-    virtual bool hasSingleSecurityOrigin() const override;
+    bool hasSingleSecurityOrigin() const override;
 
     // FloatSize due to override.
-    virtual FloatSize size() const override;
+    FloatSize size() const override;
     IntSize sizeRespectingOrientation(ImageOrientationDescription = ImageOrientationDescription()) const;
 
-    virtual bool getHotSpot(IntPoint&) const override;
+    bool getHotSpot(IntPoint&) const override;
 
     unsigned decodedSize() const { return m_decodedSize; }
 
-    virtual bool dataChanged(bool allDataReceived) override;
-    virtual String filenameExtension() const override;
+    bool dataChanged(bool allDataReceived) override;
+    String filenameExtension() const override;
 
     // It may look unusual that there is no start animation call as public API. This is because
     // we start and stop animating lazily. Animation begins whenever someone draws the image. It will
     // automatically pause once all observers no longer want to render the image anywhere.
-    virtual void stopAnimation() override;
-    virtual void resetAnimation() override;
+    void stopAnimation() override;
+    void resetAnimation() override;
 
-    virtual void drawPattern(GraphicsContext&, const FloatRect& srcRect, const AffineTransform& patternTransform,
+    void drawPattern(GraphicsContext&, const FloatRect& srcRect, const AffineTransform& patternTransform,
         const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal) override;
 
     // Accessors for native image formats.
 
 #if USE(APPKIT)
-    virtual NSImage* getNSImage() override;
+    NSImage* getNSImage() override;
 #endif
 
 #if PLATFORM(COCOA)
-    virtual CFDataRef getTIFFRepresentation() override;
+    CFDataRef getTIFFRepresentation() override;
 #endif
 
 #if USE(CG)
-    WEBCORE_EXPORT virtual CGImageRef getCGImageRef() override;
-    virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) override;
-    virtual RetainPtr<CFArrayRef> getCGImageArray() override;
+    WEBCORE_EXPORT CGImageRef getCGImageRef() override;
+    CGImageRef getFirstCGImageRefOfSize(const IntSize&) override;
+    RetainPtr<CFArrayRef> getCGImageArray() override;
 #endif
 
 #if PLATFORM(WIN)
-    virtual bool getHBITMAP(HBITMAP) override;
-    virtual bool getHBITMAPOfSize(HBITMAP, const IntSize*) override;
+    bool getHBITMAP(HBITMAP) override;
+    bool getHBITMAPOfSize(HBITMAP, const IntSize*) override;
 #endif
 
 #if PLATFORM(GTK)
-    virtual GdkPixbuf* getGdkPixbuf() override;
+    GdkPixbuf* getGdkPixbuf() override;
 #endif
 
 #if PLATFORM(EFL)
-    virtual Evas_Object* getEvasObject(Evas*) override;
+    Evas_Object* getEvasObject(Evas*) override;
 #endif
 
-    virtual PassNativeImagePtr nativeImageForCurrentFrame() override;
-    virtual ImageOrientation orientationForCurrentFrame() override { return frameOrientationAtIndex(currentFrame()); }
+    PassNativeImagePtr nativeImageForCurrentFrame() override;
+    ImageOrientation orientationForCurrentFrame() override { return frameOrientationAtIndex(currentFrame()); }
 
-    virtual bool currentFrameKnownToBeOpaque() override;
+    bool currentFrameKnownToBeOpaque() override;
 
-    virtual bool isAnimated() const override { return m_frameCount > 1; }
+    bool isAnimated() const override { return m_frameCount > 1; }
     
     bool canAnimate();
 
@@ -187,7 +187,7 @@ public:
     size_t currentFrame() const { return m_currentFrame; }
     
 private:
-    virtual bool isBitmapImage() const override { return true; }
+    bool isBitmapImage() const override { return true; }
 
     void updateSize(ImageOrientationDescription = ImageOrientationDescription()) const;
     void determineMinimumSubsamplingLevel() const;
@@ -203,9 +203,9 @@ protected:
     WEBCORE_EXPORT BitmapImage(ImageObserver* = 0);
 
 #if PLATFORM(WIN)
-    virtual void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator) override;
+    void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator) override;
 #endif
-    virtual void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientationDescription) override;
+    void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientationDescription) override;
 
 #if USE(WINGDI)
     virtual void drawPattern(GraphicsContext&, const FloatRect& srcRect, const AffineTransform& patternTransform,
@@ -237,7 +237,7 @@ protected:
     // cache. If |destroyAll| is false, we only delete frames up to the current
     // one; this is used while animating large images to keep memory footprint
     // low without redecoding the whole image on every frame.
-    virtual void destroyDecodedData(bool destroyAll = true) override;
+    void destroyDecodedData(bool destroyAll = true) override;
 
     // If the image is large enough, calls destroyDecodedData() and passes
     // |destroyAll| along.
@@ -261,7 +261,7 @@ protected:
     // Animation.
     int repetitionCount(bool imageKnownToBeComplete);  // |imageKnownToBeComplete| should be set if the caller knows the entire image has been decoded.
     bool shouldAnimate();
-    virtual void startAnimation(CatchUpAnimation = CatchUp) override;
+    void startAnimation(CatchUpAnimation = CatchUp) override;
     void advanceAnimation();
 
     // Function that does the real work of advancing the animation. When
@@ -280,18 +280,18 @@ protected:
     // changed.
     void checkForSolidColor();
 
-    virtual bool mayFillWithSolidColor() override;
-    virtual Color solidColor() const override;
+    bool mayFillWithSolidColor() override;
+    Color solidColor() const override;
 
 #if !ASSERT_DISABLED
-    virtual bool notSolidColor() override;
+    bool notSolidColor() override;
 #endif
 
 private:
     void clearTimer();
     void startTimer(double delay);
 
-    virtual void dump(TextStream&) const override;
+    void dump(TextStream&) const override;
 
     ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).

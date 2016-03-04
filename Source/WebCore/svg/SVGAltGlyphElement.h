@@ -47,8 +47,8 @@ public:
 private:
     SVGAltGlyphElement(const QualifiedName&, Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual bool childShouldCreateRenderer(const Node&) const override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool childShouldCreateRenderer(const Node&) const override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAltGlyphElement)
         DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)

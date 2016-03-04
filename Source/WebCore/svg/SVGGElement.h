@@ -36,15 +36,15 @@ public:
 private:
     SVGGElement(const QualifiedName&, Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
-    virtual bool isValid() const override { return SVGTests::isValid(); }
+    bool isValid() const override { return SVGTests::isValid(); }
 
     static bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGElement)
         DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)

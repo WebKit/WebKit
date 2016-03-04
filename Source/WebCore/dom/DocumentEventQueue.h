@@ -44,9 +44,9 @@ public:
     explicit DocumentEventQueue(Document&);
     virtual ~DocumentEventQueue();
 
-    virtual bool enqueueEvent(Ref<Event>&&) override;
-    virtual bool cancelEvent(Event&) override;
-    virtual void close() override;
+    bool enqueueEvent(Ref<Event>&&) override;
+    bool cancelEvent(Event&) override;
+    void close() override;
 
     void enqueueOrDispatchScrollEvent(Node&);
 

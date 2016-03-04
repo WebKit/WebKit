@@ -58,7 +58,7 @@ public:
     WTF_EXPORT_PRIVATE static bool isMain();
     ~RunLoop();
 
-    virtual void dispatch(std::function<void()>) override;
+    void dispatch(std::function<void()>) override;
 
     WTF_EXPORT_PRIVATE static void run();
     WTF_EXPORT_PRIVATE void stop();

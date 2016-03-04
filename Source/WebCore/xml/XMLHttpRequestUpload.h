@@ -45,15 +45,15 @@ namespace WebCore {
         void deref() { m_xmlHttpRequest->deref(); }
         XMLHttpRequest* xmlHttpRequest() const { return m_xmlHttpRequest; }
 
-        virtual EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestUploadEventTargetInterfaceType; }
-        virtual ScriptExecutionContext* scriptExecutionContext() const override { return m_xmlHttpRequest->scriptExecutionContext(); }
+        EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestUploadEventTargetInterfaceType; }
+        ScriptExecutionContext* scriptExecutionContext() const override { return m_xmlHttpRequest->scriptExecutionContext(); }
 
         void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
         void dispatchProgressEvent(const AtomicString &type);
 
     private:
-        virtual void refEventTarget() override final { ref(); }
-        virtual void derefEventTarget() override final { deref(); }
+        void refEventTarget() override final { ref(); }
+        void derefEventTarget() override final { deref(); }
 
         XMLHttpRequest* m_xmlHttpRequest;
         bool m_lengthComputable;

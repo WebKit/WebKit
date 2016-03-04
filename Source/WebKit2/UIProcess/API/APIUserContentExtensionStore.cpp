@@ -179,7 +179,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             ASSERT(!metaData.domainFiltersBytecodeSize);
         }
         
-        virtual void writeFiltersWithoutDomainsBytecode(Vector<DFABytecode>&& bytecode) override
+        void writeFiltersWithoutDomainsBytecode(Vector<DFABytecode>&& bytecode) override
         {
             ASSERT(!m_filtersWithDomainBytecodeWritten);
             ASSERT(!m_domainFiltersBytecodeWritten);
@@ -187,20 +187,20 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
         
-        virtual void writeFiltersWithDomainsBytecode(Vector<DFABytecode>&& bytecode) override
+        void writeFiltersWithDomainsBytecode(Vector<DFABytecode>&& bytecode) override
         {
             ASSERT(!m_domainFiltersBytecodeWritten);
             m_filtersWithDomainBytecodeWritten += bytecode.size();
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
         
-        virtual void writeDomainFiltersBytecode(Vector<DFABytecode>&& bytecode) override
+        void writeDomainFiltersBytecode(Vector<DFABytecode>&& bytecode) override
         {
             m_domainFiltersBytecodeWritten += bytecode.size();
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
 
-        virtual void writeActions(Vector<SerializedActionByte>&& actions) override
+        void writeActions(Vector<SerializedActionByte>&& actions) override
         {
             ASSERT(!m_filtersWithoutDomainsBytecodeWritten);
             ASSERT(!m_filtersWithDomainBytecodeWritten);
@@ -210,7 +210,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             writeToFile(Data(actions.data(), actions.size()));
         }
         
-        virtual void finalize() override
+        void finalize() override
         {
             m_metaData.actionsSize = m_actionsWritten;
             m_metaData.filtersWithoutDomainsBytecodeSize = m_filtersWithoutDomainsBytecodeWritten;
@@ -399,7 +399,7 @@ const std::error_category& userContentExtensionStoreErrorCategory()
             return "user content extension store";
         }
 
-        virtual std::string message(int errorCode) const override
+        std::string message(int errorCode) const override
         {
             switch (static_cast<UserContentExtensionStore::Error>(errorCode)) {
             case UserContentExtensionStore::Error::LookupFailed:

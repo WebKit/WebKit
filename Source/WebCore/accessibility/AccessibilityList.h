@@ -42,13 +42,13 @@ public:
     bool isOrderedList() const;
     bool isDescriptionList() const;
 
-    virtual AccessibilityRole roleValue() const override;
+    AccessibilityRole roleValue() const override;
 
 private:
     explicit AccessibilityList(RenderObject*);
-    virtual bool isList() const override { return true; }
-    virtual bool computeAccessibilityIsIgnored() const override;
-    virtual AccessibilityRole determineAccessibilityRole() override;
+    bool isList() const override { return true; }
+    bool computeAccessibilityIsIgnored() const override;
+    AccessibilityRole determineAccessibilityRole() override;
     bool childHasPseudoVisibleListItemMarkers(RenderObject*);
 };
 

@@ -72,8 +72,8 @@ public:
 private:
     explicit SVGTRefTargetEventListener(SVGTRefElement& trefElement);
 
-    virtual void handleEvent(ScriptExecutionContext*, Event*) override;
-    virtual bool operator==(const EventListener&) override;
+    void handleEvent(ScriptExecutionContext*, Event*) override;
+    bool operator==(const EventListener&) override;
 
     SVGTRefElement& m_trefElement;
     RefPtr<Element> m_target;

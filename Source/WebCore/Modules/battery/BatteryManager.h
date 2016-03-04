@@ -38,8 +38,8 @@ public:
     static Ref<BatteryManager> create(Navigator*);
 
     // EventTarget implementation.
-    virtual EventTargetInterface eventTargetInterface() const override { return BatteryManagerEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
+    EventTargetInterface eventTargetInterface() const override { return BatteryManagerEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     bool charging();
     double chargingTime();
@@ -54,8 +54,8 @@ public:
     using RefCounted<BatteryManager>::deref;
 
 protected:
-    virtual EventTargetData* eventTargetData() override { return &m_eventTargetData; }
-    virtual EventTargetData& ensureEventTargetData() override { return m_eventTargetData; }
+    EventTargetData* eventTargetData() override { return &m_eventTargetData; }
+    EventTargetData& ensureEventTargetData() override { return m_eventTargetData; }
 
 private:
     explicit BatteryManager(Navigator*);
@@ -67,10 +67,10 @@ private:
     void stop() override;
 
     // EventTarget implementation.
-    virtual void refEventTarget() override { ref(); }
-    virtual void derefEventTarget() override { deref(); }
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
 
-    virtual const char* activeDOMObjectName() const override { return "BatteryManager"; }
+    const char* activeDOMObjectName() const override { return "BatteryManager"; }
 
     BatteryController* m_batteryController;
     EventTargetData m_eventTargetData;

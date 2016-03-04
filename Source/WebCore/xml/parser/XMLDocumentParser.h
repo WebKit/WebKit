@@ -88,7 +88,7 @@ class Text;
         static bool parseDocumentFragment(const String&, DocumentFragment&, Element* parent = nullptr, ParserContentPolicy = AllowScriptingContent);
 
         // Used by the XMLHttpRequest to check if the responseXML was well formed.
-        virtual bool wellFormed() const override { return !m_sawError; }
+        bool wellFormed() const override { return !m_sawError; }
 
         static bool supportsXMLVersion(const String&);
 
@@ -97,18 +97,18 @@ class Text;
         XMLDocumentParser(DocumentFragment&, Element*, ParserContentPolicy);
 
         // From DocumentParser
-        virtual void insert(const SegmentedString&) override;
-        virtual void append(RefPtr<StringImpl>&&) override;
-        virtual void finish() override;
-        virtual bool isWaitingForScripts() const override;
-        virtual void stopParsing() override;
-        virtual void detach() override;
+        void insert(const SegmentedString&) override;
+        void append(RefPtr<StringImpl>&&) override;
+        void finish() override;
+        bool isWaitingForScripts() const override;
+        void stopParsing() override;
+        void detach() override;
 
-        virtual TextPosition textPosition() const override;
-        virtual bool shouldAssociateConsoleMessagesWithTextPosition() const override;
+        TextPosition textPosition() const override;
+        bool shouldAssociateConsoleMessagesWithTextPosition() const override;
 
         // from CachedResourceClient
-        virtual void notifyFinished(CachedResource*) override;
+        void notifyFinished(CachedResource*) override;
 
         void end();
 

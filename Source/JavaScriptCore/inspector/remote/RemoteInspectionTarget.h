@@ -57,7 +57,7 @@ public:
     virtual void unpauseForInitializedInspector();
 
     // RemoteControllableTarget overrides.
-    virtual bool remoteControlAllowed() const override;
+    bool remoteControlAllowed() const override;
 private:
     bool m_allowed {false};
     RetainPtr<CFRunLoopRef> m_runLoop;

@@ -63,8 +63,8 @@ public:
     void clearQueue() { m_queue.clear(); }
 
     // FrontendChannel overrides.
-    virtual ConnectionType connectionType() const override { return ConnectionType::Remote; }
-    virtual bool sendMessageToFrontend(const String&) override;
+    ConnectionType connectionType() const override { return ConnectionType::Remote; }
+    bool sendMessageToFrontend(const String&) override;
 
 private:
     void dispatchAsyncOnTarget(void (^block)());

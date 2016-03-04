@@ -55,37 +55,37 @@ public:
 private:
     void mediaElement() const = delete;
 
-    virtual void updateFromElement() override;
+    void updateFromElement() override;
 
-    virtual void intrinsicSizeChanged() override;
+    void intrinsicSizeChanged() override;
     LayoutSize calculateIntrinsicSize();
     void updateIntrinsicSize();
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect*) override;
+    void imageChanged(WrappedImagePtr, const IntRect*) override;
 
-    virtual const char* renderName() const override { return "RenderVideo"; }
+    const char* renderName() const override { return "RenderVideo"; }
 
-    virtual bool requiresLayer() const override { return true; }
-    virtual bool isVideo() const override { return true; }
+    bool requiresLayer() const override { return true; }
+    bool isVideo() const override { return true; }
 
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
+    void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    virtual void layout() override;
+    void layout() override;
 
-    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const override;
-    virtual LayoutUnit computeReplacedLogicalHeight() const override;
-    virtual LayoutUnit minimumReplacedHeight() const override;
+    LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const override;
+    LayoutUnit computeReplacedLogicalHeight() const override;
+    LayoutUnit minimumReplacedHeight() const override;
 
 #if ENABLE(FULLSCREEN_API)
-    virtual LayoutUnit offsetLeft() const override;
-    virtual LayoutUnit offsetTop() const override;
-    virtual LayoutUnit offsetWidth() const override;
-    virtual LayoutUnit offsetHeight() const override;
+    LayoutUnit offsetLeft() const override;
+    LayoutUnit offsetTop() const override;
+    LayoutUnit offsetWidth() const override;
+    LayoutUnit offsetHeight() const override;
 #endif
 
     void updatePlayer();
 
-    virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
+    bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
     LayoutSize m_cachedImageSize;
 };

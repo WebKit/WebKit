@@ -94,10 +94,10 @@ public:
         m_image = image;
     }
 
-    virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
+    RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
 
 private:
-    virtual std::unique_ptr<ContentData> cloneInternal() const override
+    std::unique_ptr<ContentData> cloneInternal() const override
     {
         std::unique_ptr<ContentData> image = std::make_unique<ImageContentData>(m_image.get());
         image->setAltText(altText());
@@ -129,10 +129,10 @@ public:
     const String& text() const { return m_text; }
     void setText(const String& text) { m_text = text; }
 
-    virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
+    RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
 
 private:
-    virtual std::unique_ptr<ContentData> cloneInternal() const override { return std::make_unique<TextContentData>(text()); }
+    std::unique_ptr<ContentData> cloneInternal() const override { return std::make_unique<TextContentData>(text()); }
 
     String m_text;
 };
@@ -163,10 +163,10 @@ public:
         m_counter = WTFMove(counter);
     }
 
-    virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
+    RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
 
 private:
-    virtual std::unique_ptr<ContentData> cloneInternal() const override
+    std::unique_ptr<ContentData> cloneInternal() const override
     {
         auto counterData = std::make_unique<CounterContent>(counter());
         return std::make_unique<CounterContentData>(WTFMove(counterData));
@@ -196,10 +196,10 @@ public:
     QuoteType quote() const { return m_quote; }
     void setQuote(QuoteType quote) { m_quote = quote; }
 
-    virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
+    RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
 
 private:
-    virtual std::unique_ptr<ContentData> cloneInternal() const override { return std::make_unique<QuoteContentData>(quote()); }
+    std::unique_ptr<ContentData> cloneInternal() const override { return std::make_unique<QuoteContentData>(quote()); }
 
     QuoteType m_quote;
 };

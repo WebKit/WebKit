@@ -103,7 +103,7 @@ public:
 protected:
     WebGLFramebuffer(WebGLRenderingContextBase*);
 
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
 private:
     WebGLAttachment* getAttachment(GC3Denum) const;

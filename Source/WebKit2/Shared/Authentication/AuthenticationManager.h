@@ -92,7 +92,7 @@ private:
     };
     
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     bool tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const WebCore::CertificateInfo&);
 

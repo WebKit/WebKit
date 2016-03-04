@@ -104,19 +104,19 @@ public:
     static Ref<InspectorBasicValue> create(int);
     static Ref<InspectorBasicValue> create(double);
 
-    virtual bool asBoolean(bool&) const override;
+    bool asBoolean(bool&) const override;
     // Numbers from the frontend are always parsed as doubles, so we allow
     // clients to convert to integral values with this function.
-    virtual bool asInteger(int&) const override;
-    virtual bool asInteger(unsigned&) const override;
-    virtual bool asInteger(long&) const override;
-    virtual bool asInteger(long long&) const override;
-    virtual bool asInteger(unsigned long&) const override;
-    virtual bool asInteger(unsigned long long&) const override;
-    virtual bool asDouble(double&) const override;
-    virtual bool asDouble(float&) const override;
+    bool asInteger(int&) const override;
+    bool asInteger(unsigned&) const override;
+    bool asInteger(long&) const override;
+    bool asInteger(long long&) const override;
+    bool asInteger(unsigned long&) const override;
+    bool asInteger(unsigned long long&) const override;
+    bool asDouble(double&) const override;
+    bool asDouble(float&) const override;
 
-    virtual void writeJSON(StringBuilder& output) const override;
+    void writeJSON(StringBuilder& output) const override;
 
 private:
     explicit InspectorBasicValue(bool value)
@@ -142,9 +142,9 @@ public:
     static Ref<InspectorString> create(const String&);
     static Ref<InspectorString> create(const char*);
 
-    virtual bool asString(String& output) const override;
+    bool asString(String& output) const override;
 
-    virtual void writeJSON(StringBuilder& output) const override;
+    void writeJSON(StringBuilder& output) const override;
 
 private:
     explicit InspectorString(const String& value)
@@ -171,7 +171,7 @@ public:
 protected:
     virtual ~InspectorObjectBase();
 
-    virtual bool asObject(RefPtr<InspectorObject>& output) override;
+    bool asObject(RefPtr<InspectorObject>& output) override;
 
     // FIXME: use templates to reduce the amount of duplicated set*() methods.
     void setBoolean(const String& name, bool);
@@ -211,7 +211,7 @@ protected:
 
     void remove(const String& name);
 
-    virtual void writeJSON(StringBuilder& output) const override;
+    void writeJSON(StringBuilder& output) const override;
 
     iterator begin() { return m_data.begin(); }
     iterator end() { return m_data.end(); }
@@ -270,7 +270,7 @@ public:
 protected:
     virtual ~InspectorArrayBase();
 
-    virtual bool asArray(RefPtr<InspectorArray>&) override;
+    bool asArray(RefPtr<InspectorArray>&) override;
 
     void pushBoolean(bool);
     void pushInteger(int);
@@ -282,7 +282,7 @@ protected:
 
     RefPtr<InspectorValue> get(size_t index) const;
 
-    virtual void writeJSON(StringBuilder& output) const override;
+    void writeJSON(StringBuilder& output) const override;
 
     iterator begin() { return m_data.begin(); }
     iterator end() { return m_data.end(); }

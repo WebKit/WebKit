@@ -53,17 +53,17 @@ public:
     explicit WebInspectorClient(WebView*);
 
     // InspectorClient API.
-    virtual void inspectedPageDestroyed() override;
+    void inspectedPageDestroyed() override;
 
-    virtual Inspector::FrontendChannel* openLocalFrontend(WebCore::InspectorController*) override;
-    virtual void bringFrontendToFront() override;
+    Inspector::FrontendChannel* openLocalFrontend(WebCore::InspectorController*) override;
+    void bringFrontendToFront() override;
 
-    virtual void highlight() override;
-    virtual void hideHighlight() override;
+    void highlight() override;
+    void hideHighlight() override;
 
     // FrontendChannel API.
-    virtual ConnectionType connectionType() const override { return ConnectionType::Local; }
-    virtual bool sendMessageToFrontend(const WTF::String&) override;
+    ConnectionType connectionType() const override { return ConnectionType::Local; }
+    bool sendMessageToFrontend(const WTF::String&) override;
 
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);
@@ -96,21 +96,21 @@ public:
     virtual ~WebInspectorFrontendClient();
 
     // InspectorFrontendClient API.
-    virtual void frontendLoaded() override;
+    void frontendLoaded() override;
 
-    virtual WTF::String localizedStringsURL() override;
+    WTF::String localizedStringsURL() override;
 
-    virtual void bringToFront() override;
-    virtual void closeWindow() override;
+    void bringToFront() override;
+    void closeWindow() override;
 
-    virtual void setAttachedWindowHeight(unsigned) override;
-    virtual void setAttachedWindowWidth(unsigned) override;
+    void setAttachedWindowHeight(unsigned) override;
+    void setAttachedWindowWidth(unsigned) override;
 
-    virtual void inspectedURLChanged(const WTF::String& newURL) override;
+    void inspectedURLChanged(const WTF::String& newURL) override;
 
     // InspectorFrontendClientLocal API.
-    virtual void attachWindow(DockSide) override;
-    virtual void detachWindow() override;
+    void attachWindow(DockSide) override;
+    void detachWindow() override;
 
     void destroyInspectorView();
 

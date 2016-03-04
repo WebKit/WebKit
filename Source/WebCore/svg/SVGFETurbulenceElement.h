@@ -100,10 +100,10 @@ public:
 private:
     SVGFETurbulenceElement(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
-    virtual RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
 
     static const AtomicString& baseFrequencyXIdentifier();
     static const AtomicString& baseFrequencyYIdentifier();

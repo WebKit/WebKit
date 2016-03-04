@@ -52,7 +52,7 @@ public:
 
     String availability() const { return m_availability; }
 
-    virtual EventInterface eventInterface() const override { return WebKitPlaybackTargetAvailabilityEventInterfaceType; }
+    EventInterface eventInterface() const override { return WebKitPlaybackTargetAvailabilityEventInterfaceType; }
 
 private:
     explicit WebKitPlaybackTargetAvailabilityEvent(const AtomicString& eventType, bool available);

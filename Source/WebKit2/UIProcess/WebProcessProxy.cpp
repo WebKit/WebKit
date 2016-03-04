@@ -806,7 +806,7 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
         {
         }
 
-        virtual bool shouldTransformObject(const API::Object& object) const override
+        bool shouldTransformObject(const API::Object& object) const override
         {
             switch (object.type()) {
             case API::Object::Type::FrameHandle:
@@ -826,7 +826,7 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
             }
         }
 
-        virtual RefPtr<API::Object> transformObject(API::Object& object) const override
+        RefPtr<API::Object> transformObject(API::Object& object) const override
         {
             switch (object.type()) {
             case API::Object::Type::FrameHandle:
@@ -858,7 +858,7 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
 RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* object)
 {
     struct Transformer final : UserData::Transformer {
-        virtual bool shouldTransformObject(const API::Object& object) const override
+        bool shouldTransformObject(const API::Object& object) const override
         {
             switch (object.type()) {
             case API::Object::Type::Frame:
@@ -874,7 +874,7 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
             }
         }
 
-        virtual RefPtr<API::Object> transformObject(API::Object& object) const override
+        RefPtr<API::Object> transformObject(API::Object& object) const override
         {
             switch (object.type()) {
             case API::Object::Type::Frame:

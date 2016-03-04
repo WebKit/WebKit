@@ -65,13 +65,13 @@ private:
     SpeechSynthesis();
     
     // PlatformSpeechSynthesizerClient override methods.
-    virtual void voicesDidChange() override;
-    virtual void didStartSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
-    virtual void didPauseSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
-    virtual void didResumeSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
-    virtual void didFinishSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
-    virtual void speakingErrorOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
-    virtual void boundaryEventOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance>, SpeechBoundary, unsigned charIndex) override;
+    void voicesDidChange() override;
+    void didStartSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
+    void didPauseSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
+    void didResumeSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
+    void didFinishSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
+    void speakingErrorOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
+    void boundaryEventOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance>, SpeechBoundary, unsigned charIndex) override;
 
     void startSpeakingImmediately(SpeechSynthesisUtterance*);
     void handleSpeakingCompleted(SpeechSynthesisUtterance*, bool errorOccurred);

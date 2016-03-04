@@ -55,14 +55,14 @@ public:
     InspectorConsoleAgent(AgentContext&);
     virtual ~InspectorConsoleAgent();
 
-    virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
+    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(DisconnectReason) override;
 
-    virtual void enable(ErrorString&) override;
-    virtual void disable(ErrorString&) override;
-    virtual void clearMessages(ErrorString&) override;
-    virtual void setMonitoringXHREnabled(ErrorString&, bool enabled) override = 0;
-    virtual void addInspectedNode(ErrorString&, int nodeId) override = 0;
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void clearMessages(ErrorString&) override;
+    void setMonitoringXHREnabled(ErrorString&, bool enabled) override = 0;
+    void addInspectedNode(ErrorString&, int nodeId) override = 0;
 
     bool enabled() const { return m_enabled; }
     void reset();

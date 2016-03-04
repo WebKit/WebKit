@@ -62,26 +62,26 @@ public:
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&);
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest&);
 
-    virtual ~IDBTransaction() override final;
+    ~IDBTransaction() override final;
 
     // IDBTransaction IDL
-    virtual const String& mode() const override final;
-    virtual WebCore::IDBDatabase* db() override final;
-    virtual RefPtr<DOMError> error() const override final;
-    virtual RefPtr<WebCore::IDBObjectStore> objectStore(const String& name, ExceptionCodeWithMessage&) override final;
-    virtual void abort(ExceptionCodeWithMessage&) override final;
+    const String& mode() const override final;
+    WebCore::IDBDatabase* db() override final;
+    RefPtr<DOMError> error() const override final;
+    RefPtr<WebCore::IDBObjectStore> objectStore(const String& name, ExceptionCodeWithMessage&) override final;
+    void abort(ExceptionCodeWithMessage&) override final;
 
-    virtual EventTargetInterface eventTargetInterface() const override final { return IDBTransactionEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
-    virtual void refEventTarget() override final { ref(); }
-    virtual void derefEventTarget() override final { deref(); }
+    EventTargetInterface eventTargetInterface() const override final { return IDBTransactionEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
+    void refEventTarget() override final { ref(); }
+    void derefEventTarget() override final { deref(); }
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(Event&) override final;
+    bool dispatchEvent(Event&) override final;
 
-    virtual const char* activeDOMObjectName() const override final;
-    virtual bool canSuspendForDocumentSuspension() const override final;
-    virtual bool hasPendingActivity() const override final;
-    virtual void stop() override final;
+    const char* activeDOMObjectName() const override final;
+    bool canSuspendForDocumentSuspension() const override final;
+    bool hasPendingActivity() const override final;
+    void stop() override final;
 
     const IDBTransactionInfo& info() const { return m_info; }
     IDBDatabase& database() { return m_database.get(); }

@@ -47,29 +47,29 @@ public:
     
     void setHTMLElement(HTMLElement* element) { m_optionElement = element; }
     
-    virtual AccessibilityRole roleValue() const override { return ListBoxOptionRole; }
-    virtual bool isSelected() const override;
-    virtual bool isEnabled() const override;
-    virtual bool isSelectedOptionActive() const override;
-    virtual String stringValue() const override;
-    virtual Element* actionElement() const override;
-    virtual Node* node() const override { return m_optionElement; }
-    virtual void setSelected(bool) override;
-    virtual bool canSetSelectedAttribute() const override;
+    AccessibilityRole roleValue() const override { return ListBoxOptionRole; }
+    bool isSelected() const override;
+    bool isEnabled() const override;
+    bool isSelectedOptionActive() const override;
+    String stringValue() const override;
+    Element* actionElement() const override;
+    Node* node() const override { return m_optionElement; }
+    void setSelected(bool) override;
+    bool canSetSelectedAttribute() const override;
 
-    virtual LayoutRect elementRect() const override;
-    virtual AccessibilityObject* parentObject() const override;
+    LayoutRect elementRect() const override;
+    AccessibilityObject* parentObject() const override;
 
 private:
     AccessibilityListBoxOption();
 
-    virtual bool isListBoxOption() const override { return true; }
-    virtual bool canHaveChildren() const override { return false; }
+    bool isListBoxOption() const override { return true; }
+    bool canHaveChildren() const override { return false; }
     HTMLSelectElement* listBoxOptionParentNode() const;
     int listBoxOptionIndex() const;
     IntRect listBoxOptionRect() const;
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
-    virtual bool computeAccessibilityIsIgnored() const override;
+    bool computeAccessibilityIsIgnored() const override;
 
     HTMLElement* m_optionElement;
 };

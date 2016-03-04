@@ -44,8 +44,8 @@ public:
 
     static Ref<JITToDFGDeferredCompilationCallback> create();
     
-    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock) override;
-    virtual void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult) override;
+    void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock) override;
+    void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult) override;
 };
 
 } // namespace JSC

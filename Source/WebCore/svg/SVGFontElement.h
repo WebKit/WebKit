@@ -86,7 +86,7 @@ public:
 private:
     SVGFontElement(const QualifiedName&, Document&);
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     void ensureGlyphCache();
     void registerLigaturesInGlyphCache(Vector<String>&);

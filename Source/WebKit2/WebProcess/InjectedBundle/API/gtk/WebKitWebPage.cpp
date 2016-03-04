@@ -95,7 +95,7 @@ public:
     WebKitFrame* webkitFrame() const { return m_webkitFrame.get(); }
 
 private:
-    virtual void frameDestroyed() override
+    void frameDestroyed() override
     {
         FrameDestructionObserver::frameDestroyed();
         webFrameDestroyed(webkitFrameGetWebFrame(m_webkitFrame.get()));

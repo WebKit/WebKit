@@ -45,7 +45,7 @@ public:
             : 0;
     }
 
-    virtual bool operator==(const EventListener& other) override;
+    bool operator==(const EventListener& other) override;
 
 private:
     MediaControlsAppleEventListener(MediaControlsApple* mediaControls)
@@ -54,7 +54,7 @@ private:
     {
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event*) override;
+    void handleEvent(ScriptExecutionContext*, Event*) override;
 
     MediaControlsApple* m_mediaControls;
 };
@@ -64,29 +64,29 @@ public:
     static PassRefPtr<MediaControlsApple> createControls(Document&);
 
     // MediaControls implementation.
-    virtual void setMediaController(MediaControllerInterface*) override;
+    void setMediaController(MediaControllerInterface*) override;
 
-    virtual void hide() override;
-    virtual void makeTransparent() override;
+    void hide() override;
+    void makeTransparent() override;
 
-    virtual void reset() override;
+    void reset() override;
 
-    virtual void changedMute() override;
-    virtual void changedVolume() override;
+    void changedMute() override;
+    void changedVolume() override;
 
-    virtual void enteredFullscreen() override;
-    virtual void exitedFullscreen() override;
+    void enteredFullscreen() override;
+    void exitedFullscreen() override;
 
-    virtual void reportedError() override;
-    virtual void loadedMetadata() override;
+    void reportedError() override;
+    void loadedMetadata() override;
 
-    virtual void showVolumeSlider() override;
-    virtual void updateCurrentTimeDisplay() override;
-    virtual void updateStatusDisplay() override;
+    void showVolumeSlider() override;
+    void updateCurrentTimeDisplay() override;
+    void updateStatusDisplay() override;
 
-    virtual void changedClosedCaptionsVisibility() override;
-    virtual void toggleClosedCaptionTrackList() override;
-    virtual void closedCaptionTracksChanged() override;
+    void changedClosedCaptionsVisibility() override;
+    void toggleClosedCaptionTrackList() override;
+    void closedCaptionTracksChanged() override;
 
     bool shouldClosedCaptionsContainerPreventPageScrolling(int wheelDeltaY);
     void handleClickEvent(Event*);
@@ -94,7 +94,7 @@ public:
 private:
     MediaControlsApple(Document&);
 
-    virtual void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event*) override;
     PassRefPtr<MediaControlsAppleEventListener> eventListener();
 
     void showClosedCaptionTrackList();

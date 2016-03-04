@@ -46,8 +46,8 @@ public:
     explicit InspectorLayerTreeAgent(WebAgentContext&);
     virtual ~InspectorLayerTreeAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
     void reset();
 
     // InspectorInstrumentation callbacks.
@@ -56,10 +56,10 @@ public:
     void pseudoElementDestroyed(PseudoElement&);
 
     // Called from the front-end.
-    virtual void enable(ErrorString&) override;
-    virtual void disable(ErrorString&) override;
-    virtual void layersForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&) override;
-    virtual void reasonsForCompositingLayer(ErrorString&, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>&) override;
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void layersForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&) override;
+    void reasonsForCompositingLayer(ErrorString&, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>&) override;
 
 private:
     // RenderLayer-related methods.

@@ -78,7 +78,7 @@ class ListAttributeTargetObserver : IdTargetObserver {
 public:
     ListAttributeTargetObserver(const AtomicString& id, HTMLInputElement*);
 
-    virtual void idTargetChanged() override;
+    void idTargetChanged() override;
 
 private:
     HTMLInputElement* m_element;

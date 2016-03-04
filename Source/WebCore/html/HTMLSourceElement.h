@@ -50,9 +50,9 @@ public:
 private:
     HTMLSourceElement(const QualifiedName&, Document&);
     
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
-    virtual bool isURLAttribute(const Attribute&) const override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
+    bool isURLAttribute(const Attribute&) const override;
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const override;

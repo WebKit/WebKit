@@ -107,7 +107,7 @@ protected:
     virtual void notifyAccessibilityForTextChange(Node*, AXTextEditType, const String&, const VisiblePosition&);
 
 private:
-    virtual bool isSimpleEditCommand() const override { return true; }
+    bool isSimpleEditCommand() const override { return true; }
 };
 
 inline SimpleEditCommand* toSimpleEditCommand(EditCommand* command)

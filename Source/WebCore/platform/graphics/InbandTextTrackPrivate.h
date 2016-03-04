@@ -43,7 +43,7 @@ public:
     virtual ~InbandTextTrackPrivate() { }
 
     void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
-    virtual InbandTextTrackPrivateClient* client() const override { return m_client; }
+    InbandTextTrackPrivateClient* client() const override { return m_client; }
 
     enum Mode {
         Disabled,
@@ -69,9 +69,9 @@ public:
     virtual bool isMainProgramContent() const { return true; }
     virtual bool isEasyToRead() const { return false; }
     virtual bool isDefault() const { return false; }
-    virtual AtomicString label() const override { return emptyAtom; }
-    virtual AtomicString language() const override { return emptyAtom; }
-    virtual AtomicString id() const override { return emptyAtom; }
+    AtomicString label() const override { return emptyAtom; }
+    AtomicString language() const override { return emptyAtom; }
+    AtomicString id() const override { return emptyAtom; }
     virtual AtomicString inBandMetadataTrackDispatchType() const { return emptyAtom; }
 
     virtual int textTrackIndex() const { return 0; }

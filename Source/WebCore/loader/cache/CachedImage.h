@@ -72,8 +72,8 @@ public:
     bool imageHasRelativeWidth() const;
     bool imageHasRelativeHeight() const;
 
-    virtual void addDataBuffer(SharedBuffer&) override;
-    virtual void finishLoading(SharedBuffer*) override;
+    void addDataBuffer(SharedBuffer&) override;
+    void finishLoading(SharedBuffer*) override;
 
     enum SizeType {
         UsedSize,
@@ -85,7 +85,7 @@ public:
 
     bool isManuallyCached() const { return m_isManuallyCached; }
     RevalidationDecision makeRevalidationDecision(CachePolicy) const override;
-    virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;
+    void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;
 
     bool isOriginClean(SecurityOrigin*);
 
@@ -98,30 +98,30 @@ private:
     void notifyObservers(const IntRect* changeRect = nullptr);
     void checkShouldPaintBrokenImage();
 
-    virtual void switchClientsToRevalidatedResource() override;
-    virtual bool mayTryReplaceEncodedData() const override { return true; }
+    void switchClientsToRevalidatedResource() override;
+    bool mayTryReplaceEncodedData() const override { return true; }
 
-    virtual void didAddClient(CachedResourceClient*) override;
-    virtual void didRemoveClient(CachedResourceClient*) override;
+    void didAddClient(CachedResourceClient*) override;
+    void didRemoveClient(CachedResourceClient*) override;
 
-    virtual void allClientsRemoved() override;
-    virtual void destroyDecodedData() override;
+    void allClientsRemoved() override;
+    void destroyDecodedData() override;
 
-    virtual void addData(const char* data, unsigned length) override;
-    virtual void error(CachedResource::Status) override;
-    virtual void responseReceived(const ResourceResponse&) override;
+    void addData(const char* data, unsigned length) override;
+    void error(CachedResource::Status) override;
+    void responseReceived(const ResourceResponse&) override;
 
     // For compatibility, images keep loading even if there are HTTP errors.
-    virtual bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
+    bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
 
-    virtual bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
+    bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
 
     // ImageObserver
-    virtual void decodedSizeChanged(const Image*, int delta) override;
-    virtual void didDraw(const Image*) override;
+    void decodedSizeChanged(const Image*, int delta) override;
+    void didDraw(const Image*) override;
 
-    virtual void animationAdvanced(const Image*) override;
-    virtual void changedInRect(const Image*, const IntRect&) override;
+    void animationAdvanced(const Image*) override;
+    void changedInRect(const Image*, const IntRect&) override;
 
     void addIncrementalDataBuffer(SharedBuffer&);
 

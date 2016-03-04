@@ -80,11 +80,11 @@ private:
     bool hasVideo() const override;
     bool hasAudio() const override;
     bool supportsFullscreen() const override;
-    virtual bool supportsScanning() const override { return true; }
+    bool supportsScanning() const override { return true; }
     
     void load(const String& url) override;
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String&, MediaSourcePrivateClient*) override;
+    void load(const String&, MediaSourcePrivateClient*) override;
 #endif
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override { }
@@ -100,12 +100,12 @@ private:
     bool paused() const override;
     bool seeking() const override;
     
-    virtual MediaTime durationMediaTime() const override;
-    virtual MediaTime currentMediaTime() const override;
-    virtual void seek(const MediaTime&) override;
+    MediaTime durationMediaTime() const override;
+    MediaTime currentMediaTime() const override;
+    void seek(const MediaTime&) override;
     
     void setRate(float) override;
-    virtual double rate() const override;
+    double rate() const override;
     void setVolume(float) override;
     void setPreservesPitch(bool) override;
 
@@ -125,11 +125,11 @@ private:
     void setVisible(bool) override;
     void setSize(const IntSize&) override;
     
-    virtual bool hasAvailableVideoFrame() const override;
+    bool hasAvailableVideoFrame() const override;
 
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
-    virtual void prepareForRendering() override;
+    void prepareForRendering() override;
 
     bool supportsAcceleratedRendering() const override;
     void acceleratedRenderingStateChanged() override;
@@ -137,7 +137,7 @@ private:
     bool hasSingleSecurityOrigin() const override;
     MediaPlayer::MovieLoadType movieLoadType() const override;
 
-    virtual bool canSaveMediaData() const override;
+    bool canSaveMediaData() const override;
 
     void createQTMovie(const String& url);
     void createQTMovie(NSURL *, NSDictionary *movieAttributes);
@@ -170,19 +170,19 @@ private:
 
     bool isReadyForVideoSetup() const;
 
-    virtual double maximumDurationToCacheMediaTime() const override { return 5; }
+    double maximumDurationToCacheMediaTime() const override { return 5; }
 
-    virtual void setPrivateBrowsingMode(bool) override;
+    void setPrivateBrowsingMode(bool) override;
     
     NSMutableDictionary* commonMovieAttributes();
 
-    virtual String engineDescription() const override { return "QTKit"; }
-    virtual long platformErrorCode() const override;
+    String engineDescription() const override { return "QTKit"; }
+    long platformErrorCode() const override;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    virtual bool isCurrentPlaybackTargetWireless() const override;
-    virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
-    virtual void setShouldPlayToPlaybackTarget(bool) override;
+    bool isCurrentPlaybackTargetWireless() const override;
+    void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
+    void setShouldPlayToPlaybackTarget(bool) override;
     bool wirelessVideoPlaybackDisabled() const override { return false; }
 #endif
 

@@ -73,7 +73,7 @@ public:
 #endif
 
     virtual ~DataCue();
-    virtual CueType cueType() const override { return Data; }
+    CueType cueType() const override { return Data; }
 
     PassRefPtr<ArrayBuffer> data() const;
     void setData(ArrayBuffer*, ExceptionCode&);
@@ -88,9 +88,9 @@ public:
     void setType(const String& type) { m_type = type; }
 #endif
 
-    virtual bool isEqual(const TextTrackCue&, CueMatchRules) const override;
-    virtual bool cueContentsMatch(const TextTrackCue&) const override;
-    virtual bool doesExtendCue(const TextTrackCue&) const override;
+    bool isEqual(const TextTrackCue&, CueMatchRules) const override;
+    bool cueContentsMatch(const TextTrackCue&) const override;
+    bool doesExtendCue(const TextTrackCue&) const override;
 
 protected:
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, ArrayBuffer*, const String&, ExceptionCode&);

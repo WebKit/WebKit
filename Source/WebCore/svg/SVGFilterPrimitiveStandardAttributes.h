@@ -46,19 +46,19 @@ public:
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
-    virtual void childrenChanged(const ChildChange&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    void childrenChanged(const ChildChange&) override;
 
     void invalidate();
     void primitiveAttributeChanged(const QualifiedName& attributeName);
 
 private:
-    virtual bool isFilterEffect() const override { return true; }
+    bool isFilterEffect() const override { return true; }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual bool childShouldCreateRenderer(const Node&) const override { return false; }
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
+    bool childShouldCreateRenderer(const Node&) const override { return false; }
 
     static bool isSupportedAttribute(const QualifiedName&);
 

@@ -40,9 +40,9 @@ public:
     explicit ButtonInputType(HTMLInputElement& element) : BaseButtonInputType(element) { }
 
 private:
-    virtual const AtomicString& formControlType() const override;
-    virtual bool supportsValidation() const override;
-    virtual bool isTextButton() const override;
+    const AtomicString& formControlType() const override;
+    bool supportsValidation() const override;
+    bool isTextButton() const override;
 };
 
 } // namespace WebCore

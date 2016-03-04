@@ -40,21 +40,21 @@ public:
     virtual ~RenderImageResourceStyleImage();
 
 private:
-    virtual void initialize(RenderElement*) override;
-    virtual void shutdown() override;
+    void initialize(RenderElement*) override;
+    void shutdown() override;
 
-    virtual bool hasImage() const override { return true; }
-    virtual RefPtr<Image> image(int width = 0, int height = 0) const override;
-    virtual bool errorOccurred() const override { return m_styleImage->errorOccurred(); }
+    bool hasImage() const override { return true; }
+    RefPtr<Image> image(int width = 0, int height = 0) const override;
+    bool errorOccurred() const override { return m_styleImage->errorOccurred(); }
 
-    virtual void setContainerSizeForRenderer(const IntSize&) override;
-    virtual bool imageHasRelativeWidth() const override { return m_styleImage->imageHasRelativeWidth(); }
-    virtual bool imageHasRelativeHeight() const override { return m_styleImage->imageHasRelativeHeight(); }
+    void setContainerSizeForRenderer(const IntSize&) override;
+    bool imageHasRelativeWidth() const override { return m_styleImage->imageHasRelativeWidth(); }
+    bool imageHasRelativeHeight() const override { return m_styleImage->imageHasRelativeHeight(); }
 
-    virtual LayoutSize imageSize(float multiplier) const override { return LayoutSize(m_styleImage->imageSize(m_renderer, multiplier)); }
-    virtual LayoutSize intrinsicSize(float multiplier) const override { return LayoutSize(m_styleImage->imageSize(m_renderer, multiplier)); }
+    LayoutSize imageSize(float multiplier) const override { return LayoutSize(m_styleImage->imageSize(m_renderer, multiplier)); }
+    LayoutSize intrinsicSize(float multiplier) const override { return LayoutSize(m_styleImage->imageSize(m_renderer, multiplier)); }
 
-    virtual WrappedImagePtr imagePtr() const override { return m_styleImage->data(); }
+    WrappedImagePtr imagePtr() const override { return m_styleImage->data(); }
 
     Ref<StyleImage> m_styleImage;
 };

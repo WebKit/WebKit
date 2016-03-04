@@ -40,8 +40,8 @@ public:
     HTMLSelectElement& selectElement() { return downcast<HTMLSelectElement>(ownerNode()); }
     const HTMLSelectElement& selectElement() const { return downcast<HTMLSelectElement>(ownerNode()); }
 
-    virtual HTMLOptionElement* item(unsigned offset) const override;
-    virtual HTMLOptionElement* namedItem(const AtomicString& name) const override;
+    HTMLOptionElement* item(unsigned offset) const override;
+    HTMLOptionElement* namedItem(const AtomicString& name) const override;
 
     void add(HTMLElement*, HTMLElement* beforeElement, ExceptionCode&);
     void add(HTMLElement*, int beforeIndex, ExceptionCode&);

@@ -51,8 +51,8 @@ public:
     void didChangeDeviceMotion(DeviceMotionData*);
     DeviceMotionClient* deviceMotionClient();
 
-    virtual bool hasLastData() override;
-    virtual RefPtr<Event> getLastEvent() override;
+    bool hasLastData() override;
+    RefPtr<Event> getLastEvent() override;
 
     static const char* supplementName();
     static DeviceMotionController* from(Page*);

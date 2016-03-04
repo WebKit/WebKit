@@ -60,7 +60,7 @@ public:
 
     bool ownElementDisabled() const { return m_disabled; }
 
-    virtual bool isDisabledFormControl() const override;
+    bool isDisabledFormControl() const override;
 
     String textIndentedToRespectGroupLabel() const;
 
@@ -69,17 +69,17 @@ public:
 private:
     HTMLOptionElement(const QualifiedName&, Document&);
 
-    virtual bool isFocusable() const override;
-    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool isFocusable() const override;
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void accessKeyAction(bool) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void accessKeyAction(bool) override;
 
-    virtual void childrenChanged(const ChildChange&) override;
+    void childrenChanged(const ChildChange&) override;
 
-    virtual void willResetComputedStyle() override;
+    void willResetComputedStyle() override;
 
     String collectOptionInnerText() const;
 

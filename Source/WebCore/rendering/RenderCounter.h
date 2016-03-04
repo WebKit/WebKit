@@ -43,11 +43,11 @@ public:
     void updateCounter();
 
 private:
-    virtual const char* renderName() const override;
-    virtual bool isCounter() const override;
-    virtual String originalText() const override;
+    const char* renderName() const override;
+    bool isCounter() const override;
+    String originalText() const override;
     
-    virtual void computePreferredLogicalWidths(float leadWidth) override;
+    void computePreferredLogicalWidths(float leadWidth) override;
 
     // Removes the reference to the CounterNode associated with this renderer.
     // This is used to cause a counter display update when the CounterNode tree changes.

@@ -36,13 +36,13 @@ public:
     static WebKitMessageLoop* createInstance();
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject) override;
-    virtual ULONG STDMETHODCALLTYPE AddRef() override;
-    virtual ULONG STDMETHODCALLTYPE Release() override;
+    HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject) override;
+    ULONG STDMETHODCALLTYPE AddRef() override;
+    ULONG STDMETHODCALLTYPE Release() override;
 
     // IWebKitMessageLoop
-    virtual HRESULT STDMETHODCALLTYPE run(_In_ HACCEL hAccelTable) override;
-    virtual HRESULT STDMETHODCALLTYPE performMessageLoopTasks() override;
+    HRESULT STDMETHODCALLTYPE run(_In_ HACCEL hAccelTable) override;
+    HRESULT STDMETHODCALLTYPE performMessageLoopTasks() override;
 
 private:
     ULONG m_refCount { 0 };

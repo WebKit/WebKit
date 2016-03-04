@@ -42,14 +42,14 @@ public:
     explicit DateTimeInputType(HTMLInputElement& element) : BaseDateTimeInputType(element) { }
 
 private:
-    virtual const AtomicString& formControlType() const override;
-    virtual DateComponents::Type dateType() const override;
-    virtual StepRange createStepRange(AnyStepHandling) const override;
-    virtual Decimal defaultValueForStepUp() const override;
-    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const override;
-    virtual bool setMillisecondToDateComponents(double, DateComponents*) const override;
-    virtual bool isDateTimeField() const override;
-    virtual String sanitizeValue(const String&) const override;
+    const AtomicString& formControlType() const override;
+    DateComponents::Type dateType() const override;
+    StepRange createStepRange(AnyStepHandling) const override;
+    Decimal defaultValueForStepUp() const override;
+    bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const override;
+    bool setMillisecondToDateComponents(double, DateComponents*) const override;
+    bool isDateTimeField() const override;
+    String sanitizeValue(const String&) const override;
 };
 
 } // namespace WebCore

@@ -40,10 +40,10 @@ public:
     MathMLInlineContainerElement& element() { return static_cast<MathMLInlineContainerElement&>(nodeForNonAnonymous()); }
     
 private:
-    virtual bool isRenderMathMLFenced() const override { return true; }
-    virtual const char* renderName() const override { return "RenderMathMLFenced"; }
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild) override;
-    virtual void updateFromElement() override;
+    bool isRenderMathMLFenced() const override { return true; }
+    const char* renderName() const override { return "RenderMathMLFenced"; }
+    void addChild(RenderObject* child, RenderObject* beforeChild) override;
+    void updateFromElement() override;
 
     RenderPtr<RenderMathMLOperator> createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
     void makeFences();

@@ -49,17 +49,17 @@ namespace {
 
     private:
         WebGLRenderbufferAttachment(WebGLRenderbuffer*);
-        virtual GC3Dsizei getWidth() const override;
-        virtual GC3Dsizei getHeight() const override;
-        virtual GC3Denum getFormat() const override;
-        virtual WebGLSharedObject* getObject() const override;
-        virtual bool isSharedObject(WebGLSharedObject*) const override;
-        virtual bool isValid() const override;
-        virtual bool isInitialized() const override;
-        virtual void setInitialized() override;
-        virtual void onDetached(GraphicsContext3D*) override;
-        virtual void attach(GraphicsContext3D*, GC3Denum attachment) override;
-        virtual void unattach(GraphicsContext3D*, GC3Denum attachment) override;
+        GC3Dsizei getWidth() const override;
+        GC3Dsizei getHeight() const override;
+        GC3Denum getFormat() const override;
+        WebGLSharedObject* getObject() const override;
+        bool isSharedObject(WebGLSharedObject*) const override;
+        bool isValid() const override;
+        bool isInitialized() const override;
+        void setInitialized() override;
+        void onDetached(GraphicsContext3D*) override;
+        void attach(GraphicsContext3D*, GC3Denum attachment) override;
+        void unattach(GraphicsContext3D*, GC3Denum attachment) override;
 
         WebGLRenderbufferAttachment() { };
 
@@ -143,17 +143,17 @@ namespace {
 
     private:
         WebGLTextureAttachment(WebGLTexture*, GC3Denum target, GC3Dint level);
-        virtual GC3Dsizei getWidth() const override;
-        virtual GC3Dsizei getHeight() const override;
-        virtual GC3Denum getFormat() const override;
-        virtual WebGLSharedObject* getObject() const override;
-        virtual bool isSharedObject(WebGLSharedObject*) const override;
-        virtual bool isValid() const override;
-        virtual bool isInitialized() const override;
-        virtual void setInitialized() override;
-        virtual void onDetached(GraphicsContext3D*) override;
-        virtual void attach(GraphicsContext3D*, GC3Denum attachment) override;
-        virtual void unattach(GraphicsContext3D*, GC3Denum attachment) override;
+        GC3Dsizei getWidth() const override;
+        GC3Dsizei getHeight() const override;
+        GC3Denum getFormat() const override;
+        WebGLSharedObject* getObject() const override;
+        bool isSharedObject(WebGLSharedObject*) const override;
+        bool isValid() const override;
+        bool isInitialized() const override;
+        void setInitialized() override;
+        void onDetached(GraphicsContext3D*) override;
+        void attach(GraphicsContext3D*, GC3Denum attachment) override;
+        void unattach(GraphicsContext3D*, GC3Denum attachment) override;
 
         WebGLTextureAttachment() { };
 

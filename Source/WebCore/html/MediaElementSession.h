@@ -62,8 +62,8 @@ public:
 
     void setHasPlaybackTargetAvailabilityListeners(const HTMLMediaElement&, bool);
 
-    virtual bool canPlayToWirelessPlaybackTarget() const override;
-    virtual bool isPlayingToWirelessPlaybackTarget() const override;
+    bool canPlayToWirelessPlaybackTarget() const override;
+    bool isPlayingToWirelessPlaybackTarget() const override;
 
     void mediaStateDidChange(const HTMLMediaElement&, MediaProducer::MediaStateFlags);
 #endif
@@ -110,10 +110,10 @@ private:
     void targetAvailabilityChangedTimerFired();
 
     // MediaPlaybackTargetClient
-    virtual void setPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
-    virtual void externalOutputDeviceAvailableDidChange(bool) override;
-    virtual void setShouldPlayToPlaybackTarget(bool) override;
-    virtual void customPlaybackActionSelected() override;
+    void setPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
+    void externalOutputDeviceAvailableDidChange(bool) override;
+    void setShouldPlayToPlaybackTarget(bool) override;
+    void customPlaybackActionSelected() override;
 #endif
 #if PLATFORM(IOS)
     bool requiresPlaybackTargetRouteMonitoring() const override;

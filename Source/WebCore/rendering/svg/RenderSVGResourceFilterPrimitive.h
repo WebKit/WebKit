@@ -39,9 +39,9 @@ public:
     RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, Ref<RenderStyle>&&);
     SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement() const;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle*) override;
+    void styleDidChange(StyleDifference, const RenderStyle*) override;
 
-    virtual const char* renderName() const override { return "RenderSVGResourceFilterPrimitive"; }
+    const char* renderName() const override { return "RenderSVGResourceFilterPrimitive"; }
 
     // They depend on the RenderObject argument of RenderSVGResourceFilter::applyResource.
     static FloatRect determineFilterPrimitiveSubregion(FilterEffect&);
@@ -54,7 +54,7 @@ public:
         static_cast<RenderSVGResourceFilter*>(filter)->primitiveAttributeChanged(this, attribute);
     }
 private:
-    virtual bool isSVGResourceFilterPrimitive() const override { return true; }
+    bool isSVGResourceFilterPrimitive() const override { return true; }
     void element() const = delete;
 };
 

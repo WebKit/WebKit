@@ -52,17 +52,17 @@ protected:
     void initialize();
 
     // LayerTreeHost
-    virtual void scheduleLayerFlush() override;
-    virtual void setLayerFlushSchedulingEnabled(bool layerFlushingEnabled) override;
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
-    virtual void invalidate() override;
+    void scheduleLayerFlush() override;
+    void setLayerFlushSchedulingEnabled(bool layerFlushingEnabled) override;
+    void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    void invalidate() override;
 
-    virtual void forceRepaint() override;
-    virtual void sizeDidChange(const WebCore::IntSize& newSize) override;
-    virtual void deviceOrPageScaleFactorChanged() override;
-    virtual void pageBackgroundTransparencyChanged() override;
+    void forceRepaint() override;
+    void sizeDidChange(const WebCore::IntSize& newSize) override;
+    void deviceOrPageScaleFactorChanged() override;
+    void pageBackgroundTransparencyChanged() override;
 
-    virtual void setNativeSurfaceHandleForCompositing(uint64_t) override;
+    void setNativeSurfaceHandleForCompositing(uint64_t) override;
 
 private:
 
@@ -85,18 +85,18 @@ private:
     };
 
     // LayerTreeHost
-    virtual const LayerTreeContext& layerTreeContext() override;
-    virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool) override;
+    const LayerTreeContext& layerTreeContext() override;
+    void setShouldNotifyAfterNextScheduledLayerFlush(bool) override;
 
-    virtual void setNonCompositedContentsNeedDisplay() override;
-    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) override;
-    virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
-    virtual void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
+    void setNonCompositedContentsNeedDisplay() override;
+    void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) override;
+    void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
+    void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
 
     // GraphicsLayerClient
-    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect) override;
-    virtual float deviceScaleFactor() const override;
-    virtual float pageScaleFactor() const override;
+    void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect) override;
+    float deviceScaleFactor() const override;
+    float pageScaleFactor() const override;
 
     bool flushPendingLayerChanges();
 

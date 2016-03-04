@@ -51,27 +51,27 @@ public:
     bool wasRedirected() const { return !m_redirectChain.isEmpty(); };
 
 private:
-    virtual void didAddClient(CachedResourceClient*) override;
-    virtual void addDataBuffer(SharedBuffer&) override;
-    virtual void addData(const char* data, unsigned length) override;
-    virtual void finishLoading(SharedBuffer*) override;
+    void didAddClient(CachedResourceClient*) override;
+    void addDataBuffer(SharedBuffer&) override;
+    void addData(const char* data, unsigned length) override;
+    void finishLoading(SharedBuffer*) override;
 
-    virtual bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
-    virtual void allClientsRemoved() override;
+    bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
+    void allClientsRemoved() override;
 
-    virtual void redirectReceived(ResourceRequest&, const ResourceResponse&) override;
-    virtual void responseReceived(const ResourceResponse&) override;
-    virtual bool shouldCacheResponse(const ResourceResponse&) override;
-    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
+    void redirectReceived(ResourceRequest&, const ResourceResponse&) override;
+    void responseReceived(const ResourceResponse&) override;
+    bool shouldCacheResponse(const ResourceResponse&) override;
+    void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
 
-    virtual void switchClientsToRevalidatedResource() override;
-    virtual bool mayTryReplaceEncodedData() const override { return m_allowEncodedDataReplacement; }
+    void switchClientsToRevalidatedResource() override;
+    bool mayTryReplaceEncodedData() const override { return m_allowEncodedDataReplacement; }
 
     const char* calculateIncrementalDataChunk(SharedBuffer*, unsigned& incrementalDataLength);
     void notifyClientsDataWasReceived(const char* data, unsigned length);
 
 #if USE(SOUP)
-    virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
+    char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
 #endif
 
     unsigned long m_identifier;

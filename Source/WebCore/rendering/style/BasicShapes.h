@@ -190,14 +190,14 @@ public:
 private:
     BasicShapeCircle() = default;
 
-    virtual Type type() const override { return BasicShapeCircleType; }
+    Type type() const override { return BasicShapeCircleType; }
 
-    virtual const Path& path(const FloatRect&) override;
+    const Path& path(const FloatRect&) override;
 
-    virtual bool canBlend(const BasicShape&) const override;
-    virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
+    bool canBlend(const BasicShape&) const override;
+    Ref<BasicShape> blend(const BasicShape&, double) const override;
 
-    virtual bool operator==(const BasicShape&) const override;
+    bool operator==(const BasicShape&) const override;
 
     BasicShapeCenterCoordinate m_centerX;
     BasicShapeCenterCoordinate m_centerY;
@@ -222,14 +222,14 @@ public:
 private:
     BasicShapeEllipse() = default;
 
-    virtual Type type() const override { return BasicShapeEllipseType; }
+    Type type() const override { return BasicShapeEllipseType; }
 
-    virtual const Path& path(const FloatRect&) override;
+    const Path& path(const FloatRect&) override;
 
-    virtual bool canBlend(const BasicShape&) const override;
-    virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
+    bool canBlend(const BasicShape&) const override;
+    Ref<BasicShape> blend(const BasicShape&, double) const override;
 
-    virtual bool operator==(const BasicShape&) const override;
+    bool operator==(const BasicShape&) const override;
 
     BasicShapeCenterCoordinate m_centerX;
     BasicShapeCenterCoordinate m_centerY;
@@ -248,19 +248,19 @@ public:
     void setWindRule(WindRule windRule) { m_windRule = windRule; }
     void appendPoint(Length x, Length y) { m_values.append(WTFMove(x)); m_values.append(WTFMove(y)); }
 
-    virtual WindRule windRule() const override { return m_windRule; }
+    WindRule windRule() const override { return m_windRule; }
 
 private:
     BasicShapePolygon() = default;
 
-    virtual Type type() const override { return BasicShapePolygonType; }
+    Type type() const override { return BasicShapePolygonType; }
 
-    virtual const Path& path(const FloatRect&) override;
+    const Path& path(const FloatRect&) override;
 
-    virtual bool canBlend(const BasicShape&) const override;
-    virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
+    bool canBlend(const BasicShape&) const override;
+    Ref<BasicShape> blend(const BasicShape&, double) const override;
 
-    virtual bool operator==(const BasicShape&) const override;
+    bool operator==(const BasicShape&) const override;
 
     WindRule m_windRule { RULE_NONZERO };
     Vector<Length> m_values;
@@ -274,21 +274,21 @@ public:
     }
 
     void setWindRule(WindRule windRule) { m_windRule = windRule; }
-    virtual WindRule windRule() const override { return m_windRule; }
+    WindRule windRule() const override { return m_windRule; }
 
     const SVGPathByteStream* pathData() const { return m_byteStream.get(); }
 
 private:
     BasicShapePath(std::unique_ptr<SVGPathByteStream>&&);
 
-    virtual Type type() const override { return BasicShapePathType; }
+    Type type() const override { return BasicShapePathType; }
 
-    virtual const Path& path(const FloatRect&) override;
+    const Path& path(const FloatRect&) override;
 
-    virtual bool canBlend(const BasicShape&) const override;
-    virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
+    bool canBlend(const BasicShape&) const override;
+    Ref<BasicShape> blend(const BasicShape&, double) const override;
 
-    virtual bool operator==(const BasicShape&) const override;
+    bool operator==(const BasicShape&) const override;
 
     std::unique_ptr<SVGPathByteStream> m_byteStream;
     WindRule m_windRule { RULE_NONZERO };
@@ -321,14 +321,14 @@ public:
 private:
     BasicShapeInset() = default;
 
-    virtual Type type() const override { return BasicShapeInsetType; }
+    Type type() const override { return BasicShapeInsetType; }
 
-    virtual const Path& path(const FloatRect&) override;
+    const Path& path(const FloatRect&) override;
 
-    virtual bool canBlend(const BasicShape&) const override;
-    virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
+    bool canBlend(const BasicShape&) const override;
+    Ref<BasicShape> blend(const BasicShape&, double) const override;
 
-    virtual bool operator==(const BasicShape&) const override;
+    bool operator==(const BasicShape&) const override;
 
     Length m_right;
     Length m_top;

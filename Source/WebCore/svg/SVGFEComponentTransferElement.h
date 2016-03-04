@@ -34,8 +34,8 @@ private:
     SVGFEComponentTransferElement(const QualifiedName&, Document&);
 
     // FIXME: svgAttributeChanged missing.
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEComponentTransferElement)
         DECLARE_ANIMATED_STRING(In1, in1)

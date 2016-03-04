@@ -43,14 +43,14 @@ public:
     void disclosedRows(AccessibilityChildrenVector&);
     AccessibilityObject* disclosedByRow() const;
     
-    virtual AccessibilityObject* headerObject() override;
+    AccessibilityObject* headerObject() override;
     
 private:
     explicit AccessibilityARIAGridRow(RenderObject*);
 
-    virtual bool isARIATreeGridRow() const override;
-    virtual AccessibilityTable* parentTable() const override;
-    virtual AccessibilityObject* parentObjectUnignored() const override;
+    bool isARIATreeGridRow() const override;
+    AccessibilityTable* parentTable() const override;
+    AccessibilityObject* parentObjectUnignored() const override;
 };
 
 } // namespace WebCore 

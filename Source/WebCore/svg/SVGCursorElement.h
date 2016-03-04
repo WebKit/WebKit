@@ -47,15 +47,15 @@ public:
 private:
     SVGCursorElement(const QualifiedName&, Document&);
 
-    virtual bool isValid() const override { return SVGTests::isValid(); }
+    bool isValid() const override { return SVGTests::isValid(); }
 
     static bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGCursorElement)
         DECLARE_ANIMATED_LENGTH(X, x)
@@ -65,9 +65,9 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 
     // SVGTests
-    virtual void synchronizeRequiredFeatures() override { SVGTests::synchronizeRequiredFeatures(this); }
-    virtual void synchronizeRequiredExtensions() override { SVGTests::synchronizeRequiredExtensions(this); }
-    virtual void synchronizeSystemLanguage() override { SVGTests::synchronizeSystemLanguage(this); }
+    void synchronizeRequiredFeatures() override { SVGTests::synchronizeRequiredFeatures(this); }
+    void synchronizeRequiredExtensions() override { SVGTests::synchronizeRequiredExtensions(this); }
+    void synchronizeSystemLanguage() override { SVGTests::synchronizeSystemLanguage(this); }
 
     HashSet<SVGElement*> m_clients;
 };

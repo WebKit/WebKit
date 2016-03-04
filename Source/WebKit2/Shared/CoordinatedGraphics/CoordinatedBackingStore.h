@@ -65,9 +65,9 @@ public:
     void commitTileOperations(WebCore::TextureMapper&);
     RefPtr<WebCore::BitmapTexture> texture() const override;
     void setSize(const WebCore::FloatSize&);
-    virtual void paintToTextureMapper(WebCore::TextureMapper&, const WebCore::FloatRect&, const WebCore::TransformationMatrix&, float) override;
-    virtual void drawBorder(WebCore::TextureMapper&, const WebCore::Color&, float borderWidth, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) override;
-    virtual void drawRepaintCounter(WebCore::TextureMapper&, int repaintCount, const WebCore::Color&, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) override;
+    void paintToTextureMapper(WebCore::TextureMapper&, const WebCore::FloatRect&, const WebCore::TransformationMatrix&, float) override;
+    void drawBorder(WebCore::TextureMapper&, const WebCore::Color&, float borderWidth, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) override;
+    void drawRepaintCounter(WebCore::TextureMapper&, int repaintCount, const WebCore::Color&, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) override;
 
 private:
     CoordinatedBackingStore()

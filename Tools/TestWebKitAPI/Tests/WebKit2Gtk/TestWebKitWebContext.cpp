@@ -280,7 +280,7 @@ public:
         webkit_web_context_register_uri_scheme(m_webContext.get(), scheme, uriSchemeRequestCallback, this, 0);
     }
 
-    virtual void loadCommitted() override
+    void loadCommitted() override
     {
         if (m_finishOnCommitted) {
             GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(errorDomain), errorCode, afterInitialChunkErrorMessage));

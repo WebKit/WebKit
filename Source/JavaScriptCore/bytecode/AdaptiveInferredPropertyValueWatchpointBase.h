@@ -54,13 +54,13 @@ private:
     public:
         StructureWatchpoint() { }
     protected:
-        virtual void fireInternal(const FireDetail&) override;
+        void fireInternal(const FireDetail&) override;
     };
     class PropertyWatchpoint : public Watchpoint {
     public:
         PropertyWatchpoint() { }
     protected:
-        virtual void fireInternal(const FireDetail&) override;
+        void fireInternal(const FireDetail&) override;
     };
 
     void fire(const FireDetail&);

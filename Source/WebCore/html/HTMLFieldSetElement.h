@@ -51,18 +51,18 @@ private:
     HTMLFieldSetElement(const QualifiedName&, Document&, HTMLFormElement*);
     ~HTMLFieldSetElement();
 
-    virtual bool isEnumeratable() const override { return true; }
-    virtual bool supportsFocus() const override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual const AtomicString& formControlType() const override;
-    virtual bool computeWillValidate() const override { return false; }
-    virtual void disabledAttributeChanged() override;
-    virtual void disabledStateChanged() override;
-    virtual void childrenChanged(const ChildChange&) override;
-    virtual void didMoveToNewDocument(Document* oldDocument) override;
+    bool isEnumeratable() const override { return true; }
+    bool supportsFocus() const override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    const AtomicString& formControlType() const override;
+    bool computeWillValidate() const override { return false; }
+    void disabledAttributeChanged() override;
+    void disabledStateChanged() override;
+    void childrenChanged(const ChildChange&) override;
+    void didMoveToNewDocument(Document* oldDocument) override;
 
-    virtual bool matchesValidPseudoClass() const override;
-    virtual bool matchesInvalidPseudoClass() const override;
+    bool matchesValidPseudoClass() const override;
+    bool matchesInvalidPseudoClass() const override;
 
     void refreshElementsIfNeeded() const;
 

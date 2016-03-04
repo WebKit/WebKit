@@ -41,26 +41,26 @@ private:
 
     bool isFirstBodyElementOfDocument() const;
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool isPresentationAttribute(const QualifiedName&) const override;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool isPresentationAttribute(const QualifiedName&) const override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
-    virtual bool isURLAttribute(const Attribute&) const override;
+    bool isURLAttribute(const Attribute&) const override;
     
-    virtual bool supportsFocus() const override;
+    bool supportsFocus() const override;
 
-    virtual int scrollLeft() override;
-    virtual void setScrollLeft(int) override;
+    int scrollLeft() override;
+    void setScrollLeft(int) override;
     
-    virtual int scrollTop() override;
-    virtual void setScrollTop(int) override;
+    int scrollTop() override;
+    void setScrollTop(int) override;
     
-    virtual int scrollHeight() override;
-    virtual int scrollWidth() override;
+    int scrollHeight() override;
+    int scrollWidth() override;
     
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
     static EventHandlerNameMap createWindowEventHandlerNameMap();
 };

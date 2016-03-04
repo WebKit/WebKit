@@ -42,9 +42,9 @@ public:
 
     ~InbandMetadataTextTrackPrivateGStreamer() { }
 
-    virtual Kind kind() const override { return m_kind; }
-    virtual AtomicString id() const override { return m_id; }
-    virtual AtomicString inBandMetadataTrackDispatchType() const override { return m_inBandMetadataTrackDispatchType; }
+    Kind kind() const override { return m_kind; }
+    AtomicString id() const override { return m_id; }
+    AtomicString inBandMetadataTrackDispatchType() const override { return m_inBandMetadataTrackDispatchType; }
     void setInBandMetadataTrackDispatchType(const AtomicString& value) { m_inBandMetadataTrackDispatchType = value; }
 
     void addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)

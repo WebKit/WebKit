@@ -36,9 +36,9 @@ public:
     explicit AutoTableLayout(RenderTable*);
     virtual ~AutoTableLayout();
 
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) override;
-    virtual void applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const override;
-    virtual void layout() override;
+    void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) override;
+    void applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const override;
+    void layout() override;
 
 private:
     void fullRecalc();

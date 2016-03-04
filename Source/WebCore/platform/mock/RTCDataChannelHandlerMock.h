@@ -39,20 +39,20 @@ public:
     RTCDataChannelHandlerMock(const String&, const RTCDataChannelInit&);
     virtual ~RTCDataChannelHandlerMock() { }
 
-    virtual void setClient(RTCDataChannelHandlerClient*) override;
+    void setClient(RTCDataChannelHandlerClient*) override;
 
-    virtual String label() override { return m_label; }
-    virtual bool ordered() override { return m_ordered; }
-    virtual unsigned short maxRetransmitTime() override { return m_maxRetransmitTime; }
-    virtual unsigned short maxRetransmits() override { return m_maxRetransmits; }
-    virtual String protocol() override { return m_protocol; }
-    virtual bool negotiated() override { return m_negotiated; }
-    virtual unsigned short id() override { return m_id; }
-    virtual unsigned long bufferedAmount() override { return 0; }
+    String label() override { return m_label; }
+    bool ordered() override { return m_ordered; }
+    unsigned short maxRetransmitTime() override { return m_maxRetransmitTime; }
+    unsigned short maxRetransmits() override { return m_maxRetransmits; }
+    String protocol() override { return m_protocol; }
+    bool negotiated() override { return m_negotiated; }
+    unsigned short id() override { return m_id; }
+    unsigned long bufferedAmount() override { return 0; }
 
-    virtual bool sendStringData(const String&) override;
-    virtual bool sendRawData(const char*, size_t) override;
-    virtual void close() override;
+    bool sendStringData(const String&) override;
+    bool sendRawData(const char*, size_t) override;
+    void close() override;
 
 private:
     RTCDataChannelHandlerClient* m_client;

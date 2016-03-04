@@ -1055,7 +1055,7 @@ public:
     }
 
 private:
-    virtual void fired() override
+    void fired() override
     {
         m_cacheGroup->didReachMaxAppCacheSize();
         delete this;

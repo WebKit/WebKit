@@ -71,21 +71,21 @@ public:
     using RefCounted<EventSource>::ref;
     using RefCounted<EventSource>::deref;
 
-    virtual EventTargetInterface eventTargetInterface() const override { return EventSourceEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
+    EventTargetInterface eventTargetInterface() const override { return EventSourceEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
 private:
     EventSource(ScriptExecutionContext&, const URL&, const Dictionary&);
 
-    virtual void refEventTarget() override { ref(); }
-    virtual void derefEventTarget() override { deref(); }
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
 
-    virtual void didReceiveResponse(unsigned long, const ResourceResponse&) override;
-    virtual void didReceiveData(const char*, int) override;
-    virtual void didFinishLoading(unsigned long, double) override;
-    virtual void didFail(const ResourceError&) override;
-    virtual void didFailAccessControlCheck(const ResourceError&) override;
-    virtual void didFailRedirectCheck() override;
+    void didReceiveResponse(unsigned long, const ResourceResponse&) override;
+    void didReceiveData(const char*, int) override;
+    void didFinishLoading(unsigned long, double) override;
+    void didFail(const ResourceError&) override;
+    void didFailAccessControlCheck(const ResourceError&) override;
+    void didFailRedirectCheck() override;
 
     // ActiveDOMObject API.
     void stop() override;

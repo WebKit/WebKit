@@ -42,21 +42,21 @@ public:
     HTMLMediaElement& mediaElement() const { return downcast<HTMLMediaElement>(nodeForNonAnonymous()); }
 
 protected:
-    virtual void layout() override;
+    void layout() override;
 
 private:
     void element() const = delete;
 
-    virtual bool canHaveChildren() const override final { return true; }
+    bool canHaveChildren() const override final { return true; }
 
-    virtual const char* renderName() const override { return "RenderMedia"; }
-    virtual bool isMedia() const override final { return true; }
-    virtual bool isImage() const override final { return false; }
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
+    const char* renderName() const override { return "RenderMedia"; }
+    bool isMedia() const override final { return true; }
+    bool isImage() const override final { return false; }
+    void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    virtual bool requiresForcedStyleRecalcPropagation() const override final { return true; }
+    bool requiresForcedStyleRecalcPropagation() const override final { return true; }
 
-    virtual bool shadowControlsNeedCustomLayoutMetrics() const override { return true; }
+    bool shadowControlsNeedCustomLayoutMetrics() const override { return true; }
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
 };
 

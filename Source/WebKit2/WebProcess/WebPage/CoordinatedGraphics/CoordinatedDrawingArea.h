@@ -45,32 +45,32 @@ public:
 
 private:
     // DrawingArea
-    virtual void setNeedsDisplay() override;
-    virtual void setNeedsDisplayInRect(const WebCore::IntRect&) override;
-    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
-    virtual void pageBackgroundTransparencyChanged() override;
-    virtual void setLayerTreeStateIsFrozen(bool) override;
-    virtual bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
-    virtual LayerTreeHost* layerTreeHost() const override { return m_layerTreeHost.get(); }
-    virtual void forceRepaint() override;
-    virtual bool forceRepaintAsync(uint64_t callbackID) override;
+    void setNeedsDisplay() override;
+    void setNeedsDisplayInRect(const WebCore::IntRect&) override;
+    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
+    void pageBackgroundTransparencyChanged() override;
+    void setLayerTreeStateIsFrozen(bool) override;
+    bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
+    LayerTreeHost* layerTreeHost() const override { return m_layerTreeHost.get(); }
+    void forceRepaint() override;
+    bool forceRepaintAsync(uint64_t callbackID) override;
 
-    virtual void setPaintingEnabled(bool) override;
-    virtual void updatePreferences(const WebPreferencesStore&) override;
-    virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+    void setPaintingEnabled(bool) override;
+    void updatePreferences(const WebPreferencesStore&) override;
+    void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
 
-    virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
-    virtual void scheduleCompositingLayerFlush() override;
-    virtual void scheduleCompositingLayerFlushImmediately() override;
+    WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
+    void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    void scheduleCompositingLayerFlush() override;
+    void scheduleCompositingLayerFlushImmediately() override;
 
-    virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
-    virtual void viewStateDidChange(WebCore::ViewState::Flags, bool /* wantsDidUpdateViewState */, const Vector<uint64_t>& /* callbackIDs */) override;
-    virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
+    void viewStateDidChange(WebCore::ViewState::Flags, bool /* wantsDidUpdateViewState */, const Vector<uint64_t>& /* callbackIDs */) override;
+    void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
 
     // IPC message handlers.
-    virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset) override;
+    void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset) override;
     virtual void suspendPainting();
     virtual void resumePainting();
 

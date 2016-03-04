@@ -40,7 +40,7 @@ public:
     explicit WebGLDebugRendererInfo(WebGLRenderingContextBase*);
     virtual ~WebGLDebugRendererInfo();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

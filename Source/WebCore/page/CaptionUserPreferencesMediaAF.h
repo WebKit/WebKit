@@ -42,31 +42,31 @@ public:
     virtual ~CaptionUserPreferencesMediaAF();
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    virtual CaptionDisplayMode captionDisplayMode() const override;
-    virtual void setCaptionDisplayMode(CaptionDisplayMode) override;
+    CaptionDisplayMode captionDisplayMode() const override;
+    void setCaptionDisplayMode(CaptionDisplayMode) override;
 
-    virtual bool userPrefersCaptions() const override;
-    virtual bool userPrefersSubtitles() const override;
+    bool userPrefersCaptions() const override;
+    bool userPrefersSubtitles() const override;
 
-    virtual float captionFontSizeScaleAndImportance(bool&) const override;
+    float captionFontSizeScaleAndImportance(bool&) const override;
 
-    virtual void setInterestedInCaptionPreferenceChanges() override;
+    void setInterestedInCaptionPreferenceChanges() override;
 
-    virtual void setPreferredLanguage(const String&) override;
-    virtual Vector<String> preferredLanguages() const override;
+    void setPreferredLanguage(const String&) override;
+    Vector<String> preferredLanguages() const override;
 
-    virtual void setPreferredAudioCharacteristic(const String&) override;
-    virtual Vector<String> preferredAudioCharacteristics() const override;
+    void setPreferredAudioCharacteristic(const String&) override;
+    Vector<String> preferredAudioCharacteristics() const override;
 
-    virtual void captionPreferencesChanged() override;
+    void captionPreferencesChanged() override;
 
     bool shouldFilterTrackMenu() const { return true; }
 #else
     bool shouldFilterTrackMenu() const { return false; }
 #endif
 
-    virtual String captionsStyleSheetOverride() const override;
-    virtual int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const override;
+    String captionsStyleSheetOverride() const override;
+    int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const override;
     Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*) override;
     Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*) override;
     String displayNameForTrack(AudioTrack*) const override;

@@ -46,7 +46,7 @@ class RenderNamedFlowThread;
 
 class RenderRegion : public RenderBlockFlow {
 public:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void setFlowThreadPortionRect(const LayoutRect& rect) { m_flowThreadPortionRect = rect; }
     LayoutRect flowThreadPortionRect() const { return m_flowThreadPortionRect; }
@@ -118,9 +118,9 @@ public:
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();
 
-    virtual bool canHaveChildren() const override { return false; }
-    virtual bool canHaveGeneratedChildren() const override { return true; }
-    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
+    bool canHaveChildren() const override { return false; }
+    bool canHaveGeneratedChildren() const override { return true; }
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
     virtual bool hasAutoLogicalHeight() const { return false; }
 
@@ -132,8 +132,8 @@ protected:
 
     void ensureOverflowForBox(const RenderBox*, RefPtr<RenderOverflow>&, bool);
 
-    virtual void computePreferredLogicalWidths() override;
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    void computePreferredLogicalWidths() override;
+    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
     enum OverflowType {
         LayoutOverflow = 0,
@@ -146,11 +146,11 @@ protected:
     void computeOverflowFromFlowThread();
 
 private:
-    virtual bool isRenderRegion() const override final { return true; }
-    virtual const char* renderName() const override { return "RenderRegion"; }
+    bool isRenderRegion() const override final { return true; }
+    const char* renderName() const override { return "RenderRegion"; }
 
-    virtual void insertedIntoTree() override;
-    virtual void willBeRemovedFromTree() override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     virtual void installFlowThread();
 

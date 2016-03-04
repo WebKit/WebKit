@@ -48,9 +48,9 @@ public:
 
 private:
     // From API::DiagnosticLoggingClient
-    virtual void logDiagnosticMessage(WebPageProxy*, const String& message, const String& description) override;
-    virtual void logDiagnosticMessageWithResult(WebPageProxy*, const String& message, const String& description, WebCore::DiagnosticLoggingResultType) override;
-    virtual void logDiagnosticMessageWithValue(WebPageProxy*, const String& message, const String& description, const String& value) override;
+    void logDiagnosticMessage(WebPageProxy*, const String& message, const String& description) override;
+    void logDiagnosticMessageWithResult(WebPageProxy*, const String& message, const String& description, WebCore::DiagnosticLoggingResultType) override;
+    void logDiagnosticMessageWithValue(WebPageProxy*, const String& message, const String& description, const String& value) override;
 
     WKWebView *m_webView;
     WeakObjCPtr<id <_WKDiagnosticLoggingDelegate>> m_delegate;

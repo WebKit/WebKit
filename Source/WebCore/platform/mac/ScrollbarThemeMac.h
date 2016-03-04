@@ -37,24 +37,24 @@ public:
 
     void preferencesChanged();
 
-    virtual void updateEnabledState(Scrollbar&) override;
+    void updateEnabledState(Scrollbar&) override;
 
-    virtual bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
 
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override;
+    int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override;
     
-    virtual bool supportsControlTints() const override { return true; }
-    virtual bool usesOverlayScrollbars() const  override;
-    virtual void usesOverlayScrollbarsChanged() override;
-    virtual void updateScrollbarOverlayStyle(Scrollbar&)  override;
+    bool supportsControlTints() const override { return true; }
+    bool usesOverlayScrollbars() const  override;
+    void usesOverlayScrollbarsChanged() override;
+    void updateScrollbarOverlayStyle(Scrollbar&)  override;
 
-    virtual double initialAutoscrollTimerDelay() override;
-    virtual double autoscrollTimerDelay() override;
+    double initialAutoscrollTimerDelay() override;
+    double autoscrollTimerDelay() override;
 
-    virtual ScrollbarButtonsPlacement buttonsPlacement() const override;
+    ScrollbarButtonsPlacement buttonsPlacement() const override;
 
-    virtual void registerScrollbar(Scrollbar&) override;
-    virtual void unregisterScrollbar(Scrollbar&) override;
+    void registerScrollbar(Scrollbar&) override;
+    void unregisterScrollbar(Scrollbar&) override;
 
     void setNewPainterForScrollbar(Scrollbar&, ScrollbarPainter);
     ScrollbarPainter painterForScrollbar(Scrollbar&);
@@ -73,24 +73,24 @@ public:
 #endif
 
 protected:
-    virtual bool hasButtons(Scrollbar&) override;
-    virtual bool hasThumb(Scrollbar&) override;
+    bool hasButtons(Scrollbar&) override;
+    bool hasThumb(Scrollbar&) override;
 
-    virtual IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
-    virtual IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
-    virtual IntRect trackRect(Scrollbar&, bool painting = false) override;
+    IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    IntRect trackRect(Scrollbar&, bool painting = false) override;
 
-    virtual int maxOverlapBetweenPages() override { return 40; }
+    int maxOverlapBetweenPages() override { return 40; }
 
-    virtual int minimumThumbLength(Scrollbar&) override;
+    int minimumThumbLength(Scrollbar&) override;
     
-    virtual ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
-    virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent&) override;
+    ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
+    bool shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent&) override;
     int scrollbarPartToHIPressedState(ScrollbarPart);
 
 #if ENABLE(RUBBER_BANDING)
-    virtual void setUpOverhangAreasLayerContents(GraphicsLayer*, const Color&) override;
-    virtual void setUpContentShadowLayer(GraphicsLayer*) override;
+    void setUpOverhangAreasLayerContents(GraphicsLayer*, const Color&) override;
+    void setUpContentShadowLayer(GraphicsLayer*) override;
 #endif
 };
 

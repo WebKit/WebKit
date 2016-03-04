@@ -54,7 +54,7 @@ public:
     {
     }
 
-    virtual void strokeStyle(GraphicsContext* context) override
+    void strokeStyle(GraphicsContext* context) override
     {
         SVGRenderSupport::applyStrokeStyleToContext(context, m_renderer.style(), m_renderer);
     }

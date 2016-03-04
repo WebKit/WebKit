@@ -39,8 +39,8 @@ public:
 private:
     void graphicsElement() const = delete;
 
-    virtual bool isSVGTextPath() const override { return true; }
-    virtual const char* renderName() const override { return "RenderSVGTextPath"; }
+    bool isSVGTextPath() const override { return true; }
+    const char* renderName() const override { return "RenderSVGTextPath"; }
 
     Path m_layoutPath;
 };

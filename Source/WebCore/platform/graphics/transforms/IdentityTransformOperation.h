@@ -37,27 +37,27 @@ public:
         return adoptRef(*new IdentityTransformOperation());
     }
 
-    virtual Ref<TransformOperation> clone() const override
+    Ref<TransformOperation> clone() const override
     {
         return create();
     }
 
 private:
-    virtual bool isIdentity() const override { return true; }
-    virtual OperationType type() const override { return IDENTITY; }
-    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == IDENTITY; }
+    bool isIdentity() const override { return true; }
+    OperationType type() const override { return IDENTITY; }
+    bool isSameType(const TransformOperation& o) const override { return o.type() == IDENTITY; }
 
-    virtual bool operator==(const TransformOperation& o) const override
+    bool operator==(const TransformOperation& o) const override
     {
         return isSameType(o);
     }
 
-    virtual bool apply(TransformationMatrix&, const FloatSize&) const override
+    bool apply(TransformationMatrix&, const FloatSize&) const override
     {
         return false;
     }
 
-    virtual Ref<TransformOperation> blend(const TransformOperation*, double, bool = false) override
+    Ref<TransformOperation> blend(const TransformOperation*, double, bool = false) override
     {
         return *this;
     }

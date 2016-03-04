@@ -49,16 +49,16 @@ public:
     virtual ~MockPageOverlayClient() { }
 
 private:
-    virtual void pageOverlayDestroyed(PageOverlay&) override;
-    virtual void willMoveToPage(PageOverlay&, Page*) override;
-    virtual void didMoveToPage(PageOverlay&, Page*) override;
-    virtual void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
-    virtual bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
-    virtual void didScrollFrame(PageOverlay&, Frame&) override;
+    void pageOverlayDestroyed(PageOverlay&) override;
+    void willMoveToPage(PageOverlay&, Page*) override;
+    void didMoveToPage(PageOverlay&, Page*) override;
+    void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
+    bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
+    void didScrollFrame(PageOverlay&, Frame&) override;
 
-    virtual bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) override;
-    virtual bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&) override;
-    virtual Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */) override;
+    bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) override;
+    bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&) override;
+    Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */) override;
 
     HashSet<MockPageOverlay*> m_overlays;
 };

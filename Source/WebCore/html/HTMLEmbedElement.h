@@ -34,20 +34,20 @@ public:
 private:
     HTMLEmbedElement(const QualifiedName&, Document&, bool createdByParser);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool isPresentationAttribute(const QualifiedName&) const override;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool isPresentationAttribute(const QualifiedName&) const override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
 
-    virtual bool isURLAttribute(const Attribute&) const override;
-    virtual const AtomicString& imageSourceURL() const override;
+    bool isURLAttribute(const Attribute&) const override;
+    const AtomicString& imageSourceURL() const override;
 
-    virtual RenderWidget* renderWidgetLoadingPlugin() const override;
+    RenderWidget* renderWidgetLoadingPlugin() const override;
 
-    virtual void updateWidget(PluginCreationOption) override;
+    void updateWidget(PluginCreationOption) override;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
     void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues);
 };

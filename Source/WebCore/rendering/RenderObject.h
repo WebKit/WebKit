@@ -814,7 +814,7 @@ public:
     virtual int previousOffsetForBackwardDeletion(int current) const;
     virtual int nextOffset(int current) const;
 
-    virtual void imageChanged(CachedImage*, const IntRect* = nullptr) override;
+    void imageChanged(CachedImage*, const IntRect* = nullptr) override;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
     SelectionSubtreeRoot& selectionRoot() const;

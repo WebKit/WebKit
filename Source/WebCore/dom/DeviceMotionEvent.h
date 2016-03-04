@@ -50,7 +50,7 @@ public:
 
     DeviceMotionData* deviceMotionData() const { return m_deviceMotionData.get(); }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
 private:
     DeviceMotionEvent();

@@ -58,8 +58,8 @@ public:
     // IWebHistory
     virtual HRESULT STDMETHODCALLTYPE optionalSharedHistory(_COM_Outptr_opt_ IWebHistory**);
     virtual HRESULT STDMETHODCALLTYPE setOptionalSharedHistory(_In_opt_ IWebHistory*);
-    virtual HRESULT STDMETHODCALLTYPE unused1() override;
-    virtual HRESULT STDMETHODCALLTYPE unused2() override;
+    HRESULT STDMETHODCALLTYPE unused1() override;
+    HRESULT STDMETHODCALLTYPE unused2() override;
     virtual HRESULT STDMETHODCALLTYPE addItems(int itemCount, __deref_in_ecount_opt(itemCount) IWebHistoryItem**);
     virtual HRESULT STDMETHODCALLTYPE removeItems(int itemCount, __deref_in_ecount_opt(itemCount) IWebHistoryItem**);
     virtual HRESULT STDMETHODCALLTYPE removeAllItems();

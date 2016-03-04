@@ -58,18 +58,18 @@ private:
     RemoteScrollingCoordinator(WebPage*);
     virtual ~RemoteScrollingCoordinator();
 
-    virtual bool isRemoteScrollingCoordinator() const override { return true; }
+    bool isRemoteScrollingCoordinator() const override { return true; }
     
     // ScrollingCoordinator
-    virtual bool coordinatesScrollingForFrameView(const WebCore::FrameView&) const override;
-    virtual void scheduleTreeStateCommit() override;
+    bool coordinatesScrollingForFrameView(const WebCore::FrameView&) const override;
+    void scheduleTreeStateCommit() override;
 
-    virtual bool isRubberBandInProgress() const override;
-    virtual void setScrollPinningBehavior(WebCore::ScrollPinningBehavior) override;
+    bool isRubberBandInProgress() const override;
+    void setScrollPinningBehavior(WebCore::ScrollPinningBehavior) override;
     bool isScrollSnapInProgress() const override;
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
     
     // Respond to UI process changes.
     void scrollPositionChangedForNode(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, bool syncLayerPosition);

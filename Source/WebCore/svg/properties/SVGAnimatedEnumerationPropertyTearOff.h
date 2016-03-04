@@ -29,7 +29,7 @@ namespace WebCore {
 template<typename EnumType>
 class SVGAnimatedEnumerationPropertyTearOff final : public SVGAnimatedStaticPropertyTearOff<unsigned> {
 public:
-    virtual unsigned& baseVal() override
+    unsigned& baseVal() override
     {
         unsigned& baseVal = SVGAnimatedStaticPropertyTearOff::baseVal();
 
@@ -39,7 +39,7 @@ public:
         return baseVal;
     }
 
-    virtual unsigned& animVal() override
+    unsigned& animVal() override
     {
         unsigned& animVal = SVGAnimatedStaticPropertyTearOff::animVal();
 
@@ -49,7 +49,7 @@ public:
         return animVal;
     }
 
-    virtual void setBaseVal(const unsigned& property, ExceptionCode& ec) override
+    void setBaseVal(const unsigned& property, ExceptionCode& ec) override
     {
         // All SVG enumeration values, that are allowed to be set via SVG DOM start with 1, 0 corresponds to unknown and is not settable through SVG DOM.
         if (!property || property > SVGIDLEnumLimits<EnumType>::highestExposedEnumValue()) {

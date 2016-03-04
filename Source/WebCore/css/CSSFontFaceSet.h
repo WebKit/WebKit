@@ -84,8 +84,8 @@ private:
     void incrementActiveCount();
     void decrementActiveCount();
 
-    virtual void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
-    virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) override;
+    void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
+    void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) override;
 
     void registerLocalFontFacesForFamily(const String&);
 

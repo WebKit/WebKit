@@ -45,7 +45,7 @@ public:
     ~WebContextMenuProxyEfl();
 
 private:
-    virtual void show() override;
+    void show() override;
 
     void showContextMenu();
     void hideContextMenu();

@@ -61,171 +61,171 @@ public:
     static Ref<AccessibilityRenderObject> create(RenderObject*);
     virtual ~AccessibilityRenderObject();
 
-    virtual void init() override;
+    void init() override;
     
-    virtual bool isAttachment() const override;
-    virtual bool isFileUploadButton() const override;
+    bool isAttachment() const override;
+    bool isFileUploadButton() const override;
 
-    virtual bool isSelected() const override;
-    virtual bool isFocused() const override;
-    virtual bool isLoaded() const override;
-    virtual bool isOffScreen() const override;
-    virtual bool isReadOnly() const override;
-    virtual bool isUnvisited() const override;
-    virtual bool isVisited() const override;
-    virtual bool isLinked() const override;
-    virtual bool hasBoldFont() const override;
-    virtual bool hasItalicFont() const override;
-    virtual bool hasPlainText() const override;
-    virtual bool hasSameFont(RenderObject*) const override;
-    virtual bool hasSameFontColor(RenderObject*) const override;
-    virtual bool hasSameStyle(RenderObject*) const override;
-    virtual bool hasUnderline() const override;
+    bool isSelected() const override;
+    bool isFocused() const override;
+    bool isLoaded() const override;
+    bool isOffScreen() const override;
+    bool isReadOnly() const override;
+    bool isUnvisited() const override;
+    bool isVisited() const override;
+    bool isLinked() const override;
+    bool hasBoldFont() const override;
+    bool hasItalicFont() const override;
+    bool hasPlainText() const override;
+    bool hasSameFont(RenderObject*) const override;
+    bool hasSameFontColor(RenderObject*) const override;
+    bool hasSameStyle(RenderObject*) const override;
+    bool hasUnderline() const override;
 
-    virtual bool canSetTextRangeAttributes() const override;
-    virtual bool canSetValueAttribute() const override;
-    virtual bool canSetExpandedAttribute() const override;
+    bool canSetTextRangeAttributes() const override;
+    bool canSetValueAttribute() const override;
+    bool canSetExpandedAttribute() const override;
 
-    virtual void setAccessibleName(const AtomicString&) override;
+    void setAccessibleName(const AtomicString&) override;
     
     // Provides common logic used by all elements when determining isIgnored.
-    virtual AccessibilityObjectInclusion defaultObjectInclusion() const override;
+    AccessibilityObjectInclusion defaultObjectInclusion() const override;
     
-    virtual int layoutCount() const override;
-    virtual double estimatedLoadingProgress() const override;
+    int layoutCount() const override;
+    double estimatedLoadingProgress() const override;
     
-    virtual AccessibilityObject* firstChild() const override;
-    virtual AccessibilityObject* lastChild() const override;
-    virtual AccessibilityObject* previousSibling() const override;
-    virtual AccessibilityObject* nextSibling() const override;
-    virtual AccessibilityObject* parentObject() const override;
-    virtual AccessibilityObject* parentObjectIfExists() const override;
-    virtual AccessibilityObject* observableObject() const override;
-    virtual void linkedUIElements(AccessibilityChildrenVector&) const override;
-    virtual bool exposesTitleUIElement() const override;
-    virtual AccessibilityObject* titleUIElement() const override;
-    virtual AccessibilityObject* correspondingControlForLabelElement() const override;
-    virtual AccessibilityObject* correspondingLabelForControlElement() const override;
+    AccessibilityObject* firstChild() const override;
+    AccessibilityObject* lastChild() const override;
+    AccessibilityObject* previousSibling() const override;
+    AccessibilityObject* nextSibling() const override;
+    AccessibilityObject* parentObject() const override;
+    AccessibilityObject* parentObjectIfExists() const override;
+    AccessibilityObject* observableObject() const override;
+    void linkedUIElements(AccessibilityChildrenVector&) const override;
+    bool exposesTitleUIElement() const override;
+    AccessibilityObject* titleUIElement() const override;
+    AccessibilityObject* correspondingControlForLabelElement() const override;
+    AccessibilityObject* correspondingLabelForControlElement() const override;
 
-    virtual void ariaOwnsElements(AccessibilityChildrenVector&) const override;
-    virtual bool supportsARIAOwns() const override;
-    virtual bool isPresentationalChildOfAriaRole() const override;
-    virtual bool ariaRoleHasPresentationalChildren() const override;
+    void ariaOwnsElements(AccessibilityChildrenVector&) const override;
+    bool supportsARIAOwns() const override;
+    bool isPresentationalChildOfAriaRole() const override;
+    bool ariaRoleHasPresentationalChildren() const override;
     
     // Should be called on the root accessibility object to kick off a hit test.
-    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObject* accessibilityHitTest(const IntPoint&) const override;
 
-    virtual Element* anchorElement() const override;
+    Element* anchorElement() const override;
     
-    virtual LayoutRect boundingBoxRect() const override;
-    virtual LayoutRect elementRect() const override;
-    virtual IntPoint clickPoint() override;
+    LayoutRect boundingBoxRect() const override;
+    LayoutRect elementRect() const override;
+    IntPoint clickPoint() override;
     
     void setRenderer(RenderObject*);
-    virtual RenderObject* renderer() const override { return m_renderer; }
+    RenderObject* renderer() const override { return m_renderer; }
     RenderBoxModelObject* renderBoxModelObject() const;
-    virtual Node* node() const override;
+    Node* node() const override;
 
-    virtual Document* document() const override;
+    Document* document() const override;
 
     RenderView* topRenderer() const;
     RenderTextControl* textControl() const;
     HTMLLabelElement* labelElementContainer() const;
     
-    virtual URL url() const override;
-    virtual PlainTextRange selectedTextRange() const override;
-    virtual VisibleSelection selection() const override;
-    virtual String stringValue() const override;
-    virtual String helpText() const override;
-    virtual String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
-    virtual String text() const override;
-    virtual int textLength() const override;
-    virtual String selectedText() const override;
-    virtual const AtomicString& accessKey() const override;
+    URL url() const override;
+    PlainTextRange selectedTextRange() const override;
+    VisibleSelection selection() const override;
+    String stringValue() const override;
+    String helpText() const override;
+    String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
+    String text() const override;
+    int textLength() const override;
+    String selectedText() const override;
+    const AtomicString& accessKey() const override;
     virtual const String& actionVerb() const;
-    virtual Widget* widget() const override;
-    virtual Widget* widgetForAttachmentView() const override;
+    Widget* widget() const override;
+    Widget* widgetForAttachmentView() const override;
     virtual void getDocumentLinks(AccessibilityChildrenVector&);
-    virtual FrameView* documentFrameView() const override;
+    FrameView* documentFrameView() const override;
 
-    virtual void clearChildren() override;
-    virtual void updateChildrenIfNecessary() override;
+    void clearChildren() override;
+    void updateChildrenIfNecessary() override;
     
-    virtual void setFocused(bool) override;
-    virtual void setSelectedTextRange(const PlainTextRange&) override;
-    virtual void setValue(const String&) override;
-    virtual void setSelectedRows(AccessibilityChildrenVector&) override;
-    virtual AccessibilityOrientation orientation() const override;
+    void setFocused(bool) override;
+    void setSelectedTextRange(const PlainTextRange&) override;
+    void setValue(const String&) override;
+    void setSelectedRows(AccessibilityChildrenVector&) override;
+    AccessibilityOrientation orientation() const override;
     
-    virtual void detach(AccessibilityDetachmentType, AXObjectCache*) override;
-    virtual void textChanged() override;
-    virtual void addChildren() override;
-    virtual bool canHaveChildren() const override;
-    virtual void selectedChildren(AccessibilityChildrenVector&) override;
-    virtual void visibleChildren(AccessibilityChildrenVector&) override;
-    virtual void tabChildren(AccessibilityChildrenVector&) override;
-    virtual bool shouldFocusActiveDescendant() const override;
+    void detach(AccessibilityDetachmentType, AXObjectCache*) override;
+    void textChanged() override;
+    void addChildren() override;
+    bool canHaveChildren() const override;
+    void selectedChildren(AccessibilityChildrenVector&) override;
+    void visibleChildren(AccessibilityChildrenVector&) override;
+    void tabChildren(AccessibilityChildrenVector&) override;
+    bool shouldFocusActiveDescendant() const override;
     bool shouldNotifyActiveDescendant() const;
-    virtual AccessibilityObject* activeDescendant() const override;
-    virtual void handleActiveDescendantChanged() override;
-    virtual void handleAriaExpandedChanged() override;
+    AccessibilityObject* activeDescendant() const override;
+    void handleActiveDescendantChanged() override;
+    void handleAriaExpandedChanged() override;
     
-    virtual VisiblePositionRange visiblePositionRange() const override;
-    virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
-    virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;
-    virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
-    virtual bool supportsARIAFlowTo() const override;
-    virtual void ariaFlowToElements(AccessibilityChildrenVector&) const override;
-    virtual bool supportsARIADescribedBy() const override;
-    virtual void ariaDescribedByElements(AccessibilityChildrenVector&) const override;
-    virtual bool supportsARIAControls() const override;
-    virtual void ariaControlsElements(AccessibilityChildrenVector&) const override;
-    virtual bool ariaHasPopup() const override;
+    VisiblePositionRange visiblePositionRange() const override;
+    VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
+    IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;
+    void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
+    bool supportsARIAFlowTo() const override;
+    void ariaFlowToElements(AccessibilityChildrenVector&) const override;
+    bool supportsARIADescribedBy() const override;
+    void ariaDescribedByElements(AccessibilityChildrenVector&) const override;
+    bool supportsARIAControls() const override;
+    void ariaControlsElements(AccessibilityChildrenVector&) const override;
+    bool ariaHasPopup() const override;
 
-    virtual bool supportsARIADropping() const override;
-    virtual bool supportsARIADragging() const override;
-    virtual bool isARIAGrabbed() override;
-    virtual void determineARIADropEffects(Vector<String>&) override;
+    bool supportsARIADropping() const override;
+    bool supportsARIADragging() const override;
+    bool isARIAGrabbed() override;
+    void determineARIADropEffects(Vector<String>&) override;
     
-    virtual VisiblePosition visiblePositionForPoint(const IntPoint&) const override;
-    virtual VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const override;
-    virtual int index(const VisiblePosition&) const override;
+    VisiblePosition visiblePositionForPoint(const IntPoint&) const override;
+    VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const override;
+    int index(const VisiblePosition&) const override;
 
-    virtual VisiblePosition visiblePositionForIndex(int) const override;
-    virtual int indexForVisiblePosition(const VisiblePosition&) const override;
+    VisiblePosition visiblePositionForIndex(int) const override;
+    int indexForVisiblePosition(const VisiblePosition&) const override;
 
-    virtual void lineBreaks(Vector<int>&) const override;
-    virtual PlainTextRange doAXRangeForLine(unsigned) const override;
-    virtual PlainTextRange doAXRangeForIndex(unsigned) const override;
+    void lineBreaks(Vector<int>&) const override;
+    PlainTextRange doAXRangeForLine(unsigned) const override;
+    PlainTextRange doAXRangeForIndex(unsigned) const override;
     
-    virtual String doAXStringForRange(const PlainTextRange&) const override;
-    virtual IntRect doAXBoundsForRange(const PlainTextRange&) const override;
+    String doAXStringForRange(const PlainTextRange&) const override;
+    IntRect doAXBoundsForRange(const PlainTextRange&) const override;
     
-    virtual String stringValueForMSAA() const override;
-    virtual String stringRoleForMSAA() const override;
-    virtual String nameForMSAA() const override;
-    virtual String descriptionForMSAA() const override;
-    virtual AccessibilityRole roleValueForMSAA() const override;
+    String stringValueForMSAA() const override;
+    String stringRoleForMSAA() const override;
+    String nameForMSAA() const override;
+    String descriptionForMSAA() const override;
+    AccessibilityRole roleValueForMSAA() const override;
 
-    virtual String passwordFieldValue() const override;
+    String passwordFieldValue() const override;
 
 protected:
     explicit AccessibilityRenderObject(RenderObject*);
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
     void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     bool needsToUpdateChildren() const { return m_childrenDirty; }
-    virtual ScrollableArea* getScrollableAreaIfScrollable() const override;
-    virtual void scrollTo(const IntPoint&) const override;
+    ScrollableArea* getScrollableAreaIfScrollable() const override;
+    void scrollTo(const IntPoint&) const override;
     
-    virtual bool isDetached() const override { return !m_renderer; }
+    bool isDetached() const override { return !m_renderer; }
 
-    virtual AccessibilityRole determineAccessibilityRole() override;
-    virtual bool computeAccessibilityIsIgnored() const override;
+    AccessibilityRole determineAccessibilityRole() override;
+    bool computeAccessibilityIsIgnored() const override;
 
     RenderObject* m_renderer;
 
 private:
-    virtual bool isAccessibilityRenderObject() const override final { return true; }
+    bool isAccessibilityRenderObject() const override final { return true; }
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool isAllowedChildOfTree() const;
@@ -234,8 +234,8 @@ private:
     PlainTextRange documentBasedSelectedTextRange() const;
     Element* rootEditableElementForPosition(const Position&) const;
     bool nodeIsTextControl(const Node*) const;
-    virtual void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
-    virtual Path elementPath() const override;
+    void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
+    Path elementPath() const override;
     
     bool isTabItemSelected() const;
     LayoutRect checkboxOrRadioRect() const;
@@ -243,7 +243,7 @@ private:
     AccessibilityObject* internalLinkElement() const;
     AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
-    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
     bool renderObjectIsObservable(RenderObject&) const;
     RenderObject* renderParentObject() const;
@@ -254,7 +254,7 @@ private:
     AccessibilitySVGRoot* remoteSVGRootElement() const;
     AccessibilityObject* remoteSVGElementHitTest(const IntPoint&) const;
     void offsetBoundingBoxForRemoteSVGElement(LayoutRect&) const;
-    virtual bool supportsPath() const override;
+    bool supportsPath() const override;
 
     void addHiddenChildren();
     void addTextFieldChildren();
@@ -265,8 +265,8 @@ private:
 #if PLATFORM(COCOA)
     void updateAttachmentViewParents();
 #endif
-    virtual String expandedTextValue() const override;
-    virtual bool supportsExpandedTextValue() const override;
+    String expandedTextValue() const override;
+    bool supportsExpandedTextValue() const override;
     void updateRoleAfterChildrenCreation();
     
     void ariaSelectedRows(AccessibilityChildrenVector&);
@@ -274,66 +274,66 @@ private:
     bool elementAttributeValue(const QualifiedName&) const;
     void setElementAttributeValue(const QualifiedName&, bool);
     
-    virtual ESpeak speakProperty() const override;
+    ESpeak speakProperty() const override;
     
-    virtual const String ariaLiveRegionStatus() const override;
-    virtual const AtomicString& ariaLiveRegionRelevant() const override;
-    virtual bool ariaLiveRegionAtomic() const override;
-    virtual bool ariaLiveRegionBusy() const override;
+    const String ariaLiveRegionStatus() const override;
+    const AtomicString& ariaLiveRegionRelevant() const override;
+    bool ariaLiveRegionAtomic() const override;
+    bool ariaLiveRegionBusy() const override;
 
-    virtual bool inheritsPresentationalRole() const override;
+    bool inheritsPresentationalRole() const override;
 
 #if ENABLE(MATHML)
     // All math elements return true for isMathElement().
-    virtual bool isMathElement() const override;
-    virtual bool isMathFraction() const override;
-    virtual bool isMathFenced() const override;
-    virtual bool isMathSubscriptSuperscript() const override;
-    virtual bool isMathRow() const override;
-    virtual bool isMathUnderOver() const override;
-    virtual bool isMathRoot() const override;
-    virtual bool isMathSquareRoot() const override;
-    virtual bool isMathText() const override;
-    virtual bool isMathNumber() const override;
-    virtual bool isMathOperator() const override;
-    virtual bool isMathFenceOperator() const override;
-    virtual bool isMathSeparatorOperator() const override;
-    virtual bool isMathIdentifier() const override;
-    virtual bool isMathTable() const override;
-    virtual bool isMathTableRow() const override;
-    virtual bool isMathTableCell() const override;
-    virtual bool isMathMultiscript() const override;
-    virtual bool isMathToken() const override;
-    virtual bool isMathScriptObject(AccessibilityMathScriptObjectType) const override;
-    virtual bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const override;
+    bool isMathElement() const override;
+    bool isMathFraction() const override;
+    bool isMathFenced() const override;
+    bool isMathSubscriptSuperscript() const override;
+    bool isMathRow() const override;
+    bool isMathUnderOver() const override;
+    bool isMathRoot() const override;
+    bool isMathSquareRoot() const override;
+    bool isMathText() const override;
+    bool isMathNumber() const override;
+    bool isMathOperator() const override;
+    bool isMathFenceOperator() const override;
+    bool isMathSeparatorOperator() const override;
+    bool isMathIdentifier() const override;
+    bool isMathTable() const override;
+    bool isMathTableRow() const override;
+    bool isMathTableCell() const override;
+    bool isMathMultiscript() const override;
+    bool isMathToken() const override;
+    bool isMathScriptObject(AccessibilityMathScriptObjectType) const override;
+    bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const override;
     
     // Generic components.
-    virtual AccessibilityObject* mathBaseObject() override;
+    AccessibilityObject* mathBaseObject() override;
     
     // Root components.
-    virtual AccessibilityObject* mathRadicandObject() override;
-    virtual AccessibilityObject* mathRootIndexObject() override;
+    AccessibilityObject* mathRadicandObject() override;
+    AccessibilityObject* mathRootIndexObject() override;
     
     // Fraction components.
-    virtual AccessibilityObject* mathNumeratorObject() override;
-    virtual AccessibilityObject* mathDenominatorObject() override;
+    AccessibilityObject* mathNumeratorObject() override;
+    AccessibilityObject* mathDenominatorObject() override;
 
     // Under over components.
-    virtual AccessibilityObject* mathUnderObject() override;
-    virtual AccessibilityObject* mathOverObject() override;
+    AccessibilityObject* mathUnderObject() override;
+    AccessibilityObject* mathOverObject() override;
     
     // Subscript/superscript components.
-    virtual AccessibilityObject* mathSubscriptObject() override;
-    virtual AccessibilityObject* mathSuperscriptObject() override;
+    AccessibilityObject* mathSubscriptObject() override;
+    AccessibilityObject* mathSuperscriptObject() override;
     
     // Fenced components.
-    virtual String mathFencedOpenString() const override;
-    virtual String mathFencedCloseString() const override;
-    virtual int mathLineThickness() const override;
+    String mathFencedOpenString() const override;
+    String mathFencedCloseString() const override;
+    int mathLineThickness() const override;
 
     // Multiscripts components.
-    virtual void mathPrescripts(AccessibilityMathMultiscriptPairs&) override;
-    virtual void mathPostscripts(AccessibilityMathMultiscriptPairs&) override;
+    void mathPrescripts(AccessibilityMathMultiscriptPairs&) override;
+    void mathPostscripts(AccessibilityMathMultiscriptPairs&) override;
     
     bool isIgnoredElementWithinMathTree() const;
 #endif

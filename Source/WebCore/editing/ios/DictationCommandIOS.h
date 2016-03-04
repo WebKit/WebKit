@@ -43,7 +43,7 @@ public:
 private:
     DictationCommandIOS(Document&, Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata);
 
-    virtual void doApply() override;
+    void doApply() override;
 
     Vector<Vector<String>> m_dictationPhrases;
     RetainPtr<id> m_metadata;

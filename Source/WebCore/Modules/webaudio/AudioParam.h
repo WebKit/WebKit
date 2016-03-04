@@ -53,8 +53,8 @@ public:
     }
 
     // AudioSummingJunction
-    virtual bool canUpdateState() override { return true; }
-    virtual void didUpdate() override { }
+    bool canUpdateState() override { return true; }
+    void didUpdate() override { }
 
     // Intrinsic value.
     float value();

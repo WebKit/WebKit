@@ -37,12 +37,12 @@ public:
     static RefPtr<ChannelSplitterNode> create(AudioContext&, float sampleRate, unsigned numberOfOutputs);
 
     // AudioNode
-    virtual void process(size_t framesToProcess) override;
-    virtual void reset() override;
+    void process(size_t framesToProcess) override;
+    void reset() override;
 
 private:
-    virtual double tailTime() const override { return 0; }
-    virtual double latencyTime() const override { return 0; }
+    double tailTime() const override { return 0; }
+    double latencyTime() const override { return 0; }
 
     ChannelSplitterNode(AudioContext&, float sampleRate, unsigned numberOfOutputs);
 };

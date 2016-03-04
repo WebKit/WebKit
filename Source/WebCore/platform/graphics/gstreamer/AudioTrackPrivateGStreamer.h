@@ -41,15 +41,15 @@ public:
         return adoptRef(new AudioTrackPrivateGStreamer(playbin, index, pad));
     }
 
-    virtual void disconnect() override;
+    void disconnect() override;
 
-    virtual void setEnabled(bool) override;
-    virtual void setActive(bool enabled) override { setEnabled(enabled); }
+    void setEnabled(bool) override;
+    void setActive(bool enabled) override { setEnabled(enabled); }
 
-    virtual int trackIndex() const override { return m_index; }
+    int trackIndex() const override { return m_index; }
 
-    virtual AtomicString label() const override { return m_label; }
-    virtual AtomicString language() const override { return m_language; }
+    AtomicString label() const override { return m_label; }
+    AtomicString language() const override { return m_language; }
 
 private:
     AudioTrackPrivateGStreamer(GRefPtr<GstElement> playbin, gint index, GRefPtr<GstPad>);

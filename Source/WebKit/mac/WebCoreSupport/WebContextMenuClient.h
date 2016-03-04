@@ -48,22 +48,22 @@ public:
     WebContextMenuClient(WebView *webView);
     virtual ~WebContextMenuClient();
 
-    virtual void contextMenuDestroyed() override;
+    void contextMenuDestroyed() override;
 
-    virtual void downloadURL(const WebCore::URL&) override;
-    virtual void searchWithGoogle(const WebCore::Frame*) override;
-    virtual void lookUpInDictionary(WebCore::Frame*) override;
-    virtual bool isSpeaking() override;
-    virtual void speak(const WTF::String&) override;
-    virtual void stopSpeaking() override;
-    virtual void searchWithSpotlight() override;
-    virtual void showContextMenu() override;
+    void downloadURL(const WebCore::URL&) override;
+    void searchWithGoogle(const WebCore::Frame*) override;
+    void lookUpInDictionary(WebCore::Frame*) override;
+    bool isSpeaking() override;
+    void speak(const WTF::String&) override;
+    void stopSpeaking() override;
+    void searchWithSpotlight() override;
+    void showContextMenu() override;
 
 #if ENABLE(SERVICE_CONTROLS)
     // WebSharingServicePickerClient
-    virtual void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &) override;
-    virtual WebCore::FloatRect screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &) override;
-    virtual RetainPtr<NSImage> imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &) override;
+    void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &) override;
+    WebCore::FloatRect screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &) override;
+    RetainPtr<NSImage> imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &) override;
 #endif
 
 private:

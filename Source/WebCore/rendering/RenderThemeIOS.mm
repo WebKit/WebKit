@@ -556,7 +556,7 @@ public:
         , m_style(style)
     {
     }
-    virtual float measureText(const String& string) const override
+    float measureText(const String& string) const override
     {
         TextRun run = RenderBlock::constructTextRun(&m_renderObject, m_font, string, m_style, AllowTrailingExpansion | ForbidLeadingExpansion, DefaultTextRunFlags);
         return m_font.width(run);

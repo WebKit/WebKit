@@ -55,7 +55,7 @@ public:
         return adoptRef(*new File(path, nameOverride));
     }
 
-    virtual bool isFile() const override { return true; }
+    bool isFile() const override { return true; }
 
     const String& path() const { return m_path; }
     const String& name() const { return m_name; }

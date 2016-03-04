@@ -58,11 +58,11 @@ public:
 
 private:
     // PlatformCALayerClient
-    virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return GraphicsLayer::CompositingCoordinatesTopDown; }
-    virtual bool platformCALayerContentsOpaque() const override { return true; }
-    virtual bool platformCALayerDrawsContent() const override { return true; }
-    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&) override;
-    virtual float platformCALayerDeviceScaleFactor() const override;
+    GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return GraphicsLayer::CompositingCoordinatesTopDown; }
+    bool platformCALayerContentsOpaque() const override { return true; }
+    bool platformCALayerDrawsContent() const override { return true; }
+    void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&) override;
+    float platformCALayerDeviceScaleFactor() const override;
 
     void updateTimerFired();
     

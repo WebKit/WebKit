@@ -86,12 +86,12 @@ private:
     explicit WebsiteDataStore(Configuration);
 
     // WebProcessLifetimeObserver.
-    virtual void webPageWasAdded(WebPageProxy&) override;
-    virtual void webPageWasRemoved(WebPageProxy&) override;
-    virtual void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) override;
-    virtual void webPageWillOpenConnection(WebPageProxy&, IPC::Connection&) override;
-    virtual void webPageDidCloseConnection(WebPageProxy&, IPC::Connection&) override;
-    virtual void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) override;
+    void webPageWasAdded(WebPageProxy&) override;
+    void webPageWasRemoved(WebPageProxy&) override;
+    void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) override;
+    void webPageWillOpenConnection(WebPageProxy&, IPC::Connection&) override;
+    void webPageDidCloseConnection(WebPageProxy&, IPC::Connection&) override;
+    void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) override;
 
     void platformInitialize();
     void platformDestroy();

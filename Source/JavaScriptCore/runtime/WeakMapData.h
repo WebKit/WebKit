@@ -81,8 +81,8 @@ private:
         {
         }
     private:
-        virtual void visitWeakReferences(SlotVisitor&) override;
-        virtual void finalizeUnconditionally() override;
+        void visitWeakReferences(SlotVisitor&) override;
+        void finalizeUnconditionally() override;
         unsigned m_liveKeyCount;
         WeakMapData* m_target;
     };

@@ -37,11 +37,11 @@ public:
     explicit WebProgressTrackerClient(WebPage&);
     
 private:
-    virtual void progressTrackerDestroyed() override;
+    void progressTrackerDestroyed() override;
 
-    virtual void progressStarted(WebCore::Frame& originatingProgressFrame) override;
-    virtual void progressEstimateChanged(WebCore::Frame& originatingProgressFrame) override;
-    virtual void progressFinished(WebCore::Frame& originatingProgressFrame) override;
+    void progressStarted(WebCore::Frame& originatingProgressFrame) override;
+    void progressEstimateChanged(WebCore::Frame& originatingProgressFrame) override;
+    void progressFinished(WebCore::Frame& originatingProgressFrame) override;
 
     WebPage& m_webPage;
 };

@@ -60,7 +60,7 @@ public:
     double valueRatio() const;
     GaugeRegion gaugeRegion() const;
 
-    virtual bool canContainRangeEndPoint() const override { return false; }
+    bool canContainRangeEndPoint() const override { return false; }
 
 private:
     HTMLMeterElement(const QualifiedName&, Document&);
@@ -68,15 +68,15 @@ private:
 
     RenderMeter* renderMeter() const;
 
-    virtual bool supportLabels() const override { return true; }
+    bool supportLabels() const override { return true; }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual bool childShouldCreateRenderer(const Node&) const override;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool childShouldCreateRenderer(const Node&) const override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     void didElementStateChange();
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
-    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+    void didAddUserAgentShadowRoot(ShadowRoot*) override;
+    bool canHaveUserAgentShadowRoot() const override final { return true; }
 
     RefPtr<MeterValueElement> m_value;
 };

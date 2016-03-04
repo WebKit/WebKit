@@ -64,16 +64,16 @@ public:
 
 #if ENABLE(REMOTE_INSPECTOR)
     // Inspector::RemoteAutomationTarget API
-    virtual String name() const override { return m_sessionIdentifier; }
-    virtual void dispatchMessageFromRemote(const String& message) override;
-    virtual void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false) override;
-    virtual void disconnect(Inspector::FrontendChannel*) override;
+    String name() const override { return m_sessionIdentifier; }
+    void dispatchMessageFromRemote(const String& message) override;
+    void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false) override;
+    void disconnect(Inspector::FrontendChannel*) override;
 #endif
 
     // Inspector::AutomationBackendDispatcherHandler API
-    virtual void getWindows(Inspector::ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingWindow>>& out_windows) override;
-    virtual void openWindow(Inspector::ErrorString&) override;
-    virtual void closeWindow(Inspector::ErrorString&, const String& in_handle) override;
+    void getWindows(Inspector::ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingWindow>>& out_windows) override;
+    void openWindow(Inspector::ErrorString&) override;
+    void closeWindow(Inspector::ErrorString&, const String& in_handle) override;
 
 private:
     std::unique_ptr<API::AutomationSessionClient> m_client;

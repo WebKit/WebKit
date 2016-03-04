@@ -100,7 +100,7 @@ public:
         EXPECT_EQ(data.domainFilters.size(), 0ull);
     }
 
-    virtual void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions) override
+    void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions) override
     {
         EXPECT_FALSE(finalized);
         EXPECT_EQ(m_data.actions.size(), 0ull);
@@ -110,7 +110,7 @@ public:
         m_data.actions.appendVector(actions);
     }
     
-    virtual void writeFiltersWithoutDomainsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
+    void writeFiltersWithoutDomainsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
     {
         EXPECT_FALSE(finalized);
         EXPECT_EQ(m_data.filtersWithDomains.size(), 0ull);
@@ -118,20 +118,20 @@ public:
         m_data.filtersWithoutDomains.appendVector(bytecode);
     }
     
-    virtual void writeFiltersWithDomainsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
+    void writeFiltersWithDomainsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
     {
         EXPECT_FALSE(finalized);
         EXPECT_EQ(m_data.domainFilters.size(), 0ull);
         m_data.filtersWithDomains.appendVector(bytecode);
     }
     
-    virtual void writeDomainFiltersBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
+    void writeDomainFiltersBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
     {
         EXPECT_FALSE(finalized);
         m_data.domainFilters.appendVector(bytecode);
     }
     
-    virtual void finalize() override
+    void finalize() override
     {
         finalized = true;
     }
@@ -166,14 +166,14 @@ public:
     {
     }
 
-    virtual const ContentExtensions::SerializedActionByte* actions() const override { return m_data.actions.data(); }
-    virtual unsigned actionsLength() const override { return m_data.actions.size(); }
-    virtual const ContentExtensions::DFABytecode* filtersWithoutDomainsBytecode() const override { return m_data.filtersWithoutDomains.data(); }
-    virtual unsigned filtersWithoutDomainsBytecodeLength() const override { return m_data.filtersWithoutDomains.size(); }
-    virtual const ContentExtensions::DFABytecode* filtersWithDomainsBytecode() const override { return m_data.filtersWithDomains.data(); }
-    virtual unsigned filtersWithDomainsBytecodeLength() const override { return m_data.filtersWithDomains.size(); }
-    virtual const ContentExtensions::DFABytecode* domainFiltersBytecode() const override { return m_data.domainFilters.data(); }
-    virtual unsigned domainFiltersBytecodeLength() const override { return m_data.domainFilters.size(); }
+    const ContentExtensions::SerializedActionByte* actions() const override { return m_data.actions.data(); }
+    unsigned actionsLength() const override { return m_data.actions.size(); }
+    const ContentExtensions::DFABytecode* filtersWithoutDomainsBytecode() const override { return m_data.filtersWithoutDomains.data(); }
+    unsigned filtersWithoutDomainsBytecodeLength() const override { return m_data.filtersWithoutDomains.size(); }
+    const ContentExtensions::DFABytecode* filtersWithDomainsBytecode() const override { return m_data.filtersWithDomains.data(); }
+    unsigned filtersWithDomainsBytecodeLength() const override { return m_data.filtersWithDomains.size(); }
+    const ContentExtensions::DFABytecode* domainFiltersBytecode() const override { return m_data.domainFilters.data(); }
+    unsigned domainFiltersBytecodeLength() const override { return m_data.domainFilters.size(); }
 
 private:
     InMemoryCompiledContentExtension(CompiledContentExtensionData&& data)

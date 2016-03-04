@@ -111,11 +111,11 @@ public:
 #if PLATFORM(COCOA) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
     bool shouldUseCredentialStorage();
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-    virtual void receivedCredential(const AuthenticationChallenge&, const Credential&) override;
-    virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) override;
-    virtual void receivedCancellation(const AuthenticationChallenge&) override;
-    virtual void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&) override;
-    virtual void receivedChallengeRejection(const AuthenticationChallenge&) override;
+    void receivedCredential(const AuthenticationChallenge&, const Credential&) override;
+    void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) override;
+    void receivedCancellation(const AuthenticationChallenge&) override;
+    void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&) override;
+    void receivedChallengeRejection(const AuthenticationChallenge&) override;
 #endif
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
@@ -265,8 +265,8 @@ private:
     bool start();
     static void platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
 
-    virtual void refAuthenticationClient() override { ref(); }
-    virtual void derefAuthenticationClient() override { deref(); }
+    void refAuthenticationClient() override { ref(); }
+    void derefAuthenticationClient() override { deref(); }
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
     enum class SchedulingBehavior { Asynchronous, Synchronous };

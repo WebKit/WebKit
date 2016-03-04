@@ -57,9 +57,9 @@ public:
 
 private:
     // CachedResourceClient
-    virtual void responseReceived(CachedResource*, const ResourceResponse&) override;
-    virtual void dataReceived(CachedResource*, const char*, int) override;
-    virtual void notifyFinished(CachedResource*) override;
+    void responseReceived(CachedResource*, const ResourceResponse&) override;
+    void dataReceived(CachedResource*, const char*, int) override;
+    void notifyFinished(CachedResource*) override;
 
     void fulfillRequestWithResource(CachedResource*);
 

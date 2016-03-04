@@ -76,8 +76,8 @@ public:
     bool convertTo(T& decodedValue);
 
     virtual EncodedValue encodedResult() const = 0;
-    virtual InputQueue queue() const final override { return InputQueue::ScriptMemoizedData; }
-    virtual const String& type() const final override;
+    InputQueue queue() const final override { return InputQueue::ScriptMemoizedData; }
+    const String& type() const final override;
 
     const String& attribute() const { return m_attribute; }
     EncodedCType ctype() const { return m_ctype; }
@@ -114,7 +114,7 @@ public:
         , m_result(result) { }
     virtual ~MemoizedDOMResult() { }
 
-    virtual EncodedValue encodedResult() const override
+    EncodedValue encodedResult() const override
     {
         return EncodingTraits<MemoizedType>::encodeValue(m_result);
     }

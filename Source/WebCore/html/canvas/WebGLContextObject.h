@@ -41,7 +41,7 @@ public:
 
     WebGLRenderingContextBase* context() const { return m_context; }
 
-    virtual bool validate(const WebGLContextGroup*, const WebGLRenderingContextBase* context) const override
+    bool validate(const WebGLContextGroup*, const WebGLRenderingContextBase* context) const override
     {
         return context == m_context;
     }
@@ -51,12 +51,12 @@ public:
 protected:
     WebGLContextObject(WebGLRenderingContextBase*);
 
-    virtual bool hasGroupOrContext() const override
+    bool hasGroupOrContext() const override
     {
         return m_context;
     }
 
-    virtual GraphicsContext3D* getAGraphicsContext3D() const override;
+    GraphicsContext3D* getAGraphicsContext3D() const override;
 
 private:
     WebGLRenderingContextBase* m_context;

@@ -35,7 +35,7 @@ public:
     OESTextureHalfFloat(WebGLRenderingContextBase*);
     virtual ~OESTextureHalfFloat();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

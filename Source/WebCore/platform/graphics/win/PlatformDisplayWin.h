@@ -34,7 +34,7 @@ namespace WebCore {
 
 class PlatformDisplayWin final : public PlatformDisplay {
 private:
-    virtual Type type() const override { return PlatformDisplay::Type::Windows; }
+    Type type() const override { return PlatformDisplay::Type::Windows; }
 };
 
 } // namespace WebCore

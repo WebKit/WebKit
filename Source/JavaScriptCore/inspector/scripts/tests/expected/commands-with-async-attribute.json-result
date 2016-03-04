@@ -188,7 +188,7 @@ protected:
 class DatabaseBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<DatabaseBackendDispatcher> create(BackendDispatcher&, DatabaseBackendDispatcherHandler*);
-    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
     void executeSQLSyncOptionalReturnValues(long requestId, RefPtr<InspectorObject>&& parameters);
     void executeSQLAsyncOptionalReturnValues(long requestId, RefPtr<InspectorObject>&& parameters);
@@ -843,10 +843,10 @@ namespace Inspector {
 class ObjCInspectorDatabaseBackendDispatcher final : public AlternateDatabaseBackendDispatcher {
 public:
     ObjCInspectorDatabaseBackendDispatcher(id<TestProtocolDatabaseDomainHandler> handler) { m_delegate = handler; }
-    virtual void executeSQLSyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) override;
-    virtual void executeSQLAsyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) override;
-    virtual void executeSQLSync(long requestId, int in_databaseId, const String& in_query) override;
-    virtual void executeSQLAsync(long requestId, int in_databaseId, const String& in_query) override;
+    void executeSQLSyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) override;
+    void executeSQLAsyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) override;
+    void executeSQLSync(long requestId, int in_databaseId, const String& in_query) override;
+    void executeSQLAsync(long requestId, int in_databaseId, const String& in_query) override;
 private:
     RetainPtr<id<TestProtocolDatabaseDomainHandler>> m_delegate;
 };

@@ -56,7 +56,7 @@ public:
 #if ENABLE(NOTIFICATIONS)
     virtual void requestPermission(WebCore::SecurityOrigin*, PassRefPtr<WebCore::NotificationPermissionCallback>);
 #endif
-    virtual bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;
+    bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*);
     virtual WebCore::NotificationClient::Permission checkPermission(const URL&);
 

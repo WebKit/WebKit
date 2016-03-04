@@ -48,9 +48,9 @@ namespace WebCore {
 class WorkerSharedTimer final : public SharedTimer {
 public:
     // SharedTimer interface.
-    virtual void setFiredFunction(std::function<void()>&& function) override { m_sharedTimerFunction = WTFMove(function); }
-    virtual void setFireInterval(double interval) override { m_nextFireTime = interval + currentTime(); }
-    virtual void stop() override { m_nextFireTime = 0; }
+    void setFiredFunction(std::function<void()>&& function) override { m_sharedTimerFunction = WTFMove(function); }
+    void setFireInterval(double interval) override { m_nextFireTime = interval + currentTime(); }
+    void stop() override { m_nextFireTime = 0; }
 
     bool isActive() { return m_sharedTimerFunction && m_nextFireTime; }
     double fireTime() { return m_nextFireTime; }

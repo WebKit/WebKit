@@ -86,9 +86,9 @@ protected:
     HTMLDocument(Frame*, const URL&, DocumentClassFlags = 0, unsigned constructionFlags = 0);
 
 private:
-    virtual bool isFrameSet() const override;
-    virtual Ref<DocumentParser> createParser() override;
-    virtual Ref<Document> cloneDocumentWithoutChildren() const override final;
+    bool isFrameSet() const override;
+    Ref<DocumentParser> createParser() override;
+    Ref<Document> cloneDocumentWithoutChildren() const override final;
 
     DocumentOrderedMap m_documentNamedItem;
     DocumentOrderedMap m_windowNamedItem;

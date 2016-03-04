@@ -50,9 +50,9 @@ private:
     SVGViewElement(const QualifiedName&, Document&);
 
     // FIXME: svgAttributeChanged missing.
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGViewElement)
         DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)

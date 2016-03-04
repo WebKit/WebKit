@@ -42,12 +42,12 @@ namespace WebCore {
 class DeviceMotionClientIOS : public DeviceMotionClient {
 public:
     DeviceMotionClientIOS();
-    virtual ~DeviceMotionClientIOS() override;
-    virtual void setController(DeviceMotionController*) override;
-    virtual void startUpdating() override;
-    virtual void stopUpdating() override;
-    virtual DeviceMotionData* lastMotion() const override;
-    virtual void deviceMotionControllerDestroyed() override;
+    ~DeviceMotionClientIOS() override;
+    void setController(DeviceMotionController*) override;
+    void startUpdating() override;
+    void stopUpdating() override;
+    DeviceMotionData* lastMotion() const override;
+    void deviceMotionControllerDestroyed() override;
 
     void motionChanged(double, double, double, double, double, double, double, double, double);
 

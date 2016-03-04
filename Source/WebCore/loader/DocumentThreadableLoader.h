@@ -55,15 +55,15 @@ namespace WebCore {
 
         virtual ~DocumentThreadableLoader();
 
-        virtual void cancel() override;
+        void cancel() override;
         virtual void setDefersLoading(bool);
 
         using RefCounted<DocumentThreadableLoader>::ref;
         using RefCounted<DocumentThreadableLoader>::deref;
 
     protected:
-        virtual void refThreadableLoader() override { ref(); }
-        virtual void derefThreadableLoader() override { deref(); }
+        void refThreadableLoader() override { ref(); }
+        void derefThreadableLoader() override { deref(); }
 
     private:
         enum BlockingBehavior {
@@ -76,11 +76,11 @@ namespace WebCore {
         void clearResource();
 
         // CachedRawResourceClient
-        virtual void dataSent(CachedResource*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
-        virtual void responseReceived(CachedResource*, const ResourceResponse&) override;
-        virtual void dataReceived(CachedResource*, const char* data, int dataLength) override;
-        virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) override;
-        virtual void notifyFinished(CachedResource*) override;
+        void dataSent(CachedResource*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
+        void responseReceived(CachedResource*, const ResourceResponse&) override;
+        void dataReceived(CachedResource*, const char* data, int dataLength) override;
+        void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) override;
+        void notifyFinished(CachedResource*) override;
 
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
         void didReceiveData(unsigned long identifier, const char* data, int dataLength);

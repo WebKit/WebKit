@@ -42,13 +42,13 @@ public:
     static void setLogToSystemConsole(bool);
 
 protected:
-    virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
-    virtual void count(JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
-    virtual void profile(JSC::ExecState*, const String& title) override;
-    virtual void profileEnd(JSC::ExecState*, const String& title) override;
-    virtual void time(JSC::ExecState*, const String& title) override;
-    virtual void timeEnd(JSC::ExecState*, const String& title) override;
-    virtual void timeStamp(JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
+    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
+    void count(JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
+    void profile(JSC::ExecState*, const String& title) override;
+    void profileEnd(JSC::ExecState*, const String& title) override;
+    void time(JSC::ExecState*, const String& title) override;
+    void timeEnd(JSC::ExecState*, const String& title) override;
+    void timeStamp(JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
 
 private:
     void warnUnimplemented(const String& method);

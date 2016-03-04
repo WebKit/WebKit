@@ -40,7 +40,7 @@ public:
 
     virtual ~IDBCursorWithValue();
 
-    virtual bool isKeyCursor() const override final { return false; }
+    bool isKeyCursor() const override final { return false; }
 
 private:
     IDBCursorWithValue(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);

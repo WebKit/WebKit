@@ -197,7 +197,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
     
     size_t m_restoreIndex { 0 };
 };
@@ -215,7 +215,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 };
 
 class Translate : public Item {
@@ -236,7 +236,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     float m_x;
     float m_y;
@@ -258,7 +258,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     float m_angle; // In radians.
 };
@@ -279,7 +279,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     FloatSize m_size;
 };
@@ -296,7 +296,7 @@ public:
 private:
     ConcatenateCTM(const AffineTransform&);
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     AffineTransform m_transform;
 };
@@ -324,7 +324,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     GraphicsContextStateChange m_state;
 };
@@ -345,7 +345,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     LineCap m_lineCap;
 };
@@ -368,7 +368,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     DashArray m_dashArray;
     float m_dashOffset;
@@ -390,7 +390,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     LineJoin m_lineJoin;
 };
@@ -411,7 +411,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     float m_miterLimit;
 };
@@ -429,7 +429,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 };
 
 // FIXME: treat as DrawingItem?
@@ -449,7 +449,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     FloatRect m_rect;
 };
@@ -470,7 +470,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     FloatRect m_rect;
 };
@@ -491,7 +491,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     const Path m_path;
 };
@@ -514,7 +514,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     const Path m_path;
     WindRule m_windRule;
@@ -541,9 +541,9 @@ private:
 
     void computeBounds();
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     GlyphBuffer generateGlyphBuffer() const;
 
@@ -570,9 +570,9 @@ public:
 private:
     DrawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&);
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
 
     mutable Ref<Image> m_image; // FIXME: Drawing images can cause their animations to progress. This shouldn't have to be mutable.
     FloatRect m_destination;
@@ -597,9 +597,9 @@ public:
 private:
     DrawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions&);
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
 
     mutable Ref<Image> m_image; // FIXME: Drawing images can cause their animations to progress. This shouldn't have to be mutable.
     FloatRect m_destination;
@@ -623,9 +623,9 @@ public:
 private:
     DrawTiledScaledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions&);
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
 
     mutable Ref<Image> m_image; // FIXME: Drawing images can cause their animations to progress. This shouldn't have to be mutable.
     FloatRect m_destination;
@@ -650,9 +650,9 @@ public:
 private:
     DrawNativeImage(PassNativeImagePtr, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientation);
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
 
 #if USE(CG)
     RetainPtr<CGImageRef> m_imagePtr;
@@ -685,9 +685,9 @@ public:
 private:
     DrawPattern(Image&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
 
     mutable Ref<Image> m_image; // FIXME: Drawing images can cause their animations to progress. This shouldn't have to be mutable.
     AffineTransform m_patternTransform;
@@ -716,7 +716,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     float m_opacity;
 };
@@ -734,7 +734,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 };
 
 class DrawRect : public DrawingItem {
@@ -755,8 +755,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
     float m_borderThickness;
@@ -780,8 +780,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     FloatPoint m_point1;
     FloatPoint m_point2;
@@ -814,9 +814,9 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     FloatPoint m_blockLocation;
     FloatSize m_localAnchor;
@@ -845,9 +845,9 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     FloatPoint m_point;
     float m_width;
@@ -870,8 +870,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
 };
@@ -892,9 +892,9 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_path.fastBoundingRect(); }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_path.fastBoundingRect(); }
 
     const Path m_path;
 };
@@ -921,9 +921,9 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     const Path m_path;
     int m_width;
@@ -953,9 +953,9 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     Vector<FloatRect> m_rects;
     int m_width;
@@ -979,8 +979,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
 };
@@ -1004,8 +1004,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
     Color m_color;
@@ -1028,8 +1028,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
     mutable Ref<Gradient> m_gradient; // FIXME: Make this not mutable
@@ -1057,8 +1057,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
     Color m_color;
@@ -1086,8 +1086,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect.rect(); }
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect.rect(); }
 
     FloatRoundedRect m_rect;
     Color m_color;
@@ -1114,8 +1114,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
     FloatRoundedRect m_roundedHoleRect;
@@ -1138,8 +1138,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_path.fastBoundingRect(); }
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_path.fastBoundingRect(); }
 
     const Path m_path;
 };
@@ -1160,9 +1160,9 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
 };
@@ -1185,8 +1185,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     FloatRect m_rect;
     float m_lineWidth;
@@ -1208,8 +1208,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     const Path m_path;
     FloatPoint m_blockLocation;
@@ -1231,8 +1231,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     FloatRect m_rect;
 };
@@ -1253,8 +1253,8 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
 };
@@ -1273,7 +1273,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 };
 
 class ApplyFillPattern : public Item {
@@ -1289,7 +1289,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 };
 #endif
 
@@ -1309,7 +1309,7 @@ private:
     {
     }
 
-    virtual void apply(GraphicsContext&) const override;
+    void apply(GraphicsContext&) const override;
 
     float m_scaleFactor;
 };

@@ -43,11 +43,11 @@ public:
     void updateOperatorProperties();
 
 protected:
-    virtual void layout() override;
+    void layout() override;
 
 private:
-    virtual bool isRenderMathMLRow() const override final { return true; }
-    virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLRow (anonymous)" : "RenderMathMLRow"; }
+    bool isRenderMathMLRow() const override final { return true; }
+    const char* renderName() const override { return isAnonymous() ? "RenderMathMLRow (anonymous)" : "RenderMathMLRow"; }
 };
 
 } // namespace WebCore

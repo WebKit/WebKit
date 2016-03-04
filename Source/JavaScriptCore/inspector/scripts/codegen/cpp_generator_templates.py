@@ -101,7 +101,7 @@ protected:
     """${classAndExportMacro} ${domainName}BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<${domainName}BackendDispatcher> create(BackendDispatcher&, ${domainName}BackendDispatcherHandler*);
-    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 ${commandDeclarations}
 private:
     ${domainName}BackendDispatcher(BackendDispatcher&, ${domainName}BackendDispatcherHandler*);

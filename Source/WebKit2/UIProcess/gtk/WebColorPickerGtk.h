@@ -45,8 +45,8 @@ public:
     static Ref<WebColorPickerGtk> create(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&);
     virtual ~WebColorPickerGtk();
 
-    virtual void endPicker() override;
-    virtual void showColorPicker(const WebCore::Color&) override;
+    void endPicker() override;
+    void showColorPicker(const WebCore::Color&) override;
 
     void cancel();
 

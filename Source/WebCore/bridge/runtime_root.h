@@ -82,7 +82,7 @@ private:
     RootObject(const void* nativeHandle, JSGlobalObject*);
 
     // WeakHandleOwner
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
+    void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
 
     bool m_isValid;
     

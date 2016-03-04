@@ -51,10 +51,10 @@ public:
     void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::State);
 
     // WebMediaSessionManagerClient
-    virtual void setPlaybackTarget(uint64_t, Ref<WebCore::MediaPlaybackTarget>&&) override;
-    virtual void externalOutputDeviceAvailableDidChange(uint64_t, bool) override;
-    virtual void setShouldPlayToPlaybackTarget(uint64_t, bool) override;
-    virtual void customPlaybackActionSelected(uint64_t) override;
+    void setPlaybackTarget(uint64_t, Ref<WebCore::MediaPlaybackTarget>&&) override;
+    void externalOutputDeviceAvailableDidChange(uint64_t, bool) override;
+    void setShouldPlayToPlaybackTarget(uint64_t, bool) override;
+    void customPlaybackActionSelected(uint64_t) override;
 
     void invalidate();
 

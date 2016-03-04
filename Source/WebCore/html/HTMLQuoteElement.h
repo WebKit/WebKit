@@ -36,7 +36,7 @@ public:
 private:
     HTMLQuoteElement(const QualifiedName&, Document&);
     
-    virtual bool isURLAttribute(const Attribute&) const override;
+    bool isURLAttribute(const Attribute&) const override;
 };
 
 } //namespace

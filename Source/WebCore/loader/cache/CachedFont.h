@@ -47,7 +47,7 @@ public:
     virtual ~CachedFont();
 
     void beginLoadIfNeeded(CachedResourceLoader&);
-    virtual bool stillNeedsLoad() const override { return !m_loadInitiated; }
+    bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
     virtual bool ensureCustomFontData(const AtomicString& remoteURI);
 
@@ -59,15 +59,15 @@ protected:
     bool ensureCustomFontData(SharedBuffer* data);
 
 private:
-    virtual void checkNotify() override;
-    virtual bool mayTryReplaceEncodedData() const override;
+    void checkNotify() override;
+    bool mayTryReplaceEncodedData() const override;
 
-    virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;
+    void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;
 
-    virtual void didAddClient(CachedResourceClient*) override;
-    virtual void finishLoading(SharedBuffer*) override;
+    void didAddClient(CachedResourceClient*) override;
+    void finishLoading(SharedBuffer*) override;
 
-    virtual void allClientsRemoved() override;
+    void allClientsRemoved() override;
 
     std::unique_ptr<FontCustomPlatformData> m_fontCustomPlatformData;
     bool m_loadInitiated;

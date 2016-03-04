@@ -49,7 +49,7 @@ protected:
     bool hasButtons(Scrollbar&) override { return true; }
     bool hasThumb(Scrollbar&) override;
 
-    virtual ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
+    ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
     bool shouldSnapBackToDragOrigin(Scrollbar&, const PlatformMouseEvent&) override;
 
     void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;

@@ -40,17 +40,17 @@ class ScrollingTreeFrameScrollingNode : public ScrollingTreeScrollingNode {
 public:
     virtual ~ScrollingTreeFrameScrollingNode();
 
-    virtual void updateBeforeChildren(const ScrollingStateNode&) override;
+    void updateBeforeChildren(const ScrollingStateNode&) override;
     
     // FIXME: We should implement this when we support ScrollingTreeScrollingNodes as children.
-    virtual void updateLayersAfterAncestorChange(const ScrollingTreeNode& /*changedNode*/, const FloatRect& /*fixedPositionRect*/, const FloatSize& /*cumulativeDelta*/) override { }
+    void updateLayersAfterAncestorChange(const ScrollingTreeNode& /*changedNode*/, const FloatRect& /*fixedPositionRect*/, const FloatSize& /*cumulativeDelta*/) override { }
 
-    virtual void handleWheelEvent(const PlatformWheelEvent&) override = 0;
-    virtual void setScrollPosition(const FloatPoint&) override;
-    virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override = 0;
+    void handleWheelEvent(const PlatformWheelEvent&) override = 0;
+    void setScrollPosition(const FloatPoint&) override;
+    void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override = 0;
 
-    virtual void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override = 0;
-    virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) override { }
+    void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override = 0;
+    void updateLayersAfterDelegatedScroll(const FloatPoint&) override { }
 
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     bool shouldUpdateScrollLayerPositionSynchronously() const { return m_synchronousScrollingReasons; }

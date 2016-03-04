@@ -50,9 +50,9 @@ public:
 
 private:
     WebQuickLookHandleClient(const WebCore::QuickLookHandle&, uint64_t pageID);
-    virtual void didReceiveDataArray(CFArrayRef) override;
-    virtual void didFinishLoading() override;
-    virtual void didFail() override;
+    void didReceiveDataArray(CFArrayRef) override;
+    void didFinishLoading() override;
+    void didFail() override;
 
     const String m_fileName;
     const String m_uti;

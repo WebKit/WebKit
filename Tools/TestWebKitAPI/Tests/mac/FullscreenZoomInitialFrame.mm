@@ -73,15 +73,15 @@ public:
     template <typename View> void runTest(View);
 
     // WebKitAgnosticTest
-    virtual NSURL *url() const override { return [[NSBundle mainBundle] URLForResource:@"FullscreenZoomInitialFrame" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
-    virtual void didLoadURL(WebView *webView) override { runTest(webView); }
-    virtual void didLoadURL(WKView *wkView) override { runTest(wkView); }
+    NSURL *url() const override { return [[NSBundle mainBundle] URLForResource:@"FullscreenZoomInitialFrame" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+    void didLoadURL(WebView *webView) override { runTest(webView); }
+    void didLoadURL(WKView *wkView) override { runTest(wkView); }
 
     // Setup and teardown the UIDelegate which gets alert() signals from the page.
-    virtual void initializeView(WebView *) override;
-    virtual void initializeView(WKView *) override;
-    virtual void teardownView(WebView *) override;
-    virtual void teardownView(WKView *) override;
+    void initializeView(WebView *) override;
+    void initializeView(WKView *) override;
+    void teardownView(WebView *) override;
+    void teardownView(WKView *) override;
 
     void setPageScale(WebView *, double);
     void setPageScale(WKView *, double);

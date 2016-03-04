@@ -61,7 +61,7 @@ public:
     SVGSVGElement* ownerSVGElement() const;
     SVGElement* viewportElement() const;
 
-    virtual String title() const override;
+    String title() const override;
     static bool isAnimatableCSSProperty(const QualifiedName&);
     bool isPresentationAttributeWithSVGDOM(const QualifiedName&);
     bool isKnownAttribute(const QualifiedName&);
@@ -119,7 +119,7 @@ public:
     void synchronizeAnimatedSVGAttribute(const QualifiedName&) const;
     static void synchronizeAllAnimatedSVGAttribute(SVGElement*);
  
-    virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
+    RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
 
     static void synchronizeRequiredFeatures(SVGElement* contextElement);
     static void synchronizeRequiredExtensions(SVGElement* contextElement);
@@ -140,16 +140,16 @@ public:
 
     virtual bool haveLoadedRequiredResources();
 
-    virtual bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
-    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
+    bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
+    bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
     bool hasFocusEventListeners() const;
 
 #if ENABLE(CSS_REGIONS)
-    virtual bool shouldMoveToFlowThread(const RenderStyle&) const override;
+    bool shouldMoveToFlowThread(const RenderStyle&) const override;
 #endif
 
     bool hasTagName(const SVGQualifiedName& name) const { return hasLocalName(name.localName()); }
-    virtual short tabIndex() const override;
+    short tabIndex() const override;
 
     void callClearTarget() { clearTarget(); }
 
@@ -159,26 +159,26 @@ protected:
     SVGElement(const QualifiedName&, Document&);
     virtual ~SVGElement();
 
-    virtual bool isMouseFocusable() const override;
-    virtual bool supportsFocus() const override { return false; }
+    bool isMouseFocusable() const override;
+    bool supportsFocus() const override { return false; }
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual void finishParsingChildren() override;
-    virtual void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) override;
-    virtual bool childShouldCreateRenderer(const Node&) const override;
+    void finishParsingChildren() override;
+    void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) override;
+    bool childShouldCreateRenderer(const Node&) const override;
 
     SVGElementRareData& ensureSVGRareData();
 
     void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomicString&);
     static CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&);
 
-    virtual bool isPresentationAttribute(const QualifiedName&) const override;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
-    virtual void childrenChanged(const ChildChange&) override;
+    bool isPresentationAttribute(const QualifiedName&) const override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
+    void childrenChanged(const ChildChange&) override;
     virtual bool selfHasRelativeLengths() const { return false; }
     void updateRelativeLengthsInformation() { updateRelativeLengthsInformation(selfHasRelativeLengths(), this); }
     void updateRelativeLengthsInformation(bool hasRelativeLengths, SVGElement*);
@@ -186,15 +186,15 @@ protected:
     class InstanceInvalidationGuard;
 
 private:
-    virtual RenderStyle* computedStyle(PseudoId = NOPSEUDO) override final;
-    virtual bool willRecalcStyle(Style::Change) override;
+    RenderStyle* computedStyle(PseudoId = NOPSEUDO) override final;
+    bool willRecalcStyle(Style::Change) override;
 
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 
     virtual void clearTarget() { }
 
     void buildPendingResourcesIfNeeded();
-    virtual void accessKeyAction(bool sendMouseEvents) override;
+    void accessKeyAction(bool sendMouseEvents) override;
 
 #ifndef NDEBUG
     virtual bool filterOutAnimatableAttribute(const QualifiedName&) const;

@@ -42,12 +42,12 @@ protected:
     SVGPolyElement(const QualifiedName&, Document&);
 
 private:
-    virtual bool isValid() const override { return SVGTests::isValid(); }
+    bool isValid() const override { return SVGTests::isValid(); }
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override; 
-    virtual void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override; 
+    void svgAttributeChanged(const QualifiedName&) override;
 
-    virtual bool supportsMarkers() const override { return true; }
+    bool supportsMarkers() const override { return true; }
 
     // Custom 'points' property
     static void synchronizePoints(SVGElement* contextElement);

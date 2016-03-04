@@ -108,7 +108,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
         }
 
     private:
-        virtual void didNavigateWithNavigationData(WebProcessPool& processPool, WebPageProxy& page, const WebNavigationDataStore& navigationDataStore, WebFrameProxy& frame) override
+        void didNavigateWithNavigationData(WebProcessPool& processPool, WebPageProxy& page, const WebNavigationDataStore& navigationDataStore, WebFrameProxy& frame) override
         {
             if (!m_client.didNavigateWithNavigationData)
                 return;
@@ -117,7 +117,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             m_client.didNavigateWithNavigationData(toAPI(&processPool), toAPI(&page), toAPI(navigationData.get()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void didPerformClientRedirect(WebProcessPool& processPool, WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebFrameProxy& frame) override
+        void didPerformClientRedirect(WebProcessPool& processPool, WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebFrameProxy& frame) override
         {
             if (!m_client.didPerformClientRedirect)
                 return;
@@ -125,7 +125,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             m_client.didPerformClientRedirect(toAPI(&processPool), toAPI(&page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void didPerformServerRedirect(WebProcessPool& processPool, WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebFrameProxy& frame) override
+        void didPerformServerRedirect(WebProcessPool& processPool, WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebFrameProxy& frame) override
         {
             if (!m_client.didPerformServerRedirect)
                 return;
@@ -133,7 +133,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             m_client.didPerformServerRedirect(toAPI(&processPool), toAPI(&page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void didUpdateHistoryTitle(WebProcessPool& processPool, WebPageProxy& page, const String& title, const String& url, WebFrameProxy& frame) override
+        void didUpdateHistoryTitle(WebProcessPool& processPool, WebPageProxy& page, const String& title, const String& url, WebFrameProxy& frame) override
         {
             if (!m_client.didUpdateHistoryTitle)
                 return;
@@ -141,7 +141,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             m_client.didUpdateHistoryTitle(toAPI(&processPool), toAPI(&page), toAPI(title.impl()), toURLRef(url.impl()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void populateVisitedLinks(WebProcessPool& processPool) override
+        void populateVisitedLinks(WebProcessPool& processPool) override
         {
             if (!m_client.populateVisitedLinks)
                 return;
@@ -149,7 +149,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             m_client.populateVisitedLinks(toAPI(&processPool), m_client.base.clientInfo);
         }
 
-        virtual bool addsVisitedLinks() const override
+        bool addsVisitedLinks() const override
         {
             return m_client.populateVisitedLinks;
         }
@@ -175,7 +175,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             initialize(client);
         }
     private:
-        virtual void didStart(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
+        void didStart(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
         {
             if (!m_client.didStart)
                 return;
@@ -183,7 +183,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.didStart(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
         }
 
-        virtual void didReceiveAuthenticationChallenge(WebProcessPool* processPool, DownloadProxy* downloadProxy, AuthenticationChallengeProxy* authenticationChallengeProxy) override
+        void didReceiveAuthenticationChallenge(WebProcessPool* processPool, DownloadProxy* downloadProxy, AuthenticationChallengeProxy* authenticationChallengeProxy) override
         {
             if (!m_client.didReceiveAuthenticationChallenge)
                 return;
@@ -191,7 +191,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.didReceiveAuthenticationChallenge(toAPI(processPool), toAPI(downloadProxy), toAPI(authenticationChallengeProxy), m_client.base.clientInfo);
         }
 
-        virtual void didReceiveResponse(WebProcessPool* processPool, DownloadProxy* downloadProxy, const ResourceResponse& response) override
+        void didReceiveResponse(WebProcessPool* processPool, DownloadProxy* downloadProxy, const ResourceResponse& response) override
         {
             if (!m_client.didReceiveResponse)
                 return;
@@ -199,7 +199,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.didReceiveResponse(toAPI(processPool), toAPI(downloadProxy), toAPI(API::URLResponse::create(response).ptr()), m_client.base.clientInfo);
         }
 
-        virtual void didReceiveData(WebProcessPool* processPool, DownloadProxy* downloadProxy, uint64_t length) override
+        void didReceiveData(WebProcessPool* processPool, DownloadProxy* downloadProxy, uint64_t length) override
         {
             if (!m_client.didReceiveData)
                 return;
@@ -207,7 +207,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.didReceiveData(toAPI(processPool), toAPI(downloadProxy), length, m_client.base.clientInfo);
         }
 
-        virtual bool shouldDecodeSourceDataOfMIMEType(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& mimeType) override
+        bool shouldDecodeSourceDataOfMIMEType(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& mimeType) override
         {
             if (!m_client.shouldDecodeSourceDataOfMIMEType)
                 return true;
@@ -215,7 +215,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             return m_client.shouldDecodeSourceDataOfMIMEType(toAPI(processPool), toAPI(downloadProxy), toAPI(mimeType.impl()), m_client.base.clientInfo);
         }
 
-        virtual String decideDestinationWithSuggestedFilename(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwrite) override
+        String decideDestinationWithSuggestedFilename(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwrite) override
         {
             if (!m_client.decideDestinationWithSuggestedFilename)
                 return String();
@@ -224,7 +224,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             return toWTFString(destination.get());
         }
 
-        virtual void didCreateDestination(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& path) override
+        void didCreateDestination(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& path) override
         {
             if (!m_client.didCreateDestination)
                 return;
@@ -232,7 +232,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.didCreateDestination(toAPI(processPool), toAPI(downloadProxy), toAPI(path.impl()), m_client.base.clientInfo);
         }
 
-        virtual void didFinish(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
+        void didFinish(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
         {
             if (!m_client.didFinish)
                 return;
@@ -240,7 +240,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.didFinish(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
         }
 
-        virtual void didFail(WebProcessPool* processPool, DownloadProxy* downloadProxy, const ResourceError& error) override
+        void didFail(WebProcessPool* processPool, DownloadProxy* downloadProxy, const ResourceError& error) override
         {
             if (!m_client.didFail)
                 return;
@@ -248,7 +248,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.didFail(toAPI(processPool), toAPI(downloadProxy), toAPI(error), m_client.base.clientInfo);
         }
         
-        virtual void didCancel(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
+        void didCancel(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
         {
             if (!m_client.didCancel)
                 return;
@@ -256,7 +256,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.didCancel(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
         }
         
-        virtual void processDidCrash(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
+        void processDidCrash(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
         {
             if (!m_client.processDidCrash)
                 return;

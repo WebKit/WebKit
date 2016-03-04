@@ -70,12 +70,12 @@ public:
 
 private:
     // WebPageOverlay::Client.
-    virtual void pageOverlayDestroyed(WebPageOverlay&) override
+    void pageOverlayDestroyed(WebPageOverlay&) override
     {
         delete this;
     }
 
-    virtual void willMoveToPage(WebPageOverlay& pageOverlay, WebPage* page) override
+    void willMoveToPage(WebPageOverlay& pageOverlay, WebPage* page) override
     {
         if (!m_client.willMoveToPage)
             return;
@@ -83,7 +83,7 @@ private:
         m_client.willMoveToPage(toAPI(&pageOverlay), toAPI(page), m_client.base.clientInfo);
     }
     
-    virtual void didMoveToPage(WebPageOverlay& pageOverlay, WebPage* page) override
+    void didMoveToPage(WebPageOverlay& pageOverlay, WebPage* page) override
     {
         if (!m_client.didMoveToPage)
             return;
@@ -91,7 +91,7 @@ private:
         m_client.didMoveToPage(toAPI(&pageOverlay), toAPI(page), m_client.base.clientInfo);
     }
 
-    virtual void drawRect(WebPageOverlay& pageOverlay, GraphicsContext& graphicsContext, const IntRect& dirtyRect) override
+    void drawRect(WebPageOverlay& pageOverlay, GraphicsContext& graphicsContext, const IntRect& dirtyRect) override
     {
         if (!m_client.drawRect)
             return;
@@ -99,7 +99,7 @@ private:
         m_client.drawRect(toAPI(&pageOverlay), graphicsContext.platformContext(), toAPI(dirtyRect), m_client.base.clientInfo);
     }
     
-    virtual bool mouseEvent(WebPageOverlay& pageOverlay, const PlatformMouseEvent& event) override
+    bool mouseEvent(WebPageOverlay& pageOverlay, const PlatformMouseEvent& event) override
     {
         switch (event.type()) {
         case PlatformMouseEvent::Type::MousePressed: {
@@ -135,7 +135,7 @@ private:
     }
 
 #if PLATFORM(MAC)
-    virtual DDActionContext *actionContextForResultAtPoint(WebPageOverlay& pageOverlay, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle) override
+    DDActionContext *actionContextForResultAtPoint(WebPageOverlay& pageOverlay, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle) override
     {
         if (m_client.actionContextForResultAtPoint) {
             WKBundleRangeHandleRef apiRange = nullptr;
@@ -150,7 +150,7 @@ private:
         return nil;
     }
 
-    virtual void dataDetectorsDidPresentUI(WebPageOverlay& pageOverlay) override
+    void dataDetectorsDidPresentUI(WebPageOverlay& pageOverlay) override
     {
         if (!m_client.dataDetectorsDidPresentUI)
             return;
@@ -158,7 +158,7 @@ private:
         m_client.dataDetectorsDidPresentUI(toAPI(&pageOverlay), m_client.base.clientInfo);
     }
 
-    virtual void dataDetectorsDidChangeUI(WebPageOverlay& pageOverlay) override
+    void dataDetectorsDidChangeUI(WebPageOverlay& pageOverlay) override
     {
         if (!m_client.dataDetectorsDidChangeUI)
             return;
@@ -166,7 +166,7 @@ private:
         m_client.dataDetectorsDidChangeUI(toAPI(&pageOverlay), m_client.base.clientInfo);
     }
 
-    virtual void dataDetectorsDidHideUI(WebPageOverlay& pageOverlay) override
+    void dataDetectorsDidHideUI(WebPageOverlay& pageOverlay) override
     {
         if (!m_client.dataDetectorsDidHideUI)
             return;
@@ -175,7 +175,7 @@ private:
     }
 #endif // PLATFORM(MAC)
 
-    virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay& pageOverlay, String attribute, WebCore::FloatPoint parameter, String& value) override
+    bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay& pageOverlay, String attribute, WebCore::FloatPoint parameter, String& value) override
     {
         if (!m_accessibilityClient.client().copyAccessibilityAttributeValue)
             return false;
@@ -186,7 +186,7 @@ private:
         return true;
     }
 
-    virtual bool copyAccessibilityAttributeBoolValueForPoint(WebPageOverlay& pageOverlay, String attribute, WebCore::FloatPoint parameter, bool& value) override
+    bool copyAccessibilityAttributeBoolValueForPoint(WebPageOverlay& pageOverlay, String attribute, WebCore::FloatPoint parameter, bool& value) override
     {
         if (!m_accessibilityClient.client().copyAccessibilityAttributeValue)
             return false;
@@ -197,7 +197,7 @@ private:
         return true;
     }
 
-    virtual Vector<String> copyAccessibilityAttributeNames(WebPageOverlay& pageOverlay, bool paramerizedNames) override
+    Vector<String> copyAccessibilityAttributeNames(WebPageOverlay& pageOverlay, bool paramerizedNames) override
     {
         Vector<String> names;
         if (!m_accessibilityClient.client().copyAccessibilityAttributeNames)

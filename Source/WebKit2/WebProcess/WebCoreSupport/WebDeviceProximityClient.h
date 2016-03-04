@@ -42,10 +42,10 @@ public:
     void startUpdating();
     void stopUpdating();
 
-    virtual bool hasLastData() override;
-    virtual double value() override { return m_value; }
-    virtual double min() override { return m_min; }
-    virtual double max() override { return m_max; }
+    bool hasLastData() override;
+    double value() override { return m_value; }
+    double min() override { return m_min; }
+    double max() override { return m_max; }
 
 private:
     WebPage* m_page;

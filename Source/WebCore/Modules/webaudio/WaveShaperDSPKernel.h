@@ -43,10 +43,10 @@ public:
     explicit WaveShaperDSPKernel(WaveShaperProcessor*);
 
     // AudioDSPKernel
-    virtual void process(const float* source, float* dest, size_t framesToProcess) override;
-    virtual void reset() override;
-    virtual double tailTime() const override { return 0; }
-    virtual double latencyTime() const override;
+    void process(const float* source, float* dest, size_t framesToProcess) override;
+    void reset() override;
+    double tailTime() const override { return 0; }
+    double latencyTime() const override;
 
     // Oversampling requires more resources, so let's only allocate them if needed.
     void lazyInitializeOversampling();

@@ -57,8 +57,8 @@ public:
     void insertDTMF(const String& tones, long duration, long interToneGap, ExceptionCode&);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const override { return RTCDTMFSenderEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
+    EventTargetInterface eventTargetInterface() const override { return RTCDTMFSenderEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     using RefCounted<RTCDTMFSender>::ref;
     using RefCounted<RTCDTMFSender>::deref;
@@ -75,11 +75,11 @@ private:
     void scheduledEventTimerFired();
 
     // EventTarget
-    virtual void refEventTarget() override { ref(); }
-    virtual void derefEventTarget() override { deref(); }
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
 
     // RTCDTMFSenderHandlerClient
-    virtual void didPlayTone(const String&) override;
+    void didPlayTone(const String&) override;
 
     RefPtr<MediaStreamTrack> m_track;
     long m_duration;

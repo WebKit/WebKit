@@ -55,23 +55,23 @@ class JS_EXPORT_PRIVATE InspectorRuntimeAgent : public InspectorAgentBase, publi
 public:
     virtual ~InspectorRuntimeAgent();
 
-    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
+    void willDestroyFrontendAndBackend(DisconnectReason) override;
 
-    virtual void enable(ErrorString&) override { m_enabled = true; }
-    virtual void disable(ErrorString&) override { m_enabled = false; }
-    virtual void parse(ErrorString&, const String& expression, Inspector::Protocol::Runtime::SyntaxErrorType* result, Inspector::Protocol::OptOutput<String>* message, RefPtr<Inspector::Protocol::Runtime::ErrorRange>&) override final;
-    virtual void evaluate(ErrorString&, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex) override final;
-    virtual void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const Inspector::InspectorArray* optionalArguments, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) override final;
-    virtual void releaseObject(ErrorString&, const ErrorString& objectId) override final;
-    virtual void getProperties(ErrorString&, const String& objectId, const bool* ownProperties, const bool* generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) override final;
-    virtual void getDisplayableProperties(ErrorString&, const String& objectId, const bool* generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) override final;
-    virtual void getCollectionEntries(ErrorString&, const String& objectId, const String* objectGroup, const int* startIndex, const int* numberToFetch, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::CollectionEntry>>& entries) override final;
-    virtual void saveResult(ErrorString&, const Inspector::InspectorObject& callArgument, const int* executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex) override final;
-    virtual void releaseObjectGroup(ErrorString&, const String& objectGroup) override final;
-    virtual void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const Inspector::InspectorArray& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>&) override;
-    virtual void enableTypeProfiler(ErrorString&) override;
-    virtual void disableTypeProfiler(ErrorString&) override;
-    virtual void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
+    void enable(ErrorString&) override { m_enabled = true; }
+    void disable(ErrorString&) override { m_enabled = false; }
+    void parse(ErrorString&, const String& expression, Inspector::Protocol::Runtime::SyntaxErrorType* result, Inspector::Protocol::OptOutput<String>* message, RefPtr<Inspector::Protocol::Runtime::ErrorRange>&) override final;
+    void evaluate(ErrorString&, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex) override final;
+    void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const Inspector::InspectorArray* optionalArguments, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) override final;
+    void releaseObject(ErrorString&, const ErrorString& objectId) override final;
+    void getProperties(ErrorString&, const String& objectId, const bool* ownProperties, const bool* generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) override final;
+    void getDisplayableProperties(ErrorString&, const String& objectId, const bool* generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) override final;
+    void getCollectionEntries(ErrorString&, const String& objectId, const String* objectGroup, const int* startIndex, const int* numberToFetch, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::CollectionEntry>>& entries) override final;
+    void saveResult(ErrorString&, const Inspector::InspectorObject& callArgument, const int* executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex) override final;
+    void releaseObjectGroup(ErrorString&, const String& objectGroup) override final;
+    void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const Inspector::InspectorArray& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>&) override;
+    void enableTypeProfiler(ErrorString&) override;
+    void disableTypeProfiler(ErrorString&) override;
+    void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
 
     bool enabled() const { return m_enabled; }
 

@@ -62,9 +62,9 @@ public:
     RenderTableRow* firstRow() const;
     RenderTableRow* lastRow() const;
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
+    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
 
-    virtual Optional<int> firstLineBaseline() const override;
+    Optional<int> firstLineBaseline() const override;
 
     void addCell(RenderTableCell*, RenderTableRow* row);
 
@@ -144,12 +144,12 @@ public:
     LayoutUnit distributeExtraLogicalHeightToRows(LayoutUnit extraLogicalHeight);
 
     static RenderTableSection* createAnonymousWithParentRenderer(const RenderObject*);
-    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override { return createAnonymousWithParentRenderer(parent); }
+    RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override { return createAnonymousWithParentRenderer(parent); }
     
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    void paint(PaintInfo&, const LayoutPoint&) override;
 
 protected:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
     enum ShouldIncludeAllIntersectingCells {
@@ -157,18 +157,18 @@ private:
         DoNotIncludeAllIntersectingCells
     };
 
-    virtual const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
+    const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
 
-    virtual bool canHaveChildren() const override { return true; }
+    bool canHaveChildren() const override { return true; }
 
-    virtual bool isTableSection() const override { return true; }
+    bool isTableSection() const override { return true; }
 
-    virtual void willBeRemovedFromTree() override;
+    void willBeRemovedFromTree() override;
 
-    virtual void layout() override;
+    void layout() override;
 
     void paintCell(RenderTableCell*, PaintInfo&, const LayoutPoint&);
-    virtual void paintObject(PaintInfo&, const LayoutPoint&) override;
+    void paintObject(PaintInfo&, const LayoutPoint&) override;
     void paintRowGroupBorder(const PaintInfo&, bool antialias, LayoutRect, BoxSide, CSSPropertyID borderColor, EBorderStyle, EBorderStyle tableBorderStyle);
     void paintRowGroupBorderIfRequired(const PaintInfo&, const LayoutPoint& paintOffset, unsigned row, unsigned col, BoxSide, RenderTableCell* = 0);
     LayoutUnit offsetLeftForRowGroupBorder(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
@@ -177,9 +177,9 @@ private:
     LayoutUnit verticalRowGroupBorderHeight(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
     LayoutUnit horizontalRowGroupBorderWidth(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row, unsigned column);
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
+    void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     void ensureRows(unsigned);
 

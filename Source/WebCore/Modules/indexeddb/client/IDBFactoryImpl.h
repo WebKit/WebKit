@@ -40,13 +40,13 @@ class IDBFactory : public WebCore::IDBFactory {
 public:
     static Ref<IDBFactory> create(IDBConnectionToServer&);
 
-    virtual RefPtr<WebCore::IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&) override final;
+    RefPtr<WebCore::IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&) override final;
 
-    virtual RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
+    RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
+    RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&) override final;
+    RefPtr<WebCore::IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
 
-    virtual short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCodeWithMessage&) override final;
+    short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCodeWithMessage&) override final;
 
 private:
     IDBFactory(IDBConnectionToServer&);

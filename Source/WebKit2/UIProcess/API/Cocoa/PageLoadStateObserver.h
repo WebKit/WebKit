@@ -39,71 +39,71 @@ public:
     }
 
 private:
-    virtual void willChangeIsLoading() override
+    void willChangeIsLoading() override
     {
         [m_object willChangeValueForKey:@"loading"];
     }
 
-    virtual void didChangeIsLoading() override
+    void didChangeIsLoading() override
     {
         [m_object didChangeValueForKey:@"loading"];
     }
 
-    virtual void willChangeTitle() override
+    void willChangeTitle() override
     {
         [m_object willChangeValueForKey:@"title"];
     }
 
-    virtual void didChangeTitle() override
+    void didChangeTitle() override
     {
         [m_object didChangeValueForKey:@"title"];
     }
 
-    virtual void willChangeActiveURL() override
+    void willChangeActiveURL() override
     {
         [m_object willChangeValueForKey:m_activeURLKey.get()];
     }
 
-    virtual void didChangeActiveURL() override
+    void didChangeActiveURL() override
     {
         [m_object didChangeValueForKey:m_activeURLKey.get()];
     }
 
-    virtual void willChangeHasOnlySecureContent() override
+    void willChangeHasOnlySecureContent() override
     {
         [m_object willChangeValueForKey:@"hasOnlySecureContent"];
     }
 
-    virtual void didChangeHasOnlySecureContent() override
+    void didChangeHasOnlySecureContent() override
     {
         [m_object didChangeValueForKey:@"hasOnlySecureContent"];
     }
 
-    virtual void willChangeEstimatedProgress() override
+    void willChangeEstimatedProgress() override
     {
         [m_object willChangeValueForKey:@"estimatedProgress"];
     }
 
-    virtual void didChangeEstimatedProgress() override
+    void didChangeEstimatedProgress() override
     {
         [m_object didChangeValueForKey:@"estimatedProgress"];
     }
 
-    virtual void willChangeCanGoBack() override { }
-    virtual void didChangeCanGoBack() override { }
-    virtual void willChangeCanGoForward() override { }
-    virtual void didChangeCanGoForward() override { }
-    virtual void willChangeNetworkRequestsInProgress() override { }
-    virtual void didChangeNetworkRequestsInProgress() override { }
-    virtual void willChangeCertificateInfo() override { }
-    virtual void didChangeCertificateInfo() override { }
+    void willChangeCanGoBack() override { }
+    void didChangeCanGoBack() override { }
+    void willChangeCanGoForward() override { }
+    void didChangeCanGoForward() override { }
+    void willChangeNetworkRequestsInProgress() override { }
+    void didChangeNetworkRequestsInProgress() override { }
+    void willChangeCertificateInfo() override { }
+    void didChangeCertificateInfo() override { }
 
-    virtual void willChangeWebProcessIsResponsive() override
+    void willChangeWebProcessIsResponsive() override
     {
         [m_object willChangeValueForKey:@"_webProcessIsResponsive"];
     }
 
-    virtual void didChangeWebProcessIsResponsive() override
+    void didChangeWebProcessIsResponsive() override
     {
         [m_object didChangeValueForKey:@"_webProcessIsResponsive"];
     }

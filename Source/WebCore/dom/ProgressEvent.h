@@ -51,7 +51,7 @@ public:
     unsigned long long loaded() const { return m_loaded; }
     unsigned long long total() const { return m_total; }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
 protected:
     ProgressEvent(const AtomicString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total);

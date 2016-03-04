@@ -101,7 +101,7 @@ public:
     // after layout that the columns weren't tall enough.
     void recordSpaceShortage(LayoutUnit spaceShortage);
 
-    virtual void updateLogicalWidth() override;
+    void updateLogicalWidth() override;
 
     void prepareForLayout(bool initial);
     // Begin laying out content for this column set. This happens at the beginning of flow thread
@@ -125,38 +125,38 @@ public:
     };
     LayoutPoint translateRegionPointToFlowThread(const LayoutPoint & logicalPoint, ColumnHitTestTranslationMode = DoNotClampHitTestTranslationToColumns) const;
 
-    virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
+    void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
     
     LayoutRect columnRectAt(unsigned index) const;
     unsigned columnCount() const;
 
 protected:
-    virtual void addOverflowFromChildren() override;
+    void addOverflowFromChildren() override;
     
 private:
-    virtual bool isRenderMultiColumnSet() const override { return true; }
-    virtual void layout() override;
+    bool isRenderMultiColumnSet() const override { return true; }
+    void layout() override;
 
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
-    virtual void paintObject(PaintInfo&, const LayoutPoint&) override { }
+    void paintObject(PaintInfo&, const LayoutPoint&) override { }
 
-    virtual LayoutUnit pageLogicalWidth() const override { return m_computedColumnWidth; }
-    virtual LayoutUnit pageLogicalHeight() const override { return m_computedColumnHeight; }
+    LayoutUnit pageLogicalWidth() const override { return m_computedColumnWidth; }
+    LayoutUnit pageLogicalHeight() const override { return m_computedColumnHeight; }
 
-    virtual LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const override;
+    LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const override;
 
-    virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const override { return logicalHeightInFlowThread(); }
+    LayoutUnit logicalHeightOfAllFlowThreadContent() const override { return logicalHeightInFlowThread(); }
 
-    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect) override;
+    void repaintFlowThreadContent(const LayoutRect& repaintRect) override;
 
-    virtual void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) override;
+    void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) override;
 
-    virtual void adjustRegionBoundsFromFlowThreadPortionRect(LayoutRect& regionBounds) const override;
+    void adjustRegionBoundsFromFlowThreadPortionRect(LayoutRect& regionBounds) const override;
 
-    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
-    virtual const char* renderName() const override;
+    const char* renderName() const override;
 
     LayoutUnit calculateMaxColumnHeight() const;
     LayoutUnit columnGap() const;

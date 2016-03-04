@@ -43,17 +43,17 @@ public:
 
     ~InbandTextTrackPrivateAVCF() { }
 
-    virtual InbandTextTrackPrivate::Kind kind() const override;
-    virtual bool isClosedCaptions() const override;
-    virtual bool isSDH() const override;
-    virtual bool containsOnlyForcedSubtitles() const override;
-    virtual bool isMainProgramContent() const override;
-    virtual bool isEasyToRead() const override;
-    virtual AtomicString label() const override;
-    virtual AtomicString language() const override;
-    virtual bool isDefault() const override;
+    InbandTextTrackPrivate::Kind kind() const override;
+    bool isClosedCaptions() const override;
+    bool isSDH() const override;
+    bool containsOnlyForcedSubtitles() const override;
+    bool isMainProgramContent() const override;
+    bool isEasyToRead() const override;
+    AtomicString label() const override;
+    AtomicString language() const override;
+    bool isDefault() const override;
 
-    virtual void disconnect() override;
+    void disconnect() override;
 
     Category textTrackCategory() const override { return InBand; }
     bool readNativeSampleBuffer(CFArrayRef nativeSamples, CFIndex, RefPtr<JSC::ArrayBuffer>&, MediaTime&, CMFormatDescriptionRef&) override;

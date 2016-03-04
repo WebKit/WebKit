@@ -86,10 +86,10 @@ private:
     void updateForceSynchronousScrollLayerPositionUpdates();
 
     // GraphicsLayerClient
-    virtual void notifyFlushRequired(const GraphicsLayer*) override;
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clipRect) override;
-    virtual float deviceScaleFactor() const override;
-    virtual bool shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior) const override;
+    void notifyFlushRequired(const GraphicsLayer*) override;
+    void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clipRect) override;
+    float deviceScaleFactor() const override;
+    bool shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior) const override;
 
     std::unique_ptr<GraphicsLayer> m_documentOverlayRootLayer;
     std::unique_ptr<GraphicsLayer> m_viewOverlayRootLayer;

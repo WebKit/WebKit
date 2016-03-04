@@ -71,9 +71,9 @@ namespace WebCore {
         void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
 
         // SuspendableTimer
-        virtual void fired() override;
-        virtual void didStop() override;
-        virtual double alignedFireTime(double) const override;
+        void fired() override;
+        void didStop() override;
+        double alignedFireTime(double) const override;
 
         // ActiveDOMObject API.
         const char* activeDOMObjectName() const override;

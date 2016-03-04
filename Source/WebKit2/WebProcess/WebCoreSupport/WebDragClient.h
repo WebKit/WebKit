@@ -42,21 +42,21 @@ public:
     }
 
 private:
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData&) override;
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&) override;
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData&) override;
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) override;
+    void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData&) override;
+    void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&) override;
+    WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData&) override;
+    WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) override;
 
-    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::DataTransfer&, WebCore::Frame&, bool linkDrag = false) override;
+    void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::DataTransfer&, WebCore::Frame&, bool linkDrag = false) override;
 
 #if PLATFORM(COCOA)
-    virtual void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String&, WebCore::Frame*) override;
+    void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String&, WebCore::Frame*) override;
 #if ENABLE(ATTACHMENT_ELEMENT)
-    virtual void declareAndWriteAttachment(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String& path, WebCore::Frame*) override;
+    void declareAndWriteAttachment(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String& path, WebCore::Frame*) override;
 #endif
 #endif
 
-    virtual void dragControllerDestroyed() override;
+    void dragControllerDestroyed() override;
 
     WebPage* m_page;
 };

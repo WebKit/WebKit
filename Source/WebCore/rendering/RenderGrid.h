@@ -51,11 +51,11 @@ public:
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
 
-    virtual bool avoidsFloats() const override { return true; }
-    virtual bool canDropAnonymousBlockChild() const override { return false; }
+    bool avoidsFloats() const override { return true; }
+    bool canDropAnonymousBlockChild() const override { return false; }
 
     const Vector<LayoutUnit>& columnPositions() const { return m_columnPositions; }
     const Vector<LayoutUnit>& rowPositions() const { return m_rowPositions; }
@@ -63,9 +63,9 @@ public:
     LayoutUnit guttersSize(GridTrackSizingDirection, size_t span) const;
 
 private:
-    virtual const char* renderName() const override;
-    virtual bool isRenderGrid() const override { return true; }
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    const char* renderName() const override;
+    bool isRenderGrid() const override { return true; }
+    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
     Optional<LayoutUnit> computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, Optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const override;
 
@@ -149,7 +149,7 @@ private:
 
     void applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection, GridSizingData&);
 
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
+    void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
     bool needToStretchChildLogicalHeight(const RenderBox&) const;
     LayoutUnit marginLogicalHeightForChild(const RenderBox&) const;
     LayoutUnit computeMarginLogicalHeightForChild(const RenderBox&) const;

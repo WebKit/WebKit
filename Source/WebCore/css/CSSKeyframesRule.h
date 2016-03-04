@@ -71,9 +71,9 @@ public:
 
     virtual ~CSSKeyframesRule();
 
-    virtual CSSRule::Type type() const override { return KEYFRAMES_RULE; }
-    virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase&) override;
+    CSSRule::Type type() const override { return KEYFRAMES_RULE; }
+    String cssText() const override;
+    void reattach(StyleRuleBase&) override;
 
     String name() const { return m_keyframesRule->name(); }
     void setName(const String&);

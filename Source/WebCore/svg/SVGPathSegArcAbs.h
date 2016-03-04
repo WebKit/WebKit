@@ -39,8 +39,8 @@ private:
     {
     }
 
-    virtual unsigned short pathSegType() const override { return PATHSEG_ARC_ABS; }
-    virtual String pathSegTypeAsLetter() const override { return "A"; }
+    unsigned short pathSegType() const override { return PATHSEG_ARC_ABS; }
+    String pathSegTypeAsLetter() const override { return "A"; }
 };
 
 } // namespace WebCore

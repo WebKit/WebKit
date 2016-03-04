@@ -47,7 +47,7 @@ public:
     virtual ~MediaSessionManageriOS();
 
     void externalOutputDeviceAvailableDidChange();
-    virtual bool hasWirelessTargetsAvailable() override;
+    bool hasWirelessTargetsAvailable() override;
     void applicationDidEnterBackground(bool isSuspendedUnderLock);
     void applicationWillEnterForeground(bool isSuspendedUnderLock);
 
@@ -56,16 +56,16 @@ private:
 
     MediaSessionManageriOS();
 
-    virtual bool sessionWillBeginPlayback(PlatformMediaSession&) override;
-    virtual void sessionWillEndPlayback(PlatformMediaSession&) override;
+    bool sessionWillBeginPlayback(PlatformMediaSession&) override;
+    void sessionWillEndPlayback(PlatformMediaSession&) override;
     
     void updateNowPlayingInfo();
     
-    virtual void resetRestrictions() override;
+    void resetRestrictions() override;
 
-    virtual void configureWireLessTargetMonitoring() override;
+    void configureWireLessTargetMonitoring() override;
 
-    virtual bool sessionCanLoadMedia(const PlatformMediaSession&) const override;
+    bool sessionCanLoadMedia(const PlatformMediaSession&) const override;
     
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
     bool m_isInBackground { false };

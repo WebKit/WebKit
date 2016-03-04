@@ -44,7 +44,7 @@ public:
     // If lengthBytes is 0, a recommended length is used, which is the size of the associated hash function's block size.
     static RefPtr<CryptoKeyHMAC> generate(size_t lengthBytes, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
 
-    virtual CryptoKeyClass keyClass() const override { return CryptoKeyClass::HMAC; }
+    CryptoKeyClass keyClass() const override { return CryptoKeyClass::HMAC; }
 
     const Vector<uint8_t>& key() const { return m_key; }
 
@@ -53,8 +53,8 @@ public:
 private:
     CryptoKeyHMAC(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
 
-    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const override;
-    virtual std::unique_ptr<CryptoKeyData> exportData() const override;
+    void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const override;
+    std::unique_ptr<CryptoKeyData> exportData() const override;
 
     CryptoAlgorithmIdentifier m_hash;
     Vector<uint8_t> m_key;

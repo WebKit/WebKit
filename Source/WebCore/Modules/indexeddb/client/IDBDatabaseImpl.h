@@ -49,26 +49,26 @@ public:
     virtual ~IDBDatabase();
 
     // IDBDatabase IDL
-    virtual const String name() const override final;
-    virtual uint64_t version() const override final;
-    virtual RefPtr<DOMStringList> objectStoreNames() const override final;
+    const String name() const override final;
+    uint64_t version() const override final;
+    RefPtr<DOMStringList> objectStoreNames() const override final;
 
-    virtual RefPtr<WebCore::IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCodeWithMessage&) override final;
-    virtual RefPtr<WebCore::IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCodeWithMessage&) override final;
-    virtual RefPtr<WebCore::IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCodeWithMessage&) override final;
-    virtual RefPtr<WebCore::IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCodeWithMessage&) override final;
-    virtual void deleteObjectStore(const String& name, ExceptionCodeWithMessage&) override final;
-    virtual void close() override final;
+    RefPtr<WebCore::IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCodeWithMessage&) override final;
+    RefPtr<WebCore::IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCodeWithMessage&) override final;
+    RefPtr<WebCore::IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCodeWithMessage&) override final;
+    RefPtr<WebCore::IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCodeWithMessage&) override final;
+    void deleteObjectStore(const String& name, ExceptionCodeWithMessage&) override final;
+    void close() override final;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const override final { return IDBDatabaseEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
-    virtual void refEventTarget() override final { ref(); }
-    virtual void derefEventTarget() override final { deref(); }
+    EventTargetInterface eventTargetInterface() const override final { return IDBDatabaseEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
+    void refEventTarget() override final { ref(); }
+    void derefEventTarget() override final { deref(); }
 
-    virtual const char* activeDOMObjectName() const override final;
-    virtual bool canSuspendForDocumentSuspension() const override final;
-    virtual void stop() override final;
+    const char* activeDOMObjectName() const override final;
+    bool canSuspendForDocumentSuspension() const override final;
+    void stop() override final;
 
     const IDBDatabaseInfo& info() const { return m_info; }
     uint64_t databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
@@ -99,7 +99,7 @@ private:
 
     void maybeCloseInServer();
 
-    virtual bool hasPendingActivity() const override final;
+    bool hasPendingActivity() const override final;
 
     Ref<IDBConnectionToServer> m_serverConnection;
     IDBDatabaseInfo m_info;

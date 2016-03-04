@@ -47,10 +47,10 @@ protected:
     explicit BaseClickableWithKeyInputType(HTMLInputElement& element) : InputType(element) { }
 
 private:
-    virtual void handleKeydownEvent(KeyboardEvent*) override;
-    virtual void handleKeypressEvent(KeyboardEvent*) override;
-    virtual void handleKeyupEvent(KeyboardEvent*) override;
-    virtual void accessKeyAction(bool sendMouseEvents) override;
+    void handleKeydownEvent(KeyboardEvent*) override;
+    void handleKeypressEvent(KeyboardEvent*) override;
+    void handleKeyupEvent(KeyboardEvent*) override;
+    void accessKeyAction(bool sendMouseEvents) override;
 };
 
 } // namespace WebCore

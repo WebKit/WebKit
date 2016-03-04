@@ -117,9 +117,9 @@ public:
 
 #if PLATFORM(WIN)
     // FIXME: Implement accelerated 3d canvas on Windows.
-    virtual bool isAccelerated() const override { return false; }
+    bool isAccelerated() const override { return false; }
 #else
-    virtual bool isAccelerated() const override { return true; }
+    bool isAccelerated() const override { return true; }
 #endif
 
     int drawingBufferWidth() const;
@@ -341,12 +341,12 @@ public:
 
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
     WebGLContextGroup* contextGroup() const { return m_contextGroup.get(); }
-    virtual PlatformLayer* platformLayer() const override;
+    PlatformLayer* platformLayer() const override;
 
     void reshape(int width, int height);
 
     void markLayerComposited();
-    virtual void paintRenderingResultsToCanvas() override;
+    void paintRenderingResultsToCanvas() override;
     PassRefPtr<ImageData> paintRenderingResultsToImageData();
 
     void removeSharedObject(WebGLSharedObject*);
@@ -381,9 +381,9 @@ protected:
     void setupFlags();
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const override;
-    virtual void stop() override;
-    virtual const char* activeDOMObjectName() const override;
+    bool hasPendingActivity() const override;
+    void stop() override;
+    const char* activeDOMObjectName() const override;
     bool canSuspendForDocumentSuspension() const override;
 
     void addSharedObject(WebGLSharedObject*);

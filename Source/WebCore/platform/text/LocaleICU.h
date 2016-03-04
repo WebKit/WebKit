@@ -49,18 +49,18 @@ public:
     virtual ~LocaleICU();
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    virtual String dateFormat() override;
-    virtual String monthFormat() override;
-    virtual String shortMonthFormat() override;
-    virtual String timeFormat() override;
-    virtual String shortTimeFormat() override;
-    virtual String dateTimeFormatWithSeconds() override;
-    virtual String dateTimeFormatWithoutSeconds() override;
-    virtual const Vector<String>& monthLabels() override;
-    virtual const Vector<String>& shortMonthLabels() override;
-    virtual const Vector<String>& standAloneMonthLabels() override;
-    virtual const Vector<String>& shortStandAloneMonthLabels() override;
-    virtual const Vector<String>& timeAMPMLabels() override;
+    String dateFormat() override;
+    String monthFormat() override;
+    String shortMonthFormat() override;
+    String timeFormat() override;
+    String shortTimeFormat() override;
+    String dateTimeFormatWithSeconds() override;
+    String dateTimeFormatWithoutSeconds() override;
+    const Vector<String>& monthLabels() override;
+    const Vector<String>& shortMonthLabels() override;
+    const Vector<String>& standAloneMonthLabels() override;
+    const Vector<String>& shortStandAloneMonthLabels() override;
+    const Vector<String>& timeAMPMLabels() override;
 #endif
 
 private:
@@ -68,7 +68,7 @@ private:
     String decimalSymbol(UNumberFormatSymbol);
     String decimalTextAttribute(UNumberFormatTextAttribute);
 #endif
-    virtual void initializeLocaleData() override;
+    void initializeLocaleData() override;
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     bool initializeShortDateFormat();

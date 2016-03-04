@@ -31,7 +31,7 @@ public:
 private:
     SVGFEDistantLightElement(const QualifiedName&, Document&);
 
-    virtual Ref<LightSource> lightSource() const override;
+    Ref<LightSource> lightSource() const override;
 };
 
 } // namespace WebCore

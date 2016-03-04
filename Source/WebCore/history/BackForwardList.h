@@ -46,15 +46,15 @@ public:
 
     Page* page() { return m_page; }
 
-    virtual void addItem(Ref<HistoryItem>&&) override;
+    void addItem(Ref<HistoryItem>&&) override;
     WEBCORE_EXPORT void goBack();
     WEBCORE_EXPORT void goForward();
-    virtual void goToItem(HistoryItem*) override;
+    void goToItem(HistoryItem*) override;
         
     WEBCORE_EXPORT HistoryItem* backItem();
     WEBCORE_EXPORT HistoryItem* currentItem();
     WEBCORE_EXPORT HistoryItem* forwardItem();
-    virtual HistoryItem* itemAtIndex(int) override;
+    HistoryItem* itemAtIndex(int) override;
 
     WEBCORE_EXPORT void backListWithLimit(int, HistoryItemVector&);
     WEBCORE_EXPORT void forwardListWithLimit(int, HistoryItemVector&);
@@ -63,21 +63,21 @@ public:
     WEBCORE_EXPORT void setCapacity(int);
     WEBCORE_EXPORT bool enabled();
     WEBCORE_EXPORT void setEnabled(bool);
-    virtual int backListCount() override;
-    virtual int forwardListCount() override;
+    int backListCount() override;
+    int forwardListCount() override;
     WEBCORE_EXPORT bool containsItem(HistoryItem*);
 
-    virtual void close() override;
+    void close() override;
     WEBCORE_EXPORT bool closed();
 
     WEBCORE_EXPORT void removeItem(HistoryItem*);
     WEBCORE_EXPORT HistoryItemVector& entries();
 
 #if PLATFORM(IOS)
-    virtual unsigned current() override;
-    virtual void setCurrent(unsigned newCurrent) override;
+    unsigned current() override;
+    void setCurrent(unsigned newCurrent) override;
 
-    virtual bool clearAllPageCaches() override;
+    bool clearAllPageCaches() override;
 #endif
 
 private:

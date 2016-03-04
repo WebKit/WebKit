@@ -35,18 +35,18 @@ namespace WebCore {
 class MathMLTextElement final : public MathMLElement {
 public:
     static Ref<MathMLTextElement> create(const QualifiedName& tagName, Document&);
-    virtual void didAttachRenderers() override;
+    void didAttachRenderers() override;
 
-    virtual bool isPresentationMathML() const override { return true; }
+    bool isPresentationMathML() const override { return true; }
 
 private:
     MathMLTextElement(const QualifiedName& tagName, Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual bool childShouldCreateRenderer(const Node&) const override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool childShouldCreateRenderer(const Node&) const override;
 
-    virtual void childrenChanged(const ChildChange&) override;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void childrenChanged(const ChildChange&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 };
     
 }

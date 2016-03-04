@@ -125,9 +125,9 @@ public:
     virtual LayoutUnit offsetWidth() const = 0;
     virtual LayoutUnit offsetHeight() const = 0;
 
-    virtual void updateFromStyle() override;
+    void updateFromStyle() override;
 
-    virtual bool requiresLayer() const override { return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasClipPath() || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection(); }
+    bool requiresLayer() const override { return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasClipPath() || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection(); }
 
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
     virtual IntRect borderBoundingBox() const = 0;
@@ -215,9 +215,9 @@ public:
     virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
 
-    virtual void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const override;
+    void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const override;
 
-    virtual void setSelectionState(SelectionState) override;
+    void setSelectionState(SelectionState) override;
 
     bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
 
@@ -241,7 +241,7 @@ protected:
     RenderBoxModelObject(Element&, Ref<RenderStyle>&&, BaseTypeFlags);
     RenderBoxModelObject(Document&, Ref<RenderStyle>&&, BaseTypeFlags);
 
-    virtual void willBeDestroyed() override;
+    void willBeDestroyed() override;
 
     LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
 

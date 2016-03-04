@@ -241,61 +241,61 @@ public:
     }
 
 private:
-    virtual void willChangeIsLoading() override
+    void willChangeIsLoading() override
     {
         g_object_freeze_notify(G_OBJECT(m_webView));
     }
-    virtual void didChangeIsLoading() override
+    void didChangeIsLoading() override
     {
         webkitWebViewSetIsLoading(m_webView, getPage(m_webView)->pageLoadState().isLoading());
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
 
-    virtual void willChangeTitle() override
+    void willChangeTitle() override
     {
         g_object_freeze_notify(G_OBJECT(m_webView));
     }
-    virtual void didChangeTitle() override
+    void didChangeTitle() override
     {
         m_webView->priv->title = getPage(m_webView)->pageLoadState().title().utf8();
         g_object_notify(G_OBJECT(m_webView), "title");
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
 
-    virtual void willChangeActiveURL() override
+    void willChangeActiveURL() override
     {
         g_object_freeze_notify(G_OBJECT(m_webView));
     }
-    virtual void didChangeActiveURL() override
+    void didChangeActiveURL() override
     {
         m_webView->priv->activeURI = getPage(m_webView)->pageLoadState().activeURL().utf8();
         g_object_notify(G_OBJECT(m_webView), "uri");
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
 
-    virtual void willChangeHasOnlySecureContent() override { }
-    virtual void didChangeHasOnlySecureContent() override { }
+    void willChangeHasOnlySecureContent() override { }
+    void didChangeHasOnlySecureContent() override { }
 
-    virtual void willChangeEstimatedProgress() override
+    void willChangeEstimatedProgress() override
     {
         g_object_freeze_notify(G_OBJECT(m_webView));
     }
-    virtual void didChangeEstimatedProgress() override
+    void didChangeEstimatedProgress() override
     {
         g_object_notify(G_OBJECT(m_webView), "estimated-load-progress");
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
 
-    virtual void willChangeCanGoBack() override { }
-    virtual void didChangeCanGoBack() override { }
-    virtual void willChangeCanGoForward() override { }
-    virtual void didChangeCanGoForward() override { }
-    virtual void willChangeNetworkRequestsInProgress() override { }
-    virtual void didChangeNetworkRequestsInProgress() override { }
-    virtual void willChangeCertificateInfo() override { }
-    virtual void didChangeCertificateInfo() override { }
-    virtual void willChangeWebProcessIsResponsive() override { }
-    virtual void didChangeWebProcessIsResponsive() override { }
+    void willChangeCanGoBack() override { }
+    void didChangeCanGoBack() override { }
+    void willChangeCanGoForward() override { }
+    void didChangeCanGoForward() override { }
+    void willChangeNetworkRequestsInProgress() override { }
+    void didChangeNetworkRequestsInProgress() override { }
+    void willChangeCertificateInfo() override { }
+    void didChangeCertificateInfo() override { }
+    void willChangeWebProcessIsResponsive() override { }
+    void didChangeWebProcessIsResponsive() override { }
 
     WebKitWebView* m_webView;
 };

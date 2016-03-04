@@ -91,11 +91,11 @@ static String urlForLogging(const String& url)
 class DefaultIconDatabaseClient final : public IconDatabaseClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual void didImportIconURLForPageURL(const String&) override { }
-    virtual void didImportIconDataForPageURL(const String&) override { }
-    virtual void didChangeIconForPageURL(const String&) override { }
-    virtual void didRemoveAllIcons() override { }
-    virtual void didFinishURLImport() override { }
+    void didImportIconURLForPageURL(const String&) override { }
+    void didImportIconDataForPageURL(const String&) override { }
+    void didChangeIconForPageURL(const String&) override { }
+    void didRemoveAllIcons() override { }
+    void didFinishURLImport() override { }
 };
 
 static IconDatabaseClient* defaultClient() 

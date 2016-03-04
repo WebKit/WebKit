@@ -39,25 +39,25 @@ class ScrollbarThemeEfl final : public ScrollbarThemeComposite {
 public:
     ~ScrollbarThemeEfl();
 
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override;
+    int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override;
     void setScrollbarThickness(int thickness) { m_scrollbarThickness = thickness; }
 
 protected:
-    virtual bool usesOverlayScrollbars() const override;
-    virtual bool hasButtons(Scrollbar&) override { return false; }
-    virtual bool hasThumb(Scrollbar&) override;
+    bool usesOverlayScrollbars() const override;
+    bool hasButtons(Scrollbar&) override { return false; }
+    bool hasThumb(Scrollbar&) override;
 
-    virtual IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool) override;
-    virtual IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool) override;
-    virtual IntRect trackRect(Scrollbar&, bool) override;
+    IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool) override;
+    IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool) override;
+    IntRect trackRect(Scrollbar&, bool) override;
 
-    virtual int minimumThumbLength(Scrollbar&) override;
+    int minimumThumbLength(Scrollbar&) override;
 
-    virtual void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
-    virtual void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
 
-    virtual void registerScrollbar(Scrollbar&) override;
-    virtual void unregisterScrollbar(Scrollbar&) override;
+    void registerScrollbar(Scrollbar&) override;
+    void unregisterScrollbar(Scrollbar&) override;
 
 private:
     void loadThemeIfNeeded(Scrollbar&);

@@ -49,12 +49,12 @@ public:
     virtual void removeParser(AVStreamDataParser*) = 0;
 
     // CDMSession
-    virtual void setClient(CDMSessionClient* client) override { m_client = client; }
-    virtual const String& sessionId() const override { return m_sessionId; }
+    void setClient(CDMSessionClient* client) override { m_client = client; }
+    const String& sessionId() const override { return m_sessionId; }
 
     // SourceBufferPrivateAVFObjCErrorClient
-    virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *, bool& shouldIgnore) override;
-    virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) override;
+    void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *, bool& shouldIgnore) override;
+    void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) override;
 
     void addSourceBuffer(SourceBufferPrivateAVFObjC*);
     void removeSourceBuffer(SourceBufferPrivateAVFObjC*);

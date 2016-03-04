@@ -36,17 +36,17 @@ class WebAlternativeTextClient : public WebCore::AlternativeTextClient {
 public:
     WebAlternativeTextClient(WebView *);
     virtual ~WebAlternativeTextClient();
-    virtual void pageDestroyed() override;
+    void pageDestroyed() override;
 #if USE(AUTOCORRECTION_PANEL)
-    virtual void showCorrectionAlternative(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) override;
-    virtual void dismissAlternative(WebCore::ReasonForDismissingAlternativeText) override;
-    virtual String dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText) override;
-    virtual void recordAutocorrectionResponse(WebCore::AutocorrectionResponseType, const String& replacedString, const String& replacementString) override;
+    void showCorrectionAlternative(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) override;
+    void dismissAlternative(WebCore::ReasonForDismissingAlternativeText) override;
+    String dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText) override;
+    void recordAutocorrectionResponse(WebCore::AutocorrectionResponseType, const String& replacedString, const String& replacementString) override;
 #endif
 #if USE(DICTATION_ALTERNATIVES)
-    virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) override;
-    virtual void removeDictationAlternatives(uint64_t dictationContext) override;
-    virtual Vector<String> dictationAlternatives(uint64_t dictationContext) override;
+    void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) override;
+    void removeDictationAlternatives(uint64_t dictationContext) override;
+    Vector<String> dictationAlternatives(uint64_t dictationContext) override;
 #endif
 private:
 #if PLATFORM(IOS)

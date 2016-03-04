@@ -42,20 +42,20 @@ public:
 
     SVGMaskElement& maskElement() const { return downcast<SVGMaskElement>(RenderSVGResourceContainer::element()); }
 
-    virtual void removeAllClientsFromCache(bool markForInvalidation = true) override;
-    virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
-    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
-    virtual FloatRect resourceBoundingBox(const RenderObject&) override;
+    void removeAllClientsFromCache(bool markForInvalidation = true) override;
+    void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
+    FloatRect resourceBoundingBox(const RenderObject&) override;
 
     SVGUnitTypes::SVGUnitType maskUnits() const { return maskElement().maskUnits(); }
     SVGUnitTypes::SVGUnitType maskContentUnits() const { return maskElement().maskContentUnits(); }
 
-    virtual RenderSVGResourceType resourceType() const override { return MaskerResourceType; }
+    RenderSVGResourceType resourceType() const override { return MaskerResourceType; }
 
 private:
     void element() const = delete;
 
-    virtual const char* renderName() const override { return "RenderSVGResourceMasker"; }
+    const char* renderName() const override { return "RenderSVGResourceMasker"; }
 
     bool drawContentIntoMaskImage(MaskerData*, ColorSpace, RenderObject*);
     void calculateMaskContentRepaintRect();

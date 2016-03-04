@@ -41,7 +41,7 @@ public:
     {
     }
     
-    virtual void dump(PrintStream&) const override;
+    void dump(PrintStream&) const override;
     
     JS_EXPORT_PRIVATE static void touch(WatchpointSet*, JSObject*, const PropertyName&);
 

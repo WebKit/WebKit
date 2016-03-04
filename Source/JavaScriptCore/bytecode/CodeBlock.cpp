@@ -1724,7 +1724,7 @@ public:
     {
     }
     
-    virtual void dump(PrintStream& out) const override
+    void dump(PrintStream& out) const override
     {
         out.print("Linking put_to_scope in ", FunctionExecutableDump(jsCast<FunctionExecutable*>(m_codeBlock->ownerExecutable())), " for ", m_ident);
     }

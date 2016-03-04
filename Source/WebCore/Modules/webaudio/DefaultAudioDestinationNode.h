@@ -43,18 +43,18 @@ public:
     virtual ~DefaultAudioDestinationNode();
     
     // AudioNode   
-    virtual void initialize() override;
-    virtual void uninitialize() override;
-    virtual void setChannelCount(unsigned long, ExceptionCode&) override;
+    void initialize() override;
+    void uninitialize() override;
+    void setChannelCount(unsigned long, ExceptionCode&) override;
 
     // AudioDestinationNode
-    virtual void enableInput(const String& inputDeviceId) override;
-    virtual void startRendering() override;
-    virtual void resume(std::function<void()>) override;
-    virtual void suspend(std::function<void()>) override;
-    virtual void close(std::function<void()>) override;
-    virtual unsigned long maxChannelCount() const override;
-    virtual bool isPlaying() override;
+    void enableInput(const String& inputDeviceId) override;
+    void startRendering() override;
+    void resume(std::function<void()>) override;
+    void suspend(std::function<void()>) override;
+    void close(std::function<void()>) override;
+    unsigned long maxChannelCount() const override;
+    bool isPlaying() override;
 
 private:
     explicit DefaultAudioDestinationNode(AudioContext&);

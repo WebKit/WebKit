@@ -39,14 +39,14 @@ public:
     virtual ~AccessibilityARIAGridCell();
     
     // fills in the start location and row span of cell
-    virtual void rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const override;
+    void rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const override;
     // fills in the start location and column span of cell
-    virtual void columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const override;
+    void columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const override;
     
 private:
     explicit AccessibilityARIAGridCell(RenderObject*);
 
-    virtual AccessibilityTable* parentTable() const override;
+    AccessibilityTable* parentTable() const override;
     AccessibilityObject* parentRowGroup() const;
     unsigned ariaRowSpanWithRowIndex(unsigned index) const;
 }; 

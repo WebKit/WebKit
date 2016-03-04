@@ -41,7 +41,7 @@ public:
     RenderMediaVolumeSliderContainer(Element&, Ref<RenderStyle>&&);
 
 private:
-    virtual void layout() override;
+    void layout() override;
 };
 
 // ----------------------------
@@ -51,7 +51,7 @@ public:
     RenderMediaControlTimelineContainer(Element&, Ref<RenderStyle>&&);
 
 private:
-    virtual void layout() override;
+    void layout() override;
     bool isFlexibleBoxImpl() const override { return true; }
 };
 
@@ -64,7 +64,7 @@ public:
     RenderTextTrackContainerElement(Element&, Ref<RenderStyle>&&);
 
 private:
-    virtual void layout() override;
+    void layout() override;
 };
 
 #endif // ENABLE(VIDEO_TRACK)

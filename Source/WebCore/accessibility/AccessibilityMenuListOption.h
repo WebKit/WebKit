@@ -42,22 +42,22 @@ public:
 private:
     AccessibilityMenuListOption();
 
-    virtual bool isMenuListOption() const override { return true; }
+    bool isMenuListOption() const override { return true; }
 
-    virtual AccessibilityRole roleValue() const override { return MenuListOptionRole; }
-    virtual bool canHaveChildren() const override { return false; }
+    AccessibilityRole roleValue() const override { return MenuListOptionRole; }
+    bool canHaveChildren() const override { return false; }
 
-    virtual Element* actionElement() const override;
-    virtual bool isEnabled() const override;
-    virtual bool isVisible() const override;
-    virtual bool isOffScreen() const override;
-    virtual bool isSelected() const override;
-    virtual String nameForMSAA() const override;
-    virtual void setSelected(bool) override;
-    virtual bool canSetSelectedAttribute() const override;
-    virtual LayoutRect elementRect() const override;
-    virtual String stringValue() const override;
-    virtual bool computeAccessibilityIsIgnored() const override;
+    Element* actionElement() const override;
+    bool isEnabled() const override;
+    bool isVisible() const override;
+    bool isOffScreen() const override;
+    bool isSelected() const override;
+    String nameForMSAA() const override;
+    void setSelected(bool) override;
+    bool canSetSelectedAttribute() const override;
+    LayoutRect elementRect() const override;
+    String stringValue() const override;
+    bool computeAccessibilityIsIgnored() const override;
 
     RefPtr<HTMLElement> m_element;
 };

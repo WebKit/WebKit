@@ -108,15 +108,15 @@ class SVGGlyphToPathTranslator final : public GlyphToPathTranslator {
 public:
     SVGGlyphToPathTranslator(const TextRun* const, const GlyphBuffer&, const FloatPoint&, const SVGFontData&, SVGFontElement&, const int from, const int numGlyphs, float scale, bool isVerticalText);
 private:
-    virtual bool containsMorePaths() override
+    bool containsMorePaths() override
     {
         return m_index != m_stoppingPoint;
     }
 
-    virtual Path path() override;
-    virtual std::pair<float, float> extents() override;
-    virtual GlyphUnderlineType underlineType() override;
-    virtual void advance() override;
+    Path path() override;
+    std::pair<float, float> extents() override;
+    GlyphUnderlineType underlineType() override;
+    void advance() override;
     void moveToNextValidGlyph();
     AffineTransform transform();
 
@@ -223,23 +223,23 @@ void SVGGlyphToPathTranslator::advance()
 }
 
 class DummyGlyphToPathTranslator final : public GlyphToPathTranslator {
-    virtual bool containsMorePaths() override
+    bool containsMorePaths() override
     {
         return false;
     }
-    virtual Path path() override
+    Path path() override
     {
         return Path();
     }
-    virtual std::pair<float, float> extents() override
+    std::pair<float, float> extents() override
     {
         return std::make_pair(0.f, 0.f);
     }
-    virtual GlyphUnderlineType underlineType() override
+    GlyphUnderlineType underlineType() override
     {
         return GlyphUnderlineType::DrawOverGlyph;
     }
-    virtual void advance() override
+    void advance() override
     {
     }
 };

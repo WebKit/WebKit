@@ -35,14 +35,14 @@ public:
     }
 
     const FloatPoint3D& position() const { return m_position; }
-    virtual bool setX(float) override;
-    virtual bool setY(float) override;
-    virtual bool setZ(float) override;
+    bool setX(float) override;
+    bool setY(float) override;
+    bool setZ(float) override;
 
-    virtual void initPaintingData(PaintingData&) override;
-    virtual void updatePaintingData(PaintingData&, int x, int y, float z) override;
+    void initPaintingData(PaintingData&) override;
+    void updatePaintingData(PaintingData&, int x, int y, float z) override;
 
-    virtual TextStream& externalRepresentation(TextStream&) const override;
+    TextStream& externalRepresentation(TextStream&) const override;
 
 private:
     PointLightSource(const FloatPoint3D& position)

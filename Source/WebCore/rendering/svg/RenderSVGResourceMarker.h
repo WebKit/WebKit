@@ -37,34 +37,34 @@ public:
 
     SVGMarkerElement& markerElement() const { return downcast<SVGMarkerElement>(RenderSVGResourceContainer::element()); }
 
-    virtual void removeAllClientsFromCache(bool markForInvalidation = true) override;
-    virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
+    void removeAllClientsFromCache(bool markForInvalidation = true) override;
+    void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
 
     void draw(PaintInfo&, const AffineTransform&);
 
     // Calculates marker boundaries, mapped to the target element's coordinate space
     FloatRect markerBoundaries(const AffineTransform& markerTransformation) const;
 
-    virtual void applyViewportClip(PaintInfo&) override;
-    virtual void layout() override;
-    virtual void calcViewport() override;
+    void applyViewportClip(PaintInfo&) override;
+    void layout() override;
+    void calcViewport() override;
 
-    virtual const AffineTransform& localToParentTransform() const override;
+    const AffineTransform& localToParentTransform() const override;
     AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
 
-    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short) override { return false; }
-    virtual FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short) override { return false; }
+    FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
 
     FloatPoint referencePoint() const;
     float angle() const;
     SVGMarkerUnitsType markerUnits() const { return markerElement().markerUnits(); }
 
-    virtual RenderSVGResourceType resourceType() const override { return MarkerResourceType; }
+    RenderSVGResourceType resourceType() const override { return MarkerResourceType; }
 
 private:
     void element() const = delete;
 
-    virtual const char* renderName() const override { return "RenderSVGResourceMarker"; }
+    const char* renderName() const override { return "RenderSVGResourceMarker"; }
 
     // Generates a transformation matrix usable to render marker content. Handles scaling the marker content
     // acording to SVGs markerUnits="strokeWidth" concept, when a strokeWidth value != -1 is passed in.

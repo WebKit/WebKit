@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    virtual float virtualLogicalHeight() const override { return 0; }
+    float virtualLogicalHeight() const override { return 0; }
 };
 
 } // namespace WebCore

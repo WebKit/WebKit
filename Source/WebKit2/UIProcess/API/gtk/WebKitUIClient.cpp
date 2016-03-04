@@ -45,35 +45,35 @@ public:
     }
 
 private:
-    virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest& resourceRequest, const WebCore::WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
+    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest& resourceRequest, const WebCore::WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
     {
         GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(resourceRequest));
         WebKitNavigationAction navigationAction(request.get(), navigationActionData);
         return webkitWebViewCreateNewPage(m_webView, windowFeatures, &navigationAction);
     }
 
-    virtual void showPage(WebPageProxy*) override
+    void showPage(WebPageProxy*) override
     {
         webkitWebViewReadyToShowPage(m_webView);
     }
 
-    virtual void close(WebPageProxy*) override
+    void close(WebPageProxy*) override
     {
         webkitWebViewClosePage(m_webView);
     }
 
-    virtual void runJavaScriptAlert(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void ()> completionHandler) override
+    void runJavaScriptAlert(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void ()> completionHandler) override
     {
         webkitWebViewRunJavaScriptAlert(m_webView, message.utf8());
         completionHandler();
     }
 
-    virtual void runJavaScriptConfirm(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (bool)> completionHandler) override
+    void runJavaScriptConfirm(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (bool)> completionHandler) override
     {
         completionHandler(webkitWebViewRunJavaScriptConfirm(m_webView, message.utf8()));
     }
 
-    virtual void runJavaScriptPrompt(WebPageProxy*, const String& message, const String& defaultValue, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (const String&)> completionHandler) override
+    void runJavaScriptPrompt(WebPageProxy*, const String& message, const String& defaultValue, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (const String&)> completionHandler) override
     {
         CString result = webkitWebViewRunJavaScriptPrompt(m_webView, message.utf8(), defaultValue.utf8());
         if (result.isNull()) {
@@ -84,65 +84,65 @@ private:
         completionHandler(String::fromUTF8(result.data()));
     }
 
-    virtual bool canRunBeforeUnloadConfirmPanel() const override { return true; }
+    bool canRunBeforeUnloadConfirmPanel() const override { return true; }
 
-    virtual void runBeforeUnloadConfirmPanel(WebPageProxy*, const String& message, WebFrameProxy*, std::function<void (bool)> completionHandler) override
+    void runBeforeUnloadConfirmPanel(WebPageProxy*, const String& message, WebFrameProxy*, std::function<void (bool)> completionHandler) override
     {
         completionHandler(webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, message.utf8()));
     }
 
-    virtual void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResultData& data, WebEvent::Modifiers modifiers, API::Object*) override
+    void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResultData& data, WebEvent::Modifiers modifiers, API::Object*) override
     {
         webkitWebViewMouseTargetChanged(m_webView, data, toGdkModifiers(modifiers));
     }
 
-    virtual bool toolbarsAreVisible(WebPageProxy*) override
+    bool toolbarsAreVisible(WebPageProxy*) override
     {
         return webkit_window_properties_get_toolbar_visible(webkit_web_view_get_window_properties(m_webView));
     }
 
-    virtual void setToolbarsAreVisible(WebPageProxy*, bool visible) override
+    void setToolbarsAreVisible(WebPageProxy*, bool visible) override
     {
         webkitWindowPropertiesSetToolbarVisible(webkit_web_view_get_window_properties(m_webView), visible);
     }
 
-    virtual bool menuBarIsVisible(WebPageProxy*) override
+    bool menuBarIsVisible(WebPageProxy*) override
     {
         return webkit_window_properties_get_menubar_visible(webkit_web_view_get_window_properties(m_webView));
     }
 
-    virtual void setMenuBarIsVisible(WebPageProxy*, bool visible) override
+    void setMenuBarIsVisible(WebPageProxy*, bool visible) override
     {
         webkitWindowPropertiesSetToolbarVisible(webkit_web_view_get_window_properties(m_webView), visible);
     }
 
-    virtual bool statusBarIsVisible(WebPageProxy*) override
+    bool statusBarIsVisible(WebPageProxy*) override
     {
         return webkit_window_properties_get_statusbar_visible(webkit_web_view_get_window_properties(m_webView));
     }
 
-    virtual void setStatusBarIsVisible(WebPageProxy*, bool visible) override
+    void setStatusBarIsVisible(WebPageProxy*, bool visible) override
     {
         webkitWindowPropertiesSetStatusbarVisible(webkit_web_view_get_window_properties(m_webView), visible);
     }
 
-    virtual bool isResizable(WebPageProxy*) override
+    bool isResizable(WebPageProxy*) override
     {
         return webkit_window_properties_get_resizable(webkit_web_view_get_window_properties(m_webView));
     }
 
-    virtual void setIsResizable(WebPageProxy*, bool resizable) override
+    void setIsResizable(WebPageProxy*, bool resizable) override
     {
         webkitWindowPropertiesSetResizable(webkit_web_view_get_window_properties(m_webView), resizable);
     }
 
-    virtual void setWindowFrame(WebPageProxy*, const WebCore::FloatRect& frame) override
+    void setWindowFrame(WebPageProxy*, const WebCore::FloatRect& frame) override
     {
         GdkRectangle geometry = WebCore::IntRect(frame);
         webkitWindowPropertiesSetGeometry(webkit_web_view_get_window_properties(m_webView), &geometry);
     }
 
-    virtual WebCore::FloatRect windowFrame(WebPageProxy*) override
+    WebCore::FloatRect windowFrame(WebPageProxy*) override
     {
         GdkRectangle geometry = { 0, 0, 0, 0 };
         GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
@@ -153,54 +153,54 @@ private:
         return WebCore::FloatRect(geometry);
     }
 
-    virtual void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const String&, const String&, unsigned long long /*currentQuota*/, unsigned long long /*currentOriginUsage*/, unsigned long long /*currentDatabaseUsage*/, unsigned long long /*expectedUsage*/, std::function<void (unsigned long long)> completionHandler) override
+    void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const String&, const String&, unsigned long long /*currentQuota*/, unsigned long long /*currentOriginUsage*/, unsigned long long /*currentDatabaseUsage*/, unsigned long long /*expectedUsage*/, std::function<void (unsigned long long)> completionHandler) override
     {
         static const unsigned long long defaultQuota = 5 * 1024 * 1204; // 5 MB
         // FIXME: Provide API for this.
         completionHandler(defaultQuota);
     }
 
-    virtual bool runOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener) override
+    bool runOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener) override
     {
         GRefPtr<WebKitFileChooserRequest> request = adoptGRef(webkitFileChooserRequestCreate(parameters, listener));
         webkitWebViewRunFileChooserRequest(m_webView, request.get());
         return true;
     }
 
-    virtual bool decidePolicyForGeolocationPermissionRequest(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, GeolocationPermissionRequestProxy* permissionRequest) override
+    bool decidePolicyForGeolocationPermissionRequest(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, GeolocationPermissionRequestProxy* permissionRequest) override
     {
         GRefPtr<WebKitGeolocationPermissionRequest> geolocationPermissionRequest = adoptGRef(webkitGeolocationPermissionRequestCreate(permissionRequest));
         webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(geolocationPermissionRequest.get()));
         return true;
     }
 
-    virtual bool decidePolicyForUserMediaPermissionRequest(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin& userMediaDocumentOrigin, API::SecurityOrigin& topLevelDocumentOrigin, UserMediaPermissionRequestProxy& permissionRequest) override
+    bool decidePolicyForUserMediaPermissionRequest(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin& userMediaDocumentOrigin, API::SecurityOrigin& topLevelDocumentOrigin, UserMediaPermissionRequestProxy& permissionRequest) override
     {
         GRefPtr<WebKitUserMediaPermissionRequest> userMediaPermissionRequest = adoptGRef(webkitUserMediaPermissionRequestCreate(permissionRequest, userMediaDocumentOrigin, topLevelDocumentOrigin));
         webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(userMediaPermissionRequest.get()));
         return true;
     }
 
-    virtual bool decidePolicyForNotificationPermissionRequest(WebPageProxy*, API::SecurityOrigin*, NotificationPermissionRequest* permissionRequest) override
+    bool decidePolicyForNotificationPermissionRequest(WebPageProxy*, API::SecurityOrigin*, NotificationPermissionRequest* permissionRequest) override
     {
         GRefPtr<WebKitNotificationPermissionRequest> notificationPermissionRequest = adoptGRef(webkitNotificationPermissionRequestCreate(permissionRequest));
         webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(notificationPermissionRequest.get()));
         return true;
     }
 
-    virtual void printFrame(WebPageProxy*, WebFrameProxy* frame) override
+    void printFrame(WebPageProxy*, WebFrameProxy* frame) override
     {
         webkitWebViewPrintFrame(m_webView, frame);
     }
 
-    virtual bool canRunModal() const override { return true; }
+    bool canRunModal() const override { return true; }
 
-    virtual void runModal(WebPageProxy*) override
+    void runModal(WebPageProxy*) override
     {
         webkitWebViewRunAsModal(m_webView);
     }
 
-    virtual void isPlayingAudioDidChange(WebPageProxy&) override
+    void isPlayingAudioDidChange(WebPageProxy&) override
     {
         webkitWebViewIsPlayingAudioChanged(m_webView);
     }

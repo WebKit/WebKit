@@ -74,13 +74,13 @@ public:
 
     virtual ~FrameView();
 
-    virtual HostWindow* hostWindow() const override;
+    HostWindow* hostWindow() const override;
     
-    WEBCORE_EXPORT virtual void invalidateRect(const IntRect&) override;
-    virtual void setFrameRect(const IntRect&) override;
+    WEBCORE_EXPORT void invalidateRect(const IntRect&) override;
+    void setFrameRect(const IntRect&) override;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    virtual bool scheduleAnimation() override;
+    bool scheduleAnimation() override;
 #endif
 
     Frame& frame() const { return const_cast<Frame&>(m_frame.get()); }
@@ -95,15 +95,15 @@ public:
     void setMarginWidth(LayoutUnit);
     void setMarginHeight(LayoutUnit);
 
-    WEBCORE_EXPORT virtual void setCanHaveScrollbars(bool) override;
+    WEBCORE_EXPORT void setCanHaveScrollbars(bool) override;
     WEBCORE_EXPORT void updateCanHaveScrollbars();
 
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation) override;
+    PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation) override;
 
-    virtual bool avoidScrollbarCreation() const override;
+    bool avoidScrollbarCreation() const override;
 
-    virtual void setContentsSize(const IntSize&) override;
-    virtual void updateContentsSize() override;
+    void setContentsSize(const IntSize&) override;
+    void updateContentsSize() override;
 
     void layout(bool allowSubtree = true);
     WEBCORE_EXPORT bool didFirstLayout() const;
@@ -164,7 +164,7 @@ public:
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPlatformWidget(PlatformWidget);
     WEBCORE_EXPORT void scheduleLayerFlushAllowingThrottling();
 
-    WEBCORE_EXPORT virtual TiledBacking* tiledBacking() const override;
+    WEBCORE_EXPORT TiledBacking* tiledBacking() const override;
 
     // In the future when any ScrollableArea can have a node in th ScrollingTree, this should
     // become a virtual function on ScrollableArea.
@@ -227,21 +227,21 @@ public:
     WEBCORE_EXPORT void setViewportSizeForCSSViewportUnits(IntSize);
     IntSize viewportSizeForCSSViewportUnits() const;
     
-    virtual IntRect windowClipRect() const override;
+    IntRect windowClipRect() const override;
     WEBCORE_EXPORT IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
 
-    virtual float visibleContentScaleFactor() const override;
+    float visibleContentScaleFactor() const override;
 
 #if USE(COORDINATED_GRAPHICS)
-    virtual void setFixedVisibleContentRect(const IntRect&) override;
+    void setFixedVisibleContentRect(const IntRect&) override;
 #endif
-    WEBCORE_EXPORT virtual void setScrollPosition(const ScrollPosition&) override;
-    virtual void updateLayerPositionsAfterScrolling() override;
-    virtual void updateCompositingLayersAfterScrolling() override;
-    virtual bool requestScrollPositionUpdate(const ScrollPosition&) override;
-    virtual bool isRubberBandInProgress() const override;
-    WEBCORE_EXPORT virtual ScrollPosition minimumScrollPosition() const override;
-    WEBCORE_EXPORT virtual ScrollPosition maximumScrollPosition() const override;
+    WEBCORE_EXPORT void setScrollPosition(const ScrollPosition&) override;
+    void updateLayerPositionsAfterScrolling() override;
+    void updateCompositingLayersAfterScrolling() override;
+    bool requestScrollPositionUpdate(const ScrollPosition&) override;
+    bool isRubberBandInProgress() const override;
+    WEBCORE_EXPORT ScrollPosition minimumScrollPosition() const override;
+    WEBCORE_EXPORT ScrollPosition maximumScrollPosition() const override;
 
     void viewportContentsChanged();
     WEBCORE_EXPORT void resumeVisibleImageAnimationsIncludingSubframes();
@@ -321,7 +321,7 @@ public:
     void addEmbeddedObjectToUpdate(RenderEmbeddedObject&);
     void removeEmbeddedObjectToUpdate(RenderEmbeddedObject&);
 
-    WEBCORE_EXPORT virtual void paintContents(GraphicsContext&, const IntRect& dirtyRect) override;
+    WEBCORE_EXPORT void paintContents(GraphicsContext&, const IntRect& dirtyRect) override;
 
     struct PaintingState {
         PaintBehavior paintBehavior;
@@ -353,9 +353,9 @@ public:
     enum CoordinateSpaceForSnapshot { DocumentCoordinates, ViewCoordinates };
     WEBCORE_EXPORT void paintContentsForSnapshot(GraphicsContext&, const IntRect& imageRect, SelectionInSnapshot shouldPaintSelection, CoordinateSpaceForSnapshot);
 
-    virtual void paintOverhangAreas(GraphicsContext&, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect) override;
-    virtual void paintScrollCorner(GraphicsContext&, const IntRect& cornerRect) override;
-    virtual void paintScrollbar(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintOverhangAreas(GraphicsContext&, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect) override;
+    void paintScrollCorner(GraphicsContext&, const IntRect& cornerRect) override;
+    void paintScrollbar(GraphicsContext&, Scrollbar&, const IntRect&) override;
 
     WEBCORE_EXPORT Color documentBackgroundColor() const;
 
@@ -410,10 +410,10 @@ public:
     WEBCORE_EXPORT IntPoint convertFromContainingViewToRenderer(const RenderElement*, const IntPoint&) const;
 
     // Override ScrollView methods to do point conversion via renderers, in order to take transforms into account.
-    virtual IntRect convertToContainingView(const IntRect&) const override;
-    virtual IntRect convertFromContainingView(const IntRect&) const override;
-    virtual IntPoint convertToContainingView(const IntPoint&) const override;
-    virtual IntPoint convertFromContainingView(const IntPoint&) const override;
+    IntRect convertToContainingView(const IntRect&) const override;
+    IntRect convertFromContainingView(const IntRect&) const override;
+    IntPoint convertToContainingView(const IntPoint&) const override;
+    IntPoint convertFromContainingView(const IntPoint&) const override;
 
     bool isFrameViewScrollCorner(const RenderScrollbarPart& scrollCorner) const { return m_scrollCorner == &scrollCorner; }
 
@@ -425,21 +425,21 @@ public:
     enum class Scrollability { Scrollable, ScrollableOrRubberbandable };
     WEBCORE_EXPORT bool isScrollable(Scrollability definitionOfScrollable = Scrollability::Scrollable);
 
-    virtual bool isScrollableOrRubberbandable() override;
-    virtual bool hasScrollableOrRubberbandableAncestor() override;
+    bool isScrollableOrRubberbandable() override;
+    bool hasScrollableOrRubberbandableAncestor() override;
 
     enum ScrollbarModesCalculationStrategy { RulesFromWebContentOnly, AnyRule };
     void calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode, ScrollbarModesCalculationStrategy = AnyRule);
 
-    virtual IntPoint lastKnownMousePosition() const override;
-    virtual bool isHandlingWheelEvent() const override;
+    IntPoint lastKnownMousePosition() const override;
+    bool isHandlingWheelEvent() const override;
     bool shouldSetCursor() const;
 
     // FIXME: Remove this method once plugin loading is decoupled from layout.
     void flushAnyPendingPostLayoutTasks();
 
-    virtual bool shouldSuspendScrollAnimations() const override;
-    virtual void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;
+    bool shouldSuspendScrollAnimations() const override;
+    void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;
 
     RenderBox* embeddedContentBox() const;
     
@@ -457,7 +457,7 @@ public:
     bool containsScrollableArea(ScrollableArea*) const;
     const ScrollableAreaSet* scrollableAreas() const { return m_scrollableAreas.get(); }
 
-    virtual void removeChild(Widget&) override;
+    void removeChild(Widget&) override;
 
     // This function exists for ports that need to handle wheel events manually.
     // On Mac WebKit1 the underlying NSScrollView just does the scrolling, but on most other platforms
@@ -483,9 +483,9 @@ public:
     void setInitialViewportSize(const IntSize& size) { m_initialViewportSize = size; }
 #endif
 
-    virtual bool isActive() const override;
-    virtual bool updatesScrollLayerPositionOnMainThread() const override;
-    virtual bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
+    bool isActive() const override;
+    bool updatesScrollLayerPositionOnMainThread() const override;
+    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
 
 #if ENABLE(RUBBER_BANDING)
     WEBCORE_EXPORT GraphicsLayer* setWantsLayerForTopOverHangArea(bool) const;
@@ -495,18 +495,18 @@ public:
     LayoutRect fixedScrollableAreaBoundsInflatedForScrolling(const LayoutRect& uninflatedBounds) const;
     LayoutPoint scrollPositionRespectingCustomFixedPosition() const;
 
-    virtual int headerHeight() const override { return m_headerHeight; }
+    int headerHeight() const override { return m_headerHeight; }
     WEBCORE_EXPORT void setHeaderHeight(int);
-    virtual int footerHeight() const override { return m_footerHeight; }
+    int footerHeight() const override { return m_footerHeight; }
     WEBCORE_EXPORT void setFooterHeight(int);
 
-    WEBCORE_EXPORT virtual float topContentInset(TopContentInsetType = TopContentInsetType::WebCoreContentInset) const override;
+    WEBCORE_EXPORT float topContentInset(TopContentInsetType = TopContentInsetType::WebCoreContentInset) const override;
     void topContentInsetDidChange(float newTopContentInset);
 
-    WEBCORE_EXPORT virtual void willStartLiveResize() override;
-    WEBCORE_EXPORT virtual void willEndLiveResize() override;
+    WEBCORE_EXPORT void willStartLiveResize() override;
+    WEBCORE_EXPORT void willEndLiveResize() override;
 
-    WEBCORE_EXPORT virtual void availableContentSizeChanged(AvailableSizeChangeReason) override;
+    WEBCORE_EXPORT void availableContentSizeChanged(AvailableSizeChangeReason) override;
 
     void addPaintPendingMilestones(LayoutMilestones);
     void firePaintRelatedMilestonesIfNeeded();
@@ -547,20 +547,20 @@ public:
     void updateScrollingCoordinatorScrollSnapProperties() const;
 #endif
 
-    virtual float adjustScrollStepForFixedContent(float step, ScrollbarOrientation, ScrollGranularity) override;
+    float adjustScrollStepForFixedContent(float step, ScrollbarOrientation, ScrollGranularity) override;
 
     void didChangeScrollOffset();
 
     void show() override;
 
 protected:
-    virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) override;
-    virtual void scrollContentsSlowPath(const IntRect& updateRect) override;
+    bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) override;
+    void scrollContentsSlowPath(const IntRect& updateRect) override;
     
     void repaintSlowRepaintObjects();
 
-    virtual bool isVerticalDocument() const override;
-    virtual bool isFlippedDocument() const override;
+    bool isVerticalDocument() const override;
+    bool isFlippedDocument() const override;
 
 private:
     explicit FrameView(Frame&);
@@ -581,7 +581,7 @@ private:
 
     bool inPreLayoutStyleUpdate() const { return m_layoutPhase == InPreLayoutStyleUpdate; }
 
-    virtual bool isFrameView() const override { return true; }
+    bool isFrameView() const override { return true; }
 
     friend class RenderWidget;
     bool useSlowRepaints(bool considerOverlap = true) const;
@@ -592,9 +592,9 @@ private:
     bool shouldUpdateCompositingLayersAfterScrolling() const;
     bool flushCompositingStateForThisFrame(const Frame& rootFrameForFlush);
 
-    virtual bool shouldDeferScrollUpdateAfterContentSizeChange() override;
+    bool shouldDeferScrollUpdateAfterContentSizeChange() override;
 
-    virtual void scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& oldOffset, const ScrollOffset& newOffset) override;
+    void scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& oldOffset, const ScrollOffset& newOffset) override;
 
     void applyOverflowToViewport(const RenderElement&, ScrollbarMode& hMode, ScrollbarMode& vMode);
     void applyPaginationToViewport();
@@ -614,41 +614,41 @@ private:
     void updateLayerFlushThrottling();
     WEBCORE_EXPORT void adjustTiledBackingCoverage();
 
-    virtual void repaintContentRectangle(const IntRect&) override;
-    virtual void addedOrRemovedScrollbar() override;
+    void repaintContentRectangle(const IntRect&) override;
+    void addedOrRemovedScrollbar() override;
 
-    virtual void delegatesScrollingDidChange() override;
+    void delegatesScrollingDidChange() override;
 
     // ScrollableArea interface
-    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
-    virtual void scrollTo(const ScrollPosition&) override;
-    virtual void setVisibleScrollerThumbRect(const IntRect&) override;
-    virtual ScrollableArea* enclosingScrollableArea() const override;
-    virtual IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
-    virtual bool scrollAnimatorEnabled() const override;
-    virtual GraphicsLayer* layerForScrolling() const override;
-    virtual GraphicsLayer* layerForHorizontalScrollbar() const override;
-    virtual GraphicsLayer* layerForVerticalScrollbar() const override;
-    virtual GraphicsLayer* layerForScrollCorner() const override;
+    void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
+    void scrollTo(const ScrollPosition&) override;
+    void setVisibleScrollerThumbRect(const IntRect&) override;
+    ScrollableArea* enclosingScrollableArea() const override;
+    IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
+    bool scrollAnimatorEnabled() const override;
+    GraphicsLayer* layerForScrolling() const override;
+    GraphicsLayer* layerForHorizontalScrollbar() const override;
+    GraphicsLayer* layerForVerticalScrollbar() const override;
+    GraphicsLayer* layerForScrollCorner() const override;
 #if ENABLE(RUBBER_BANDING)
-    virtual GraphicsLayer* layerForOverhangAreas() const override;
+    GraphicsLayer* layerForOverhangAreas() const override;
 #endif
 
-    virtual bool usesCompositedScrolling() const override;
-    virtual bool usesAsyncScrolling() const override;
+    bool usesCompositedScrolling() const override;
+    bool usesAsyncScrolling() const override;
     bool usesMockScrollAnimator() const override;
     void logMockScrollAnimatorMessage(const String&) const override;
 
     // Override scrollbar notifications to update the AXObject cache.
-    virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation) override;
-    virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation) override;
+    void didAddScrollbar(Scrollbar*, ScrollbarOrientation) override;
+    void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation) override;
 
     IntSize sizeForResizeEvent() const;
     void sendResizeEventIfNeeded();
 
     void updateScrollableAreaSet();
 
-    virtual void notifyPageThatContentAreaWillPaint() const override;
+    void notifyPageThatContentAreaWillPaint() const override;
 
     void enableSpeculativeTilingIfNeeded();
     void speculativeTilingEnableTimerFired();
@@ -663,7 +663,7 @@ private:
 
     bool hasCustomScrollbars() const;
 
-    virtual void updateScrollCorner() override;
+    void updateScrollCorner() override;
 
     FrameView* parentFrameView() const;
 

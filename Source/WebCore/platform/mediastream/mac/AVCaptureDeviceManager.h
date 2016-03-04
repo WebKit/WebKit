@@ -46,8 +46,8 @@ namespace WebCore {
 class AVCaptureSessionInfo : public CaptureSessionInfo {
 public:
     AVCaptureSessionInfo(AVCaptureSession*);
-    virtual bool supportsVideoSize(const String&) const override;
-    virtual String bestSessionPresetForVideoDimensions(int width, int height) const override;
+    bool supportsVideoSize(const String&) const override;
+    String bestSessionPresetForVideoDimensions(int width, int height) const override;
 
 private:
     AVCaptureSession *m_platformSession;
@@ -56,15 +56,15 @@ private:
 class AVCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<AVCaptureDeviceManager>;
 public:
-    virtual Vector<CaptureDeviceInfo>& captureDeviceList() override;
+    Vector<CaptureDeviceInfo>& captureDeviceList() override;
 
     static AVCaptureDeviceManager& singleton();
 
-    virtual RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) override;
-    virtual Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>) override;
+    RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) override;
+    Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>) override;
 
-    virtual TrackSourceInfoVector getSourcesInfo(const String&) override;
-    virtual bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, MediaConstraints*, const CaptureSessionInfo*, String&) override;
+    TrackSourceInfoVector getSourcesInfo(const String&) override;
+    bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, MediaConstraints*, const CaptureSessionInfo*, String&) override;
 
     void deviceConnected();
     void deviceDisconnected(AVCaptureDevice*);
@@ -75,12 +75,12 @@ protected:
     static bool isAvailable();
 
     AVCaptureDeviceManager();
-    virtual ~AVCaptureDeviceManager() override;
-    virtual bool sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type, const String& name, const String& value) override;
-    virtual RealtimeMediaSource* createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo&, MediaConstraints*) override;
-    virtual CaptureSessionInfo defaultCaptureSession() const override;
-    virtual void refreshCaptureDeviceList() override;
-    virtual bool isSupportedFrameRate(float frameRate) const override;
+    ~AVCaptureDeviceManager() override;
+    bool sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type, const String& name, const String& value) override;
+    RealtimeMediaSource* createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo&, MediaConstraints*) override;
+    CaptureSessionInfo defaultCaptureSession() const override;
+    void refreshCaptureDeviceList() override;
+    bool isSupportedFrameRate(float frameRate) const override;
 
     void registerForDeviceNotifications();
 

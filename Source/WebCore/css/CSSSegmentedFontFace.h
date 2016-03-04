@@ -52,7 +52,7 @@ public:
     Vector<Ref<CSSFontFace>, 1>& constituentFaces() { return m_fontFaces; }
 
 private:
-    virtual void fontLoaded(CSSFontFace&) override;
+    void fontLoaded(CSSFontFace&) override;
 
     HashMap<FontDescriptionKey, FontRanges, FontDescriptionKeyHash, WTF::SimpleClassHashTraits<FontDescriptionKey>> m_cache;
     Vector<Ref<CSSFontFace>, 1> m_fontFaces;

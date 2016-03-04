@@ -38,11 +38,11 @@ public:
     static Ref<AccessibilityTreeItem> create(RenderObject*);
     virtual ~AccessibilityTreeItem();
 
-    virtual bool shouldIgnoreAttributeRole() const override { return !m_isTreeItemValid; }
+    bool shouldIgnoreAttributeRole() const override { return !m_isTreeItemValid; }
 
 private:
     explicit AccessibilityTreeItem(RenderObject*);
-    virtual AccessibilityRole determineAccessibilityRole() override;
+    AccessibilityRole determineAccessibilityRole() override;
     bool m_isTreeItemValid;
 };
     

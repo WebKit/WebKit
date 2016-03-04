@@ -33,9 +33,9 @@ public:
 private:
     SVGFEMergeNodeElement(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
-    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEMergeNodeElement)
         DECLARE_ANIMATED_STRING(In1, in1)

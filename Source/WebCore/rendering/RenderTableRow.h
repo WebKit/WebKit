@@ -48,7 +48,7 @@ public:
     void paintOutlineForRowIfNeeded(PaintInfo&, const LayoutPoint&);
 
     static RenderTableRow* createAnonymousWithParentRenderer(const RenderObject*);
-    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override { return createAnonymousWithParentRenderer(parent); }
+    RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override { return createAnonymousWithParentRenderer(parent); }
 
     void setRowIndex(unsigned);
     bool rowIndexWasSet() const { return m_rowIndex != unsetRowIndex; }
@@ -59,28 +59,28 @@ public:
     const BorderValue& borderAdjoiningStartCell(const RenderTableCell*) const;
     const BorderValue& borderAdjoiningEndCell(const RenderTableCell*) const;
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
+    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
 private:
-    virtual const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableRow (anonymous)" : "RenderTableRow"; }
+    const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableRow (anonymous)" : "RenderTableRow"; }
 
-    virtual bool isTableRow() const override { return true; }
+    bool isTableRow() const override { return true; }
 
-    virtual bool canHaveChildren() const override { return true; }
-    virtual void willBeRemovedFromTree() override;
+    bool canHaveChildren() const override { return true; }
+    void willBeRemovedFromTree() override;
 
-    virtual void layout() override;
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
+    void layout() override;
+    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
 
-    virtual bool requiresLayer() const override { return hasOverflowClip() || hasTransformRelatedProperty() || hasHiddenBackface() || hasClipPath() || createsGroup() || isStickyPositioned(); }
+    bool requiresLayer() const override { return hasOverflowClip() || hasTransformRelatedProperty() || hasHiddenBackface() || hasClipPath() || createsGroup() || isStickyPositioned(); }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    void paint(PaintInfo&, const LayoutPoint&) override;
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
+    void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     RenderTableSection* section() const { return downcast<RenderTableSection>(parent()); }
 

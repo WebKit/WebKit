@@ -36,41 +36,41 @@ public:
     
     const AtomicString& value() const;
 
-    virtual bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() override;
 
 private:
     HTMLButtonElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
 
     enum Type { SUBMIT, RESET, BUTTON };
 
-    virtual const AtomicString& formControlType() const override;
+    const AtomicString& formControlType() const override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
     // HTMLFormControlElement always creates one, but buttons don't need it.
-    virtual bool alwaysCreateUserAgentShadowRoot() const override { return false; }
-    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+    bool alwaysCreateUserAgentShadowRoot() const override { return false; }
+    bool canHaveUserAgentShadowRoot() const override final { return true; }
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool isPresentationAttribute(const QualifiedName&) const override;
-    virtual void defaultEventHandler(Event*) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool isPresentationAttribute(const QualifiedName&) const override;
+    void defaultEventHandler(Event*) override;
 
-    virtual bool appendFormData(FormDataList&, bool) override;
+    bool appendFormData(FormDataList&, bool) override;
 
-    virtual bool isEnumeratable() const override { return true; }
-    virtual bool supportLabels() const override { return true; }
+    bool isEnumeratable() const override { return true; }
+    bool supportLabels() const override { return true; }
 
-    virtual bool isSuccessfulSubmitButton() const override;
-    virtual bool isActivatedSubmit() const override;
-    virtual void setActivatedSubmit(bool flag) override;
+    bool isSuccessfulSubmitButton() const override;
+    bool isActivatedSubmit() const override;
+    void setActivatedSubmit(bool flag) override;
 
-    virtual void accessKeyAction(bool sendMouseEvents) override;
-    virtual bool isURLAttribute(const Attribute&) const override;
+    void accessKeyAction(bool sendMouseEvents) override;
+    bool isURLAttribute(const Attribute&) const override;
 
-    virtual bool canStartSelection() const override { return false; }
+    bool canStartSelection() const override { return false; }
 
-    virtual bool isOptionalFormControl() const override { return true; }
-    virtual bool computeWillValidate() const override;
+    bool isOptionalFormControl() const override { return true; }
+    bool computeWillValidate() const override;
 
     Type m_type;
     bool m_isActivatedSubmit;

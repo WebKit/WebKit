@@ -89,32 +89,32 @@ public:
 
 private:
     // GraphicsLayerClient
-    virtual void notifyAnimationStarted(const GraphicsLayer*, const String&, double time) override;
-    virtual void notifyFlushRequired(const GraphicsLayer*) override;
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clipRect) override;
-    virtual float deviceScaleFactor() const override;
-    virtual float pageScaleFactor() const override;
+    void notifyAnimationStarted(const GraphicsLayer*, const String&, double time) override;
+    void notifyFlushRequired(const GraphicsLayer*) override;
+    void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clipRect) override;
+    float deviceScaleFactor() const override;
+    float pageScaleFactor() const override;
 
     // CoordinatedImageBacking::Client
-    virtual void createImageBacking(CoordinatedImageBackingID) override;
-    virtual void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>) override;
-    virtual void clearImageBackingContents(CoordinatedImageBackingID) override;
-    virtual void removeImageBacking(CoordinatedImageBackingID) override;
+    void createImageBacking(CoordinatedImageBackingID) override;
+    void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>) override;
+    void clearImageBackingContents(CoordinatedImageBackingID) override;
+    void removeImageBacking(CoordinatedImageBackingID) override;
 
     // CoordinatedGraphicsLayerClient
-    virtual bool isFlushingLayerChanges() const override { return m_isFlushingLayerChanges; }
-    virtual FloatRect visibleContentsRect() const override;
-    virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(Image*) override;
-    virtual void detachLayer(CoordinatedGraphicsLayer*) override;
-    virtual bool paintToSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& /* atlasID */, WebCore::IntPoint&, WebCore::CoordinatedSurface::Client*) override;
-    virtual void syncLayerState(CoordinatedLayerID, CoordinatedGraphicsLayerState&) override;
+    bool isFlushingLayerChanges() const override { return m_isFlushingLayerChanges; }
+    FloatRect visibleContentsRect() const override;
+    PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(Image*) override;
+    void detachLayer(CoordinatedGraphicsLayer*) override;
+    bool paintToSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& /* atlasID */, WebCore::IntPoint&, WebCore::CoordinatedSurface::Client*) override;
+    void syncLayerState(CoordinatedLayerID, CoordinatedGraphicsLayerState&) override;
 
     // UpdateAtlas::Client
-    virtual void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>) override;
-    virtual void removeUpdateAtlas(uint32_t atlasID) override;
+    void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>) override;
+    void removeUpdateAtlas(uint32_t atlasID) override;
 
     // GraphicsLayerFactory
-    virtual std::unique_ptr<GraphicsLayer> createGraphicsLayer(GraphicsLayer::Type, GraphicsLayerClient&) override;
+    std::unique_ptr<GraphicsLayer> createGraphicsLayer(GraphicsLayer::Type, GraphicsLayerClient&) override;
 
     void initializeRootCompositingLayerIfNeeded();
     void flushPendingImageBackingChanges();

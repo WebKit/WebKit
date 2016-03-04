@@ -61,25 +61,25 @@ public:
 private:
     SliderThumbElement(Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
-    virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
-    virtual bool isDisabledFormControl() const override;
-    virtual bool matchesReadWritePseudoClass() const override;
-    virtual Element* focusDelegate() override;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
+    bool isDisabledFormControl() const override;
+    bool matchesReadWritePseudoClass() const override;
+    Element* focusDelegate() override;
 #if !PLATFORM(IOS)
-    virtual void defaultEventHandler(Event*) override;
-    virtual bool willRespondToMouseMoveEvents() override;
-    virtual bool willRespondToMouseClickEvents() override;
+    void defaultEventHandler(Event*) override;
+    bool willRespondToMouseMoveEvents() override;
+    bool willRespondToMouseClickEvents() override;
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    virtual void didAttachRenderers() override;
+    void didAttachRenderers() override;
 #endif
-    virtual void willDetachRenderers() override;
+    void willDetachRenderers() override;
 
-    virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle&, RenderStyle*) override;
-    virtual const AtomicString& shadowPseudoId() const override;
+    RefPtr<RenderStyle> customStyleForRenderer(RenderStyle&, RenderStyle*) override;
+    const AtomicString& shadowPseudoId() const override;
 
     void startDragging();
     void stopDragging();
@@ -123,7 +123,7 @@ public:
     void updateAppearance(RenderStyle* parentStyle);
 
 private:
-    virtual bool isSliderThumb() const override;
+    bool isSliderThumb() const override;
 };
 
 // --------------------------------
@@ -134,9 +134,9 @@ public:
 
 private:
     SliderContainerElement(Document&);
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle&, RenderStyle*) override;
-    virtual const AtomicString& shadowPseudoId() const override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RefPtr<RenderStyle> customStyleForRenderer(RenderStyle&, RenderStyle*) override;
+    const AtomicString& shadowPseudoId() const override;
 
     AtomicString m_shadowPseudoId;
 };

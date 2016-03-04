@@ -44,20 +44,20 @@ public:
 private:
     void element() const = delete;
 
-    virtual bool isFileUploadControl() const override { return true; }
+    bool isFileUploadControl() const override { return true; }
 
-    virtual const char* renderName() const override { return "RenderFileUploadControl"; }
+    const char* renderName() const override { return "RenderFileUploadControl"; }
 
-    virtual void updateFromElement() override;
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
-    virtual void computePreferredLogicalWidths() override;
-    virtual void paintObject(PaintInfo&, const LayoutPoint&) override;
+    void updateFromElement() override;
+    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    void computePreferredLogicalWidths() override;
+    void paintObject(PaintInfo&, const LayoutPoint&) override;
 
-    virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
+    bool requiresForcedStyleRecalcPropagation() const override { return true; }
 
     int maxFilenameWidth() const;
     
-    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
     HTMLInputElement* uploadButton() const;
 

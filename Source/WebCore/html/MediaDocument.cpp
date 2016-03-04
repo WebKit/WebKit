@@ -68,7 +68,7 @@ private:
         m_outgoingReferrer = document.outgoingReferrer();
     }
 
-    virtual void appendBytes(DocumentWriter&, const char*, size_t) override;
+    void appendBytes(DocumentWriter&, const char*, size_t) override;
 
     void createDocumentStructure();
 

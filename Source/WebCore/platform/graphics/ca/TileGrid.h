@@ -140,14 +140,14 @@ private:
     void removeTiles(Vector<TileGrid::TileIndex>& toRemove);
 
     // PlatformCALayerClient
-    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&) override;
-    virtual bool platformCALayerShowDebugBorders() const override;
-    virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
-    virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) override;
-    virtual bool platformCALayerContentsOpaque() const override;
-    virtual bool platformCALayerDrawsContent() const override { return true; }
-    virtual float platformCALayerDeviceScaleFactor() const override;
-    virtual bool isUsingDisplayListDrawing(PlatformCALayer*) const override;
+    void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&) override;
+    bool platformCALayerShowDebugBorders() const override;
+    bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
+    int platformCALayerIncrementRepaintCount(PlatformCALayer*) override;
+    bool platformCALayerContentsOpaque() const override;
+    bool platformCALayerDrawsContent() const override { return true; }
+    float platformCALayerDeviceScaleFactor() const override;
+    bool isUsingDisplayListDrawing(PlatformCALayer*) const override;
 
     TileController& m_controller;
     Ref<PlatformCALayer> m_containerLayer;

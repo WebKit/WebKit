@@ -42,18 +42,18 @@ public:
     PlatformClockCM();
     PlatformClockCM(CMClockRef);
 
-    virtual void setCurrentTime(double) override;
-    virtual double currentTime() const override;
+    void setCurrentTime(double) override;
+    double currentTime() const override;
 
     void setCurrentMediaTime(const MediaTime&);
     MediaTime currentMediaTime() const;
 
-    virtual void setPlayRate(double) override;
-    virtual double playRate() const override { return m_rate; }
+    void setPlayRate(double) override;
+    double playRate() const override { return m_rate; }
 
-    virtual void start() override;
-    virtual void stop() override;
-    virtual bool isRunning() const override { return m_running; }
+    void start() override;
+    void stop() override;
+    bool isRunning() const override { return m_running; }
 
     CMTimebaseRef timebase() const { return m_timebase.get(); }
 

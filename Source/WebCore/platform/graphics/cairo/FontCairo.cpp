@@ -223,14 +223,14 @@ public:
         moveToNextValidGlyph();
     }
 private:
-    virtual bool containsMorePaths() override
+    bool containsMorePaths() override
     {
         return m_index != m_glyphBuffer.size();
     }
-    virtual Path path() override;
-    virtual std::pair<float, float> extents() override;
-    virtual GlyphUnderlineType underlineType() override;
-    virtual void advance() override;
+    Path path() override;
+    std::pair<float, float> extents() override;
+    GlyphUnderlineType underlineType() override;
+    void advance() override;
     void moveToNextValidGlyph();
 
     int m_index;

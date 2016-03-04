@@ -41,7 +41,7 @@ public:
 private:
     SVGDocument(Frame*, const URL&);
 
-    virtual Ref<Document> cloneDocumentWithoutChildren() const override;
+    Ref<Document> cloneDocumentWithoutChildren() const override;
 
     FloatSize m_panningOffset;
 };

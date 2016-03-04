@@ -54,19 +54,19 @@ public:
     void mainFrameNavigated();
 
 protected:
-    virtual void enable() override;
-    virtual void disable(bool isBeingDestroyed) override;
+    void enable() override;
+    void disable(bool isBeingDestroyed) override;
 
-    virtual String sourceMapURLForScript(const Script&) override;
+    String sourceMapURLForScript(const Script&) override;
 
 private:
-    virtual void muteConsole() override;
-    virtual void unmuteConsole() override;
+    void muteConsole() override;
+    void unmuteConsole() override;
 
-    virtual void breakpointActionLog(JSC::ExecState*, const String&) override;
+    void breakpointActionLog(JSC::ExecState*, const String&) override;
 
-    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
-    virtual void setOverlayMessage(ErrorString&, const String*) override;
+    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
+    void setOverlayMessage(ErrorString&, const String*) override;
 
     Page& m_page;
 

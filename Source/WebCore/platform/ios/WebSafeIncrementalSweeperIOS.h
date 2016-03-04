@@ -38,7 +38,7 @@ public:
     {
     }
 
-    virtual ~WebSafeIncrementalSweeper() override { }
+    ~WebSafeIncrementalSweeper() override { }
 
 };
 

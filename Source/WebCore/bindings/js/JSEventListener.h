@@ -50,7 +50,7 @@ public:
 
     virtual ~JSEventListener();
 
-    virtual bool operator==(const EventListener& other) override;
+    bool operator==(const EventListener& other) override;
 
     // Returns true if this event listener was created for an event handler attribute, like "onload" or "onclick".
     bool isAttribute() const { return m_isAttribute; }
@@ -63,12 +63,12 @@ public:
 
 private:
     virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const;
-    virtual void visitJSFunction(JSC::SlotVisitor&) override;
-    virtual bool virtualisAttribute() const override;
+    void visitJSFunction(JSC::SlotVisitor&) override;
+    bool virtualisAttribute() const override;
 
 protected:
     JSEventListener(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld&);
-    virtual void handleEvent(ScriptExecutionContext*, Event*) override;
+    void handleEvent(ScriptExecutionContext*, Event*) override;
 
 private:
     mutable JSC::Weak<JSC::JSObject> m_jsFunction;

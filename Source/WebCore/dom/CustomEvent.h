@@ -52,7 +52,7 @@ public:
 
     void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, const Deprecated::ScriptValue& detail);
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
     const Deprecated::ScriptValue& detail() const { return m_detail; }
     

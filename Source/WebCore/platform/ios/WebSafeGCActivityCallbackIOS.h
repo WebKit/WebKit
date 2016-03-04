@@ -39,7 +39,7 @@ public:
         return adoptRef(new WebSafeFullGCActivityCallback(heap));
     }
 
-    virtual ~WebSafeFullGCActivityCallback() override { }
+    ~WebSafeFullGCActivityCallback() override { }
 
 private:
     WebSafeFullGCActivityCallback(JSC::Heap* heap)
@@ -55,7 +55,7 @@ public:
         return adoptRef(new WebSafeEdenGCActivityCallback(heap));
     }
 
-    virtual ~WebSafeEdenGCActivityCallback() override { }
+    ~WebSafeEdenGCActivityCallback() override { }
 
 private:
     WebSafeEdenGCActivityCallback(JSC::Heap* heap)

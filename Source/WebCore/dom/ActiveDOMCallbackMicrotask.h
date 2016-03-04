@@ -37,10 +37,10 @@ public:
     WEBCORE_EXPORT ActiveDOMCallbackMicrotask(MicrotaskQueue&, ScriptExecutionContext&, std::function<void()>&&);
     virtual ~ActiveDOMCallbackMicrotask();
 
-    virtual Result run() override;
+    Result run() override;
 
 private:
-    virtual void contextDestroyed() override;
+    void contextDestroyed() override;
 
     // FIXME: It should not be necessary to have the queue as a member. Instead, it should
     // be accessed via the ScriptExecutionContext, which should hold a reference to the relevent

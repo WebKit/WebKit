@@ -44,7 +44,7 @@ public:
     FormAttributeTargetObserver(const AtomicString& id, FormAssociatedElement&);
 
 private:
-    virtual void idTargetChanged() override;
+    void idTargetChanged() override;
 
     FormAssociatedElement& m_element;
 };

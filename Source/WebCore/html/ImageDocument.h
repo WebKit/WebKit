@@ -54,7 +54,7 @@ public:
 private:
     ImageDocument(Frame&, const URL&);
 
-    virtual Ref<DocumentParser> createParser() override;
+    Ref<DocumentParser> createParser() override;
 
     LayoutSize imageSize();
 

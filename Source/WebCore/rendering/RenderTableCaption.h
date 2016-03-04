@@ -33,13 +33,13 @@ public:
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    virtual LayoutUnit containingBlockLogicalWidthForContent() const override { return containingBlock()->logicalWidth(); }
+    LayoutUnit containingBlockLogicalWidthForContent() const override { return containingBlock()->logicalWidth(); }
     
 private:
-    virtual bool isTableCaption() const override { return true; }
+    bool isTableCaption() const override { return true; }
 
-    virtual void insertedIntoTree() override;
-    virtual void willBeRemovedFromTree() override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     RenderTable* table() const;
 };

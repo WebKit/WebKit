@@ -38,10 +38,10 @@ public:
 private:
     SVGFEDiffuseLightingElement(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
-    virtual RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
 
     static const AtomicString& kernelUnitLengthXIdentifier();
     static const AtomicString& kernelUnitLengthYIdentifier();

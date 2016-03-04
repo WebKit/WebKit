@@ -61,43 +61,43 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
 
 class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
     struct EmptyStorageArea : public StorageArea {
-        virtual unsigned length() override { return 0; }
-        virtual String key(unsigned) override { return String(); }
-        virtual String item(const String&) override { return String(); }
-        virtual void setItem(Frame*, const String&, const String&, bool&) override { }
-        virtual void removeItem(Frame*, const String&) override { }
-        virtual void clear(Frame*) override { }
-        virtual bool contains(const String&) override { return false; }
-        virtual bool canAccessStorage(Frame*) override { return false; }
-        virtual StorageType storageType() const override { return LocalStorage; }
-        virtual size_t memoryBytesUsedByCache() override { return 0; }
+        unsigned length() override { return 0; }
+        String key(unsigned) override { return String(); }
+        String item(const String&) override { return String(); }
+        void setItem(Frame*, const String&, const String&, bool&) override { }
+        void removeItem(Frame*, const String&) override { }
+        void clear(Frame*) override { }
+        bool contains(const String&) override { return false; }
+        bool canAccessStorage(Frame*) override { return false; }
+        StorageType storageType() const override { return LocalStorage; }
+        size_t memoryBytesUsedByCache() override { return 0; }
         SecurityOrigin& securityOrigin() override { return SecurityOrigin::createUnique(); }
     };
 
     struct EmptyStorageNamespace final : public StorageNamespace {
-        virtual RefPtr<StorageArea> storageArea(RefPtr<SecurityOrigin>&&) override { return adoptRef(new EmptyStorageArea); }
-        virtual RefPtr<StorageNamespace> copy(Page*) override { return adoptRef(new EmptyStorageNamespace); }
+        RefPtr<StorageArea> storageArea(RefPtr<SecurityOrigin>&&) override { return adoptRef(new EmptyStorageArea); }
+        RefPtr<StorageNamespace> copy(Page*) override { return adoptRef(new EmptyStorageNamespace); }
     };
 
-    virtual RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) override
+    RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) override
     {
         return adoptRef(new EmptyStorageNamespace);
     }
 
-    virtual RefPtr<StorageNamespace> createLocalStorageNamespace(unsigned) override
+    RefPtr<StorageNamespace> createLocalStorageNamespace(unsigned) override
     {
         return adoptRef(new EmptyStorageNamespace);
     }
 
-    virtual RefPtr<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned) override
+    RefPtr<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned) override
     {
         return adoptRef(new EmptyStorageNamespace);
     }
 };
 
 class EmptyVisitedLinkStore : public VisitedLinkStore {
-    virtual bool isLinkVisited(Page&, LinkHash, const URL&, const AtomicString&) override { return false; }
-    virtual void addVisitedLink(Page&, LinkHash) override { }
+    bool isLinkVisited(Page&, LinkHash, const URL&, const AtomicString&) override { return false; }
+    void addVisitedLink(Page&, LinkHash) override { }
 };
 
 void fillWithEmptyClients(PageConfiguration& pageConfiguration)

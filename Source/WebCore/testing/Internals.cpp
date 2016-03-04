@@ -231,20 +231,20 @@ public:
     virtual ~InspectorStubFrontend();
 
     // InspectorFrontendClient API
-    virtual void attachWindow(DockSide) override { }
-    virtual void detachWindow() override { }
-    virtual void closeWindow() override;
-    virtual void bringToFront() override { }
-    virtual String localizedStringsURL() override { return String(); }
-    virtual void inspectedURLChanged(const String&) override { }
+    void attachWindow(DockSide) override { }
+    void detachWindow() override { }
+    void closeWindow() override;
+    void bringToFront() override { }
+    String localizedStringsURL() override { return String(); }
+    void inspectedURLChanged(const String&) override { }
 protected:
-    virtual void setAttachedWindowHeight(unsigned) override { }
-    virtual void setAttachedWindowWidth(unsigned) override { }
+    void setAttachedWindowHeight(unsigned) override { }
+    void setAttachedWindowWidth(unsigned) override { }
 
 public:
     // Inspector::FrontendChannel API
-    virtual bool sendMessageToFrontend(const String& message) override;
-    virtual ConnectionType connectionType() const override { return ConnectionType::Local; }
+    bool sendMessageToFrontend(const String& message) override;
+    ConnectionType connectionType() const override { return ConnectionType::Local; }
 
 private:
     Page* frontendPage() const

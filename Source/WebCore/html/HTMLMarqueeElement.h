@@ -39,7 +39,7 @@ public:
     // DOM Functions
 
     void start();
-    virtual void stop() override;
+    void stop() override;
     
     unsigned scrollAmount() const;
     void setScrollAmount(unsigned);
@@ -53,16 +53,16 @@ public:
 private:
     HTMLMarqueeElement(const QualifiedName&, Document&);
 
-    virtual bool isPresentationAttribute(const QualifiedName&) const override;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    bool isPresentationAttribute(const QualifiedName&) const override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
     // ActiveDOMObject
-    virtual bool canSuspendForDocumentSuspension() const override;
-    virtual void suspend(ReasonForSuspension) override;
-    virtual void resume() override;
-    virtual const char* activeDOMObjectName() const override { return "HTMLMarqueeElement"; }
+    bool canSuspendForDocumentSuspension() const override;
+    void suspend(ReasonForSuspension) override;
+    void resume() override;
+    const char* activeDOMObjectName() const override { return "HTMLMarqueeElement"; }
 
-    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+    bool canHaveUserAgentShadowRoot() const override final { return true; }
 
     RenderMarquee* renderMarquee() const;
 };

@@ -38,10 +38,10 @@ public:
     RTCDTMFSenderHandlerMock();
     virtual ~RTCDTMFSenderHandlerMock() { }
 
-    virtual void setClient(RTCDTMFSenderHandlerClient*) override;
-    virtual String currentToneBuffer() override { return m_toneBuffer; }
-    virtual bool canInsertDTMF() override { return true; }
-    virtual bool insertDTMF(const String& tones, long duration, long interToneGap) override;
+    void setClient(RTCDTMFSenderHandlerClient*) override;
+    String currentToneBuffer() override { return m_toneBuffer; }
+    bool canInsertDTMF() override { return true; }
+    bool insertDTMF(const String& tones, long duration, long interToneGap) override;
 
 private:
     RTCDTMFSenderHandlerClient* m_client;

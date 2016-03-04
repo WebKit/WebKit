@@ -56,8 +56,8 @@ public:
     virtual ~OscillatorNode();
     
     // AudioNode
-    virtual void process(size_t framesToProcess) override;
-    virtual void reset() override;
+    void process(size_t framesToProcess) override;
+    void reset() override;
 
     String type() const;
 
@@ -72,13 +72,13 @@ public:
 private:
     OscillatorNode(AudioContext&, float sampleRate);
 
-    virtual double tailTime() const override { return 0; }
-    virtual double latencyTime() const override { return 0; }
+    double tailTime() const override { return 0; }
+    double latencyTime() const override { return 0; }
 
     // Returns true if there are sample-accurate timeline parameter changes.
     bool calculateSampleAccuratePhaseIncrements(size_t framesToProcess);
 
-    virtual bool propagatesSilence() const override;
+    bool propagatesSilence() const override;
 
     // One of the waveform types defined in the enum.
     unsigned short m_type;

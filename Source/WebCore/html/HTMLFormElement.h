@@ -111,7 +111,7 @@ public:
     String method() const;
     void setMethod(const String&);
 
-    virtual String target() const override;
+    String target() const override;
 
     bool wasUserSubmitted() const;
 
@@ -143,21 +143,21 @@ public:
 private:
     HTMLFormElement(const QualifiedName&, Document&);
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
-    virtual void finishParsingChildren() override;
+    bool rendererIsNeeded(const RenderStyle&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
+    void finishParsingChildren() override;
 
-    virtual void handleLocalEvents(Event&) override;
+    void handleLocalEvents(Event&) override;
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool isURLAttribute(const Attribute&) const override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool isURLAttribute(const Attribute&) const override;
 
-    virtual void resumeFromDocumentSuspension() override;
+    void resumeFromDocumentSuspension() override;
 
-    virtual void didMoveToNewDocument(Document* oldDocument) override;
+    void didMoveToNewDocument(Document* oldDocument) override;
 
-    virtual void copyNonAttributePropertiesFromElement(const Element&) override;
+    void copyNonAttributePropertiesFromElement(const Element&) override;
 
     void submit(Event*, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger);
 
@@ -177,8 +177,8 @@ private:
     void assertItemCanBeInPastNamesMap(FormNamedItem*) const;
     void removeFromPastNamesMap(FormNamedItem*);
 
-    virtual bool matchesValidPseudoClass() const override;
-    virtual bool matchesInvalidPseudoClass() const override;
+    bool matchesValidPseudoClass() const override;
+    bool matchesInvalidPseudoClass() const override;
 
     typedef HashMap<RefPtr<AtomicStringImpl>, FormNamedItem*> PastNamesMap;
 

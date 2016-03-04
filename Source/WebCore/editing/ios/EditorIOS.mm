@@ -379,14 +379,14 @@ public:
     bool madeFragmentFromPlainText;
 
 private:
-    virtual bool readWebArchive(PassRefPtr<SharedBuffer>) override;
-    virtual bool readFilenames(const Vector<String>&) override;
-    virtual bool readHTML(const String&) override;
-    virtual bool readRTFD(PassRefPtr<SharedBuffer>) override;
-    virtual bool readRTF(PassRefPtr<SharedBuffer>) override;
-    virtual bool readImage(PassRefPtr<SharedBuffer>, const String& type) override;
-    virtual bool readURL(const URL&, const String& title) override;
-    virtual bool readPlainText(const String&) override;
+    bool readWebArchive(PassRefPtr<SharedBuffer>) override;
+    bool readFilenames(const Vector<String>&) override;
+    bool readHTML(const String&) override;
+    bool readRTFD(PassRefPtr<SharedBuffer>) override;
+    bool readRTF(PassRefPtr<SharedBuffer>) override;
+    bool readImage(PassRefPtr<SharedBuffer>, const String& type) override;
+    bool readURL(const URL&, const String& title) override;
+    bool readPlainText(const String&) override;
 };
 
 void Editor::WebContentReader::addFragment(PassRefPtr<DocumentFragment> newFragment)

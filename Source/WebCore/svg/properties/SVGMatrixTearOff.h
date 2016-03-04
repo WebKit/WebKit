@@ -38,11 +38,11 @@ public:
         return result;
     }
 
-    virtual SVGMatrix& propertyReference() override { return m_parent->propertyReference().svgMatrix(); }
+    SVGMatrix& propertyReference() override { return m_parent->propertyReference().svgMatrix(); }
 
-    virtual void setValue(SVGMatrix& value) override { m_parent->propertyReference().setMatrix(value); }
+    void setValue(SVGMatrix& value) override { m_parent->propertyReference().setMatrix(value); }
 
-    virtual void commitChange() override
+    void commitChange() override
     {
         m_parent->propertyReference().updateSVGMatrix();
         m_parent->commitChange();

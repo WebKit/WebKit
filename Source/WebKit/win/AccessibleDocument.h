@@ -34,8 +34,8 @@ public:
     WebCore::Document* document() const;
 
 protected:
-    virtual long role() const override;
-    virtual long state() const override;
+    long role() const override;
+    long state() const override;
 };
 
 #endif // AccessibleDocument_h

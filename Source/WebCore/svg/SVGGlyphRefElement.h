@@ -32,7 +32,7 @@ public:
     static Ref<SVGGlyphRefElement> create(const QualifiedName&, Document&);
 
     bool hasValidGlyphElement(String& glyphName) const;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     // DOM interface
     const AtomicString& glyphRef() const;
@@ -49,7 +49,7 @@ public:
 private:
     SVGGlyphRefElement(const QualifiedName&, Document&);
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGlyphRefElement)
         DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)

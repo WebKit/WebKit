@@ -59,7 +59,7 @@ public:
         return adoptRef(new VideoTrackPrivateAVFObjC(option));
     }
 
-    virtual void setSelected(bool) override;
+    void setSelected(bool) override;
 
     void setPlayerItemTrack(AVPlayerItemTrack*);
     AVPlayerItemTrack* playerItemTrack();

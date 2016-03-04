@@ -46,7 +46,7 @@ public:
 private:
     WebGLVertexArrayObject(WebGLRenderingContextBase*, VAOType);
     bool isTransformFeedback() const { return true; }
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 };
 
 } // namespace WebCore

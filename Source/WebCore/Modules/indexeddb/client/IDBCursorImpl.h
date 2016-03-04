@@ -49,17 +49,17 @@ public:
     virtual ~IDBCursor();
 
     // Implement the IDL
-    virtual const String& direction() const override final;
-    virtual const Deprecated::ScriptValue& key() const override final;
-    virtual const Deprecated::ScriptValue& primaryKey() const override final;
-    virtual const Deprecated::ScriptValue& value() const override final;
-    virtual IDBAny* source() override final;
+    const String& direction() const override final;
+    const Deprecated::ScriptValue& key() const override final;
+    const Deprecated::ScriptValue& primaryKey() const override final;
+    const Deprecated::ScriptValue& value() const override final;
+    IDBAny* source() override final;
 
-    virtual RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&) override final;
-    virtual void advance(unsigned long, ExceptionCodeWithMessage&) override final;
-    virtual void continueFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
-    virtual void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
-    virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
+    RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&) override final;
+    void advance(unsigned long, ExceptionCodeWithMessage&) override final;
+    void continueFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
+    void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
+    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
 
     void continueFunction(const IDBKeyData&, ExceptionCodeWithMessage&);
 
@@ -71,8 +71,8 @@ public:
 
     void setGetResult(IDBRequest&, const IDBGetResult&);
 
-    virtual bool isKeyCursor() const override { return true; }
-    virtual bool isModernCursor() const override final { return true; }
+    bool isKeyCursor() const override { return true; }
+    bool isModernCursor() const override final { return true; }
 
     void decrementOutstandingRequestCount();
 
@@ -82,9 +82,9 @@ protected:
 
 private:
     // ActiveDOMObject.
-    virtual const char* activeDOMObjectName() const override final;
-    virtual bool canSuspendForDocumentSuspension() const override final;
-    virtual bool hasPendingActivity() const override final;
+    const char* activeDOMObjectName() const override final;
+    bool canSuspendForDocumentSuspension() const override final;
+    bool hasPendingActivity() const override final;
 
     // Cursors are created with an outstanding iteration request.
     unsigned m_outstandingRequestCount { 1 };

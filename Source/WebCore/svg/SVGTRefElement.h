@@ -38,24 +38,24 @@ private:
     SVGTRefElement(const QualifiedName&, Document&);
     virtual ~SVGTRefElement();
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual bool childShouldCreateRenderer(const Node&) const override;
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool childShouldCreateRenderer(const Node&) const override;
+    bool rendererIsNeeded(const RenderStyle&) override;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
-    virtual void finishedInsertingSubtree() override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
+    void finishedInsertingSubtree() override;
 
-    virtual void clearTarget() override;
+    void clearTarget() override;
 
     void updateReferencedText(Element*);
 
     void detachTarget();
 
-    virtual void buildPendingResource() override;
+    void buildPendingResource() override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTRefElement)
         DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)

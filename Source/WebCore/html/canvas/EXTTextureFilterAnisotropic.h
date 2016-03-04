@@ -35,7 +35,7 @@ public:
     explicit EXTTextureFilterAnisotropic(WebGLRenderingContextBase*);
     virtual ~EXTTextureFilterAnisotropic();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

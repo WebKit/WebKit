@@ -47,8 +47,8 @@ public:
         return adoptRef(new VideoTrackPrivateMediaSourceAVFObjC(track, parent));
     }
 
-    virtual bool selected() const override;
-    virtual void setSelected(bool) override;
+    bool selected() const override;
+    void setSelected(bool) override;
 
     void setAssetTrack(AVAssetTrack*);
     AVAssetTrack* assetTrack() const;

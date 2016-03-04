@@ -60,19 +60,19 @@ public:
     static const AtomicString& signKeyword();
     static const AtomicString& subtitlesKeyword();
     static const AtomicString& commentaryKeyword();
-    virtual const AtomicString& defaultKindKeyword() const override { return emptyAtom; }
+    const AtomicString& defaultKindKeyword() const override { return emptyAtom; }
 
     bool selected() const { return m_selected; }
     virtual void setSelected(const bool);
 
-    virtual void clearClient() override { m_client = 0; }
+    void clearClient() override { m_client = 0; }
     VideoTrackClient* client() const { return m_client; }
 
     size_t inbandTrackIndex();
 
 #if ENABLE(MEDIA_SOURCE)
-    virtual void setKind(const AtomicString&) override;
-    virtual void setLanguage(const AtomicString&) override;
+    void setKind(const AtomicString&) override;
+    void setLanguage(const AtomicString&) override;
 #endif
 
     const MediaDescription& description() const;
@@ -83,7 +83,7 @@ protected:
     VideoTrack(VideoTrackClient*, PassRefPtr<VideoTrackPrivate> privateTrack);
 
 private:
-    virtual bool isValidKind(const AtomicString&) const override;
+    bool isValidKind(const AtomicString&) const override;
 
     // VideoTrackPrivateClient
     void selectedChanged(VideoTrackPrivate*, bool) override;
@@ -94,7 +94,7 @@ private:
     void languageChanged(TrackPrivateBase*, const AtomicString&) override;
     void willRemove(TrackPrivateBase*) override;
 
-    virtual bool enabled() const override { return selected(); }
+    bool enabled() const override { return selected(); }
 
     void updateKindFromPrivate();
 

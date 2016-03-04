@@ -39,7 +39,7 @@ public:
 
 private:
     ReplaceDeleteFromTextNodeCommand(RefPtr<Text>&&, unsigned, unsigned);
-    virtual void notifyAccessibilityForTextChange(Node*, AXTextEditType, const String&, const VisiblePosition&) override;
+    void notifyAccessibilityForTextChange(Node*, AXTextEditType, const String&, const VisiblePosition&) override;
 };
 
 } // namespace WebCore

@@ -57,7 +57,7 @@ public:
     AbstractView* view() const { return m_view.get(); }
     int detail() const { return m_detail; }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
     virtual int keyCode() const;
     virtual int charCode() const;
@@ -77,7 +77,7 @@ protected:
     UIEvent(const AtomicString&, const UIEventInit&);
 
 private:
-    virtual bool isUIEvent() const override final;
+    bool isUIEvent() const override final;
 
     RefPtr<AbstractView> m_view;
     int m_detail;

@@ -48,8 +48,8 @@ public:
     String value() const;
     void setValue(const String&);
 
-    virtual bool elementMatches(Element&) const override;
-    virtual bool isRootedAtDocument() const override { return m_isRootedAtDocument; }
+    bool elementMatches(Element&) const override;
+    bool isRootedAtDocument() const override { return m_isRootedAtDocument; }
 
 private:
     RadioNodeList(ContainerNode&, const AtomicString& name);

@@ -57,21 +57,21 @@ public:
     WEBCORE_EXPORT bool isDone() const;
 
 private:
-    virtual bool init(const ResourceRequest&) override;
+    bool init(const ResourceRequest&) override;
 
-    virtual void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback) override;
-    virtual void didReceiveResponse(const ResourceResponse&) override;
-    virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
-    virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) override;
-    virtual void didFinishLoading(double finishTime) override;
-    virtual void didFail(const ResourceError&) override;
+    void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback) override;
+    void didReceiveResponse(const ResourceResponse&) override;
+    void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
+    void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) override;
+    void didFinishLoading(double finishTime) override;
+    void didFail(const ResourceError&) override;
 
-    virtual void releaseResources() override;
+    void releaseResources() override;
 
     NetscapePlugInStreamLoader(Frame*, NetscapePlugInStreamLoaderClient*);
 
-    virtual void willCancel(const ResourceError&) override;
-    virtual void didCancel(const ResourceError&) override;
+    void willCancel(const ResourceError&) override;
+    void didCancel(const ResourceError&) override;
 
     void didReceiveDataOrBuffer(const char*, int, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
 

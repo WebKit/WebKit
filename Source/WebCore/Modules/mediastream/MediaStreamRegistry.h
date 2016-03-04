@@ -47,10 +47,10 @@ public:
     static MediaStreamRegistry& shared();
 
     // Registers a blob URL referring to the specified stream data.
-    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) override;
-    virtual void unregisterURL(const URL&) override;
+    void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) override;
+    void unregisterURL(const URL&) override;
 
-    virtual URLRegistrable* lookup(const String&) const override;
+    URLRegistrable* lookup(const String&) const override;
 
     void registerStream(MediaStream&);
     void unregisterStream(MediaStream&);

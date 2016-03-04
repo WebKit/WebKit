@@ -69,8 +69,8 @@ public:
     virtual ~MouseOrFocusEventContext();
     EventTarget* relatedTarget() const { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget>);
-    virtual void handleLocalEvents(Event&) const override;
-    virtual bool isMouseOrFocusEventContext() const override;
+    void handleLocalEvents(Event&) const override;
+    bool isMouseOrFocusEventContext() const override;
 
 private:
     RefPtr<EventTarget> m_relatedTarget;
@@ -83,8 +83,8 @@ public:
     TouchEventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
     virtual ~TouchEventContext();
 
-    virtual void handleLocalEvents(Event&) const override;
-    virtual bool isTouchEventContext() const override;
+    void handleLocalEvents(Event&) const override;
+    bool isTouchEventContext() const override;
 
     enum TouchListType { Touches, TargetTouches, ChangedTouches, NotTouchList };
     TouchList* touchList(TouchListType type)

@@ -269,7 +269,7 @@ private:
 
     private:
         void update(FontSelector&);
-        virtual void fontsNeedUpdate(FontSelector&) override;
+        void fontsNeedUpdate(FontSelector&) override;
 
         FontCascade m_font;
     };
@@ -384,14 +384,14 @@ private:
     RefPtr<ImageData> getImageData(ImageBuffer::CoordinateSystem, float sx, float sy, float sw, float sh, ExceptionCode&) const;
     void putImageData(ImageData*, ImageBuffer::CoordinateSystem, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
 
-    virtual bool is2d() const override { return true; }
-    virtual bool isAccelerated() const override;
+    bool is2d() const override { return true; }
+    bool isAccelerated() const override;
 
-    virtual bool hasInvertibleTransform() const override { return state().hasInvertibleTransform; }
+    bool hasInvertibleTransform() const override { return state().hasInvertibleTransform; }
     TextDirection toTextDirection(Direction, RenderStyle** computedStyle = nullptr) const;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    virtual PlatformLayer* platformLayer() const override;
+    PlatformLayer* platformLayer() const override;
 #endif
 
     Vector<State, 1> m_stateStack;

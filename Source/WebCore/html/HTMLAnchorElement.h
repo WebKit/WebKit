@@ -103,7 +103,7 @@ public:
 
     bool isLiveLink() const;
 
-    virtual bool willRespondToMouseClickEvents() override final;
+    bool willRespondToMouseClickEvents() override final;
 
     bool hasRel(uint32_t relation) const;
     
@@ -115,20 +115,20 @@ public:
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
 private:
-    virtual bool supportsFocus() const override;
-    virtual bool isMouseFocusable() const override;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
-    virtual void defaultEventHandler(Event*) override final;
-    virtual void setActive(bool active = true, bool pause = false) override final;
-    virtual void accessKeyAction(bool sendMouseEvents) override final;
-    virtual bool isURLAttribute(const Attribute&) const override final;
-    virtual bool canStartSelection() const override final;
-    virtual String target() const override;
-    virtual short tabIndex() const override final;
-    virtual bool draggable() const override final;
+    bool supportsFocus() const override;
+    bool isMouseFocusable() const override;
+    bool isKeyboardFocusable(KeyboardEvent*) const override;
+    void defaultEventHandler(Event*) override final;
+    void setActive(bool active = true, bool pause = false) override final;
+    void accessKeyAction(bool sendMouseEvents) override final;
+    bool isURLAttribute(const Attribute&) const override final;
+    bool canStartSelection() const override final;
+    String target() const override;
+    short tabIndex() const override final;
+    bool draggable() const override final;
 
     void sendPings(const URL& destinationURL);
 

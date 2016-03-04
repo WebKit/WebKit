@@ -41,7 +41,7 @@ public:
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
 
-    virtual void finishParsingChildren() override;
+    void finishParsingChildren() override;
 
     const String& localHref() const { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
@@ -55,23 +55,23 @@ private:
     friend class CharacterData;
     ProcessingInstruction(Document&, const String& target, const String& data);
 
-    virtual String nodeName() const override;
-    virtual NodeType nodeType() const override;
-    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    String nodeName() const override;
+    NodeType nodeType() const override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
 
     void checkStyleSheet();
-    virtual void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet*) override;
+    void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet*) override;
 #if ENABLE(XSLT)
-    virtual void setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet) override;
+    void setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet) override;
 #endif
 
     bool isLoading() const;
-    virtual bool sheetLoaded() override;
+    bool sheetLoaded() override;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
     void parseStyleSheet(const String& sheet);
 

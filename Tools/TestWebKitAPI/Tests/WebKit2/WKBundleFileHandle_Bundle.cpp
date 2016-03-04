@@ -47,7 +47,7 @@ public:
     }
 
 private:
-    virtual void didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody) override
+    void didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody) override
     {
         if (!WKStringIsEqualToUTF8CString(messageName, "TestFile")) {
             WKBundlePostMessage(bundle, Util::toWK("FAIL").get(), Util::toWK("Recieved invalid message").get());
@@ -86,7 +86,7 @@ private:
             WKBundlePostMessage(bundle, Util::toWK("FAIL").get(), Util::toWK("Script failed").get());
     }
 
-    virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page) override
+    void didCreatePage(WKBundleRef bundle, WKBundlePageRef page) override
     {
         loadedPage = page;
     }

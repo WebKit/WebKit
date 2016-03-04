@@ -44,7 +44,7 @@ public:
     RenderMathMLBlock(Element&, Ref<RenderStyle>&&);
     RenderMathMLBlock(Document&, Ref<RenderStyle>&&);
 
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     
     // MathML defines an "embellished operator" as roughly an <mo> that may have subscripts,
     // superscripts, underscripts, overscripts, or a denominator (as in d/dx, where "d" is some
@@ -55,7 +55,7 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=78617.
     virtual RenderMathMLOperator* unembellishedOperator() { return 0; }
     
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
+    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
     
 #if ENABLE(DEBUG_MATH_LAYOUT)
     virtual void paint(PaintInfo&, const LayoutPoint&);
@@ -65,8 +65,8 @@ public:
     RenderPtr<RenderMathMLBlock> createAnonymousMathMLBlock();
     
 private:
-    virtual bool isRenderMathMLBlock() const override final { return true; }
-    virtual const char* renderName() const override;
+    bool isRenderMathMLBlock() const override final { return true; }
+    const char* renderName() const override;
     bool isFlexibleBoxImpl() const override { return true; }
 };
 
@@ -77,11 +77,11 @@ public:
     {
     }
     
-    virtual Optional<int> firstLineBaseline() const override;
+    Optional<int> firstLineBaseline() const override;
     
 private:
-    virtual bool isRenderMathMLTable() const override { return true; }
-    virtual const char* renderName() const override { return "RenderMathMLTable"; }
+    bool isRenderMathMLTable() const override { return true; }
+    const char* renderName() const override { return "RenderMathMLTable"; }
 };
 
 // Parsing functions for MathML Length values

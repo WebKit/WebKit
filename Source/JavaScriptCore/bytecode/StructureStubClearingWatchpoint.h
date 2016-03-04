@@ -62,7 +62,7 @@ public:
         std::unique_ptr<StructureStubClearingWatchpoint>& head);
 
 protected:
-    virtual void fireInternal(const FireDetail&) override;
+    void fireInternal(const FireDetail&) override;
 
 private:
     ObjectPropertyCondition m_key;

@@ -45,14 +45,14 @@ public:
 
     virtual ~CSSSupportsRule() { }
 
-    virtual String cssText() const override;
+    String cssText() const override;
 
     String conditionText() const;
 
 private:
     CSSSupportsRule(StyleRuleSupports&, CSSStyleSheet*);
 
-    virtual CSSRule::Type type() const override { return SUPPORTS_RULE; }
+    CSSRule::Type type() const override { return SUPPORTS_RULE; }
 };
 
 } // namespace WebCore

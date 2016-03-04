@@ -58,16 +58,16 @@ public:
     virtual ~ScriptProcessorNode();
 
     // AudioNode
-    virtual void process(size_t framesToProcess) override;
-    virtual void reset() override;
-    virtual void initialize() override;
-    virtual void uninitialize() override;
+    void process(size_t framesToProcess) override;
+    void reset() override;
+    void initialize() override;
+    void uninitialize() override;
 
     size_t bufferSize() const { return m_bufferSize; }
 
 private:
-    virtual double tailTime() const override;
-    virtual double latencyTime() const override;
+    double tailTime() const override;
+    double latencyTime() const override;
 
     ScriptProcessorNode(AudioContext&, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels);
 

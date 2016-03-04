@@ -58,18 +58,18 @@ namespace WebCore {
     public:
         virtual ~WorkerGlobalScope();
 
-        virtual bool isWorkerGlobalScope() const override { return true; }
+        bool isWorkerGlobalScope() const override { return true; }
 
-        virtual ScriptExecutionContext* scriptExecutionContext() const override final { return const_cast<WorkerGlobalScope*>(this); }
+        ScriptExecutionContext* scriptExecutionContext() const override final { return const_cast<WorkerGlobalScope*>(this); }
 
         virtual bool isDedicatedWorkerGlobalScope() const { return false; }
 
-        virtual const URL& url() const override final { return m_url; }
-        virtual URL completeURL(const String&) const override final;
+        const URL& url() const override final { return m_url; }
+        URL completeURL(const String&) const override final;
 
-        virtual String userAgent(const URL&) const override;
+        String userAgent(const URL&) const override;
 
-        virtual void disableEval(const String& errorMessage) override;
+        void disableEval(const String& errorMessage) override;
 
         bool shouldBypassMainWorldContentSecurityPolicy() const override final { return m_shouldBypassMainWorldContentSecurityPolicy; }
 
@@ -80,7 +80,7 @@ namespace WebCore {
 
         using ScriptExecutionContext::hasPendingActivity;
 
-        virtual void postTask(Task) override; // Executes the task on context's thread asynchronously.
+        void postTask(Task) override; // Executes the task on context's thread asynchronously.
 
         // WorkerGlobalScope
         WorkerGlobalScope* self() { return this; }
@@ -97,8 +97,8 @@ namespace WebCore {
         int setInterval(std::unique_ptr<ScheduledAction>, int timeout);
         void clearInterval(int timeoutId);
 
-        virtual bool isContextThread() const override;
-        virtual bool isJSExecutionForbidden() const override;
+        bool isContextThread() const override;
+        bool isJSExecutionForbidden() const override;
 
         // These methods are used for GC marking. See JSWorkerGlobalScope::visitChildrenVirtual(SlotVisitor&) in
         // JSWorkerGlobalScopeCustom.cpp.
@@ -126,36 +126,36 @@ namespace WebCore {
         void unregisterObserver(Observer*);
         void notifyObserversOfStop();
 
-        virtual SecurityOrigin* topOrigin() const override { return m_topOrigin.get(); }
+        SecurityOrigin* topOrigin() const override { return m_topOrigin.get(); }
 
         void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>);
-        virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override;
+        void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override;
 
 #if ENABLE(SUBTLE_CRYPTO)
-        virtual bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) override;
-        virtual bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) override;
+        bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) override;
+        bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) override;
 #endif
 
     protected:
         WorkerGlobalScope(const URL&, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin);
         void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
-        virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) override;
+        void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) override;
         void addMessageToWorkerConsole(std::unique_ptr<Inspector::ConsoleMessage>);
         void addMessageToWorkerConsole(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
 
     private:
-        virtual void refScriptExecutionContext() override { ref(); }
-        virtual void derefScriptExecutionContext() override { deref(); }
+        void refScriptExecutionContext() override { ref(); }
+        void derefScriptExecutionContext() override { deref(); }
 
-        virtual void refEventTarget() override final { ref(); }
-        virtual void derefEventTarget() override final { deref(); }
+        void refEventTarget() override final { ref(); }
+        void derefEventTarget() override final { deref(); }
 
-        virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) override;
+        void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) override;
 
-        virtual EventTarget* errorEventTarget() override;
+        EventTarget* errorEventTarget() override;
 
-        virtual WorkerEventQueue& eventQueue() const override final;
+        WorkerEventQueue& eventQueue() const override final;
 
         URL m_url;
         String m_userAgent;

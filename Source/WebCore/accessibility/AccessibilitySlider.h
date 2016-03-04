@@ -46,23 +46,23 @@ protected:
 
 private:
     HTMLInputElement* inputElement() const;
-    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
-    virtual AccessibilityRole roleValue() const override { return SliderRole; }
-    virtual bool isSlider() const override final { return true; }
-    virtual bool isInputSlider() const override { return true; }
-    virtual bool isControl() const override { return true; }
+    AccessibilityRole roleValue() const override { return SliderRole; }
+    bool isSlider() const override final { return true; }
+    bool isInputSlider() const override { return true; }
+    bool isControl() const override { return true; }
     
-    virtual void addChildren() override;
+    void addChildren() override;
     
-    virtual bool canSetValueAttribute() const override { return true; }
+    bool canSetValueAttribute() const override { return true; }
     const AtomicString& getAttribute(const QualifiedName& attribute) const;
     
-    virtual void setValue(const String&) override;
-    virtual float valueForRange() const override;
-    virtual float maxValueForRange() const override;
-    virtual float minValueForRange() const override;
-    virtual AccessibilityOrientation orientation() const override;
+    void setValue(const String&) override;
+    float valueForRange() const override;
+    float maxValueForRange() const override;
+    float minValueForRange() const override;
+    AccessibilityOrientation orientation() const override;
 };
 
 class AccessibilitySliderThumb final : public AccessibilityMockObject {
@@ -70,14 +70,14 @@ public:
     static Ref<AccessibilitySliderThumb> create();
     virtual ~AccessibilitySliderThumb() { }
 
-    virtual AccessibilityRole roleValue() const override { return SliderThumbRole; }
-    virtual LayoutRect elementRect() const override;
+    AccessibilityRole roleValue() const override { return SliderThumbRole; }
+    LayoutRect elementRect() const override;
 
 private:
     AccessibilitySliderThumb();
 
-    virtual bool isSliderThumb() const override { return true; }
-    virtual bool computeAccessibilityIsIgnored() const override;
+    bool isSliderThumb() const override { return true; }
+    bool computeAccessibilityIsIgnored() const override;
 };
 
 } // namespace WebCore

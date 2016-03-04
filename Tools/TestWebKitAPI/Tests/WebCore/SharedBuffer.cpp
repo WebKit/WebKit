@@ -38,7 +38,7 @@ const char* SharedBufferTestData = "This is a test";
 
 class SharedBufferTest : public testing::Test {
 public:
-    virtual void SetUp() override
+    void SetUp() override
     {
         WTF::initializeMainThread();
         
@@ -52,7 +52,7 @@ public:
         closeFile(handle); 
     }
 
-    virtual void TearDown() override
+    void TearDown() override
     {
         deleteFile(m_tempFilePath);
         deleteFile(m_tempEmptyFilePath);

@@ -55,12 +55,12 @@ public:
 
 private:
     // PageBanner::Client.
-    virtual void pageBannerDestroyed(PageBanner*) override
+    void pageBannerDestroyed(PageBanner*) override
     {
         delete this;
     }
     
-    virtual bool mouseEvent(PageBanner* pageBanner, WebEvent::Type type, WebMouseEvent::Button button, const IntPoint& position) override
+    bool mouseEvent(PageBanner* pageBanner, WebEvent::Type type, WebMouseEvent::Button button, const IntPoint& position) override
     {
         switch (type) {
         case WebEvent::MouseDown: {

@@ -75,7 +75,7 @@ public:
     const String& fragment() const { return m_fragment; }
 
 private:
-    virtual bool operator==(const ClipPathOperation& other) const override
+    bool operator==(const ClipPathOperation& other) const override
     {
         if (!isSameType(other))
             return false;
@@ -109,7 +109,7 @@ public:
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
 private:
-    virtual bool operator==(const ClipPathOperation& other) const override
+    bool operator==(const ClipPathOperation& other) const override
     {
         if (!isSameType(other))
             return false;
@@ -145,7 +145,7 @@ public:
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
 private:
-    virtual bool operator==(const ClipPathOperation& other) const override
+    bool operator==(const ClipPathOperation& other) const override
     {
         if (!isSameType(other))
             return false;

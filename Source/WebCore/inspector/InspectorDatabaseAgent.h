@@ -53,16 +53,16 @@ public:
     explicit InspectorDatabaseAgent(WebAgentContext&);
     virtual ~InspectorDatabaseAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     void clearResources();
 
     // Called from the front-end.
-    virtual void enable(ErrorString&) override;
-    virtual void disable(ErrorString&) override;
-    virtual void getDatabaseTableNames(ErrorString&, const String& databaseId, RefPtr<Inspector::Protocol::Array<String>>& names) override;
-    virtual void executeSQL(ErrorString&, const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&) override;
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void getDatabaseTableNames(ErrorString&, const String& databaseId, RefPtr<Inspector::Protocol::Array<String>>& names) override;
+    void executeSQL(ErrorString&, const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&) override;
 
     // Called from the injected script.
     String databaseId(Database*);

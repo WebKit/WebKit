@@ -48,9 +48,9 @@ public:
     void didEndChooser();
     void disconnectFromPage();
 
-    virtual void reattachColorChooser(const WebCore::Color&) override;
-    virtual void setSelectedColor(const WebCore::Color&) override;
-    virtual void endChooser() override;
+    void reattachColorChooser(const WebCore::Color&) override;
+    void setSelectedColor(const WebCore::Color&) override;
+    void endChooser() override;
 
 private:
     WebCore::ColorChooserClient* m_colorChooserClient;

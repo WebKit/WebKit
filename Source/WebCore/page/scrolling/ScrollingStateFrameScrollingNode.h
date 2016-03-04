@@ -42,7 +42,7 @@ class ScrollingStateFrameScrollingNode final : public ScrollingStateScrollingNod
 public:
     static Ref<ScrollingStateFrameScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-    virtual Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
+    Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
     virtual ~ScrollingStateFrameScrollingNode();
 
@@ -119,7 +119,7 @@ public:
 #endif
     void setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
 
-    virtual void dumpProperties(TextStream&, int indent) const override;
+    void dumpProperties(TextStream&, int indent) const override;
 
 private:
     ScrollingStateFrameScrollingNode(ScrollingStateTree&, ScrollingNodeID);

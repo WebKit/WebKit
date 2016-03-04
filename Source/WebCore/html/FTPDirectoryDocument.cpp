@@ -50,11 +50,11 @@ public:
     }
 
 private:
-    virtual void append(RefPtr<StringImpl>&&) override;
-    virtual void finish() override;
+    void append(RefPtr<StringImpl>&&) override;
+    void finish() override;
 
     // FIXME: Why do we need this?
-    virtual bool isWaitingForScripts() const override { return false; }
+    bool isWaitingForScripts() const override { return false; }
 
     void checkBuffer(int len = 10)
     {

@@ -44,124 +44,124 @@ public:
 
     ~PlatformCALayerCocoa();
 
-    virtual void setOwner(PlatformCALayerClient*) override;
+    void setOwner(PlatformCALayerClient*) override;
 
-    virtual void setNeedsDisplay() override;
-    virtual void setNeedsDisplayInRect(const FloatRect& dirtyRect) override;
+    void setNeedsDisplay() override;
+    void setNeedsDisplayInRect(const FloatRect& dirtyRect) override;
 
-    virtual void copyContentsFromLayer(PlatformCALayer*) override;
+    void copyContentsFromLayer(PlatformCALayer*) override;
 
-    virtual PlatformCALayer* superlayer() const override;
-    virtual void removeFromSuperlayer() override;
-    virtual void setSublayers(const PlatformCALayerList&) override;
-    virtual void removeAllSublayers() override;
-    virtual void appendSublayer(PlatformCALayer&) override;
-    virtual void insertSublayer(PlatformCALayer&, size_t index) override;
-    virtual void replaceSublayer(PlatformCALayer& reference, PlatformCALayer&) override;
-    virtual const PlatformCALayerList* customSublayers() const override { return m_customSublayers.get(); }
-    virtual void adoptSublayers(PlatformCALayer& source) override;
+    PlatformCALayer* superlayer() const override;
+    void removeFromSuperlayer() override;
+    void setSublayers(const PlatformCALayerList&) override;
+    void removeAllSublayers() override;
+    void appendSublayer(PlatformCALayer&) override;
+    void insertSublayer(PlatformCALayer&, size_t index) override;
+    void replaceSublayer(PlatformCALayer& reference, PlatformCALayer&) override;
+    const PlatformCALayerList* customSublayers() const override { return m_customSublayers.get(); }
+    void adoptSublayers(PlatformCALayer& source) override;
 
-    virtual void addAnimationForKey(const String& key, PlatformCAAnimation&) override;
-    virtual void removeAnimationForKey(const String& key) override;
-    virtual PassRefPtr<PlatformCAAnimation> animationForKey(const String& key) override;
-    virtual void animationStarted(const String& key, CFTimeInterval beginTime) override;
-    virtual void animationEnded(const String& key) override;
+    void addAnimationForKey(const String& key, PlatformCAAnimation&) override;
+    void removeAnimationForKey(const String& key) override;
+    PassRefPtr<PlatformCAAnimation> animationForKey(const String& key) override;
+    void animationStarted(const String& key, CFTimeInterval beginTime) override;
+    void animationEnded(const String& key) override;
 
-    virtual void setMask(PlatformCALayer*) override;
+    void setMask(PlatformCALayer*) override;
 
-    virtual bool isOpaque() const override;
-    virtual void setOpaque(bool) override;
+    bool isOpaque() const override;
+    void setOpaque(bool) override;
 
-    virtual FloatRect bounds() const override;
-    virtual void setBounds(const FloatRect&) override;
+    FloatRect bounds() const override;
+    void setBounds(const FloatRect&) override;
 
-    virtual FloatPoint3D position() const override;
-    virtual void setPosition(const FloatPoint3D&) override;
+    FloatPoint3D position() const override;
+    void setPosition(const FloatPoint3D&) override;
 
-    virtual FloatPoint3D anchorPoint() const override;
-    virtual void setAnchorPoint(const FloatPoint3D&) override;
+    FloatPoint3D anchorPoint() const override;
+    void setAnchorPoint(const FloatPoint3D&) override;
 
-    virtual TransformationMatrix transform() const override;
-    virtual void setTransform(const TransformationMatrix&) override;
+    TransformationMatrix transform() const override;
+    void setTransform(const TransformationMatrix&) override;
 
-    virtual TransformationMatrix sublayerTransform() const override;
-    virtual void setSublayerTransform(const TransformationMatrix&) override;
+    TransformationMatrix sublayerTransform() const override;
+    void setSublayerTransform(const TransformationMatrix&) override;
 
-    virtual void setHidden(bool) override;
+    void setHidden(bool) override;
 
-    virtual void setBackingStoreAttached(bool) override;
-    virtual bool backingStoreAttached() const override;
+    void setBackingStoreAttached(bool) override;
+    bool backingStoreAttached() const override;
 
     bool geometryFlipped() const override;
     WEBCORE_EXPORT void setGeometryFlipped(bool) override;
 
-    virtual bool isDoubleSided() const override;
-    virtual void setDoubleSided(bool) override;
+    bool isDoubleSided() const override;
+    void setDoubleSided(bool) override;
 
-    virtual bool masksToBounds() const override;
-    virtual void setMasksToBounds(bool) override;
+    bool masksToBounds() const override;
+    void setMasksToBounds(bool) override;
 
-    virtual bool acceleratesDrawing() const override;
-    virtual void setAcceleratesDrawing(bool) override;
+    bool acceleratesDrawing() const override;
+    void setAcceleratesDrawing(bool) override;
 
-    virtual CFTypeRef contents() const override;
-    virtual void setContents(CFTypeRef) override;
+    CFTypeRef contents() const override;
+    void setContents(CFTypeRef) override;
 
-    virtual void setContentsRect(const FloatRect&) override;
+    void setContentsRect(const FloatRect&) override;
 
-    virtual void setMinificationFilter(FilterType) override;
-    virtual void setMagnificationFilter(FilterType) override;
+    void setMinificationFilter(FilterType) override;
+    void setMagnificationFilter(FilterType) override;
 
-    virtual Color backgroundColor() const override;
-    virtual void setBackgroundColor(const Color&) override;
+    Color backgroundColor() const override;
+    void setBackgroundColor(const Color&) override;
 
-    virtual void setBorderWidth(float) override;
+    void setBorderWidth(float) override;
 
-    virtual void setBorderColor(const Color&) override;
+    void setBorderColor(const Color&) override;
 
-    virtual float opacity() const override;
-    virtual void setOpacity(float) override;
-    virtual void setFilters(const FilterOperations&) override;
+    float opacity() const override;
+    void setOpacity(float) override;
+    void setFilters(const FilterOperations&) override;
     WEBCORE_EXPORT static bool filtersCanBeComposited(const FilterOperations&);
-    virtual void copyFiltersFrom(const PlatformCALayer&) override;
+    void copyFiltersFrom(const PlatformCALayer&) override;
 
 #if ENABLE(CSS_COMPOSITING)
-    virtual void setBlendMode(BlendMode) override;
+    void setBlendMode(BlendMode) override;
 #endif
 
-    virtual void setName(const String&) override;
+    void setName(const String&) override;
 
-    virtual void setSpeed(float) override;
+    void setSpeed(float) override;
 
-    virtual void setTimeOffset(CFTimeInterval) override;
+    void setTimeOffset(CFTimeInterval) override;
 
-    virtual float contentsScale() const override;
-    virtual void setContentsScale(float) override;
+    float contentsScale() const override;
+    void setContentsScale(float) override;
 
-    virtual float cornerRadius() const override;
-    virtual void setCornerRadius(float) override;
+    float cornerRadius() const override;
+    void setCornerRadius(float) override;
 
-    virtual void setEdgeAntialiasingMask(unsigned) override;
+    void setEdgeAntialiasingMask(unsigned) override;
 
-    virtual FloatRoundedRect shapeRoundedRect() const override;
-    virtual void setShapeRoundedRect(const FloatRoundedRect&) override;
+    FloatRoundedRect shapeRoundedRect() const override;
+    void setShapeRoundedRect(const FloatRoundedRect&) override;
 
-    virtual Path shapePath() const override;
-    virtual void setShapePath(const Path&) override;
+    Path shapePath() const override;
+    void setShapePath(const Path&) override;
 
-    virtual WindRule shapeWindRule() const override;
-    virtual void setShapeWindRule(WindRule) override;
+    WindRule shapeWindRule() const override;
+    void setShapeWindRule(WindRule) override;
 
-    virtual GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
-    virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
+    GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
+    void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
 
-    virtual TiledBacking* tiledBacking() override;
+    TiledBacking* tiledBacking() override;
 
-    virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const override;
+    PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const override;
 
-    virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(PlatformCALayer::LayerType, PlatformCALayerClient*) const override;
+    PassRefPtr<PlatformCALayer> createCompatibleLayer(PlatformCALayer::LayerType, PlatformCALayerClient*) const override;
 
-    virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) override;
+    void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) override;
 
 private:
     PlatformCALayerCocoa(LayerType, PlatformCALayerClient* owner);
@@ -169,7 +169,7 @@ private:
 
     void commonInit();
 
-    virtual bool isPlatformCALayerCocoa() const override { return true; }
+    bool isPlatformCALayerCocoa() const override { return true; }
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 

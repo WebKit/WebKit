@@ -34,7 +34,7 @@ class HTMLOptGroupElement final : public HTMLElement {
 public:
     static Ref<HTMLOptGroupElement> create(const QualifiedName&, Document&);
 
-    virtual bool isDisabledFormControl() const override;
+    bool isDisabledFormControl() const override;
     HTMLSelectElement* ownerSelectElement() const;
     
     WEBCORE_EXPORT String groupLabelText() const;
@@ -43,13 +43,13 @@ private:
     HTMLOptGroupElement(const QualifiedName&, Document&);
 
     const AtomicString& formControlType() const;
-    virtual bool isFocusable() const override;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool isFocusable() const override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
-    virtual void childrenChanged(const ChildChange&) override;
+    void childrenChanged(const ChildChange&) override;
 
-    virtual void accessKeyAction(bool sendMouseEvents) override;
+    void accessKeyAction(bool sendMouseEvents) override;
 
     void recalcSelectOptions();
 };

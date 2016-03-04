@@ -105,7 +105,7 @@ public:
     bool operator!=(const FixedPositionViewportConstraints& other) const { return !(*this == other); }
 
 private:
-    virtual ConstraintType constraintType() const override { return FixedPositionConstraint; };
+    ConstraintType constraintType() const override { return FixedPositionConstraint; };
 
     FloatRect m_viewportRectAtLastLayout;
     FloatPoint m_layerPositionAtLastLayout;
@@ -183,7 +183,7 @@ public:
     bool operator!=(const StickyPositionViewportConstraints& other) const { return !(*this == other); }
 
 private:
-    virtual ConstraintType constraintType() const override { return StickyPositionConstraint; };
+    ConstraintType constraintType() const override { return StickyPositionConstraint; };
 
     float m_leftOffset;
     float m_rightOffset;

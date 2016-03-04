@@ -60,7 +60,7 @@ public:
     bool iceRestart() const { return m_iceRestart; }
 
 private:
-    virtual bool initialize(const Dictionary&) override;
+    bool initialize(const Dictionary&) override;
     RTCOfferOptions();
 
     int64_t m_offerToReceiveVideo;
@@ -73,7 +73,7 @@ public:
     static RefPtr<RTCAnswerOptions> create(const Dictionary&, ExceptionCode&);
 
 private:
-    virtual bool initialize(const Dictionary&) override;
+    bool initialize(const Dictionary&) override;
     RTCAnswerOptions() { }
 };
 

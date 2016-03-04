@@ -64,8 +64,8 @@ private:
     void createMix();
 
     // AudioSourceProvider
-    virtual void provideInput(AudioBus*, size_t framesToProcess) override;
-    virtual void setClient(AudioSourceProviderClient*) override;
+    void provideInput(AudioBus*, size_t framesToProcess) override;
+    void setClient(AudioSourceProviderClient*) override;
 
     static void initCallback(MTAudioProcessingTapRef, void*, void**);
     static void finalizeCallback(MTAudioProcessingTapRef);

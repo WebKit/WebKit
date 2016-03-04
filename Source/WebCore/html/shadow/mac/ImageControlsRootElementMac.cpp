@@ -42,11 +42,11 @@ public:
     virtual ~RenderImageControls();
 
 private:
-    virtual void updateLogicalWidth() override;
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    void updateLogicalWidth() override;
+    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
-    virtual const char* renderName() const override { return "RenderImageControls"; }
-    virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
+    const char* renderName() const override { return "RenderImageControls"; }
+    bool requiresForcedStyleRecalcPropagation() const override { return true; }
 };
 
 RenderImageControls::RenderImageControls(HTMLElement& element, Ref<RenderStyle>&& style)

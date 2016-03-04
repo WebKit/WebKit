@@ -42,7 +42,7 @@ public:
 
     AudioBuffer* renderedBuffer() { return m_renderedBuffer.get(); }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
 private:
     explicit OfflineAudioCompletionEvent(PassRefPtr<AudioBuffer> renderedBuffer);

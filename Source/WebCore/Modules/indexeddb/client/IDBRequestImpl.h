@@ -59,28 +59,28 @@ public:
 
     const IDBResourceIdentifier& resourceIdentifier() const { return m_resourceIdentifier; }
 
-    virtual ~IDBRequest() override;
+    ~IDBRequest() override;
 
-    virtual RefPtr<WebCore::IDBAny> result(ExceptionCodeWithMessage&) const override;
-    virtual unsigned short errorCode(ExceptionCode&) const override;
-    virtual RefPtr<DOMError> error(ExceptionCodeWithMessage&) const override;
-    virtual RefPtr<WebCore::IDBAny> source() const override;
-    virtual RefPtr<WebCore::IDBTransaction> transaction() const override;
-    virtual const String& readyState() const override;
+    RefPtr<WebCore::IDBAny> result(ExceptionCodeWithMessage&) const override;
+    unsigned short errorCode(ExceptionCode&) const override;
+    RefPtr<DOMError> error(ExceptionCodeWithMessage&) const override;
+    RefPtr<WebCore::IDBAny> source() const override;
+    RefPtr<WebCore::IDBTransaction> transaction() const override;
+    const String& readyState() const override;
 
     uint64_t sourceObjectStoreIdentifier() const;
     uint64_t sourceIndexIdentifier() const;
     IndexedDB::IndexRecordType requestedIndexRecordType() const;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const override;
-    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
+    EventTargetInterface eventTargetInterface() const override;
+    ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
 
     using RefCounted<IDBRequest>::ref;
     using RefCounted<IDBRequest>::deref;
 
     void enqueueEvent(Ref<Event>&&);
-    virtual bool dispatchEvent(Event&) override;
+    bool dispatchEvent(Event&) override;
 
     IDBConnectionToServer& connection() { return m_connection; }
 
@@ -111,15 +111,15 @@ protected:
     IDBRequest(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
     // ActiveDOMObject.
-    virtual const char* activeDOMObjectName() const override final;
-    virtual bool canSuspendForDocumentSuspension() const override final;
-    virtual bool hasPendingActivity() const override final;
-    virtual void stop() override final;
+    const char* activeDOMObjectName() const override final;
+    bool canSuspendForDocumentSuspension() const override final;
+    bool hasPendingActivity() const override final;
+    void stop() override final;
 
     // EventTarget.
-    virtual void refEventTarget() override final { RefCounted<IDBRequest>::ref(); }
-    virtual void derefEventTarget() override final { RefCounted<IDBRequest>::deref(); }
-    virtual void uncaughtExceptionInEventHandler() override final;
+    void refEventTarget() override final { RefCounted<IDBRequest>::ref(); }
+    void derefEventTarget() override final { RefCounted<IDBRequest>::deref(); }
+    void uncaughtExceptionInEventHandler() override final;
 
     virtual bool isOpenDBRequest() const { return false; }
 

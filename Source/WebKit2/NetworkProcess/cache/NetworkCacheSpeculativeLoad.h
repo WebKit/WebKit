@@ -51,16 +51,16 @@ public:
 
 private:
     // NetworkLoadClient.
-    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override { }
-    virtual void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override { }
-    virtual bool isSynchronous() const override { return false; }
-    virtual void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse) override;
-    virtual ShouldContinueDidReceiveResponse didReceiveResponse(const WebCore::ResourceResponse&) override;
-    virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
-    virtual void didFinishLoading(double finishTime) override;
-    virtual void didFailLoading(const WebCore::ResourceError&) override;
+    void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override { }
+    void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override { }
+    bool isSynchronous() const override { return false; }
+    void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse) override;
+    ShouldContinueDidReceiveResponse didReceiveResponse(const WebCore::ResourceResponse&) override;
+    void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
+    void didFinishLoading(double finishTime) override;
+    void didFailLoading(const WebCore::ResourceError&) override;
 #if USE(NETWORK_SESSION)
-    virtual void didBecomeDownload() override { ASSERT_NOT_REACHED(); }
+    void didBecomeDownload() override { ASSERT_NOT_REACHED(); }
 #endif
 
     void didComplete();

@@ -39,7 +39,7 @@ class DidAssociateFormControlsTest : public InjectedBundleTest {
 public:
     DidAssociateFormControlsTest(const std::string& identifier);
 
-    virtual void didCreatePage(WKBundleRef, WKBundlePageRef) override;
+    void didCreatePage(WKBundleRef, WKBundlePageRef) override;
 };
 
 static InjectedBundleTest::Register<DidAssociateFormControlsTest> registrar("DidAssociateFormControlsTest");

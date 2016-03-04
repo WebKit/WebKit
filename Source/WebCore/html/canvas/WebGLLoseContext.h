@@ -37,7 +37,7 @@ public:
     explicit WebGLLoseContext(WebGLRenderingContextBase*);
     virtual ~WebGLLoseContext();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 
     void loseContext();
     void restoreContext();

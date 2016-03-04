@@ -42,24 +42,24 @@ public:
 private:
     SVGImageElement(const QualifiedName&, Document&);
     
-    virtual bool isValid() const override { return SVGTests::isValid(); }
+    bool isValid() const override { return SVGTests::isValid(); }
 
     static bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
 
-    virtual void didAttachRenderers() override;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void didAttachRenderers() override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
-    virtual const AtomicString& imageSourceURL() const override;
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    const AtomicString& imageSourceURL() const override;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
-    virtual bool haveLoadedRequiredResources() override;
+    bool haveLoadedRequiredResources() override;
 
-    virtual bool selfHasRelativeLengths() const override { return true; }
-    virtual void didMoveToNewDocument(Document* oldDocument) override;
+    bool selfHasRelativeLengths() const override { return true; }
+    void didMoveToNewDocument(Document* oldDocument) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGImageElement)
         DECLARE_ANIMATED_LENGTH(X, x)

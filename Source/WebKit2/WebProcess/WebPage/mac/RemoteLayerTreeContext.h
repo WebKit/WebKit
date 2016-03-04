@@ -73,7 +73,7 @@ public:
 
 private:
     // WebCore::GraphicsLayerFactory
-    virtual std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
+    std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
 
     WebPage& m_webPage;
 

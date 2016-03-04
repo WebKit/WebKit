@@ -63,68 +63,68 @@ public:
 private:
     void element() const = delete;
 
-    virtual bool isMenuList() const override { return true; }
+    bool isMenuList() const override { return true; }
 
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
-    virtual void removeChild(RenderObject&) override;
-    virtual bool createsAnonymousWrapper() const override { return true; }
+    void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
+    void removeChild(RenderObject&) override;
+    bool createsAnonymousWrapper() const override { return true; }
 
-    virtual void updateFromElement() override;
+    void updateFromElement() override;
 
-    virtual LayoutRect controlClipRect(const LayoutPoint&) const override;
-    virtual bool hasControlClip() const override { return true; }
-    virtual bool canHaveGeneratedChildren() const override { return false; }
+    LayoutRect controlClipRect(const LayoutPoint&) const override;
+    bool hasControlClip() const override { return true; }
+    bool canHaveGeneratedChildren() const override { return false; }
 
-    virtual const char* renderName() const override { return "RenderMenuList"; }
+    const char* renderName() const override { return "RenderMenuList"; }
 
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
-    virtual void computePreferredLogicalWidths() override;
+    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    void computePreferredLogicalWidths() override;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
+    bool requiresForcedStyleRecalcPropagation() const override { return true; }
 
     // PopupMenuClient methods
-    virtual void valueChanged(unsigned listIndex, bool fireOnChange = true) override;
-    virtual void selectionChanged(unsigned, bool) override { }
-    virtual void selectionCleared() override { }
-    virtual String itemText(unsigned listIndex) const override;
-    virtual String itemLabel(unsigned listIndex) const override;
-    virtual String itemIcon(unsigned listIndex) const override;
-    virtual String itemToolTip(unsigned listIndex) const override;
-    virtual String itemAccessibilityText(unsigned listIndex) const override;
-    virtual bool itemIsEnabled(unsigned listIndex) const override;
-    virtual PopupMenuStyle itemStyle(unsigned listIndex) const override;
-    virtual PopupMenuStyle menuStyle() const override;
-    virtual int clientInsetLeft() const override;
-    virtual int clientInsetRight() const override;
-    virtual LayoutUnit clientPaddingLeft() const override;
-    virtual LayoutUnit clientPaddingRight() const override;
-    virtual int listSize() const override;
-    virtual int selectedIndex() const override;
-    virtual void popupDidHide() override;
-    virtual bool itemIsSeparator(unsigned listIndex) const override;
-    virtual bool itemIsLabel(unsigned listIndex) const override;
-    virtual bool itemIsSelected(unsigned listIndex) const override;
-    virtual bool shouldPopOver() const override { return !POPUP_MENU_PULLS_DOWN; }
-    virtual bool valueShouldChangeOnHotTrack() const override { return true; }
-    virtual void setTextFromItem(unsigned listIndex) override;
-    virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) override;
-    virtual bool multiple() const override;
-    virtual FontSelector* fontSelector() const override;
-    virtual HostWindow* hostWindow() const override;
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize) override;
+    void valueChanged(unsigned listIndex, bool fireOnChange = true) override;
+    void selectionChanged(unsigned, bool) override { }
+    void selectionCleared() override { }
+    String itemText(unsigned listIndex) const override;
+    String itemLabel(unsigned listIndex) const override;
+    String itemIcon(unsigned listIndex) const override;
+    String itemToolTip(unsigned listIndex) const override;
+    String itemAccessibilityText(unsigned listIndex) const override;
+    bool itemIsEnabled(unsigned listIndex) const override;
+    PopupMenuStyle itemStyle(unsigned listIndex) const override;
+    PopupMenuStyle menuStyle() const override;
+    int clientInsetLeft() const override;
+    int clientInsetRight() const override;
+    LayoutUnit clientPaddingLeft() const override;
+    LayoutUnit clientPaddingRight() const override;
+    int listSize() const override;
+    int selectedIndex() const override;
+    void popupDidHide() override;
+    bool itemIsSeparator(unsigned listIndex) const override;
+    bool itemIsLabel(unsigned listIndex) const override;
+    bool itemIsSelected(unsigned listIndex) const override;
+    bool shouldPopOver() const override { return !POPUP_MENU_PULLS_DOWN; }
+    bool valueShouldChangeOnHotTrack() const override { return true; }
+    void setTextFromItem(unsigned listIndex) override;
+    void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) override;
+    bool multiple() const override;
+    FontSelector* fontSelector() const override;
+    HostWindow* hostWindow() const override;
+    PassRefPtr<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize) override;
 
-    virtual bool hasLineIfEmpty() const override { return true; }
+    bool hasLineIfEmpty() const override { return true; }
 
     // Flexbox defines baselines differently than regular blocks.
     // For backwards compatibility, menulists need to do the regular block behavior.
-    virtual int baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const override
+    int baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const override
     {
         return RenderBlock::baselinePosition(baseline, firstLine, direction, position);
     }
-    virtual Optional<int> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
-    virtual Optional<int> inlineBlockBaseline(LineDirectionMode direction) const override { return RenderBlock::inlineBlockBaseline(direction); }
+    Optional<int> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
+    Optional<int> inlineBlockBaseline(LineDirectionMode direction) const override { return RenderBlock::inlineBlockBaseline(direction); }
 
     void getItemBackgroundColor(unsigned listIndex, Color&, bool& itemHasCustomBackgroundColor) const;
 

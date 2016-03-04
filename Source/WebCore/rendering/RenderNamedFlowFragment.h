@@ -54,11 +54,11 @@ public:
 
     static Ref<RenderStyle> createStyle(const RenderStyle& parentStyle);
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void getRanges(Vector<RefPtr<Range>>&) const;
 
-    virtual LayoutUnit pageLogicalHeight() const override;
+    LayoutUnit pageLogicalHeight() const override;
     LayoutUnit maxPageLogicalHeight() const;
     
     LayoutRect flowThreadPortionRectForClipping(bool isFirstRegionInRange, bool isLastRegionInRange) const;
@@ -66,9 +66,9 @@ public:
     RenderBlockFlow& fragmentContainer() const;
     RenderLayer& fragmentContainerLayer() const;
     
-    virtual bool shouldClipFlowThreadContent() const override;
+    bool shouldClipFlowThreadContent() const override;
     
-    virtual LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
+    LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
 
     bool isPseudoElementRegion() const { return parent() && parent()->isPseudoElement(); }
 
@@ -84,11 +84,11 @@ public:
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();
     
-    virtual LayoutRect visualOverflowRect() const override;
+    LayoutRect visualOverflowRect() const override;
 
     RenderNamedFlowThread* namedFlowThread() const;
 
-    virtual bool hasAutoLogicalHeight() const override { return m_hasAutoLogicalHeight; }
+    bool hasAutoLogicalHeight() const override { return m_hasAutoLogicalHeight; }
 
     LayoutUnit computedAutoHeight() const { return m_computedAutoHeight; }
 
@@ -108,20 +108,20 @@ public:
 
     RegionOversetState regionOversetState() const;
 
-    virtual void attachRegion() override;
-    virtual void detachRegion() override;
+    void attachRegion() override;
+    void detachRegion() override;
 
-    virtual void updateLogicalHeight() override;
+    void updateLogicalHeight() override;
 
     void updateRegionFlags();
 
-    virtual void absoluteQuadsForBoxInRegion(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) override;
+    void absoluteQuadsForBoxInRegion(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) override;
 
     void invalidateRegionIfNeeded();
 
 private:
-    virtual bool isRenderNamedFlowFragment() const override { return true; }
-    virtual const char* renderName() const override { return "RenderNamedFlowFragment"; }
+    bool isRenderNamedFlowFragment() const override { return true; }
+    const char* renderName() const override { return "RenderNamedFlowFragment"; }
 
     PassRefPtr<RenderStyle> computeStyleInRegion(RenderElement&, RenderStyle& parentStyle) const;
     void computeChildrenStyleInRegion(RenderElement&);
@@ -140,7 +140,7 @@ private:
     void updateOversetState();
     void setRegionOversetState(RegionOversetState);
 
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
 
     struct ObjectRegionStyleInfo {
         // Used to store the original style of the object in region

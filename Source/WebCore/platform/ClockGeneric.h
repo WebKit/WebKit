@@ -35,15 +35,15 @@ public:
     ClockGeneric();
 
 private:
-    virtual void setCurrentTime(double) override;
-    virtual double currentTime() const override;
+    void setCurrentTime(double) override;
+    double currentTime() const override;
 
-    virtual void setPlayRate(double) override;
-    virtual double playRate() const override { return m_rate; }
+    void setPlayRate(double) override;
+    double playRate() const override { return m_rate; }
 
-    virtual void start() override;
-    virtual void stop() override;
-    virtual bool isRunning() const override { return m_running; }
+    void start() override;
+    void stop() override;
+    bool isRunning() const override { return m_running; }
 
     double now() const;
 

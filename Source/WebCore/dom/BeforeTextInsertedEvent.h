@@ -39,14 +39,14 @@ public:
         return adoptRef(*new BeforeTextInsertedEvent(text));
     }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
     const String& text() const { return m_text; }
     void setText(const String& s) { m_text = s; }
 
 private:
     explicit BeforeTextInsertedEvent(const String&);
-    virtual bool isBeforeTextInsertedEvent() const override { return true; }
+    bool isBeforeTextInsertedEvent() const override { return true; }
 
     String m_text;
 };

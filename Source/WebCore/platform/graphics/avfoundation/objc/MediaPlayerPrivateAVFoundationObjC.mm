@@ -382,31 +382,31 @@ private:
         ASSERT(m_challenge);
     }
 
-    virtual void refAuthenticationClient() override { ref(); }
-    virtual void derefAuthenticationClient() override { deref(); }
+    void refAuthenticationClient() override { ref(); }
+    void derefAuthenticationClient() override { deref(); }
 
-    virtual void receivedCredential(const AuthenticationChallenge&, const Credential& credential) override
+    void receivedCredential(const AuthenticationChallenge&, const Credential& credential) override
     {
         [[m_challenge sender] useCredential:credential.nsCredential() forAuthenticationChallenge:m_challenge.get()];
     }
 
-    virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) override
+    void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) override
     {
         [[m_challenge sender] continueWithoutCredentialForAuthenticationChallenge:m_challenge.get()];
     }
 
-    virtual void receivedCancellation(const AuthenticationChallenge&) override
+    void receivedCancellation(const AuthenticationChallenge&) override
     {
         [[m_challenge sender] cancelAuthenticationChallenge:m_challenge.get()];
     }
 
-    virtual void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&) override
+    void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&) override
     {
         if ([[m_challenge sender] respondsToSelector:@selector(performDefaultHandlingForAuthenticationChallenge:)])
             [[m_challenge sender] performDefaultHandlingForAuthenticationChallenge:m_challenge.get()];
     }
 
-    virtual void receivedChallengeRejection(const AuthenticationChallenge&) override
+    void receivedChallengeRejection(const AuthenticationChallenge&) override
     {
         if ([[m_challenge sender] respondsToSelector:@selector(rejectProtectionSpaceAndContinueWithChallenge:)])
             [[m_challenge sender] rejectProtectionSpaceAndContinueWithChallenge:m_challenge.get()];

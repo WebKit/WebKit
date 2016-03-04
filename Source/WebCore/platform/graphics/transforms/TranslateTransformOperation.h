@@ -44,7 +44,7 @@ public:
         return adoptRef(*new TranslateTransformOperation(tx, ty, tz, type));
     }
 
-    virtual Ref<TransformOperation> clone() const override
+    Ref<TransformOperation> clone() const override
     {
         return adoptRef(*new TranslateTransformOperation(m_x, m_y, m_z, m_type));
     }
@@ -58,20 +58,20 @@ public:
     Length z() const { return m_z; }
 
 private:
-    virtual bool isIdentity() const override { return !floatValueForLength(m_x, 1) && !floatValueForLength(m_y, 1) && !floatValueForLength(m_z, 1); }
+    bool isIdentity() const override { return !floatValueForLength(m_x, 1) && !floatValueForLength(m_y, 1) && !floatValueForLength(m_z, 1); }
 
-    virtual OperationType type() const override { return m_type; }
-    virtual bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
+    OperationType type() const override { return m_type; }
+    bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
 
-    virtual bool operator==(const TransformOperation&) const override;
+    bool operator==(const TransformOperation&) const override;
 
-    virtual bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const override
+    bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const override
     {
         transform.translate3d(x(borderBoxSize), y(borderBoxSize), z(borderBoxSize));
         return m_x.isPercent() || m_y.isPercent();
     }
 
-    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     TranslateTransformOperation(const Length& tx, const Length& ty, const Length& tz, OperationType type)
         : m_x(tx)

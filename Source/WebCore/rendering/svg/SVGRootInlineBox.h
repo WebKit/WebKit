@@ -38,19 +38,19 @@ public:
 
     RenderSVGText& renderSVGText();
 
-    virtual float virtualLogicalHeight() const override { return m_logicalHeight; }
+    float virtualLogicalHeight() const override { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
+    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
 
     void computePerCharacterLayoutInformation();
 
     InlineBox* closestLeafChildForPosition(const LayoutPoint&);
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override final;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override final;
 
 private:
-    virtual bool isSVGRootInlineBox() const override { return true; }
+    bool isSVGRootInlineBox() const override { return true; }
     void reorderValueLists(Vector<SVGTextLayoutAttributes*>&);
     void layoutCharactersInTextBoxes(InlineFlowBox*, SVGTextLayoutEngine&);
     void layoutChildBoxes(InlineFlowBox*, FloatRect* = nullptr);

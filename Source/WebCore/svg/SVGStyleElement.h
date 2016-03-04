@@ -49,19 +49,19 @@ public:
 private:
     SVGStyleElement(const QualifiedName&, Document&, bool createdByParser);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
-    virtual void childrenChanged(const ChildChange&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
+    void childrenChanged(const ChildChange&) override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
-    virtual void finishParsingChildren() override;
+    void finishParsingChildren() override;
 
     virtual bool isLoading() const { return m_styleSheetOwner.isLoading(); }
-    virtual bool sheetLoaded() override { return m_styleSheetOwner.sheetLoaded(*this); }
-    virtual void startLoadingDynamicSheet() override { m_styleSheetOwner.startLoadingDynamicSheet(*this); }
-    virtual Timer* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
+    bool sheetLoaded() override { return m_styleSheetOwner.sheetLoaded(*this); }
+    void startLoadingDynamicSheet() override { m_styleSheetOwner.startLoadingDynamicSheet(*this); }
+    Timer* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
 
     InlineStyleSheetOwner m_styleSheetOwner;
     Timer m_svgLoadEventTimer;

@@ -249,13 +249,13 @@ public:
 
     String layerTreeAsText(LayerTreeFlags);
 
-    virtual float deviceScaleFactor() const override;
-    virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
-    virtual float pageScaleFactor() const override;
-    virtual float zoomedOutPageScaleFactor() const override;
+    float deviceScaleFactor() const override;
+    float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
+    float pageScaleFactor() const override;
+    float zoomedOutPageScaleFactor() const override;
 
-    virtual void didCommitChangesForLayer(const GraphicsLayer*) const override;
-    virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) override;
+    void didCommitChangesForLayer(const GraphicsLayer*) const override;
+    void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) override;
 
     void layerTiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/);
     
@@ -331,13 +331,13 @@ private:
     struct OverlapExtent;
 
     // GraphicsLayerClient implementation
-    virtual void notifyFlushRequired(const GraphicsLayer*) override;
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect&) override;
-    virtual void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
-    virtual bool isTrackingRepaints() const override;
+    void notifyFlushRequired(const GraphicsLayer*) override;
+    void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect&) override;
+    void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
+    bool isTrackingRepaints() const override;
     
     // GraphicsLayerUpdaterClient implementation
-    virtual void flushLayersSoon(GraphicsLayerUpdater&) override;
+    void flushLayersSoon(GraphicsLayerUpdater&) override;
 
     // Whether the given RL needs a compositing layer.
     bool needsToBeComposited(const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = nullptr) const;

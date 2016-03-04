@@ -80,14 +80,14 @@ public:
     String stringResult();
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const override { return FileReaderEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
+    EventTargetInterface eventTargetInterface() const override { return FileReaderEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     // FileReaderLoaderClient
-    virtual void didStartLoading() override;
-    virtual void didReceiveData() override;
-    virtual void didFinishLoading() override;
-    virtual void didFail(int errorCode) override;
+    void didStartLoading() override;
+    void didReceiveData() override;
+    void didFinishLoading() override;
+    void didFail(int errorCode) override;
 
     using RefCounted<FileReader>::ref;
     using RefCounted<FileReader>::deref;
@@ -101,8 +101,8 @@ private:
     void stop() override;
 
     // EventTarget
-    virtual void refEventTarget() override { ref(); }
-    virtual void derefEventTarget() override { deref(); }
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
 
     void terminate();
     void readInternal(Blob*, FileReaderLoader::ReadType, ExceptionCode&);

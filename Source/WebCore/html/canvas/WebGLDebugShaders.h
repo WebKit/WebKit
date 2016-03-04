@@ -39,7 +39,7 @@ public:
     explicit WebGLDebugShaders(WebGLRenderingContextBase*);
     virtual ~WebGLDebugShaders();
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 
     String getTranslatedShaderSource(WebGLShader*, ExceptionCode&);
 };

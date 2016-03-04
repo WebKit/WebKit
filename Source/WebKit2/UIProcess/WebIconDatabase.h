@@ -93,16 +93,16 @@ private:
     explicit WebIconDatabase(WebProcessPool&);
 
     // WebCore::IconDatabaseClient
-    virtual void didImportIconURLForPageURL(const String&) override;
-    virtual void didImportIconDataForPageURL(const String&) override;
-    virtual void didChangeIconForPageURL(const String&) override;
-    virtual void didRemoveAllIcons() override;
-    virtual void didFinishURLImport() override;
-    virtual void didClose() override;
+    void didImportIconURLForPageURL(const String&) override;
+    void didImportIconDataForPageURL(const String&) override;
+    void didChangeIconForPageURL(const String&) override;
+    void didRemoveAllIcons() override;
+    void didFinishURLImport() override;
+    void didClose() override;
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    virtual void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
 
     void notifyIconDataReadyForPageURL(const String&);
 

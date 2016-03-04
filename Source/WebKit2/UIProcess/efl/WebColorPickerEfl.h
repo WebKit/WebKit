@@ -41,9 +41,9 @@ public:
     }
     ~WebColorPickerEfl() { }
 
-    virtual void endPicker() override;
-    virtual void setSelectedColor(const WebCore::Color&) override;
-    virtual void showColorPicker(const WebCore::Color&) override;
+    void endPicker() override;
+    void setSelectedColor(const WebCore::Color&) override;
+    void showColorPicker(const WebCore::Color&) override;
 
     void didChooseColor(const WebCore::Color&);
 

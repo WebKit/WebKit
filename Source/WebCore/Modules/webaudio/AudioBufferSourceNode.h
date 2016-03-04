@@ -50,8 +50,8 @@ public:
     virtual ~AudioBufferSourceNode();
 
     // AudioNode
-    virtual void process(size_t framesToProcess) override;
-    virtual void reset() override;
+    void process(size_t framesToProcess) override;
+    void reset() override;
 
     // setBuffer() is called on the main thread.  This is the buffer we use for playback.
     // returns true on success.
@@ -96,16 +96,16 @@ public:
     void clearPannerNode();
 
     // If we are no longer playing, propogate silence ahead to downstream nodes.
-    virtual bool propagatesSilence() const override;
+    bool propagatesSilence() const override;
 
     // AudioScheduledSourceNode
-    virtual void finish() override;
+    void finish() override;
 
 private:
     AudioBufferSourceNode(AudioContext&, float sampleRate);
 
-    virtual double tailTime() const override { return 0; }
-    virtual double latencyTime() const override { return 0; }
+    double tailTime() const override { return 0; }
+    double latencyTime() const override { return 0; }
 
     enum BufferPlaybackMode {
         Entire,

@@ -54,7 +54,7 @@ public:
     double elapsedTime() const;
     const String& pseudoElement() const;
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
 private:
     TransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime, const String& pseudoElement);

@@ -37,7 +37,7 @@ public:
 
     static bool supported(GraphicsContext3D*);
 
-    virtual ExtensionName getName() const override;
+    ExtensionName getName() const override;
 };
 
 } // namespace WebCore

@@ -48,8 +48,8 @@ public:
     GraphicsContext3D::RenderStyle renderStyle() { return m_renderStyle; }
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    virtual RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
-    virtual void swapBuffersIfNeeded() override;
+    RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
+    void swapBuffersIfNeeded() override;
 #elif USE(TEXTURE_MAPPER)
     virtual void paintToTextureMapper(TextureMapper&, const FloatRect& target, const TransformationMatrix&, float opacity);
 #endif

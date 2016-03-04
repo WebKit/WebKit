@@ -89,7 +89,7 @@ public:
         m_childTearOffs.append(child);
     }
 
-    virtual void detachWrapper() override
+    void detachWrapper() override
     {
         if (m_valueIsCopy)
             return;
@@ -108,14 +108,14 @@ public:
         m_animatedProperty = nullptr;
     }
 
-    virtual void commitChange() override
+    void commitChange() override
     {
         if (!m_animatedProperty || m_valueIsCopy)
             return;
         m_animatedProperty->commitChange();
     }
 
-    virtual bool isReadOnly() const override
+    bool isReadOnly() const override
     {
         if (m_role == AnimValRole)
             return true;

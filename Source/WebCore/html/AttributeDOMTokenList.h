@@ -38,11 +38,11 @@ public:
     void attributeValueChanged(const AtomicString&);
 
 private:
-    virtual void ref() override { m_element.ref(); }
-    virtual void deref() override { m_element.deref(); }
+    void ref() override { m_element.ref(); }
+    void deref() override { m_element.deref(); }
 
-    virtual Element* element() const override { return &m_element; }
-    virtual void updateAfterTokenChange() override;
+    Element* element() const override { return &m_element; }
+    void updateAfterTokenChange() override;
 
     Element& m_element;
     const WebCore::QualifiedName& m_attributeName;

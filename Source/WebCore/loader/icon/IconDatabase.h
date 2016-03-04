@@ -71,32 +71,32 @@ public:
     WEBCORE_EXPORT IconDatabase();
     ~IconDatabase();
 
-    WEBCORE_EXPORT virtual void setClient(IconDatabaseClient*) override;
+    WEBCORE_EXPORT void setClient(IconDatabaseClient*) override;
 
-    WEBCORE_EXPORT virtual bool open(const String& directory, const String& filename) override;
-    WEBCORE_EXPORT virtual void close() override;
+    WEBCORE_EXPORT bool open(const String& directory, const String& filename) override;
+    WEBCORE_EXPORT void close() override;
             
-    WEBCORE_EXPORT virtual void removeAllIcons() override;
+    WEBCORE_EXPORT void removeAllIcons() override;
 
     void readIconForPageURLFromDisk(const String&);
 
-    WEBCORE_EXPORT virtual Image* defaultIcon(const IntSize&) override;
+    WEBCORE_EXPORT Image* defaultIcon(const IntSize&) override;
 
-    WEBCORE_EXPORT virtual void retainIconForPageURL(const String&) override;
-    WEBCORE_EXPORT virtual void releaseIconForPageURL(const String&) override;
-    WEBCORE_EXPORT virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&) override;
-    WEBCORE_EXPORT virtual void setIconURLForPageURL(const String& iconURL, const String& pageURL) override;
+    WEBCORE_EXPORT void retainIconForPageURL(const String&) override;
+    WEBCORE_EXPORT void releaseIconForPageURL(const String&) override;
+    WEBCORE_EXPORT void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&) override;
+    WEBCORE_EXPORT void setIconURLForPageURL(const String& iconURL, const String& pageURL) override;
 
-    WEBCORE_EXPORT virtual Image* synchronousIconForPageURL(const String&, const IntSize&) override;
-    virtual PassNativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&) override;
-    WEBCORE_EXPORT virtual String synchronousIconURLForPageURL(const String&) override;
-    virtual bool synchronousIconDataKnownForIconURL(const String&) override;
-    WEBCORE_EXPORT virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) override;
+    WEBCORE_EXPORT Image* synchronousIconForPageURL(const String&, const IntSize&) override;
+    PassNativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&) override;
+    WEBCORE_EXPORT String synchronousIconURLForPageURL(const String&) override;
+    bool synchronousIconDataKnownForIconURL(const String&) override;
+    WEBCORE_EXPORT IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) override;
 
-    WEBCORE_EXPORT virtual void setEnabled(bool) override;
-    WEBCORE_EXPORT virtual bool isEnabled() const override;
+    WEBCORE_EXPORT void setEnabled(bool) override;
+    WEBCORE_EXPORT bool isEnabled() const override;
 
-    WEBCORE_EXPORT virtual void setPrivateBrowsingEnabled(bool flag) override;
+    WEBCORE_EXPORT void setPrivateBrowsingEnabled(bool flag) override;
     bool isPrivateBrowsingEnabled() const;
 
     WEBCORE_EXPORT static void delayDatabaseCleanup();
@@ -104,10 +104,10 @@ public:
     WEBCORE_EXPORT static void checkIntegrityBeforeOpening();
 
     // Support for WebCoreStatistics in WebKit
-    WEBCORE_EXPORT virtual size_t pageURLMappingCount() override;
-    WEBCORE_EXPORT virtual size_t retainedPageURLCount() override;
-    WEBCORE_EXPORT virtual size_t iconRecordCount() override;
-    WEBCORE_EXPORT virtual size_t iconRecordCountWithData() override;
+    WEBCORE_EXPORT size_t pageURLMappingCount() override;
+    WEBCORE_EXPORT size_t retainedPageURLCount() override;
+    WEBCORE_EXPORT size_t iconRecordCount() override;
+    WEBCORE_EXPORT size_t iconRecordCountWithData() override;
 
 private:
     friend IconDatabaseBase& iconDatabase();
@@ -131,8 +131,8 @@ private:
 
 // *** Any Thread ***
 public:
-    WEBCORE_EXPORT virtual bool isOpen() const override;
-    WEBCORE_EXPORT virtual String databasePath() const override;
+    WEBCORE_EXPORT bool isOpen() const override;
+    WEBCORE_EXPORT String databasePath() const override;
     WEBCORE_EXPORT static String defaultDatabaseFilename();
 
 private:
@@ -179,7 +179,7 @@ private:
 
 // *** Sync Thread Only ***
 public:
-    WEBCORE_EXPORT virtual bool shouldStopThreadActivity() const override;
+    WEBCORE_EXPORT bool shouldStopThreadActivity() const override;
 
 private:    
     static void iconDatabaseSyncThreadStart(void *);

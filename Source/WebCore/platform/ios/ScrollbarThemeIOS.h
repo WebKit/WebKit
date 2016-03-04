@@ -35,29 +35,29 @@ public:
     ScrollbarThemeIOS();
     virtual ~ScrollbarThemeIOS();
 
-    virtual bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
 
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override;
+    int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override;
     
-    virtual bool supportsControlTints() const override { return true; }
+    bool supportsControlTints() const override { return true; }
 
-    virtual double initialAutoscrollTimerDelay() override;
-    virtual double autoscrollTimerDelay() override;
+    double initialAutoscrollTimerDelay() override;
+    double autoscrollTimerDelay() override;
 
-    virtual ScrollbarButtonsPlacement buttonsPlacement() const override;
+    ScrollbarButtonsPlacement buttonsPlacement() const override;
 
-    virtual void registerScrollbar(Scrollbar&) override;
-    virtual void unregisterScrollbar(Scrollbar&) override;
+    void registerScrollbar(Scrollbar&) override;
+    void unregisterScrollbar(Scrollbar&) override;
 
 protected:
-    virtual bool hasButtons(Scrollbar&) override;
-    virtual bool hasThumb(Scrollbar&) override;
+    bool hasButtons(Scrollbar&) override;
+    bool hasThumb(Scrollbar&) override;
 
-    virtual IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
-    virtual IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
-    virtual IntRect trackRect(Scrollbar&, bool painting = false) override;
+    IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    IntRect trackRect(Scrollbar&, bool painting = false) override;
 
-    virtual int minimumThumbLength(Scrollbar&) override;
+    int minimumThumbLength(Scrollbar&) override;
 
 public:
     void preferencesChanged();

@@ -51,73 +51,73 @@ public:
 
     virtual ~PlatformCAAnimationRemote() { }
 
-    virtual bool isPlatformCAAnimationRemote() const override { return true; }
+    bool isPlatformCAAnimationRemote() const override { return true; }
 
-    virtual PassRefPtr<PlatformCAAnimation> copy() const override;
+    PassRefPtr<PlatformCAAnimation> copy() const override;
 
-    virtual String keyPath() const override;
+    String keyPath() const override;
 
-    virtual CFTimeInterval beginTime() const override;
-    virtual void setBeginTime(CFTimeInterval) override;
+    CFTimeInterval beginTime() const override;
+    void setBeginTime(CFTimeInterval) override;
 
-    virtual CFTimeInterval duration() const override;
-    virtual void setDuration(CFTimeInterval) override;
+    CFTimeInterval duration() const override;
+    void setDuration(CFTimeInterval) override;
 
-    virtual float speed() const override;
-    virtual void setSpeed(float) override;
+    float speed() const override;
+    void setSpeed(float) override;
 
-    virtual CFTimeInterval timeOffset() const override;
-    virtual void setTimeOffset(CFTimeInterval) override;
+    CFTimeInterval timeOffset() const override;
+    void setTimeOffset(CFTimeInterval) override;
 
-    virtual float repeatCount() const override;
-    virtual void setRepeatCount(float) override;
+    float repeatCount() const override;
+    void setRepeatCount(float) override;
 
-    virtual bool autoreverses() const override;
-    virtual void setAutoreverses(bool) override;
+    bool autoreverses() const override;
+    void setAutoreverses(bool) override;
 
-    virtual FillModeType fillMode() const override;
-    virtual void setFillMode(FillModeType) override;
+    FillModeType fillMode() const override;
+    void setFillMode(FillModeType) override;
 
-    virtual void setTimingFunction(const WebCore::TimingFunction*, bool reverse = false) override;
+    void setTimingFunction(const WebCore::TimingFunction*, bool reverse = false) override;
     void copyTimingFunctionFrom(const WebCore::PlatformCAAnimation&) override;
 
-    virtual bool isRemovedOnCompletion() const override;
-    virtual void setRemovedOnCompletion(bool) override;
+    bool isRemovedOnCompletion() const override;
+    void setRemovedOnCompletion(bool) override;
 
-    virtual bool isAdditive() const override;
-    virtual void setAdditive(bool) override;
+    bool isAdditive() const override;
+    void setAdditive(bool) override;
 
-    virtual ValueFunctionType valueFunction() const override;
-    virtual void setValueFunction(ValueFunctionType) override;
+    ValueFunctionType valueFunction() const override;
+    void setValueFunction(ValueFunctionType) override;
 
     // Basic-animation properties.
-    virtual void setFromValue(float) override;
-    virtual void setFromValue(const WebCore::TransformationMatrix&) override;
-    virtual void setFromValue(const WebCore::FloatPoint3D&) override;
-    virtual void setFromValue(const WebCore::Color&) override;
-    virtual void setFromValue(const WebCore::FilterOperation*, int internalFilterPropertyIndex) override;
-    virtual void copyFromValueFrom(const WebCore::PlatformCAAnimation&) override;
+    void setFromValue(float) override;
+    void setFromValue(const WebCore::TransformationMatrix&) override;
+    void setFromValue(const WebCore::FloatPoint3D&) override;
+    void setFromValue(const WebCore::Color&) override;
+    void setFromValue(const WebCore::FilterOperation*, int internalFilterPropertyIndex) override;
+    void copyFromValueFrom(const WebCore::PlatformCAAnimation&) override;
 
-    virtual void setToValue(float) override;
-    virtual void setToValue(const WebCore::TransformationMatrix&) override;
-    virtual void setToValue(const WebCore::FloatPoint3D&) override;
-    virtual void setToValue(const WebCore::Color&) override;
-    virtual void setToValue(const WebCore::FilterOperation*, int internalFilterPropertyIndex) override;
-    virtual void copyToValueFrom(const WebCore::PlatformCAAnimation&) override;
+    void setToValue(float) override;
+    void setToValue(const WebCore::TransformationMatrix&) override;
+    void setToValue(const WebCore::FloatPoint3D&) override;
+    void setToValue(const WebCore::Color&) override;
+    void setToValue(const WebCore::FilterOperation*, int internalFilterPropertyIndex) override;
+    void copyToValueFrom(const WebCore::PlatformCAAnimation&) override;
 
     // Keyframe-animation properties.
-    virtual void setValues(const Vector<float>&) override;
-    virtual void setValues(const Vector<WebCore::TransformationMatrix>&) override;
-    virtual void setValues(const Vector<WebCore::FloatPoint3D>&) override;
-    virtual void setValues(const Vector<WebCore::Color>&) override;
-    virtual void setValues(const Vector<RefPtr<WebCore::FilterOperation>>&, int internalFilterPropertyIndex) override;
-    virtual void copyValuesFrom(const WebCore::PlatformCAAnimation&) override;
+    void setValues(const Vector<float>&) override;
+    void setValues(const Vector<WebCore::TransformationMatrix>&) override;
+    void setValues(const Vector<WebCore::FloatPoint3D>&) override;
+    void setValues(const Vector<WebCore::Color>&) override;
+    void setValues(const Vector<RefPtr<WebCore::FilterOperation>>&, int internalFilterPropertyIndex) override;
+    void copyValuesFrom(const WebCore::PlatformCAAnimation&) override;
 
-    virtual void setKeyTimes(const Vector<float>&) override;
-    virtual void copyKeyTimesFrom(const WebCore::PlatformCAAnimation&) override;
+    void setKeyTimes(const Vector<float>&) override;
+    void copyKeyTimesFrom(const WebCore::PlatformCAAnimation&) override;
 
-    virtual void setTimingFunctions(const Vector<const WebCore::TimingFunction*>&, bool reverse = false) override;
-    virtual void copyTimingFunctionsFrom(const WebCore::PlatformCAAnimation&) override;
+    void setTimingFunctions(const Vector<const WebCore::TimingFunction*>&, bool reverse = false) override;
+    void copyTimingFunctionsFrom(const WebCore::PlatformCAAnimation&) override;
 
     AnimationType animationType() const { return m_properties.animationType; }
     void setHasExplicitBeginTime(bool hasExplicitBeginTime) { m_properties.hasExplicitBeginTime = hasExplicitBeginTime; }

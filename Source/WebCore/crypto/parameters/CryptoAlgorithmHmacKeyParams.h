@@ -48,7 +48,7 @@ public:
     bool hasLength;
     unsigned length;
 
-    virtual Class parametersClass() const override { return Class::HmacKeyParams; }
+    Class parametersClass() const override { return Class::HmacKeyParams; }
 };
 
 } // namespace WebCore

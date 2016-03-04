@@ -43,7 +43,7 @@ public:
     Display* native() const { return m_display; }
 
 private:
-    virtual Type type() const override { return PlatformDisplay::Type::X11; }
+    Type type() const override { return PlatformDisplay::Type::X11; }
 
 #if USE(EGL)
     void initializeEGLDisplay() override;

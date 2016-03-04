@@ -39,7 +39,7 @@ public:
 
 private:
     ReplaceInsertIntoTextNodeCommand(RefPtr<Text>&&, unsigned, const String&, const String&, EditAction);
-    virtual void notifyAccessibilityForTextChange(Node*, AXTextEditType, const String&, const VisiblePosition&) override;
+    void notifyAccessibilityForTextChange(Node*, AXTextEditType, const String&, const VisiblePosition&) override;
 
     String m_deletedText;
 };

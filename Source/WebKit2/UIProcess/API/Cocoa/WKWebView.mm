@@ -3541,7 +3541,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
         virtual ~FormClient() { }
 
-        virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy& sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& textFieldValues, API::Object* userData, Ref<WebKit::WebFormSubmissionListenerProxy>&& listener) override
+        void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy& sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& textFieldValues, API::Object* userData, Ref<WebKit::WebFormSubmissionListenerProxy>&& listener) override
         {
             if (userData && userData->type() != API::Object::Type::Data) {
                 ASSERT(!userData || userData->type() == API::Object::Type::Data);

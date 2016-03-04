@@ -36,9 +36,9 @@ public:
     virtual ~RenderLineBreak();
 
     // FIXME: The lies here keep render tree dump based test results unchanged.
-    virtual const char* renderName() const override { return m_isWBR ? "RenderWordBreak" : "RenderBR"; }
+    const char* renderName() const override { return m_isWBR ? "RenderWordBreak" : "RenderBR"; }
 
-    virtual bool isWBR() const override { return m_isWBR; }
+    bool isWBR() const override { return m_isWBR; }
 
     std::unique_ptr<InlineElementBox> createInlineBox();
     InlineElementBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
@@ -50,44 +50,44 @@ public:
 
     IntRect linesBoundingBox() const;
 
-    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
+    void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
+    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 #if PLATFORM(IOS)
-virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) override;
+void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) override;
 #endif
 
 private:
     void node() const = delete;
 
-    virtual bool canHaveChildren() const override { return false; }
-    virtual void paint(PaintInfo&, const LayoutPoint&) override { }
+    bool canHaveChildren() const override { return false; }
+    void paint(PaintInfo&, const LayoutPoint&) override { }
 
-    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
-    virtual int caretMinOffset() const override;
-    virtual int caretMaxOffset() const override;
-    virtual bool canBeSelectionLeaf() const override;
-    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine) override;
-    virtual void setSelectionState(SelectionState) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
+    int caretMinOffset() const override;
+    int caretMaxOffset() const override;
+    bool canBeSelectionLeaf() const override;
+    LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine) override;
+    void setSelectionState(SelectionState) override;
 
-    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode) const override;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode) const override;
+    LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode) const override;
+    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode) const override;
 
-    virtual LayoutUnit marginTop() const override { return 0; }
-    virtual LayoutUnit marginBottom() const override { return 0; }
-    virtual LayoutUnit marginLeft() const override { return 0; }
-    virtual LayoutUnit marginRight() const override { return 0; }
-    virtual LayoutUnit marginBefore(const RenderStyle*) const override { return 0; }
-    virtual LayoutUnit marginAfter(const RenderStyle*) const override { return 0; }
-    virtual LayoutUnit marginStart(const RenderStyle*) const override { return 0; }
-    virtual LayoutUnit marginEnd(const RenderStyle*) const override { return 0; }
-    virtual LayoutUnit offsetWidth() const override { return linesBoundingBox().width(); }
-    virtual LayoutUnit offsetHeight() const override { return linesBoundingBox().height(); }
-    virtual IntRect borderBoundingBox() const override;
-    virtual LayoutRect frameRectForStickyPositioning() const override { ASSERT_NOT_REACHED(); return LayoutRect(); }
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const override { return LayoutRect(); }
+    LayoutUnit marginTop() const override { return 0; }
+    LayoutUnit marginBottom() const override { return 0; }
+    LayoutUnit marginLeft() const override { return 0; }
+    LayoutUnit marginRight() const override { return 0; }
+    LayoutUnit marginBefore(const RenderStyle*) const override { return 0; }
+    LayoutUnit marginAfter(const RenderStyle*) const override { return 0; }
+    LayoutUnit marginStart(const RenderStyle*) const override { return 0; }
+    LayoutUnit marginEnd(const RenderStyle*) const override { return 0; }
+    LayoutUnit offsetWidth() const override { return linesBoundingBox().width(); }
+    LayoutUnit offsetHeight() const override { return linesBoundingBox().height(); }
+    IntRect borderBoundingBox() const override;
+    LayoutRect frameRectForStickyPositioning() const override { ASSERT_NOT_REACHED(); return LayoutRect(); }
+    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const override { return LayoutRect(); }
 
-    virtual void updateFromStyle() override;
-    virtual bool requiresLayer() const override { return false; }
+    void updateFromStyle() override;
+    bool requiresLayer() const override { return false; }
 
     InlineElementBox* m_inlineBoxWrapper;
     mutable int m_cachedLineHeight;

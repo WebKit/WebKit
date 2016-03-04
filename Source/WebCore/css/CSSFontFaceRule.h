@@ -36,15 +36,15 @@ public:
 
     virtual ~CSSFontFaceRule();
 
-    virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase&) override;
+    String cssText() const override;
+    void reattach(StyleRuleBase&) override;
 
     CSSStyleDeclaration& style();
 
 private:
     CSSFontFaceRule(StyleRuleFontFace&, CSSStyleSheet* parent);
 
-    virtual CSSRule::Type type() const override { return FONT_FACE_RULE; }
+    CSSRule::Type type() const override { return FONT_FACE_RULE; }
 
     Ref<StyleRuleFontFace> m_fontFaceRule;
     RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;

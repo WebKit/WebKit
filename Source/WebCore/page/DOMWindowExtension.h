@@ -43,11 +43,11 @@ public:
         return adoptRef(*new DOMWindowExtension(frame, world));
     }
 
-    virtual void disconnectFrameForDocumentSuspension() override;
-    virtual void reconnectFrameFromDocumentSuspension(Frame*) override;
-    virtual void willDestroyGlobalObjectInCachedFrame() override;
-    virtual void willDestroyGlobalObjectInFrame() override;
-    virtual void willDetachGlobalObjectFromFrame() override;
+    void disconnectFrameForDocumentSuspension() override;
+    void reconnectFrameFromDocumentSuspension(Frame*) override;
+    void willDestroyGlobalObjectInCachedFrame() override;
+    void willDestroyGlobalObjectInFrame() override;
+    void willDetachGlobalObjectFromFrame() override;
 
     DOMWrapperWorld& world() const { return *m_world; }
 

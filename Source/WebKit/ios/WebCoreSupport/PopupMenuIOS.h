@@ -37,10 +37,10 @@ class PopupMenuIOS : public WebCore::PopupMenu {
 public:
     PopupMenuIOS(WebCore::PopupMenuClient*);
 
-    virtual void show(const WebCore::IntRect&, WebCore::FrameView*, int index) override;
-    virtual void hide() override;
-    virtual void updateFromElement() override;
-    virtual void disconnectClient() override;
+    void show(const WebCore::IntRect&, WebCore::FrameView*, int index) override;
+    void hide() override;
+    void updateFromElement() override;
+    void disconnectClient() override;
 
 private:
     WebCore::PopupMenuClient* client() const { return m_popupClient; }

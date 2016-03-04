@@ -83,10 +83,10 @@ class BlobResourceSynchronousLoader : public ResourceHandleClient {
 public:
     BlobResourceSynchronousLoader(ResourceError&, ResourceResponse&, Vector<char>&);
 
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
-    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) override;
-    virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) override;
-    virtual void didFail(ResourceHandle*, const ResourceError&) override;
+    void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
+    void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) override;
+    void didFinishLoading(ResourceHandle*, double /*finishTime*/) override;
+    void didFail(ResourceHandle*, const ResourceError&) override;
 
 private:
     ResourceError& m_error;

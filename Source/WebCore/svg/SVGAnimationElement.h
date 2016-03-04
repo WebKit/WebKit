@@ -79,7 +79,7 @@ public:
 
     static bool isTargetAttributeCSSProperty(SVGElement*, const QualifiedName&);
 
-    virtual bool isAdditive() const override;
+    bool isAdditive() const override;
     bool isAccumulated() const;
     AnimationMode animationMode() const { return m_animationMode; }
     CalcMode calcMode() const { return m_calcMode; }
@@ -171,8 +171,8 @@ protected:
     virtual void resetAnimatedPropertyType();
 
     static bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
 
     enum AttributeType {
         AttributeTypeCSS,
@@ -188,14 +188,14 @@ protected:
     String targetAttributeBaseValue();
 
     // from SVGSMILElement
-    virtual void startedActiveInterval() override;
-    virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) override;
+    void startedActiveInterval() override;
+    void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) override;
 
     AnimatedPropertyValueType m_fromPropertyValueType;
     AnimatedPropertyValueType m_toPropertyValueType;
 
-    virtual void setTargetElement(SVGElement*) override;
-    virtual void setAttributeName(const QualifiedName&) override { }
+    void setTargetElement(SVGElement*) override;
+    void setAttributeName(const QualifiedName&) override { }
     bool hasInvalidCSSAttributeType() const { return m_hasInvalidCSSAttributeType; }
     void checkInvalidCSSAttributeType(SVGElement*);
 
@@ -204,7 +204,7 @@ protected:
     void setCalcMode(CalcMode calcMode) { m_calcMode = calcMode; }
 
 private:
-    virtual void animationAttributeChanged() override;
+    void animationAttributeChanged() override;
     void setAttributeType(const AtomicString&);
 
     virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) = 0;
@@ -229,9 +229,9 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 
     // SVGTests
-    virtual void synchronizeRequiredFeatures() override { SVGTests::synchronizeRequiredFeatures(this); }
-    virtual void synchronizeRequiredExtensions() override { SVGTests::synchronizeRequiredExtensions(this); }
-    virtual void synchronizeSystemLanguage() override { SVGTests::synchronizeSystemLanguage(this); }
+    void synchronizeRequiredFeatures() override { SVGTests::synchronizeRequiredFeatures(this); }
+    void synchronizeRequiredExtensions() override { SVGTests::synchronizeRequiredExtensions(this); }
+    void synchronizeSystemLanguage() override { SVGTests::synchronizeSystemLanguage(this); }
 
     void setCalcMode(const AtomicString&);
 

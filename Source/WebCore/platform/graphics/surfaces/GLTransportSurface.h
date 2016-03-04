@@ -38,9 +38,9 @@ public:
     // Creates a GL surface whose results can be transported to the UI process for display.
     static std::unique_ptr<GLTransportSurface> createTransportSurface(const IntSize&, SurfaceAttributes = GLPlatformSurface::Default);
     virtual ~GLTransportSurface();
-    virtual void updateContents(const uint32_t) override;
-    virtual void setGeometry(const IntRect&) override;
-    virtual void destroy() override;
+    void updateContents(const uint32_t) override;
+    void setGeometry(const IntRect&) override;
+    void destroy() override;
 
 protected:
     GLTransportSurface(const IntSize&, SurfaceAttributes);

@@ -38,9 +38,9 @@ public:
     CachedTextTrack(const ResourceRequest&, SessionID);
 
 private:
-    virtual bool mayTryReplaceEncodedData() const override { return true; }
-    virtual void addDataBuffer(SharedBuffer&) override;
-    virtual void finishLoading(SharedBuffer*) override;
+    bool mayTryReplaceEncodedData() const override { return true; }
+    void addDataBuffer(SharedBuffer&) override;
+    void finishLoading(SharedBuffer*) override;
 
     void updateData(SharedBuffer*);
 };

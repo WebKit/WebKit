@@ -40,11 +40,11 @@ public:
 private:
     MergeIdenticalElementsCommand(PassRefPtr<Element>, PassRefPtr<Element>);
 
-    virtual void doApply() override;
-    virtual void doUnapply() override;
+    void doApply() override;
+    void doUnapply() override;
     
 #ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) override;
+    void getNodesInCommand(HashSet<Node*>&) override;
 #endif
     
     RefPtr<Element> m_element1;

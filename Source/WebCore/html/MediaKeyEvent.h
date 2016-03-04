@@ -57,7 +57,7 @@ public:
         return adoptRef(*new MediaKeyEvent(type, initializer));
     }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
     String keySystem() const { return m_keySystem; }
     String sessionId() const { return m_sessionId; }

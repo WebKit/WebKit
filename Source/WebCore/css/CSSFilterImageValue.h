@@ -97,7 +97,7 @@ private:
         }
 
         virtual ~FilterSubimageObserverProxy() { }
-        virtual void imageChanged(CachedImage*, const IntRect* = nullptr) override;
+        void imageChanged(CachedImage*, const IntRect* = nullptr) override;
         void setReady(bool ready) { m_ready = ready; }
     private:
         CSSFilterImageValue* m_ownerValue;

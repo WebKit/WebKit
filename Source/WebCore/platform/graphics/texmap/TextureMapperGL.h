@@ -53,21 +53,21 @@ public:
     typedef int Flags;
 
     // TextureMapper implementation
-    virtual void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
-    virtual void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&) override;
-    virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, unsigned exposedEdges) override;
+    void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
+    void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&) override;
+    void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, unsigned exposedEdges) override;
     virtual void drawTexture(Platform3DObject texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
-    virtual void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&) override;
+    void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&) override;
 
-    virtual void bindSurface(BitmapTexture* surface) override;
+    void bindSurface(BitmapTexture* surface) override;
     BitmapTexture* currentSurface();
-    virtual void beginClip(const TransformationMatrix&, const FloatRect&) override;
-    virtual void beginPainting(PaintFlags = 0) override;
-    virtual void endPainting() override;
-    virtual void endClip() override;
-    virtual IntRect clipBounds() override;
-    virtual IntSize maxTextureSize() const override { return IntSize(2000, 2000); }
-    virtual PassRefPtr<BitmapTexture> createTexture() override;
+    void beginClip(const TransformationMatrix&, const FloatRect&) override;
+    void beginPainting(PaintFlags = 0) override;
+    void endPainting() override;
+    void endClip() override;
+    IntRect clipBounds() override;
+    IntSize maxTextureSize() const override { return IntSize(2000, 2000); }
+    PassRefPtr<BitmapTexture> createTexture() override;
     inline GraphicsContext3D* graphicsContext3D() const { return m_context3D.get(); }
 
     void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);

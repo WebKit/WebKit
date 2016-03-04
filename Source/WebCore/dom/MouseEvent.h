@@ -81,7 +81,7 @@ public:
     // but we will match the standard DOM.
     unsigned short button() const { return m_button; }
     bool buttonDown() const { return m_buttonDown; }
-    virtual EventTarget* relatedTarget() const override final { return m_relatedTarget.get(); }
+    EventTarget* relatedTarget() const override final { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
     double force() const { return m_force; }
     void setForce(double force) { m_force = force; }
@@ -91,17 +91,17 @@ public:
 
     // FIXME: These functions can be merged if m_dataTransfer is only initialized for drag events.
     DataTransfer* dataTransfer() const { return isDragEvent() ? m_dataTransfer.get() : nullptr; }
-    virtual DataTransfer* internalDataTransfer() const override { return m_dataTransfer.get(); }
+    DataTransfer* internalDataTransfer() const override { return m_dataTransfer.get(); }
 
-    virtual EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override;
 
-    virtual bool isMouseEvent() const override;
-    virtual bool isDragEvent() const override;
+    bool isMouseEvent() const override;
+    bool isDragEvent() const override;
     static bool canTriggerActivationBehavior(const Event&); 
 
-    virtual int which() const override;
+    int which() const override;
 
-    virtual Ref<Event> cloneFor(HTMLIFrameElement*) const override;
+    Ref<Event> cloneFor(HTMLIFrameElement*) const override;
 
 protected:
     MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView*,

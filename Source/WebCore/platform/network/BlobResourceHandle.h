@@ -62,13 +62,13 @@ private:
     virtual ~BlobResourceHandle();
 
     // FileStreamClient methods.
-    virtual void didGetSize(long long) override;
-    virtual void didOpen(bool) override;
-    virtual void didRead(int) override;
+    void didGetSize(long long) override;
+    void didOpen(bool) override;
+    void didRead(int) override;
 
     // ResourceHandle methods.
-    virtual void cancel() override;
-    virtual void continueDidReceiveResponse() override;
+    void cancel() override;
+    void continueDidReceiveResponse() override;
 
     void doStart();
     void getSizeForNext();

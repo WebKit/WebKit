@@ -59,9 +59,9 @@ enum class DominantScrollGestureDirection {
 class BasicWheelEventDeltaFilter final : public WheelEventDeltaFilter {
 public:
     BasicWheelEventDeltaFilter();
-    virtual void updateFromDelta(const FloatSize&) override;
-    virtual void beginFilteringDeltas() override;
-    virtual void endFilteringDeltas() override;
+    void updateFromDelta(const FloatSize&) override;
+    void beginFilteringDeltas() override;
+    void endFilteringDeltas() override;
 
 private:
     DominantScrollGestureDirection dominantScrollGestureDirection() const;

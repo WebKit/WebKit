@@ -51,10 +51,10 @@ public:
     virtual void remove(TrackBase*, bool scheduleEvent = true);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const override = 0;
+    EventTargetInterface eventTargetInterface() const override = 0;
     using RefCounted<TrackListBase>::ref;
     using RefCounted<TrackListBase>::deref;
-    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return m_context; }
+    ScriptExecutionContext* scriptExecutionContext() const override final { return m_context; }
 
     void clearElement() { m_element = 0; }
     Element* element() const;
@@ -77,8 +77,8 @@ private:
     void scheduleTrackEvent(const AtomicString& eventName, PassRefPtr<TrackBase>);
 
     // EventTarget
-    virtual void refEventTarget() override final { ref(); }
-    virtual void derefEventTarget() override final { deref(); }
+    void refEventTarget() override final { ref(); }
+    void derefEventTarget() override final { deref(); }
 
     ScriptExecutionContext* m_context;
     HTMLMediaElement* m_element;

@@ -40,20 +40,20 @@ public:
 protected:
     SVGAnimateElementBase(const QualifiedName&, Document&);
 
-    virtual void resetAnimatedType() override;
-    virtual void clearAnimatedType(SVGElement* targetElement) override;
+    void resetAnimatedType() override;
+    void clearAnimatedType(SVGElement* targetElement) override;
 
-    virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
-    virtual bool calculateFromAndToValues(const String& fromString, const String& toString) override;
-    virtual bool calculateFromAndByValues(const String& fromString, const String& byString) override;
-    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement) override;
-    virtual void applyResultsToTarget() override;
-    virtual float calculateDistance(const String& fromString, const String& toString) override;
-    virtual bool isAdditive() const override;
+    bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
+    bool calculateFromAndToValues(const String& fromString, const String& toString) override;
+    bool calculateFromAndByValues(const String& fromString, const String& byString) override;
+    void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement) override;
+    void applyResultsToTarget() override;
+    float calculateDistance(const String& fromString, const String& toString) override;
+    bool isAdditive() const override;
 
-    virtual void setTargetElement(SVGElement*) override;
-    virtual void setAttributeName(const QualifiedName&) override;
-    virtual void resetAnimatedPropertyType() override;
+    void setTargetElement(SVGElement*) override;
+    void setAttributeName(const QualifiedName&) override;
+    void resetAnimatedPropertyType() override;
 
     AnimatedPropertyType m_animatedPropertyType;
 
@@ -61,7 +61,7 @@ private:
     SVGAnimatedTypeAnimator* ensureAnimator();
     bool animatedPropertyTypeSupportsAddition() const;
 
-    virtual bool hasValidAttributeType() override;
+    bool hasValidAttributeType() override;
 
     std::unique_ptr<SVGAnimatedType> m_fromType;
     std::unique_ptr<SVGAnimatedType> m_toType;

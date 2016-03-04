@@ -37,10 +37,10 @@ public:
 private:
     void detachQuote();
 
-    virtual const char* renderName() const override { return "RenderQuote"; }
-    virtual bool isQuote() const override { return true; }
-    virtual void styleDidChange(StyleDifference, const RenderStyle*) override;
-    virtual void willBeRemovedFromTree() override;
+    const char* renderName() const override { return "RenderQuote"; }
+    bool isQuote() const override { return true; }
+    void styleDidChange(StyleDifference, const RenderStyle*) override;
+    void willBeRemovedFromTree() override;
 
     String computeText() const;
     void updateText();

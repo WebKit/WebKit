@@ -38,9 +38,9 @@ public:
 private:
     explicit WebStorageNamespaceProvider(uint64_t identifier);
 
-    virtual RefPtr<WebCore::StorageNamespace> createSessionStorageNamespace(WebCore::Page&, unsigned quota) override;
-    virtual RefPtr<WebCore::StorageNamespace> createLocalStorageNamespace(unsigned quota) override;
-    virtual RefPtr<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota) override;
+    RefPtr<WebCore::StorageNamespace> createSessionStorageNamespace(WebCore::Page&, unsigned quota) override;
+    RefPtr<WebCore::StorageNamespace> createLocalStorageNamespace(unsigned quota) override;
+    RefPtr<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota) override;
 
     const uint64_t m_identifier;
 };

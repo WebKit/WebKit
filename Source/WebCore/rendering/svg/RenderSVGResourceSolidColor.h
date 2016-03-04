@@ -31,14 +31,14 @@ public:
     RenderSVGResourceSolidColor();
     virtual ~RenderSVGResourceSolidColor();
 
-    virtual void removeAllClientsFromCache(bool = true) override { }
-    virtual void removeClientFromCache(RenderElement&, bool = true) override { }
+    void removeAllClientsFromCache(bool = true) override { }
+    void removeClientFromCache(RenderElement&, bool = true) override { }
 
-    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
-    virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override;
-    virtual FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
+    void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override;
+    FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
 
-    virtual RenderSVGResourceType resourceType() const override { return SolidColorResourceType; }
+    RenderSVGResourceType resourceType() const override { return SolidColorResourceType; }
 
     const Color& color() const { return m_color; }
     void setColor(const Color& color) { m_color = color; }

@@ -46,17 +46,17 @@ public:
     InspectorScriptProfilerAgent(AgentContext&);
     virtual ~InspectorScriptProfilerAgent();
 
-    virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
+    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     // ScriptProfilerBackendDispatcherHandler
-    virtual void startTracking(ErrorString&, const bool* includeSamples) override;
-    virtual void stopTracking(ErrorString&) override;
+    void startTracking(ErrorString&, const bool* includeSamples) override;
+    void stopTracking(ErrorString&) override;
 
     // Debugger::ProfilingClient
-    virtual bool isAlreadyProfiling() const override;
-    virtual double willEvaluateScript() override;
-    virtual void didEvaluateScript(double, JSC::ProfilingReason) override;
+    bool isAlreadyProfiling() const override;
+    double willEvaluateScript() override;
+    void didEvaluateScript(double, JSC::ProfilingReason) override;
 
 private:
     struct Event {

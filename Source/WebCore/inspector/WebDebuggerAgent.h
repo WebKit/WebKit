@@ -42,8 +42,8 @@ public:
     virtual ~WebDebuggerAgent() { }
 
 protected:
-    virtual void enable() override;
-    virtual void disable(bool isBeingDestroyed) override;
+    void enable() override;
+    void disable(bool isBeingDestroyed) override;
 
     InstrumentingAgents& m_instrumentingAgents;
 };

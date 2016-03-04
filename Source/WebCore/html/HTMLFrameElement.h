@@ -39,12 +39,12 @@ public:
 private:
     HTMLFrameElement(const QualifiedName&, Document&);
 
-    virtual void didAttachRenderers() override;
+    void didAttachRenderers() override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
     
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     bool m_frameBorder;
     bool m_frameBorderSet;

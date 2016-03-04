@@ -98,12 +98,12 @@ public:
 
     virtual ~GetDatabaseNamesCallback() { }
 
-    virtual bool operator==(const EventListener& other) override
+    bool operator==(const EventListener& other) override
     {
         return this == &other;
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event* event) override
+    void handleEvent(ScriptExecutionContext*, Event* event) override
     {
         if (!m_requestCallback->isActive())
             return;
@@ -162,12 +162,12 @@ public:
 
     virtual ~OpenDatabaseCallback() { }
 
-    virtual bool operator==(const EventListener& other) override
+    bool operator==(const EventListener& other) override
     {
         return this == &other;
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event* event) override
+    void handleEvent(ScriptExecutionContext*, Event* event) override
     {
         if (event->type() != eventNames().successEvent) {
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected event type.");
@@ -222,7 +222,7 @@ public:
 
     virtual ~DatabaseLoader() { }
 
-    virtual void execute() override
+    void execute() override
     {
         if (!requestCallback().isActive())
             return;
@@ -230,7 +230,7 @@ public:
         // FIXME (webkit.org/b/154686) - Reimplement this.
     }
 
-    virtual RequestCallback& requestCallback() override { return m_requestCallback.get(); }
+    RequestCallback& requestCallback() override { return m_requestCallback.get(); }
 private:
     DatabaseLoader(ScriptExecutionContext* context, Ref<RequestDatabaseCallback>&& requestCallback)
         : ExecutableWithDatabase(context)
@@ -325,12 +325,12 @@ public:
 
     virtual ~OpenCursorCallback() { }
 
-    virtual bool operator==(const EventListener& other) override
+    bool operator==(const EventListener& other) override
     {
         return this == &other;
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event* event) override
+    void handleEvent(ScriptExecutionContext*, Event* event) override
     {
         if (event->type() != eventNames().successEvent) {
             m_requestCallback->sendFailure("Unexpected event type.");
@@ -419,7 +419,7 @@ public:
 
     virtual ~DataLoader() { }
 
-    virtual void execute() override
+    void execute() override
     {
         if (!requestCallback().isActive())
             return;
@@ -427,7 +427,7 @@ public:
         // FIXME (webkit.org/b/154686) - Reimplement this.
     }
 
-    virtual RequestCallback& requestCallback() override { return m_requestCallback.get(); }
+    RequestCallback& requestCallback() override { return m_requestCallback.get(); }
     DataLoader(ScriptExecutionContext* scriptExecutionContext, Ref<RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
         : ExecutableWithDatabase(scriptExecutionContext)
         , m_requestCallback(WTFMove(requestCallback))
@@ -570,12 +570,12 @@ public:
 
     virtual ~ClearObjectStoreListener() { }
 
-    virtual bool operator==(const EventListener& other) override
+    bool operator==(const EventListener& other) override
     {
         return this == &other;
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event* event) override
+    void handleEvent(ScriptExecutionContext*, Event* event) override
     {
         if (!m_requestCallback->isActive())
             return;
@@ -611,7 +611,7 @@ public:
     {
     }
 
-    virtual void execute() override
+    void execute() override
     {
         if (!requestCallback().isActive())
             return;
@@ -619,7 +619,7 @@ public:
         // FIXME (webkit.org/b/154686) - Reimplement this.
     }
 
-    virtual RequestCallback& requestCallback() override { return m_requestCallback.get(); }
+    RequestCallback& requestCallback() override { return m_requestCallback.get(); }
 private:
     const String m_objectStoreName;
     Ref<ClearObjectStoreCallback> m_requestCallback;

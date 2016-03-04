@@ -36,11 +36,11 @@ class VideoTrackPrivateAVF : public VideoTrackPrivate {
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateAVF)
 public:
 
-    virtual int trackIndex() const override { return m_index; }
-    virtual Kind kind() const override { return m_kind; }
-    virtual AtomicString id() const override { return m_id; }
-    virtual AtomicString label() const override { return m_label; }
-    virtual AtomicString language() const override { return m_language; }
+    int trackIndex() const override { return m_index; }
+    Kind kind() const override { return m_kind; }
+    AtomicString id() const override { return m_id; }
+    AtomicString label() const override { return m_label; }
+    AtomicString language() const override { return m_language; }
 
 protected:
     void setKind(Kind kind) { m_kind = kind; }

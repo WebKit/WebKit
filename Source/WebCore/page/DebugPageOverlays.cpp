@@ -85,7 +85,7 @@ private:
     {
     }
 
-    virtual bool updateRegion() override;
+    bool updateRegion() override;
 };
 
 bool MouseWheelRegionOverlay::updateRegion()
@@ -124,7 +124,7 @@ private:
     {
     }
 
-    virtual bool updateRegion() override;
+    bool updateRegion() override;
 };
 
 bool NonFastScrollableRegionOverlay::updateRegion()

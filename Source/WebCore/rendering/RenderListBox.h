@@ -59,83 +59,83 @@ public:
 
     int size() const;
 
-    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override;
+    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override;
 
-    virtual bool scrolledToTop() const override;
-    virtual bool scrolledToBottom() const override;
-    virtual bool scrolledToLeft() const override;
-    virtual bool scrolledToRight() const override;
+    bool scrolledToTop() const override;
+    bool scrolledToBottom() const override;
+    bool scrolledToLeft() const override;
+    bool scrolledToRight() const override;
 
 private:
     void element() const = delete;
 
-    virtual const char* renderName() const override { return "RenderListBox"; }
+    const char* renderName() const override { return "RenderListBox"; }
 
-    virtual bool isListBox() const override { return true; }
+    bool isListBox() const override { return true; }
 
-    virtual void updateFromElement() override;
-    virtual bool hasControlClip() const override { return true; }
-    virtual void paintObject(PaintInfo&, const LayoutPoint&) override;
-    virtual LayoutRect controlClipRect(const LayoutPoint&) const override;
+    void updateFromElement() override;
+    bool hasControlClip() const override { return true; }
+    void paintObject(PaintInfo&, const LayoutPoint&) override;
+    LayoutRect controlClipRect(const LayoutPoint&) const override;
 
-    virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset) override;
+    bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset) override;
 
-    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr) override;
+    bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr) override;
 
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
-    virtual void computePreferredLogicalWidths() override;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    void computePreferredLogicalWidths() override;
+    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
+    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
-    virtual void layout() override;
+    void layout() override;
 
-    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) override;
+    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) override;
 
-    virtual bool canBeProgramaticallyScrolled() const override { return true; }
-    virtual void autoscroll(const IntPoint&) override;
-    virtual void stopAutoscroll() override;
+    bool canBeProgramaticallyScrolled() const override { return true; }
+    void autoscroll(const IntPoint&) override;
+    void stopAutoscroll() override;
 
     virtual bool shouldPanScroll() const { return true; }
-    virtual void panScroll(const IntPoint&) override;
+    void panScroll(const IntPoint&) override;
 
-    virtual int verticalScrollbarWidth() const override;
-    virtual int scrollLeft() const override;
-    virtual int scrollTop() const override;
-    virtual int scrollWidth() const override;
-    virtual int scrollHeight() const override;
-    virtual void setScrollLeft(int) override;
-    virtual void setScrollTop(int) override;
+    int verticalScrollbarWidth() const override;
+    int scrollLeft() const override;
+    int scrollTop() const override;
+    int scrollWidth() const override;
+    int scrollHeight() const override;
+    void setScrollLeft(int) override;
+    void setScrollTop(int) override;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     // ScrollableArea interface.
-    virtual int scrollSize(ScrollbarOrientation) const override;
-    virtual int scrollOffset(ScrollbarOrientation) const override;
-    virtual void setScrollOffset(const ScrollOffset&) override;
-    virtual ScrollPosition minimumScrollPosition() const override;
-    virtual ScrollPosition maximumScrollPosition() const override;
-    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
-    virtual bool isActive() const override;
-    virtual bool isScrollCornerVisible() const override { return false; } // We don't support resize on list boxes yet. If we did these would have to change.
-    virtual IntRect scrollCornerRect() const override { return IntRect(); }
-    virtual void invalidateScrollCornerRect(const IntRect&) override { }
-    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const override;
-    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const override;
-    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const override;
-    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const override;
-    virtual Scrollbar* verticalScrollbar() const override { return m_vBar.get(); }
-    virtual IntSize contentsSize() const override;
-    virtual IntSize visibleSize() const override { return IntSize(width(), height()); }
-    virtual IntPoint lastKnownMousePosition() const override;
-    virtual bool isHandlingWheelEvent() const override;
-    virtual bool shouldSuspendScrollAnimations() const override;
-    virtual bool updatesScrollLayerPositionOnMainThread() const override { return true; }
-    virtual bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
+    int scrollSize(ScrollbarOrientation) const override;
+    int scrollOffset(ScrollbarOrientation) const override;
+    void setScrollOffset(const ScrollOffset&) override;
+    ScrollPosition minimumScrollPosition() const override;
+    ScrollPosition maximumScrollPosition() const override;
+    void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
+    bool isActive() const override;
+    bool isScrollCornerVisible() const override { return false; } // We don't support resize on list boxes yet. If we did these would have to change.
+    IntRect scrollCornerRect() const override { return IntRect(); }
+    void invalidateScrollCornerRect(const IntRect&) override { }
+    IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const override;
+    IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const override;
+    IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const override;
+    IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const override;
+    Scrollbar* verticalScrollbar() const override { return m_vBar.get(); }
+    IntSize contentsSize() const override;
+    IntSize visibleSize() const override { return IntSize(width(), height()); }
+    IntPoint lastKnownMousePosition() const override;
+    bool isHandlingWheelEvent() const override;
+    bool shouldSuspendScrollAnimations() const override;
+    bool updatesScrollLayerPositionOnMainThread() const override { return true; }
+    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
 
-    virtual ScrollableArea* enclosingScrollableArea() const override;
-    virtual bool isScrollableOrRubberbandable() override;
-    virtual bool hasScrollableOrRubberbandableAncestor() override;
-    virtual IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
+    ScrollableArea* enclosingScrollableArea() const override;
+    bool isScrollableOrRubberbandable() override;
+    bool hasScrollableOrRubberbandableAncestor() override;
+    IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
     bool usesMockScrollAnimator() const override;
     void logMockScrollAnimatorMessage(const String&) const override;
 

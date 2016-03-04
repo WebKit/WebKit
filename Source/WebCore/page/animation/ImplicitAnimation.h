@@ -49,21 +49,21 @@ public:
     CSSPropertyID transitionProperty() const { return m_transitionProperty; }
     CSSPropertyID animatingProperty() const { return m_animatingProperty; }
 
-    virtual void onAnimationEnd(double elapsedTime) override;
-    virtual bool startAnimation(double timeOffset) override;
-    virtual void pauseAnimation(double timeOffset) override;
-    virtual void endAnimation() override;
+    void onAnimationEnd(double elapsedTime) override;
+    bool startAnimation(double timeOffset) override;
+    void pauseAnimation(double timeOffset) override;
+    void endAnimation() override;
 
-    virtual bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;
-    virtual void getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle) override;
+    bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;
+    void getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle) override;
     virtual void reset(RenderStyle* to);
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const override;
 
     void setOverridden(bool);
-    virtual bool overridden() const override { return m_overridden; }
+    bool overridden() const override { return m_overridden; }
 
-    virtual bool affectsProperty(CSSPropertyID) const override;
+    bool affectsProperty(CSSPropertyID) const override;
 
     bool hasStyle() const { return m_fromStyle && m_toStyle; }
 
@@ -71,7 +71,7 @@ public:
 
     void blendPropertyValueInStyle(CSSPropertyID, RenderStyle*);
 
-    virtual double timeToNextService() override;
+    double timeToNextService() override;
     
     bool active() const { return m_active; }
     void setActive(bool b) { m_active = b; }

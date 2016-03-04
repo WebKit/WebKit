@@ -49,7 +49,7 @@ protected:
     MeterShadowElement(Document&);
 
 private:
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
 };
 
 class MeterInnerElement final : public MeterShadowElement {
@@ -59,8 +59,8 @@ public:
 private:
     MeterInnerElement(Document&);
 
-    virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 };
 
 inline Ref<MeterInnerElement> MeterInnerElement::create(Document& document)

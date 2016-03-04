@@ -68,24 +68,24 @@ private:
     HTMLTrackElement(const QualifiedName&, Document&);
     virtual ~HTMLTrackElement();
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void removedFrom(ContainerNode&) override;
 
-    virtual bool isURLAttribute(const Attribute&) const override;
+    bool isURLAttribute(const Attribute&) const override;
 
     void loadTimerFired();
 
     HTMLMediaElement* mediaElement() const;
 
     // TextTrackClient
-    virtual void textTrackModeChanged(TextTrack*) override;
-    virtual void textTrackKindChanged(TextTrack*) override;
-    virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*) override;
-    virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) override;
-    virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>) override;
-    virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) override;
+    void textTrackModeChanged(TextTrack*) override;
+    void textTrackKindChanged(TextTrack*) override;
+    void textTrackAddCues(TextTrack*, const TextTrackCueList*) override;
+    void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) override;
+    void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>) override;
+    void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) override;
 
     LoadableTextTrack& ensureTrack();
     bool canLoadURL(const URL&);

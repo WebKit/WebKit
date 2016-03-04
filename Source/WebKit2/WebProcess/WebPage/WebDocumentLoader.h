@@ -43,7 +43,7 @@ public:
 private:
     WebDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
-    virtual void detachFromFrame() override;
+    void detachFromFrame() override;
 
     uint64_t m_navigationID;
 };

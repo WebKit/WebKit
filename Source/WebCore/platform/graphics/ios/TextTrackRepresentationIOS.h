@@ -43,12 +43,12 @@ public:
 
     TextTrackRepresentationClient& client() const { return m_client; }
 
-    virtual PlatformLayer* platformLayer() override { return m_layer.get(); }
-    virtual IntRect bounds() const override;
+    PlatformLayer* platformLayer() override { return m_layer.get(); }
+    IntRect bounds() const override;
 
 private:
-    virtual void update() override;
-    virtual void setContentScale(float) override;
+    void update() override;
+    void setContentScale(float) override;
 
     TextTrackRepresentationClient& m_client;
     RetainPtr<CALayer> m_layer;

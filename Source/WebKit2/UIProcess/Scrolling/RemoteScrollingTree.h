@@ -41,30 +41,30 @@ public:
     static Ref<RemoteScrollingTree> create(RemoteScrollingCoordinatorProxy&);
     virtual ~RemoteScrollingTree();
 
-    virtual bool isRemoteScrollingTree() const override { return true; }
-    virtual EventResult tryToHandleWheelEvent(const WebCore::PlatformWheelEvent&) override;
+    bool isRemoteScrollingTree() const override { return true; }
+    EventResult tryToHandleWheelEvent(const WebCore::PlatformWheelEvent&) override;
 
     const RemoteScrollingCoordinatorProxy& scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy; }
 
-    virtual void scrollingTreeNodeDidScroll(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, WebCore::SetOrSyncScrollingLayerPosition = WebCore::SyncScrollingLayerPosition) override;
-    virtual void scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, bool representsProgrammaticScroll) override;
+    void scrollingTreeNodeDidScroll(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, WebCore::SetOrSyncScrollingLayerPosition = WebCore::SyncScrollingLayerPosition) override;
+    void scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, bool representsProgrammaticScroll) override;
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, unsigned horizontal, unsigned vertical) override;
 
 private:
     explicit RemoteScrollingTree(RemoteScrollingCoordinatorProxy&);
 
 #if PLATFORM(MAC)
-    virtual void handleWheelEventPhase(WebCore::PlatformWheelEventPhase) override;
+    void handleWheelEventPhase(WebCore::PlatformWheelEventPhase) override;
 #endif
 
 #if PLATFORM(IOS)
-    virtual WebCore::FloatRect fixedPositionRect() override;
-    virtual void scrollingTreeNodeWillStartPanGesture() override;
-    virtual void scrollingTreeNodeWillStartScroll() override;
-    virtual void scrollingTreeNodeDidEndScroll() override;
+    WebCore::FloatRect fixedPositionRect() override;
+    void scrollingTreeNodeWillStartPanGesture() override;
+    void scrollingTreeNodeWillStartScroll() override;
+    void scrollingTreeNodeDidEndScroll() override;
 #endif
 
-    virtual PassRefPtr<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
+    PassRefPtr<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
     
     RemoteScrollingCoordinatorProxy& m_scrollingCoordinatorProxy;
 };

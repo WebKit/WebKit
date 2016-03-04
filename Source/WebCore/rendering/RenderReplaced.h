@@ -30,8 +30,8 @@ class RenderReplaced : public RenderBox {
 public:
     virtual ~RenderReplaced();
 
-    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ComputeActual) const override;
-    virtual LayoutUnit computeReplacedLogicalHeight() const override;
+    LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ComputeActual) const override;
+    LayoutUnit computeReplacedLogicalHeight() const override;
 
     LayoutRect replacedContentRect(const LayoutSize& intrinsicSize) const;
 
@@ -43,47 +43,47 @@ protected:
     RenderReplaced(Element&, Ref<RenderStyle>&&, const LayoutSize& intrinsicSize);
     RenderReplaced(Document&, Ref<RenderStyle>&&, const LayoutSize& intrinsicSize);
 
-    virtual void layout() override;
+    void layout() override;
 
-    virtual LayoutSize intrinsicSize() const override final { return m_intrinsicSize; }
-    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override;
+    LayoutSize intrinsicSize() const override final { return m_intrinsicSize; }
+    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override;
 
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override final;
+    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override final;
 
     virtual LayoutUnit minimumReplacedHeight() const { return LayoutUnit(); }
 
-    virtual void setSelectionState(SelectionState) override;
+    void setSelectionState(SelectionState) override;
 
     bool isSelected() const;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void setIntrinsicSize(const LayoutSize& intrinsicSize) { m_intrinsicSize = intrinsicSize; }
     virtual void intrinsicSizeChanged();
     virtual bool hasRelativeIntrinsicLogicalWidth() const { return false; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    void paint(PaintInfo&, const LayoutPoint&) override;
     bool shouldPaint(PaintInfo&, const LayoutPoint&);
     LayoutRect localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
 
-    virtual void willBeDestroyed() override;
+    void willBeDestroyed() override;
 
 private:
     virtual RenderBox* embeddedContentBox() const { return 0; }
-    virtual const char* renderName() const override { return "RenderReplaced"; }
+    const char* renderName() const override { return "RenderReplaced"; }
 
-    virtual bool canHaveChildren() const override { return false; }
+    bool canHaveChildren() const override { return false; }
 
-    virtual void computePreferredLogicalWidths() override final;
+    void computePreferredLogicalWidths() override final;
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
+    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
 
-    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override final;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override final;
     
-    virtual bool canBeSelectionLeaf() const override { return true; }
+    bool canBeSelectionLeaf() const override { return true; }
 
-    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) override final;
+    LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) override final;
     void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, double& intrinsicRatio) const;
 
     virtual bool shouldDrawSelectionTint() const;

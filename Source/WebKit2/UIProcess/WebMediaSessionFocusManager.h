@@ -59,8 +59,8 @@ private:
     explicit WebMediaSessionFocusManager(WebProcessPool*);
 
     // WebContextSupplement
-    virtual void refWebContextSupplement() override;
-    virtual void derefWebContextSupplement() override;
+    void refWebContextSupplement() override;
+    void derefWebContextSupplement() override;
 
     void updatePlaybackAttribute(WKMediaSessionFocusManagerPlaybackAttribute, bool);
 

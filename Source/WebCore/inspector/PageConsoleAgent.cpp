@@ -57,7 +57,7 @@ void PageConsoleAgent::clearMessages(ErrorString& errorString)
 class InspectableNode final : public CommandLineAPIHost::InspectableObject {
 public:
     explicit InspectableNode(Node* node) : m_node(node) { }
-    virtual Deprecated::ScriptValue get(JSC::ExecState* state) override
+    Deprecated::ScriptValue get(JSC::ExecState* state) override
     {
         return InspectorDOMAgent::nodeAsScriptValue(state, m_node.get());
     }

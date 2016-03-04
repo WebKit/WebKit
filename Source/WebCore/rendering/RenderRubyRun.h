@@ -48,20 +48,20 @@ public:
 
     bool hasRubyText() const;
     bool hasRubyBase() const;
-    virtual bool isEmpty() const override;
+    bool isEmpty() const override;
     RenderRubyText* rubyText() const;
     RenderRubyBase* rubyBase() const;
     RenderRubyBase* rubyBaseSafe(); // creates the base if it doesn't already exist
 
-    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
-    virtual void layout() override;
+    RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
+    void layout() override;
 
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual void removeChild(RenderObject&) override;
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
+    void removeChild(RenderObject&) override;
 
-    virtual RenderBlock* firstLineBlock() const override;
-    virtual void updateFirstLetter() override;
+    RenderBlock* firstLineBlock() const override;
+    void updateFirstLetter() override;
 
     void getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, float& startOverhang, float& endOverhang) const;
 
@@ -79,10 +79,10 @@ protected:
     RenderRubyBase* createRubyBase() const;
 
 private:
-    virtual bool isRubyRun() const override { return true; }
-    virtual const char* renderName() const override { return "RenderRubyRun (anonymous)"; }
-    virtual bool createsAnonymousWrapper() const override { return true; }
-    virtual void removeLeftoverAnonymousBlock(RenderBlock*) override { }
+    bool isRubyRun() const override { return true; }
+    const char* renderName() const override { return "RenderRubyRun (anonymous)"; }
+    bool createsAnonymousWrapper() const override { return true; }
+    void removeLeftoverAnonymousBlock(RenderBlock*) override { }
 
 private:
     UChar m_lastCharacter;

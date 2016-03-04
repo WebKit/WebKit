@@ -63,7 +63,7 @@ public:
     void removeReferenceFilterClients();
 
 private:
-    virtual void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource*) override;
 
     static HashMap<const RenderLayer*, std::unique_ptr<FilterInfo>>& map();
 

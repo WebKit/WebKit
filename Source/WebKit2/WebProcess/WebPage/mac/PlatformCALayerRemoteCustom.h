@@ -40,22 +40,22 @@ public:
 
     virtual ~PlatformCALayerRemoteCustom();
 
-    virtual PlatformLayer* platformLayer() const override { return m_platformLayer.get(); }
+    PlatformLayer* platformLayer() const override { return m_platformLayer.get(); }
 
-    virtual uint32_t hostingContextID() override;
+    uint32_t hostingContextID() override;
 
-    virtual void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
-    virtual void setNeedsDisplay() override;
+    void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
+    void setNeedsDisplay() override;
 
 private:
     PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, PlatformLayer *, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 
-    virtual PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
+    PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
 
-    virtual bool isPlatformCALayerRemoteCustom() const override { return true; }
+    bool isPlatformCALayerRemoteCustom() const override { return true; }
 
-    virtual CFTypeRef contents() const override;
-    virtual void setContents(CFTypeRef) override;
+    CFTypeRef contents() const override;
+    void setContents(CFTypeRef) override;
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     RetainPtr<PlatformLayer> m_platformLayer;

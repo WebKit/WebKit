@@ -49,7 +49,7 @@ public:
     void stopLoading(CachedResourceHandle<CachedImage>&);
 
 private:
-    virtual void imageChanged(CachedImage*, const IntRect*) override;
+    void imageChanged(CachedImage*, const IntRect*) override;
     DataTransfer* m_dataTransfer;
 };
 

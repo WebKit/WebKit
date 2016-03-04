@@ -128,7 +128,7 @@ public:
     }
 
 private:
-    virtual void fired() override
+    void fired() override
     {
         m_function();
     }
@@ -184,7 +184,7 @@ public:
     using TimerBase::isActive;
 
 private:
-    virtual void fired() override
+    void fired() override
     {
         if (m_shouldRestartWhenTimerFires) {
             m_shouldRestartWhenTimerFires = false;

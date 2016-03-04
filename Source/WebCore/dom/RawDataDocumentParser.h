@@ -37,26 +37,26 @@ protected:
     {
     }
 
-    virtual void finish() override
+    void finish() override
     {
         if (!isStopped())
             document()->finishedParsing();
     }
 
 private:
-    virtual void flush(DocumentWriter& writer) override
+    void flush(DocumentWriter& writer) override
     {
         // Make sure appendBytes is called at least once.
         appendBytes(writer, 0, 0);
     }
 
-    virtual void insert(const SegmentedString&) override
+    void insert(const SegmentedString&) override
     {
         // <https://bugs.webkit.org/show_bug.cgi?id=25397>: JS code can always call document.write, we need to handle it.
         ASSERT_NOT_REACHED();
     }
 
-    virtual void append(RefPtr<StringImpl>&&) override
+    void append(RefPtr<StringImpl>&&) override
     {
         ASSERT_NOT_REACHED();
     }

@@ -61,27 +61,27 @@ public:
     bool allowsAcceleratedCompositing() const;
 
 protected:
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override final;
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    void paintReplaced(PaintInfo&, const LayoutPoint&) override final;
+    void paint(PaintInfo&, const LayoutPoint&) override;
 
-    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const override;
+    CursorDirective getCursor(const LayoutPoint&, Cursor&) const override;
 
 protected:
-    virtual void layout() override;
+    void layout() override;
 
 private:
-    virtual const char* renderName() const override { return "RenderEmbeddedObject"; }
-    virtual bool isEmbeddedObject() const override final { return true; }
+    const char* renderName() const override { return "RenderEmbeddedObject"; }
+    bool isEmbeddedObject() const override final { return true; }
 
     void paintSnapshotImage(PaintInfo&, const LayoutPoint&, Image&);
-    virtual void paintContents(PaintInfo&, const LayoutPoint&) override final;
+    void paintContents(PaintInfo&, const LayoutPoint&) override final;
 
-    virtual bool requiresLayer() const override final;
+    bool requiresLayer() const override final;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
 
-    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override final;
-    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier, Element** stopElement) override final;
+    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override final;
+    bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier, Element** stopElement) override final;
 
     void setUnavailablePluginIndicatorIsPressed(bool);
     bool isInUnavailablePluginIndicator(const MouseEvent&) const;
@@ -89,7 +89,7 @@ private:
     bool getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, FontCascade&, TextRun&, float& textWidth) const;
     LayoutRect unavailablePluginIndicatorBounds(const LayoutPoint&) const;
 
-    virtual bool canHaveChildren() const override final;
+    bool canHaveChildren() const override final;
     virtual bool canHaveWidget() const { return true; }
 
     bool m_isPluginUnavailable;

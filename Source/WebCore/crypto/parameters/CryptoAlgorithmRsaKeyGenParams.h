@@ -47,7 +47,7 @@ public:
     bool hasHash;
     CryptoAlgorithmIdentifier hash;
 
-    virtual Class parametersClass() const override { return Class::RsaKeyGenParams; }
+    Class parametersClass() const override { return Class::RsaKeyGenParams; }
 };
 
 } // namespace WebCore

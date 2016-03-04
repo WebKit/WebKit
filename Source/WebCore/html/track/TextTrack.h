@@ -63,8 +63,8 @@ public:
     }
     virtual ~TextTrack();
 
-    virtual EventTargetInterface eventTargetInterface() const override final { return TextTrackEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return m_scriptExecutionContext; }
+    EventTargetInterface eventTargetInterface() const override final { return TextTrackEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override final { return m_scriptExecutionContext; }
 
     static TextTrack* captionMenuOffItem();
     static TextTrack* captionMenuAutomaticItem();
@@ -75,14 +75,14 @@ public:
     static const AtomicString& chaptersKeyword();
     static const AtomicString& metadataKeyword();
     static const AtomicString& forcedKeyword();
-    virtual const AtomicString& defaultKindKeyword() const override { return subtitlesKeyword(); }
+    const AtomicString& defaultKindKeyword() const override { return subtitlesKeyword(); }
     static bool isValidKindKeyword(const AtomicString&);
 
     static const AtomicString& disabledKeyword();
     static const AtomicString& hiddenKeyword();
     static const AtomicString& showingKeyword();
 
-    virtual void setKind(const AtomicString&) override;
+    void setKind(const AtomicString&) override;
 
     virtual AtomicString inBandMetadataTrackDispatchType() const { return emptyString(); }
 
@@ -96,7 +96,7 @@ public:
     TextTrackCueList* cues();
     TextTrackCueList* activeCues() const;
 
-    virtual void clearClient() override { m_client = 0; }
+    void clearClient() override { m_client = 0; }
     TextTrackClient* client() { return m_client; }
 
     void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
@@ -135,7 +135,7 @@ public:
     void removeAllCues();
 
 #if ENABLE(MEDIA_SOURCE)
-    virtual void setLanguage(const AtomicString&) override;
+    void setLanguage(const AtomicString&) override;
 #endif
 
     virtual bool isInband() const { return false; }
@@ -151,12 +151,12 @@ protected:
     RefPtr<TextTrackCueList> m_cues;
 
 private:
-    virtual bool isValidKind(const AtomicString&) const override;
+    bool isValidKind(const AtomicString&) const override;
 
-    virtual bool enabled() const override;
+    bool enabled() const override;
 
-    virtual void refEventTarget() override final { ref(); }
-    virtual void derefEventTarget() override final { deref(); }
+    void refEventTarget() override final { ref(); }
+    void derefEventTarget() override final { deref(); }
 
     VTTRegionList* ensureVTTRegionList();
     RefPtr<VTTRegionList> m_regions;

@@ -42,7 +42,7 @@ public:
     
     virtual ~RemoteLayerTreeDisplayRefreshMonitor();
 
-    virtual bool requestRefreshCallback() override;
+    bool requestRefreshCallback() override;
 
     void didUpdateLayers();
 

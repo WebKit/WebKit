@@ -38,7 +38,7 @@ public:
     // The inner hash function to use.
     CryptoAlgorithmIdentifier hash;
 
-    virtual Class parametersClass() const override { return Class::HmacParams; }
+    Class parametersClass() const override { return Class::HmacParams; }
 };
 
 } // namespace WebCore

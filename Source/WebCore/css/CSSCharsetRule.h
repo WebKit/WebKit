@@ -35,14 +35,14 @@ public:
 
     virtual ~CSSCharsetRule() { }
 
-    virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase&) override { }
+    String cssText() const override;
+    void reattach(StyleRuleBase&) override { }
 
     const String& encoding() const { return m_encoding; }
     void setEncoding(const String& encoding, ExceptionCode&) { m_encoding = encoding; }
 
 private:
-    virtual CSSRule::Type type() const override { return CHARSET_RULE; }
+    CSSRule::Type type() const override { return CHARSET_RULE; }
 
     CSSCharsetRule(CSSStyleSheet* parent, const String& encoding);
 

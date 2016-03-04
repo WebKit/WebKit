@@ -95,11 +95,11 @@ class CodeBlock : public JSCell {
     friend class LLIntOffsetsExtractor;
 
     class UnconditionalFinalizer : public JSC::UnconditionalFinalizer { 
-        virtual void finalizeUnconditionally() override;
+        void finalizeUnconditionally() override;
     };
 
     class WeakReferenceHarvester : public JSC::WeakReferenceHarvester {
-        virtual void visitWeakReferences(SlotVisitor&) override;
+        void visitWeakReferences(SlotVisitor&) override;
     };
 
 public:
