@@ -1,3 +1,11 @@
+2016-03-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline inspector/model/remote-object.html for mac after r197539
+
+        Unreviewed test gardening.
+
+        * platform/mac/inspector/model/remote-object-expected.txt:
+
 2016-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Whitespace causes font-variant: all-small-caps to synthesize
