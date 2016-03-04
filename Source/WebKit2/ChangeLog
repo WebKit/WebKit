@@ -1,3 +1,14 @@
+2016-03-04  Daniel Bates  <dabates@apple.com>
+
+        Temporarily use bundle identifier as part of user directory suffix
+        https://bugs.webkit.org/show_bug.cgi?id=155042
+        <rdar://problem/24983174>
+
+        Reviewed by Brent Fulgham and Brady Eidson.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+
 2016-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Release build fix after r197572.

@@ -78,6 +78,8 @@ void ChildProcess::platformInitialize()
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
 
+// FIXME: Remove this macro guard once we fix <rdar://problem/24308793>.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 static RetainPtr<SecCodeRef> findSecCodeForProcess(pid_t pid)
 {
     RetainPtr<CFNumberRef> pidCFNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &pid));
@@ -89,6 +91,7 @@ static RetainPtr<SecCodeRef> findSecCodeForProcess(pid_t pid)
         return nullptr;
     return adoptCF(code);
 }
+#endif
 
 void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
@@ -96,6 +99,8 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     String defaultProfilePath = [webkit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
 
     if (sandboxParameters.userDirectorySuffix().isNull()) {
+        // FIXME: Remove this macro guard once we fix <rdar://problem/24308793>.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
         if (const OSObjectPtr<xpc_connection_t>& xpcConnection = parameters.connectionIdentifier.xpcConnection) {
             pid_t clientProcessID = xpc_connection_get_pid(xpcConnection.get());
             RetainPtr<SecCodeRef> code = findSecCodeForProcess(clientProcessID);
@@ -131,6 +136,9 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
             // Legacy client
             sandboxParameters.setUserDirectorySuffix(makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier));
         }
+#else
+        sandboxParameters.setUserDirectorySuffix(makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier));
+#endif
     }
 
     Vector<String> osVersionParts;
