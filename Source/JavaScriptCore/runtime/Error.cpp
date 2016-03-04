@@ -219,6 +219,11 @@ JSObject* throwTypeError(ExecState* exec)
     return exec->vm().throwException(exec, createTypeError(exec));
 }
 
+JSObject* throwTypeError(ExecState* exec, const String& message)
+{
+    return exec->vm().throwException(exec, createTypeError(exec, message));
+}
+
 JSObject* throwSyntaxError(ExecState* exec)
 {
     return exec->vm().throwException(exec, createSyntaxError(exec, ASCIILiteral("Syntax error")));

@@ -166,6 +166,9 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
     VM&, JSCell* owner, ExecState*, Structure* headStructure, JSObject* prototype,
     UniquedStringImpl* uid);
 
+
+ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(
+    VM&, JSGlobalObject*, Structure* headStructure, UniquedStringImpl* uid);
 ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
     VM&, JSGlobalObject*, Structure* headStructure, UniquedStringImpl* uid);
 

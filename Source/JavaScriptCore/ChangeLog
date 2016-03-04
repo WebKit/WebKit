@@ -1,3 +1,58 @@
+2016-03-03  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add support for Symbol.toPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=154877
+
+        Reviewed by Saam Barati.
+
+        This patch adds suport for Symbol.toPrimitive. Since we don't currently
+        generate snippits for one side of a binary operation we only need to change
+        the JSObject::ToPrimitive function and update some optimizations in the DFG
+        that need to know how conversions to primitive values should work. As of
+        ES6, the date prototype is also no longer special cased in the ToPrimitive
+        operation. Instead, Date.prototype has a Symbol.species function that
+        replicates the old behavior.
+
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::generateConditionsForPropertyMissConcurrently):
+        * bytecode/ObjectPropertyConditionSet.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::watchConditions):
+        (JSC::DFG::Graph::canOptimizeStringObjectAccess):
+        * dfg/DFGGraph.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+        (JSC::dateProtoFuncToPrimitiveSymbol):
+        * runtime/Error.cpp:
+        (JSC::throwTypeError):
+        * runtime/Error.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::toPreferredPrimitiveType):
+        * runtime/JSObject.cpp:
+        (JSC::callToPrimitiveFunction):
+        (JSC::JSObject::ordinaryToPrimitive):
+        (JSC::JSObject::defaultValue):
+        (JSC::JSObject::toPrimitive):
+        (JSC::JSObject::getPrimitiveNumber):
+        (JSC::callDefaultValueFunction): Deleted.
+        (JSC::throwTypeError): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::toPrimitive): Deleted.
+        * runtime/SmallStrings.h:
+        * runtime/SymbolPrototype.cpp:
+        (JSC::SymbolPrototype::finishCreation):
+        * runtime/SymbolPrototype.h:
+        (JSC::SymbolPrototype::create):
+        * tests/es6.yaml:
+        * tests/stress/date-symbol-toprimitive.js: Added.
+        * tests/stress/ropes-symbol-toprimitive.js: Added.
+        (ropify):
+        (String.prototype.Symbol.toPrimitive):
+        * tests/stress/symbol-toprimitive.js: Added.
+        (foo.Symbol.toPrimitive):
+        (catch):
+
 2016-03-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to compile StringReplace

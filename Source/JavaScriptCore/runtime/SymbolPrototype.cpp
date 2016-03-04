@@ -56,11 +56,13 @@ SymbolPrototype::SymbolPrototype(VM& vm, Structure* structure)
 {
 }
 
-void SymbolPrototype::finishCreation(VM& vm)
+void SymbolPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Symbol"), DontEnum | ReadOnly);
     ASSERT(inherits(info()));
+
+    JSC_NATIVE_FUNCTION(vm.propertyNames->toPrimitiveSymbol, symbolProtoFuncValueOf, DontEnum | ReadOnly, 1);
 }
 
 bool SymbolPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)

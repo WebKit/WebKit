@@ -890,6 +890,18 @@ bool Graph::watchCondition(const ObjectPropertyCondition& key)
     return true;
 }
 
+bool Graph::watchConditions(const ObjectPropertyConditionSet& keys)
+{
+    if (!keys.isValid())
+        return false;
+
+    for (const ObjectPropertyCondition& key : keys) {
+        if (!watchCondition(key))
+            return false;
+    }
+    return true;
+}
+
 bool Graph::isSafeToLoad(JSObject* base, PropertyOffset offset)
 {
     return m_safeToLoad.contains(std::make_pair(base, offset));
@@ -1516,6 +1528,9 @@ bool Graph::canOptimizeStringObjectAccess(const CodeOrigin& codeOrigin)
         return false;
 
     if (stringPrototypeStructure->isDictionary())
+        return false;
+
+    if (!watchConditions(generateConditionsForPropertyMissConcurrently(m_vm, globalObjectFor(codeOrigin), stringObjectStructure, m_vm.propertyNames->toPrimitiveSymbol.impl())))
         return false;
 
     // We're being conservative here. We want DFG's ToString on StringObject to be

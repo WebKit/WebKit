@@ -38,10 +38,10 @@ public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
-    static SymbolPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
+    static SymbolPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         SymbolPrototype* prototype = new (NotNull, allocateCell<SymbolPrototype>(vm.heap)) SymbolPrototype(vm, structure);
-        prototype->finishCreation(vm);
+        prototype->finishCreation(vm, globalObject);
         return prototype;
     }
 
@@ -54,7 +54,7 @@ public:
 
 protected:
     SymbolPrototype(VM&, Structure*);
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 
 private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);

@@ -276,13 +276,13 @@
     macro(match) \
     macro(replace) \
     macro(split) \
-    macro(toPrimitive)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
     macro(hasInstance) \
     macro(iterator) \
     macro(search) \
     macro(species) \
+    macro(toPrimitive) \
     macro(toStringTag) \
     macro(unscopables)
 

@@ -31,6 +31,7 @@
 #include <wtf/Noncopyable.h>
 
 #define JSC_COMMON_STRINGS_EACH_NAME(macro) \
+    macro(default) \
     macro(boolean) \
     macro(false) \
     macro(function) \

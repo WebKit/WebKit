@@ -349,6 +349,20 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
         });
 }
 
+ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(
+    VM& vm, JSGlobalObject* globalObject, Structure* headStructure, UniquedStringImpl* uid)
+{
+    return generateConditions(
+        vm, globalObject, headStructure, nullptr,
+        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+            ObjectPropertyCondition result = generateCondition(vm, nullptr, object, uid, PropertyCondition::Absence);
+            if (!result)
+                return false;
+            conditions.append(result);
+            return true;
+        }, Concurrent);
+}
+
 ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
     VM& vm, JSGlobalObject* globalObject, Structure* headStructure, UniquedStringImpl* uid)
 {

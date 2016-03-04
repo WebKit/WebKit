@@ -111,6 +111,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToGMTString(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToLocaleDateString(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToLocaleString(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToLocaleTimeString(ExecState*);
+EncodedJSValue JSC_HOST_CALL dateProtoFuncToPrimitiveSymbol(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToString(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToTimeString(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToUTCString(ExecState*);
@@ -499,6 +500,7 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     UNUSED_PARAM(globalObject);
 #endif // ENABLE(INTL)
 
+    JSC_NATIVE_FUNCTION(vm.propertyNames->toPrimitiveSymbol, dateProtoFuncToPrimitiveSymbol, DontEnum | ReadOnly, 1);
     // The constructor will be added later, after DateConstructor has been built.
 }
 
@@ -595,6 +597,27 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToLocaleTimeString(ExecState* exec)
 
     DateInstance* thisDateObj = asDateInstance(thisValue); 
     return JSValue::encode(formatLocaleDate(exec, thisDateObj, thisDateObj->internalNumber(), LocaleTime));
+}
+
+EncodedJSValue JSC_HOST_CALL dateProtoFuncToPrimitiveSymbol(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!thisValue.isObject())
+        return throwVMTypeError(exec, "Date.prototype[Symbol.toPrimitive] expected |this| to be an object.");
+    JSObject* thisObject = jsCast<JSObject*>(thisValue);
+
+    if (!exec->argumentCount())
+        return throwVMTypeError(exec, "Date.prototype[Symbol.toPrimitive] expected a first argument.");
+
+    JSValue hintValue = exec->uncheckedArgument(0);
+    PreferredPrimitiveType type = toPreferredPrimitiveType(exec, hintValue);
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+
+    if (type == NoPreference)
+        type = PreferString;
+
+    return JSValue::encode(thisObject->ordinaryToPrimitive(exec, type));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTime(ExecState* exec)

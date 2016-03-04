@@ -504,6 +504,7 @@ public:
     JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
 
     JS_EXPORT_PRIVATE static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+    JS_EXPORT_PRIVATE JSValue ordinaryToPrimitive(ExecState*, PreferredPrimitiveType) const;
 
     JS_EXPORT_PRIVATE bool hasInstance(ExecState*, JSValue value, JSValue hasInstanceValue);
     bool hasInstance(ExecState*, JSValue);
@@ -517,7 +518,7 @@ public:
     JS_EXPORT_PRIVATE static void getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     JS_EXPORT_PRIVATE static void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
-    JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
+    JS_EXPORT_PRIVATE JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
     bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
     JS_EXPORT_PRIVATE double toNumber(ExecState*) const;
     JS_EXPORT_PRIVATE JSString* toString(ExecState*) const;
@@ -1450,11 +1451,6 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     structure->willStoreValueForNewTransition(vm, propertyName, value, shouldOptimize);
     setStructureAndButterfly(vm, structure, newButterfly);
     putDirect(vm, offset, value);
-}
-
-inline JSValue JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
-{
-    return methodTable()->defaultValue(this, exec, preferredType);
 }
 
 ALWAYS_INLINE JSObject* Register::object() const

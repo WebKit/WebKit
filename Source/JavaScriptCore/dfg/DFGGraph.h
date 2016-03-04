@@ -650,6 +650,7 @@ public:
     // this also makes it cheap to query if the condition holds. Also makes sure that the GC knows
     // what's going on.
     bool watchCondition(const ObjectPropertyCondition&);
+    bool watchConditions(const ObjectPropertyConditionSet&);
 
     // Checks if it's known that loading from the given object at the given offset is fine. This is
     // computed by tracking which conditions we track with watchCondition().
