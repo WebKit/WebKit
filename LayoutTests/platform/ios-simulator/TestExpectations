@@ -2950,6 +2950,8 @@ webkit.org/b/76121 imported/blink/fast/events/event-trusted.html [ Skip ]
 
 webkit.org/b/154253 animations/animation-delay-changed.html [ Pass Failure ]
 
+webkit.org/b/155036 fast/table/table-overflow.html [ Skip ]
+
 # Uncategorized reftest failures, uncovered once we made reftests work. Needs triage.
 css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
