@@ -1,3 +1,16 @@
+2016-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Whitespace causes font-variant: all-small-caps to synthesize
+        https://bugs.webkit.org/show_bug.cgi?id=155004
+        <rdar://problem/24630796>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/all-small-caps-whitespace-expected.html: Added.
+        * fast/text/all-small-caps-whitespace.html: Added.
+        * platform/mac/TestExpectations: Skip on platforms which don't support proper coverage
+        queries.
+
 2016-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r197541): many tiled drawing tests failing after new "large tile size" logic was added

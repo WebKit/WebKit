@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure that font-variant: all-small-caps doesn't cause synthesis due to whitespace. Avenir Next says that it supports all of the following characters except the space. This space character should not make us synthesize.
+<div style="font: 100px 'Avenir Next'; font-feature-settings: 'smcp', 'c2sc';">Hello Kitty!</div>
+</body>
+</html>

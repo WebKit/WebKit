@@ -1,5 +1,20 @@
 2016-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Whitespace causes font-variant: all-small-caps to synthesize
+        https://bugs.webkit.org/show_bug.cgi?id=155004
+        <rdar://problem/24630796>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::allowedFontFamilySet):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::allowedFontFamilySet):
+
+2016-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [iOS] Crash during font loading when injected bundle cancels load
         https://bugs.webkit.org/show_bug.cgi?id=155001
 

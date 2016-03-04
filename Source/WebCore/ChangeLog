@@ -1,5 +1,24 @@
 2016-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Whitespace causes font-variant: all-small-caps to synthesize
+        https://bugs.webkit.org/show_bug.cgi?id=155004
+        <rdar://problem/24630796>
+
+        Reviewed by Darin Adler.
+
+        Many fonts (such as Avenir Next) don't report to support whitespace characters under
+        smcp or c2sc. Previously, we were using this as a signal to synthesize small caps
+        instead of true small caps. However, a better solution is for whitespace to never
+        cause synthesis with all-small-caps.
+
+        Test: fast/text/all-small-caps-whitespace.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::shouldSynthesize):
+        (WebCore::ComplexTextController::collectComplexTextRuns):
+
+2016-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [iOS] Crash during font loading when injected bundle cancels load
         https://bugs.webkit.org/show_bug.cgi?id=155001
 

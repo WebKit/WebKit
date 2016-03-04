@@ -304,6 +304,17 @@ static inline Optional<UChar32> capitalized(UChar32 baseCharacter)
     return Nullopt;
 }
 
+static bool shouldSynthesize(const Font* nextFont, UChar32 baseCharacter, Optional<UChar32> capitalizedBase, FontVariantCaps fontVariantCaps, bool engageAllSmallCapsProcessing)
+{
+    if (!nextFont || nextFont == Font::systemFallback())
+        return false;
+    if (engageAllSmallCapsProcessing && isASCIISpace(baseCharacter))
+        return false;
+    if (!engageAllSmallCapsProcessing && !capitalizedBase)
+        return false;
+    return !nextFont->variantCapsSupportsCharacterForSynthesis(fontVariantCaps, baseCharacter);
+}
+
 void ComplexTextController::collectComplexTextRuns()
 {
     if (!m_end)
@@ -346,8 +357,7 @@ void ComplexTextController::collectComplexTextRuns()
     bool nextIsSmallCaps = false;
 
     auto capitalizedBase = capitalized(baseCharacter);
-    if (nextFont && nextFont != Font::systemFallback() && (capitalizedBase || engageAllSmallCapsProcessing)
-        && !nextFont->variantCapsSupportsCharacterForSynthesis(fontVariantCaps, baseCharacter)) {
+    if (shouldSynthesize(nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
         synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
         smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
         UChar32 characterToWrite = capitalizedBase ? capitalizedBase.value() : cp[0];
@@ -388,8 +398,7 @@ void ComplexTextController::collectComplexTextRuns()
             nextFont = m_font.fontForCombiningCharacterSequence(cp + index, curr - cp - index);
 
         capitalizedBase = capitalized(baseCharacter);
-        if (!synthesizedFont && nextFont && nextFont != Font::systemFallback() && (capitalizedBase || engageAllSmallCapsProcessing)
-            && !nextFont->variantCapsSupportsCharacterForSynthesis(fontVariantCaps, baseCharacter)) {
+        if (!synthesizedFont && shouldSynthesize(nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
             // Rather than synthesize each character individually, we should synthesize the entire "run" if any character requires synthesis.
             synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
             smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
