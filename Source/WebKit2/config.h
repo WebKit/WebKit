@@ -73,8 +73,11 @@
 #ifndef HAVE_WINDOW_SERVER_OCCLUSION_NOTIFICATIONS
 #define HAVE_WINDOW_SERVER_OCCLUSION_NOTIFICATIONS 1
 #endif
+#endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
 #ifndef USE_NETWORK_SESSION
-#define USE_NETWORK_SESSION 0
+#define USE_NETWORK_SESSION 1
 #endif
 
 // FIXME: We should work towards not using CredentialStorage in WebKit2 to not have problems with digest authentication.
