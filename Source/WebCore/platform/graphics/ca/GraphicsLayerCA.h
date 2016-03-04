@@ -200,7 +200,7 @@ private:
     WEBCORE_EXPORT virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const override;
     WEBCORE_EXPORT virtual bool platformCALayerShouldAggressivelyRetainTiles(PlatformCALayer*) const override;
     WEBCORE_EXPORT virtual bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const override;
-    WEBCORE_EXPORT virtual IntSize platformCALayerTileSize() const override;
+    WEBCORE_EXPORT virtual bool platformCALayerUseGiantTiles() const override;
 
     virtual bool isCommittingChanges() const override { return m_isCommittingChanges; }
     virtual bool isUsingDisplayListDrawing(PlatformCALayer*) const override { return m_usesDisplayListDrawing; }

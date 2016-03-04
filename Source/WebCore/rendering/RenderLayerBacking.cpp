@@ -250,9 +250,7 @@ void RenderLayerBacking::setTiledBackingHasMargins(bool hasExtendedBackgroundOnL
     if (!m_usingTiledCacheLayer)
         return;
 
-    int marginLeftAndRightSize = hasExtendedBackgroundOnLeftAndRight ? tileSize().width() : 0;
-    int marginTopAndBottomSize = hasExtendedBackgroundOnTopAndBottom ? tileSize().height() : 0;
-    tiledBacking()->setTileMargins(marginTopAndBottomSize, marginTopAndBottomSize, marginLeftAndRightSize, marginLeftAndRightSize);
+    tiledBacking()->setHasMargins(hasExtendedBackgroundOnTopAndBottom, hasExtendedBackgroundOnTopAndBottom, hasExtendedBackgroundOnLeftAndRight, hasExtendedBackgroundOnLeftAndRight);
 }
 
 void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaintCounter)
@@ -2486,10 +2484,9 @@ bool RenderLayerBacking::shouldTemporarilyRetainTileCohorts(const GraphicsLayer*
     return true;
 }
 
-IntSize RenderLayerBacking::tileSize() const
+bool RenderLayerBacking::useGiantTiles() const
 {
-    TileSizeMode tileSizeMode = renderer().frame().page()->settings().useGiantTiles() ? GiantTileSizeMode : StandardTileSizeMode;
-    return defaultTileSize(tileSizeMode);
+    return renderer().frame().page()->settings().useGiantTiles();
 }
 
 #ifndef NDEBUG

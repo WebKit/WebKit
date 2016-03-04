@@ -37,6 +37,7 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/MachSendRight.h>
+#import <WebCore/PlatformCALayerClient.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WebLayer.h>
 

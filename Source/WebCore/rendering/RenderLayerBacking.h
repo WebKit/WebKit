@@ -213,7 +213,7 @@ public:
 
     virtual bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;
     virtual bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
-    virtual IntSize tileSize() const override;
+    virtual bool useGiantTiles() const override;
     virtual bool needsPixelAligment() const override { return !m_isMainFrameRenderViewLayer; }
 
 #if PLATFORM(IOS)

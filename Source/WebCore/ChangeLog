@@ -1,3 +1,96 @@
+2016-03-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Use larger tiles when possible to reduce per-tile painting overhead
+        https://bugs.webkit.org/show_bug.cgi?id=154985
+        rdar://problem/23635219
+
+        Reviewed by Tim Horton.
+
+        There's no reason to use lots of 512x512 tiles on a non-scrollable page. We can reduce
+        per-tile painting overhead by using one big tile. On vertically scrolling pages, we
+        can also use wide tiles to reduce tile-crossing when painting. Have FrameView tell
+        the TiledBacking about scrollability, allowing TileController to make tile size decisions.
+
+        Change the "giant tile" code path to just return whether Settings says we're in giant
+        tile mode, so that tile size decisions can be made in TileController.
+
+        TileController now stores a single margin size, and a per-edge margin flag rather than a size
+        per edge. It computes tile size based on scrollability, but adjusts tile size with some 
+        hysteresis to avoid size thrashing for content that frequently resizes the document (e.g.
+        some performance tests).
+
+        TileGrid stores a copy of the tile size, so that it remains unchanged from one revalidate
+        to the next, and the grid can detect when the tile size changes, since it needs to throw away
+        all tiles in that case.
+
+        Tests: tiled-drawing/tile-size-both-scrollable.html
+               tiled-drawing/tile-size-horizontally-scrollable.html
+               tiled-drawing/tile-size-unscrollable.html
+               tiled-drawing/tile-size-vertically-scrollable.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addedOrRemovedScrollbar):
+        (WebCore::FrameView::willStartLiveResize): Tell the tile backing when live resize starts and stops.
+        (WebCore::FrameView::willEndLiveResize):
+        * platform/graphics/EdgeSet.h: Added. Template class that just stores some value
+        per edge.
+        (WebCore::EdgeSet::EdgeSet):
+        (WebCore::EdgeSet::top):
+        (WebCore::EdgeSet::setTop):
+        (WebCore::EdgeSet::right):
+        (WebCore::EdgeSet::setRight):
+        (WebCore::EdgeSet::bottom):
+        (WebCore::EdgeSet::setBottom):
+        (WebCore::EdgeSet::left):
+        (WebCore::EdgeSet::setLeft):
+        (WebCore::EdgeSet::operator==):
+        (WebCore::EdgeSet::operator!=):
+        * platform/graphics/GraphicsLayerClient.h: Rather than have the client return the
+        tile size, have it return whether we're in giant tile mode.
+        (WebCore::GraphicsLayerClient::useGiantTiles):
+        (WebCore::GraphicsLayerClient::tileSize): Deleted.
+        * platform/graphics/TiledBacking.h:
+        (WebCore::defaultTileSize): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerUseGiantTiles):
+        (WebCore::GraphicsLayerCA::platformCALayerTileSize): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (WebCore::PlatformCALayerClient::platformCALayerUseGiantTiles):
+        (WebCore::PlatformCALayerClient::platformCALayerTileSize): Deleted.
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::setScrollability):
+        (WebCore::TileController::willStartLiveResize):
+        (WebCore::TileController::didEndLiveResize):
+        (WebCore::TileController::tileSize):
+        (WebCore::TileController::setHasMargins):
+        (WebCore::TileController::setMarginSize):
+        (WebCore::TileController::hasMargins):
+        (WebCore::TileController::hasHorizontalMargins):
+        (WebCore::TileController::hasVerticalMargins):
+        (WebCore::TileController::topMarginHeight):
+        (WebCore::TileController::bottomMarginHeight):
+        (WebCore::TileController::leftMarginWidth):
+        (WebCore::TileController::rightMarginWidth):
+        (WebCore::TileController::setTileMargins): Deleted.
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::TileGrid):
+        (WebCore::TileGrid::setNeedsDisplayInRect):
+        (WebCore::TileGrid::rectForTileIndex):
+        (WebCore::TileGrid::getTileIndexRangeForRect):
+        (WebCore::TileGrid::removeAllTiles):
+        (WebCore::TileGrid::revalidateTiles):
+        * platform/graphics/ca/TileGrid.h:
+        (WebCore::TileGrid::tileSize):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setTiledBackingHasMargins):
+        (WebCore::RenderLayerBacking::useGiantTiles):
+        (WebCore::RenderLayerBacking::tileSize): Deleted.
+        * rendering/RenderLayerBacking.h:
+
 2016-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disallow custom elements inside a window-less documents

@@ -1,0 +1,14 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 2008.00 585.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 2008.00 585.00)
+      (contentsOpaque 1)
+      (tile cache coverage 0, 0 1024 x 585)
+      (tile size 512 x 512)
+      (top left tile 0, 0 tiles grid 2 x 2)
+    )
+  )
+)
+

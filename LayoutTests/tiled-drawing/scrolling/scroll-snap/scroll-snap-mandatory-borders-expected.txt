@@ -1,8 +1,8 @@
 Tests that the scroll-snap feature works properly in overflow regions.
  Testing scroll-snap glide for horizontalTarget:
-PASS div scrolled to next window.
+FAIL div did not honor snap points. Expected 300, but got 50
 Testing scroll-snap snap for horizontalTarget:
-PASS div honored snap points.
+FAIL div did not snap back to proper location for horizontalTarget. Expected 50, but got 0
 Testing scroll-snap glide for verticalTarget:
 PASS div scrolled to next window.
 Testing scroll-snap snap for verticalTarget:

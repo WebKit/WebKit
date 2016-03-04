@@ -1496,9 +1496,9 @@ bool GraphicsLayerCA::platformCALayerShouldTemporarilyRetainTileCohorts(Platform
     return client().shouldTemporarilyRetainTileCohorts(this);
 }
 
-IntSize GraphicsLayerCA::platformCALayerTileSize() const
+bool GraphicsLayerCA::platformCALayerUseGiantTiles() const
 {
-    return client().tileSize();
+    return client().useGiantTiles();
 }
 
 static PlatformCALayer::LayerType layerTypeForCustomBackdropAppearance(GraphicsLayer::CustomAppearance appearance)

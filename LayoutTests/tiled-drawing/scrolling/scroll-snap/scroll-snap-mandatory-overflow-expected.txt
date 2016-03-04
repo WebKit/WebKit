@@ -4,9 +4,9 @@ PASS div scrolled to next window.
 Testing scroll-snap snap for horizontalTarget:
 PASS div honored snap points.
 Testing scroll-snap glide for verticalTarget:
-PASS div scrolled to next window.
+FAIL div did not honor snap points. Expected 300, but got 50
 Testing scroll-snap snap for verticalTarget:
-PASS div honored snap points.
+FAIL div did not snap back to proper location for verticalTarget. Expected 50, but got 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -28,7 +28,9 @@
 
 #include "GraphicsContext.h"
 #include "LayerPool.h"
+#include "Logging.h"
 #include "PlatformCALayer.h"
+#include "TextStream.h"
 #include "TileController.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
@@ -42,8 +44,9 @@ namespace WebCore {
 TileGrid::TileGrid(TileController& controller)
     : m_controller(controller)
     , m_containerLayer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
-    , m_scale(1)
     , m_cohortRemovalTimer(*this, &TileGrid::cohortRemovalTimerFired)
+    , m_tileSize(kDefaultTileSize, kDefaultTileSize)
+    , m_tileSizeAtLastRevalidate(m_tileSize)
 {
     m_containerLayer.get().setName(TileController::tileGridContainerLayerName());
 }
@@ -101,7 +104,7 @@ void TileGrid::setNeedsDisplayInRect(const IntRect& rect)
     scaledRect.scale(m_scale);
     IntRect repaintRectInTileCoords(enclosingIntRect(scaledRect));
 
-    IntSize tileSize = m_controller.tileSize();
+    IntSize tileSize = m_tileSize;
 
     // For small invalidations, lookup the covered tiles.
     if (repaintRectInTileCoords.height() < 2 * tileSize.height() && repaintRectInTileCoords.width() < 2 * tileSize.width()) {
@@ -218,7 +221,7 @@ IntRect TileGrid::rectForTileIndex(const TileIndex& tileIndex) const
     // FIXME: calculating the scaled size here should match with the rest of calculated sizes where we use the combination of
     // enclosingIntRect, expandedIntSize (floor vs ceil).
     // However enclosing this size could reveal gap on root layer's background. see RenderView::backgroundRect()
-    IntSize tileSize = m_controller.tileSize();
+    IntSize tileSize = m_tileSize;
     IntRect rect(tileIndex.x() * tileSize.width(), tileIndex.y() * tileSize.height(), tileSize.width(), tileSize.height());
     IntRect scaledBounds(m_controller.bounds());
     scaledBounds.scale(m_scale);
@@ -232,7 +235,7 @@ void TileGrid::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft,
     clampedRect.scale(m_scale);
     clampedRect.intersect(rect);
 
-    auto tileSize = m_controller.tileSize();
+    auto tileSize = m_tileSize;
     if (clampedRect.x() >= 0)
         topLeft.setX(clampedRect.x() / tileSize.width());
     else
@@ -270,6 +273,17 @@ void TileGrid::removeTiles(Vector<TileGrid::TileIndex>& toRemove)
         m_tileRepaintCounts.remove(tileInfo.layer.get());
         tileInfo.layer->moveToLayerPool();
     }
+}
+
+void TileGrid::removeAllTiles()
+{
+    Vector<TileIndex> tilesToRemove;
+    tilesToRemove.reserveInitialCapacity(m_tiles.size());
+
+    for (auto& entry : m_tiles)
+        tilesToRemove.uncheckedAppend(entry.key);
+
+    removeTiles(tilesToRemove);
 }
 
 void TileGrid::removeAllSecondaryTiles()
@@ -318,6 +332,12 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
 
     double minimumRevalidationTimerDuration = std::numeric_limits<double>::max();
     bool needsTileRevalidation = false;
+    
+    m_tileSize = m_controller.tileSize();
+    if (m_tileSize != m_tileSizeAtLastRevalidate) {
+        removeAllTiles();
+        m_tileSizeAtLastRevalidate = m_tileSize;
+    }
 
     // Move tiles newly outside the coverage rect into the cohort map.
     for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {

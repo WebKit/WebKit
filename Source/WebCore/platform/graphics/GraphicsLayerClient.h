@@ -120,7 +120,7 @@ public:
     virtual bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const { return false; }
     virtual bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const { return true; }
 
-    virtual IntSize tileSize() const { return defaultTileSize(); }
+    virtual bool useGiantTiles() const { return false; }
 
     virtual bool needsPixelAligment() const { return false; }
 

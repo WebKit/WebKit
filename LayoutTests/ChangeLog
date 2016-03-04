@@ -1,5 +1,43 @@
 2016-03-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Use larger tiles when possible to reduce per-tile painting overhead
+        https://bugs.webkit.org/show_bug.cgi?id=154985
+        rdar://problem/23635219
+
+        Reviewed by Tim Horton.
+        
+        Rebaseline tests with new tile sizes. Add new tests that explicitly test tile size on
+        pages with different scrollability.
+
+        * tiled-drawing/background-transparency-toggle-expected.txt:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-expected.txt:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-with-handler-expected.txt:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-expected.txt:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler-expected.txt:
+        * tiled-drawing/scrolling/fixed-background/fixed-background-no-image-expected.txt:
+        * tiled-drawing/scrolling/fixed-background/fixed-body-background-body-layer-expected.txt:
+        * tiled-drawing/scrolling/fixed-background/fixed-body-background-expected.txt:
+        * tiled-drawing/scrolling/fixed-background/fixed-body-background-opacity-expected.txt:
+        * tiled-drawing/scrolling/fixed-background/fixed-body-background-positioned-expected.txt:
+        * tiled-drawing/scrolling/fixed-background/fixed-html-background-expected.txt:
+        * tiled-drawing/scrolling/fixed-background/fixed-non-propagated-body-background-expected.txt:
+        * tiled-drawing/tile-coverage-after-scroll-expected.txt:
+        * tiled-drawing/tile-coverage-after-scroll-speculative-expected.txt:
+        * tiled-drawing/tile-coverage-scroll-to-bottom-expected.txt:
+        * tiled-drawing/tile-coverage-slow-scrolling-expected.txt:
+        * tiled-drawing/tile-coverage-speculative-expected.txt:
+        * tiled-drawing/tile-size-both-scrollable-expected.txt: Copied from LayoutTests/tiled-drawing/scrolling/fixed-background/fixed-background-no-image-expected.txt.
+        * tiled-drawing/tile-size-both-scrollable.html: Added.
+        * tiled-drawing/tile-size-horizontally-scrollable-expected.txt: Copied from LayoutTests/tiled-drawing/scrolling/fixed-background/fixed-background-no-image-expected.txt.
+        * tiled-drawing/tile-size-horizontally-scrollable.html: Added.
+        * tiled-drawing/tile-size-unscrollable-expected.txt: Added.
+        * tiled-drawing/tile-size-unscrollable.html: Added.
+        * tiled-drawing/tile-size-vertically-scrollable-expected.txt: Copied from LayoutTests/tiled-drawing/scrolling/fixed-background/fixed-background-no-image-expected.txt.
+        * tiled-drawing/tile-size-vertically-scrollable.html: Added.
+        * tiled-drawing/visible-rect-content-inset-expected.txt:
+
+2016-03-03  Simon Fraser  <simon.fraser@apple.com>
+
         Fix an image resource URL in tiled scrolling tests
         https://bugs.webkit.org/show_bug.cgi?id=154981
 

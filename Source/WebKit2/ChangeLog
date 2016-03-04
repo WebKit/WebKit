@@ -1,3 +1,18 @@
+2016-03-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Use larger tiles when possible to reduce per-tile painting overhead
+        https://bugs.webkit.org/show_bug.cgi?id=154985
+        rdar://problem/23635219
+
+        Reviewed by Tim Horton.
+
+        Do a bit of #include cleanup.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.h:
+
 2016-03-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Use std::make_unique<> when creating std::unique_ptr<>

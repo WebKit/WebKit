@@ -26,6 +26,7 @@
 #ifndef TileController_h
 #define TileController_h
 
+#include "EdgeSet.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "PlatformCALayer.h"
@@ -46,6 +47,11 @@ class TileCoverageMap;
 class TileGrid;
 
 typedef Vector<RetainPtr<PlatformLayer>> PlatformLayerList;
+
+const int kDefaultTileSize = 512;
+// This is an experimental value for debugging and evaluating the overhead which may be
+// incurred due to a large tile size.
+const int kGiantTileSize = 4096;
 
 class TileController final : public TiledBacking {
     WTF_MAKE_NONCOPYABLE(TileController); WTF_MAKE_FAST_ALLOCATED;
@@ -95,6 +101,9 @@ public:
     float tileDebugBorderWidth() const { return m_tileDebugBorderWidth; }
     ScrollingModeIndication indicatorMode() const { return m_indicatorMode; }
 
+    virtual void willStartLiveResize() override;
+    virtual void didEndLiveResize() override;
+
     virtual IntSize tileSize() const override;
     virtual IntRect bounds() const override;
     virtual IntRect boundsWithoutMargin() const override;
@@ -140,6 +149,7 @@ private:
     virtual void setTiledScrollingIndicatorPosition(const FloatPoint&) override;
     virtual void setTopContentInset(float) override;
     virtual void setVelocity(const VelocityData&) override;
+    virtual void setScrollability(Scrollability) override;
     virtual void prepopulateRect(const FloatRect&) override;
     virtual void setIsInWindow(bool) override;
     virtual void setTileCoverage(TileCoverage) override;
@@ -154,15 +164,20 @@ private:
     virtual PlatformCALayer* tiledScrollingIndicatorLayer() override;
 #endif
     virtual void setScrollingModeIndication(ScrollingModeIndication) override;
-    virtual void setTileMargins(int marginTop, int marginBottom, int marginLeft, int marginRight) override;
+    virtual void setHasMargins(bool marginTop, bool marginBottom, bool marginLeft, bool marginRight) override;
+    virtual void setMarginSize(int) override;
     virtual void setZoomedOutContentsScale(float) override;
     virtual float zoomedOutContentsScale() const override;
 
+    void updateMargins();
     void clearZoomedOutTileGrid();
     void tileGridsChanged();
 
     void tileRevalidationTimerFired();
     void setNeedsRevalidateTiles();
+
+    void notePendingTileSizeChange();
+    void tileSizeChangeTimerFired();
     
     IntRect boundsForSize(const FloatSize&) const;
 
@@ -180,34 +195,39 @@ private:
     IntRect m_boundsAtLastRevalidate;
 
     Timer m_tileRevalidationTimer;
+    DeferrableOneShotTimer m_tileSizeChangeTimer;
 
-    float m_zoomedOutContentsScale;
+    float m_zoomedOutContentsScale { 0 };
     float m_deviceScaleFactor;
 
-    TileCoverage m_tileCoverage;
+    TileCoverage m_tileCoverage { CoverageForVisibleArea };
     
     VelocityData m_velocity;
+
+    int m_marginSize { kDefaultTileSize };
 
     // m_marginTop and m_marginBottom are the height in pixels of the top and bottom margin tiles. The width
     // of those tiles will be equivalent to the width of the other tiles in the grid. m_marginRight and
     // m_marginLeft are the width in pixels of the right and left margin tiles, respectively. The height of
     // those tiles will be equivalent to the height of the other tiles in the grid.
-    int m_marginTop;
-    int m_marginBottom;
-    int m_marginLeft;
-    int m_marginRight;
-
-    bool m_isInWindow;
-    bool m_scrollingPerformanceLoggingEnabled;
-    bool m_unparentsOffscreenTiles;
-    bool m_acceleratesDrawing;
-    bool m_tilesAreOpaque;
-    bool m_hasTilesWithTemporaryScaleFactor; // Used to make low-res tiles when zooming.
+    
+    Scrollability m_scrollability { HorizontallyScrollable | VerticallyScrollable };
+    
+    EdgeSet<bool> m_marginEdges;
+    
+    bool m_isInWindow { false };
+    bool m_scrollingPerformanceLoggingEnabled { false };
+    bool m_unparentsOffscreenTiles { false };
+    bool m_acceleratesDrawing { false };
+    bool m_tilesAreOpaque { false };
+    bool m_hasTilesWithTemporaryScaleFactor { false }; // Used to make low-res tiles when zooming.
+    bool m_inLiveResize { false };
+    mutable bool m_tileSizeLocked { false };
 
     Color m_tileDebugBorderColor;
-    float m_tileDebugBorderWidth;
-    ScrollingModeIndication m_indicatorMode;
-    float m_topContentInset;
+    float m_tileDebugBorderWidth { 0 };
+    ScrollingModeIndication m_indicatorMode { SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication };
+    float m_topContentInset { 0 };
 };
 
 } // namespace WebCore

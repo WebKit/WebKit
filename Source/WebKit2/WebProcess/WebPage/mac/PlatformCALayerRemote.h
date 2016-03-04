@@ -29,7 +29,6 @@
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformLayer.h>
-#include <WebCore/TileController.h>
 
 namespace WebCore {
 class LayerPool;

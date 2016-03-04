@@ -27,6 +27,7 @@
 #define PlatformCALayerRemoteTiledBacking_h
 
 #include "PlatformCALayerRemote.h"
+#include <WebCore/TileController.h>
 
 namespace WebKit {
 

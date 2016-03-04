@@ -77,6 +77,8 @@ public:
 
     IntRect tileCoverageRect() const;
     IntRect extent() const;
+    
+    IntSize tileSize() const { return m_tileSize; }
 
     double retainedTileBackingStoreMemory() const;
     unsigned blankPixelCount() const;
@@ -89,6 +91,7 @@ public:
 #endif
 
     typedef IntPoint TileIndex;
+
     typedef unsigned TileCohort;
     static const TileCohort VisibleTileCohort = UINT_MAX;
 
@@ -123,6 +126,7 @@ private:
         double timeUntilExpiration();
     };
 
+    void removeAllTiles();
     void removeAllSecondaryTiles();
     void removeTilesInCohort(TileCohort);
 
@@ -154,8 +158,6 @@ private:
     IntRect m_primaryTileCoverageRect;
     Vector<FloatRect> m_secondaryTileCoverageRects;
 
-    float m_scale;
-
     typedef Deque<TileCohortInfo> TileCohortList;
     TileCohortList m_cohortList;
 
@@ -163,6 +165,11 @@ private:
 
     typedef HashMap<PlatformCALayer*, int> RepaintCountMap;
     RepaintCountMap m_tileRepaintCounts;
+    
+    IntSize m_tileSize;
+    IntSize m_tileSizeAtLastRevalidate;
+
+    float m_scale { 1 };
 };
 
 }
