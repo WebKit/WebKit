@@ -2067,6 +2067,11 @@ struct Node {
         return isCellSpeculation(prediction());
     }
     
+    bool shouldSpeculateCellOrOther()
+    {
+        return isCellOrOtherSpeculation(prediction());
+    }
+    
     bool shouldSpeculateNotCell()
     {
         return isNotCellSpeculation(prediction());
