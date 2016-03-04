@@ -1,3 +1,16 @@
+2016-03-03  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r196770): Unable to use HipChat Mac app
+        https://bugs.webkit.org/show_bug.cgi?id=154999
+        <rdar://problem/24931959>
+
+        Reviewed by Darin Adler.
+
+        Add a setter to PutPropertySlot to override the 'isStrictMode' flag.
+
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::setStrictMode):
+
 2016-03-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add support for MADD, MSUB and MNEG to Air

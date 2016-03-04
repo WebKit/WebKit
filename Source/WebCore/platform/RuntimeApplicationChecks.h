@@ -26,6 +26,8 @@
 #ifndef RuntimeApplicationChecks_h
 #define RuntimeApplicationChecks_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 WEBCORE_EXPORT bool applicationIsAOLInstantMessenger();
@@ -42,6 +44,9 @@ WEBCORE_EXPORT bool applicationIsSafari();
 bool applicationIsSolidStateNetworksDownloader();
 WEBCORE_EXPORT bool applicationIsVersions();
 WEBCORE_EXPORT bool applicationIsHRBlock();
+WEBCORE_EXPORT bool applicationIsHipChat();
+
+WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
 
 } // namespace WebCore
 

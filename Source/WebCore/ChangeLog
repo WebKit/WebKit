@@ -1,3 +1,58 @@
+2016-03-03  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r196770): Unable to use HipChat Mac app
+        https://bugs.webkit.org/show_bug.cgi?id=154999
+        <rdar://problem/24931959>
+
+        Reviewed by Darin Adler.
+
+        r196770 made [Unforgeable] operations such as Location.reload()
+        non-writable as per the Web IDL specification. As a result,
+        trying to set such properties will be ignored in non-strict
+        mode and will throw an exception is strict mode. This also matches
+        Firefox and Chrome.
+
+        However, this broke the HipChat Mac App (the Web App seems fine)
+        because it sets Location.reload() and is using strict mode, therefore
+        causing an exception to be thrown.
+
+        This patch adds a quirk to JSLocation::putDelegate() which disable
+        strict mode when we detect that the application is HipChat. As a
+        result, we no longer throw when HipChat tries to set Location.reload
+        and the application is able to connect again.
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::putDelegate):
+        Add a quirk which disables strict mode if the application is HipChat.
+
+        * platform/RuntimeApplicationChecks.cpp:
+        (WebCore::mainBundleIdentifier):
+        Extract this from mainBundleIsEqualTo() so it can be shared with
+        applicationBundleIdentifier().
+
+        (WebCore::applicationBundleIdentifier):
+        Returns the application bundle identifier, which is a static variable.
+        For the WebContent / Networking processes, the application bundle
+        identifier gets set to the UIProcess bundle identifier upon
+        initialization. If unset, we fall back to using mainBundleIdentifier()
+        which will do the right thing for the WK2 UIProcess and WK1.
+
+        (WebCore::mainBundleIsEqualTo):
+        Extract part of the code to mainBundleIdentifier() to better share
+        code.
+
+        (WebCore::applicationIsHipChat):
+        Add utility function that checks if the application is HipChat. This
+        will do the right thing whether it is called from the UIProcess, the
+        WebProcess or the UIProcess.
+
+        (WebCore::setApplicationBundleIdentifier):
+        Add utility function to set the application bundle identifier. It gets
+        called with the UIProcess bundle identifier by the NetworkProcess and
+        the WebProcess upon initialization.
+
+        * platform/RuntimeApplicationChecks.h:
+
 2016-03-03  Keith Miller  <keith_miller@apple.com>
 
         JSArrayBuffers should be collected less aggressively

@@ -94,6 +94,11 @@ public:
         m_thisValue = thisValue;
     }
 
+    void setStrictMode(bool value)
+    {
+        m_isStrictMode = value;
+    }
+
     PutValueFunc customSetter() const
     {
         ASSERT(isCacheableCustom());

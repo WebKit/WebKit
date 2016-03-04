@@ -24,6 +24,7 @@
 #include "JSLocation.h"
 
 #include "JSDOMBinding.h"
+#include "RuntimeApplicationChecks.h"
 #include <runtime/JSFunction.h>
 
 using namespace JSC;
@@ -83,6 +84,12 @@ bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue
     // disclose other parts of the original location.
     if (propertyName != exec->propertyNames().href && !sameDomainAccess)
         return true;
+
+#if PLATFORM(MAC)
+    // FIXME: HipChat tries to set Location.reload which causes an exception to be thrown in strict mode (see <rdar://problem/24931959>).
+    if (applicationIsHipChat())
+        slot.setStrictMode(false);
+#endif
 
     return false;
 }

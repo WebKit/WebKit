@@ -26,25 +26,54 @@
 #include "config.h"
 #include "RuntimeApplicationChecks.h"
 
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
+#include <wtf/text/WTFString.h>
+
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
 #endif
 
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
-    
+
+#if USE(CF)
+static CFStringRef mainBundleIdentifier()
+{
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    if (!mainBundle)
+        return nullptr;
+
+    return CFBundleGetIdentifier(mainBundle);
+}
+#endif
+
+// The application bundle identifier gets set to the UIProcess bundle identifier by the WebProcess and
+// the networking process upon initialization.
+// If not explicitly set, this will return the main bundle identifier which is accurate for WK1 or
+// the WK2 UIProcess.
+static String& applicationBundleIdentifier()
+{
+    ASSERT(RunLoop::isMain());
+
+#if USE(CF)
+    static NeverDestroyed<String> identifier(mainBundleIdentifier());
+#else
+    static NeverDestroyed<String> identifier;
+#endif
+
+    return identifier;
+}
+
+// FIXME: This should probably be renamed to applicationBundleIsEqualTo() and use applicationBundleIdentifier()
+// instead of mainBundleIdentifier() internally. This would have the benefit of working for both WebKit1 and
+// WebKit2.
 static bool mainBundleIsEqualTo(const String& bundleIdentifierString)
 {
     // FIXME: We should consider merging this file with RuntimeApplicationChecksIOS.mm.
     // Then we can remove the PLATFORM(IOS)-guard.
 #if USE(CF) && !PLATFORM(IOS)
-    CFBundleRef mainBundle = CFBundleGetMainBundle();
-    if (!mainBundle)
-        return false;
-
-    CFStringRef bundleIdentifier = CFBundleGetIdentifier(mainBundle);
+    CFStringRef bundleIdentifier = mainBundleIdentifier();
     if (!bundleIdentifier)
         return false;
 
@@ -137,6 +166,18 @@ bool applicationIsSolidStateNetworksDownloader()
 {
     static bool isSolidStateNetworksDownloader = mainBundleIsEqualTo("com.solidstatenetworks.awkhost");
     return isSolidStateNetworksDownloader;
+}
+
+bool applicationIsHipChat()
+{
+    static bool isHipChat = applicationBundleIdentifier() == "com.hipchat.HipChat";
+    ASSERT_WITH_MESSAGE(isHipChat == (applicationBundleIdentifier() == "com.hipchat.HipChat"), "Should not be called before setApplicationBundleIdentifier()");
+    return isHipChat;
+}
+
+void setApplicationBundleIdentifier(const String& bundleIdentifier)
+{
+    applicationBundleIdentifier() = bundleIdentifier;
 }
 
 } // namespace WebCore

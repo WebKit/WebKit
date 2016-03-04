@@ -86,6 +86,7 @@
 #include <WebCore/PageGroup.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
@@ -327,6 +328,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         setShouldUseFontSmoothing(true);
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
+    setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
     SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
 #endif
 

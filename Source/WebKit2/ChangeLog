@@ -1,3 +1,20 @@
+2016-03-03  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r196770): Unable to use HipChat Mac app
+        https://bugs.webkit.org/show_bug.cgi?id=154999
+        <rdar://problem/24931959>
+
+        Reviewed by Darin Adler.
+
+        Have the NetworkProcess and the WebProcess pass the UIProcess bundle
+        identifier to WebCore so that we can do app detection of applications
+        using a WK2 WebView (such as HipChat).
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2016-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Use larger tiles when possible to reduce per-tile painting overhead
