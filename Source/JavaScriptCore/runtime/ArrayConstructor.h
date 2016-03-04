@@ -35,10 +35,10 @@ public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
-    static ArrayConstructor* create(VM& vm, Structure* structure, ArrayPrototype* arrayPrototype, GetterSetter* speciesSymbol)
+    static ArrayConstructor* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype, GetterSetter* speciesSymbol)
     {
         ArrayConstructor* constructor = new (NotNull, allocateCell<ArrayConstructor>(vm.heap)) ArrayConstructor(vm, structure);
-        constructor->finishCreation(vm, arrayPrototype, speciesSymbol);
+        constructor->finishCreation(vm, globalObject, arrayPrototype, speciesSymbol);
         return constructor;
     }
 
@@ -50,7 +50,7 @@ public:
     }
 
 protected:
-    void finishCreation(VM&, ArrayPrototype*, GetterSetter* speciesSymbol);
+    void finishCreation(VM&, JSGlobalObject*, ArrayPrototype*, GetterSetter* speciesSymbol);
 
 private:
     ArrayConstructor(VM&, Structure*);
@@ -61,6 +61,8 @@ private:
 };
 
 JSObject* constructArrayWithSizeQuirk(ExecState*, ArrayAllocationProfile*, JSGlobalObject*, JSValue length, JSValue prototype = JSValue());
+
+EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArrayConstructor(ExecState*);
 
 } // namespace JSC
 

@@ -1,0 +1,10 @@
+PASS result instanceof Array is true
+PASS result instanceof Array is true
+PASS result instanceof Array is true
+PASS result instanceof Array is true
+PASS result instanceof Array is true
+PASS result instanceof Array is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

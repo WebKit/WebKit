@@ -364,6 +364,8 @@
     macro(isBoundFunction) \
     macro(hasInstanceBoundFunction) \
     macro(instanceOf) \
+    macro(isArray) \
+    macro(isArrayConstructor) \
     macro(isSet) \
     macro(isMap) \
     macro(SetIterator) \

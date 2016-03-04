@@ -51,7 +51,6 @@ const ClassInfo ArrayConstructor::s_info = { "Function", &InternalFunction::s_in
 
 /* Source for ArrayConstructor.lut.h
 @begin arrayConstructorTable
-  isArray   arrayConstructorIsArray     DontEnum|Function 1
   of        JSBuiltin                   DontEnum|Function 0
   from      JSBuiltin                   DontEnum|Function 0
 @end
@@ -62,12 +61,13 @@ ArrayConstructor::ArrayConstructor(VM& vm, Structure* structure)
 {
 }
 
-void ArrayConstructor::finishCreation(VM& vm, ArrayPrototype* arrayPrototype, GetterSetter* speciesSymbol)
+void ArrayConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, ArrayPrototype* arrayPrototype, GetterSetter* speciesSymbol)
 {
     Base::finishCreation(vm, arrayPrototype->classInfo()->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
     putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isArray, arrayConstructorIsArray, DontEnum, 1);
 }
 
 bool ArrayConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
@@ -128,6 +128,11 @@ CallType ArrayConstructor::getCallData(JSCell*, CallData& callData)
 EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState* exec)
 {
     return JSValue::encode(jsBoolean(exec->argument(0).inherits(JSArray::info())));
+}
+
+EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArrayConstructor(ExecState* exec)
+{
+    return JSValue::encode(jsBoolean(jsDynamicCast<ArrayConstructor*>(exec->uncheckedArgument(0))));
 }
 
 } // namespace JSC

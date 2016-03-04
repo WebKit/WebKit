@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe srcdoc="<script></script>">
+</iframe>
+<script>
+
+function id(x) { return x; }
+
+testFunctions = [
+    [Array.prototype.concat, []],
+    [Array.prototype.slice, [1,2]],
+    [Array.prototype.splice, []],
+    [Array.prototype.splice, [0,1]],
+    [Array.prototype.map, [id]],
+    [Array.prototype.filter, [id]]
+];
+
+let otherArray = frames[0].Array(10);
+
+var result;
+
+function testFunction(testArgs) {
+    let [func, args] = testArgs;
+
+    result = func.call(otherArray, ...args);
+
+    shouldBeTrue("result instanceof Array");
+}
+
+testFunctions.forEach(testFunction);
+
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

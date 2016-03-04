@@ -169,7 +169,28 @@ function filter(callback /*, thisArg */)
         throw new @TypeError("Array.prototype.filter callback must be a function");
     
     var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
-    var result = [];
+
+    // Do 9.4.2.3 ArraySpeciesCreate
+    var result;
+    var constructor;
+    if (@isArray(array)) {
+        constructor = array.constructor;
+        // We have this check so that if some array from a different global object
+        // calls this map they don't get an array with the Array.prototype of the
+        // other global object.
+        if (@isArrayConstructor(constructor) && @Array !== constructor)
+            constructor = @undefined;
+        if (@isObject(constructor)) {
+            constructor = constructor[@symbolSpecies];
+            if (constructor === null)
+                constructor = @undefined;
+        }
+    }
+    if (constructor === @undefined) {
+        result = [];
+    } else
+        result = new constructor(0);
+
     var nextIndex = 0;
     for (var i = 0; i < length; i++) {
         if (!(i in array))
@@ -200,8 +221,28 @@ function map(callback /*, thisArg */)
         throw new @TypeError("Array.prototype.map callback must be a function");
     
     var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
-    var result = [];
-    result.length = length;
+
+    // Do 9.4.2.3 ArraySpeciesCreate
+    var result;
+    var constructor;
+    if (@isArray(array)) {
+        constructor = array.constructor;
+        // We have this check so that if some array from a different global object
+        // calls this map they don't get an array with the Array.prototype of the
+        // other global object.
+        if (@isArrayConstructor(constructor) && @Array !== constructor)
+            constructor = @undefined;
+        if (@isObject(constructor)) {
+            constructor = constructor[@symbolSpecies];
+            if (constructor === null)
+                constructor = @undefined;
+        }
+    }
+    if (constructor === @undefined) {
+        result = @Array(length);
+    } else
+        result = new constructor(length);
+
     var nextIndex = 0;
     for (var i = 0; i < length; i++) {
         if (!(i in array))
