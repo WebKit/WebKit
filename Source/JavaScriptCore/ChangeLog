@@ -1,3 +1,16 @@
+2016-03-04  Andreas Kling  <akling@apple.com>
+
+        [iOS] Throw away compiled RegExp code when navigating to a new page.
+        <https://webkit.org/b/155015>
+
+        Reviewed by Anders Carlsson.
+
+        Add a mechanism to have the VM discard all RegExp bytecode and JIT code.
+
+        * runtime/VM.cpp:
+        (JSC::VM::deleteAllRegExpCode):
+        * runtime/VM.h:
+
 2016-03-04  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r197531): JavaScriptCore ASan build fails due to weak external symbol

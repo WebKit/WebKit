@@ -558,6 +558,14 @@ void VM::deleteAllLinkedCode()
     });
 }
 
+void VM::deleteAllRegExpCode()
+{
+    whenIdle([this]() {
+        m_regExpCache->deleteAllCode();
+        heap.reportAbandonedObjectGraph();
+    });
+}
+
 void VM::deleteAllCode()
 {
     whenIdle([this]() {
