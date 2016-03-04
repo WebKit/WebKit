@@ -9,6 +9,8 @@ PASS E.getParentStaticValue() is expectedValue
 PASS f.prop is expectedValue + "-" + expectedValue
 PASS f.prop is expectedValue + "-" + "new-value"
 PASS (new F()).getParentValue() is expectedValue
+PASS (new F()).genGetParentValue().next().value is expectedValue
+PASS (new F()).genGetParentValueDeepArrow().next().value is expectedValue
 PASS successfullyParsed is true
 
 TEST COMPLETE

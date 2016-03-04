@@ -63,6 +63,14 @@ class F extends A {
         let arrow = () => () => super.getValue();
         return arrow()();
     }
+    *genGetParentValue() {
+        let arr = () => super.getValue();
+        yield arr();
+    }
+    *genGetParentValueDeepArrow() {
+        let arr = () => () => () => super.getValue();
+        yield arr()()();
+    }
  };
 
 shouldBe('(new B()).getValueParentFunction()', 'expectedValue');
@@ -83,5 +91,8 @@ f.prop = 'new-value';
 shouldBe('f.prop', 'expectedValue + "-" + "new-value"');
 
 shouldBe('(new F()).getParentValue()', 'expectedValue');
+
+shouldBe('(new F()).genGetParentValue().next().value', 'expectedValue');
+shouldBe('(new F()).genGetParentValueDeepArrow().next().value', 'expectedValue');
 
 var successfullyParsed = true;

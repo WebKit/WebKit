@@ -144,6 +144,7 @@ PASS class D { constructor() { function a () { return () => super(); }} threw ex
 PASS class E { constructor() { function b () { return () => super; }; }} threw exception SyntaxError: Cannot reference super..
 PASS class F { constructor() { function c () { return () => super.getValue(); }} threw exception SyntaxError: super can only be used in a method of a derived class..
 PASS class G {}; class G2 extends G { getValue() { function c () { return () => super.getValue(); }} threw exception SyntaxError: super can only be used in a method of a derived class..
+PASS class H {}; class H2 extends H { method() { function *gen() { let arr = () => super.getValue(); arr(); } } } threw exception SyntaxError: super can only be used in a method of a derived class..
 PASS successfullyParsed is true
 
 TEST COMPLETE

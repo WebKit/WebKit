@@ -170,6 +170,7 @@ struct Scope {
         , m_strictMode(strictMode)
         , m_isFunction(isFunction)
         , m_isGenerator(isGenerator)
+        , m_isGeneratorBoundary(false)
         , m_isArrowFunction(isArrowFunction)
         , m_isArrowFunctionBoundary(false)
         , m_isLexicalScope(false)
@@ -196,6 +197,7 @@ struct Scope {
         , m_strictMode(rhs.m_strictMode)
         , m_isFunction(rhs.m_isFunction)
         , m_isGenerator(rhs.m_isGenerator)
+        , m_isGeneratorBoundary(rhs.m_isGeneratorBoundary)
         , m_isArrowFunction(rhs.m_isArrowFunction)
         , m_isArrowFunctionBoundary(rhs.m_isArrowFunctionBoundary)
         , m_isLexicalScope(rhs.m_isLexicalScope)
@@ -287,6 +289,7 @@ struct Scope {
     bool isFunction() const { return m_isFunction; }
     bool isFunctionBoundary() const { return m_isFunctionBoundary; }
     bool isGenerator() const { return m_isGenerator; }
+    bool isGeneratorBoundary() const { return m_isGeneratorBoundary; }
 
     bool hasArguments() const { return m_hasArguments; }
 
@@ -624,6 +627,7 @@ private:
         m_hasArguments = true;
         setIsLexicalScope();
         m_isGenerator = false;
+        m_isGeneratorBoundary = false;
         m_isArrowFunctionBoundary = false;
         m_isArrowFunction = false;
     }
@@ -638,6 +642,7 @@ private:
     {
         setIsFunction();
         m_isGenerator = true;
+        m_isGeneratorBoundary = true;
         m_hasArguments = false;
     }
     
@@ -664,6 +669,7 @@ private:
     bool m_strictMode : 1;
     bool m_isFunction : 1;
     bool m_isGenerator : 1;
+    bool m_isGeneratorBoundary : 1;
     bool m_isArrowFunction : 1;
     bool m_isArrowFunctionBoundary : 1;
     bool m_isLexicalScope : 1;
@@ -929,11 +935,11 @@ private:
         return ScopeRef(&m_scopeStack, i);
     }
 
-    ScopeRef closestParentNonArrowFunctionNonLexicalScope()
+    ScopeRef closestParentOrdinaryFunctionNonLexicalScope()
     {
         unsigned i = m_scopeStack.size() - 1;
         ASSERT(i < m_scopeStack.size() && m_scopeStack.size());
-        while (i && (!m_scopeStack[i].isFunctionBoundary() || m_scopeStack[i].isArrowFunctionBoundary()))
+        while (i && (!m_scopeStack[i].isFunctionBoundary() || m_scopeStack[i].isGeneratorBoundary() || m_scopeStack[i].isArrowFunctionBoundary()))
             i--;
         return ScopeRef(&m_scopeStack, i);
     }

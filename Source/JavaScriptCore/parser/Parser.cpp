@@ -2061,14 +2061,14 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         if (functionScope->hasDirectSuper()) {
             ConstructorKind functionConstructorKind = functionBodyType == StandardFunctionBodyBlock
                 ? constructorKind
-                : closestParentNonArrowFunctionNonLexicalScope()->constructorKind();
+                : closestParentOrdinaryFunctionNonLexicalScope()->constructorKind();
             semanticFailIfTrue(functionConstructorKind == ConstructorKind::None, "Cannot call super() outside of a class constructor");
             semanticFailIfTrue(functionConstructorKind != ConstructorKind::Derived, "Cannot call super() in a base class constructor");
         }
         if (functionScope->needsSuperBinding()) {
             SuperBinding functionSuperBinding = functionBodyType == StandardFunctionBodyBlock
                 ? expectedSuperBinding
-                : closestParentNonArrowFunctionNonLexicalScope()->expectedSuperBinding();
+                : closestParentOrdinaryFunctionNonLexicalScope()->expectedSuperBinding();
             semanticFailIfTrue(functionSuperBinding == SuperBinding::NotNeeded, "super can only be used in a method of a derived class");
         }
     }

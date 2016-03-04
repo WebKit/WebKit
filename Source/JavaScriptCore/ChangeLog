@@ -1,3 +1,24 @@
+2016-03-04  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Lexical bind "super" inside of the arrow function in generator.
+        https://bugs.webkit.org/show_bug.cgi?id=152575
+
+        Reviewed by Yusuke Suzuki.
+
+        Added support of the 'SuperProperty' in arrow function within of the generator 
+        method of class. Before patch parser  did not recognize that current arrow function 
+        is declated inside of the generator and raise SyntaxError.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::isGeneratorBoundary):
+        (JSC::Scope::setIsFunction):
+        (JSC::Scope::setIsGenerator):
+        (JSC::Parser::closestParentOrdinaryFunctionNonLexicalScope):
+        * tests/stress/arrowfunction-lexical-bind-superproperty.js:
+
 2016-03-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG/FTL should inline accesses to RegExpObject::m_lastIndex

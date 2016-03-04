@@ -64,5 +64,6 @@ shouldThrow('class D { constructor() { function a () { return () => super(); }}'
 shouldThrow('class E { constructor() { function b () { return () => super; }; }}', '"SyntaxError: Cannot reference super."');
 shouldThrow('class F { constructor() { function c () { return () => super.getValue(); }}', '"SyntaxError: super can only be used in a method of a derived class."');
 shouldThrow('class G {}; class G2 extends G { getValue() { function c () { return () => super.getValue(); }}', '"SyntaxError: super can only be used in a method of a derived class."');
+shouldThrow('class H {}; class H2 extends H { method() { function *gen() { let arr = () => super.getValue(); arr(); } } }', '"SyntaxError: super can only be used in a method of a derived class."');
 
 var successfullyParsed = true;

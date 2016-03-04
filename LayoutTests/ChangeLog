@@ -1,3 +1,15 @@
+2016-03-04  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Lexical bind "super" inside of the arrow function in generator.
+        https://bugs.webkit.org/show_bug.cgi?id=152575
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/arrowfunction-superproperty-expected.txt:
+        * js/arrowfunction-syntax-errors-expected.txt:
+        * js/script-tests/arrowfunction-superproperty.js:
+        * js/script-tests/arrowfunction-syntax-errors.js:
+
 2016-03-03  Antti Koivisto  <antti@apple.com>
 
         ComposedTreeIterator may traverse slotted nodes multiple times
