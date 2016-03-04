@@ -273,7 +273,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
 void NetworkProcess::clearCachedCredentials()
 {
     NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
-#if USE(NETWORK_SESSION)
+#if USE(NETWORK_SESSION) && !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
     NetworkSession::defaultSession().clearCredentials();
 #endif
 }

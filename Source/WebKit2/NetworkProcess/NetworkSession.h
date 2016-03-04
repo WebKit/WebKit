@@ -53,9 +53,12 @@ public:
     NetworkSession(Type, WebCore::SessionID, CustomProtocolManager*);
     ~NetworkSession();
 
+    WebCore::SessionID sessionID() { return m_sessionID; }
     static void setCustomProtocolManager(CustomProtocolManager*);
     static NetworkSession& defaultSession();
+#if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
     void clearCredentials();
+#endif
 
     NetworkDataTask* dataTaskForIdentifier(NetworkDataTask::TaskIdentifier, WebCore::StoredCredentials);
 
@@ -64,6 +67,7 @@ public:
     DownloadID takeDownloadID(NetworkDataTask::TaskIdentifier);
     
 private:
+    WebCore::SessionID m_sessionID;
     HashMap<NetworkDataTask::TaskIdentifier, NetworkDataTask*> m_dataTaskMapWithCredentials;
     HashMap<NetworkDataTask::TaskIdentifier, NetworkDataTask*> m_dataTaskMapWithoutCredentials;
     HashMap<NetworkDataTask::TaskIdentifier, DownloadID> m_downloadMap;

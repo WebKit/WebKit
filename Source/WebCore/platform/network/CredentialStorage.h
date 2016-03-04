@@ -43,9 +43,9 @@ public:
     WEBCORE_EXPORT static CredentialStorage& defaultCredentialStorage();
 
     // WebCore session credential storage.
-    void set(const Credential&, const ProtectionSpace&, const URL&);
+    WEBCORE_EXPORT void set(const Credential&, const ProtectionSpace&, const URL&);
     WEBCORE_EXPORT Credential get(const ProtectionSpace&);
-    void remove(const ProtectionSpace&);
+    WEBCORE_EXPORT void remove(const ProtectionSpace&);
 
     // OS persistent storage.
     WEBCORE_EXPORT Credential getFromPersistentStorage(const ProtectionSpace&);
@@ -58,7 +58,7 @@ public:
 
     // These methods work for authentication schemes that support sending credentials without waiting for a request. E.g., for HTTP Basic authentication scheme
     // a client should assume that all paths at or deeper than the depth of a known protected resource share are within the same protection space.
-    bool set(const Credential&, const URL&); // Returns true if the URL corresponds to a known protection space, so credentials could be updated.
+    WEBCORE_EXPORT bool set(const Credential&, const URL&); // Returns true if the URL corresponds to a known protection space, so credentials could be updated.
     WEBCORE_EXPORT Credential get(const URL&);
 
 private:

@@ -51,7 +51,7 @@ public:
 
     bool encodingRequiresPlatformData() const { return false; }
 
-    static bool compare(const Credential&, const Credential&);
+    WEBCORE_EXPORT static bool compare(const Credential&, const Credential&);
 
 protected:
     WEBCORE_EXPORT CredentialBase();

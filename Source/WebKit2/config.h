@@ -76,6 +76,11 @@
 #ifndef USE_NETWORK_SESSION
 #define USE_NETWORK_SESSION 0
 #endif
+
+// FIXME: We should work towards not using CredentialStorage in WebKit2 to not have problems with digest authentication.
+#ifndef USE_CREDENTIAL_STORAGE_WITH_NETWORK_SESSION
+#define USE_CREDENTIAL_STORAGE_WITH_NETWORK_SESSION 1
+#endif
 #endif
 
 #ifndef HAVE_SEC_ACCESS_CONTROL

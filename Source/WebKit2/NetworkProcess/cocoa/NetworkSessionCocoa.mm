@@ -119,16 +119,30 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 {
     auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
     if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials)) {
+        WebCore::AuthenticationChallenge authenticationChallenge(challenge);
         auto completionHandlerCopy = Block_copy(completionHandler);
-        auto challengeCompletionHandler = [completionHandlerCopy](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
+        auto sessionID = _session->sessionID();
+        auto challengeCompletionHandler = [completionHandlerCopy, sessionID, authenticationChallenge](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
         {
-            completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
+#if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
+            UNUSED_PARAM(sessionID);
+            UNUSED_PARAM(authenticationChallenge);
+#else
+            if (credential.persistence() == WebCore::CredentialPersistenceForSession && authenticationChallenge.protectionSpace().authenticationScheme() != WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+
+                WebCore::Credential nonPersistentCredential(credential.user(), credential.password(), WebCore::CredentialPersistenceNone);
+                WebCore::URL urlToStore;
+                if (authenticationChallenge.failureResponse().httpStatusCode() == 401)
+                    urlToStore = authenticationChallenge.failureResponse().url();
+                if (auto storageSession = WebKit::SessionTracker::storageSession(sessionID))
+                    storageSession->credentialStorage().set(nonPersistentCredential, authenticationChallenge.protectionSpace(), urlToStore);
+
+                completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), nonPersistentCredential.nsCredential());
+            } else
+#endif
+                completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
             Block_release(completionHandlerCopy);
         };
-        
-        if (networkDataTask->tryPasswordBasedAuthentication(challenge, challengeCompletionHandler))
-            return;
-        
         networkDataTask->didReceiveChallenge(challenge, challengeCompletionHandler);
     }
 }
@@ -243,6 +257,7 @@ NetworkSession& NetworkSession::defaultSession()
 }
 
 NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID, CustomProtocolManager* customProtocolManager)
+    : m_sessionID(sessionID)
 {
     m_sessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this]);
 
@@ -272,6 +287,7 @@ NetworkSession::~NetworkSession()
     [m_sessionWithoutCredentialStorage invalidateAndCancel];
 }
 
+#if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
 void NetworkSession::clearCredentials()
 {
     ASSERT(m_dataTaskMapWithCredentials.isEmpty());
@@ -279,6 +295,7 @@ void NetworkSession::clearCredentials()
     ASSERT(m_downloadMap.isEmpty());
     m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:m_sessionWithCredentialStorage.get().configuration delegate:static_cast<id>(m_sessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 }
+#endif
 
 NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIdentifier taskIdentifier, WebCore::StoredCredentials storedCredentials)
 {

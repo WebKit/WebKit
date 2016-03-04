@@ -27,6 +27,7 @@
 #define NetworkDataTask_h
 
 #include "SandboxExtension.h"
+#include <WebCore/Credential.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ResourceHandleTypes.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -122,12 +123,13 @@ public:
     const String& pendingDownloadLocation() { return m_pendingDownloadLocation; }
     WebCore::ResourceRequest currentRequest();
     String suggestedFilename();
-    bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler);
     void willPerformHTTPRedirection(const WebCore::ResourceResponse&, WebCore::ResourceRequest&&, RedirectCompletionHandler);
     void transferSandboxExtensionToDownload(Download&);
     
 private:
     NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ContentSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
+
+    bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler);
     
     enum FailureType {
         NoFailure,
@@ -145,6 +147,9 @@ private:
     DownloadID m_pendingDownloadID;
     String m_user;
     String m_password;
+#if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
+    WebCore::Credential m_initialCredential;
+#endif
     WebCore::StoredCredentials m_storedCredentials;
     String m_lastHTTPMethod;
     String m_pendingDownloadLocation;

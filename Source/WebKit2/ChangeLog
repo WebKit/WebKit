@@ -1,3 +1,53 @@
+2016-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Use CredentialStorage with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154939
+
+        Reviewed by Darin Adler.
+
+        * config.h:
+        Added compile-time flag to help us be able to keep track and remove this code when we can.
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::pendingDownloadLocation):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::clearCachedCredentials):
+        (WebKit::NetworkProcess::ensurePrivateBrowsingSession):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::sessionID):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::applyBasicAuthorizationHeader):
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        Use a credential storage and preemptively apply basic authentication headers if we have credentials from the storage.
+        This is analogous to code in ResourceHandle::createNSURLConnection.
+        
+        (WebKit::NetworkDataTask::didReceiveChallenge):
+        Make this look more like ResourceHandle::didReceiveAuthenticationChallenge.
+        The call to tryPasswordBasedAuthentication was moved from the delegate callback to here.
+        
+        (WebKit::NetworkDataTask::willPerformHTTPRedirection):
+        Use credentials from the credential storage if they exist.  This is analogous to code in ResourceHandle::willSendRequest.
+        
+        (WebKit::NetworkDataTask::tryPasswordBasedAuthentication):
+        Use credentials from the credential storage if they exist.  This is analogous to code in ResourceHandle::tryHandlePasswordBasedAuthentication.
+        
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        If we are given a credential with CredentialPersistenceForSession, put it in the credential storage and give 
+        CFNetwork a credential with CredentialPersistenceNone so it won't automatically be used again until the credential
+        storage says its ok to use again.  This gives us the ability to clear session credentials when logout credentials are used.
+        This is analogous to code in ResourceHandle::receivedCredential.
+        
+        (WebKit::NetworkSession::defaultSession):
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::dataTaskForIdentifier):
+        (WebKit::NetworkSession::clearCredentials): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::clearCachedCredentials):
+        (WebKit::WebProcess::focusedWebPage):
+        We no longer need to clear credentials from the NSURLSessions because we don't store session credentials in them.
+        Instead, calling CredentialStorage.clearCredentials is sufficient.
+
 2016-03-03  Andy Estes  <aestes@apple.com>
 
         Adopt CFNetwork storage partitioning SPI
