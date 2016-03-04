@@ -1,3 +1,16 @@
+2016-03-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Use std::make_unique<> when creating std::unique_ptr<>
+        https://bugs.webkit.org/show_bug.cgi?id=154574
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::open):
+        * NetworkProcess/cache/NetworkCacheStatistics.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createColorChooser):
+
 2016-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Move SPI to CFNetworkSPI.h

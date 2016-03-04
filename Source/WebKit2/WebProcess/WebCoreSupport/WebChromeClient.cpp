@@ -701,7 +701,7 @@ String WebChromeClient::generateReplacementFile(const String& path)
 #if ENABLE(INPUT_TYPE_COLOR)
 std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient* client, const Color& initialColor)
 {
-    return std::unique_ptr<WebColorChooser>(new WebColorChooser(m_page, client, initialColor));
+    return std::make_unique<WebColorChooser>(m_page, client, initialColor);
 }
 #endif
 

@@ -78,7 +78,7 @@ std::unique_ptr<Statistics> Statistics::open(const String& cachePath)
     ASSERT(RunLoop::isMain());
 
     String databasePath = WebCore::pathByAppendingComponent(cachePath, StatisticsDatabaseName);
-    return std::unique_ptr<Statistics>(new Statistics(databasePath));
+    return std::make_unique<Statistics>(databasePath);
 }
 
 Statistics::Statistics(const String& databasePath)

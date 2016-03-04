@@ -44,6 +44,7 @@ namespace NetworkCache {
 class Statistics {
 public:
     static std::unique_ptr<Statistics> open(const String& cachePath);
+    explicit Statistics(const String& databasePath);
 
     void clear();
 
@@ -55,8 +56,6 @@ public:
     void recordRevalidationSuccess(uint64_t webPageID, const Key&, const WebCore::ResourceRequest&);
 
 private:
-    explicit Statistics(const String& databasePath);
-
     WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
 
     void initialize(const String& databasePath);
