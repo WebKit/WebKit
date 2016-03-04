@@ -1,5 +1,13 @@
 2016-03-04  Alex Christensen  <achristensen@webkit.org>
 
+        Release build fix after r197572.
+        https://bugs.webkit.org/show_bug.cgi?id=154993
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]):
+
+2016-03-04  Alex Christensen  <achristensen@webkit.org>
+
         Use NSURLSession for loading in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=154993
 

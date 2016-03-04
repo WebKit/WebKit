@@ -193,7 +193,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
     auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    ASSERT_WITH_MESSAGE(!_session->dataTaskForIdentifier([downloadTask taskIdentifier], storedCredentials), "The NetworkDataTask should be destroyed immediately after didBecomeDownloadTask returns");
+    ASSERT_WITH_MESSAGE_UNUSED(storedCredentials, !_session->dataTaskForIdentifier([downloadTask taskIdentifier], storedCredentials), "The NetworkDataTask should be destroyed immediately after didBecomeDownloadTask returns");
 
     auto downloadID = _session->downloadID([downloadTask taskIdentifier]);
     if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID))
