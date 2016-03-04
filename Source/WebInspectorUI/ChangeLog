@@ -1,5 +1,23 @@
 2016-03-03  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Selected range path component should be zero time corrected
+        https://bugs.webkit.org/show_bug.cgi?id=154950
+        <rdar://problem/24947022>
+
+        Reviewed by Timothy Hatcher.
+
+        Subtracts zero time from TimelineRange start and end values, and corrects
+        a cosmetic issue in TimelineRuler which showed selection handle tooltips
+        that weren't adjusted for the ruler's zero time.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._updateSelection):
+
+2016-03-03  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Events and Frames mode switch does not fully switch until first zoom
         https://bugs.webkit.org/show_bug.cgi?id=154971
         <rdar://problem/24955871>

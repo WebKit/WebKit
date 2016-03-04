@@ -631,8 +631,8 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
         this.element.classList.toggle("both-handles-clamped", startTimeClamped && endTimeClamped);
 
-        let formattedStartTimeText = this._formatDividerLabelText(this._selectionStartTime);
-        let formattedEndTimeText = this._formatDividerLabelText(this._selectionEndTime);
+        let formattedStartTimeText = this._formatDividerLabelText(this._selectionStartTime - this._zeroTime);
+        let formattedEndTimeText = this._formatDividerLabelText(this._selectionEndTime - this._zeroTime);
 
         let newLeftPosition = Number.constrain((this._selectionStartTime - this._startTime) / duration, 0, 1);
         this._updatePositionOfElement(this._leftShadedAreaElement, newLeftPosition, visibleWidth, "width");

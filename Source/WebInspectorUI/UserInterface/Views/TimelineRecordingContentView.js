@@ -693,8 +693,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
             selectedPathComponent = this._entireRecordingPathComponent;
         else {
             let timelineRange = this._timelineSelectionPathComponent.representedObject;
-            timelineRange.startValue = this.currentTimelineView.startTime;
-            timelineRange.endValue = this.currentTimelineView.endTime;
+            timelineRange.startValue = this.currentTimelineView.startTime - this.currentTimelineView.zeroTime;
+            timelineRange.endValue = this.currentTimelineView.endTime - this.currentTimelineView.zeroTime;
 
             this._updateTimeRangePathComponents();
             selectedPathComponent = this._timelineSelectionPathComponent;
