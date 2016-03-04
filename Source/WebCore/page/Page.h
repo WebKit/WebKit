@@ -533,7 +533,7 @@ private:
     void hiddenPageDOMTimerThrottlingStateChanged();
     void setTimerThrottlingState(TimerThrottlingState);
     void updateTimerThrottlingState();
-    void setDOMTimerAlignmentInterval(double);
+    void updateDOMTimerAlignmentInterval();
     void timerAlignmentIntervalIncreaseTimerFired();
 
     const std::unique_ptr<Chrome> m_chrome;
@@ -621,7 +621,7 @@ private:
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
     TimerThrottlingState m_timerThrottlingState { TimerThrottlingState::Disabled };
-    double m_timerThrottlingEnabledTime { 0 };
+    double m_timerThrottlingStateLastChangedTime { 0 };
     double m_timerAlignmentInterval;
     Timer m_timerAlignmentIntervalIncreaseTimer;
     double m_timerAlignmentIntervalIncreaseLimit { 0 };

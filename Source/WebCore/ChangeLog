@@ -1,3 +1,30 @@
+2016-03-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Unify determination of page timer alignment
+        https://bugs.webkit.org/show_bug.cgi?id=155031
+
+        Reviewed by Chris Dumez.
+
+        Currently this is scattered throughout Page - sites that call setDOMTimerAlignmentInterval have
+        to determine the correct alignment interval. Instead, replace setDOMTimerAlignmentInterval with
+        updateDOMTimerAlignmentInterval, and unify the policy decision here.
+
+        * page/Page.cpp:
+        (WebCore::Page::setTimerThrottlingState):
+            - setDOMTimerAlignmentInterval -> updateDOMTimerAlignmentInterval
+              Also, to simplify always record the timestamp when the state changes.
+        (WebCore::Page::setTimerAlignmentIntervalIncreaseLimit):
+            - setDOMTimerAlignmentInterval -> updateDOMTimerAlignmentInterval
+        (WebCore::Page::updateDOMTimerAlignmentInterval):
+            - Was setDOMTimerAlignmentInterval, now determines the new alignment value.
+        (WebCore::Page::timerAlignmentIntervalIncreaseTimerFired):
+            - setDOMTimerAlignmentInterval -> updateDOMTimerAlignmentInterval
+        (WebCore::Page::setDOMTimerAlignmentInterval): Deleted.
+            - Removed, became updateDOMTimerAlignmentInterval.
+        * page/Page.h:
+            - setDOMTimerAlignmentInterval -> updateDOMTimerAlignmentInterval
+              m_timerThrottlingEnabledTime -> m_timerThrottlingStateLastChangedTime
+
 2016-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Fix crash seen in iOS simulator tests
