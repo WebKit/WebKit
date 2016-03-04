@@ -2743,7 +2743,7 @@
 		7C5343FC17B74B63004232F0 /* JSMediaQueryListListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5343FA17B74B63004232F0 /* JSMediaQueryListListener.cpp */; };
 		7C5343FD17B74B63004232F0 /* JSMediaQueryListListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5343FB17B74B63004232F0 /* JSMediaQueryListListener.h */; };
 		7C5F28FB1A827D8400C0F31F /* HTMLAttachmentElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5F28F91A827D8400C0F31F /* HTMLAttachmentElement.cpp */; };
-		7C5F28FC1A827D8400C0F31F /* HTMLAttachmentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5F28FA1A827D8400C0F31F /* HTMLAttachmentElement.h */; };
+		7C5F28FC1A827D8400C0F31F /* HTMLAttachmentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5F28FA1A827D8400C0F31F /* HTMLAttachmentElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C73FB07191EF417007DE061 /* UserMessageHandlersNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C73FB05191EF416007DE061 /* UserMessageHandlersNamespace.cpp */; };
 		7C73FB08191EF417007DE061 /* UserMessageHandlersNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C73FB06191EF417007DE061 /* UserMessageHandlersNamespace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C73FB0C191EF5A8007DE061 /* JSUserMessageHandlersNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C73FB0A191EF5A8007DE061 /* JSUserMessageHandlersNamespace.cpp */; };

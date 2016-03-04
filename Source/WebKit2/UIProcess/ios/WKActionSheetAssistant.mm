@@ -281,6 +281,8 @@ static LSAppLink *appLinkForURL(NSURL *url)
 
     NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
+    if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()])
+        return;
     auto defaultActions = [self defaultActionsForImageSheet:elementInfo.get()];
 
     RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTFMove(defaultActions)];
@@ -395,6 +397,9 @@ static LSAppLink *appLinkForURL(NSURL *url)
         return;
 
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
+    if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()])
+        return;
+
     auto defaultActions = [self defaultActionsForLinkSheet:elementInfo.get()];
 
     RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTFMove(defaultActions)];

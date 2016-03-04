@@ -37,10 +37,10 @@ class File;
 class HTMLAttachmentElement final : public HTMLElement {
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
-    File* file() const;
+    WEBCORE_EXPORT File* file() const;
     void setFile(File*);
 
-    String attachmentTitle() const;
+    WEBCORE_EXPORT String attachmentTitle() const;
     String attachmentType() const;
 
 private:

@@ -45,6 +45,7 @@ struct InteractionInformationAtPosition {
     bool touchCalloutEnabled { true };
     bool isLink { false };
     bool isImage { false };
+    bool isAttachment { false };
     bool isAnimatedImage { false };
     bool isElement { false };
 #if ENABLE(DATA_DETECTION)

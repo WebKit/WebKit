@@ -48,6 +48,7 @@ void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) con
     encoder << touchCalloutEnabled;
     encoder << isLink;
     encoder << isImage;
+    encoder << isAttachment;
     encoder << isAnimatedImage;
     encoder << isElement;
     encoder << url;
@@ -98,6 +99,9 @@ bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, Int
     if (!decoder.decode(result.isImage))
         return false;
 
+    if (!decoder.decode(result.isAttachment))
+        return false;
+    
     if (!decoder.decode(result.isAnimatedImage))
         return false;
     

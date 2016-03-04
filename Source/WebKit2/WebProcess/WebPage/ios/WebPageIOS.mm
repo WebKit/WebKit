@@ -56,12 +56,14 @@
 #import <WebCore/Element.h>
 #import <WebCore/ElementAncestorIterator.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/File.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GeometryUtilities.h>
+#import <WebCore/HTMLAttachmentElement.h>
 #import <WebCore/HTMLElementTypeHelpers.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLImageElement.h>
@@ -2243,8 +2245,16 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
             m_page->focusController().setFocusedFrame(result.innerNodeFrame());
             info.bounds = renderer->absoluteBoundingBoxRect(true);
             // We don't want to select blocks that are larger than 97% of the visible area of the document.
-            const static CGFloat factor = 0.97;
-            info.isSelectable = renderer->style().userSelect() != SELECT_NONE && info.bounds.height() < result.innerNodeFrame()->view()->unobscuredContentRect().height() * factor;
+            if (is<HTMLAttachmentElement>(*hitNode)) {
+                info.isAttachment = true;
+                const HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(*hitNode);
+                info.title = attachment.attachmentTitle();
+                if (attachment.file())
+                    info.url = downcast<HTMLAttachmentElement>(*hitNode).file()->path();
+            } else {
+                const static CGFloat factor = 0.97;
+                info.isSelectable = renderer->style().userSelect() != SELECT_NONE && info.bounds.height() < result.innerNodeFrame()->view()->unobscuredContentRect().height() * factor;
+            }
         }
     }
 }

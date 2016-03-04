@@ -1,3 +1,36 @@
+2016-03-03  Enrica Casucci  <enrica@apple.com>
+
+        Add a mechanism to customize the long press action.
+        https://bugs.webkit.org/show_bug.cgi?id=154995
+        rdar://problem/24823732
+
+        Reviewed by Tim Horton.
+
+        Adding a new private delegate method to allow clients to
+        replace the action sheet displayed for images and links.
+        The change also adds support for attachment elements.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h:
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showImageSheet]):
+        (-[WKContentView _showAttachmentSheet]):
+        (-[WKContentView _showLinkSheet]):
+        (-[WKContentView _actionForLongPress]):
+        (-[WKContentView actionSheetAssistant:shouldIncludeAppLinkActionsForElement:]):
+        (-[WKContentView actionSheetAssistant:showCustomSheetForElement:]):
+        (-[WKContentView actionSheetAssistant:decideActionsForElement:defaultActions:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2016-03-04  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] Gather resource load statistics

@@ -1083,6 +1083,14 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     [_actionSheetAssistant showImageSheet];
 }
 
+- (void)_showAttachmentSheet
+{
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    
+    if ([uiDelegate respondsToSelector:@selector(_webView:showCustomSheetForElement:)])
+        [uiDelegate _webView:_webView showCustomSheetForElement:[[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:[NSURL _web_URLWithWTFString:_positionInformation.url] location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:nil]];
+}
+
 - (void)_showLinkSheet
 {
     [_actionSheetAssistant showLinkSheet];
@@ -1107,6 +1115,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             return @selector(_showDataDetectorsSheet);
         return @selector(_showLinkSheet);
     }
+    
+    if (_positionInformation.isAttachment)
+        return @selector(_showAttachmentSheet);
 
     return nil;
 }
@@ -3544,6 +3555,21 @@ static bool isAssistableInputType(InputType type)
     return _page->uiClient().shouldIncludeAppLinkActionsForElement(element);
 }
 #endif
+
+- (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant showCustomSheetForElement:(_WKActivatedElementInfo *)element
+{
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    
+    if ([uiDelegate respondsToSelector:@selector(_webView:showCustomSheetForElement:)]) {
+        if ([uiDelegate _webView:_webView showCustomSheetForElement:element]) {
+            // Prevent tap-and-hold and drag.
+            [UIApp _cancelAllTouches];
+            return YES;
+        }
+    }
+
+    return NO;
+}
 
 - (RetainPtr<NSArray>)actionSheetAssistant:(WKActionSheetAssistant *)assistant decideActionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions
 {

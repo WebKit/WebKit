@@ -52,6 +52,7 @@ struct InteractionInformationAtPosition;
 - (RetainPtr<NSArray>)actionSheetAssistant:(WKActionSheetAssistant *)assistant decideActionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions;
 
 @optional
+- (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant showCustomSheetForElement:(_WKActivatedElementInfo *)element;
 - (void)updatePositionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant willStartInteractionWithElement:(_WKActivatedElementInfo *)element;
 - (void)actionSheetAssistantDidStopInteraction:(WKActionSheetAssistant *)assistant;

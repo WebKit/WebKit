@@ -1,3 +1,16 @@
+2016-03-03  Enrica Casucci  <enrica@apple.com>
+
+        Add a mechanism to customize the long press action.
+        https://bugs.webkit.org/show_bug.cgi?id=154995
+        rdar://problem/24823732
+
+        Reviewed by Tim Horton.
+
+        We want to allow long press on attachment elements as well.
+
+        * WebCore.xcodeproj/project.pbxproj: Making HTMLAttachmentElement.h private.
+        * html/HTMLAttachmentElement.h: Adding exported functions.
+
 2016-03-04  Andreas Kling  <akling@apple.com>
 
         [iOS] Throw away compiled RegExp code when navigating to a new page.
