@@ -40,10 +40,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/text/Base64.h>
 
-@interface NSURLSessionTask ()
-@property (readwrite, copy) NSString *_pathToDownloadTaskFile;
-@end
-
 namespace WebKit {
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
 static void applyBasicAuthorizationHeader(WebCore::ResourceRequest& request, const WebCore::Credential& credential)

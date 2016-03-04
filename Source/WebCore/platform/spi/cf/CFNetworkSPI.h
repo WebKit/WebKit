@@ -113,6 +113,7 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @end
 
 @interface NSURLSessionTask ()
+@property (readwrite, copy) NSString *_pathToDownloadTaskFile;
 @property (copy) NSString *_storagePartitionIdentifier;
 @end
 #endif
