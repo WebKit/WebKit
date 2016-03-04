@@ -1,6 +1,6 @@
-FAIL div did not honor 2D snap points. (diagonal glide)
-FAIL div did not honor 2D snap points. (diagonal snap)
-PASS div successfully snapped after dragging along one axis and then scrolling in the other.
+PASS div successfully scrolled diagonally.
+PASS div successfully snapped diagonally.
+FAIL div did not honor 2D snap points. (single axis scroll followed by flick on other axis)
 PASS successfullyParsed is true
 
 TEST COMPLETE
