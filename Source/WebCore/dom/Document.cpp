@@ -532,7 +532,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_scheduledTasksAreSuspended(false)
     , m_visualUpdatesAllowed(true)
     , m_visualUpdatesSuppressionTimer(*this, &Document::visualUpdatesSuppressionTimerFired)
-    , m_sharedObjectPoolClearTimer(*this, &Document::sharedObjectPoolClearTimerFired)
+    , m_sharedObjectPoolClearTimer(*this, &Document::clearSharedObjectPool)
 #ifndef NDEBUG
     , m_didDispatchViewportPropertiesChanged(false)
 #endif
@@ -4599,6 +4599,7 @@ void Document::setInPageCache(bool flag)
 
         clearStyleResolver();
         clearSelectorQueryCache();
+        clearSharedObjectPool();
     } else {
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
@@ -5045,9 +5046,10 @@ void Document::finishedParsing()
     m_cachedResourceLoader->clearPreloads();
 }
 
-void Document::sharedObjectPoolClearTimerFired()
+void Document::clearSharedObjectPool()
 {
     m_sharedObjectPool = nullptr;
+    m_sharedObjectPoolClearTimer.stop();
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)

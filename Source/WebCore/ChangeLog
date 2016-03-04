@@ -1,3 +1,26 @@
+2016-03-04  Andreas Kling  <akling@apple.com>
+
+        Drop DocumentSharedObjectPool immediately when going into PageCache.
+        <https://webkit.org/b/154986>
+
+        Reviewed by Antti Koivisto.
+
+        The DocumentSharedObjectPool is a weirdly efficient little optimization
+        that deduplicates ElementData during the first 10s of a Document's lifetime.
+        While it's up, every ElementData created will persist so it can be used for
+        deduplication.
+
+        If a Document goes into the PageCache while its shared object pool is still
+        alive, we can just kill it right away. This will sometimes allow us to free
+        a bunch of ElementData sooner.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setInPageCache):
+        (WebCore::Document::clearSharedObjectPool):
+        (WebCore::Document::sharedObjectPoolClearTimerFired): Deleted.
+        * dom/Document.h:
+
 2016-03-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove PassRefPtr from ThreadableLoader and relatives
