@@ -1,5 +1,36 @@
 2016-03-04  Alex Christensen  <achristensen@webkit.org>
 
+        Remove vcxproj build system
+        https://bugs.webkit.org/show_bug.cgi?id=154388
+
+        Rubber-stamped by Brent Fulgham.
+
+        * WTF.vcxproj/WTF.submit.sln: Removed.
+        * WTF.vcxproj/WTF.vcxproj: Removed.
+        * WTF.vcxproj/WTF.vcxproj.filters: Removed.
+        * WTF.vcxproj/WTFCFLite.props: Removed.
+        * WTF.vcxproj/WTFCommon.props: Removed.
+        * WTF.vcxproj/WTFCoreFoundation.props: Removed.
+        * WTF.vcxproj/WTFDebug.props: Removed.
+        * WTF.vcxproj/WTFDebugWinCairo.props: Removed.
+        * WTF.vcxproj/WTFGenerated.make: Removed.
+        * WTF.vcxproj/WTFGenerated.vcxproj: Removed.
+        * WTF.vcxproj/WTFGenerated.vcxproj.filters: Removed.
+        * WTF.vcxproj/WTFGeneratedCommon.props: Removed.
+        * WTF.vcxproj/WTFGeneratedDebug.props: Removed.
+        * WTF.vcxproj/WTFGeneratedProduction.props: Removed.
+        * WTF.vcxproj/WTFGeneratedRelease.props: Removed.
+        * WTF.vcxproj/WTFPostBuild.cmd: Removed.
+        * WTF.vcxproj/WTFPreBuild.cmd: Removed.
+        * WTF.vcxproj/WTFProduction.props: Removed.
+        * WTF.vcxproj/WTFRelease.props: Removed.
+        * WTF.vcxproj/WTFReleaseWinCairo.props: Removed.
+        * WTF.vcxproj/build-generated-files.pl: Removed.
+        * WTF.vcxproj/copy-files.cmd: Removed.
+        * WTF.vcxproj/work-around-vs-dependency-tracking-bugs.py: Removed.
+
+2016-03-04  Alex Christensen  <achristensen@webkit.org>
+
         Use NSURLSession for loading in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=154993
 
