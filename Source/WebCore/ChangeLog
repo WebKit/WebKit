@@ -1,3 +1,13 @@
+2016-03-03  Ada Chan  <adachan@apple.com>
+
+        The visibility of the airplay menu also depends on whether there's a custom menu item.
+        https://bugs.webkit.org/show_bug.cgi?id=154987
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+
 2016-03-04  Timothy Hatcher  <timothy@apple.com>
 
         Inform WebKit and WebCore if a page is controlled by automation.
