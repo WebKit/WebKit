@@ -1,3 +1,32 @@
+2016-03-04  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [check-webkit-style] Added checks for redundant virtual specifiers.
+        https://bugs.webkit.org/show_bug.cgi?id=155017
+
+        Reviewed by Darin Adler.
+
+        Added 3 new checks related to virtual, override, and final specifiers:
+
+        1. When "override" is present, "virtual" is redundant.
+        2. When "final" is present, "virtual" is redundant.
+        3. When "final" is present, "override" is redundant.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_FunctionState.begin):
+        (_FunctionState.is_virtual):
+        (_check_parameter_name_against_text):
+        (_error_redundant_specifier):
+        (check_function_definition):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (FunctionDetectionTest.perform_function_detection):
+        (FunctionDetectionTest.test_basic_function_detection):
+        (FunctionDetectionTest.test_function_declaration_detection):
+        (FunctionDetectionTest.test_pure_function_detection):
+        (FunctionDetectionTest.test_override_and_final_function_detection):
+        (FunctionDetectionTest.test_non_functions):
+        (FunctionDetectionTest.test_parameter_list):
+
 2016-03-03  Darin Adler  <darin@apple.com>
 
         Followup to:

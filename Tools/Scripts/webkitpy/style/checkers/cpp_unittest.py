@@ -374,7 +374,10 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.assertEqual(function_state.in_a_function, True)
         self.assertEqual(function_state.current_function, function_information['name'] + '()')
         self.assertEqual(function_state.modifiers_and_return_type(), function_information['modifiers_and_return_type'])
+        self.assertEqual(function_state.is_final, function_information['is_final'])
+        self.assertEqual(function_state.is_override, function_information['is_override'])
         self.assertEqual(function_state.is_pure, function_information['is_pure'])
+        self.assertEqual(function_state.is_virtual(), function_information['is_virtual'])
         self.assertEqual(function_state.is_declaration, function_information['is_declaration'])
         self.assert_positions_equal(function_state.function_name_start_position, function_information['function_name_start_position'])
         self.assert_positions_equal(function_state.parameter_start_position, function_information['parameter_start_position'])
@@ -403,6 +406,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 29),
              'body_start_position': (0, 30),
              'end_position': (1, 1),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
              'is_pure': False,
              'is_declaration': False})
 
@@ -416,6 +422,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 23),
              'body_start_position': (0, 23),
              'end_position': (0, 24),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
              'is_pure': False,
              'is_declaration': True})
 
@@ -428,6 +437,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
              'end_position': (0, 77),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
              'is_pure': False,
              'is_declaration': True})
 
@@ -440,6 +452,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
              'end_position': (0, 77),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
              'is_pure': False,
              'is_declaration': True})
 
@@ -452,6 +467,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 77),
              'body_start_position': (0, 77),
              'end_position': (0, 78),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
              'is_pure': False,
              'is_declaration': True})
 
@@ -464,6 +482,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
              'end_position': (0, 77),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
              'is_pure': False,
              'is_declaration': True})
 
@@ -477,6 +498,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 41),
              'body_start_position': (0, 41),
              'end_position': (0, 42),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': True,
              'is_pure': False,
              'is_declaration': True})
 
@@ -489,6 +513,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 37),
              'body_start_position': (0, 41),
              'end_position': (0, 42),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': True,
              'is_pure': True,
              'is_declaration': True})
 
@@ -504,7 +531,90 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 37),
              'body_start_position': (2, 3),
              'end_position': (2, 4),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': True,
              'is_pure': True,
+             'is_declaration': True})
+
+    def test_override_and_final_function_detection(self):
+        self.perform_function_detection(
+            ['void theTestFunctionName(int override, int final);'],
+            {'name': 'theTestFunctionName',
+             'modifiers_and_return_type': 'void',
+             'function_name_start_position': (0, 5),
+             'parameter_start_position': (0, 24),
+             'parameter_end_position': (0, 49),
+             'body_start_position': (0, 49),
+             'end_position': (0, 50),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
+             'is_pure': False,
+             'is_declaration': True})
+
+        self.perform_function_detection(
+            ['void theTestFunctionName(int final) override;'],
+            {'name': 'theTestFunctionName',
+             'modifiers_and_return_type': 'void',
+             'function_name_start_position': (0, 5),
+             'parameter_start_position': (0, 24),
+             'parameter_end_position': (0, 35),
+             'body_start_position': (0, 44),
+             'end_position': (0, 45),
+             'is_final': False,
+             'is_override': True,
+             'is_virtual': False,
+             'is_pure': False,
+             'is_declaration': True})
+
+        self.perform_function_detection(
+            ['void theTestFunctionName(int final) const override',
+             '{',
+             '}'],
+            {'name': 'theTestFunctionName',
+             'modifiers_and_return_type': 'void',
+             'function_name_start_position': (0, 5),
+             'parameter_start_position': (0, 24),
+             'parameter_end_position': (0, 35),
+             'body_start_position': (1, 0),
+             'end_position': (2, 1),
+             'is_final': False,
+             'is_override': True,
+             'is_virtual': False,
+             'is_pure': False,
+             'is_declaration': False})
+
+        self.perform_function_detection(
+            ['virtual void theTestFunctionName(int override) final;'],
+            {'name': 'theTestFunctionName',
+             'modifiers_and_return_type': 'virtual void',
+             'function_name_start_position': (0, 13),
+             'parameter_start_position': (0, 32),
+             'parameter_end_position': (0, 46),
+             'body_start_position': (0, 52),
+             'end_position': (0, 53),
+             'is_final': True,
+             'is_override': False,
+             'is_virtual': True,
+             'is_pure': False,
+             'is_declaration': True})
+
+        self.perform_function_detection(
+            ['void theTestFunctionName()',
+             'override',
+             'final;'],
+            {'name': 'theTestFunctionName',
+             'modifiers_and_return_type': 'void',
+             'function_name_start_position': (0, 5),
+             'parameter_start_position': (0, 24),
+             'parameter_end_position': (0, 26),
+             'body_start_position': (2, 5),
+             'end_position': (2, 6),
+             'is_final': True,
+             'is_override': True,
+             'is_virtual': False,
+             'is_pure': False,
              'is_declaration': True})
 
     def test_ignore_macros(self):
@@ -525,6 +635,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (2, 1),
              'body_start_position': (2, 1),
              'end_position': (2, 2),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
              'is_pure': False,
              'is_declaration': True})
 
@@ -542,6 +655,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 19),
              'body_start_position': (0, 19),
              'end_position': (0, 20),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
              'is_pure': False,
              'is_declaration': True,
              'parameter_list': ()})
@@ -556,6 +672,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 22),
              'body_start_position': (0, 22),
              'end_position': (0, 23),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
              'is_pure': False,
              'is_declaration': True,
              'parameter_list':
@@ -571,6 +690,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
              'end_position': (0, 77),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': False,
              'is_pure': False,
              'is_declaration': True,
              'parameter_list':
@@ -589,6 +711,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 147),
              'body_start_position': (0, 147),
              'end_position': (0, 148),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': True,
              'is_pure': False,
              'is_declaration': True,
              'parameter_list':
@@ -613,6 +738,9 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (5, 17),
              'body_start_position': (5, 17),
              'end_position': (5, 18),
+             'is_final': False,
+             'is_override': False,
+             'is_virtual': True,
              'is_pure': False,
              'is_declaration': True,
              'parameter_list':
