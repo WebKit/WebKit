@@ -52,7 +52,7 @@ static const char loadResourceSynchronouslyMode[] = "loadResourceSynchronouslyMo
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerGlobalScope* workerGlobalScope, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, const ThreadableLoaderOptions& options)
     : m_workerGlobalScope(workerGlobalScope)
     , m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client))
-    , m_bridge(*(new MainThreadBridge(m_workerClientWrapper, workerGlobalScope->thread().workerLoaderProxy(), taskMode, request, options, workerGlobalScope->url().strippedForUseAsReferrer(), workerGlobalScope->securityOrigin(), workerGlobalScope->contentSecurityPolicy())))
+    , m_bridge(*new MainThreadBridge(*m_workerClientWrapper, workerGlobalScope->thread().workerLoaderProxy(), taskMode, request, options, workerGlobalScope->url().strippedForUseAsReferrer(), workerGlobalScope->securityOrigin(), workerGlobalScope->contentSecurityPolicy()))
 {
 }
 
@@ -83,15 +83,13 @@ void WorkerThreadableLoader::cancel()
     m_bridge.cancel();
 }
 
-WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, WorkerLoaderProxy& loaderProxy, const String& taskMode,
+WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClientWrapper& workerClientWrapper, WorkerLoaderProxy& loaderProxy, const String& taskMode,
     const ResourceRequest& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer,
     const SecurityOrigin* securityOrigin, const ContentSecurityPolicy* contentSecurityPolicy)
-    : m_workerClientWrapper(workerClientWrapper)
+    : m_workerClientWrapper(&workerClientWrapper)
     , m_loaderProxy(loaderProxy)
     , m_taskMode(taskMode.isolatedCopy())
 {
-    ASSERT(m_workerClientWrapper.get());
-
     auto* requestData = request.copyData().release();
     auto* optionsCopy = options.isolatedCopy().release();
 

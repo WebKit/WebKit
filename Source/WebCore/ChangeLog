@@ -1,3 +1,23 @@
+2016-03-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Remove PassRefPtr from ThreadableLoader and relatives
+        https://bugs.webkit.org/show_bug.cgi?id=154966
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::create):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::create):
+        * loader/ThreadableLoader.h:
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        * loader/WorkerThreadableLoader.h:
+
 2016-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Let XCode have its own way and also sort the file.

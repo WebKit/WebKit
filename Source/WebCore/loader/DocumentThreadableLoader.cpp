@@ -66,17 +66,17 @@ void DocumentThreadableLoader::loadResourceSynchronously(Document& document, con
     loadResourceSynchronously(document, request, client, options, nullptr);
 }
 
-PassRefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client, const ResourceRequest& request, const ThreadableLoaderOptions& options, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)
+RefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client, const ResourceRequest& request, const ThreadableLoaderOptions& options, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)
 {
     RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, client, LoadAsynchronously, request, options, WTFMove(contentSecurityPolicy)));
     if (!loader->m_resource)
         loader = nullptr;
-    return loader.release();
+    return loader;
 }
 
-PassRefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client, const ResourceRequest& request, const ThreadableLoaderOptions& options)
+RefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client, const ResourceRequest& request, const ThreadableLoaderOptions& options)
 {
-    return DocumentThreadableLoader::create(document, client, request, options, nullptr);
+    return create(document, client, request, options, nullptr);
 }
 
 DocumentThreadableLoader::DocumentThreadableLoader(Document& document, ThreadableLoaderClient& client, BlockingBehavior blockingBehavior, const ResourceRequest& request, const ThreadableLoaderOptions& options, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)

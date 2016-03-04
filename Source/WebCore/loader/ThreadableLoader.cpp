@@ -69,7 +69,7 @@ std::unique_ptr<ThreadableLoaderOptions> ThreadableLoaderOptions::isolatedCopy()
     return std::make_unique<ThreadableLoaderOptions>(*this, preflightPolicy, crossOriginRequestPolicy, contentSecurityPolicyEnforcement, WTFMove(securityOriginCopy), initiator.isolatedCopy());
 }
 
-PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, const ThreadableLoaderOptions& options)
+RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, const ThreadableLoaderOptions& options)
 {
     ASSERT(client);
     ASSERT(context);

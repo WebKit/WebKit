@@ -34,8 +34,6 @@
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "ThreadableLoader.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
     class CachedRawResource;
@@ -52,8 +50,8 @@ namespace WebCore {
         static void loadResourceSynchronously(Document&, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&, std::unique_ptr<ContentSecurityPolicy>&&);
         static void loadResourceSynchronously(Document&, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
 
-        static PassRefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, const ResourceRequest&, const ThreadableLoaderOptions&, std::unique_ptr<ContentSecurityPolicy>&&);
-        static PassRefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, const ResourceRequest&, const ThreadableLoaderOptions&);
+        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, const ResourceRequest&, const ThreadableLoaderOptions&, std::unique_ptr<ContentSecurityPolicy>&&);
+        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, const ResourceRequest&, const ThreadableLoaderOptions&);
 
         virtual ~DocumentThreadableLoader();
 

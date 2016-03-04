@@ -35,9 +35,6 @@
 #include "ThreadableLoaderClient.h"
 #include "ThreadableLoaderClientWrapper.h"
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
@@ -95,7 +92,7 @@ namespace WebCore {
         class MainThreadBridge : public ThreadableLoaderClient {
         public:
             // All executed on the worker context's thread.
-            MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper>, WorkerLoaderProxy&, const String& taskMode, const ResourceRequest&, const ThreadableLoaderOptions&, const String& outgoingReferrer, const SecurityOrigin*, const ContentSecurityPolicy*);
+            MainThreadBridge(ThreadableLoaderClientWrapper&, WorkerLoaderProxy&, const String& taskMode, const ResourceRequest&, const ThreadableLoaderOptions&, const String& outgoingReferrer, const SecurityOrigin*, const ContentSecurityPolicy*);
             void cancel();
             void destroy();
 
