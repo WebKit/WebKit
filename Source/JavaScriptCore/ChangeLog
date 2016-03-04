@@ -1,3 +1,37 @@
+2016-03-03  Saam Barati  <sbarati@apple.com>
+
+        [ES6] Implement Proxy.[[SetPrototypeOf]]
+        https://bugs.webkit.org/show_bug.cgi?id=154931
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch is a straight forward implementation of Proxy.[[SetPrototypeOf]]
+        with respect to section 9.5.2 of the ECMAScript spec.
+        https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-setprototypeof-v
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::put):
+        (JSC::ProxyObject::getGenericPropertyNames):
+        (JSC::ProxyObject::performSetPrototype):
+        (JSC::ProxyObject::setPrototype):
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyObject.h:
+        * tests/es6.yaml:
+        * tests/stress/proxy-set-prototype-of.js: Added.
+        (assert):
+        (throw.new.Error.let.handler.get setPrototypeOf):
+        (throw.new.Error.set let):
+        (throw.new.Error.set catch):
+        (throw.new.Error):
+        (assert.let.handler.setPrototypeOf):
+        (assert.set let):
+        (assert.set catch):
+        (let.handler.setPrototypeOf):
+        (set let):
+        (set catch):
+
 2016-03-03  Keith Miller  <keith_miller@apple.com>
 
         JSArrayBuffers should be collected less aggressively

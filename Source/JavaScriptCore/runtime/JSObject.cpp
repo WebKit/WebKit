@@ -429,7 +429,7 @@ void JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
                 }
             }
         }
-        if (obj->type() == ProxyObjectType) {
+        if (obj->type() == ProxyObjectType && propertyName != vm.propertyNames->underscoreProto) {
             ProxyObject* proxy = jsCast<ProxyObject*>(obj);
             proxy->ProxyObject::put(proxy, exec, propertyName, value, slot);
             return;

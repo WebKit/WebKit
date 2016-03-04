@@ -405,6 +405,11 @@ void ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
 void ProxyObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     VM& vm = exec->vm();
+    if (propertyName == vm.propertyNames->underscoreProto) {
+        Base::put(cell, exec, propertyName, value, slot);
+        return;
+    }
+
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
     auto performDefaultPut = [&] () {
         JSObject* target = jsCast<JSObject*>(thisObject->target());
@@ -953,6 +958,66 @@ void ProxyObject::getStructurePropertyNames(JSObject*, ExecState*, PropertyNameA
 void ProxyObject::getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
 {
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool shouldThrowIfCantSet)
+{
+    ASSERT(prototype.isObject() || prototype.isNull());
+
+    VM& vm = exec->vm();
+
+    JSValue handlerValue = this->handler();
+    if (handlerValue.isNull()) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
+        return false;
+    }
+
+    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    CallData callData;
+    CallType callType;
+    JSValue setPrototypeOfMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "setPrototypeOf"), ASCIILiteral("'setPrototypeOf' property of a Proxy's handler should be callable."));
+    if (vm.exception())
+        return false;
+
+    JSObject* target = this->target();
+    if (setPrototypeOfMethod.isUndefined())
+        return target->setPrototype(vm, exec, prototype, shouldThrowIfCantSet);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(target);
+    arguments.append(prototype);
+    JSValue trapResult = call(exec, setPrototypeOfMethod, callType, callData, handler, arguments);
+    if (vm.exception())
+        return false;
+
+    bool trapResultAsBool = trapResult.toBoolean(exec);
+    if (vm.exception())
+        return false;
+    
+    if (!trapResultAsBool) {
+        if (shouldThrowIfCantSet)
+            throwVMTypeError(exec, ASCIILiteral("Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed."));
+        return false;
+    }
+
+    bool targetIsExtensible = target->isExtensible(exec);
+    if (vm.exception())
+        return false;
+    if (targetIsExtensible)
+        return true;
+
+    JSValue targetPrototype = target->prototype();
+    if (!sameValue(exec, prototype, targetPrototype)) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy 'setPrototypeOf' trap returned true when its target is non-extensible and the new prototype value is not the same as the current prototype value. It should have returned false."));
+        return false;
+    }
+
+    return true;
+}
+
+bool ProxyObject::setPrototype(JSObject* object, ExecState* exec, JSValue prototype, bool shouldThrowIfCantSet)
+{
+    return jsCast<ProxyObject*>(object)->performSetPrototype(exec, prototype, shouldThrowIfCantSet);
 }
 
 void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

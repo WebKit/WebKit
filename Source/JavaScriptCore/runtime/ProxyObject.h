@@ -83,6 +83,7 @@ private:
     static NO_RETURN_DUE_TO_CRASH void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static NO_RETURN_DUE_TO_CRASH void getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static NO_RETURN_DUE_TO_CRASH void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static bool setPrototype(JSObject*, ExecState*, JSValue prototype, bool shouldThrowIfCantSet);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     bool getOwnPropertySlotCommon(ExecState*, PropertyName, PropertySlot&);
@@ -96,6 +97,7 @@ private:
     bool performIsExtensible(ExecState*);
     bool performDefineOwnProperty(ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     void performGetOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode);
+    bool performSetPrototype(ExecState*, JSValue prototype, bool shouldThrowIfCantSet);
 
     WriteBarrier<JSObject> m_target;
     WriteBarrier<Unknown> m_handler;
