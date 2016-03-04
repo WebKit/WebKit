@@ -1,3 +1,25 @@
+2016-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disallow custom elements inside template elements and share the registry for windowless documents
+        https://bugs.webkit.org/show_bug.cgi?id=154944
+        <rdar://problem/24944875>
+
+        Reviewed by Antti Koivisto.
+
+        Added various tests to ensure the custom elements registry is not shared between documents with
+        distinct browsing context (e.g. iframes) but shared among the ones that share a single browsing context
+        (e.g. documents created by DOMImplementation).
+
+        Also added a test case for defineCustomElement to ensure it throws NotSupportedError when it's called on
+        a template element's inert owner document as well as a basic test case for document.write.
+
+        * fast/custom-elements/Document-defineCustomElement-expected.txt:
+        * fast/custom-elements/Document-defineCustomElement.html: Added a new test case.
+        * fast/custom-elements/parser/parser-constructs-custom-element-in-document-write-expected.txt: Added.
+        * fast/custom-elements/parser/parser-constructs-custom-element-in-document-write.html: Added.
+        * fast/custom-elements/parser/parser-uses-registry-of-owner-document-expected.txt: Added.
+        * fast/custom-elements/parser/parser-uses-registry-of-owner-document.html: Added.
+
 2016-03-03  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make collapsed borders painting subpixel aware.

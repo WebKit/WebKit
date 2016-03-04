@@ -58,6 +58,36 @@ test(function () {
 }, 'document.defineCustomElement should throw with a duplicate name');
 
 test(function () {
+    class SomeCustomElement extends HTMLElement {};
+
+    var templateContentOwnerDocument = document.createElement('template').content.ownerDocument;
+    assert_throws({'name': 'NotSupportedError'}, function () {
+        templateContentOwnerDocument.defineCustomElement('some-custom-element', SomeCustomElement);
+    });
+
+}, 'document.defineCustomElement must throw a NotSupportedError when the context object is an associated inert template document');
+
+test(function () {
+    class SomeCustomElement extends HTMLElement {};
+
+    var windowlessDocument = document.implementation.createHTMLDocument();
+    assert_throws({'name': 'NotSupportedError'}, function () {
+        windowlessDocument.defineCustomElement('some-custom-element', SomeCustomElement);
+    });
+
+}, 'document.defineCustomElement must throw a NotSupportedError when the context object is created by DOMImplementation.createHTMLDocument');
+
+test(function () {
+    class SomeCustomElement extends HTMLElement {};
+
+    var windowlessDocument = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null)
+    assert_throws({'name': 'NotSupportedError'}, function () {
+        windowlessDocument.defineCustomElement('some-custom-element', SomeCustomElement);
+    });
+
+}, 'document.defineCustomElement must throw a NotSupportedError when the context object is created by DOMImplementation.createDocument');
+
+test(function () {
     assert_throws({'name': 'TypeError'}, function () { document.defineCustomElement('invalid-element', 1); },
         'document.defineCustomElement must throw a TypeError when the element interface is a number');
     assert_throws({'name': 'TypeError'}, function () { document.defineCustomElement('invalid-element', '123'); },

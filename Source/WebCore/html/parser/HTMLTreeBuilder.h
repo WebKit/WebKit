@@ -61,6 +61,7 @@ public:
 
     void constructTree(AtomicHTMLToken&);
 
+    bool isParsingTemplateContents() const;
     bool hasParserBlockingScriptWork() const;
 
     // Must be called to take the parser-blocking script before calling the parser again.
@@ -107,7 +108,6 @@ private:
         AfterAfterFrameset,
     };
 
-    bool isParsingTemplateContents() const;
     bool isParsingFragmentOrTemplateContents() const;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS)

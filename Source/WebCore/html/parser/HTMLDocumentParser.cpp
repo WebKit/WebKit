@@ -196,7 +196,7 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 
         RefPtr<Element> newElement = constructionData->interface->constructElement(constructionData->name, JSCustomElementInterface::ShouldClearException::Clear);
         if (!newElement) {
-            // FIXME: This call to docuemnt() is wrong for elements inside a template element.
+            ASSERT(!m_treeBuilder->isParsingTemplateContents());
             newElement = HTMLUnknownElement::create(QualifiedName(nullAtom, constructionData->name, xhtmlNamespaceURI), *document());
         }
 

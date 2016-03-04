@@ -1,3 +1,30 @@
+2016-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disallow custom elements inside a window-less documents
+        https://bugs.webkit.org/show_bug.cgi?id=154944
+        <rdar://problem/24944875>
+
+        Reviewed by Antti Koivisto.
+
+        Disallow custom elements inside a window-less documents such as the shared inert document of template elements
+        and the ones created by DOMImplementation.createDocument and DOMImplementation.createHTMLDocument.
+
+        Throw NotSupportedError in defineCustomElement when it's called in such a document as discussed in:
+        https://github.com/w3c/webcomponents/issues/369
+
+        Tests: fast/custom-elements/parser/parser-constructs-custom-element-in-document-write.html
+               fast/custom-elements/parser/parser-uses-registry-of-owner-document.html
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::throwNotSupportedError): Added.
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::defineCustomElement): Throw NotSupportedError when the context object's document doesn't
+        have a browsing context (i.e. window-less).
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder): Replaced a FIXME with an assertion now that we
+        disallow instantiation of custom elements inside a template element.
+
 2016-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Move SPI to CFNetworkSPI.h

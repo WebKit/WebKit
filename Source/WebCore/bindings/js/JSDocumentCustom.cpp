@@ -147,6 +147,11 @@ JSValue JSDocument::defineCustomElement(ExecState& state)
         return throwTypeError(&state, "The second argument must be a constructor");
 
     Document& document = wrapped();
+    if (!document.domWindow()) {
+        throwNotSupportedError(state, "Cannot define a custom element in a docuemnt without a browsing context");
+        return jsUndefined();
+    }
+
     switch (CustomElementDefinitions::checkName(tagName)) {
     case CustomElementDefinitions::NameStatus::Valid:
         break;
@@ -161,10 +166,7 @@ JSValue JSDocument::defineCustomElement(ExecState& state)
     QualifiedName name(nullAtom, tagName, HTMLNames::xhtmlNamespaceURI);
     auto& definitions = document.ensureCustomElementDefinitions();
     if (definitions.findInterface(tagName)) {
-        ExceptionCodeWithMessage ec;
-        ec.code = NOT_SUPPORTED_ERR;
-        ec.message = "Cannot define multiple custom elements with the same tag name";
-        setDOMException(&state, ec);
+        throwNotSupportedError(state, "Cannot define multiple custom elements with the same tag name");
         return jsUndefined();
     }
     definitions.defineElement(name, JSCustomElementInterface::create(object, globalObject()));
