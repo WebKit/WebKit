@@ -1,3 +1,34 @@
+2016-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Use NetworkSession for pings
+        https://bugs.webkit.org/show_bug.cgi?id=154984
+
+        Reviewed by Antti Koivisto.
+
+        Before this patch, we were using NSURLConnection for pings when the rest of the loading was being 
+        done with NSURLSession.  To fix this, I implemented PingLoad, which is the NetworkSession equivalent
+        of PingHandle.
+
+        This fixes http/tests/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        (WebKit::NetworkConnectionToWebProcess::removeLoadIdentifier):
+        * NetworkProcess/PingLoad.h: Added.
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        (WebKit::PingLoad::didReceiveChallenge):
+        (WebKit::PingLoad::didReceiveResponseNetworkSession):
+        (WebKit::PingLoad::didReceiveData):
+        (WebKit::PingLoad::didCompleteWithError):
+        (WebKit::PingLoad::didBecomeDownload):
+        (WebKit::PingLoad::didSendData):
+        (WebKit::PingLoad::wasBlocked):
+        (WebKit::PingLoad::cannotShowURL):
+        (WebKit::PingLoad::timeoutTimerFired):
+        (WebKit::PingLoad::~PingLoad):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-03-04  Timothy Hatcher  <timothy@apple.com>
 
         Inform WebKit and WebCore if a page is controlled by automation.
