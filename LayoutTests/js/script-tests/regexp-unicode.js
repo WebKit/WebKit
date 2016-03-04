@@ -3,19 +3,19 @@ description(
 );
 
 // Test \u{} escapes in a regular expression
-shouldBe('"a".match(/\u{61}/)[0].length', '1');
-shouldBe('"a".match(/\u{41}/i)[0].length', '1');
+shouldBe('"a".match(/\u{61}/u)[0].length', '1');
+shouldBe('"a".match(/\u{41}/ui)[0].length', '1');
 shouldBe('"a".match(/\u{061}/u)[0].length', '1');
 shouldBe('"a".match(/\u{041}/iu)[0].length', '1');
-shouldBe('"\u{212}".match(/\u{212}/)[0].length', '1');
+shouldBe('"\u{212}".match(/\u{212}/u)[0].length', '1');
 shouldBe('"\u{212}".match(/\u{0212}/u)[0].length', '1');
-shouldBe('"\u{1234}".match(/\u{1234}/)[0].length', '1');
+shouldBe('"\u{1234}".match(/\u{1234}/u)[0].length', '1');
 shouldBe('"\u{1234}".match(/\u{01234}/u)[0].length', '1');
-shouldBe('"\u{2abc}".match(/\u{2abc}/)[0].length', '1');
+shouldBe('"\u{2abc}".match(/\u{2abc}/u)[0].length', '1');
 shouldBe('"\u{03fed}".match(/\u{03fed}/u)[0].length', '1');
 shouldBe('"\u{12345}".match(/\u{12345}/u)[0].length', '2');
 shouldBe('"\u{12345}".match(/\u{012345}/u)[0].length', '2');
-shouldBe('"\u{1d306}".match(/\u{1d306}/)[0].length', '2');
+shouldBe('"\u{1d306}".match(/\u{1d306}/u)[0].length', '2');
 shouldBeTrue('/\u{1044f}/u.test("\ud801\udc4f")');
 shouldBeTrue('/\ud801\udc4f/u.test("\u{1044f}")');
 
@@ -47,15 +47,16 @@ shouldBe('"\u0164x".match(/\u0165x/iu)[0].length', '2');
 // Test . matches with Unicode flag
 shouldBe('"\u{1D306}".match(/^.$/u)[0].length', '2');
 shouldBe('"It is 78\u00B0".match(/.*/u)[0].length', '9');
-// FIXME: These tests are disabled until https://bugs.webkit.org/show_bug.cgi?id=154863 is fixed
-// shouldBe('"\ud801XXX".match(/.*/u)[0].length', '4'); // We should match a dangling first surrogate as 1 character
-// shouldBe('"X\udfffXX".match(/.*/u)[0].length', '4'); // We should match a dangling second surrogate as 1 character
+var stringWithDanglingFirstSurrogate = "X\uD801X";
+shouldBe('stringWithDanglingFirstSurrogate.match(/.*/u)[0].length', '3'); // We should match a dangling first surrogate as 1 character
+var stringWithDanglingSecondSurrogate = "X\uDF01X";
+shouldBe('stringWithDanglingSecondSurrogate.match(/.*/u)[0].length', '3'); // We should match a dangling second surrogate as 1 character
 
 // Test character classes with unicode characters with and without unicode flag
-shouldBe('"\u{1d306}".match(/[\u{1d306}a]/)[0].length', '1');
+shouldBe('"\u{1d306}".match(/[\uD834\uDF06a]/)[0].length', '1');
 shouldBe('"\u{1d306}".match(/[a\u{1d306}]/u)[0].length', '2');
 shouldBe('"\u{1d306}".match(/[\u{1d306}a]/u)[0].length', '2');
-shouldBe('"\u{1d306}".match(/[a-\u{1d306}]/)[0].length', '1');
+shouldBe('"\u{1d306}".match(/[a-\uD834\uDF06]/)[0].length', '1');
 shouldBe('"\u{1d306}".match(/[a-\u{1d306}]/u)[0].length', '2');
 
 // Test a character class that is a range from one UTF16 to a Unicode character
@@ -63,7 +64,7 @@ shouldBe('"X".match(/[\u0020-\ud801\udc4f]/u)[0].length', '1');
 shouldBe('"\u1000".match(/[\u0020-\ud801\udc4f]/u)[0].length', '1');
 shouldBe('"\ud801\udc27".match(/[\u0020-\ud801\udc4f]/u)[0].length', '2');
 
-var re1 = new RegExp("[^\u0020-\ud801\udc4f]", "u");
+var re1 = new RegExp("[^\u0020-\uD801\uDC4F]", "u");
 shouldBeFalse('re1.test("Z")');
 shouldBeFalse('re1.test("\u{1000}")');
 shouldBeFalse('re1.test("\u{10400}")');
@@ -135,8 +136,44 @@ shouldBe('match6[0]', '"a\u{10412}\u{10412}b\u{1043a}\u{10412}"');
 shouldBeUndefined('match6[1]');
 shouldBe('match6[2]', '"\u{10412}\u{10412}"');
 
-// Miscellaneous tests
+// Check unicode case insensitive matches
 shouldBeTrue('/\u1e9Abc/ui.test("abc")');
 shouldBeTrue('/abc/ui.test("\u1e9Abc")');
 shouldBeTrue('/tex\u1e97/ui.test("text")');
 shouldBeTrue('/text/ui.test("\u1e97ext")');
+
+// Verify that without the unicode flag, \u{} doesn't parse to a unicode escapes, but to a counted match of the character 'u'.
+shouldBeTrue('/\\u{1}/.test("u")');
+shouldBeFalse('/\\u{4}/.test("u")');
+shouldBeTrue('/\\u{4}/.test("uuuu")');
+
+// Check that \- escape works in a character class for a unicode pattern
+shouldBe('"800-555-1212".match(/[0-9\\-]*/u)[0].length', '12');
+
+// Check that control letter escapes work with unicode flag
+shouldBe('"this is b\ba test".match(/is b\\cha test/u)[0].length', '11');
+
+// Check that invalid unicode patterns throw exceptions
+shouldBe('new RegExp("\\\\/", "u").source', '"\\\\/"');
+shouldThrow('r = new RegExp("\\\\u{110000}", "u")', '"SyntaxError: Invalid regular expression: invalid unicode {} escape"');
+
+var invalidEscapeException = "SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern";
+var newRegExp;
+
+function shouldThrowInvalidEscape(pattern)
+{
+    newRegExp = 'r = new RegExp("' + pattern + '", "u")';
+
+    shouldThrow(newRegExp, 'invalidEscapeException');
+}
+
+shouldThrowInvalidEscape("\\\\-");
+shouldThrowInvalidEscape("\\\\a");
+shouldThrowInvalidEscape("[\\\\a]");
+shouldThrowInvalidEscape("[\\\\b]");
+shouldThrowInvalidEscape("[\\\\B]");
+shouldThrowInvalidEscape("\\\\x");
+shouldThrowInvalidEscape("[\\\\x]");
+shouldThrowInvalidEscape("\\\\u");
+shouldThrowInvalidEscape("[\\\\u]");
+

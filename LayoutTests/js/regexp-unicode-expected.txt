@@ -3,19 +3,19 @@ Test for unicode regular expression processing
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS "a".match(/a/)[0].length is 1
-PASS "a".match(/A/i)[0].length is 1
+PASS "a".match(/a/u)[0].length is 1
+PASS "a".match(/A/ui)[0].length is 1
 PASS "a".match(/a/u)[0].length is 1
 PASS "a".match(/A/iu)[0].length is 1
-PASS "Ȓ".match(/Ȓ/)[0].length is 1
 PASS "Ȓ".match(/Ȓ/u)[0].length is 1
-PASS "ሴ".match(/ሴ/)[0].length is 1
+PASS "Ȓ".match(/Ȓ/u)[0].length is 1
 PASS "ሴ".match(/ሴ/u)[0].length is 1
-PASS "⪼".match(/⪼/)[0].length is 1
+PASS "ሴ".match(/ሴ/u)[0].length is 1
+PASS "⪼".match(/⪼/u)[0].length is 1
 PASS "㿭".match(/㿭/u)[0].length is 1
 PASS "𒍅".match(/𒍅/u)[0].length is 2
 PASS "𒍅".match(/𒍅/u)[0].length is 2
-PASS "𝌆".match(/𝌆/)[0].length is 2
+PASS "𝌆".match(/𝌆/u)[0].length is 2
 PASS /𐑏/u.test("𐑏") is true
 PASS /𐑏/u.test("𐑏") is true
 PASS "𝌆".match(/𝌆/u)[0].length is 2
@@ -41,6 +41,8 @@ PASS "a𐄣X".match(/a𐄣b|a𐄣x/iu)[0].length is 4
 PASS "Ťx".match(/ťx/iu)[0].length is 2
 PASS "𝌆".match(/^.$/u)[0].length is 2
 PASS "It is 78°".match(/.*/u)[0].length is 9
+PASS stringWithDanglingFirstSurrogate.match(/.*/u)[0].length is 3
+PASS stringWithDanglingSecondSurrogate.match(/.*/u)[0].length is 3
 PASS "𝌆".match(/[𝌆a]/)[0].length is 1
 PASS "𝌆".match(/[a𝌆]/u)[0].length is 2
 PASS "𝌆".match(/[𝌆a]/u)[0].length is 2
@@ -91,6 +93,22 @@ PASS /ẚbc/ui.test("abc") is true
 PASS /abc/ui.test("ẚbc") is true
 PASS /texẗ/ui.test("text") is true
 PASS /text/ui.test("ẗext") is true
+PASS /\u{1}/.test("u") is true
+PASS /\u{4}/.test("u") is false
+PASS /\u{4}/.test("uuuu") is true
+PASS "800-555-1212".match(/[0-9\-]*/u)[0].length is 12
+PASS "this is ba test".match(/is b\cha test/u)[0].length is 11
+PASS new RegExp("\\/", "u").source is "\\/"
+PASS r = new RegExp("\\u{110000}", "u") threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS r = new RegExp("\\-", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS r = new RegExp("\\a", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS r = new RegExp("[\\a]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS r = new RegExp("[\\b]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS r = new RegExp("[\\B]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS r = new RegExp("\\x", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS r = new RegExp("[\\x]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS r = new RegExp("\\u", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS r = new RegExp("[\\u]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
 PASS successfullyParsed is true
 
 TEST COMPLETE

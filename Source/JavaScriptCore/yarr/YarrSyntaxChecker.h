@@ -30,7 +30,7 @@
 
 namespace JSC { namespace Yarr {
 
-const char* checkSyntax(const String& pattern);
+const char* checkSyntax(const String& pattern, const String& flags);
 
 }} // JSC::YARR
 

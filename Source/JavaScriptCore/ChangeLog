@@ -1,3 +1,60 @@
+2016-03-03  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Make Unicode RegExp pattern parsing conform to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=154988
+
+        Reviewed by Benjamin Poulain.
+
+        Updated RegExp pattern processing with 'u' (Unicode) flag to conform to the
+        spec (https://tc39.github.io/ecma262/2016/#sec-patterns).  In the spec, the
+        grammar is annotated with [U] annotations.  Productions that are prefixed with
+        [+U] are only available with the Unicode flags while productions prefixed with
+        [~U] are only available without the Unicode flag.
+        
+        Added flags argument to Yarr::checkSyntax() so we can catch Unicode flag related
+        parsing errors at syntax checking time.  Restricted what escapes are available for
+        non Unicode patterns.  Most of this is defined in the IdentityEscape rule in the
+        pattern grammar.
+
+        Added \- as a CharacterClass only escape in Unicode patterns.
+
+        Updated the tests for these changes.
+
+        Made changes suggested in https://bugs.webkit.org/show_bug.cgi?id=154842#c22 after
+        change set r197426 was landed.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createRegExp):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createRegExp):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::InputStream::readChecked):
+        (JSC::Yarr::Interpreter::InputStream::readSurrogatePairChecked):
+        (JSC::Yarr::Interpreter::InputStream::reread):
+        (JSC::Yarr::Interpreter::InputStream::uncheckInput):
+        (JSC::Yarr::Interpreter::InputStream::atStart):
+        (JSC::Yarr::Interpreter::InputStream::atEnd):
+        (JSC::Yarr::Interpreter::testCharacterClass):
+        (JSC::Yarr::Interpreter::backtrackPatternCharacter):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::ByteCompiler::atomPatternCharacter):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::Parser):
+        (JSC::Yarr::Parser::isIdentityEscapeAnError):
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::parse):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::putChar):
+        (JSC::Yarr::CharacterClassConstructor::putRange):
+        (JSC::Yarr::CharacterClassConstructor::addSorted):
+        (JSC::Yarr::YarrPatternConstructor::setupAlternativeOffsets):
+        * yarr/YarrSyntaxChecker.cpp:
+        (JSC::Yarr::SyntaxChecker::disjunction):
+        (JSC::Yarr::checkSyntax):
+        * yarr/YarrSyntaxChecker.h:
+
 2016-03-03  Saam barati  <sbarati@apple.com>
 
         [ES6] Implement Proxy.[[DefineOwnProperty]]

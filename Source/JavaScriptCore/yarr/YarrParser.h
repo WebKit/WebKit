@@ -61,6 +61,7 @@ private:
         CharacterClassOutOfOrder,
         EscapeUnterminated,
         InvalidUnicodeEscape,
+        InvalidIdentityEscape,
         NumberOfErrorCodes
     };
 
@@ -241,6 +242,19 @@ private:
     {
     }
 
+    // The handling of IdentityEscapes is different depending on the unicode flag.
+    // For Unicode patterns, IdentityEscapes only include SyntaxCharacters or '/'.
+    // For non-unicode patterns, most any character can be escaped.
+    bool isIdentityEscapeAnError(int ch)
+    {
+        if (m_isUnicode && !strchr("^$\\.*+?()[]{}|/", ch)) {
+            m_err = InvalidIdentityEscape;
+            return true;
+        }
+
+        return false;
+    }
+
     /*
      * parseEscape():
      *
@@ -277,18 +291,24 @@ private:
         // Assertions
         case 'b':
             consume();
-            if (inCharacterClass)
+            if (inCharacterClass) {
+                if (isIdentityEscapeAnError('b'))
+                    break;
+
                 delegate.atomPatternCharacter('\b');
-            else {
+            } else {
                 delegate.assertionWordBoundary(false);
                 return false;
             }
             break;
         case 'B':
             consume();
-            if (inCharacterClass)
+            if (inCharacterClass) {
+                if (isIdentityEscapeAnError('B'))
+                    break;
+
                 delegate.atomPatternCharacter('B');
-            else {
+            } else {
                 delegate.assertionWordBoundary(true);
                 return false;
             }
@@ -403,9 +423,12 @@ private:
         case 'x': {
             consume();
             int x = tryConsumeHex(2);
-            if (x == -1)
+            if (x == -1) {
+                if (isIdentityEscapeAnError('x'))
+                    break;
+
                 delegate.atomPatternCharacter('x');
-            else
+            } else
                 delegate.atomPatternCharacter(x);
             break;
         }
@@ -414,20 +437,23 @@ private:
         case 'u': {
             consume();
             if (atEndOfPattern()) {
+                if (isIdentityEscapeAnError('u'))
+                    break;
+
                 delegate.atomPatternCharacter('u');
                 break;
             }
 
-            if (peek() == '{') {
+            if (m_isUnicode && peek() == '{') {
                 consume();
                 UChar32 codePoint = 0;
                 do {
                     if (atEndOfPattern())
                         m_err = InvalidUnicodeEscape;
-                    if (!WTF::isASCIIHexDigit(peek()))
+                    if (!isASCIIHexDigit(peek()))
                         m_err = InvalidUnicodeEscape;
 
-                    codePoint = (codePoint << 4) | WTF::toASCIIHexValue(consume());
+                    codePoint = (codePoint << 4) | toASCIIHexValue(consume());
 
                     if (codePoint > UCHAR_MAX_VALUE)
                         m_err = InvalidUnicodeEscape;
@@ -441,9 +467,12 @@ private:
                 break;
             }
             int u = tryConsumeHex(4);
-            if (u == -1)
+            if (u == -1) {
+                if (isIdentityEscapeAnError('u'))
+                    break;
+
                 delegate.atomPatternCharacter('u');
-            else {
+            } else {
                 // If we have the first of a surrogate pair, look for the second.
                 if (U16_IS_LEAD(u) && m_isUnicode && (patternRemaining() >= 6) && peek() == '\\') {
                     ParseState state = saveState();
@@ -467,6 +496,17 @@ private:
 
         // IdentityEscape
         default:
+            int ch = peek();
+
+            if (ch == '-' && m_isUnicode && inCharacterClass) {
+                // \- is allowed for ClassEscape with unicode flag.
+                delegate.atomPatternCharacter(consume());
+                break;
+            }
+
+            if (isIdentityEscapeAnError(ch))
+                break;
+
             delegate.atomPatternCharacter(consume());
         }
         
@@ -762,8 +802,9 @@ private:
             REGEXP_ERROR_PREFIX "unrecognized character after (?",
             REGEXP_ERROR_PREFIX "missing terminating ] for character class",
             REGEXP_ERROR_PREFIX "range out of order in character class",
-            REGEXP_ERROR_PREFIX "\\ at end of pattern"
-            REGEXP_ERROR_PREFIX "invalid unicode {} escape"
+            REGEXP_ERROR_PREFIX "\\ at end of pattern",
+            REGEXP_ERROR_PREFIX "invalid unicode {} escape",
+            REGEXP_ERROR_PREFIX "invalid escaped character for unicode pattern"
         };
 
         return errorMessages[m_err];
