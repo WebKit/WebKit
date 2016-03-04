@@ -1,3 +1,15 @@
+2014-02-27  Alberto Garcia  <berto@igalia.com>
+
+        [gtk-doc] UnicodeEncodeError: 'ascii' codec can't encode character
+        https://bugs.webkit.org/show_bug.cgi?id=128927
+
+        Reviewed by Philippe Normand.
+
+        Encode manually the data for sys.{stdout,stderr}.write.
+
+        * gtk/gtkdoc.py:
+        (GTKDoc._run_command):
+
 2015-04-17  Milan Crha  <mcrha@redhat.com>
 
         [GTK] Expand wildcards inside generate-inspector-gresource-manifest.py
