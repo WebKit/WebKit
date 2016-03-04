@@ -33,6 +33,10 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
 
         super(identifier || "timeline", "timeline", tabBarItem, WebInspector.TimelineSidebarPanel, detailsSidebarPanels);
 
+        // FIXME: Remove these when the TimelineSidebarPanel is removed. https://bugs.webkit.org/show_bug.cgi?id=154973
+        this.contentBrowser.navigationBar.removeNavigationItem(this._showNavigationSidebarItem);
+        this.navigationSidebarPanel.hide();
+
         // Maintain an invisible tree outline containing tree elements for all recordings.
         // The visible recording's tree element is selected when the content view changes.
         this._recordingTreeElementMap = new Map;

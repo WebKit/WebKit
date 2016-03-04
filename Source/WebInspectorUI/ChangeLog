@@ -1,3 +1,15 @@
+2016-03-03  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Temporarily hide the TimelineSidebarPanel
+
+        https://bugs.webkit.org/show_bug.cgi?id=154974
+        rdar://problem/24956380
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView): Remove _showNavigationSidebarItem and hide the sidebar.
+
 2016-03-03  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Selected range path component should be zero time corrected
