@@ -1,3 +1,14 @@
+2016-03-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, remove test with flaky timeout that doesn't test anything anymore. This test
+        was relevant back when arguments got torn off; something that we don't do anymore. It
+        uses a loop that waits for the top-tier compiler to compile it. We don't write tests
+        like that anymore.
+
+        * js/dfg-osr-exit-between-create-and-tearoff-arguments-expected.txt: Removed.
+        * js/dfg-osr-exit-between-create-and-tearoff-arguments.html: Removed.
+        * js/script-tests/dfg-osr-exit-between-create-and-tearoff-arguments.js: Removed.
+
 2016-03-03  Keith Miller  <keith_miller@apple.com>
 
         JSArrayBuffers should be collected less aggressively
