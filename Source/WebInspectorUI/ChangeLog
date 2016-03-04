@@ -1,5 +1,20 @@
 2016-03-03  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Events and Frames mode switch does not fully switch until first zoom
+        https://bugs.webkit.org/show_bug.cgi?id=154971
+        <rdar://problem/24955871>
+
+        Reviewed by Timothy Hatcher.
+
+        Switching modes toggles the visibility of the tree outline, which changes
+        the width of the overview's ruler, graphs, and scroll container. When the
+        view mode changes, the overview needs a forced "resize" layout.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype._viewModeDidChange):
+
+2016-03-03  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Assertion Failed: Cannot show timeline because it does not belong to the shown recording. – "overview"
         https://bugs.webkit.org/show_bug.cgi?id=154972
         <rdar://problem/24956233>

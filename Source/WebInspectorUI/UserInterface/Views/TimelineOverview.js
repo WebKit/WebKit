@@ -740,6 +740,8 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         }
 
         this.element.classList.toggle("frames", isRenderingFramesMode);
+
+        this.updateLayout(WebInspector.View.LayoutReason.Resize);
     }
 
     _createViewModeSettings(viewMode, minimumDurationPerPixel, maximumDurationPerPixel, durationPerPixel, selectionStartValue, selectionDuration)
