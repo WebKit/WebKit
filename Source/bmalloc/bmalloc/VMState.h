@@ -74,6 +74,13 @@ private:
     State m_state;
 };
 
+inline VMState merge(VMState a, VMState b)
+{
+    VMState result(a);
+    result.merge(b);
+    return result;
+}
+
 } // namespace bmalloc
 
 #endif // VMState_h

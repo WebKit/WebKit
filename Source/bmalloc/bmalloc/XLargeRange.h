@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "LargeObject.h"
-#include "PerProcess.h"
-#include "SuperChunk.h"
-#include "VMHeap.h"
-#include <thread>
+#ifndef XLargeRange_h
+#define XLargeRange_h
+
+#include "VMState.h"
 
 namespace bmalloc {
 
-VMHeap::VMHeap()
-    : m_largeObjects(VMState::HasPhysical::False)
+class XLargeRange : public Range {
+public:
+    XLargeRange()
+        : Range()
+        , m_vmState(VMState::Virtual)
+    {
+    }
+
+    XLargeRange(void* begin, size_t size, VMState vmState)
+        : Range(begin, size)
+        , m_vmState(vmState)
+    {
+    }
+    
+    VMState vmState() const { return m_vmState; }
+    void setVMState(VMState vmState) { m_vmState = vmState; }
+
+    std::pair<XLargeRange, XLargeRange> split(size_t) const;
+
+private:
+    VMState m_vmState;
+};
+
+inline bool canMerge(const XLargeRange& a, const XLargeRange& b)
 {
+    if (a.end() == b.begin())
+        return true;
+    
+    if (b.end() == a.begin())
+        return true;
+    
+    return false;
 }
 
-void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock)
+inline XLargeRange merge(const XLargeRange& a, const XLargeRange& b)
 {
-    if (!m_smallChunks.size())
-        allocateSuperChunk(lock);
-
-    // We initialize chunks lazily to avoid dirtying their metadata pages.
-    SmallChunk* smallChunk = new (m_smallChunks.pop()->smallChunk()) SmallChunk(lock);
-    for (auto* it = smallChunk->begin(); it < smallChunk->end(); ++it)
-        m_smallPages.push(it);
+    return XLargeRange(
+        std::min(a.begin(), b.begin()),
+        a.size() + b.size(),
+        merge(a.vmState(), b.vmState()));
 }
 
-LargeObject VMHeap::allocateLargeChunk(std::lock_guard<StaticMutex>& lock)
+inline std::pair<XLargeRange, XLargeRange> XLargeRange::split(size_t size) const
 {
-    if (!m_largeChunks.size())
-        allocateSuperChunk(lock);
+    BASSERT(size <= this->size());
 
-    // We initialize chunks lazily to avoid dirtying their metadata pages.
-    LargeChunk* largeChunk = new (m_largeChunks.pop()->largeChunk()) LargeChunk;
-    return LargeObject(largeChunk->begin());
-}
-
-void VMHeap::allocateSuperChunk(std::lock_guard<StaticMutex>&)
-{
-    SuperChunk* superChunk =
-        new (vmAllocate(superChunkSize, superChunkSize)) SuperChunk;
-    m_smallChunks.push(superChunk);
-    m_largeChunks.push(superChunk);
-#if BOS(DARWIN)
-    m_zone.addSuperChunk(superChunk);
-#endif
+    XLargeRange left(begin(), size, vmState());
+    XLargeRange right(left.end(), this->size() - size, vmState());
+    return std::make_pair(left, right);
 }
 
 } // namespace bmalloc
+
+#endif // XLargeRange_h

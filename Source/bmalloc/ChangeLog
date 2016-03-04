@@ -1,3 +1,24 @@
+2016-03-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling in r197174.
+        https://bugs.webkit.org/show_bug.cgi?id=154762
+
+        The right calculation for alignment is actually:
+
+            vmAlignment - getpagesize() + vmSize
+
+        instead of:
+
+            vmAlignment - vmPageSize + vmSize
+
+        The vmPageSize might be larger than getpagesize().
+
+        Restored changeset:
+
+        "bmalloc: Added a fast XLarge allocator"
+        https://bugs.webkit.org/show_bug.cgi?id=154720
+        http://trac.webkit.org/changeset/197174
+
 2016-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197174.

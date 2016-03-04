@@ -82,29 +82,6 @@ inline void* tryVMAllocate(size_t vmSize)
     return result;
 }
 
-inline bool tryVMExtend(void* p, size_t vmOldSize, size_t vmNewSize)
-{
-    vmValidate(vmOldSize);
-    vmValidate(vmNewSize);
-    
-    BASSERT(vmOldSize < vmNewSize);
-
-    void* nextAddress = static_cast<char*>(p) + vmOldSize;
-    size_t extentionSize = vmNewSize - vmOldSize;
-
-    void* result = mmap(nextAddress, extentionSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, BMALLOC_VM_TAG, 0);
-
-    if (result == MAP_FAILED)
-        return false;
-
-    if (result != nextAddress) {
-        munmap(result, extentionSize);
-        return false;
-    }
-    
-    return true;
-}
-
 inline void* vmAllocate(size_t vmSize)
 {
     void* result = tryVMAllocate(vmSize);
@@ -126,7 +103,10 @@ inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize)
     vmValidate(vmSize);
     vmValidate(vmAlignment);
 
-    size_t mappedSize = std::max(vmSize, vmAlignment) + vmAlignment;
+    // We use getpagesize() here instead of vmPageSize because vmPageSize is
+    // allowed to be larger than the OS's true page size.
+
+    size_t mappedSize = vmAlignment - getpagesize() + vmSize;
     char* mapped = static_cast<char*>(tryVMAllocate(mappedSize));
     if (!mapped)
         return nullptr;
@@ -134,6 +114,8 @@ inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize)
 
     char* aligned = roundUpToMultipleOf(vmAlignment, mapped);
     char* alignedEnd = aligned + vmSize;
+    
+    RELEASE_BASSERT(alignedEnd <= mappedEnd);
     
     if (size_t leftExtra = aligned - mapped)
         vmDeallocate(mapped, leftExtra);
