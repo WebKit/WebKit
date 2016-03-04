@@ -1,3 +1,93 @@
+2016-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Gather resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=154278
+        <rdar://problem/24702892>
+
+        Reviewed by Andy Estes.
+
+        Revise the WebProcess to notify the UIProcess about resource load statistics. These
+        updates are not time-critical, and do not need to be done in concert with the actual
+        load. As resource loads are made, each WebProcess notifies the UIProcess of the new
+        load counts, then clears its local state. These statistics are then aggregated in
+        the UIProcess.
+
+        * CMakeLists.txt: Add new ResourceLoadStatisticsState files to build.
+        * DerivedSources.make: Ditto.
+        * Platform/IPC/ArgumentCoders.h: Update to support HashCountedSets.
+        * PlatformEfl.cmake: Add new ResourceLoadStatisticsState files to build.
+        * PlatformGTK.cmake: Ditto.
+        * PlatformMac.cmake: Ditto.
+        * Shared/API/APIObject.h: Add new ResourceLoadStatistics type.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ExceptionDetails>::decode): Support new ResourceLoadStatistics type.
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::encode): Added.
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::decode): Added.
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Handle 'resourceLoadStatisticsEnabled' flag.
+        (WebKit::WebProcessCreationParameters::decode): Ditto.
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration): Add storage location for the
+        resource load statistics.
+        (API::ProcessPoolConfiguration::copy): Handle the new storage location and the feature flag.
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory): Added stub.
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory): Added.
+        (API::WebsiteDataStore::defaultDataStoreConfiguration): Added support for the new resource
+        load statistics storage location.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Sync Process Pool configuration parameters
+        with the state of our websiteData object's "ResourceLoadStatisticsEnabled" flag, so that
+        new processes are created in the right state.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsEnabled]): Added.
+        (-[WKWebsiteDataStore _setResourceLoadStatisticsEnabled:]): Added.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess): Handle new flag for enabling resource
+        load statistics.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp: Added.
+        (WebKit::WebResourceLoadStatisticsStore::create):
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::setResourceLoadStatisticsEnabled):
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsEnabled):
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded):
+        (WebKit::WebResourceLoadStatisticsStore::writeToDisk):
+        (WebKit::WebResourceLoadStatisticsStore::applicationWillTerminate):
+        * UIProcess/WebResourceLoadStatisticsStore.h: Added.
+        (WebKit::WebResourceLoadStatisticsStore::coreStore):
+        * UIProcess/WebResourceLoadStatisticsStore.messages.in: Added.
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformInitialize): Register a termination handler
+        to close down the resource load statistics store.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore): Initialize the new WebResourceLoadStatisticsStore
+        member.
+        (WebKit::WebsiteDataStore::webProcessWillOpenConnection): Register the WebResourceLoadStatisticsStore
+        object as a work queue message receiver
+        (WebKit::WebsiteDataStore::webProcessDidCloseConnection): Unregister WebResourceLoadStatisticsStore.
+        (WebKit::WebsiteDataStore::resourceLoadStatisticsEnabled): Added.
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled): Ditto.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::resourceLoadStatisticsStore): Added.
+        * WebKit2.xcodeproj/project.pbxproj: Add new ResourceLoadStatisticsState files to build.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Take into account the new parameter
+        specifying whether resource load statistics are being captured.
+        (WebKit::WebProcess::WebProcess): Initialized statistics changed notification timer.
+        (WebKit::WebProcess::statisticsChangedTimerFired): Added. Send bundles of site load
+        statistics to the UIProcess on a set interval. Clear out local cache after each send.
+        (WebKit::WebProcess::setResourceLoadStatisticsEnabled): Added.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Add new SetResourceLoadStatisticsEnabled message.
+
 2016-03-04  Daniel Bates  <dabates@apple.com>
 
         Temporarily use bundle identifier as part of user directory suffix

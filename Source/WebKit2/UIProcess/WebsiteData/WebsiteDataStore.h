@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,7 @@ namespace WebKit {
 class StorageManager;
 class WebPageProxy;
 class WebProcessPool;
+class WebResourceLoadStatisticsStore;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
 struct WebsiteDataRecord;
@@ -63,6 +64,7 @@ public:
         String webSQLDatabaseDirectory;
         String localStorageDirectory;
         String mediaKeysStorageDirectory;
+        String resourceLoadStatisticsDirectory;
     };
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Configuration);
@@ -72,6 +74,9 @@ public:
 
     bool isPersistent() const { return !m_sessionID.isEphemeral(); }
     WebCore::SessionID sessionID() const { return m_sessionID; }
+
+    bool resourceLoadStatisticsEnabled() const;
+    void setResourceLoadStatisticsEnabled(bool);
 
     static void cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage);
 
@@ -116,6 +121,7 @@ private:
     const String m_webSQLDatabaseDirectory;
     const String m_mediaKeysStorageDirectory;
     const RefPtr<StorageManager> m_storageManager;
+    const RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
 
     Ref<WorkQueue> m_queue;
 };

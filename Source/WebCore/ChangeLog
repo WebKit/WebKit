@@ -1,3 +1,68 @@
+2016-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Gather resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=154278
+        <rdar://problem/24702892>
+
+        Reviewed by Andy Estes.
+
+        Tested (now under WK2) by http/tests/navigation/statistics.html
+
+        Split part of the ResourceLoadObserver into a new class (ResourceLoadStatisticsStore)
+        that manages the collection of ResourceLoadStatistic objects, and that can be used
+        in the UIProcess without touching various WebProcess-specific WebCore classes.
+
+        Have the WebProcess only fire a message to the UIProcess if data has been modified. Otherwise,
+        no messages should be sent. When new data is encountered, start a 5 second timer. If more
+        data is found during this delay, just accumulate it. When the timer fires, all data is sent
+        and the timer stops until a new batch of data arrives.
+
+        * CMakeLists.txt: Add the new ResourceLoadStatisticsStore class.
+        * WebCore.xcodeproj/project.pbxproj: Adjust visibility of ResourceLoadStatistics header,
+        and add new ResourceLoadStatisticsStore class.
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setResourceLoadStatisticsEnabled): Deleted.
+        (WebCore::ResourceLoadObserver::resourceLoadStatisticsEnabled): Deleted.
+        (WebCore::ResourceLoadObserver::setStatisticsStore): Added.
+        (WebCore::ResourceLoadObserver::logFrameNavigation): Tell the ResourceLoadStatisticsStore to fire its 'data changed'
+        handler if necessary.
+        (WebCore::ResourceLoadObserver::logSubresourceLoading): Ditto.
+        (WebCore::ResourceLoadObserver::logUserInteraction): Ditto.
+        (WebCore::ResourceLoadObserver::statisticsForOrigin): Use new ResourceLoadStatisticsStore.
+        (WebCore::ResourceLoadObserver::isPrevalentResource): Deleted.
+        (WebCore::ResourceLoadObserver::resourceStatisticsForPrimaryDomain): Deleted.
+        (WebCore::ResourceLoadObserver::writeDataToDisk): Deleted.
+        (WebCore::ResourceLoadObserver::setStatisticsStorageDirectory): Deleted.
+        (WebCore::ResourceLoadObserver::persistentStoragePath): Deleted.
+        (WebCore::ResourceLoadObserver::readDataFromDiskIfNeeded): Deleted.
+        (WebCore::ResourceLoadObserver::createDecoderFromDisk): Deleted.
+        (WebCore::ResourceLoadObserver::writeEncoderToDisk): Deleted.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::encode): Get rid of unneeded argument.
+        (WebCore::ResourceLoadStatistics::decode): Ditto.
+        (WebCore::mergeHashCountedSet): Added helper function.
+        (WebCore::ResourceLoadStatistics::merge): Added.
+        * loader/ResourceLoadStatistics.h:
+        (WebCore::ResourceLoadStatistics::ResourceLoadStatistics):
+        * loader/ResourceLoadStatisticsStore.cpp: Added.
+        (WebCore::ResourceLoadStatisticsStore::create):
+        (WebCore::ResourceLoadStatisticsStore::ResourceLoadStatisticsStore):
+        (WebCore::ResourceLoadStatisticsStore::isPrevalentResource):
+        (WebCore::ResourceLoadStatisticsStore::resourceStatisticsForPrimaryDomain):
+        (WebCore::ResourceLoadStatisticsStore::writeDataToDisk):
+        (WebCore::ResourceLoadStatisticsStore::setStatisticsStorageDirectory):
+        (WebCore::ResourceLoadStatisticsStore::persistentStoragePath):
+        (WebCore::ResourceLoadStatisticsStore::readDataFromDiskIfNeeded):
+        (WebCore::ResourceLoadStatisticsStore::createDecoderFromDisk):
+        (WebCore::ResourceLoadStatisticsStore::writeEncoderToDisk):
+        (WebCore::ResourceLoadStatisticsStore::statisticsForOrigin):
+        (WebCore::ResourceLoadStatisticsStore::takeStatistics):
+        (WebCore::ResourceLoadStatisticsStore::mergeStatistics):
+        (WebCore::ResourceLoadStatisticsStore::setNotificationCallback):
+        (WebCore::ResourceLoadStatisticsStore::fireDataModificationHandler):
+        * loader/ResourceLoadStatisticsStore.h: Added.
+
 2016-03-04  Konstantin Tokarev  <annulen@yandex.ru>
 
         Added missing override specifiers under Source/WebCore.

@@ -667,6 +667,7 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebPasteboardProxy.messages.in
     UIProcess/WebProcessPool.messages.in
     UIProcess/WebProcessProxy.messages.in
+    UIProcess/WebResourceLoadStatisticsStore.messages.in
     UIProcess/WebVibrationProxy.messages.in
 
     UIProcess/Databases/DatabaseProcessProxy.messages.in

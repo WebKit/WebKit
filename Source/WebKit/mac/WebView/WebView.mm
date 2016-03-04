@@ -252,6 +252,8 @@
 #import <WebCore/MobileGestaltSPI.h>
 #import <WebCore/NetworkStateNotifier.h>
 #import <WebCore/PlatformScreen.h>
+#import <WebCore/ResourceLoadStatistics.h>
+#import <WebCore/ResourceLoadStatisticsStore.h>
 #import <WebCore/RuntimeApplicationChecksIOS.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/SmartReplace.h>
@@ -606,6 +608,7 @@ enum { WebViewVersion = 4 };
 #define timedLayoutSize 4096
 
 static NSMutableSet *schemesWithRepresentationsSet;
+static WebCore::ResourceLoadStatisticsStore* resourceLoadStatisticsStore;
 
 #if !PLATFORM(IOS)
 NSString *_WebCanGoBackKey =            @"canGoBack";
@@ -764,7 +767,9 @@ static void WebKitInitializeApplicationStatisticsStoragePathIfNecessary()
     ASSERT(appName);
     
     NSString *supportDirectory = [NSString _webkit_localStorageDirectoryWithBundleIdentifier:appName];
-    ResourceLoadObserver::sharedObserver().setStatisticsStorageDirectory(supportDirectory);
+
+    resourceLoadStatisticsStore = &WebCore::ResourceLoadStatisticsStore::create(supportDirectory).leakRef();
+    ResourceLoadObserver::sharedObserver().setStatisticsStore(*resourceLoadStatisticsStore);
     
     initialized = YES;
 }
@@ -2472,7 +2477,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
 
     settings.setResourceLoadStatisticsEnabled([preferences resourceLoadStatisticsEnabled]);
-    ResourceLoadObserver::sharedObserver().readDataFromDiskIfNeeded();
+    resourceLoadStatisticsStore->readDataFromDiskIfNeeded();
 
 #if ENABLE(GAMEPAD)
     RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled([preferences gamepadsEnabled]);
@@ -4842,7 +4847,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 {   
     applicationIsTerminating = YES;
 
-    ResourceLoadObserver::sharedObserver().writeDataToDisk();
+    resourceLoadStatisticsStore->writeDataToDisk();
 
     if (fastDocumentTeardownEnabled())
         [self closeAllWebViews];

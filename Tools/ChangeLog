@@ -1,3 +1,20 @@
+2016-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Gather resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=154278
+        <rdar://problem/24702892>
+
+        Reviewed by Andy Estes.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration): Retrieve state of the ResourceLoadStatisticsEnabled setting.
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]): Move setting from WK1-only to be
+        universally applicable.
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController didChangeSettings]): Recognize when the
+        Resource Load Statistics flag has changed.
+
 2016-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Remove vcxproj build system

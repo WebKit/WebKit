@@ -37,6 +37,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 
 - (void)_fetchDataRecordsOfTypes:(WK_SET(NSString *) *)dataTypes withOptions:(_WKWebsiteDataStoreFetchOptions)options completionHandler:(void (^)(WK_ARRAY(WKWebsiteDataRecord *) *))completionHandler;
 
+@property (nonatomic, setter=_setResourceLoadStatisticsEnabled:) BOOL _resourceLoadStatisticsEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -138,6 +138,7 @@ list(APPEND WebKit2_SOURCES
     Shared/mac/WebMemorySampler.mac.mm
 
     UIProcess/ViewGestureController.cpp
+    UIProcess/WebResourceLoadStatisticsStore.cpp
 
     UIProcess/Automation/WebAutomationSession.cpp
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -363,6 +363,9 @@ public:
     static String legacyPlatformDefaultNetworkCacheDirectory();
     static bool isNetworkCacheEnabled();
 
+    bool resourceLoadStatisticsEnabled() { return m_resourceLoadStatisticsEnabled; }
+    void setResourceLoadStatisticsEnabled(bool enabled) { m_resourceLoadStatisticsEnabled = enabled; }
+
 private:
     void platformInitialize();
 
@@ -514,6 +517,7 @@ private:
 #endif
 
     bool m_memoryCacheDisabled;
+    bool m_resourceLoadStatisticsEnabled { false };
 
     UserObservablePageCounter m_userObservablePageCounter;
     ProcessSuppressionDisabledCounter m_processSuppressionDisabledForPageCounter;

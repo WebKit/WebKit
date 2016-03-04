@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,10 @@
 #include "APIWebsiteDataRecord.h"
 #include "NetworkProcessMessages.h"
 #include "StorageManager.h"
+#include "WebProcessMessages.h"
 #include "WebProcessPool.h"
+#include "WebResourceLoadStatisticsStore.h"
+#include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebsiteData.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/DatabaseTracker.h>
@@ -77,6 +80,7 @@ WebsiteDataStore::WebsiteDataStore(Configuration configuration)
     , m_webSQLDatabaseDirectory(WTFMove(configuration.webSQLDatabaseDirectory))
     , m_mediaKeysStorageDirectory(WTFMove(configuration.mediaKeysStorageDirectory))
     , m_storageManager(StorageManager::create(WTFMove(configuration.localStorageDirectory)))
+    , m_resourceLoadStatistics(WebResourceLoadStatisticsStore::create(WTFMove(configuration.resourceLoadStatisticsDirectory)))
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
     platformInitialize();
@@ -976,6 +980,8 @@ void WebsiteDataStore::webProcessWillOpenConnection(WebProcessProxy& webProcessP
 {
     if (m_storageManager)
         m_storageManager->processWillOpenConnection(webProcessProxy, connection);
+
+    connection.addWorkQueueMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName(), &m_queue.get(), m_resourceLoadStatistics.get());
 }
 
 void WebsiteDataStore::webPageWillOpenConnection(WebPageProxy& webPageProxy, IPC::Connection& connection)
@@ -992,6 +998,8 @@ void WebsiteDataStore::webPageDidCloseConnection(WebPageProxy& webPageProxy, IPC
 
 void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)
 {
+    connection.removeWorkQueueMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName());
+
     if (m_storageManager)
         m_storageManager->processDidCloseConnection(webProcessProxy, connection);
 }
@@ -1091,6 +1099,27 @@ void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, 
 
         WebCore::deleteFile(mediaKeyFile);
         WebCore::deleteEmptyDirectory(mediaKeyDirectory);
+    }
+}
+
+bool WebsiteDataStore::resourceLoadStatisticsEnabled() const
+{
+    return m_resourceLoadStatistics ? m_resourceLoadStatistics->resourceLoadStatisticsEnabled() : false;
+}
+
+void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
+{
+    if (!m_resourceLoadStatistics)
+        return;
+
+    if (enabled == resourceLoadStatisticsEnabled())
+        return;
+
+    m_resourceLoadStatistics->setResourceLoadStatisticsEnabled(enabled);
+
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
+        processPool->setResourceLoadStatisticsEnabled(enabled);
+        processPool->sendToAllProcesses(Messages::WebProcess::SetResourceLoadStatisticsEnabled(enabled));
     }
 }
 

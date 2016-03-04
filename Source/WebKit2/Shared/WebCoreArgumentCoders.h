@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,6 +80,7 @@ struct PasteboardImage;
 struct PasteboardWebContent;
 struct PluginInfo;
 struct RecentSearch;
+struct ResourceLoadStatistics;
 struct ScrollableAreaParameters;
 struct TextCheckingResult;
 struct TextIndicatorData;
@@ -453,6 +454,11 @@ template<> struct ArgumentCoder<WebCore::RecentSearch> {
 template<> struct ArgumentCoder<WebCore::ExceptionDetails> {
     static void encode(ArgumentEncoder&, const WebCore::ExceptionDetails&);
     static bool decode(ArgumentDecoder&, WebCore::ExceptionDetails&);
+};
+
+template<> struct ArgumentCoder<WebCore::ResourceLoadStatistics> {
+    static void encode(ArgumentEncoder&, const WebCore::ResourceLoadStatistics&);
+    static bool decode(ArgumentDecoder&, WebCore::ResourceLoadStatistics&);
 };
 
 } // namespace IPC

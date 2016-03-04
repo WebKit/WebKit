@@ -35,15 +35,26 @@ class KeyedDecoder;
 class KeyedEncoder;
 
 struct ResourceLoadStatistics {
+    ResourceLoadStatistics(const String& primaryDomain)
+        : highLevelDomain(primaryDomain)
+    {
+    }
+
+    ResourceLoadStatistics() = default;
+
     bool checkAndSetAsPrevalentResourceIfNecessary(unsigned originsVisitedSoFar);
 
     bool hasPrevalentRedirection() const;
     bool hasPrevalentResourceCharacteristics() const;
 
-    void encode(KeyedEncoder&, const String& origin) const;
-    bool decode(KeyedDecoder&, const String& origin);
+    void encode(KeyedEncoder&) const;
+    bool decode(KeyedDecoder&);
 
     String toString() const;
+
+    void merge(const ResourceLoadStatistics&);
+
+    String highLevelDomain;
 
     // User interaction
     bool hadUserInteraction { false };

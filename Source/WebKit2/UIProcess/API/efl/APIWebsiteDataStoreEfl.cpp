@@ -67,6 +67,11 @@ String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
     return websiteDataDirectoryFileSystemRepresentation("WebKitEfl" EINA_PATH_SEP_S "Databases");
 }
 
+String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("WebKitEfl" EINA_PATH_SEP_S "ResourceLoadStatistics");
+}
+
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
 {
     return WebCore::pathByAppendingComponent(String::fromUTF8(efreet_cache_home_get()), directoryName);
@@ -87,6 +92,7 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
     configuration.webSQLDatabaseDirectory = defaultWebSQLDatabaseDirectory();
     configuration.localStorageDirectory = defaultLocalStorageDirectory();
     configuration.mediaKeysStorageDirectory = defaultMediaKeysStorageDirectory();
+    configuration.resourceLoadStatisticsDirectory = defaultResourceLoadStatisticsDirectory();
 
     return configuration;
 }

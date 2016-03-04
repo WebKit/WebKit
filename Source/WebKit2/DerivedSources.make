@@ -131,6 +131,7 @@ MESSAGE_RECEIVERS = \
     WebProcessPool \
     WebProcessProxy \
     WebResourceLoader \
+    WebResourceLoadStatisticsStore \
     WebUserContentController \
     WebUserContentControllerProxy \
     WebVideoFullscreenManager \

@@ -1,3 +1,21 @@
+2016-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Gather resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=154278
+        <rdar://problem/24702892>
+
+        Reviewed by Andy Estes.
+
+        Switch to maintaining a global WebCore::ResourceLoadStatisticsStore in the WebKit process,
+        and hand it off to the WebCore layer to use during data gathering. The ResourceLoadStatisticsStore
+        is now responsible for reading/writing to disk, and tracking the collection of load data.
+
+        * WebView/WebView.mm:
+        (WebKitInitializeApplicationStatisticsStoragePathIfNecessary): Initialize singleton
+        ResourceLoadStatisticsStore object for tracking state.
+        (-[WebView _preferencesChanged:]): Revise for new singleton.
+        (+[WebView _applicationWillTerminate]): Ditto.
+
 2016-02-29  Ada Chan  <adachan@apple.com>
 
         Adopt the new version of AVOutputDeviceMenuController's showMenuForRect method.

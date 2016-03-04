@@ -65,6 +65,11 @@ String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
     return websiteDataDirectoryFileSystemRepresentation("webkitgtk" G_DIR_SEPARATOR_S "databases");
 }
 
+String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("webkitgtk" G_DIR_SEPARATOR_S "ResourceLoadStatistics");
+}
+
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
 {
     return WebCore::pathByAppendingComponent(WebCore::filenameToString(g_get_user_cache_dir()), directoryName);
@@ -85,6 +90,7 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
     configuration.webSQLDatabaseDirectory = defaultWebSQLDatabaseDirectory();
     configuration.localStorageDirectory = defaultLocalStorageDirectory();
     configuration.mediaKeysStorageDirectory = defaultMediaKeysStorageDirectory();
+    configuration.resourceLoadStatisticsDirectory = defaultResourceLoadStatisticsDirectory();
 
     return configuration;
 }

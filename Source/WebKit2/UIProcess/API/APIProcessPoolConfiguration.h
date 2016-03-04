@@ -103,6 +103,7 @@ private:
     WTF::String m_localStorageDirectory;
     WTF::String m_webSQLDatabaseDirectory;
     WTF::String m_mediaKeysStorageDirectory;
+    WTF::String m_resourceLoadStatisticsDirectory;
     Vector<WTF::String> m_cachePartitionedURLSchemes;
     Vector<WTF::String> m_alwaysRevalidatedURLSchemes;
     bool m_fullySynchronousModeIsAllowedForTesting { false };
