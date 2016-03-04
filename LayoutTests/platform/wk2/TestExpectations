@@ -237,6 +237,40 @@ webkit.org/b/148890 http/tests/appcache/decide-navigation-policy-after-delay.htm
 webkit.org/b/154681 storage/indexeddb/database-odd-names.html
 webkit.org/b/154681 storage/indexeddb/odd-strings.html
 
+# WKTR does not support overriding WebKitUsesPageCachePreferenceKey.
+# https://bugs.webkit.org/show_bug.cgi?id=114153
+fast/harness/use-page-cache.html
+
+# eventSender.dragMode is unimplemented in WKTR
+# Mac: https://bugs.webkit.org/show_bug.cgi?id=68552
+fast/events/controlclick-no-onclick.html
+fast/events/moving-text-should-fire-drop-and-dragend-events.html
+fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
+editing/pasteboard/drag-drop-url-with-style.html
+
+# WTR needs an implementation for eventSender.continuousMouseScrollBy
+# https://bugs.webkit.org/show_bug.cgi?id=69417
+fast/events/wheelevent-direction-inverted-from-device.html
+
+# This should only be a layer change.
+# http://webkit.org/b/82129
+fast/box-shadow/shadow-buffer-partial.html
+fast/block/lineboxcontain/block-font.html
+fast/block/lineboxcontain/block-glyphs.html
+fast/block/lineboxcontain/font.html
+
+# WTR needs an implementation of setAutomaticLinkDetectionEnabled.
+# https://bugs.webkit.org/show_bug.cgi?id=87162
+editing/inserting/smart-link-when-caret-is-moved-before-URL.html
+editing/inserting/smart-quote-with-all-configurations.html
+editing/inserting/typing-space-to-trigger-smart-link.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=115203
+# Downloaded file name tests fail because of incorrect custom policy delegate implementation
+http/tests/download/default-encoding.html
+http/tests/download/inherited-encoding-form-submission-result.html
+http/tests/download/inherited-encoding.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -347,37 +381,8 @@ java
 compositing/plugins/invalidate_rect.html
 plugins/windowless_plugin_paint_test.html
 
-# WKTR does not support overriding WebKitUsesPageCachePreferenceKey.
-# https://bugs.webkit.org/show_bug.cgi?id=114153
-fast/harness/use-page-cache.html
-
-# eventSender.dragMode is unimplemented in WKTR
-# Mac: https://bugs.webkit.org/show_bug.cgi?id=68552
-# Qt: https://bugs.webkit.org/show_bug.cgi?id=69946
-fast/events/controlclick-no-onclick.html
-fast/events/moving-text-should-fire-drop-and-dragend-events.html
-fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
-editing/pasteboard/drag-drop-url-with-style.html
-
-# WTR needs an implementation for eventSender.continuousMouseScrollBy
-# https://bugs.webkit.org/show_bug.cgi?id=69417
-fast/events/wheelevent-direction-inverted-from-device.html
-
 # eventSender.clearKillRing() is unimplemented
 editing/pasteboard/emacs-cntl-y-001.html
-
-# This should only be a layer change.
-# http://webkit.org/b/82129
-fast/box-shadow/shadow-buffer-partial.html
-fast/block/lineboxcontain/block-font.html
-fast/block/lineboxcontain/block-glyphs.html
-fast/block/lineboxcontain/font.html
-
-# WTR needs an implementation of setAutomaticLinkDetectionEnabled.
-# https://bugs.webkit.org/show_bug.cgi?id=87162
-editing/inserting/smart-link-when-caret-is-moved-before-URL.html
-editing/inserting/smart-quote-with-all-configurations.html
-editing/inserting/typing-space-to-trigger-smart-link.html
 
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
@@ -399,12 +404,6 @@ fast/spatial-navigation/snav-fully-aligned-horizontally.html
 fast/spatial-navigation/snav-fully-aligned-vertically.html
 fast/spatial-navigation/snav-iframe-no-scrollable-content.html
 fast/spatial-navigation/snav-imagemap-overlapped-areas.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=115203
-# Downloaded file name tests fail because of incorrect custom policy delegate implementation
-http/tests/download/default-encoding.html
-http/tests/download/inherited-encoding-form-submission-result.html
-http/tests/download/inherited-encoding.html
 
 # WebFrameLoaderClient::canHandleRequest() has to be implemented.
 http/tests/misc/redirect-to-external-url.html
@@ -498,7 +497,6 @@ storage/websql/open-database-while-transaction-in-progress.html
 svg/hixie/cascade/002.xml
 transitions/font-family-during-transition.html
 
-
 # [WK2] http/tests/navigation/anchor-frames-cross-origin.html fails.
 # https://bugs.webkit.org/show_bug.cgi?id=83581
 http/tests/navigation/anchor-frames-cross-origin.html
@@ -576,8 +574,8 @@ http/tests/security/feed-urls-from-remote.html
 # First two lines are reversed when test is flaky.
 fast/preloader/document-write-2.html [ Pass Failure ]
 
-# These two IDB tests are, by their very nature, very slow.
-# Give them some extra time.
+# These two IDB tests are, by their nature, very slow.
+# Give them some extra time. (Why only for WebKit 2?)
 storage/indexeddb/modern/256-open-databases.html [ Slow ]
 storage/indexeddb/modern/exceed-open-file-limit.html [ Slow ]
 

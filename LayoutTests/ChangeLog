@@ -1,3 +1,11 @@
+2016-03-04  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r197541): many tiled drawing tests failing after new "large tile size" logic was added
+        https://bugs.webkit.org/show_bug.cgi?id=155020
+
+        * platform/mac-wk2/TestExpectations: Added failure expectations for tiled drawing tests.
+        * platform/wk2/TestExpectations: Moved some expectations to a more appropriate section in the file.
+
 2016-03-04  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Lexical bind "super" inside of the arrow function in generator.
