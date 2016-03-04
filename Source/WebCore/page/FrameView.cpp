@@ -2465,6 +2465,17 @@ void FrameView::addedOrRemovedScrollbar()
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidAddOrRemoveScrollbars();
     }
+
+    if (auto* tiledBacking = this->tiledBacking()) {
+        TiledBacking::Scrollability scrollability = TiledBacking::NotScrollable;
+        if (horizontalScrollbar())
+            scrollability = TiledBacking::HorizontallyScrollable;
+
+        if (verticalScrollbar())
+            scrollability |= TiledBacking::VerticallyScrollable;
+
+        tiledBacking->setScrollability(scrollability);
+    }
 }
 
 static LayerFlushThrottleState::Flags determineLayerFlushThrottleState(Page& page)

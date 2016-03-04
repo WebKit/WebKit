@@ -46,7 +46,6 @@ TileGrid::TileGrid(TileController& controller)
     , m_containerLayer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
     , m_cohortRemovalTimer(*this, &TileGrid::cohortRemovalTimerFired)
     , m_tileSize(kDefaultTileSize, kDefaultTileSize)
-    , m_tileSizeAtLastRevalidate(m_tileSize)
 {
     m_containerLayer.get().setName(TileController::tileGridContainerLayerName());
 }
@@ -333,10 +332,10 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
     double minimumRevalidationTimerDuration = std::numeric_limits<double>::max();
     bool needsTileRevalidation = false;
     
-    m_tileSize = m_controller.tileSize();
-    if (m_tileSize != m_tileSizeAtLastRevalidate) {
+    auto tileSize = m_controller.tileSize();
+    if (tileSize != m_tileSize) {
         removeAllTiles();
-        m_tileSizeAtLastRevalidate = m_tileSize;
+        m_tileSize = tileSize;
     }
 
     // Move tiles newly outside the coverage rect into the cohort map.

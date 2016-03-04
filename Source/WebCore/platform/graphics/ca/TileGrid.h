@@ -167,7 +167,6 @@ private:
     RepaintCountMap m_tileRepaintCounts;
     
     IntSize m_tileSize;
-    IntSize m_tileSizeAtLastRevalidate;
 
     float m_scale { 1 };
 };

@@ -1,5 +1,25 @@
 2016-03-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Use larger tiles when possible to reduce per-tile painting overhead
+        https://bugs.webkit.org/show_bug.cgi?id=154985
+
+        Reviewed by Zalan Bujtas.
+
+        r197541 inadvertently missed FrameView changes that push scrollability data
+        onto the TiledBacking, so didn't actually change behavior (hence the 512x512 tiles
+        in the failing tests).
+
+        Also remove m_tileSizeAtLastRevalidate from TileGrid; it's replaced by a simpler test.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addedOrRemovedScrollbar):
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::revalidateTiles):
+        (WebCore::TileGrid::TileGrid): Deleted.
+        * platform/graphics/ca/TileGrid.h:
+
+2016-03-04  Simon Fraser  <simon.fraser@apple.com>
+
         Use BoxExtent instead of EdgeSet in TileController
         https://bugs.webkit.org/show_bug.cgi?id=155040
 
