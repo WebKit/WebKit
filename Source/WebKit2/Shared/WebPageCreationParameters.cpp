@@ -70,6 +70,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << backgroundExtendsBeyondPage;
     encoder.encodeEnum(layerHostingMode);
     encoder << mimeTypesWithCustomContentProviders;
+    encoder << controlledByAutomation;
 
 #if ENABLE(REMOTE_INSPECTOR)
     encoder << allowsRemoteInspection;
@@ -162,6 +163,8 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
     if (!decoder.decodeEnum(parameters.layerHostingMode))
         return false;
     if (!decoder.decode(parameters.mimeTypesWithCustomContentProviders))
+        return false;
+    if (!decoder.decode(parameters.controlledByAutomation))
         return false;
 
 #if ENABLE(REMOTE_INSPECTOR)

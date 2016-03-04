@@ -84,6 +84,9 @@ WK_EXPORT void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo
 WK_EXPORT void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context);
 WK_EXPORT void WKPageEndPrinting(WKPageRef page);
 
+WK_EXPORT bool WKPageGetIsControlledByAutomation(WKPageRef page);
+WK_EXPORT void WKPageSetControlledByAutomation(WKPageRef page, bool controlled);
+
 WK_EXPORT bool WKPageGetAllowsRemoteInspection(WKPageRef page);
 WK_EXPORT void WKPageSetAllowsRemoteInspection(WKPageRef page, bool allow);
 

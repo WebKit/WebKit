@@ -310,6 +310,9 @@ public:
 
     WebInspectorProxy* inspector();
 
+    bool isControlledByAutomation() const { return m_controlledByAutomation; }
+    void setControlledByAutomation(bool);
+
 #if ENABLE(REMOTE_INSPECTOR)
     bool allowsRemoteInspection() const { return m_allowsRemoteInspection; }
     void setAllowsRemoteInspection(bool);
@@ -1678,6 +1681,8 @@ private:
 
     bool m_isPageSuspended;
     bool m_addsVisitedLinks;
+
+    bool m_controlledByAutomation { false };
 
 #if ENABLE(REMOTE_INSPECTOR)
     bool m_allowsRemoteInspection;

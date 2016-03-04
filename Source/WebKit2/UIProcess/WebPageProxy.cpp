@@ -1232,6 +1232,17 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType)
     return false;
 }
 
+void WebPageProxy::setControlledByAutomation(bool controlled)
+{
+    if (m_controlledByAutomation == controlled)
+        return;
+
+    m_controlledByAutomation = controlled;
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetControlledByAutomation(controlled), m_pageID);
+}
+
 #if ENABLE(REMOTE_INSPECTOR)
 void WebPageProxy::setAllowsRemoteInspection(bool allow)
 {
@@ -5173,6 +5184,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
         parameters.scrollbarOverlayStyle = Nullopt;
     parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
     parameters.layerHostingMode = m_layerHostingMode;
+    parameters.controlledByAutomation = m_controlledByAutomation;
 #if ENABLE(REMOTE_INSPECTOR)
     parameters.allowsRemoteInspection = m_allowsRemoteInspection;
     parameters.remoteInspectionNameOverride = m_remoteInspectionNameOverride;

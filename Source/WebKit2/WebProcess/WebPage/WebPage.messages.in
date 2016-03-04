@@ -94,6 +94,8 @@ messages -> WebPage LegacyReceiver {
     SetAllowsMediaDocumentInlinePlayback(bool allows)
 #endif
 
+    SetControlledByAutomation(bool controlled)
+
 #if ENABLE(REMOTE_INSPECTOR)
     SetAllowsRemoteInspection(bool allow)
     SetRemoteInspectionNameOverride(String name)

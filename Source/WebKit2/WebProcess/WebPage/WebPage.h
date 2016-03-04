@@ -929,6 +929,9 @@ public:
 
     void didRestoreScrollPosition();
 
+    bool isControlledByAutomation() const;
+    void setControlledByAutomation(bool);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

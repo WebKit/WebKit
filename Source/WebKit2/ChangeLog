@@ -1,3 +1,35 @@
+2016-03-04  Timothy Hatcher  <timothy@apple.com>
+
+        Inform WebKit and WebCore if a page is controlled by automation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=154991
+        rdar://problem/24965784
+
+        Reviewed by Joseph Pecoraro.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetIsControlledByAutomation):
+        (WKPageSetControlledByAutomation):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setControlledByAutomation):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isControlledByAutomation):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageIsControlledByAutomation):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents):
+        (WebKit::WebPage::isControlledByAutomation):
+        (WebKit::WebPage::setControlledByAutomation):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-03-03  Chris Dumez  <cdumez@apple.com>
 
         Regression(r196770): Unable to use HipChat Mac app

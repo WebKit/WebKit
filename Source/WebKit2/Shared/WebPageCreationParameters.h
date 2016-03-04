@@ -116,6 +116,8 @@ struct WebPageCreationParameters {
 
     Vector<String> mimeTypesWithCustomContentProviders;
 
+    bool controlledByAutomation;
+
 #if ENABLE(REMOTE_INSPECTOR)
     bool allowsRemoteInspection;
     String remoteInspectionNameOverride;

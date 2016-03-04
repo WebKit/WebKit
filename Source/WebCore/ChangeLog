@@ -1,3 +1,16 @@
+2016-03-04  Timothy Hatcher  <timothy@apple.com>
+
+        Inform WebKit and WebCore if a page is controlled by automation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=154991
+        rdar://problem/24965784
+
+        Reviewed by Joseph Pecoraro.
+
+        * page/Page.h:
+        (WebCore::Page::isControlledByAutomation): Added.
+        (WebCore::Page::setControlledByAutomation): Added.
+
 2016-03-03  Antti Koivisto  <antti@apple.com>
 
         ComposedTreeIterator may traverse slotted nodes multiple times

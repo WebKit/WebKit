@@ -2534,6 +2534,16 @@ void WKPageEndPrinting(WKPageRef page)
 }
 #endif
 
+bool WKPageGetIsControlledByAutomation(WKPageRef page)
+{
+    return toImpl(page)->isControlledByAutomation();
+}
+
+void WKPageSetControlledByAutomation(WKPageRef page, bool controlled)
+{
+    toImpl(page)->setControlledByAutomation(controlled);
+}
+
 bool WKPageGetAllowsRemoteInspection(WKPageRef page)
 {
 #if ENABLE(REMOTE_INSPECTOR)

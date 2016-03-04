@@ -568,6 +568,11 @@ bool WKBundlePageIsUsingEphemeralSession(WKBundlePageRef pageRef)
     return toImpl(pageRef)->usesEphemeralSession();
 }
 
+bool WKBundlePageIsControlledByAutomation(WKBundlePageRef pageRef)
+{
+    return toImpl(pageRef)->isControlledByAutomation();
+}
+
 #if TARGET_OS_IPHONE
 void WKBundlePageSetUseTestingViewportConfiguration(WKBundlePageRef pageRef, bool useTestingViewportConfiguration)
 {
