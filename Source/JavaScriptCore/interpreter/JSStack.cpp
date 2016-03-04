@@ -142,7 +142,7 @@ void JSStack::enableErrorStackReserve()
 
 void JSStack::disableErrorStackReserve()
 {
-    char* useableEnd = reinterpret_cast<char*>(reservationEnd()) + commitSize;
+    char* useableEnd = reinterpret_cast<char*>(reservationEnd()) + commitSize();
     m_useableEnd = reinterpret_cast_ptr<Register*>(useableEnd);
 
     // By the time we get here, we are guaranteed to be destructing the last
