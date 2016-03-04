@@ -151,6 +151,19 @@ bool JSArrayBufferView::getOwnPropertySlot(
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
+void JSArrayBufferView::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
+
+    if (thisObject->hasArrayBuffer()) {
+        ArrayBuffer* buffer = thisObject->buffer();
+        RELEASE_ASSERT(buffer);
+        visitor.addOpaqueRoot(buffer);
+    }
+    
+    Base::visitChildren(thisObject, visitor);
+}
+
 void JSArrayBufferView::put(
     JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value,
     PutPropertySlot& slot)

@@ -150,6 +150,8 @@ protected:
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+
+    static void visitChildren(JSCell*, SlotVisitor&);
     
     static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     

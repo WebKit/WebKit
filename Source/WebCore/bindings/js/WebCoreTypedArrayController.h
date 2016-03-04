@@ -41,7 +41,8 @@ public:
     virtual ~WebCoreTypedArrayController();
     
     virtual JSC::JSArrayBuffer* toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBuffer*) override;
-    
+    virtual void registerWrapper(JSC::JSGlobalObject*, ArrayBuffer*, JSC::JSArrayBuffer*) override;
+
     JSC::WeakHandleOwner* wrapperOwner() { return &m_owner; }
 
 private:

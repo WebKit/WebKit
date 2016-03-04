@@ -436,7 +436,6 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     }
         
     case WastefulTypedArray:
-        RELEASE_ASSERT(thisObject->existingBufferInButterfly());
         break;
         
     case DataViewMode:

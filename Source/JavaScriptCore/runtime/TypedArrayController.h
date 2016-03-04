@@ -41,6 +41,7 @@ public:
     JS_EXPORT_PRIVATE virtual ~TypedArrayController();
     
     virtual JSArrayBuffer* toJS(ExecState*, JSGlobalObject*, ArrayBuffer*) = 0;
+    virtual void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) = 0;
 };
 
 } // namespace JSC

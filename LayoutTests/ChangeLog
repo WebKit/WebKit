@@ -1,3 +1,15 @@
+2016-03-03  Keith Miller  <keith_miller@apple.com>
+
+        JSArrayBuffers should be collected less aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=154982
+
+        Reviewed by Geoffrey Garen.
+
+        * js/arraybuffer-wrappers-expected.txt: Added.
+        * js/arraybuffer-wrappers.html: Added.
+        * js/script-tests/arraybuffer-wrappers.js: Added.
+        (prototype.types.forEach):
+
 2016-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Use larger tiles when possible to reduce per-tile painting overhead

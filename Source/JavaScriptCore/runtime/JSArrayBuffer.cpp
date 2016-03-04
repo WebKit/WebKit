@@ -40,10 +40,11 @@ JSArrayBuffer::JSArrayBuffer(VM& vm, Structure* structure, PassRefPtr<ArrayBuffe
 {
 }
 
-void JSArrayBuffer::finishCreation(VM& vm)
+void JSArrayBuffer::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     vm.heap.addReference(this, m_impl);
+    vm.m_typedArrayController->registerWrapper(globalObject, m_impl, this);
 }
 
 JSArrayBuffer* JSArrayBuffer::create(
@@ -53,7 +54,7 @@ JSArrayBuffer* JSArrayBuffer::create(
     JSArrayBuffer* result =
         new (NotNull, allocateCell<JSArrayBuffer>(vm.heap))
         JSArrayBuffer(vm, structure, buffer);
-    result->finishCreation(vm);
+    result->finishCreation(vm, structure->globalObject());
     return result;
 }
 

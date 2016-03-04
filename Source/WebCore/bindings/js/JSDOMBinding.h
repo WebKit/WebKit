@@ -410,9 +410,9 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
         return JSC::jsNull();
     if (JSC::JSValue result = getExistingWrapper<JSC::JSArrayBuffer>(globalObject, buffer))
         return result;
-    buffer->ref();
+
+    // The JSArrayBuffer::create function will register the wrapper in finishCreation.
     JSC::JSArrayBuffer* wrapper = JSC::JSArrayBuffer::create(exec->vm(), globalObject->arrayBufferStructure(), buffer);
-    cacheWrapper(globalObject->world(), buffer, wrapper);
     return wrapper;
 }
 

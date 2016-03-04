@@ -1,3 +1,42 @@
+2016-03-03  Keith Miller  <keith_miller@apple.com>
+
+        JSArrayBuffers should be collected less aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=154982
+
+        Reviewed by Geoffrey Garen.
+
+        We are currently too aggressive in our collection of ArrayBuffer wrappers.
+        There are three cases where we need to avoid collecting ArrayBuffer wrappers.
+        1. If the wrapper has custom properties.
+        2. If the wrapper is a subclass of ArrayBuffer.
+        3. If the wrapper is in a WeakMap/WeakSet.
+
+        Currently, we only pass the first case in WebCore and none in the jsc CLI.
+        This patch removes some optimizations that cause us to collect when we
+        should not. Namely, always skipping the object unless it has custom
+        properties. Additionally, in the case of subclassing, we also need a way
+        for custom JSArrayBuffer objects to register themselves as the wrapper for
+        an ArrayBuffer class.
+
+        Finally, this patch removes an unnecessary ref() and deref() of
+        ArrayBuffer objects during the creation/destruction of the wrapper.
+        Since an ArrayBuffer object's GC lifetime will be at least as long
+        as the lifetime of the wrapper we are creating for it we don't need
+        to ref() and deref() the ArrayBuffer object. This lifetime is
+        guaranteed because ArrayBuffer objects are both GCed and refcounted
+        and any new wrapper will visit the ArrayBuffer object as long as the
+        wrapper is still alive.
+
+        Test: js/arraybuffer-wrappers.html
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS):
+        * bindings/js/WebCoreTypedArrayController.cpp:
+        (WebCore::WebCoreTypedArrayController::registerWrapper):
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::finalize):
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots): Deleted.
+        * bindings/js/WebCoreTypedArrayController.h:
+
 2016-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Use larger tiles when possible to reduce per-tile painting overhead

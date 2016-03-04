@@ -40,12 +40,26 @@ JSArrayBuffer* SimpleTypedArrayController::toJS(
 {
     if (JSArrayBuffer* buffer = native->m_wrapper.get())
         return buffer;
-    
+
+    // The JSArrayBuffer::create function will register the wrapper in finishCreation.
     JSArrayBuffer* result = JSArrayBuffer::create(
         exec->vm(), globalObject->arrayBufferStructure(), native);
-    native->m_wrapper = Weak<JSArrayBuffer>(result);
     return result;
 }
+
+void SimpleTypedArrayController::registerWrapper(JSGlobalObject*, ArrayBuffer* native, JSArrayBuffer* wrapper)
+{
+    ASSERT(!native->m_wrapper);
+    native->m_wrapper = Weak<JSArrayBuffer>(wrapper, &m_owner);
+}
+
+bool SimpleTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor)
+{
+    auto& wrapper = *JSC::jsCast<JSC::JSArrayBuffer*>(handle.slot()->asCell());
+    return visitor.containsOpaqueRoot(wrapper.impl());
+}
+
+void SimpleTypedArrayController::JSArrayBufferOwner::finalize(JSC::Handle<JSC::Unknown>, void*) { }
 
 } // namespace JSC
 

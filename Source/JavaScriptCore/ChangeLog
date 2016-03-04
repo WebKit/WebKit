@@ -1,3 +1,46 @@
+2016-03-03  Keith Miller  <keith_miller@apple.com>
+
+        JSArrayBuffers should be collected less aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=154982
+
+        Reviewed by Geoffrey Garen.
+
+        We are currently too aggressive in our collection of ArrayBuffer wrappers.
+        There are three cases where we need to avoid collecting ArrayBuffer wrappers.
+        1. If the wrapper has custom properties.
+        2. If the wrapper is a subclass of ArrayBuffer.
+        3. If the wrapper is in a WeakMap/WeakSet.
+
+        Currently, we only pass the first case in WebCore and none in the jsc CLI.
+        This patch removes some optimizations that cause us to collect when we
+        should not. Namely, always skipping the object unless it has custom
+        properties. Additionally, in the case of subclassing, we also need a way
+        for custom JSArrayBuffer objects to register themselves as the wrapper for
+        an ArrayBuffer class.
+
+        Finally, this patch fixes an issue where views would not mark their ArrayBuffer
+        as an opaque root. This patch also moves an associated ASSERT that the
+        ArrayBuffer held by a view is not null in JSGenericTypedArrayView::visitChildren
+        into JSArrayBufferView::visitChildren, where we add the opaque root.
+
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::finishCreation):
+        (JSC::JSArrayBuffer::create):
+        (JSC::JSArrayBuffer::createWithoutWrapping):
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::visitChildren):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren): Deleted.
+        * runtime/SimpleTypedArrayController.cpp:
+        (JSC::SimpleTypedArrayController::toJS):
+        (JSC::SimpleTypedArrayController::registerWrapper):
+        (JSC::SimpleTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots):
+        (JSC::SimpleTypedArrayController::JSArrayBufferOwner::finalize):
+        * runtime/SimpleTypedArrayController.h:
+        * runtime/TypedArrayController.h:
+
 2016-03-03  Filip Pizlo  <fpizlo@apple.com>
 
         Octane/regexp's Exec function should benefit from array length accessor inlining
