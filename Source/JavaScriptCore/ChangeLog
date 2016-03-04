@@ -1,3 +1,22 @@
+2016-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Location.reload should not be writable
+        https://bugs.webkit.org/show_bug.cgi?id=154989
+
+        Reviewed by Gavin Barraclough.
+
+        After r196770, operations marked as [Unforgeable] in the IDL (such as
+        Location.reload) are correctly reported as not writable by
+        Object.getOwnPropertyDescriptor(). Trying to set such property in JS
+        is correctly ignored (or throws in strict mode) if the object has
+        previously been reified. However, due to a bug in putEntry(), it was
+        still possible to override the property if the object was not reified
+        yet. This patch fixes the issue by checking in putEntry() that entries
+        that are functions are not ReadOnly before calling putDirect().
+
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+
 2016-03-04  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Lexical bind "super" inside of the arrow function in generator.

@@ -1,3 +1,16 @@
+2016-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Location.reload should not be writable
+        https://bugs.webkit.org/show_bug.cgi?id=154989
+
+        Reviewed by Gavin Barraclough.
+
+        Add a layout test to verify that operations marked as [Unforgeable] in
+        IDL are indeed not writable.
+
+        * fast/html/unforgeable-operations-readonly-expected.txt: Added.
+        * fast/html/unforgeable-operations-readonly.html: Added.
+
 2016-03-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline inspector/model/remote-object.html for mac after r197539
