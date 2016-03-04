@@ -708,6 +708,99 @@ bool ProxyObject::isExtensible(JSObject* object, ExecState* exec)
     return jsCast<ProxyObject*>(object)->performIsExtensible(exec);
 }
 
+bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
+{
+    VM& vm = exec->vm();
+
+    JSObject* target = this->target();
+    auto performDefaultDefineOwnProperty = [&] {
+        return target->methodTable(vm)->defineOwnProperty(target, exec, propertyName, descriptor, shouldThrow);
+    };
+
+    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
+        return performDefaultDefineOwnProperty();
+
+    JSValue handlerValue = this->handler();
+    if (handlerValue.isNull()) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
+        return false;
+    }
+
+    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    CallData callData;
+    CallType callType;
+    JSValue definePropertyMethod = handler->getMethod(exec, callData, callType, vm.propertyNames->defineProperty, ASCIILiteral("'defineProperty' property of a Proxy's handler should be callable."));
+    if (vm.exception())
+        return false;
+
+    if (definePropertyMethod.isUndefined())
+        return performDefaultDefineOwnProperty();
+
+    JSObject* descriptorObject = constructObjectFromPropertyDescriptor(exec, descriptor);
+    if (vm.exception())
+        return false;
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(target);
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    arguments.append(descriptorObject);
+    JSValue trapResult = call(exec, definePropertyMethod, callType, callData, handler, arguments);
+    if (vm.exception())
+        return false;
+
+    bool trapResultAsBool = trapResult.toBoolean(exec);
+    if (vm.exception())
+        return false;
+
+    if (!trapResultAsBool)
+        return false;
+
+    PropertyDescriptor targetDescriptor;
+    bool isTargetDescriptorDefined = target->getOwnPropertyDescriptor(exec, propertyName, targetDescriptor);
+    if (vm.exception())
+        return false;
+
+    bool targetIsExtensible = target->isExtensible(exec);
+    if (vm.exception())
+        return false;
+    bool settingConfigurableToFalse = descriptor.configurablePresent() && !descriptor.configurable();
+
+    if (!isTargetDescriptorDefined) {
+        if (!targetIsExtensible) {
+            throwVMTypeError(exec, ASCIILiteral("Proxy's 'defineProperty' trap returned true even though getOwnPropertyDescriptor of the Proxy's target returned undefined and the target is non-extensible."));
+            return false;
+        }
+        if (settingConfigurableToFalse) {
+            throwVMTypeError(exec, ASCIILiteral("Proxy's 'defineProperty' trap returned true for a non-configurable field even though getOwnPropertyDescriptor of the Proxy's target returned undefined."));
+            return false;
+        }
+
+        return true;
+    } 
+
+    ASSERT(isTargetDescriptorDefined);
+    bool isCurrentDefined = isTargetDescriptorDefined;
+    const PropertyDescriptor& current = targetDescriptor;
+    bool throwException = false;
+    bool isCompatibleDescriptor = validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, targetIsExtensible, descriptor, isCurrentDefined, current, throwException);
+    if (!isCompatibleDescriptor) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor."));
+        return false;
+    }
+    if (settingConfigurableToFalse && targetDescriptor.configurable()) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy's 'defineProperty' trap did not define a non-configurable property on its target even though the input descriptor to the trap said it must do so."));
+        return false;
+    }
+    
+    return true;
+}
+
+bool ProxyObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
+{
+    ProxyObject* thisObject = jsCast<ProxyObject*>(object);
+    return thisObject->performDefineOwnProperty(exec, propertyName, descriptor, shouldThrow);
+}
+
 void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);

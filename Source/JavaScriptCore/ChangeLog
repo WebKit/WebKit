@@ -1,3 +1,42 @@
+2016-03-03  Saam barati  <sbarati@apple.com>
+
+        [ES6] Implement Proxy.[[DefineOwnProperty]]
+        https://bugs.webkit.org/show_bug.cgi?id=154759
+
+        Reviewed by Geoffrey Garen and Mark Lam.
+
+        This patch is a straight forward implementation of Proxy.[[DefineOwnProperty]]
+        with respect to section 9.5.6 of the ECMAScript spec.
+        https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-defineownproperty-p-desc
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorGetOwnPropertyDescriptors):
+        * runtime/ObjectConstructor.h:
+        (JSC::constructEmptyObject):
+        (JSC::constructObjectFromPropertyDescriptor):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::isExtensible):
+        (JSC::ProxyObject::performDefineOwnProperty):
+        (JSC::ProxyObject::defineOwnProperty):
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyObject.h:
+        * tests/es6.yaml:
+        * tests/stress/proxy-define-own-property.js: Added.
+        (assert):
+        (throw.new.Error):
+        (assert.let.handler.get defineProperty):
+        (assert.let.handler.defineProperty):
+        (let.handler.defineProperty):
+        (i.catch):
+        (assert.try.):
+        (assert.set get catch):
+        (assert.let.setter):
+        (assert.let.getter):
+        (assert.set get let.handler.defineProperty):
+        (assert.set get let):
+        (assert.):
+
 2016-03-03  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for Symbol.toPrimitive

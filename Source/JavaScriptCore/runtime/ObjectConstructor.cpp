@@ -224,23 +224,10 @@ JSValue objectConstructorGetOwnPropertyDescriptor(ExecState* exec, JSObject* obj
     if (exec->hadException())
         return jsUndefined();
 
-    JSObject* description = constructEmptyObject(exec);
-    if (exec->hadException())
+    JSObject* result = constructObjectFromPropertyDescriptor(exec, descriptor);
+    if (!result)
         return jsUndefined();
-    if (!descriptor.isAccessorDescriptor()) {
-        description->putDirect(exec->vm(), exec->propertyNames().value, descriptor.value() ? descriptor.value() : jsUndefined(), 0);
-        description->putDirect(exec->vm(), exec->propertyNames().writable, jsBoolean(descriptor.writable()), 0);
-    } else {
-        ASSERT(descriptor.getter());
-        ASSERT(descriptor.setter());
-        description->putDirect(exec->vm(), exec->propertyNames().get, descriptor.getter(), 0);
-        description->putDirect(exec->vm(), exec->propertyNames().set, descriptor.setter(), 0);
-    }
-    
-    description->putDirect(exec->vm(), exec->propertyNames().enumerable, jsBoolean(descriptor.enumerable()), 0);
-    description->putDirect(exec->vm(), exec->propertyNames().configurable, jsBoolean(descriptor.configurable()), 0);
-
-    return description;
+    return result;
 }
 
 JSValue objectConstructorGetOwnPropertyDescriptors(ExecState* exec, JSObject* object)

@@ -915,7 +915,7 @@
 - path: es6/Proxy_constructor_requires_new.js
   cmd: runES6 :normal
 - path: es6/Proxy_defineProperty_handler.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_deleteProperty_handler.js
   cmd: runES6 :normal
 - path: es6/Proxy_enumerate_handler.js
