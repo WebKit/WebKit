@@ -1,3 +1,48 @@
+2016-03-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add support for MADD, MSUB and MNEG to Air
+        https://bugs.webkit.org/show_bug.cgi?id=154997
+
+        Reviewed by Filip Pizlo.
+
+        ARM64 can do an Add/Sub in the Multiply units.
+        LLVM was doing so but we lost that when switching to B3.
+
+        This patch adds those instructions in Air.
+
+        There are more ALUs than multiply units, thus we are more
+        likely to successfully schedule a Multiply+Add than 2 Multiply.
+        I am conservative and only emit a multiply-add if the value
+        can be interned. As far as I can tell from what is generated
+        by LLVM, that backend had the same rule.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::multiplyAdd32):
+        (JSC::MacroAssemblerARM64::multiplySub32):
+        (JSC::MacroAssemblerARM64::multiplyNeg32):
+        (JSC::MacroAssemblerARM64::multiplyAdd64):
+        (JSC::MacroAssemblerARM64::multiplySub64):
+        (JSC::MacroAssemblerARM64::multiplyNeg64):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::populateWithInterestingValues):
+        (JSC::B3::floatingPointOperands):
+        (JSC::B3::int64Operands):
+        (JSC::B3::int32Operands):
+        (JSC::B3::testMulAddArgsLeft):
+        (JSC::B3::testMulAddArgsRight):
+        (JSC::B3::testMulAddArgsLeft32):
+        (JSC::B3::testMulAddArgsRight32):
+        (JSC::B3::testMulSubArgsLeft):
+        (JSC::B3::testMulSubArgsRight):
+        (JSC::B3::testMulSubArgsLeft32):
+        (JSC::B3::testMulSubArgsRight32):
+        (JSC::B3::testMulNegArgs):
+        (JSC::B3::testMulNegArgs32):
+        (JSC::B3::run):
+
 2016-03-03  Saam Barati  <sbarati@apple.com>
 
         [ES6] Implement Proxy.[[SetPrototypeOf]]

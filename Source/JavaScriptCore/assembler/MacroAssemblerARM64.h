@@ -487,6 +487,36 @@ public:
         m_assembler.mul<64>(dest, left, right);
     }
 
+    void multiplyAdd32(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
+    {
+        m_assembler.madd<32>(dest, mulLeft, mulRight, summand);
+    }
+
+    void multiplySub32(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
+    {
+        m_assembler.msub<32>(dest, mulLeft, mulRight, minuend);
+    }
+
+    void multiplyNeg32(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
+    {
+        m_assembler.msub<32>(dest, mulLeft, mulRight, ARM64Registers::zr);
+    }
+
+    void multiplyAdd64(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
+    {
+        m_assembler.madd<64>(dest, mulLeft, mulRight, summand);
+    }
+
+    void multiplySub64(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
+    {
+        m_assembler.msub<64>(dest, mulLeft, mulRight, minuend);
+    }
+
+    void multiplyNeg64(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
+    {
+        m_assembler.msub<64>(dest, mulLeft, mulRight, ARM64Registers::zr);
+    }
+
     void div32(RegisterID dividend, RegisterID divisor, RegisterID dest)
     {
         m_assembler.sdiv<32>(dest, dividend, divisor);

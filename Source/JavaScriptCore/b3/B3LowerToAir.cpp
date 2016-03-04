@@ -1704,17 +1704,86 @@ private:
         }
 
         case Add: {
+            Air::Opcode multiplyAddOpcode = tryOpcodeForType(MultiplyAdd32, MultiplyAdd64, m_value->type());
+            if (multiplyAddOpcode != Air::Oops
+                && isValidForm(multiplyAddOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+                Value* left = m_value->child(0);
+                Value* right = m_value->child(1);
+                if (!imm(right) || m_valueToTmp[right]) {
+                    auto tryAppendMultiplyAdd = [&] (Value* left, Value* right) -> bool {
+                        if (left->opcode() != Mul || !canBeInternal(left))
+                            return false;
+
+                        Value* multiplyLeft = left->child(0);
+                        Value* multiplyRight = left->child(1);
+                        if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
+                            return false;
+
+                        append(multiplyAddOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(right), tmp(m_value));
+                        commitInternal(left);
+
+                        return true;
+                    };
+
+                    if (tryAppendMultiplyAdd(left, right))
+                        return;
+                    if (tryAppendMultiplyAdd(right, left))
+                        return;
+                }
+            }
+
             appendBinOp<Add32, Add64, AddDouble, AddFloat, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }
 
         case Sub: {
+            Air::Opcode multiplySubOpcode = tryOpcodeForType(MultiplySub32, MultiplySub64, m_value->type());
+            if (multiplySubOpcode != Air::Oops
+                && isValidForm(multiplySubOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+                Value* left = m_value->child(0);
+                Value* right = m_value->child(1);
+                if (!imm(right) || m_valueToTmp[right]) {
+                    auto tryAppendMultiplySub = [&] () -> bool {
+                        if (right->opcode() != Mul || !canBeInternal(right))
+                            return false;
+
+                        Value* multiplyLeft = right->child(0);
+                        Value* multiplyRight = right->child(1);
+                        if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
+                            return false;
+
+                        append(multiplySubOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(left), tmp(m_value));
+                        commitInternal(right);
+
+                        return true;
+                    };
+
+                    if (tryAppendMultiplySub())
+                        return;
+                }
+            }
+
             appendBinOp<Sub32, Sub64, SubDouble, SubFloat>(m_value->child(0), m_value->child(1));
             return;
         }
 
         case Neg: {
+            Air::Opcode multiplyNegOpcode = tryOpcodeForType(MultiplyNeg32, MultiplyNeg64, m_value->type());
+            if (multiplyNegOpcode != Air::Oops
+                && isValidForm(multiplyNegOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)
+                && m_value->child(0)->opcode() == Mul
+                && canBeInternal(m_value->child(0))) {
+                Value* multiplyOperation = m_value->child(0);
+                Value* multiplyLeft = multiplyOperation->child(0);
+                Value* multiplyRight = multiplyOperation->child(1);
+                if (!m_locked.contains(multiplyLeft) && !m_locked.contains(multiplyRight)) {
+                    append(multiplyNegOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(m_value));
+                    commitInternal(multiplyOperation);
+                    return;
+                }
+            }
+
             appendUnOp<Neg32, Neg64, NegateDouble, Air::Oops>(m_value->child(0));
             return;
         }
