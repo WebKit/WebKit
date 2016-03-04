@@ -76,7 +76,7 @@ public:
     virtual void removeRegionFromThread(RenderRegion*);
     const RenderRegionList& renderRegionList() const { return m_regionList; }
 
-    void updateLogicalWidth() override final;
+    void updateLogicalWidth() final;
     void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
@@ -237,7 +237,7 @@ public:
 private:
     // Always create a RenderLayer for the RenderFlowThread so that we
     // can easily avoid drawing the children directly.
-    bool requiresLayer() const override final { return true; }
+    bool requiresLayer() const final { return true; }
 
 protected:
     RenderFlowThread(Document&, Ref<RenderStyle>&&);

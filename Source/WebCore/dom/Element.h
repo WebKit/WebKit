@@ -194,9 +194,9 @@ public:
     // A fast function for checking the local name against another atomic string.
     bool hasLocalName(const AtomicString& other) const { return m_tagName.localName() == other; }
 
-    const AtomicString& localName() const override final { return m_tagName.localName(); }
-    const AtomicString& prefix() const override final { return m_tagName.prefix(); }
-    const AtomicString& namespaceURI() const override final { return m_tagName.namespaceURI(); }
+    const AtomicString& localName() const final { return m_tagName.localName(); }
+    const AtomicString& prefix() const final { return m_tagName.prefix(); }
+    const AtomicString& namespaceURI() const final { return m_tagName.namespaceURI(); }
 
     String nodeName() const override;
 
@@ -372,7 +372,7 @@ public:
 
     bool isFinishedParsingChildren() const { return isParsingChildrenFinished(); }
     void finishParsingChildren() override;
-    void beginParsingChildren() override final;
+    void beginParsingChildren() final;
 
     WEBCORE_EXPORT PseudoElement* beforePseudoElement() const;
     WEBCORE_EXPORT PseudoElement* afterPseudoElement() const;
@@ -511,7 +511,7 @@ protected:
     InsertionNotificationRequest insertedInto(ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
     void childrenChanged(const ChildChange&) override;
-    void removeAllEventListeners() override final;
+    void removeAllEventListeners() final;
     virtual void parserDidSetAttributes();
 
     void clearTabIndexExplicitlyIfNeeded();
@@ -564,9 +564,9 @@ private:
 
     void scrollByUnits(int units, ScrollGranularity);
 
-    void setPrefix(const AtomicString&, ExceptionCode&) override final;
-    NodeType nodeType() const override final;
-    bool childTypeAllowed(NodeType) const override final;
+    void setPrefix(const AtomicString&, ExceptionCode&) final;
+    NodeType nodeType() const final;
+    bool childTypeAllowed(NodeType) const final;
 
     void setAttributeInternal(unsigned index, const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
     void addAttributeInternal(const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);

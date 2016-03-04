@@ -51,8 +51,8 @@ public:
 
 private:
     // DateTimeFormat::TokenHandler functions.
-    void visitField(DateTimeFormat::FieldType, int) override final;
-    void visitLiteral(const String&) override final;
+    void visitField(DateTimeFormat::FieldType, int) final;
+    void visitLiteral(const String&) final;
 
     String zeroPadString(const String&, size_t width);
     void appendNumber(int number, size_t width);

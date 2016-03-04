@@ -48,7 +48,7 @@ protected:
     void detachFromParent() override { m_parent = nullptr; }
 
 private:
-    bool isMockObject() const override final { return true; }
+    bool isMockObject() const final { return true; }
     bool isDetachedFromParent() override { return !m_parent; }
 
     bool computeAccessibilityIsIgnored() const override;

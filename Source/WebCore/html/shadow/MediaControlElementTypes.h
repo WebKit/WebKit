@@ -112,7 +112,7 @@ protected:
     explicit MediaControlDivElement(Document&, MediaControlElementType);
 
 private:
-    bool isMediaControlElement() const override final { return MediaControlElement::isMediaControlElement(); }
+    bool isMediaControlElement() const final { return MediaControlElement::isMediaControlElement(); }
 };
 
 // ----------------------------
@@ -122,7 +122,7 @@ protected:
     explicit MediaControlInputElement(Document&, MediaControlElementType);
 
 private:
-    bool isMediaControlElement() const override final { return MediaControlElement::isMediaControlElement(); }
+    bool isMediaControlElement() const final { return MediaControlElement::isMediaControlElement(); }
     virtual void updateDisplayType() { }
 };
 
@@ -170,7 +170,7 @@ protected:
     virtual bool isForwardButton() const = 0;
 
 private:
-    void setActive(bool /*flag*/ = true, bool /*pause*/ = false) override final;
+    void setActive(bool /*flag*/ = true, bool /*pause*/ = false) final;
 };
 
 // ----------------------------

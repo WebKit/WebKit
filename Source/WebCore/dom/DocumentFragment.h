@@ -36,7 +36,7 @@ public:
     void parseHTML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
     bool parseXML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
     
-    bool canContainRangeEndPoint() const override final { return true; }
+    bool canContainRangeEndPoint() const final { return true; }
     virtual bool isTemplateContent() const { return false; }
 
     // From the NonElementParentNode interface - https://dom.spec.whatwg.org/#interface-nonelementparentnode
@@ -44,10 +44,10 @@ public:
 
 protected:
     DocumentFragment(Document&, ConstructionType = CreateContainer);
-    String nodeName() const override final;
+    String nodeName() const final;
 
 private:
-    NodeType nodeType() const override final;
+    NodeType nodeType() const final;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     bool childTypeAllowed(NodeType) const override;
 };

@@ -186,7 +186,7 @@ protected:
     class InstanceInvalidationGuard;
 
 private:
-    RenderStyle* computedStyle(PseudoId = NOPSEUDO) override final;
+    RenderStyle* computedStyle(PseudoId = NOPSEUDO) final;
     bool willRecalcStyle(Style::Change) override;
 
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;

@@ -34,8 +34,8 @@ public:
     virtual ~RenderSVGContainer();
 
     void paint(PaintInfo&, const LayoutPoint&) override;
-    void setNeedsBoundariesUpdate() override final { m_needsBoundariesUpdate = true; }
-    bool needsBoundariesUpdate() override final { return m_needsBoundariesUpdate; }
+    void setNeedsBoundariesUpdate() final { m_needsBoundariesUpdate = true; }
+    bool needsBoundariesUpdate() final { return m_needsBoundariesUpdate; }
     virtual bool didTransformToRootUpdate() { return false; }
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 
@@ -44,17 +44,17 @@ protected:
 
     const char* renderName() const override { return "RenderSVGContainer"; }
 
-    bool canHaveChildren() const override final { return true; }
+    bool canHaveChildren() const final { return true; }
 
     void layout() override;
 
-    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override final;
-    void removeChild(RenderObject&) override final;
-    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override final;
+    void addChild(RenderObject* child, RenderObject* beforeChild = 0) final;
+    void removeChild(RenderObject&) final;
+    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) final;
 
-    FloatRect objectBoundingBox() const override final { return m_objectBoundingBox; }
-    FloatRect strokeBoundingBox() const override final { return m_strokeBoundingBox; }
-    FloatRect repaintRectInLocalCoordinates() const override final { return m_repaintBoundingBox; }
+    FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
+    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
+    FloatRect repaintRectInLocalCoordinates() const final { return m_repaintBoundingBox; }
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 
@@ -72,7 +72,7 @@ protected:
     void updateCachedBoundaries();
 
 private:
-    bool isSVGContainer() const override final { return true; }
+    bool isSVGContainer() const final { return true; }
 
     FloatRect m_objectBoundingBox;
     bool m_objectBoundingBoxValid;

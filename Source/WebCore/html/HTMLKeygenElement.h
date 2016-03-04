@@ -52,7 +52,7 @@ private:
     void reset() override;
     bool shouldSaveAndRestoreFormControlState() const override;
 
-    bool canHaveUserAgentShadowRoot() const override final { return true; }
+    bool canHaveUserAgentShadowRoot() const final { return true; }
 
     HTMLSelectElement* shadowSelect() const;
 };

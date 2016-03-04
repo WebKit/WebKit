@@ -180,7 +180,7 @@ public:
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override;
-    ScriptExecutionContext* scriptExecutionContext() const override final;
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.

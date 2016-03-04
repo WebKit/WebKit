@@ -52,12 +52,12 @@ public:
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp); }
     bool isVertical() const { return m_isVertical; }
 
-    void updateStyle() override final;
+    void updateStyle() final;
 
     void paint(PaintInfo&, const LayoutPoint&) override;
 
     void updateTokenContent(const String& operatorString);
-    void updateTokenContent() override final;
+    void updateTokenContent() final;
     void updateOperatorProperties();
     void setOperatorFlagAndScheduleLayoutIfNeeded(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
     LayoutUnit trailingSpaceError();

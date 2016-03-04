@@ -52,22 +52,22 @@ public:
 
 private:
     CSSRule* parentRule() const override { return nullptr; }
-    unsigned length() const override final;
-    String item(unsigned index) const override final;
-    RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) override final;
-    String getPropertyValue(const String& propertyName) override final;
-    String getPropertyPriority(const String& propertyName) override final;
-    String getPropertyShorthand(const String& propertyName) override final;
-    bool isPropertyImplicit(const String& propertyName) override final;
-    void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&) override final;
-    String removeProperty(const String& propertyName, ExceptionCode&) override final;
-    String cssText() const override final;
-    void setCssText(const String&, ExceptionCode&) override final;
-    RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override final;
-    String getPropertyValueInternal(CSSPropertyID) override final;
-    bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) override final;
+    unsigned length() const final;
+    String item(unsigned index) const final;
+    RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) final;
+    String getPropertyValue(const String& propertyName) final;
+    String getPropertyPriority(const String& propertyName) final;
+    String getPropertyShorthand(const String& propertyName) final;
+    bool isPropertyImplicit(const String& propertyName) final;
+    void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&) final;
+    String removeProperty(const String& propertyName, ExceptionCode&) final;
+    String cssText() const final;
+    void setCssText(const String&, ExceptionCode&) final;
+    RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) final;
+    String getPropertyValueInternal(CSSPropertyID) final;
+    bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) final;
     
-    Ref<MutableStyleProperties> copyProperties() const override final;
+    Ref<MutableStyleProperties> copyProperties() const final;
 
     CSSValue* cloneAndCacheForCSSOM(CSSValue*);
     

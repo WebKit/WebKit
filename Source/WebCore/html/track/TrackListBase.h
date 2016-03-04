@@ -54,7 +54,7 @@ public:
     EventTargetInterface eventTargetInterface() const override = 0;
     using RefCounted<TrackListBase>::ref;
     using RefCounted<TrackListBase>::deref;
-    ScriptExecutionContext* scriptExecutionContext() const override final { return m_context; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return m_context; }
 
     void clearElement() { m_element = 0; }
     Element* element() const;
@@ -77,8 +77,8 @@ private:
     void scheduleTrackEvent(const AtomicString& eventName, PassRefPtr<TrackBase>);
 
     // EventTarget
-    void refEventTarget() override final { ref(); }
-    void derefEventTarget() override final { deref(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
     ScriptExecutionContext* m_context;
     HTMLMediaElement* m_element;

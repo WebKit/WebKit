@@ -127,11 +127,11 @@ protected:
 private:
     Ref<Inspector::Protocol::Array<Inspector::Protocol::Debugger::CallFrame>> currentCallFrames(const InjectedScript&);
 
-    void didParseSource(JSC::SourceID, const Script&) override final;
-    void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) override final;
+    void didParseSource(JSC::SourceID, const Script&) final;
+    void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
 
     void breakpointActionSound(int breakpointActionIdentifier) override;
-    void breakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue& sample) override final;
+    void breakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue& sample) final;
 
     RefPtr<Inspector::Protocol::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
     bool assertPaused(ErrorString&);

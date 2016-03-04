@@ -89,7 +89,7 @@ private:
     void platformSetDidEndScrollingCallback();
     void platformClearAllCallbacks();
 
-    virtual JSClassRef wrapperClass() override;
+    JSClassRef wrapperClass() final;
 
     JSObjectRef objectFromRect(const WKRect&) const;
 

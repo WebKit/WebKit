@@ -85,8 +85,8 @@ public:
     bool isActive();
     virtual void setIsActive(bool);
 
-    EventTargetInterface eventTargetInterface() const override final { return TextTrackCueEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override final { return &m_scriptExecutionContext; }
+    EventTargetInterface eventTargetInterface() const final { return TextTrackCueEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }
 
     virtual bool isOrderedBefore(const TextTrackCue*) const;
     virtual bool isPositionedAbove(const TextTrackCue* cue) const { return isOrderedBefore(cue); }
@@ -122,8 +122,8 @@ protected:
 
 private:
 
-    void refEventTarget() override final { ref(); }
-    void derefEventTarget() override final { deref(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
     String m_id;
     MediaTime m_startTime;

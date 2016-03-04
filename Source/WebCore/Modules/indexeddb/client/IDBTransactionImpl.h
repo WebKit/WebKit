@@ -62,26 +62,26 @@ public:
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&);
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest&);
 
-    ~IDBTransaction() override final;
+    ~IDBTransaction() final;
 
     // IDBTransaction IDL
-    const String& mode() const override final;
-    WebCore::IDBDatabase* db() override final;
-    RefPtr<DOMError> error() const override final;
-    RefPtr<WebCore::IDBObjectStore> objectStore(const String& name, ExceptionCodeWithMessage&) override final;
-    void abort(ExceptionCodeWithMessage&) override final;
+    const String& mode() const final;
+    WebCore::IDBDatabase* db() final;
+    RefPtr<DOMError> error() const final;
+    RefPtr<WebCore::IDBObjectStore> objectStore(const String& name, ExceptionCodeWithMessage&) final;
+    void abort(ExceptionCodeWithMessage&) final;
 
-    EventTargetInterface eventTargetInterface() const override final { return IDBTransactionEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
-    void refEventTarget() override final { ref(); }
-    void derefEventTarget() override final { deref(); }
+    EventTargetInterface eventTargetInterface() const final { return IDBTransactionEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
     using EventTarget::dispatchEvent;
-    bool dispatchEvent(Event&) override final;
+    bool dispatchEvent(Event&) final;
 
-    const char* activeDOMObjectName() const override final;
-    bool canSuspendForDocumentSuspension() const override final;
-    bool hasPendingActivity() const override final;
-    void stop() override final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+    bool hasPendingActivity() const final;
+    void stop() final;
 
     const IDBTransactionInfo& info() const { return m_info; }
     IDBDatabase& database() { return m_database.get(); }

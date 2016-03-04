@@ -48,9 +48,9 @@ private:
     }
 
 #if ENABLE(METER_ELEMENT)
-    bool canHaveUserAgentShadowRoot() const override final { return false; }
+    bool canHaveUserAgentShadowRoot() const final { return false; }
 #else
-    bool canHaveUserAgentShadowRoot() const override final { return localName() == "meter"; }
+    bool canHaveUserAgentShadowRoot() const final { return localName() == "meter"; }
 #endif
 
     bool isHTMLUnknownElement() const override { return true; }

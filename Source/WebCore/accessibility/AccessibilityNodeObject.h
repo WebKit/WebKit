@@ -129,7 +129,7 @@ public:
     String stringValue() const override;
     void colorValue(int& r, int& g, int& b) const override;
     String ariaLabeledByAttribute() const override;
-    bool hasAttributesRequiredForInclusion() const override final;
+    bool hasAttributesRequiredForInclusion() const final;
     void setIsExpanded(bool) override;
 
     Element* actionElement() const override;
@@ -193,7 +193,7 @@ protected:
     AccessibilityObject* menuButtonForMenu() const;
 
 private:
-    bool isAccessibilityNodeObject() const override final { return true; }
+    bool isAccessibilityNodeObject() const final { return true; }
     void accessibilityText(Vector<AccessibilityText>&) override;
     virtual void titleElementText(Vector<AccessibilityText>&) const;
     void alternativeText(Vector<AccessibilityText>&) const;

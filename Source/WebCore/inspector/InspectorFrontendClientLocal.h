@@ -59,16 +59,16 @@ public:
     WEBCORE_EXPORT InspectorFrontendClientLocal(InspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings>);
     WEBCORE_EXPORT virtual ~InspectorFrontendClientLocal();
 
-    WEBCORE_EXPORT void windowObjectCleared() override final;
+    WEBCORE_EXPORT void windowObjectCleared() final;
     WEBCORE_EXPORT void frontendLoaded() override;
 
     void startWindowDrag() override { }
-    WEBCORE_EXPORT void moveWindowBy(float x, float y) override final;
+    WEBCORE_EXPORT void moveWindowBy(float x, float y) final;
 
-    WEBCORE_EXPORT void requestSetDockSide(DockSide) override final;
-    WEBCORE_EXPORT void changeAttachedWindowHeight(unsigned) override final;
-    WEBCORE_EXPORT void changeAttachedWindowWidth(unsigned) override final;
-    WEBCORE_EXPORT void openInNewTab(const String& url) override final;
+    WEBCORE_EXPORT void requestSetDockSide(DockSide) final;
+    WEBCORE_EXPORT void changeAttachedWindowHeight(unsigned) final;
+    WEBCORE_EXPORT void changeAttachedWindowWidth(unsigned) final;
+    WEBCORE_EXPORT void openInNewTab(const String& url) final;
     bool canSave()  override { return false; }
     void save(const String&, const String&, bool, bool) override { }
     void append(const String&, const String&) override { }
@@ -76,10 +76,10 @@ public:
     virtual void attachWindow(DockSide) = 0;
     virtual void detachWindow() = 0;
 
-    WEBCORE_EXPORT void sendMessageToBackend(const String& message) override final;
+    WEBCORE_EXPORT void sendMessageToBackend(const String& message) final;
 
-    WEBCORE_EXPORT bool isUnderTest() override final;
-    WEBCORE_EXPORT unsigned inspectionLevel() const override final;
+    WEBCORE_EXPORT bool isUnderTest() final;
+    WEBCORE_EXPORT unsigned inspectionLevel() const final;
 
     WEBCORE_EXPORT bool canAttachWindow();
     WEBCORE_EXPORT void setDockingUnavailable(bool);

@@ -30,7 +30,7 @@ class SVGElement;
 
 class RenderSVGBlock : public RenderBlockFlow {
 public:
-    LayoutRect visualOverflowRect() const override final;
+    LayoutRect visualOverflowRect() const final;
 
     SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(nodeForNonAnonymous()); }
 
@@ -41,13 +41,13 @@ protected:
 private:
     void element() const = delete;
 
-    void updateFromStyle() override final;
+    void updateFromStyle() final;
 
-    bool isRenderSVGBlock() const override final { return true; }
+    bool isRenderSVGBlock() const final { return true; }
 
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 };
 
 }

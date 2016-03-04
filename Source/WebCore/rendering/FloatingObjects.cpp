@@ -162,7 +162,7 @@ public:
     LayoutUnit heightRemaining() const;
 
 protected:
-    bool updateOffsetIfNeeded(const FloatingObject&) override final;
+    bool updateOffsetIfNeeded(const FloatingObject&) final;
 };
 
 template <FloatingObject::Type FloatTypeValue>
@@ -176,7 +176,7 @@ public:
     virtual ~ComputeFloatOffsetForLineLayoutAdapter() { }
 
 protected:
-    bool updateOffsetIfNeeded(const FloatingObject&) override final;
+    bool updateOffsetIfNeeded(const FloatingObject&) final;
 };
 
 class FindNextFloatLogicalBottomAdapter {

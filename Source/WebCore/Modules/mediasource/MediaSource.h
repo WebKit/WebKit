@@ -100,9 +100,9 @@ public:
     static bool isTypeSupported(const String& type);
 
     // EventTarget interface
-    ScriptExecutionContext* scriptExecutionContext() const override final;
-    void refEventTarget() override final { ref(); }
-    void derefEventTarget() override final { deref(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
     EventTargetInterface eventTargetInterface() const override;
 
     // URLRegistrable interface

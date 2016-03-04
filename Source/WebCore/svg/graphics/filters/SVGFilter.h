@@ -46,7 +46,7 @@ public:
     FloatRect sourceImageRect() const override { return m_absoluteSourceDrawingRegion; }
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
-    bool isSVGFilter() const override final { return true; }
+    bool isSVGFilter() const final { return true; }
 
 private:
     SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);

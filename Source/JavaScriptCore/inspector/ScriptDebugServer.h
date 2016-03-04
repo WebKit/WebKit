@@ -92,12 +92,12 @@ protected:
 private:
     typedef HashMap<JSC::BreakpointID, BreakpointActions> BreakpointIDToActionsMap;
 
-    void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) override final;
-    bool needPauseHandling(JSC::JSGlobalObject*) override final { return true; }
-    void handleBreakpointHit(JSC::JSGlobalObject*, const JSC::Breakpoint&) override final;
-    void handleExceptionInBreakpointCondition(JSC::ExecState*, JSC::Exception*) const override final;
-    void handlePause(JSC::JSGlobalObject*, JSC::Debugger::ReasonForPause) override final;
-    void notifyDoneProcessingDebuggerEvents() override final;
+    void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) final;
+    bool needPauseHandling(JSC::JSGlobalObject*) final { return true; }
+    void handleBreakpointHit(JSC::JSGlobalObject*, const JSC::Breakpoint&) final;
+    void handleExceptionInBreakpointCondition(JSC::ExecState*, JSC::Exception*) const final;
+    void handlePause(JSC::JSGlobalObject*, JSC::Debugger::ReasonForPause) final;
+    void notifyDoneProcessingDebuggerEvents() final;
 
     Deprecated::ScriptValue exceptionOrCaughtValue(JSC::ExecState*);
 

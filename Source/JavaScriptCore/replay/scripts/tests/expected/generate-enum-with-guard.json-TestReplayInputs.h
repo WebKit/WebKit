@@ -72,7 +72,7 @@ public:
     virtual ~HandleWheelEvent();
 
     // EventLoopInput API
-    void dispatch(ReplayController&) override final;
+    void dispatch(ReplayController&) final;
     const PlatformWheelEvent& platformEvent() const { return *m_platformEvent; }
     PlatformWheelPhase phase() const { return m_phase; }
 private:

@@ -42,7 +42,7 @@ class HTMLElement : public StyledElement {
 public:
     static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);
 
-    WEBCORE_EXPORT String title() const override final;
+    WEBCORE_EXPORT String title() const final;
 
     short tabIndex() const override;
 
@@ -125,7 +125,7 @@ protected:
     static const AtomicString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 
 private:
-    String nodeName() const override final;
+    String nodeName() const final;
 
     void mapLanguageAttributeToLocale(const AtomicString&, MutableStyleProperties&);
 

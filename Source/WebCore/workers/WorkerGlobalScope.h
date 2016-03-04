@@ -60,18 +60,18 @@ namespace WebCore {
 
         bool isWorkerGlobalScope() const override { return true; }
 
-        ScriptExecutionContext* scriptExecutionContext() const override final { return const_cast<WorkerGlobalScope*>(this); }
+        ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerGlobalScope*>(this); }
 
         virtual bool isDedicatedWorkerGlobalScope() const { return false; }
 
-        const URL& url() const override final { return m_url; }
-        URL completeURL(const String&) const override final;
+        const URL& url() const final { return m_url; }
+        URL completeURL(const String&) const final;
 
         String userAgent(const URL&) const override;
 
         void disableEval(const String& errorMessage) override;
 
-        bool shouldBypassMainWorldContentSecurityPolicy() const override final { return m_shouldBypassMainWorldContentSecurityPolicy; }
+        bool shouldBypassMainWorldContentSecurityPolicy() const final { return m_shouldBypassMainWorldContentSecurityPolicy; }
 
         WorkerScriptController* script() { return m_script.get(); }
         void clearScript() { m_script = nullptr; }
@@ -148,14 +148,14 @@ namespace WebCore {
         void refScriptExecutionContext() override { ref(); }
         void derefScriptExecutionContext() override { deref(); }
 
-        void refEventTarget() override final { ref(); }
-        void derefEventTarget() override final { deref(); }
+        void refEventTarget() final { ref(); }
+        void derefEventTarget() final { deref(); }
 
         void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) override;
 
         EventTarget* errorEventTarget() override;
 
-        WorkerEventQueue& eventQueue() const override final;
+        WorkerEventQueue& eventQueue() const final;
 
         URL m_url;
         String m_userAgent;

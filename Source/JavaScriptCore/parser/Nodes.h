@@ -263,10 +263,10 @@ namespace JSC {
         NumberNode(const JSTokenLocation&, double value);
         double value() const { return m_value; }
         virtual bool isIntegerNode() const = 0;
-        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override final;
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) final;
 
     private:
-        bool isNumber() const override final { return true; }
+        bool isNumber() const final { return true; }
         JSValue jsValue(BytecodeGenerator&) const override { return jsNumber(m_value); }
 
         double m_value;
@@ -284,7 +284,7 @@ namespace JSC {
     class IntegerNode : public DoubleNode {
     public:
         IntegerNode(const JSTokenLocation&, double value);
-        bool isIntegerNode() const override final { return true; }
+        bool isIntegerNode() const final { return true; }
     };
 
     class StringNode : public ConstantNode {

@@ -718,7 +718,7 @@ class Generator:
             extra_declarations.extend([
                 "",
                 "    // EventLoopInput API",
-                "    virtual void dispatch(ReplayController&) override final;",
+                "    virtual void dispatch(ReplayController&) final;",
             ])
 
             if _input.setting('CREATE_FROM_PAGE'):

@@ -63,8 +63,8 @@ public:
     }
     virtual ~TextTrack();
 
-    EventTargetInterface eventTargetInterface() const override final { return TextTrackEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override final { return m_scriptExecutionContext; }
+    EventTargetInterface eventTargetInterface() const final { return TextTrackEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext; }
 
     static TextTrack* captionMenuOffItem();
     static TextTrack* captionMenuAutomaticItem();
@@ -155,8 +155,8 @@ private:
 
     bool enabled() const override;
 
-    void refEventTarget() override final { ref(); }
-    void derefEventTarget() override final { deref(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
     VTTRegionList* ensureVTTRegionList();
     RefPtr<VTTRegionList> m_regions;

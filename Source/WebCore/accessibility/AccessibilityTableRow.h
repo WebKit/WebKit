@@ -59,12 +59,12 @@ public:
 protected:
     explicit AccessibilityTableRow(RenderObject*);
 
-    AccessibilityRole determineAccessibilityRole() override final;
+    AccessibilityRole determineAccessibilityRole() final;
 
 private:
-    bool isTableRow() const override final;
-    AccessibilityObject* observableObject() const override final;
-    bool computeAccessibilityIsIgnored() const override final;
+    bool isTableRow() const final;
+    AccessibilityObject* observableObject() const final;
+    bool computeAccessibilityIsIgnored() const final;
 
     int m_rowIndex;
 };

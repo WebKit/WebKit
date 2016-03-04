@@ -58,7 +58,7 @@ public:
     static void synchronizeStyleAttributeInternal(StyledElement*);
     void synchronizeStyleAttributeInternal() const { StyledElement::synchronizeStyleAttributeInternal(const_cast<StyledElement*>(this)); }
     
-    CSSStyleDeclaration* cssomStyle() override final;
+    CSSStyleDeclaration* cssomStyle() final;
 
     const StyleProperties* presentationAttributeStyle();
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) { }

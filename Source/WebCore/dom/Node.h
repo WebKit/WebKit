@@ -497,7 +497,7 @@ public:
     Node* toNode() override;
 
     EventTargetInterface eventTargetInterface() const override;
-    ScriptExecutionContext* scriptExecutionContext() const override final; // Implemented in Document.h
+    ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in Document.h
 
     bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
     bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
@@ -541,8 +541,8 @@ public:
     bool m_adoptionIsRequired { true };
 #endif
 
-    EventTargetData* eventTargetData() override final;
-    EventTargetData& ensureEventTargetData() override final;
+    EventTargetData* eventTargetData() final;
+    EventTargetData& ensureEventTargetData() final;
 
     void getRegisteredMutationObserversOfType(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, MutationObserver::MutationType, const QualifiedName* attributeName);
     void registerMutationObserver(MutationObserver*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);

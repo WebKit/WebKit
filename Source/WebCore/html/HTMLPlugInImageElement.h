@@ -94,7 +94,7 @@ protected:
     HTMLPlugInImageElement(const QualifiedName& tagName, Document&, bool createdByParser);
 
     void didMoveToNewDocument(Document* oldDocument) override;
-    bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) override final;
+    bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) final;
 
     bool isImageType();
     HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
@@ -108,25 +108,25 @@ protected:
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
 
 private:
-    bool isPlugInImageElement() const override final { return true; }
-    bool isRestartedPlugin() const override final { return m_isRestartedPlugin; }
+    bool isPlugInImageElement() const final { return true; }
+    bool isRestartedPlugin() const final { return m_isRestartedPlugin; }
 
-    void finishParsingChildren() override final;
-    void didAddUserAgentShadowRoot(ShadowRoot*) override final;
+    void finishParsingChildren() final;
+    void didAddUserAgentShadowRoot(ShadowRoot*) final;
 
     RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;
-    bool willRecalcStyle(Style::Change) override final;
-    void didAttachRenderers() override final;
-    void willDetachRenderers() override final;
+    bool willRecalcStyle(Style::Change) final;
+    void didAttachRenderers() final;
+    void willDetachRenderers() final;
 
-    void prepareForDocumentSuspension() override final;
-    void resumeFromDocumentSuspension() override final;
+    void prepareForDocumentSuspension() final;
+    void resumeFromDocumentSuspension() final;
 
-    void defaultEventHandler(Event*) override final;
-    void dispatchPendingMouseClick() override final;
+    void defaultEventHandler(Event*) final;
+    void dispatchPendingMouseClick() final;
 
-    void updateSnapshot(PassRefPtr<Image>) override final;
+    void updateSnapshot(PassRefPtr<Image>) final;
 
     void startLoadingImage();
     void updateWidgetIfNecessary();

@@ -39,10 +39,10 @@ public:
 
     virtual ~CachedHTMLCollection();
 
-    unsigned length() const override final { return m_indexCache.nodeCount(collection()); }
+    unsigned length() const final { return m_indexCache.nodeCount(collection()); }
     Element* item(unsigned offset) const override { return m_indexCache.nodeAt(collection(), offset); }
     Element* namedItem(const AtomicString& name) const override;
-    size_t memoryCost() const override final { return m_indexCache.memoryCost() + HTMLCollection::memoryCost(); }
+    size_t memoryCost() const final { return m_indexCache.memoryCost() + HTMLCollection::memoryCost(); }
 
     // For CollectionIndexCache; do not use elsewhere.
     using CollectionTraversalIterator = typename CollectionTraversal<traversalType>::Iterator;

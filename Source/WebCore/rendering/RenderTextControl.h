@@ -71,7 +71,7 @@ private:
     void element() const = delete;
 
     const char* renderName() const override { return "RenderTextControl"; }
-    bool isTextControl() const override final { return true; }
+    bool isTextControl() const final { return true; }
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;
     void removeLeftoverAnonymousBlock(RenderBlock*) override { }

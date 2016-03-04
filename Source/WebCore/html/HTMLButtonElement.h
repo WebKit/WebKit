@@ -49,7 +49,7 @@ private:
 
     // HTMLFormControlElement always creates one, but buttons don't need it.
     bool alwaysCreateUserAgentShadowRoot() const override { return false; }
-    bool canHaveUserAgentShadowRoot() const override final { return true; }
+    bool canHaveUserAgentShadowRoot() const final { return true; }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     bool isPresentationAttribute(const QualifiedName&) const override;

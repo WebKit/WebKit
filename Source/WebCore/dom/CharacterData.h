@@ -63,11 +63,11 @@ protected:
     void dispatchModifiedEvent(const String& oldValue);
 
 private:
-    String nodeValue() const override final;
-    void setNodeValue(const String&, ExceptionCode&) override final;
-    bool isCharacterDataNode() const override final { return true; }
-    int maxCharacterOffset() const override final;
-    bool offsetInCharacters() const override final;
+    String nodeValue() const final;
+    void setNodeValue(const String&, ExceptionCode&) final;
+    bool isCharacterDataNode() const final { return true; }
+    int maxCharacterOffset() const final;
+    bool offsetInCharacters() const final;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength);
     void checkCharDataOperation(unsigned offset, ExceptionCode&);
 

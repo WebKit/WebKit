@@ -240,8 +240,8 @@ public:
     void removeMarkedSummingJunction(AudioSummingJunction*);
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const override final { return AudioContextEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override final;
+    EventTargetInterface eventTargetInterface() const final { return AudioContextEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
     // Reconcile ref/deref which are defined both in ThreadSafeRefCounted and EventTarget.
     using ThreadSafeRefCounted<AudioContext>::ref;

@@ -64,7 +64,7 @@ public:
 protected:
     VTTCueBox(Document&, VTTCue&);
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override final;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) final;
 
     VTTCue& m_cue;
     int m_fontSizeFromCaptionUserPrefs;
@@ -166,7 +166,7 @@ public:
     bool doesExtendCue(const TextTrackCue&) const override;
 
     CueType cueType() const override { return WebVTT; }
-    bool isRenderable() const override final { return true; }
+    bool isRenderable() const final { return true; }
 
     void didChange() override;
 

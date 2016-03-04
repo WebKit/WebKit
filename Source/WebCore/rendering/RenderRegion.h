@@ -146,7 +146,7 @@ protected:
     void computeOverflowFromFlowThread();
 
 private:
-    bool isRenderRegion() const override final { return true; }
+    bool isRenderRegion() const final { return true; }
     const char* renderName() const override { return "RenderRegion"; }
 
     void insertedIntoTree() override;

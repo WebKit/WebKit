@@ -34,7 +34,7 @@ public:
     virtual ~LocaleNone();
 
 private:
-    void initializeLocaleData() override final;
+    void initializeLocaleData() final;
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     String dateFormat() override;
     String monthFormat() override;

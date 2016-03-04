@@ -48,7 +48,7 @@ private:
 
     bool hasControlClip() const override;
     LayoutRect controlClipRect(const LayoutPoint&) const override;
-    bool isTextField() const override final { return true; }
+    bool isTextField() const final { return true; }
 
     void layout() override;
 
@@ -63,8 +63,8 @@ private:
     int scrollHeight() const override;
     void setScrollLeft(int) override;
     void setScrollTop(int) override;
-    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override final;
-    bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) override final;
+    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) final;
+    bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) final;
 
     int textBlockWidth() const;
     float getAverageCharWidth() override;

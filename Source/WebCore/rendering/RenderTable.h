@@ -127,7 +127,7 @@ public:
     LayoutUnit calcBorderEnd() const;
     void recalcBordersInRowDirection();
 
-    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override final;
+    void addChild(RenderObject* child, RenderObject* beforeChild = 0) final;
 
     struct ColumnStruct {
         explicit ColumnStruct(unsigned initialSpan = 1)
@@ -270,31 +270,31 @@ public:
     LayoutUnit offsetWidthForColumn(const RenderTableCol&) const;
     LayoutUnit offsetHeightForColumn(const RenderTableCol&) const;
     
-    void markForPaginationRelayoutIfNeeded() override final;
+    void markForPaginationRelayoutIfNeeded() final;
     
 protected:
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
-    void simplifiedNormalFlowLayout() override final;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void simplifiedNormalFlowLayout() final;
 
 private:
     const char* renderName() const override { return "RenderTable"; }
 
-    bool isTable() const override final { return true; }
+    bool isTable() const final { return true; }
 
-    bool avoidsFloats() const override final { return true; }
+    bool avoidsFloats() const final { return true; }
 
-    void paint(PaintInfo&, const LayoutPoint&) override final;
-    void paintObject(PaintInfo&, const LayoutPoint&) override final;
-    void paintBoxDecorations(PaintInfo&, const LayoutPoint&) override final;
-    void paintMask(PaintInfo&, const LayoutPoint&) override final;
-    void layout() override final;
-    void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const override final;
+    void paint(PaintInfo&, const LayoutPoint&) final;
+    void paintObject(PaintInfo&, const LayoutPoint&) final;
+    void paintBoxDecorations(PaintInfo&, const LayoutPoint&) final;
+    void paintMask(PaintInfo&, const LayoutPoint&) final;
+    void layout() final;
+    void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const final;
     void computePreferredLogicalWidths() override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override final;
+    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
     Optional<int> firstLineBaseline() const override;
-    Optional<int> inlineBlockBaseline(LineDirectionMode) const override final;
+    Optional<int> inlineBlockBaseline(LineDirectionMode) const final;
 
     RenderTableCol* slowColElement(unsigned col, bool* startEdge, bool* endEdge) const;
 
@@ -303,18 +303,18 @@ private:
 
     void invalidateCachedColumnOffsets();
 
-    RenderBlock* firstLineBlock() const override final;
-    void updateFirstLetter() override final;
+    RenderBlock* firstLineBlock() const final;
+    void updateFirstLetter() final;
     
-    void updateLogicalWidth() override final;
+    void updateLogicalWidth() final;
 
     LayoutUnit convertStyleLogicalWidthToComputedWidth(const Length& styleLogicalWidth, LayoutUnit availableWidth);
     LayoutUnit convertStyleLogicalHeightToComputedHeight(const Length& styleLogicalHeight);
 
-    LayoutRect overflowClipRect(const LayoutPoint& location, RenderRegion*, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhaseBlockBackground) override final;
+    LayoutRect overflowClipRect(const LayoutPoint& location, RenderRegion*, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhaseBlockBackground) final;
     LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy) override { return RenderBox::overflowClipRect(location, region, relevancy); }
 
-    void addOverflowFromChildren() override final;
+    void addOverflowFromChildren() final;
 
     void subtractCaptionRect(LayoutRect&) const;
 

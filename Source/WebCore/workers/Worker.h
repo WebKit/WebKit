@@ -62,7 +62,7 @@ namespace WebCore {
         void terminate();
 
         // EventTarget API.
-        ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
+        ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
         // ActiveDOMObject API.
         bool hasPendingActivity() const override;

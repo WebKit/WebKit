@@ -341,7 +341,7 @@ public:
     using ContainerNode::ref;
     using ContainerNode::deref;
 
-    bool canContainRangeEndPoint() const override final { return true; }
+    bool canContainRangeEndPoint() const final { return true; }
 
     Element* getElementByAccessKey(const String& key);
     void invalidateAccessKeyMap();
@@ -595,10 +595,10 @@ public:
     void prepareForDestruction();
 
     // Override ScriptExecutionContext methods to do additional work
-    bool shouldBypassMainWorldContentSecurityPolicy() const override final;
-    void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) override final;
-    void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) override final;
-    void stopActiveDOMObjects() override final;
+    bool shouldBypassMainWorldContentSecurityPolicy() const final;
+    void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) final;
+    void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) final;
+    void stopActiveDOMObjects() final;
 
     void suspendDeviceMotionAndOrientationUpdates();
     void resumeDeviceMotionAndOrientationUpdates();
@@ -640,7 +640,7 @@ public:
 
     bool wellFormed() const { return m_wellFormed; }
 
-    const URL& url() const override final { return m_url; }
+    const URL& url() const final { return m_url; }
     void setURL(const URL&);
     const URL& urlForBindings() const { return m_url.isEmpty() ? blankURL() : m_url; }
 
@@ -653,12 +653,12 @@ public:
     const String& baseTarget() const { return m_baseTarget; }
     void processBaseElement();
 
-    WEBCORE_EXPORT URL completeURL(const String&) const override final;
+    WEBCORE_EXPORT URL completeURL(const String&) const final;
     URL completeURL(const String&, const URL& baseURLOverride) const;
 
-    String userAgent(const URL&) const override final;
+    String userAgent(const URL&) const final;
 
-    void disableEval(const String& errorMessage) override final;
+    void disableEval(const String& errorMessage) final;
 
     bool canNavigate(Frame* targetFrame);
     Frame* findUnsafeParentScrollPropagationBoundary();
@@ -978,7 +978,7 @@ public:
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
     void parseDNSPrefetchControlHeader(const String&);
 
-    void postTask(Task) override final; // Executes the task on context's thread asynchronously.
+    void postTask(Task) final; // Executes the task on context's thread asynchronously.
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     ScriptedAnimationController* scriptedAnimationController() { return m_scriptedAnimationController.get(); }
@@ -1067,7 +1067,7 @@ public:
     void setAnnotatedRegions(const Vector<AnnotatedRegionValue>&);
 #endif
 
-    void removeAllEventListeners() override final;
+    void removeAllEventListeners() final;
 
     WEBCORE_EXPORT const SVGDocumentExtensions* svgExtensions();
     WEBCORE_EXPORT SVGDocumentExtensions& accessSVGExtensions();
@@ -1081,8 +1081,8 @@ public:
     bool processingLoadEvent() const { return m_processingLoadEvent; }
     bool loadEventFinished() const { return m_loadEventFinished; }
 
-    bool isContextThread() const override final;
-    bool isJSExecutionForbidden() const override final { return false; }
+    bool isContextThread() const final;
+    bool isJSExecutionForbidden() const final { return false; }
 
     void enqueueWindowEvent(Ref<Event>&&);
     void enqueueDocumentEvent(Ref<Event>&&);
@@ -1090,7 +1090,7 @@ public:
     void enqueuePageshowEvent(PageshowEventPersistence);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void enqueuePopstateEvent(RefPtr<SerializedScriptValue>&& stateObject);
-    DocumentEventQueue& eventQueue() const override final { return m_eventQueue; }
+    DocumentEventQueue& eventQueue() const final { return m_eventQueue; }
 
     WEBCORE_EXPORT void addMediaCanStartListener(MediaCanStartListener*);
     WEBCORE_EXPORT void removeMediaCanStartListener(MediaCanStartListener*);
@@ -1164,8 +1164,8 @@ public:
 
     void sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, const IntPoint& newPosition, const IntRect& visibleRect, const IntSize& contentsSize, Element* target = nullptr);
 
-    EventTarget* errorEventTarget() override final;
-    void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) override final;
+    EventTarget* errorEventTarget() final;
+    void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final;
 
     void initDNSPrefetch();
 
@@ -1212,7 +1212,7 @@ public:
     typedef std::pair<Region, bool> RegionFixedPair;
     RegionFixedPair absoluteRegionForEventTargets(const EventTargetSet*);
 
-    LayoutRect absoluteEventHandlerBounds(bool&) override final;
+    LayoutRect absoluteEventHandlerBounds(bool&) final;
 
     bool visualUpdatesAllowed() const { return m_visualUpdatesAllowed; }
 
@@ -1259,9 +1259,9 @@ public:
     void addDisabledFieldsetElement() { m_disabledFieldsetElementsCount++; }
     void removeDisabledFieldsetElement() { ASSERT(m_disabledFieldsetElementsCount); m_disabledFieldsetElementsCount--; }
 
-    WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override final;
+    WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) final;
 
-    WEBCORE_EXPORT SecurityOrigin* topOrigin() const override final;
+    WEBCORE_EXPORT SecurityOrigin* topOrigin() const final;
 
     Ref<FontFaceSet> fonts();
 
@@ -1270,8 +1270,8 @@ public:
     void setVisualUpdatesAllowedByClient(bool);
 
 #if ENABLE(SUBTLE_CRYPTO)
-    bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) override final;
-    bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) override final;
+    bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) final;
+    bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) final;
 #endif
 
     void setHasStyleWithViewportUnits() { m_hasStyleWithViewportUnits = true; }
@@ -1338,26 +1338,26 @@ private:
     void detachParser();
 
     // FontSelectorClient
-    void fontsNeedUpdate(FontSelector&) override final;
+    void fontsNeedUpdate(FontSelector&) final;
 
-    bool isDocument() const override final { return true; }
+    bool isDocument() const final { return true; }
 
-    void childrenChanged(const ChildChange&) override final;
+    void childrenChanged(const ChildChange&) final;
 
-    String nodeName() const override final;
-    NodeType nodeType() const override final;
-    bool childTypeAllowed(NodeType) const override final;
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override final;
+    String nodeName() const final;
+    NodeType nodeType() const final;
+    bool childTypeAllowed(NodeType) const final;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation) final;
     void cloneDataFromDocument(const Document&);
 
-    void refScriptExecutionContext() override final { ref(); }
-    void derefScriptExecutionContext() override final { deref(); }
+    void refScriptExecutionContext() final { ref(); }
+    void derefScriptExecutionContext() final { deref(); }
 
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) override final;
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) final;
 
-    double minimumTimerInterval() const override final;
+    double minimumTimerInterval() const final;
 
-    double timerAlignmentInterval(bool hasReachedMaxNestingLevel) const override final;
+    double timerAlignmentInterval(bool hasReachedMaxNestingLevel) const final;
 
     void updateTitleFromTitleElement();
     void updateTitle(const StringWithDirection&);
@@ -1407,7 +1407,7 @@ private:
     void setCachedDOMCookies(const String&);
     bool isDOMCookieCacheValid() const { return m_cookieCacheExpiryTimer.isActive(); }
     void invalidateDOMCookieCache();
-    void didLoadResourceSynchronously(const ResourceRequest&) override final;
+    void didLoadResourceSynchronously(const ResourceRequest&) final;
 
     void checkViewportDependentPictures();
 

@@ -123,12 +123,12 @@ private:
     bool isKeyboardFocusable(KeyboardEvent*) const override;
     bool isMouseFocusable() const override;
 
-    void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection) override final;
-    void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override final;
+    void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection) final;
+    void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) final;
     
     bool canStartSelection() const override { return false; }
 
-    bool canHaveUserAgentShadowRoot() const override final { return true; }
+    bool canHaveUserAgentShadowRoot() const final { return true; }
 
     bool isEnumeratable() const override { return true; }
     bool supportLabels() const override { return true; }
@@ -149,7 +149,7 @@ private:
 
     void dispatchChangeEventForMenuList();
 
-    void didRecalcStyle(Style::Change) override final;
+    void didRecalcStyle(Style::Change) final;
 
     void recalcListItems(bool updateSelectedStates = true) const;
 

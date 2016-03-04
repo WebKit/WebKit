@@ -45,7 +45,7 @@ public:
     static Ref<IDBOpenDBRequest> createDeleteRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&);
     static Ref<IDBOpenDBRequest> createOpenRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version);
 
-    ~IDBOpenDBRequest() override final;
+    ~IDBOpenDBRequest() final;
     
     const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
     uint64_t version() const { return m_version; }
@@ -57,7 +57,7 @@ public:
     void fireSuccessAfterVersionChangeCommit();
     void fireErrorAfterVersionChangeCompletion();
 
-    bool dispatchEvent(Event&) override final;
+    bool dispatchEvent(Event&) final;
 
 private:
     IDBOpenDBRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version, IndexedDB::RequestType);

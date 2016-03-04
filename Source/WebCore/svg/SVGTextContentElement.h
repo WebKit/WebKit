@@ -104,7 +104,7 @@ protected:
     bool selfHasRelativeLengths() const override;
 
 private:
-    bool isTextContent() const override final { return true; }
+    bool isTextContent() const final { return true; }
 
     static bool isSupportedAttribute(const QualifiedName&);
 

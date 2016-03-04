@@ -77,7 +77,7 @@ protected:
     UIEvent(const AtomicString&, const UIEventInit&);
 
 private:
-    bool isUIEvent() const override final;
+    bool isUIEvent() const final;
 
     RefPtr<AbstractView> m_view;
     int m_detail;

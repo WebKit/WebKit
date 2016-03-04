@@ -43,13 +43,13 @@ public:
     static Ref<AccessibilityTable> create(RenderObject*);
     virtual ~AccessibilityTable();
 
-    void init() override final;
+    void init() final;
 
-    AccessibilityRole roleValue() const override final;
+    AccessibilityRole roleValue() const final;
     virtual bool isAriaTable() const { return false; }
     
     void addChildren() override;
-    void clearChildren() override final;
+    void clearChildren() final;
     
     const AccessibilityChildrenVector& columns();
     const AccessibilityChildrenVector& rows();
@@ -57,9 +57,9 @@ public:
     virtual bool supportsSelectedRows() { return false; }
     unsigned columnCount();
     unsigned rowCount();
-    int tableLevel() const override final;
+    int tableLevel() const final;
     
-    String title() const override final;
+    String title() const final;
     
     // all the cells in the table
     void cells(AccessibilityChildrenVector&);
@@ -90,15 +90,15 @@ protected:
     bool hasARIARole() const;
 
     // isTable is whether it's an AccessibilityTable object.
-    bool isTable() const override final { return true; }
+    bool isTable() const final { return true; }
     // isDataTable is whether it is exposed as an AccessibilityTable because the heuristic
     // think this "looks" like a data-based table (instead of a table used for layout).
-    bool isDataTable() const override final;
-    bool computeAccessibilityIsIgnored() const override final;
+    bool isDataTable() const final;
+    bool computeAccessibilityIsIgnored() const final;
 
 private:
     virtual bool computeIsTableExposableThroughAccessibility() const;
-    void titleElementText(Vector<AccessibilityText>&) const override final;
+    void titleElementText(Vector<AccessibilityText>&) const final;
     HTMLTableElement* tableElement() const;
     void addChildrenFromSection(RenderTableSection*, unsigned& maxColumnCount);
     void addTableCellChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);

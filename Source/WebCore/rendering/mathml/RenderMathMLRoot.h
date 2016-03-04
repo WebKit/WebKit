@@ -58,7 +58,7 @@ protected:
     void paint(PaintInfo&, const LayoutPoint&) override;
 
 private:
-    bool isRenderMathMLRoot() const override final { return true; }
+    bool isRenderMathMLRoot() const final { return true; }
     const char* renderName() const override { return "RenderMathMLRoot"; }
     Optional<int> firstLineBaseline() const override;
     void updateStyle();

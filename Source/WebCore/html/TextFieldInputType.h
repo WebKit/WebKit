@@ -49,58 +49,58 @@ protected:
     void handleKeydownEvent(KeyboardEvent*) override;
     void handleKeydownEventForSpinButton(KeyboardEvent*);
 
-    HTMLElement* containerElement() const override final;
-    HTMLElement* innerBlockElement() const override final;
-    TextControlInnerTextElement* innerTextElement() const override final;
-    HTMLElement* innerSpinButtonElement() const override final;
-    HTMLElement* capsLockIndicatorElement() const override final;
-    HTMLElement* autoFillButtonElement() const override final;
+    HTMLElement* containerElement() const final;
+    HTMLElement* innerBlockElement() const final;
+    TextControlInnerTextElement* innerTextElement() const final;
+    HTMLElement* innerSpinButtonElement() const final;
+    HTMLElement* capsLockIndicatorElement() const final;
+    HTMLElement* autoFillButtonElement() const final;
 
 protected:
     virtual bool needsContainer() const;
     void createShadowSubtree() override;
     void destroyShadowSubtree() override;
-    void attributeChanged() override final;
-    void disabledAttributeChanged() override final;
-    void readonlyAttributeChanged() override final;
-    bool supportsReadOnly() const override final;
-    void handleFocusEvent(Node* oldFocusedNode, FocusDirection) override final;
-    void handleBlurEvent() override final;
+    void attributeChanged() final;
+    void disabledAttributeChanged() final;
+    void readonlyAttributeChanged() final;
+    bool supportsReadOnly() const final;
+    void handleFocusEvent(Node* oldFocusedNode, FocusDirection) final;
+    void handleBlurEvent() final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
-    void updateInnerTextValue() override final;
+    void updateInnerTextValue() final;
     String sanitizeValue(const String&) const override;
 
     virtual String convertFromVisibleValue(const String&) const;
     virtual void didSetValueByUserEdit();
 
 private:
-    bool isKeyboardFocusable(KeyboardEvent*) const override final;
-    bool isMouseFocusable() const override final;
-    bool isTextField() const override final;
-    bool isEmptyValue() const override final;
-    bool valueMissing(const String&) const override final;
-    void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) override final;
-    void forwardEvent(Event*) override final;
-    bool shouldSubmitImplicitly(Event*) override final;
+    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isMouseFocusable() const final;
+    bool isTextField() const final;
+    bool isEmptyValue() const final;
+    bool valueMissing(const String&) const final;
+    void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) final;
+    void forwardEvent(Event*) final;
+    bool shouldSubmitImplicitly(Event*) final;
     RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
     bool shouldUseInputMethod() const override;
     bool shouldRespectListAttribute() override;
-    HTMLElement* placeholderElement() const override final;
-    void updatePlaceholderText() override final;
-    bool appendFormData(FormDataList&, bool multipart) const override final;
-    void subtreeHasChanged() override final;
-    void capsLockStateMayHaveChanged() override final;
-    void updateAutoFillButton() override final;
+    HTMLElement* placeholderElement() const final;
+    void updatePlaceholderText() final;
+    bool appendFormData(FormDataList&, bool multipart) const final;
+    void subtreeHasChanged() final;
+    void capsLockStateMayHaveChanged() final;
+    void updateAutoFillButton() final;
 
     // SpinButtonElement::SpinButtonOwner functions.
-    void focusAndSelectSpinButtonOwner() override final;
-    bool shouldSpinButtonRespondToMouseEvents() override final;
-    bool shouldSpinButtonRespondToWheelEvents() override final;
-    void spinButtonStepDown() override final;
-    void spinButtonStepUp() override final;
+    void focusAndSelectSpinButtonOwner() final;
+    bool shouldSpinButtonRespondToMouseEvents() final;
+    bool shouldSpinButtonRespondToWheelEvents() final;
+    void spinButtonStepDown() final;
+    void spinButtonStepUp() final;
 
     // AutoFillButtonElement::AutoFillButtonOwner
-    void autoFillButtonElementWasClicked() override final;
+    void autoFillButtonElementWasClicked() final;
 
     bool shouldHaveSpinButton() const;
     bool shouldHaveCapsLockIndicator() const;

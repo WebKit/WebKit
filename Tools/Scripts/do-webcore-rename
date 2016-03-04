@@ -215,6 +215,9 @@ for my $file (sort @paths) {
     # Remove the "virtual" keyword from virtual/override lines.
     # Should be a no-op but also OK to remove this any time, now that we have done it once.
     $newContents =~ s/^(\s*(\w+EXPORT\w*\s+)?)virtual ([^{;]+ override\b)/$1$3/mg;
+    $newContents =~ s/^(\s*(\w+EXPORT\w*\s+)?)virtual ([^{;]+ final\b)/$1$3/mg;
+    $newContents =~ s/\boverride\s+final\b/final/g;
+    $newContents =~ s/\bfinal\s+override\b/final/g;
 
     if ($newContents ne $contents) {
         open FILE, ">", $file or die "Failed to open $file";

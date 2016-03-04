@@ -64,12 +64,12 @@ public:
     DownloadID pendingDownloadID() { return m_task->pendingDownloadID(); }
     
     // NetworkDataTaskClient
-    void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, RedirectCompletionHandler) final override;
-    void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler) final override;
-    void didReceiveResponseNetworkSession(const WebCore::ResourceResponse&, ResponseCompletionHandler) final override;
-    void didReceiveData(RefPtr<WebCore::SharedBuffer>&&) final override;
-    void didCompleteWithError(const WebCore::ResourceError&) final override;
-    void didBecomeDownload() final override;
+    void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, RedirectCompletionHandler) final;
+    void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler) final;
+    void didReceiveResponseNetworkSession(const WebCore::ResourceResponse&, ResponseCompletionHandler) final;
+    void didReceiveData(RefPtr<WebCore::SharedBuffer>&&) final;
+    void didCompleteWithError(const WebCore::ResourceError&) final;
+    void didBecomeDownload() final;
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) override;
     void wasBlocked() override;
     void cannotShowURL() override;

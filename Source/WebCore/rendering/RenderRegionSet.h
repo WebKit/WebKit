@@ -53,11 +53,11 @@ protected:
     RenderRegionSet(Document&, Ref<RenderStyle>&&, RenderFlowThread&);
 
 private:
-    void installFlowThread() override final;
+    void installFlowThread() final;
 
     const char* renderName() const override = 0;
     
-    bool isRenderRegionSet() const override final { return true; }
+    bool isRenderRegionSet() const final { return true; }
 };
 
 } // namespace WebCore

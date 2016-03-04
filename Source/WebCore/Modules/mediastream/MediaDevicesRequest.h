@@ -64,10 +64,10 @@ private:
     void didCompleteTrackSourceInfoRequest(const TrackSourceInfoVector&) final;
 
     // ContextDestructionObserver
-    void contextDestroyed() override final;
+    void contextDestroyed() final;
 
     // UserMediaPermissionCheckClient
-    void didCompletePermissionCheck(const String&, bool) override final;
+    void didCompletePermissionCheck(const String&, bool) final;
 
     String hashID(const String&);
 

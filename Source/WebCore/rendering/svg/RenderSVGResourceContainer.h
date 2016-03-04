@@ -33,9 +33,9 @@ public:
     virtual ~RenderSVGResourceContainer();
 
     void layout() override;
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
-    bool isSVGResourceContainer() const override final { return true; }
+    bool isSVGResourceContainer() const final { return true; }
 
     static bool shouldTransformOnTextPainting(const RenderElement&, AffineTransform&);
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
@@ -66,7 +66,7 @@ private:
     void addClient(RenderElement&);
     void removeClient(RenderElement&);
 
-    void willBeDestroyed() override final;
+    void willBeDestroyed() final;
     void registerResource();
 
     AtomicString m_id;

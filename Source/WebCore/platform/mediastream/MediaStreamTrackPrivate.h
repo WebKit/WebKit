@@ -100,10 +100,10 @@ private:
     MediaStreamTrackPrivate(RefPtr<RealtimeMediaSource>&&, const String& id);
 
     // RealtimeMediaSourceObserver
-    void sourceStopped() override final;
-    void sourceMutedChanged() override final;
-    void sourceSettingsChanged() override final;
-    bool preventSourceFromStopping() override final;
+    void sourceStopped() final;
+    void sourceMutedChanged() final;
+    void sourceSettingsChanged() final;
+    bool preventSourceFromStopping() final;
 
     Vector<Observer*> m_observers;
     RefPtr<RealtimeMediaSource> m_source;

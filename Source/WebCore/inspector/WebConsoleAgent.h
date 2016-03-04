@@ -42,7 +42,7 @@ public:
     WebConsoleAgent(Inspector::AgentContext&);
     virtual ~WebConsoleAgent() { }
 
-    void setMonitoringXHREnabled(ErrorString&, bool enabled) override final;
+    void setMonitoringXHREnabled(ErrorString&, bool enabled) final;
 
     void frameWindowDiscarded(DOMWindow*);
 

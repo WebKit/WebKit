@@ -47,17 +47,17 @@ protected:
 private:
     void element() const = delete;
 
-    bool canHaveChildren() const override final { return true; }
+    bool canHaveChildren() const final { return true; }
 
     const char* renderName() const override { return "RenderMedia"; }
-    bool isMedia() const override final { return true; }
-    bool isImage() const override final { return false; }
+    bool isMedia() const final { return true; }
+    bool isImage() const final { return false; }
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    bool requiresForcedStyleRecalcPropagation() const override final { return true; }
+    bool requiresForcedStyleRecalcPropagation() const final { return true; }
 
     bool shadowControlsNeedCustomLayoutMetrics() const override { return true; }
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 };
 
 } // namespace WebCore

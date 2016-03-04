@@ -66,18 +66,18 @@ public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
-    WEBCORE_EXPORT bool shouldAutocomplete() const override final;
+    WEBCORE_EXPORT bool shouldAutocomplete() const final;
 
     // For ValidityState
-    bool hasBadInput() const override final;
-    bool patternMismatch() const override final;
-    bool rangeUnderflow() const override final;
-    bool rangeOverflow() const override final;
-    bool stepMismatch() const override final;
-    bool tooLong() const override final;
-    bool typeMismatch() const override final;
-    bool valueMissing() const override final;
-    String validationMessage() const override final;
+    bool hasBadInput() const final;
+    bool patternMismatch() const final;
+    bool rangeUnderflow() const final;
+    bool rangeOverflow() const final;
+    bool stepMismatch() const final;
+    bool tooLong() const final;
+    bool typeMismatch() const final;
+    bool valueMissing() const final;
+    String validationMessage() const final;
 
     // Returns the minimum value for type=date, number, or range.  Don't call this for other types.
     double minimum() const;
@@ -141,7 +141,7 @@ public:
 
     HTMLElement* containerElement() const;
     
-    TextControlInnerTextElement* innerTextElement() const override final;
+    TextControlInnerTextElement* innerTextElement() const final;
     Ref<RenderStyle> createInnerTextStyle(const RenderStyle&) const override;
 
     HTMLElement* innerBlockElement() const;
@@ -151,7 +151,7 @@ public:
     HTMLElement* cancelButtonElement() const;
     HTMLElement* sliderThumbElement() const;
     HTMLElement* sliderTrackElement() const;
-    HTMLElement* placeholderElement() const override final;
+    HTMLElement* placeholderElement() const final;
     WEBCORE_EXPORT HTMLElement* autoFillButtonElement() const;
 
     bool checked() const { return m_isChecked; }
@@ -162,7 +162,7 @@ public:
     void setIndeterminate(bool);
     // shouldAppearChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
     bool shouldAppearChecked() const;
-    bool shouldAppearIndeterminate() const override final;
+    bool shouldAppearIndeterminate() const final;
 
     unsigned size() const;
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
@@ -170,7 +170,7 @@ public:
 
     void setType(const AtomicString&);
 
-    WEBCORE_EXPORT String value() const override final;
+    WEBCORE_EXPORT String value() const final;
     void setValue(const String&, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
     WEBCORE_EXPORT void setValue(const String&, TextFieldEventBehavior = DispatchNoEvent);
     WEBCORE_EXPORT void setValueForUser(const String&);
@@ -200,17 +200,17 @@ public:
 
     bool canHaveSelection() const;
 
-    bool rendererIsNeeded(const RenderStyle&) override final;
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override final;
-    void willAttachRenderers() override final;
-    void didAttachRenderers() override final;
-    void didDetachRenderers() override final;
+    bool rendererIsNeeded(const RenderStyle&) final;
+    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) final;
+    void willAttachRenderers() final;
+    void didAttachRenderers() final;
+    void didDetachRenderers() final;
 
     // FIXME: For isActivatedSubmit and setActivatedSubmit, we should use the NVI-idiom here by making
     // it private virtual in all classes and expose a public method in HTMLFormControlElement to call
     // the private virtual method.
-    bool isActivatedSubmit() const override final;
-    void setActivatedSubmit(bool flag) override final;
+    bool isActivatedSubmit() const final;
+    void setActivatedSubmit(bool flag) final;
 
     String altText() const;
 
@@ -299,18 +299,18 @@ public:
     void setHeight(unsigned);
     void setWidth(unsigned);
 
-    void blur() override final;
+    void blur() final;
     void defaultBlur();
 
-    const AtomicString& name() const override final;
+    const AtomicString& name() const final;
 
     void endEditing();
 
     static Vector<FileChooserFileInfo> filesFromFileInputFormControlState(const FormControlState&);
 
-    bool matchesReadWritePseudoClass() const override final;
-    void setRangeText(const String& replacement, ExceptionCode&) override final;
-    void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) override final;
+    bool matchesReadWritePseudoClass() const final;
+    void setRangeText(const String& replacement, ExceptionCode&) final;
+    void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) final;
 
     HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
     HTMLImageLoader& ensureImageLoader();
@@ -329,62 +329,62 @@ protected:
 private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
 
-    void didAddUserAgentShadowRoot(ShadowRoot*) override final;
-    bool canHaveUserAgentShadowRoot() const override final { return true; }
+    void didAddUserAgentShadowRoot(ShadowRoot*) final;
+    bool canHaveUserAgentShadowRoot() const final { return true; }
 
-    void willChangeForm() override final;
-    void didChangeForm() override final;
-    InsertionNotificationRequest insertedInto(ContainerNode&) override final;
-    void finishedInsertingSubtree() override final;
-    void removedFrom(ContainerNode&) override final;
-    void didMoveToNewDocument(Document* oldDocument) override final;
+    void willChangeForm() final;
+    void didChangeForm() final;
+    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    void finishedInsertingSubtree() final;
+    void removedFrom(ContainerNode&) final;
+    void didMoveToNewDocument(Document* oldDocument) final;
 
-    bool hasCustomFocusLogic() const override final;
-    bool isKeyboardFocusable(KeyboardEvent*) const override final;
-    bool isMouseFocusable() const override final;
-    bool isEnumeratable() const override final;
-    bool supportLabels() const override final;
-    void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) override final;
-    bool shouldUseInputMethod() override final;
+    bool hasCustomFocusLogic() const final;
+    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isMouseFocusable() const final;
+    bool isEnumeratable() const final;
+    bool supportLabels() const final;
+    void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) final;
+    bool shouldUseInputMethod() final;
 
-    bool isTextFormControl() const override final { return isTextField(); }
+    bool isTextFormControl() const final { return isTextField(); }
 
-    bool canTriggerImplicitSubmission() const override final { return isTextField(); }
+    bool canTriggerImplicitSubmission() const final { return isTextField(); }
 
-    const AtomicString& formControlType() const override final;
+    const AtomicString& formControlType() const final;
 
-    bool shouldSaveAndRestoreFormControlState() const override final;
-    FormControlState saveFormControlState() const override final;
-    void restoreFormControlState(const FormControlState&) override final;
+    bool shouldSaveAndRestoreFormControlState() const final;
+    FormControlState saveFormControlState() const final;
+    void restoreFormControlState(const FormControlState&) final;
 
-    bool canStartSelection() const override final;
+    bool canStartSelection() const final;
 
-    void accessKeyAction(bool sendMouseEvents) override final;
+    void accessKeyAction(bool sendMouseEvents) final;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override final;
-    bool isPresentationAttribute(const QualifiedName&) const override final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override final;
-    void finishParsingChildren() override final;
-    void parserDidSetAttributes() override final;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    bool isPresentationAttribute(const QualifiedName&) const final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
+    void finishParsingChildren() final;
+    void parserDidSetAttributes() final;
 
-    void copyNonAttributePropertiesFromElement(const Element&) override final;
+    void copyNonAttributePropertiesFromElement(const Element&) final;
 
-    bool appendFormData(FormDataList&, bool) override final;
+    bool appendFormData(FormDataList&, bool) final;
 
-    bool isSuccessfulSubmitButton() const override final;
+    bool isSuccessfulSubmitButton() const final;
 
-    void reset() override final;
+    void reset() final;
 
-    bool isURLAttribute(const Attribute&) const override final;
-    bool isInRange() const override final;
-    bool isOutOfRange() const override final;
+    bool isURLAttribute(const Attribute&) const final;
+    bool isInRange() const final;
+    bool isOutOfRange() const final;
 
-    void resumeFromDocumentSuspension() override final;
+    void resumeFromDocumentSuspension() final;
 #if ENABLE(INPUT_TYPE_COLOR)
-    void prepareForDocumentSuspension() override final;
+    void prepareForDocumentSuspension() final;
 #endif
 
-    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override final;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     bool needsSuspensionCallback();
     void registerForSuspensionCallbackIfNeeded();
@@ -394,22 +394,22 @@ private:
     bool isTextType() const;
     bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
 
-    bool supportsPlaceholder() const override final;
-    void updatePlaceholderText() override final;
-    bool isEmptyValue() const override final;
-    void handleFocusEvent(Node* oldFocusedNode, FocusDirection) override final;
-    void handleBlurEvent() override final;
+    bool supportsPlaceholder() const final;
+    void updatePlaceholderText() final;
+    bool isEmptyValue() const final;
+    void handleFocusEvent(Node* oldFocusedNode, FocusDirection) final;
+    void handleBlurEvent() final;
 
-    bool isOptionalFormControl() const override final { return !isRequiredFormControl(); }
-    bool isRequiredFormControl() const override final;
-    bool computeWillValidate() const override final;
-    void requiredAttributeChanged() override final;
+    bool isOptionalFormControl() const final { return !isRequiredFormControl(); }
+    bool isRequiredFormControl() const final;
+    bool computeWillValidate() const final;
+    void requiredAttributeChanged() final;
 
     void initializeInputType();
     void updateType();
     void runPostTypeUpdateTasks();
     
-    void subtreeHasChanged() override final;
+    void subtreeHasChanged() final;
 
 #if ENABLE(DATALIST_ELEMENT)
     void resetListAttributeTargetObserver();

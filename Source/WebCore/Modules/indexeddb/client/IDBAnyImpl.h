@@ -75,19 +75,19 @@ public:
 
     virtual ~IDBAny();
 
-    Type type() const override final { return m_type; }
-    RefPtr<WebCore::DOMStringList> domStringList() override final;
-    RefPtr<WebCore::IDBCursor> idbCursor() override final;
-    RefPtr<WebCore::IDBCursorWithValue> idbCursorWithValue() override final;
-    RefPtr<WebCore::IDBDatabase> idbDatabase() override final;
-    RefPtr<WebCore::IDBFactory> idbFactory() override final;
-    RefPtr<WebCore::IDBIndex> idbIndex() override final;
-    RefPtr<WebCore::IDBObjectStore> idbObjectStore() override final;
-    RefPtr<WebCore::IDBTransaction> idbTransaction() override final;
-    const Deprecated::ScriptValue& scriptValue() override final;
-    int64_t integer() override final;
-    const String& string() override final;
-    const IDBKeyPath& keyPath() override final;
+    Type type() const final { return m_type; }
+    RefPtr<WebCore::DOMStringList> domStringList() final;
+    RefPtr<WebCore::IDBCursor> idbCursor() final;
+    RefPtr<WebCore::IDBCursorWithValue> idbCursorWithValue() final;
+    RefPtr<WebCore::IDBDatabase> idbDatabase() final;
+    RefPtr<WebCore::IDBFactory> idbFactory() final;
+    RefPtr<WebCore::IDBIndex> idbIndex() final;
+    RefPtr<WebCore::IDBObjectStore> idbObjectStore() final;
+    RefPtr<WebCore::IDBTransaction> idbTransaction() final;
+    const Deprecated::ScriptValue& scriptValue() final;
+    int64_t integer() final;
+    const String& string() final;
+    const IDBKeyPath& keyPath() final;
 
     IDBObjectStore* modernIDBObjectStore();
     IDBIndex* modernIDBIndex();

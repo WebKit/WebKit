@@ -230,7 +230,7 @@ private:
     WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() override;
 #endif
 
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override final { }
+    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) final { }
 
     void navigationGestureDidBegin() override { }
     void navigationGestureWillEnd(bool, WebBackForwardListItem&) override { }
@@ -239,18 +239,18 @@ private:
     void willRecordNavigationSnapshot(WebBackForwardListItem&) override { }
     void didRemoveNavigationGestureSnapshot() override { }
 
-    void didFirstVisuallyNonEmptyLayoutForMainFrame() override final { }
-    void didFinishLoadForMainFrame() override final { }
+    void didFirstVisuallyNonEmptyLayoutForMainFrame() final { }
+    void didFinishLoadForMainFrame() final { }
     void didFailLoadForMainFrame() override { }
-    void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override final { }
+    void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) final { }
 
     void didChangeBackgroundColor() override { }
 
-    void refView() override final { }
-    void derefView() override final { }
+    void refView() final { }
+    void derefView() final { }
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
-    bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override final { return false; };
+    bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) final { return false; };
 #endif
 
     void didRestoreScrollPosition() override { }
@@ -258,9 +258,9 @@ private:
 #if ENABLE(FULLSCREEN_API)
     // WebFullScreenManagerProxyClient
     void closeFullScreenManager() override { }
-    bool isFullScreen() override final;
-    void enterFullScreen() override final;
-    void exitFullScreen() override final;
+    bool isFullScreen() final;
+    void enterFullScreen() final;
+    void exitFullScreen() final;
     void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
     void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
 #endif

@@ -58,7 +58,7 @@ private:
     void removeChildInternal(bool normalRemoval, RenderObject& child);
 
     const char* renderName() const override { return m_kind == Base ? "Base Wrapper" : "SubSupPair Wrapper"; }
-    bool isRenderMathMLScriptsWrapper() const override final { return true; }
+    bool isRenderMathMLScriptsWrapper() const final { return true; }
 
     RenderMathMLScripts* parentMathMLScripts();
 

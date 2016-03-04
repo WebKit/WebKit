@@ -49,7 +49,7 @@ private:
     AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
     AccessibilityRole roleValue() const override { return SliderRole; }
-    bool isSlider() const override final { return true; }
+    bool isSlider() const final { return true; }
     bool isInputSlider() const override { return true; }
     bool isControl() const override { return true; }
     

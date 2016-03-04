@@ -286,8 +286,8 @@ private:
     void isText() const = delete;
     void isRenderElement() const = delete;
 
-    RenderObject* firstChildSlow() const override final { return firstChild(); }
-    RenderObject* lastChildSlow() const override final { return lastChild(); }
+    RenderObject* firstChildSlow() const final { return firstChild(); }
+    RenderObject* lastChildSlow() const final { return lastChild(); }
 
     // Called when an object that was floating or positioned becomes a normal flow object
     // again.  We have to make sure the render tree updates as needed to accommodate the new
@@ -307,7 +307,7 @@ private:
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
     RenderStyle* cachedFirstLineStyle() const;
 
-    void newImageAnimationFrameAvailable(CachedImage&) final override;
+    void newImageAnimationFrameAvailable(CachedImage&) final;
 
     bool getLeadingCorner(FloatPoint& output) const;
     bool getTrailingCorner(FloatPoint& output) const;

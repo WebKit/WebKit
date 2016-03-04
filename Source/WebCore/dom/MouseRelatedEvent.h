@@ -54,8 +54,8 @@ public:
     WEBCORE_EXPORT int offsetX();
     WEBCORE_EXPORT int offsetY();
     bool isSimulated() const { return m_isSimulated; }
-    int pageX() const override final;
-    int pageY() const override final;
+    int pageX() const final;
+    int pageY() const final;
     virtual const LayoutPoint& pageLocation() const;
     int x() const;
     int y() const;
@@ -77,7 +77,7 @@ protected:
 
     void initCoordinates();
     void initCoordinates(const LayoutPoint& clientLocation);
-    void receivedTarget() override final;
+    void receivedTarget() final;
 
     void computePageLocation();
     void computeRelativePosition();

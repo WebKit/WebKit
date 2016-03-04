@@ -41,7 +41,7 @@ public:
     static Ref<AccessibilityTableCell> create(RenderObject*);
     virtual ~AccessibilityTableCell();
     
-    bool isTableCell() const override final;
+    bool isTableCell() const final;
     bool isTableHeaderCell() const;
     bool isColumnHeaderCell() const;
     bool isRowHeaderCell() const;
@@ -65,18 +65,18 @@ protected:
 
     AccessibilityTableRow* parentRow() const;
     virtual AccessibilityTable* parentTable() const;
-    AccessibilityRole determineAccessibilityRole() override final;
+    AccessibilityRole determineAccessibilityRole() final;
 
     int m_rowIndex;
     int m_ariaColIndexFromRow;
 
 private:
     // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.
-    AccessibilityObject* titleUIElement() const override final;
-    bool exposesTitleUIElement() const override final { return true; }
-    bool computeAccessibilityIsIgnored() const override final;
-    String expandedTextValue() const override final;
-    bool supportsExpandedTextValue() const override final;
+    AccessibilityObject* titleUIElement() const final;
+    bool exposesTitleUIElement() const final { return true; }
+    bool computeAccessibilityIsIgnored() const final;
+    String expandedTextValue() const final;
+    bool supportsExpandedTextValue() const final;
 
     bool isTableCellInSameRowGroup(AccessibilityTableCell*);
     bool isTableCellInSameColGroup(AccessibilityTableCell*);

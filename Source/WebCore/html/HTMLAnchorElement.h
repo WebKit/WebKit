@@ -103,7 +103,7 @@ public:
 
     bool isLiveLink() const;
 
-    bool willRespondToMouseClickEvents() override final;
+    bool willRespondToMouseClickEvents() final;
 
     bool hasRel(uint32_t relation) const;
     
@@ -121,14 +121,14 @@ private:
     bool supportsFocus() const override;
     bool isMouseFocusable() const override;
     bool isKeyboardFocusable(KeyboardEvent*) const override;
-    void defaultEventHandler(Event*) override final;
-    void setActive(bool active = true, bool pause = false) override final;
-    void accessKeyAction(bool sendMouseEvents) override final;
-    bool isURLAttribute(const Attribute&) const override final;
-    bool canStartSelection() const override final;
+    void defaultEventHandler(Event*) final;
+    void setActive(bool active = true, bool pause = false) final;
+    void accessKeyAction(bool sendMouseEvents) final;
+    bool isURLAttribute(const Attribute&) const final;
+    bool canStartSelection() const final;
     String target() const override;
-    short tabIndex() const override final;
-    bool draggable() const override final;
+    short tabIndex() const final;
+    bool draggable() const final;
 
     void sendPings(const URL& destinationURL);
 

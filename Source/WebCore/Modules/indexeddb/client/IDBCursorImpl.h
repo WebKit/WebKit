@@ -49,17 +49,17 @@ public:
     virtual ~IDBCursor();
 
     // Implement the IDL
-    const String& direction() const override final;
-    const Deprecated::ScriptValue& key() const override final;
-    const Deprecated::ScriptValue& primaryKey() const override final;
-    const Deprecated::ScriptValue& value() const override final;
-    IDBAny* source() override final;
+    const String& direction() const final;
+    const Deprecated::ScriptValue& key() const final;
+    const Deprecated::ScriptValue& primaryKey() const final;
+    const Deprecated::ScriptValue& value() const final;
+    IDBAny* source() final;
 
-    RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&) override final;
-    void advance(unsigned long, ExceptionCodeWithMessage&) override final;
-    void continueFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
-    void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
+    RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&) final;
+    void advance(unsigned long, ExceptionCodeWithMessage&) final;
+    void continueFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) final;
+    void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) final;
 
     void continueFunction(const IDBKeyData&, ExceptionCodeWithMessage&);
 
@@ -72,7 +72,7 @@ public:
     void setGetResult(IDBRequest&, const IDBGetResult&);
 
     bool isKeyCursor() const override { return true; }
-    bool isModernCursor() const override final { return true; }
+    bool isModernCursor() const final { return true; }
 
     void decrementOutstandingRequestCount();
 
@@ -82,9 +82,9 @@ protected:
 
 private:
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const override final;
-    bool canSuspendForDocumentSuspension() const override final;
-    bool hasPendingActivity() const override final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+    bool hasPendingActivity() const final;
 
     // Cursors are created with an outstanding iteration request.
     unsigned m_outstandingRequestCount { 1 };

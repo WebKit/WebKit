@@ -38,8 +38,8 @@ protected:
     void svgAttributeChanged(const QualifiedName&) override;
 
 private:
-    bool isPresentationAttribute(const QualifiedName&) const override final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override final;
+    bool isPresentationAttribute(const QualifiedName&) const final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTextPositioningElement)
         DECLARE_ANIMATED_LENGTH_LIST(X, x)

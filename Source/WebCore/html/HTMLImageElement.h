@@ -121,10 +121,10 @@ private:
     InsertionNotificationRequest insertedInto(ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
 
-    bool isFormAssociatedElement() const override final { return false; }
-    FormNamedItem* asFormNamedItem() override final { return this; }
-    HTMLImageElement& asHTMLElement() override final { return *this; }
-    const HTMLImageElement& asHTMLElement() const override final { return *this; }
+    bool isFormAssociatedElement() const final { return false; }
+    FormNamedItem* asFormNamedItem() final { return this; }
+    HTMLImageElement& asHTMLElement() final { return *this; }
+    const HTMLImageElement& asHTMLElement() const final { return *this; }
 
     void selectImageSource();
 

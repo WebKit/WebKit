@@ -68,8 +68,8 @@ private:
 
     MediaSession* m_session { nullptr };
 
-    void refEventTarget() override final { ref(); }
-    void derefEventTarget() override final { deref(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 };
 
 } // namespace WebCore

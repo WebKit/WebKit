@@ -63,7 +63,7 @@ public:
 
     void setVisibleScrollerThumbRect(const IntRect&);
 
-    bool scrollbarsCanBeActive() const override final;
+    bool scrollbarsCanBeActive() const final;
 
 private:
     RetainPtr<id> m_scrollAnimationHelper;
@@ -110,7 +110,7 @@ private:
     void didEndScrollGesture() const;
     void mayBeginScrollGesture() const;
 
-    void lockOverlayScrollbarStateToHidden(bool shouldLockState) override final;
+    void lockOverlayScrollbarStateToHidden(bool shouldLockState) final;
 
     void didAddVerticalScrollbar(Scrollbar*) override;
     void willRemoveVerticalScrollbar(Scrollbar*) override;

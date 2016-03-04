@@ -54,8 +54,8 @@ public:
     void didFinishLoading(uint64_t customProtocolID);
 
 private:
-    void start(GTask*) final override;
-    GInputStream* finish(GTask*, GError**) final override;
+    void start(GTask*) final;
+    GInputStream* finish(GTask*, GError**) final;
 
     ChildProcess* m_childProcess;
     GRefPtr<GPtrArray> m_schemes;

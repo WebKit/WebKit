@@ -48,7 +48,7 @@ public:
 
     const IDBResourceIdentifier& requestIdentifier() const { return m_requestIdentifier; }
 
-    bool isVersionChangeEvent() const override final { return true; }
+    bool isVersionChangeEvent() const final { return true; }
 
 private:
     IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType);

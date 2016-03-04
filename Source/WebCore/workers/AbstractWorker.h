@@ -58,8 +58,8 @@ namespace WebCore {
         intptr_t asID() const { return reinterpret_cast<intptr_t>(this); }
 
     private:
-        void refEventTarget() override final { ref(); }
-        void derefEventTarget() override final { deref(); }
+        void refEventTarget() final { ref(); }
+        void derefEventTarget() final { deref(); }
     };
 
 } // namespace WebCore

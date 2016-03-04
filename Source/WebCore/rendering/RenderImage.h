@@ -72,9 +72,9 @@ public:
     void setHasShadowControls(bool hasShadowControls) { m_hasShadowControls = hasShadowControls; }
 
 protected:
-    bool needsPreferredWidthsRecalculation() const override final;
-    RenderBox* embeddedContentBox() const override final;
-    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override final;
+    bool needsPreferredWidthsRecalculation() const final;
+    RenderBox* embeddedContentBox() const final;
+    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const final;
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
     void styleDidChange(StyleDifference, const RenderStyle*) override;
@@ -82,7 +82,7 @@ protected:
     void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
     void paintIntoRect(GraphicsContext&, const FloatRect&);
-    void paint(PaintInfo&, const LayoutPoint&) override final;
+    void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() override;
 
     void intrinsicSizeChanged() override
@@ -96,18 +96,18 @@ private:
     bool canHaveChildren() const override;
 
     bool isImage() const override { return true; }
-    bool isRenderImage() const override final { return true; }
+    bool isRenderImage() const final { return true; }
 
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    bool computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset) override final;
+    bool computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset) final;
 
     LayoutUnit minimumReplacedHeight() const override;
 
-    void notifyFinished(CachedResource*) override final;
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
+    void notifyFinished(CachedResource*) final;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 
-    bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance, InlineFlowBox*) const override final;
+    bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance, InlineFlowBox*) const final;
 
     virtual bool shadowControlsNeedCustomLayoutMetrics() const { return false; }
 

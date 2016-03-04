@@ -68,13 +68,13 @@ public:
     InlineTextBox* createInlineTextBox() { return m_lineBoxes.createAndAppendLineBox(*this); }
     void dirtyLineBoxes(bool fullLayout);
 
-    void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override final;
+    void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const final;
     Vector<IntRect> absoluteRectsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
 #if PLATFORM(IOS)
     void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) override;
 #endif
 
-    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override final;
+    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
     Vector<FloatQuad> absoluteQuadsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
 
     Vector<FloatQuad> absoluteQuadsClippedToEllipsis() const;
@@ -116,7 +116,7 @@ public:
     void setTextWithOffset(const String&, unsigned offset, unsigned len, bool force = false);
 
     bool canBeSelectionLeaf() const override { return true; }
-    void setSelectionState(SelectionState) override final;
+    void setSelectionState(SelectionState) final;
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) override;
     LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) override;
 
@@ -125,7 +125,7 @@ public:
     LayoutUnit marginLeft() const { return minimumValueForLength(style().marginLeft(), 0); }
     LayoutUnit marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
 
-    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override final;
+    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const final;
 
     InlineTextBox* firstTextBox() const { return m_lineBoxes.first(); }
     InlineTextBox* lastTextBox() const { return m_lineBoxes.last(); }
@@ -137,9 +137,9 @@ public:
     bool containsCaretOffset(unsigned) const;
     bool hasRenderedText() const;
 
-    int previousOffset(int current) const override final;
-    int previousOffsetForBackwardDeletion(int current) const override final;
-    int nextOffset(int current) const override final;
+    int previousOffset(int current) const final;
+    int previousOffsetForBackwardDeletion(int current) const final;
+    int nextOffset(int current) const final;
 
     bool containsReversedText() const { return m_containsReversedText; }
 
@@ -180,7 +180,7 @@ protected:
 private:
     RenderText(Node&, const String&);
 
-    bool canHaveChildren() const override final { return false; }
+    bool canHaveChildren() const final { return false; }
 
     void computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow&);
 
@@ -189,9 +189,9 @@ private:
     // Make length() private so that callers that have a RenderText*
     // will use the more efficient textLength() instead, while
     // callers with a RenderObject* can continue to use length().
-    unsigned length() const override final { return textLength(); }
+    unsigned length() const final { return textLength(); }
 
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) override final { ASSERT_NOT_REACHED(); return false; }
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
 
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     float widthFromCache(const FontCascade&, int start, int len, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow*, const RenderStyle&) const;

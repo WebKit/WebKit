@@ -60,12 +60,12 @@ public:
 
     // For HTMLTreeBuilder.
     HTMLTokenizer& tokenizer();
-    TextPosition textPosition() const override final;
+    TextPosition textPosition() const final;
 
 protected:
     explicit HTMLDocumentParser(HTMLDocument&);
 
-    void insert(const SegmentedString&) override final;
+    void insert(const SegmentedString&) final;
     void append(RefPtr<StringImpl>&&) override;
     void finish() override;
 
@@ -76,28 +76,28 @@ private:
     static Ref<HTMLDocumentParser> create(DocumentFragment&, Element& contextElement, ParserContentPolicy);
 
     // DocumentParser
-    void detach() override final;
-    bool hasInsertionPoint() override final;
-    bool processingData() const override final;
-    void prepareToStopParsing() override final;
-    void stopParsing() override final;
+    void detach() final;
+    bool hasInsertionPoint() final;
+    bool processingData() const final;
+    void prepareToStopParsing() final;
+    void stopParsing() final;
     bool isWaitingForScripts() const override;
-    bool isExecutingScript() const override final;
-    void executeScriptsWaitingForStylesheets() override final;
-    void suspendScheduledTasks() override final;
-    void resumeScheduledTasks() override final;
+    bool isExecutingScript() const final;
+    void executeScriptsWaitingForStylesheets() final;
+    void suspendScheduledTasks() final;
+    void resumeScheduledTasks() final;
 
-    bool shouldAssociateConsoleMessagesWithTextPosition() const override final;
+    bool shouldAssociateConsoleMessagesWithTextPosition() const final;
 
     // HTMLScriptRunnerHost
-    void watchForLoad(CachedResource*) override final;
-    void stopWatchingForLoad(CachedResource*) override final;
-    HTMLInputStream& inputStream() override final;
-    bool hasPreloadScanner() const override final;
-    void appendCurrentInputStreamToPreloadScannerAndScan() override final;
+    void watchForLoad(CachedResource*) final;
+    void stopWatchingForLoad(CachedResource*) final;
+    HTMLInputStream& inputStream() final;
+    bool hasPreloadScanner() const final;
+    void appendCurrentInputStreamToPreloadScannerAndScan() final;
 
     // CachedResourceClient
-    void notifyFinished(CachedResource*) override final;
+    void notifyFinished(CachedResource*) final;
 
     Document* contextForParsingSession();
 

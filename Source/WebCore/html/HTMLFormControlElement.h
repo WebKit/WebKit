@@ -101,7 +101,7 @@ public:
     void setAutocapitalize(const AtomicString&);
 #endif
 
-    bool willValidate() const override final;
+    bool willValidate() const final;
     void updateVisibleValidationMessage();
     void hideVisibleValidationMessage();
     bool checkValidity(Vector<RefPtr<FormAssociatedElement>>* unhandledInvalidControls = 0);
@@ -163,19 +163,19 @@ private:
     bool matchesValidPseudoClass() const override;
     bool matchesInvalidPseudoClass() const override;
 
-    bool isFormControlElement() const override final { return true; }
+    bool isFormControlElement() const final { return true; }
     bool alwaysCreateUserAgentShadowRoot() const override { return true; }
 
-    short tabIndex() const override final;
+    short tabIndex() const final;
 
     HTMLFormElement* virtualForm() const override;
     bool isValidFormControlElement() const;
 
     bool computeIsDisabledByFieldsetAncestor() const;
 
-    HTMLElement& asHTMLElement() override final { return *this; }
-    const HTMLFormControlElement& asHTMLElement() const override final { return *this; }
-    HTMLFormControlElement* asFormNamedItem() override final { return this; }
+    HTMLElement& asHTMLElement() final { return *this; }
+    const HTMLFormControlElement& asHTMLElement() const final { return *this; }
+    HTMLFormControlElement* asFormNamedItem() final { return this; }
 
     std::unique_ptr<ValidationMessage> m_validationMessage;
     bool m_disabled : 1;

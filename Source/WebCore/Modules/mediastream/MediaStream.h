@@ -75,8 +75,8 @@ public:
     MediaStreamPrivate* privateStream() const { return m_private.get(); }
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     using RefCounted<MediaStream>::ref;
     using RefCounted<MediaStream>::deref;
@@ -92,22 +92,22 @@ protected:
     MediaStream(ScriptExecutionContext&, RefPtr<MediaStreamPrivate>&&);
 
     // ContextDestructionObserver
-    void contextDestroyed() override final;
+    void contextDestroyed() final;
 
 private:
     enum class StreamModifier { DomAPI, Platform };
 
     // EventTarget
-    void refEventTarget() override final { ref(); }
-    void derefEventTarget() override final { deref(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
     // MediaStreamTrack::Observer
-    void trackDidEnd() override final;
+    void trackDidEnd() final;
 
     // MediaStreamPrivate::Observer
-    void activeStatusChanged() override final;
-    void didAddTrack(MediaStreamTrackPrivate&) override final;
-    void didRemoveTrack(MediaStreamTrackPrivate&) override final;
+    void activeStatusChanged() final;
+    void didAddTrack(MediaStreamTrackPrivate&) final;
+    void didRemoveTrack(MediaStreamTrackPrivate&) final;
 
     bool internalAddTrack(RefPtr<MediaStreamTrack>&&, StreamModifier);
     bool internalRemoveTrack(RefPtr<MediaStreamTrack>&&, StreamModifier);

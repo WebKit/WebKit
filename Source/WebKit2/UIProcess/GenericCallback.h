@@ -119,7 +119,7 @@ public:
         performCallbackWithReturnValue();
     }
 
-    void invalidate(Error error = Error::Unknown) override final
+    void invalidate(Error error = Error::Unknown) final
     {
         if (!m_callback)
             return;

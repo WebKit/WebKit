@@ -51,9 +51,9 @@ public:
     SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(RenderSVGModelObject::element()); }
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
-    void setNeedsBoundariesUpdate() override final { m_needsBoundariesUpdate = true; }
-    bool needsBoundariesUpdate() override final { return m_needsBoundariesUpdate; }
-    void setNeedsTransformUpdate() override final { m_needsTransformUpdate = true; }
+    void setNeedsBoundariesUpdate() final { m_needsBoundariesUpdate = true; }
+    bool needsBoundariesUpdate() final { return m_needsBoundariesUpdate; }
+    void setNeedsTransformUpdate() final { m_needsTransformUpdate = true; }
     virtual void fillShape(GraphicsContext&) const;
     virtual void strokeShape(GraphicsContext&) const;
     virtual bool isRenderingDisabled() const = 0;
@@ -87,23 +87,23 @@ private:
     bool fillContains(const FloatPoint&, bool requiresFill = true, const WindRule fillRule = RULE_NONZERO);
     bool strokeContains(const FloatPoint&, bool requiresStroke = true);
 
-    FloatRect repaintRectInLocalCoordinates() const override final { return m_repaintBoundingBox; }
-    FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const override final { return m_repaintBoundingBoxExcludingShadow; }
-    const AffineTransform& localToParentTransform() const override final { return m_localTransform; }
-    AffineTransform localTransform() const override final { return m_localTransform; }
+    FloatRect repaintRectInLocalCoordinates() const final { return m_repaintBoundingBox; }
+    FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const final { return m_repaintBoundingBoxExcludingShadow; }
+    const AffineTransform& localToParentTransform() const final { return m_localTransform; }
+    AffineTransform localTransform() const final { return m_localTransform; }
 
-    bool isSVGShape() const override final { return true; }
-    bool canHaveChildren() const override final { return false; }
+    bool isSVGShape() const final { return true; }
+    bool canHaveChildren() const final { return false; }
     const char* renderName() const override { return "RenderSVGShape"; }
 
-    void layout() override final;
-    void paint(PaintInfo&, const LayoutPoint&) override final;
-    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override final;
+    void layout() final;
+    void paint(PaintInfo&, const LayoutPoint&) final;
+    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) final;
 
-    bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override final;
+    bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) final;
 
-    FloatRect objectBoundingBox() const override final { return m_fillBoundingBox; }
-    FloatRect strokeBoundingBox() const override final { return m_strokeBoundingBox; }
+    FloatRect objectBoundingBox() const final { return m_fillBoundingBox; }
+    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
     FloatRect calculateObjectBoundingBox() const;
     FloatRect calculateStrokeBoundingBox() const;
     void updateRepaintBoundingBox();

@@ -225,7 +225,7 @@ protected:
     RenderObject* m_renderer;
 
 private:
-    bool isAccessibilityRenderObject() const override final { return true; }
+    bool isAccessibilityRenderObject() const final { return true; }
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool isAllowedChildOfTree() const;

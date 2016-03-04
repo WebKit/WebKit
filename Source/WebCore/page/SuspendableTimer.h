@@ -58,11 +58,11 @@ private:
     void fired() override = 0;
 
     // ActiveDOMObject API.
-    bool hasPendingActivity() const override final;
-    void stop() override final;
-    bool canSuspendForDocumentSuspension() const override final;
-    void suspend(ReasonForSuspension) override final;
-    void resume() override final;
+    bool hasPendingActivity() const final;
+    void stop() final;
+    bool canSuspendForDocumentSuspension() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
 
     bool m_suspended;
 

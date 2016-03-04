@@ -1,5 +1,17 @@
 2016-03-03  Darin Adler  <darin@apple.com>
 
+        Followup to:
+        Remove "virtual" from all lines that have both "virtual" and "override".
+        https://bugs.webkit.org/show_bug.cgi?id=155005
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/do-webcore-rename: Added more regular expressions to make sure we always
+        use either override or final, not both, and to remove virtual from all lines that
+        have both virtual and final.
+
+2016-03-03  Darin Adler  <darin@apple.com>
+
         Remove "virtual" from all lines that have both "virtual" and "override".
         https://bugs.webkit.org/show_bug.cgi?id=155005
 

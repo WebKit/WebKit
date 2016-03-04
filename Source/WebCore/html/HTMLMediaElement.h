@@ -471,7 +471,7 @@ protected:
     DisplayMode displayMode() const { return m_displayMode; }
     virtual void setDisplayMode(DisplayMode mode) { m_displayMode = mode; }
     
-    bool isMediaElement() const override final { return true; }
+    bool isMediaElement() const final { return true; }
 
 #if ENABLE(VIDEO_TRACK)
     bool ignoreTrackDisplayUpdateRequests() const { return m_ignoreTrackDisplayUpdate > 0 || !m_textTracks || !m_cueTree.size(); }
@@ -494,7 +494,7 @@ private:
     bool alwaysCreateUserAgentShadowRoot() const override { return true; }
 
     // FIXME: Shadow DOM spec says we should be able to create shadow root on audio and video elements
-    bool canHaveUserAgentShadowRoot() const override final { return true; }
+    bool canHaveUserAgentShadowRoot() const final { return true; }
 
     bool hasCustomFocusLogic() const override;
     bool supportsFocus() const override;
@@ -610,14 +610,14 @@ private:
     bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const override;
 #endif
 
-    bool mediaPlayerIsInMediaDocument() const override final;
-    void mediaPlayerEngineFailedToLoad() const override final;
+    bool mediaPlayerIsInMediaDocument() const final;
+    void mediaPlayerEngineFailedToLoad() const final;
 
-    double mediaPlayerRequestedPlaybackRate() const override final;
-    VideoFullscreenMode mediaPlayerFullscreenMode() const override final { return fullscreenMode(); }
+    double mediaPlayerRequestedPlaybackRate() const final;
+    VideoFullscreenMode mediaPlayerFullscreenMode() const final { return fullscreenMode(); }
 
 #if USE(GSTREAMER)
-    void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback&) override final;
+    void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback&) final;
 #endif
 
     void pendingActionTimerFired();
@@ -752,8 +752,8 @@ private:
     void updateCaptionContainer();
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    void prepareForDocumentSuspension() override final;
-    void resumeFromDocumentSuspension() override final;
+    void prepareForDocumentSuspension() final;
+    void resumeFromDocumentSuspension() final;
 
     enum class UpdateMediaState {
         Asynchronously,
@@ -763,7 +763,7 @@ private:
     bool hasPlaybackTargetAvailabilityListeners() const { return m_hasPlaybackTargetAvailabilityListeners; }
 #endif
 
-    void isVisibleInViewportChanged() override final;
+    void isVisibleInViewportChanged() final;
     void updateShouldAutoplay();
 
     Timer m_pendingActionTimer;

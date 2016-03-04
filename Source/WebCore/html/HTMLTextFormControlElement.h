@@ -75,7 +75,7 @@ public:
     PassRefPtr<Range> selection() const;
     String selectedText() const;
 
-    void dispatchFormControlChangeEvent() override final;
+    void dispatchFormControlChangeEvent() final;
 
     virtual String value() const = 0;
 
@@ -131,8 +131,8 @@ private:
     int computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
 
-    void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection) override final;
-    void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override final;
+    void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection) final;
+    void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) final;
     bool childShouldCreateRenderer(const Node&) const override;
 
     unsigned indexForPosition(const Position&) const;

@@ -50,7 +50,7 @@ protected:
     void createWrapperIfNeeded();
 
 private:
-    bool isRenderMathMLToken() const override final { return true; }
+    bool isRenderMathMLToken() const final { return true; }
     const char* renderName() const override { return isAnonymous() ? "RenderMathMLToken (anonymous)" : "RenderMathMLToken"; }
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void updateStyle();

@@ -74,7 +74,7 @@ public:
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override;
-    ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     using RefCounted<IDBRequest>::ref;
     using RefCounted<IDBRequest>::deref;
@@ -111,15 +111,15 @@ protected:
     IDBRequest(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
     // ActiveDOMObject.
-    const char* activeDOMObjectName() const override final;
-    bool canSuspendForDocumentSuspension() const override final;
-    bool hasPendingActivity() const override final;
-    void stop() override final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+    bool hasPendingActivity() const final;
+    void stop() final;
 
     // EventTarget.
-    void refEventTarget() override final { RefCounted<IDBRequest>::ref(); }
-    void derefEventTarget() override final { RefCounted<IDBRequest>::deref(); }
-    void uncaughtExceptionInEventHandler() override final;
+    void refEventTarget() final { RefCounted<IDBRequest>::ref(); }
+    void derefEventTarget() final { RefCounted<IDBRequest>::deref(); }
+    void uncaughtExceptionInEventHandler() final;
 
     virtual bool isOpenDBRequest() const { return false; }
 

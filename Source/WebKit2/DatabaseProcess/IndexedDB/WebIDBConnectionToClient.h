@@ -52,29 +52,29 @@ public:
     virtual ~WebIDBConnectionToClient();
 
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient();
-    uint64_t identifier() const override final { return m_identifier; }
-    uint64_t messageSenderDestinationID() override final { return m_identifier; }
+    uint64_t identifier() const final { return m_identifier; }
+    uint64_t messageSenderDestinationID() final { return m_identifier; }
 
     // IDBConnectionToClientDelegate
-    void didDeleteDatabase(const WebCore::IDBResultData&) override final;
-    void didOpenDatabase(const WebCore::IDBResultData&) override final;
-    void didAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) override final;
-    void didCommitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) override final;
-    void didCreateObjectStore(const WebCore::IDBResultData&) override final;
-    void didDeleteObjectStore(const WebCore::IDBResultData&) override final;
-    void didClearObjectStore(const WebCore::IDBResultData&) override final;
-    void didCreateIndex(const WebCore::IDBResultData&) override final;
-    void didDeleteIndex(const WebCore::IDBResultData&) override final;
-    void didPutOrAdd(const WebCore::IDBResultData&) override final;
-    void didGetRecord(const WebCore::IDBResultData&) override final;
-    void didGetCount(const WebCore::IDBResultData&) override final;
-    void didDeleteRecord(const WebCore::IDBResultData&) override final;
-    void didOpenCursor(const WebCore::IDBResultData&) override final;
-    void didIterateCursor(const WebCore::IDBResultData&) override final;
+    void didDeleteDatabase(const WebCore::IDBResultData&) final;
+    void didOpenDatabase(const WebCore::IDBResultData&) final;
+    void didAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) final;
+    void didCommitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) final;
+    void didCreateObjectStore(const WebCore::IDBResultData&) final;
+    void didDeleteObjectStore(const WebCore::IDBResultData&) final;
+    void didClearObjectStore(const WebCore::IDBResultData&) final;
+    void didCreateIndex(const WebCore::IDBResultData&) final;
+    void didDeleteIndex(const WebCore::IDBResultData&) final;
+    void didPutOrAdd(const WebCore::IDBResultData&) final;
+    void didGetRecord(const WebCore::IDBResultData&) final;
+    void didGetCount(const WebCore::IDBResultData&) final;
+    void didDeleteRecord(const WebCore::IDBResultData&) final;
+    void didOpenCursor(const WebCore::IDBResultData&) final;
+    void didIterateCursor(const WebCore::IDBResultData&) final;
 
-    void fireVersionChangeEvent(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) override final;
-    void didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) override final;
-    void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) override final;
+    void fireVersionChangeEvent(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) final;
+    void didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) final;
+    void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) final;
 
     void ref() override { RefCounted<WebIDBConnectionToClient>::ref(); }
     void deref() override { RefCounted<WebIDBConnectionToClient>::deref(); }
@@ -109,7 +109,7 @@ public:
 private:
     WebIDBConnectionToClient(DatabaseToWebProcessConnection&, uint64_t serverConnectionIdentifier);
 
-    IPC::Connection* messageSenderConnection() override final;
+    IPC::Connection* messageSenderConnection() final;
 
     Ref<DatabaseToWebProcessConnection> m_connection;
 

@@ -84,10 +84,10 @@ private:
     void setPoster(const String&) override { }
 
     // MediaStreamTrackPrivate::Observer implementation.
-    void trackEnded(MediaStreamTrackPrivate&) override final;
-    void trackMutedChanged(MediaStreamTrackPrivate&) override final;
-    void trackSettingsChanged(MediaStreamTrackPrivate&) override final;
-    void trackEnabledChanged(MediaStreamTrackPrivate&) override final;
+    void trackEnded(MediaStreamTrackPrivate&) final;
+    void trackMutedChanged(MediaStreamTrackPrivate&) final;
+    void trackSettingsChanged(MediaStreamTrackPrivate&) final;
+    void trackEnabledChanged(MediaStreamTrackPrivate&) final;
 
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);

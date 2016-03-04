@@ -55,47 +55,47 @@ public:
     IDBServer::IDBConnectionToClient& connectionToClient() const;
 
     // IDBConnectionToServer
-    void deleteDatabase(IDBRequestData&) override final;
-    void openDatabase(IDBRequestData&) override final;
-    void abortTransaction(IDBResourceIdentifier&) override final;
-    void commitTransaction(IDBResourceIdentifier&) override final;
-    void didFinishHandlingVersionChangeTransaction(IDBResourceIdentifier&) override final;
-    void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) override final;
-    void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) override final;
-    void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) override final;
-    void createIndex(const IDBRequestData&, const IDBIndexInfo&) override final;
-    void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) override final;
-    void putOrAdd(const IDBRequestData&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode) override final;
-    void getRecord(const IDBRequestData&, const IDBKeyRangeData&) override final;
-    void getCount(const IDBRequestData&, const IDBKeyRangeData&) override final;
-    void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) override final;
-    void openCursor(const IDBRequestData&, const IDBCursorInfo&) override final;
-    void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count) override final;
-    void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) override final;
-    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) override final;
-    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier) override final;
-    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier) override final;
+    void deleteDatabase(IDBRequestData&) final;
+    void openDatabase(IDBRequestData&) final;
+    void abortTransaction(IDBResourceIdentifier&) final;
+    void commitTransaction(IDBResourceIdentifier&) final;
+    void didFinishHandlingVersionChangeTransaction(IDBResourceIdentifier&) final;
+    void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) final;
+    void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) final;
+    void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) final;
+    void createIndex(const IDBRequestData&, const IDBIndexInfo&) final;
+    void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) final;
+    void putOrAdd(const IDBRequestData&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode) final;
+    void getRecord(const IDBRequestData&, const IDBKeyRangeData&) final;
+    void getCount(const IDBRequestData&, const IDBKeyRangeData&) final;
+    void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) final;
+    void openCursor(const IDBRequestData&, const IDBCursorInfo&) final;
+    void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count) final;
+    void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) final;
+    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) final;
+    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier) final;
+    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier) final;
 
     // IDBConnectionToClient
     uint64_t identifier() const override;
-    void didDeleteDatabase(const IDBResultData&) override final;
-    void didOpenDatabase(const IDBResultData&) override final;
-    void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) override final;
-    void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) override final;
-    void didCreateObjectStore(const IDBResultData&) override final;
-    void didDeleteObjectStore(const IDBResultData&) override final;
-    void didClearObjectStore(const IDBResultData&) override final;
-    void didCreateIndex(const IDBResultData&) override final;
-    void didDeleteIndex(const IDBResultData&) override final;
-    void didPutOrAdd(const IDBResultData&) override final;
-    void didGetRecord(const IDBResultData&) override final;
-    void didGetCount(const IDBResultData&) override final;
-    void didDeleteRecord(const IDBResultData&) override final;
-    void didOpenCursor(const IDBResultData&) override final;
-    void didIterateCursor(const IDBResultData&) override final;
-    void fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) override final;
-    void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) override final;
-    void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) override final;
+    void didDeleteDatabase(const IDBResultData&) final;
+    void didOpenDatabase(const IDBResultData&) final;
+    void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) final;
+    void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) final;
+    void didCreateObjectStore(const IDBResultData&) final;
+    void didDeleteObjectStore(const IDBResultData&) final;
+    void didClearObjectStore(const IDBResultData&) final;
+    void didCreateIndex(const IDBResultData&) final;
+    void didDeleteIndex(const IDBResultData&) final;
+    void didPutOrAdd(const IDBResultData&) final;
+    void didGetRecord(const IDBResultData&) final;
+    void didGetCount(const IDBResultData&) final;
+    void didDeleteRecord(const IDBResultData&) final;
+    void didOpenCursor(const IDBResultData&) final;
+    void didIterateCursor(const IDBResultData&) final;
+    void fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) final;
+    void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) final;
+    void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) final;
 
     void ref() override { RefCounted<InProcessIDBServer>::ref(); }
     void deref() override { RefCounted<InProcessIDBServer>::deref(); }

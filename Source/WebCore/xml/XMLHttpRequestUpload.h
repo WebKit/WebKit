@@ -52,8 +52,8 @@ namespace WebCore {
         void dispatchProgressEvent(const AtomicString &type);
 
     private:
-        void refEventTarget() override final { ref(); }
-        void derefEventTarget() override final { deref(); }
+        void refEventTarget() final { ref(); }
+        void derefEventTarget() final { deref(); }
 
         XMLHttpRequest* m_xmlHttpRequest;
         bool m_lengthComputable;

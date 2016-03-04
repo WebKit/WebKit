@@ -49,36 +49,36 @@ class IDBObjectStore : public WebCore::IDBObjectStore, public ActiveDOMObject {
 public:
     static Ref<IDBObjectStore> create(ScriptExecutionContext*, const IDBObjectStoreInfo&, IDBTransaction&);
 
-    ~IDBObjectStore() override final;
+    ~IDBObjectStore() final;
 
     // Implement the IDBObjectStore IDL
-    const String name() const override final;
-    RefPtr<WebCore::IDBAny> keyPathAny() const override final;
-    const IDBKeyPath keyPath() const override final;
-    RefPtr<DOMStringList> indexNames() const override final;
-    RefPtr<WebCore::IDBTransaction> transaction() override final;
-    bool autoIncrement() const override final;
+    const String name() const final;
+    RefPtr<WebCore::IDBAny> keyPathAny() const final;
+    const IDBKeyPath keyPath() const final;
+    RefPtr<DOMStringList> indexNames() const final;
+    RefPtr<WebCore::IDBTransaction> transaction() final;
+    bool autoIncrement() const final;
 
-    RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> clear(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBIndex> index(const String& name, ExceptionCodeWithMessage&) override final;
-    void deleteIndex(const String& name, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
-    RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
+    RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> clear(ScriptExecutionContext*, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBIndex> index(const String& name, ExceptionCodeWithMessage&) final;
+    void deleteIndex(const String& name, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) final;
 
     RefPtr<IDBRequest> putForCursorUpdate(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> modernDelete(ScriptExecutionContext*, JSC::JSValue key, ExceptionCodeWithMessage&);
@@ -111,9 +111,9 @@ private:
     RefPtr<IDBRequest> doDelete(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec);
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const override final;
-    bool canSuspendForDocumentSuspension() const override final;
-    bool hasPendingActivity() const override final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+    bool hasPendingActivity() const final;
 
     IDBObjectStoreInfo m_info;
     IDBObjectStoreInfo m_originalInfo;

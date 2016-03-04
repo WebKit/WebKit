@@ -129,7 +129,7 @@ private:
     void setCurrentTextTrack(InbandTextTrackPrivateAVF*) override;
     InbandTextTrackPrivateAVF* currentTextTrack() const override;
 
-    long assetErrorCode() const override final;
+    long assetErrorCode() const final;
 
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     void processLegacyClosedCaptionsTracks();

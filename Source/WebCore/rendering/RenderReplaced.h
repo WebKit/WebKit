@@ -45,10 +45,10 @@ protected:
 
     void layout() override;
 
-    LayoutSize intrinsicSize() const override final { return m_intrinsicSize; }
+    LayoutSize intrinsicSize() const final { return m_intrinsicSize; }
     void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override;
 
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override final;
+    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const final;
 
     virtual LayoutUnit minimumReplacedHeight() const { return LayoutUnit(); }
 
@@ -74,16 +74,16 @@ private:
 
     bool canHaveChildren() const override { return false; }
 
-    void computePreferredLogicalWidths() override final;
+    void computePreferredLogicalWidths() final;
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 
     LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
 
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override final;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) final;
     
     bool canBeSelectionLeaf() const override { return true; }
 
-    LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) override final;
+    LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
     void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, double& intrinsicRatio) const;
 
     virtual bool shouldDrawSelectionTint() const;

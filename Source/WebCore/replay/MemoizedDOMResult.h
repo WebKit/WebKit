@@ -76,8 +76,8 @@ public:
     bool convertTo(T& decodedValue);
 
     virtual EncodedValue encodedResult() const = 0;
-    InputQueue queue() const final override { return InputQueue::ScriptMemoizedData; }
-    const String& type() const final override;
+    InputQueue queue() const final { return InputQueue::ScriptMemoizedData; }
+    const String& type() const final;
 
     const String& attribute() const { return m_attribute; }
     EncodedCType ctype() const { return m_ctype; }

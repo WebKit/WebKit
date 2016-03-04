@@ -73,7 +73,7 @@ public:
 
     unsigned short truncation() const { return m_truncation; }
 
-    void markDirty(bool dirty = true) override final;
+    void markDirty(bool dirty = true) final;
 
     using InlineBox::hasHyphen;
     using InlineBox::setHasHyphen;
@@ -88,8 +88,8 @@ public:
 
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
-    int baselinePosition(FontBaseline) const override final;
-    LayoutUnit lineHeight() const override final;
+    int baselinePosition(FontBaseline) const final;
+    LayoutUnit lineHeight() const final;
 
     bool emphasisMarkExistsAndIsAbove(const RenderStyle&, bool& isAbove) const;
 
@@ -103,8 +103,8 @@ public:
     virtual void dirtyOwnLineBoxes() { dirtyLineBoxes(); }
 
 #if ENABLE(TREE_DEBUGGING)
-    void showLineBox(bool mark, int depth) const override final;
-    const char* boxName() const override final;
+    void showLineBox(bool mark, int depth) const final;
+    const char* boxName() const final;
 #endif
 
 private:
@@ -127,26 +127,26 @@ protected:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
 private:
-    void deleteLine() override final;
-    void extractLine() override final;
-    void attachLine() override final;
+    void deleteLine() final;
+    void extractLine() final;
+    void attachLine() final;
 
 public:
-    RenderObject::SelectionState selectionState() override final;
+    RenderObject::SelectionState selectionState() final;
 
 private:
-    void clearTruncation() override final { m_truncation = cNoTruncation; }
-    float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) override final;
+    void clearTruncation() final { m_truncation = cNoTruncation; }
+    float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) final;
 
 public:
-    bool isLineBreak() const override final;
+    bool isLineBreak() const final;
 
 private:
-    bool isInlineTextBox() const override final { return true; }
+    bool isInlineTextBox() const final { return true; }
 
 public:
-    int caretMinOffset() const override final;
-    int caretMaxOffset() const override final;
+    int caretMinOffset() const final;
+    int caretMaxOffset() const final;
 
 private:
     float textPos() const; // returns the x position relative to the left start of the text line.

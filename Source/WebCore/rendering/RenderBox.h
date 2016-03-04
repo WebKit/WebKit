@@ -58,7 +58,7 @@ public:
             || !style().hasAutoZIndex();
     }
 
-    bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const override final;
+    bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const final;
 
     // Use this with caution! No type checking is done!
     RenderBox* firstChildBox() const;
@@ -153,7 +153,7 @@ public:
     }
     LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
     LayoutRect paddingBoxRect() const { return LayoutRect(borderLeft(), borderTop(), contentWidth() + paddingLeft() + paddingRight(), contentHeight() + paddingTop() + paddingBottom()); }
-    IntRect borderBoundingBox() const override final { return enclosingIntRect(borderBoxRect()); }
+    IntRect borderBoundingBox() const final { return enclosingIntRect(borderBoxRect()); }
 
     WEBCORE_EXPORT RoundedRect::Radii borderRadii() const;
 
@@ -169,7 +169,7 @@ public:
     LayoutRect computedCSSContentBoxRect() const { return LayoutRect(borderLeft() + computedCSSPaddingLeft(), borderTop() + computedCSSPaddingTop(), clientWidth() - computedCSSPaddingLeft() - computedCSSPaddingRight(), clientHeight() - computedCSSPaddingTop() - computedCSSPaddingBottom()); }
 
     // Bounds of the outline box in absolute coords. Respects transforms
-    LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* /*repaintContainer*/, const RenderGeometryMap*) const override final;
+    LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* /*repaintContainer*/, const RenderGeometryMap*) const final;
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) override;
     
     FloatRect repaintRectInLocalCoordinates() const override { return borderBoxRect(); }
@@ -254,14 +254,14 @@ public:
     LayoutUnit marginLogicalLeft() const { return m_marginBox.start(style().writingMode()); }
     LayoutUnit marginLogicalRight() const { return m_marginBox.end(style().writingMode()); }
     
-    LayoutUnit marginBefore(const RenderStyle* overrideStyle = nullptr) const override final { return m_marginBox.before((overrideStyle ? overrideStyle : &style())->writingMode()); }
-    LayoutUnit marginAfter(const RenderStyle* overrideStyle = nullptr) const override final { return m_marginBox.after((overrideStyle ? overrideStyle : &style())->writingMode()); }
-    LayoutUnit marginStart(const RenderStyle* overrideStyle = nullptr) const override final
+    LayoutUnit marginBefore(const RenderStyle* overrideStyle = nullptr) const final { return m_marginBox.before((overrideStyle ? overrideStyle : &style())->writingMode()); }
+    LayoutUnit marginAfter(const RenderStyle* overrideStyle = nullptr) const final { return m_marginBox.after((overrideStyle ? overrideStyle : &style())->writingMode()); }
+    LayoutUnit marginStart(const RenderStyle* overrideStyle = nullptr) const final
     {
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
         return m_marginBox.start(styleToUse->writingMode(), styleToUse->direction());
     }
-    LayoutUnit marginEnd(const RenderStyle* overrideStyle = nullptr) const override final
+    LayoutUnit marginEnd(const RenderStyle* overrideStyle = nullptr) const final
     {
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
         return m_marginBox.end(styleToUse->writingMode(), styleToUse->direction());
@@ -722,7 +722,7 @@ private:
     // These include tables, positioned objects, floats and flexible boxes.
     virtual void computePreferredLogicalWidths() { setPreferredLogicalWidthsDirty(false); }
 
-    LayoutRect frameRectForStickyPositioning() const override final { return frameRect(); }
+    LayoutRect frameRectForStickyPositioning() const final { return frameRect(); }
     
     void applyTopLeftLocationOffsetWithFlipping(LayoutPoint&) const;
 

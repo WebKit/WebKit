@@ -81,7 +81,7 @@ public:
 protected:
     RenderWidget(HTMLFrameOwnerElement&, Ref<RenderStyle>&&);
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
@@ -91,14 +91,14 @@ protected:
 private:
     void element() const = delete;
 
-    bool isWidget() const override final { return true; }
+    bool isWidget() const final { return true; }
 
-    bool needsPreferredWidthsRecalculation() const override final;
-    RenderBox* embeddedContentBox() const override final;
+    bool needsPreferredWidthsRecalculation() const final;
+    RenderBox* embeddedContentBox() const final;
 
-    void willBeDestroyed() override final;
-    void setSelectionState(SelectionState) override final;
-    void setOverlapTestResult(bool) override final;
+    void willBeDestroyed() final;
+    void setSelectionState(SelectionState) final;
+    void setOverlapTestResult(bool) final;
 
     bool setWidgetGeometry(const LayoutRect&);
     bool updateWidgetGeometry();

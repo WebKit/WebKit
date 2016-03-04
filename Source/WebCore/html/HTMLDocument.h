@@ -88,7 +88,7 @@ protected:
 private:
     bool isFrameSet() const override;
     Ref<DocumentParser> createParser() override;
-    Ref<Document> cloneDocumentWithoutChildren() const override final;
+    Ref<Document> cloneDocumentWithoutChildren() const final;
 
     DocumentOrderedMap m_documentNamedItem;
     DocumentOrderedMap m_windowNamedItem;

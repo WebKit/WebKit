@@ -62,7 +62,7 @@ protected:
     RefPtr<InbandTextTrackPrivate> m_private;
 
 private:
-    bool isInband() const override final { return true; }
+    bool isInband() const final { return true; }
     void idChanged(TrackPrivateBase*, const AtomicString&) override;
     void labelChanged(TrackPrivateBase*, const AtomicString&) override;
     void languageChanged(TrackPrivateBase*, const AtomicString&) override;

@@ -87,7 +87,7 @@ public:
     InlineBox* firstChild() const { checkConsistency(); return m_firstChild; }
     InlineBox* lastChild() const { checkConsistency(); return m_lastChild; }
 
-    bool isLeaf() const override final { return false; }
+    bool isLeaf() const final { return false; }
     
     InlineBox* firstLeafChild() const;
     InlineBox* lastLeafChild() const;
@@ -95,7 +95,7 @@ public:
     typedef void (*CustomInlineBoxRangeReverse)(void* userData, Vector<InlineBox*>::iterator first, Vector<InlineBox*>::iterator last);
     void collectLeafBoxesInLogicalOrder(Vector<InlineBox*>&, CustomInlineBoxRangeReverse customReverseImplementation = nullptr, void* userData = nullptr) const;
 
-    void setConstructed() override final
+    void setConstructed() final
     {
         InlineBox::setConstructed();
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
@@ -103,9 +103,9 @@ public:
     }
 
     void addToLine(InlineBox* child);
-    void deleteLine() override final;
-    void extractLine() override final;
-    void attachLine() override final;
+    void deleteLine() final;
+    void extractLine() final;
+    void attachLine() final;
     void adjustPosition(float dx, float dy) override;
 
     virtual void extractLineBoxFromRenderObject();
@@ -204,7 +204,7 @@ public:
 
     RenderObject::SelectionState selectionState() override;
 
-    bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const override final;
+    bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const final;
     float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool&) override;
 
     bool hasTextChildren() const { return m_hasTextChildren; }
@@ -303,7 +303,7 @@ public:
     void minLogicalTopForTextDecorationLine(float& minLogicalTop, const RenderElement* decorationRenderer, TextDecoration) const;
 
 private:
-    bool isInlineFlowBox() const override final { return true; }
+    bool isInlineFlowBox() const final { return true; }
     void boxModelObject() const = delete;
 
     void addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow);

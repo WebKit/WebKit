@@ -44,15 +44,15 @@ public:
 
     RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(InlineBox::renderer()); }
 
-    void deleteLine() override final;
-    void extractLine() override final;
-    void attachLine() override final;
+    void deleteLine() final;
+    void extractLine() final;
+    void attachLine() final;
 
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
 private:
-    bool isInlineElementBox() const override final { return true; }
+    bool isInlineElementBox() const final { return true; }
 };
 
 } // namespace WebCore

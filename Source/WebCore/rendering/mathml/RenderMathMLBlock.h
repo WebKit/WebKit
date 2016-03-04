@@ -65,7 +65,7 @@ public:
     RenderPtr<RenderMathMLBlock> createAnonymousMathMLBlock();
     
 private:
-    bool isRenderMathMLBlock() const override final { return true; }
+    bool isRenderMathMLBlock() const final { return true; }
     const char* renderName() const override;
     bool isFlexibleBoxImpl() const override { return true; }
 };

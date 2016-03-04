@@ -100,8 +100,8 @@ public:
 
     void valueChanged(IOHIDValueRef);
 
-    const Vector<double>& axisValues() const override final { return m_axisValues; }
-    const Vector<double>& buttonValues() const override final { return m_buttonValues; }
+    const Vector<double>& axisValues() const final { return m_axisValues; }
+    const Vector<double>& buttonValues() const final { return m_buttonValues; }
 
 private:
     void initElements();
