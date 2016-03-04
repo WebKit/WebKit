@@ -401,7 +401,7 @@ public:
     {
     }
 
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         if (a == b)
             return true;
@@ -479,7 +479,7 @@ public:
     {
     }
 
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         // If the style pointers are the same, don't bother doing the test.
         // If either is null, return false. If both are null, return true.
@@ -507,7 +507,7 @@ public:
     {
     }
 
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         // If the style pointers are the same, don't bother doing the test.
         // If either is null, return false. If both are null, return true.
@@ -535,7 +535,7 @@ public:
     {
     }
 
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
        if (a == b)
            return true;
@@ -557,7 +557,7 @@ public:
     {
     }
 
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<Color>::m_getter)(), (b->*PropertyWrapperGetter<Color>::m_getter)(), progress));
     }
@@ -575,9 +575,9 @@ public:
     {
     }
 
-    virtual bool animationIsAccelerated() const { return true; }
+    bool animationIsAccelerated() const override { return true; }
 
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         float fromOpacity = a->opacity();
 
@@ -594,9 +594,9 @@ public:
     {
     }
 
-    virtual bool animationIsAccelerated() const { return true; }
+    bool animationIsAccelerated() const override { return true; }
 
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         dst->setTransform(blendFunc(anim, a->transform(), b->transform(), progress));
     }
@@ -610,9 +610,9 @@ public:
     {
     }
 
-    virtual bool animationIsAccelerated() const { return true; }
+    bool animationIsAccelerated() const override { return true; }
 
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         dst->setFilter(blendFunc(anim, a->filter(), b->filter(), progress));
     }
@@ -670,7 +670,7 @@ public:
     {
     }
 
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         if (a == b)
             return true;
@@ -699,7 +699,7 @@ public:
         return true;
     }
 
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         const ShadowData* shadowA = (a->*m_getter)();
         const ShadowData* shadowB = (b->*m_getter)();
@@ -791,7 +791,7 @@ public:
     {
     }
 
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         if (a == b)
             return true;
@@ -812,7 +812,7 @@ public:
         return fromColor == toColor;
     }
 
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         Color fromColor = (a->*m_getter)();
         Color toColor = (b->*m_getter)();
@@ -851,11 +851,11 @@ public:
         , m_visitedWrapper(std::make_unique<PropertyWrapperMaybeInvalidColor>(prop, visitedGetter, visitedSetter))
     {
     }
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         return m_wrapper->equals(a, b) && m_visitedWrapper->equals(a, b);
     }
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         m_wrapper->blend(anim, dst, a, b, progress);
         m_visitedWrapper->blend(anim, dst, a, b, progress);
@@ -890,7 +890,7 @@ public:
     {
     }
 
-    virtual bool equals(const FillLayer* a, const FillLayer* b) const
+    bool equals(const FillLayer* a, const FillLayer* b) const override
     {
         if (a == b)
             return true;
@@ -949,7 +949,7 @@ public:
     {
     }
 
-    virtual bool equals(const FillLayer* a, const FillLayer* b) const
+    bool equals(const FillLayer* a, const FillLayer* b) const override
     {
        if (a == b)
            return true;
@@ -995,7 +995,7 @@ public:
         }
     }
 
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         if (a == b)
             return true;
@@ -1016,7 +1016,7 @@ public:
         return true;
     }
 
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         const FillLayer* aLayer = (a->*m_layersGetter)();
         const FillLayer* bLayer = (b->*m_layersGetter)();
@@ -1046,9 +1046,9 @@ public:
     {
     }
 
-    virtual bool isShorthandWrapper() const { return true; }
+    bool isShorthandWrapper() const override { return true; }
 
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         if (a == b)
             return true;
@@ -1062,7 +1062,7 @@ public:
         return true;
     }
 
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         for (auto& wrapper : m_propertyWrappers)
             wrapper->blend(anim, dst, a, b, progress);
@@ -1082,7 +1082,7 @@ public:
     {
     }
 
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         if (a == b)
             return true;
@@ -1092,7 +1092,7 @@ public:
         return a->flexBasis() == b->flexBasis() && a->flexGrow() == b->flexGrow() && a->flexShrink() == b->flexShrink();
     }
 
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         dst->setFlexBasis(blendFunc(anim, a->flexBasis(), b->flexBasis(), progress));
         dst->setFlexGrow(blendFunc(anim, a->flexGrow(), b->flexGrow(), progress));
@@ -1111,7 +1111,7 @@ public:
     {
     }
 
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         if (a == b)
             return true;
@@ -1141,7 +1141,7 @@ public:
         return true;
     }
 
-    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         if ((a->*m_paintTypeGetter)() != SVGPaint::SVG_PAINTTYPE_RGBCOLOR
             || (b->*m_paintTypeGetter)() != SVGPaint::SVG_PAINTTYPE_RGBCOLOR)

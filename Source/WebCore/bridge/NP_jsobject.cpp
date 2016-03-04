@@ -88,7 +88,7 @@ public:
 
 private:
     struct RootObjectInvalidationCallback : public RootObject::InvalidationCallback {
-        virtual void operator()(RootObject*);
+        void operator()(RootObject*) override;
     };
     RootObjectInvalidationCallback m_invalidationCallback;
 

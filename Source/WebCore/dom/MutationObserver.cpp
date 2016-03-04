@@ -167,8 +167,8 @@ public:
     {
     }
 
-private:    
-    virtual Result run()
+private:
+    Result run() override
     {
         mutationObserverCompoundMicrotaskQueuedFlag = false;
 

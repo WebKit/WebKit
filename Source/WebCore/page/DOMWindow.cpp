@@ -165,7 +165,7 @@ public:
     ScriptCallStack* stackTrace() const { return m_stackTrace.get(); }
 
 private:
-    virtual void fired()
+    void fired() override
     {
         // This object gets deleted when std::unique_ptr falls out of scope..
         std::unique_ptr<PostMessageTimer> timer(this);

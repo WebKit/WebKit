@@ -251,10 +251,10 @@ public:
     HTMLAttributeEquivalent(CSSPropertyID, const QualifiedName& tagName, const QualifiedName& attrName);
     HTMLAttributeEquivalent(CSSPropertyID, const QualifiedName& attrName);
 
-    bool matches(const Element& element) const { return HTMLElementEquivalent::matches(element) && element.hasAttribute(m_attrName); }
-    virtual bool hasAttribute() const { return true; }
-    virtual bool valueIsPresentInStyle(Element&, const EditingStyle&) const;
-    virtual void addToStyle(Element*, EditingStyle*) const;
+    bool matches(const Element& element) const override { return HTMLElementEquivalent::matches(element) && element.hasAttribute(m_attrName); }
+    bool hasAttribute() const override { return true; }
+    bool valueIsPresentInStyle(Element&, const EditingStyle&) const override;
+    void addToStyle(Element*, EditingStyle*) const override;
     virtual PassRefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
     inline const QualifiedName& attributeName() const { return m_attrName; }
 
@@ -305,7 +305,7 @@ class HTMLFontSizeEquivalent : public HTMLAttributeEquivalent {
 public:
     HTMLFontSizeEquivalent();
 
-    virtual PassRefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
+    PassRefPtr<CSSValue> attributeValueAsCSSValue(Element*) const override;
 };
 
 HTMLFontSizeEquivalent::HTMLFontSizeEquivalent()

@@ -60,7 +60,7 @@ public:
         return adoptRef(*new DictationMarkerSupplier(alternatives));
     }
 
-    virtual void addMarkersToTextNode(Text* textNode, unsigned offsetOfInsertion, const String& textToBeInserted)
+    void addMarkersToTextNode(Text* textNode, unsigned offsetOfInsertion, const String& textToBeInserted) override
     {
         DocumentMarkerController& markerController = textNode->document().markers();
         for (auto& alternative : m_alternatives) {

@@ -141,18 +141,18 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
 
 class EmptyPopupMenu : public PopupMenu {
 public:
-    virtual void show(const IntRect&, FrameView*, int) { }
-    virtual void hide() { }
-    virtual void updateFromElement() { }
-    virtual void disconnectClient() { }
+    void show(const IntRect&, FrameView*, int) override { }
+    void hide() override { }
+    void updateFromElement() override { }
+    void disconnectClient() override { }
 };
 
 class EmptySearchPopupMenu : public SearchPopupMenu {
 public:
-    virtual PopupMenu* popupMenu() { return m_popup.get(); }
-    virtual void saveRecentSearches(const AtomicString&, const Vector<RecentSearch>&) { }
-    virtual void loadRecentSearches(const AtomicString&, Vector<RecentSearch>&) { }
-    virtual bool enabled() { return false; }
+    PopupMenu* popupMenu() override { return m_popup.get(); }
+    void saveRecentSearches(const AtomicString&, const Vector<RecentSearch>&) override { }
+    void loadRecentSearches(const AtomicString&, Vector<RecentSearch>&) override { }
+    bool enabled() override { return false; }
 
 private:
     RefPtr<EmptyPopupMenu> m_popup;

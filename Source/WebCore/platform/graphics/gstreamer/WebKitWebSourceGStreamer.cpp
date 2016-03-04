@@ -92,15 +92,17 @@ class ResourceHandleStreamingClient : public ResourceHandleClient, public Stream
 
     private:
         // ResourceHandleClient virtual methods.
-        virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize);
-        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&);
-        virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-        virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int);
-        virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedLength);
-        virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
-        virtual void didFail(ResourceHandle*, const ResourceError&);
-        virtual void wasBlocked(ResourceHandle*);
-        virtual void cannotShowURL(ResourceHandle*);
+#if USE(SOUP)
+        char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
+#endif
+        void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&) override;
+        void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
+        void didReceiveData(ResourceHandle*, const char*, unsigned, int) override;
+        void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedLength) override;
+        void didFinishLoading(ResourceHandle*, double /*finishTime*/) override;
+        void didFail(ResourceHandle*, const ResourceError&) override;
+        void wasBlocked(ResourceHandle*) override;
+        void cannotShowURL(ResourceHandle*) override;
 
         RefPtr<ResourceHandle> m_resource;
 };

@@ -44,7 +44,7 @@ private:
     }
 
     // Ignore all data.
-    virtual void appendBytes(DocumentWriter&, const char*, size_t)
+    void appendBytes(DocumentWriter&, const char*, size_t) override
     {
     }
 };

@@ -1,3 +1,28 @@
+2016-03-04  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added missing override specifiers under Source/WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=155021
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests needed.
+
+        * bridge/NP_jsobject.cpp:
+        * css/CSSStyleSheet.cpp:
+        * dom/MutationObserver.cpp:
+        * editing/DictationCommand.cpp:
+        * editing/EditingStyle.cpp:
+        * loader/EmptyClients.cpp:
+        * loader/SinkDocument.cpp:
+        * page/DOMWindow.cpp:
+        * page/animation/CSSPropertyAnimation.cpp:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        Also added #if(SOUP) guard to
+        ResourceHandleStreamingClient::getOrCreateReadBuffer
+        because it is not an overridden method otherwise.
+        * platform/text/LineEnding.cpp:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+
 2016-03-04  Gavin Barraclough  <barraclough@apple.com>
 
         Max out timer throttling immediately for pre-render pages

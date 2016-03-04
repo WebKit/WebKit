@@ -52,13 +52,13 @@ public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
     
 private:
-    virtual void ref() { m_styleSheet->ref(); }
-    virtual void deref() { m_styleSheet->deref(); }
-    
-    virtual unsigned length() const { return m_styleSheet->length(); }
-    virtual CSSRule* item(unsigned index) const { return m_styleSheet->item(index); }
-    
-    virtual CSSStyleSheet* styleSheet() const { return m_styleSheet; }
+    void ref() override { m_styleSheet->ref(); }
+    void deref() override { m_styleSheet->deref(); }
+
+    unsigned length() const override { return m_styleSheet->length(); }
+    CSSRule* item(unsigned index) const override { return m_styleSheet->item(index); }
+
+    CSSStyleSheet* styleSheet() const override { return m_styleSheet; }
 
     CSSStyleSheet* m_styleSheet;
 };

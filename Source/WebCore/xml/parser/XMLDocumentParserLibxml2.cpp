@@ -227,7 +227,7 @@ private:
             xmlFree(attributes);
         }
 
-        virtual void call(XMLDocumentParser* parser)
+        void call(XMLDocumentParser* parser) override
         {
             parser->startElementNs(xmlLocalName, xmlPrefix, xmlURI,
                                       nb_namespaces, const_cast<const xmlChar**>(namespaces),
@@ -245,7 +245,7 @@ private:
     };
 
     struct PendingEndElementNSCallback : public PendingCallback {
-        virtual void call(XMLDocumentParser* parser)
+        void call(XMLDocumentParser* parser) override
         {
             parser->endElementNs();
         }
@@ -257,7 +257,7 @@ private:
             xmlFree(s);
         }
 
-        virtual void call(XMLDocumentParser* parser)
+        void call(XMLDocumentParser* parser) override
         {
             parser->characters(s, len);
         }
@@ -273,7 +273,7 @@ private:
             xmlFree(data);
         }
 
-        virtual void call(XMLDocumentParser* parser)
+        void call(XMLDocumentParser* parser) override
         {
             parser->processingInstruction(target, data);
         }
@@ -288,7 +288,7 @@ private:
             xmlFree(s);
         }
 
-        virtual void call(XMLDocumentParser* parser)
+        void call(XMLDocumentParser* parser) override
         {
             parser->cdataBlock(s, len);
         }
@@ -303,7 +303,7 @@ private:
             xmlFree(s);
         }
 
-        virtual void call(XMLDocumentParser* parser)
+        void call(XMLDocumentParser* parser) override
         {
             parser->comment(s);
         }
@@ -319,7 +319,7 @@ private:
             xmlFree(systemID);
         }
 
-        virtual void call(XMLDocumentParser* parser)
+        void call(XMLDocumentParser* parser) override
         {
             parser->internalSubset(name, externalID, systemID);
         }
@@ -335,7 +335,7 @@ private:
             xmlFree(message);
         }
 
-        virtual void call(XMLDocumentParser* parser)
+        void call(XMLDocumentParser* parser) override
         {
             parser->handleError(type, reinterpret_cast<char*>(message), TextPosition(lineNumber, columnNumber));
         }
