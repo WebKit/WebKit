@@ -1,3 +1,18 @@
+2016-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Crash during font loading when injected bundle cancels load
+        https://bugs.webkit.org/show_bug.cgi?id=155001
+
+        Reviewed by Tim Horton.
+
+        If a injected bundle cancels the load, the fontLoaded() callback will be
+        called twice. We can simply detect this condition.
+
+        Test: CancelLoading.CancelFontSubresource API test
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::fontLoaded):
+
 2016-03-03  Ada Chan  <adachan@apple.com>
 
         The visibility of the airplay menu also depends on whether there's a custom menu item.
