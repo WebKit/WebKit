@@ -1,3 +1,36 @@
+2016-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove vcxproj build system
+        https://bugs.webkit.org/show_bug.cgi?id=154388
+
+        Rubber-stamped by Brent Fulgham.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.sln: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCore.submit.sln: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreCF.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreCFLite.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreDLL.cpp: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreDebug.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreDebugCFLite.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.make: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj.filters: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedCommon.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedDebug.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedProduction.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedRelease.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCorePostBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCorePreBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCorePreLink.cmd: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreProduction.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreRelease.props: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCoreReleaseCFLite.props: Removed.
+        * JavaScriptCore.vcxproj/build-generated-files.pl: Removed.
+        * JavaScriptCore.vcxproj/copy-files.cmd: Removed.
+
 2016-03-04  Chris Dumez  <cdumez@apple.com>
 
         Location.reload should not be writable

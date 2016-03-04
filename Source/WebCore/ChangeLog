@@ -1,3 +1,52 @@
+2016-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove vcxproj build system
+        https://bugs.webkit.org/show_bug.cgi?id=154388
+
+        Rubber-stamped by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.submit.sln: Removed.
+        * WebCore.vcxproj/WebCore.vcxproj: Removed.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Removed.
+        * WebCore.vcxproj/WebCoreCFNetwork.props: Removed.
+        * WebCore.vcxproj/WebCoreCG.props: Removed.
+        * WebCore.vcxproj/WebCoreCURL.props: Removed.
+        * WebCore.vcxproj/WebCoreCairo.props: Removed.
+        * WebCore.vcxproj/WebCoreCommon.props: Removed.
+        * WebCore.vcxproj/WebCoreDebug.props: Removed.
+        * WebCore.vcxproj/WebCoreDebugWinCairo.props: Removed.
+        * WebCore.vcxproj/WebCoreGenerated.make: Removed.
+        * WebCore.vcxproj/WebCoreGenerated.vcxproj: Removed.
+        * WebCore.vcxproj/WebCoreGenerated.vcxproj.filters: Removed.
+        * WebCore.vcxproj/WebCoreGeneratedCommon.props: Removed.
+        * WebCore.vcxproj/WebCoreGeneratedDebug.props: Removed.
+        * WebCore.vcxproj/WebCoreGeneratedDebugWinCairo.props: Removed.
+        * WebCore.vcxproj/WebCoreGeneratedProduction.props: Removed.
+        * WebCore.vcxproj/WebCoreGeneratedRelease.props: Removed.
+        * WebCore.vcxproj/WebCoreGeneratedReleaseWinCairo.props: Removed.
+        * WebCore.vcxproj/WebCoreGeneratedWinCairo.make: Removed.
+        * WebCore.vcxproj/WebCoreGeneratedWinCairoCommon.props: Removed.
+        * WebCore.vcxproj/WebCoreIncludeCommon.props: Removed.
+        * WebCore.vcxproj/WebCoreMediaQT.props: Removed.
+        * WebCore.vcxproj/WebCorePostBuild.cmd: Removed.
+        * WebCore.vcxproj/WebCorePreBuild.cmd: Removed.
+        * WebCore.vcxproj/WebCoreProduction.props: Removed.
+        * WebCore.vcxproj/WebCoreQuartzCore.props: Removed.
+        * WebCore.vcxproj/WebCoreRelease.props: Removed.
+        * WebCore.vcxproj/WebCoreReleaseWinCairo.props: Removed.
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj: Removed.
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj.filters: Removed.
+        * WebCore.vcxproj/WebCoreTestSupportCommon.props: Removed.
+        * WebCore.vcxproj/WebCoreTestSupportDebug.props: Removed.
+        * WebCore.vcxproj/WebCoreTestSupportDebugWinCairo.props: Removed.
+        * WebCore.vcxproj/WebCoreTestSupportProduction.props: Removed.
+        * WebCore.vcxproj/WebCoreTestSupportRelease.props: Removed.
+        * WebCore.vcxproj/WebCoreTestSupportReleaseWinCairo.props: Removed.
+        * WebCore.vcxproj/build-generated-files.pl: Removed.
+        * WebCore.vcxproj/copyForwardingHeaders.cmd: Removed.
+        * WebCore.vcxproj/copyWebCoreResourceFiles.cmd: Removed.
+        * WebCore.vcxproj/migrate-scripts.pl: Removed.
+
 2016-03-04  Brady Eidson  <beidson@apple.com>
 
         Remove use of deprecated sqlite3_expired

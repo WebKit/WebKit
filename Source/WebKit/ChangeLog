@@ -1,3 +1,40 @@
+2016-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove vcxproj build system
+        https://bugs.webkit.org/show_bug.cgi?id=154388
+
+        Rubber-stamped by Brent Fulgham.
+
+        * WebKit.vcxproj/Interfaces/FixMIDLHeaders.pl: Removed.
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj: Removed.
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj.filters: Removed.
+        * WebKit.vcxproj/Interfaces/InterfacesCommon.props: Removed.
+        * WebKit.vcxproj/Interfaces/InterfacesDebug.props: Removed.
+        * WebKit.vcxproj/Interfaces/InterfacesDebugWinCairo.props: Removed.
+        * WebKit.vcxproj/Interfaces/InterfacesPostBuild.cmd: Removed.
+        * WebKit.vcxproj/Interfaces/InterfacesPreBuild.cmd: Removed.
+        * WebKit.vcxproj/Interfaces/InterfacesProduction.props: Removed.
+        * WebKit.vcxproj/Interfaces/InterfacesRelease.props: Removed.
+        * WebKit.vcxproj/Interfaces/InterfacesReleaseWinCairo.props: Removed.
+        * WebKit.vcxproj/WebKit.sln: Removed.
+        * WebKit.vcxproj/WebKit.submit.sln: Removed.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Removed.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters: Removed.
+        * WebKit.vcxproj/WebKit/WebKitANGLE.props: Removed.
+        * WebKit.vcxproj/WebKit/WebKitApple.props: Removed.
+        * WebKit.vcxproj/WebKit/WebKitCFLite.props: Removed.
+        * WebKit.vcxproj/WebKit/WebKitCommon.props: Removed.
+        * WebKit.vcxproj/WebKit/WebKitDebug.props: Removed.
+        * WebKit.vcxproj/WebKit/WebKitDebugWinCairo.props: Removed.
+        * WebKit.vcxproj/WebKit/WebKitDirectX.props: Removed.
+        * WebKit.vcxproj/WebKit/WebKitPostBuild.cmd: Removed.
+        * WebKit.vcxproj/WebKit/WebKitPreBuild.cmd: Removed.
+        * WebKit.vcxproj/WebKit/WebKitPreLink.cmd: Removed.
+        * WebKit.vcxproj/WebKit/WebKitProduction.props: Removed.
+        * WebKit.vcxproj/WebKit/WebKitRelease.props: Removed.
+        * WebKit.vcxproj/WebKit/WebKitReleaseWinCairo.props: Removed.
+        * WebKit.vcxproj/WebKit/WebKitVersion.cmd: Removed.
+
 2016-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Reduce size of internal windows build output
