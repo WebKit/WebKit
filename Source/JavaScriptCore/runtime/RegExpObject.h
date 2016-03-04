@@ -74,6 +74,16 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(RegExpObjectType, StructureFlags), info());
     }
 
+    static ptrdiff_t offsetOfLastIndex()
+    {
+        return OBJECT_OFFSETOF(RegExpObject, m_lastIndex);
+    }
+
+    static ptrdiff_t offsetOfLastIndexIsWritable()
+    {
+        return OBJECT_OFFSETOF(RegExpObject, m_lastIndexIsWritable);
+    }
+
 protected:
     JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*);
     JS_EXPORT_PRIVATE void finishCreation(VM&);

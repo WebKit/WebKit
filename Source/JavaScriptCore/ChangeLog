@@ -1,3 +1,62 @@
+2016-03-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG/FTL should inline accesses to RegExpObject::m_lastIndex
+        https://bugs.webkit.org/show_bug.cgi?id=155003
+
+        Reviewed by Benjamin Poulain.
+
+        The Octane/regexp benchmark sets RegExps' lastIndex a lot. I could imagine this being
+        something that people want to do. Right now, I'm not convinced that making the RegExp object
+        be more plain-JS would be a good idea considering that pretty much all uses of it will
+        require some special compiler magic. Also, it's good that this patch teaches the compiler
+        how to reason about lastIndex since some of my other plans for regexp involve having the
+        compiler treat more regexp stuff as intrinsic.
+
+        This is a smaller Octane/regexp speed-up than I hoped - maybe around 1%. It's an enormous
+        speed-up on the microbenchmarks attached to this patch.
+
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutAccessorByVal):
+        (JSC::DFG::SpeculativeJIT::compileGetRegExpObjectLastIndex):
+        (JSC::DFG::SpeculativeJIT::compileSetRegExpObjectLastIndex):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLAbstractHeapRepository.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringReplace):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetRegExpObjectLastIndex):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetRegExpObjectLastIndex):
+        (JSC::FTL::DFG::LowerDFGToB3::didOverflowStack):
+        (JSC::FTL::DFG::LowerDFGToB3::lowObject):
+        (JSC::FTL::DFG::LowerDFGToB3::lowRegExpObject):
+        (JSC::FTL::DFG::LowerDFGToB3::lowString):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::createStructure):
+        (JSC::RegExpObject::offsetOfLastIndex):
+
 2016-03-03  Chris Dumez  <cdumez@apple.com>
 
         Regression(r196770): Unable to use HipChat Mac app

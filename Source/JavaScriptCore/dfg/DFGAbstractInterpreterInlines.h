@@ -1882,6 +1882,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case PutClosureVar:
         break;
+
+    case GetRegExpObjectLastIndex:
+        forNode(node).makeHeapTop();
+        break;
+
+    case SetRegExpObjectLastIndex:
+        break;
         
     case GetFromArguments:
         forNode(node).makeHeapTop();

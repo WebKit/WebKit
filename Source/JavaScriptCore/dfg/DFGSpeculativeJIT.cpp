@@ -7518,6 +7518,33 @@ void SpeculativeJIT::compilePutAccessorByVal(Node* node)
     noResult(node);
 }
 
+void SpeculativeJIT::compileGetRegExpObjectLastIndex(Node* node)
+{
+    SpeculateCellOperand regExp(this, node->child1());
+    JSValueRegsTemporary result(this);
+    GPRReg regExpGPR = regExp.gpr();
+    JSValueRegs resultRegs = result.regs();
+    speculateRegExpObject(node->child1(), regExpGPR);
+    m_jit.loadValue(JITCompiler::Address(regExpGPR, RegExpObject::offsetOfLastIndex()), resultRegs);
+    jsValueResult(resultRegs, node);
+}
+
+void SpeculativeJIT::compileSetRegExpObjectLastIndex(Node* node)
+{
+    SpeculateCellOperand regExp(this, node->child1());
+    JSValueOperand value(this, node->child2());
+    GPRReg regExpGPR = regExp.gpr();
+    JSValueRegs valueRegs = value.jsValueRegs();
+    speculateRegExpObject(node->child1(), regExpGPR);
+    speculationCheck(
+        ExoticObjectMode, JSValueRegs(), nullptr,
+        m_jit.branchTest8(
+            JITCompiler::Zero,
+            JITCompiler::Address(regExpGPR, RegExpObject::offsetOfLastIndexIsWritable())));
+    m_jit.storeValue(valueRegs, JITCompiler::Address(regExpGPR, RegExpObject::offsetOfLastIndex()));
+    noResult(node);
+}
+
 } } // namespace JSC::DFG
 
 #endif

@@ -224,6 +224,8 @@ inline CapabilityLevel canCompile(Node* node)
     case RegExpTest:
     case NewRegexp:
     case StringReplace:
+    case GetRegExpObjectLastIndex:
+    case SetRegExpObjectLastIndex:
         // These are OK.
         break;
 
