@@ -26,40 +26,38 @@
 #include "config.h"
 #include "CryptoDigest.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
-
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {
 
 struct CryptoDigestContext {
-    CryptoAlgorithmIdentifier algorithm;
+    CryptoDigest::Algorithm algorithm;
     void* ccContext;
 };
 
 inline CC_SHA1_CTX* toSHA1Context(CryptoDigestContext* context)
 {
-    ASSERT(context->algorithm == CryptoAlgorithmIdentifier::SHA_1);
+    ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_1);
     return static_cast<CC_SHA1_CTX*>(context->ccContext);
 }
 inline CC_SHA256_CTX* toSHA224Context(CryptoDigestContext* context)
 {
-    ASSERT(context->algorithm == CryptoAlgorithmIdentifier::SHA_224);
+    ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_224);
     return static_cast<CC_SHA256_CTX*>(context->ccContext);
 }
 inline CC_SHA256_CTX* toSHA256Context(CryptoDigestContext* context)
 {
-    ASSERT(context->algorithm == CryptoAlgorithmIdentifier::SHA_256);
+    ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_256);
     return static_cast<CC_SHA256_CTX*>(context->ccContext);
 }
 inline CC_SHA512_CTX* toSHA384Context(CryptoDigestContext* context)
 {
-    ASSERT(context->algorithm == CryptoAlgorithmIdentifier::SHA_384);
+    ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_384);
     return static_cast<CC_SHA512_CTX*>(context->ccContext);
 }
 inline CC_SHA512_CTX* toSHA512Context(CryptoDigestContext* context)
 {
-    ASSERT(context->algorithm == CryptoAlgorithmIdentifier::SHA_512);
+    ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_512);
     return static_cast<CC_SHA512_CTX*>(context->ccContext);
 }
 
@@ -71,88 +69,82 @@ CryptoDigest::CryptoDigest()
 CryptoDigest::~CryptoDigest()
 {
     switch (m_context->algorithm) {
-    case CryptoAlgorithmIdentifier::SHA_1:
+    case CryptoDigest::Algorithm::SHA_1:
         delete toSHA1Context(m_context.get());
         return;
-    case CryptoAlgorithmIdentifier::SHA_224:
+    case CryptoDigest::Algorithm::SHA_224:
         delete toSHA224Context(m_context.get());
         return;
-    case CryptoAlgorithmIdentifier::SHA_256:
+    case CryptoDigest::Algorithm::SHA_256:
         delete toSHA256Context(m_context.get());
         return;
-    case CryptoAlgorithmIdentifier::SHA_384:
+    case CryptoDigest::Algorithm::SHA_384:
         delete toSHA384Context(m_context.get());
         return;
-    case CryptoAlgorithmIdentifier::SHA_512:
+    case CryptoDigest::Algorithm::SHA_512:
         delete toSHA512Context(m_context.get());
         return;
-    default:
-        ASSERT_NOT_REACHED();
     }
 }
 
 
-std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoAlgorithmIdentifier algorithm)
+std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algorithm)
 {
     std::unique_ptr<CryptoDigest> digest(new CryptoDigest);
     digest->m_context->algorithm = algorithm;
 
     switch (algorithm) {
-    case CryptoAlgorithmIdentifier::SHA_1: {
+    case CryptoDigest::Algorithm::SHA_1: {
         CC_SHA1_CTX* context = new CC_SHA1_CTX;
         digest->m_context->ccContext = context;
         CC_SHA1_Init(context);
         return digest;
     }
-    case CryptoAlgorithmIdentifier::SHA_224: {
+    case CryptoDigest::Algorithm::SHA_224: {
         CC_SHA256_CTX* context = new CC_SHA256_CTX;
         digest->m_context->ccContext = context;
         CC_SHA224_Init(context);
         return digest;
     }
-    case CryptoAlgorithmIdentifier::SHA_256: {
+    case CryptoDigest::Algorithm::SHA_256: {
         CC_SHA256_CTX* context = new CC_SHA256_CTX;
         digest->m_context->ccContext = context;
         CC_SHA256_Init(context);
         return digest;
     }
-    case CryptoAlgorithmIdentifier::SHA_384: {
+    case CryptoDigest::Algorithm::SHA_384: {
         CC_SHA512_CTX* context = new CC_SHA512_CTX;
         digest->m_context->ccContext = context;
         CC_SHA384_Init(context);
         return digest;
     }
-    case CryptoAlgorithmIdentifier::SHA_512: {
+    case CryptoDigest::Algorithm::SHA_512: {
         CC_SHA512_CTX* context = new CC_SHA512_CTX;
         digest->m_context->ccContext = context;
         CC_SHA512_Init(context);
         return digest;
     }
-    default:
-        return nullptr;
     }
 }
 
 void CryptoDigest::addBytes(const void* input, size_t length)
 {
     switch (m_context->algorithm) {
-    case CryptoAlgorithmIdentifier::SHA_1:
+    case CryptoDigest::Algorithm::SHA_1:
         CC_SHA1_Update(toSHA1Context(m_context.get()), input, length);
         return;
-    case CryptoAlgorithmIdentifier::SHA_224:
+    case CryptoDigest::Algorithm::SHA_224:
         CC_SHA224_Update(toSHA224Context(m_context.get()), input, length);
         return;
-    case CryptoAlgorithmIdentifier::SHA_256:
+    case CryptoDigest::Algorithm::SHA_256:
         CC_SHA256_Update(toSHA256Context(m_context.get()), input, length);
         return;
-    case CryptoAlgorithmIdentifier::SHA_384:
+    case CryptoDigest::Algorithm::SHA_384:
         CC_SHA384_Update(toSHA384Context(m_context.get()), input, length);
         return;
-    case CryptoAlgorithmIdentifier::SHA_512:
+    case CryptoDigest::Algorithm::SHA_512:
         CC_SHA512_Update(toSHA512Context(m_context.get()), input, length);
         return;
-    default:
-        ASSERT_NOT_REACHED();
     }
 }
 
@@ -160,32 +152,28 @@ Vector<uint8_t> CryptoDigest::computeHash()
 {
     Vector<uint8_t> result;
     switch (m_context->algorithm) {
-    case CryptoAlgorithmIdentifier::SHA_1:
+    case CryptoDigest::Algorithm::SHA_1:
         result.resize(CC_SHA1_DIGEST_LENGTH);
         CC_SHA1_Final(result.data(), toSHA1Context(m_context.get()));
         break;
-    case CryptoAlgorithmIdentifier::SHA_224:
+    case CryptoDigest::Algorithm::SHA_224:
         result.resize(CC_SHA224_DIGEST_LENGTH);
         CC_SHA224_Final(result.data(), toSHA224Context(m_context.get()));
         break;
-    case CryptoAlgorithmIdentifier::SHA_256:
+    case CryptoDigest::Algorithm::SHA_256:
         result.resize(CC_SHA256_DIGEST_LENGTH);
         CC_SHA256_Final(result.data(), toSHA256Context(m_context.get()));
         break;
-    case CryptoAlgorithmIdentifier::SHA_384:
+    case CryptoDigest::Algorithm::SHA_384:
         result.resize(CC_SHA384_DIGEST_LENGTH);
         CC_SHA384_Final(result.data(), toSHA384Context(m_context.get()));
         break;
-    case CryptoAlgorithmIdentifier::SHA_512:
+    case CryptoDigest::Algorithm::SHA_512:
         result.resize(CC_SHA512_DIGEST_LENGTH);
         CC_SHA512_Final(result.data(), toSHA512Context(m_context.get()));
         break;
-    default:
-        ASSERT_NOT_REACHED();
     }
     return result;
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SUBTLE_CRYPTO)

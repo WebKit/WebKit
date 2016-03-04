@@ -1,3 +1,60 @@
+2016-03-04  Daniel Bates  <dabates@apple.com>
+
+        Move CryptoDigest to WebCore/platform
+        https://bugs.webkit.org/show_bug.cgi?id=155008
+        <rdar://problem/24969787>
+
+        Reviewed by Brent Fulgham.
+
+        CryptoDigest provides a platform-independent interface for interacting with platform-
+        specific cryptographic hashing services. We currently make use of this code as part
+        of the implementation of Web Crypto. This code will also be beneficial as part of
+        implementing support for Content Security Policy inline script and inline stylesheet
+        hashes. We should move CryptoDigest to WebCore/platform to convey that it a general
+        purpose platform abstraction.
+
+        * CMakeLists.txt: Add include directory WebCore/platform/crypto.
+        * PlatformEfl.cmake: Add file platform/crypto/gnutls/CryptoDigestGnuTLS.cpp and
+        remove file crypto/gnutls/CryptoDigestGnuTLS.cpp.
+        * PlatformGTK.cmake: Ditto.
+        * PlatformMac.cmake: Add file platform/crypto/mac/CryptoDigestMac.cpp and
+        remove file crypto/mac/CryptoDigestMac.cpp.
+        * WebCore.xcodeproj/project.pbxproj:
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp:
+        (WebCore::CryptoAlgorithmSHA1::digest): Substitute "CryptoDigest::Algorithm" for "CryptoAlgorithmIdentifier".
+        * crypto/algorithms/CryptoAlgorithmSHA224.cpp:
+        (WebCore::CryptoAlgorithmSHA224::digest): Ditto.
+        * crypto/algorithms/CryptoAlgorithmSHA256.cpp:
+        (WebCore::CryptoAlgorithmSHA256::digest): Ditto.
+        * crypto/algorithms/CryptoAlgorithmSHA384.cpp:
+        (WebCore::CryptoAlgorithmSHA384::digest): Ditto.
+        * crypto/algorithms/CryptoAlgorithmSHA512.cpp:
+        (WebCore::CryptoAlgorithmSHA512::digest): Ditto.
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::getCryptoDigestAlgorithm): Converts a CryptoAlgorithmIdentifier enumerator to a
+        CryptoDigest::Algorithm enumerator, if applicable.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign): Write in terms of WebCore::getCryptoDigestAlgorithm().
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify): Ditto.
+        * platform/crypto/CryptoDigest.h: Renamed from Source/WebCore/crypto/CryptoDigest.h. Also added enum CryptoDigest::Algorithm
+        and changed constructor to take this enum.
+        * platform/crypto/gnutls/CryptoDigestGnuTLS.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoDigestGnuTLS.cpp.
+        (WebCore::CryptoDigest::CryptoDigest): Substitute "CryptoDigest::Algorithm" for "CryptoAlgorithmIdentifier".
+        (WebCore::CryptoDigest::~CryptoDigest): Ditto.
+        (WebCore::CryptoDigest::create): Ditto.
+        (WebCore::CryptoDigest::addBytes): Ditto.
+        (WebCore::CryptoDigest::computeHash): Ditto.
+        * platform/crypto/mac/CryptoDigestMac.cpp: Renamed from Source/WebCore/crypto/mac/CryptoDigestMac.cpp.
+        (WebCore::toSHA1Context): Ditto.
+        (WebCore::toSHA224Context): Ditto.
+        (WebCore::toSHA256Context): Ditto.
+        (WebCore::toSHA384Context): Ditto.
+        (WebCore::toSHA512Context): Ditto.
+        (WebCore::CryptoDigest::CryptoDigest): Ditto.
+        (WebCore::CryptoDigest::~CryptoDigest): Ditto.
+        (WebCore::CryptoDigest::create): Ditto.
+        (WebCore::CryptoDigest::addBytes): Ditto.
+        (WebCore::CryptoDigest::computeHash): Ditto.
+
 2016-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Whitespace causes font-variant: all-small-caps to synthesize

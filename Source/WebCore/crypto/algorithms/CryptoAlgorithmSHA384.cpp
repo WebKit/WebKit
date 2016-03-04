@@ -54,7 +54,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmSHA384::identifier() const
 
 void CryptoAlgorithmSHA384::digest(const CryptoAlgorithmParameters&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
-    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(CryptoAlgorithmIdentifier::SHA_384);
+    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_384);
     if (!digest) {
         failureCallback();
         return;

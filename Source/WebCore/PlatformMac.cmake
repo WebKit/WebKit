@@ -218,7 +218,6 @@ list(APPEND WebCore_SOURCES
     crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp
     crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp
     crypto/mac/CryptoAlgorithmRegistryMac.cpp
-    crypto/mac/CryptoDigestMac.cpp
     crypto/mac/CryptoKeyMac.cpp
     crypto/mac/CryptoKeyRSAMac.cpp
     crypto/mac/SerializedCryptoKeyWrapMac.mm
@@ -339,6 +338,8 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/ThemeCocoa.cpp
     platform/cocoa/VNodeTrackerCocoa.cpp
     platform/cocoa/WebCoreNSErrorExtras.mm
+
+    platform/crypto/mac/CryptoDigestMac.cpp
 
     platform/graphics/DisplayRefreshMonitor.cpp
     platform/graphics/DisplayRefreshMonitorManager.cpp

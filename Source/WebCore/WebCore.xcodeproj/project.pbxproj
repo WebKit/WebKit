@@ -14550,8 +14550,8 @@
 		E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyPairCustom.cpp; sourceTree = "<group>"; };
 		E1F80B8B183172B5007885C3 /* JSCryptoKeyPair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyPair.cpp; sourceTree = "<group>"; };
 		E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoKeyPair.h; sourceTree = "<group>"; };
-		E1FE13621834351100892F13 /* CryptoDigestMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoDigestMac.cpp; sourceTree = "<group>"; };
-		E1FE136618343A1000892F13 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoDigest.h; sourceTree = "<group>"; };
+		E1FE13621834351100892F13 /* CryptoDigestMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoDigestMac.cpp; path = crypto/mac/CryptoDigestMac.cpp; sourceTree = "<group>"; };
+		E1FE136618343A1000892F13 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoDigest.h; path = crypto/CryptoDigest.h; sourceTree = "<group>"; };
 		E1FE1368183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSA_OAEP.cpp; sourceTree = "<group>"; };
 		E1FE1369183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRSA_OAEP.h; sourceTree = "<group>"; };
 		E1FE136E183FECF000892F13 /* CryptoAlgorithmRSA_OAEPMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSA_OAEPMac.cpp; sourceTree = "<group>"; };
@@ -22791,6 +22791,7 @@
 				FD31604012B026A300C1A359 /* audio */,
 				1AE42F670AA4B8CB00C8612D /* cf */,
 				A5C974CE11485FDA0066F2AB /* cocoa */,
+				CE50D8CE1C8932ED0072EA5A /* crypto */,
 				B2A015910AF6CD53006BCE0E /* graphics */,
 				A59E3C1B11580F340072928E /* ios */,
 				6582A14809999D6C00BEEB6D /* mac */,
@@ -23176,6 +23177,23 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		CE50D8CE1C8932ED0072EA5A /* crypto */ = {
+			isa = PBXGroup;
+			children = (
+				CE50D8CF1C8932FB0072EA5A /* mac */,
+				E1FE136618343A1000892F13 /* CryptoDigest.h */,
+			);
+			name = crypto;
+			sourceTree = "<group>";
+		};
+		CE50D8CF1C8932FB0072EA5A /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				E1FE13621834351100892F13 /* CryptoDigestMac.cpp */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
 		DF9AFD6F13FC31B00015FEB7 /* objc */ = {
 			isa = PBXGroup;
 			children = (
@@ -23230,7 +23248,6 @@
 				E1FE136E183FECF000892F13 /* CryptoAlgorithmRSA_OAEPMac.cpp */,
 				E1233F0E185A4130008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp */,
 				E1C266D618317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp */,
-				E1FE13621834351100892F13 /* CryptoDigestMac.cpp */,
 				E19AC3F8182566F700349426 /* CryptoKeyMac.cpp */,
 				E164FAA418315E1A00DB4E61 /* CryptoKeyRSAMac.cpp */,
 				E18DF33618AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm */,
@@ -23421,7 +23438,6 @@
 				E1C657261816F9FE00256CDD /* CryptoAlgorithmParameters.h */,
 				E1FF8F6A180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp */,
 				E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */,
-				E1FE136618343A1000892F13 /* CryptoDigest.h */,
 				E157A8E218173A3A009F821D /* CryptoKey.cpp */,
 				E157A8E318173A3A009F821D /* CryptoKey.h */,
 				E157A8DC18172C2C009F821D /* CryptoKey.idl */,

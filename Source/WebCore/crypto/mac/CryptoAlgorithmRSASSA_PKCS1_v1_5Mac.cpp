@@ -36,6 +36,29 @@
 
 namespace WebCore {
 
+inline bool getCryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction, CryptoDigest::Algorithm& algorithm)
+{
+    switch (hashFunction) {
+    case CryptoAlgorithmIdentifier::SHA_1:
+        algorithm = CryptoDigest::Algorithm::SHA_1;
+        return true;
+    case CryptoAlgorithmIdentifier::SHA_224:
+        algorithm = CryptoDigest::Algorithm::SHA_224;
+        return true;
+    case CryptoAlgorithmIdentifier::SHA_256:
+        algorithm = CryptoDigest::Algorithm::SHA_256;
+        return true;
+    case CryptoAlgorithmIdentifier::SHA_384:
+        algorithm = CryptoDigest::Algorithm::SHA_384;
+        return true;
+    case CryptoAlgorithmIdentifier::SHA_512:
+        algorithm = CryptoDigest::Algorithm::SHA_512;
+        return true;
+    default:
+        return false;
+    }
+}
+
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaParams& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     CCDigestAlgorithm digestAlgorithm;
@@ -44,7 +67,13 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaP
         return;
     }
 
-    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(parameters.hash);
+    CryptoDigest::Algorithm cryptoDigestAlgorithm;
+    if (!getCryptoDigestAlgorithm(parameters.hash, cryptoDigestAlgorithm)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(cryptoDigestAlgorithm);
     if (!digest) {
         ec = NOT_SUPPORTED_ERR;
         return;
@@ -75,7 +104,13 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoAlgorithmRsaSs
         return;
     }
 
-    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(parameters.hash);
+    CryptoDigest::Algorithm cryptoDigestAlgorithm;
+    if (!getCryptoDigestAlgorithm(parameters.hash, cryptoDigestAlgorithm)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(cryptoDigestAlgorithm);
     if (!digest) {
         ec = NOT_SUPPORTED_ERR;
         return;

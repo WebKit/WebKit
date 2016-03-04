@@ -54,7 +54,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmSHA512::identifier() const
 
 void CryptoAlgorithmSHA512::digest(const CryptoAlgorithmParameters&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
-    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(CryptoAlgorithmIdentifier::SHA_512);
+    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_512);
     if (!digest) {
         failureCallback();
         return;

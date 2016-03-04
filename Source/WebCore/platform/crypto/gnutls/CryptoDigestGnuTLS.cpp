@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoDigest.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
-
 #include <gnutls/gnutls.h>
 #include <gnutls/crypto.h>
 
@@ -48,33 +46,31 @@ CryptoDigest::~CryptoDigest()
     gnutls_hash_deinit(m_context->hash, 0);
 }
 
-std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoAlgorithmIdentifier algorithm)
+std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algorithm)
 {
     gnutls_digest_algorithm_t gnutlsAlgorithm;
 
     switch (algorithm) {
-    case CryptoAlgorithmIdentifier::SHA_1: {
+    case CryptoDigest::Algorithm::SHA_1: {
         gnutlsAlgorithm = GNUTLS_DIG_SHA1;
         break;
     }
-    case CryptoAlgorithmIdentifier::SHA_224: {
+    case CryptoDigest::Algorithm::SHA_224: {
         gnutlsAlgorithm = GNUTLS_DIG_SHA224;
         break;
     }
-    case CryptoAlgorithmIdentifier::SHA_256: {
+    case CryptoDigest::Algorithm::SHA_256: {
         gnutlsAlgorithm = GNUTLS_DIG_SHA256;
         break;
     }
-    case CryptoAlgorithmIdentifier::SHA_384: {
+    case CryptoDigest::Algorithm::SHA_384: {
         gnutlsAlgorithm = GNUTLS_DIG_SHA384;
         break;
     }
-    case CryptoAlgorithmIdentifier::SHA_512: {
+    case CryptoDigest::Algorithm::SHA_512: {
         gnutlsAlgorithm = GNUTLS_DIG_SHA512;
         break;
     }
-    default:
-        return nullptr;
     }
 
     std::unique_ptr<CryptoDigest> digest(new CryptoDigest);
@@ -104,5 +100,3 @@ Vector<uint8_t> CryptoDigest::computeHash()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SUBTLE_CRYPTO)
