@@ -26,9 +26,9 @@
 #ifndef TileController_h
 #define TileController_h
 
-#include "EdgeSet.h"
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "LengthBox.h"
 #include "PlatformCALayer.h"
 #include "PlatformCALayerClient.h"
 #include "TiledBacking.h"
@@ -213,7 +213,7 @@ private:
     
     Scrollability m_scrollability { HorizontallyScrollable | VerticallyScrollable };
     
-    EdgeSet<bool> m_marginEdges;
+    BoxExtent<bool> m_marginEdges;
     
     bool m_isInWindow { false };
     bool m_scrollingPerformanceLoggingEnabled { false };

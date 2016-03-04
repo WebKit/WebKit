@@ -1,3 +1,30 @@
+2016-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Use BoxExtent instead of EdgeSet in TileController
+        https://bugs.webkit.org/show_bug.cgi?id=155040
+
+        Reviewed by Zalan Bujtas.
+
+        Remove EdgeSet, which was very similar to the existing BoxExtent, and use BoxExtent
+        in TileController.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/EdgeSet.h: Removed.
+        (WebCore::EdgeSet::EdgeSet): Deleted.
+        (WebCore::EdgeSet::top): Deleted.
+        (WebCore::EdgeSet::setTop): Deleted.
+        (WebCore::EdgeSet::right): Deleted.
+        (WebCore::EdgeSet::setRight): Deleted.
+        (WebCore::EdgeSet::bottom): Deleted.
+        (WebCore::EdgeSet::setBottom): Deleted.
+        (WebCore::EdgeSet::left): Deleted.
+        (WebCore::EdgeSet::setLeft): Deleted.
+        (WebCore::EdgeSet::operator==): Deleted.
+        (WebCore::EdgeSet::operator!=): Deleted.
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setHasMargins):
+        * platform/graphics/ca/TileController.h:
+
 2016-03-04  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] Gather resource load statistics
