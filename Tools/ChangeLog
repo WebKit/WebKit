@@ -1,3 +1,89 @@
+2016-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove vcxproj build system
+        https://bugs.webkit.org/show_bug.cgi?id=154388
+
+        Rubber-stamped by Brent Fulgham.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree.sln: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTree.vcxproj: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTree.vcxproj.filters: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeApple.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeCommon.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeDebug.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeDebugWinCairo.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncher.vcxproj: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherCommon.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherDebug.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherProduction.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherRelease.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreePostBuild.cmd: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreePreBuild.cmd: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeProduction.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeRelease.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeReleaseWinCairo.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiff.vcxproj: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffCommon.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffCommonWinCairo.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffDebug.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffDebugWinCairo.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncher.vcxproj: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherCommon.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherDebug.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherProduction.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherRelease.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffPostBuild.cmd: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffPreBuild.cmd: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffProduction.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffRelease.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffReleaseWinCairo.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj.filters: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginCommon.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginDebug.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginPostBuild.cmd: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginPreBuild.cmd: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginProduction.props: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginRelease.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowser.vcxproj: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowser.vcxproj.filters: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserCF.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserCFLite.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserCommon.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserDebug.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLib.vcxproj: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLib.vcxproj.filters: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibCommon.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibDebug.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibPostBuild.cmd: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibPreBuild.cmd: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibProduction.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibRelease.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserPostBuild.cmd: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserPreBuild.cmd: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserProduction.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserRelease.props: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.sln: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPICommon.props: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPICommonWinCairo.props: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIDebug.props: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIDebugWinCairo.props: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIPostBuild.cmd: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIPreBuild.cmd: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIProduction.props: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIRelease.props: Removed.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIReleaseWinCairo.props: Removed.
+        * win/AssembleBuildLogs: Removed.
+        * win/AssembleBuildLogs/AssembleBuildLogs.vcxproj: Removed.
+        * win/AssembleBuildLogs/AssembleBuildLogs.vcxproj.filters: Removed.
+        * win/AssembleBuildLogs/AssembleLogs.cmd: Removed.
+        * win/AssembleBuildLogs/README: Removed.
+
 2016-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Whitespace causes font-variant: all-small-caps to synthesize
