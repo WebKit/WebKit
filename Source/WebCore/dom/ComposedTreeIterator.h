@@ -67,16 +67,16 @@ private:
 #endif
 
     struct Context {
-        Context() { }
-        explicit Context(ContainerNode& root)
-            : iterator(root)
-        { }
-        Context(ContainerNode& root, Node& node, size_t slotNodeIndex = notFound)
-            : iterator(root, &node)
-            , slotNodeIndex(slotNodeIndex)
-        { }
+        Context();
+        explicit Context(ContainerNode& root);
+        Context(ContainerNode& root, Node& node);
 
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
+        enum SlottedTag { Slotted };
+        Context(ContainerNode& root, Node& node, SlottedTag);
+#endif
         ElementAndTextDescendantIterator iterator;
+        ElementAndTextDescendantIterator end;
         size_t slotNodeIndex { notFound };
     };
     Context& context() { return m_contextStack.last(); }
@@ -84,7 +84,7 @@ private:
     Node& current() { return *context().iterator; }
 
     bool m_didDropAssertions { false };
-    Vector<Context, 4> m_contextStack;
+    Vector<Context, 8> m_contextStack;
 };
 
 inline ComposedTreeIterator::ComposedTreeIterator()
@@ -112,7 +112,7 @@ inline ComposedTreeIterator& ComposedTreeIterator::traverseNextSkippingChildren(
 {
     context().iterator.traverseNextSkippingChildren();
 
-    if (!context().iterator && m_contextStack.size() > 1)
+    if (context().iterator == context().end && m_contextStack.size() > 1)
         traverseNextLeavingContext();
     
     return *this;

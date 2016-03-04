@@ -1,0 +1,123 @@
+
+Test 1
+  div (shadow root)
+    slot
+
+Test 2
+  div (shadow root)
+    slot
+      #text
+
+Test 3
+  div (shadow root)
+    slot
+      #text
+      div
+
+Test 4
+  div (shadow root)
+    slot
+      div
+        #text
+      div
+        #text
+
+Test 5
+  div (shadow root)
+    div
+      slot
+    #text
+
+Test 6
+  div (shadow root)
+    div
+      slot
+        #text
+    #text
+
+Test 7
+  div (shadow root)
+    div
+      slot
+        #text
+        div
+    #text
+
+Test 8
+  div (shadow root)
+    div
+      slot
+        div
+          #text
+        div
+          #text
+    #text
+
+Test 9
+  div (shadow root)
+    slot
+      slot-default
+        #text
+
+Test 10
+  div (shadow root)
+    slot
+      #text
+
+Test 11
+  div (shadow root)
+    slot
+      #text
+      div
+
+Test 12
+  div (shadow root)
+    slot
+      div
+        #text
+      div
+        #text
+
+Test 13
+  div (shadow root)
+    div (shadow root)
+      div
+        slot
+          #text
+          slot
+          #text
+
+Test 14
+  div (shadow root)
+    div (shadow root)
+      div
+        slot
+          #text
+          slot
+            #text
+          #text
+
+Test 15
+  div (shadow root)
+    div (shadow root)
+      div
+        slot
+          #text
+          slot
+            #text
+            div
+          #text
+
+Test 16
+  div (shadow root)
+    div (shadow root)
+      div
+        slot
+          #text
+          slot
+            div
+              #text
+            div
+              #text
+          #text
+

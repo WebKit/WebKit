@@ -1,3 +1,28 @@
+2016-03-03  Antti Koivisto  <antti@apple.com>
+
+        ComposedTreeIterator may traverse slotted nodes multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=154983
+
+        Reviewed by Ryosuke Niwa.
+
+        Traversal of slotted nodes can escape to real siblings. Those siblings are then traversed again as slotted nodes.
+
+        Test: fast/shadow-dom/composed-tree-slots.html
+
+        * dom/ComposedTreeIterator.cpp:
+        (WebCore::ComposedTreeIterator::initializeContextStack):
+        (WebCore::ComposedTreeIterator::traverseNextInShadowTree):
+        (WebCore::ComposedTreeIterator::traverseNextLeavingContext):
+        (WebCore::ComposedTreeIterator::advanceInSlot):
+        * dom/ComposedTreeIterator.h:
+        (WebCore::ComposedTreeIterator::Context::Context):
+
+            Include end iterator to the context.
+            For slotted nodes set it up to point to the next sibling of the node.
+
+        (WebCore::ComposedTreeIterator::context):
+        (WebCore::ComposedTreeIterator::traverseNextSkippingChildren):
+
 2016-03-04  Andreas Kling  <akling@apple.com>
 
         Drop DocumentSharedObjectPool immediately when going into PageCache.

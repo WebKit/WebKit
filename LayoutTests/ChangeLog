@@ -1,3 +1,13 @@
+2016-03-03  Antti Koivisto  <antti@apple.com>
+
+        ComposedTreeIterator may traverse slotted nodes multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=154983
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/composed-tree-slots-expected.txt: Added.
+        * fast/shadow-dom/composed-tree-slots.html: Added.
+
 2016-03-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG/FTL should inline accesses to RegExpObject::m_lastIndex
