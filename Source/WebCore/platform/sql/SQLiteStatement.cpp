@@ -71,7 +71,7 @@ int SQLiteStatement::prepare()
     // this lets SQLite avoid an extra string copy.
     size_t lengthIncludingNullCharacter = query.length() + 1;
 
-    const char* tail;
+    const char* tail = nullptr;
     int error = sqlite3_prepare_v2(m_database.sqlite3Handle(), query.data(), lengthIncludingNullCharacter, &m_statement, &tail);
 
     if (error != SQLITE_OK)
