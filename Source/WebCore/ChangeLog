@@ -1,3 +1,9 @@
+2016-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Let XCode have its own way and also sort the file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-03-03  Chris Dumez  <cdumez@apple.com>
 
         Regression(r196770): Unable to use HipChat Mac app
