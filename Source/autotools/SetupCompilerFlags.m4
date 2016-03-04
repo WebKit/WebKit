@@ -57,3 +57,18 @@ else
     CXXFLAGS="$CXXFLAGS -O0"
     CFLAGS="$CFLAGS -O0"
 fi
+
+# Some architectures need to add libatomic explicitly
+AC_LANG_PUSH([C++])
+AC_LINK_IFELSE([AC_LANG_SOURCE([[
+#include <atomic>
+int main() {
+   std::atomic<int64_t> i(0);
+   i++;
+   return 0;
+}
+]])], has_atomic=yes, has_atomic=no)
+AC_LANG_POP([C++])
+if test "$has_atomic" = "no"; then
+   LIBS="$LIBS -latomic"
+fi
