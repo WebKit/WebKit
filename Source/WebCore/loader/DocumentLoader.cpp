@@ -532,8 +532,7 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     ASSERT(m_frame->document());
     ASSERT(topFrame.document());
 
-    if (Settings::resourceLoadStatisticsEnabled())
-        ResourceLoadObserver::sharedObserver().logFrameNavigation(!redirectResponse.isNull(), m_frame->document()->url(), newRequest.url(), m_frame->isMainFrame(), topFrame.document()->url());
+    ResourceLoadObserver::sharedObserver().logFrameNavigation(*m_frame, topFrame, newRequest, redirectResponse);
     
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.

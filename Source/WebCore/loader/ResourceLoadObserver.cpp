@@ -27,11 +27,16 @@
 #include "ResourceLoadObserver.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "NetworkStorageSession.h"
+#include "Page.h"
 #include "PlatformStrategies.h"
 #include "ResourceLoadStatistics.h"
 #include "ResourceLoadStatisticsStore.h"
+#include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -52,11 +57,25 @@ void ResourceLoadObserver::setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&
     m_store = WTFMove(store);
 }
 
-void ResourceLoadObserver::logFrameNavigation(bool isRedirect, const URL& sourceURL, const URL& targetURL, bool isMainFrame, const URL& mainFrameURL)
+void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     if (!Settings::resourceLoadStatisticsEnabled())
         return;
 
+    ASSERT(frame.document());
+    ASSERT(topFrame.document());
+    ASSERT(topFrame.page());
+
+    bool needPrivacy = topFrame.page() ? topFrame.page()->usesEphemeralSession() : false;
+    if (needPrivacy)
+        return;
+
+    bool isRedirect = !redirectResponse.isNull();
+    bool isMainFrame = frame.isMainFrame();
+    const URL& sourceURL = frame.document()->url();
+    const URL& targetURL = newRequest.url();
+    const URL& mainFrameURL = topFrame.document()->url();
+    
     if (!targetURL.isValid() || !mainFrameURL.isValid())
         return;
 
@@ -124,11 +143,20 @@ void ResourceLoadObserver::logFrameNavigation(bool isRedirect, const URL& source
     m_store->fireDataModificationHandler();
 }
     
-void ResourceLoadObserver::logSubresourceLoading(bool isRedirect, const URL& sourceURL, const URL& targetURL, const URL& mainFrameURL)
+void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     if (!Settings::resourceLoadStatisticsEnabled())
         return;
 
+    bool needPrivacy = (frame && frame->page()) ? frame->page()->usesEphemeralSession() : false;
+    if (needPrivacy)
+        return;
+    
+    bool isRedirect = !redirectResponse.isNull();
+    const URL& sourceURL = redirectResponse.url();
+    const URL& targetURL = newRequest.url();
+    const URL& mainFrameURL = frame ? frame->mainFrame().document()->url() : URL();
+    
     auto targetHost = targetURL.host();
     auto mainFrameHost = mainFrameURL.host();
 
@@ -178,6 +206,10 @@ void ResourceLoadObserver::logSubresourceLoading(bool isRedirect, const URL& sou
 void ResourceLoadObserver::logUserInteraction(const Document& document)
 {
     if (!Settings::resourceLoadStatisticsEnabled())
+        return;
+
+    bool needPrivacy = document.page() ? document.page()->usesEphemeralSession() : false;
+    if (needPrivacy)
         return;
 
     auto& statistics = m_store->resourceStatisticsForPrimaryDomain(primaryDomain(document.url()));

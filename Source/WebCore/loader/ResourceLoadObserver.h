@@ -33,6 +33,9 @@
 namespace WebCore {
 
 class Document;
+class Frame;
+class ResourceRequest;
+class ResourceResponse;
 class URL;
 
 struct ResourceLoadStatistics;
@@ -42,10 +45,11 @@ class ResourceLoadObserver {
 public:
     WEBCORE_EXPORT static ResourceLoadObserver& sharedObserver();
     
-    void logFrameNavigation(bool isRedirect, const URL& sourceURL, const URL& targetURL, bool isMainFrame, const URL& mainFrameURL);
-    void logSubresourceLoading(bool isRedirect, const URL& sourceURL, const URL& targetURL, const URL& mainFrameURL);
-    void logUserInteraction(const Document&);
+    void logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
+    void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
 
+    void logUserInteraction(const Document&);
+    
     WEBCORE_EXPORT void setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&);
 
     WEBCORE_EXPORT String statisticsForOrigin(const String&);

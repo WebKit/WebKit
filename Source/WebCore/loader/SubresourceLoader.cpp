@@ -191,8 +191,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
     if (newRequest.isNull())
         cancel();
 
-    if (Settings::resourceLoadStatisticsEnabled())
-        ResourceLoadObserver::sharedObserver().logSubresourceLoading(!redirectResponse.isNull(), redirectResponse.url(), newRequest.url(), m_frame ? m_frame->mainFrame().document()->url() : URL());
+    ResourceLoadObserver::sharedObserver().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse);
 }
 
 void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

@@ -1,3 +1,29 @@
+2016-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Resource load statistics are not honoring private browsing
+        https://bugs.webkit.org/show_bug.cgi?id=155054
+        <rdar://problem/24987873>
+
+        Reviewed by Andy Estes.
+
+        Modify the points where we capture resource load statistics to ignore
+        loads made during private browsing. Do this by moving more of the logic
+        about whether to gather statistics into the logging functions, passing
+        the raw input types (frame, ResourceRequest, ResourceResponse) internally
+        so that we don't pay any cost until we decide we want to gather data.s
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest): Revise for the new API on
+        ResourceLoadObserver.
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logFrameNavigation): Revise signature and
+        check for private browsing.
+        (WebCore::ResourceLoadObserver::logSubresourceLoading): Ditto.
+        (WebCore::ResourceLoadObserver::logUserInteraction): Ditto.
+        * loader/ResourceLoadObserver.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal): Ditto.
+
 2016-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix file mime-types when using NetworkSession
