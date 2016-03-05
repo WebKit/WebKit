@@ -44,8 +44,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSCustomElementInterface::JSCustomElementInterface(JSObject* constructor, JSDOMGlobalObject* globalObject)
+JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JSObject* constructor, JSDOMGlobalObject* globalObject)
     : ActiveDOMCallback(globalObject->scriptExecutionContext())
+    , m_name(name)
     , m_constructor(constructor)
     , m_isolatedWorld(&globalObject->world())
 {

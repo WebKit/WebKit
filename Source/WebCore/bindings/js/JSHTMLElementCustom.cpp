@@ -53,8 +53,8 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState* state)
     VM& vm = state->vm();
     JSValue newTargetValue = state->thisValue();
     JSObject* newTarget = newTargetValue.getObject();
-    QualifiedName fullName = definitions->findName(newTarget);
-    if (fullName == nullQName())
+    auto* interface = definitions->findInterface(newTarget);
+    if (!interface)
         return throwVMTypeError(state, "new.target does not define a custom element");
 
     auto* globalObject = jsConstructor->globalObject();
@@ -63,7 +63,7 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState* state)
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
 
-    Ref<HTMLElement> element = HTMLElement::create(fullName, document);
+    Ref<HTMLElement> element = HTMLElement::create(interface->name(), document);
     auto* jsElement = JSHTMLElement::create(newElementStructure, globalObject, element.get());
     cacheWrapper(globalObject->world(), element.ptr(), jsElement);
     return JSValue::encode(jsElement);

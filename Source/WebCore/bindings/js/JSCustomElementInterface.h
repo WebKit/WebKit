@@ -30,6 +30,7 @@
 #if ENABLE(CUSTOM_ELEMENTS)
 
 #include "ActiveDOMCallback.h"
+#include "QualifiedName.h"
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
 #include <runtime/JSObject.h>
@@ -50,14 +51,13 @@ class DOMWrapperWorld;
 class Element;
 class JSDOMGlobalObject;
 class MathMLElement;
-class QualifiedName;
 class SVGElement;
 
 class JSCustomElementInterface : public RefCounted<JSCustomElementInterface>, public ActiveDOMCallback {
 public:
-    static Ref<JSCustomElementInterface> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSCustomElementInterface> create(const QualifiedName& name, JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(*new JSCustomElementInterface(callback, globalObject));
+        return adoptRef(*new JSCustomElementInterface(name, callback, globalObject));
     }
 
     enum class ShouldClearException { Clear, DoNotClear };
@@ -68,11 +68,14 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
     JSC::JSObject* constructor() { return m_constructor.get(); }
 
+    const QualifiedName& name() const { return m_name; }
+
     virtual ~JSCustomElementInterface();
 
 private:
-    JSCustomElementInterface(JSC::JSObject* callback, JSDOMGlobalObject*);
+    JSCustomElementInterface(const QualifiedName&, JSC::JSObject* callback, JSDOMGlobalObject*);
 
+    QualifiedName m_name;
     mutable JSC::Weak<JSC::JSObject> m_constructor;
     RefPtr<DOMWrapperWorld> m_isolatedWorld;
 };

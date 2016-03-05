@@ -69,40 +69,35 @@ CustomElementDefinitions::NameStatus CustomElementDefinitions::checkName(const A
     return NameStatus::Valid;
 }
 
-bool CustomElementDefinitions::defineElement(const QualifiedName& fullName, Ref<JSCustomElementInterface>&& interface)
+void CustomElementDefinitions::addElementDefinition(Ref<JSCustomElementInterface>&& interface)
 {
-    ASSERT(!m_nameMap.contains(fullName.localName()));
-    auto* constructor = interface->constructor();
-    m_nameMap.add(fullName.localName(), CustomElementInfo(fullName, WTFMove(interface)));
-
-    auto addResult = m_constructorMap.add(constructor, fullName);
-    if (!addResult.isNewEntry)
-        addResult.iterator->value = nullQName(); // The interface has multiple tag names associated with it.
-
-    return true;
+    AtomicString localName = interface->name().localName();
+    ASSERT(!m_nameMap.contains(localName));
+    m_constructorMap.add(interface->constructor(), interface.ptr());
+    m_nameMap.add(localName, WTFMove(interface));
 }
 
 JSCustomElementInterface* CustomElementDefinitions::findInterface(const QualifiedName& name) const
 {
     auto it = m_nameMap.find(name.localName());
-    return it == m_nameMap.end() || it->value.fullName != name ? nullptr : it->value.interface.get();
+    return it == m_nameMap.end() || it->value->name() != name ? nullptr : it->value.get();
 }
 
 JSCustomElementInterface* CustomElementDefinitions::findInterface(const AtomicString& name) const
 {
     auto it = m_nameMap.find(name);
-    return it == m_nameMap.end() ? nullptr : it->value.interface.get();
+    return it == m_nameMap.end() ? nullptr : it->value.get();
+}
+
+JSCustomElementInterface* CustomElementDefinitions::findInterface(const JSC::JSObject* constructor) const
+{
+    auto it = m_constructorMap.find(constructor);
+    return it->value;
 }
 
 bool CustomElementDefinitions::containsConstructor(const JSC::JSObject* constructor) const
 {
     return m_constructorMap.contains(constructor);
-}
-
-const QualifiedName& CustomElementDefinitions::findName(const JSC::JSObject* constructor) const
-{
-    auto it = m_constructorMap.find(constructor);
-    return it == m_constructorMap.end() ? nullQName() : it->value;
 }
 
 }

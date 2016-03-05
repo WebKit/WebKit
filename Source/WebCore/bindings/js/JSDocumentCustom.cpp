@@ -181,7 +181,7 @@ JSValue JSDocument::defineElement(ExecState& state)
     // FIXME: 14. Let attributeChangedCallback be Get(prototype, "attributeChangedCallback"). Rethrow any exceptions.
 
     QualifiedName name(nullAtom, tagName, HTMLNames::xhtmlNamespaceURI);
-    definitions.defineElement(name, JSCustomElementInterface::create(object, globalObject()));
+    definitions.addElementDefinition(JSCustomElementInterface::create(name, object, globalObject()));
     PrivateName uniquePrivateName;
     globalObject()->putDirect(globalObject()->vm(), uniquePrivateName, object);
 

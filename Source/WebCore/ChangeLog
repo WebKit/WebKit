@@ -1,3 +1,35 @@
+2016-03-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move QualifiedName from CustomElementInfo to JSCustomElementInterface
+        https://bugs.webkit.org/show_bug.cgi?id=155061
+
+        Reviewed by Antti Koivisto.
+
+        Store QualifiedName of custom elements in JSCustomElementInterface instead of CustomElementInfo
+        now that each interface is associated with exactly one custom element as of r197602.
+
+        No new tests since this is a refactoring.
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::JSCustomElementInterface): Now takes QualifiedName as the
+        first argument.
+        * bindings/js/JSCustomElementInterface.h:
+        (WebCore::JSCustomElementInterface::create):
+        (WebCore::JSCustomElementInterface::name): Added.
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::defineElement):
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement): Use findInterface instead of the deleted findName.
+        * dom/CustomElementDefinitions.cpp:
+        (WebCore::CustomElementDefinitions::checkName):
+        (WebCore::CustomElementDefinitions::addElementDefinition): Renamed from defineElement.
+        (WebCore::CustomElementDefinitions::findInterface): Add a variant that finds the interface object
+        by a JS constructor.
+        (WebCore::CustomElementDefinitions::containsConstructor):
+        (WebCore::CustomElementDefinitions::findName): Deleted.
+        * dom/CustomElementDefinitions.h:
+        (WebCore::CustomElementDefinitions::CustomElementInfo::CustomElementInfo): Deleted.
+
 2016-03-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add basic support for attributeChanged lifecycle callback
