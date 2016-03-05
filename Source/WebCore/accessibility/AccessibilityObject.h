@@ -202,6 +202,9 @@ enum AccessibilityRole {
     SwitchRole,
     SystemWideRole,
     SVGRootRole,
+    SVGTextRole,
+    SVGTSpanRole,
+    SVGTextPathRole,
     TabGroupRole,
     TabListRole,
     TabPanelRole,            
@@ -465,6 +468,7 @@ public:
     virtual bool isAccessibilityScrollbar() const { return false; }
     virtual bool isAccessibilityScrollView() const { return false; }
     virtual bool isAccessibilitySVGRoot() const { return false; }
+    virtual bool isAccessibilitySVGElement() const { return false; }
 
     bool accessibilityObjectContainsText(String *) const;
 

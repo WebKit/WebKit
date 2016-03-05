@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+<svg>
+  <foreignObject id="test1" role="presentation" width="100" height="50" aria-label="word wrap example">
+    <body xmlns="http://www.w3.org/1999/xhtml">Here is a paragraph that requires word wrap</body>
+  </foreignObject>
+</svg>
+<svg>
+  <g id="test2" role="presentation">
+    <title>Venn Diagram</title>
+    <circle cx="50" cy="50" r="20" aria-label="set A"/>
+    <circle cx="50" cy="75" r="20" aria-label="set B"/>
+  </g>
+</svg>
+<svg>
+  <image id="test3" x="200" y="200" width="100px" height="100px" href="myimage.png" role="presentation">
+    <title>My image</title>
+  </image>
+</svg>
+<svg id="test4" width="4in" height="3in" xmlns="http://www.w3.org/2000/svg" role="presentation">
+  <desc>This graphic links to an external image</desc>
+  <image x="200" y="200" width="100px" height="100px" href="myimage.png">
+    <title>My image</title>
+  </image>
+</svg>
+<svg>
+  <defs>
+    <rect id="MyRect5" width="60" height="10"/>
+  </defs>
+  <use id="test5" role="presentation" x="20" y="10" href="#MyRect5" aria-label="black bar"/>
+</svg>
+<svg>
+  <path id="test6" d="M 100 100 L 300 100 L 200 300 z" fill="red" role="presentation" ><desc>abc</desc></path>
+</svg>
+<svg>
+  <rect id="test7" aria-label="hello" x="10" y="10" width="50" height="30" role="presentation"/>
+</svg>
+<svg>
+  <ellipse id="test8" cx="10" cy="100" rx="25" ry="15" role="presentation">
+    <title>abc</title>
+  </ellipse>
+</svg>
+<svg>
+  <line id="test9" aria-label="hello" x1="10" y1="10" x2="50" y2="10" role="presentation"/>
+</svg>
+<svg>
+  <polyline id="test10" aria-label="hello" fill="presentation" stroke="blue" stroke-width="10" points="50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375" role="presentation"/>
+</svg>
+<svg>
+  <polygon id="test11" fill="magenta" points="850,75 958,137.5 958,262.5 850,325 742,262.6 742,137.5" role="presentation">
+    <desc>built up area</desc>
+  </polygon>
+</svg>
+<svg>
+  <text id="test12" x="250" y="180" font-family="Verdana" font-size="64" fill="blue" role="presentation">Hello, out there!</text>
+</svg>
+<svg>
+  <text transform="rotate(45)" role="presentation">
+    <textPath id="test13" href="#path13">Text on a path</textPath>
+  </text>
+</svg>
+<svg>
+  <text x="100" y="180" fill="blue" role="presentation">But you
+    <tspan id="test14" dx="2em" dy="-50" font-weight="bold" fill="red"> are a peach </tspan>
+  </text>
+</svg>
+<svg>
+  <foreignObject id="test15" role="none" width="100" height="50" aria-label="word wrap example">
+    <body xmlns="http://www.w3.org/1999/xhtml">Here is a paragraph that requires word wrap</body>
+  </foreignObject>
+</svg>
+<svg>
+  <g id="test16" role="none">
+    <title>Venn Diagram</title>
+    <circle cx="50" cy="50" r="20" aria-label="set A"/>
+    <circle cx="50" cy="75" r="20" aria-label="set B"/>
+  </g>
+</svg>
+<svg>
+  <image id="test17" x="200" y="200" width="100px" height="100px" href="myimage.png" role="none">
+    <title>My image</title>
+  </image>
+</svg>
+<svg id="test18" width="4in" height="3in" xmlns="http://www.w3.org/2000/svg" role="none">
+  <desc>This graphic links to an external image</desc>
+  <image x="200" y="200" width="100px" height="100px" href="myimage.png">
+    <title>My image</title>
+  </image>
+</svg>
+<svg>
+  <defs>
+    <rect id="MyRect19" width="60" height="10"/>
+  </defs>
+  <use id="test19" role="none" x="20" y="10" href="#MyRect19" aria-label="black bar"/>
+</svg>
+<svg>
+  <path id="test20" d="M 100 100 L 300 100 L 200 300 z" fill="red" role="none" ><desc>abc</desc></path>
+</svg>
+<svg>
+  <rect id="test21" aria-label="hello" x="10" y="10" width="50" height="30" role="none"/>
+</svg>
+<svg>
+  <ellipse id="test22" cx="10" cy="100" rx="25" ry="15" role="none">
+    <title>abc</title>
+  </ellipse>
+</svg>
+<svg>
+  <line id="test23" aria-label="hello" x1="10" y1="10" x2="50" y2="10" role="none"/>
+</svg>
+<svg>
+  <polyline id="test24" aria-label="hello" fill="none" stroke="blue" stroke-width="10" points="50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375" role="none"/>
+</svg>
+<svg>
+  <polygon id="test25" fill="magenta" points="850,75 958,137.5 958,262.5 850,325 742,262.6 742,137.5" role="none">
+    <desc>built up area</desc>
+  </polygon>
+</svg>
+<svg>
+  <text id="test26" x="250" y="180" font-family="Verdana" font-size="64" fill="blue" role="none">Hello, out there!</text>
+</svg>
+<svg>
+  <text transform="rotate(45)" role="none">
+    <textPath id="test27" href="#path27">Text on a path</textPath>
+  </text>
+</svg>
+<svg>
+  <text x="100" y="180" fill="blue" role="none">But you
+    <tspan id="test28" dx="2em" dy="-50" font-weight="bold" fill="red"> are a peach </tspan>
+  </text>
+</svg>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests that SVG elements with role presentation are not exposed.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 28; i++) {
+            var element = document.getElementById("test" + i);
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug("test" + i + ": " + (axElement ? axElement.role : "Element not exposed"));
+        }
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

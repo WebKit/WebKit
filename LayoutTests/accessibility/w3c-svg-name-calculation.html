@@ -1,0 +1,336 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+<svg>
+  <circle id="test1" aria-labelledby="t1" aria-label="bob" cx="50" cy="100" r="15" data-expected="name: end">
+    <title>abc</title>
+  </circle>
+  <text id="t1" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test2" aria-labelledby="t2" aria-label="bob" cx="50" cy="100" r="15" data-expected="name: end"/>
+  <text id="t2" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test3" aria-labelledby="t3" cx="50" cy="100" r="15" data-expected="name: end">
+    <title>abc</title>
+  </circle>
+  <text id="t3" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test4" aria-labelledby="t4" cx="50" cy="100" r="15" data-expected="name: end"/>
+  <text id="t4" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test5" aria-label="hello" cx="10" cy="10" r="5" data-expected="name: hello">
+    <title>abc</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test6" aria-label="hello" cx="10" cy="10" r="5" data-expected="name: hello"/>
+</svg>
+<svg>
+  <circle id="test7" cx="10" cy="100" r="5" data-expected="name: abc">
+    <title>abc</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test8" cx="10" cy="100" r="5" data-expected="name: hi">
+    <title lang="es">hola</title>
+    <title lang="en">hi</title>
+    <title lang="de">Hallo</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test9" cx="10" cy="100" r="5" data-expected="name: hi">
+    <title lang="en">hi</title>
+    <title lang="es">hola</title>
+    <title lang="de">Hallo</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test10" cx="10" cy="100" r="5" data-expected="name: hi">
+    <title lang="es">hola</title>
+    <title lang="de">Hallo</title>
+    <title lang="en">hi</title>
+  </circle>
+</svg>
+<svg>
+  <g lang="es">
+    <circle id="test11" cx="10" cy="100" r="5" data-expected="name: hola">
+      <title lang="es">hola</title>
+      <title lang="en">hi</title>
+       <title lang="de">Hallo</title>
+    </circle>
+  </g>
+</svg>
+<svg>
+  <g lang="es" aria-label="123">
+    <circle id="test12" cx="10" cy="100" r="5" data-expected="name: hola">
+      <title lang="en">hi</title>
+      <title lang="es">hola</title>
+      <title lang="de">Hallo</title>
+    </circle>
+  </g>
+</svg>
+<svg>
+  <g lang="es" aria-label="123">
+    <circle id="test13" cx="10" cy="100" r="5" data-expected="name: hola">
+      <title lang="es">hola</title>
+      <title lang="de">Hallo</title>
+      <title lang="en">hi</title>
+    </circle>
+  </g>
+</svg>
+<svg>
+  <circle id="test14" aria-labelledby="" aria-label="bob" cx="50" cy="100" r="15" data-expected="name: bob">
+    <title>abc</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test15" aria-labelledby="" aria-label="bob" cx="50" cy="100" r="15" data-expected="name: bob"/>
+</svg>
+<svg>
+  <circle id="test16" aria-labelledby="" cx="50" cy="100" r="15" data-expected="name: abc">
+    <title>abc</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test17" aria-labelledby="" cx="50" cy="100" r="15" tabindex="0" data-expected="name: (empty)"/>
+</svg>
+<svg>
+  <circle id="test18" aria-labelledby="" cx="50" cy="100" r="15" data-expected="name: waz up">
+    <title lang="es">hola</title>
+    <title lang="fr">bonjour</title>
+    <title lang="en">waz up</title>
+    <title lang="de">Hallo</title>
+  </circle>
+</svg>
+<svg>
+  <g lang="de" aria-label="123">
+    <circle id="test19" aria-labelledby="" cx="50" cy="100" r="15" data-expected="name: Hallo">
+      <title lang="es">hola</title>
+      <title lang="fr">bonjour</title>
+      <title lang="en">waz up</title>
+      <title lang="de">Hallo</title>
+    </circle>
+  </g>
+</svg>
+<svg>
+  <circle id="test20" aria-labelledby="20a 20b" cx="50" cy="100" r="15" data-expected="name: the end"/>
+  <text id="20a" x="40" y="90">the</text>
+  <text id="20b" x="140" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test21" aria-labelledby="21a 21b" cx="50" cy="100" r="15" data-expected="name: big end"/>
+  <text id="21a" x="40" y="90" aria-label="big">the</text>
+  <text id="21b" x="140" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test22" aria-labelledby="22a 22b" cx="50" cy="100" r="15" data-expected="name: big end"/>
+  <text id="22a" x="40" y="90" aria-label="big">the</text>
+  <text id="22b" x="140" y="90" aria-labelledby="3c">end</text>
+  <text id="22c" x="180" y="90">finish</text>
+</svg>
+<svg>
+  <circle id="test23" aria-labelledby="23a 23b" cx="50" cy="100" r="15" data-expected="name: end"/>
+  <text id="23b" x="40" y="90">end</text>
+</svg>
+<svg>
+  <text id="test24" x="40" y="90" data-expected="name: end">end</text>
+</svg>
+<svg>
+  <a id="test25" aria-label="booth" href="../index.html" xlink:title="table" data-expected="name: booth"></a>
+</svg>
+<svg>
+  <a id="test26" href="../index.html" xlink:title="table" data-expected="name: table"></a>
+</svg>
+<svg>
+  <a id="test27" href="../index.html" data-expected="name: counter">
+    <title>counter</title>
+  </a>
+</svg>
+<svg>
+  <a id="test28" href="../index.html" xlink:title="table" data-expected="name: counter">
+    <title>counter</title>
+  </a>
+</svg>
+<svg>
+  <a id="test29" href="../index.html" xlink:title="table" data-expected="name: counter">
+    <title lang="es">barra</title>
+    <title lang="en">counter</title>
+    <title lang="fr">guichet</title>
+  </a>
+</svg>
+<svg>
+  <defs>
+    <path id="r30" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z">
+      <title>rock</title>
+    </path>
+  </defs>
+  <use id="test30" transform="translate(30 345)" xlink:href="#r30" aria-labelledby="b1" data-expected="name: boulder"/>
+  <text id="b1" x="35" y="90">boulder</text>
+</svg>
+<svg>
+  <defs>
+    <path id="r31" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z">
+      <title>rock</title>
+    </path>
+  </defs>
+  <use id="test31" transform="translate(30 345)" xlink:href="#31" aria-label="stone" data-expected="name: stone"/>
+</svg>
+<svg>
+  <defs>
+    <path id="r32" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z">
+      <title>rock</title>
+    </path>
+  </defs>
+  <use id="test32" transform="translate(30 345)" xlink:href="#r32" data-expected="name: pebble">
+    <title>pebble</title>
+  </use>
+</svg>
+<svg>
+  <defs>
+    <path id="r33" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z">
+      <title>rock</title>
+    </path>
+  </defs>
+  <use id="test33" transform="translate(30 345)" xlink:href="#r33" data-expected="name: rock"/>
+</svg>
+<svg>
+  <defs>
+    <path id="r34" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z">
+      <title>rock</title>
+    </path>
+  </defs>
+  <use id="test34" transform="translate(30 345)" href="#r34" data-expected="name: rock"/>
+</svg>
+<svg>
+  <defs>
+    <path id="r35" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z">
+      <title lang="en">stone</title>
+    </path>
+  </defs>
+  <use id="test35" transform="translate(30 345)" xlink:href="#r35" data-expected="name: stone"/>
+</svg>
+<svg>
+  <defs>
+    <path id="r36" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z">
+      <title lang="en">stone</title>
+      <title lang="es">piedra</title>
+      <title lang="de">Stein</title>
+    </path>
+  </defs>
+  <use id="test36" transform="translate(30 345)" href="#r36" data-expected="name: stone"/>
+</svg>
+<svg>
+  <defs>
+    <path id="r37" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z" lang="es">
+      <title lang="es">piedra</title>
+      <title lang="en">stone</title>
+      <title lang="de">Stein</title>
+    </path>
+  </defs>
+  <use id="test37" transform="translate(30 345)" xlink:href="#r37"  data-expected="name: piedra"/>
+</svg>
+<svg>
+  <defs lang="es">
+    <path id="r38" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z">
+      <title lang="en">stone</title>
+      <title lang="es">piedra</title>
+      <title lang="de">Stein</title>
+    </path>
+  </defs>
+  <use id="test38" transform="translate(30 345)" href="#r38" data-expected="name: piedra"/>
+</svg>
+<svg>
+  <defs>
+    <path id="r39" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z">
+      <title lang="es">piedra</title>
+      <title lang="en">stone</title>
+      <title lang="de">Stein</title>
+    </path>
+  </defs>
+  <g lang="es">
+    <use id="test39" transform="translate(30 345)" xlink:href="#r39" data-expected="name: stone"/>
+  </g>
+</svg>
+<svg>
+  <defs>
+    <path id="r40" d="M 8,2 L 10,0 L 7,-5 L 3,-7 L 3,-8 L -9,1 L -5,4 L 1,3 L 2,2 L 5,3 z">
+      <title lang="en">stone</title>
+      <title lang="es">piedra</title>
+      <title lang="de">Stein</title>
+    </path>
+  </defs>
+  <g lang="es">
+    <use id="test40" transform="translate(30 345)" href="#r40" lang="es" data-expected="name: stone"/>
+  </g>
+</svg>
+<svg>
+  <path id="test41" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="name: (empty)">
+    <title></title>
+  </path>
+</svg>
+<svg>
+  <circle id="test42" cx="10" cy="10" r="5" data-expected="name: (empty)">
+    <title> </title>
+  </circle>
+</svg>
+<svg>
+  <ellipse id="test43" cx="10" cy="100" rx="25" ry="15" data-expected="name: (empty)">
+    <title></title>
+    <desc></desc>
+  </ellipse>
+</svg>
+<svg>
+  <line id="test44" x1="10" y1="10" x2="50" y2="10" data-expected="name: (empty)">
+    <title> </title>
+    <desc></desc>
+  </line>
+</svg>
+<svg>
+  <circle id="test45" cx="10" cy="10" r="5" data-expected="name: (empty)">
+    <title></title>
+    <desc> </desc>
+  </circle>
+</svg>
+<svg>
+  <line id="test46" x1="10" y1="10" x2="50" y2="10" data-expected="name: (empty)">
+    <title> </title>
+    <desc>	</desc>
+  </line>
+</svg>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    function textAlternatives(axElement) {
+        if (!axElement)
+            return "Element not exposed";
+
+       result = axElement.title + "\n\t" + axElement.description;
+       if (accessibilityController.platformName == "mac")
+           result += "\n\t" + axElement.helpText;
+       return result;
+    }
+
+    description("This tests the accessible text alternatives results for SVG.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 46; i++) {
+            var element = document.getElementById("test" + i);
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            var result = textAlternatives(axElement);
+            debug("test" + i + ":\n\tExpected " + element.getAttribute("data-expected") + "\n\t" + result);
+        }
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

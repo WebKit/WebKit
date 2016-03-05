@@ -45,6 +45,7 @@
 #include "HTMLTableElement.h"
 #include "HostWindow.h"
 #include "RenderObject.h"
+#include "SVGElement.h"
 #include "Settings.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
@@ -132,6 +133,19 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
             return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, textUnder);
     }
 
+    if (is<SVGElement>(coreObject->element())) {
+        Vector<AccessibilityText> textOrder;
+        coreObject->accessibilityText(textOrder);
+
+        for (const auto& text : textOrder) {
+            if (text.textSource != HelpText && text.textSource != SummaryText)
+                return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, text.text);
+        }
+        // FIXME: This is to keep the next blocks from returning duplicate text.
+        // This behavior should be extended to all elements; not just SVG.
+        return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, "");
+    }
+
     if (coreObject->isImage() || coreObject->isInputImage() || coreObject->isImageMap() || coreObject->isImageMapLink()) {
         Node* node = coreObject->node();
         if (is<HTMLElement>(node)) {
@@ -167,6 +181,20 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
     Node* node = nullptr;
     if (coreObject->isAccessibilityRenderObject())
         node = coreObject->node();
+
+    if (is<SVGElement>(node)) {
+        Vector<AccessibilityText> textOrder;
+        coreObject->accessibilityText(textOrder);
+
+        for (const auto& text : textOrder) {
+            if (text.textSource == HelpText || text.textSource == SummaryText || text.textSource == TitleTagText)
+                return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, text.text);
+        }
+        // FIXME: This is to keep the next blocks from returning duplicate text.
+        // This behavior should be extended to all elements; not just SVG.
+        return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, "");
+    }
+
     if (!is<HTMLElement>(node) || coreObject->ariaRoleAttribute() != UnknownRole || coreObject->isImage())
         return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, accessibilityDescription(coreObject));
 
@@ -572,6 +600,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case DocumentRegionRole:
     case GroupRole:
     case RadioGroupRole:
+    case SVGRootRole:
     case TabPanelRole:
         return ATK_ROLE_PANEL;
     case RowHeaderRole:
@@ -620,6 +649,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
 #endif
     case DivRole:
     case PreRole:
+    case SVGTextRole:
         return ATK_ROLE_SECTION;
     case FooterRole:
         return ATK_ROLE_FOOTER;
@@ -696,6 +726,8 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
 #endif
 #if ATK_CHECK_VERSION(2, 15, 2)
     case InlineRole:
+    case SVGTextPathRole:
+    case SVGTSpanRole:
         return ATK_ROLE_STATIC;
 #endif
     default:

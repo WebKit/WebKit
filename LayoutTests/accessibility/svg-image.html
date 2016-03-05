@@ -27,10 +27,16 @@
         document.getElementById("svgimage").focus();
         var svgImage = accessibilityController.focusedElement;
         shouldBe("svgImage.role", "realImage.role");
-        shouldBe("svgImage.description", "realImage.description");
+        if (accessibilityController.platformName == "atk")
+            shouldBe("svgImage.title", "realImage.title");
+        else
+            shouldBe("svgImage.description", "realImage.description");
        
         debug("SVG Image Role: " + svgImage.role);
-        debug("SVG Image Description: " + svgImage.description);
+        if (accessibilityController.platformName == "atk")
+            debug("SVG Image Title: " + svgImage.title);
+        else
+            debug("SVG Image Description: " + svgImage.description);
     }
 
 </script>

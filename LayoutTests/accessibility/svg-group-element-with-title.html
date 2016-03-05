@@ -24,7 +24,10 @@
           debug("Verify that the SVG group is returned as an accessible element.");
           var group1 = accessibilityController.accessibleElementById("group1");
           shouldBe("group1.role", "'AXRole: AXGroup'");
-          shouldBe("group1.description", "'AXDescription: SVG TITLE 1'");
+          if (accessibilityController.platformName == "atk")
+              shouldBe("group1.title", "'AXTitle: SVG TITLE 1'");
+          else
+              shouldBe("group1.description", "'AXDescription: SVG TITLE 1'");
 
           debug("\nVerify that you can hit-test to the SVG group.");
           var hitTestElement = group1.elementAtPoint(group1.clickPointX, group1.clickPointY);

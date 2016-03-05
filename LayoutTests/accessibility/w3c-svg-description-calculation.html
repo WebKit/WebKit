@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+<svg>
+  <circle id="test1" aria-describedby="t1" cx="50" cy="100" r="15" data-expected="description: end">
+    <title>abc</title>
+    <desc>123</desc>
+  </circle>
+  <text id="t1" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test2" aria-describedby="t2" cx="50" cy="100" r="15" data-expected="description: end">
+    <desc>123</desc>
+  </circle>
+  <text id="t2" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test3" aria-describedby="t3" cx="50" cy="100" r="15" data-expected="description: end">
+    <title>abc</title>
+  </circle>
+  <text id="t3" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test4" aria-describedby="t4" cx="50" cy="100" r="15" data-expected="description: end"/>
+  <text id="t4" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test5" cx="50" cy="100" r="15" data-expected="description: 123">
+    <title>abc</title>
+    <desc>123</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test6" cx="50" cy="100" r="15" data-expected="description: 123">
+    <desc>123</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test7" aria-describedby="t7" cx="50" cy="100" r="15" data-expected="description: end">
+    <title>abc</title>
+    <desc lang="en">123</desc>
+    <desc lang="es">456</desc>
+  </circle>
+  <text id="t7" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test8" cx="50" cy="100" r="15" data-expected="description: 554">
+    <title lang="en">abc</title>
+    <title lang="de">def</title>
+    <desc lang="fr">123</desc>
+    <desc lang="en">554</desc>
+    <desc lang="es">432</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test9" cx="50" cy="100" r="15" data-expected="description: 567">
+    <desc lang="es">432</desc>
+    <desc lang="fr">123</desc>
+    <desc lang="en">567</desc>
+  </circle>
+</svg>
+<svg>
+  <g lang="fr">
+    <circle id="test10" cx="50" cy="100" r="15" data-expected="description: 123">
+      <title lang="en">abc</title>
+      <title lang="de">def</title>
+      <desc lang="fr">123</desc>
+      <desc lang="en">554</desc>
+      <desc lang="es">432</desc>
+    </circle>
+  </g>
+</svg>
+<svg>
+  <g lang="fr">
+    <circle id="test11" cx="50" cy="100" r="15" data-expected="description: 123">
+      <desc lang="es">432</desc>
+      <desc lang="fr">123</desc>
+      <desc lang="en">567</desc>
+    </circle>
+  </g>
+</svg>
+<svg>
+  <circle id="test12" aria-describedby="" cx="50" cy="100" r="15" data-expected="description: 123">
+    <title>abc</title>
+    <desc>123</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test13" aria-describedby="" cx="50" cy="100" r="15" data-expected="description: 12">
+    <desc>12</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test14" aria-describedby="" cx="50" cy="100" r="15" data-expected="description: (empty)">
+    <title>abc</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test15" aria-describedby="" cx="50" cy="100" r="15" tabindex="0" data-expected="description: (empty)"/>
+</svg>
+<svg>
+  <circle id="test16" aria-describedby="" cx="50" cy="100" r="15" data-expected="description: 222">
+    <title>abc</title>
+    <desc lang="fr">123</desc>
+    <desc lang="en">222</desc>
+    <desc lang="es">432</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test17" aria-describedby="" cx="50" cy="100" r="15" data-expected="description: 911">
+    <desc lang="fr">123</desc>
+    <desc lang="es">444</desc>
+    <desc lang="en">911</desc>
+  </circle>
+</svg>
+<svg>
+  <g lang="fr">
+    <circle id="test18" aria-describedby="" cx="50" cy="100" r="15" data-expected="description: 123">
+      <title>abc</title>
+      <desc lang="fr">123</desc>
+      <desc lang="en">222</desc>
+      <desc lang="es">432</desc>
+    </circle>
+  </g>
+</svg>
+<svg>
+  <g lang="fr">
+    <circle id="test19" aria-describedby="" cx="50" cy="100" r="15" data-expected="description: 123">
+      <desc lang="es">444</desc>
+      <desc lang="fr">123</desc>
+      <desc lang="en">911</desc>
+    </circle>
+  </g>
+</svg>
+<svg>
+  <circle id="test20" aria-describedby="t20a t20b" cx="50" cy="100" r="15" data-expected="description: the end"/>
+  <text id="t20a" x="40" y="90">the</text>
+  <text id="t20b" x="140" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test21" aria-describedby="t21a t21b" cx="50" cy="100" r="15" data-expected="description: the end"/>
+  <text id="t21a" x="40" y="90">the</text>
+  <text id="t21b" x="140" y="90" aria-describedby="t2c">end</text>
+  <text id="t21c" x="180" y="90">finish</text>
+</svg>
+<svg>
+  <circle id="test22" aria-describedby="t22a t22b" cx="50" cy="100" r="15" data-expected="description: end"/>
+  <text id="t22b" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test23" aria-labelledby="t23" cx="50" cy="100" r="15" data-expected="description: abc">
+    <title>abc</title>
+  </circle>
+  <text id="t23" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test24" aria-label="bob" cx="50" cy="100" r="15" data-expected="description: abc">
+    <title>abc</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test25" aria-labelledby="t25" cx="50" cy="100" r="15" data-expected="description: counter">
+    <title lang="es">barra</title>
+    <title lang="en">counter</title>
+    <title lang="fr">guichet</title>
+  </circle>
+  <text id="t25" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test26" aria-label="bob" cx="50" cy="100" r="15" data-expected="description: counter">
+    <title lang="fr">guichet</title>
+    <title lang="es">barra</title>
+    <title lang="en">counter</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test27" aria-labelledby="t27" cx="50" cy="100" r="15" lang="es" data-expected="description: barra">
+    <title lang="es">barra</title>
+    <title lang="en">counter</title>
+    <title lang="fr">guichet</title>
+  </circle>
+  <text id="t27" x="40" y="90">end</text>
+</svg>
+<svg>
+  <g lang="es" aria-label="hola">
+    <circle id="test28" aria-label="bob" cx="50" cy="100" r="15" data-expected="description: barra">
+      <title lang="fr">guichet</title>
+      <title lang="es">barra</title>
+      <title lang="en">counter</title>
+    </circle>
+  </g>
+</svg>
+<svg>
+  <circle id="test29" aria-labelledby="t29" cx="50" cy="100" r="15" data-expected="description: (empty)">
+    <title>abc</title>
+  </circle>
+  <text id="t29" x="40" y="90">abc</text>
+</svg>
+<svg>
+  <circle id="test30" aria-label="bob" cx="50" cy="100" r="15" data-expected="description: (empty)">
+    <title>bob</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test31" aria-labelledby="t31" cx="50" cy="100" r="15" data-expected="description: (empty)">
+    <title lang="es">soy</title>
+    <title lang="en">abc</title>
+    <title lang="fr">le</title>
+  </circle>
+  <text id="t31" x="40" y="90">abc</text> then accessible description = BLANK
+</svg>
+<svg>
+  <circle id="test32" aria-label="bob" cx="50" cy="100" r="15" data-expected="description: (empty)">
+    <title lang="en">bob</title>
+    <title lang="fr">dan</title>
+    <title lang="es">juan</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test33" aria-label="bob" cx="50" cy="100" r="15" data-expected="description: (empty)">
+    <title lang="fr">dan</title>
+    <title lang="es">juan</title>
+    <title lang="en">bob</title>
+  </circle>
+</svg>
+<svg>
+  <a id="test34" aria-labelledby="t34" aria-label="booth" href="../index.html" xlink:title="table" data-expected="description: (empty)"></a>
+  <text id="t34" x="40" y="90">end</text>
+</svg>
+<svg>
+  <a id="test35" aria-labelledby="t35" href="../index.html" xlink:title="table" data-expected="description: (empty)"></a>
+  <text id="t35" x="40" y="90">end</text>
+</svg>
+<svg>
+  <a id="test36" aria-label="booth" href="../index.html" xlink:title="table" data-expected="description: (empty)"></a>
+</svg>
+<svg>
+  <a id="test37" href="../index.html" xlink:title="table" data-expected="description: (empty)">
+    <title>counter</title>
+  </a>
+</svg>
+<svg>
+  <a id="test38" href="../index.html" xlink:title="table" data-expected="description: (empty)"></a>
+</svg>
+<svg>
+  <ellipse id="test39" cx="10" cy="100" rx="25" ry="15" data-expected="description: (empty)">
+    <title></title>
+    <desc></desc>
+  </ellipse>
+</svg>
+<svg>
+  <circle id="test40" cx="10" cy="10" r="5" data-expected="description: (empty)">
+    <title></title>
+    <desc> </desc>
+  </circle>
+</svg>
+<svg>
+  <line id="test41" x1="10" y1="10" x2="50" y2="10" data-expected="description: (empty)">
+    <title> </title>
+    <desc>	</desc>
+  </line>
+</svg>
+<svg>
+  <polygon id="test42" fill="magenta" points="850,75 958,137.5 958,262.5 850,325 742,262.6 742,137.5" data-expected="description: (empty)">
+    <desc></desc>
+  </polygon>
+</svg>
+<svg>
+  <rect id="test43" x="10" y="10" width="50" height="30" data-expected="description: (empty)">
+    <desc>     </desc>
+  </rect>
+</svg>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    function textAlternatives(axElement) {
+        if (!axElement)
+            return "Element not exposed";
+
+       result = axElement.title + "\n\t" + axElement.description;
+       if (accessibilityController.platformName == "mac")
+           result += "\n\t" + axElement.helpText;
+       return result;
+    }
+
+    description("This tests the accessible text alternatives results for SVG.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 43; i++) {
+            var element = document.getElementById("test" + i);
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            var result = textAlternatives(axElement);
+            debug("test" + i + ":\n\tExpected " + element.getAttribute("data-expected") + "\n\t" + result);
+        }
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

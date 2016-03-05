@@ -45,6 +45,7 @@
 #include "AccessibilityMenuListPopup.h"
 #include "AccessibilityProgressIndicator.h"
 #include "AccessibilityRenderObject.h"
+#include "AccessibilitySVGElement.h"
 #include "AccessibilitySVGRoot.h"
 #include "AccessibilityScrollView.h"
 #include "AccessibilityScrollbar.h"
@@ -80,6 +81,7 @@
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderView.h"
+#include "SVGElement.h"
 #include "ScrollView.h"
 #include "TextBoundaries.h"
 #include "TextIterator.h"
@@ -404,6 +406,9 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
     if (is<RenderSVGRoot>(*renderer))
         return AccessibilitySVGRoot::create(renderer);
     
+    if (is<SVGElement>(node))
+        return AccessibilitySVGElement::create(renderer);
+
     if (is<RenderBoxModelObject>(*renderer)) {
         RenderBoxModelObject& cssBox = downcast<RenderBoxModelObject>(*renderer);
         if (is<RenderListBox>(cssBox))

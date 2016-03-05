@@ -413,6 +413,7 @@ public:
     virtual bool isSVGShape() const { return false; }
     virtual bool isSVGText() const { return false; }
     virtual bool isSVGTextPath() const { return false; }
+    virtual bool isSVGTSpan() const { return false; }
     virtual bool isSVGInline() const { return false; }
     virtual bool isSVGInlineText() const { return false; }
     virtual bool isSVGImage() const { return false; }

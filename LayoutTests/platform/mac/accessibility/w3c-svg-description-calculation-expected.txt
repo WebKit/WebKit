@@ -1,0 +1,224 @@
+This tests the accessible text alternatives results for SVG.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1:
+	Expected description: end
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: end
+test2:
+	Expected description: end
+	AXTitle: 
+	AXDescription: 
+	AXHelp: end
+test3:
+	Expected description: end
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: end
+test4:
+	Expected description: end
+	AXTitle: 
+	AXDescription: 
+	AXHelp: end
+test5:
+	Expected description: 123
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: 123
+test6:
+	Expected description: 123
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 123
+test7:
+	Expected description: end
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: end
+test8:
+	Expected description: 554
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: 554
+test9:
+	Expected description: 567
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 567
+test10:
+	Expected description: 123
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 123
+test11:
+	Expected description: 123
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 123
+test12:
+	Expected description: 123
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: 123
+test13:
+	Expected description: 12
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 12
+test14:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: 
+test15:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+test16:
+	Expected description: 222
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: 222
+test17:
+	Expected description: 911
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 911
+test18:
+	Expected description: 123
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: 123
+test19:
+	Expected description: 123
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 123
+test20:
+	Expected description: the end
+	AXTitle: 
+	AXDescription: 
+	AXHelp: the end
+test21:
+	Expected description: the end
+	AXTitle: 
+	AXDescription: 
+	AXHelp: the end
+test22:
+	Expected description: end
+	AXTitle: 
+	AXDescription: 
+	AXHelp: end
+test23:
+	Expected description: abc
+	AXTitle: 
+	AXDescription: end
+	AXHelp: abc
+test24:
+	Expected description: abc
+	AXTitle: 
+	AXDescription: bob
+	AXHelp: abc
+test25:
+	Expected description: counter
+	AXTitle: 
+	AXDescription: end
+	AXHelp: counter
+test26:
+	Expected description: counter
+	AXTitle: 
+	AXDescription: bob
+	AXHelp: counter
+test27:
+	Expected description: barra
+	AXTitle: 
+	AXDescription: end
+	AXHelp: barra
+test28:
+	Expected description: barra
+	AXTitle: 
+	AXDescription: bob
+	AXHelp: barra
+test29:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: 
+test30:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: bob
+	AXHelp: 
+test31:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: 
+test32:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: bob
+	AXHelp: 
+test33:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: bob
+	AXHelp: 
+test34:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: end
+	AXHelp: 
+test35:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: end
+	AXHelp: 
+test36:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: booth
+	AXHelp: 
+test37:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: counter
+	AXHelp: 
+test38:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: table
+	AXHelp: 
+test39:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+test40:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXHelp:  
+test41:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription:  
+	AXHelp: 	
+test42:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+test43:
+	Expected description: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXHelp:      
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

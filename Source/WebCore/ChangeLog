@@ -1,3 +1,58 @@
+2016-03-05  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement missing/different accessibility API mappings for SVG
+        https://bugs.webkit.org/show_bug.cgi?id=155034
+
+        Reviewed by Chris Fleizach.
+
+        Create an AccessibilitySVGElement class for the SVG-specific mappings;
+        fix name and description mappings for ATK; add new AccessibilityRole
+        types (SVGTextRole, SVGTSpanRole, SVGTextPathRole) and map them for
+        ATK and AX API.
+
+        Tests: accessibility/w3c-svg-description-calculation.html
+               accessibility/w3c-svg-elements-not-exposed.html
+               accessibility/w3c-svg-name-calculation.html
+               accessibility/w3c-svg-presentational-role.html
+               accessibility/w3c-svg-roles.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::createFromRenderer):
+        * accessibility/AccessibilityAllInOne.cpp:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::alternativeText): Deleted.
+        (WebCore::AccessibilityNodeObject::accessibilityDescription): Deleted.
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isAccessibilitySVGElement):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole): Deleted.
+        * accessibility/AccessibilitySVGElement.cpp: Added.
+        (WebCore::AccessibilitySVGElement::AccessibilitySVGElement):
+        (WebCore::AccessibilitySVGElement::~AccessibilitySVGElement):
+        (WebCore::AccessibilitySVGElement::create):
+        (WebCore::AccessibilitySVGElement::targetForUseElement):
+        (WebCore::AccessibilitySVGElement::accessibilityText):
+        (WebCore::AccessibilitySVGElement::accessibilityDescription):
+        (WebCore::AccessibilitySVGElement::helpText):
+        (WebCore::AccessibilitySVGElement::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilitySVGElement::inheritsPresentationalRole):
+        (WebCore::AccessibilitySVGElement::determineAriaRoleAttribute):
+        (WebCore::AccessibilitySVGElement::determineAccessibilityRole):
+        * accessibility/AccessibilitySVGElement.h: Added.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetName):
+        (webkitAccessibleGetDescription):
+        (atkRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGTSpan):
+        * rendering/svg/RenderSVGTSpan.h:
+
 2016-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Support Reflect.construct

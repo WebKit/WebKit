@@ -1,0 +1,239 @@
+This tests the accessible text alternatives results for SVG.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1:
+	Expected name: end
+	AXTitle: 
+	AXDescription: end
+	AXHelp: abc
+test2:
+	Expected name: end
+	AXTitle: 
+	AXDescription: end
+	AXHelp: 
+test3:
+	Expected name: end
+	AXTitle: 
+	AXDescription: end
+	AXHelp: abc
+test4:
+	Expected name: end
+	AXTitle: 
+	AXDescription: end
+	AXHelp: 
+test5:
+	Expected name: hello
+	AXTitle: 
+	AXDescription: hello
+	AXHelp: abc
+test6:
+	Expected name: hello
+	AXTitle: 
+	AXDescription: hello
+	AXHelp: 
+test7:
+	Expected name: abc
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: 
+test8:
+	Expected name: hi
+	AXTitle: 
+	AXDescription: hi
+	AXHelp: 
+test9:
+	Expected name: hi
+	AXTitle: 
+	AXDescription: hi
+	AXHelp: 
+test10:
+	Expected name: hi
+	AXTitle: 
+	AXDescription: hi
+	AXHelp: 
+test11:
+	Expected name: hola
+	AXTitle: 
+	AXDescription: hola
+	AXHelp: 
+test12:
+	Expected name: hola
+	AXTitle: 
+	AXDescription: hola
+	AXHelp: 
+test13:
+	Expected name: hola
+	AXTitle: 
+	AXDescription: hola
+	AXHelp: 
+test14:
+	Expected name: bob
+	AXTitle: 
+	AXDescription: bob
+	AXHelp: abc
+test15:
+	Expected name: bob
+	AXTitle: 
+	AXDescription: bob
+	AXHelp: 
+test16:
+	Expected name: abc
+	AXTitle: 
+	AXDescription: abc
+	AXHelp: 
+test17:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+test18:
+	Expected name: waz up
+	AXTitle: 
+	AXDescription: waz up
+	AXHelp: 
+test19:
+	Expected name: Hallo
+	AXTitle: 
+	AXDescription: Hallo
+	AXHelp: 
+test20:
+	Expected name: the end
+	AXTitle: 
+	AXDescription: the end
+	AXHelp: 
+test21:
+	Expected name: big end
+	AXTitle: 
+	AXDescription: big end
+	AXHelp: 
+test22:
+	Expected name: big end
+	AXTitle: 
+	AXDescription: big end
+	AXHelp: 
+test23:
+	Expected name: end
+	AXTitle: 
+	AXDescription: end
+	AXHelp: 
+test24:
+	Expected name: end
+	AXTitle: 
+	AXDescription: end
+	AXHelp: 
+test25:
+	Expected name: booth
+	AXTitle: 
+	AXDescription: booth
+	AXHelp: 
+test26:
+	Expected name: table
+	AXTitle: 
+	AXDescription: table
+	AXHelp: 
+test27:
+	Expected name: counter
+	AXTitle: 
+	AXDescription: counter
+	AXHelp: 
+test28:
+	Expected name: counter
+	AXTitle: 
+	AXDescription: counter
+	AXHelp: 
+test29:
+	Expected name: counter
+	AXTitle: 
+	AXDescription: counter
+	AXHelp: 
+test30:
+	Expected name: boulder
+	AXTitle: 
+	AXDescription: boulder
+	AXHelp: 
+test31:
+	Expected name: stone
+	AXTitle: 
+	AXDescription: stone
+	AXHelp: 
+test32:
+	Expected name: pebble
+	AXTitle: 
+	AXDescription: pebble
+	AXHelp: 
+test33:
+	Expected name: rock
+	AXTitle: 
+	AXDescription: rock
+	AXHelp: 
+test34:
+	Expected name: rock
+	AXTitle: 
+	AXDescription: rock
+	AXHelp: 
+test35:
+	Expected name: stone
+	AXTitle: 
+	AXDescription: stone
+	AXHelp: 
+test36:
+	Expected name: stone
+	AXTitle: 
+	AXDescription: stone
+	AXHelp: 
+test37:
+	Expected name: piedra
+	AXTitle: 
+	AXDescription: piedra
+	AXHelp: 
+test38:
+	Expected name: piedra
+	AXTitle: 
+	AXDescription: piedra
+	AXHelp: 
+test39:
+	Expected name: stone
+	AXTitle: 
+	AXDescription: stone
+	AXHelp: 
+test40:
+	Expected name: stone
+	AXTitle: 
+	AXDescription: stone
+	AXHelp: 
+test41:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+test42:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription:  
+	AXHelp: 
+test43:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+test44:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription:  
+	AXHelp: 
+test45:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXHelp:  
+test46:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription:  
+	AXHelp: 	
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

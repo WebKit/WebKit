@@ -2181,6 +2181,9 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { RubyTextRole, NSAccessibilityGroupRole },
         { DetailsRole, NSAccessibilityGroupRole },
         { SummaryRole, NSAccessibilityGroupRole },
+        { SVGTextPathRole, NSAccessibilityGroupRole },
+        { SVGTextRole, NSAccessibilityGroupRole },
+        { SVGTSpanRole, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     

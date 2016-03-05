@@ -42,6 +42,7 @@
 #include "AccessibilityObject.cpp"
 #include "AccessibilityProgressIndicator.cpp"
 #include "AccessibilityRenderObject.cpp"
+#include "AccessibilitySVGElement.cpp"
 #include "AccessibilitySVGRoot.cpp"
 #include "AccessibilityScrollView.cpp"
 #include "AccessibilityScrollbar.cpp"

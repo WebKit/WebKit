@@ -1,0 +1,37 @@
+This tests that SVG elements with role presentation are not exposed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1: Element not exposed
+test2: Element not exposed
+test3: Element not exposed
+test4: Element not exposed
+test5: Element not exposed
+test6: Element not exposed
+test7: Element not exposed
+test8: Element not exposed
+test9: Element not exposed
+test10: Element not exposed
+test11: Element not exposed
+test12: Element not exposed
+test13: Element not exposed
+test14: Element not exposed
+test15: Element not exposed
+test16: Element not exposed
+test17: Element not exposed
+test18: Element not exposed
+test19: Element not exposed
+test20: Element not exposed
+test21: Element not exposed
+test22: Element not exposed
+test23: Element not exposed
+test24: Element not exposed
+test25: Element not exposed
+test26: Element not exposed
+test27: Element not exposed
+test28: Element not exposed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

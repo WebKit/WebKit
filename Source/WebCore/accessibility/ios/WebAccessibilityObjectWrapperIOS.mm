@@ -857,6 +857,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case SummaryRole:
         case SystemWideRole:
         case SVGRootRole:
+        case SVGTextPathRole:
+        case SVGTextRole:
+        case SVGTSpanRole:
         case TabGroupRole:
         case TabListRole:
         case TabPanelRole:
