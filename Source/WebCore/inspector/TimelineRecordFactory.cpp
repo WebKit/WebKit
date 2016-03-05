@@ -99,7 +99,7 @@ Ref<InspectorObject> TimelineRecordFactory::createTimerInstallData(int timerId, 
 {
     Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger(ASCIILiteral("timerId"), timerId);
-    data->setInteger(ASCIILiteral("timeout"), timeout.count());
+    data->setInteger(ASCIILiteral("timeout"), (int)timeout.count());
     data->setBoolean(ASCIILiteral("singleShot"), singleShot);
     return data;
 }
