@@ -1,0 +1,3 @@
+
+PASS setAttribute and removeAttribute must enqueue and invoke attributeChangedCallback 
+

@@ -1,3 +1,68 @@
+2016-03-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add basic support for attributeChanged lifecycle callback
+        https://bugs.webkit.org/show_bug.cgi?id=155011
+
+        Reviewed by Antti Koivisto.
+
+        Add basic support for attributeChangedCallback in setAttribute, removeAttribute, setAttributeNS,
+        remoteAttributeNS, setAttributeNode, and removeAttributeNS. There are many other DOM APIs that
+        could modify attributes but we would annotate those APIs in a separate patch to limit the scope
+        of this change.
+
+        In order to invoke the lifecycle callback right before returning to the author script, allocate
+        an instance of CustomElementLifecycleProcessingStack in each of these functions' binding code.
+        The stack object's destructor invokes all callbacks enqueued by the DOM API if there are any.
+
+        Spec: https://w3c.github.io/webcomponents/spec/custom/#dfn-attribute-changed-callback
+
+        Tests: fast/custom-elements/attribute-changed-callback.html
+               fast/custom-elements/lifecycle-callback-timing.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::attributeChanged): Added. Invokes attributeChangedCallback.
+        * bindings/js/JSCustomElementInterface.h:
+        * bindings/js/JSMainThreadExecState.h:
+        (JSMainThreadNullState): Allocate an instance of CustomElementLifecycleProcessingStack in GObject
+        and Objective-C binding code for consistency with JavaScript. We can't do this in JavaScript
+        because there is no RAII object all functions, getters, and setters allocate (for a good reason).
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Generate an instance of CustomElementLifecycleProcessingStack when
+        NeedsLifecycleProcessingStack is specified as an extended IDL attribute.
+        * bindings/scripts/IDLAttributes.txt: Added NeedsLifecycleProcessingStack.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNeedsLifecycleProcessingStack):
+        * bindings/scripts/test/TestObj.idl: Added a test for NeedsLifecycleProcessingStack.
+
+        * dom/DOMAllInOne.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged): Enqueue attributeChanged callback if the context object
+        is a custom element and there is a CustomElementLifecycleProcessingStack allocated in the stack.
+        * dom/Element.idl:
+
+        * dom/LifecycleCallbackQueue.cpp: Added.
+        (WebCore::LifecycleQueueItem): Added.
+        (WebCore::LifecycleQueueItem::LifecycleQueueItem): Added.
+        (WebCore::LifecycleQueueItem::invoke): Added.
+        (WebCore::LifecycleCallbackQueue::LifecycleCallbackQueue): Added.
+        (WebCore::LifecycleCallbackQueue::~LifecycleCallbackQueue): Added.
+        (WebCore::LifecycleCallbackQueue::enqueueAttributeChangedCallback): Added.
+        (WebCore::LifecycleCallbackQueue::invokeAll): Added.
+        (WebCore::CustomElementLifecycleProcessingStack::ensureCurrentQueue): Added. As noted in FIXME,
+        the early exit in the code is necessary only because we haven't added NeedsLifecycleProcessingStack
+        in all places. It should go away in a follow up patch.
+        (WebCore::CustomElementLifecycleProcessingStack::processQueue): Added.
+        * dom/LifecycleCallbackQueue.h: Added.
+        (WebCore::CustomElementLifecycleProcessingStack): This is a light weight RAII object the binding
+        code will allocate in order to queue up lifecycle callbacks. We don't use Ref or std::unique_ptr
+        in m_queue to avoid generating the code to destruct LifecycleCallbackQueue everywhere.
+        (WebCore::CustomElementLifecycleProcessingStack::CustomElementLifecycleProcessingStack): Added.
+        (WebCore::CustomElementLifecycleProcessingStack::~CustomElementLifecycleProcessingStack): Added.
+        (WebCore::CustomElementLifecycleProcessingStack::hasCurrentProcessingStack): Added.
+
 2016-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Scrollbars are broken again with GTK+ >= 3.19.11

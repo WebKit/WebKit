@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: Lifecycle callback must be invoked before returning to author scripts</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="Lifecycle callbacks must be invoked before returning to author scripts">
+<link rel="help" href="https://w3c.github.io/webcomponents/spec/custom/#enqueuing-and-invoking-callbacks">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../resources/testharness.css'>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+class MyCustomElement extends HTMLElement {
+    attributeChangedCallback(...args) {
+        this.handler(...args);
+    }
+
+    handler() { }
+}
+document.defineElement('my-custom-element', MyCustomElement);
+
+test(function () {
+    var instance = document.createElement('my-custom-element');
+    var anotherInstance = document.createElement('my-custom-element');
+
+    var callbackOrder = [];
+    instance.handler = function () {
+        callbackOrder.push([this, 'begin']);
+        anotherInstance.setAttribute('data-title', 'baz');
+        callbackOrder.push([this, 'end']);
+    }
+    anotherInstance.handler = function () {
+        callbackOrder.push([this, 'begin']);
+        callbackOrder.push([this, 'end']);
+    }
+
+    instance.setAttribute('title', 'foo');
+    assert_equals(callbackOrder.length, 4);
+
+    assert_array_equals(callbackOrder[0], [instance, 'begin']);
+    assert_array_equals(callbackOrder[1], [anotherInstance, 'begin']);
+    assert_array_equals(callbackOrder[2], [anotherInstance, 'end']);
+    assert_array_equals(callbackOrder[3], [instance, 'end']);
+
+}, 'setAttribute and removeAttribute must enqueue and invoke attributeChangedCallback');
+
+</script>
+</body>
+</html>

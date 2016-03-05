@@ -101,6 +101,50 @@ RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& t
     return wrappedElement;
 }
 
+void JSCustomElementInterface::attributeChanged(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
+{
+    if (!canInvokeCallback())
+        return;
+
+    Ref<JSCustomElementInterface> protect(*this);
+
+    JSLockHolder lock(m_isolatedWorld->vm());
+
+    ScriptExecutionContext* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    ASSERT(context->isDocument());
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, *m_isolatedWorld);
+    ExecState* state = globalObject->globalExec();
+
+    JSObject* jsElement = asObject(toJS(state, globalObject, &element));
+
+    PropertyName attributeChanged(Identifier::fromString(state, "attributeChangedCallback"));
+    JSValue callback = jsElement->get(state, attributeChanged);
+    CallData callData;
+    CallType callType = getCallData(callback, callData);
+    if (callType == CallTypeNone)
+        return;
+
+    const AtomicString& namespaceURI = attributeName.namespaceURI();
+    MarkedArgumentBuffer args;
+    args.append(jsStringWithCache(state, attributeName.localName()));
+    args.append(oldValue == nullAtom ? jsNull() : jsStringWithCache(state, oldValue));
+    args.append(newValue == nullAtom ? jsNull() : jsStringWithCache(state, newValue));
+    args.append(namespaceURI == nullAtom ? jsNull() : jsStringWithCache(state, attributeName.namespaceURI()));
+
+    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
+
+    NakedPtr<Exception> exception;
+    JSMainThreadExecState::call(state, callback, callType, callData, jsElement, args, exception);
+
+    InspectorInstrumentation::didCallFunction(cookie, context);
+
+    if (exception)
+        reportException(state, exception);
+}
+
 } // namespace WebCore
 
 #endif

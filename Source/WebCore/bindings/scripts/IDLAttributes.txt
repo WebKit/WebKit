@@ -91,6 +91,7 @@ JSLegacyParent=*
 LenientThis
 MasqueradesAsUndefined
 NamedConstructor=*
+InvokesCustomElementLifecycleCallbacks
 NewImpurePropertyFiresWatchpoints
 NewObject
 NoInterfaceObject

@@ -37,6 +37,7 @@
 #include "ClientRectList.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"
+#include "CustomElementDefinitions.h"
 #include "DOMTokenList.h"
 #include "Dictionary.h"
 #include "DocumentSharedObjectPool.h"
@@ -61,6 +62,7 @@
 #include "IdTargetObserverRegistry.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
+#include "LifecycleCallbackQueue.h"
 #include "MainFrame.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
@@ -1261,6 +1263,15 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
     parseAttribute(name, newValue);
 
     document().incDOMTreeVersion();
+
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (UNLIKELY(isCustomElement())) {
+        auto* definitions = document().customElementDefinitions();
+        auto* interface = definitions->findInterface(tagQName());
+        RELEASE_ASSERT(interface);
+        LifecycleCallbackQueue::enqueueAttributeChangedCallback(*this, *interface, name, oldValue, newValue);
+    }
+#endif
 
     if (valueIsSameAsBefore)
         return;

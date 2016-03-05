@@ -50,6 +50,7 @@ class DOMWrapperWorld;
 class Element;
 class JSDOMGlobalObject;
 class MathMLElement;
+class QualifiedName;
 class SVGElement;
 
 class JSCustomElementInterface : public RefCounted<JSCustomElementInterface>, public ActiveDOMCallback {
@@ -61,6 +62,8 @@ public:
 
     enum class ShouldClearException { Clear, DoNotClear };
     RefPtr<Element> constructElement(const AtomicString&, ShouldClearException);
+
+    void attributeChanged(Element&, const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
 
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
     JSC::JSObject* constructor() { return m_constructor.get(); }

@@ -2913,6 +2913,13 @@ sub GenerateImplementation
 
             $implIncludes{"<runtime/Error.h>"} = 1;
 
+            if ($function->signature->extendedAttributes->{"InvokesCustomElementLifecycleCallbacks"}) {
+                push(@implContent, "#if ENABLE(CUSTOM_ELEMENTS)\n");
+                push(@implContent, "    CustomElementLifecycleProcessingStack customElementLifecycleProcessingStack;\n");
+                push(@implContent, "#endif\n");
+                $implIncludes{"LifecycleCallbackQueue.h"} = 1;
+            }
+
             if ($function->isStatic) {
                 if ($isCustom) {
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);

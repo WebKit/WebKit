@@ -1,3 +1,17 @@
+2016-03-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add basic support for attributeChanged lifecycle callback
+        https://bugs.webkit.org/show_bug.cgi?id=155011
+
+        Reviewed by Antti Koivisto.
+
+        Added a test for attributeChangedCallback and a test for the timing of lifecycle callbacks in general.
+
+        * fast/custom-elements/attribute-changed-callback-expected.txt: Added.
+        * fast/custom-elements/attribute-changed-callback.html: Added.
+        * fast/custom-elements/lifecycle-callback-timing-expected.txt: Added.
+        * fast/custom-elements/lifecycle-callback-timing.html: Added.
+
 2016-03-04  Tim Horton  <timothy_horton@apple.com>
 
         Temporarily skip attachment tests on iOS
