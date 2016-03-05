@@ -43,5 +43,5 @@ WEBCORE_EXPORT NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLConnect
 #endif // __OBJC__
 
 namespace WebCore {
-void adjustMIMETypeIfNecessary(CFURLResponseRef);
+WEBCORE_EXPORT void adjustMIMETypeIfNecessary(CFURLResponseRef);
 }

@@ -1,3 +1,18 @@
+2016-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Fix file mime-types when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=155058
+
+        Reviewed by Andy Estes.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        Call adjustMIMETypeIfNecessary like we do in connection didReceiveResponse in 
+        WebCoreResourceHandleAsOperationQueueDelegate.mm.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        Don't content sniff file urls.  This check is analogous to ResourceHandle::shouldContentSniffURL.
+
 2016-03-04  Sam Weinig  <sam@webkit.org>
 
         [WebKit2] Add WebKit2 equivalent of -[WebView _insertNewlineInQuotedContent]

@@ -97,7 +97,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
 #endif
     
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::UpdateHTTPBody);
-    if (shouldContentSniff == WebCore::DoNotSniffContent) {
+    if (shouldContentSniff == WebCore::DoNotSniffContent || url.protocolIs("file")) {
         NSMutableURLRequest *mutableRequest = [[nsRequest mutableCopy] autorelease];
         [mutableRequest _setProperty:@(NO) forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
         nsRequest = mutableRequest;

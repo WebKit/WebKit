@@ -46,6 +46,7 @@
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/URL.h>
+#import <WebCore/WebCoreURLResponse.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -166,6 +167,12 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
     auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
     if (auto* networkDataTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier, storedCredentials)) {
         ASSERT(isMainThread());
+        
+        // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
+        int statusCode = [response respondsToSelector:@selector(statusCode)] ? [(id)response statusCode] : 0;
+        if (statusCode != 304)
+            WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse);
+        
         WebCore::ResourceResponse resourceResponse(response);
         copyTimingData([dataTask _timingData], resourceResponse.resourceLoadTiming());
         auto completionHandlerCopy = Block_copy(completionHandler);
