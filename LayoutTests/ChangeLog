@@ -1,3 +1,11 @@
+2016-03-04  Tim Horton  <timothy_horton@apple.com>
+
+        Temporarily skip attachment tests on iOS
+
+        * platform/ios-simulator/TestExpectations:
+        There's no point in running these quite yet (I'm surprised they weren't already skipped).
+        We'll turn them back on soon.
+
 2016-03-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update defineCustomElement according to the spec rewrite

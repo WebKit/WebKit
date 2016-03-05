@@ -247,6 +247,9 @@ webkit.org/b/152993 http/tests/contentdispositionattachmentsandbox/form-submissi
 fast/text/complex-small-caps-non-bmp-capitalize.html [ Skip ]
 fast/text/all-small-caps-whitespace.html [ Skip ]
 
+# <attachment> support is currently half-baked
+fast/attachment [ Skip ]
+
 ###
 # Known failures
 ##
