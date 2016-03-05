@@ -1,3 +1,21 @@
+2016-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Stub API to support a debug menu option for measuring resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=154998
+        <rdar://problem/24944604>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::resourceLoadStatisticsEnabled): Added stub.
+        (API::WebsiteDataStore::setResourceLoadStatisticsEnabled): Ditto.
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetResourceLoadStatisticsEnabled): Added method that calls through
+        to the underlying APIWebsiteDataStore class.
+        (WKWebsiteDataStoreGetResourceLoadStatisticsEnabled): Ditto.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+
 2016-03-03  Enrica Casucci  <enrica@apple.com>
 
         Add a mechanism to customize the long press action.

@@ -69,6 +69,16 @@ bool WebsiteDataStore::isPersistent()
     return m_websiteDataStore->isPersistent();
 }
 
+bool WebsiteDataStore::resourceLoadStatisticsEnabled() const
+{
+    return m_websiteDataStore->resourceLoadStatisticsEnabled();
+}
+
+void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
+{
+    m_websiteDataStore->setResourceLoadStatisticsEnabled(enabled);
+}
+    
 #if !PLATFORM(COCOA) && !PLATFORM(EFL) && !PLATFORM(GTK)
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
 {

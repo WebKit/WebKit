@@ -43,3 +43,14 @@ WKWebsiteDataStoreRef WKWebsiteDataStoreCreateNonPersistentDataStore()
 {
     return WebKit::toAPI(&API::WebsiteDataStore::createNonPersistentDataStore().leakRef());
 }
+
+void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enable)
+{
+    WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsEnabled(enable);
+}
+
+bool WKWebsiteDataStoreGetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef)
+{
+    return WebKit::toImpl(dataStoreRef)->resourceLoadStatisticsEnabled();
+}
+
