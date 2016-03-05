@@ -2886,6 +2886,16 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyColumnWidth: // auto | <length>
         parsedValue = parseColumnWidth();
         break;
+    case CSSPropertyObjectPosition: {
+        RefPtr<CSSPrimitiveValue> val1;
+        RefPtr<CSSPrimitiveValue> val2;
+        parseFillPosition(*m_valueList, val1, val2);
+        if (val1) {
+            addProperty(CSSPropertyObjectPosition, createPrimitiveValuePair(val1.release(), val2.release()), important);
+            return true;
+        }
+        return false;
+        }
     // End of CSS3 properties
 
     case CSSPropertyWillChange: // auto | [scroll-position | contents | <custom-ident>]#

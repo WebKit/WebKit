@@ -40,6 +40,7 @@
 #include "Length.h"
 #include "LengthBox.h"
 #include "LengthFunctions.h"
+#include "LengthPoint.h"
 #include "LengthSize.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
@@ -1031,8 +1032,9 @@ public:
     TextOrientation textOrientation() const { return static_cast<TextOrientation>(rareInheritedData->m_textOrientation); }
 
     ObjectFit objectFit() const { return static_cast<ObjectFit>(rareNonInheritedData->m_objectFit); }
-    
-    // Return true if any transform related property (currently transform, transformStyle3D or perspective) 
+    LengthPoint objectPosition() const { return rareNonInheritedData->m_objectPosition; }
+
+    // Return true if any transform related property (currently transform, transformStyle3D or perspective)
     // indicates that we are transforming
     bool hasTransformRelatedProperty() const { return hasTransform() || preserves3D() || hasPerspective(); }
 
@@ -1601,6 +1603,7 @@ public:
     bool setTextOrientation(TextOrientation);
 
     void setObjectFit(ObjectFit fit) { SET_VAR(rareNonInheritedData, m_objectFit, fit); }
+    void setObjectPosition(const LengthPoint& position) { SET_VAR(rareNonInheritedData, m_objectPosition, position); }
 
     void setRubyPosition(RubyPosition position) { SET_VAR(rareInheritedData, m_rubyPosition, position); }
 
@@ -1891,6 +1894,7 @@ public:
     static TextOrientation initialTextOrientation() { return TextOrientation::
     Mixed; }
     static ObjectFit initialObjectFit() { return ObjectFitFill; }
+    static LengthPoint initialObjectPosition() { return LengthPoint(Length(50.0f, Percent), Length(50.0f, Percent)); }
     static EEmptyCell initialEmptyCells() { return SHOW; }
     static EListStylePosition initialListStylePosition() { return OUTSIDE; }
     static EListStyleType initialListStyleType() { return Disc; }

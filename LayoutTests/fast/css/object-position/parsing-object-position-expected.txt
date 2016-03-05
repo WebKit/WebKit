@@ -1,0 +1,28 @@
+This tests checks that all of the input values for object-position parse correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testComputedStyle(";") is "50% 50%"
+PASS test("object-position: inherit;") is "inherit"
+PASS test("object-position: initial;") is "initial"
+PASS test("object-position: 23px;") is "23px 50%"
+PASS test("object-position: center 23px;") is "50% 23px"
+PASS test("object-position: 50% 23px;") is "50% 23px"
+PASS test("object-position: 50% left;") is ""
+PASS test("object-position: left 10px top 15px;") is "left 10px top 15px"
+PASS test("object-position: right 10px bottom 15px;") is "right 10px bottom 15px"
+PASS testComputedStyle("object-position: bottom 20%;") is "50% 50%"
+PASS testComputedStyle("object-position: right 20%;") is "100% 20%"
+PASS testComputedStyle("object-position: right") is "100% 50%"
+PASS testComputedStyle("object-position: center bottom 20%;") is "50% 80%"
+PASS testComputedStyle("object-position: right bottom") is "100% 100%"
+PASS testComputedStyle("object-position: left 10px top 15px;") is "10px 15px"
+PASS testComputedStyle("object-position: right 10px bottom 15px;") is "calc(100% - 10px) calc(100% - 15px)"
+PASS testComputedStyle("object-position: bottom 20% right -20px;") is "calc(100% - -20px) 80%"
+PASS testComputedStyle("object-position: calc(100% - 20px) calc(100% - 10%)") is "calc(100% - 20px) 90%"
+PASS testComputedStyle("object-position: right calc(100% - 20px) bottom calc(100% - 10%)") is "calc(100% - (100% - 20px)) 10%"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

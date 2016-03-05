@@ -809,6 +809,7 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, unsigned& chan
         || rareNonInheritedData->userDrag != other.rareNonInheritedData->userDrag
         || rareNonInheritedData->m_borderFit != other.rareNonInheritedData->m_borderFit
         || rareNonInheritedData->m_objectFit != other.rareNonInheritedData->m_objectFit
+        || rareNonInheritedData->m_objectPosition != other.rareNonInheritedData->m_objectPosition
         || rareInheritedData->m_imageRendering != other.rareInheritedData->m_imageRendering)
         return true;
 

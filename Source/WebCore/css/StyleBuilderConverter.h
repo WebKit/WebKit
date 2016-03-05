@@ -56,7 +56,7 @@ namespace WebCore {
 // Note that we assume the CSS parser only allows valid CSSValue types.
 class StyleBuilderConverter {
 public:
-    static Length convertLength(StyleResolver&, CSSValue&);
+    static Length convertLength(StyleResolver&, const CSSValue&);
     static Length convertLengthOrAuto(StyleResolver&, CSSValue&);
     static Length convertLengthSizing(StyleResolver&, CSSValue&);
     static Length convertLengthMaxSizing(StyleResolver&, CSSValue&);
@@ -64,6 +64,7 @@ public:
     template <typename T> static T convertLineWidth(StyleResolver&, CSSValue&);
     static float convertSpacing(StyleResolver&, CSSValue&);
     static LengthSize convertRadius(StyleResolver&, CSSValue&);
+    static LengthPoint convertObjectPosition(StyleResolver&, CSSValue&);
     static TextDecoration convertTextDecoration(StyleResolver&, CSSValue&);
     template <typename T> static T convertNumber(StyleResolver&, CSSValue&);
     template <typename T> static T convertNumberOrAuto(StyleResolver&, CSSValue&);
@@ -147,6 +148,10 @@ private:
 #if ENABLE(CSS_SCROLL_SNAP)
     static Length parseSnapCoordinate(StyleResolver&, const CSSValue&);
 #endif
+
+    static Length convertTo100PercentMinusLength(const Length&);
+    static Length convertPositionComponent(StyleResolver&, const CSSPrimitiveValue&);
+
 #if ENABLE(CSS_GRID_LAYOUT)
     static GridLength createGridTrackBreadth(CSSPrimitiveValue&, StyleResolver&);
     static GridTrackSize createGridTrackSize(CSSValue&, StyleResolver&);
@@ -157,7 +162,7 @@ private:
     static CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(StyleResolver&);
 };
 
-inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver, CSSValue& value)
+inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     CSSToLengthConversionData conversionData = styleResolver.useSVGZoomRulesForLength() ?
@@ -295,6 +300,54 @@ inline LengthSize StyleBuilderConverter::convertRadius(StyleResolver& styleResol
         return LengthSize(Length(0, Fixed), Length(0, Fixed));
 
     return LengthSize(radiusWidth, radiusHeight);
+}
+
+inline Length StyleBuilderConverter::convertTo100PercentMinusLength(const Length& length)
+{
+    if (length.isPercent())
+        return Length(100 - length.value(), Percent);
+    
+    // Turn this into a calc expression: calc(100% - length)
+    auto lhs = std::make_unique<CalcExpressionLength>(Length(100, Percent));
+    auto rhs = std::make_unique<CalcExpressionLength>(length);
+    auto op = std::make_unique<CalcExpressionBinaryOperation>(WTFMove(lhs), WTFMove(rhs), CalcSubtract);
+    return Length(CalculationValue::create(WTFMove(op), CalculationRangeAll));
+}
+
+inline Length StyleBuilderConverter::convertPositionComponent(StyleResolver& styleResolver, const CSSPrimitiveValue& value)
+{
+    Length length;
+
+    auto* lengthValue = &value;
+    bool relativeToTrailingEdge = false;
+    
+    if (value.isPair()) {
+        auto& first = *value.getPairValue()->first();
+        if (first.getValueID() == CSSValueRight || first.getValueID() == CSSValueBottom)
+            relativeToTrailingEdge = true;
+
+        lengthValue = value.getPairValue()->second();
+    }
+
+    length = convertLength(styleResolver, *lengthValue);
+
+    if (relativeToTrailingEdge)
+        length = convertTo100PercentMinusLength(length);
+
+    return length;
+}
+
+inline LengthPoint StyleBuilderConverter::convertObjectPosition(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    Pair* pair = primitiveValue.getPairValue();
+    if (!pair || !pair->first() || !pair->second())
+        return RenderStyle::initialObjectPosition();
+
+    Length lengthX = convertPositionComponent(styleResolver, *pair->first());
+    Length lengthY = convertPositionComponent(styleResolver, *pair->second());
+
+    return LengthPoint(lengthX, lengthY);
 }
 
 inline TextDecoration StyleBuilderConverter::convertTextDecoration(StyleResolver&, CSSValue& value)

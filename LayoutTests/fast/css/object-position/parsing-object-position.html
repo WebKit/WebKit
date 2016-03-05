@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("This tests checks that all of the input values for object-position parse correctly.");
+
+            function test(value)
+            {
+                var div = document.createElement("div");
+                div.setAttribute("style", value);
+                document.body.appendChild(div);
+
+                var result = div.style.getPropertyValue("object-position");
+                document.body.removeChild(div);
+                return result;
+            }
+
+            function testComputedStyle(value)
+            {
+                var div = document.createElement("div");
+                div.setAttribute("style", value);
+                document.body.appendChild(div);
+
+                var result = window.getComputedStyle(div).objectPosition;
+                document.body.removeChild(div);
+                return result;
+            }
+
+            shouldBe('testComputedStyle(";")', '"50% 50%"');
+            shouldBe('test("object-position: inherit;")', '"inherit"');
+            shouldBe('test("object-position: initial;")', '"initial"');
+            
+            shouldBeEqualToString('test("object-position: 23px;")', '23px 50%');
+            shouldBeEqualToString('test("object-position: center 23px;")', '50% 23px');
+            shouldBeEqualToString('test("object-position: 50% 23px;")', '50% 23px');
+            shouldBeEqualToString('test("object-position: 50% left;")', '');
+            
+            shouldBeEqualToString('test("object-position: left 10px top 15px;")', 'left 10px top 15px');
+            shouldBeEqualToString('test("object-position: right 10px bottom 15px;")', 'right 10px bottom 15px');
+
+            shouldBeEqualToString('testComputedStyle("object-position: bottom 20%;")', '50% 50%');
+            shouldBeEqualToString('testComputedStyle("object-position: right 20%;")', '100% 20%');
+            shouldBeEqualToString('testComputedStyle("object-position: right")', '100% 50%');
+            shouldBeEqualToString('testComputedStyle("object-position: center bottom 20%;")', '50% 80%');
+            shouldBeEqualToString('testComputedStyle("object-position: right bottom")', '100% 100%');
+
+            shouldBeEqualToString('testComputedStyle("object-position: left 10px top 15px;")', '10px 15px');
+            shouldBeEqualToString('testComputedStyle("object-position: right 10px bottom 15px;")', 'calc(100% - 10px) calc(100% - 15px)');
+            shouldBeEqualToString('testComputedStyle("object-position: bottom 20% right -20px;")', 'calc(100% - -20px) 80%');
+            shouldBeEqualToString('testComputedStyle("object-position: calc(100% - 20px) calc(100% - 10%)")', 'calc(100% - 20px) 90%');
+            shouldBeEqualToString('testComputedStyle("object-position: right calc(100% - 20px) bottom calc(100% - 10%)")', 'calc(100% - (100% - 20px)) 10%');
+            
+        </script>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

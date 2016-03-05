@@ -2105,6 +2105,7 @@ set(WebCore_SOURCES
     platform/FileSystem.cpp
     platform/Language.cpp
     platform/Length.cpp
+    platform/LengthPoint.cpp
     platform/LengthSize.cpp
     platform/LinkHash.cpp
     platform/Logging.cpp

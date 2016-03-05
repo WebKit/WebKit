@@ -32,6 +32,7 @@
 #include "CursorData.h"
 #include "DataRef.h"
 #include "FillLayer.h"
+#include "LengthPoint.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
 #include "ShapeValue.h"
@@ -154,6 +155,7 @@ public:
     NinePieceImage m_maskBoxImage;
 
     LengthSize m_pageSize;
+    LengthPoint m_objectPosition;
 
 #if ENABLE(CSS_SHAPES)
     RefPtr<ShapeValue> m_shapeOutside;

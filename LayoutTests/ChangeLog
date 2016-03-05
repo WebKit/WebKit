@@ -1,3 +1,15 @@
+2016-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Add parsing support for object-position
+        https://bugs.webkit.org/show_bug.cgi?id=155065
+
+        Reviewed by Sam Weinig.
+        
+        object-position parsing test.
+
+        * fast/css/object-position/parsing-object-position-expected.txt: Added.
+        * fast/css/object-position/parsing-object-position.html: Added.
+
 2016-03-05  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement missing/different accessibility API mappings for SVG
