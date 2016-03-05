@@ -44,11 +44,17 @@
 
                     { "name": "bot407", "platform": "ios-9" },
                     { "name": "bot197", "platform": "ios-simulator-9" },
+                    { "name": "bot329", "platform": "ios-simulator-9" },
                     { "name": "bot402", "platform": "ios-simulator-9" },
                     { "name": "bot403", "platform": "ios-simulator-9" },
+                    { "name": "bot404", "platform": "ios-simulator-9" },
                     { "name": "bot215", "platform": "ios-simulator-9" },
                     { "name": "bot216", "platform": "ios-simulator-9" },
                     { "name": "bot217", "platform": "ios-simulator-9" },
+                    { "name": "bot651", "platform": "ios-simulator-9" },
+                    { "name": "bot652", "platform": "ios-simulator-9" },
+                    { "name": "bot653", "platform": "ios-simulator-9" },
+                    { "name": "bot654", "platform": "ios-simulator-9" },
 
                     { "name": "bot516", "platform": "win" },
                     { "name": "bot514", "platform": "win" },
@@ -212,16 +218,34 @@
                       "slavenames": ["bot402", "bot403"]
                     },
                     {
+                      "name": "Apple iOS 9 Simulator Debug (Build)", "type": "Build", "builddir": "ios-simulator-9-debug",
+                      "platform": "ios-simulator-9", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["ios-simulator-9-debug-tests-wk1", "ios-simulator-9-debug-tests-wk2"],
+                      "slavenames": ["bot329", "bot404"]
+                    },
+                    {
                       "name": "Apple iOS 9 Simulator Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "ios-simulator-9-release-tests-wk1",
                       "platform": "ios-simulator-9", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot197", "bot215"]
                     },
                     {
+                      "name": "Apple iOS 9 Simulator Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "ios-simulator-9-debug-tests-wk1",
+                      "platform": "ios-simulator-9", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot216", "bot217"]
+                    },
+                    {
                       "name": "Apple iOS 9 Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-9-release-tests-wk2",
                       "platform": "ios-simulator-9", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot216", "bot217"]
+                      "slavenames": ["bot651", "bot652"]
+                    },
+                    {
+                      "name": "Apple iOS 9 Simulator Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-9-debug-tests-wk2",
+                      "platform": "ios-simulator-9", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot653", "bot654"]
                     },
                     {
                       "name": "Apple Win Release (Build)", "type": "Build", "builddir": "win-release",
@@ -335,6 +359,9 @@
                     { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-9", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple iOS 9 Simulator Release (Build)"]
                     },
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-9", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple iOS 9 Simulator Debug (Build)"]
+                    },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]
                     },
@@ -389,8 +416,14 @@
                     { "type": "Triggerable", "name": "ios-simulator-9-release-tests-wk1",
                       "builderNames": ["Apple iOS 9 Simulator Release WK1 (Tests)"]
                     },
+                    { "type": "Triggerable", "name": "ios-simulator-9-debug-tests-wk1",
+                      "builderNames": ["Apple iOS 9 Simulator Debug WK1 (Tests)"]
+                    },
                     { "type": "Triggerable", "name": "ios-simulator-9-release-tests-wk2",
                       "builderNames": ["Apple iOS 9 Simulator Release WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "ios-simulator-9-debug-tests-wk2",
+                      "builderNames": ["Apple iOS 9 Simulator Debug WK2 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
                       "builderNames": ["Apple Win 7 Release (Tests)"]
