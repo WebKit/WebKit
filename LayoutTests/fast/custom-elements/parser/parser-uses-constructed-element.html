@@ -25,7 +25,7 @@ class InstantiatesItselfBeforeSuper extends HTMLElement {
         elementCreatedBySuperCall = this;
     }
 };
-document.defineCustomElement('instantiates-itself-before-super', InstantiatesItselfBeforeSuper);
+document.defineElement('instantiates-itself-before-super', InstantiatesItselfBeforeSuper);
 
 let shouldCreateAnotherInstance = true;
 let anotherInstance = undefined;
@@ -42,7 +42,7 @@ class ReturnsAnotherInstance extends HTMLElement {
             return this;
     }
 };
-document.defineCustomElement('returns-another-instance', ReturnsAnotherInstance);
+document.defineElement('returns-another-instance', ReturnsAnotherInstance);
 
 </script>
 <instantiates-itself-before-super></instantiates-itself-before-super>

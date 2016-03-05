@@ -1,3 +1,30 @@
+2016-03-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update defineCustomElement according to the spec rewrite
+        https://bugs.webkit.org/show_bug.cgi?id=155010
+        <rdar://problem/24970878>
+
+        Reviewed by Chris Dumez.
+
+        Update the tests for the rename and semantics change of defineCustomElement and HTMLElement constructor.
+
+        * fast/custom-elements/Document-createElement.html:
+        * fast/custom-elements/Document-defineCustomElement-expected.txt: Removed.
+        * fast/custom-elements/Document-defineCustomElement.html: Removed.
+        * fast/custom-elements/Document-defineElement-expected.txt: Renamed from LayoutTests/fast/custom-elements/Document-defineCustomElement-expected.txt.
+        * fast/custom-elements/Document-defineElement.html: Renamed from LayoutTests/fast/custom-elements/Document-defineCustomElement.html.
+        Also added a test case for defining multiple custom elements with a single class, which must throw.
+        * fast/custom-elements/HTMLElement-constructor-expected.txt:
+        * fast/custom-elements/HTMLElement-constructor.html:
+        Removed test cases for the tag name in the first argument as well as ones that associate a single class with multiple tag names.
+        * fast/custom-elements/parser/parser-constructs-custom-element-in-document-write.html:
+        * fast/custom-elements/parser/parser-constructs-custom-element-synchronously.html:
+        * fast/custom-elements/parser/parser-constructs-custom-elements.html:
+        * fast/custom-elements/parser/parser-fallsback-to-unknown-element.html:
+        * fast/custom-elements/parser/parser-sets-attributes-and-children.html:
+        * fast/custom-elements/parser/parser-uses-constructed-element.html:
+        * fast/custom-elements/parser/parser-uses-registry-of-owner-document.html:
+
 2016-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Use larger tiles when possible to reduce per-tile painting overhead

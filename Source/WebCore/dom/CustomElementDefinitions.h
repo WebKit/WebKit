@@ -52,6 +52,7 @@ public:
 
     JSCustomElementInterface* findInterface(const QualifiedName&) const;
     JSCustomElementInterface* findInterface(const AtomicString&) const;
+    bool containsConstructor(const JSC::JSObject*) const;
     const QualifiedName& findName(const JSC::JSObject*) const;
 
     enum class NameStatus { Valid, ConflictsWithBuiltinNames, NoHyphen, ContainsUpperCase };

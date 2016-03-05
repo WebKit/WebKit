@@ -13,7 +13,7 @@
 <script>
 
 class MyCustomElement extends HTMLElement { };
-document.defineCustomElement('my-custom-element', MyCustomElement);
+document.defineElement('my-custom-element', MyCustomElement);
 
 document.write('<template><my-custom-element></my-custom-element></template>');
 
@@ -43,7 +43,7 @@ test(function () {
 }, 'HTML parser must not use the registry of the owner element\'s document inside an iframe');
 
 class ElementInIFrame extends iframe.contentWindow.HTMLElement { };
-iframe.contentDocument.defineCustomElement('element-in-iframe', ElementInIFrame);
+iframe.contentDocument.defineElement('element-in-iframe', ElementInIFrame);
 iframe.contentDocument.body.innerHTML = '<element-in-iframe></element-in-iframe>';
 
 test(function () {

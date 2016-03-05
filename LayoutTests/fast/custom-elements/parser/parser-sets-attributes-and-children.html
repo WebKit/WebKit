@@ -22,7 +22,7 @@ class MyCustomElement extends HTMLElement {
         numberOfChildNodesInConstructor = this.childNodes.length;
     }
 };
-document.defineCustomElement('my-custom-element', MyCustomElement);
+document.defineElement('my-custom-element', MyCustomElement);
 
 </script>
 <my-custom-element id="custom-element-id" class="class1 class2">hello <b>world</b></my-custom-element>

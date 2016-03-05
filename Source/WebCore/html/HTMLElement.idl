@@ -20,7 +20,7 @@
 
 [
 #if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
-    CustomConstructor(optional DOMString localName),
+    CustomConstructor(),
 #endif
     JSGenerateToNativeObject,
     JSCustomPushEventHandlerScope,

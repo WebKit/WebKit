@@ -1,0 +1,11 @@
+
+PASS Check the existence of defineElement on Document interface 
+PASS document.defineElement should throw with an invalid name 
+PASS document.defineElement should throw when there is already a custom element of the same name 
+PASS document.defineElement should throw when there is already a custom element with the same class 
+PASS document.defineElement must throw a NotSupportedError when the context object is an associated inert template document 
+PASS document.defineElement must throw a NotSupportedError when the context object is created by DOMImplementation.createHTMLDocument 
+PASS document.defineElement must throw a NotSupportedError when the context object is created by DOMImplementation.createDocument 
+PASS document.defineElement should throw when the element interface is not a constructor 
+PASS document.defineElement should define an instantiatable custom element 
+

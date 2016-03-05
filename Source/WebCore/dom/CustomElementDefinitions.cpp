@@ -94,6 +94,11 @@ JSCustomElementInterface* CustomElementDefinitions::findInterface(const AtomicSt
     return it == m_nameMap.end() ? nullptr : it->value.interface.get();
 }
 
+bool CustomElementDefinitions::containsConstructor(const JSC::JSObject* constructor) const
+{
+    return m_constructorMap.contains(constructor);
+}
+
 const QualifiedName& CustomElementDefinitions::findName(const JSC::JSObject* constructor) const
 {
     auto it = m_constructorMap.find(constructor);

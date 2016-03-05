@@ -18,7 +18,7 @@ test(function () {
     assert_true(document.createElement('my-custom-element') instanceof HTMLElement);
     assert_false(document.createElement('my-custom-element') instanceof MyCustomElement);
 
-    document.defineCustomElement('my-custom-element', MyCustomElement);
+    document.defineElement('my-custom-element', MyCustomElement);
     var instance = document.createElement('my-custom-element');
     assert_true(instance instanceof MyCustomElement);
     assert_equals(instance.localName, 'my-custom-element');
@@ -33,7 +33,7 @@ test(function () {
             return {foo: 'bar'};
         }
     };
-    document.defineCustomElement('object-custom-element', ObjectCustomElement);
+    document.defineElement('object-custom-element', ObjectCustomElement);
 
     var instance = new ObjectCustomElement;
     assert_true(instance instanceof Object);
@@ -49,7 +49,7 @@ test(function () {
             return document.createTextNode('hello');
         }
     };
-    document.defineCustomElement('text-custom-element', TextCustomElement);
+    document.defineElement('text-custom-element', TextCustomElement);
     assert_true(new TextCustomElement instanceof Text);
     assert_equals(document.createElement('object-custom-element'), null);
 }, 'document.createElement must return null when a custom element constructor returns a Text node');
@@ -64,7 +64,7 @@ test(function () {
             return createdElement;
         }
     };
-    document.defineCustomElement('div-custom-element', DivCustomElement);
+    document.defineElement('div-custom-element', DivCustomElement);
     assert_true(new DivCustomElement instanceof HTMLDivElement);
 
     var instance = document.createElement('div-custom-element');
@@ -82,7 +82,7 @@ test(function () {
                 throw exceptionToThrow;
         }
     };
-    document.defineCustomElement('throw-custom-element', ThrowCustomElement);
+    document.defineElement('throw-custom-element', ThrowCustomElement);
 
     assert_throws(null, function () { new ThrowCustomElement; });
 

@@ -295,7 +295,7 @@
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [Custom, RaisesException, Conditional=CUSTOM_ELEMENTS]
-    void defineCustomElement(DOMString tagName, CustomElementInterface elementInterface);
+    void defineElement(DOMString localName, Function constructor);
 #endif
 
     // Page visibility API.

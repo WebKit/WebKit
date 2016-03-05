@@ -1,3 +1,34 @@
+2016-03-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update defineCustomElement according to the spec rewrite
+        https://bugs.webkit.org/show_bug.cgi?id=155010
+        <rdar://problem/24970878>
+
+        Reviewed by Chris Dumez.
+
+        Updated the implementation of defineCustomElement and HTMLConstructor per recent rewrite of the spec:
+        https://w3c.github.io/webcomponents/spec/custom/#dom-document-defineelement
+        https://w3c.github.io/webcomponents/spec/custom/#htmlelement-constructor
+
+        defineCustomElement is now called defineElement and we disallow defining multiple custom elements with
+        a single class and throw an exception in defineElement.
+
+        Test: fast/custom-elements/Document-defineElement.html
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::defineElement): Renamed from defineCustomElement. Throw an exception when the interface
+        already defines another custom element. Also added FIXME's for missing steps.
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement): Removed the support for specifying a tag name in the first argument when
+        a single class defines multiple custom elements since that now results in an exception (in defineElement).
+
+        * dom/CustomElementDefinitions.cpp:
+        (WebCore::CustomElementDefinitions::containsConstructor): Added.
+        * dom/CustomElementDefinitions.h:
+        * dom/Document.idl: Renamed defineCustomElement to defineElement.
+        * html/HTMLElement.idl: Removed the optional tag name from the constructor.
+
 2016-03-04  Tim Horton  <timothy_horton@apple.com>
 
         Begin implementing <attachment> painting on iOS

@@ -135,7 +135,7 @@ JSValue JSDocument::createTouchList(ExecState& state)
 #endif
 
 #if ENABLE(CUSTOM_ELEMENTS)
-JSValue JSDocument::defineCustomElement(ExecState& state)
+JSValue JSDocument::defineElement(ExecState& state)
 {
     AtomicString tagName(state.argument(0).toString(&state)->toAtomicString(&state));
     if (UNLIKELY(state.hadException()))
@@ -163,15 +163,30 @@ JSValue JSDocument::defineCustomElement(ExecState& state)
         return throwSyntaxError(&state, "Custom element name cannot contain an upper case letter");
     }
 
-    QualifiedName name(nullAtom, tagName, HTMLNames::xhtmlNamespaceURI);
     auto& definitions = document.ensureCustomElementDefinitions();
     if (definitions.findInterface(tagName)) {
         throwNotSupportedError(state, "Cannot define multiple custom elements with the same tag name");
         return jsUndefined();
     }
+
+    if (definitions.containsConstructor(object)) {
+        throwNotSupportedError(state, "Cannot define multiple custom elements with the same class");
+        return jsUndefined();
+    }
+
+    // FIXME: 10. Let prototype be Get(constructor, "prototype"). Rethrow any exceptions.
+    // FIXME: 11. If Type(prototype) is not Object, throw a TypeError exception.
+    // FIXME: 12. Let attachedCallback be Get(prototype, "attachedCallback"). Rethrow any exceptions.
+    // FIXME: 13. Let detachedCallback be Get(prototype, "detachedCallback"). Rethrow any exceptions.
+    // FIXME: 14. Let attributeChangedCallback be Get(prototype, "attributeChangedCallback"). Rethrow any exceptions.
+
+    QualifiedName name(nullAtom, tagName, HTMLNames::xhtmlNamespaceURI);
     definitions.defineElement(name, JSCustomElementInterface::create(object, globalObject()));
     PrivateName uniquePrivateName;
     globalObject()->putDirect(globalObject()->vm(), uniquePrivateName, object);
+
+    // FIXME: 17. Let map be registry's upgrade candidates map.
+    // FIXME: 18. Upgrade a newly-defined element given map and definition.
 
     return jsUndefined();
 }

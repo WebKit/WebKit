@@ -25,7 +25,7 @@ test(function () {
 
 }, 'HTML parser must NOT create a custom element before defineElement is called');
 
-document.defineCustomElement('my-custom-element', MyCustomElement);
+document.defineElement('my-custom-element', MyCustomElement);
 
 </script>
 <my-custom-element id="instance2"></my-custom-element>
