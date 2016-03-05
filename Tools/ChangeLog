@@ -1,3 +1,13 @@
+2016-03-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Fix logging details after r197505 (Run the run-benchmark script on the performance bot.)
+        https://bugs.webkit.org/show_bug.cgi?id=154595
+
+        Unreviewed.
+
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (start): Use logging.exception when a test fails in order to get the details about the error.
+
 2016-03-04  Alexey Proskuryakov  <ap@apple.com>
 
         Add iOS simulator debug bots
