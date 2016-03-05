@@ -1,3 +1,13 @@
+2016-03-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Convert DOMTimer interval from int to std::chromo::milliseconds
+        https://bugs.webkit.org/show_bug.cgi?id=155051
+
+        iOS build fix
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+
 2016-03-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update defineCustomElement according to the spec rewrite
