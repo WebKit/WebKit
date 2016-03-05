@@ -2477,7 +2477,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
 
     settings.setResourceLoadStatisticsEnabled([preferences resourceLoadStatisticsEnabled]);
-    resourceLoadStatisticsStore->readDataFromDiskIfNeeded();
+    if (resourceLoadStatisticsStore)
+        resourceLoadStatisticsStore->readDataFromDiskIfNeeded();
 
 #if ENABLE(GAMEPAD)
     RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled([preferences gamepadsEnabled]);
@@ -4847,7 +4848,8 @@ static Vector<String> toStringVector(NSArray* patterns)
 {   
     applicationIsTerminating = YES;
 
-    resourceLoadStatisticsStore->writeDataToDisk();
+    if (resourceLoadStatisticsStore)
+        resourceLoadStatisticsStore->writeDataToDisk();
 
     if (fastDocumentTeardownEnabled())
         [self closeAllWebViews];

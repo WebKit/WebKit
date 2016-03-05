@@ -1,5 +1,13 @@
 2016-03-04  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed test fix for null global WebResourceLoadStatisticsStore.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        (+[WebView _applicationWillTerminate]):
+
+2016-03-04  Brent Fulgham  <bfulgham@apple.com>
+
         [WK2] Gather resource load statistics
         https://bugs.webkit.org/show_bug.cgi?id=154278
         <rdar://problem/24702892>
