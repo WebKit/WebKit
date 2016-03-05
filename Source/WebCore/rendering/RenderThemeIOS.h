@@ -34,7 +34,8 @@ namespace WebCore {
     
 class RenderStyle;
 class GraphicsContext;
-    
+struct AttachmentLayout;
+
 class RenderThemeIOS final : public RenderTheme {
 public:
     static Ref<RenderTheme> create();
@@ -108,6 +109,12 @@ protected:
 #if ENABLE(VIDEO)
     String mediaControlsStyleSheet() override;
     String mediaControlsScript() override;
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const override;
+    int attachmentBaseline(const RenderAttachment&) const override;
+    bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
 private:

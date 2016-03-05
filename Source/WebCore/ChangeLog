@@ -1,3 +1,33 @@
+2016-03-04  Tim Horton  <timothy_horton@apple.com>
+
+        Begin implementing <attachment> painting on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=155046
+        <rdar://problem/24805991>
+
+        Reviewed by Enrica Casucci.
+
+        No new tests; there are existing tests that I will unskip and rebaseline
+        in the near future.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::AttachmentInfo::addLine):
+        (WebCore::AttachmentInfo::buildTitleLines):
+        (WebCore::AttachmentInfo::buildSingleLine):
+        (WebCore::getAttachmentProgress):
+        (WebCore::iconForAttachment):
+        (WebCore::AttachmentInfo::AttachmentInfo):
+        (WebCore::RenderThemeIOS::attachmentIntrinsicSize):
+        (WebCore::RenderThemeIOS::attachmentBaseline):
+        (WebCore::paintAttachmentIcon):
+        (WebCore::paintAttachmentText):
+        (WebCore::paintAttachmentProgress):
+        (WebCore::paintAttachmentBorder):
+        (WebCore::RenderThemeIOS::paintAttachment):
+        There are still a few missing pieces, but get <attachment> painting a bit on iOS.
+        We will paint an icon, action, title, and subtitle - in that order - depending on what we have.
+        The content is vertically and horizontally centered.
+
 2016-03-04  Gavin Barraclough  <barraclough@apple.com>
 
         Convert DOMTimer interval from int to std::chromo::milliseconds
