@@ -1,3 +1,40 @@
+2016-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Scrollbars are broken again with GTK+ >= 3.19.11
+        https://bugs.webkit.org/show_bug.cgi?id=154890
+
+        Reviewed by Michael Catanzaro.
+
+        Scrollbar style properties have been deprecated in GTK+, and it
+        seems that now deprecating means keeping the properties but
+        ignoring them. So, this reworks the whole scrollbars theme code
+        again to not cache style properties anymore, but retrieve them
+        from the GtkStyleContext. Previous GTK+ versions still need to
+        query the style properties, so I've added helper functions to get
+        all the style properties with the ifdefs, trying to keep the
+        common render code free of GTK+ versions ifdefs.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::backButtonRect):
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect):
+        (WebCore::ScrollbarThemeGtk::trackRect):
+        (WebCore::ScrollbarThemeGtk::thumbRect):
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground):
+        (WebCore::ScrollbarThemeGtk::paintThumb):
+        (WebCore::ScrollbarThemeGtk::paint):
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness):
+        (WebCore::ScrollbarThemeGtk::buttonSize):
+        (WebCore::ScrollbarThemeGtk::stepperSize):
+        (WebCore::ScrollbarThemeGtk::getStepperSpacing):
+        (WebCore::ScrollbarThemeGtk::troughUnderSteppers):
+        (WebCore::ScrollbarThemeGtk::minimumThumbLength):
+        (WebCore::ScrollbarThemeGtk::thumbFatness):
+        (WebCore::ScrollbarThemeGtk::getTroughBorder):
+        (WebCore::ScrollbarThemeGtk::getOrCreateStyleContext):
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties):
+        (WebCore::ScrollbarThemeGtk::handleMousePressEvent):
+        * platform/gtk/ScrollbarThemeGtk.h:
+
 2016-03-04  Brent Fulgham  <bfulgham@apple.com>
 
         Resource load statistics are not honoring private browsing
