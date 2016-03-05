@@ -357,10 +357,7 @@
                       "builderNames": ["Apple iOS 9 Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-9", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple iOS 9 Simulator Release (Build)"]
-                    },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-9", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple iOS 9 Simulator Debug (Build)"]
+                      "builderNames": ["Apple iOS 9 Simulator Release (Build)", "Apple iOS 9 Simulator Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]
