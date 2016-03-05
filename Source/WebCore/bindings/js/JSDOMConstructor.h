@@ -52,7 +52,7 @@ private:
     static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData& callData)
     {
         callData.native.function = callThrowTypeError;
-        return JSC::CallTypeHost;
+        return JSC::CallType::Host;
     }
 };
 
@@ -168,7 +168,7 @@ template<typename JSClass> inline void JSDOMConstructor<JSClass>::finishCreation
 template<typename JSClass> inline JSC::ConstructType JSDOMConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)
 {
     constructData.native.function = construct;
-    return JSC::ConstructTypeHost;
+    return JSC::ConstructType::Host;
 }
 
 template<typename JSClass> inline JSDOMNamedConstructor<JSClass>* JSDOMNamedConstructor<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
@@ -193,7 +193,7 @@ template<typename JSClass> inline void JSDOMNamedConstructor<JSClass>::finishCre
 template<typename JSClass> inline JSC::ConstructType JSDOMNamedConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)
 {
     constructData.native.function = construct;
-    return JSC::ConstructTypeHost;
+    return JSC::ConstructType::Host;
 }
 
 template<typename JSClass> inline JSBuiltinConstructor<JSClass>* JSBuiltinConstructor<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
@@ -232,7 +232,7 @@ template<typename JSClass> inline JSC::JSObject* JSBuiltinConstructor<JSClass>::
 template<typename JSClass> inline JSC::ConstructType JSBuiltinConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)
 {
     constructData.native.function = construct;
-    return JSC::ConstructTypeHost;
+    return JSC::ConstructType::Host;
 }
 
 } // namespace WebCore

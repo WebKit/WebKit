@@ -252,7 +252,7 @@ static bool NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVa
         JSC::JSValue function = obj->imp->get(exec, JSC::Bindings::identifierFromNPIdentifier(exec, i->string()));
         JSC::CallData callData;
         JSC::CallType callType = getCallData(function, callData);
-        if (callType == JSC::CallTypeNone)
+        if (callType == JSC::CallType::None)
             return false;
 
         // Call the function object.

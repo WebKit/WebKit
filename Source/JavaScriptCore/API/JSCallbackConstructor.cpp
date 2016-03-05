@@ -68,7 +68,7 @@ void JSCallbackConstructor::destroy(JSCell* cell)
 ConstructType JSCallbackConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = APICallbackFunction::construct<JSCallbackConstructor>;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 } // namespace JSC

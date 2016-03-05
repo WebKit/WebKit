@@ -106,7 +106,7 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
 CallType RuntimeMethod::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callRuntimeMethod;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 }

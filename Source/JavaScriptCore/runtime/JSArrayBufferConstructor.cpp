@@ -113,13 +113,13 @@ ConstructType JSArrayBufferConstructor::getConstructData(
     JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructArrayBuffer;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 CallType JSArrayBufferConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callArrayBuffer;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 // ------------------------------ Functions --------------------------------

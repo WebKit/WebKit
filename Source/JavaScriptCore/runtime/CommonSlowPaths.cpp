@@ -222,9 +222,9 @@ SLOW_PATH_DECL(slow_path_create_this)
 {
     BEGIN();
     JSObject* result;
-    JSCell* constructorAsCell = OP(2).jsValue().asCell();
-    if (constructorAsCell->type() == JSFunctionType) {
-        JSFunction* constructor = jsCast<JSFunction*>(constructorAsCell);
+    JSObject* constructorAsObject = asObject(OP(2).jsValue());
+    if (constructorAsObject->type() == JSFunctionType) {
+        JSFunction* constructor = jsCast<JSFunction*>(constructorAsObject);
         auto& cacheWriteBarrier = pc[4].u.jsCell;
         if (!cacheWriteBarrier)
             cacheWriteBarrier.set(exec->vm(), exec->codeBlock(), constructor);
@@ -234,8 +234,15 @@ SLOW_PATH_DECL(slow_path_create_this)
         size_t inlineCapacity = pc[3].u.operand;
         Structure* structure = constructor->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure();
         result = constructEmptyObject(exec, structure);
-    } else
-        result = constructEmptyObject(exec);
+    } else {
+        // http://ecma-international.org/ecma-262/6.0/#sec-ordinarycreatefromconstructor
+        JSValue proto = constructorAsObject->get(exec, exec->propertyNames().prototype);
+        CHECK_EXCEPTION();
+        if (proto.isObject())
+            result = constructEmptyObject(exec, asObject(proto));
+        else
+            result = constructEmptyObject(exec);
+    }
     RETURN(result);
 }
 

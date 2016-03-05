@@ -308,7 +308,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* ex
 ConstructType RegExpConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithRegExpConstructor;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 // ECMA 15.10.3
@@ -321,7 +321,7 @@ static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(ExecState* exec)
 CallType RegExpConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callRegExpConstructor;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 } // namespace JSC

@@ -1094,15 +1094,15 @@ inline void JSObject::setButterflyWithoutChangingStructure(VM& vm, Butterfly* bu
 
 inline CallType getCallData(JSValue value, CallData& callData)
 {
-    CallType result = value.isCell() ? value.asCell()->methodTable()->getCallData(value.asCell(), callData) : CallTypeNone;
-    ASSERT(result == CallTypeNone || value.isValidCallee());
+    CallType result = value.isCell() ? value.asCell()->methodTable()->getCallData(value.asCell(), callData) : CallType::None;
+    ASSERT(result == CallType::None || value.isValidCallee());
     return result;
 }
 
 inline ConstructType getConstructData(JSValue value, ConstructData& constructData)
 {
-    ConstructType result = value.isCell() ? value.asCell()->methodTable()->getConstructData(value.asCell(), constructData) : ConstructTypeNone;
-    ASSERT(result == ConstructTypeNone || value.isValidCallee());
+    ConstructType result = value.isCell() ? value.asCell()->methodTable()->getConstructData(value.asCell(), constructData) : ConstructType::None;
+    ASSERT(result == ConstructType::None || value.isValidCallee());
     return result;
 }
 

@@ -1071,11 +1071,11 @@
 - path: es6/Proxy_setPrototypeOf_handler.js
   cmd: runES6 :normal
 - path: es6/Reflect_Reflect.construct.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Reflect_Reflect.construct_creates_instance_from_newTarget_argument.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Reflect_Reflect.construct_sets_new.target_meta_property.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Reflect_Reflect.set.js
   cmd: runES6 :fail
 - path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.match].js

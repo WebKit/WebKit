@@ -5064,7 +5064,7 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "#if $conditionalString\n");
         push(@$outputArray, "    UNUSED_PARAM(cell);\n");
         push(@$outputArray, "    constructData.native.function = construct;\n");
-        push(@$outputArray, "    return ConstructTypeHost;\n");
+        push(@$outputArray, "    return ConstructType::Host;\n");
         push(@$outputArray, "#else\n");
         push(@$outputArray, "    return Base::getConstructData(cell, constructData);\n");
         push(@$outputArray, "#endif\n");

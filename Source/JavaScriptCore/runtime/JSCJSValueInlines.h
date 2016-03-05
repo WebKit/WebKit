@@ -705,7 +705,16 @@ inline bool JSValue::isFunction() const
         return false;
     JSCell* cell = asCell();
     CallData ignored;
-    return cell->methodTable()->getCallData(cell, ignored) != CallTypeNone;
+    return cell->methodTable()->getCallData(cell, ignored) != CallType::None;
+}
+
+inline bool JSValue::isFunction(CallType& callType, CallData& callData) const
+{
+    if (!isCell())
+        return false;
+    JSCell* cell = asCell();
+    callType = cell->methodTable()->getCallData(cell, callData);
+    return callType != CallType::None;
 }
 
 inline bool JSValue::isConstructor() const
@@ -714,7 +723,16 @@ inline bool JSValue::isConstructor() const
         return false;
     JSCell* cell = asCell();
     ConstructData ignored;
-    return cell->methodTable()->getConstructData(cell, ignored) != ConstructTypeNone;
+    return cell->methodTable()->getConstructData(cell, ignored) != ConstructType::None;
+}
+
+inline bool JSValue::isConstructor(ConstructType& constructType, ConstructData& constructData) const
+{
+    if (!isCell())
+        return false;
+    JSCell* cell = asCell();
+    constructType = cell->methodTable()->getConstructData(cell, constructData);
+    return constructType != ConstructType::None;
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits

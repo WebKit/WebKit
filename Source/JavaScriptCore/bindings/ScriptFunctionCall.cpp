@@ -129,7 +129,7 @@ Deprecated::ScriptValue ScriptFunctionCall::call(bool& hadException)
 
     CallData callData;
     CallType callType = getCallData(function, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallType::None)
         return Deprecated::ScriptValue();
 
     JSValue result;

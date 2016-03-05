@@ -3468,7 +3468,7 @@ bool Internals::isReadableStreamDisturbed(ScriptState& state, JSValue stream)
     JSObject* function = value.getObject();
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
-    ASSERT(callType != JSC::CallTypeNone);
+    ASSERT(callType != JSC::CallType::None);
     MarkedArgumentBuffer arguments;
     arguments.append(stream);
     JSValue returnedValue = JSC::call(&state, function, callType, callData, JSC::jsUndefined(), arguments);

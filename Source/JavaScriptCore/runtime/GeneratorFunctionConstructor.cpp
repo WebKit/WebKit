@@ -65,13 +65,13 @@ static EncodedJSValue JSC_HOST_CALL constructGeneratorFunctionConstructor(ExecSt
 CallType GeneratorFunctionConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callGeneratorFunctionConstructor;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 ConstructType GeneratorFunctionConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructGeneratorFunctionConstructor;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 } // namespace JSC

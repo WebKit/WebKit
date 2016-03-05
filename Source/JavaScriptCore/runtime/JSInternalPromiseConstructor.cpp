@@ -76,13 +76,13 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
 ConstructType JSInternalPromiseConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructPromise;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 CallType JSInternalPromiseConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = constructPromise;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 bool JSInternalPromiseConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

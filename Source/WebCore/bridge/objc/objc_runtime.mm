@@ -261,9 +261,9 @@ CallType ObjcFallbackObjectImp::getCallData(JSCell* cell, CallData& callData)
     ObjcFallbackObjectImp* thisObject = jsCast<ObjcFallbackObjectImp*>(cell);
     id targetObject = thisObject->_instance->getObject();
     if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
-        return CallTypeNone;
+        return CallType::None;
     callData.native.function = callObjCFallbackObject;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 bool ObjcFallbackObjectImp::deleteProperty(JSCell*, ExecState*, PropertyName)

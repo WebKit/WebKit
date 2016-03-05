@@ -238,10 +238,10 @@ JSC::CallType JSNPObject::getCallData(JSC::JSCell* cell, JSC::CallData& callData
     JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (!thisObject->m_npObject || !thisObject->m_npObject->_class->invokeDefault)
-        return CallTypeNone;
+        return CallType::None;
 
     callData.native.function = callNPJSObject;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
@@ -257,10 +257,10 @@ ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& construc
     JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (!thisObject->m_npObject || !thisObject->m_npObject->_class->construct)
-        return ConstructTypeNone;
+        return ConstructType::None;
 
     constructData.native.function = constructWithConstructor;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 bool JSNPObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

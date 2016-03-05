@@ -66,7 +66,7 @@ void JSMutationCallback::call(const Vector<RefPtr<MutationRecord>>& mutations, M
     JSValue callback = m_callback.get();
     CallData callData;
     CallType callType = getCallData(callback, callData);
-    if (callType == CallTypeNone) {
+    if (callType == CallType::None) {
         ASSERT_NOT_REACHED();
         return;
     }

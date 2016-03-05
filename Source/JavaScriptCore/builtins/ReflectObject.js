@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.apply
+// https://tc39.github.io/ecma262/#sec-reflect.apply
 function apply(target, thisArgument, argumentsList)
 {
     "use strict";
@@ -37,7 +37,7 @@ function apply(target, thisArgument, argumentsList)
     return target.@apply(thisArgument, argumentsList);
 }
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.deleteproperty
+// https://tc39.github.io/ecma262/#sec-reflect.deleteproperty
 function deleteProperty(target, propertyKey)
 {
     // Intentionally keep the code the sloppy mode to suppress the TypeError
@@ -49,7 +49,7 @@ function deleteProperty(target, propertyKey)
     return delete target[propertyKey];
 }
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.has
+// https://tc39.github.io/ecma262/#sec-reflect.has
 function has(target, propertyKey)
 {
     "use strict";

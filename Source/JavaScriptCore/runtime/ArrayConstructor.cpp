@@ -109,7 +109,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState* exe
 ConstructType ArrayConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithArrayConstructor;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 static EncodedJSValue JSC_HOST_CALL callArrayConstructor(ExecState* exec)
@@ -122,7 +122,7 @@ CallType ArrayConstructor::getCallData(JSCell*, CallData& callData)
 {
     // equivalent to 'new Array(....)'
     callData.native.function = callArrayConstructor;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState* exec)

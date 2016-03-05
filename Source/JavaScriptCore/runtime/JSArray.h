@@ -342,6 +342,13 @@ inline JSArray* constructArrayNegativeIndexed(ExecState* exec, Structure* arrayS
     return array;
 }
 
+ALWAYS_INLINE unsigned getLength(ExecState* exec, JSObject* obj)
+{
+    if (isJSArray(obj))
+        return jsCast<JSArray*>(obj)->length();
+    return obj->get(exec, exec->propertyNames().length).toUInt32(exec);
+}
+
 } // namespace JSC
 
 #endif // JSArray_h

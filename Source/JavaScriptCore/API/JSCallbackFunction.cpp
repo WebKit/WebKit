@@ -66,7 +66,7 @@ JSCallbackFunction* JSCallbackFunction::create(VM& vm, JSGlobalObject* globalObj
 CallType JSCallbackFunction::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = APICallbackFunction::call<JSCallbackFunction>;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 } // namespace JSC

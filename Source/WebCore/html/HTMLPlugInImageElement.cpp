@@ -406,7 +406,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     JSC::JSObject* overlay = globalObject->get(exec, JSC::Identifier::fromString(exec, "createOverlay")).toObject(exec);
     JSC::CallData callData;
     JSC::CallType callType = overlay->methodTable()->getCallData(overlay, callData);
-    if (callType == JSC::CallTypeNone)
+    if (callType == JSC::CallType::None)
         return;
 
     JSC::call(exec, overlay, callType, callData, globalObject, argList);

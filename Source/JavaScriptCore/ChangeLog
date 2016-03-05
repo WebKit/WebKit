@@ -1,3 +1,256 @@
+2016-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Support Reflect.construct
+        https://bugs.webkit.org/show_bug.cgi?id=147330
+
+        Reviewed by Saam Barati.
+
+        Based on Saam's r196868, this patch adds support for Reflect.construct.
+        This patch implements OrdinaryCreateFromConstructor[1] for fallback cases.
+        This path is rarely taken. For example,
+
+            Reflect.construct(function () { }, [], Map);
+
+        In this case, the `new.target` becomes `Map`.
+        So we should create an object that `__proto__` is `Map.prototype`.
+
+        And to allow forward declaration (and encouraging strong type checking), we change
+        ConstructType, CallType to C++11 enum class.
+
+        [1]: http://ecma-international.org/ecma-262/6.0/#sec-ordinarycreatefromconstructor
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::getConstructData):
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::getCallData):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getConstructData):
+        (JSC::JSCallbackObject<Parent>::getCallData):
+        * API/JSObjectRef.cpp:
+        (JSObjectIsFunction):
+        (JSObjectCallAsFunction):
+        (JSObjectIsConstructor):
+        (JSObjectCallAsConstructor):
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunction::getCallData):
+        (JSC::ObjCCallbackFunction::getConstructData):
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        * bindings/ScriptValue.cpp:
+        (Deprecated::ScriptValue::isFunction):
+        * builtins/ReflectObject.js:
+        * dfg/DFGOperations.cpp:
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::createInjectedScript):
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::handleHostCall):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::getConstructData):
+        (JSC::ArrayConstructor::getCallData):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::getLength): Deleted.
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::getConstructData):
+        (JSC::BooleanConstructor::getCallData):
+        * runtime/CallData.cpp:
+        (JSC::call):
+        * runtime/CallData.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/ConstructData.cpp:
+        (JSC::construct):
+        * runtime/ConstructData.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::getConstructData):
+        (JSC::DateConstructor::getCallData):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToJSON):
+        * runtime/Error.h:
+        (JSC::StrictModeTypeErrorFunction::getConstructData):
+        (JSC::StrictModeTypeErrorFunction::getCallData):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::getConstructData):
+        (JSC::ErrorConstructor::getCallData):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::errorDescriptionForValue):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::getConstructData):
+        (JSC::FunctionConstructor::getCallData):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::getCallData):
+        (JSC::functionProtoFuncToString):
+        (JSC::functionProtoFuncBind):
+        * runtime/GeneratorFunctionConstructor.cpp:
+        (JSC::GeneratorFunctionConstructor::getCallData):
+        (JSC::GeneratorFunctionConstructor::getConstructData):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::getCallData):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::getConstructData):
+        (JSC::IntlCollatorConstructor::getCallData):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::getConstructData):
+        (JSC::IntlDateTimeFormatConstructor::getCallData):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::getConstructData):
+        (JSC::IntlNumberFormatConstructor::getCallData):
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorNext):
+        (JSC::iteratorClose):
+        * runtime/JSArray.h:
+        (JSC::getLength):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::getConstructData):
+        (JSC::JSArrayBufferConstructor::getCallData):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundFunctionCall):
+        (JSC::boundFunctionConstruct):
+        (JSC::JSBoundFunction::create):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isFunction):
+        (JSC::JSValue::isConstructor):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getCallData):
+        (JSC::JSCell::getConstructData):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getCallData):
+        (JSC::JSFunction::getConstructData):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::getConstructData):
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::getCallData):
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::then):
+        * runtime/JSInternalPromiseConstructor.cpp:
+        (JSC::JSInternalPromiseConstructor::getConstructData):
+        (JSC::JSInternalPromiseConstructor::getCallData):
+        * runtime/JSJob.cpp:
+        (JSC::JSJobMicrotask::run):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::toJSONImpl):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::JSONProtoFuncParse):
+        * runtime/JSObject.cpp:
+        (JSC::callToPrimitiveFunction):
+        (JSC::JSObject::hasInstance):
+        (JSC::JSObject::getMethod):
+        * runtime/JSObject.h:
+        (JSC::getCallData):
+        (JSC::getConstructData):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::initialize):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::getConstructData):
+        (JSC::JSPromiseConstructor::getCallData):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::newPromiseCapability):
+        (JSC::callFunction):
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::constructTypedArrayView):
+        (JSC::JSTypedArrayViewConstructor::getConstructData):
+        (JSC::JSTypedArrayViewConstructor::getCallData):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        (JSC::MapConstructor::getConstructData):
+        (JSC::MapConstructor::getCallData):
+        * runtime/ModuleLoaderObject.cpp:
+        (JSC::ModuleLoaderObject::provide):
+        (JSC::ModuleLoaderObject::loadAndEvaluateModule):
+        (JSC::ModuleLoaderObject::loadModule):
+        (JSC::ModuleLoaderObject::linkAndEvaluateModule):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::getConstructData):
+        (JSC::NativeErrorConstructor::getCallData):
+        * runtime/NullGetterFunction.cpp:
+        (JSC::NullGetterFunction::getCallData):
+        (JSC::NullGetterFunction::getConstructData):
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunction::getCallData):
+        (JSC::NullSetterFunction::getConstructData):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getConstructData):
+        (JSC::NumberConstructor::getCallData):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::getConstructData):
+        (JSC::ObjectConstructor::getCallData):
+        (JSC::toPropertyDescriptor):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncToLocaleString):
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectTypeOrNull):
+        (JSC::jsIsFunctionType):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::ProxyConstructor::getConstructData):
+        (JSC::ProxyConstructor::getCallData):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::finishCreation):
+        (JSC::performProxyCall):
+        (JSC::ProxyObject::getCallData):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::getConstructData):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectConstruct):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getConstructData):
+        (JSC::RegExpConstructor::getCallData):
+        * runtime/RuntimeType.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        (JSC::SetConstructor::getConstructData):
+        (JSC::SetConstructor::getCallData):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::getConstructData):
+        (JSC::StringConstructor::getCallData):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::operationStringProtoFuncReplaceRegExpEmptyStr):
+        (JSC::operationStringProtoFuncReplaceRegExpString):
+        (JSC::replaceUsingStringSearch):
+        * runtime/SymbolConstructor.cpp:
+        (JSC::SymbolConstructor::getConstructData):
+        (JSC::SymbolConstructor::getCallData):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        (JSC::WeakMapConstructor::getConstructData):
+        (JSC::WeakMapConstructor::getCallData):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::constructWeakSet):
+        (JSC::WeakSetConstructor::getConstructData):
+        (JSC::WeakSetConstructor::getCallData):
+        * tests/es6.yaml:
+        * tests/stress/reflect-construct.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (shouldThrow.array.get length):
+        (shouldThrow.array.get 0):
+        (array.get length):
+        (array.get 0):
+        (shouldBe.Reflect.construct):
+        (shouldBe.Reflect.construct.Hello):
+        (3.shouldBe.Reflect.construct.Hello):
+        (3.newTarget):
+        (0.shouldBe.Reflect.construct):
+        (shouldBe.A):
+        (shouldBe.B):
+        (nativeConstructorTest.DerivedMap):
+        (nativeConstructorTest.FailedMap):
+        (set noInline):
+
 2016-03-04  Andreas Kling  <akling@apple.com>
 
         [iOS] Throw away compiled RegExp code when navigating to a new page.

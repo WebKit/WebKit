@@ -46,6 +46,8 @@ enum RuntimeType : uint16_t {
 
 typedef uint16_t RuntimeTypeMask;
 
+static const RuntimeTypeMask RuntimeTypeMaskAllTypes = TypeFunction | TypeUndefined | TypeNull | TypeBoolean | TypeMachineInt | TypeNumber | TypeString | TypeObject | TypeSymbol;
+
 class JSValue;
 RuntimeType runtimeTypeForValue(JSValue);
 String runtimeTypeAsString(RuntimeType);

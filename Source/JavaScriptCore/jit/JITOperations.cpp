@@ -700,9 +700,9 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
         CallData callData;
         CallType callType = getCallData(callee, callData);
     
-        ASSERT(callType != CallTypeJS);
+        ASSERT(callType != CallType::JS);
     
-        if (callType == CallTypeHost) {
+        if (callType == CallType::Host) {
             NativeCallFrameTracer tracer(vm, execCallee);
             execCallee->setCallee(asObject(callee));
             vm->hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
@@ -717,7 +717,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
                 reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
     
-        ASSERT(callType == CallTypeNone);
+        ASSERT(callType == CallType::None);
         exec->vm().throwException(exec, createNotAFunctionError(exec, callee));
         return encodeResult(
             vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
@@ -729,9 +729,9 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
     ConstructData constructData;
     ConstructType constructType = getConstructData(callee, constructData);
     
-    ASSERT(constructType != ConstructTypeJS);
+    ASSERT(constructType != ConstructType::JS);
     
-    if (constructType == ConstructTypeHost) {
+    if (constructType == ConstructType::Host) {
         NativeCallFrameTracer tracer(vm, execCallee);
         execCallee->setCallee(asObject(callee));
         vm->hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
@@ -744,7 +744,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
         return encodeResult(bitwise_cast<void*>(getHostCallReturnValue), reinterpret_cast<void*>(KeepTheFrame));
     }
     
-    ASSERT(constructType == ConstructTypeNone);
+    ASSERT(constructType == ConstructType::None);
     exec->vm().throwException(exec, createNotAConstructorError(exec, callee));
     return encodeResult(
         vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),

@@ -55,7 +55,7 @@ void DeferredWrapper::callFunction(ExecState& exec, JSValue function, JSValue re
 {
     CallData callData;
     CallType callType = getCallData(function, callData);
-    ASSERT(callType != CallTypeNone);
+    ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(resolution);

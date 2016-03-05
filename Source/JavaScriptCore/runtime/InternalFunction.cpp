@@ -65,7 +65,7 @@ const String InternalFunction::displayName(ExecState* exec)
 CallType InternalFunction::getCallData(JSCell*, CallData&)
 {
     RELEASE_ASSERT_NOT_REACHED();
-    return CallTypeNone;
+    return CallType::None;
 }
 
 const String InternalFunction::calculatedDisplayName(ExecState* exec)

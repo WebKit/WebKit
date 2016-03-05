@@ -400,10 +400,10 @@ ConstructType JSCallbackObject<Parent>::getConstructData(JSCell* cell, Construct
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsConstructor) {
             constructData.native.function = construct;
-            return ConstructTypeHost;
+            return ConstructType::Host;
         }
     }
-    return ConstructTypeNone;
+    return ConstructType::None;
 }
 
 template <class Parent>
@@ -467,10 +467,10 @@ CallType JSCallbackObject<Parent>::getCallData(JSCell* cell, CallData& callData)
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsFunction) {
             callData.native.function = call;
-            return CallTypeHost;
+            return CallType::Host;
         }
     }
-    return CallTypeNone;
+    return CallType::None;
 }
 
 template <class Parent>

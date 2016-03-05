@@ -135,13 +135,13 @@ static EncodedJSValue JSC_HOST_CALL callIntlCollator(ExecState* state)
 ConstructType IntlCollatorConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructIntlCollator;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 CallType IntlCollatorConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callIntlCollator;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 bool IntlCollatorConstructor::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)

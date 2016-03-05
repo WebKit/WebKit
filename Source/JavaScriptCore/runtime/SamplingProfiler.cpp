@@ -368,7 +368,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 CallData callData;
                 CallType callType;
                 callType = getCallData(calleeCell, callData);
-                if (callType == CallTypeHost)
+                if (callType == CallType::Host)
                     result = FrameType::Host;
 
                 stackFrame.frameType = result;

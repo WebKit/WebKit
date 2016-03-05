@@ -115,7 +115,7 @@ public:
     static ConstructType getConstructData(JSCell*, ConstructData& constructData)
     {
         constructData.native.function = constructThrowTypeError;
-        return ConstructTypeHost;
+        return ConstructType::Host;
     }
 
     static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
@@ -127,7 +127,7 @@ public:
     static CallType getCallData(JSCell*, CallData& callData)
     {
         callData.native.function = callThrowTypeError;
-        return CallTypeHost;
+        return CallType::Host;
     }
 
     DECLARE_INFO;

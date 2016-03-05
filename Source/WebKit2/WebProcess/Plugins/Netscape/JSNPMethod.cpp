@@ -84,7 +84,7 @@ static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)
 CallType JSNPMethod::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callMethod;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 } // namespace WebKit

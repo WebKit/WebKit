@@ -68,10 +68,10 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
     JSObject* targetAsObject = jsCast<JSObject*>(target);
 
     CallData ignoredCallData;
-    m_isCallable = targetAsObject->methodTable(vm)->getCallData(targetAsObject, ignoredCallData) != CallTypeNone;
+    m_isCallable = targetAsObject->methodTable(vm)->getCallData(targetAsObject, ignoredCallData) != CallType::None;
 
     ConstructData ignoredConstructData;
-    m_isConstructible = jsCast<JSObject*>(target)->methodTable(vm)->getConstructData(jsCast<JSObject*>(target), ignoredConstructData) != ConstructTypeNone;
+    m_isConstructible = jsCast<JSObject*>(target)->methodTable(vm)->getConstructData(jsCast<JSObject*>(target), ignoredConstructData) != ConstructType::None;
 
     m_target.set(vm, this, targetAsObject);
     m_handler.set(vm, this, handler);
@@ -457,7 +457,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
     if (applyMethod.isUndefined()) {
         CallData callData;
         CallType callType = target->methodTable(vm)->getCallData(target, callData);
-        RELEASE_ASSERT(callType != CallTypeNone);
+        RELEASE_ASSERT(callType != CallType::None);
         return JSValue::encode(call(exec, target, callType, callData, exec->thisValue(), ArgList(exec)));
     }
 
@@ -477,11 +477,11 @@ CallType ProxyObject::getCallData(JSCell* cell, CallData& callData)
     if (!proxy->m_isCallable) {
         callData.js.functionExecutable = nullptr;
         callData.js.scope = nullptr;
-        return CallTypeNone;
+        return CallType::None;
     }
 
     callData.native.function = performProxyCall;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
@@ -502,7 +502,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
     if (constructMethod.isUndefined()) {
         ConstructData constructData;
         ConstructType constructType = target->methodTable(vm)->getConstructData(target, constructData);
-        RELEASE_ASSERT(constructType != ConstructTypeNone);
+        RELEASE_ASSERT(constructType != ConstructType::None);
         return JSValue::encode(construct(exec, target, constructType, constructData, ArgList(exec), exec->newTarget()));
     }
 
@@ -527,11 +527,11 @@ ConstructType ProxyObject::getConstructData(JSCell* cell, ConstructData& constru
     if (!proxy->m_isConstructible) {
         constructData.js.functionExecutable = nullptr;
         constructData.js.scope = nullptr;
-        return ConstructTypeNone;
+        return ConstructType::None;
     }
 
     constructData.native.function = performProxyConstruct;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 template <typename DefaultDeleteFunction>

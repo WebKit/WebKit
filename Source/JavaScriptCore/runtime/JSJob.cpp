@@ -65,7 +65,7 @@ void JSJobMicrotask::run(ExecState* exec)
 {
     CallData handlerCallData;
     CallType handlerCallType = getCallData(m_job.get(), handlerCallData);
-    ASSERT(handlerCallType != CallTypeNone);
+    ASSERT(handlerCallType != CallType::None);
 
     MarkedArgumentBuffer handlerArguments;
     for (unsigned index = 0, length = m_arguments->length(); index < length; ++index)

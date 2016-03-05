@@ -78,7 +78,7 @@ JSValue jsTypeStringForValue(VM& vm, JSGlobalObject* globalObject, JSValue v)
         if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
             CallData callData;
             JSObject* object = asObject(v);
-            if (object->methodTable(vm)->getCallData(object, callData) != CallTypeNone)
+            if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
                 return vm.smallStrings.functionString();
         }
     }
@@ -103,7 +103,7 @@ bool jsIsObjectTypeOrNull(CallFrame* callFrame, JSValue v)
             return false;
         CallData callData;
         JSObject* object = asObject(v);
-        if (object->methodTable(callFrame->vm())->getCallData(object, callData) != CallTypeNone)
+        if (object->methodTable(callFrame->vm())->getCallData(object, callData) != CallType::None)
             return false;
     }
     return true;
@@ -114,7 +114,7 @@ bool jsIsFunctionType(JSValue v)
     if (v.isObject()) {
         CallData callData;
         JSObject* object = asObject(v);
-        if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
+        if (object->methodTable()->getCallData(object, callData) != CallType::None)
             return true;
     }
     return false;

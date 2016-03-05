@@ -502,7 +502,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
 
-        if (callType == CallTypeNone && !replacementString.length())
+        if (callType == CallType::None && !replacementString.length())
             return removeUsingRegExpSearch(exec, string, source, regExp);
     }
 
@@ -517,7 +517,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
     Vector<String, 16> replacements;
 
     // This is either a loop (if global is set) or a one-way (if not).
-    if (global && callType == CallTypeJS) {
+    if (global && callType == CallType::JS) {
         // regExp->numSubpatterns() + 1 for pattern args, + 2 for match start and string
         int argCount = regExp->numSubpatterns() + 1 + 2;
         JSFunction* func = jsCast<JSFunction*>(replaceValue);
@@ -612,7 +612,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
             if (!result)
                 break;
 
-            if (callType != CallTypeNone) {
+            if (callType != CallType::None) {
                 sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
 
                 MarkedArgumentBuffer args;
@@ -681,7 +681,7 @@ EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
     CallData callData;
     String replacementString = emptyString();
     return replaceUsingRegExpSearch(
-        exec, thisValue, searchValue, callData, CallTypeNone, replacementString, JSValue());
+        exec, thisValue, searchValue, callData, CallType::None, replacementString, JSValue());
 }
 
 EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
@@ -690,7 +690,7 @@ EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
     CallData callData;
     String replacementString = replaceString->value(exec);
     return replaceUsingRegExpSearch(
-        exec, thisValue, searchValue, callData, CallTypeNone, replacementString, replaceString);
+        exec, thisValue, searchValue, callData, CallType::None, replacementString, replaceString);
 }
 
 static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSString* string, JSValue searchValue, JSValue replaceValue)
@@ -698,7 +698,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JS
     String replacementString;
     CallData callData;
     CallType callType = getCallData(replaceValue, callData);
-    if (callType == CallTypeNone) {
+    if (callType == CallType::None) {
         replacementString = replaceValue.toString(exec)->value(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
@@ -722,7 +722,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingStringSearch(ExecState* exec, JS
 
     CallData callData;
     CallType callType = getCallData(replaceValue, callData);
-    if (callType != CallTypeNone) {
+    if (callType != CallType::None) {
         MarkedArgumentBuffer args;
         args.append(jsSubstring(exec, string, matchStart, searchString.impl()->length()));
         args.append(jsNumber(matchStart));

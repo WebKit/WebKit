@@ -192,7 +192,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot* root)
     JSC::JSObject* replacementObject = replacementFunction.toObject(exec);
     JSC::CallData callData;
     JSC::CallType callType = replacementObject->methodTable()->getCallData(replacementObject, callData);
-    if (callType == JSC::CallTypeNone)
+    if (callType == JSC::CallType::None)
         return false;
 
     JSC::MarkedArgumentBuffer argList;

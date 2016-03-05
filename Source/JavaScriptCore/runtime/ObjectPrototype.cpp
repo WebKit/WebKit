@@ -120,7 +120,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
 
     JSValue get = exec->argument(1);
     CallData callData;
-    if (getCallData(get, callData) == CallTypeNone)
+    if (getCallData(get, callData) == CallType::None)
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("invalid getter usage")));
 
     auto propertyName = exec->argument(0).toPropertyKey(exec);
@@ -146,7 +146,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
 
     JSValue set = exec->argument(1);
     CallData callData;
-    if (getCallData(set, callData) == CallTypeNone)
+    if (getCallData(set, callData) == CallType::None)
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("invalid setter usage")));
 
     auto propertyName = exec->argument(0).toPropertyKey(exec);
@@ -246,7 +246,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
     // 3. If IsCallable(toString) is false, throw a TypeError exception.
     CallData callData;
     CallType callType = getCallData(toString, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallType::None)
         return JSValue::encode(jsUndefined());
 
     // 4. Return the result of calling the [[Call]] internal method of toString passing O as the this value and no arguments.

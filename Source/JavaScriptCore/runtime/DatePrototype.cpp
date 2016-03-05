@@ -1117,7 +1117,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
 
     CallData callData;
     CallType callType = getCallData(toISOValue, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallType::None)
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("toISOString is not a function")));
 
     JSValue result = call(exec, asObject(toISOValue), callType, callData, object, exec->emptyList());

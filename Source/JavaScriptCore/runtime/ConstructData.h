@@ -40,20 +40,22 @@ class FunctionExecutable;
 class JSObject;
 class JSScope;
 
-enum ConstructType {
-    ConstructTypeNone,
-    ConstructTypeHost,
-    ConstructTypeJS
+enum class ConstructType : unsigned {
+    None,
+    Host,
+    JS
 };
 
-union ConstructData {
-    struct {
-        NativeFunction function;
-    } native;
-    struct {
-        FunctionExecutable* functionExecutable;
-        JSScope* scope;
-    } js;
+struct ConstructData {
+    union {
+        struct {
+            NativeFunction function;
+        } native;
+        struct {
+            FunctionExecutable* functionExecutable;
+            JSScope* scope;
+        } js;
+    };
 };
 
 // Convenience wrapper so you don't need to deal with CallData and CallType unless you are going to use them.

@@ -530,7 +530,7 @@ bool JSObjectIsFunction(JSContextRef ctx, JSObjectRef object)
     JSLockHolder locker(toJS(ctx));
     CallData callData;
     JSCell* cell = toJS(object);
-    return cell->methodTable()->getCallData(cell, callData) != CallTypeNone;
+    return cell->methodTable()->getCallData(cell, callData) != CallType::None;
 }
 
 JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -553,7 +553,7 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
 
     CallData callData;
     CallType callType = jsObject->methodTable()->getCallData(jsObject, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallType::None)
         return 0;
 
     JSValueRef result = toRef(exec, profiledCall(exec, ProfilingReason::API, jsObject, callType, callData, jsThisObject, argList));
@@ -568,7 +568,7 @@ bool JSObjectIsConstructor(JSContextRef, JSObjectRef object)
         return false;
     JSObject* jsObject = toJS(object);
     ConstructData constructData;
-    return jsObject->methodTable()->getConstructData(jsObject, constructData) != ConstructTypeNone;
+    return jsObject->methodTable()->getConstructData(jsObject, constructData) != ConstructType::None;
 }
 
 JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -583,7 +583,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
 
     ConstructData constructData;
     ConstructType constructType = jsObject->methodTable()->getConstructData(jsObject, constructData);
-    if (constructType == ConstructTypeNone)
+    if (constructType == ConstructType::None)
         return 0;
 
     MarkedArgumentBuffer argList;

@@ -264,7 +264,7 @@ template<> ConstructType JSTestInterfaceConstructor::getConstructData(JSCell* ce
 #if ENABLE(TEST_INTERFACE)
     UNUSED_PARAM(cell);
     constructData.native.function = construct;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 #else
     return Base::getConstructData(cell, constructData);
 #endif

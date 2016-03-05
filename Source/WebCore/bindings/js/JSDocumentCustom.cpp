@@ -143,7 +143,7 @@ JSValue JSDocument::defineElement(ExecState& state)
 
     JSObject* object = state.argument(1).getObject();
     ConstructData callData;
-    if (!object || object->methodTable()->getConstructData(object, callData) == ConstructTypeNone)
+    if (!object || object->methodTable()->getConstructData(object, callData) == ConstructType::None)
         return throwTypeError(&state, "The second argument must be a constructor");
 
     Document& document = wrapped();

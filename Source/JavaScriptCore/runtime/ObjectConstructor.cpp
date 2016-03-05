@@ -134,7 +134,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithObjectConstructor(ExecState* ex
 ConstructType ObjectConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithObjectConstructor;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 static EncodedJSValue JSC_HOST_CALL callObjectConstructor(ExecState* exec)
@@ -145,7 +145,7 @@ static EncodedJSValue JSC_HOST_CALL callObjectConstructor(ExecState* exec)
 CallType ObjectConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callObjectConstructor;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 class ObjectConstructorGetPrototypeOfFunctor {
@@ -349,7 +349,7 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
             return false;
         if (!get.isUndefined()) {
             CallData callData;
-            if (getCallData(get, callData) == CallTypeNone) {
+            if (getCallData(get, callData) == CallType::None) {
                 exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Getter must be a function.")));
                 return false;
             }
@@ -364,7 +364,7 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
             return false;
         if (!set.isUndefined()) {
             CallData callData;
-            if (getCallData(set, callData) == CallTypeNone) {
+            if (getCallData(set, callData) == CallType::None) {
                 exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Setter must be a function.")));
                 return false;
             }

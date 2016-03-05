@@ -41,22 +41,24 @@ class FunctionExecutable;
 class JSObject;
 class JSScope;
 
-enum CallType {
-    CallTypeNone,
-    CallTypeHost,
-    CallTypeJS
+enum class CallType : unsigned {
+    None,
+    Host,
+    JS
 };
 
 typedef EncodedJSValue (JSC_HOST_CALL *NativeFunction)(ExecState*);
 
-union CallData {
-    struct {
-        NativeFunction function;
-    } native;
-    struct {
-        FunctionExecutable* functionExecutable;
-        JSScope* scope;
-    } js;
+struct CallData {
+    union {
+        struct {
+            NativeFunction function;
+        } native;
+        struct {
+            FunctionExecutable* functionExecutable;
+            JSScope* scope;
+        } js;
+    };
 };
 
 enum class ProfilingReason {

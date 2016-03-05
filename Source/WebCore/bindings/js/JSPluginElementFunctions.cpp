@@ -145,7 +145,7 @@ static EncodedJSValue JSC_HOST_CALL callPlugin(ExecState* exec)
 
     CallData callData;
     CallType callType = getCallData(scriptObject, callData);
-    ASSERT(callType == CallTypeHost);
+    ASSERT(callType == CallType::Host);
 
     // Call the object.
     JSValue result = call(exec, scriptObject, callType, callData, exec->thisValue(), argumentList);
@@ -158,18 +158,18 @@ CallType pluginElementGetCallData(JSHTMLElement* element, CallData& callData)
     if (JSObject* scriptObject = pluginScriptObjectFromPluginViewBase(element)) {
         CallData scriptObjectCallData;
         
-        if (scriptObject->methodTable()->getCallData(scriptObject, scriptObjectCallData) == CallTypeNone)
-            return CallTypeNone;
+        if (scriptObject->methodTable()->getCallData(scriptObject, scriptObjectCallData) == CallType::None)
+            return CallType::None;
 
         callData.native.function = callPlugin;
-        return CallTypeHost;
+        return CallType::Host;
     }
     
     Instance* instance = pluginInstance(element->wrapped());
     if (!instance || !instance->supportsInvokeDefaultMethod())
-        return CallTypeNone;
+        return CallType::None;
     callData.native.function = callPlugin;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 } // namespace WebCore

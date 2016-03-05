@@ -90,13 +90,13 @@ static EncodedJSValue JSC_HOST_CALL callSymbol(ExecState* exec)
 
 ConstructType SymbolConstructor::getConstructData(JSCell*, ConstructData&)
 {
-    return ConstructTypeNone;
+    return ConstructType::None;
 }
 
 CallType SymbolConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callSymbol;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL symbolConstructorFor(ExecState* exec)

@@ -58,7 +58,7 @@ using namespace WebCore;
 
 using JSC::CallData;
 using JSC::CallType;
-using JSC::CallTypeNone;
+using JSC::CallType::None;
 using JSC::ExecState;
 using JSC::Identifier;
 using JSC::JSLockHolder;
@@ -315,7 +315,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSC::JSValue function = [self _imp]->get(exec, Identifier::fromString(exec, String(name)));
     CallData callData;
     CallType callType = getCallData(function, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallType::None)
         return nil;
 
     MarkedArgumentBuffer argList;

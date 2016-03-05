@@ -94,7 +94,7 @@ bool ScriptValue::isObject() const
 bool ScriptValue::isFunction() const
 {
     CallData callData;
-    return getCallData(m_value.get(), callData) != CallTypeNone;
+    return getCallData(m_value.get(), callData) != CallType::None;
 }
 
 static RefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSValue value, int maxDepth)

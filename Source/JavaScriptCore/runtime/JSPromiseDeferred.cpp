@@ -45,7 +45,7 @@ JSValue newPromiseCapability(ExecState* exec, JSGlobalObject* globalObject, JSPr
     JSFunction* newPromiseCapabilityFunction = globalObject->newPromiseCapabilityFunction();
     CallData callData;
     CallType callType = JSC::getCallData(newPromiseCapabilityFunction, callData);
-    ASSERT(callType != CallTypeNone);
+    ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(promiseConstructor);
@@ -88,7 +88,7 @@ static inline void callFunction(ExecState* exec, JSValue function, JSValue value
 {
     CallData callData;
     CallType callType = getCallData(function, callData);
-    ASSERT(callType != CallTypeNone);
+    ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(value);

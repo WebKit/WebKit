@@ -77,7 +77,7 @@ static EncodedJSValue JSC_HOST_CALL callFunctionPrototype(ExecState*)
 CallType FunctionPrototype::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callFunctionPrototype;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
@@ -113,7 +113,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         JSObject* object = asObject(thisValue);
         if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
             CallData callData;
-            if (object->methodTable(exec->vm())->getCallData(object, callData) != CallTypeNone) {
+            if (object->methodTable(exec->vm())->getCallData(object, callData) != CallType::None) {
                 if (auto* classInfo = object->classInfo())
                     return JSValue::encode(jsMakeNontrivialString(exec, "function ", classInfo->className, "() {\n    [native code]\n}"));
             }
@@ -134,7 +134,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
     // If IsCallable(Target) is false, throw a TypeError exception.
     CallData callData;
     CallType callType = getCallData(target, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallType::None)
         return throwVMTypeError(exec);
     // Primitive values are not callable.
     ASSERT(target.isObject());

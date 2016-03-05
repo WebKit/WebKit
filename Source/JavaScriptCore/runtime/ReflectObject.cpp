@@ -34,6 +34,7 @@
 
 namespace JSC {
 
+static EncodedJSValue JSC_HOST_CALL reflectObjectConstruct(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectDefineProperty(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectGet(ExecState*);
@@ -57,6 +58,7 @@ const ClassInfo ReflectObject::s_info = { "Reflect", &Base::s_info, &reflectObje
 /* Source for ReflectObject.lut.h
 @begin reflectObjectTable
     apply                    JSBuiltin                             DontEnum|Function 3
+    construct                reflectObjectConstruct                DontEnum|Function 2
     defineProperty           reflectObjectDefineProperty           DontEnum|Function 3
     deleteProperty           JSBuiltin                             DontEnum|Function 2
     enumerate                reflectObjectEnumerate                DontEnum|Function 1
@@ -89,7 +91,41 @@ bool ReflectObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
 
 // ------------------------------ Functions --------------------------------
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.defineproperty
+// https://tc39.github.io/ecma262/#sec-reflect.construct
+EncodedJSValue JSC_HOST_CALL reflectObjectConstruct(ExecState* exec)
+{
+    JSValue target = exec->argument(0);
+    if (!target.isObject())
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.construct requires the first argument be a constructor")));
+
+    ConstructData constructData;
+    ConstructType constructType;
+    if (!target.isConstructor(constructType, constructData))
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.construct requires the first argument be a constructor")));
+
+    JSValue newTarget = target;
+    if (exec->argumentCount() >= 3) {
+        newTarget = exec->argument(2);
+        if (!newTarget.isConstructor())
+            return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.construct requires the third argument be a constructor if present")));
+    }
+
+    MarkedArgumentBuffer arguments;
+    JSObject* argumentsObject = jsDynamicCast<JSObject*>(exec->argument(1));
+    if (!argumentsObject)
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.construct requires the second argument be an object")));
+
+    createListFromArrayLike(exec, argumentsObject, RuntimeTypeMaskAllTypes, ASCIILiteral("This error must not be raised"), [&] (JSValue value, RuntimeType) -> bool {
+        arguments.append(value);
+        return false;
+    });
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    return JSValue::encode(construct(exec, target, constructType, constructData, arguments, newTarget));
+}
+
+// https://tc39.github.io/ecma262/#sec-reflect.defineproperty
 EncodedJSValue JSC_HOST_CALL reflectObjectDefineProperty(ExecState* exec)
 {
     JSValue target = exec->argument(0);
@@ -111,6 +147,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectDefineProperty(ExecState* exec)
     return JSValue::encode(jsBoolean(targetObject->methodTable(exec->vm())->defineOwnProperty(targetObject, exec, propertyName, descriptor, shouldThrow)));
 }
 
+// FIXME: Reflect.enumerate is removed in ECMA 2016 draft.
 // http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.enumerate
 EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState* exec)
 {
@@ -120,7 +157,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState* exec)
     return JSValue::encode(JSPropertyNameIterator::create(exec, exec->lexicalGlobalObject()->propertyNameIteratorStructure(), asObject(target)));
 }
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.get
+// https://tc39.github.io/ecma262/#sec-reflect.get
 EncodedJSValue JSC_HOST_CALL reflectObjectGet(ExecState* exec)
 {
     JSValue target = exec->argument(0);
@@ -139,7 +176,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectGet(ExecState* exec)
     return JSValue::encode(target.get(exec, propertyName, slot));
 }
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.getownpropertydescriptor
+// https://tc39.github.io/ecma262/#sec-reflect.getownpropertydescriptor
 EncodedJSValue JSC_HOST_CALL reflectObjectGetOwnPropertyDescriptor(ExecState* exec)
 {
     JSValue target = exec->argument(0);
@@ -153,7 +190,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectGetOwnPropertyDescriptor(ExecState* ex
     return JSValue::encode(objectConstructorGetOwnPropertyDescriptor(exec, asObject(target), key));
 }
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.getprototypeof
+// https://tc39.github.io/ecma262/#sec-reflect.getprototypeof
 EncodedJSValue JSC_HOST_CALL reflectObjectGetPrototypeOf(ExecState* exec)
 {
     JSValue target = exec->argument(0);
@@ -162,7 +199,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectGetPrototypeOf(ExecState* exec)
     return JSValue::encode(objectConstructorGetPrototypeOf(exec, asObject(target)));
 }
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.isextensible
+// https://tc39.github.io/ecma262/#sec-reflect.isextensible
 EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState* exec)
 {
     JSValue target = exec->argument(0);
@@ -175,7 +212,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState* exec)
     return JSValue::encode(jsBoolean(isExtensible));
 }
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.ownkeys
+// https://tc39.github.io/ecma262/#sec-reflect.ownkeys
 EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState* exec)
 {
     JSValue target = exec->argument(0);
@@ -184,7 +221,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState* exec)
     return JSValue::encode(ownPropertyKeys(exec, jsCast<JSObject*>(target), PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Include));
 }
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.preventextensions
+// https://tc39.github.io/ecma262/#sec-reflect.preventextensions
 EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState* exec)
 {
     JSValue target = exec->argument(0);
@@ -197,7 +234,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState* exec)
     return JSValue::encode(jsBoolean(result));
 }
 
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.setprototypeof
+// https://tc39.github.io/ecma262/#sec-reflect.setprototypeof
 EncodedJSValue JSC_HOST_CALL reflectObjectSetPrototypeOf(ExecState* exec)
 {
     JSValue target = exec->argument(0);

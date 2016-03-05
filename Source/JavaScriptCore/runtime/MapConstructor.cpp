@@ -70,7 +70,7 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
 
     CallData adderFunctionCallData;
     CallType adderFunctionCallType = getCallData(adderFunction, adderFunctionCallData);
-    if (adderFunctionCallType == CallTypeNone)
+    if (adderFunctionCallType == CallType::None)
         return JSValue::encode(throwTypeError(exec));
 
     JSValue iteratorFunction = iterable.get(exec, exec->propertyNames().iteratorSymbol);
@@ -79,7 +79,7 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
 
     CallData iteratorFunctionCallData;
     CallType iteratorFunctionCallType = getCallData(iteratorFunction, iteratorFunctionCallData);
-    if (iteratorFunctionCallType == CallTypeNone)
+    if (iteratorFunctionCallType == CallType::None)
         return JSValue::encode(throwTypeError(exec));
 
     ArgList iteratorFunctionArguments;
@@ -136,13 +136,13 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
 ConstructType MapConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructMap;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 CallType MapConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callMap;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 }

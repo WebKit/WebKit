@@ -230,11 +230,11 @@ CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostFunction()) {
         callData.native.function = thisObject->nativeFunction();
-        return CallTypeHost;
+        return CallType::Host;
     }
     callData.js.functionExecutable = thisObject->jsExecutable();
     callData.js.scope = thisObject->scope();
-    return CallTypeJS;
+    return CallType::JS;
 }
 
 class RetrieveArgumentsFunctor {
@@ -546,16 +546,16 @@ ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& construc
 
     if (thisObject->isHostFunction()) {
         constructData.native.function = thisObject->nativeConstructor();
-        return ConstructTypeHost;
+        return ConstructType::Host;
     }
 
     FunctionExecutable* functionExecutable = thisObject->jsExecutable();
     if (functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
-        return ConstructTypeNone;
+        return ConstructType::None;
 
     constructData.js.functionExecutable = functionExecutable;
     constructData.js.scope = thisObject->scope();
-    return ConstructTypeJS;
+    return ConstructType::JS;
 }
 
 String getCalculatedDisplayName(CallFrame* callFrame, JSObject* object)

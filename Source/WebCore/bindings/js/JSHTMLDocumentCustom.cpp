@@ -144,7 +144,7 @@ JSValue JSHTMLDocument::open(ExecState& state)
                 JSValue function = wrapper->get(&state, Identifier::fromString(&state, "open"));
                 CallData callData;
                 CallType callType = ::getCallData(function, callData);
-                if (callType == CallTypeNone)
+                if (callType == CallType::None)
                     return throwTypeError(&state);
                 return JSC::call(&state, function, callType, callData, wrapper, ArgList(&state));
             }

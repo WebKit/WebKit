@@ -93,7 +93,7 @@ CallType JSCell::getCallData(JSCell*, CallData& callData)
     callData.js.functionExecutable = 0;
     callData.js.scope = 0;
     callData.native.function = 0;
-    return CallTypeNone;
+    return CallType::None;
 }
 
 ConstructType JSCell::getConstructData(JSCell*, ConstructData& constructData)
@@ -101,7 +101,7 @@ ConstructType JSCell::getConstructData(JSCell*, ConstructData& constructData)
     constructData.js.functionExecutable = 0;
     constructData.js.scope = 0;
     constructData.native.function = 0;
-    return ConstructTypeNone;
+    return ConstructType::None;
 }
 
 void JSCell::put(JSCell* cell, ExecState* exec, PropertyName identifier, JSValue value, PutPropertySlot& slot)

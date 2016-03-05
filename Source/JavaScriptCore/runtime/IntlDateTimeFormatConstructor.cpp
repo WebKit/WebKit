@@ -134,13 +134,13 @@ static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState* state)
 ConstructType IntlDateTimeFormatConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructIntlDateTimeFormat;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 CallType IntlDateTimeFormatConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callIntlDateTimeFormat;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 bool IntlDateTimeFormatConstructor::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)

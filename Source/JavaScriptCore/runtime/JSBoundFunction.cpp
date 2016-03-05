@@ -50,7 +50,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
     JSObject* targetFunction = boundFunction->targetFunction();
     CallData callData;
     CallType callType = getCallData(targetFunction, callData);
-    ASSERT(callType != CallTypeNone);
+    ASSERT(callType != CallType::None);
     return JSValue::encode(call(exec, targetFunction, callType, callData, boundFunction->boundThis(), args));
 }
 
@@ -70,7 +70,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
     JSObject* targetFunction = boundFunction->targetFunction();
     ConstructData constructData;
     ConstructType constructType = getConstructData(targetFunction, constructData);
-    ASSERT(constructType != ConstructTypeNone);
+    ASSERT(constructType != ConstructType::None);
     return JSValue::encode(construct(exec, targetFunction, constructType, constructData, args));
 }
 
@@ -121,7 +121,7 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, J
 {
     ConstructData constructData;
     ConstructType constructType = JSC::getConstructData(targetFunction, constructData);
-    bool canConstruct = constructType != ConstructTypeNone;
+    bool canConstruct = constructType != ConstructType::None;
     NativeExecutable* executable = vm.getHostFunction(boundFunctionCall, canConstruct ? boundFunctionConstruct : callHostFunctionAsConstructor, ASCIILiteral("Function.prototype.bind result"));
     Structure* structure = getBoundFunctionStructure(vm, globalObject, targetFunction);
     JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, globalObject, structure, targetFunction, boundThis, boundArgs);

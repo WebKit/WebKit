@@ -69,7 +69,7 @@ void JSPromise::initialize(ExecState* exec, JSGlobalObject* globalObject, JSValu
     JSFunction* initializePromise = globalObject->initializePromiseFunction();
     CallData callData;
     CallType callType = JSC::getCallData(initializePromise, callData);
-    ASSERT(callType != CallTypeNone);
+    ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(executor);

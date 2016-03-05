@@ -138,7 +138,7 @@ JSValue ModuleLoaderObject::provide(ExecState* exec, JSValue key, Status status,
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().providePublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
-    ASSERT(callType != CallTypeNone);
+    ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(key);
@@ -153,7 +153,7 @@ JSInternalPromise* ModuleLoaderObject::loadAndEvaluateModule(ExecState* exec, JS
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().loadAndEvaluateModulePublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
-    ASSERT(callType != CallTypeNone);
+    ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(moduleName);
@@ -167,7 +167,7 @@ JSInternalPromise* ModuleLoaderObject::loadModule(ExecState* exec, JSValue modul
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().loadModulePublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
-    ASSERT(callType != CallTypeNone);
+    ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(moduleName);
@@ -181,7 +181,7 @@ JSInternalPromise* ModuleLoaderObject::linkAndEvaluateModule(ExecState* exec, JS
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().linkAndEvaluateModulePublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
-    ASSERT(callType != CallTypeNone);
+    ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(moduleKey);

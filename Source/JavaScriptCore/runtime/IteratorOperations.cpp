@@ -42,7 +42,7 @@ JSValue iteratorNext(ExecState* exec, JSValue iterator, JSValue value)
 
     CallData nextFunctionCallData;
     CallType nextFunctionCallType = getCallData(nextFunction, nextFunctionCallData);
-    if (nextFunctionCallType == CallTypeNone)
+    if (nextFunctionCallType == CallType::None)
         return throwTypeError(exec);
 
     MarkedArgumentBuffer nextFunctionArguments;
@@ -106,7 +106,7 @@ void iteratorClose(ExecState* exec, JSValue iterator)
 
     CallData returnFunctionCallData;
     CallType returnFunctionCallType = getCallData(returnFunction, returnFunctionCallData);
-    if (returnFunctionCallType == CallTypeNone) {
+    if (returnFunctionCallType == CallType::None) {
         if (exception)
             exec->vm().throwException(exec, exception);
         else

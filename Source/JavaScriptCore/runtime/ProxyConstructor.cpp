@@ -72,7 +72,7 @@ static EncodedJSValue JSC_HOST_CALL constructProxyObject(ExecState* exec)
 ConstructType ProxyConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructProxyObject;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 static EncodedJSValue JSC_HOST_CALL callProxy(ExecState* exec)
@@ -83,7 +83,7 @@ static EncodedJSValue JSC_HOST_CALL callProxy(ExecState* exec)
 CallType ProxyConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callProxy;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 } // namespace JSC

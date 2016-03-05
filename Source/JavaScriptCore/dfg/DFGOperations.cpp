@@ -167,6 +167,11 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     if (constructor->type() == JSFunctionType)
         return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure());
 
+    JSValue proto = constructor->get(exec, exec->propertyNames().prototype);
+    if (vm.exception())
+        return nullptr;
+    if (proto.isObject())
+        return constructEmptyObject(exec, asObject(proto));
     return constructEmptyObject(exec);
 }
 
@@ -990,7 +995,7 @@ size_t JIT_OPERATION operationObjectIsObject(ExecState* exec, JSGlobalObject* gl
         return false;
     if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
         CallData callData;
-        if (object->methodTable(vm)->getCallData(object, callData) != CallTypeNone)
+        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
             return false;
     }
     
@@ -1010,7 +1015,7 @@ size_t JIT_OPERATION operationObjectIsFunction(ExecState* exec, JSGlobalObject* 
         return true;
     if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
         CallData callData;
-        if (object->methodTable(vm)->getCallData(object, callData) != CallTypeNone)
+        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
             return true;
     }
     
@@ -1030,7 +1035,7 @@ JSCell* JIT_OPERATION operationTypeOfObject(ExecState* exec, JSGlobalObject* glo
         return vm.smallStrings.functionString();
     if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
         CallData callData;
-        if (object->methodTable(vm)->getCallData(object, callData) != CallTypeNone)
+        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
             return vm.smallStrings.functionString();
     }
     
@@ -1050,7 +1055,7 @@ int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(ExecState* exec, JSGloba
         return static_cast<int32_t>(TypeofType::Function);
     if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
         CallData callData;
-        if (object->methodTable(vm)->getCallData(object, callData) != CallTypeNone)
+        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
             return static_cast<int32_t>(TypeofType::Function);
     }
     

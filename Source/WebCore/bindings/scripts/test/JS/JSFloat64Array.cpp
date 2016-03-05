@@ -106,7 +106,7 @@ bool JSFloat64ArrayConstructor::getOwnPropertyDescriptor(JSObject* object, ExecS
 ConstructType JSFloat64ArrayConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructJSFloat64Array;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 /* Hash table for prototype */

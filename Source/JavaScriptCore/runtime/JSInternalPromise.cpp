@@ -57,7 +57,7 @@ JSInternalPromise* JSInternalPromise::then(ExecState* exec, JSFunction* onFulfil
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().thenPublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
-    ASSERT(callType != CallTypeNone);
+    ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(onFulfilled ? onFulfilled : jsUndefined());

@@ -1100,9 +1100,9 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         CallData callData;
         CallType callType = getCallData(callee, callData);
     
-        ASSERT(callType != CallTypeJS);
+        ASSERT(callType != CallType::JS);
     
-        if (callType == CallTypeHost) {
+        if (callType == CallType::Host) {
             NativeCallFrameTracer tracer(&vm, execCallee);
             execCallee->setCallee(asObject(callee));
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
@@ -1114,7 +1114,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         dataLog("Call callee is not a function: ", callee, "\n");
 #endif
 
-        ASSERT(callType == CallTypeNone);
+        ASSERT(callType == CallType::None);
         LLINT_CALL_THROW(exec, createNotAFunctionError(exec, callee));
     }
 
@@ -1123,9 +1123,9 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
     ConstructData constructData;
     ConstructType constructType = getConstructData(callee, constructData);
     
-    ASSERT(constructType != ConstructTypeJS);
+    ASSERT(constructType != ConstructType::JS);
     
-    if (constructType == ConstructTypeHost) {
+    if (constructType == ConstructType::Host) {
         NativeCallFrameTracer tracer(&vm, execCallee);
         execCallee->setCallee(asObject(callee));
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
@@ -1137,7 +1137,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
     dataLog("Constructor callee is not a function: ", callee, "\n");
 #endif
 
-    ASSERT(constructType == ConstructTypeNone);
+    ASSERT(constructType == ConstructType::None);
     LLINT_CALL_THROW(exec, createNotAConstructorError(exec, callee));
 }
 

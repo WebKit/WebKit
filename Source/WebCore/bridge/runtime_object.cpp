@@ -216,14 +216,14 @@ CallType RuntimeObject::getCallData(JSCell* cell, CallData& callData)
 {
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
     if (!thisObject->m_instance)
-        return CallTypeNone;
+        return CallType::None;
     
     RefPtr<Instance> instance = thisObject->m_instance;
     if (!instance->supportsInvokeDefaultMethod())
-        return CallTypeNone;
+        return CallType::None;
     
     callData.native.function = callRuntimeObject;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 static EncodedJSValue JSC_HOST_CALL callRuntimeConstructor(ExecState* exec)
@@ -244,14 +244,14 @@ ConstructType RuntimeObject::getConstructData(JSCell* cell, ConstructData& const
 {
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
     if (!thisObject->m_instance)
-        return ConstructTypeNone;
+        return ConstructType::None;
     
     RefPtr<Instance> instance = thisObject->m_instance;
     if (!instance->supportsConstruct())
-        return ConstructTypeNone;
+        return ConstructType::None;
     
     constructData.native.function = callRuntimeConstructor;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 void RuntimeObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode)

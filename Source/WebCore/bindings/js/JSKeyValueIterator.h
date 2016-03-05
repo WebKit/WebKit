@@ -123,7 +123,7 @@ JSC::EncodedJSValue keyValueIteratorForEach(JSC::ExecState& state, const char* p
 
     JSC::CallData callData;
     JSC::CallType callType = JSC::getCallData(state.argument(0), callData);
-    if (callType == JSC::CallTypeNone)
+    if (callType == JSC::CallType::None)
         return throwVMTypeError(&state);
 
     auto iterator = wrapper->wrapped().createIterator();

@@ -157,13 +157,6 @@ static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* object, unsi
     return slot.getValue(exec, index);
 }
 
-static ALWAYS_INLINE unsigned getLength(ExecState* exec, JSObject* obj)
-{
-    if (isJSArray(obj))
-        return jsCast<JSArray*>(obj)->length();
-    return obj->get(exec, exec->propertyNames().length).toUInt32(exec);
-}
-
 static ALWAYS_INLINE void putLength(ExecState* exec, JSObject* obj, JSValue value)
 {
     PutPropertySlot slot(obj);
@@ -342,11 +335,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]"));
     CallData callData;
     CallType callType = getCallData(function, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallType::None)
         return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]"));
 
     // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
-    if (!isJSArray(thisObject) || callType != CallTypeHost || callData.native.function != arrayProtoFuncJoin)
+    if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin)
         return JSValue::encode(call(exec, function, callType, callData, thisObject, exec->emptyList()));
 
     ASSERT(isJSArray(thisValue));
@@ -411,7 +404,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
                 return JSValue::encode(jsUndefined());
             CallData callData;
             CallType callType = getCallData(conversionFunction, callData);
-            if (callType != CallTypeNone) {
+            if (callType != CallType::None) {
                 element = call(exec, conversionFunction, callType, callData, element, arguments);
                 if (exec->hadException())
                 return JSValue::encode(jsUndefined());
@@ -433,7 +426,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
             return JSValue::encode(jsUndefined());
         CallData callData;
         CallType callType = getCallData(conversionFunction, callData);
-        if (callType != CallTypeNone) {
+        if (callType != CallType::None) {
             element = call(exec, conversionFunction, callType, callData, element, exec->emptyList());
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());

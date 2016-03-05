@@ -62,7 +62,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(ExecState* 
 ConstructType FunctionConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithFunctionConstructor;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(ExecState* exec)
@@ -75,7 +75,7 @@ static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(ExecState* exec)
 CallType FunctionConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callFunctionConstructor;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 // ECMA 15.3.2 The Function Constructor

@@ -147,7 +147,7 @@ Deprecated::ScriptObject InjectedScriptManager::createInjectedScript(const Strin
 
     CallData callData;
     CallType callType = getCallData(functionValue, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallType::None)
         return Deprecated::ScriptObject();
 
     MarkedArgumentBuffer args;

@@ -524,7 +524,7 @@ void ObjCCallbackFunction::destroy(JSCell* cell)
 CallType ObjCCallbackFunction::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = APICallbackFunction::call<ObjCCallbackFunction>;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 ConstructType ObjCCallbackFunction::getConstructData(JSCell* cell, ConstructData& constructData)
@@ -533,7 +533,7 @@ ConstructType ObjCCallbackFunction::getConstructData(JSCell* cell, ConstructData
     if (!callback->impl()->isConstructible())
         return Base::getConstructData(cell, constructData);
     constructData.native.function = APICallbackFunction::construct<ObjCCallbackFunction>;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 String ObjCCallbackFunctionImpl::name()

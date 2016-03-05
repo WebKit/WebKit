@@ -60,7 +60,7 @@ EncodedJSValue JSC_HOST_CALL Interpreter::constructWithErrorConstructor(ExecStat
 ConstructType ErrorConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = Interpreter::constructWithErrorConstructor;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL Interpreter::callErrorConstructor(ExecState* exec)
@@ -73,7 +73,7 @@ EncodedJSValue JSC_HOST_CALL Interpreter::callErrorConstructor(ExecState* exec)
 CallType ErrorConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = Interpreter::callErrorConstructor;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 } // namespace JSC

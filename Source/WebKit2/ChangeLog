@@ -1,3 +1,20 @@
+2016-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Support Reflect.construct
+        https://bugs.webkit.org/show_bug.cgi?id=147330
+
+        Reviewed by Saam Barati.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::JSNPMethod::getCallData):
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getCallData):
+        (WebKit::JSNPObject::getConstructData):
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::hasMethod):
+        (WebKit::NPJSObject::construct):
+        (WebKit::NPJSObject::invoke):
+
 2016-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix file mime-types when using NetworkSession

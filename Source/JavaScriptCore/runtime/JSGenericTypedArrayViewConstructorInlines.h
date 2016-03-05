@@ -170,7 +170,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
 
                     CallData callData;
                     CallType callType = getCallData(iteratorFunc, callData);
-                    if (callType == CallTypeNone)
+                    if (callType == CallType::None)
                         return throwTypeError(exec, "Symbol.Iterator for the first argument cannot be called.");
 
                     ArgList arguments;
@@ -257,7 +257,7 @@ template<typename ViewClass>
 ConstructType JSGenericTypedArrayViewConstructor<ViewClass>::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructGenericTypedArrayView<ViewClass>;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 template<typename ViewClass>
@@ -270,7 +270,7 @@ template<typename ViewClass>
 CallType JSGenericTypedArrayViewConstructor<ViewClass>::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callGenericTypedArrayView<ViewClass>;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 } // namespace JSC

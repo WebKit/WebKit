@@ -68,7 +68,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
 
     CallData adderFunctionCallData;
     CallType adderFunctionCallType = getCallData(adderFunction, adderFunctionCallData);
-    if (adderFunctionCallType == CallTypeNone)
+    if (adderFunctionCallType == CallType::None)
         return JSValue::encode(throwTypeError(exec));
 
     JSValue iteratorFunction = iterable.get(exec, exec->propertyNames().iteratorSymbol);
@@ -77,7 +77,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
 
     CallData iteratorFunctionCallData;
     CallType iteratorFunctionCallType = getCallData(iteratorFunction, iteratorFunctionCallData);
-    if (iteratorFunctionCallType == CallTypeNone)
+    if (iteratorFunctionCallType == CallType::None)
         return JSValue::encode(throwTypeError(exec));
 
     ArgList iteratorFunctionArguments;
@@ -115,13 +115,13 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
 ConstructType WeakSetConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWeakSet;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 CallType WeakSetConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callWeakSet;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 }

@@ -919,7 +919,7 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     JSValue function = object->get(exec, methodName);
     CallData callData;
     CallType callType = getCallData(function, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallType::None)
         return false;
 
     MarkedArgumentBuffer argList;
@@ -951,7 +951,7 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
     JSLockHolder lock(exec);    
     CallData callData;
     CallType callType = object->methodTable()->getCallData(object, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallType::None)
         return false;
 
     MarkedArgumentBuffer argList;
@@ -984,7 +984,7 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
 
     ConstructData constructData;
     ConstructType constructType = object->methodTable()->getConstructData(object, constructData);
-    if (constructType == ConstructTypeNone)
+    if (constructType == ConstructType::None)
         return false;
 
     MarkedArgumentBuffer argList;

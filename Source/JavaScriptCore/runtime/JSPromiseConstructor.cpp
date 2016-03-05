@@ -120,7 +120,7 @@ static EncodedJSValue JSC_HOST_CALL callPromise(ExecState* exec)
 ConstructType JSPromiseConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructPromise;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 CallType JSPromiseConstructor::getCallData(JSCell*, CallData& callData)
@@ -130,7 +130,7 @@ CallType JSPromiseConstructor::getCallData(JSCell*, CallData& callData)
     // returns "object", we need to define [[Call]] for now.
     // https://bugs.webkit.org/show_bug.cgi?id=144093
     callData.native.function = callPromise;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 bool JSPromiseConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

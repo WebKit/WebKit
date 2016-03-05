@@ -93,7 +93,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* ex
 ConstructType NumberConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithNumberConstructor;
-    return ConstructTypeHost;
+    return ConstructType::Host;
 }
 
 // ECMA 15.7.2
@@ -105,7 +105,7 @@ static EncodedJSValue JSC_HOST_CALL callNumberConstructor(ExecState* exec)
 CallType NumberConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callNumberConstructor;
-    return CallTypeHost;
+    return CallType::Host;
 }
 
 // ECMA-262 20.1.2.2

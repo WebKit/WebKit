@@ -3920,7 +3920,7 @@ void HTMLMediaElement::updateCaptionContainer()
 
     JSC::CallData callData;
     JSC::CallType callType = methodObject->methodTable()->getCallData(methodObject, callData);
-    if (callType == JSC::CallTypeNone)
+    if (callType == JSC::CallType::None)
         return;
 
     JSC::MarkedArgumentBuffer noArguments;
@@ -6357,7 +6357,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     JSC::JSObject* function = functionValue.toObject(exec);
     JSC::CallData callData;
     JSC::CallType callType = function->methodTable()->getCallData(function, callData);
-    if (callType == JSC::CallTypeNone)
+    if (callType == JSC::CallType::None)
         return;
 
     JSC::JSValue controllerValue = JSC::call(exec, function, callType, callData, globalObject, argList);
@@ -6452,7 +6452,7 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
     JSC::CallData callData;
     JSC::CallType callType = function->methodTable()->getCallData(function, callData);
     JSC::MarkedArgumentBuffer argList;
-    if (callType == JSC::CallTypeNone)
+    if (callType == JSC::CallType::None)
         return "";
 
     JSC::JSValue outputValue = JSC::call(exec, function, callType, callData, controllerObject, argList);
