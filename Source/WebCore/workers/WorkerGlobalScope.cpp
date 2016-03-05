@@ -150,7 +150,7 @@ void WorkerGlobalScope::postTask(Task task)
 
 int WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout)
 {
-    return DOMTimer::install(*this, WTFMove(action), timeout, true);
+    return DOMTimer::install(*this, WTFMove(action), std::chrono::milliseconds(timeout), true);
 }
 
 void WorkerGlobalScope::clearTimeout(int timeoutId)
@@ -160,7 +160,7 @@ void WorkerGlobalScope::clearTimeout(int timeoutId)
 
 int WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction> action, int timeout)
 {
-    return DOMTimer::install(*this, WTFMove(action), timeout, false);
+    return DOMTimer::install(*this, WTFMove(action), std::chrono::milliseconds(timeout), false);
 }
 
 void WorkerGlobalScope::clearInterval(int timeoutId)

@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-static const int maxIntervalForUserGestureForwarding = 1000; // One second matches Gecko.
+static const std::chrono::milliseconds maxIntervalForUserGestureForwarding = std::chrono::milliseconds(1000); // One second matches Gecko.
 static const int minIntervalForNonUserObservableChangeTimers = 1000; // Empirically determined to maximize battery life.
 static const int maxTimerNestingLevel = 5;
 static const double oneMillisecond = 0.001;
@@ -162,14 +162,14 @@ private:
 
 bool NestedTimersMap::isTrackingNestedTimers = false;
 
-static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
+static inline bool shouldForwardUserGesture(std::chrono::milliseconds interval, int nestingLevel)
 {
     return UserGestureIndicator::processingUserGesture()
         && interval <= maxIntervalForUserGestureForwarding
         && !nestingLevel; // Gestures should not be forwarded to nested timers.
 }
 
-DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, int interval, bool singleShot)
+DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, std::chrono::milliseconds interval, bool singleShot)
     : SuspendableTimer(context)
     , m_nestingLevel(context.timerNestingLevel())
     , m_action(WTFMove(action))
@@ -195,7 +195,7 @@ DOMTimer::~DOMTimer()
 {
 }
 
-int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, int timeout, bool singleShot)
+int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, std::chrono::milliseconds timeout, bool singleShot)
 {
     // DOMTimer constructor passes ownership of the initial ref on the object to the constructor.
     // This reference will be released automatically when a one-shot timer fires, when the context
@@ -408,7 +408,7 @@ double DOMTimer::intervalClampedToMinimum() const
     ASSERT(scriptExecutionContext());
     ASSERT(m_nestingLevel <= maxTimerNestingLevel);
 
-    double intervalInSeconds = std::max(oneMillisecond, m_originalInterval * oneMillisecond);
+    double intervalInSeconds = std::max(oneMillisecond, m_originalInterval.count() * oneMillisecond);
 
     // Only apply throttling to repeating timers.
     if (m_nestingLevel < maxTimerNestingLevel)

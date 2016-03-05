@@ -140,7 +140,7 @@ public:
     static bool forcePseudoState(Element&, CSSSelector::PseudoClassType);
 
     static void willSendXMLHttpRequest(ScriptExecutionContext*, const String& url);
-    static void didInstallTimer(ScriptExecutionContext*, int timerId, int timeout, bool singleShot);
+    static void didInstallTimer(ScriptExecutionContext*, int timerId, std::chrono::milliseconds timeout, bool singleShot);
     static void didRemoveTimer(ScriptExecutionContext*, int timerId);
 
     static InspectorInstrumentationCookie willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine);
@@ -309,7 +309,7 @@ private:
     static bool forcePseudoStateImpl(InstrumentingAgents&, Element&, CSSSelector::PseudoClassType);
 
     static void willSendXMLHttpRequestImpl(InstrumentingAgents&, const String& url);
-    static void didInstallTimerImpl(InstrumentingAgents&, int timerId, int timeout, bool singleShot, ScriptExecutionContext*);
+    static void didInstallTimerImpl(InstrumentingAgents&, int timerId, std::chrono::milliseconds timeout, bool singleShot, ScriptExecutionContext*);
     static void didRemoveTimerImpl(InstrumentingAgents&, int timerId, ScriptExecutionContext*);
 
     static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents&, const String& scriptName, int scriptLine, ScriptExecutionContext*);
@@ -648,7 +648,7 @@ inline void InspectorInstrumentation::willSendXMLHttpRequest(ScriptExecutionCont
         willSendXMLHttpRequestImpl(*instrumentingAgents, url);
 }
 
-inline void InspectorInstrumentation::didInstallTimer(ScriptExecutionContext* context, int timerId, int timeout, bool singleShot)
+inline void InspectorInstrumentation::didInstallTimer(ScriptExecutionContext* context, int timerId, std::chrono::milliseconds timeout, bool singleShot)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))

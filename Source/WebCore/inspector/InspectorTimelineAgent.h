@@ -110,7 +110,7 @@ public:
     RefPtr<JSC::Profile> stopFromConsole(JSC::ExecState*, const String& title);
 
     // InspectorInstrumentation callbacks.
-    void didInstallTimer(int timerId, int timeout, bool singleShot, Frame*);
+    void didInstallTimer(int timerId, std::chrono::milliseconds timeout, bool singleShot, Frame*);
     void didRemoveTimer(int timerId, Frame*);
     void willFireTimer(int timerId, Frame*);
     void didFireTimer();
