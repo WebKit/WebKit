@@ -334,7 +334,7 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [PutForwards=name] readonly attribute TestNode? putForwardsNullableAttribute;
 
 #if defined(TESTING_JS)
-    [NeedsLifecycleProcessingStack] void methodWithNeedsLifecycleProcessingStack();
+    [InvokesCustomElementLifecycleCallbacks] void methodWithNeedsLifecycleProcessingStack();
 #endif
 };
 
