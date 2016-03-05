@@ -932,6 +932,8 @@ public:
     bool isControlledByAutomation() const;
     void setControlledByAutomation(bool);
 
+    void insertNewlineInQuotedContent();
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

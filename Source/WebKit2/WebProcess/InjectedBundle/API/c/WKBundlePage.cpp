@@ -223,6 +223,11 @@ WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef pageRef, W
 #endif
 }
 
+void WKBundlePageInsertNewlineInQuotedContent(WKBundlePageRef pageRef)
+{
+    toImpl(pageRef)->insertNewlineInQuotedContent();
+}
+
 void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
 {
 #if HAVE(ACCESSIBILITY)

@@ -2347,6 +2347,14 @@ void WebPage::setControlledByAutomation(bool controlled)
     m_page->setControlledByAutomation(controlled);
 }
 
+void WebPage::insertNewlineInQuotedContent()
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (frame.selection().isNone())
+        return;
+    frame.editor().insertParagraphSeparatorInQuotedContent();
+}
+
 #if ENABLE(REMOTE_INSPECTOR)
 void WebPage::setAllowsRemoteInspection(bool allow)
 {

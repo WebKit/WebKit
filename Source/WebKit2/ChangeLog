@@ -1,3 +1,19 @@
+2016-03-04  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2] Add WebKit2 equivalent of -[WebView _insertNewlineInQuotedContent]
+        <rdar://problem/24943591>
+        https://bugs.webkit.org/show_bug.cgi?id=155057
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageInsertNewlineInQuotedContent):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertNewlineInQuotedContent):
+        * WebProcess/WebPage/WebPage.h:
+        Expose WKBundlePageInsertNewlineInQuotedContent as SPI.
+
 2016-03-04  Brent Fulgham  <bfulgham@apple.com>
 
         Stub API to support a debug menu option for measuring resource load statistics

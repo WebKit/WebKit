@@ -231,6 +231,7 @@ public:
     bool insertTextWithoutSendingTextEvent(const String&, bool selectInsertedText, TextEvent* triggeringEvent);
     bool insertLineBreak();
     bool insertParagraphSeparator();
+    WEBCORE_EXPORT bool insertParagraphSeparatorInQuotedContent();
 
     WEBCORE_EXPORT bool isContinuousSpellCheckingEnabled() const;
     WEBCORE_EXPORT void toggleContinuousSpellChecking();
@@ -430,7 +431,6 @@ public:
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
     void getTextDecorationAttributesRespectingTypingStyle(RenderStyle&, NSMutableDictionary*) const;
-    WEBCORE_EXPORT bool insertParagraphSeparatorInQuotedContent();
     WEBCORE_EXPORT const Font* fontForSelection(bool&) const;
     WEBCORE_EXPORT NSDictionary *fontAttributesForSelectionStart() const;
     WEBCORE_EXPORT String stringSelectionForPasteboard();

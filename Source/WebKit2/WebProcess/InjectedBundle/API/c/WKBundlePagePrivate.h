@@ -90,6 +90,8 @@ WK_EXPORT void WKBundlePageClickMenuItem(WKBundlePageRef, WKContextMenuItemRef);
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef);
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef, WKPoint);
 
+WK_EXPORT void WKBundlePageInsertNewlineInQuotedContent(WKBundlePageRef page);
+
 // This only works if the SuppressesIncrementalRendering preference is set as well.
 typedef unsigned WKRenderingSuppressionToken;
 WK_EXPORT WKRenderingSuppressionToken WKBundlePageExtendIncrementalRenderingSuppression(WKBundlePageRef);

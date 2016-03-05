@@ -1234,6 +1234,14 @@ bool Editor::insertParagraphSeparator()
     return true;
 }
 
+bool Editor::insertParagraphSeparatorInQuotedContent()
+{
+    // FIXME: Why is this missing calls to canEdit, canEditRichly, etc.?
+    TypingCommand::insertParagraphSeparatorInQuotedContent(document());
+    revealSelectionAfterEditingOperation();
+    return true;
+}
+
 void Editor::cut()
 {
     if (tryDHTMLCut())

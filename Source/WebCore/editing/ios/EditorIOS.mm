@@ -175,14 +175,6 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
     applyParagraphStyle(style.get());
 }
 
-bool Editor::insertParagraphSeparatorInQuotedContent()
-{
-    // FIXME: Why is this missing calls to canEdit, canEditRichly, etc...
-    TypingCommand::insertParagraphSeparatorInQuotedContent(*m_frame.document());
-    revealSelectionAfterEditingOperation();
-    return true;
-}
-
 const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
 {
     hasMultipleFonts = false;

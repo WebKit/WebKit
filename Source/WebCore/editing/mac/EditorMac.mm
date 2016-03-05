@@ -101,14 +101,6 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
     client()->setInsertionPasteboard(String());
 }
 
-bool Editor::insertParagraphSeparatorInQuotedContent()
-{
-    // FIXME: Why is this missing calls to canEdit, canEditRichly, etc.?
-    TypingCommand::insertParagraphSeparatorInQuotedContent(document());
-    revealSelectionAfterEditingOperation();
-    return true;
-}
-
 const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
 {
     hasMultipleFonts = false;
