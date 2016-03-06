@@ -1188,3 +1188,73 @@ drawJpg(); // FIXME(joe): Make this code handle jpg in addition to the png suppo
 ```cpp
 drawJpg(); // TODO: Make this code handle jpg in addition to the png support.
 ```
+
+### Overriding Virtual Methods
+
+[](#override-methods) The base level declaration of a virtual method inside a class must be declared with the `virtual` keyword. All subclasses of that class must either specify the `override` keyword when overriding the virtual method or the `final` keyword when overriding the virtual method and requiring that no further subclasses can override it. You never want to annotate a method with more than one of the `virtual`, `override`, or `final` keywords.
+
+###### Right:
+
+```cpp
+class Person {
+public:
+    virtual String description() { ... };
+}
+
+class Student : public Person {
+public:
+    String description() override { ... }; // This is correct because it only contains the "override" keyword to indicate that the method is overridden.
+}
+
+```
+
+```cpp
+class Person {
+public:
+    virtual String description() { ... };
+}
+
+class Student : public Person {
+public:
+    String description() final { ... }; // This is correct because it only contains the "final" keyword to indicate that the method is overridden and that no subclasses of "Student" can override "description".
+}
+
+```
+
+###### Wrong:
+
+```cpp
+class Person {
+public:
+    virtual String description() { ... };
+}
+
+class Student : public Person {
+public:
+    virtual String description() override { ... }; // This is incorrect because it uses both the "virtual" and "override" keywords to indicate that the method is overridden. Instead, it should only use the "override" keyword.
+}
+```
+
+```cpp
+class Person {
+public:
+    virtual String description() { ... };
+}
+
+class Student : public Person {
+public:
+    virtual String description() final { ... }; // This is incorrect because it uses both the "virtual" and "final" keywords to indicate that the method is overridden and final. Instead, it should only use the "final" keyword.
+}
+```
+
+```cpp
+class Person {
+public:
+    virtual String description() { ... };
+}
+
+class Student : public Person {
+public:
+    virtual String description() { ... }; // This is incorrect because it uses the "virtual" keyword to indicate that the method is overridden.
+}
+```

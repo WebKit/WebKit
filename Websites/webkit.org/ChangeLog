@@ -1,3 +1,12 @@
+2016-03-03  Saam barati  <sbarati@apple.com>
+
+        Update style guide to reflect our style of only using "override" or "final" when overriding virtual methods
+        https://bugs.webkit.org/show_bug.cgi?id=154978
+
+        Reviewed by Darin Adler.
+
+        * code-style.md:
+
 2016-02-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL][B3] Support floor and ceil
