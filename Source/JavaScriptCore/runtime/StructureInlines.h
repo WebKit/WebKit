@@ -210,7 +210,7 @@ inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cac
         if (asObject(prototype)->structure() != cachedStructure->get())
             return false;
         ++cachedStructure;
-        prototype = asObject(prototype)->getPrototypeDirect();
+        prototype = asObject(prototype)->prototype();
     }
     return prototype.isNull() && !*cachedStructure;
 }

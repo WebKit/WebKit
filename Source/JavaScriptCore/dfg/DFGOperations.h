@@ -155,8 +155,6 @@ void JIT_OPERATION operationLoadVarargs(ExecState*, int32_t firstElementDest, En
 int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue);
 int64_t JIT_OPERATION operationConvertDoubleToInt52(double);
 
-size_t JIT_OPERATION operationDefaultHasInstance(ExecState*, JSCell* value, JSCell* proto);
-
 void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState*) WTF_INTERNAL;
 
 void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*, void*) WTF_INTERNAL;

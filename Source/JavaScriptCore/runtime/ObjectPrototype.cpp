@@ -101,19 +101,14 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)
     if (!exec->argument(0).isObject())
         return JSValue::encode(jsBoolean(false));
 
-    VM& vm = exec->vm();
-    JSValue v = asObject(exec->argument(0))->getPrototype(vm, exec);
-    if (UNLIKELY(vm.exception()))
-        return JSValue::encode(JSValue());
+    JSValue v = asObject(exec->argument(0))->prototype();
 
     while (true) {
         if (!v.isObject())
             return JSValue::encode(jsBoolean(false));
         if (v == thisObj)
             return JSValue::encode(jsBoolean(true));
-        v = asObject(v)->getPrototype(vm, exec);
-        if (UNLIKELY(vm.exception()))
-            return JSValue::encode(JSValue());
+        v = asObject(v)->prototype();
     }
 }
 

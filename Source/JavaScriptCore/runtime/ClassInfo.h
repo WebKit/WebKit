@@ -112,9 +112,6 @@ struct MethodTable {
     typedef bool (*SetPrototypeFunctionPtr)(JSObject*, ExecState*, JSValue, bool shouldThrowIfCantSet);
     SetPrototypeFunctionPtr setPrototype;
 
-    typedef JSValue (*GetPrototypeFunctionPtr)(JSObject*, ExecState*);
-    GetPrototypeFunctionPtr getPrototype;
-
     typedef void (*DumpToStreamFunctionPtr)(const JSCell*, PrintStream&);
     DumpToStreamFunctionPtr dumpToStream;
 
@@ -169,7 +166,6 @@ struct MethodTable {
         &ClassName::preventExtensions, \
         &ClassName::isExtensible, \
         &ClassName::setPrototype, \
-        &ClassName::getPrototype, \
         &ClassName::dumpToStream, \
         &ClassName::estimatedSize \
     }, \

@@ -1392,15 +1392,6 @@ int64_t JIT_OPERATION operationConvertDoubleToInt52(double value)
     return tryConvertToInt52(value);
 }
 
-size_t JIT_OPERATION operationDefaultHasInstance(ExecState* exec, JSCell* value, JSCell* proto) // Returns jsBoolean(True|False) on 64-bit.
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    if (JSObject::defaultHasInstance(exec, value, proto))
-        return 1;
-    return 0;
-}
-
 void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState* exec) 
 {
     exec->vm().typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside DFG."));

@@ -103,19 +103,7 @@ public:
     JS_EXPORT_PRIVATE static String className(const JSObject*);
     JS_EXPORT_PRIVATE static String calculatedClassName(JSObject*);
 
-    // This is the fully virtual [[GetPrototypeOf]] internal function defined
-    // in the ECMAScript 6 specification. Use this when doing a [[GetPrototypeOf]] 
-    // operation as dictated in the specification.
-    JSValue getPrototype(VM&, ExecState*);
-    JS_EXPORT_PRIVATE static JSValue getPrototype(JSObject*, ExecState*);
-    // This gets the prototype directly off of the structure. This does not do
-    // dynamic dispatch on the getPrototype method table method. It is not valid 
-    // to use this when performing a [[GetPrototypeOf]] operation in the specification.
-    // It is valid to use though when you know that you want to directly get it
-    // without consulting the method table. This is akin to getting the [[Prototype]]
-    // internal field directly as described in the specification.
-    JSValue getPrototypeDirect() const;
-
+    JSValue prototype() const;
     // This sets the prototype without checking for cycles and without
     // doing dynamic dispatch on [[SetPrototypeOf]] operation in the specification.
     // It is not valid to use this when performing a [[SetPrototypeOf]] operation in
@@ -771,7 +759,7 @@ protected:
     {
         Base::finishCreation(vm);
         ASSERT(inherits(info()));
-        ASSERT(getPrototypeDirect().isNull() || Heap::heap(this) == Heap::heap(getPrototypeDirect()));
+        ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
         ASSERT(structure()->isObject());
         ASSERT(classInfo());
     }
@@ -1136,18 +1124,9 @@ inline JSObject::JSObject(VM& vm, Structure* structure, Butterfly* butterfly)
     vm.heap.ascribeOwner(this, butterfly);
 }
 
-inline JSValue JSObject::getPrototypeDirect() const
+inline JSValue JSObject::prototype() const
 {
     return structure()->storedPrototype();
-}
-
-inline JSValue JSObject::getPrototype(VM& vm, ExecState* exec)
-{
-    auto getPrototypeMethod = methodTable(vm)->getPrototype;
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-    if (LIKELY(getPrototypeMethod == defaultGetPrototype))
-        return getPrototypeDirect();
-    return getPrototypeMethod(this, exec);
 }
 
 // It is safe to call this method with a PropertyName that is actually an index,
@@ -1225,7 +1204,6 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName prope
             // parsing the int again.
             return object->getNonIndexPropertySlot(exec, propertyName, slot);
         }
-        ASSERT(object->type() != ProxyObjectType);
         Structure& structure = *structureIDTable.get(object->structureID());
         if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
             return true;
@@ -1245,21 +1223,11 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyN
     VM& vm = exec->vm();
     auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
     while (true) {
         Structure& structure = *structureIDTable.get(object->structureID());
         if (structure.classInfo()->methodTable.getOwnPropertySlotByIndex(object, exec, propertyName, slot))
             return true;
-        if (UNLIKELY(vm.exception()))
-            return false;
-        JSValue prototype;
-        if (LIKELY(structure.classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
-            prototype = structure.storedPrototype();
-        else {
-            prototype = object->getPrototype(vm, exec);
-            if (vm.exception())
-                return false;
-        }
+        JSValue prototype = structure.storedPrototype();
         if (!prototype.isObject())
             return false;
         object = asObject(prototype);
@@ -1274,26 +1242,14 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyNa
     VM& vm = exec->vm();
     auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
     while (true) {
         Structure& structure = *structureIDTable.get(object->structureID());
         if (LIKELY(!TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()))) {
             if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
                 return true;
-        } else {
-            if (structure.classInfo()->methodTable.getOwnPropertySlot(object, exec, propertyName, slot))
-                return true;
-            if (UNLIKELY(vm.exception()))
-                return false;
-        }
-        JSValue prototype;
-        if (LIKELY(structure.classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
-            prototype = structure.storedPrototype();
-        else {
-            prototype = object->getPrototype(vm, exec);
-            if (vm.exception())
-                return false;
-        }
+        } else if (structure.classInfo()->methodTable.getOwnPropertySlot(object, exec, propertyName, slot))
+            return true;
+        JSValue prototype = structure.storedPrototype();
         if (!prototype.isObject())
             return false;
         object = asObject(prototype);

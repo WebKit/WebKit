@@ -143,7 +143,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     JSValue prototype;
     if (propertyName != exec->propertyNames().underscoreProto) {
         for (; !obj->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
-            prototype = obj->getPrototypeDirect();
+            prototype = obj->prototype();
             if (prototype.isNull()) {
                 if (slot.isStrictMode())
                     throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
@@ -178,9 +178,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             break;
         }
 
-        prototype = obj->getPrototype(vm, exec);
-        if (vm.exception())
-            return;
+        prototype = obj->prototype();
         if (prototype.isNull())
             break;
     }

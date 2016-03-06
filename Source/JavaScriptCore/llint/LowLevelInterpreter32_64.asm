@@ -1206,6 +1206,34 @@ _llint_op_overrides_has_instance:
     storei 1, PayloadOffset[cfr, t3, 8]
     dispatch(4)
 
+_llint_op_instanceof:
+    traceExecution()
+    # Actually do the work.
+    loadi 12[PC], t0
+    loadi 4[PC], t3
+    loadConstantOrVariablePayload(t0, CellTag, t1, .opInstanceofSlow)
+    bbb JSCell::m_type[t1], ObjectType, .opInstanceofSlow
+    loadi 8[PC], t0
+    loadConstantOrVariablePayload(t0, CellTag, t2, .opInstanceofSlow)
+    
+    # Register state: t1 = prototype, t2 = value
+    move 1, t0
+.opInstanceofLoop:
+    loadp JSCell::m_structureID[t2], t2
+    loadi Structure::m_prototype + PayloadOffset[t2], t2
+    bpeq t2, t1, .opInstanceofDone
+    btinz t2, .opInstanceofLoop
+
+    move 0, t0
+.opInstanceofDone:
+    storei BooleanTag, TagOffset[cfr, t3, 8]
+    storei t0, PayloadOffset[cfr, t3, 8]
+    dispatch(4)
+
+.opInstanceofSlow:
+    callSlowPath(_llint_slow_path_instanceof)
+    dispatch(4)
+
 _llint_op_instanceof_custom:
     traceExecution()
     callSlowPath(_llint_slow_path_instanceof_custom)

@@ -233,8 +233,6 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     move(TrustedImm32(1), regT0);
     Label loop(this);
 
-    addSlowCase(branch8(Equal, Address(regT2, JSCell::typeInfoTypeOffset()), TrustedImm32(ProxyObjectType)));
-
     // Load the prototype of the cell in regT2.  If this is equal to regT1 - WIN!
     // Otherwise, check if we've hit null - if we have then drop out of the loop, if not go again.
     loadPtr(Address(regT2, JSCell::structureIDOffset()), regT2);
@@ -264,7 +262,6 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
 
     linkSlowCaseIfNotJSCell(iter, value);
     linkSlowCaseIfNotJSCell(iter, proto);
-    linkSlowCase(iter);
     linkSlowCase(iter);
 
     emitLoad(value, regT1, regT0);

@@ -42,7 +42,7 @@ ALWAYS_INLINE bool JSObject::canPerformFastPutInline(ExecState* exec, VM& vm, Pr
         if (obj->structure(vm)->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || obj->type() == ProxyObjectType)
             return false;
 
-        prototype = obj->getPrototypeDirect();
+        prototype = obj->prototype();
         if (prototype.isNull())
             return true;
 

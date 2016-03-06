@@ -613,7 +613,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         putDirectWithoutTransition(vm, Identifier::fromString(exec, "$vm"), dollarVM, DontEnum);
     }
 
-    resetPrototype(vm, getPrototypeDirect());
+    resetPrototype(vm, prototype());
 }
 
 bool JSGlobalObject::hasLegacyProfiler() const
@@ -669,8 +669,8 @@ void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName
 static inline JSObject* lastInPrototypeChain(JSObject* object)
 {
     JSObject* o = object;
-    while (o->getPrototypeDirect().isObject())
-        o = asObject(o->getPrototypeDirect());
+    while (o->prototype().isObject())
+        o = asObject(o->prototype());
     return o;
 }
 
@@ -726,7 +726,7 @@ inline void ObjectsWithBrokenIndexingFinder::visit(JSCell* cell)
             break;
         }
         
-        JSValue prototypeValue = current->getPrototypeDirect();
+        JSValue prototypeValue = current->prototype();
         if (prototypeValue.isNull())
             break;
         current = asObject(prototypeValue);
@@ -785,20 +785,20 @@ void JSGlobalObject::haveABadTime(VM& vm)
 bool JSGlobalObject::objectPrototypeIsSane()
 {
     return !hasIndexedProperties(m_objectPrototype->indexingType())
-        && m_objectPrototype->getPrototypeDirect().isNull();
+        && m_objectPrototype->prototype().isNull();
 }
 
 bool JSGlobalObject::arrayPrototypeChainIsSane()
 {
     return !hasIndexedProperties(m_arrayPrototype->indexingType())
-        && m_arrayPrototype->getPrototypeDirect() == m_objectPrototype.get()
+        && m_arrayPrototype->prototype() == m_objectPrototype.get()
         && objectPrototypeIsSane();
 }
 
 bool JSGlobalObject::stringPrototypeChainIsSane()
 {
     return !hasIndexedProperties(m_stringPrototype->indexingType())
-        && m_stringPrototype->getPrototypeDirect() == m_objectPrototype.get()
+        && m_stringPrototype->prototype() == m_objectPrototype.get()
         && objectPrototypeIsSane();
 }
 

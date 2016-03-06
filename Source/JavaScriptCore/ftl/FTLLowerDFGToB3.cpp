@@ -5947,8 +5947,6 @@ private:
         LBasicBlock loop = FTL_NEW_BLOCK(m_out, ("InstanceOf loop"));
         LBasicBlock notYetInstance = FTL_NEW_BLOCK(m_out, ("InstanceOf not yet instance"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("InstanceOf continuation"));
-        LBasicBlock loadPrototypeDirect = FTL_NEW_BLOCK(m_out, ("Instanceof defaultPrototypeFunction"));
-        LBasicBlock defaultHasInstanceSlow = FTL_NEW_BLOCK(m_out, ("Instanceof defaultPrototypeFunction"));
         
         LValue condition;
         if (m_node->child1().useKind() == UntypedUse)
@@ -5966,14 +5964,8 @@ private:
         ValueFromBlock originalValue = m_out.anchor(cell);
         m_out.jump(loop);
         
-        m_out.appendTo(loop, loadPrototypeDirect);
+        m_out.appendTo(loop, notYetInstance);
         LValue value = m_out.phi(m_out.int64, originalValue);
-        LValue type = m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType);
-        m_out.branch(
-            m_out.notEqual(type, m_out.constInt32(ProxyObjectType)),
-            usually(loadPrototypeDirect), rarely(defaultHasInstanceSlow));
-
-        m_out.appendTo(loadPrototypeDirect, notYetInstance);
         LValue structure = loadStructure(value);
         LValue currentPrototype = m_out.load64(structure, m_heaps.Structure_prototype);
         ValueFromBlock isInstanceResult = m_out.anchor(m_out.booleanTrue);
@@ -5981,22 +5973,14 @@ private:
             m_out.equal(currentPrototype, prototype),
             unsure(continuation), unsure(notYetInstance));
         
-        m_out.appendTo(notYetInstance, defaultHasInstanceSlow);
+        m_out.appendTo(notYetInstance, continuation);
         ValueFromBlock notInstanceResult = m_out.anchor(m_out.booleanFalse);
         m_out.addIncomingToPhi(value, m_out.anchor(currentPrototype));
         m_out.branch(isCell(currentPrototype), unsure(loop), unsure(continuation));
-
-        m_out.appendTo(defaultHasInstanceSlow, continuation);
-        // We can use the value that we're looping with because we
-        // can just continue off from wherever we bailed from the
-        // loop.
-        ValueFromBlock defaultHasInstanceResult = m_out.anchor(
-            vmCall(m_out.boolean, m_out.operation(operationDefaultHasInstance), m_callFrame, value, prototype));
-        m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
         setBoolean(
-            m_out.phi(m_out.boolean, notCellResult, isInstanceResult, notInstanceResult, defaultHasInstanceResult));
+            m_out.phi(m_out.boolean, notCellResult, isInstanceResult, notInstanceResult));
     }
 
     void compileInstanceOfCustom()

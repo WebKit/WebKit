@@ -168,7 +168,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
     }
 
     JSString* name = target.get(exec, exec->propertyNames().name).toString(exec);
-    return JSValue::encode(JSBoundFunction::create(vm, exec, globalObject, targetObject, exec->argument(0), boundArgs, length, name->value(exec)));
+    return JSValue::encode(JSBoundFunction::create(vm, globalObject, targetObject, exec->argument(0), boundArgs, length, name->value(exec)));
 }
 
 } // namespace JSC

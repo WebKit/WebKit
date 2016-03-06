@@ -526,6 +526,7 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof)
     LLINT_BEGIN();
     JSValue value = LLINT_OP_C(2).jsValue();
     JSValue proto = LLINT_OP_C(3).jsValue();
+    ASSERT(!value.isObject() || !proto.isObject());
     LLINT_RETURN(jsBoolean(JSObject::defaultHasInstance(exec, value, proto)));
 }
 

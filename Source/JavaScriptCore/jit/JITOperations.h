@@ -196,7 +196,6 @@ typedef int64_t JIT_OPERATION(*Q_JITOperation_D)(double);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_D)(double);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_E)(ExecState*);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EC)(ExecState*, JSCell*);
-typedef int32_t JIT_OPERATION (*Z_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EGC)(ExecState*, JSGlobalObject*, JSCell*);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_ESJss)(ExecState*, size_t, JSString*);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EJ)(ExecState*, EncodedJSValue);

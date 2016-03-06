@@ -1779,6 +1779,8 @@ EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState* exec, EncodedJSValue
     JSValue value = JSValue::decode(encodedValue);
     JSValue proto = JSValue::decode(encodedProto);
     
+    ASSERT(!value.isObject() || !proto.isObject());
+
     bool result = JSObject::defaultHasInstance(exec, value, proto);
     return JSValue::encode(jsBoolean(result));
 }

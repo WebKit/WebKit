@@ -40,7 +40,7 @@ public:
     typedef JSFunction Base;
     const static unsigned StructureFlags = ~ImplementsDefaultHasInstance & Base::StructureFlags;
 
-    static JSBoundFunction* create(VM&, ExecState*, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const String&);
+    static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const String&);
     
     static bool customHasInstance(JSObject*, ExecState*, JSValue);
 

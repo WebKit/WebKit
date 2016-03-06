@@ -87,11 +87,9 @@ EncodedJSValue JSC_HOST_CALL hasInstanceBoundFunction(ExecState* exec)
     return JSValue::encode(jsBoolean(boundObject->targetFunction()->hasInstance(exec, value)));
 }
 
-inline Structure* getBoundFunctionStructure(VM& vm, ExecState* exec, JSGlobalObject* globalObject, JSObject* targetFunction)
+inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction)
 {
-    JSValue prototype = targetFunction->getPrototype(vm, exec);
-    if (UNLIKELY(vm.exception()))
-        return nullptr;
+    JSValue prototype = targetFunction->structure(vm)->storedPrototype();
     JSFunction* targetJSFunction = jsDynamicCast<JSFunction*>(targetFunction);
 
     // We only cache the structure of the bound function if the bindee is a JSFunction since there
@@ -119,15 +117,13 @@ inline Structure* getBoundFunctionStructure(VM& vm, ExecState* exec, JSGlobalObj
     return result;
 }
 
-JSBoundFunction* JSBoundFunction::create(VM& vm, ExecState* exec, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int length, const String& name)
+JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int length, const String& name)
 {
     ConstructData constructData;
     ConstructType constructType = JSC::getConstructData(targetFunction, constructData);
     bool canConstruct = constructType != ConstructType::None;
     NativeExecutable* executable = vm.getHostFunction(boundFunctionCall, canConstruct ? boundFunctionConstruct : callHostFunctionAsConstructor, ASCIILiteral("Function.prototype.bind result"));
-    Structure* structure = getBoundFunctionStructure(vm, exec, globalObject, targetFunction);
-    if (UNLIKELY(vm.exception()))
-        return nullptr;
+    Structure* structure = getBoundFunctionStructure(vm, globalObject, targetFunction);
     JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, globalObject, structure, targetFunction, boundThis, boundArgs);
 
     function->finishCreation(vm, executable, length, makeString("bound ", name));

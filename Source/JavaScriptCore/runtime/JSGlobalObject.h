@@ -379,7 +379,7 @@ protected:
         structure()->setGlobalObject(vm, this);
         m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
         init(vm);
-        setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, getPrototypeDirect(), PureForwardingProxyType), this));
+        setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, prototype(), PureForwardingProxyType), this));
     }
 
     void finishCreation(VM& vm, JSObject* thisValue)

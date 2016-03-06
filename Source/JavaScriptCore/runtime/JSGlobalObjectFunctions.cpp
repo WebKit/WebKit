@@ -784,9 +784,8 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState* exec)
 
 class GlobalFuncProtoGetterFunctor {
 public:
-    GlobalFuncProtoGetterFunctor(ExecState* exec, JSObject* thisObject)
-        : m_exec(exec)
-        , m_hasSkippedFirstFrame(false)
+    GlobalFuncProtoGetterFunctor(JSObject* thisObject)
+        : m_hasSkippedFirstFrame(false)
         , m_thisObject(thisObject)
         , m_result(JSValue::encode(jsUndefined()))
     {
@@ -802,13 +801,12 @@ public:
         }
 
         if (m_thisObject->allowsAccessFrom(visitor->callFrame()))
-            m_result = JSValue::encode(m_thisObject->getPrototype(m_exec->vm(), m_exec));
+            m_result = JSValue::encode(m_thisObject->prototype());
 
         return StackVisitor::Done;
     }
 
 private:
-    ExecState* m_exec;
     bool m_hasSkippedFirstFrame;
     JSObject* m_thisObject;
     EncodedJSValue m_result;
@@ -824,10 +822,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
     if (!thisObject)
         return JSValue::encode(exec->thisValue().synthesizePrototype(exec));
 
-    GlobalFuncProtoGetterFunctor functor(exec, thisObject);
-    // This can throw but it's just unneeded extra work to check for it. The return
-    // value from this function is only used as the return value from a host call.
-    // Therefore, the return value is only used if there wasn't an exception.
+    GlobalFuncProtoGetterFunctor functor(thisObject);
     exec->iterate(functor);
     return functor.result();
 }
