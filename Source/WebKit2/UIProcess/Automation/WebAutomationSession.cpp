@@ -99,17 +99,22 @@ void WebAutomationSession::disconnect(Inspector::FrontendChannel* channel)
 
 // Inspector::AutomationBackendDispatcherHandler API
 
-void WebAutomationSession::getWindows(Inspector::ErrorString& errorString, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingWindow>>& out_windows)
+void WebAutomationSession::getBrowsingContexts(Inspector::ErrorString& errorString, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>>& contexts)
 {
     FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
 }
 
-void WebAutomationSession::openWindow(Inspector::ErrorString& errorString)
+void WebAutomationSession::createBrowsingContext(Inspector::ErrorString& errorString, String* handle)
 {
     FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
 }
 
-void WebAutomationSession::closeWindow(Inspector::ErrorString& errorString, const String& in_handle)
+void WebAutomationSession::closeBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
+{
+    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+}
+
+void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
 {
     FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
 }

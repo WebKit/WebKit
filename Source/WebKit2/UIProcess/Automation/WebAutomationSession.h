@@ -71,9 +71,10 @@ public:
 #endif
 
     // Inspector::AutomationBackendDispatcherHandler API
-    void getWindows(Inspector::ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingWindow>>& out_windows) override;
-    void openWindow(Inspector::ErrorString&) override;
-    void closeWindow(Inspector::ErrorString&, const String& in_handle) override;
+    void getBrowsingContexts(Inspector::ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>>&) override;
+    void createBrowsingContext(Inspector::ErrorString&, String*) override;
+    void closeBrowsingContext(Inspector::ErrorString&, const String&) override;
+    void switchToBrowsingContext(Inspector::ErrorString&, const String&) override;
 
 private:
     std::unique_ptr<API::AutomationSessionClient> m_client;

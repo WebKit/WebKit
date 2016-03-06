@@ -1,3 +1,25 @@
+2016-03-05  Timothy Hatcher  <timothy@apple.com>
+
+        Rename Automation protocol methods to use "BrowsingContext" instead of "Window".
+        Also flesh out the protocol commands more by adding switchToBrowsingContext
+        and return a BrowsingContextHandle for createBrowsingContext.
+
+        https://bugs.webkit.org/show_bug.cgi?id=154953
+        rdar://problem/24947489
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::getBrowsingContexts):
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        (WebKit::WebAutomationSession::closeBrowsingContext):
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        (WebKit::WebAutomationSession::getWindows): Deleted.
+        (WebKit::WebAutomationSession::openWindow): Deleted.
+        (WebKit::WebAutomationSession::closeWindow): Deleted.
+        * UIProcess/Automation/WebAutomationSession.h:
+
 2016-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Support Reflect.construct

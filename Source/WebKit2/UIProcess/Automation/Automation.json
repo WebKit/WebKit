@@ -3,46 +3,58 @@
     "description": "Automation domain exposes commands for automating user interactions with the browser.",
     "types": [
         {
-            "id": "OpaqueWindowHandle",
+            "id": "BrowsingContextHandle",
             "type": "string",
-            "description": "An opaque identifier for a window."
+            "description": "An opaque identifier for a browsing context."
         },
         {
             "id": "ErrorMessage",
             "type": "string",
+            "description": "This enum contains predefined error messages that can be used to signal a well-defined error condition, such as a missing implementation, unknown window handle, and so forth. The backend signals one of these errors by using it as a prefix of the commands's error message (the errorString argument in generated C++ backend dispatchers). This will be reported to the frontend as a protocol error with a JSON-RPC error code of 'ServerError'. It is up to the frontend whether and how to deal with errors.",
             "enum": [
+                "InternalError",
+                "WindowNotFound",
                 "NotImplemented"
-            ],
-            "description": "This enum contains predefined error messages that can be used to signal a well-defined error condition, such as a missing implementation, unknown window handle, and so forth. The backend signals one of these errors by using it as a prefix of the commands's error message (the errorString argument in generated C++ backend dispatchers). This will be reported to the frontend as a protocol error with a JSON-RPC error code of 'ServerError'. It is up to the frontend whether and how to deal with errors."
+            ]
         },
         {
-            "id": "BrowsingWindow",
+            "id": "BrowsingContext",
             "type": "object",
             "description": "A handle representing an open window or tab in the automation session.",
             "properties": [
-                { "name": "handle", "$ref": "OpaqueWindowHandle", "description": "Opaque handle for the window. Used as a key for window-related commands." },
-                { "name": "active", "type": "boolean", "description": "Whether the window is active at the time the command is handled." }
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "Opaque handle for a browsing context (window or tab). Used as a key for window-related commands." },
+                { "name": "active", "type": "boolean", "description": "Whether the browsing context has focus at the time the command is handled." }
             ]
         }
     ],
     "commands": [
         {
-            "name": "getWindows",
+            "name": "getBrowsingContexts",
+            "description": "Fetches information about all open browsing contexts (windows and tabs) in the automation session.",
             "returns": [
-                { "name": "windows", "type": "array", "items": { "$ref": "BrowsingWindow"}, "description": "All known windows and tabs in the browsing session." }
-            ],
-            "description": "Gets information about all open windows and tabs in the automation session."
+                { "name": "contexts", "type": "array", "items": { "$ref": "BrowsingContext" }, "description": "All known browsing contexts available to the session." }
+            ]
         },
         {
-            "name": "openWindow",
-            "description": "Opens a new automation window in the current browsing context."
+            "name": "createBrowsingContext",
+            "description": "Opens a new browsing context in the automation session and makes it the active browsing context for user interaction. This command creates a browsing context in a new window rather than adding a tab to an existing window.",
+            "returns": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "An opaque handle for the newly created browsing context." }
+            ]
         },
         {
-            "name": "closeWindow",
+            "name": "closeBrowsingContext",
+            "description": "Try to close the specified browsing context. This can trigger an unload prompt and thereafter succeed or fail.",
             "parameters": [
-                { "name": "handle", "$ref": "OpaqueWindowHandle", "description": "The handle for the window that should be closed." }
-            ],
-            "description": "Closes the specified window."
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be closed." }
+            ]
+        },
+        {
+            "name": "switchToBrowsingContext",
+            "description": "Activates the specified browsing context.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be made active." }
+            ]
         }
     ]
 }
