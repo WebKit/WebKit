@@ -27,6 +27,7 @@
 #define AssistedNodeInformation_h
 
 #include "ArgumentCoders.h"
+#include <WebCore/Autofill.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/WebAutocapitalize.h>
 #include <wtf/text/WTFString.h>
@@ -130,6 +131,7 @@ struct AssistedNodeInformation {
     String value;
     double valueAsNumber;
     String title;
+    WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, AssistedNodeInformation&);

@@ -1,3 +1,15 @@
+2016-03-05  Sam Weinig  <sam@webkit.org>
+
+        Add support for processing the autofill field name out of form control elements ultimately to aid input methods
+        <rdar://problem/23041180>
+        https://bugs.webkit.org/show_bug.cgi?id=155079
+
+        Reviewed by Enrica Casucci.
+
+        * fast/forms/autocomplete-tokens-expected.txt:
+        * fast/forms/autocomplete-tokens.html:
+        Update test to also test field names, as they are now exposed via internals.
+
 2016-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Add support for the object-position CSS property

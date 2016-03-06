@@ -31,6 +31,7 @@
 #include "ActiveDOMCallbackMicrotask.h"
 #include "AnimationController.h"
 #include "ApplicationCacheStorage.h"
+#include "Autofill.h"
 #include "BackForwardController.h"
 #include "BitmapImage.h"
 #include "CachedImage.h"
@@ -1367,6 +1368,21 @@ void Internals::scrollElementToRect(Element* element, long x, long y, long w, lo
     }
     FrameView* frameView = element->document().view();
     frameView->scrollElementToRect(*element, IntRect(x, y, w, h));
+}
+
+String Internals::autofillFieldName(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return { };
+    }
+
+    if (!is<HTMLFormControlElement>(*element)) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return { };
+    }
+
+    return downcast<HTMLFormControlElement>(*element).autofillData().fieldName;
 }
 
 void Internals::paintControlTints(ExceptionCode& ec)

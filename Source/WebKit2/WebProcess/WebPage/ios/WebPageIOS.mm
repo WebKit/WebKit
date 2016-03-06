@@ -49,6 +49,7 @@
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
 #import <CoreText/CTFont.h>
+#import <WebCore/Autofill.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/DiagnosticLoggingClient.h>
@@ -2425,6 +2426,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.elementType = InputType::TextArea;
         information.isReadOnly = element.isReadOnly();
         information.value = element.value();
+        information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
     } else if (is<HTMLInputElement>(*m_assistedNode)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
         HTMLFormElement* form = element.form();
@@ -2472,6 +2474,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.value = element.value();
         information.valueAsNumber = element.valueAsNumber();
         information.title = element.title();
+        information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
     } else if (m_assistedNode->hasEditableStyle()) {
         information.elementType = InputType::ContentEditable;
         information.isAutocorrect = true;   // FIXME: Should we look at the attribute?

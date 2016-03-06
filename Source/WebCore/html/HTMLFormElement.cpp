@@ -865,10 +865,10 @@ void HTMLFormElement::setAutocomplete(const AtomicString& value)
     setAttributeWithoutSynchronization(autocompleteAttr, value);
 }
 
-const String& HTMLFormElement::autocomplete() const
+const AtomicString& HTMLFormElement::autocomplete() const
 {
-    static NeverDestroyed<const String> on("on", String::ConstructFromLiteral);
-    static NeverDestroyed<const String> off("off", String::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> on("on", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> off("off", AtomicString::ConstructFromLiteral);
 
     return equalIgnoringASCIICase(fastGetAttribute(autocompleteAttr), "off") ? off : on;
 }

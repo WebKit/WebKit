@@ -1,3 +1,26 @@
+2016-03-05  Sam Weinig  <sam@webkit.org>
+
+        Add support for processing the autofill field name out of form control elements ultimately to aid input methods
+        <rdar://problem/23041180>
+        https://bugs.webkit.org/show_bug.cgi?id=155079
+
+        Reviewed by Enrica Casucci.
+
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::AssistedNodeInformation::encode):
+        (WebKit::AssistedNodeInformation::decode):
+        * Shared/AssistedNodeInformation.h:
+        Add AutofillFieldName. Convert some coders to use encodeEnum/decodeEnum instead of casting.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textInputTraits]):
+        Map AutofillFieldNames to the associated UITextContentTypes.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+        Extract the AutofillFieldNames onto the AssistedNodeInformation for <input> elements 
+        and <textarea> elements.
+
 2016-03-05  Timothy Hatcher  <timothy@apple.com>
 
         Implement the Automation protocol commands by tracking WebPageProxy objects

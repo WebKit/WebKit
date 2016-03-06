@@ -162,6 +162,8 @@ enum AutoFillButtonType {
     [RaisesException] void setShowAutoFillButton(Element inputElement, AutoFillButtonType autoFillButtonType);
     [RaisesException] unsigned long countMatchesForText(DOMString text, unsigned long findOptions, DOMString markMatches);
 
+    [RaisesException] DOMString autofillFieldName(Element formControlElement);
+
     [RaisesException] void paintControlTints();
 
     [RaisesException] void scrollElementToRect(Element element, long x, long y, long w, long h);

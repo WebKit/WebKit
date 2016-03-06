@@ -71,8 +71,8 @@ void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
     encoder << hasNextNode;
     encoder << hasPreviousNode;
     encoder << isAutocorrect;
-    encoder << (uint32_t)autocapitalizeType;
-    encoder << (uint32_t)elementType;
+    encoder.encodeEnum(autocapitalizeType);
+    encoder.encodeEnum(elementType);
     encoder << formAction;
     encoder << selectOptions;
     encoder << selectedIndex;
@@ -83,6 +83,7 @@ void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
     encoder << value;
     encoder << valueAsNumber;
     encoder << title;
+    encoder.encodeEnum(autofillFieldName);
 }
 
 bool AssistedNodeInformation::decode(IPC::ArgumentDecoder& decoder, AssistedNodeInformation& result)
@@ -111,10 +112,10 @@ bool AssistedNodeInformation::decode(IPC::ArgumentDecoder& decoder, AssistedNode
     if (!decoder.decode(result.isAutocorrect))
         return false;
 
-    if (!decoder.decode((uint32_t&)result.autocapitalizeType))
+    if (!decoder.decodeEnum(result.autocapitalizeType))
         return false;
 
-    if (!decoder.decode((uint32_t&)result.elementType))
+    if (!decoder.decodeEnum(result.elementType))
         return false;
 
     if (!decoder.decode(result.formAction))
@@ -145,6 +146,9 @@ bool AssistedNodeInformation::decode(IPC::ArgumentDecoder& decoder, AssistedNode
         return false;
 
     if (!decoder.decode(result.title))
+        return false;
+
+    if (!decoder.decodeEnum(result.autofillFieldName))
         return false;
 
     return true;

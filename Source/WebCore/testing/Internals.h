@@ -183,6 +183,8 @@ public:
     void setShowAutoFillButton(Element*, const String& autoFillButtonType, ExceptionCode&);
     void scrollElementToRect(Element*, long x, long y, long w, long h, ExceptionCode&);
 
+    String autofillFieldName(Element*, ExceptionCode&);
+
     void paintControlTints(ExceptionCode&);
 
     RefPtr<Range> rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, ExceptionCode&);

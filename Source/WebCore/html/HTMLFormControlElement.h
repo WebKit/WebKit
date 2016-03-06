@@ -24,6 +24,7 @@
 #ifndef HTMLFormControlElement_h
 #define HTMLFormControlElement_h
 
+#include "Autofill.h"
 #include "FormAssociatedElement.h"
 #include "LabelableElement.h"
 
@@ -119,6 +120,10 @@ public:
 
     String autocomplete() const;
     void setAutocomplete(const String&);
+
+    AutofillMantle autofillMantle() const;
+
+    WEBCORE_EXPORT AutofillData autofillData() const;
 
     using Node::ref;
     using Node::deref;
