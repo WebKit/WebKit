@@ -29,6 +29,7 @@
 #include "CustomElementDefinitions.h"
 #include "Document.h"
 #include "HTMLFormElement.h"
+#include "JSNodeCustom.h"
 #include <runtime/InternalFunction.h>
 #include <runtime/JSWithScope.h>
 
@@ -57,16 +58,40 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState* state)
     if (!interface)
         return throwVMTypeError(state, "new.target does not define a custom element");
 
-    auto* globalObject = jsConstructor->globalObject();
-    Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *globalObject);
-    auto* newElementStructure = InternalFunction::createSubclassStructure(state, newTargetValue, baseStructure);
-    if (UNLIKELY(state->hadException()))
+    if (!interface->isUpgradingElement()) {
+        auto* globalObject = jsConstructor->globalObject();
+        Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *globalObject);
+        auto* newElementStructure = InternalFunction::createSubclassStructure(state, newTargetValue, baseStructure);
+        if (UNLIKELY(state->hadException()))
+            return JSValue::encode(jsUndefined());
+
+        Ref<HTMLElement> element = HTMLElement::create(interface->name(), document);
+        auto* jsElement = JSHTMLElement::create(newElementStructure, globalObject, element.get());
+        cacheWrapper(globalObject->world(), element.ptr(), jsElement);
+        return JSValue::encode(jsElement);
+    }
+
+    Element* elementToUpgrade = interface->lastElementInConstructionStack();
+    if (!elementToUpgrade) {
+        throwInvalidStateError(*state, "Cannot instantiate a custom element inside its own constrcutor during upgrades");
+        return JSValue::encode(jsUndefined());
+    }
+
+    JSValue elementWrapperValue = toJS(state, jsConstructor->globalObject(), elementToUpgrade);
+    ASSERT(elementWrapperValue.isObject());
+
+    JSValue newPrototype = newTarget->get(state, vm.propertyNames->prototype);
+    if (state->hadException())
         return JSValue::encode(jsUndefined());
 
-    Ref<HTMLElement> element = HTMLElement::create(interface->name(), document);
-    auto* jsElement = JSHTMLElement::create(newElementStructure, globalObject, element.get());
-    cacheWrapper(globalObject->world(), element.ptr(), jsElement);
-    return JSValue::encode(jsElement);
+    JSObject* elementWrapperObject = asObject(elementWrapperValue);
+    JSObject::setPrototype(elementWrapperObject, state, newPrototype, true /* shouldThrowIfCantSet */);
+    if (state->hadException())
+        return JSValue::encode(jsUndefined());
+
+    interface->didUpgradeLastElementInConstructionStack();
+
+    return JSValue::encode(elementWrapperValue);
 }
 #endif
 

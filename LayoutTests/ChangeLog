@@ -1,3 +1,15 @@
+2016-03-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for upgrading custom elements in cloneNode
+        https://bugs.webkit.org/show_bug.cgi?id=155062
+
+        Reviewed by Antti Koivisto.
+
+        Added test cases for upgrading elements with Node.prototype.cloneNode.
+
+        * fast/custom-elements/lifecycle-callback-timing-expected.txt:
+        * fast/custom-elements/lifecycle-callback-timing.html:
+
 2016-03-05  Sam Weinig  <sam@webkit.org>
 
         Update tests to match the latest version of the HTML5 spec.

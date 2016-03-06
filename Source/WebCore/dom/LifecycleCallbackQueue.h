@@ -46,6 +46,8 @@ public:
     LifecycleCallbackQueue();
     ~LifecycleCallbackQueue();
 
+    static void enqueueElementUpgrade(Element&, JSCustomElementInterface&);
+
     static void enqueueAttributeChangedCallback(Element&, JSCustomElementInterface&,
         const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
 

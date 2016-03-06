@@ -47,6 +47,42 @@ test(function () {
 
 }, 'setAttribute and removeAttribute must enqueue and invoke attributeChangedCallback');
 
+test(function () {
+    var shouldCloneAnotherInstance = false;
+    var anotherInstanceClone;
+    var log = [];
+
+    class SelfCloningElement extends HTMLElement {
+        constructor() {
+            super();
+            log.push([this, 'begin']);
+            if (shouldCloneAnotherInstance) {
+                shouldCloneAnotherInstance = false;
+                anotherInstanceClone = anotherInstance.cloneNode(false);
+            }
+            log.push([this, 'end']);
+        }
+    }
+    document.defineElement('self-cloning-element', SelfCloningElement);
+
+    var instance = document.createElement('self-cloning-element');
+    var anotherInstance = document.createElement('self-cloning-element');
+    shouldCloneAnotherInstance = true;
+
+    assert_equals(log.length, 4);
+    var instanceClone = instance.cloneNode(false);
+
+    assert_equals(log.length, 8);
+    assert_array_equals(log[0], [instance, 'begin']);
+    assert_array_equals(log[1], [instance, 'end']);
+    assert_array_equals(log[2], [anotherInstance, 'begin']);
+    assert_array_equals(log[3], [anotherInstance, 'end']);
+    assert_array_equals(log[4], [instanceClone, 'begin']);
+    assert_array_equals(log[5], [anotherInstanceClone, 'begin']);
+    assert_array_equals(log[6], [anotherInstanceClone, 'end']);
+    assert_array_equals(log[7], [instanceClone, 'end']);
+}, 'Calling Node.prototype.cloneNode(false) must push a new element queue to the processing stack');
+
 </script>
 </body>
 </html>

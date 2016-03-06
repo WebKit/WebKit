@@ -102,6 +102,54 @@ RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& t
     return wrappedElement;
 }
 
+void JSCustomElementInterface::upgradeElement(Element& element)
+{
+    ASSERT(element.isCustomElement());
+    if (!canInvokeCallback())
+        return;
+
+    Ref<JSCustomElementInterface> protect(*this);
+    JSLockHolder lock(m_isolatedWorld->vm());
+
+    if (!m_constructor)
+        return;
+
+    ScriptExecutionContext* context = scriptExecutionContext();
+    if (!context)
+        return;
+    ASSERT(context->isDocument());
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, *m_isolatedWorld);
+    ExecState* state = globalObject->globalExec();
+    if (state->hadException())
+        return;
+
+    ConstructData constructData;
+    ConstructType constructType = m_constructor->methodTable()->getConstructData(m_constructor.get(), constructData);
+    if (constructType == ConstructType::None) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_constructionStack.append(&element);
+
+    MarkedArgumentBuffer args;
+    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(context, constructType, constructData);
+    JSValue returnedElement = construct(state, m_constructor.get(), constructType, constructData, args);
+    InspectorInstrumentation::didCallFunction(cookie, context);
+
+    m_constructionStack.removeLast();
+
+    if (state->hadException())
+        return;
+
+    Element* wrappedElement = JSElement::toWrapped(returnedElement);
+    if (!wrappedElement || wrappedElement != &element) {
+        throwInvalidStateError(*state, "Custom element constructor failed to upgrade an element");
+        return;
+    }
+    ASSERT(wrappedElement->isCustomElement());
+}
+
 void JSCustomElementInterface::attributeChanged(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
 {
     if (!canInvokeCallback())
@@ -144,6 +192,11 @@ void JSCustomElementInterface::attributeChanged(Element& element, const Qualifie
 
     if (exception)
         reportException(state, exception);
+}
+    
+void JSCustomElementInterface::didUpgradeLastElementInConstructionStack()
+{
+    m_constructionStack.last() = nullptr;
 }
 
 } // namespace WebCore

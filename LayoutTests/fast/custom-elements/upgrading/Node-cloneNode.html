@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: Extensions to Document interface</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="Node.prototype.cloneNode should upgrade a custom element">
+<link rel="help" href="https://w3c.github.io/webcomponents/spec/custom/#upgrading">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../../resources/testharness.css'>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+function withNewDocumentWithABrowsingContext(callback) {
+    var iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    try {
+        callback(iframe.contentWindow, iframe.contentDocument);        
+    } finally {
+        document.body.removeChild(iframe);
+    }
+}
+
+test(function () {
+    class MyCustomElement extends HTMLElement {}
+    document.defineElement('my-custom-element', MyCustomElement);
+
+    var instance = document.createElement('my-custom-element');
+    assert_true(instance instanceof HTMLElement);
+    assert_true(instance instanceof MyCustomElement);
+
+    var clone = instance.cloneNode(false);
+    assert_not_equals(instance, clone);
+    assert_true(clone instanceof HTMLElement,
+        'A cloned custom element must be an instance of HTMLElement');
+    assert_true(clone instanceof MyCustomElement,
+        'A cloned custom element must be an instance of the custom element');
+}, 'Node.prototype.cloneNode(false) must be able to clone a custom element');
+
+test(function () {
+    withNewDocumentWithABrowsingContext(function (contentWindow, contentDocument) {
+        class MyCustomElement extends contentWindow.HTMLElement {}
+        contentDocument.defineElement('my-custom-element', MyCustomElement);
+
+        var instance = contentDocument.createElement('my-custom-element');
+        assert_true(instance instanceof contentWindow.HTMLElement);
+        assert_true(instance instanceof MyCustomElement);
+
+        var clone = instance.cloneNode(false);
+        assert_not_equals(instance, clone);
+        assert_true(clone instanceof contentWindow.HTMLElement,
+            'A cloned custom element must be an instance of HTMLElement');
+        assert_true(clone instanceof MyCustomElement,
+            'A cloned custom element must be an instance of the custom element');
+    });
+}, 'Node.prototype.cloneNode(false) must be able to clone a custom element inside an iframe');
+
+test(function () {
+    withNewDocumentWithABrowsingContext(function (contentWindow, contentDocument) {
+        class MyCustomElement extends contentWindow.HTMLElement { }
+        contentDocument.defineElement('my-custom-element', MyCustomElement);
+
+        var instance = contentDocument.createElement('my-custom-element');
+        var container = contentDocument.createElement('div');
+        container.appendChild(instance);
+
+        var containerClone = container.cloneNode(true);
+        assert_true(containerClone instanceof contentWindow.HTMLDivElement);
+
+        var clone = containerClone.firstChild;
+        assert_not_equals(instance, clone);
+        assert_true(clone instanceof contentWindow.HTMLElement,
+            'A cloned custom element must be an instance of HTMLElement');
+        assert_true(clone instanceof MyCustomElement,
+            'A cloned custom element must be an instance of the custom element');
+    });
+}, 'Node.prototype.cloneNode(true) must be able to clone a descendent custom element');
+
+test(function () {
+    withNewDocumentWithABrowsingContext(function (contentWindow, contentDocument) {
+        var parentNodeInConstructor;
+        var previousSiblingInConstructor;
+        var nextSiblingInConstructor;
+        class MyCustomElement extends contentWindow.HTMLElement {
+            constructor() {
+                super();
+                parentNodeInConstructor = this.parentNode;
+                previousSiblingInConstructor = this.previousSibling;
+                nextSiblingInConstructor = this.nextSibling;
+            }
+        }
+        contentDocument.defineElement('my-custom-element', MyCustomElement);
+
+        var instance = contentDocument.createElement('my-custom-element');
+        var siblingBeforeInstance = contentDocument.createElement('b');
+        var siblingAfterInstance = contentDocument.createElement('a');
+        var container = contentDocument.createElement('div');
+        container.appendChild(siblingBeforeInstance);
+        container.appendChild(instance);
+        container.appendChild(siblingAfterInstance);
+
+        var containerClone = container.cloneNode(true);
+
+        assert_equals(parentNodeInConstructor, containerClone,
+            'An upgraded element must have its parentNode set before the custom element constructor is called');
+        assert_equals(previousSiblingInConstructor, containerClone.firstChild,
+            'An upgraded element must have its previousSibling set before the custom element constructor is called');
+        assert_equals(nextSiblingInConstructor, containerClone.lastChild,
+            'An upgraded element must have its nextSibling set before the custom element constructor is called');
+    });
+}, 'Node.prototype.cloneNode(true) must be able to clone a descendent custom element');
+
+test(function () {
+    withNewDocumentWithABrowsingContext(function (contentWindow, contentDocument) {
+        class MyCustomElement extends contentWindow.HTMLElement {
+            constructor(doNotCreateItself) {
+                super();
+                if (!doNotCreateItself)
+                    new MyCustomElement(true);
+            }
+        }
+        contentDocument.defineElement('my-custom-element', MyCustomElement);
+
+        var instance = contentDocument.createElement('my-custom-element');
+        assert_throws({'name': 'InvalidStateError'}, function () { instance.cloneNode(false); });
+    });
+}, 'HTMLElement constructor must throw an InvalidStateError when the top of the construction stack is marked AlreadyConstructed'
+    + ' due to a custom element constructor constructing itself after super() call');
+
+test(function () {
+    withNewDocumentWithABrowsingContext(function (contentWindow, contentDocument) {
+        class MyCustomElement extends contentWindow.HTMLElement {
+            constructor(doNotCreateItself) {
+                if (!doNotCreateItself)
+                    new MyCustomElement(true);
+                super();
+            }
+        }
+        contentDocument.defineElement('my-custom-element', MyCustomElement);
+
+        var instance = contentDocument.createElement('my-custom-element');
+        assert_throws({'name': 'InvalidStateError'}, function () { instance.cloneNode(false); });
+    });
+}, 'HTMLElement constructor must throw an InvalidStateError when the top of the construction stack is marked AlreadyConstructed'
+    + ' due to a custom element constructor constructing itself before super() call');
+
+test(function () {
+    withNewDocumentWithABrowsingContext(function (contentWindow, contentDocument) {
+        var cloning = false;
+        class MyCustomElement extends contentWindow.HTMLElement {
+            constructor() {
+                super();
+                if (cloning)
+                    return contentDocument.createElement('span');
+            }
+        }
+        contentDocument.defineElement('my-custom-element', MyCustomElement);
+
+        var instance = contentDocument.createElement('my-custom-element');
+        cloning = true;
+        assert_throws({'name': 'InvalidStateError'}, function () { instance.cloneNode(false); });
+    });
+}, 'Upgrading a custom element must throw InvalidStateError when the custom element\'s constructor returns another element');
+
+</script>
+</body>
+</html>

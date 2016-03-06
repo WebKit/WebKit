@@ -85,6 +85,7 @@ WEBCORE_EXPORT JSC::EncodedJSValue reportDeprecatedGetterError(JSC::ExecState&, 
 WEBCORE_EXPORT void reportDeprecatedSetterError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
 
 void throwNotSupportedError(JSC::ExecState&, const char* message);
+void throwInvalidStateError(JSC::ExecState&, const char* message);
 void throwArrayElementTypeError(JSC::ExecState&);
 void throwAttributeTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName, const char* expectedType);
 WEBCORE_EXPORT void throwSequenceTypeError(JSC::ExecState&);

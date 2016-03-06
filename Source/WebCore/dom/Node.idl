@@ -70,7 +70,10 @@
     [Custom, RaisesException] Node appendChild([CustomReturn] Node newChild);
 
     boolean            hasChildNodes();
-    [NewObject, RaisesException, ImplementedAs=cloneNodeForBindings] Node cloneNode([Default=Undefined] optional boolean deep);
+
+    [NewObject, RaisesException, ImplementedAs=cloneNodeForBindings, InvokesCustomElementLifecycleCallbacks]
+    Node cloneNode([Default=Undefined] optional boolean deep);
+
     void               normalize();
 
     // Introduced in DOM Level 2:

@@ -1047,12 +1047,23 @@ RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::crea
     return nullptr;
 }
 
-Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const AtomicString& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
+RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
 {
-    RefPtr<$parameters{namespace}Element> element = $parameters{namespace}ElementFactory::createKnownElement($argumentList);
-    if (LIKELY(element))
-        return element.releaseNonNull();
-    return $parameters{fallbackInterfaceName}::create(QualifiedName(nullAtom, name, ${lowercaseNamespacePrefix}NamespaceURI), document);
+    const ConstructorFunctionMapEntry& entry = find$parameters{namespace}ElementConstructorFunction(name.localName());
+    if (LIKELY(entry.function))
+        return entry.function($argumentList);
+    return nullptr;
+}
+
+Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const AtomicString& localName, Document& document$formElementArgumentForDefinition, bool createdByParser)
+{
+    const ConstructorFunctionMapEntry& entry = find$parameters{namespace}ElementConstructorFunction(localName);
+    if (LIKELY(entry.function)) {
+        ASSERT(entry.qualifiedName);
+        const auto& name = *entry.qualifiedName;
+        return entry.function($argumentList);
+    }
+    return $parameters{fallbackInterfaceName}::create(QualifiedName(nullAtom, localName, ${lowercaseNamespacePrefix}NamespaceURI), document);
 }
 
 Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
@@ -1089,29 +1100,36 @@ sub printFactoryHeaderFile
 
 namespace WebCore {
 
-    class Document;
-    class HTMLFormElement;
-    class QualifiedName;
+class Document;
+class HTMLFormElement;
+class QualifiedName;
 
-    class $parameters{namespace}Element;
+class $parameters{namespace}Element;
 
-    class $parameters{namespace}ElementFactory {
-    public:
+class $parameters{namespace}ElementFactory {
+public:
 END
 ;
 
-print F "        static RefPtr<$parameters{namespace}Element> createKnownElement(const AtomicString& localName, Document&";
-print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
-print F ", bool createdByParser = false);\n\n";
-print F "        static Ref<$parameters{namespace}Element> createElement(const AtomicString& localName, Document&";
+print F "static RefPtr<$parameters{namespace}Element> createKnownElement(const AtomicString&, Document&";
 print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
 print F ", bool createdByParser = false);\n";
-print F "        static Ref<$parameters{namespace}Element> createElement(const QualifiedName& localName, Document&";
+
+print F "static RefPtr<$parameters{namespace}Element> createKnownElement(const QualifiedName&, Document&";
+print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
+print F ", bool createdByParser = false);\n";
+
+print F "static Ref<$parameters{namespace}Element> createElement(const AtomicString&, Document&";
+print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
+print F ", bool createdByParser = false);\n";
+
+print F "static Ref<$parameters{namespace}Element> createElement(const QualifiedName&, Document&";
 print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
 print F ", bool createdByParser = false);\n";
 
 printf F<<END
-    };
+};
+
 }
 
 #endif // $parameters{namespace}ElementFactory_h

@@ -33,6 +33,7 @@
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
 #include <heap/Heap.h>
+#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -40,8 +41,15 @@ namespace WebCore {
 class LifecycleQueueItem {
 public:
     enum class Type {
+        ElementUpgrade,
         AttributeChanged,
     };
+
+    LifecycleQueueItem(Type type, Element& element, JSCustomElementInterface& interface)
+        : m_type(type)
+        , m_element(element)
+        , m_interface(interface)
+    { }
 
     LifecycleQueueItem(Element& element, JSCustomElementInterface& interface, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
         : m_type(Type::AttributeChanged)
@@ -54,14 +62,22 @@ public:
 
     void invoke()
     {
-        m_interface->attributeChanged(m_element.get(), m_attributeName, m_oldValue, m_newValue);
+        switch (m_type) {
+        case Type::ElementUpgrade:
+            m_interface->upgradeElement(m_element.get());
+            break;
+        case Type::AttributeChanged:
+            ASSERT(m_attributeName);
+            m_interface->attributeChanged(m_element.get(), m_attributeName.value(), m_oldValue, m_newValue);
+            break;
+        }
     }
 
 private:
     Type m_type;
     Ref<Element> m_element;
     Ref<JSCustomElementInterface> m_interface;
-    QualifiedName m_attributeName;
+    Optional<QualifiedName> m_attributeName;
     AtomicString m_oldValue;
     AtomicString m_newValue;
 };
@@ -72,6 +88,12 @@ LifecycleCallbackQueue::LifecycleCallbackQueue()
 LifecycleCallbackQueue::~LifecycleCallbackQueue()
 {
     ASSERT(m_items.isEmpty());
+}
+
+void LifecycleCallbackQueue::enqueueElementUpgrade(Element& element, JSCustomElementInterface& interface)
+{
+    if (auto* queue = CustomElementLifecycleProcessingStack::ensureCurrentQueue())
+        queue->m_items.append(LifecycleQueueItem(LifecycleQueueItem::Type::ElementUpgrade, element, interface));
 }
 
 void LifecycleCallbackQueue::enqueueAttributeChangedCallback(Element& element, JSCustomElementInterface& interface,

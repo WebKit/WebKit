@@ -103,6 +103,7 @@
 #include "JSModuleLoader.h"
 #include "KeyboardEvent.h"
 #include "Language.h"
+#include "LifecycleCallbackQueue.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MainFrame.h"
@@ -1072,15 +1073,33 @@ bool Document::hasValidNamespaceForAttributes(const QualifiedName& qName)
     return hasValidNamespaceForElements(qName);
 }
 
+static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const QualifiedName& name)
+{
+#if ENABLE(CUSTOM_ELEMENTS)
+    auto* definitions = document.customElementDefinitions();
+    if (UNLIKELY(definitions)) {
+        if (auto* interface = definitions->findInterface(name)) {
+            Ref<HTMLElement> element = HTMLElement::create(name, document);
+            element->setIsCustomElement(); // Pre-upgrade element is still considered a custom element.
+            LifecycleCallbackQueue::enqueueElementUpgrade(element.get(), *interface);
+            return element;
+        }
+    }
+#endif
+    return HTMLUnknownElement::create(name, document);
+}
+
 // FIXME: This should really be in a possible ElementFactory class.
 Ref<Element> Document::createElement(const QualifiedName& name, bool createdByParser)
 {
     RefPtr<Element> element;
 
     // FIXME: Use registered namespaces and look up in a hash to find the right factory.
-    if (name.namespaceURI() == xhtmlNamespaceURI)
-        element = HTMLElementFactory::createElement(name, *this, nullptr, createdByParser);
-    else if (name.namespaceURI() == SVGNames::svgNamespaceURI)
+    if (name.namespaceURI() == xhtmlNamespaceURI) {
+        element = HTMLElementFactory::createKnownElement(name, *this, nullptr, createdByParser);
+        if (UNLIKELY(!element))
+            element = createFallbackHTMLElement(*this, name);
+    } else if (name.namespaceURI() == SVGNames::svgNamespaceURI)
         element = SVGElementFactory::createElement(name, *this, createdByParser);
 #if ENABLE(MATHML)
     else if (name.namespaceURI() == MathMLNames::mathmlNamespaceURI)

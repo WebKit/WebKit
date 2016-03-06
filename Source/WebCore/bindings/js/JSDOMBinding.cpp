@@ -642,6 +642,13 @@ void throwNotSupportedError(JSC::ExecState& state, const char* message)
     state.vm().throwException(&state, createDOMException(&state, NOT_SUPPORTED_ERR, &messageString));
 }
 
+void throwInvalidStateError(JSC::ExecState& state, const char* message)
+{
+    ASSERT(!state.hadException());
+    String messageString(message);
+    state.vm().throwException(&state, createDOMException(&state, INVALID_STATE_ERR, &messageString));
+}
+
 JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState& state, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues)
 {
     StringBuilder builder;

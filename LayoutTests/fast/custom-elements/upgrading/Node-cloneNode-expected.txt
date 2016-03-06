@@ -1,0 +1,9 @@
+
+PASS Node.prototype.cloneNode(false) must be able to clone a custom element 
+PASS Node.prototype.cloneNode(false) must be able to clone a custom element inside an iframe 
+PASS Node.prototype.cloneNode(true) must be able to clone a descendent custom element 
+PASS Node.prototype.cloneNode(true) must be able to clone a descendent custom element 
+PASS HTMLElement constructor must throw an InvalidStateError when the top of the construction stack is marked AlreadyConstructed due to a custom element constructor constructing itself after super() call 
+PASS HTMLElement constructor must throw an InvalidStateError when the top of the construction stack is marked AlreadyConstructed due to a custom element constructor constructing itself before super() call 
+PASS Upgrading a custom element must throw InvalidStateError when the custom element's constructor returns another element 
+

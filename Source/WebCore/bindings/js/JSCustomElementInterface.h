@@ -63,12 +63,18 @@ public:
     enum class ShouldClearException { Clear, DoNotClear };
     RefPtr<Element> constructElement(const AtomicString&, ShouldClearException);
 
+    void upgradeElement(Element&);
+
     void attributeChanged(Element&, const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
 
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
     JSC::JSObject* constructor() { return m_constructor.get(); }
 
     const QualifiedName& name() const { return m_name; }
+
+    bool isUpgradingElement() const { return !m_constructionStack.isEmpty(); }
+    Element* lastElementInConstructionStack() const { return m_constructionStack.last().get(); }
+    void didUpgradeLastElementInConstructionStack();
 
     virtual ~JSCustomElementInterface();
 
@@ -78,6 +84,7 @@ private:
     QualifiedName m_name;
     mutable JSC::Weak<JSC::JSObject> m_constructor;
     RefPtr<DOMWrapperWorld> m_isolatedWorld;
+    Vector<RefPtr<Element>, 1> m_constructionStack;
 };
 
 } // namespace WebCore
