@@ -1,3 +1,11 @@
+2016-03-05  Sam Weinig  <sam@webkit.org>
+
+        Fix two minor typos from http://trac.webkit.org/changeset/197626 that were causing some test failures.
+
+        * html/Autofill.cpp:
+        (WebCore::fieldNameMap):
+        (WebCore::AutofillData::createFromHTMLFormControlElement):
+
 2016-03-05  Chris Dumez  <cdumez@apple.com>
 
         Consolidate RuntimeApplicationChecks and RuntimeApplicationChecksIOS

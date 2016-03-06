@@ -52,8 +52,8 @@ static HashMap<AtomicString, AutofillInfo>& fieldNameMap()
 {
     static NeverDestroyed<HashMap<AtomicString, AutofillInfo>> map;
     if (map.get().isEmpty()) {
-        map.get().add(AtomicString("on", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::None, AutofillCategory::Off });
-        map.get().add(AtomicString("off", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::None,  AutofillCategory::Automatic });
+        map.get().add(AtomicString("off", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::None, AutofillCategory::Off });
+        map.get().add(AtomicString("on", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::None,  AutofillCategory::Automatic });
         map.get().add(AtomicString("name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Name, AutofillCategory::Normal });
         map.get().add(AtomicString("honorific-prefix", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::HonorificPrefix, AutofillCategory::Normal });
         map.get().add(AtomicString("given-name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::GivenName, AutofillCategory::Normal });
@@ -222,7 +222,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // 8. If category is Automatic, let the element's autofill field name be the string "on",
     // let its autofill hint set be empty, and let its IDL-exposed autofill value be the string
     // "on". Then, abort these steps.
-    if (category == AutofillCategory::Off)
+    if (category == AutofillCategory::Automatic)
         return { on, on.get().string() };
 
     // 9. Let scope tokens be an empty list.
