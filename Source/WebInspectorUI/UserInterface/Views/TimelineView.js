@@ -172,7 +172,6 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
         this._timelineSidebarPanel.hideEmptyContentPlaceholder();
     }
 
-
     filterDidChange()
     {
         // Implemented by sub-classes if needed.

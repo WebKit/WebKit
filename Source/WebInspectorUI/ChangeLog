@@ -1,3 +1,264 @@
+2016-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add back support for a heavy / bottom up profile view
+        https://bugs.webkit.org/show_bug.cgi?id=140578
+        <rdar://problem/19506794>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings and resources.
+
+        * UserInterface/Base/Utilities.js:
+        (Number.secondsToMillisecondsString):
+        Helper for providing a consistent milliseconds string used in profiles.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.scriptProfilerTrackingCompleted):
+        The calling context tree should be stored on a Recording, not on the global
+        TimelineManager. Also create two trees, one top down and one bottom up.
+
+        * UserInterface/Models/CallingContextTree.js:
+        (WebInspector.CallingContextTree):
+        (WebInspector.CallingContextTree.prototype.get type):
+        (WebInspector.CallingContextTree.prototype.get totalExecutionTime):
+        (WebInspector.CallingContextTree.prototype.reset):
+        (WebInspector.CallingContextTree.prototype.numberOfSamplesInTimeRange):
+        (WebInspector.CallingContextTree.prototype.increaseExecutionTime):
+        Give a CallingContextTree a type (TopDown / BottomUp) and some getters.
+
+        (WebInspector.CallingContextTree.prototype.updateTreeWithStackTrace):
+        Build a bottom up or top down tree from samples.
+
+        (WebInspector.CallingContextTree.prototype.forEachChild):
+        Allow iterating from the root.
+
+        (WebInspector.CCTNode):
+        (WebInspector.CCTNode.prototype.hasChildrenInTimeRange):
+        (WebInspector.CCTNode.prototype.numberOfLeafTimestamps):
+        (WebInspector.CCTNode.prototype.addTimestampAndExpressionLocation):
+        (WebInspector.CCTNode.prototype.equals):
+        (WebInspector.CCTNode.prototype.hasChildren): Deleted.
+        Give a CCTNode a list of leaf timestamps alongside the list of all timestamps.
+        Leaf timestamps will count as "self time" in a profile view.
+
+        * UserInterface/Models/SourceCodeLocation.js:
+        (WebInspector.SourceCodeLocation.prototype._locationString):
+        Nobody was using "ColumnStyle.Hidden" so repurpose it to be even simpler.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording):
+        (WebInspector.TimelineRecording.prototype.get topDownCallingContextTree):
+        (WebInspector.TimelineRecording.prototype.get bottomUpCallingContextTree):
+        (WebInspector.TimelineRecording.prototype.reset):
+        Store the two types of calling context trees and allow reseting them.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.contextMenuItemSelected):
+        Helper for debugging uncaught exceptions in context menus.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        (WebInspector.ContentView.isViewable):
+        A ScriptTimeline now has a cluster view.
+        A CallingContextTree now has a ProfileView.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.insertChild):
+        (WebInspector.DataGrid.prototype._contextMenuInDataTable):
+        (WebInspector.DataGridNode.prototype.refreshRecursively):
+        (WebInspector.DataGridNode.prototype.elementWithColumnIdentifier):
+        (WebInspector.DataGridNode.prototype.forEachImmediateChild):
+        (WebInspector.DataGridNode.prototype.forEachChildInSubtree):
+        (WebInspector.DataGridNode.prototype.isInSubtreeOfNode):
+        Provide some helpers for iterating DataGridNodes, useful when the
+        actual DataGrid comes from a DataGridTree.
+
+        (WebInspector.DataGridNode.prototype.select):
+        (WebInspector.DataGridNode.prototype.deselect):
+        The indent width of DataGridNodes was not getting reset when a
+        node was removed and re-added to a tree due to a cached padding.
+
+        (WebInspector.DataGridNode.prototype.appendContextMenuItems):
+        Allow DataGridNodes to provide context menu items by overriding this method.
+
+        * UserInterface/Views/PathComponentIcons.css:
+        (.function-icon .icon):
+        (.native-icon .icon):
+        (.program-icon .icon):
+        Icons for profile nodes in path components.
+
+        * UserInterface/Views/ProfileDataGridNode.js: Added.
+        (WebInspector.ProfileDataGridNode):
+        (WebInspector.ProfileDataGridNode.prototype.get node):
+        (WebInspector.ProfileDataGridNode.prototype.displayName):
+        (WebInspector.ProfileDataGridNode.prototype.iconClassName):
+        (WebInspector.ProfileDataGridNode.prototype.get data):
+        (WebInspector.ProfileDataGridNode.prototype.createCellContent):
+        (WebInspector.ProfileDataGridNode.prototype.sort):
+        (WebInspector.ProfileDataGridNode.prototype.refresh):
+        (WebInspector.ProfileDataGridNode.prototype.appendContextMenuItems):
+        (WebInspector.ProfileDataGridNode.prototype._updateChildrenForModifiers):
+        (WebInspector.ProfileDataGridNode.prototype._recalculateData):
+        (WebInspector.ProfileDataGridNode.prototype._totalTimeContent):
+        (WebInspector.ProfileDataGridNode.prototype._displayContent):
+        (WebInspector.ProfileDataGridNode.prototype._populate):
+        CCTNode DataGridNode. A row in the ProfileDataGridTree. Handles
+        tree modifiers like charge to caller.
+
+        * UserInterface/Views/ProfileDataGridTree.js: Added.
+        (WebInspector.ProfileDataGridTree):
+        (WebInspector.ProfileDataGridTree.buildSortComparator):
+        (WebInspector.ProfileDataGridTree.prototype.get callingContextTree):
+        (WebInspector.ProfileDataGridTree.prototype.get sampleInterval):
+        (WebInspector.ProfileDataGridTree.prototype.get focusNodes):
+        (WebInspector.ProfileDataGridTree.prototype.get currentFocusNode):
+        (WebInspector.ProfileDataGridTree.prototype.get modifiers):
+        (WebInspector.ProfileDataGridTree.prototype.get startTime):
+        (WebInspector.ProfileDataGridTree.prototype.get endTime):
+        (WebInspector.ProfileDataGridTree.prototype.get numberOfSamples):
+        (WebInspector.ProfileDataGridTree.prototype.get children):
+        (WebInspector.ProfileDataGridTree.prototype.appendChild):
+        (WebInspector.ProfileDataGridTree.prototype.insertChild):
+        (WebInspector.ProfileDataGridTree.prototype.removeChildren):
+        (WebInspector.ProfileDataGridTree.prototype.set sortComparator):
+        (WebInspector.ProfileDataGridTree.prototype.sort):
+        (WebInspector.ProfileDataGridTree.prototype.refresh):
+        (WebInspector.ProfileDataGridTree.prototype.addFocusNode):
+        (WebInspector.ProfileDataGridTree.prototype.rollbackFocusNode):
+        (WebInspector.ProfileDataGridTree.prototype.clearFocusNodes):
+        (WebInspector.ProfileDataGridTree.prototype.hasModifiers):
+        (WebInspector.ProfileDataGridTree.prototype.addModifier):
+        (WebInspector.ProfileDataGridTree.prototype.clearModifiers):
+        (WebInspector.ProfileDataGridTree.prototype._repopulate):
+        (WebInspector.ProfileDataGridTree.prototype._focusChanged):
+        (WebInspector.ProfileDataGridTree.prototype._updateCurrentFocusDetails):
+        (WebInspector.ProfileDataGridTree.prototype._restoreFocusedNodeToOriginalParent):
+        (WebInspector.ProfileDataGridTree.prototype._modifiersChanged):
+        Start of a DataGridTree for a CallingContextTree.
+        Contains special logic for focused nodes and modifiers.
+
+        * UserInterface/Views/ProfileView.css: Added.
+        (.profile > .data-grid):
+        (.profile > .data-grid th):
+        (.profile > .data-grid td .icon):
+        (.profile > .data-grid td .percentage):
+        (.profile > .data-grid td .location):
+        (.profile > .data-grid:matches(:focus, .force-focus) tr.selected td .location):
+        (.profile > .data-grid td .icon.function-icon):
+        (.profile > .data-grid td .icon.native-icon):
+        (.profile > .data-grid td .icon.program-icon):
+        (.profile > .data-grid tr:matches(.selected, :hover) .go-to-arrow):
+        (.profile > .data-grid td.function-column):
+        (.profile > .data-grid td .guidance):
+        (.profile > .data-grid td .guidance.hover):
+        (.profile > .data-grid td .guidance.base):
+        (.profile > .data-grid tr:not(.expanded) td .guidance.base):
+        (.profile > .data-grid tr.expanded td .guidance.base):
+        * UserInterface/Views/ProfileView.js: Added.
+        (WebInspector.ProfileView):
+        (WebInspector.ProfileView.prototype.get callingContextTree):
+        (WebInspector.ProfileView.prototype.get startTime):
+        (WebInspector.ProfileView.prototype.get endTime):
+        (WebInspector.ProfileView.prototype.setStartAndEndTime):
+        (WebInspector.ProfileView.prototype.hasFocusNodes):
+        (WebInspector.ProfileView.prototype.clearFocusNodes):
+        (WebInspector.ProfileView.prototype.get selectionPathComponents):
+        (WebInspector.ProfileView.prototype._recreate):
+        (WebInspector.ProfileView.prototype._repopulateDataGridFromTree):
+        (WebInspector.ProfileView.prototype._pathComponentClicked):
+        (WebInspector.ProfileView.prototype._dataGridTreeFocusChanged):
+        (WebInspector.ProfileView.prototype._dataGridTreeModifiersChanged):
+        (WebInspector.ProfileView.prototype._dataGridSortChanged):
+        (WebInspector.ProfileView.prototype._dataGridNodeSelected):
+        (WebInspector.ProfileView.prototype._dataGridNodeExpanded):
+        (WebInspector.ProfileView.prototype._mouseOverDataGrid):
+        (WebInspector.ProfileView.prototype._mouseLeaveDataGrid):
+        (WebInspector.ProfileView.prototype._guidanceElementKey):
+        (WebInspector.ProfileView.prototype._removeGuidanceElement):
+        (WebInspector.ProfileView.prototype._appendGuidanceElement):
+        ProfileView holds a data grid which is populated from the data grid tree.
+        Special handing for guidance markers when hovering / selecting parts of the tree.
+
+        * UserInterface/Views/ScriptClusterTimelineView.js: Added.
+        (WebInspector.ScriptClusterTimelineView.createPathComponent):
+        (WebInspector.ScriptClusterTimelineView):
+        (WebInspector.ScriptClusterTimelineView.prototype.get zeroTime):
+        (WebInspector.ScriptClusterTimelineView.prototype.set zeroTime):
+        (WebInspector.ScriptClusterTimelineView.prototype.get startTime):
+        (WebInspector.ScriptClusterTimelineView.prototype.set startTime):
+        (WebInspector.ScriptClusterTimelineView.prototype.get endTime):
+        (WebInspector.ScriptClusterTimelineView.prototype.set endTime):
+        (WebInspector.ScriptClusterTimelineView.prototype.get currentTime):
+        (WebInspector.ScriptClusterTimelineView.prototype.set currentTime):
+        (WebInspector.ScriptClusterTimelineView.prototype.get navigationSidebarTreeOutline):
+        (WebInspector.ScriptClusterTimelineView.prototype.reset):
+        (WebInspector.ScriptClusterTimelineView.prototype.filterDidChange):
+        (WebInspector.ScriptClusterTimelineView.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.ScriptClusterTimelineView.prototype.get detailsContentView):
+        (WebInspector.ScriptClusterTimelineView.prototype.get profileContentView):
+        (WebInspector.ScriptClusterTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.ScriptClusterTimelineView.prototype.saveToCookie):
+        (WebInspector.ScriptClusterTimelineView.prototype.restoreFromCookie):
+        (WebInspector.ScriptClusterTimelineView.prototype.showDetails):
+        (WebInspector.ScriptClusterTimelineView.prototype.showProfile):
+        (WebInspector.ScriptClusterTimelineView.prototype._pathComponentForContentView):
+        (WebInspector.ScriptClusterTimelineView.prototype._identifierForContentView):
+        (WebInspector.ScriptClusterTimelineView.prototype._showContentViewForIdentifier):
+        (WebInspector.ScriptClusterTimelineView.prototype._pathComponentSelected):
+        (WebInspector.ScriptClusterTimelineView.prototype._scriptClusterViewCurrentContentViewDidChange):
+        Script Timeline ClusterContentView. Toggle between the normal "Details" data grid
+        and the new "Call Tree" profile view. Currently the recording expects child content
+        views to be TimelineViews, this ClusterContentView forwards TimelineView relevant
+        methods to the real TimelineView children.
+
+        * UserInterface/Views/ScriptDetailsTimelineView.js: Renamed from Source/WebInspectorUI/UserInterface/Views/ScriptTimelineView.js.
+        (WebInspector.ScriptDetailsTimelineView):
+        (WebInspector.ScriptDetailsTimelineView.prototype.get navigationSidebarTreeOutlineLabel):
+        (WebInspector.ScriptDetailsTimelineView.prototype.shown):
+        (WebInspector.ScriptDetailsTimelineView.prototype.hidden):
+        (WebInspector.ScriptDetailsTimelineView.prototype.closed):
+        (WebInspector.ScriptDetailsTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.ScriptDetailsTimelineView.prototype.reset):
+        (WebInspector.ScriptDetailsTimelineView.prototype.canShowContentViewForTreeElement):
+        (WebInspector.ScriptDetailsTimelineView.prototype.showContentViewForTreeElement):
+        (WebInspector.ScriptDetailsTimelineView.prototype.treeElementPathComponentSelected):
+        (WebInspector.ScriptDetailsTimelineView.prototype.treeElementSelected):
+        (WebInspector.ScriptDetailsTimelineView.prototype.dataGridNodeForTreeElement):
+        (WebInspector.ScriptDetailsTimelineView.prototype.populateProfileNodeTreeElement):
+        (WebInspector.ScriptDetailsTimelineView.prototype.layout):
+        (WebInspector.ScriptDetailsTimelineView.prototype._processPendingRecords):
+        (WebInspector.ScriptDetailsTimelineView.prototype._scriptTimelineRecordAdded):
+        (WebInspector.ScriptDetailsTimelineView.prototype._scriptTimelineRecordRefreshed):
+        (WebInspector.ScriptDetailsTimelineView.prototype._dataGridFiltersDidChange):
+        (WebInspector.ScriptDetailsTimelineView.prototype._dataGridNodeSelected):
+        * UserInterface/Views/ScriptProfileTimelineView.js: Added.
+        (WebInspector.ScriptProfileTimelineView):
+        (WebInspector.ScriptProfileTimelineView.prototype.closed):
+        (WebInspector.ScriptProfileTimelineView.prototype.get navigationItems):
+        (WebInspector.ScriptProfileTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.ScriptProfileTimelineView.prototype.layout):
+        (WebInspector.ScriptProfileTimelineView.prototype._callingContextTreeForOrientation):
+        (WebInspector.ScriptProfileTimelineView.prototype._profileViewSelectionPathComponentsDidChange):
+        (WebInspector.ScriptProfileTimelineView.prototype._scriptTimelineRecordRefreshed):
+        (WebInspector.ScriptProfileTimelineView.prototype._updateProfileOrientationButtonItem):
+        (WebInspector.ScriptProfileTimelineView.prototype._toggleProfileOrientation):
+        (WebInspector.ScriptProfileTimelineView.prototype._updateClearFocusNodesButtonItem):
+        (WebInspector.ScriptProfileTimelineView.prototype._clearFocusNodes):
+        The two TimelineViews.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.get currentTimelineView):
+        (WebInspector.TimelineRecordingContentView.prototype.contentBrowserTreeElementForRepresentedObject):
+        The timeline content browser may now hold a ClusterContentView. It is not exactly a TimelineView,
+        but it holds TimelineViews, so treat it like one. Assume the ClusterContentView will add its own
+        path components.
+
+        (WebInspector.TimelineRecordingContentView.prototype._instrumentAdded):
+        Add extra information other than the sidebar to TimelineViews. The ProfileView looks
+        at the recording for the calling context trees.
+
 2016-03-03  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Temporarily hide the TimelineSidebarPanel

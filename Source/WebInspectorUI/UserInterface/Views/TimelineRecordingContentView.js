@@ -162,8 +162,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     get currentTimelineView()
     {
-        let contentView = this._timelineContentBrowser.currentContentView;
-        return (contentView instanceof WebInspector.TimelineView) ? contentView : null;
+        return this._timelineContentBrowser.currentContentView;
     }
 
     get timelineOverviewHeight()
@@ -336,6 +335,9 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     contentBrowserTreeElementForRepresentedObject(contentBrowser, representedObject)
     {
         if (!(representedObject instanceof WebInspector.Timeline) && !(representedObject instanceof WebInspector.TimelineRecording))
+            return null;
+
+        if (this.currentTimelineView instanceof WebInspector.ClusterContentView)
             return null;
 
         let iconClassName;
@@ -602,7 +604,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         let timeline = this._recording.timelineForInstrument(instrument);
         console.assert(!this._timelineViewMap.has(timeline), timeline);
 
-        this._timelineViewMap.set(timeline, WebInspector.ContentView.createFromRepresentedObject(timeline, {timelineSidebarPanel: this._timelineSidebarPanel}));
+        this._timelineViewMap.set(timeline, WebInspector.ContentView.createFromRepresentedObject(timeline, {timelineSidebarPanel: this._timelineSidebarPanel, recording: this._recording}));
         if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame)
             this._renderingFrameTimeline = timeline;
 

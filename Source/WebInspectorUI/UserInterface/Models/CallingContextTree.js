@@ -25,27 +25,57 @@
 
 WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.Object
 {
-    constructor()
+    constructor(type)
     {
         super();
 
-        this._root = new WebInspector.CCTNode(-1, -1, -1, "<root>", null);
-        this._totalNumberOfSamples = 0;
+        this._type = type || WebInspector.CallingContextTree.Type.TopDown;
+
+        this.reset();
     }
 
     // Public
 
+    get type() { return this._type; }
+    get totalExecutionTime() { return this._totalExecutionTime; }
     get totalNumberOfSamples() { return this._totalNumberOfSamples; }
-    
+
+    reset()
+    {
+        this._root = new WebInspector.CCTNode(-1, -1, -1, "<root>", null);
+        this._totalExecutionTime = 0;
+        this._totalNumberOfSamples = 0;
+    }
+
+    numberOfSamplesInTimeRange(startTime, endTime)
+    {
+        return this._root.filteredTimestamps(startTime, endTime).length;
+    }
+
+    increaseExecutionTime(executionTime)
+    {
+        this._totalExecutionTime += executionTime;
+    }
+
     updateTreeWithStackTrace({timestamp, stackFrames})
     {
         this._totalNumberOfSamples++;
+
         let node = this._root;
         node.addTimestampAndExpressionLocation(timestamp, null);
-        for (let i = stackFrames.length; i--; ) {
-            let stackFrame = stackFrames[i];
-            node = node.findOrMakeChild(stackFrame);
-            node.addTimestampAndExpressionLocation(timestamp, stackFrame.expressionLocation || null);
+
+        if (this._type === WebInspector.CallingContextTree.Type.TopDown) {
+            for (let i = stackFrames.length; i--; ) {
+                let stackFrame = stackFrames[i];
+                node = node.findOrMakeChild(stackFrame);
+                node.addTimestampAndExpressionLocation(timestamp, stackFrame.expressionLocation || null, i === 0);
+            }
+        } else {
+            for (let i = 0; i < stackFrames.length; ++i) {
+                let stackFrame = stackFrames[i];
+                node = node.findOrMakeChild(stackFrame);
+                node.addTimestampAndExpressionLocation(timestamp, stackFrame.expressionLocation || null, i === 0);
+            }
         }
     }
 
@@ -53,7 +83,7 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
     {
         let cpuProfile = {};
         let roots = [];
-        let numSamplesInTimeRange = this._root.filteredTimestamps(startTime, endTime).length;
+        let numSamplesInTimeRange = this.numberOfSamplesInTimeRange(startTime, endTime);
 
         this._root.forEachChild((child) => {
             if (child.hasStackTraceInTimeRange(startTime, endTime))
@@ -62,6 +92,11 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
 
         cpuProfile.rootNodes = roots;
         return cpuProfile;
+    }
+
+    forEachChild(callback)
+    {
+        this._root.forEachChild(callback);
     }
 
     forEachNode(callback)
@@ -129,6 +164,7 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         this._uid = WebInspector.CCTNode.__uid++;
 
         this._timestamps = [];
+        this._leafTimestamps = [];
         this._expressionLocations = {}; // Keys are "line:column" strings. Values are arrays of timestamps in sorted order.
     }
 
@@ -148,6 +184,16 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
     get uid() { return this._uid; }
     get url() { return this._url; }
 
+    hasChildrenInTimeRange(startTime, endTime)
+    {
+        for (let propertyName of Object.getOwnPropertyNames(this._children)) {
+            let child = this._children[propertyName];
+            if (child.hasStackTraceInTimeRange(startTime, endTime))
+                return true;
+        }
+        return false;
+    }
+    
     hasStackTraceInTimeRange(startTime, endTime)
     {
         console.assert(startTime <= endTime);
@@ -182,6 +228,20 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         return result;
     }
 
+    numberOfLeafTimestamps(startTime, endTime)
+    {
+        let count = 0;
+        let lowerIndex = this._leafTimestamps.lowerBound(startTime);
+        for (let i = lowerIndex; i < this._leafTimestamps.length; ++i) {
+            let timestamp = this._leafTimestamps[i];
+            console.assert(startTime <= timestamp);
+            if (!(timestamp <= endTime))
+                break;
+            count++;
+        }
+        return count;
+    }
+
     hasChildren()
     {
         return !!Object.getOwnPropertyNames(this._children).length;
@@ -198,10 +258,13 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         return node;
     }
 
-    addTimestampAndExpressionLocation(timestamp, expressionLocation)
+    addTimestampAndExpressionLocation(timestamp, expressionLocation, leaf)
     {
         console.assert(!this._timestamps.length || this._timestamps.lastValue <= timestamp, "Expected timestamps to be added in sorted, increasing, order.");
         this._timestamps.push(timestamp);
+
+        if (leaf)
+            this._leafTimestamps.push(timestamp);
 
         if (!expressionLocation)
             return;
@@ -229,6 +292,11 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         this.forEachChild(function(child) {
             child.forEachNode(callback);
         });
+    }
+
+    equals(other)
+    {
+        return WebInspector.CCTNode._hash(this) === WebInspector.CCTNode._hash(other);
     }
 
     toCPUProfileNode(numSamples, startTime, endTime)
@@ -291,3 +359,7 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
 
 WebInspector.CCTNode.__uid = 0;
 
+WebInspector.CallingContextTree.Type = {
+    TopDown: Symbol("TopDown"),
+    BottomUp: Symbol("BottomUp"),
+};

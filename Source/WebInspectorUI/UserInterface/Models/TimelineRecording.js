@@ -35,6 +35,8 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         this._capturing = false;
         this._readonly = false;
         this._instruments = instruments || [];
+        this._topDownCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.TopDown);
+        this._bottomUpCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.BottomUp);
 
         let timelines = [
             WebInspector.TimelineRecord.Type.Network,
@@ -100,6 +102,16 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         return this._endTime;
     }
 
+    get topDownCallingContextTree()
+    {
+        return this._topDownCallingContextTree;
+    }
+
+    get bottomUpCallingContextTree()
+    {
+        return this._bottomUpCallingContextTree;
+    }
+
     start()
     {
         console.assert(!this._capturing, "Attempted to start an already started session.");
@@ -155,6 +167,9 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         this._eventMarkers = [];
         this._startTime = NaN;
         this._endTime = NaN;
+
+        this._topDownCallingContextTree.reset();
+        this._bottomUpCallingContextTree.reset();
 
         for (var timeline of this._timelines.values())
             timeline.reset(suppressEvents);

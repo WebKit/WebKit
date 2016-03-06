@@ -45,8 +45,6 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         this._webTimelineScriptRecordsExpectingScriptProfilerEvents = null;
         this._scriptProfilerRecords = null;
 
-        this._callingContextTree = null;
-
         this.reset();
     }
 
@@ -712,17 +710,25 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         console.assert(!this._webTimelineScriptRecordsExpectingScriptProfilerEvents || this._scriptProfilerRecords.length >= this._webTimelineScriptRecordsExpectingScriptProfilerEvents.length);
 
         if (samples) {
-            if (!this._callingContextTree)
-                this._callingContextTree = new WebInspector.CallingContextTree;
-
             // Associate the stackTraces with the ScriptProfiler created records.
-            let stackTraces = samples.stackTraces;
-            for (let i = 0; i < stackTraces.length; i++)
-                this._callingContextTree.updateTreeWithStackTrace(stackTraces[i]);
+            let {totalTime: totalExecutionTime, stackTraces} = samples;
+            let topDownCallingContextTree = this.activeRecording.topDownCallingContextTree;
+            let bottomUpCallingContextTree = this.activeRecording.bottomUpCallingContextTree;
 
+            topDownCallingContextTree.increaseExecutionTime(totalExecutionTime);
+            bottomUpCallingContextTree.increaseExecutionTime(totalExecutionTime);
+
+            for (let i = 0; i < stackTraces.length; i++) {
+                topDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i]);
+                bottomUpCallingContextTree.updateTreeWithStackTrace(stackTraces[i]);
+            }
+
+            // FIXME: This transformation should not be needed after introducing ProfileView.
+            // Once we eliminate ProfileNodeTreeElements and ProfileNodeDataGridNodes.
+            // <https://webkit.org/b/154973> Web Inspector: Timelines UI redesign: Remove TimelineSidebarPanel
             for (let i = 0; i < this._scriptProfilerRecords.length; ++i) {
                 let record = this._scriptProfilerRecords[i];
-                record.profilePayload = this._callingContextTree.toCPUProfilePayload(record.startTime, record.endTime);
+                record.profilePayload = topDownCallingContextTree.toCPUProfilePayload(record.startTime, record.endTime);
             }
         }
 

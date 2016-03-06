@@ -1,0 +1,254 @@
+/*
+* Copyright (C) 2016 Apple Inc. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+* 1. Redistributions of source code must retain the above copyright
+*    notice, this list of conditions and the following disclaimer.
+* 2. Redistributions in binary form must reproduce the above copyright
+*    notice, this list of conditions and the following disclaimer in the
+*    documentation and/or other materials provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+* PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+* THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspector.DataGridNode
+{
+    constructor(cctNode, tree)
+    {
+        super(cctNode, false);
+
+        this._node = cctNode;
+        this._tree = tree;
+
+        this._populated = false;
+        this._childrenToChargeToSelf = new Set;
+
+        // FIXME: Make profile data grid nodes copyable.
+        this.copyable = false;
+
+        this.addEventListener("populate", this._populate, this);
+
+        this._updateChildrenForModifiers();
+        this._recalculateData();
+    }
+
+    // Public
+
+    get node() { return this._node; }
+
+    displayName()
+    {
+        let title = this._node.name;
+        if (!title)
+            return WebInspector.UIString("(anonymous function)");
+        if (title === "(program)")
+            return WebInspector.UIString("(program)");
+        return title;
+    }
+
+    iconClassName()
+    {
+        let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID);
+        if (!script || !script.url)
+            return "native-icon";
+        if (this._node.name === "(program)")
+            return "program-icon";
+        return "function-icon";
+    }
+
+    // Protected
+
+    get data()
+    {
+        return this._data;
+    }
+
+    createCellContent(columnIdentifier, cell)
+    {
+        switch (columnIdentifier) {
+        case "totalTime":
+            return this._totalTimeContent();
+        case "selfTime":
+            return Number.secondsToMillisecondsString(this._data.selfTime);
+        case "function":
+            return this._displayContent();
+        }
+
+        return super.createCellContent(columnIdentifier, cell);
+    }
+
+    sort()
+    {
+        let children = this.children;
+        children.sort(this._tree._sortComparator);
+
+        for (let i = 0; i < children.length; ++i) {
+            children[i]._recalculateSiblings(i);
+            children[i].sort();
+        }
+    }
+
+    refresh()
+    {
+        this._updateChildrenForModifiers();
+        this._recalculateData();
+
+        super.refresh();
+    }
+
+    appendContextMenuItems(contextMenu)
+    {
+        let disableFocus = this === this._tree.currentFocusNode;
+        contextMenu.appendItem(WebInspector.UIString("Focus on Subtree"), () => {
+            this._tree.addFocusNode(this);
+        }, disableFocus);
+
+        // FIXME: <https://webkit.org/b/155072> Web Inspector: Charge to Caller should work with Bottom Up Profile View
+        let disableChargeToCaller = this._tree.callingContextTree.type === WebInspector.CallingContextTree.Type.BottomUp;
+        contextMenu.appendItem(WebInspector.UIString("Charge ‘%s’ to Callers").format(this.displayName()), () => {
+            this._tree.addModifier({type: WebInspector.ProfileDataGridTree.ModifierType.ChargeToCaller, source: this._node});
+        }, disableChargeToCaller);
+
+        contextMenu.appendSeparator();
+    }
+
+    // Private
+
+    _updateChildrenForModifiers()
+    {
+        // NOTE: This currently assumes we either add modifiers or remove them all.
+        // This doesn't handle removing a single modifier and re-inserting a single child.
+
+        // FIXME: <https://webkit.org/b/155072> Web Inspector: Charge to Caller should work with Bottom Up Profile View
+        let isBottomUp = this._tree.callingContextTree.type === WebInspector.CallingContextTree.Type.BottomUp;
+        if (!this._tree.hasModifiers() || isBottomUp) {
+            // Add back child data grid nodes that were previously charged to us.
+            if (this._populated && this._childrenToChargeToSelf.size) {
+                for (let child of this._childrenToChargeToSelf) {
+                    console.assert(child.hasStackTraceInTimeRange(this._tree.startTime, this._tree.endTime));
+                    this.appendChild(new WebInspector.ProfileDataGridNode(child, this._tree));
+                }
+
+                this.sort();
+            }
+
+            this._extraSelfTimeFromChargedChildren = 0;
+            this._childrenToChargeToSelf.clear();
+            this.hasChildren = this._node.hasChildrenInTimeRange(this._tree.startTime, this._tree.endTime);
+            return;
+        }
+
+        this._extraSelfTimeFromChargedChildren = 0;
+        this._childrenToChargeToSelf.clear();
+
+        let hasNonChargedChild = false;
+        this._node.forEachChild((child) => {
+            if (child.hasStackTraceInTimeRange(this._tree.startTime, this._tree.endTime)) {
+                for (let {type, source} of this._tree.modifiers) {
+                    if (type === WebInspector.ProfileDataGridTree.ModifierType.ChargeToCaller) {
+                        if (child.equals(source)) {
+                            this._childrenToChargeToSelf.add(child);
+                            let childSubtreeSamples = child.filteredTimestamps(this._tree.startTime, this._tree.endTime).length;
+                            this._extraSelfTimeFromChargedChildren += childSubtreeSamples * this._tree.sampleInterval;
+                            continue;
+                        }
+                    }
+                    hasNonChargedChild = true;
+                }
+            }
+        });
+
+        this.hasChildren = hasNonChargedChild;
+
+        // Remove child data grid nodes that have been charged to us.
+        if (this._populated && this._childrenToChargeToSelf.size) {
+            for (let childDataGridNode of this.children) {
+                if (this._childrenToChargeToSelf.has(childDataGridNode.node))
+                    this.removeChild(childDataGridNode);
+            }
+        }
+    }
+
+    _recalculateData()
+    {
+        let timestamps = this._node.filteredTimestamps(this._tree.startTime, this._tree.endTime);
+        let leafs = this._node.numberOfLeafTimestamps(this._tree.startTime, this._tree.endTime);
+
+        let sampleInterval = this._tree.sampleInterval;
+        let totalTime = timestamps.length * sampleInterval;
+        let selfTime = (leafs * sampleInterval) + this._extraSelfTimeFromChargedChildren;
+        let percent = (totalTime / (this._tree.numberOfSamples * sampleInterval)) * 100;
+
+        this._data = {totalTime, selfTime, percent};
+    }
+
+    _totalTimeContent()
+    {
+        let {totalTime, percent} = this._data;
+
+        let fragment = document.createDocumentFragment();
+        let timeElement = fragment.appendChild(document.createElement("span"));
+        timeElement.classList.add("time");
+        timeElement.textContent = Number.secondsToMillisecondsString(totalTime);
+        let percentElement = fragment.appendChild(document.createElement("span"));
+        percentElement.classList.add("percentage");
+        percentElement.textContent = Number.percentageString(percent);
+        return fragment;
+    }
+
+    _displayContent()
+    {
+        let title = this.displayName();
+        let iconClassName = this.iconClassName();
+
+        let fragment = document.createDocumentFragment();
+        let iconElement = fragment.appendChild(document.createElement("img"));
+        iconElement.classList.add("icon", iconClassName);
+        let titleElement = fragment.appendChild(document.createElement("span"));
+        titleElement.textContent = title;
+
+        let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID);
+        if (script && script.url && this._node.line >= 0 && this._node.column >= 0) {
+            let sourceCodeLocation = script.createSourceCodeLocation(this._node.line, this._node.column);
+
+            let locationElement = fragment.appendChild(document.createElement("span"));
+            locationElement.classList.add("location");
+            sourceCodeLocation.populateLiveDisplayLocationString(locationElement, "textContent", WebInspector.SourceCodeLocation.ColumnStyle.Hidden, WebInspector.SourceCodeLocation.NameStyle.Short);
+
+            let dontFloat = true;
+            let useGoToArrowButton = true;
+            let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, dontFloat, useGoToArrowButton);
+            fragment.appendChild(goToArrowButtonLink);
+        }
+
+        return fragment;
+    }
+
+    _populate()
+    {
+        this._populated = true;
+
+        this._node.forEachChild((child) => {
+            if (!this._childrenToChargeToSelf.has(child)) {
+                if (child.hasStackTraceInTimeRange(this._tree.startTime, this._tree.endTime))
+                    this.appendChild(new WebInspector.ProfileDataGridNode(child, this._tree));
+            }
+        });
+
+        this.sort();
+
+        this.removeEventListener("populate", this._populate, this);
+    }
+}

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.TimelineView
+WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WebInspector.TimelineView
 {
     constructor(timeline, extraArguments)
     {

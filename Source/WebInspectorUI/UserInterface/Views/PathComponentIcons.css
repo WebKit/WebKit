@@ -62,3 +62,15 @@
 .dom-node-icon .icon {
     content: url(../Images/DOMNode.svg);
 }
+
+.function-icon .icon {
+    content: url(../Images/Function.svg);
+}
+
+.native-icon .icon {
+    content: url(../Images/Native.svg);
+}
+
+.program-icon .icon {
+    content: url(../Images/Program.svg);
+}
