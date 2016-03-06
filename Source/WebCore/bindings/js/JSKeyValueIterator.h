@@ -35,8 +35,8 @@ namespace WebCore {
 template<typename JSWrapper>
 class JSKeyValueIteratorPrototype : public JSC::JSNonFinalObject {
 public:
-    using DOMWrapped = typename std::remove_reference<decltype(std::declval<JSWrapper>().wrapped())>::type;
     using Base = JSC::JSNonFinalObject;
+    using DOMWrapped = typename JSWrapper::DOMWrapped;
 
     static JSKeyValueIteratorPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {

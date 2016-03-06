@@ -63,16 +63,6 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamControllerPrivate
 template<> const ClassInfo JSBuiltinReadableStreamReaderPrivateConstructor::s_info = { "ReadableStreamReaderPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamReaderPrivateConstructor) };
 template<> const ClassInfo JSBuiltinReadableStreamControllerPrivateConstructor::s_info = { "ReadableStreamControllerPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamControllerPrivateConstructor) };
 
-template<> JSObject* JSBuiltinReadableStreamReaderPrivateConstructor::createJSObject()
-{
-    return JSReadableStreamReader::create(getDOMStructure<JSReadableStreamReader>(globalObject()->vm(), *globalObject()), globalObject());
-}
-
-template<> JSObject* JSBuiltinReadableStreamControllerPrivateConstructor::createJSObject()
-{
-    return JSReadableStreamController::create(getDOMStructure<JSReadableStreamController>(globalObject()->vm(), *globalObject()), globalObject());
-}
-
 template<> FunctionExecutable* JSBuiltinReadableStreamReaderPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
     return readableStreamInternalsPrivateInitializeReadableStreamReaderCodeGenerator(vm);

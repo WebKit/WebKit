@@ -1,3 +1,33 @@
+2016-03-06  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Enable DOM class create functions to take parameters in case of JSBuiltinConstructor
+        https://bugs.webkit.org/show_bug.cgi?id=155022
+
+        Reviewed by Darin Adler.
+
+        Introducing JSDOMObjectInspector to check whether a given JS class is built-in (no DOM class).
+        If that is not the case, the JS class wraps a DOM class.
+        The inspector detects whether the DOM class create static method takes no parameter or some parameters.
+        This is used in JSDOMConstructor.h to generate correctly the createJSObject functions needed by JSBuiltinConstructor.
+
+        Updated binding generator to not generate anymore createJSObject as it is handled directly in JSDOMConstructor.h.
+
+        Covered by existing tests.
+
+        * bindings/js/JSDOMConstructor.h:
+        (WebCore::JSBuiltinConstructor<JSClass>::callConstructor):
+        (WebCore::createJSObject):
+        (WebCore::JSBuiltinConstructor<JSClass>::construct):
+        * bindings/js/JSDOMWrapper.h:
+        * bindings/js/JSKeyValueIterator.h: Taking benefit of JSClass::DOMWrapper type declaration.
+        * bindings/js/JSReadableStreamPrivateConstructors.cpp:
+        (WebCore::JSBuiltinReadableStreamReaderPrivateConstructor::initializeExecutable): Deleted.
+        (WebCore::JSBuiltinReadableStreamControllerPrivateConstructor::initializeExecutable): Deleted.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition): Deleted.
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::JSTestClassWithJSBuiltinConstructorConstructor::prototypeForStructure): Deleted.
+
 2016-03-06  Antti Koivisto  <antti@apple.com>
 
         RenderTextControlSingleLine shouldn't mutate placeholder element inline style

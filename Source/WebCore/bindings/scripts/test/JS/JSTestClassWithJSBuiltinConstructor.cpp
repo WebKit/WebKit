@@ -63,11 +63,6 @@ private:
 
 typedef JSBuiltinConstructor<JSTestClassWithJSBuiltinConstructor> JSTestClassWithJSBuiltinConstructorConstructor;
 
-template<> JSC::JSObject* JSTestClassWithJSBuiltinConstructorConstructor::createJSObject()
-{
-    return JSTestClassWithJSBuiltinConstructor::create(getDOMStructure<JSTestClassWithJSBuiltinConstructor>(globalObject()->vm(), *globalObject()), globalObject(), TestClassWithJSBuiltinConstructor::create());
-}
-
 template<> JSValue JSTestClassWithJSBuiltinConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);

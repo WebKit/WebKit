@@ -36,6 +36,7 @@ static const uint8_t JSElementType = JSC::LastJSCObjectType + 3;
 class JSDOMObject : public JSC::JSDestructibleObject {
 public:
     typedef JSC::JSDestructibleObject Base;
+    static constexpr bool isDOMWrapper = false;
 
     JSDOMGlobalObject* globalObject() const { return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject()); }
     ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
@@ -51,6 +52,8 @@ protected:
 template<typename ImplementationClass> class JSDOMWrapper : public JSDOMObject {
 public:
     typedef JSDOMObject Base;
+    typedef ImplementationClass DOMWrapped;
+    static constexpr bool isDOMWrapper = true;
 
     ImplementationClass& wrapped() const { return const_cast<ImplementationClass&>(m_wrapped.get()); }
 
@@ -61,6 +64,26 @@ protected:
 
 private:
     Ref<ImplementationClass> m_wrapped;
+};
+
+template<typename JSClass, typename Enable = void>
+struct JSDOMObjectInspector {
+public:
+    static constexpr bool isSimpleWrapper = false;
+    static constexpr bool isComplexWrapper = false;
+    static constexpr bool isBuiltin = true;
+};
+
+template<typename JSClass>
+struct JSDOMObjectInspector<JSClass, typename std::enable_if<JSClass::isDOMWrapper>::type> {
+private:
+    template<typename T> static constexpr auto test(int) -> decltype(T::create(), bool()) { return true; }
+    template<typename T> static constexpr bool test(...) { return false; }
+
+public:
+    static constexpr bool isSimpleWrapper = test<typename JSClass::DOMWrapped>(0);
+    static constexpr bool isComplexWrapper = !isSimpleWrapper;
+    static constexpr bool isBuiltin = false;
 };
 
 } // namespace WebCore
