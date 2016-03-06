@@ -1,3 +1,44 @@
+2016-03-05  Filip Pizlo  <fpizlo@apple.com>
+
+        The most aggressive form of RegExpTest/RegExpExec should speculate more aggressively than just cell
+        https://bugs.webkit.org/show_bug.cgi?id=154900
+
+        Reviewed by Saam Barati.
+
+        These old operations used to speculate cell. That's what they did when they were first
+        introduced. That was probably about as good as they could do back then because we didn't have
+        very powerful checks. Now we have powerful checks, so we can do this right.
+
+        The most profitable thing to check is that child1 is a RegExpObject and child2 is a JSString.
+        Sometimes though, we will not know what child2 is even though we know that child1 is a
+        RegExpObject. So, this patch means that RegExpExec/RegExpTest have the following overloads:
+
+            RegExpExec(RegExpObject:, String:)
+            RegExpExec(RegExpObject:, Untyped:)
+            RegExpExec(Untyped:, Untyped:)
+
+        This shaves off some type checks in Octane/regexp. It also cleans up some problems in our
+        modeling of the effectfulness of these operations.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpExec):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpTest):
+        * jit/JITOperations.h:
+
 2016-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Support Reflect.construct

@@ -619,23 +619,25 @@ EncodedJSValue JIT_OPERATION operationArrayPopAndRecoverLength(ExecState* exec, 
     return JSValue::encode(array->pop(exec));
 }
         
-EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState* exec, JSCell* base, JSCell* argument)
+EncodedJSValue JIT_OPERATION operationRegExpExecString(ExecState* exec, RegExpObject* regExpObject, JSString* argument)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     
-    if (!base->inherits(RegExpObject::info()))
-        return throwVMTypeError(exec);
+    return JSValue::encode(regExpObject->exec(exec, argument));
+}
+        
+EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState* exec, RegExpObject* regExpObject, EncodedJSValue encodedArgument)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    
+    JSValue argument = JSValue::decode(encodedArgument);
 
-    JSString* input;
-    if (argument->isString())
-        input = asString(argument);
-    else {
-        input = JSValue(argument).toStringOrNull(exec);
-        if (!input)
-            return JSValue::encode(jsUndefined());
-    }
-    return JSValue::encode(asRegExpObject(base)->exec(exec, input));
+    JSString* input = argument.toStringOrNull(exec);
+    if (!input)
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(regExpObject->exec(exec, input));
 }
         
 EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
@@ -655,25 +657,25 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, Encoded
     return JSValue::encode(asRegExpObject(base)->exec(exec, input));
 }
         
-size_t JIT_OPERATION operationRegExpTest(ExecState* exec, JSCell* base, JSCell* argument)
+size_t JIT_OPERATION operationRegExpTestString(ExecState* exec, RegExpObject* regExpObject, JSString* input)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    if (!base->inherits(RegExpObject::info())) {
-        throwTypeError(exec);
-        return false;
-    }
+    return regExpObject->test(exec, input);
+}
 
-    JSString* input;
-    if (argument->isString())
-        input = asString(argument);
-    else {
-        input = JSValue(argument).toStringOrNull(exec);
-        if (!input)
-            return false;
-    }
-    return asRegExpObject(base)->test(exec, input);
+size_t JIT_OPERATION operationRegExpTest(ExecState* exec, RegExpObject* regExpObject, EncodedJSValue encodedArgument)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSValue argument = JSValue::decode(encodedArgument);
+
+    JSString* input = argument.toStringOrNull(exec);
+    if (!input)
+        return false;
+    return regExpObject->test(exec, input);
 }
 
 size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
