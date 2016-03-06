@@ -285,4 +285,9 @@ bool JSCell::setPrototype(JSObject*, ExecState*, JSValue, bool)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+JSValue JSCell::getPrototype(JSObject*, ExecState*)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC

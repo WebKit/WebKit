@@ -150,8 +150,9 @@ CallType ObjectConstructor::getCallData(JSCell*, CallData& callData)
 
 class ObjectConstructorGetPrototypeOfFunctor {
 public:
-    ObjectConstructorGetPrototypeOfFunctor(JSObject* object)
-        : m_hasSkippedFirstFrame(false)
+    ObjectConstructorGetPrototypeOfFunctor(ExecState* exec, JSObject* object)
+        : m_exec(exec)
+        , m_hasSkippedFirstFrame(false)
         , m_object(object)
         , m_result(jsUndefined())
     {
@@ -167,11 +168,12 @@ public:
         }
 
         if (m_object->allowsAccessFrom(visitor->callFrame()))
-            m_result = m_object->prototype();
+            m_result = m_object->getPrototype(m_exec->vm(), m_exec);
         return StackVisitor::Done;
     }
 
 private:
+    ExecState* m_exec;
     bool m_hasSkippedFirstFrame;
     JSObject* m_object;
     JSValue m_result;
@@ -179,7 +181,10 @@ private:
 
 JSValue objectConstructorGetPrototypeOf(ExecState* exec, JSObject* object)
 {
-    ObjectConstructorGetPrototypeOfFunctor functor(object);
+    ObjectConstructorGetPrototypeOfFunctor functor(exec, object);
+    // This can throw but it's just unneeded extra work to check for it. The return
+    // value from this function is only used as the return value from a host call.
+    // Therefore, the return value is only used if there wasn't an exception.
     exec->iterate(functor);
     return functor.result();
 }

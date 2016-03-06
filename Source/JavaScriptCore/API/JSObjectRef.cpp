@@ -267,8 +267,8 @@ JSValueRef JSObjectGetPrototype(JSContextRef ctx, JSObjectRef object)
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    JSObject* jsObject = toJS(object);
-    return toRef(exec, jsObject->prototype());
+    JSObject* jsObject = toJS(object); 
+    return toRef(exec, jsObject->getPrototypeDirect());
 }
 
 void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value)
