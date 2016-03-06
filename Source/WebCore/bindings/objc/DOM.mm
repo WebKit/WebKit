@@ -33,6 +33,7 @@
 #import "DOMElementInternal.h"
 #import "DOMHTMLCanvasElement.h"
 #import "DOMHTMLTableCellElementInternal.h"
+#import "DOMHTMLVideoElement.h"
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import "DOMRangeInternal.h"
@@ -163,6 +164,9 @@ static void createElementClassMap()
     addElementClass(HTMLNames::titleTag, [DOMHTMLTitleElement class]);
     addElementClass(HTMLNames::trTag, [DOMHTMLTableRowElement class]);
     addElementClass(HTMLNames::ulTag, [DOMHTMLUListElement class]);
+#if ENABLE(VIDEO)
+    addElementClass(HTMLNames::videoTag, [DOMHTMLVideoElement class]);
+#endif
     addElementClass(HTMLNames::xmpTag, [DOMHTMLPreElement class]);
 }
 

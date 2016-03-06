@@ -1,3 +1,17 @@
+2016-03-05  Tim Horton  <timothy_horton@apple.com>
+
+        Create a DOMHTMLVideoElement when wrapping <video> elements
+        https://bugs.webkit.org/show_bug.cgi?id=155084
+        <rdar://problem/24997193>
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/DOMHTMLVideoElementWrapper.mm: Added.
+        (-[VideoWrapperFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+        Add an API test for this behavior.
+
 2016-03-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Fix logging details after r197505 (Run the run-benchmark script on the performance bot.)

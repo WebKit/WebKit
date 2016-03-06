@@ -1,3 +1,15 @@
+2016-03-05  Tim Horton  <timothy_horton@apple.com>
+
+        Create a DOMHTMLVideoElement when wrapping <video> elements
+        https://bugs.webkit.org/show_bug.cgi?id=155084
+        <rdar://problem/24997193>
+
+        Reviewed by Dan Bernstein.
+
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        Add <video> to the mapping.
+
 2016-03-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Minor cleans up in custom elements' code per Darin's comments
