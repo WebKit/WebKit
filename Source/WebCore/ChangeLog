@@ -1,3 +1,10 @@
+2016-03-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix GTK/EFL build after r197575 and add mandatory GnuTLS dependency
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+
 2016-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Add support for the object-position CSS property

@@ -145,6 +145,7 @@ WEBKIT_OPTION_END()
 # Begin to find necessary packages for EFL port.
 find_package(Cairo 1.10.2 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
+find_package(GnuTLS 3.0.0 REQUIRED)
 find_package(LibXml2 2.8.0 REQUIRED)
 find_package(LibXslt 1.1.7 REQUIRED)
 find_package(ICU REQUIRED)
@@ -287,10 +288,6 @@ endif ()
 
 if (ENABLE_FTL_JIT AND NOT WTF_CPU_X86_64 AND NOT DEVELOPER_MODE)
     message(FATAL_ERROR "FTL JIT is only available on X86_64 architecture.")
-endif ()
-
-if (ENABLE_SUBTLE_CRYPTO)
-    find_package(GnuTLS 3.0.0 REQUIRED)
 endif ()
 
 if (USE_LIBHYPHEN)
