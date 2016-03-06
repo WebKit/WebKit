@@ -1,3 +1,11 @@
+2016-03-05  Sam Weinig  <sam@webkit.org>
+
+        Update tests to match the latest version of the HTML5 spec.
+
+        * fast/forms/autocomplete-expected.txt:
+        * fast/forms/autocomplete.html:
+        Fields that don't have any value set for their autocomplete attribute should return the the empty string.
+
 2016-03-05  Zalan Bujtas  <zalan@apple.com>
 
         Make table collapsed borders subpixel aware.

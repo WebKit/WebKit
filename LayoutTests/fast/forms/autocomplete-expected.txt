@@ -5,7 +5,7 @@ PASS ('autocomplete' in field) is true
 PASS form.getAttribute('autocomplete') is null
 PASS field.getAttribute('autocomplete') is null
 PASS form.autocomplete is "on"
-PASS field.autocomplete is "on"
+PASS field.autocomplete is ""
 PASS form.getAttribute('autocomplete') is "off"
 PASS field.getAttribute('autocomplete') is "off"
 PASS form.autocomplete is "on"

@@ -1,3 +1,10 @@
+2016-03-05  Sam Weinig  <sam@webkit.org>
+
+        Update tests to match the latest version of the HTML5 spec.
+
+        * web-platform-tests/html/semantics/forms/the-form-element/form-autocomplete.html:
+        Fields that don't have any value set for their autocomplete attribute should return the the empty string.
+
 2016-03-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTML parser instantiates a custom element inside a template element with a wrong owner document
