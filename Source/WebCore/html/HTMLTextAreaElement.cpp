@@ -92,10 +92,6 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document&
     : HTMLTextFormControlElement(tagName, document, form)
     , m_rows(defaultRows)
     , m_cols(defaultCols)
-    , m_wrap(SoftWrap)
-    , m_placeholder(0)
-    , m_isDirty(false)
-    , m_wasModifiedByUser(false)
 {
     ASSERT(hasTagName(textareaTag));
     setFormControlValueMatchesRenderer(true);
@@ -497,7 +493,7 @@ bool HTMLTextAreaElement::shouldUseInputMethod()
 
 HTMLElement* HTMLTextAreaElement::placeholderElement() const
 {
-    return m_placeholder;
+    return m_placeholder.get();
 }
 
 bool HTMLTextAreaElement::matchesReadWritePseudoClass() const
@@ -516,10 +512,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
         return;
     }
     if (!m_placeholder) {
-        RefPtr<HTMLDivElement> placeholder = HTMLDivElement::create(document());
-        m_placeholder = placeholder.get();
-        m_placeholder->setPseudo(AtomicString("-webkit-input-placeholder", AtomicString::ConstructFromLiteral));
-        m_placeholder->setInlineStyleProperty(CSSPropertyDisplay, isPlaceholderVisible() ? CSSValueBlock : CSSValueNone, true);
+        m_placeholder = TextControlPlaceholderElement::create(document());
         userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement()->nextSibling());
     }
     m_placeholder->setInnerText(placeholderText, ASSERT_NO_EXCEPTION);

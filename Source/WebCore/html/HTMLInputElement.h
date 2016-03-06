@@ -321,6 +321,8 @@ public:
 
     void capsLockStateMayHaveChanged();
 
+    bool shouldTruncateText(const RenderStyle&) const;
+
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 

@@ -39,6 +39,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScriptController.h"
+#include "ShadowRoot.h"
 #include "TextEvent.h"
 #include "TextEventInputType.h"
 #include <wtf/Ref.h>
@@ -135,6 +136,30 @@ RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
 RefPtr<RenderStyle> TextControlInnerTextElement::customStyleForRenderer(RenderStyle&, RenderStyle* shadowHostStyle)
 {
     return downcast<HTMLTextFormControlElement>(*shadowHost()).createInnerTextStyle(*shadowHostStyle);
+}
+
+// ----------------------------
+
+TextControlPlaceholderElement::TextControlPlaceholderElement(Document& document)
+    : HTMLDivElement(divTag, document)
+{
+    setPseudo(AtomicString("-webkit-input-placeholder", AtomicString::ConstructFromLiteral));
+    setHasCustomStyleResolveCallbacks();
+}
+
+RefPtr<RenderStyle> TextControlPlaceholderElement::customStyleForRenderer(RenderStyle& parentStyle, RenderStyle* shadowHostStyle)
+{
+    auto style = resolveStyle(&parentStyle);
+
+    auto& controlElement = downcast<HTMLTextFormControlElement>(*containingShadowRoot()->host());
+    style->setDisplay(controlElement.isPlaceholderVisible() ? BLOCK : NONE);
+
+    if (is<HTMLInputElement>(controlElement)) {
+        auto& inputElement = downcast<HTMLInputElement>(controlElement);
+        style->setTextOverflow(inputElement.shouldTruncateText(*shadowHostStyle) ? TextOverflowEllipsis : TextOverflowClip);
+    }
+
+    return WTFMove(style);
 }
 
 // ----------------------------

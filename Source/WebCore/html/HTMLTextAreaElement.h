@@ -124,11 +124,11 @@ private:
     unsigned m_rows;
     unsigned m_cols;
     int m_maxLength { -1 };
-    WrapMethod m_wrap;
-    HTMLElement* m_placeholder;
+    WrapMethod m_wrap { SoftWrap };
+    RefPtr<HTMLElement> m_placeholder;
     mutable String m_value;
-    mutable bool m_isDirty;
-    mutable bool m_wasModifiedByUser;
+    mutable bool m_isDirty { false };
+    mutable bool m_wasModifiedByUser { false };
 };
 
 } //namespace

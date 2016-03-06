@@ -1859,6 +1859,13 @@ void HTMLInputElement::setRangeText(const String& replacement, unsigned start, u
     HTMLTextFormControlElement::setRangeText(replacement, start, end, selectionMode, ec);
 }
 
+bool HTMLInputElement::shouldTruncateText(const RenderStyle& style) const
+{
+    if (!isTextField())
+        return false;
+    return document().focusedElement() != this && style.textOverflow() == TextOverflowEllipsis;
+}
+
 Ref<RenderStyle> HTMLInputElement::createInnerTextStyle(const RenderStyle& style) const
 {
     auto textBlockStyle = RenderStyle::create();
@@ -1869,9 +1876,7 @@ Ref<RenderStyle> HTMLInputElement::createInnerTextStyle(const RenderStyle& style
     textBlockStyle.get().setOverflowWrap(NormalOverflowWrap);
     textBlockStyle.get().setOverflowX(OHIDDEN);
     textBlockStyle.get().setOverflowY(OHIDDEN);
-
-    bool textShouldBeTruncated = document().focusedElement() != this && style.textOverflow() == TextOverflowEllipsis;
-    textBlockStyle.get().setTextOverflow(textShouldBeTruncated ? TextOverflowEllipsis : TextOverflowClip);
+    textBlockStyle.get().setTextOverflow(shouldTruncateText(style) ? TextOverflowEllipsis : TextOverflowClip);
 
     // Do not allow line-height to be smaller than our default.
     if (textBlockStyle.get().fontMetrics().lineSpacing() > style.computedLineHeight())

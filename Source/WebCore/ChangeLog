@@ -1,3 +1,64 @@
+2016-03-06  Antti Koivisto  <antti@apple.com>
+
+        RenderTextControlSingleLine shouldn't mutate placeholder element inline style
+        https://bugs.webkit.org/show_bug.cgi?id=155086
+
+        Reviewed by Andreas Kling.
+
+        Text field placeholder element is currently managed by changing its inline style
+        from the host renderer based on the host style and state. Rendering poking
+        into DOM is wrong.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setRangeText):
+        (WebCore::HTMLInputElement::shouldTruncateText):
+
+            Add a helper.
+
+        (WebCore::HTMLInputElement::createInnerTextStyle):
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement):
+        (WebCore::HTMLTextAreaElement::placeholderElement):
+        (WebCore::HTMLTextAreaElement::matchesReadWritePseudoClass):
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText):
+
+            Use the new shadow element.
+
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+
+            No more poking to inline style.
+
+        (WebCore::HTMLTextFormControlElement::setSelectionStart):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+
+            Use the new shadow element.
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlPlaceholderElement::TextControlPlaceholderElement):
+
+            Add a subclass for the placeholder element instead of just using div.
+
+        (WebCore::TextControlPlaceholderElement::customStyleForRenderer):
+
+            Compute style base on the host state and style.
+
+        (WebCore::SearchFieldResultsButtonElement::SearchFieldResultsButtonElement):
+        * html/shadow/TextControlInnerElements.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+
+            No more setInlineStyleProperty.
+            This now needs to trigger layout like it does with other inner elements.
+
+        (WebCore::RenderTextControlSingleLine::computeControlLogicalHeight):
+        (WebCore::RenderTextControlSingleLine::autoscroll):
+        (WebCore::RenderTextControlSingleLine::textShouldBeTruncated): Deleted.
+        * rendering/RenderTextControlSingleLine.h:
+
 2016-03-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add the support for upgrading custom elements in cloneNode

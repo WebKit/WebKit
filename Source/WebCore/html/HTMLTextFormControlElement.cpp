@@ -164,9 +164,6 @@ void HTMLTextFormControlElement::updatePlaceholderVisibility()
         return;
 
     setNeedsStyleRecalc();
-
-    if (HTMLElement* placeholder = placeholderElement())
-        placeholder->setInlineStyleProperty(CSSPropertyDisplay, m_isPlaceholderVisible ? CSSValueBlock : CSSValueNone, true);
 }
 
 void HTMLTextFormControlElement::setSelectionStart(int start)

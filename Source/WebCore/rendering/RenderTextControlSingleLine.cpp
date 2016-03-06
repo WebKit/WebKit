@@ -245,11 +245,14 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
         containerRenderer->style().setHeight(Length());
         containerRenderer->style().setWidth(Length());
     }
-    RenderTextControlInnerBlock* innerTextRenderer = innerTextElement()->renderer();
-    if (innerTextRenderer && diff == StyleDifferenceLayout)
-        innerTextRenderer->setNeedsLayout(MarkContainingBlockChain);
-    if (HTMLElement* placeholder = inputElement().placeholderElement())
-        placeholder->setInlineStyleProperty(CSSPropertyTextOverflow, textShouldBeTruncated() ? CSSValueEllipsis : CSSValueClip);
+    if (diff == StyleDifferenceLayout) {
+        if (auto* innerTextRenderer = innerTextElement()->renderer())
+            innerTextRenderer->setNeedsLayout(MarkContainingBlockChain);
+        if (auto* placeholder = inputElement().placeholderElement()) {
+            if (placeholder->renderer())
+                placeholder->renderer()->setNeedsLayout(MarkContainingBlockChain);
+        }
+    }
     setHasOverflowClip(false);
 }
 
@@ -319,11 +322,6 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
 LayoutUnit RenderTextControlSingleLine::computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
 {
     return lineHeight + nonContentHeight;
-}
-
-bool RenderTextControlSingleLine::textShouldBeTruncated() const
-{
-    return document().focusedElement() != &inputElement() && style().textOverflow() == TextOverflowEllipsis;
 }
 
 void RenderTextControlSingleLine::autoscroll(const IntPoint& position)

@@ -70,6 +70,16 @@ private:
     bool isTextControlInnerTextElement() const override { return true; }
 };
 
+class TextControlPlaceholderElement final : public HTMLDivElement {
+public:
+    static Ref<TextControlPlaceholderElement> create(Document& document) { return adoptRef(*new TextControlPlaceholderElement(document)); }
+
+private:
+    TextControlPlaceholderElement(Document&);
+    
+    RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
+};
+
 class SearchFieldResultsButtonElement final : public HTMLDivElement {
 public:
     static Ref<SearchFieldResultsButtonElement> create(Document&);

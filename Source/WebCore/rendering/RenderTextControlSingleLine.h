@@ -73,8 +73,6 @@ private:
     
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    bool textShouldBeTruncated() const;
-
     HTMLElement* innerSpinButtonElement() const;
 };
 
