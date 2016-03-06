@@ -619,17 +619,17 @@ EncodedJSValue JIT_OPERATION operationArrayPopAndRecoverLength(ExecState* exec, 
     return JSValue::encode(array->pop(exec));
 }
         
-EncodedJSValue JIT_OPERATION operationRegExpExecString(ExecState* exec, RegExpObject* regExpObject, JSString* argument)
+EncodedJSValue JIT_OPERATION operationRegExpExecString(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* argument)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     
-    return JSValue::encode(regExpObject->exec(exec, argument));
+    return JSValue::encode(regExpObject->exec(exec, globalObject, argument));
 }
         
-EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState* exec, RegExpObject* regExpObject, EncodedJSValue encodedArgument)
+EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, EncodedJSValue encodedArgument)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     
     JSValue argument = JSValue::decode(encodedArgument);
@@ -637,12 +637,12 @@ EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState* exec, RegExpObject* 
     JSString* input = argument.toStringOrNull(exec);
     if (!input)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(regExpObject->exec(exec, input));
+    return JSValue::encode(regExpObject->exec(exec, globalObject, input));
 }
         
-EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
+EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
     JSValue base = JSValue::decode(encodedBase);
@@ -654,20 +654,20 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, Encoded
     JSString* input = argument.toStringOrNull(exec);
     if (!input)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(asRegExpObject(base)->exec(exec, input));
+    return JSValue::encode(asRegExpObject(base)->exec(exec, globalObject, input));
 }
         
-size_t JIT_OPERATION operationRegExpTestString(ExecState* exec, RegExpObject* regExpObject, JSString* input)
+size_t JIT_OPERATION operationRegExpTestString(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* input)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    return regExpObject->test(exec, input);
+    return regExpObject->test(exec, globalObject, input);
 }
 
-size_t JIT_OPERATION operationRegExpTest(ExecState* exec, RegExpObject* regExpObject, EncodedJSValue encodedArgument)
+size_t JIT_OPERATION operationRegExpTest(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, EncodedJSValue encodedArgument)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
     JSValue argument = JSValue::decode(encodedArgument);
@@ -675,12 +675,12 @@ size_t JIT_OPERATION operationRegExpTest(ExecState* exec, RegExpObject* regExpOb
     JSString* input = argument.toStringOrNull(exec);
     if (!input)
         return false;
-    return regExpObject->test(exec, input);
+    return regExpObject->test(exec, globalObject, input);
 }
 
-size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
+size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
     JSValue base = JSValue::decode(encodedBase);
@@ -694,7 +694,7 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, EncodedJSValue 
     JSString* input = argument.toStringOrNull(exec);
     if (!input)
         return false;
-    return asRegExpObject(base)->test(exec, input);
+    return asRegExpObject(base)->test(exec, globalObject, input);
 }
 
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

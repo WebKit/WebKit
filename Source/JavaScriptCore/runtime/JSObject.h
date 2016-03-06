@@ -1376,7 +1376,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     // we want.
     DeferredStructureTransitionWatchpointFire deferredWatchpointFire;
     
-    newStructure = Structure::addPropertyTransition(
+    newStructure = Structure::addNewPropertyTransition(
         vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
     newStructure->willStoreValueForNewTransition(
         vm, propertyName, value, slot.context() == PutPropertySlot::PutById);

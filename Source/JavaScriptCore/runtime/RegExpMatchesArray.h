@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2008, 2016 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -26,8 +26,9 @@
 
 namespace JSC {
 
-JSArray* createRegExpMatchesArray(ExecState*, JSString*, RegExp*, MatchResult);
-Structure* createRegExpMatchesArrayStructure(VM&, JSGlobalObject&);
+JSArray* createRegExpMatchesArray(ExecState*, JSGlobalObject*, JSString*, RegExp*, MatchResult);
+Structure* createRegExpMatchesArrayStructure(VM&, JSGlobalObject*);
+Structure* createRegExpMatchesArraySlowPutStructure(VM&, JSGlobalObject*);
 
 }
 

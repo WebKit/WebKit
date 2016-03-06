@@ -66,8 +66,8 @@ public:
         return m_lastIndex.get();
     }
 
-    bool test(ExecState* exec, JSString* string) { return match(exec, string); }
-    JSValue exec(ExecState*, JSString*);
+    bool test(ExecState* exec, JSGlobalObject* globalObject, JSString* string) { return match(exec, globalObject, string); }
+    JSValue exec(ExecState*, JSGlobalObject*, JSString*);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
@@ -102,7 +102,7 @@ protected:
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
 private:
-    MatchResult match(ExecState*, JSString*);
+    MatchResult match(ExecState*, JSGlobalObject*, JSString*);
 
     WriteBarrier<RegExp> m_regExp;
     WriteBarrier<Unknown> m_lastIndex;

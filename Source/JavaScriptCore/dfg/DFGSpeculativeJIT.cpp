@@ -5342,6 +5342,16 @@ void SpeculativeJIT::compileSkipScope(Node* node)
     cellResult(result.gpr(), node);
 }
 
+void SpeculativeJIT::compileGetGlobalObject(Node* node)
+{
+    SpeculateCellOperand object(this, node->child1());
+    GPRTemporary result(this);
+    GPRTemporary scratch(this);
+    m_jit.emitLoadStructure(object.gpr(), result.gpr(), scratch.gpr());
+    m_jit.loadPtr(JITCompiler::Address(result.gpr(), Structure::globalObjectOffset()), result.gpr());
+    cellResult(result.gpr(), node);
+}
+
 void SpeculativeJIT::compileGetArrayLength(Node* node)
 {
     switch (node->arrayMode().type()) {

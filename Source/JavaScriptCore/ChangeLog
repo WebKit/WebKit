@@ -1,3 +1,131 @@
+2016-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        RegExpMatchesArray doesn't know how to have a bad time
+        https://bugs.webkit.org/show_bug.cgi?id=155069
+
+        Reviewed by Yusuke Suzuki.
+
+        In trunk if we are having a bad time, the regexp matches array is still allocated with a
+        non-slow-put indexing shape, which makes it have the wrong behavior on indexed setters on
+        the prototype chain.
+
+        Getting this to work right requires introducing bad time code paths into the regexp matches
+        array. It also requires something more drastic: making this code not play games with the
+        global object. The code that creates the matches array needs to have the actual global
+        object of the regexp native function that it's logically created by.
+
+        This is totally different from how we've handled global objects in the past because it means
+        that the global object is not a constant. Normally we can make it a constant because a
+        script executable will know its global object. But with native functions, it's the function
+        instance that knows the global object - not the native executable. When we inline a native
+        intrinsic, we are guaranteed to know the native executable but we're not guaranteed to know
+        the functon instance. This means that the global object may be a variable that gets computed
+        by looking at the instance at run-time. So, the RegExpExec/RegExpTest nodes in DFG IR now
+        take a global object child. That also meant adding a new node type, GetGlobalObject, which
+        does the thing to the callee that CallFrame::lexicalGlobalObject() would have done.
+        Eventually, we'll probably have to make other native intrinsics also use GetGlobalObject. It
+        turns out that this really isn't so bad because usually it's constant-folded anyway, since
+        although the intrinsic code supports executable-based inlining (which leaves the callee
+        instance as an unknown), it happens rarely for intrinsics. So, conveying the global object
+        via a child isn't any worse than conveying it via meta-data, and it's probably better than
+        telling the inliner not to do executable-based inlining of native intrinsics. That would
+        have been a confusing special-case.
+
+        This is perf-neutral on my machines but it fixes a bug and it unlocks some interesting
+        possibilities. For example, RegExpExec can now make a firm promise about the type of array
+        it's creating.
+
+        This also contains some other changes:
+        
+        - We are now using Structure::addPropertyTransition() in a lot of places even though it was
+          meant to be an internal method with a quirky contract - for example if only works if you
+          know that there is not existing transition. This relaxes this constraint.
+        
+        - Restores the use of "*" for heap references in JSString.h. It's very unusual to have heap
+          references pointed at with "&", since we don't currently do that anywhere. The fact that
+          it was using the wrong reference type also meant that the code couldn't elegantly make use
+          of some our GC pointer helpers like jsCast<>.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSkipScope):
+        (JSC::DFG::SpeculativeJIT::compileGetGlobalObject):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSkipScope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetGlobalObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetClosureVar):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpExec):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpTest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        * jit/JITOperations.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::haveABadTime):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/JSString.h:
+        (JSC::jsString):
+        (JSC::jsSubstring):
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::lastResult):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        (JSC::createRegExpMatchesArray):
+        (JSC::createStructureImpl):
+        (JSC::createRegExpMatchesArrayStructure):
+        (JSC::createRegExpMatchesArraySlowPutStructure):
+        * runtime/RegExpMatchesArray.h:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::put):
+        (JSC::RegExpObject::exec):
+        (JSC::RegExpObject::match):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::getLastIndex):
+        (JSC::RegExpObject::test):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTest):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncCompile):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        * runtime/Structure.cpp:
+        (JSC::Structure::suggestedArrayStorageTransition):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::addNewPropertyTransition):
+        * runtime/Structure.h:
+        * tests/stress/regexp-matches-array-bad-time.js: Added.
+        * tests/stress/regexp-matches-array-slow-put.js: Added.
+
 2016-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] RegExp#lastIndex should handle writable attribute when defining in defineOwnProperty path

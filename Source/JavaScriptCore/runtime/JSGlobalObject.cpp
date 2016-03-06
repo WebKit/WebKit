@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2014-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -364,7 +364,8 @@ void JSGlobalObject::init(VM& vm)
     
     m_regExpPrototype.set(vm, this, RegExpPrototype::create(vm, this, RegExpPrototype::createStructure(vm, this, m_objectPrototype.get()), emptyRegex));
     m_regExpStructure.set(vm, this, RegExpObject::createStructure(vm, this, m_regExpPrototype.get()));
-    m_regExpMatchesArrayStructure.set(vm, this, createRegExpMatchesArrayStructure(vm, *this));
+    m_regExpMatchesArrayStructure.set(vm, this, createRegExpMatchesArrayStructure(vm, this));
+    m_regExpMatchesArraySlowPutStructure.set(vm, this, createRegExpMatchesArraySlowPutStructure(vm, this));
 
     m_moduleRecordStructure.set(vm, this, JSModuleRecord::createStructure(vm, this, m_objectPrototype.get()));
     m_moduleNamespaceObjectStructure.set(vm, this, JSModuleNamespaceObject::createStructure(vm, this, jsNull()));
@@ -761,6 +762,9 @@ void JSGlobalObject::haveABadTime(VM& vm)
     // this object now load a structure that uses SlowPut.
     for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
         m_arrayStructureForIndexingShapeDuringAllocation[i].set(vm, this, originalArrayStructureForIndexingType(ArrayWithSlowPutArrayStorage));
+
+    // Same for any special array structures.
+    m_regExpMatchesArrayStructure.set(vm, this, m_regExpMatchesArraySlowPutStructure.get());
     
     // Make sure that all objects that have indexed storage switch to the slow kind of
     // indexed storage.
@@ -900,6 +904,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_generatorFunctionStructure);
     visitor.append(&thisObject->m_iteratorResultObjectStructure);
     visitor.append(&thisObject->m_regExpMatchesArrayStructure);
+    visitor.append(&thisObject->m_regExpMatchesArraySlowPutStructure);
     visitor.append(&thisObject->m_moduleRecordStructure);
     visitor.append(&thisObject->m_moduleNamespaceObjectStructure);
     visitor.append(&thisObject->m_consoleStructure);

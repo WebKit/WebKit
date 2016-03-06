@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2014, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -293,28 +293,27 @@ private:
         fiber(2).set(vm, this, s3);
     }
 
-    void finishCreation(ExecState& exec, JSString& base, unsigned offset, unsigned length)
+    void finishCreation(VM& vm, ExecState* exec, JSString* base, unsigned offset, unsigned length)
     {
-        VM& vm = exec.vm();
         Base::finishCreation(vm);
         ASSERT(!sumOverflows<int32_t>(offset, length));
-        ASSERT(offset + length <= base.length());
+        ASSERT(offset + length <= base->length());
         m_length = length;
-        setIs8Bit(base.is8Bit());
+        setIs8Bit(base->is8Bit());
         setIsSubstring(true);
-        if (base.isSubstring()) {
-            JSRopeString& baseRope = static_cast<JSRopeString&>(base);
-            substringBase().set(vm, this, baseRope.substringBase().get());
-            substringOffset() = baseRope.substringOffset() + offset;
+        if (base->isSubstring()) {
+            JSRopeString* baseRope = jsCast<JSRopeString*>(base);
+            substringBase().set(vm, this, baseRope->substringBase().get());
+            substringOffset() = baseRope->substringOffset() + offset;
         } else {
-            substringBase().set(vm, this, &base);
+            substringBase().set(vm, this, base);
             substringOffset() = offset;
 
             // For now, let's not allow substrings with a rope base.
             // Resolve non-substring rope bases so we don't have to deal with it.
             // FIXME: Evaluate if this would be worth adding more branches.
-            if (base.isRope())
-                static_cast<JSRopeString&>(base).resolveRope(&exec);
+            if (base->isRope())
+                jsCast<JSRopeString*>(base)->resolveRope(exec);
         }
     }
 
@@ -356,10 +355,10 @@ public:
         return newString;
     }
 
-    static JSString* create(ExecState& exec, JSString& base, unsigned offset, unsigned length)
+    static JSString* create(VM& vm, ExecState* exec, JSString* base, unsigned offset, unsigned length)
     {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(exec.vm().heap)) JSRopeString(exec.vm());
-        newString->finishCreation(exec, base, offset, length);
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
+        newString->finishCreation(vm, exec, base, offset, length);
         return newString;
     }
 
@@ -542,17 +541,21 @@ inline JSString* jsString(VM* vm, const String& s)
     return JSString::create(*vm, s.impl());
 }
 
-inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsigned length)
+inline JSString* jsSubstring(VM& vm, ExecState* exec, JSString* s, unsigned offset, unsigned length)
 {
     ASSERT(offset <= static_cast<unsigned>(s->length()));
     ASSERT(length <= static_cast<unsigned>(s->length()));
     ASSERT(offset + length <= static_cast<unsigned>(s->length()));
-    VM& vm = exec->vm();
     if (!length)
         return vm.smallStrings.emptyString();
     if (!offset && length == s->length())
         return s;
-    return JSRopeString::create(*exec, *s, offset, length);
+    return JSRopeString::create(vm, exec, s, offset, length);
+}
+
+inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsigned length)
+{
+    return jsSubstring(exec->vm(), exec, s, offset, length);
 }
 
 inline JSString* jsSubstring(VM* vm, const String& s, unsigned offset, unsigned length)

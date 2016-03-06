@@ -101,13 +101,13 @@ EncodedJSValue JIT_OPERATION operationArrayPush(ExecState*, EncodedJSValue encod
 EncodedJSValue JIT_OPERATION operationArrayPushDouble(ExecState*, double value, JSArray*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPop(ExecState*, JSArray*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPopAndRecoverLength(ExecState*, JSArray*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationRegExpExecString(ExecState*, RegExpObject*, JSString*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationRegExpExecString(ExecState*, JSGlobalObject*, RegExpObject*, JSString*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState*, JSGlobalObject*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState*, JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 // These comparisons return a boolean within a size_t such that the value is zero extended to fill the register.
-size_t JIT_OPERATION operationRegExpTestString(ExecState*, RegExpObject*, JSString*) WTF_INTERNAL;
-size_t JIT_OPERATION operationRegExpTest(ExecState*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
-size_t JIT_OPERATION operationRegExpTestGeneric(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+size_t JIT_OPERATION operationRegExpTestString(ExecState*, JSGlobalObject*, RegExpObject*, JSString*) WTF_INTERNAL;
+size_t JIT_OPERATION operationRegExpTest(ExecState*, JSGlobalObject*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
+size_t JIT_OPERATION operationRegExpTestGeneric(ExecState*, JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 size_t JIT_OPERATION operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationCreateActivationDirect(ExecState*, Structure*, JSScope*, SymbolTable*, EncodedJSValue);

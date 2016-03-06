@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2016 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -102,7 +102,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState* exec)
     JSString* string = exec->argument(0).toStringOrNull(exec);
     if (!string)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->test(exec, string)));
+    return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->test(exec, exec->lexicalGlobalObject(), string)));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
@@ -113,7 +113,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
     JSString* string = exec->argument(0).toStringOrNull(exec);
     if (!string)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(asRegExpObject(thisValue)->exec(exec, string));
+    return JSValue::encode(asRegExpObject(thisValue)->exec(exec, exec->lexicalGlobalObject(), string));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)

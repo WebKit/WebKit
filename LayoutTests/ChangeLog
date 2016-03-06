@@ -1,3 +1,14 @@
+2016-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        RegExpMatchesArray doesn't know how to have a bad time
+        https://bugs.webkit.org/show_bug.cgi?id=155069
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/regress/regexp-exec-expected.txt: Added.
+        * js/regress/regexp-exec.html: Added.
+        * js/regress/script-tests/regexp-exec.js: Added.
+
 2016-03-06  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Gardening after r197627.

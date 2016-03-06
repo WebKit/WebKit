@@ -122,6 +122,9 @@ typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_ECJ)(ExecState*, JSCell*, 
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_ECZ)(ExecState*, JSCell*, int32_t);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EDA)(ExecState*, double, JSArray*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EE)(ExecState*, ExecState*);
+typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EGReoJ)(ExecState*, JSGlobalObject*, RegExpObject*, EncodedJSValue);
+typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EGReoJss)(ExecState*, JSGlobalObject*, RegExpObject*, JSString*);
+typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EGJJ)(ExecState*, JSGlobalObject*, EncodedJSValue, EncodedJSValue);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EI)(ExecState*, UniquedStringImpl*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJZ)(ExecState*, EncodedJSValue, int32_t);
@@ -201,6 +204,9 @@ typedef int32_t JIT_OPERATION (*Z_JITOperation_EJZ)(ExecState*, EncodedJSValue, 
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EJZZ)(ExecState*, EncodedJSValue, int32_t, int32_t);
 typedef size_t JIT_OPERATION (*S_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef size_t JIT_OPERATION (*S_JITOperation_EGC)(ExecState*, JSGlobalObject*, JSCell*);
+typedef size_t JIT_OPERATION (*S_JITOperation_EGJJ)(ExecState*, JSGlobalObject*, EncodedJSValue, EncodedJSValue);
+typedef size_t JIT_OPERATION (*S_JITOperation_EGReoJ)(ExecState*, JSGlobalObject*, RegExpObject*, EncodedJSValue);
+typedef size_t JIT_OPERATION (*S_JITOperation_EGReoJss)(ExecState*, JSGlobalObject*, RegExpObject*, JSString*);
 typedef size_t JIT_OPERATION (*S_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef size_t JIT_OPERATION (*S_JITOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef size_t JIT_OPERATION (*S_JITOperation_EOJss)(ExecState*, JSObject*, JSString*);
