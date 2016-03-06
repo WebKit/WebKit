@@ -127,10 +127,10 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
                 return reject(exec, shouldThrow, "Attempting to change value of a readonly property.");
             return true;
         }
-        if (descriptor.writablePresent() && !descriptor.writable())
-            regExp->m_lastIndexIsWritable = false;
         if (descriptor.value())
             regExp->setLastIndex(exec, descriptor.value(), false);
+        if (descriptor.writablePresent() && !descriptor.writable())
+            regExp->m_lastIndexIsWritable = false;
         return true;
     }
 
