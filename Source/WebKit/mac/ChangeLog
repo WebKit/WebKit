@@ -1,3 +1,15 @@
+2016-03-06  Andreas Kling  <akling@apple.com>
+
+        Reduce page cache capacity from 3 to 2.
+        <https://webkit.org/b/155087>
+
+        Reviewed by Antti Koivisto.
+
+        Trim WebKit1 page cache capacities consistently with WebKit2.
+
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
 2016-03-05  Chris Dumez  <cdumez@apple.com>
 
         Consolidate RuntimeApplicationChecks and RuntimeApplicationChecksIOS

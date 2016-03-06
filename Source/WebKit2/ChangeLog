@@ -1,3 +1,20 @@
+2016-03-06  Andreas Kling  <akling@apple.com>
+
+        Reduce page cache capacity from 3 to 2.
+        <https://webkit.org/b/155087>
+
+        Reviewed by Antti Koivisto.
+
+        It's extremely rare that users go back more than 2 pages in the page cache,
+        and nowadays the network cache makes even un-cached pages fast to reload.
+
+        Trimming the page cache from 3 to 2 entries has a very nice effect on heap
+        fragmentation. I'm seeing a ~5% progression on the iPad PLUM test locally;
+        average memory usage across 300 loads goes from ~121MB to ~114MB.
+
+        * Shared/CacheModel.cpp:
+        (WebKit::calculateCacheSizes):
+
 2016-03-05  Sam Weinig  <sam@webkit.org>
 
         Revert usage of autofill field name for use with UITextInputTraits

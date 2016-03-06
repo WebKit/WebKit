@@ -62,9 +62,7 @@ void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t di
     }
     case CacheModelDocumentBrowser: {
         // Page cache capacity (in pages)
-        if (memorySize >= 1024)
-            pageCacheCapacity = 3;
-        else if (memorySize >= 512)
+        if (memorySize >= 512)
             pageCacheCapacity = 2;
         else if (memorySize >= 256)
             pageCacheCapacity = 1;
@@ -108,9 +106,7 @@ void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t di
     }
     case CacheModelPrimaryWebBrowser: {
         // Page cache capacity (in pages)
-        if (memorySize >= 1024)
-            pageCacheCapacity = 3;
-        else if (memorySize >= 512)
+        if (memorySize >= 512)
             pageCacheCapacity = 2;
         else if (memorySize >= 256)
             pageCacheCapacity = 1;

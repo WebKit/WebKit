@@ -7879,9 +7879,7 @@ static WebFrameView *containingFrameView(NSView *view)
     }
     case WebCacheModelDocumentBrowser: {
         // Page cache capacity (in pages)
-        if (memSize >= 1024)
-            pageCacheSize = 3;
-        else if (memSize >= 512)
+        if (memSize >= 512)
             pageCacheSize = 2;
         else if (memSize >= 256)
             pageCacheSize = 1;
@@ -7932,10 +7930,7 @@ static WebFrameView *containingFrameView(NSView *view)
     }
     case WebCacheModelPrimaryWebBrowser: {
         // Page cache capacity (in pages)
-        // Research indicates that value / page drops substantially after 3 pages.
-        if (memSize >= 1024)
-            pageCacheSize = 3;
-        else if (memSize >= 512)
+        if (memSize >= 512)
             pageCacheSize = 2;
         else if (memSize >= 256)
             pageCacheSize = 1;
