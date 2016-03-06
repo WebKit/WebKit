@@ -194,9 +194,13 @@ void Widget::paint(GraphicsContext& p, const IntRect& r)
     // We don't want to paint the view at all if it's layer backed, because then we'll end up
     // with multiple copies of the view contents, one in the view's layer itself and one in the
     // WebHTMLView's backing store (either a layer or the window backing store).
-    // However, Quicken Essentials has a plug-in that depends on drawing to update the layer (see <rdar://problem/15221231>).
-    if (view.layer && !applicationIsQuickenEssentials())
+    if (view.layer) {
+#if PLATFORM(MAC)
+        // However, Quicken Essentials has a plug-in that depends on drawing to update the layer (see <rdar://problem/15221231>).
+        if (!MacApplication::isQuickenEssentials())
+#endif
         return;
+    }
 
     // Take a reference to this Widget, because sending messages to the views can invoke arbitrary
     // code, which can deref it.

@@ -148,7 +148,7 @@
 #import <WebCore/FileSystemIOS.h>
 #import <WebCore/NSFileManagerSPI.h>
 #import <WebCore/QuickLook.h>
-#import <WebCore/RuntimeApplicationChecksIOS.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #endif
 
 #if HAVE(APP_LINKS)
@@ -2239,7 +2239,7 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
             : m_firstRequestURL(handle.firstRequestURL())
         {
             NSURL *previewRequestURL = handle.previewRequestURL();
-            if (!applicationIsMobileSafari()) {
+            if (!IOSApplication::isMobileSafari()) {
                 // This keeps the QLPreviewConverter alive to serve any subresource requests.
                 // It is removed by -[WebDataSource dealloc].
                 addQLPreviewConverterWithFileForURL(previewRequestURL, handle.converter(), nil);

@@ -52,7 +52,6 @@
 #if PLATFORM(IOS)
 #import "ArgumentCodersCF.h"
 #import "WebMemoryPressureHandlerIOS.h"
-#import <WebCore/RuntimeApplicationChecksIOS.h>
 #else
 #import <QuartzCore/CARemoteLayerServer.h>
 #endif
@@ -180,7 +179,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
 
 #if PLATFORM(MAC)
-    parameters.shouldRewriteConstAsVar = applicationIsIBooks();
+    parameters.shouldRewriteConstAsVar = MacApplication::isIBooks();
 #endif
 
 #if HAVE(HOSTED_CORE_ANIMATION)
@@ -365,7 +364,7 @@ String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
 #if PLATFORM(IOS)
     // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
     // Preserving it avoids the need to migrate data when upgrading.
-    if (applicationIsMobileSafari() || applicationIsWebApp())
+    if (IOSApplication::isMobileSafari() || IOSApplication::isWebApp())
         appName = @"com.apple.WebAppCache";
 #endif
 

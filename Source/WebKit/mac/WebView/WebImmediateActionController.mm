@@ -318,11 +318,19 @@ using namespace WebCore;
         customClientAnimationController = [(id)[_webView UIDelegate] _webView:_webView immediateActionAnimationControllerForHitTestResult:webHitTestResult.get() withType:_type];
     }
 
-    // FIXME: We should not permanently disable this for iTunes. rdar://problem/19461358
-    if (customClientAnimationController == [NSNull null] || applicationIsITunes()) {
+    if (customClientAnimationController == [NSNull null]) {
         [self _cancelImmediateAction];
         return;
     }
+
+#if PLATFORM(MAC)
+    // FIXME: We should not permanently disable this for iTunes. rdar://problem/19461358
+    if (MacApplication::isITunes()) {
+        [self _cancelImmediateAction];
+        return;
+    }
+#endif
+
     if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
         [_immediateActionRecognizer setAnimationController:(id <NSImmediateActionAnimationController>)customClientAnimationController];
     else

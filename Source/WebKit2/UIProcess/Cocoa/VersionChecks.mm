@@ -29,7 +29,7 @@
 #import <mach-o/dyld.h>
 
 #if PLATFORM(IOS)
-#import <WebCore/RuntimeApplicationChecksIOS.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #endif
 
 namespace WebKit {
@@ -43,7 +43,7 @@ bool linkedOnOrAfter(LibraryVersion version)
 {
 #if PLATFORM(IOS)
     // Always make new features available for Safari.
-    if (WebCore::applicationIsMobileSafari())
+    if (WebCore::IOSApplication::isMobileSafari())
         return true;
 #endif
 

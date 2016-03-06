@@ -1,3 +1,91 @@
+2016-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Consolidate RuntimeApplicationChecks and RuntimeApplicationChecksIOS
+        https://bugs.webkit.org/show_bug.cgi?id=155035
+
+        Reviewed by Darin Adler.
+
+        Consolidate RuntimeApplicationChecks and RuntimeApplicationChecksIOS into
+        one file. The following changes were made:
+        - The checks now all rely on applicationBundleIdentifier(), which has the
+          benefit of working in WK1 and WK2 UI/WebContent/Networking processes.
+        - Use namespaces to distinguish Mac and iOS applications instead of relying
+          on the method name. So, applicationIsIBooksForIOS() becomes
+          IOSApplication::isIBooks().
+        - Use NSBundle API on both iOS and Mac instead of using the CF API on Mac
+          and the NS API on iOS.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityWebDocumentView]):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::putDelegate):
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::shouldNotPerformURLAdjustment):
+        * html/MediaElementSession.cpp:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::currentRunLoop):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::willLoadMediaElementURL):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        (WebCore::SubresourceLoader::startLoading):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::shouldIgnoreHTTPStatusCodeErrors):
+        * platform/RuntimeApplicationChecks.cpp: Removed.
+        * platform/RuntimeApplicationChecks.h:
+        * platform/RuntimeApplicationChecks.mm: Added.
+        (WebCore::applicationBundleIdentifier):
+        (WebCore::applicationBundleIsEqualTo):
+        (WebCore::MacApplication::isSafari):
+        (WebCore::MacApplication::isAppleMail):
+        (WebCore::MacApplication::isIBooks):
+        (WebCore::MacApplication::isITunes):
+        (WebCore::MacApplication::isMicrosoftMessenger):
+        (WebCore::MacApplication::isAdobeInstaller):
+        (WebCore::MacApplication::isAOLInstantMessenger):
+        (WebCore::MacApplication::isMicrosoftMyDay):
+        (WebCore::MacApplication::isMicrosoftOutlook):
+        (WebCore::MacApplication::isQuickenEssentials):
+        (WebCore::MacApplication::isAperture):
+        (WebCore::MacApplication::isVersions):
+        (WebCore::MacApplication::isHRBlock):
+        (WebCore::MacApplication::isSolidStateNetworksDownloader):
+        (WebCore::MacApplication::isHipChat):
+        (WebCore::IOSApplication::isMobileMail):
+        (WebCore::IOSApplication::isMobileSafari):
+        (WebCore::IOSApplication::isDumpRenderTree):
+        (WebCore::IOSApplication::isMobileStore):
+        (WebCore::IOSApplication::isWebApp):
+        (WebCore::IOSApplication::isOkCupid):
+        (WebCore::IOSApplication::isFacebook):
+        (WebCore::IOSApplication::isDaijisenDictionary):
+        (WebCore::IOSApplication::isNASAHD):
+        (WebCore::IOSApplication::isTheEconomistOnIphone):
+        (WebCore::IOSApplication::isWebProcess):
+        (WebCore::IOSApplication::isIBooks):
+        (WebCore::setApplicationBundleIdentifier):
+        * platform/RuntimeApplicationChecksIOS.h: Removed.
+        * platform/RuntimeApplicationChecksIOS.mm: Removed.
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        * platform/cf/URLCF.cpp:
+        * platform/graphics/ca/cocoa/LayerFlushSchedulerMac.cpp:
+        (WebCore::currentRunLoop):
+        * platform/ios/PasteboardIOS.mm:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        * platform/ios/wak/WebCoreThread.mm:
+        (WebThreadEnable):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+        * platform/network/ios/QuickLook.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack):
+
 2016-03-05  Zalan Bujtas  <zalan@apple.com>
 
         Make table collapsed borders subpixel aware.

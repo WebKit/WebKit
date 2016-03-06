@@ -30,7 +30,7 @@
 #include "SandboxUtilities.h"
 
 #if PLATFORM(IOS)
-#import <WebCore/RuntimeApplicationChecksIOS.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #endif
 
 namespace API {
@@ -42,7 +42,7 @@ String WebsiteDataStore::defaultApplicationCacheDirectory()
     // Preserving it avoids the need to migrate data when upgrading.
     // FIXME: Ideally we should just have Safari and WebApp create a data store with
     // this application cache path, but that's not supported as of right now.
-    if (WebCore::applicationIsMobileSafari() || WebCore::applicationIsWebApp()) {
+    if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebApp()) {
         NSString *cachePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebAppCache"];
 
         return WebKit::stringByResolvingSymlinksInPath(cachePath.stringByStandardizingPath);

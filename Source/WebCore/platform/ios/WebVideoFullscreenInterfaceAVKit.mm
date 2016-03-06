@@ -35,7 +35,7 @@
 #import "AVKitSPI.h"
 #import "GeometryUtilities.h"
 #import "Logging.h"
-#import "RuntimeApplicationChecksIOS.h"
+#import "RuntimeApplicationChecks.h"
 #import "TimeRanges.h"
 #import "WebCoreSystemInterface.h"
 #import "WebVideoFullscreenChangeObserver.h"

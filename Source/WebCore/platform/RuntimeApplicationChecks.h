@@ -26,28 +26,60 @@
 #ifndef RuntimeApplicationChecks_h
 #define RuntimeApplicationChecks_h
 
+#if PLATFORM(COCOA)
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-WEBCORE_EXPORT bool applicationIsAOLInstantMessenger();
-WEBCORE_EXPORT bool applicationIsAdobeInstaller();
-WEBCORE_EXPORT bool applicationIsAperture();
-WEBCORE_EXPORT bool applicationIsAppleMail();
-WEBCORE_EXPORT bool applicationIsIBooks();
-WEBCORE_EXPORT bool applicationIsITunes();
-WEBCORE_EXPORT bool applicationIsMicrosoftMessenger();
-WEBCORE_EXPORT bool applicationIsMicrosoftMyDay();
-WEBCORE_EXPORT bool applicationIsMicrosoftOutlook();
-bool applicationIsQuickenEssentials();
-WEBCORE_EXPORT bool applicationIsSafari();
-bool applicationIsSolidStateNetworksDownloader();
-WEBCORE_EXPORT bool applicationIsVersions();
-WEBCORE_EXPORT bool applicationIsHRBlock();
-WEBCORE_EXPORT bool applicationIsHipChat();
-
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
 
+#if PLATFORM(MAC)
+
+namespace MacApplication {
+
+WEBCORE_EXPORT bool isAOLInstantMessenger();
+WEBCORE_EXPORT bool isAdobeInstaller();
+WEBCORE_EXPORT bool isAperture();
+WEBCORE_EXPORT bool isAppleMail();
+WEBCORE_EXPORT bool isIBooks();
+WEBCORE_EXPORT bool isITunes();
+WEBCORE_EXPORT bool isMicrosoftMessenger();
+WEBCORE_EXPORT bool isMicrosoftMyDay();
+WEBCORE_EXPORT bool isMicrosoftOutlook();
+bool isQuickenEssentials();
+WEBCORE_EXPORT bool isSafari();
+bool isSolidStateNetworksDownloader();
+WEBCORE_EXPORT bool isVersions();
+WEBCORE_EXPORT bool isHRBlock();
+WEBCORE_EXPORT bool isHipChat();
+
+} // MacApplication
+
+#endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS)
+
+namespace IOSApplication {
+
+WEBCORE_EXPORT bool isMobileMail();
+WEBCORE_EXPORT bool isMobileSafari();
+bool isDumpRenderTree();
+bool isMobileStore();
+WEBCORE_EXPORT bool isWebApp();
+WEBCORE_EXPORT bool isOkCupid();
+WEBCORE_EXPORT bool isFacebook();
+WEBCORE_EXPORT bool isDaijisenDictionary();
+bool isNASAHD();
+WEBCORE_EXPORT bool isTheEconomistOnIphone();
+WEBCORE_EXPORT bool isWebProcess();
+bool isIBooks();
+
+} // IOSApplication
+
+#endif // PLATFORM(IOS)
+
 } // namespace WebCore
+
+#endif // PLATFORM(COCOA)
 
 #endif // RuntimeApplicationChecks_h

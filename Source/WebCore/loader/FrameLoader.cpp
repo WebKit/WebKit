@@ -135,7 +135,7 @@
 #include "DocumentType.h"
 #include "MemoryPressureHandler.h"
 #include "ResourceLoader.h"
-#include "RuntimeApplicationChecksIOS.h"
+#include "RuntimeApplicationChecks.h"
 #include "SystemMemory.h"
 #include "WKContentObservation.h"
 #endif
@@ -1475,7 +1475,7 @@ bool FrameLoader::willLoadMediaElementURL(URL& url)
 #if PLATFORM(IOS)
     // MobileStore depends on the iOS 4.0 era client delegate method because webView:resource:willSendRequest:redirectResponse:fromDataSource
     // doesn't let them tell when a load request is coming from a media element. See <rdar://problem/8266916> for more details.
-    if (applicationIsMobileStore())
+    if (IOSApplication::isMobileStore())
         return m_client.shouldLoadMediaElementURL(url);
 #endif
 

@@ -68,7 +68,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/Page.h>
-#import <WebCore/RuntimeApplicationChecksIOS.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreThreadRun.h>
 #endif
@@ -110,7 +110,7 @@ static void initializeAudioSession()
         return;
 
     wasAudioSessionInitialized = true;
-    if (!WebCore::applicationIsMobileSafari())
+    if (!WebCore::IOSApplication::isMobileSafari())
         return;
 
     AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);

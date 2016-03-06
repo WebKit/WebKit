@@ -254,7 +254,6 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ResourceLoadStatistics.h>
 #import <WebCore/ResourceLoadStatisticsStore.h>
-#import <WebCore/RuntimeApplicationChecksIOS.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/TextRun.h>
@@ -741,7 +740,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     if (!appName)
         appName = [[NSProcessInfo processInfo] processName];
 #if PLATFORM(IOS)
-    if (WebCore::applicationIsMobileSafari() || WebCore::applicationIsWebApp())
+    if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebApp())
         appName = @"com.apple.WebAppCache";
 #endif
 
@@ -776,7 +775,11 @@ static void WebKitInitializeApplicationStatisticsStoragePathIfNecessary()
 
 static bool shouldEnableLoadDeferring()
 {
-    return !applicationIsAdobeInstaller();
+#if PLATFORM(IOS)
+    return true;
+#else
+    return !MacApplication::isAdobeInstaller();
+#endif
 }
 
 static bool shouldRestrictWindowFocus()
@@ -784,7 +787,7 @@ static bool shouldRestrictWindowFocus()
 #if PLATFORM(IOS)
     return true;
 #else
-    return !applicationIsHRBlock();
+    return !MacApplication::isHRBlock();
 #endif
 }
 
@@ -807,7 +810,7 @@ static bool shouldRestrictWindowFocus()
 static bool needsOutlookQuirksScript()
 {
     static bool isOutlookNeedingQuirksScript = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
-        && applicationIsMicrosoftOutlook();
+        && MacApplication::isMicrosoftOutlook();
     return isOutlookNeedingQuirksScript;
 }
 
@@ -842,13 +845,13 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
 #if PLATFORM(IOS)
 static bool shouldTransformsAffectOverflow()
 {
-    static bool shouldTransformsAffectOverflow = !applicationIsOkCupid() || WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CSS_TRANSFORMS_AFFECTING_OVERFLOW);
+    static bool shouldTransformsAffectOverflow = !IOSApplication::isOkCupid() || WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CSS_TRANSFORMS_AFFECTING_OVERFLOW);
     return shouldTransformsAffectOverflow;
 }
 
 static bool shouldDispatchJavaScriptWindowOnErrorEvents()
 {
-    static bool shouldDispatchJavaScriptWindowOnErrorEvents = !applicationIsFacebook() || WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_WINDOW_ON_ERROR);
+    static bool shouldDispatchJavaScriptWindowOnErrorEvents = !IOSApplication::isFacebook() || WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_WINDOW_ON_ERROR);
     return shouldDispatchJavaScriptWindowOnErrorEvents;
 }
 
@@ -866,7 +869,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
 #if PLATFORM(IOS)
     static bool shouldUseLegacyBackgroundSizeShorthandBehavior = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_LEGACY_BACKGROUNDSIZE_SHORTHAND_BEHAVIOR);
 #else
-    static bool shouldUseLegacyBackgroundSizeShorthandBehavior = applicationIsVersions()
+    static bool shouldUseLegacyBackgroundSizeShorthandBehavior = MacApplication::isVersions()
         && !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_LEGACY_BACKGROUNDSIZE_SHORTHAND_BEHAVIOR);
 #endif
     return shouldUseLegacyBackgroundSizeShorthandBehavior;
@@ -976,7 +979,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         Settings::setShouldRespectPriorityInCSSAttributeSetters(shouldRespectPriorityInCSSAttributeSetters());
 
 #if PLATFORM(IOS)
-        if (applicationIsMobileSafari())
+        if (IOSApplication::isMobileSafari())
             Settings::setShouldManageAudioSessionCategory(true);
 #endif
 
@@ -1201,7 +1204,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCoreObjCDeallocOnWebThread([WebPolicyDecisionListener class]);
         WebCoreObjCDeallocOnWebThread([WebView class]);
         WebCoreObjCDeallocOnWebThread([WebVisiblePosition class]);
-        if (applicationIsTheEconomistOnIPhone() && !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_DELEGATE_CALLS_IN_COMMON_RUNLOOP_MODES))
+        if (IOSApplication::isTheEconomistOnIphone() && !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_DELEGATE_CALLS_IN_COMMON_RUNLOOP_MODES))
             WebThreadSetDelegateSourceRunLoopMode(kCFRunLoopDefaultMode);
         WebThreadEnable();
         isWebThreadEnabled = YES;
@@ -1327,7 +1330,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 + (void)registerForMemoryNotifications
 {
-    BOOL shouldAutoClearPressureOnMemoryRelease = !WebCore::applicationIsMobileSafari();
+    BOOL shouldAutoClearPressureOnMemoryRelease = !WebCore::IOSApplication::isMobileSafari();
 
     MemoryPressureHandler::singleton().installMemoryReleaseBlock(^{
         [WebView _handleMemoryWarning];
@@ -2148,7 +2151,7 @@ static bool fastDocumentTeardownEnabled()
 
 - (BOOL)_needsKeyboardEventDisambiguationQuirks
 {
-    static BOOL needsQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH) && !applicationIsSafari();
+    static BOOL needsQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH) && !MacApplication::isSafari();
     return needsQuirks;
 }
 
@@ -2160,7 +2163,7 @@ static bool fastDocumentTeardownEnabled()
 
 static bool needsSelfRetainWhileLoadingQuirk()
 {
-    static bool needsQuirk = applicationIsAperture();
+    static bool needsQuirk = MacApplication::isAperture();
     return needsQuirk;
 }
 #endif // !PLATFORM(IOS)
@@ -2175,10 +2178,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     // <https://bugs.webkit.org/show_bug.cgi?id=46134> and
     // <https://bugs.webkit.org/show_bug.cgi?id=46334>.
     static bool isApplicationNeedingParserQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
-        && (applicationIsAOLInstantMessenger() || applicationIsMicrosoftMyDay());
+        && (MacApplication::isAOLInstantMessenger() || MacApplication::isMicrosoftMyDay());
     
     // Mail.app must continue to display HTML email that contains quirky markup.
-    static bool isAppleMail = applicationIsAppleMail();
+    static bool isAppleMail = MacApplication::isAppleMail();
 
     return isApplicationNeedingParserQuirks
         || isAppleMail
@@ -2189,7 +2192,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
         || [[self preferences] usePreHTML5ParserQuirks];
 #else
-    static bool isApplicationNeedingParserQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER) && applicationIsDaijisenDictionary();
+    static bool isApplicationNeedingParserQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER) && IOSApplication::isDaijisenDictionary();
     return isApplicationNeedingParserQuirks || [[self preferences] usePreHTML5ParserQuirks];
 #endif
 }

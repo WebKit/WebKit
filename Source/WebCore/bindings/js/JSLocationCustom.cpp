@@ -87,7 +87,7 @@ bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue
 
 #if PLATFORM(MAC)
     // FIXME: HipChat tries to set Location.reload which causes an exception to be thrown in strict mode (see <rdar://problem/24931959>).
-    if (applicationIsHipChat())
+    if (MacApplication::isHipChat())
         slot.setStrictMode(false);
 #endif
 

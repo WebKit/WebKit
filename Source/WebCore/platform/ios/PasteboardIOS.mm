@@ -44,7 +44,7 @@
 #import "PasteboardStrategy.h"
 #import "PlatformStrategies.h"
 #import "RenderImage.h"
-#import "RuntimeApplicationChecksIOS.h"
+#import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
 #import "SoftLinking.h"
 #import "Text.h"

@@ -41,7 +41,7 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS)
-#include <WebCore/RuntimeApplicationChecksIOS.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #endif
 
 #if USE(QUICK_LOOK)
@@ -261,7 +261,7 @@ void WebResourceLoadScheduler::servePendingRequests(HostInformation* host, Resou
             requestsPending.removeFirst();
             host->addLoadInProgress(resourceLoader.get());
 #if PLATFORM(IOS)
-            if (!applicationIsWebProcess()) {
+            if (!IOSApplication::isWebProcess()) {
                 resourceLoader->startLoading();
                 return;
             }

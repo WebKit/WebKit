@@ -1,3 +1,15 @@
+2016-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Consolidate RuntimeApplicationChecks and RuntimeApplicationChecksIOS
+        https://bugs.webkit.org/show_bug.cgi?id=155035
+
+        Reviewed by Darin Adler.
+
+        Update runtime application checks.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::servePendingRequests):
+
 2016-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Remove vcxproj build system

@@ -35,7 +35,7 @@
 #import "ResourceError.h"
 #import "ResourceHandle.h"
 #import "ResourceLoader.h"
-#import "RuntimeApplicationChecksIOS.h"
+#import "RuntimeApplicationChecks.h"
 #import "SynchronousResourceHandleCFURLConnectionDelegate.h"
 #import "WebCoreResourceHandleAsDelegate.h"
 #import "WebCoreURLResponseIOS.h"

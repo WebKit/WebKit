@@ -46,7 +46,7 @@
 
 #if PLATFORM(IOS)
 #include "AudioSession.h"
-#include "RuntimeApplicationChecksIOS.h"
+#include "RuntimeApplicationChecks.h"
 #endif
 
 namespace WebCore {
