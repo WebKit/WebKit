@@ -92,7 +92,7 @@ JSCustomElementInterface* CustomElementDefinitions::findInterface(const AtomicSt
 JSCustomElementInterface* CustomElementDefinitions::findInterface(const JSC::JSObject* constructor) const
 {
     auto it = m_constructorMap.find(constructor);
-    return it->value;
+    return it == m_constructorMap.end() ? nullptr : it->value;
 }
 
 bool CustomElementDefinitions::containsConstructor(const JSC::JSObject* constructor) const

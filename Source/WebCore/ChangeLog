@@ -1,3 +1,10 @@
+2016-03-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r197612 (under ASAN/GuardMalloc).
+
+        * dom/CustomElementDefinitions.cpp:
+        (WebCore::CustomElementDefinitions::findInterface):
+
 2016-03-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix GTK/EFL build after r197575 and add mandatory GnuTLS dependency
