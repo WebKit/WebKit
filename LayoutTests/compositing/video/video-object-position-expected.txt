@@ -1,0 +1,89 @@
+        
+        
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 10
+        (GraphicsLayer
+          (position 13.00 13.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents layer 2.00, 2.00 120.00 x 200.00)
+        )
+        (GraphicsLayer
+          (position 151.00 13.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents clipping layer 2.00, 2.00 120.00 x 200.00)
+          (contents layer 20.00, 10.00 120.00 x 200.00)
+        )
+        (GraphicsLayer
+          (position 289.00 13.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents layer 2.00, 2.00 120.00 x 200.00)
+        )
+        (GraphicsLayer
+          (position 427.00 13.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents clipping layer 2.00, 2.00 120.00 x 200.00)
+          (contents layer -10.00, -10.00 120.00 x 200.00)
+        )
+        (GraphicsLayer
+          (position 565.00 13.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents layer 2.00, 2.00 120.00 x 200.00)
+        )
+        (GraphicsLayer
+          (position 13.00 231.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents layer 2.00, 57.00 120.00 x 90.00)
+        )
+        (GraphicsLayer
+          (position 151.00 231.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents clipping layer 2.00, 2.00 120.00 x 200.00)
+          (contents layer 20.00, 10.00 120.00 x 90.00)
+        )
+        (GraphicsLayer
+          (position 289.00 231.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents layer 2.00, 30.00 120.00 x 90.00)
+        )
+        (GraphicsLayer
+          (position 427.00 231.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents clipping layer 2.00, 2.00 120.00 x 200.00)
+          (contents layer -10.00, 100.00 120.00 x 90.00)
+        )
+        (GraphicsLayer
+          (position 565.00 231.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents layer 2.00, 101.00 120.00 x 90.00)
+        )
+      )
+    )
+  )
+)
+

@@ -1,5 +1,32 @@
 2016-03-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Add support for the object-position CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=122811
+        rdar://problem/15836338
+
+        Reviewed by Sam Weinig.
+
+        Various object-position tests.
+
+        * compositing/video/video-object-position-expected.txt: Added.
+        * compositing/video/video-object-position.html: Added.
+        * fast/css/object-position/object-position-embed-expected.html: Added.
+        * fast/css/object-position/object-position-embed.html: Added.
+        * fast/css/object-position/object-position-img-expected.html: Added.
+        * fast/css/object-position/object-position-img-svg-expected.html: Added.
+        * fast/css/object-position/object-position-img-svg.html: Added.
+        * fast/css/object-position/object-position-img.html: Added.
+        * fast/css/object-position/object-position-input-image-expected.html: Added.
+        * fast/css/object-position/object-position-input-image.html: Added.
+        * fast/css/object-position/object-position-object-expected.html: Added.
+        * fast/css/object-position/object-position-object.html: Added.
+        * fast/css/object-position/object-position-video-poster-expected.html: Added.
+        * fast/css/object-position/object-position-video-poster.html: Added.
+        * fast/css/object-position/resources/expected.css: Added.
+        * fast/css/object-position/resources/test.css: Added.
+
+2016-03-05  Simon Fraser  <simon.fraser@apple.com>
+
         Add parsing support for object-position
         https://bugs.webkit.org/show_bug.cgi?id=155065
 

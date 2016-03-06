@@ -584,6 +584,11 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
     ObjectFit objectFit = style().objectFit();
     if (objectFit != ObjectFitFill && objectFit != ObjectFitCover)
         return false;
+
+    LengthPoint objectPosition = style().objectPosition();
+    if (objectPosition != RenderStyle::initialObjectPosition())
+        return false;
+
     // Check for image with alpha.
     return imageResource().cachedImage() && imageResource().cachedImage()->currentFrameKnownToBeOpaque(this);
 }
