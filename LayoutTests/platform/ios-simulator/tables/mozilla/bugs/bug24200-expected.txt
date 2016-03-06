@@ -4,60 +4,60 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {CENTER} at (0,0) size 784x212
-        RenderTable {TABLE} at (76,0) size 632x212 [border: (1px solid #FF0000)]
-          RenderTableSection {TBODY} at (1,1) size 628x209
+        RenderTable {TABLE} at (76,0) size 632x212 [border: (1.50px solid #FF0000)]
+          RenderTableSection {TBODY} at (1,1) size 629x210
             RenderTableRow {TR} at (0,0) size 628x24
-              RenderTableCell {TD} at (0,0) size 628x24 [border: (2px solid #FF0000)] [r=0 c=0 rs=1 cs=2]
-                RenderText {#text} at (3,3) size 180x19
-                  text run at (3,3) width 180: "parent table, 1st row, 1st col"
+              RenderTableCell {TD} at (0,0) size 628x24 [border: (1.50px solid #FF0000)] [r=0 c=0 rs=1 cs=2]
+                RenderText {#text} at (2,3) size 181x19
+                  text run at (2,3) width 181: "parent table, 1st row, 1st col"
             RenderTableRow {TR} at (0,24) size 628x185
-              RenderTableCell {TD} at (0,24) size 143x185 [border: (1px solid #FF0000)] [r=1 c=0 rs=1 cs=1]
-                RenderBlock {FORM} at (3,2) size 139x165
-                  RenderTable {TABLE} at (0,0) size 139x165 [border: (1px solid #00FF00)]
-                    RenderTableSection {TBODY} at (1,1) size 136x162
+              RenderTableCell {TD} at (0,24) size 143x185 [border: (0.50px solid #FF0000)] [r=1 c=0 rs=1 cs=1]
+                RenderBlock {FORM} at (2,1) size 140x166
+                  RenderTable {TABLE} at (0,0) size 139x165 [border: (1.50px solid #00FF00)]
+                    RenderTableSection {TBODY} at (1,1) size 137x163
                       RenderTableRow {TR} at (0,0) size 136x24
-                        RenderTableCell {TD} at (0,0) size 136x24 [border: (2px solid #00FF00)] [r=0 c=0 rs=1 cs=1]
-                          RenderText {#text} at (3,3) size 24x19
-                            text run at (3,3) width 24: "text"
+                        RenderTableCell {TD} at (0,0) size 136x24 [border: (1.50px solid #00FF00)] [r=0 c=0 rs=1 cs=1]
+                          RenderText {#text} at (2,3) size 25x19
+                            text run at (2,3) width 25: "text"
                       RenderTableRow {TR} at (0,24) size 136x37
-                        RenderTableCell {TD} at (0,24) size 136x37 [border: (1px solid #00FF00)] [r=1 c=0 rs=1 cs=1]
-                          RenderTable {TABLE} at (3,2) size 131x34 [border: (1px solid #FFFF00)]
-                            RenderTableSection {TBODY} at (1,1) size 128x31
+                        RenderTableCell {TD} at (0,24) size 136x37 [border: (0.50px solid #00FF00)] [r=1 c=0 rs=1 cs=1]
+                          RenderTable {TABLE} at (2,1) size 132x35 [border: (1.50px solid #FFFF00)]
+                            RenderTableSection {TBODY} at (1,1) size 129x32
                               RenderTableRow {TR} at (0,0) size 128x31
-                                RenderTableCell {TD} at (0,0) size 102x31 [border: (2px solid #FFFF00)] [r=0 c=0 rs=1 cs=1]
-                                  RenderTextControl {INPUT} at (5,5) size 81x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                                RenderTableCell {TD} at (0,0) size 102x31 [border: (1.50px solid #FFFF00)] [r=0 c=0 rs=1 cs=1]
+                                  RenderTextControl {INPUT} at (4,4) size 81x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
                                   RenderText {#text} at (0,0) size 0x0
-                                RenderTableCell {TD} at (101,0) size 28x31 [border: (2px solid #FFFF00)] [r=0 c=1 rs=1 cs=1]
-                                  RenderImage {INPUT} at (3,7) size 20x18
+                                RenderTableCell {TD} at (101,0) size 28x31 [border: (1.50px solid #FFFF00)] [r=0 c=1 rs=1 cs=1]
+                                  RenderImage {INPUT} at (3,6) size 20x19
                                   RenderText {#text} at (0,0) size 0x0
                       RenderTableRow {TR} at (0,61) size 136x23
-                        RenderTableCell {TD} at (0,61) size 136x23 [border: (1px solid #00FF00)] [r=2 c=0 rs=1 cs=1]
-                          RenderText {#text} at (3,2) size 24x19
-                            text run at (3,2) width 24: "text"
+                        RenderTableCell {TD} at (0,61) size 136x23 [border: (0.50px solid #00FF00)] [r=2 c=0 rs=1 cs=1]
+                          RenderText {#text} at (2,2) size 25x19
+                            text run at (2,2) width 25: "text"
                       RenderTableRow {TR} at (0,84) size 136x54
-                        RenderTableCell {TD} at (0,84) size 136x54 [border: (1px solid #00FF00)] [r=3 c=0 rs=1 cs=1]
-                          RenderBlock (anonymous) at (3,2) size 131x0
+                        RenderTableCell {TD} at (0,84) size 136x54 [border: (0.50px solid #00FF00)] [r=3 c=0 rs=1 cs=1]
+                          RenderBlock (anonymous) at (2,1) size 132x0
                             RenderInline {FONT} at (0,0) size 0x0
-                          RenderTable {TABLE} at (3,2) size 131x51 [border: (1px solid #FF00FF)]
-                            RenderTableSection {TBODY} at (1,1) size 128x48
+                          RenderTable {TABLE} at (2,1) size 132x52 [border: (1.50px solid #FF00FF)]
+                            RenderTableSection {TBODY} at (1,1) size 129x49
                               RenderTableRow {TR} at (0,0) size 128x24
-                                RenderTableCell {TD} at (0,0) size 128x24 [border: (2px solid #FF00FF)] [r=0 c=0 rs=1 cs=1]
-                                  RenderText {#text} at (3,3) size 54x19
-                                    text run at (3,3) width 54: "problem"
+                                RenderTableCell {TD} at (0,0) size 128x24 [border: (1.50px solid #FF00FF)] [r=0 c=0 rs=1 cs=1]
+                                  RenderText {#text} at (2,3) size 54x19
+                                    text run at (2,3) width 54: "problem"
                               RenderTableRow {TR} at (0,24) size 128x24
-                                RenderTableCell {TD} at (0,24) size 128x24 [border: (1px solid #FF00FF)] [r=1 c=0 rs=1 cs=1]
-                                  RenderText {#text} at (3,2) size 54x19
-                                    text run at (3,2) width 54: "problem"
+                                RenderTableCell {TD} at (0,24) size 128x24 [border: (0.50px solid #FF00FF)] [r=1 c=0 rs=1 cs=1]
+                                  RenderText {#text} at (2,2) size 54x19
+                                    text run at (2,2) width 54: "problem"
                       RenderTableRow {TR} at (0,138) size 136x24
-                        RenderTableCell {TD} at (0,138) size 136x24 [border: (1px solid #00FF00)] [r=4 c=0 rs=1 cs=1]
-                          RenderText {#text} at (3,2) size 24x19
-                            text run at (3,2) width 24: "text"
-              RenderTableCell {TD} at (143,24) size 485x32 [border: (1px solid #FF0000)] [r=1 c=1 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 481x28 [border: (1px solid #0000FF)]
-                  RenderTableSection {TBODY} at (1,1) size 478x25
+                        RenderTableCell {TD} at (0,138) size 136x24 [border: (0.50px solid #00FF00)] [r=4 c=0 rs=1 cs=1]
+                          RenderText {#text} at (2,2) size 25x19
+                            text run at (2,2) width 25: "text"
+              RenderTableCell {TD} at (143,24) size 485x32 [border: (0.50px solid #FF0000)] [r=1 c=1 rs=1 cs=1]
+                RenderTable {TABLE} at (1,1) size 482x29 [border: (1.50px solid #0000FF)]
+                  RenderTableSection {TBODY} at (1,1) size 479x26
                     RenderTableRow {TR} at (0,0) size 478x25
-                      RenderTableCell {TD} at (0,0) size 478x25 [border: (2px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (3,3) size 48x19
-                          text run at (3,3) width 48: "overlap"
+                      RenderTableCell {TD} at (0,0) size 478x25 [border: (1.50px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (2,3) size 49x19
+                          text run at (2,3) width 49: "overlap"
 layer at (105,72) size 67x14
   RenderBlock {DIV} at (6,3) size 68x15

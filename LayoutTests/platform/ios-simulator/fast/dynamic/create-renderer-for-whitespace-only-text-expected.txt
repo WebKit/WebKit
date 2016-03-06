@@ -23,24 +23,24 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,92) size 784x20
         RenderText {#text} at (0,0) size 358x19
           text run at (0,0) width 358: "The left column should be identical to the right column."
-      RenderTable {TABLE} at (0,128) size 200x104 [border: none]
-        RenderTableSection {TBODY} at (0,0) size 199x103
+      RenderTable {TABLE} at (0,128) size 200x104 [border: (0.50px none #808080)]
+        RenderTableSection {TBODY} at (0,0) size 199x104
           RenderTableRow {TR} at (0,0) size 199x29
-            RenderTableCell {TD} at (0,0) size 100x29 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (5,5) size 91x20
+            RenderTableCell {TD} at (0,0) size 100x29 [border: (0.50px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (4,4) size 91x21
                 RenderText {#text} at (0,0) size 24x19
                   text run at (0,0) width 24: "wet"
                 RenderText {#text} at (23,0) size 5x19
                   text run at (23,0) width 5: " "
                 RenderText {#text} at (27,0) size 24x19
                   text run at (27,0) width 24: "suit"
-            RenderTableCell {TD} at (99,0) size 100x29 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (5,5) size 91x20
+            RenderTableCell {TD} at (99,0) size 100x29 [border: (0.50px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (4,4) size 91x21
                 RenderText {#text} at (0,0) size 51x19
                   text run at (0,0) width 51: "wet suit"
           RenderTableRow {TR} at (0,29) size 199x45
-            RenderTableCell {TD} at (0,29) size 100x45 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderBlock {UL} at (5,5) size 91x20
+            RenderTableCell {TD} at (0,29) size 100x45 [border: (0.50px solid #000000)] [r=1 c=0 rs=1 cs=1]
+              RenderBlock {UL} at (4,4) size 91x21
                 RenderInline {LI} at (0,0) size 24x19
                   RenderText {#text} at (40,0) size 24x19
                     text run at (40,0) width 24: "wet"
@@ -50,8 +50,8 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (67,0) size 24x19
                     text run at (67,0) width 24: "suit"
                 RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (99,29) size 100x45 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {UL} at (5,5) size 91x20
+            RenderTableCell {TD} at (99,29) size 100x45 [border: (0.50px solid #000000)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {UL} at (4,4) size 91x21
                 RenderInline {LI} at (0,0) size 24x19
                   RenderText {#text} at (40,0) size 24x19
                     text run at (40,0) width 24: "wet"
@@ -62,8 +62,8 @@ layer at (0,0) size 800x600
                     text run at (67,0) width 24: "suit"
                 RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,74) size 199x29
-            RenderTableCell {TD} at (0,74) size 100x29 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (5,5) size 91x20
+            RenderTableCell {TD} at (0,74) size 100x29 [border: (0.50px solid #000000)] [r=2 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (4,4) size 91x21
                 RenderInline {DIV} at (0,0) size 24x19
                   RenderText {#text} at (0,0) size 24x19
                     text run at (0,0) width 24: "wet"
@@ -73,8 +73,8 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (27,0) size 24x19
                     text run at (27,0) width 24: "suit"
                 RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (99,74) size 100x29 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (5,5) size 91x20
+            RenderTableCell {TD} at (99,74) size 100x29 [border: (0.50px solid #000000)] [r=2 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (4,4) size 91x21
                 RenderInline {DIV} at (0,0) size 24x19
                   RenderText {#text} at (0,0) size 24x19
                     text run at (0,0) width 24: "wet"

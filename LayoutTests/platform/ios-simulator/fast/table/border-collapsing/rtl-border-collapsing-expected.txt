@@ -58,9 +58,9 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,1) size 8x19
                         text run at (2,1) width 8 RTL: "  "
                     RenderTableCell {TD} at (21,22) size 12x22 [border: none] [r=1 c=2 rs=1 cs=1]
-                      RenderText {#text} at (2,1) size 8x19
-                        text run at (2,1) width 8 RTL: "  "
-                    RenderTableCell {TD} at (11,22) size 10x22 [r=1 c=3 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 9x19
+                        text run at (1,1) width 9 RTL: "  "
+                    RenderTableCell {TD} at (11,22) size 11x22 [border: none] [r=1 c=3 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 8x19
                         text run at (1,1) width 8 RTL: "  "
                     RenderTableCell {TD} at (0,22) size 11x22 [border: none] [r=1 c=4 rs=1 cs=1]
@@ -94,12 +94,12 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (12,22) size 11x22 [border: none] [r=1 c=1 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 8x19
                         text run at (1,1) width 8: "  "
-                    RenderTableCell {TD} at (23,22) size 11x22 [border: none] [r=1 c=2 rs=1 cs=1]
+                    RenderTableCell {TD} at (23,22) size 12x22 [border: none] [r=1 c=2 rs=1 cs=1]
                       RenderText {#text} at (2,1) size 8x19
                         text run at (2,1) width 8: "  "
                     RenderTableCell {TD} at (34,22) size 11x22 [border: none] [r=1 c=3 rs=1 cs=1]
-                      RenderText {#text} at (2,1) size 8x19
-                        text run at (2,1) width 8: "  "
+                      RenderText {#text} at (1,1) size 9x19
+                        text run at (1,1) width 9: "  "
                     RenderTableCell {TD} at (45,22) size 11x22 [border: none] [r=1 c=4 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 8x19
                         text run at (1,1) width 8: "  "
