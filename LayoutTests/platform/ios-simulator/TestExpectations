@@ -2956,6 +2956,9 @@ webkit.org/b/154253 animations/animation-delay-changed.html [ Pass Failure ]
 webkit.org/b/155095 fast/table/border-collapsing/table-rtl-row-mixed-direction.html [ ImageOnlyFailure Pass ]
 webkit.org/b/155095 fast/table/border-collapsing/table-ltr-rows-mixed-direction.html [ ImageOnlyFailure Pass ]
 
+# Redundant and invalid. fast/table/hidpi-collapsed-border-with-odd-pixel-width.html covers it.
+fast/table/collapsed-border-with-odd-pixel-width.html [ ImageOnlyFailure ]
+
 # Uncategorized reftest failures, uncovered once we made reftests work. Needs triage.
 css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]

@@ -1,5 +1,13 @@
 2016-03-06  Zalan Bujtas  <zalan@apple.com>
 
+        [iOS] Some more gardening after r197627.
+
+        Unreviewed.
+
+        * platform/ios-simulator/TestExpectations: skip a test.
+
+2016-03-06  Zalan Bujtas  <zalan@apple.com>
+
         [iOS] Gardening after r197627.
 
         Unreviewed.
