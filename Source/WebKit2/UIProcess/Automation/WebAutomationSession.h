@@ -46,6 +46,8 @@ class FrontendRouter;
 namespace WebKit {
 
 class WebAutomationSessionClient;
+class WebPageProxy;
+class WebProcessPool;
 
 class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>
 #if ENABLE(REMOTE_INSPECTOR)
@@ -54,6 +56,9 @@ class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::Aut
     , public Inspector::AutomationBackendDispatcherHandler
 {
 public:
+    typedef HashMap<uint64_t, String> WebPageHandleMap;
+    typedef HashMap<String, uint64_t> HandleWebPageMap;
+
     WebAutomationSession();
     ~WebAutomationSession();
 
@@ -61,6 +66,9 @@ public:
 
     void setSessionIdentifier(const String& sessionIdentifier) { m_sessionIdentifier = sessionIdentifier; }
     String sessionIdentifier() const { return m_sessionIdentifier; }
+
+    WebKit::WebProcessPool* processPool() const { return m_processPool; }
+    void setProcessPool(WebKit::WebProcessPool* processPool) { m_processPool = processPool; }
 
 #if ENABLE(REMOTE_INSPECTOR)
     // Inspector::RemoteAutomationTarget API
@@ -77,11 +85,19 @@ public:
     void switchToBrowsingContext(Inspector::ErrorString&, const String&) override;
 
 private:
+    WebKit::WebPageProxy* webPageProxyForHandle(const String&);
+    String handleForWebPageProxy(WebKit::WebPageProxy*);
+
+    WebKit::WebProcessPool* m_processPool { nullptr };
     std::unique_ptr<API::AutomationSessionClient> m_client;
     String m_sessionIdentifier { ASCIILiteral("Untitled Session") };
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Ref<Inspector::AutomationBackendDispatcher> m_domainDispatcher;
+
+    WebPageHandleMap m_webPageHandleMap;
+    HandleWebPageMap m_handleWebPageMap;
+    String m_activeBrowsingContextHandle;
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };

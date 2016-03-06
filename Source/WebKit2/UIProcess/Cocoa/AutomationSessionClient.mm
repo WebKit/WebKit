@@ -28,7 +28,9 @@
 
 #if WK_API_ENABLED
 
+#import "WKSharedAPICast.h"
 #import "WebAutomationSession.h"
+#import "WebPageProxy.h"
 #import "_WKAutomationSessionDelegate.h"
 #import "_WKAutomationSessionInternal.h"
 
@@ -41,10 +43,11 @@ AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegat
     m_delegateMethods.didDisconnectFromRemote = [delegate respondsToSelector:@selector(_automationSessionDidDisconnectFromRemote:)];
 }
 
-void AutomationSessionClient::didRequestNewWindow(WebAutomationSession* session)
+WebPageProxy* AutomationSessionClient::didRequestNewWindow(WebAutomationSession* session)
 {
     if (m_delegateMethods.didRequestNewWindow)
-        [m_delegate.get() _automationSessionDidRequestNewWindow:wrapper(*session)];
+        return toImpl([m_delegate.get() _automationSessionDidRequestNewWindow:wrapper(*session)]);
+    return nullptr;
 }
 
 void AutomationSessionClient::didDisconnectFromRemote(WebAutomationSession* session)

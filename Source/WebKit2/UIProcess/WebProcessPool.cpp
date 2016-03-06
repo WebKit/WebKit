@@ -1120,8 +1120,10 @@ void WebProcessPool::setAutomationSession(RefPtr<WebAutomationSession>&& automat
     m_automationSession = WTFMove(automationSession);
 
 #if ENABLE(REMOTE_INSPECTOR)
-    if (m_automationSession)
+    if (m_automationSession) {
         m_automationSession->init();
+        m_automationSession->setProcessPool(this);
+    }
 #endif
 }
 

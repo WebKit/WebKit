@@ -28,8 +28,11 @@
 
 #include "APIAutomationSessionClient.h"
 #include "InspectorProtocolObjects.h"
+#include "WebProcessPool.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <WebCore/UUID.h>
+#include <wtf/HashMap.h>
 
 using namespace Inspector;
 
@@ -97,26 +100,92 @@ void WebAutomationSession::disconnect(Inspector::FrontendChannel* channel)
 
 #endif // ENABLE(REMOTE_INSPECTOR)
 
+WebPageProxy* WebAutomationSession::webPageProxyForHandle(const String& handle)
+{
+    auto iter = m_handleWebPageMap.find(handle);
+    if (iter == m_handleWebPageMap.end())
+        return nullptr;
+    return WebProcessProxy::webPage(iter->value);
+}
+
+String WebAutomationSession::handleForWebPageProxy(WebPageProxy* webPageProxy)
+{
+    auto iter = m_webPageHandleMap.find(webPageProxy->pageID());
+    if (iter != m_webPageHandleMap.end())
+        return iter->value;
+
+    String handle = WebCore::createCanonicalUUIDString().convertToASCIIUppercase();
+
+    auto firstAddResult = m_webPageHandleMap.add(webPageProxy->pageID(), handle);
+    RELEASE_ASSERT(firstAddResult.isNewEntry);
+
+    auto secondAddResult = m_handleWebPageMap.add(handle, webPageProxy->pageID());
+    RELEASE_ASSERT(secondAddResult.isNewEntry);
+
+    return handle;
+}
+
 // Inspector::AutomationBackendDispatcherHandler API
 
 void WebAutomationSession::getBrowsingContexts(Inspector::ErrorString& errorString, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>>& contexts)
 {
-    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+    contexts = Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>::create();
+
+    for (auto& process : m_processPool->processes()) {
+        for (auto& page : process->pages()) {
+            if (!page->isControlledByAutomation())
+                continue;
+
+            String handle = handleForWebPageProxy(page);
+
+            auto browsingContext = Inspector::Protocol::Automation::BrowsingContext::create()
+                .setHandle(handleForWebPageProxy(page))
+                .setActive(m_activeBrowsingContextHandle == handle)
+                .release();
+
+            contexts->addItem(browsingContext.copyRef());
+        }
+    }
 }
 
 void WebAutomationSession::createBrowsingContext(Inspector::ErrorString& errorString, String* handle)
 {
-    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+    ASSERT(m_client);
+    if (!m_client)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InternalError);
+
+    WebPageProxy* page = m_client->didRequestNewWindow(this);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InternalError);
+
+    m_activeBrowsingContextHandle = *handle = handleForWebPageProxy(page);
 }
 
 void WebAutomationSession::closeBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
 {
-    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    if (handle == m_activeBrowsingContextHandle)
+        m_activeBrowsingContextHandle = emptyString();
+
+    // FIXME: Verify this is enough. We still might want to go through the AutomationSessionClient
+    // to get closer to a user pressing the close button.
+    page->tryClose();
 }
 
 void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
 {
-    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    m_activeBrowsingContextHandle = handle;
+
+    // FIXME: Verify this is enough. We still might want to go through the AutomationSessionClient
+    // to get closer a user pressing focusing the window / page.
+    page->setFocus(true);
 }
 
 } // namespace WebKit

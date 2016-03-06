@@ -1,5 +1,45 @@
 2016-03-05  Timothy Hatcher  <timothy@apple.com>
 
+        Implement the Automation protocol commands by tracking WebPageProxy objects
+        that are controlled by automation and assigning them a UUID handle.
+
+        https://bugs.webkit.org/show_bug.cgi?id=154953
+        rdar://problem/24947489
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::didRequestNewWindow):
+        Return a WebPageProxy instead of void so it can be assigned a UUID handle.
+
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        Return a WKPageRef from _automationSessionDidRequestNewWindow:.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::webPageProxyForHandle):
+        (WebKit::WebAutomationSession::handleForWebPageProxy):
+        (WebKit::WebAutomationSession::getBrowsingContexts):
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        (WebKit::WebAutomationSession::closeBrowsingContext):
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        Added new methods and maps to track pages and handles.
+
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::didRequestNewWindow):
+        Return a WebPageProxy from the WKPageRef.
+
+        * UIProcess/WebPageProxy.h: Make setFocus public.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setAutomationSession):
+        Set the WebProcessPool on the WebAutomationSession so it can be used to find
+        WebPageProxy objects controlled by automation.
+
+2016-03-05  Timothy Hatcher  <timothy@apple.com>
+
         Rename Automation protocol methods to use "BrowsingContext" instead of "Window".
         Also flesh out the protocol commands more by adding switchToBrowsingContext
         and return a BrowsingContextHandle for createBrowsingContext.

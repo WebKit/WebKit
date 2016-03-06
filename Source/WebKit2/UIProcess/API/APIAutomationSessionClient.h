@@ -30,6 +30,7 @@
 
 namespace WebKit {
 class WebAutomationSession;
+class WebPageProxy;
 }
 
 namespace API {
@@ -40,7 +41,7 @@ public:
 
     virtual String sessionIdentifier() const { return String(); }
     virtual void didDisconnectFromRemote(WebKit::WebAutomationSession*) { }
-    virtual void didRequestNewWindow(WebKit::WebAutomationSession*) { }
+    virtual WebKit::WebPageProxy* didRequestNewWindow(WebKit::WebAutomationSession*) { return nullptr; }
 };
 
 } // namespace API
