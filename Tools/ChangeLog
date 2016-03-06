@@ -1,3 +1,18 @@
+2016-03-06  Alexey Proskuryakov  <ap@apple.com>
+
+        build-webkit prints an error on iOS simulator bots
+        https://bugs.webkit.org/show_bug.cgi?id=155078
+
+        Reviewed by Dan Bernstein.
+
+        This happens when build-layouttestrelay sets $xcodeSDK to undefined, to use host SDK.
+
+        * Scripts/webkitdirs.pm: (buildXCodeProject): There is no need to pass -sdk, because
+        XcodeOptions() already passes SDKROOT as appropriate.
+
+        * Scripts/build-layouttestrelay: Added a FIXME. Resetting $xcodeSDK doesn't reset
+        any other configuration variables that were derived from its initial value, like $portName.
+
 2016-03-05  Tim Horton  <timothy_horton@apple.com>
 
         Create a DOMHTMLVideoElement when wrapping <video> elements

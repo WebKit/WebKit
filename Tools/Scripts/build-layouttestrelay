@@ -60,6 +60,8 @@ chdir "Tools/LayoutTestRelay" or die;
 #        to avoid breaking some Apple Internal tools we support calling this script
 #        without --ios-simulator so long as we are building on a Mac.
 if (isAppleMacWebKit() && !willUseIOSDeviceSDK()) {
+    # FIXME: Changing SDK at this point results in an inconsistent webkitdirs state.
+    # We should make it so that webkitdirs functions never see the wrong SDK.
     setXcodeSDK(undef); # Force use of Mac SDK if --ios-simulator was passed
     exit exitStatus(buildXCodeProject("LayoutTestRelay", $clean, XcodeOptions(), @ARGV));
 }
