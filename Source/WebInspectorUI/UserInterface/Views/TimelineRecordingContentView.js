@@ -337,9 +337,6 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (!(representedObject instanceof WebInspector.Timeline) && !(representedObject instanceof WebInspector.TimelineRecording))
             return null;
 
-        if (this.currentTimelineView instanceof WebInspector.ClusterContentView)
-            return null;
-
         let iconClassName;
         let title;
         if (representedObject instanceof WebInspector.Timeline) {

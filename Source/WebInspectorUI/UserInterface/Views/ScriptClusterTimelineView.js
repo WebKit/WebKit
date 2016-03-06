@@ -33,7 +33,7 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
 
         this._extraArguments = extraArguments;
 
-        this._currentContentViewSetting = new WebInspector.Setting("script-cluster-timeline-view-current-view", WebInspector.ScriptClusterTimelineView.DetailsIdentifier);
+        this._currentContentViewSetting = new WebInspector.Setting("script-cluster-timeline-view-current-view", WebInspector.ScriptClusterTimelineView.EventsIdentifier);
 
         let showSelectorArrows = this._canShowProfileView();
         function createPathComponent(displayName, className, identifier)
@@ -43,17 +43,16 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
             return pathComponent;
         }
 
-        let iconClassName = WebInspector.TimelineTabContentView.iconClassNameForTimeline(timeline);
-        this._detailsPathComponent = createPathComponent.call(this, WebInspector.UIString("Details"), iconClassName, WebInspector.ScriptClusterTimelineView.DetailsIdentifier);
-        this._profilePathComponent = createPathComponent.call(this, WebInspector.UIString("Call Trees"), iconClassName, WebInspector.ScriptClusterTimelineView.ProfileIdentifier);
+        this._eventsPathComponent = createPathComponent.call(this, WebInspector.UIString("Events"), "events-icon", WebInspector.ScriptClusterTimelineView.EventsIdentifier);
+        this._profilePathComponent = createPathComponent.call(this, WebInspector.UIString("Call Trees"), "call-trees-icon", WebInspector.ScriptClusterTimelineView.ProfileIdentifier);
 
         if (this._canShowProfileView()) {
-            this._detailsPathComponent.nextSibling = this._profilePathComponent;
-            this._profilePathComponent.previousSibling = this._detailsPathComponent;
+            this._eventsPathComponent.nextSibling = this._profilePathComponent;
+            this._profilePathComponent.previousSibling = this._eventsPathComponent;
         }
 
         // FIXME: We should be able to create these lazily.
-        this._detailsContentView = new WebInspector.ScriptDetailsTimelineView(this.representedObject, this._extraArguments);
+        this._eventsContentView = new WebInspector.ScriptDetailsTimelineView(this.representedObject, this._extraArguments);
         this._profileContentView = this._canShowProfileView() ? new WebInspector.ScriptProfileTimelineView(this.representedObject, this._extraArguments) : null;
 
         this._showContentViewForIdentifier(this._currentContentViewSetting.value);
@@ -79,9 +78,9 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
 
     // Public
 
-    get detailsContentView()
+    get eventsContentView()
     {
-        return this._detailsContentView;
+        return this._eventsContentView;
     }
 
     get profileContentView()
@@ -112,15 +111,15 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         this._showContentViewForIdentifier(cookie[WebInspector.ScriptClusterTimelineView.ContentViewIdentifierCookieKey]);
     }
 
-    showDetails()
+    showEvents()
     {
-        return this._showContentViewForIdentifier(WebInspector.ScriptClusterTimelineView.DetailsIdentifier);
+        return this._showContentViewForIdentifier(WebInspector.ScriptClusterTimelineView.EventsIdentifier);
     }
 
     showProfile()
     {
         if (!this._canShowProfileView())
-            return showDetails();
+            return this.showEvents();
 
         return this._showContentViewForIdentifier(WebInspector.ScriptClusterTimelineView.ProfileIdentifier);
     }
@@ -138,8 +137,8 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         console.assert(contentView);
         if (!contentView)
             return null;
-        if (contentView === this._detailsContentView)
-            return this._detailsPathComponent;
+        if (contentView === this._eventsContentView)
+            return this._eventsPathComponent;
         if (contentView === this._profileContentView)
             return this._profilePathComponent;
         console.error("Unknown contentView.");
@@ -151,8 +150,8 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         console.assert(contentView);
         if (!contentView)
             return null;
-        if (contentView === this._detailsContentView)
-            return WebInspector.ScriptClusterTimelineView.DetailsIdentifier;
+        if (contentView === this._eventsContentView)
+            return WebInspector.ScriptClusterTimelineView.EventsIdentifier;
         if (contentView === this._profileContentView)
             return WebInspector.ScriptClusterTimelineView.ProfileIdentifier;
         console.error("Unknown contentView.");
@@ -164,8 +163,8 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         let contentViewToShow = null;
 
         switch (identifier) {
-        case WebInspector.ScriptClusterTimelineView.DetailsIdentifier:
-            contentViewToShow = this.detailsContentView;
+        case WebInspector.ScriptClusterTimelineView.EventsIdentifier:
+            contentViewToShow = this.eventsContentView;
             break;
         case WebInspector.ScriptClusterTimelineView.ProfileIdentifier:
             contentViewToShow = this.profileContentView;
@@ -173,7 +172,7 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         }
 
         if (!contentViewToShow)
-            contentViewToShow = this.detailsContentView;
+            contentViewToShow = this.eventsContentView;
 
         console.assert(contentViewToShow);
 
@@ -190,7 +189,7 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
     _scriptClusterViewCurrentContentViewDidChange(event)
     {
         let currentContentView = this._contentViewContainer.currentContentView;
-        let previousContentView = currentContentView === this._detailsContentView ? this._profileContentView : this._detailsContentView;
+        let previousContentView = currentContentView === this._eventsContentView ? this._profileContentView : this._eventsContentView;
 
         currentContentView.zeroTime = previousContentView.zeroTime;
         currentContentView.startTime = previousContentView.startTime;
@@ -203,5 +202,5 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
 
 WebInspector.ScriptClusterTimelineView.ContentViewIdentifierCookieKey = "script-cluster-timeline-view-identifier";
 
-WebInspector.ScriptClusterTimelineView.DetailsIdentifier = "details";
+WebInspector.ScriptClusterTimelineView.EventsIdentifier = "events";
 WebInspector.ScriptClusterTimelineView.ProfileIdentifier = "profile";

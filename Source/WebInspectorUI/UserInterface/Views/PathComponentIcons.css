@@ -74,3 +74,17 @@
 .program-icon .icon {
     content: url(../Images/Program.svg);
 }
+
+.events-icon .icon {
+    content: url(../Images/Events.svg);
+}
+
+.call-trees-icon .icon {
+    content: url(../Images/CallTrees.svg);
+}
+
+/* FIXME: <https://webkit.org/b/155077> [GTK] Web Inspector: Add new GTK+ icons for different Script Timeline Views */
+body:not(.mac-platform, .windows-platform) .events-icon .icon,
+body:not(.mac-platform, .windows-platform) .call-trees-icon .icon {
+    content: url(../Images/ResultLine.svg);
+}

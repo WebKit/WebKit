@@ -1,5 +1,40 @@
 2016-03-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Have separate path component for Script Timeline content views
+        https://bugs.webkit.org/show_bug.cgi?id=155075
+        <rdar://problem/24996564>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Images/CallTrees.svg: Added.
+        * UserInterface/Images/Events.svg: Added.
+        New icons based off of ResultLine.svg.
+
+        * UserInterface/Views/PathComponentIcons.css:
+        (.events-icon .icon):
+        (.call-trees-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .call-trees-icon .icon):
+        Use the new icons and fallback to ResultLine.svg for other ports.
+
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView):
+        (WebInspector.ScriptClusterTimelineView.prototype.get eventsContentView):
+        (WebInspector.ScriptClusterTimelineView.prototype.showEvents):
+        (WebInspector.ScriptClusterTimelineView.prototype.showProfile):
+        (WebInspector.ScriptClusterTimelineView.prototype._pathComponentForContentView):
+        (WebInspector.ScriptClusterTimelineView.prototype._identifierForContentView):
+        (WebInspector.ScriptClusterTimelineView.prototype._showContentViewForIdentifier):
+        (WebInspector.ScriptClusterTimelineView.prototype._scriptClusterViewCurrentContentViewDidChange):
+        (WebInspector.ScriptClusterTimelineView.prototype.get detailsContentView): Deleted.
+        (WebInspector.ScriptClusterTimelineView.prototype.showDetails): Deleted.
+        Rename "Details" to "Events".
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.contentBrowserTreeElementForRepresentedObject): Deleted.
+        Always include the top level "Details" component.
+
+2016-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Add back support for a heavy / bottom up profile view
         https://bugs.webkit.org/show_bug.cgi?id=140578
         <rdar://problem/19506794>
