@@ -85,14 +85,12 @@ JSCustomElementInterface* CustomElementDefinitions::findInterface(const Qualifie
 
 JSCustomElementInterface* CustomElementDefinitions::findInterface(const AtomicString& name) const
 {
-    auto it = m_nameMap.find(name);
-    return it == m_nameMap.end() ? nullptr : it->value.get();
+    return m_nameMap.get(name);
 }
 
 JSCustomElementInterface* CustomElementDefinitions::findInterface(const JSC::JSObject* constructor) const
 {
-    auto it = m_constructorMap.find(constructor);
-    return it == m_constructorMap.end() ? nullptr : it->value;
+    return m_constructorMap.get(constructor);
 }
 
 bool CustomElementDefinitions::containsConstructor(const JSC::JSObject* constructor) const
