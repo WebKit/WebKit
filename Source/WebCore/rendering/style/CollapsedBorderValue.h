@@ -62,6 +62,8 @@ public:
         return width() == o.width() && style() == o.style() && precedence() == o.precedence();
     }
 
+    static LayoutUnit adjustedCollapsedBorderWidth(float borderWidth, float deviceScaleFactor, bool roundUp);
+
 private:
     LayoutUnit m_width;
     RGBA32 m_color { 0 };
@@ -70,6 +72,12 @@ private:
     unsigned m_precedence : 3; // EBorderPrecedence
     unsigned m_transparent : 1;
 };
+
+inline LayoutUnit CollapsedBorderValue::adjustedCollapsedBorderWidth(float borderWidth, float deviceScaleFactor, bool roundUp)
+{
+    float halfCollapsedBorderWidth = (borderWidth + (roundUp ? (1 / deviceScaleFactor) : 0)) / 2;
+    return floorToDevicePixel(halfCollapsedBorderWidth, deviceScaleFactor);
+}
 
 } // namespace WebCore
 

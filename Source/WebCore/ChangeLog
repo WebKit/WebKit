@@ -1,3 +1,37 @@
+2016-03-05  Zalan Bujtas  <zalan@apple.com>
+
+        Make table collapsed borders subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=150383
+
+        Reviewed by Simon Fraser.
+
+        This patch enables authors to 
+        - set subpixel width on collapsed borders
+        - and push those borders to subpixel positions.
+
+        Test: fast/table/collapsed-border-with-odd-pixel-width.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcBorderStart):
+        (WebCore::RenderTable::calcBorderEnd):
+        (WebCore::RenderTable::outerBorderBefore):
+        (WebCore::RenderTable::outerBorderAfter):
+        (WebCore::RenderTable::outerBorderStart):
+        (WebCore::RenderTable::outerBorderEnd):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::borderHalfStart):
+        (WebCore::RenderTableCell::borderHalfEnd):
+        (WebCore::RenderTableCell::borderHalfBefore):
+        (WebCore::RenderTableCell::borderHalfAfter):
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcOuterBorderBefore):
+        (WebCore::RenderTableSection::calcOuterBorderAfter):
+        (WebCore::RenderTableSection::calcOuterBorderStart):
+        (WebCore::RenderTableSection::calcOuterBorderEnd):
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::adjustedCollapsedBorderWidth):
+
 2016-03-05  Sam Weinig  <sam@webkit.org>
 
         Add support for processing the autofill field name out of form control elements ultimately to aid input methods

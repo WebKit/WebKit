@@ -1,3 +1,18 @@
+2016-03-05  Zalan Bujtas  <zalan@apple.com>
+
+        Make table collapsed borders subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=150383
+
+        Reviewed by Simon Fraser.
+
+        This patch enables authors to 
+        - set subpixel width on collapsed borders
+        - and push those borders to subpixel positions.
+
+        * fast/table/collapsed-border-with-odd-pixel-width-expected.html: Added.
+        * fast/table/collapsed-border-with-odd-pixel-width.html: Added.
+        * fast/table/hidpi-collapsed-border-with-odd-pixel-width-expected.html:
+
 2016-03-05  Sam Weinig  <sam@webkit.org>
 
         Add support for processing the autofill field name out of form control elements ultimately to aid input methods
