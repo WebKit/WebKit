@@ -1,3 +1,11 @@
+2016-03-06  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Gardening after r197627.
+
+        Unreviewed.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-03-06  Filip Pizlo  <fpizlo@apple.com>
 
         RegExpMatchesArray doesn't know how to have a bad time
