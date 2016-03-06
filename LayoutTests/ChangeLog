@@ -1,3 +1,11 @@
+2016-03-06  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Gardening after r197627.
+
+        Unreviewed.
+
+        * platform/ios-simulator/css2.1/20110323/border-conflict-style-088-expected.txt:
+
 2016-03-05  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Gardening after r197627.
