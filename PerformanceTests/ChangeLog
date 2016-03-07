@@ -1,5 +1,19 @@
 2016-03-03  Jon Lee  <jonlee@apple.com>
 
+        Make sure multiply test particles have at least some opacity
+        https://bugs.webkit.org/show_bug.cgi?id=155027
+
+        Reviewed by Simon Fraser.
+
+        * Animometer/tests/master/resources/multiply.js:
+        (initialize): Have the elements spin a little faster to make it
+        more obvious when the system is being stressed.
+        (_addTile):
+        (animate): Make sure each element being animated has at least 1%
+        opacity.
+
+2016-03-03  Jon Lee  <jonlee@apple.com>
+
         Update image test
         https://bugs.webkit.org/show_bug.cgi?id=154962
 

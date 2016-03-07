@@ -23,7 +23,7 @@ var MultiplyStage = Utilities.createSubclass(Stage,
         var maxSide = Math.floor(y / tileStride) * 2 + 1;
         this._centerSpiralCount = maxSide * maxSide;
         for (var i = 0; i < this._centerSpiralCount; ++i) {
-            this._addTile(x, y, tileSize, i % 360);
+            this._addTile(x, y, tileSize, Stage.randomInt(0, 359));
 
             if (i == nextIndex) {
                 direction = (direction + 1) % 4;
@@ -47,7 +47,7 @@ var MultiplyStage = Utilities.createSubclass(Stage,
 
             if (Math.floor(i / maxSide) % 2 == 1)
                 sideX = this.size.width - sideX - tileSize + 1;
-            this._addTile(sideX, sideY, tileSize, (6 * i) % 360);
+            this._addTile(sideX, sideY, tileSize, Stage.randomInt(0, 359));
         }
     },
 
@@ -62,11 +62,10 @@ var MultiplyStage = Utilities.createSubclass(Stage,
         tile.style.visibility = "hidden";
 
         var distance = 1 / tileSize * this.size.multiply(0.5).subtract(new Point(x + halfTileSize, y + halfTileSize)).length();
-
         this.tiles.push({
             element: tile,
             rotate: rotateDeg,
-            step: Math.max(1, distance / 4),
+            step: Math.max(3, distance / 1.5),
             distance: distance,
             active: false
         });
@@ -97,7 +96,7 @@ var MultiplyStage = Utilities.createSubclass(Stage,
             tile.rotate += tile.step;
             tile.element.style.transform = "rotate(" + tile.rotate + "deg)";
 
-            var influence = 1 - (tile.distance * this._distanceFactor);
+            var influence = Math.max(.01, 1 - (tile.distance * this._distanceFactor));
             tile.element.style.backgroundColor = hslPrefix + l * Math.tan(influence / 1.25) + "%," + influence + ")";
         }
 
