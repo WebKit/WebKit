@@ -1,3 +1,12 @@
+2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline inspector/model/remote-object.html for mac after r197626
+        https://bugs.webkit.org/show_bug.cgi?id=155115
+
+        Unreviewed test gardening.
+
+        * platform/mac/inspector/model/remote-object-expected.txt:
+
 2016-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS Simulator] Three object-position tests failing after r197618

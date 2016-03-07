@@ -1919,7 +1919,7 @@ EXPRESSION: input = document.createElement('input'); input.type = 'password'; in
         "_listeners": null,
         "_name": "autocomplete",
         "_type": "string",
-        "_value": "on"
+        "_value": ""
       },
       {
         "_listeners": null,
