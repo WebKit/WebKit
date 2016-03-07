@@ -1,3 +1,37 @@
+2016-03-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] StringObject.{put, defineOwnProperty} should realize indexed properties
+        https://bugs.webkit.org/show_bug.cgi?id=155089
+
+        Reviewed by Geoffrey Garen.
+
+        Through implementing Reflect.set[1], we found StringObject does not obey the spec.
+        StringObject::put should call putByIndex if the given propertyName is index.
+        And StringObject::defineOwnProperty should recognize indexed properties since
+        JSObject::defineOwnIndexedProperty is specialized to JSObject layout.
+        Before calling JSObject::defineOwnProperty,
+        StringObject should handle its special indexed own properties.
+        It is responsibility of StringObject::defineOwnProperty.
+
+        And the logic is cleaned up by using validateAndApplyPropertyDescriptor.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=155024
+
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        (JSC::StringObject::putByIndex):
+        (JSC::isStringOwnProperty):
+        (JSC::StringObject::defineOwnProperty):
+        (JSC::StringObject::deleteProperty):
+        * tests/stress/string-object-define-own-property.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        * tests/stress/string-object-put-by-index.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (testSloppy):
+        (testStrict):
+
 2016-03-06  Brian Burg  <bburg@apple.com>
 
         Web Inspector: the protocol generator should have separate prefix options for Objective-C classes and filenames

@@ -67,7 +67,9 @@ void StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return;
     }
-    JSObject::put(cell, exec, propertyName, value, slot);
+    if (Optional<uint32_t> index = parseIndex(propertyName))
+        return putByIndex(cell, exec, index.value(), value, slot.isStrictMode());
+    return JSObject::put(cell, exec, propertyName, value, slot);
 }
 
 void StringObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
@@ -78,49 +80,37 @@ void StringObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyNa
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return;
     }
-    JSObject::putByIndex(cell, exec, propertyName, value, shouldThrow);
+    return JSObject::putByIndex(cell, exec, propertyName, value, shouldThrow);
+}
+
+static bool isStringOwnProperty(ExecState* exec, StringObject* object, PropertyName propertyName)
+{
+    if (propertyName == exec->propertyNames().length)
+        return true;
+    if (Optional<uint32_t> index = parseIndex(propertyName)) {
+        if (object->internalValue()->canGetIndex(index.value()))
+            return true;
+    }
+    return false;
 }
 
 bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
 {
     StringObject* thisObject = jsCast<StringObject*>(object);
 
-    if (propertyName == exec->propertyNames().length) {
-        bool isExtensible = object->isExtensible(exec);
+    if (isStringOwnProperty(exec, thisObject, propertyName)) {
+        // The current PropertyDescriptor is always
+        // PropertyDescriptor{[[Value]]: value, [[Writable]]: false, [[Enumerable]]: true, [[Configurable]]: false}.
+        // This ensures that any property descriptor cannot change the existing one.
+        // Here, simply return the result of validateAndApplyPropertyDescriptor.
+        // https://tc39.github.io/ecma262/#sec-string-exotic-objects-getownproperty-p
+        PropertyDescriptor current;
+        bool isCurrentDefined = thisObject->getOwnPropertyDescriptor(exec, propertyName, current);
+        ASSERT(isCurrentDefined);
+        bool isExtensible = thisObject->isExtensible(exec);
         if (exec->hadException())
             return false;
-        if (!isExtensible) {
-            if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to define property on object that is not extensible.")));
-            return false;
-        }
-        if (descriptor.configurablePresent() && descriptor.configurable()) {
-            if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property.")));
-            return false;
-        }
-        if (descriptor.enumerablePresent() && descriptor.enumerable()) {
-            if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property.")));
-            return false;
-        }
-        if (descriptor.isAccessorDescriptor()) {
-            if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change access mechanism for an unconfigurable property.")));
-            return false;
-        }
-        if (descriptor.writablePresent() && descriptor.writable()) {
-            if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property.")));
-            return false;
-        }
-        if (!descriptor.value())
-            return true;
-        if (propertyName == exec->propertyNames().length && sameValue(exec, descriptor.value(), jsNumber(thisObject->internalValue()->length())))
-            return true;
-        if (throwException)
-            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property.")));
-        return false;
+        return validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, isExtensible, descriptor, isCurrentDefined, current, throwException);
     }
 
     return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
@@ -132,9 +122,8 @@ bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName pr
     if (propertyName == exec->propertyNames().length)
         return false;
     Optional<uint32_t> index = parseIndex(propertyName);
-    if (index && thisObject->internalValue()->canGetIndex(index.value())) {
+    if (index && thisObject->internalValue()->canGetIndex(index.value()))
         return false;
-    }
     return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 
