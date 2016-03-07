@@ -229,7 +229,11 @@ private:
 
     bool willStoreValueSlow(VM&, PropertyName, JSValue);
     void makeTopSlow(VM&, PropertyName);
-    void set(const ConcurrentJITLocker&, VM&, PropertyName, JSValue, Descriptor);
+
+    // Helper for willStoreValueSlow() and makeTopSlow(). This returns true if we should fire the
+    // watchpoint set.
+    bool set(const ConcurrentJITLocker&, VM&, Descriptor);
+    
     void removeStructure();
 
     mutable ConcurrentJITLock m_lock;
