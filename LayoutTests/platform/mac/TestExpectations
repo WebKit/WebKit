@@ -1332,3 +1332,5 @@ webkit.org/b/152506 webgl/1.0.2/conformance/extensions/get-extension.html [ Pass
 webkit.org/b/154709 [ ElCapitan+ ] fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
 
 webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
+
+webkit.org/b/155140 js/promises-tests/promises-tests-2-3-3.html [ Pass Failure ]

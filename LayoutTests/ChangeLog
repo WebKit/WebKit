@@ -1,5 +1,14 @@
 2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking js/promises-tests/promises-tests-2-3-3.html as flaky on mac
+        https://bugs.webkit.org/show_bug.cgi?id=155140
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking inspector/console/addInspectedNode.html as flaky on Yosemite WK2
         https://bugs.webkit.org/show_bug.cgi?id=155138
 
