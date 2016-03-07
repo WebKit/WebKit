@@ -296,6 +296,8 @@ webkit.org/b/152492 [ Debug ] inspector/debugger/break-on-exception-catch.html [
 
 webkit.org/b/155050 storage/indexeddb/intversion-open-in-upgradeneeded.html [ Skip ]
 
+webkit.org/b/155138 [ Yosemite ] inspector/console/addInspectedNode.html [ Pass Timeout ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

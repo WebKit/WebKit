@@ -1,5 +1,14 @@
 2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking inspector/console/addInspectedNode.html as flaky on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=155138
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skipping css3/filters/huge-region-composited.html on ios-simulator in an 
         attempt to eliminate a flaky crash.
         https://bugs.webkit.org/show_bug.cgi?id=153933
