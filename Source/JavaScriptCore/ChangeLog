@@ -1,3 +1,25 @@
+2016-03-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Improve and64() and or64() with immediate on x86
+        https://bugs.webkit.org/show_bug.cgi?id=155104
+
+        Reviewed by Geoffrey Garen.
+
+        GetButterflyReadOnly was doing:
+            movq 0x8(%rbx), %r9
+            movq $0xfffffffffffffffc, %r11
+            andq %r11, %r9
+        There is no need for the move to load the immediate,
+        andq sign extend its immediate.
+
+        With this patch, we have:
+            movq 0x8(%rbx), %r9
+            andq $0xfffffffffffffffc, %r9
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::and64):
+        (JSC::MacroAssemblerX86_64::or64):
+
 2016-03-07  Brian Burg  <bburg@apple.com>
 
         Web Inspector: It should be possible to initialize generated ObjC protocol types from an NSDictionary payload

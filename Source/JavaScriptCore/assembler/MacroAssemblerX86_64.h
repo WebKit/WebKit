@@ -345,6 +345,12 @@ public:
 
     void and64(TrustedImmPtr imm, RegisterID srcDest)
     {
+        intptr_t intValue = imm.asIntptr();
+        if (intValue <= std::numeric_limits<int32_t>::max()
+            && intValue >= std::numeric_limits<int32_t>::min()) {
+            and64(TrustedImm32(static_cast<int32_t>(intValue)), srcDest);
+            return;
+        }
         move(imm, scratchRegister());
         and64(scratchRegister(), srcDest);
     }
@@ -487,10 +493,15 @@ public:
         m_assembler.orq_rr(src, dest);
     }
 
-    void or64(TrustedImm64 imm, RegisterID dest)
+    void or64(TrustedImm64 imm, RegisterID srcDest)
     {
+        if (imm.m_value <= std::numeric_limits<int32_t>::max()
+            && imm.m_value >= std::numeric_limits<int32_t>::min()) {
+            or64(TrustedImm32(static_cast<int32_t>(imm.m_value)), srcDest);
+            return;
+        }
         move(imm, scratchRegister());
-        or64(scratchRegister(), dest);
+        or64(scratchRegister(), srcDest);
     }
 
     void or64(TrustedImm32 imm, RegisterID dest)
