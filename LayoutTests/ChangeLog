@@ -1,5 +1,13 @@
 2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skip unsupported plugin tests from r197697 on ios-simulator
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skip storage/indexeddb/intversion-open-in-upgradeneeded.html on mac-wk2
         https://bugs.webkit.org/show_bug.cgi?id=155050
 

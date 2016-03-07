@@ -87,6 +87,10 @@ http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html
+http/tests/security/contentSecurityPolicy/object-src-param-code-blocked.html
+http/tests/security/contentSecurityPolicy/object-src-param-movie-blocked.html
+http/tests/security/contentSecurityPolicy/object-src-param-src-blocked.html
+http/tests/security/contentSecurityPolicy/object-src-param-url-blocked.html
 
 # Pointer-lock not supported on iOS
 pointer-lock
