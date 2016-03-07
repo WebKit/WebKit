@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -141,6 +141,11 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
                 myOut.print("Stringobject");
             else
                 isTop = false;
+    
+            if (value & SpecRegExpObject)
+                myOut.print("Regexpobject");
+            else
+                isTop = false;
         }
 
         if ((value & SpecString) == SpecString)
@@ -257,6 +262,8 @@ static const char* speculationToAbbreviatedString(SpeculatedType prediction)
         return "<ScopedArguments>";
     if (isStringObjectSpeculation(prediction))
         return "<StringObject>";
+    if (isRegExpObjectSpeculation(prediction))
+        return "<RegExpObject>";
     if (isStringOrStringObjectSpeculation(prediction))
         return "<StringOrStringObject>";
     if (isObjectSpeculation(prediction))
@@ -336,6 +343,9 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
     
     if (classInfo == StringObject::info())
         return SpecStringObject;
+
+    if (classInfo == RegExpObject::info())
+        return SpecRegExpObject;
     
     if (classInfo->isSubClassOf(JSFunction::info()))
         return SpecFunction;

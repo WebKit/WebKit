@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1358,6 +1358,7 @@ struct Node {
         case RegExpTest:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
+        case StringReplace:
             return true;
         default:
             return false;
@@ -1966,6 +1967,11 @@ struct Node {
         return isStringOrStringObjectSpeculation(prediction());
     }
 
+    bool shouldSpeculateRegExpObject()
+    {
+        return isRegExpObjectSpeculation(prediction());
+    }
+    
     bool shouldSpeculateSymbol()
     {
         return isSymbolSpeculation(prediction());

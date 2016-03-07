@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1070,6 +1070,18 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case RegExpTest:
         read(RegExpState);
         write(RegExpState);
+        return;
+
+    case StringReplace:
+        if (node->child1().useKind() == StringUse
+            && node->child2().useKind() == RegExpObjectUse
+            && node->child3().useKind() == StringUse) {
+            read(RegExpState);
+            write(RegExpState);
+            return;
+        }
+        read(World);
+        write(Heap);
         return;
 
     case StringCharAt:

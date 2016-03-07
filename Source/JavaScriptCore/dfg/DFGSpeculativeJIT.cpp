@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -6623,6 +6623,15 @@ void SpeculativeJIT::speculateFinalObject(Edge edge)
     speculateCellType(edge, operand.gpr(), SpecFinalObject, FinalObjectType);
 }
 
+void SpeculativeJIT::speculateRegExpObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecRegExpObject))
+        return;
+    
+    SpeculateCellOperand operand(this, edge);
+    speculateCellType(edge, operand.gpr(), SpecRegExpObject, RegExpObjectType);
+}
+
 void SpeculativeJIT::speculateObjectOrOther(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecObject | SpecOther))
@@ -6885,6 +6894,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case FinalObjectUse:
         speculateFinalObject(edge);
+        break;
+    case RegExpObjectUse:
+        speculateRegExpObject(edge);
         break;
     case ObjectOrOtherUse:
         speculateObjectOrOther(edge);

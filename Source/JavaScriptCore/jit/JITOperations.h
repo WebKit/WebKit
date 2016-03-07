@@ -254,6 +254,7 @@ typedef char* JIT_OPERATION (*P_JITOperation_EZZ)(ExecState*, int32_t, int32_t);
 typedef SlowPathReturnType JIT_OPERATION (*Sprt_JITOperation_ECli)(ExecState*, CallLinkInfo*);
 typedef StringImpl* JIT_OPERATION (*T_JITOperation_EJss)(ExecState*, JSString*);
 typedef JSString* JIT_OPERATION (*Jss_JITOperation_EZ)(ExecState*, int32_t);
+typedef JSString* JIT_OPERATION (*Jss_JITOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

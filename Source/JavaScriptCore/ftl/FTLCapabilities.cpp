@@ -223,6 +223,7 @@ inline CapabilityLevel canCompile(Node* node)
     case RegExpExec:
     case RegExpTest:
     case NewRegexp:
+    case StringReplace:
         // These are OK.
         break;
 
@@ -465,6 +466,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case StringOrStringObjectUse:
                 case SymbolUse:
                 case FinalObjectUse:
+                case RegExpObjectUse:
                 case NotCellUse:
                 case OtherUse:
                 case MiscUse:

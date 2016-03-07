@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +90,9 @@ void printInternal(PrintStream& out, UseKind useKind)
         return;
     case FinalObjectUse:
         out.print("FinalObject");
+        return;
+    case RegExpObjectUse:
+        out.print("RegExpObject");
         return;
     case ObjectOrOtherUse:
         out.print("ObjectOrOther");

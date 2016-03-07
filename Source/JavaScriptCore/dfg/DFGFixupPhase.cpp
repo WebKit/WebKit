@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -881,6 +881,18 @@ private:
         case RegExpTest: {
             fixEdge<CellUse>(node->child1());
             fixEdge<CellUse>(node->child2());
+            break;
+        }
+
+        case StringReplace: {
+            if (node->child1()->shouldSpeculateString()
+                && node->child2()->shouldSpeculateRegExpObject()
+                && node->child3()->shouldSpeculateString()) {
+                fixEdge<StringUse>(node->child1());
+                fixEdge<RegExpObjectUse>(node->child2());
+                fixEdge<StringUse>(node->child3());
+                break;
+            }
             break;
         }
             
