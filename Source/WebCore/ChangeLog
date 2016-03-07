@@ -1,3 +1,33 @@
+2016-03-07  Daniel Bates  <dabates@apple.com>
+
+        CSP: object-src directive should prohibit creation of nested browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=153153
+        <rdar://problem/24383209>
+
+        Reviewed by Brent Fulgham.
+
+        Enforce the Content Security Policy object-src directive when fetching a URL for content
+        that will cause an HTML object or HTML embed element to act as a nested browsing context
+        (i.e. behave as if the content was loaded in an HTML iframe element). This makes our
+        enforcement of the object-src directive match the behavior of the object-src directive
+        in the Content Security Policy 2.0 spec., <http://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+
+        Tests: http/tests/security/contentSecurityPolicy/embed-src-url-blocked.html
+               http/tests/security/contentSecurityPolicy/embed-src-url-blocked2.html
+               http/tests/security/contentSecurityPolicy/object-src-param-src-blocked2.html
+               http/tests/security/contentSecurityPolicy/object-src-url-blocked2.html
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::isPluginContentAllowedByContentSecurityPolicy): Extracted from SubframeLoader::pluginIsLoadable().
+        Checks if the plugin element is allowed by the Content Security Policy to load the URL and MIME type.
+        (WebCore::SubframeLoader::pluginIsLoadable): Extract out the logic for determining if
+        the plugin content is allowed to load by the Content Security Policy into SubframeLoader::isPluginContentAllowedByContentSecurityPolicy()
+        and make use of this function.
+        (WebCore::SubframeLoader::requestObject): Modified to call SubframeLoader::isPluginContentAllowedByContentSecurityPolicy()
+        before loading plugin content into a sub frame. If the plugin content is not allowed to load then we
+        mark the plugin as unavailable with the reason being that it was blocked by the Content Security Policy.
+        * loader/SubframeLoader.h:
+
 2016-03-06  Gavin Barraclough  <barraclough@apple.com>
 
         Convert DOMTimer to std::chrono::milliseconds

@@ -845,10 +845,6 @@ webkit.org/b/153151 http/tests/security/contentSecurityPolicy/icon-allowed.html 
 webkit.org/b/153151 http/tests/security/contentSecurityPolicy/icon-blocked.html [ Failure ]
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html # Needs testRunner.getManifestThen()
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html # Needs testRunner.getManifestThen()
-webkit.org/b/153153 http/tests/security/contentSecurityPolicy/object-src-param-code-blocked.html
-webkit.org/b/153153 http/tests/security/contentSecurityPolicy/object-src-param-movie-blocked.html
-webkit.org/b/153153 http/tests/security/contentSecurityPolicy/object-src-param-src-blocked.html
-webkit.org/b/153153 http/tests/security/contentSecurityPolicy/object-src-param-url-blocked.html
 webkit.org/b/153154 http/tests/security/contentSecurityPolicy/redirect-does-not-match-paths.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/style-src-blocked-error-event.html
 webkit.org/b/153159 http/tests/security/contentSecurityPolicy/image-document-default-src-none.html [ Failure ]

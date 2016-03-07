@@ -1,3 +1,35 @@
+2016-03-07  Daniel Bates  <dabates@apple.com>
+
+        CSP: object-src directive should prohibit creation of nested browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=153153
+        <rdar://problem/24383209>
+
+        Reviewed by Brent Fulgham.
+
+        Add test to ensure that we enforce the Content Security Policy object-src directive
+        for HTML object and HTML embed elements that behave like an HTML iframe element.
+
+        * TestExpectations: Remove entries for tests that pass.
+        * http/tests/security/contentSecurityPolicy/embed-src-url-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/embed-src-url-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/embed-src-url-blocked2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/embed-src-url-blocked2.html: Added.
+
+        * http/tests/security/contentSecurityPolicy/object-src-param-code-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/object-src-param-movie-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/object-src-param-movie-blocked.html:
+        * http/tests/security/contentSecurityPolicy/object-src-param-src-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/object-src-param-src-blocked.html:
+        * http/tests/security/contentSecurityPolicy/object-src-param-src-blocked2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-param-src-blocked2.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-param-url-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/object-src-param-url-blocked.html:
+        Simplify the code used in the above tests and update incorrect expected results.
+
+        * http/tests/security/contentSecurityPolicy/object-src-url-blocked2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-url-blocked2.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/object-src-param.js: Removed.
+
 2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking js/arraybuffer-wrappers.html as a flaky timeout on Mac
