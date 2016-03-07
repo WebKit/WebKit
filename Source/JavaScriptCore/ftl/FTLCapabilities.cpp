@@ -218,6 +218,9 @@ inline CapabilityLevel canCompile(Node* node)
     case PutSetterByVal:
     case CopyRest:
     case GetRestLength:
+    case RegExpExec:
+    case RegExpTest:
+    case NewRegexp:
         // These are OK.
         break;
 

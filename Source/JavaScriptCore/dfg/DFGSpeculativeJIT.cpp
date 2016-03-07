@@ -5910,46 +5910,6 @@ void SpeculativeJIT::compileNotifyWrite(Node* node)
     noResult(node);
 }
 
-bool SpeculativeJIT::compileRegExpExec(Node* node)
-{
-    unsigned branchIndexInBlock = detectPeepHoleBranch();
-    if (branchIndexInBlock == UINT_MAX)
-        return false;
-    Node* branchNode = m_block->at(branchIndexInBlock);
-    ASSERT(node->adjustedRefCount() == 1);
-
-    BasicBlock* taken = branchNode->branchData()->taken.block;
-    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
-    
-    bool invert = false;
-    if (taken == nextBlock()) {
-        invert = true;
-        BasicBlock* tmp = taken;
-        taken = notTaken;
-        notTaken = tmp;
-    }
-
-    SpeculateCellOperand base(this, node->child1());
-    SpeculateCellOperand argument(this, node->child2());
-    GPRReg baseGPR = base.gpr();
-    GPRReg argumentGPR = argument.gpr();
-    
-    flushRegisters();
-    GPRFlushedCallResult result(this);
-    callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
-    m_jit.exceptionCheck();
-
-    branchTest32(invert ? JITCompiler::Zero : JITCompiler::NonZero, result.gpr(), taken);
-    jump(notTaken);
-
-    use(node->child1());
-    use(node->child2());
-    m_indexInBlock = branchIndexInBlock;
-    m_currentNode = branchNode;
-
-    return true;
-}
-
 void SpeculativeJIT::compileIsObjectOrNull(Node* node)
 {
     JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
