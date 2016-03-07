@@ -589,7 +589,7 @@ namespace Inspector {
 class ObjCInspectorCommandDomainBackendDispatcher final : public AlternateCommandDomainBackendDispatcher {
 public:
     ObjCInspectorCommandDomainBackendDispatcher(id<TestProtocolCommandDomainDomainHandler> handler) { m_delegate = handler; }
-    void commandWithEnumReturnValue(long requestId) override;
+    virtual void commandWithEnumReturnValue(long requestId) override;
 private:
     RetainPtr<id<TestProtocolCommandDomainDomainHandler>> m_delegate;
 };

@@ -765,7 +765,7 @@ namespace Inspector {
 class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1BackendDispatcher {
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<TestProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
-    void loadResource1(long requestId) override;
+    virtual void loadResource1(long requestId) override;
 private:
     RetainPtr<id<TestProtocolNetwork1DomainHandler>> m_delegate;
 };
@@ -775,13 +775,13 @@ private:
 class ObjCInspectorNetwork3BackendDispatcher final : public AlternateNetwork3BackendDispatcher {
 public:
     ObjCInspectorNetwork3BackendDispatcher(id<TestProtocolNetwork3DomainHandler> handler) { m_delegate = handler; }
-    void loadResource1(long requestId) override;
-    void loadResource2(long requestId) override;
-    void loadResource3(long requestId) override;
-    void loadResource4(long requestId) override;
-    void loadResource5(long requestId) override;
-    void loadResource6(long requestId) override;
-    void loadResource7(long requestId) override;
+    virtual void loadResource1(long requestId) override;
+    virtual void loadResource2(long requestId) override;
+    virtual void loadResource3(long requestId) override;
+    virtual void loadResource4(long requestId) override;
+    virtual void loadResource5(long requestId) override;
+    virtual void loadResource6(long requestId) override;
+    virtual void loadResource7(long requestId) override;
 private:
     RetainPtr<id<TestProtocolNetwork3DomainHandler>> m_delegate;
 };

@@ -843,10 +843,10 @@ namespace Inspector {
 class ObjCInspectorDatabaseBackendDispatcher final : public AlternateDatabaseBackendDispatcher {
 public:
     ObjCInspectorDatabaseBackendDispatcher(id<TestProtocolDatabaseDomainHandler> handler) { m_delegate = handler; }
-    void executeSQLSyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) override;
-    void executeSQLAsyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) override;
-    void executeSQLSync(long requestId, int in_databaseId, const String& in_query) override;
-    void executeSQLAsync(long requestId, int in_databaseId, const String& in_query) override;
+    virtual void executeSQLSyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) override;
+    virtual void executeSQLAsyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) override;
+    virtual void executeSQLSync(long requestId, int in_databaseId, const String& in_query) override;
+    virtual void executeSQLAsync(long requestId, int in_databaseId, const String& in_query) override;
 private:
     RetainPtr<id<TestProtocolDatabaseDomainHandler>> m_delegate;
 };

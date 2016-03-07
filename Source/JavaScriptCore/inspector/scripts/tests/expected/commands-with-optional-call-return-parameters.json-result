@@ -744,8 +744,8 @@ namespace Inspector {
 class ObjCInspectorDatabaseBackendDispatcher final : public AlternateDatabaseBackendDispatcher {
 public:
     ObjCInspectorDatabaseBackendDispatcher(id<TestProtocolDatabaseDomainHandler> handler) { m_delegate = handler; }
-    void executeAllOptionalParameters(long requestId, const Inspector::InspectorArray* in_columnNames, const String* in_notes, const double* in_timestamp, const Inspector::InspectorObject* in_values, const Inspector::InspectorValue* in_payload, const int* in_databaseId, const Inspector::InspectorObject* in_sqlError, const String* in_screenColor, const Inspector::InspectorArray* in_alternateColors, const String* in_printColor) override;
-    void executeNoOptionalParameters(long requestId, const Inspector::InspectorArray& in_columnNames, const String& in_notes, double in_timestamp, const Inspector::InspectorObject& in_values, Inspector::InspectorValue in_payload, int in_databaseId, const Inspector::InspectorObject& in_sqlError, const String& in_screenColor, const Inspector::InspectorArray& in_alternateColors, const String& in_printColor) override;
+    virtual void executeAllOptionalParameters(long requestId, const Inspector::InspectorArray* in_columnNames, const String* in_notes, const double* in_timestamp, const Inspector::InspectorObject* in_values, const Inspector::InspectorValue* in_payload, const int* in_databaseId, const Inspector::InspectorObject* in_sqlError, const String* in_screenColor, const Inspector::InspectorArray* in_alternateColors, const String* in_printColor) override;
+    virtual void executeNoOptionalParameters(long requestId, const Inspector::InspectorArray& in_columnNames, const String& in_notes, double in_timestamp, const Inspector::InspectorObject& in_values, Inspector::InspectorValue in_payload, int in_databaseId, const Inspector::InspectorObject& in_sqlError, const String& in_screenColor, const Inspector::InspectorArray& in_alternateColors, const String& in_printColor) override;
 private:
     RetainPtr<id<TestProtocolDatabaseDomainHandler>> m_delegate;
 };

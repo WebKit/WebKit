@@ -1,3 +1,13 @@
+2016-03-06  Brian Burg  <bburg@apple.com>
+
+        Unreviewed, rebaseline inspector protocol generator tests after r197563.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+
 2016-03-06  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Improve DFG's Int32 ArithMul if one operand is a constant

@@ -632,7 +632,7 @@ namespace Inspector {
 class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1BackendDispatcher {
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<TestProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
-    void loadResource(long requestId) override;
+    virtual void loadResource(long requestId) override;
 private:
     RetainPtr<id<TestProtocolNetwork1DomainHandler>> m_delegate;
 };
