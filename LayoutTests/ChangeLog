@@ -1,3 +1,32 @@
+2016-03-07  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Add missing test for grid-template shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=155013
+
+        Reviewed by Sergio Villar Senin.
+
+        We support the following syntax in grid-template shorthand:
+            -webkit-grid-template: [foo1] 'a' 50px [foo2]
+                                   [bar1] 'b' 50px [bar2] / 100px;
+
+        But we don't have a test to check that grid-template-rows value
+        has the names of the same lines grouped. So it's:
+            [foo1] 50px [foo2 bar1] 50px [bar2];
+
+        This means that if we remove the third argument in
+        CSSParser::parseGridLineNames(), all the current tests are passing.
+
+        Without that argument, the value for grid-template-rows would be:
+            [foo1] 50px [foo2] [bar1] 50px [bar2];
+
+        Which is wrong.
+
+        This patch adds a specific test case for this which would fail
+        in that case.
+
+        * fast/css-grid-layout/grid-template-shorthand-get-set-expected.txt:
+        * fast/css-grid-layout/grid-template-shorthand-get-set.html:
+
 2016-03-06  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Some more gardening after r197627.
