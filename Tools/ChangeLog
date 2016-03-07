@@ -1,3 +1,18 @@
+2016-03-07  Aakash Jain  <aakash_jain@apple.com>
+
+        webkitpy should verify timestamp from CrashLogs while collecting all crash logs
+        https://bugs.webkit.org/show_bug.cgi?id=155000
+        <rdar://problem/24860219>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs._find_all_logs_darwin): Make sure that crash log timestamp is within expected 
+        time range, because file modification time is not always accurate.
+        (CrashLogs.get_timestamp_from_logs): Parse the timestamp from logs.
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (CrashLogsTest.test_get_timestamp_from_logs_darwin): Testcase for above function.
+
 2016-03-06  Alexey Proskuryakov  <ap@apple.com>
 
         build-webkit prints an error on iOS simulator bots

@@ -29,6 +29,7 @@
 
 import codecs
 import re
+import datetime
 
 
 class CrashLogs(object):
@@ -139,6 +140,13 @@ class CrashLogs(object):
                     result_name = "Unknown"
                     pid = 0
                     log_contents = self._host.filesystem.read_text_file(path)
+                    # Verify timestamp from log contents
+                    crash_time = self.get_timestamp_from_log(log_contents)
+                    if crash_time is not None and newer_than is not None:
+                        start_time = datetime.datetime.fromtimestamp(float(newer_than))
+                        if crash_time < start_time:
+                            continue
+
                     match = first_line_regex.match(log_contents[0:log_contents.find('\n')])
                     if match:
                         process_name = match.group('process_name')
@@ -158,3 +166,14 @@ class CrashLogs(object):
         if include_errors and errors and len(crash_logs) == 0:
             return errors
         return crash_logs
+
+    def get_timestamp_from_log(self, log_contents):
+        date_match = re.search('Date/Time:\s+(.+?)\n', log_contents)
+        if not date_match:
+            return None
+        try:
+            crash_time_str = ' '.join(date_match.group(1).split(" ")[0:2])
+            crash_time = datetime.datetime.strptime(crash_time_str, '%Y-%m-%d %H:%M:%S.%f')
+        except ValueError:
+            return None
+        return crash_time
