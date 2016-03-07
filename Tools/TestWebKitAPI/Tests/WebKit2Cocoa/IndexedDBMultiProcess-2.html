@@ -1,0 +1,32 @@
+<script>
+
+var request = window.indexedDB.open("IndexedDBMultiProcess", 2);
+
+request.onsuccess = function(event)
+{
+    var req = event.target.result.transaction("TestObjectStore").objectStore("TestObjectStore").get("foo");
+
+    req.onsuccess = function(event)
+    {
+        window.webkit.messageHandlers.testHandler.postMessage('Value of foo: ' + req.result);
+    }
+
+    req.onerror = function(event)
+    {
+        // Unexpected error
+        window.webkit.messageHandlers.testHandler.postMessage('Unexpected error');
+    }
+}
+
+request.onerror = function()
+{
+    // Unexpected error
+    window.webkit.messageHandlers.testHandler.postMessage('Unexpected error');
+}
+
+request.onupgradeneeded = function(event)
+{
+    // Unexpected upgrade needed
+    window.webkit.messageHandlers.testHandler.postMessage('Unexpected UpgradeNeeded');
+}
+</script>

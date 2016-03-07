@@ -49,27 +49,17 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static uint64_t generateConnectionToServerIdentifier()
-{
-    ASSERT(RunLoop::isMain());
-    static uint64_t identifier = 0;
-    return ++identifier;
-}
-
 Ref<WebIDBConnectionToServer> WebIDBConnectionToServer::create()
 {
     return adoptRef(*new WebIDBConnectionToServer);
 }
 
 WebIDBConnectionToServer::WebIDBConnectionToServer()
-    : m_identifier(generateConnectionToServerIdentifier())
 {
     relaxAdoptionRequirement();
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
 
-    send(Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer(m_identifier));
-
-    m_isOpenInServer = true;
+    m_isOpenInServer = sendSync(Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer(), m_identifier);
 }
 
 WebIDBConnectionToServer::~WebIDBConnectionToServer()

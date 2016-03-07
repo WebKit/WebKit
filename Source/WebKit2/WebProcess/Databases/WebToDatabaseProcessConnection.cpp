@@ -52,8 +52,8 @@ void WebToDatabaseProcessConnection::didReceiveMessage(IPC::Connection& connecti
 {
 #if ENABLE(INDEXED_DATABASE)
     if (decoder.messageReceiverName() == Messages::WebIDBConnectionToServer::messageReceiverName()) {
-        auto iterator = m_webIDBConnections.find(decoder.destinationID());
-        if (iterator != m_webIDBConnections.end())
+        auto iterator = m_webIDBConnectionsByIdentifier.find(decoder.destinationID());
+        if (iterator != m_webIDBConnectionsByIdentifier.end())
             iterator->value->didReceiveMessage(connection, decoder);
         return;
     }
@@ -74,9 +74,12 @@ void WebToDatabaseProcessConnection::didReceiveInvalidMessage(IPC::Connection&, 
 #if ENABLE(INDEXED_DATABASE)
 WebIDBConnectionToServer& WebToDatabaseProcessConnection::idbConnectionToServerForSession(const SessionID& sessionID)
 {
-    auto result = m_webIDBConnections.add(sessionID.sessionID(), nullptr);
-    if (result.isNewEntry)
+    auto result = m_webIDBConnectionsBySession.add(sessionID, nullptr);
+    if (result.isNewEntry) {
         result.iterator->value = WebIDBConnectionToServer::create();
+        ASSERT(!m_webIDBConnectionsByIdentifier.contains(result.iterator->value->identifier()));
+        m_webIDBConnectionsByIdentifier.set(result.iterator->value->identifier(), result.iterator->value);
+    }
 
     return *result.iterator->value;
 }
