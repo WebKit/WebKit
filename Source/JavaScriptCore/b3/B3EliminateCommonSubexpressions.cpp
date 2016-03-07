@@ -66,25 +66,85 @@ const bool verbose = false;
 
 typedef Vector<MemoryValue*, 1> MemoryMatches;
 
+class MemoryValueMap {
+public:
+    MemoryValueMap() { }
+
+    void add(MemoryValue* memory)
+    {
+        Matches& matches = m_map.add(memory->lastChild(), Matches()).iterator->value;
+        if (matches.contains(memory))
+            return;
+        matches.append(memory);
+    }
+
+    template<typename Functor>
+    void removeIf(const Functor& functor)
+    {
+        m_map.removeIf(
+            [&] (HashMap<Value*, Matches>::KeyValuePairType& entry) -> bool {
+                entry.value.removeAllMatching(
+                    [&] (Value* value) -> bool {
+                        if (MemoryValue* memory = value->as<MemoryValue>())
+                            return functor(memory);
+                        return true;
+                    });
+                return entry.value.isEmpty();
+            });
+    }
+
+    Matches* find(Value* ptr)
+    {
+        auto iter = m_map.find(ptr);
+        if (iter == m_map.end())
+            return nullptr;
+        return &iter->value;
+    }
+
+    template<typename Functor>
+    MemoryValue* find(Value* ptr, const Functor& functor)
+    {
+        if (Matches* matches = find(ptr)) {
+            for (Value* candidateValue : *matches) {
+                if (MemoryValue* candidateMemory = candidateValue->as<MemoryValue>()) {
+                    if (functor(candidateMemory))
+                        return candidateMemory;
+                }
+            }
+        }
+        return nullptr;
+    }
+
+    void dump(PrintStream& out) const
+    {
+        out.print("{");
+        CommaPrinter comma;
+        for (auto& entry : m_map)
+            out.print(comma, pointerDump(entry.key), "=>", pointerListDump(entry.value));
+        out.print("}");
+    }
+    
+private:
+    // This uses Matches for two reasons:
+    // - It cannot be a MemoryValue* because the key is imprecise. Many MemoryValues could have the
+    //   same key while being unaliased.
+    // - It can't be a MemoryMatches array because the MemoryValue*'s could be turned into Identity's.
+    HashMap<Value*, Matches> m_map;
+};
+
 struct ImpureBlockData {
     void dump(PrintStream& out) const
     {
-        out.print("{writes = ", writes, ", memoryValues = {");
-
-        CommaPrinter comma;
-        for (auto& entry : memoryValues)
-            out.print(comma, pointerDump(entry.key), "=>", pointerListDump(entry.value));
-
-        out.print("}}");
+        out.print(
+            "{reads = ", reads, ", writes = ", writes, ", storesAtHead = ", storesAtHead,
+            ", memoryValuesAtTail = ", memoryValuesAtTail, "}");
     }
-    
-    RangeSet<HeapRange> writes;
-    
-    // Maps an address base to all of the MemoryValues that do things to it. After we're done
-    // processing a map, this tells us the values at tail. Note that we use a Matches array
-    // because those MemoryValues could be turned into Identity's, and we need to check for this
-    // as we go.
-    HashMap<Value*, Matches> memoryValues;
+
+    RangeSet<HeapRange> reads; // This only gets used for forward store elimination.
+    RangeSet<HeapRange> writes; // This gets used for both load and store elimination.
+
+    MemoryValueMap storesAtHead;
+    MemoryValueMap memoryValuesAtTail;
 };
 
 class CSE {
@@ -104,20 +164,32 @@ public:
         
         m_proc.resetValueOwners();
 
+        // Summarize the impure effects of each block, and the impure values available at the end of
+        // each block. This doesn't edit code yet.
         for (BasicBlock* block : m_proc) {
             ImpureBlockData& data = m_impureBlockData[block];
             for (Value* value : *block) {
-                if (HeapRange writes = value->effects().writes)
+                Effects effects = value->effects();
+                MemoryValue* memory = value->as<MemoryValue>();
+                
+                if (memory && memory->isStore()
+                    && !data.reads.overlaps(memory->range())
+                    && !data.writes.overlaps(memory->range()))
+                    data.storesAtHead.add(memory);
+                data.reads.add(effects.reads);
+
+                if (HeapRange writes = effects.writes)
                     clobber(data, writes);
 
-                if (MemoryValue* memory = value->as<MemoryValue>())
-                    addMemoryValue(data, memory);
+                if (memory)
+                    data.memoryValuesAtTail.add(memory);
             }
 
             if (verbose)
                 dataLog("Block ", *block, ": ", data, "\n");
         }
 
+        // Perform CSE. This edits code.
         Vector<BasicBlock*> postOrder = m_proc.blocksInPostOrder();
         for (unsigned i = postOrder.size(); i--;) {
             m_block = postOrder[i];
@@ -133,6 +205,8 @@ public:
             m_impureBlockData[m_block] = m_data;
         }
 
+        // The previous pass might have requested that we insert code in some basic block other than
+        // the one that it was looking at. This inserts them.
         for (BasicBlock* block : m_proc) {
             for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
                 auto iter = m_sets.find(block->at(valueIndex));
@@ -162,30 +236,69 @@ private:
             return;
         }
 
+        MemoryValue* memory = m_value->as<MemoryValue>();
+        if (memory && processMemoryBeforeClobber(memory))
+            return;
+
         if (HeapRange writes = m_value->effects().writes)
             clobber(m_data, writes);
         
-        if (MemoryValue* memory = m_value->as<MemoryValue>())
-            processMemory(memory);
+        if (memory)
+            processMemoryAfterClobber(memory);
+    }
+
+    // Return true if we got rid of the operation. If you changed IR in this function, you have to
+    // set m_changed even if you also return true.
+    bool processMemoryBeforeClobber(MemoryValue* memory)
+    {
+        Value* value = memory->child(0);
+        Value* ptr = memory->lastChild();
+        HeapRange range = memory->range();
+        int32_t offset = memory->offset();
+
+        switch (memory->opcode()) {
+        case Store8:
+            return handleStoreBeforeClobber(
+                ptr, range,
+                [&] (MemoryValue* candidate) -> bool {
+                    return candidate->offset() == offset
+                        && ((candidate->opcode() == Store8 && candidate->child(0) == value)
+                            || ((candidate->opcode() == Load8Z || candidate->opcode() == Load8S)
+                                && candidate == value));
+                });
+        case Store16:
+            return handleStoreBeforeClobber(
+                ptr, range,
+                [&] (MemoryValue* candidate) -> bool {
+                    return candidate->offset() == offset
+                        && ((candidate->opcode() == Store16 && candidate->child(0) == value)
+                            || ((candidate->opcode() == Load16Z || candidate->opcode() == Load16S)
+                                && candidate == value));
+                });
+        case Store:
+            return handleStoreBeforeClobber(
+                ptr, range,
+                [&] (MemoryValue* candidate) -> bool {
+                    return candidate->offset() == offset
+                        && ((candidate->opcode() == Store && candidate->child(0) == value)
+                            || (candidate->opcode() == Load && candidate == value));
+                });
+        default:
+            return false;
+        }
     }
 
     void clobber(ImpureBlockData& data, HeapRange writes)
     {
         data.writes.add(writes);
         
-        data.memoryValues.removeIf(
-            [&] (HashMap<Value*, Matches>::KeyValuePairType& entry) -> bool {
-                entry.value.removeAllMatching(
-                    [&] (Value* value) -> bool {
-                        if (MemoryValue* memory = value->as<MemoryValue>())
-                            return memory->range().overlaps(writes);
-                        return true;
-                    });
-                return entry.value.isEmpty();
+        data.memoryValuesAtTail.removeIf(
+            [&] (MemoryValue* memory) {
+                return memory->range().overlaps(writes);
             });
     }
 
-    void processMemory(MemoryValue* memory)
+    void processMemoryAfterClobber(MemoryValue* memory)
     {
         Value* ptr = memory->lastChild();
         HeapRange range = memory->range();
@@ -301,10 +414,33 @@ private:
             break;
         }
 
-        case Store8:
-        case Store16:
+        case Store8: {
+            handleStoreAfterClobber(
+                ptr, range,
+                [&] (MemoryValue* candidate) -> bool {
+                    return candidate->opcode() == Store8
+                        && candidate->offset() == offset;
+                });
+            break;
+        }
+            
+        case Store16: {
+            handleStoreAfterClobber(
+                ptr, range,
+                [&] (MemoryValue* candidate) -> bool {
+                    return candidate->opcode() == Store16
+                        && candidate->offset() == offset;
+                });
+            break;
+        }
+            
         case Store: {
-            addMemoryValue(m_data, memory);
+            handleStoreAfterClobber(
+                ptr, range,
+                [&] (MemoryValue* candidate) -> bool {
+                    return candidate->opcode() == Store
+                        && candidate->offset() == offset;
+                });
             break;
         }
 
@@ -313,6 +449,82 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+    }
+
+    template<typename Filter>
+    bool handleStoreBeforeClobber(Value* ptr, HeapRange range, const Filter& filter)
+    {
+        MemoryMatches matches = findMemoryValue(ptr, range, filter);
+        if (matches.isEmpty())
+            return false;
+
+        m_value->replaceWithNop();
+        m_changed = true;
+        return true;
+    }
+
+    template<typename Filter>
+    void handleStoreAfterClobber(Value* ptr, HeapRange range, const Filter& filter)
+    {
+        if (findStoreAfterClobber(ptr, range, filter)) {
+            m_value->replaceWithNop();
+            m_changed = true;
+            return;
+        }
+
+        m_data.memoryValuesAtTail.add(m_value->as<MemoryValue>());
+    }
+
+    template<typename Filter>
+    bool findStoreAfterClobber(Value* ptr, HeapRange range, const Filter& filter)
+    {
+        // We can eliminate a store if every forward path hits a store to the same location before
+        // hitting any operation that observes the store. This search seems like it should be
+        // expensive, but in the overwhelming majority of cases it will almost immediately hit an 
+        // operation that interferes.
+
+        if (verbose)
+            dataLog(*m_value, ": looking forward for stores to ", *ptr, "...\n");
+
+        // First search forward in this basic block.
+        // FIXME: It would be cool to get rid of this linear search. It's not super critical since
+        // we will probably bail out very quickly, but it *is* annoying.
+        for (unsigned index = m_index + 1; index < m_block->size(); ++index) {
+            Value* value = m_block->at(index);
+
+            if (MemoryValue* memoryValue = value->as<MemoryValue>()) {
+                if (memoryValue->lastChild() == ptr && filter(memoryValue))
+                    return true;
+            }
+
+            Effects effects = value->effects();
+            if (effects.reads.overlaps(range) || effects.writes.overlaps(range))
+                return false;
+        }
+
+        if (!m_block->numSuccessors())
+            return false;
+
+        BlockWorklist worklist;
+        worklist.pushAll(m_block->successorBlocks());
+
+        while (BasicBlock* block = worklist.pop()) {
+            ImpureBlockData& data = m_impureBlockData[block];
+
+            MemoryValue* match = data.storesAtHead.find(ptr, filter);
+            if (match && match != m_value)
+                continue;
+
+            if (data.writes.overlaps(range) || data.reads.overlaps(range))
+                return false;
+
+            if (!block->numSuccessors())
+                return false;
+
+            worklist.pushAll(block->successorBlocks());
+        }
+
+        return true;
     }
 
     template<typename Filter>
@@ -332,7 +544,7 @@ private:
         MemoryMatches matches = findMemoryValue(ptr, range, filter);
         if (replaceMemoryValue(matches, replace))
             return;
-        addMemoryValue(m_data, m_value->as<MemoryValue>());
+        m_data.memoryValuesAtTail.add(m_value->as<MemoryValue>());
     }
 
     template<typename Replace>
@@ -396,39 +608,13 @@ private:
         return true;
     }
 
-    void addMemoryValue(ImpureBlockData& data, MemoryValue* memory)
-    {
-        if (verbose)
-            dataLog("Adding memory: ", *memory, "\n");
-        
-        Matches& matches = data.memoryValues.add(memory->lastChild(), Matches()).iterator->value;
-
-        if (matches.contains(memory))
-            return;
-
-        matches.append(memory);
-    }
-
     template<typename Filter>
     MemoryMatches findMemoryValue(Value* ptr, HeapRange range, const Filter& filter)
     {
         if (verbose)
-            dataLog(*m_value, ": looking for ", *ptr, "...\n");
+            dataLog(*m_value, ": looking backward for ", *ptr, "...\n");
         
-        auto find = [&] (ImpureBlockData& data) -> MemoryValue* {
-            auto iter = data.memoryValues.find(ptr);
-            if (iter != data.memoryValues.end()) {
-                for (Value* candidateValue : iter->value) {
-                    if (MemoryValue* candidateMemory = candidateValue->as<MemoryValue>()) {
-                        if (filter(candidateMemory))
-                            return candidateMemory;
-                    }
-                }
-            }
-            return nullptr;
-        };
-
-        if (MemoryValue* match = find(m_data)) {
+        if (MemoryValue* match = m_data.memoryValuesAtTail.find(ptr, filter)) {
             if (verbose)
                 dataLog("    Found ", *match, " locally.\n");
             return { match };
@@ -441,8 +627,6 @@ private:
         }
 
         BlockWorklist worklist;
-        Vector<BasicBlock*, 8> seenList;
-
         worklist.pushAll(m_block->predecessors());
 
         MemoryMatches matches;
@@ -450,11 +634,10 @@ private:
         while (BasicBlock* block = worklist.pop()) {
             if (verbose)
                 dataLog("    Looking at ", *block, "\n");
-            seenList.append(block);
 
             ImpureBlockData& data = m_impureBlockData[block];
 
-            MemoryValue* match = find(data);
+            MemoryValue* match = data.memoryValuesAtTail.find(ptr, filter);
             if (match && match != m_value) {
                 if (verbose)
                     dataLog("    Found match: ", *match, "\n");

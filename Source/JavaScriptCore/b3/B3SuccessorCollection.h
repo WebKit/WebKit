@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,6 +89,50 @@ public:
 
     iterator begin() { return iterator(*this, 0); }
     iterator end() { return iterator(*this, size()); }
+
+    class const_iterator {
+    public:
+        const_iterator()
+            : m_collection(nullptr)
+            , m_index(0)
+        {
+        }
+
+        const_iterator(const SuccessorCollection& collection, size_t index)
+            : m_collection(&collection)
+            , m_index(index)
+        {
+        }
+
+        BasicBlock* operator*() const
+        {
+            return m_collection->at(m_index);
+        }
+
+        const_iterator& operator++()
+        {
+            m_index++;
+            return *this;
+        }
+
+        bool operator==(const const_iterator& other) const
+        {
+            ASSERT(m_collection == other.m_collection);
+            return m_index == other.m_index;
+        }
+
+        bool operator!=(const const_iterator& other) const
+        {
+            return !(*this == other);
+        }
+
+    private:
+        const SuccessorCollection* m_collection;
+        size_t m_index;
+    };
+
+    const_iterator begin() const { return const_iterator(*this, 0); }
+    const_iterator end() const { return const_iterator(*this, size()); }
 
 private:
     SuccessorList& m_list;

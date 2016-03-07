@@ -52,6 +52,23 @@ public:
         }
     }
 
+    static bool isStore(Opcode opcode)
+    {
+        switch (opcode) {
+        case Store8:
+        case Store16:
+        case Store:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    static bool isLoad(Opcode opcode)
+    {
+        return accepts(opcode) && !isStore(opcode);
+    }
+
     ~MemoryValue();
 
     int32_t offset() const { return m_offset; }
