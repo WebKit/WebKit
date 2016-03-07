@@ -1,3 +1,28 @@
+2016-03-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Use 3 operands Add in more places
+        https://bugs.webkit.org/show_bug.cgi?id=155082
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::addPtr):
+        (JSC::MacroAssembler::add32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::add32):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithAdd):
+        The case with child1 constant is useless.
+        The canonical form will have the constant as child2.
+
+        Also add register reuse for the fast-add.
+        Registers are a scarce resource on x86.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generate):
+
 2016-03-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Improve codegen of Compare and Test

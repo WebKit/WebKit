@@ -3256,32 +3256,20 @@ void SpeculativeJIT::compileArithAdd(Node* node)
     switch (node->binaryUseKind()) {
     case Int32Use: {
         ASSERT(!shouldCheckNegativeZero(node->arithMode()));
-        
-        if (node->child1()->isInt32Constant()) {
-            int32_t imm1 = node->child1()->asInt32();
-            SpeculateInt32Operand op2(this, node->child2());
-            GPRTemporary result(this);
 
-            if (!shouldCheckOverflow(node->arithMode())) {
-                m_jit.move(op2.gpr(), result.gpr());
-                m_jit.add32(Imm32(imm1), result.gpr());
-            } else
-                speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchAdd32(MacroAssembler::Overflow, op2.gpr(), Imm32(imm1), result.gpr()));
-
-            int32Result(result.gpr(), node);
-            return;
-        }
-        
         if (node->child2()->isInt32Constant()) {
             SpeculateInt32Operand op1(this, node->child1());
             int32_t imm2 = node->child2()->asInt32();
-            GPRTemporary result(this);
-                
+
             if (!shouldCheckOverflow(node->arithMode())) {
-                m_jit.move(op1.gpr(), result.gpr());
-                m_jit.add32(Imm32(imm2), result.gpr());
-            } else
-                speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchAdd32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
+                GPRTemporary result(this, Reuse, op1);
+                m_jit.add32(Imm32(imm2), op1.gpr(), result.gpr());
+                int32Result(result.gpr(), node);
+                return;
+            }
+
+            GPRTemporary result(this);
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchAdd32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
 
             int32Result(result.gpr(), node);
             return;
@@ -3295,14 +3283,9 @@ void SpeculativeJIT::compileArithAdd(Node* node)
         GPRReg gpr2 = op2.gpr();
         GPRReg gprResult = result.gpr();
 
-        if (!shouldCheckOverflow(node->arithMode())) {
-            if (gpr1 == gprResult)
-                m_jit.add32(gpr2, gprResult);
-            else {
-                m_jit.move(gpr2, gprResult);
-                m_jit.add32(gpr1, gprResult);
-            }
-        } else {
+        if (!shouldCheckOverflow(node->arithMode()))
+            m_jit.add32(gpr1, gpr2, gprResult);
+        else {
             MacroAssembler::Jump check = m_jit.branchAdd32(MacroAssembler::Overflow, gpr1, gpr2, gprResult);
                 
             if (gpr1 == gprResult)
@@ -3329,8 +3312,7 @@ void SpeculativeJIT::compileArithAdd(Node* node)
             SpeculateWhicheverInt52Operand op1(this, node->child1());
             SpeculateWhicheverInt52Operand op2(this, node->child2(), op1);
             GPRTemporary result(this, Reuse, op1);
-            m_jit.move(op1.gpr(), result.gpr());
-            m_jit.add64(op2.gpr(), result.gpr());
+            m_jit.add64(op1.gpr(), op2.gpr(), result.gpr());
             int52Result(result.gpr(), node, op1.format());
             return;
         }
