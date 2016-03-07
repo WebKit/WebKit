@@ -709,7 +709,7 @@ void XMLHttpRequest::sendBytesData(const void* data, size_t length, ExceptionCod
 void XMLHttpRequest::createRequest(ExceptionCode& ec)
 {
     // Only GET request is supported for blob URL.
-    if (m_url.protocolIs("blob") && m_method != "GET") {
+    if (m_url.protocolIsBlob() && m_method != "GET") {
         ec = NETWORK_ERR;
         return;
     }

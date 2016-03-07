@@ -1,3 +1,18 @@
+2016-03-07  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Add convenience function URL::procotolIsBlob()
+        https://bugs.webkit.org/show_bug.cgi?id=155127
+        <rdar://problem/25016829>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad): Modified to use URL::protocolIsBlob().
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader): Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canHandleRequest): Ditto.
+
 2016-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         Use CGColorSpaceCopyICCData instead of CGColorSpaceCopyICCProfile

@@ -49,7 +49,7 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, const NetworkLoadParameters&
     , m_currentRequest(parameters.request)
 {
 #if USE(NETWORK_SESSION)
-    if (parameters.request.url().protocolIs("blob")) {
+    if (parameters.request.url().protocolIsBlob()) {
         m_handle = ResourceHandle::create(nullptr, parameters.request, this, parameters.defersLoading, parameters.contentSniffingPolicy == SniffContent);
         return;
     }

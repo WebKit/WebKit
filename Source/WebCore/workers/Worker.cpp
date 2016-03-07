@@ -158,7 +158,7 @@ void Worker::notifyNetworkStateChange(bool isOnLine)
 void Worker::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
     const URL& responseURL = response.url();
-    if (!responseURL.protocolIs("blob") && !responseURL.protocolIs("file") && !SecurityOrigin::create(responseURL)->isUnique())
+    if (!responseURL.protocolIsBlob() && !responseURL.protocolIs("file") && !SecurityOrigin::create(responseURL)->isUnique())
         m_contentSecurityPolicyResponseHeaders = ContentSecurityPolicyResponseHeaders(response);
     InspectorInstrumentation::didReceiveScriptResponse(scriptExecutionContext(), identifier);
 }
