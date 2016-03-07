@@ -613,7 +613,7 @@ Store16 U:G:16, D:G:16
 
 Compare32 U:G:32, U:G:32, U:G:32, ZD:G:32
     RelCond, Tmp, Tmp, Tmp
-    x86: RelCond, Tmp, Imm, Tmp
+    RelCond, Tmp, Imm, Tmp
 
 64: Compare64 U:G:32, U:G:64, U:G:64, ZD:G:32
     RelCond, Tmp, Tmp, Tmp
@@ -622,6 +622,7 @@ Compare32 U:G:32, U:G:32, U:G:32, ZD:G:32
 Test32 U:G:32, U:G:32, U:G:32, ZD:G:32
     x86: ResCond, Addr, Imm, Tmp
     ResCond, Tmp, Tmp, Tmp
+    ResCond, Tmp, BitImm, Tmp
 
 64: Test64 U:G:32, U:G:64, U:G:64, ZD:G:32
     x86: ResCond, Tmp, Imm, Tmp
@@ -662,7 +663,7 @@ BranchTest8 U:G:32, U:G:8, U:G:8 /branch
 
 BranchTest32 U:G:32, U:G:32, U:G:32 /branch
     ResCond, Tmp, Tmp
-    x86: ResCond, Tmp, Imm
+    ResCond, Tmp, BitImm
     x86: ResCond, Addr, Imm
     x86: ResCond, Index, Imm
 
@@ -670,7 +671,7 @@ BranchTest32 U:G:32, U:G:32, U:G:32 /branch
 # BranchTest32 in most cases where you use an immediate.
 64: BranchTest64 U:G:32, U:G:64, U:G:64 /branch
     ResCond, Tmp, Tmp
-    x86: ResCond, Tmp, Imm
+    ResCond, Tmp, BitImm64
     x86: ResCond, Addr, Imm
     x86: ResCond, Addr, Tmp
     x86: ResCond, Index, Imm
@@ -748,6 +749,7 @@ MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
 
 64: MoveConditionally64 U:G:32, U:G:64, U:G:64, U:G:Ptr, U:G:Ptr, D:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
+    RelCond, Tmp, Imm, Tmp, Tmp, Tmp
 
 MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp
@@ -755,7 +757,7 @@ MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
 
 MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
-    x86: ResCond, Tmp, Imm, Tmp, Tmp, Tmp
+    ResCond, Tmp, BitImm, Tmp, Tmp, Tmp
 
 64: MoveConditionallyTest64 U:G:32, U:G:64, U:G:64, U:G:Ptr, UD:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp
@@ -795,7 +797,7 @@ MoveDoubleConditionally32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
 
 MoveDoubleConditionallyTest32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
     ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
-    x86: ResCond, Tmp, Imm, Tmp, Tmp, Tmp
+    ResCond, Tmp, BitImm, Tmp, Tmp, Tmp
     x86: ResCond, Addr, Imm, Tmp, Tmp, Tmp
     x86: ResCond, Index, Imm, Tmp, Tmp, Tmp
 

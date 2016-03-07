@@ -30,6 +30,7 @@
 
 #include "X86Assembler.h"
 #include "AbstractMacroAssembler.h"
+#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -1779,10 +1780,14 @@ public:
 
     void moveConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
     {
-        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
-            m_assembler.testl_rr(left, left);
-        else
-            m_assembler.cmpl_ir(right.m_value, left);
+        if (!right.m_value) {
+            if (auto resultCondition = commuteCompareToZeroIntoTest(cond)) {
+                moveConditionallyTest32(*resultCondition, left, left, thenCase, elseCase, dest);
+                return;
+            }
+        }
+
+        m_assembler.cmpl_ir(right.m_value, left);
 
         if (thenCase != dest && elseCase != dest) {
             move(elseCase, dest);
@@ -1821,7 +1826,7 @@ public:
 
     void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, TrustedImm32 mask, RegisterID src, RegisterID dest)
     {
-        test32(cond, testReg, mask);
+        test32(testReg, mask);
         cmov(x86Condition(cond), src, dest);
     }
 
@@ -1830,7 +1835,7 @@ public:
         ASSERT(isInvertible(cond));
         ASSERT_WITH_MESSAGE(cond != Overflow, "TEST does not set the Overflow Flag.");
 
-        test32(cond, testReg, mask);
+        test32(testReg, mask);
 
         if (thenCase != dest && elseCase != dest) {
             move(elseCase, dest);
@@ -1960,10 +1965,12 @@ public:
 
     Jump branch32(RelationalCondition cond, RegisterID left, TrustedImm32 right)
     {
-        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
-            m_assembler.testl_rr(left, left);
-        else
-            m_assembler.cmpl_ir(right.m_value, left);
+        if (!right.m_value) {
+            if (auto resultCondition = commuteCompareToZeroIntoTest(cond))
+                return branchTest32(*resultCondition, left, left);
+        }
+
+        m_assembler.cmpl_ir(right.m_value, left);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
@@ -2002,7 +2009,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    void test32(ResultCondition, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    void test32(RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         if (mask.m_value == -1)
             m_assembler.testl_rr(reg, reg);
@@ -2022,7 +2029,7 @@ public:
 
     Jump branchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
-        test32(cond, reg, mask);
+        test32(reg, mask);
         return branch(cond);
     }
 
@@ -2290,10 +2297,14 @@ public:
 
     void compare32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
-        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
-            m_assembler.testl_rr(left, left);
-        else
-            m_assembler.cmpl_ir(right.m_value, left);
+        if (!right.m_value) {
+            if (auto resultCondition = commuteCompareToZeroIntoTest(cond)) {
+                test32(*resultCondition, left, left, dest);
+                return;
+            }
+        }
+
+        m_assembler.cmpl_ir(right.m_value, left);
         set32(x86Condition(cond), dest);
     }
 
@@ -2320,6 +2331,12 @@ public:
     void test32(ResultCondition cond, RegisterID reg, RegisterID mask, RegisterID dest)
     {
         m_assembler.testl_rr(reg, mask);
+        set32(x86Condition(cond), dest);
+    }
+
+    void test32(ResultCondition cond, RegisterID reg, TrustedImm32 mask, RegisterID dest)
+    {
+        test32(reg, mask);
         set32(x86Condition(cond), dest);
     }
 
@@ -2393,6 +2410,23 @@ public:
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return Zero; // Make compiler happy for release builds.
+        }
+    }
+
+    static Optional<ResultCondition> commuteCompareToZeroIntoTest(RelationalCondition cond)
+    {
+        switch (cond) {
+        case Equal:
+            return Zero;
+        case NotEqual:
+            return NonZero;
+        case LessThan:
+            return Signed;
+        case GreaterThanOrEqual:
+            return PositiveOrZero;
+            break;
+        default:
+            return Nullopt;
         }
     }
 

@@ -1,3 +1,13 @@
+2016-03-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Improve codegen of Compare and Test
+        https://bugs.webkit.org/show_bug.cgi?id=155055
+
+        Reviewed by Filip Pizlo.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::callAndBranchOnCondition):
+
 2016-03-06  Saam Barati  <sbarati@apple.com>
 
         [[GetPrototypeOf]] should be a fully virtual method in the method table

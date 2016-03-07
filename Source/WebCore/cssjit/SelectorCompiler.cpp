@@ -2389,7 +2389,7 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
         LocalRegister divisorRegister(m_registerAllocator);
         m_assembler.move(Assembler::TrustedImm64(divisor), divisorRegister);
         m_assembler.m_assembler.idivl_r(divisorRegister);
-        m_assembler.test32(condition, remainder);
+        m_assembler.test32(remainder);
     }
 
     // 3) Return RAX and RDX.

@@ -1,3 +1,95 @@
+2016-03-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Improve codegen of Compare and Test
+        https://bugs.webkit.org/show_bug.cgi?id=155055
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces a few improvements on how we lower
+        Compare and Test with immediates:
+            -Add certain Immediate forms of ARM64.
+            -Use CBZ/CBNZ when possible on ARM64.
+            -When possible, convert a CMP into a TST
+             On some hardware, we can issue more TST simultaneously.
+
+             On x86, any TST+Jump is candidate for macro-fusion.
+             They are also smaller.
+             (sections 3.4.2.2 and 3.5.1.9)
+            -Do not load the mask immediate of a TST
+             if it only contains ones (mostly useful for ARM64
+             since that would not have been a valid immediate).
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::compare32):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::moveConditionallyAfterFloatingPointCompare):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionallyAfterFloatingPointCompare):
+        This is somewhat unrelated but I found that out while working
+        on moveDoubleConditionallyTest32:
+            If "thenCase" and "dest" are assigned the same register
+            by the allocator, then the first (f)fcsel would override
+            the "thenCase" and the second fcsel would always be "elseCase".
+
+        This is covered by testb3 but was only uncovered
+        after recent "Move" removals in lowering.
+
+        (JSC::MacroAssemblerARM64::moveConditionally32):
+        (JSC::MacroAssemblerARM64::moveConditionally64):
+        (JSC::MacroAssemblerARM64::moveConditionallyTest32):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionally32):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionally64):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionallyTest32):
+        (JSC::MacroAssemblerARM64::branch32):
+        (JSC::MacroAssemblerARM64::branch64):
+        (JSC::MacroAssemblerARM64::branchTest32):
+        (JSC::MacroAssemblerARM64::test32):
+        The version taking an immediate was guarded by
+        (cond == Zero) || (cond == NonZero). That is overzealous,
+        and only needed for CBZ/CBNZ.
+
+        (JSC::MacroAssemblerARM64::branchTest64):
+        (JSC::MacroAssemblerARM64::compare32):
+        (JSC::MacroAssemblerARM64::compare64):
+        (JSC::MacroAssemblerARM64::commuteCompareToZeroIntoTest):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::moveConditionally32):
+        (JSC::MacroAssemblerX86Common::moveConditionallyTest32):
+        (JSC::MacroAssemblerX86Common::branch32):
+        (JSC::MacroAssemblerX86Common::test32):
+        (JSC::MacroAssemblerX86Common::branchTest32):
+        (JSC::MacroAssemblerX86Common::compare32):
+        (JSC::MacroAssemblerX86Common::commuteCompareToZeroIntoTest):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::compare64):
+        (JSC::MacroAssemblerX86_64::branch64):
+        (JSC::MacroAssemblerX86_64::moveConditionally64):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        Unfortunately this cannot be abstracted by the MacroAssembler.
+        Those immediates are not valid, we have to pick the better
+        for right away.
+
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::int64Operands):
+        (JSC::B3::modelCompare):
+        (JSC::B3::testCompareImpl):
+        (JSC::B3::testCompare):
+        (JSC::B3::b3Pow):
+        (JSC::B3::testPowDoubleByIntegerLoop):
+        Some versions of pow(double, int) do not return
+        the exact same bits as our integer loop.
+        Added a new version to have the same behavior
+        as the B3 loop.
+
+        (JSC::B3::run):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBooleanBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInt32Compare):
+        Comparing to an immediate is super common. Do not waste
+        a register for that!
+
 2016-03-06  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix build. This was a messed up merge.
