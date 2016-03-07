@@ -1,5 +1,31 @@
 2016-03-06  Benjamin Poulain  <benjamin@webkit.org>
 
+        [JSC] Remove a superfluous Move in front of every double unboxing
+        https://bugs.webkit.org/show_bug.cgi?id=155064
+
+        Reviewed by Saam Barati.
+
+        Double unboxing was always doing:
+            Move source, scratch
+            Add64 tag, scratch
+            IntToDouble scratch, fp
+
+        We do not need to "Move" to copy the source.
+        Both x86 and ARM64 have an efficient 3 operands Add instruction.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::SpeculativeJIT::speculateRealNumber):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::unboxDouble):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::unboxDoubleWithoutAssertions):
+        (JSC::AssemblyHelpers::unboxDouble):
+        (JSC::AssemblyHelpers::unboxDoubleNonDestructive):
+
+2016-03-06  Benjamin Poulain  <benjamin@webkit.org>
+
         [JSC] Use 3 operands Add in more places
         https://bugs.webkit.org/show_bug.cgi?id=155082
 
