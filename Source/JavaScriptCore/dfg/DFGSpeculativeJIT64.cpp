@@ -1774,6 +1774,9 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
     case StringUse:
         return compileStringZeroLength(node);
 
+    case StringOrOtherUse:
+        return compileLogicalNotStringOrOther(node);
+
     default:
         DFG_CRASH(m_jit.graph(), node, "Bad use kind");
         break;
@@ -1872,6 +1875,11 @@ void SpeculativeJIT::emitBranch(Node* node)
 
     case StringUse: {
         emitStringBranch(node->child1(), taken, notTaken);
+        return;
+    }
+
+    case StringOrOtherUse: {
+        emitStringOrOtherBranch(node->child1(), taken, notTaken);
         return;
     }
 

@@ -103,6 +103,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case StringUse:
         out.print("String");
         return;
+    case StringOrOtherUse:
+        out.print("StringOrOther");
+        return;
     case KnownStringUse:
         out.print("KnownString");
         return;

@@ -1,3 +1,158 @@
+2016-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should know how to speculate StringOrOther
+        https://bugs.webkit.org/show_bug.cgi?id=155094
+
+        Reviewed by Saam Barati.
+
+        Any code that processes the regexp matches array was previously doing a relatively expensive
+        Branch(Untyped:). This introduces a new use kind called StringOrOther, which is perfect for
+        code that loops over the matches array and branches on the entries being non-empty.
+
+        To do this, I needed to introduce code into the FTL that creates new blocks. We still had that
+        awful FTL_NEW_BLOCK idiom since the only way to debug LLVM IR was to ascribe names to basic
+        blocks. B3 IR is inherently more debuggable since unlike LLVM, B3 knows how to always respect
+        code origin, and it knows how to print the code origin nicely in the dumps. So, rather than
+        continue using FTL_NEW_BLOCK(m_out, ("things")), I replaced all of that stuff with
+        m_out.newBlock(). It's much nicer that way.
+
+        This is a tiny speed-up on Octane/regexp at best. I was hoping for more. Oh well.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isStringSpeculation):
+        (JSC::isStringOrOtherSpeculation):
+        (JSC::isSymbolSpeculation):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateString):
+        (JSC::DFG::Node::shouldSpeculateStringOrOther):
+        (JSC::DFG::Node::shouldSpeculateStringObject):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStringZeroLength):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNotStringOrOther):
+        (JSC::DFG::SpeculativeJIT::emitStringBranch):
+        (JSC::DFG::SpeculativeJIT::emitStringOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compileConstantStoragePointer):
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateString):
+        (JSC::DFG::SpeculativeJIT::speculateStringOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateStringIdentAndLoadStorage):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDoubleRep):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBooleanToNumber):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithMul):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithDiv):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithMod):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithMinOrMax):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithPow):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithRound):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayifyToStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayByteOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPop):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCopyRest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetRestLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToStringOrCallStringConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToPrimitive):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharCodeAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringFromCharCode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiGetByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNotifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSwitch):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsString):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsObjectOrNull):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileOverridesHasInstance):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasStructureProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetDirectPname):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetEnumeratorStructurePname):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetEnumeratorGenericPname):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckWatchdogTimer):
+        (JSC::FTL::DFG::LowerDFGToB3::checkStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::numberOrNotCellToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::checkInferredType):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::loadVectorWithBarrier):
+        (JSC::FTL::DFG::LowerDFGToB3::copyBarrier):
+        (JSC::FTL::DFG::LowerDFGToB3::loadVectorReadOnly):
+        (JSC::FTL::DFG::LowerDFGToB3::compareEqObjectOrOtherToObject):
+        (JSC::FTL::DFG::LowerDFGToB3::nonSpeculativeCompare):
+        (JSC::FTL::DFG::LowerDFGToB3::stringsEqual):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateCell):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateBasicStorageAndGetEnd):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::boolify):
+        (JSC::FTL::DFG::LowerDFGToB3::equalNullOrUndefined):
+        (JSC::FTL::DFG::LowerDFGToB3::contiguousPutByValOutOfBounds):
+        (JSC::FTL::DFG::LowerDFGToB3::switchString):
+        (JSC::FTL::DFG::LowerDFGToB3::switchStringRecurse):
+        (JSC::FTL::DFG::LowerDFGToB3::buildTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::doubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::sensibleDoubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::strictInt52ToJSValue):
+        (JSC::FTL::DFG::LowerDFGToB3::jsValueToStrictInt52):
+        (JSC::FTL::DFG::LowerDFGToB3::convertDoubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateCellOrOther):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateObjectOrOther):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateString):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringOrOther):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringIdent):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringOrStringObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateRealNumber):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateNotStringVar):
+        (JSC::FTL::DFG::LowerDFGToB3::emitStoreBarrier):
+        (JSC::FTL::DFG::LowerDFGToB3::callCheck):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::initialize):
+        (JSC::FTL::Output::newBlock):
+        (JSC::FTL::Output::check):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::setFrequency):
+        (JSC::FTL::Output::insertNewBlocksBefore):
+
 2016-03-06  Saam Barati  <sbarati@apple.com>
 
         [[GetPrototypeOf]] should be a fully virtual method in the method table

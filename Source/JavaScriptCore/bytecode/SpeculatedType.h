@@ -149,6 +149,11 @@ inline bool isStringSpeculation(SpeculatedType value)
     return !!value && (value & SpecString) == value;
 }
 
+inline bool isStringOrOtherSpeculation(SpeculatedType value)
+{
+    return !!value && (value & (SpecString | SpecOther)) == value;
+}
+
 inline bool isSymbolSpeculation(SpeculatedType value)
 {
     return value == SpecSymbol;

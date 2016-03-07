@@ -5130,11 +5130,56 @@ void SpeculativeJIT::compileStringZeroLength(Node* node)
     unblessedBooleanResult(eqGPR, node);
 }
 
+void SpeculativeJIT::compileLogicalNotStringOrOther(Node* node)
+{
+    JSValueOperand value(this, node->child1(), ManualOperandSpeculation);
+    GPRTemporary temp(this);
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg tempGPR = temp.gpr();
+
+    JITCompiler::Jump notCell = m_jit.branchIfNotCell(valueRegs);
+    GPRReg cellGPR = valueRegs.payloadGPR();
+    DFG_TYPE_CHECK(
+        valueRegs, node->child1(), (~SpecCell) | SpecString, m_jit.branchIfNotString(cellGPR));
+    m_jit.test32(
+        JITCompiler::Zero, JITCompiler::Address(cellGPR, JSString::offsetOfLength()),
+        JITCompiler::TrustedImm32(-1), tempGPR);
+    JITCompiler::Jump done = m_jit.jump();
+    notCell.link(&m_jit);
+    DFG_TYPE_CHECK(
+        valueRegs, node->child1(), SpecCell | SpecOther, m_jit.branchIfNotOther(valueRegs, tempGPR));
+    m_jit.move(TrustedImm32(1), tempGPR);
+    done.link(&m_jit);
+
+    unblessedBooleanResult(tempGPR, node);
+}
+
 void SpeculativeJIT::emitStringBranch(Edge nodeUse, BasicBlock* taken, BasicBlock* notTaken)
 {
     SpeculateCellOperand str(this, nodeUse);
     speculateString(nodeUse, str.gpr());
     branchTest32(JITCompiler::NonZero, MacroAssembler::Address(str.gpr(), JSString::offsetOfLength()), taken);
+    jump(notTaken);
+    noResult(m_currentNode);
+}
+
+void SpeculativeJIT::emitStringOrOtherBranch(Edge nodeUse, BasicBlock* taken, BasicBlock* notTaken)
+{
+    JSValueOperand value(this, nodeUse, ManualOperandSpeculation);
+    GPRTemporary temp(this);
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg tempGPR = temp.gpr();
+    
+    JITCompiler::Jump notCell = m_jit.branchIfNotCell(valueRegs);
+    GPRReg cellGPR = valueRegs.payloadGPR();
+    DFG_TYPE_CHECK(valueRegs, nodeUse, (~SpecCell) | SpecString, m_jit.branchIfNotString(cellGPR));
+    branchTest32(
+        JITCompiler::Zero, JITCompiler::Address(cellGPR, JSString::offsetOfLength()),
+        JITCompiler::TrustedImm32(-1), notTaken);
+    jump(taken, ForceJump);
+    notCell.link(&m_jit);
+    DFG_TYPE_CHECK(
+        valueRegs, nodeUse, SpecCell | SpecOther, m_jit.branchIfNotOther(valueRegs, tempGPR));
     jump(notTaken);
     noResult(m_currentNode);
 }
@@ -6674,11 +6719,9 @@ void SpeculativeJIT::speculateObjectOrOther(Edge edge)
         operand.jsValueRegs(), edge, (~SpecCell) | SpecObject, m_jit.branchIfNotObject(gpr));
     MacroAssembler::Jump done = m_jit.jump();
     notCell.link(&m_jit);
-    if (needsTypeCheck(edge, SpecCell | SpecOther)) {
-        typeCheck(
-            operand.jsValueRegs(), edge, SpecCell | SpecOther,
-            m_jit.branchIfNotOther(operand.jsValueRegs(), tempGPR));
-    }
+    DFG_TYPE_CHECK(
+        operand.jsValueRegs(), edge, SpecCell | SpecOther,
+        m_jit.branchIfNotOther(operand.jsValueRegs(), tempGPR));
     done.link(&m_jit);
 }
 
@@ -6686,6 +6729,29 @@ void SpeculativeJIT::speculateString(Edge edge, GPRReg cell)
 {
     DFG_TYPE_CHECK(
         JSValueSource::unboxedCell(cell), edge, SpecString | ~SpecCell, m_jit.branchIfNotString(cell));
+}
+
+void SpeculativeJIT::speculateStringOrOther(Edge edge, JSValueRegs regs, GPRReg scratch)
+{
+    JITCompiler::Jump notCell = m_jit.branchIfNotCell(regs);
+    GPRReg cell = regs.payloadGPR();
+    DFG_TYPE_CHECK(regs, edge, (~SpecCell) | SpecString, m_jit.branchIfNotString(cell));
+    JITCompiler::Jump done = m_jit.jump();
+    notCell.link(&m_jit);
+    DFG_TYPE_CHECK(regs, edge, SpecCell | SpecOther, m_jit.branchIfNotOther(regs, scratch));
+    done.link(&m_jit);
+}
+
+void SpeculativeJIT::speculateStringOrOther(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecString | SpecOther))
+        return;
+
+    JSValueOperand operand(this, edge, ManualOperandSpeculation);
+    GPRTemporary temp(this);
+    JSValueRegs regs = operand.jsValueRegs();
+    GPRReg tempGPR = temp.gpr();
+    speculateStringOrOther(edge, regs, tempGPR);
 }
 
 void SpeculativeJIT::speculateStringIdentAndLoadStorage(Edge edge, GPRReg string, GPRReg storage)
@@ -6934,6 +7000,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case StringUse:
         speculateString(edge);
+        break;
+    case StringOrOtherUse:
+        speculateStringOrOther(edge);
         break;
     case SymbolUse:
         speculateSymbol(edge);
