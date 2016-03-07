@@ -1,3 +1,28 @@
+2016-02-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Make it cheap to #include "JITOperations.h"
+        https://bugs.webkit.org/show_bug.cgi?id=154836
+
+        Reviewed by Mark Lam.
+
+        Prior to this change, this header included the whole world even though it did't have any
+        definitions. This patch turns almost all of the includes into forward declarations. Right
+        now this header is very cheap to include.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGSpeculativeJIT.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/Repatch.h:
+        * runtime/CommonSlowPaths.h:
+        (JSC::encodeResult): Deleted.
+        (JSC::decodeResult): Deleted.
+        * runtime/SlowPathReturnType.h: Added.
+        (JSC::encodeResult):
+        (JSC::decodeResult):
+
 2016-02-28  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should be able to run everything in Octane/regexp

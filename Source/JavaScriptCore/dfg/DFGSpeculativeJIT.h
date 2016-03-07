@@ -39,6 +39,7 @@
 #include "JITOperations.h"
 #include "MarkedAllocator.h"
 #include "PutKind.h"
+#include "SpillRegistersMode.h"
 #include "ValueRecovery.h"
 #include "VirtualRegister.h"
 

@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "ArrayConstructor.h"
+#include "CommonSlowPaths.h"
 #include "DFGCompilationMode.h"
 #include "DFGDriver.h"
 #include "DFGOSREntry.h"
@@ -42,6 +43,7 @@
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "JIT.h"
+#include "JITExceptions.h"
 #include "JITToDFGDeferredCompilationCallback.h"
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"

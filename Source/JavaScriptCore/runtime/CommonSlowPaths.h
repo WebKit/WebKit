@@ -30,6 +30,7 @@
 #include "CodeSpecializationKind.h"
 #include "ExceptionHelpers.h"
 #include "JSStackInlines.h"
+#include "SlowPathReturnType.h"
 #include "StackAlignment.h"
 #include "Symbol.h"
 #include "VM.h"
@@ -175,57 +176,6 @@ inline void tryCacheGetFromScopeGlobal(
 class ExecState;
 struct Instruction;
 
-#if USE(JSVALUE64)
-// According to C++ rules, a type used for the return signature of function with C linkage (i.e.
-// 'extern "C"') needs to be POD; hence putting any constructors into it could cause either compiler
-// warnings, or worse, a change in the ABI used to return these types.
-struct SlowPathReturnType {
-    void* a;
-    void* b;
-};
-
-inline SlowPathReturnType encodeResult(void* a, void* b)
-{
-    SlowPathReturnType result;
-    result.a = a;
-    result.b = b;
-    return result;
-}
-
-inline void decodeResult(SlowPathReturnType result, void*& a, void*& b)
-{
-    a = result.a;
-    b = result.b;
-}
-
-#else // USE(JSVALUE32_64)
-typedef int64_t SlowPathReturnType;
-
-typedef union {
-    struct {
-        void* a;
-        void* b;
-    } pair;
-    int64_t i;
-} SlowPathReturnTypeEncoding;
-
-inline SlowPathReturnType encodeResult(void* a, void* b)
-{
-    SlowPathReturnTypeEncoding u;
-    u.pair.a = a;
-    u.pair.b = b;
-    return u.i;
-}
-
-inline void decodeResult(SlowPathReturnType result, void*& a, void*& b)
-{
-    SlowPathReturnTypeEncoding u;
-    u.i = result;
-    a = u.pair.a;
-    b = u.pair.b;
-}
-#endif // USE(JSVALUE32_64)
-    
 #define SLOW_PATH
     
 #define SLOW_PATH_DECL(name) \
