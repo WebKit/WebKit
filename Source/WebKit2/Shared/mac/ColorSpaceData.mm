@@ -50,7 +50,12 @@ void ColorSpaceData::encode(IPC::ArgumentEncoder& encoder) const
         }
 
         // Failing that, just encode the ICC data.
-        if (RetainPtr<CFDataRef> profileData = adoptCF(CGColorSpaceCopyICCProfile(cgColorSpace.get()))) {
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+        RetainPtr<CFDataRef> profileData = adoptCF(CGColorSpaceCopyICCData(cgColorSpace.get()));
+#else
+        RetainPtr<CFDataRef> profileData = adoptCF(CGColorSpaceCopyICCProfile(cgColorSpace.get()));
+#endif
+        if (profileData) {
             encoder.encodeEnum(Data);
             IPC::encode(encoder, profileData.get());
             return;

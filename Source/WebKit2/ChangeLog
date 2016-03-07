@@ -1,3 +1,16 @@
+2016-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Use CGColorSpaceCopyICCData instead of CGColorSpaceCopyICCProfile
+        https://bugs.webkit.org/show_bug.cgi?id=155123
+        rdar://problem/24990256
+
+        Reviewed by Tim Horton.
+        
+        On newer OSes, use CGColorSpaceCopyICCData().
+
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::encode):
+
 2016-03-07  Gavin Barraclough  <barraclough@apple.com>
 
         Last opened tab does not receive SetHiddenPageTimerThrottlingIncreaseLimit message
