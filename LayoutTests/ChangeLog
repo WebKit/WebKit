@@ -1,3 +1,12 @@
+2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip storage/indexeddb/modern/exceed-open-file-limit.html
+        https://bugs.webkit.org/show_bug.cgi?id=155091
+
+        Unreviewed test gardening.
+
+        * platform/wk2/TestExpectations:
+
 2016-03-07  Daniel Bates  <dabates@apple.com>
 
         CSP: object-src directive should prohibit creation of nested browsing context
