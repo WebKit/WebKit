@@ -35,7 +35,14 @@
 
 #include "DOMError.h"
 #include "JSDOMError.h"
+#include "JSRTCSessionDescription.h"
+#include "MediaEndpointSessionConfiguration.h"
+#include "MediaStreamTrack.h"
+#include "RTCOfferAnswerOptions.h"
+#include "RTCRtpSender.h"
+#include "SDPProcessor.h"
 #include <wtf/MainThread.h>
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 
@@ -48,18 +55,114 @@ static std::unique_ptr<PeerConnectionBackend> createMediaEndpointPeerConnection(
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createMediaEndpointPeerConnection;
 
-MediaEndpointPeerConnection::MediaEndpointPeerConnection(PeerConnectionBackendClient* client)
+class WrappedSessionDescriptionPromise : public RefCounted<WrappedSessionDescriptionPromise> {
+public:
+    static Ref<WrappedSessionDescriptionPromise> create(SessionDescriptionPromise&& promise)
+    {
+        return *adoptRef(new WrappedSessionDescriptionPromise(WTFMove(promise)));
+    }
+
+    SessionDescriptionPromise& promise() { return m_promise; }
+
+private:
+    WrappedSessionDescriptionPromise(SessionDescriptionPromise&& promise)
+        : m_promise(WTFMove(promise))
+    { }
+
+    SessionDescriptionPromise m_promise;
+};
+
+static String randomString(size_t length)
 {
-    UNUSED_PARAM(client);
+    const size_t size = ceil(length * 3 / 4);
+    unsigned char randomValues[size];
+    cryptographicallyRandomValues(randomValues, size);
+    return base64Encode(randomValues, size);
+}
+
+MediaEndpointPeerConnection::MediaEndpointPeerConnection(PeerConnectionBackendClient* client)
+    : m_client(client)
+    , m_sdpProcessor(std::unique_ptr<SDPProcessor>(new SDPProcessor(m_client->scriptExecutionContext())))
+    , m_cname(randomString(16))
+    , m_iceUfrag(randomString(4))
+    , m_icePassword(randomString(22))
+{
+    m_mediaEndpoint = MediaEndpoint::create(*this);
+    ASSERT(m_mediaEndpoint);
+
+    m_defaultAudioPayloads = m_mediaEndpoint->getDefaultAudioPayloads();
+    m_defaultVideoPayloads = m_mediaEndpoint->getDefaultVideoPayloads();
+
+    // Tasks (see runTask()) will be deferred until we get the DTLS fingerprint.
+    m_mediaEndpoint->generateDtlsInfo();
+}
+
+void MediaEndpointPeerConnection::runTask(std::function<void()> task)
+{
+    if (m_dtlsFingerprint.isNull()) {
+        // Only one task needs to be deferred since it will hold off any others until completed.
+        ASSERT(!m_initialDeferredTask);
+        m_initialDeferredTask = task;
+    } else
+        callOnMainThread(task);
+}
+
+void MediaEndpointPeerConnection::startRunningTasks()
+{
+    if (!m_initialDeferredTask)
+        return;
+
+    m_initialDeferredTask();
+    m_initialDeferredTask = nullptr;
 }
 
 void MediaEndpointPeerConnection::createOffer(RTCOfferOptions& options, SessionDescriptionPromise&& promise)
 {
-    UNUSED_PARAM(options);
+    const RefPtr<RTCOfferOptions> protectedOptions = &options;
+    RefPtr<WrappedSessionDescriptionPromise> wrappedPromise = WrappedSessionDescriptionPromise::create(WTFMove(promise));
 
-    notImplemented();
+    runTask([this, protectedOptions, wrappedPromise]() {
+        createOfferTask(*protectedOptions, wrappedPromise->promise());
+    });
+}
 
-    promise.reject(DOMError::create("NotSupportedError"));
+void MediaEndpointPeerConnection::createOfferTask(RTCOfferOptions&, SessionDescriptionPromise& promise)
+{
+    ASSERT(!m_dtlsFingerprint.isEmpty());
+
+    RefPtr<MediaEndpointSessionConfiguration> configurationSnapshot = MediaEndpointSessionConfiguration::create();
+
+    configurationSnapshot->setSessionVersion(m_sdpSessionVersion++);
+
+    RtpSenderVector senders = m_client->getSenders();
+
+    // Add media descriptions for senders.
+    for (auto& sender : senders) {
+        RefPtr<PeerMediaDescription> mediaDescription = PeerMediaDescription::create();
+        MediaStreamTrack* track = sender->track();
+
+        mediaDescription->setMediaStreamId(sender->mediaStreamIds()[0]);
+        mediaDescription->setMediaStreamTrackId(track->id());
+        mediaDescription->setType(track->kind());
+        mediaDescription->setPayloads(track->kind() == "audio" ? m_defaultAudioPayloads : m_defaultVideoPayloads);
+        mediaDescription->setDtlsFingerprintHashFunction(m_dtlsFingerprintFunction);
+        mediaDescription->setDtlsFingerprint(m_dtlsFingerprint);
+        mediaDescription->setCname(m_cname);
+        mediaDescription->addSsrc(cryptographicallyRandomNumber());
+        mediaDescription->setIceUfrag(m_iceUfrag);
+        mediaDescription->setIcePassword(m_icePassword);
+
+        configurationSnapshot->addMediaDescription(WTFMove(mediaDescription));
+    }
+
+    String sdpString;
+    SDPProcessor::Result result = m_sdpProcessor->generate(*configurationSnapshot, sdpString);
+    if (result != SDPProcessor::Result::Success) {
+        LOG_ERROR("SDPProcessor internal error");
+        return;
+    }
+
+    promise.resolve(RTCSessionDescription::create("offer", sdpString));
 }
 
 void MediaEndpointPeerConnection::createAnswer(RTCAnswerOptions& options, SessionDescriptionPromise&& promise)
@@ -179,10 +282,10 @@ void MediaEndpointPeerConnection::gotDtlsFingerprint(const String& fingerprint, 
 {
     ASSERT(isMainThread());
 
-    UNUSED_PARAM(fingerprint);
-    UNUSED_PARAM(fingerprintFunction);
+    m_dtlsFingerprint = fingerprint;
+    m_dtlsFingerprintFunction = fingerprintFunction;
 
-    notImplemented();
+    startRunningTasks();
 }
 
 void MediaEndpointPeerConnection::gotIceCandidate(unsigned mdescIndex, RefPtr<IceCandidate>&& candidate)

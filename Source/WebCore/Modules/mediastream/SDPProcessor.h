@@ -28,20 +28,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef SDPProcessor_h
+#define SDPProcessor_h
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaEndpoint.h"
+
+#include "ContextDestructionObserver.h"
+#include "IceCandidate.h"
+#include "MediaEndpointSessionConfiguration.h"
+#include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-static std::unique_ptr<MediaEndpoint> createMediaEndpoint(MediaEndpointClient&)
-{
-    return nullptr;
-}
+class DOMWrapperWorld;
+class ScriptExecutionContext;
 
-CreateMediaEndpoint MediaEndpoint::create = createMediaEndpoint;
+class SDPProcessor : public ContextDestructionObserver {
+public:
+    enum class Result {
+        Success = 1,
+        InternalError = 2,
+        ParseError = 3
+    };
+
+    SDPProcessor(ScriptExecutionContext*);
+
+    Result generate(const MediaEndpointSessionConfiguration&, String& outSdpString) const;
+    Result parse(const String& sdp, RefPtr<MediaEndpointSessionConfiguration>&) const;
+
+    Result generateCandidateLine(const IceCandidate&, String& outCandidateLine) const;
+    Result parseCandidateLine(const String& candidateLine, RefPtr<IceCandidate>&) const;
+
+private:
+    bool callScript(const String& functionName, const String& argument, String& outResult) const;
+
+    mutable RefPtr<DOMWrapperWorld> m_isolatedWorld;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
+
+#endif // SDPProcessor_h

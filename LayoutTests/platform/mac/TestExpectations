@@ -178,6 +178,7 @@ fast/mediastream/RTCPeerConnection-stats.html
 fast/mediastream/RTCPeerConnection-statsSelector.html
 fast/mediastream/RTCPeerConnection-stable.html
 fast/mediastream/RTCPeerConnection.html
+fast/mediastream/RTCPeerConnection-inspect-offer.html
 
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]

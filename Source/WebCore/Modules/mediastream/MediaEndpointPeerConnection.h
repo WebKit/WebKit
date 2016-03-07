@@ -42,6 +42,9 @@
 namespace WebCore {
 
 class MediaStreamTrack;
+class SDPProcessor;
+
+typedef Vector<RefPtr<RTCRtpSender>> RtpSenderVector;
 
 class MediaEndpointPeerConnection : public PeerConnectionBackend, public MediaEndpointClient {
 public:
@@ -74,11 +77,33 @@ public:
     void clearNegotiationNeededState() override { notImplemented(); };
 
 private:
+    void runTask(std::function<void()>);
+    void startRunningTasks();
+
+    void createOfferTask(RTCOfferOptions&, PeerConnection::SessionDescriptionPromise&);
+
     // MediaEndpointClient
     void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) override;
     void gotIceCandidate(unsigned mdescIndex, RefPtr<IceCandidate>&&) override;
     void doneGatheringCandidates(unsigned mdescIndex) override;
     void gotRemoteSource(unsigned mdescIndex, RefPtr<RealtimeMediaSource>&&) override;
+
+    PeerConnectionBackendClient* m_client;
+    std::unique_ptr<MediaEndpoint> m_mediaEndpoint;
+
+    std::function<void()> m_initialDeferredTask;
+
+    std::unique_ptr<SDPProcessor> m_sdpProcessor;
+
+    Vector<RefPtr<MediaPayload>> m_defaultAudioPayloads;
+    Vector<RefPtr<MediaPayload>> m_defaultVideoPayloads;
+
+    String m_cname;
+    String m_iceUfrag;
+    String m_icePassword;
+    String m_dtlsFingerprint;
+    String m_dtlsFingerprintFunction;
+    unsigned m_sdpSessionVersion { 0 };
 };
 
 } // namespace WebCore

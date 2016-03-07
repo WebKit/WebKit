@@ -28,20 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef SDPProcessorScriptResource_h
+#define SDPProcessorScriptResource_h
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaEndpoint.h"
+
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-static std::unique_ptr<MediaEndpoint> createMediaEndpoint(MediaEndpointClient&)
-{
-    return nullptr;
-}
+namespace SDPProcessorScriptResource {
 
-CreateMediaEndpoint MediaEndpoint::create = createMediaEndpoint;
+const String& scriptString();
+
+} // namespace SDPProcessorScriptResource
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
+
+#endif // SDPProcessorScriptResource_h

@@ -31,16 +31,22 @@
 #include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaEndpoint.h"
+#include "SDPProcessorScriptResource.h"
+
+#include "SDPProcessorScripts.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-static std::unique_ptr<MediaEndpoint> createMediaEndpoint(MediaEndpointClient&)
+namespace SDPProcessorScriptResource {
+
+const String& scriptString()
 {
-    return nullptr;
+    static NeverDestroyed<const String> script = String(sdpJavaScript);
+    return script;
 }
 
-CreateMediaEndpoint MediaEndpoint::create = createMediaEndpoint;
+} // namespace SDPProcessorScriptResource
 
 } // namespace WebCore
 

@@ -31,16 +31,18 @@
 #include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaEndpoint.h"
+#include "SDPProcessorScriptResource.h"
 
 namespace WebCore {
 
-static std::unique_ptr<MediaEndpoint> createMediaEndpoint(MediaEndpointClient&)
+namespace SDPProcessorScriptResource {
+
+const String& scriptString()
 {
-    return nullptr;
+    return emptyString();
 }
 
-CreateMediaEndpoint MediaEndpoint::create = createMediaEndpoint;
+} // namespace SDPProcessorScriptResource
 
 } // namespace WebCore
 

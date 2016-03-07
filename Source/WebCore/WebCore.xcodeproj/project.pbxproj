@@ -2396,6 +2396,12 @@
 		5E2C43741BCF0D750001E2BC /* JSRTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */; };
 		5E2C437B1BCF9A570001E2BC /* RTCPeerConnectionBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43791BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5EA3D6DF1C859D7F00300BBB /* MockMediaEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA3D6DE1C859D5300300BBB /* MockMediaEndpoint.h */; };
+		5EA3D6E01C859D8400300BBB /* MockMediaEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EA3D6DD1C859D5300300BBB /* MockMediaEndpoint.cpp */; };
+		5EA3D6E31C859DC100300BBB /* SDPProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EA3D6E11C859DAA00300BBB /* SDPProcessor.cpp */; };
+		5EA3D6E41C859DC100300BBB /* SDPProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA3D6E21C859DAA00300BBB /* SDPProcessor.h */; };
+		5EA3D6E71C85A9DB00300BBB /* SDPProcessorScriptResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EA3D6E51C85A9C300300BBB /* SDPProcessorScriptResource.cpp */; };
+		5EA3D6E81C85A9DB00300BBB /* SDPProcessorScriptResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA3D6E61C85A9C300300BBB /* SDPProcessorScriptResource.h */; };
 		5EA725D21ACABD4700EAD17B /* MediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EA725CD1ACABCD900EAD17B /* MediaDevices.cpp */; };
 		5EA725D31ACABD4700EAD17B /* MediaDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA725CE1ACABCD900EAD17B /* MediaDevices.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5EA725D51ACABD5700EAD17B /* NavigatorMediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EA725CA1ACABCB500EAD17B /* NavigatorMediaDevices.cpp */; };
@@ -9972,6 +9978,12 @@
 		5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionBuiltins.h; sourceTree = "<group>"; };
 		5E2C43781BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPeerConnectionInternalsBuiltins.cpp; sourceTree = "<group>"; };
 		5E2C43791BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionInternalsBuiltins.h; sourceTree = "<group>"; };
+		5EA3D6DD1C859D5300300BBB /* MockMediaEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockMediaEndpoint.cpp; sourceTree = "<group>"; };
+		5EA3D6DE1C859D5300300BBB /* MockMediaEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockMediaEndpoint.h; sourceTree = "<group>"; };
+		5EA3D6E11C859DAA00300BBB /* SDPProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDPProcessor.cpp; sourceTree = "<group>"; };
+		5EA3D6E21C859DAA00300BBB /* SDPProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDPProcessor.h; sourceTree = "<group>"; };
+		5EA3D6E51C85A9C300300BBB /* SDPProcessorScriptResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDPProcessorScriptResource.cpp; sourceTree = "<group>"; };
+		5EA3D6E61C85A9C300300BBB /* SDPProcessorScriptResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDPProcessorScriptResource.h; sourceTree = "<group>"; };
 		5EA725CA1ACABCB500EAD17B /* NavigatorMediaDevices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorMediaDevices.cpp; sourceTree = "<group>"; };
 		5EA725CB1ACABCB500EAD17B /* NavigatorMediaDevices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorMediaDevices.h; sourceTree = "<group>"; };
 		5EA725CC1ACABCB500EAD17B /* NavigatorMediaDevices.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorMediaDevices.idl; sourceTree = "<group>"; };
@@ -15441,6 +15453,8 @@
 				5E2C43641BCEE3720001E2BC /* RTCTrackEvent.cpp */,
 				5E2C43651BCEE3720001E2BC /* RTCTrackEvent.h */,
 				5E2C43661BCEE3720001E2BC /* RTCTrackEvent.idl */,
+				5EA3D6E11C859DAA00300BBB /* SDPProcessor.cpp */,
+				5EA3D6E21C859DAA00300BBB /* SDPProcessor.h */,
 				076306D417E149CF005A7C4E /* SourceInfo.cpp */,
 				076306D517E149CF005A7C4E /* SourceInfo.h */,
 				076306D617E149CF005A7C4E /* SourceInfo.idl */,
@@ -15502,6 +15516,8 @@
 				07221BAE17CF0AD400848E51 /* RTCStatsRequest.h */,
 				07221BAF17CF0AD400848E51 /* RTCStatsResponseBase.h */,
 				07221BB017CF0AD400848E51 /* RTCVoidRequest.h */,
+				5EA3D6E51C85A9C300300BBB /* SDPProcessorScriptResource.cpp */,
+				5EA3D6E61C85A9C300300BBB /* SDPProcessorScriptResource.h */,
 				070E81D01BF27656001FDA48 /* VideoTrackPrivateMediaStream.h */,
 			);
 			path = mediastream;
@@ -17438,6 +17454,8 @@
 				077B64151B95F703003E9AD5 /* MediaPlaybackTargetMock.h */,
 				077B64101B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.cpp */,
 				077B64111B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.h */,
+				5EA3D6DD1C859D5300300BBB /* MockMediaEndpoint.cpp */,
+				5EA3D6DE1C859D5300300BBB /* MockMediaEndpoint.h */,
 				07D6A4F11BED5F8800174146 /* MockRealtimeAudioSource.cpp */,
 				07D6A4F21BED5F8800174146 /* MockRealtimeAudioSource.h */,
 				07D6A4ED1BECF2D200174146 /* MockRealtimeMediaSource.cpp */,
@@ -25661,6 +25679,7 @@
 				85E711A60AC5D5350053270F /* DOMHTMLDocumentInternal.h in Headers */,
 				85DF2EED0AA387CB00AD64C5 /* DOMHTMLElement.h in Headers */,
 				85E711A70AC5D5350053270F /* DOMHTMLElementInternal.h in Headers */,
+				5EA3D6DF1C859D7F00300BBB /* MockMediaEndpoint.h in Headers */,
 				8540756A0AD6CBF900620C57 /* DOMHTMLEmbedElement.h in Headers */,
 				855247D00AD850B80012093B /* DOMHTMLEmbedElementInternal.h in Headers */,
 				85BA4CDF0AA6861B0088052D /* DOMHTMLFieldSetElement.h in Headers */,
@@ -25862,6 +25881,7 @@
 				31C0FF4C0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.h in Headers */,
 				31C0FF4E0E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h in Headers */,
 				85C7F5E70AAFBAFB004014DD /* DOMWheelEvent.h in Headers */,
+				5EA3D6E41C859DC100300BBB /* SDPProcessor.h in Headers */,
 				85989DD10ACC8BBD00A0BC51 /* DOMWheelEventInternal.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
 				FC9A0F75164094CF003D6B8D /* DOMWindowCSS.h in Headers */,
@@ -27335,6 +27355,7 @@
 				CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */,
 				F3820893147D35F90010BC06 /* PageConsoleAgent.h in Headers */,
 				DAED203116F244480070EC0F /* PageConsoleClient.h in Headers */,
+				5EA3D6E81C85A9DB00300BBB /* SDPProcessorScriptResource.h in Headers */,
 				A5A2AF0C1829734300DE1729 /* PageDebuggable.h in Headers */,
 				F34742DD134362F000531BC2 /* PageDebuggerAgent.h in Headers */,
 				9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */,
@@ -30299,6 +30320,7 @@
 				BC4918C60BFEA050009D6316 /* JSHTMLFrameElement.cpp in Sources */,
 				BC2ED7A50C6C0F3600920BFF /* JSHTMLFrameElementCustom.cpp in Sources */,
 				BC926F800C0552470082776B /* JSHTMLFrameSetElement.cpp in Sources */,
+				5EA3D6E31C859DC100300BBB /* SDPProcessor.cpp in Sources */,
 				BCD41ABB0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp in Sources */,
 				A80E7B140A19D606007FB8C5 /* JSHTMLHeadElement.cpp in Sources */,
 				1AE2AA2E0A1CDAB400B42B25 /* JSHTMLHeadingElement.cpp in Sources */,
@@ -31341,6 +31363,7 @@
 				5E2C43671BCEE3770001E2BC /* RTCTrackEvent.cpp in Sources */,
 				5824ABA21AE81116009074B7 /* RubyElement.cpp in Sources */,
 				5824ABA61AE81384009074B7 /* RubyTextElement.cpp in Sources */,
+				5EA3D6E71C85A9DB00300BBB /* SDPProcessorScriptResource.cpp in Sources */,
 				A79BADA1161E7F3F00C2E652 /* RuleFeature.cpp in Sources */,
 				A79BADA3161E7F3F00C2E652 /* RuleSet.cpp in Sources */,
 				2D76BB8419456F8100CFD29A /* RunLoopObserver.cpp in Sources */,
@@ -31384,6 +31407,7 @@
 				0FC4E40E187F82E10045882C /* ScrollingCoordinatorIOS.mm in Sources */,
 				1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */,
 				93C38BFE164473C700091EB2 /* ScrollingStateFixedNode.cpp in Sources */,
+				5EA3D6E01C859D8400300BBB /* MockMediaEndpoint.cpp in Sources */,
 				0FEA3E7C191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.cpp in Sources */,
 				0FA88EBD16A8D1BD00F99984 /* ScrollingStateFrameScrollingNodeMac.mm in Sources */,
 				931CBD0C161A44E900E4C874 /* ScrollingStateNode.cpp in Sources */,

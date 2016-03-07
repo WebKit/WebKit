@@ -1,3 +1,107 @@
+2016-03-07  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Implement MediaEndpointPeerConnection::createOffer()
+        https://bugs.webkit.org/show_bug.cgi?id=154867
+
+        Reviewed by Eric Carlson and Jer Noble.
+
+        - MediaEndpointPeerConnection: Initial implementation of createOffer()
+        added. createOffer() is split up into a synchronous part, and a
+        scheduled task. The task will be deferred until information, requiring
+        some amount of work, such as the DTLS fingerprint is available. Other
+        async API functions will also follow this pattern.
+
+        - SDPProcessor (added): The SDPProcessors parses SDP to a
+        MediaEndpointSessionConfiguration object and generates SDP in the
+        reverse direction. Any SDP string handling is confined to the
+        SDPProcessor and all configuration of the media session is done via the
+        MediaEndpointSessionConfiguration object.
+
+        The SDP parser and generator logic is implemented in JavaScript and
+        works with JSON (SDP->JSON, JSON->SDP). The SDPProcessor runs JS in an
+        isolated scope and converts JSON to a MediaEndpointSessionConfiguration
+        object and the reverse. Using JSON signaling (nonstandard) can be
+        helpful during debugging.
+
+        - MockMediaEndpoint (added): Mock MediaEndpoint implementation with
+        support for generating offers. DTLS information, such as fingerprint,
+        is hard coded to facilitate testing with expected values.
+
+        Test: fast/mediastream/RTCPeerConnection-inspect-offer.html
+
+        The test is currently skipped on the mac port until support to read the
+        SDPProcessor JavaScript resource is added.
+
+        * CMakeLists.txt:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::WrappedSessionDescriptionPromise::create):
+        (WebCore::WrappedSessionDescriptionPromise::promise):
+        (WebCore::WrappedSessionDescriptionPromise::WrappedSessionDescriptionPromise):
+        (WebCore::randomString):
+        (WebCore::MediaEndpointPeerConnection::MediaEndpointPeerConnection):
+        (WebCore::MediaEndpointPeerConnection::runTask):
+        (WebCore::MediaEndpointPeerConnection::startRunningTasks):
+        (WebCore::MediaEndpointPeerConnection::createOffer):
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        (WebCore::MediaEndpointPeerConnection::gotDtlsFingerprint):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/SDPProcessor.cpp: Added.
+        (WebCore::SDPProcessor::SDPProcessor):
+        (WebCore::createCandidateObject):
+        (WebCore::createCandidate):
+        (WebCore::configurationFromJSON):
+        (WebCore::iceCandidateFromJSON):
+        (WebCore::configurationToJSON):
+        (WebCore::iceCandidateToJSON):
+        (WebCore::SDPProcessor::generate):
+        (WebCore::SDPProcessor::parse):
+        (WebCore::SDPProcessor::generateCandidateLine):
+        (WebCore::SDPProcessor::parseCandidateLine):
+        (WebCore::SDPProcessor::callScript):
+        * Modules/mediastream/SDPProcessor.h: Added.
+        * Modules/mediastream/sdp.js: Added.
+        (match):
+        (addDefaults):
+        (fillTemplate):
+        (SDP.parse):
+        (SDP.generate):
+        (SDP.generateCandidateLine):
+        (hasAllProperties):
+        (SDP.verifyObject):
+        (generate):
+        (parse):
+        (generateCandidateLine):
+        (parseCandidateLine):
+        * PlatformGTK.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/MediaEndpoint.cpp:
+        (WebCore::createMediaEndpoint):
+        * platform/mediastream/MediaEndpoint.h:
+        * platform/mediastream/PeerMediaDescription.h:
+        * platform/mediastream/SDPProcessorScriptResource.cpp: Added.
+        (WebCore::SDPProcessorScriptResource::scriptString):
+        * platform/mediastream/SDPProcessorScriptResource.h: Added.
+        * platform/mediastream/gtk/SDPProcessorScriptResourceGtk.cpp: Added.
+        (WebCore::SDPProcessorScriptResource::scriptString):
+        * platform/mock/MockMediaEndpoint.cpp: Added.
+        (WebCore::MockMediaEndpoint::create):
+        (WebCore::MockMediaEndpoint::MockMediaEndpoint):
+        (WebCore::MockMediaEndpoint::~MockMediaEndpoint):
+        (WebCore::MockMediaEndpoint::setConfiguration):
+        (WebCore::MockMediaEndpoint::generateDtlsInfo):
+        (WebCore::MockMediaEndpoint::getDefaultAudioPayloads):
+        (WebCore::MockMediaEndpoint::getDefaultVideoPayloads):
+        (WebCore::MockMediaEndpoint::updateReceiveConfiguration):
+        (WebCore::MockMediaEndpoint::updateSendConfiguration):
+        (WebCore::MockMediaEndpoint::addRemoteCandidate):
+        (WebCore::MockMediaEndpoint::replaceSendSource):
+        (WebCore::MockMediaEndpoint::stop):
+        * platform/mock/MockMediaEndpoint.h: Added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::enableMockMediaEndpoint):
+        * testing/Internals.h:
+
 2016-03-07  Daniel Bates  <dabates@apple.com>
 
         CSP: object-src directive should prohibit creation of nested browsing context

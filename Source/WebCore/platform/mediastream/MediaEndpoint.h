@@ -54,7 +54,7 @@ public:
     virtual ~MediaEndpointClient() { }
 };
 
-typedef std::unique_ptr<MediaEndpoint> (*CreateMediaEndpoint)(MediaEndpointClient*);
+typedef std::unique_ptr<MediaEndpoint> (*CreateMediaEndpoint)(MediaEndpointClient&);
 
 class MediaEndpoint {
 public:

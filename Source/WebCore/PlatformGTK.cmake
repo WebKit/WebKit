@@ -44,6 +44,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/wayland"
     "${WEBCORE_DIR}/platform/graphics/x11"
+    "${WEBCORE_DIR}/platform/mediastream/gtk"
     "${WEBCORE_DIR}/platform/mock/mediasource"
     "${WEBCORE_DIR}/platform/network/gtk"
     "${WEBCORE_DIR}/platform/network/soup"
@@ -154,6 +155,8 @@ list(APPEND WebCore_SOURCES
 
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
 
+    platform/mediastream/gtk/SDPProcessorScriptResourceGtk.cpp
+
     platform/network/gtk/CredentialBackingStore.cpp
 
     platform/network/soup/AuthenticationChallengeSoup.cpp
@@ -247,6 +250,9 @@ set(WebCore_USER_AGENT_SCRIPTS
 )
 
 set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/gtk/RenderThemeGtk.cpp)
+
+set(WebCore_SDP_PROCESSOR_SCRIPTS ${WEBCORE_DIR}/Modules/mediastream/sdp.js)
+set(WebCore_SDP_PROCESSOR_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/mediastream/gtk/SDPProcessorScriptResource.cpp)
 
 list(APPEND WebCore_LIBRARIES
     ${ATK_LIBRARIES}

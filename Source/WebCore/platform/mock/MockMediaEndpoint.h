@@ -28,20 +28,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef MockMediaEndpoint_h
+#define MockMediaEndpoint_h
 
 #if ENABLE(MEDIA_STREAM)
+
 #include "MediaEndpoint.h"
 
 namespace WebCore {
 
-static std::unique_ptr<MediaEndpoint> createMediaEndpoint(MediaEndpointClient&)
-{
-    return nullptr;
-}
+class MockMediaEndpoint : public MediaEndpoint {
+public:
+    WEBCORE_EXPORT static std::unique_ptr<MediaEndpoint> create(MediaEndpointClient&);
 
-CreateMediaEndpoint MediaEndpoint::create = createMediaEndpoint;
+    MockMediaEndpoint(MediaEndpointClient&);
+    ~MockMediaEndpoint();
+
+    void setConfiguration(RefPtr<MediaEndpointConfiguration>&&) override;
+
+    void generateDtlsInfo() override;
+    Vector<RefPtr<MediaPayload>> getDefaultAudioPayloads() override;
+    Vector<RefPtr<MediaPayload>> getDefaultVideoPayloads() override;
+
+    UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool isInitiator) override;
+    UpdateResult updateSendConfiguration(MediaEndpointSessionConfiguration*, bool isInitiator) override;
+
+    void addRemoteCandidate(IceCandidate&, unsigned mdescIndex, const String& ufrag, const String& password) override;
+
+    void replaceSendSource(RealtimeMediaSource&, unsigned mdescIndex) override;
+
+    void stop() override;
+
+private:
+    MediaEndpointClient& m_client;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
+
+#endif // MockMediaEndpoint_h

@@ -150,20 +150,20 @@ private:
     PeerMediaDescription() { }
 
     String m_type;
-    unsigned short m_port { 0 };
-    String m_address;
-    String m_mode;
+    unsigned short m_port { 9 };
+    String m_address { "0.0.0.0" };
+    String m_mode { "sendrecv" };
 
     Vector<RefPtr<MediaPayload>> m_payloads;
 
-    bool m_rtcpMux { false };
+    bool m_rtcpMux { true };
     String m_rtcpAddress;
     unsigned short m_rtcpPort { 0 };
 
     String m_mediaStreamId;
     String m_mediaStreamTrackId;
 
-    String m_dtlsSetup;
+    String m_dtlsSetup { "actpass" };
     String m_dtlsFingerprintHashFunction;
     String m_dtlsFingerprint;
 

@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            var stream;
+            var audioTrack;
+            var videoTrack;
+            var mediaDescriptionVariables = [];
+
+            description("Inspect the result of RTCPeerConnection.createOffer()");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            var pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            navigator.mediaDevices.getUserMedia({ "audio": true, "video": true })
+            .then(function (s) {
+                stream = s;
+                audioTrack = stream.getAudioTracks()[0];
+                videoTrack = stream.getVideoTracks()[0];
+
+                pc.addTrack(audioTrack, stream);
+                return pc.createOffer();
+            })
+            .then(function (offer) {
+                testPassed("Got offer");
+                mediaDescriptionVariables.push({ "trackId": audioTrack.id, "streamId": stream.id });
+                printComparableSessionDescription(offer, mediaDescriptionVariables);
+
+                pc.addTrack(videoTrack, stream);
+                return pc.createOffer();
+            })
+            .then(function (offer) {
+                testPassed("Got offer");
+                mediaDescriptionVariables.push({ "trackId": videoTrack.id, "streamId": stream.id });
+                printComparableSessionDescription(offer, mediaDescriptionVariables);
+
+                testPassed("End of promise chain");
+                finishJSTest();
+            })
+            .catch(function (error) {
+                testFailed("Error caught in promise chain: " + error);
+                finishJSTest();
+            });
+
+            // Variable fields (e.g. generated ids) are verified and replaced with predictable
+            // lables. The result can be compared with a predefined expected output.
+            function printComparableSessionDescription(sessionDescription, mdescVariables) {
+                debug("=== RTCSessionDescription ===");
+                debug("type: " + sessionDescription.type + ", sdp:");
+
+                var sdp = sessionDescription.sdp;
+
+                var regexp = {
+                    "oline": "^o=(-) ([\\d]+) .*$",
+                    "msidsemantic": "^a=msid-semantic: *WMS .*$",
+                    "mline": "^m=.*$",
+                    "cname": "^a=ssrc:(\\d+) cname:([\\w+/\\-@\\.\\{\\}]+).*$",
+                    "msid": "^a=(ssrc:\\d+ )?msid:([\\w+/\\-=]+) +([\\w+/\\-=]+).*$",
+                    "iceufrag": "^a=ice-ufrag:([\\w+/]*).*$",
+                    "icepwd": "^a=ice-pwd:([\\w+/]*=*).*$",
+                };
+
+                var mdescIndex = -1;
+                sdp.split("\r\n").forEach(function (line) {
+                    if (match(line, regexp.mline)) {
+                        // Media block ("header" line)
+                        mdescIndex++;
+                    } else if (mdescIndex < 0) {
+                        // Session block
+                        var oline;
+
+                        if (oline = match(line, regexp.oline))
+                            line = line.replace(oline[2], verified("session-id"));
+                        else if (match(line, regexp.msidsemantic)) {
+                            mdescVariables.forEach(function (variables) {
+                                line = line.replace(variables.streamId, verified("media-stream-id"));
+                            });
+                        }
+                    } else {
+                        // Media block (content lines)
+                        var cname;
+                        var msid;
+                        var iceufrag;
+                        var icepwd;
+
+                        if (cname = match(line, regexp.cname)) {
+                            line = line.replace(cname[1], verified("ssrc"));
+                            line = line.replace(cname[2], verified("cname"));
+
+                        } else if (msid = match(line, regexp.msid)) {
+                            if (msid[1])
+                                line = line.replace(msid[1], verified("ssrc"));
+
+                            var variables = mdescVariables[mdescIndex];
+
+                            var mediaStreamId = msid[2];
+                            var streamIdVerified = verified("media-stream-id", mediaStreamId != variables.streamId);
+                            line = line.replace(mediaStreamId, streamIdVerified);
+
+                            var mediaStreamTrackId = msid[3];
+                            var trackIdVerified = verified("media-stream-track-id", mediaStreamTrackId != variables.trackId);
+                            line = line.replace(mediaStreamTrackId, trackIdVerified);
+
+                        } else if (iceufrag = match(line, regexp.iceufrag))
+                            line = line.replace(iceufrag[1], verified("ice-ufrag"));
+                        else if (icepwd = match(line, regexp.icepwd))
+                            line = line.replace(icepwd[1], verified("ice-password"));
+                    }
+
+                    if (line)
+                        debug(line);
+                });
+
+                debug("===");
+                debug("");
+            }
+
+            function verified(name, isFailure) {
+                return "{" + name + ":" + (isFailure ? "FAILED" : "OK") + "}";
+            }
+
+            function match(data, pattern) {
+                return data.match(new RegExp(pattern));
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

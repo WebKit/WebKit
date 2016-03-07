@@ -940,6 +940,7 @@ set(WebCore_SOURCES
     Modules/mediastream/RTCStatsReport.cpp
     Modules/mediastream/RTCStatsResponse.cpp
     Modules/mediastream/RTCTrackEvent.cpp
+    Modules/mediastream/SDPProcessor.cpp
     Modules/mediastream/SourceInfo.cpp
     Modules/mediastream/UserMediaController.cpp
     Modules/mediastream/UserMediaPermissionCheck.cpp
@@ -2297,6 +2298,7 @@ set(WebCore_SOURCES
     platform/mock/DeviceOrientationClientMock.cpp
     platform/mock/GeolocationClientMock.cpp
     platform/mock/MediaConstraintsMock.cpp
+    platform/mock/MockMediaEndpoint.cpp
     platform/mock/MockRealtimeAudioSource.cpp
     platform/mock/MockRealtimeMediaSource.cpp
     platform/mock/MockRealtimeMediaSourceCenter.cpp
@@ -3581,6 +3583,22 @@ if (WebCore_USER_AGENT_SCRIPTS)
         VERBATIM)
     list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentScriptsData.cpp)
     ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES} UserAgentScriptsData.cpp UserAgentScripts.h)
+endif ()
+
+if (WebCore_SDP_PROCESSOR_SCRIPTS)
+    # Necessary variables:
+    # WebCore_SDP_PROCESSOR_SCRIPTS containing the JavaScript sources list
+    # WebCore_SDP_PROCESSOR_SCRIPTS_DEPENDENCIES containing the source file that will load the scripts to add the proper
+    #   dependency and having them built at the right moment
+
+    add_custom_command(
+        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/SDPProcessorScriptsData.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/SDPProcessorScripts.h
+        MAIN_DEPENDENCY ${WEBCORE_DIR}/Scripts/make-js-file-arrays.py
+        DEPENDS ${WebCore_SDP_PROCESSOR_SCRIPTS}
+        COMMAND "PYTHONPATH=${JavaScriptCore_SCRIPTS_DIR}" ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/Scripts/make-js-file-arrays.py ${DERIVED_SOURCES_WEBCORE_DIR}/SDPProcessorScripts.h ${DERIVED_SOURCES_WEBCORE_DIR}/SDPProcessorScriptsData.cpp ${WebCore_SDP_PROCESSOR_SCRIPTS}
+        VERBATIM)
+    list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/SDPProcessorScriptsData.cpp)
+    ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WebCore_SDP_PROCESSOR_SCRIPTS_DEPENDENCIES} SDPProcessorScriptsData.cpp SDPProcessorScripts.h)
 endif ()
 
 # Generate plug-in resources

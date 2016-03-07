@@ -1,3 +1,21 @@
+2016-03-07  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Implement MediaEndpointPeerConnection::createOffer()
+        https://bugs.webkit.org/show_bug.cgi?id=154867
+
+        Reviewed by Eric Carlson and Jer Noble.
+
+        The output SDP from createOffer() is processed by verifying all variable
+        identifiers, such as session and user id, and replacing them with
+        predefined values to make the SDP comparable with an expected result.
+
+        The test is currently skipped on the mac port until support to read the
+        SDPProcessor JavaScript resource is added.
+
+        * fast/mediastream/RTCPeerConnection-inspect-offer-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-inspect-offer.html: Added.
+        * platform/mac/TestExpectations:
+
 2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip storage/indexeddb/modern/exceed-open-file-limit.html
