@@ -1354,7 +1354,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
             CodeBlock* codeBlock = exec->codeBlock();
             ConcurrentJITLocker locker(codeBlock->m_lock);
             pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
-            pc[6].u.operand = slot.cachedOffset();
+            pc[6].u.pointer = reinterpret_cast<void*>(slot.cachedOffset());
         }
     }
 
@@ -1381,7 +1381,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
         if (slot.isCacheable() && slot.base() == scope && scope->structure()->propertyAccessesAreCacheable()) {
             ConcurrentJITLocker locker(codeBlock->m_lock);
             pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
-            pc[6].u.operand = slot.cachedOffset();
+            pc[6].u.pointer = reinterpret_cast<void*>(slot.cachedOffset());
         }
     }
 

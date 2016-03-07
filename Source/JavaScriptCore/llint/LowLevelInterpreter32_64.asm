@@ -321,7 +321,7 @@ macro doCallToJavaScript(makeCall, doReturn)
 
 .calleeFramePopped:
     loadp Callee[cfr], temp3 # VM.topCallFrame
-    loadp ScopeChain[cfr], temp4
+    loadp ScopeChain + PayloadOffset[cfr], temp4
     storep temp4, [temp3]
 
     doReturn(extraStackSpace)
@@ -598,7 +598,7 @@ end
 
 
 macro branchIfException(label)
-    loadp ScopeChain[cfr], t3
+    loadp ScopeChain + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     bieq VM::m_exception + TagOffset[t3], EmptyValueTag, .noException
@@ -2002,7 +2002,7 @@ _llint_op_next_pname:
     loadi 20[PC], t2
     loadi PayloadOffset[cfr, t2, 8], t2
     loadp JSPropertyNameIterator::m_jsStrings[t2], t3
-    loadi [t3, t0, 8], t3
+    loadi PayloadOffset[t3, t0, 8], t3
     addi 1, t0
     storei t0, PayloadOffset[cfr, t1, 8]
     loadi 4[PC], t1
@@ -2039,7 +2039,7 @@ _llint_op_catch:
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
     # The throwing code must have known that we were throwing to the interpreter,
     # and have set VM::targetInterpreterPCForThrow.
-    loadp ScopeChain[cfr], t3
+    loadp ScopeChain + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
@@ -2135,7 +2135,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         move t0, cfr
         call executableOffsetToFunction[t1]
         addp 16 - 4, sp
-        loadp ScopeChain[cfr], t3
+        loadp ScopeChain + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
@@ -2159,7 +2159,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     elsif C_LOOP
-        loadp ScopeChain[cfr], t3
+        loadp ScopeChain + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         storep cfr, VM::topCallFrame[t3]
@@ -2172,7 +2172,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         move t2, cfr
         cloopCallNative executableOffsetToFunction[t1]
         restoreReturnAddressBeforeReturn(t3)
-        loadp ScopeChain[cfr], t3
+        loadp ScopeChain + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     else
@@ -2212,7 +2212,7 @@ macro resolveScope()
     addi 1, t2
 
 .resolveScopeAfterActivationCheck:
-    loadp ScopeChain[cfr], t0
+    loadp ScopeChain + PayloadOffset[cfr], t0
     btiz t2, .resolveScopeLoopEnd
 
 .resolveScopeLoop:
@@ -2271,13 +2271,13 @@ _llint_op_resolve_scope:
 
 macro loadWithStructureCheck(operand, slowPath)
     loadisFromInstruction(operand, t0)
-    loadp [cfr, t0, 8], t0
+    loadp PayloadOffset[cfr, t0, 8], t0
     loadpFromInstruction(5, t1)
     bpneq JSCell::m_structure[t0], t1, slowPath
 end
 
 macro getProperty()
-    loadisFromInstruction(6, t3)
+    loadpFromInstruction(6, t3)
     loadPropertyAtVariableOffset(t3, t0, t1, t2)
     valueProfile(t1, t2, 28, t0)
     loadisFromInstruction(1, t0)
@@ -2297,7 +2297,7 @@ end
 
 macro getClosureVar()
     loadp JSVariableObject::m_registers[t0], t0
-    loadisFromInstruction(6, t3)
+    loadpFromInstruction(6, t3)
     loadp TagOffset[t0, t3, 8], t1
     loadp PayloadOffset[t0, t3, 8], t2
     valueProfile(t1, t2, 28, t0)
@@ -2356,7 +2356,7 @@ _llint_op_get_from_scope:
 macro putProperty()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2, t3)
-    loadisFromInstruction(6, t1)
+    loadpFromInstruction(6, t1)
     storePropertyAtVariableOffset(t1, t0, t2, t3)
 end
 
@@ -2374,7 +2374,7 @@ macro putClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2, t3)
     loadp JSVariableObject::m_registers[t0], t0
-    loadisFromInstruction(6, t1)
+    loadpFromInstruction(6, t1)
     storei t2, TagOffset[t0, t1, 8]
     storei t3, PayloadOffset[t0, t1, 8]
 end
