@@ -87,7 +87,7 @@ template<> JSValue JSTestExceptionConstructor::prototypeForStructure(JSC::VM& vm
 
 template<> void JSTestExceptionConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestException::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestException::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestException"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -121,7 +121,7 @@ JSObject* JSTestException::createPrototype(VM& vm, JSGlobalObject* globalObject)
     return JSTestExceptionPrototype::create(vm, globalObject, JSTestExceptionPrototype::createStructure(vm, globalObject, globalObject->errorPrototype()));
 }
 
-JSObject* JSTestException::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestException::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestException>(vm, globalObject);
 }

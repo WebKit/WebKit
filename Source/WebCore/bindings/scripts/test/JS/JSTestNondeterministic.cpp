@@ -93,7 +93,7 @@ template<> JSValue JSTestNondeterministicConstructor::prototypeForStructure(JSC:
 
 template<> void JSTestNondeterministicConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestNondeterministic::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestNondeterministic::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestNondeterministic"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -133,7 +133,7 @@ JSObject* JSTestNondeterministic::createPrototype(VM& vm, JSGlobalObject* global
     return JSTestNondeterministicPrototype::create(vm, globalObject, JSTestNondeterministicPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSTestNondeterministic::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestNondeterministic::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestNondeterministic>(vm, globalObject);
 }

@@ -79,7 +79,7 @@ template<> JSValue JSTestJSBuiltinConstructorConstructor::prototypeForStructure(
 
 template<> void JSTestJSBuiltinConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestJSBuiltinConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestJSBuiltinConstructor::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestJSBuiltinConstructor"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -121,7 +121,7 @@ JSObject* JSTestJSBuiltinConstructor::createPrototype(VM& vm, JSGlobalObject* gl
     return JSTestJSBuiltinConstructorPrototype::create(vm, globalObject, JSTestJSBuiltinConstructorPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSTestJSBuiltinConstructor::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestJSBuiltinConstructor::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestJSBuiltinConstructor>(vm, globalObject);
 }

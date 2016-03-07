@@ -116,7 +116,7 @@ template<> JSValue JSTestEventConstructorConstructor::prototypeForStructure(JSC:
 
 template<> void JSTestEventConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestEventConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestEventConstructor::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestEventConstructor"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
 }
@@ -152,7 +152,7 @@ JSObject* JSTestEventConstructor::createPrototype(VM& vm, JSGlobalObject* global
     return JSTestEventConstructorPrototype::create(vm, globalObject, JSTestEventConstructorPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSTestEventConstructor::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestEventConstructor::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestEventConstructor>(vm, globalObject);
 }

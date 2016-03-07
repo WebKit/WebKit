@@ -50,7 +50,7 @@ namespace WebCore {
             if (Type::hasStaticPropertyTable && JSC::getStaticValueSlot<Type, Base>(exec, *Type::info()->staticPropHashTable, element, propertyName, slot))
                 return true;
 
-            JSC::JSValue proto = element->prototype();
+            JSC::JSValue proto = element->getPrototypeDirect();
             if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(exec, propertyName))
                 return false;
         }

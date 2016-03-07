@@ -84,7 +84,7 @@ template<> JSValue JSTestSerializedScriptValueInterfaceConstructor::prototypeFor
 
 template<> void JSTestSerializedScriptValueInterfaceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestSerializedScriptValueInterface::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestSerializedScriptValueInterface::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestSerializedScriptValueInterface"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -123,7 +123,7 @@ JSObject* JSTestSerializedScriptValueInterface::createPrototype(VM& vm, JSGlobal
     return JSTestSerializedScriptValueInterfacePrototype::create(vm, globalObject, JSTestSerializedScriptValueInterfacePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSTestSerializedScriptValueInterface::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestSerializedScriptValueInterface::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestSerializedScriptValueInterface>(vm, globalObject);
 }

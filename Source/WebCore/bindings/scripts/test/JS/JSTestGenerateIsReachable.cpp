@@ -70,7 +70,7 @@ template<> JSValue JSTestGenerateIsReachableConstructor::prototypeForStructure(J
 
 template<> void JSTestGenerateIsReachableConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestGenerateIsReachable::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestGenerateIsReachable::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestGenerateIsReachable"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -104,7 +104,7 @@ JSObject* JSTestGenerateIsReachable::createPrototype(VM& vm, JSGlobalObject* glo
     return JSTestGenerateIsReachablePrototype::create(vm, globalObject, JSTestGenerateIsReachablePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSTestGenerateIsReachable::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestGenerateIsReachable::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestGenerateIsReachable>(vm, globalObject);
 }

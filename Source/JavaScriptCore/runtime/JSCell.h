@@ -209,6 +209,7 @@ protected:
     static NO_RETURN_DUE_TO_CRASH bool preventExtensions(JSObject*, ExecState*);
     static NO_RETURN_DUE_TO_CRASH bool isExtensible(JSObject*, ExecState*);
     static NO_RETURN_DUE_TO_CRASH bool setPrototype(JSObject*, ExecState*, JSValue, bool);
+    static NO_RETURN_DUE_TO_CRASH JSValue getPrototype(JSObject*, ExecState*);
 
     static String className(const JSObject*);
     JS_EXPORT_PRIVATE static bool customHasInstance(JSObject*, ExecState*, JSValue);

@@ -73,7 +73,7 @@ template<> JSValue JSattributeConstructor::prototypeForStructure(JSC::VM& vm, co
 
 template<> void JSattributeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSattribute::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSattribute::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("attribute"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -108,7 +108,7 @@ JSObject* JSattribute::createPrototype(VM& vm, JSGlobalObject* globalObject)
     return JSattributePrototype::create(vm, globalObject, JSattributePrototype::createStructure(vm, globalObject, globalObject->errorPrototype()));
 }
 
-JSObject* JSattribute::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSattribute::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSattribute>(vm, globalObject);
 }

@@ -77,7 +77,7 @@ template<> JSValue JSTestMediaQueryListListenerConstructor::prototypeForStructur
 
 template<> void JSTestMediaQueryListListenerConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestMediaQueryListListener::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestMediaQueryListListener::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestMediaQueryListListener"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -112,7 +112,7 @@ JSObject* JSTestMediaQueryListListener::createPrototype(VM& vm, JSGlobalObject* 
     return JSTestMediaQueryListListenerPrototype::create(vm, globalObject, JSTestMediaQueryListListenerPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSTestMediaQueryListListener::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestMediaQueryListListener::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestMediaQueryListListener>(vm, globalObject);
 }

@@ -150,7 +150,7 @@ template<> JSValue JSTestOverloadedConstructorsConstructor::prototypeForStructur
 
 template<> void JSTestOverloadedConstructorsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestOverloadedConstructors::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestOverloadedConstructors::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestOverloadedConstructors"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -184,7 +184,7 @@ JSObject* JSTestOverloadedConstructors::createPrototype(VM& vm, JSGlobalObject* 
     return JSTestOverloadedConstructorsPrototype::create(vm, globalObject, JSTestOverloadedConstructorsPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSTestOverloadedConstructors::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestOverloadedConstructors::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestOverloadedConstructors>(vm, globalObject);
 }

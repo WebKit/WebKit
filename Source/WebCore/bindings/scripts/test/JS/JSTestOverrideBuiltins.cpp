@@ -79,7 +79,7 @@ template<> JSValue JSTestOverrideBuiltinsConstructor::prototypeForStructure(JSC:
 
 template<> void JSTestOverrideBuiltinsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestOverrideBuiltins::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestOverrideBuiltins::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestOverrideBuiltins"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -114,7 +114,7 @@ JSObject* JSTestOverrideBuiltins::createPrototype(VM& vm, JSGlobalObject* global
     return JSTestOverrideBuiltinsPrototype::create(vm, globalObject, JSTestOverrideBuiltinsPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSTestOverrideBuiltins::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestOverrideBuiltins::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestOverrideBuiltins>(vm, globalObject);
 }

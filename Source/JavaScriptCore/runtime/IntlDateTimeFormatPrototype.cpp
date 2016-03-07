@@ -134,7 +134,9 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
             return JSValue::encode(throwOutOfMemoryError(state));
 
         // c. Let bf be BoundFunctionCreate(F, «this value»).
-        boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, dtf, boundArgs, 1, ASCIILiteral("format"));
+        boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, dtf, boundArgs, 1, ASCIILiteral("format"));
+        if (vm.exception())
+            return JSValue::encode(JSValue());
         // d. Set dtf.[[boundFormat]] to bf.
         dtf->setBoundFormat(vm, boundFormat);
     }

@@ -95,11 +95,11 @@ void WorkerScriptController::initScript()
         ASSERT(structure->globalObject() == m_workerGlobalScopeWrapper);
         ASSERT(m_workerGlobalScopeWrapper->structure()->globalObject() == m_workerGlobalScopeWrapper);
         workerGlobalScopePrototype->structure()->setGlobalObject(*m_vm, m_workerGlobalScopeWrapper.get());
-        workerGlobalScopePrototype->structure()->setPrototypeWithoutTransition(*m_vm, JSEventTarget::getPrototype(*m_vm, m_workerGlobalScopeWrapper.get()));
+        workerGlobalScopePrototype->structure()->setPrototypeWithoutTransition(*m_vm, JSEventTarget::prototype(*m_vm, m_workerGlobalScopeWrapper.get()));
         dedicatedContextPrototype->structure()->setGlobalObject(*m_vm, m_workerGlobalScopeWrapper.get());
     }
     ASSERT(m_workerGlobalScopeWrapper->globalObject() == m_workerGlobalScopeWrapper);
-    ASSERT(asObject(m_workerGlobalScopeWrapper->prototype())->globalObject() == m_workerGlobalScopeWrapper);
+    ASSERT(asObject(m_workerGlobalScopeWrapper->getPrototypeDirect())->globalObject() == m_workerGlobalScopeWrapper);
 
     m_consoleClient = std::make_unique<WorkerConsoleClient>(*m_workerGlobalScope);
     m_workerGlobalScopeWrapper->setConsoleClient(m_consoleClient.get());

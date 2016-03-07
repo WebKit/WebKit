@@ -129,7 +129,9 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(ExecState* state
             return JSValue::encode(throwOutOfMemoryError(state));
 
         // c. Let bc be BoundFunctionCreate(F, «this value»).
-        boundCompare = JSBoundFunction::create(vm, globalObject, targetObject, collator, boundArgs, 2, ASCIILiteral("compare"));
+        boundCompare = JSBoundFunction::create(vm, state, globalObject, targetObject, collator, boundArgs, 2, ASCIILiteral("compare"));
+        if (vm.exception())
+            return JSValue::encode(JSValue());
         // d. Set collator.[[boundCompare]] to bc.
         collator->setBoundCompare(vm, boundCompare);
     }

@@ -122,7 +122,9 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
             return JSValue::encode(throwOutOfMemoryError(state));
 
         // c. Let bf be BoundFunctionCreate(F, «this value»).
-        boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, nf, boundArgs, 1, ASCIILiteral("format"));
+        boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, nf, boundArgs, 1, ASCIILiteral("format"));
+        if (vm.exception())
+            return JSValue::encode(JSValue());
         // d. Set nf.[[boundFormat]] to bf.
         nf->setBoundFormat(vm, boundFormat);
     }

@@ -93,7 +93,7 @@ template<> JSValue JSTestActiveDOMObjectConstructor::prototypeForStructure(JSC::
 
 template<> void JSTestActiveDOMObjectConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestActiveDOMObject::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestActiveDOMObject::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestActiveDOMObject"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -129,7 +129,7 @@ JSObject* JSTestActiveDOMObject::createPrototype(VM& vm, JSGlobalObject* globalO
     return JSTestActiveDOMObjectPrototype::create(vm, globalObject, JSTestActiveDOMObjectPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSTestActiveDOMObject::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestActiveDOMObject::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestActiveDOMObject>(vm, globalObject);
 }

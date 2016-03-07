@@ -90,11 +90,10 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
     // FIXME: make it so that custom getters take both the |this| value and the slotBase (property holder).
     // https://bugs.webkit.org/show_bug.cgi?id=154320
     while (true) {
-        if (LIKELY(proxyObjectAsObject->inherits(ProxyObject::info())))
+        if (LIKELY(proxyObjectAsObject->type() == ProxyObjectType))
             break;
 
-        Structure& structure = *vm.heap.structureIDTable().get(proxyObjectAsObject->structureID());
-        JSValue prototype = structure.storedPrototype();
+        JSValue prototype = proxyObjectAsObject->getPrototypeDirect();
         RELEASE_ASSERT(prototype.isObject());
         proxyObjectAsObject = asObject(prototype);
     }
@@ -1006,7 +1005,9 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
     if (targetIsExtensible)
         return true;
 
-    JSValue targetPrototype = target->prototype();
+    JSValue targetPrototype = target->getPrototype(vm, exec);
+    if (vm.exception())
+        return false;
     if (!sameValue(exec, prototype, targetPrototype)) {
         throwVMTypeError(exec, ASCIILiteral("Proxy 'setPrototypeOf' trap returned true when its target is non-extensible and the new prototype value is not the same as the current prototype value. It should have returned false."));
         return false;

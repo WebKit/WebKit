@@ -61,7 +61,7 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
 
     static_assert(!hasStaticPropertyTable, "This function does not handle static instance properties");
 
-    JSValue prototype = thisObject->prototype();
+    JSValue prototype = thisObject->getPrototypeDirect();
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(exec, propertyName, slot))
         return Base::deleteProperty(thisObject, exec, propertyName);
 
@@ -106,7 +106,7 @@ bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue 
     PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
     static_assert(!hasStaticPropertyTable, "This function does not handle static instance properties");
 
-    JSValue prototype = this->prototype();
+    JSValue prototype = this->getPrototypeDirect();
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(exec, propertyName, slot))
         return false;
 

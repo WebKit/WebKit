@@ -367,3 +367,79 @@ function assert(b) {
         assert(threw);
     }
 }
+
+{
+    let e1 = null;
+    let e2 = null;
+    let t1 = {};
+    let called1 = false;
+    let h1 = {
+        has: function(theTarget, propName) {
+            called1 = true;
+            e1 = new Error;
+            throw e1;
+            return false;
+        }
+    };
+    let p1 = new Proxy(t1, h1);
+
+    let t2 = {};
+    t2.__proto__ = p1;
+    let h2 = {
+        has: function(theTarget, propName) {
+            e2 = new Error;
+            throw e2;
+            return false;
+        }
+    };
+    let p2 = new Proxy(t2, h2);
+    for (let i = 0; i < 500; i++) {
+        let threw = false;
+        try {
+            10 in p2;
+        } catch(e) {
+            assert(e === e2);
+            threw = true;
+        }
+        assert(threw);
+        assert(!called1);
+    }
+}
+
+{
+    let e1 = null;
+    let e2 = null;
+    let t1 = {};
+    let called1 = false;
+    let h1 = {
+        has: function(theTarget, propName) {
+            called1 = true;
+            e1 = new Error;
+            throw e1;
+            return false;
+        }
+    };
+    let p1 = new Proxy(t1, h1);
+
+    let t2 = {};
+    t2.__proto__ = p1;
+    let h2 = {
+        has: function(theTarget, propName) {
+            e2 = new Error;
+            throw e2;
+            return false;
+        }
+    };
+    let p2 = new Proxy(t2, h2);
+    for (let i = 0; i < 500; i++) {
+        let threw = false;
+        try {
+            "foo" in p2;
+        } catch(e) {
+            assert(e === e2);
+            threw = true;
+        }
+        assert(threw);
+        assert(!called1);
+    }
+}

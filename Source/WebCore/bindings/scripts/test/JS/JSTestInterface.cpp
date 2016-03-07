@@ -253,7 +253,7 @@ template<> JSValue JSTestInterfaceConstructor::prototypeForStructure(JSC::VM& vm
 
 template<> void JSTestInterfaceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestInterface::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestInterface::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestInterface"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
     reifyStaticProperties(vm, JSTestInterfaceConstructorTableValues, *this);
@@ -399,7 +399,7 @@ JSObject* JSTestInterface::createPrototype(VM& vm, JSGlobalObject* globalObject)
     return JSTestInterfacePrototype::create(vm, globalObject, JSTestInterfacePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSTestInterface::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestInterface::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestInterface>(vm, globalObject);
 }

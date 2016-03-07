@@ -76,7 +76,7 @@ bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, ExecState* exec,
     // We don't call through to JSObject because there's no way to give a 
     // lexical environment object getter properties or a prototype.
     ASSERT(!thisObject->hasGetterSetterProperties());
-    ASSERT(thisObject->prototype().isNull());
+    ASSERT(thisObject->getPrototypeDirect().isNull());
     return false;
 }
 

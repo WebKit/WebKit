@@ -70,7 +70,7 @@ template<> JSValue JSreadonlyConstructor::prototypeForStructure(JSC::VM& vm, con
 
 template<> void JSreadonlyConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSreadonly::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSreadonly::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("readonly"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -104,7 +104,7 @@ JSObject* JSreadonly::createPrototype(VM& vm, JSGlobalObject* globalObject)
     return JSreadonlyPrototype::create(vm, globalObject, JSreadonlyPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
-JSObject* JSreadonly::getPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSreadonly::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSreadonly>(vm, globalObject);
 }

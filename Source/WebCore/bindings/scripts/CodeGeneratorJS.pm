@@ -408,7 +408,7 @@ sub GenerateGetOwnPropertySlotBody
     # https://heycam.github.io/webidl/#dfn-named-property-visibility
     # https://heycam.github.io/webidl/#dfn-named-properties-object
     my $prototypeCheck = sub {
-        push(@getOwnPropertySlotImpl, "    ${namespaceMaybe}JSValue proto = thisObject->prototype();\n");
+        push(@getOwnPropertySlotImpl, "    ${namespaceMaybe}JSValue proto = thisObject->getPrototypeDirect();\n");
         push(@getOwnPropertySlotImpl, "    if (proto.isObject() && jsCast<${namespaceMaybe}JSObject*>(proto)->hasProperty(state, propertyName))\n");
         push(@getOwnPropertySlotImpl, "        return false;\n\n");
     };
@@ -981,7 +981,7 @@ sub GenerateHeader
     # Prototype
     unless (IsDOMGlobalObject($interface)) {
         push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);\n");
-        push(@headerContent, "    static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);\n");
+        push(@headerContent, "    static JSC::JSObject* prototype(JSC::VM&, JSC::JSGlobalObject*);\n");
     }
 
     # JSValue to implementation type
@@ -2195,14 +2195,14 @@ sub GenerateImplementation
         push(@implContent, "JSObject* ${className}::createPrototype(VM& vm, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, ${parentClassName}::getPrototype(vm, globalObject)));\n");
+            push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, ${parentClassName}::prototype(vm, globalObject)));\n");
         } else {
             my $prototype = $interface->isException ? "errorPrototype" : "objectPrototype";
             push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, globalObject->${prototype}()));\n");
         }
         push(@implContent, "}\n\n");
 
-        push(@implContent, "JSObject* ${className}::getPrototype(VM& vm, JSGlobalObject* globalObject)\n");
+        push(@implContent, "JSObject* ${className}::prototype(VM& vm, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getDOMPrototype<${className}>(vm, globalObject);\n");
         push(@implContent, "}\n\n");
@@ -2333,7 +2333,7 @@ sub GenerateImplementation
                 } elsif (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
                     # Fallback to trying to searching the prototype chain for compatibility reasons.
                     push(@implContent, "        JSObject* thisObject = JSValue::decode(thisValue).getObject();\n");
-                    push(@implContent, "        for (thisObject = thisObject ? thisObject->prototype().getObject() : nullptr; thisObject; thisObject = thisObject->prototype().getObject()) {\n");
+                    push(@implContent, "        for (thisObject = thisObject ? thisObject->getPrototypeDirect().getObject() : nullptr; thisObject; thisObject = thisObject->getPrototypeDirect().getObject()) {\n");
                     push(@implContent, "            if ((castedThis = " . GetCastingHelperForThisObject($interface) . "(thisObject)))\n");
                     push(@implContent, "                break;\n");
                     push(@implContent, "        }\n");
@@ -2636,7 +2636,7 @@ sub GenerateImplementation
                 } elsif (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
                     # Fallback to trying to searching the prototype chain for compatibility reasons.
                     push(@implContent, "        JSObject* thisObject = JSValue::decode(thisValue).getObject();\n");
-                    push(@implContent, "        for (thisObject = thisObject ? thisObject->prototype().getObject() : nullptr; thisObject; thisObject = thisObject->prototype().getObject()) {\n");
+                    push(@implContent, "        for (thisObject = thisObject ? thisObject->getPrototypeDirect().getObject() : nullptr; thisObject; thisObject = thisObject->getPrototypeDirect().getObject()) {\n");
                     push(@implContent, "            if ((castedThis = " . GetCastingHelperForThisObject($interface) . "(thisObject)))\n");
                     push(@implContent, "                break;\n");
                     push(@implContent, "        }\n");
@@ -5027,11 +5027,11 @@ sub GenerateConstructorHelperMethods
     # of whether the interface was declared with the [NoInterfaceObject] extended attribute.
     # https://heycam.github.io/webidl/#interface-prototype-object
     if (IsDOMGlobalObject($interface)) {
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject.prototype(), DontDelete | ReadOnly | DontEnum);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(), DontDelete | ReadOnly | DontEnum);\n");
     } elsif ($interface->isCallback) {
         push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
     } else {
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);\n");
     }
 
     push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral(\"$visibleInterfaceName\"))), ReadOnly | DontEnum);\n");

@@ -1093,34 +1093,6 @@ _llint_op_overrides_has_instance:
     dispatch(4)
 
 
-_llint_op_instanceof:
-    traceExecution()
-    # Actually do the work.
-    loadisFromInstruction(3, t0)
-    loadConstantOrVariableCell(t0, t1, .opInstanceofSlow)
-    bbb JSCell::m_type[t1], ObjectType, .opInstanceofSlow
-    loadisFromInstruction(2, t0)
-    loadConstantOrVariableCell(t0, t2, .opInstanceofSlow)
-    
-    # Register state: t1 = prototype, t2 = value
-    move 1, t0
-.opInstanceofLoop:
-    loadStructureAndClobberFirstArg(t2, t3)
-    loadq Structure::m_prototype[t3], t2
-    bqeq t2, t1, .opInstanceofDone
-    btqz t2, tagMask, .opInstanceofLoop
-
-    move 0, t0
-.opInstanceofDone:
-    orq ValueFalse, t0
-    loadisFromInstruction(1, t3)
-    storeq t0, [cfr, t3, 8]
-    dispatch(4)
-
-.opInstanceofSlow:
-    callSlowPath(_llint_slow_path_instanceof)
-    dispatch(4)
-
 _llint_op_instanceof_custom:
     traceExecution()
     callSlowPath(_llint_slow_path_instanceof_custom)

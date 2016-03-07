@@ -184,7 +184,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
         // Fast path in the normal case where the user has not set an own constructor and the Array.prototype.constructor is normal.
         // We need prototype check for subclasses of Array, which are Array objects but have a different prototype by default.
         if (LIKELY(!thisObject->hasCustomProperties()
-            && thisObject->globalObject()->arrayPrototype() == thisObject->prototype()
+            && thisObject->globalObject()->arrayPrototype() == thisObject->getPrototypeDirect()
             && !thisObject->globalObject()->arrayPrototype()->didChangeConstructorOrSpeciesProperties()))
             return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
 

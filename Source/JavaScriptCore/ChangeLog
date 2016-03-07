@@ -1,3 +1,123 @@
+2016-03-06  Saam Barati  <sbarati@apple.com>
+
+        [[GetPrototypeOf]] should be a fully virtual method in the method table
+        https://bugs.webkit.org/show_bug.cgi?id=155002
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes us more consistent with how the ES6 specification models the
+        [[GetPrototypeOf]] trap. Moving this method into ClassInfo::methodTable 
+        is a prerequisite for implementing Proxy.[[GetPrototypeOf]]. This patch
+        still allows directly accessing the prototype for situations where this
+        is the desired behavior. This is equivalent to getting the internal
+        [[Prototype]] field as described in the specification. 
+
+        * API/JSObjectRef.cpp:
+        (JSObjectGetPrototype):
+        (JSObjectSetPrototype):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::compileCheckTypeInfoFlags):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOfCustom):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        (functionCreateProxy):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::speciesConstructArray):
+        * runtime/ClassInfo.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncBind):
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototypeGetterCompare):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::hasInstanceBoundFunction):
+        (JSC::getBoundFunctionStructure):
+        (JSC::JSBoundFunction::create):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::setPrototype):
+        (JSC::JSCell::getPrototype):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::hasLegacyProfiler):
+        (JSC::lastInPrototypeChain):
+        (JSC::JSGlobalObject::objectPrototypeIsSane):
+        (JSC::JSGlobalObject::arrayPrototypeChainIsSane):
+        (JSC::JSGlobalObject::stringPrototypeChainIsSane):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::GlobalFuncProtoGetterFunctor::GlobalFuncProtoGetterFunctor):
+        (JSC::GlobalFuncProtoGetterFunctor::operator()):
+        (JSC::globalFuncProtoGetter):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::getOwnPropertySlot):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::calculatedClassName):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::getPrototype):
+        (JSC::JSObject::defaultHasInstance):
+        (JSC::objectPrivateFuncInstanceOf):
+        (JSC::JSObject::getPropertyNames):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHole):
+        (JSC::JSObject::getGenericPropertyNames):
+        * runtime/JSObject.h:
+        (JSC::JSObject::finishCreation):
+        (JSC::JSObject::JSObject):
+        (JSC::JSObject::getPrototypeDirect):
+        (JSC::JSObject::getPrototype):
+        (JSC::JSObject::getOwnNonIndexPropertySlot):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::getNonIndexPropertySlot):
+        (JSC::JSObject::prototype): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canPerformFastPutInline):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::setTarget):
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::constructTypedArrayView):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::ObjectConstructorGetPrototypeOfFunctor):
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::operator()):
+        (JSC::objectConstructorGetPrototypeOf):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncIsPrototypeOf):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performSetPrototype):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::isValid):
+        * tests/stress/proxy-has-property.js:
+        (assert.let.h1.has):
+        (assert.let.h2.has):
+        (assert):
+
 2016-03-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197645.

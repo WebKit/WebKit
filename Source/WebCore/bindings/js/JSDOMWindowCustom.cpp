@@ -169,7 +169,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
     // FIXME: This seems like a silly idea. It only serves to suppress named property access
     // to frames that happen to have names corresponding to properties on the prototype.
     // This seems to only serve to leak some information cross-origin.
-    JSValue proto = thisObject->prototype();
+    JSValue proto = thisObject->getPrototypeDirect();
     if (proto.isObject() && asObject(proto)->getPropertySlot(exec, propertyName, slot)) {
         thisObject->printErrorMessage(errorMessage);
         slot.setUndefined();
@@ -192,7 +192,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
 
 static bool jsDOMWindowGetOwnPropertySlotNamedItemGetter(JSDOMWindow* thisObject, Frame& frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSValue proto = thisObject->prototype();
+    JSValue proto = thisObject->getPrototypeDirect();
     if (proto.isObject() && asObject(proto)->hasProperty(exec, propertyName))
         return false;
 

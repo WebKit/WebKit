@@ -1,3 +1,154 @@
+2016-03-06  Saam Barati  <sbarati@apple.com>
+
+        [[GetPrototypeOf]] should be a fully virtual method in the method table
+        https://bugs.webkit.org/show_bug.cgi?id=155002
+
+        Reviewed by Filip Pizlo.
+
+        Change ::getPrototype(.) to ::prototype(.) in various places to prevent
+        a naming conflict with JSC.
+
+        No new tests because no new functionality was added.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::initializeProperties):
+        (WebCore::JSImageConstructor::prototypeForStructure):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObjectConstructor::initializeProperties):
+        (WebCore::JSTestActiveDOMObject::createPrototype):
+        (WebCore::JSTestActiveDOMObject::prototype):
+        (WebCore::JSTestActiveDOMObject::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::JSTestClassWithJSBuiltinConstructorConstructor::initializeProperties):
+        (WebCore::JSTestClassWithJSBuiltinConstructor::createPrototype):
+        (WebCore::JSTestClassWithJSBuiltinConstructor::prototype):
+        (WebCore::JSTestClassWithJSBuiltinConstructor::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObjectConstructor::initializeProperties):
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObject::createPrototype):
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObject::prototype):
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObject::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetterConstructor::initializeProperties):
+        (WebCore::JSTestCustomNamedGetter::createPrototype):
+        (WebCore::JSTestCustomNamedGetter::prototype):
+        (WebCore::JSTestCustomNamedGetter::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::initializeProperties):
+        (WebCore::JSTestEventConstructor::createPrototype):
+        (WebCore::JSTestEventConstructor::prototype):
+        (WebCore::JSTestEventConstructor::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTargetConstructor::initializeProperties):
+        (WebCore::JSTestEventTarget::createPrototype):
+        (WebCore::JSTestEventTarget::prototype):
+        (WebCore::JSTestEventTarget::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestExceptionConstructor::initializeProperties):
+        (WebCore::JSTestException::createPrototype):
+        (WebCore::JSTestException::prototype):
+        (WebCore::JSTestException::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachableConstructor::initializeProperties):
+        (WebCore::JSTestGenerateIsReachable::createPrototype):
+        (WebCore::JSTestGenerateIsReachable::prototype):
+        (WebCore::JSTestGenerateIsReachable::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::initializeProperties):
+        (WebCore::JSTestInterface::createPrototype):
+        (WebCore::JSTestInterface::prototype):
+        (WebCore::JSTestInterface::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::JSTestJSBuiltinConstructorConstructor::initializeProperties):
+        (WebCore::JSTestJSBuiltinConstructor::createPrototype):
+        (WebCore::JSTestJSBuiltinConstructor::prototype):
+        (WebCore::JSTestJSBuiltinConstructor::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerConstructor::initializeProperties):
+        (WebCore::JSTestMediaQueryListListener::createPrototype):
+        (WebCore::JSTestMediaQueryListListener::prototype):
+        (WebCore::JSTestMediaQueryListListener::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorConstructor::initializeProperties):
+        (WebCore::JSTestNamedConstructorNamedConstructor::initializeProperties):
+        (WebCore::JSTestNamedConstructor::createPrototype):
+        (WebCore::JSTestNamedConstructor::prototype):
+        (WebCore::JSTestNamedConstructor::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::initializeProperties):
+        (WebCore::JSTestNode::createPrototype):
+        (WebCore::JSTestNode::prototype):
+        (WebCore::JSTestNode::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        (WebCore::JSTestNondeterministicConstructor::initializeProperties):
+        (WebCore::JSTestNondeterministic::createPrototype):
+        (WebCore::JSTestNondeterministic::prototype):
+        (WebCore::JSTestNondeterministic::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::initializeProperties):
+        (WebCore::JSTestObj::createPrototype):
+        (WebCore::JSTestObj::prototype):
+        (WebCore::JSTestObj::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::initializeProperties):
+        (WebCore::JSTestOverloadedConstructors::createPrototype):
+        (WebCore::JSTestOverloadedConstructors::prototype):
+        (WebCore::JSTestOverloadedConstructors::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::JSTestOverrideBuiltinsConstructor::initializeProperties):
+        (WebCore::JSTestOverrideBuiltins::createPrototype):
+        (WebCore::JSTestOverrideBuiltins::prototype):
+        (WebCore::JSTestOverrideBuiltins::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::initializeProperties):
+        (WebCore::JSTestSerializedScriptValueInterface::createPrototype):
+        (WebCore::JSTestSerializedScriptValueInterface::prototype):
+        (WebCore::JSTestSerializedScriptValueInterface::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::initializeProperties):
+        (WebCore::JSTestTypedefs::createPrototype):
+        (WebCore::JSTestTypedefs::prototype):
+        (WebCore::JSTestTypedefs::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::JSattributeConstructor::initializeProperties):
+        (WebCore::JSattribute::createPrototype):
+        (WebCore::JSattribute::prototype):
+        (WebCore::JSattribute::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSattribute.h:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::JSreadonlyConstructor::initializeProperties):
+        (WebCore::JSreadonly::createPrototype):
+        (WebCore::JSreadonly::prototype):
+        (WebCore::JSreadonly::getPrototype): Deleted.
+        * bindings/scripts/test/JS/JSreadonly.h:
+
 2016-03-06  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Enable DOM class create functions to take parameters in case of JSBuiltinConstructor

@@ -1706,6 +1706,11 @@ _llint_op_copy_rest:
     callSlowPath(_slow_path_copy_rest)
     dispatch(4)
 
+_llint_op_instanceof:
+    traceExecution()
+    callSlowPath(_llint_slow_path_instanceof)
+    dispatch(4)
+
 
 # Lastly, make sure that we can link even though we don't support all opcodes.
 # These opcodes should never arise when using LLInt or either JIT. We assert

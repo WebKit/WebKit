@@ -36,7 +36,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSImageConstructor);
 
 template<> void JSImageConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSHTMLImageElement::getPrototype(vm, &globalObject), None);
+    putDirect(vm, vm.propertyNames->prototype, JSHTMLImageElement::prototype(vm, &globalObject), None);
 }
 
 template<> JSValue JSImageConstructor::prototypeForStructure(VM& vm, const JSDOMGlobalObject& globalObject)
