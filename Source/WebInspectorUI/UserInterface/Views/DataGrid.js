@@ -699,7 +699,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             // Get the width of the cell in the first (and only) row of the
             // header table in order to determine the width of the column, since
             // it is not possible to query a column for its width.
-            left += this._headerTableBodyElement.rows[0].cells[i].offsetWidth;
+            left += this._headerTableBodyElement.rows[0].cells[i].getBoundingClientRect().width;
 
             if (this._isColumnVisible(this.orderedColumns[i])) {
                 resizer.element.style.removeProperty("display");

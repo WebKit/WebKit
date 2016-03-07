@@ -58,7 +58,7 @@
 }
 
 .data-grid.inline {
-    border: 1px solid var(--border-color);
+    border: 0.5px solid var(--border-color);
 }
 
 .data-grid.no-header > table.header {
@@ -75,7 +75,7 @@
 
     background-color: white;
 
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 0.5px solid var(--border-color);
 
     font-weight: normal;
 
@@ -87,7 +87,7 @@
 }
 
 .data-grid :matches(th, td):not(:last-child) {
-    border-right: 1px solid var(--border-color);
+    border-right: 0.5px solid var(--border-color);
 }
 
 .data-grid th.sortable:active {

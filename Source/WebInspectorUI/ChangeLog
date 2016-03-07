@@ -1,3 +1,21 @@
+2016-03-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Use half-pixel borders for data grids
+        https://bugs.webkit.org/show_bug.cgi?id=154437
+        <rdar://problem/24736365>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid.inline):
+        (.data-grid th):
+        (.data-grid :matches(th, td):not(:last-child)):
+        Half-pixel borders round to 1px on 1x (non-retina) screens since r192444.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._positionResizerElements):
+        Use getBoundingClientRect for better precision since it provides subpixel values.
+
 2016-03-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Have separate path component for Script Timeline content views
