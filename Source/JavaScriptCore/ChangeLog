@@ -1,3 +1,31 @@
+2016-03-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Simplify the overflow check of ArithAbs
+        https://bugs.webkit.org/show_bug.cgi?id=155063
+
+        Reviewed by Geoffrey Garen.
+
+        The only integer that overflow abs(int32) is INT_MIN.
+        For some reason, our code testing for that case
+        was checking the top bit of the result specifically.
+
+        The code required a large immediate on x86 and an extra
+        register on ARM64.
+
+        This patch turns the overflow check into a branch on
+        the sign of the result.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAbs):
+        * jit/ThunkGenerators.cpp:
+        (JSC::absThunkGenerator):
+        * tests/stress/arith-abs-overflow.js: Added.
+        (opaqueAbs):
+
 2016-03-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Improve how DFG zero Floating Point registers

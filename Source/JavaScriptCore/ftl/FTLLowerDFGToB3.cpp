@@ -1774,7 +1774,7 @@ private:
             LValue result = m_out.bitXor(mask, m_out.add(mask, value));
 
             if (shouldCheckOverflow(m_node->arithMode()))
-                speculate(Overflow, noValue(), 0, m_out.equal(result, m_out.constInt32(1 << 31)));
+                speculate(Overflow, noValue(), 0, m_out.lessThan(result, m_out.int32Zero));
 
             setInt32(result);
             break;
