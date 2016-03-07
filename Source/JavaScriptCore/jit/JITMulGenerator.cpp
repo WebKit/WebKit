@@ -60,9 +60,13 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
         // Try to do intVar * intConstant.
         CCallHelpers::Jump notInt32 = jit.branchIfNotInt32(var);
 
-        m_slowPathJumpList.append(jit.branchMul32(CCallHelpers::Overflow, var.payloadGPR(), CCallHelpers::Imm32(constOpr.asConstInt32()), m_scratchGPR));
+        GPRReg multiplyResultGPR = m_result.payloadGPR();
+        if (multiplyResultGPR == var.payloadGPR())
+            multiplyResultGPR = m_scratchGPR;
 
-        jit.boxInt32(m_scratchGPR, m_result);
+        m_slowPathJumpList.append(jit.branchMul32(CCallHelpers::Overflow, var.payloadGPR(), CCallHelpers::Imm32(constOpr.asConstInt32()), multiplyResultGPR));
+
+        jit.boxInt32(multiplyResultGPR, m_result);
         m_endJumpList.append(jit.jump());
 
         if (!jit.supportsFloatingPoint()) {
