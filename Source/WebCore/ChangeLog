@@ -1,3 +1,18 @@
+2016-03-07  Andreas Kling  <akling@apple.com>
+
+        Make RenderStyle copy-on-write a bit less.
+        <https://webkit.org/b/155106>
+
+        Reviewed by Antti Koivisto.
+
+        Add a cheesy SET_NESTED_VAR macro complement to SET_VAR so we can avoid copy-on-write
+        detachment of nested RenderStyle substructures when the leaf value doesn't change.
+
+        I spotted about 300kB of these mistakes being made during PLT on iOS, most of them
+        in the transformX setter.
+
+        * rendering/style/RenderStyle.h:
+
 2016-03-07  Miguel Gomez  <magomez@igalia.com>
 
         [TextureMapper] [BitmapTexturePool] Use appropriate list size when freeing textures
