@@ -298,6 +298,8 @@ webkit.org/b/155050 storage/indexeddb/intversion-open-in-upgradeneeded.html [ Sk
 
 webkit.org/b/155138 [ Yosemite ] inspector/console/addInspectedNode.html [ Pass Timeout ]
 
+webkit.org/b/154606 [ Release Yosemite ] imported/w3c/indexeddb/idbcursor-advance-continue-async.htm [ Pass Timeout ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

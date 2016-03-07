@@ -1,5 +1,14 @@
 2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking imported/w3c/indexeddb/idbcursor-advance-continue-async.htm as flaky on Yosemite Release WK2
+        https://bugs.webkit.org/show_bug.cgi?id=154606
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking js/promises-tests/promises-tests-2-3-3.html as flaky on mac
         https://bugs.webkit.org/show_bug.cgi?id=155140
 
