@@ -38,6 +38,7 @@ public:
     explicit UnlinkedInstructionStream(const Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>&);
 
     unsigned count() const { return m_instructionCount; }
+    size_t sizeInBytes() const;
 
     class Reader {
     public:

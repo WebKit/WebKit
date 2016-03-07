@@ -43,6 +43,13 @@ void JSSet::destroy(JSCell* cell)
     thisObject->JSSet::~JSSet();
 }
 
+size_t JSSet::estimatedSize(JSCell* cell)
+{
+    JSSet* thisObject = jsCast<JSSet*>(cell);
+    size_t setDataSize = thisObject->m_setData.capacityInBytes();
+    return Base::estimatedSize(cell) + setDataSize;
+}
+
 void JSSet::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Base::visitChildren(cell, visitor);

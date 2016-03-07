@@ -72,6 +72,14 @@ void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
     out.printf(">");
 }
 
+size_t JSString::estimatedSize(JSCell* cell)
+{
+    JSString* thisObject = jsCast<JSString*>(cell);
+    if (thisObject->isRope())
+        return Base::estimatedSize(cell);
+    return Base::estimatedSize(cell) + thisObject->m_value.impl()->costDuringGC();
+}
+
 void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSString* thisObject = jsCast<JSString*>(cell);

@@ -105,6 +105,9 @@ struct MethodTable {
 
     typedef void (*DumpToStreamFunctionPtr)(const JSCell*, PrintStream&);
     DumpToStreamFunctionPtr dumpToStream;
+
+    typedef size_t (*EstimatedSizeFunctionPtr)(JSCell*);
+    EstimatedSizeFunctionPtr estimatedSize;
 };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -151,7 +154,8 @@ struct MethodTable {
         &ClassName::defineOwnProperty, \
         &ClassName::slowDownAndWasteMemory, \
         &ClassName::getTypedArrayImpl, \
-        &ClassName::dumpToStream \
+        &ClassName::dumpToStream, \
+        &ClassName::estimatedSize \
     }, \
     ClassName::TypedArrayStorageType
 

@@ -179,6 +179,7 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=123677
     CodeBlock* baselineVersion();
 
+    static size_t estimatedSize(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
     void visitChildren(SlotVisitor&);
     void visitWeakly(SlotVisitor&);

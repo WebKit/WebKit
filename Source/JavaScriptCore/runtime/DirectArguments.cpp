@@ -85,6 +85,13 @@ DirectArguments* DirectArguments::createByCopying(ExecState* exec)
     return result;
 }
 
+size_t DirectArguments::estimatedSize(JSCell* cell)
+{
+    DirectArguments* thisObject = jsCast<DirectArguments*>(cell);
+    size_t overridesSize = thisObject->m_overrides ? thisObject->overridesSize() : 0;
+    return Base::estimatedSize(cell) + overridesSize;
+}
+
 void DirectArguments::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
 {
     DirectArguments* thisObject = static_cast<DirectArguments*>(thisCell);

@@ -256,6 +256,16 @@ void RegExp::destroy(JSCell* cell)
     thisObject->RegExp::~RegExp();
 }
 
+size_t RegExp::estimatedSize(JSCell* cell)
+{
+    RegExp* thisObject = static_cast<RegExp*>(cell);
+    size_t regexDataSize = thisObject->m_regExpBytecode ? thisObject->m_regExpBytecode->estimatedSizeInBytes() : 0;
+#if ENABLE(YARR_JIT)
+    regexDataSize += thisObject->m_regExpJITCode.size();
+#endif
+    return Base::estimatedSize(cell) + regexDataSize;
+}
+
 RegExp* RegExp::createWithoutCaching(VM& vm, const String& patternString, RegExpFlags flags)
 {
     RegExp* regExp = new (NotNull, allocateCell<RegExp>(vm.heap)) RegExp(vm, patternString, flags);

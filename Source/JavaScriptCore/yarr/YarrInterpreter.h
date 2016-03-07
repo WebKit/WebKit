@@ -327,6 +327,8 @@ public:
     {
     }
 
+    size_t estimatedSizeInBytes() const { return terms.capacity() * sizeof(ByteTerm); }
+
     Vector<ByteTerm> terms;
     unsigned m_numSubpatterns;
     unsigned m_frameSize;
@@ -352,6 +354,8 @@ public:
         m_userCharacterClasses.swap(pattern.m_userCharacterClasses);
         m_userCharacterClasses.shrinkToFit();
     }
+
+    size_t estimatedSizeInBytes() const { return m_body->estimatedSizeInBytes(); }
 
     std::unique_ptr<ByteDisjunction> m_body;
     bool m_ignoreCase;

@@ -70,6 +70,7 @@ public:
 private:
     WeakMapData(VM&);
     static void destroy(JSCell*);
+    static size_t estimatedSize(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
     void finishCreation(VM&);
 
