@@ -696,6 +696,26 @@ public:
         m_assembler.roundss_mr(src.offset, src.base, dst, X86Assembler::RoundingType::TowardInfiniti);
     }
 
+    void floorDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.roundsd_rr(src, dst, X86Assembler::RoundingType::TowardNegativeInfiniti);
+    }
+
+    void floorDouble(Address src, FPRegisterID dst)
+    {
+        m_assembler.roundsd_mr(src.offset, src.base, dst, X86Assembler::RoundingType::TowardNegativeInfiniti);
+    }
+
+    void floorFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.roundss_rr(src, dst, X86Assembler::RoundingType::TowardNegativeInfiniti);
+    }
+
+    void floorFloat(Address src, FPRegisterID dst)
+    {
+        m_assembler.roundss_mr(src.offset, src.base, dst, X86Assembler::RoundingType::TowardNegativeInfiniti);
+    }
+
     // Memory access operations:
     //
     // Loads are of the form load(address, destination) and stores of the form
@@ -2300,7 +2320,7 @@ public:
         return X86Assembler::maxJumpReplacementSize();
     }
 
-    static bool supportsFloatingPointCeil()
+    static bool supportsFloatingPointRounding()
     {
         if (s_sse4_1CheckState == CPUIDCheckState::NotChecked) {
             int flags = 0;

@@ -3377,6 +3377,18 @@ void testCeilCeilArg(double a)
     CHECK(isIdentical(compileAndRun<double>(proc, a), ceil(a)));
 }
 
+void testFloorCeilArg(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* firstCeil = root->appendNew<Value>(proc, Ceil, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0));
+    Value* wrappingFloor = root->appendNew<Value>(proc, Floor, Origin(), firstCeil);
+    root->appendNew<ControlValue>(proc, Return, Origin(), wrappingFloor);
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), ceil(a)));
+}
+
 void testCeilIToD64(int64_t a)
 {
     Procedure proc;
@@ -3459,6 +3471,20 @@ void testCeilCeilArg(float a)
     CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), ceilf(a)));
 }
 
+void testFloorCeilArg(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* firstCeil = root->appendNew<Value>(proc, Ceil, Origin(), argument);
+    Value* wrappingFloor = root->appendNew<Value>(proc, Floor, Origin(), firstCeil);
+    root->appendNew<ControlValue>(proc, Return, Origin(), wrappingFloor);
+
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), ceilf(a)));
+}
+
 void testCeilArgWithUselessDoubleConversion(float a)
 {
     Procedure proc;
@@ -3494,6 +3520,201 @@ void testCeilArgWithEffectfulDoubleConversion(float a)
     int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
     CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(ceilf(a))));
     CHECK(isIdentical(effect, ceilf(a)));
+}
+
+void testFloorArg(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Floor, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0)));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), floor(a)));
+}
+
+void testFloorImm(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Floor, Origin(), argument));
+
+    CHECK(isIdentical(compileAndRun<double>(proc), floor(a)));
+}
+
+void testFloorMem(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadDouble = root->appendNew<MemoryValue>(proc, Load, Double, Origin(), address);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Floor, Origin(), loadDouble));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, &a), floor(a)));
+}
+
+void testFloorFloorArg(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* firstFloor = root->appendNew<Value>(proc, Floor, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0));
+    Value* secondFloor = root->appendNew<Value>(proc, Floor, Origin(), firstFloor);
+    root->appendNew<ControlValue>(proc, Return, Origin(), secondFloor);
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), floor(a)));
+}
+
+void testCeilFloorArg(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* firstFloor = root->appendNew<Value>(proc, Floor, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0));
+    Value* wrappingCeil = root->appendNew<Value>(proc, Ceil, Origin(), firstFloor);
+    root->appendNew<ControlValue>(proc, Return, Origin(), wrappingCeil);
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), floor(a)));
+}
+
+void testFloorIToD64(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argumentAsDouble = root->appendNew<Value>(proc, IToD, Origin(), argument);
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Floor, Origin(), argumentAsDouble));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), floor(static_cast<double>(a))));
+}
+
+void testFloorIToD32(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argumentAsDouble = root->appendNew<Value>(proc, IToD, Origin(), argument);
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Floor, Origin(), argumentAsDouble));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), floor(static_cast<double>(a))));
+}
+
+void testFloorArg(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* result = root->appendNew<Value>(proc, Floor, Origin(), argument);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(floorf(a))));
+}
+
+void testFloorImm(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ConstFloatValue>(proc, Origin(), a);
+    Value* result = root->appendNew<Value>(proc, Floor, Origin(), argument);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(floorf(a))));
+}
+
+void testFloorMem(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadFloat = root->appendNew<MemoryValue>(proc, Load, Float, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Floor, Origin(), loadFloat);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(floorf(a))));
+}
+
+void testFloorFloorArg(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* firstFloor = root->appendNew<Value>(proc, Floor, Origin(), argument);
+    Value* secondFloor = root->appendNew<Value>(proc, Floor, Origin(), firstFloor);
+    root->appendNew<ControlValue>(proc, Return, Origin(), secondFloor);
+
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), floorf(a)));
+}
+
+void testCeilFloorArg(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* firstFloor = root->appendNew<Value>(proc, Floor, Origin(), argument);
+    Value* wrappingCeil = root->appendNew<Value>(proc, Ceil, Origin(), firstFloor);
+    root->appendNew<ControlValue>(proc, Return, Origin(), wrappingCeil);
+
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), floorf(a)));
+}
+
+void testFloorArgWithUselessDoubleConversion(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* floatValue = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* asDouble = root->appendNew<Value>(proc, FloatToDouble, Origin(), floatValue);
+    Value* result = root->appendNew<Value>(proc, Floor, Origin(), asDouble);
+    Value* floatResult = root->appendNew<Value>(proc, DoubleToFloat, Origin(), result);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(floorf(a))));
+}
+
+void testFloorArgWithEffectfulDoubleConversion(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* floatValue = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* asDouble = root->appendNew<Value>(proc, FloatToDouble, Origin(), floatValue);
+    Value* result = root->appendNew<Value>(proc, Floor, Origin(), asDouble);
+    Value* floatResult = root->appendNew<Value>(proc, DoubleToFloat, Origin(), result);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
+    Value* doubleAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, doubleAddress);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    double effect = 0;
+    int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
+    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(floorf(a))));
+    CHECK(isIdentical(effect, floorf(a)));
 }
 
 void testSqrtArg(double a)
@@ -11142,14 +11363,31 @@ void run(const char* filter)
     RUN_UNARY(testCeilImm, floatingPointOperands<double>());
     RUN_UNARY(testCeilMem, floatingPointOperands<double>());
     RUN_UNARY(testCeilCeilArg, floatingPointOperands<double>());
+    RUN_UNARY(testFloorCeilArg, floatingPointOperands<double>());
     RUN_UNARY(testCeilIToD64, int64Operands());
     RUN_UNARY(testCeilIToD32, int32Operands());
     RUN_UNARY(testCeilArg, floatingPointOperands<float>());
     RUN_UNARY(testCeilImm, floatingPointOperands<float>());
     RUN_UNARY(testCeilMem, floatingPointOperands<float>());
     RUN_UNARY(testCeilCeilArg, floatingPointOperands<float>());
+    RUN_UNARY(testFloorCeilArg, floatingPointOperands<float>());
     RUN_UNARY(testCeilArgWithUselessDoubleConversion, floatingPointOperands<float>());
     RUN_UNARY(testCeilArgWithEffectfulDoubleConversion, floatingPointOperands<float>());
+
+    RUN_UNARY(testFloorArg, floatingPointOperands<double>());
+    RUN_UNARY(testFloorImm, floatingPointOperands<double>());
+    RUN_UNARY(testFloorMem, floatingPointOperands<double>());
+    RUN_UNARY(testFloorFloorArg, floatingPointOperands<double>());
+    RUN_UNARY(testCeilFloorArg, floatingPointOperands<double>());
+    RUN_UNARY(testFloorIToD64, int64Operands());
+    RUN_UNARY(testFloorIToD32, int32Operands());
+    RUN_UNARY(testFloorArg, floatingPointOperands<float>());
+    RUN_UNARY(testFloorImm, floatingPointOperands<float>());
+    RUN_UNARY(testFloorMem, floatingPointOperands<float>());
+    RUN_UNARY(testFloorFloorArg, floatingPointOperands<float>());
+    RUN_UNARY(testCeilFloorArg, floatingPointOperands<float>());
+    RUN_UNARY(testFloorArgWithUselessDoubleConversion, floatingPointOperands<float>());
+    RUN_UNARY(testFloorArgWithEffectfulDoubleConversion, floatingPointOperands<float>());
 
     RUN_UNARY(testSqrtArg, floatingPointOperands<double>());
     RUN_UNARY(testSqrtImm, floatingPointOperands<double>());

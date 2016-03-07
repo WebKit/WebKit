@@ -510,8 +510,7 @@ private:
             //    -0 + 0 = 0
             //    -0 + -0 = -0
             if (m_value->child(1)->isInt(0) || m_value->child(1)->isNegativeZero()) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
@@ -566,8 +565,7 @@ private:
             // Turn this: Neg(Neg(value))
             // Into this: value
             if (m_value->child(0)->opcode() == Neg) {
-                m_value->replaceWithIdentity(m_value->child(0)->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0)->child(0));
                 break;
             }
             
@@ -591,16 +589,14 @@ private:
                 // Note that we don't do this for doubles because that's wrong. For example, -1 * 0
                 // and 1 * 0 yield different results.
                 if (!factor) {
-                    m_value->replaceWithIdentity(m_value->child(1));
-                    m_changed = true;
+                    replaceWithIdentity(m_value->child(1));
                     break;
                 }
 
                 // Turn this: Mul(value, 1)
                 // Into this: value
                 if (factor == 1) {
-                    m_value->replaceWithIdentity(m_value->child(0));
-                    m_changed = true;
+                    replaceWithIdentity(m_value->child(0));
                     break;
                 }
 
@@ -632,7 +628,7 @@ private:
                 // Turn this: Mul(value, 1)
                 // Into this: value
                 if (factor == 1) {
-                    m_value->replaceWithIdentity(m_value->child(0));
+                    replaceWithIdentity(m_value->child(0));
                     break;
                 }
             }
@@ -663,13 +659,13 @@ private:
                     // Into this: 0
                     // We can do this because it's precisely correct for ChillDiv and for Div we
                     // are allowed to do whatever we want.
-                    m_value->replaceWithIdentity(m_value->child(1));
+                    replaceWithIdentity(m_value->child(1));
                     break;
 
                 case 1:
                     // Turn this: Div(value, 1)
                     // Into this: value
-                    m_value->replaceWithIdentity(m_value->child(0));
+                    replaceWithIdentity(m_value->child(0));
                     break;
 
                 default:
@@ -715,7 +711,7 @@ private:
                             m_insertionSet.insert<Const32Value>(
                                 m_index, m_value->origin(), magic.shift));
                     }
-                    m_value->replaceWithIdentity(
+                    replaceWithIdentity(
                         m_insertionSet.insert<Value>(
                             m_index, Add, m_value->origin(), magicQuotient,
                             m_insertionSet.insert<Value>(
@@ -724,8 +720,6 @@ private:
                                     m_index, m_value->origin(), 31))));
                     break;
                 }
-
-                m_changed = true;
                 break;
             }
             break;
@@ -746,7 +740,7 @@ private:
                     // Turn this: Mod(value, 0)
                     // Into this: 0
                     // This is correct according to ChillMod semantics.
-                    m_value->replaceWithIdentity(m_value->child(1));
+                    replaceWithIdentity(m_value->child(1));
                     break;
 
                 default:
@@ -782,7 +776,7 @@ private:
                         break;
                     }
 
-                    m_value->replaceWithIdentity(
+                    replaceWithIdentity(
                         m_insertionSet.insert<Value>(
                             m_index, Sub, m_value->origin(),
                             m_value->child(0),
@@ -794,8 +788,6 @@ private:
                                 m_value->child(1))));
                     break;
                 }
-                
-                m_changed = true;
                 break;
             }
             
@@ -826,16 +818,14 @@ private:
             // Turn this: BitAnd(valueX, valueX)
             // Into this: valueX.
             if (m_value->child(0) == m_value->child(1)) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
             // Turn this: BitAnd(value, zero-constant)
             // Into this: zero-constant.
             if (m_value->child(1)->isInt(0)) {
-                m_value->replaceWithIdentity(m_value->child(1));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(1));
                 break;
             }
 
@@ -843,8 +833,7 @@ private:
             // Into this: value.
             if ((m_value->type() == Int64 && m_value->child(1)->isInt(0xffffffffffffffff))
                 || (m_value->type() == Int32 && m_value->child(1)->isInt(0xffffffff))) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
@@ -854,8 +843,7 @@ private:
                 Value* newValue = m_insertionSet.insert<Value>(
                     m_index, ZExt32, m_value->origin(),
                     m_insertionSet.insert<Value>(m_index, Trunc, m_value->origin(), m_value->child(0)));
-                m_value->replaceWithIdentity(newValue);
-                m_changed = true;
+                replaceWithIdentity(newValue);
                 break;
             }
 
@@ -932,16 +920,14 @@ private:
             // Turn this: BitOr(valueX, valueX)
             // Into this: valueX.
             if (m_value->child(0) == m_value->child(1)) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
             // Turn this: BitOr(value, zero-constant)
             // Into this: value.
             if (m_value->child(1)->isInt(0)) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
@@ -949,8 +935,7 @@ private:
             // Into this: all-ones.
             if ((m_value->type() == Int64 && m_value->child(1)->isInt(0xffffffffffffffff))
                 || (m_value->type() == Int32 && m_value->child(1)->isInt(0xffffffff))) {
-                m_value->replaceWithIdentity(m_value->child(1));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(1));
                 break;
             }
 
@@ -997,8 +982,7 @@ private:
             // Turn this: BitXor(value, zero-constant)
             // Into this: value.
             if (m_value->child(1)->isInt(0)) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
@@ -1103,7 +1087,7 @@ private:
             // Turn this: Abs(Abs(value))
             // Into this: Abs(value)
             if (m_value->child(0)->opcode() == Abs) {
-                m_value->replaceWithIdentity(m_value->child(0));
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
@@ -1120,7 +1104,7 @@ private:
                     m_value->child(0)->child(0),
                     mask);
                 Value* cast = m_insertionSet.insert<Value>(m_index, BitwiseCast, m_value->origin(), bitAnd);
-                m_value->replaceWithIdentity(cast);
+                replaceWithIdentity(cast);
                 break;
             }
             break;
@@ -1133,20 +1117,26 @@ private:
                 break;
             }
 
-            // Turn this: Ceil(Ceil(value))
-            // Into this: Ceil(value)
-            if (m_value->child(0)->opcode() == Ceil) {
-                m_value->replaceWithIdentity(m_value->child(0));
+            // Turn this: Ceil(roundedValue)
+            // Into this: roundedValue
+            if (m_value->child(0)->isRounded()) {
+                replaceWithIdentity(m_value->child(0));
+                break;
+            }
+            break;
+
+        case Floor:
+            // Turn this: Floor(constant)
+            // Into this: floor<value->type()>(constant)
+            if (Value* constant = m_value->child(0)->floorConstant(m_proc)) {
+                replaceWithNewValue(constant);
                 break;
             }
 
-            // Turn this: Ceil(IToD(value))
-            // Into this: IToD(value)
-            //
-            // That works for Int64 because both ARM64 and x86_64
-            // perform rounding when converting a 64bit integer to double.
-            if (m_value->child(0)->opcode() == IToD) {
-                m_value->replaceWithIdentity(m_value->child(0));
+            // Turn this: Floor(roundedValue)
+            // Into this: roundedValue
+            if (m_value->child(0)->isRounded()) {
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
             break;
@@ -1171,8 +1161,7 @@ private:
             // Turn this: BitwiseCast(BitwiseCast(value))
             // Into this: value
             if (m_value->child(0)->opcode() == BitwiseCast) {
-                m_value->replaceWithIdentity(m_value->child(0)->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0)->child(0));
                 break;
             }
             break;
@@ -1238,8 +1227,7 @@ private:
             // Turn this: SExt16(SExt8(value))
             // Into this: SExt8(value)
             if (m_value->child(0)->opcode() == SExt8) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
@@ -1311,8 +1299,7 @@ private:
             // Turn this: Trunc(SExt32(value)) or Trunc(ZExt32(value))
             // Into this: value
             if (m_value->child(0)->opcode() == SExt32 || m_value->child(0)->opcode() == ZExt32) {
-                m_value->replaceWithIdentity(m_value->child(0)->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0)->child(0));
                 break;
             }
 
@@ -1350,8 +1337,7 @@ private:
             // Turn this: DoubleToFloat(FloatToDouble(value))
             // Into this: value
             if (m_value->child(0)->opcode() == FloatToDouble) {
-                m_value->replaceWithIdentity(m_value->child(0)->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0)->child(0));
                 break;
             }
 
@@ -1367,9 +1353,8 @@ private:
             // Turn this: Select(constant, a, b)
             // Into this: constant ? a : b
             if (m_value->child(0)->hasInt32()) {
-                m_value->replaceWithIdentity(
+                replaceWithIdentity(
                     m_value->child(0)->asInt32() ? m_value->child(1) : m_value->child(2));
-                m_changed = true;
                 break;
             }
 
@@ -1407,8 +1392,7 @@ private:
             // Turn this: Select(stuff, x, x)
             // Into this: x
             if (m_value->child(1) == m_value->child(2)) {
-                m_value->replaceWithIdentity(m_value->child(1));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(1));
                 break;
             }
             break;
@@ -1491,8 +1475,7 @@ private:
             // Turn this Equal(bool, 1)
             // Into this: bool
             if (m_value->child(0)->returnsBool() && m_value->child(1)->isInt32(1)) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
@@ -1511,8 +1494,7 @@ private:
                 // Turn this: NotEqual(bool, 0)
                 // Into this: bool
                 if (m_value->child(1)->isInt32(0)) {
-                    m_value->replaceWithIdentity(m_value->child(0));
-                    m_changed = true;
+                    replaceWithIdentity(m_value->child(0));
                     break;
                 }
                 
@@ -1613,8 +1595,7 @@ private:
             handleCommutativity();
             
             if (m_value->child(1)->isInt(0)) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
@@ -1633,8 +1614,7 @@ private:
                 break;
 
             if (m_value->child(1)->isInt(0)) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
+                replaceWithIdentity(m_value->child(0));
                 break;
             }
 
@@ -1669,8 +1649,7 @@ private:
                     replaceWithNewValue(m_proc.addIntConstant(m_value, 0));
                     break;
                 case 1:
-                    m_value->replaceWithIdentity(m_value->child(0));
-                    m_changed = true;
+                    replaceWithIdentity(m_value->child(0));
                     break;
                 case 2:
                     m_value->as<CheckValue>()->convertToAdd();
@@ -2110,12 +2089,17 @@ private:
         return true;
     }
 
+    void replaceWithIdentity(Value* newValue)
+    {
+        m_value->replaceWithIdentity(newValue);
+        m_changed = true;
+    }
+
     bool handleShiftAmount()
     {
         // Shift anything by zero is identity.
         if (m_value->child(1)->isInt32(0)) {
-            m_value->replaceWithIdentity(m_value->child(0));
-            m_changed = true;
+            replaceWithIdentity(m_value->child(0));
             return true;
         }
 

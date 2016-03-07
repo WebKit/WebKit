@@ -316,7 +316,7 @@ public:
 
     bool roundShouldSpeculateInt32(Node* arithRound, PredictionPass pass)
     {
-        ASSERT(arithRound->op() == ArithRound);
+        ASSERT(arithRound->op() == ArithRound || arithRound->op() == ArithFloor || arithRound->op() == ArithCeil);
         return arithRound->canSpeculateInt32(pass) && !hasExitSite(arithRound->origin.semantic, Overflow) && !hasExitSite(arithRound->origin.semantic, NegativeZero);
     }
     

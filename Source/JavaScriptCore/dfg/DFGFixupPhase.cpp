@@ -363,7 +363,9 @@ private:
             break;
         }
 
-        case ArithRound: {
+        case ArithRound:
+        case ArithFloor:
+        case ArithCeil: {
             if (m_graph.unaryArithShouldSpeculateInt32(node, FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
                 insertCheck<Int32Use>(m_indexInBlock, node->child1().node());

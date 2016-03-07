@@ -154,6 +154,8 @@ namespace JSC { namespace DFG {
     macro(ArithPow, NodeResultNumber) \
     macro(ArithRandom, NodeResultDouble | NodeMustGenerate) \
     macro(ArithRound, NodeResultNumber) \
+    macro(ArithFloor, NodeResultNumber) \
+    macro(ArithCeil, NodeResultNumber) \
     macro(ArithSqrt, NodeResultNumber) \
     macro(ArithSin, NodeResultNumber) \
     macro(ArithCos, NodeResultNumber) \

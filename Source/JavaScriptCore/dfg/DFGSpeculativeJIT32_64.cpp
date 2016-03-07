@@ -2292,7 +2292,9 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case ArithRound:
-        compileArithRound(node);
+    case ArithFloor:
+    case ArithCeil:
+        compileArithRounding(node);
         break;
 
     case ArithSin: {

@@ -88,15 +88,35 @@ private:
                 break;
             }
             case Ceil: {
-                if (MacroAssembler::supportsFloatingPointCeil())
+                if (MacroAssembler::supportsFloatingPointRounding())
                     break;
 
                 Value* functionAddress = nullptr;
-                double (*ceilDouble)(double) = ceil;
                 if (m_value->type() == Double)
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceilDouble);
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceil);
                 else if (m_value->type() == Float)
                     functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceilf);
+                else
+                    RELEASE_ASSERT_NOT_REACHED();
+
+                Value* result = m_insertionSet.insert<CCallValue>(m_index,
+                    m_value->type(),
+                    m_origin,
+                    Effects::none(),
+                    functionAddress,
+                    m_value->child(0));
+                m_value->replaceWithIdentity(result);
+                break;
+            }
+            case Floor: {
+                if (MacroAssembler::supportsFloatingPointRounding())
+                    break;
+
+                Value* functionAddress = nullptr;
+                if (m_value->type() == Double)
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, floor);
+                else if (m_value->type() == Float)
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, floorf);
                 else
                     RELEASE_ASSERT_NOT_REACHED();
 

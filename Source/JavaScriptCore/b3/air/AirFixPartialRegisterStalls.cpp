@@ -54,6 +54,8 @@ bool hasPartialXmmRegUpdate(const Inst& inst)
     case SqrtFloat:
     case CeilDouble:
     case CeilFloat:
+    case FloorDouble:
+    case FloorFloat:
         return true;
     default:
         break;

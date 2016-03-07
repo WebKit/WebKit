@@ -55,6 +55,22 @@ void printInternal(PrintStream& out, JSC::DFG::Arith::Mode mode)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void printInternal(PrintStream& out, JSC::DFG::Arith::RoundingMode mode)
+{
+    switch (mode) {
+    case JSC::DFG::Arith::RoundingMode::Int32:
+        out.print("Int32");
+        return;
+    case JSC::DFG::Arith::RoundingMode::Int32WithNegativeZeroCheck:
+        out.print("Int32WithNegativeZeroCheck");
+        return;
+    case JSC::DFG::Arith::RoundingMode::Double:
+        out.print("Double");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)

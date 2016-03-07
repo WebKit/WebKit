@@ -222,6 +222,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, node->arrayMode());
     if (node->hasArithMode())
         out.print(comma, node->arithMode());
+    if (node->hasArithRoundingMode())
+        out.print(comma, "Rounding:", node->arithRoundingMode());
     if (node->hasScopeOffset())
         out.print(comma, node->scopeOffset());
     if (node->hasDirectArgumentsOffset())

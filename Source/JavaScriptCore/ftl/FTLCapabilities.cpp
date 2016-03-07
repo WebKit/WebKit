@@ -97,6 +97,8 @@ inline CapabilityLevel canCompile(Node* node)
     case ArithPow:
     case ArithRandom:
     case ArithRound:
+    case ArithFloor:
+    case ArithCeil:
     case ArithSqrt:
     case ArithLog:
     case ArithFRound:

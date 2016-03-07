@@ -52,6 +52,7 @@ public:
     Value* doubleToFloatConstant(Procedure&) const override;
     Value* absConstant(Procedure&) const override;
     Value* ceilConstant(Procedure&) const override;
+    Value* floorConstant(Procedure&) const override;
     Value* sqrtConstant(Procedure&) const override;
 
     TriState equalConstant(const Value* other) const override;

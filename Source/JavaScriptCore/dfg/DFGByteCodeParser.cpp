@@ -2188,7 +2188,9 @@ bool ByteCodeParser::handleIntrinsicCall(int resultOperand, Intrinsic intrinsic,
         
         return true;
     }
-    case RoundIntrinsic: {
+    case RoundIntrinsic:
+    case FloorIntrinsic:
+    case CeilIntrinsic: {
         if (argumentCountIncludingThis == 1) {
             insertChecks();
             set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
@@ -2197,7 +2199,16 @@ bool ByteCodeParser::handleIntrinsicCall(int resultOperand, Intrinsic intrinsic,
         if (argumentCountIncludingThis == 2) {
             insertChecks();
             Node* operand = get(virtualRegisterForArgument(1, registerOffset));
-            Node* roundNode = addToGraph(ArithRound, OpInfo(0), OpInfo(prediction), operand);
+            NodeType op;
+            if (intrinsic == RoundIntrinsic)
+                op = ArithRound;
+            else if (intrinsic == FloorIntrinsic)
+                op = ArithFloor;
+            else {
+                ASSERT(intrinsic == CeilIntrinsic);
+                op = ArithCeil;
+            }
+            Node* roundNode = addToGraph(op, OpInfo(0), OpInfo(prediction), operand);
             set(VirtualRegister(resultOperand), roundNode);
             return true;
         }

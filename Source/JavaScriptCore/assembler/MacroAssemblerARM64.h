@@ -1343,7 +1343,7 @@ public:
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return true; }
-    static bool supportsFloatingPointCeil() { return true; }
+    static bool supportsFloatingPointRounding() { return true; }
 
     enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
 
@@ -1397,6 +1397,11 @@ public:
     void floorDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.frintm<64>(dest, src);
+    }
+
+    void floorFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.frintm<32>(dest, src);
     }
 
     // Convert 'src' to an integer, and places the resulting 'dest'.

@@ -386,7 +386,9 @@ private:
             break;
         }
 
-        case ArithRound: {
+        case ArithRound:
+        case ArithFloor:
+        case ArithCeil: {
             if (isInt32OrBooleanSpeculation(node->getHeapPrediction()) && m_graph.roundShouldSpeculateInt32(node, m_pass))
                 changed |= setPrediction(SpecInt32);
             else

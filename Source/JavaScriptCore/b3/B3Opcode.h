@@ -97,6 +97,7 @@ enum Opcode : int16_t {
     // Floating point math.
     Abs,
     Ceil,
+    Floor,
     Sqrt,
 
     // Casts and such.

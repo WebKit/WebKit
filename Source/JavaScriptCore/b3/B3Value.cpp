@@ -287,6 +287,11 @@ Value* Value::ceilConstant(Procedure&) const
     return nullptr;
 }
 
+Value* Value::floorConstant(Procedure&) const
+{
+    return nullptr;
+}
+
 Value* Value::sqrtConstant(Procedure&) const
 {
     return nullptr;
@@ -354,6 +359,30 @@ Value* Value::invertedCompare(Procedure& proc) const
     if (Optional<Opcode> invertedOpcode = B3::invertedCompare(opcode(), child(0)->type()))
         return proc.add<Value>(*invertedOpcode, type(), origin(), children());
     return nullptr;
+}
+
+bool Value::isRounded() const
+{
+    ASSERT(isFloat(type()));
+    switch (opcode()) {
+    case Floor:
+    case Ceil:
+    case IToD:
+        return true;
+
+    case ConstDouble: {
+        double value = asDouble();
+        return std::isfinite(value) && value == ceil(value);
+    }
+
+    case ConstFloat: {
+        float value = asFloat();
+        return std::isfinite(value) && value == ceilf(value);
+    }
+
+    default:
+        return false;
+    }
 }
 
 bool Value::returnsBool() const
@@ -432,6 +461,7 @@ Effects Value::effects() const
     case Clz:
     case Abs:
     case Ceil:
+    case Floor:
     case Sqrt:
     case BitwiseCast:
     case SExt8:
@@ -514,6 +544,7 @@ ValueKey Value::key() const
     case Identity:
     case Abs:
     case Ceil:
+    case Floor:
     case Sqrt:
     case SExt8:
     case SExt16:
@@ -629,6 +660,7 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case Clz:
     case Abs:
     case Ceil:
+    case Floor:
     case Sqrt:
     case CheckAdd:
     case CheckSub:
