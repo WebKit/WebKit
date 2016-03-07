@@ -1,5 +1,22 @@
 2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        ImageBufferCairo should support OpenGL ES 2 configurations
+        https://bugs.webkit.org/show_bug.cgi?id=154790
+
+        Reviewed by Carlos Garcia Campos.
+
+        When building with OpenGL ES 2 and with accelerated 2D canvas support,
+        the GLES2 header should be included instead of the OpenGLShims.h header.
+
+        The glTexParameterf() calls targeting GL_TEXTURE_WRAP_S and
+        GL_TEXTURE_WRAP_T parameters should use the GL_CLAMP_TO_EDGE value.
+        GL_CLAMP isn't available in OpenGL ES 2 and was dropped in OpenGL 3.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBufferData::createCairoGLSurface):
+
+2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
+
         TextureMapperGL: beginPainting() should handle the PaintingMirrored value in PaintFlags
         https://bugs.webkit.org/show_bug.cgi?id=154789
 
