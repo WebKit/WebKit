@@ -1,3 +1,25 @@
+2016-03-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Improve how DFG zero Floating Point registers
+        https://bugs.webkit.org/show_bug.cgi?id=155096
+
+        Reviewed by Geoffrey Garen.
+
+        DFG had a weird way of zeroing a FPR:
+            -zero a GP.
+            -move that to a FP.
+
+        Filip added moveZeroToDouble() for B3. This patch
+        uses that in the lower tiers.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::moveZeroToDouble):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        * jit/ThunkGenerators.cpp:
+        (JSC::floorThunkGenerator):
+        (JSC::roundThunkGenerator):
+
 2016-03-07  Andreas Kling  <akling@apple.com>
 
         REGRESSION (r197303): Web Inspector crashes web process when inspecting an element on TOT

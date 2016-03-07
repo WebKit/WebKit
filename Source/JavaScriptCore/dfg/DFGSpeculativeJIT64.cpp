@@ -1133,13 +1133,17 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
 
     if (info.registerFormat() == DataFormatNone) {
         if (edge->hasConstant()) {
-            GPRReg gpr = allocate();
-
             if (edge->isNumberConstant()) {
                 FPRReg fpr = fprAllocate();
-                m_jit.move(MacroAssembler::Imm64(reinterpretDoubleToInt64(edge->asNumber())), gpr);
-                m_jit.move64ToDouble(gpr, fpr);
-                unlock(gpr);
+                int64_t doubleAsInt = reinterpretDoubleToInt64(edge->asNumber());
+                if (!doubleAsInt)
+                    m_jit.moveZeroToDouble(fpr);
+                else {
+                    GPRReg gpr = allocate();
+                    m_jit.move(MacroAssembler::Imm64(doubleAsInt), gpr);
+                    m_jit.move64ToDouble(gpr, fpr);
+                    unlock(gpr);
+                }
 
                 m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
                 info.fillDouble(*m_stream, fpr);
