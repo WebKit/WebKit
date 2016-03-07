@@ -41,12 +41,12 @@ class ObjCInternalHeaderGenerator(ObjCGenerator):
         ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sInternal.h' % self.objc_prefix()
+        return '%sInternal.h' % self.protocol_name()
 
     def generate_output(self):
         headers = set([
-            '"%s.h"' % self.objc_prefix(),
-            '"%sJSONObjectPrivate.h"' % self.objc_prefix(),
+            '"%s.h"' % self.protocol_name(),
+            '"%sJSONObjectPrivate.h"' % self.protocol_name(),
             '<JavaScriptCore/InspectorValues.h>',
             '<JavaScriptCore/AugmentableInspectorController.h>',
         ])

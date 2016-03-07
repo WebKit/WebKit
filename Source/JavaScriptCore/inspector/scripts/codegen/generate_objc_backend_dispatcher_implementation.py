@@ -44,20 +44,20 @@ class ObjCConfigurationImplementationGenerator(ObjCGenerator):
         ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sBackendDispatchers.mm' % self.objc_prefix()
+        return '%sBackendDispatchers.mm' % self.protocol_name()
 
     def domains_to_generate(self):
         return filter(ObjCGenerator.should_generate_domain_command_handler_filter(self.model()), Generator.domains_to_generate(self))
 
     def generate_output(self):
         secondary_headers = [
-            '"%sInternal.h"' % self.objc_prefix(),
-            '"%sEnumConversionHelpers.h"' % self.objc_prefix(),
+            '"%sInternal.h"' % self.protocol_name(),
+            '"%sEnumConversionHelpers.h"' % self.protocol_name(),
             '<JavaScriptCore/InspectorValues.h>',
         ]
 
         header_args = {
-            'primaryInclude': '"%sBackendDispatchers.h"' % self.objc_prefix(),
+            'primaryInclude': '"%sBackendDispatchers.h"' % self.protocol_name(),
             'secondaryIncludes': '\n'.join(['#include %s' % header for header in secondary_headers]),
         }
 

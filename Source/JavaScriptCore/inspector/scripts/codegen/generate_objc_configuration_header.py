@@ -41,11 +41,11 @@ class ObjCConfigurationHeaderGenerator(ObjCGenerator):
         ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sConfiguration.h' % self.objc_prefix()
+        return '%sConfiguration.h' % self.protocol_name()
 
     def generate_output(self):
         headers = [
-            '<WebInspector/%s.h>' % self.objc_prefix(),
+            '<WebInspector/%s.h>' % self.protocol_name(),
         ]
 
         header_args = {
@@ -66,7 +66,7 @@ class ObjCConfigurationHeaderGenerator(ObjCGenerator):
     def _generate_configuration_interface_for_domains(self, domains):
         lines = []
         lines.append('__attribute__((visibility ("default")))')
-        lines.append('@interface %sConfiguration : NSObject' % self.objc_prefix())
+        lines.append('@interface %sConfiguration : NSObject' % self.protocol_name())
         for domain in domains:
             lines.extend(self._generate_properties_for_domain(domain))
         lines.append('@end')

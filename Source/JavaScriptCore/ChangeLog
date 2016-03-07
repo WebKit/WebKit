@@ -1,5 +1,55 @@
 2016-03-06  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: the protocol generator should have separate prefix options for Objective-C classes and filenames
+        https://bugs.webkit.org/show_bug.cgi?id=155101
+        <rdar://problem/25000053>
+
+        Reviewed by Timothy Hatcher.
+
+        It should be possible to generate Objective-C protocol types without prefixing all class names.
+        The prefixes are only necessary when the generated files are part of a framework, but this isn't
+        how the generated Objective-C frontend files are used.
+
+        Add a separate framework setting and switch over code to use the 'protocol_group' in filenames,
+        and the 'objc_prefix' for Objective-C enum and class prefixes.
+
+        No tests need to be rebaselined because tests always set the protocol_group and objc_prefix
+        to the same value.
+
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator.output_filename):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCConfigurationImplementationGenerator.output_filename):
+        (ObjCConfigurationImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generate_objc_configuration_header.py:
+        (ObjCConfigurationHeaderGenerator.output_filename):
+        (ObjCConfigurationHeaderGenerator.generate_output):
+        (ObjCConfigurationHeaderGenerator._generate_configuration_interface_for_domains):
+        * inspector/scripts/codegen/generate_objc_configuration_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator.output_filename):
+        (ObjCBackendDispatcherImplementationGenerator.generate_output):
+        (ObjCBackendDispatcherImplementationGenerator._generate_configuration_implementation_for_domains):
+        * inspector/scripts/codegen/generate_objc_conversion_helpers.py:
+        (ObjCConversionHelpersGenerator.output_filename):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator.output_filename):
+        (ObjCFrontendDispatcherImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator.output_filename):
+        * inspector/scripts/codegen/generate_objc_internal_header.py:
+        (ObjCInternalHeaderGenerator.output_filename):
+        (ObjCInternalHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator.output_filename):
+        (ObjCProtocolTypesImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/models.py:
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator):
+        (ObjCGenerator.protocol_name):
+        (ObjCGenerator.objc_prefix):
+
+2016-03-06  Brian Burg  <bburg@apple.com>
+
         Unreviewed, rebaseline inspector protocol generator tests after r197563.
 
         * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:

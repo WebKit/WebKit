@@ -92,9 +92,19 @@ class ObjCGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
+    # The 'protocol name' is used to prefix filenames for a protocol group (a set of domains generated together).
+    def protocol_name(self):
+        protocol_group = self.model().framework.setting('protocol_group', '')
+        return '%s%s' % (protocol_group, ObjCGenerator.OBJC_SHARED_PREFIX)
+
+    # The 'ObjC prefix' is used to prefix Objective-C class names and enums with a
+    # framework-specific prefix. It is separate from filename prefixes.
     def objc_prefix(self):
-        framework_prefix = self.model().framework.setting('objc_prefix', '')
-        return '%s%s' % (framework_prefix, ObjCGenerator.OBJC_SHARED_PREFIX)
+        framework_prefix = self.model().framework.setting('objc_prefix', None)
+        if not framework_prefix:
+            return ''
+        else:
+            return '%s%s' % (framework_prefix, ObjCGenerator.OBJC_SHARED_PREFIX)
 
     # Adjust identifier names that collide with ObjC keywords.
 

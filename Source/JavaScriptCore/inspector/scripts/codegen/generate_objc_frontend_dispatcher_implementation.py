@@ -42,19 +42,19 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sEventDispatchers.mm' % self.objc_prefix()
+        return '%sEventDispatchers.mm' % self.protocol_name()
 
     def domains_to_generate(self):
         return filter(ObjCGenerator.should_generate_domain_event_dispatcher_filter(self.model()), Generator.domains_to_generate(self))
 
     def generate_output(self):
         secondary_headers = [
-            '"%sEnumConversionHelpers.h"' % self.objc_prefix(),
+            '"%sEnumConversionHelpers.h"' % self.protocol_name(),
             '<JavaScriptCore/InspectorValues.h>',
         ]
 
         header_args = {
-            'primaryInclude': '"%sInternal.h"' % self.objc_prefix(),
+            'primaryInclude': '"%sInternal.h"' % self.protocol_name(),
             'secondaryIncludes': '\n'.join(['#import %s' % header for header in secondary_headers]),
         }
 

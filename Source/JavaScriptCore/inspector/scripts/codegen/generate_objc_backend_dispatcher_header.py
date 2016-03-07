@@ -44,7 +44,7 @@ class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
         ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sBackendDispatchers.h' % self.objc_prefix()
+        return '%sBackendDispatchers.h' % self.protocol_name()
 
     def domains_to_generate(self):
         return filter(ObjCGenerator.should_generate_domain_command_handler_filter(self.model()), Generator.domains_to_generate(self))

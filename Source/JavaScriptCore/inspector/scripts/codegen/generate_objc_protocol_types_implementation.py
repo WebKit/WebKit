@@ -48,21 +48,21 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
         ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sTypes.mm' % self.objc_prefix()
+        return '%sTypes.mm' % self.protocol_name()
 
     def domains_to_generate(self):
         return filter(ObjCGenerator.should_generate_domain_types_filter(self.model()), Generator.domains_to_generate(self))
 
     def generate_output(self):
         secondary_headers = [
-            '"%sEnumConversionHelpers.h"' % self.objc_prefix(),
+            '"%sEnumConversionHelpers.h"' % self.protocol_name(),
             Generator.string_for_file_include('%sJSONObjectPrivate.h' % ObjCGenerator.OBJC_STATIC_PREFIX, Frameworks.WebInspector, self.model().framework),
             '<JavaScriptCore/InspectorValues.h>',
             '<wtf/Assertions.h>',
         ]
 
         # The FooProtocolInternal.h header is only needed to declare the backend-side event dispatcher bindings.
-        primaryIncludeName = self.objc_prefix()
+        primaryIncludeName = self.protocol_name()
         if self.get_generator_setting('generate_backend', False):
             primaryIncludeName += 'Internal'
 

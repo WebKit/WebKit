@@ -48,7 +48,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
         ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%s.h' % self.objc_prefix()
+        return '%s.h' % self.protocol_name()
 
     def generate_output(self):
         headers = set([
