@@ -1,3 +1,37 @@
+2016-03-07  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: It should be possible to initialize generated ObjC protocol types from an NSDictionary payload
+        https://bugs.webkit.org/show_bug.cgi?id=155102
+        <rdar://problem/25002015>
+
+        Reviewed by Timothy Hatcher.
+
+        In Objective-C code, we sometimes prefer to parse JSON using Cocoa rather
+        than the InspectorValue classes. Support initializing protocol objects
+        directly from an NSDictionary payload. This delegates validation of values to
+        the setter methods that already exist on the protocol object classes.
+
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator._generate_type_interface):
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator.generate_type_implementation):
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_payload):
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.payload_to_objc_expression_for_member):
+        Add a new helper method to generate an expression to unpack the value
+        from an NSDictionary. If it's not a primitive, the setter performs
+        validation of the value's kind using -[NSObject isKindOfClass:].
+
+        Rebaseline relevant tests.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-03-07  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Simplify the overflow check of ArithAbs

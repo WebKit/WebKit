@@ -90,6 +90,10 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
     def generate_type_implementation(self, domain, declaration):
         lines = []
         lines.append('@implementation %s' % self.objc_name_for_type(declaration.type))
+        # The initializer that takes a payload is only needed by the frontend.
+        if self.get_generator_setting('generate_frontend', False):
+            lines.append('')
+            lines.append(self._generate_init_method_for_payload(domain, declaration))
         required_members = filter(lambda member: not member.is_optional, declaration.type_members)
         if required_members:
             lines.append('')
@@ -101,6 +105,26 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
             lines.append(self._generate_getter_for_member(domain, declaration, member))
         lines.append('')
         lines.append('@end')
+        return '\n'.join(lines)
+
+    def _generate_init_method_for_payload(self, domain, declaration):
+        lines = []
+        lines.append('- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload')
+        lines.append('{')
+        lines.append('    if (!(self = [super init]))')
+        lines.append('        return nil;')
+        lines.append('')
+
+        for member in declaration.type_members:
+            var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
+            if not member.is_optional:
+                lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"%s"], @"%s");' % (var_name, var_name))
+            conversion_expression = self.payload_to_objc_expression_for_member(declaration, member)
+            lines.append('    self.%s = %s;' % (var_name, conversion_expression))
+            lines.append('')
+
+        lines.append('    return self;')
+        lines.append('}')
         return '\n'.join(lines)
 
     def _generate_init_method_for_required_members(self, domain, declaration, required_members):

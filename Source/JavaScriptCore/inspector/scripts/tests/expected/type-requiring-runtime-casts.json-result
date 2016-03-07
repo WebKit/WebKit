@@ -1161,6 +1161,7 @@ typedef NS_ENUM(NSInteger, TestProtocolTestCastedAnimals) {
 
 __attribute__((visibility ("default")))
 @interface TestProtocolTestTypeNeedingCast : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 - (instancetype)initWithString:(NSString *)string number:(int)number animals:(TestProtocolTestCastedAnimals)animals identifier:(int)identifier tree:(TestProtocolTestRecursiveObject1 *)tree;
 /* required */ @property (nonatomic, copy) NSString *string;
 /* required */ @property (nonatomic, assign) int number;
@@ -1171,11 +1172,13 @@ __attribute__((visibility ("default")))
 
 __attribute__((visibility ("default")))
 @interface TestProtocolTestRecursiveObject1 : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 /* optional */ @property (nonatomic, retain) TestProtocolTestRecursiveObject2 *obj;
 @end
 
 __attribute__((visibility ("default")))
 @interface TestProtocolTestRecursiveObject2 : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 /* optional */ @property (nonatomic, retain) TestProtocolTestRecursiveObject1 *obj;
 @end
 
@@ -1271,6 +1274,29 @@ using namespace Inspector;
 
 @implementation TestProtocolTestTypeNeedingCast
 
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"string"], @"string");
+    self.string = payload[@"string"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"number"], @"number");
+    self.number = [payload[@"number"] integerValue];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"animals"], @"animals");
+    self.animals = fromProtocolString<TestProtocolTestCastedAnimals>(payload[@"animals"]);
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"identifier"], @"identifier");
+    self.identifier = [payload[@"id"] integerValue];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"tree"], @"tree");
+    self.tree = payload[@"tree"];
+
+    return self;
+}
+
 - (instancetype)initWithString:(NSString *)string number:(int)number animals:(TestProtocolTestCastedAnimals)animals identifier:(int)identifier tree:(TestProtocolTestRecursiveObject1 *)tree;
 {
     self = [super init];
@@ -1343,6 +1369,16 @@ using namespace Inspector;
 
 @implementation TestProtocolTestRecursiveObject1
 
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    self.obj = payload[@"obj"];
+
+    return self;
+}
+
 - (void)setObj:(TestProtocolTestRecursiveObject2 *)obj
 {
     [super setObject:obj forKey:@"obj"];
@@ -1356,6 +1392,16 @@ using namespace Inspector;
 @end
 
 @implementation TestProtocolTestRecursiveObject2
+
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    self.obj = payload[@"obj"];
+
+    return self;
+}
 
 - (void)setObj:(TestProtocolTestRecursiveObject1 *)obj
 {

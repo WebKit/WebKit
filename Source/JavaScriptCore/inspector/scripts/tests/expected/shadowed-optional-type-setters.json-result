@@ -840,6 +840,7 @@ typedef NS_ENUM(NSInteger, TestProtocolRuntimeKeyPathType) {
 
 __attribute__((visibility ("default")))
 @interface TestProtocolRuntimeKeyPath : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 - (instancetype)initWithType:(TestProtocolRuntimeKeyPathType)type;
 /* required */ @property (nonatomic, assign) TestProtocolRuntimeKeyPathType type;
 /* optional */ @property (nonatomic, copy) NSString *string;
@@ -937,6 +938,21 @@ using namespace Inspector;
 
 
 @implementation TestProtocolRuntimeKeyPath
+
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"type"], @"type");
+    self.type = fromProtocolString<TestProtocolRuntimeKeyPathType>(payload[@"type"]);
+
+    self.string = payload[@"string"];
+
+    self.array = payload[@"array"];
+
+    return self;
+}
 
 - (instancetype)initWithType:(TestProtocolRuntimeKeyPathType)type;
 {

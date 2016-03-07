@@ -457,6 +457,31 @@ class ObjCGenerator(Generator):
                 return 'objcIntegerArray(%s)' % sub_expression
             return 'objcArray<%s>(%s)' % (objc_class, sub_expression)
 
+    def payload_to_objc_expression_for_member(self, declaration, member):
+        _type = member.type
+        if isinstance(_type, AliasedType):
+            _type = _type.aliased_type
+        if isinstance(_type, PrimitiveType):
+            sub_expression = 'payload[@"%s"]' % member.member_name
+            raw_name = _type.raw_name()
+            if raw_name is 'boolean':
+                return '[%s boolValue]' % sub_expression
+            if raw_name is 'integer':
+                return '[%s integerValue]' % sub_expression
+            if raw_name is 'number':
+                return '[%s doubleValue]' % sub_expression
+            if raw_name in ['any', 'object', 'array', 'string']:
+                return sub_expression  # The setter will check the incoming value.
+            return None
+        if isinstance(member.type, EnumType):
+            sub_expression = 'payload[@"%s"]' % member.member_name
+            if member.type.is_anonymous:
+                return 'fromProtocolString<%s>(%s)' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
+            else:
+                return 'fromProtocolString<%s>(%s)' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
+        if isinstance(_type, (ObjectType, ArrayType)):
+            return 'payload[@"%s"]' % member.member_name
+
     # JSON object setter/getter selectors for types.
 
     @staticmethod

@@ -1346,6 +1346,7 @@ typedef NS_ENUM(NSInteger, TestProtocolDatabaseExecuteNoOptionalParametersPrintC
 
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseError : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;
 /* required */ @property (nonatomic, assign) int code;
@@ -1446,6 +1447,20 @@ using namespace Inspector;
 
 
 @implementation TestProtocolDatabaseError
+
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"message"], @"message");
+    self.message = payload[@"message"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"code"], @"code");
+    self.code = [payload[@"code"] integerValue];
+
+    return self;
+}
 
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 {

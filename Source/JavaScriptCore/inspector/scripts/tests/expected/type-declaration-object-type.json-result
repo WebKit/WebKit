@@ -1211,6 +1211,7 @@ using namespace Inspector;
 
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseError : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;
 /* required */ @property (nonatomic, assign) int code;
@@ -1218,6 +1219,7 @@ __attribute__((visibility ("default")))
 
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseOptionalParameterBundle : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 /* optional */ @property (nonatomic, copy) NSArray/*<NSString>*/ *columnNames;
 /* optional */ @property (nonatomic, copy) NSString *notes;
 /* optional */ @property (nonatomic, assign) double timestamp;
@@ -1229,6 +1231,7 @@ __attribute__((visibility ("default")))
 
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseParameterBundle : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 - (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(TestProtocolDatabaseError *)error errorList:(NSArray/*<TestProtocolDatabaseError>*/ *)errorList;
 /* required */ @property (nonatomic, copy) NSArray/*<NSString>*/ *columnNames;
 /* required */ @property (nonatomic, copy) NSString *notes;
@@ -1241,6 +1244,7 @@ __attribute__((visibility ("default")))
 
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseObjectWithPropertyNameConflicts : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 - (instancetype)initWithInteger:(NSString *)integer array:(NSString *)array string:(NSString *)string value:(NSString *)value object:(NSString *)object;
 /* required */ @property (nonatomic, copy) NSString *integer;
 /* required */ @property (nonatomic, copy) NSString *array;
@@ -1251,10 +1255,12 @@ __attribute__((visibility ("default")))
 
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseDummyObject : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 @end
 
 __attribute__((visibility ("default")))
 @interface TestProtocolTestParameterBundle : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 - (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(TestProtocolDatabaseError *)error;
 /* required */ @property (nonatomic, copy) NSArray/*<NSString>*/ *columnNames;
 /* required */ @property (nonatomic, copy) NSString *notes;
@@ -1356,6 +1362,20 @@ using namespace Inspector;
 
 @implementation TestProtocolDatabaseError
 
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"message"], @"message");
+    self.message = payload[@"message"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"code"], @"code");
+    self.code = [payload[@"code"] integerValue];
+
+    return self;
+}
+
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 {
     self = [super init];
@@ -1393,6 +1413,28 @@ using namespace Inspector;
 @end
 
 @implementation TestProtocolDatabaseOptionalParameterBundle
+
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    self.columnNames = payload[@"columnNames"];
+
+    self.notes = payload[@"notes"];
+
+    self.timestamp = [payload[@"timestamp"] doubleValue];
+
+    self.values = payload[@"values"];
+
+    self.payload = payload[@"payload"];
+
+    self.error = payload[@"error"];
+
+    self.errorList = payload[@"errorList"];
+
+    return self;
+}
 
 - (void)setColumnNames:(NSArray/*<NSString>*/ *)columnNames
 {
@@ -1468,6 +1510,35 @@ using namespace Inspector;
 @end
 
 @implementation TestProtocolDatabaseParameterBundle
+
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"columnNames"], @"columnNames");
+    self.columnNames = payload[@"columnNames"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"notes"], @"notes");
+    self.notes = payload[@"notes"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"timestamp"], @"timestamp");
+    self.timestamp = [payload[@"timestamp"] doubleValue];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"values"], @"values");
+    self.values = payload[@"values"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"payload"], @"payload");
+    self.payload = payload[@"payload"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"error"], @"error");
+    self.error = payload[@"error"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"errorList"], @"errorList");
+    self.errorList = payload[@"errorList"];
+
+    return self;
+}
 
 - (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(TestProtocolDatabaseError *)error errorList:(NSArray/*<TestProtocolDatabaseError>*/ *)errorList;
 {
@@ -1569,6 +1640,29 @@ using namespace Inspector;
 
 @implementation TestProtocolDatabaseObjectWithPropertyNameConflicts
 
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"integer"], @"integer");
+    self.integer = payload[@"integer"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"array"], @"array");
+    self.array = payload[@"array"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"string"], @"string");
+    self.string = payload[@"string"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"value"], @"value");
+    self.value = payload[@"value"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"object"], @"object");
+    self.object = payload[@"object"];
+
+    return self;
+}
+
 - (instancetype)initWithInteger:(NSString *)integer array:(NSString *)array string:(NSString *)string value:(NSString *)value object:(NSString *)object;
 {
     self = [super init];
@@ -1644,10 +1738,44 @@ using namespace Inspector;
 
 @implementation TestProtocolDatabaseDummyObject
 
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    return self;
+}
+
 @end
 
 
 @implementation TestProtocolTestParameterBundle
+
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"columnNames"], @"columnNames");
+    self.columnNames = payload[@"columnNames"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"notes"], @"notes");
+    self.notes = payload[@"notes"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"timestamp"], @"timestamp");
+    self.timestamp = [payload[@"timestamp"] doubleValue];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"values"], @"values");
+    self.values = payload[@"values"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"payload"], @"payload");
+    self.payload = payload[@"payload"];
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"error"], @"error");
+    self.error = payload[@"error"];
+
+    return self;
+}
 
 - (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(TestProtocolDatabaseError *)error;
 {
