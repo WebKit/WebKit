@@ -1,3 +1,69 @@
+2016-03-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Convert DOMTimer to std::chrono::milliseconds
+        https://bugs.webkit.org/show_bug.cgi?id=155085
+
+        Reviewed by Andreas Kling.
+
+        DOMTimer currently uses a mix of millisecond (was int, now std::chrono) and second (as double)
+        time values. Constant conversion back and forth is a complete mess. Stop that.
+
+        * dom/Document.cpp:
+        (WebCore::Document::minimumTimerInterval):
+        (WebCore::Document::timerAlignmentInterval):
+        * dom/Document.h:
+            - double -> std::chrono::milliseconds
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::adjustMinimumTimerInterval):
+        (WebCore::ScriptExecutionContext::minimumTimerInterval):
+        (WebCore::ScriptExecutionContext::timerAlignmentInterval):
+        * dom/ScriptExecutionContext.h:
+            - double -> std::chrono::milliseconds
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::updateTimerIntervalIfNecessary):
+        (WebCore::DOMTimer::intervalClampedToMinimum):
+        (WebCore::DOMTimer::alignedFireTime):
+        * page/DOMTimer.h:
+            - double -> std::chrono::milliseconds
+        * page/Page.cpp:
+        (WebCore::Page::setTimerThrottlingState):
+        (WebCore::Page::setTimerAlignmentIntervalIncreaseLimit):
+        (WebCore::Page::updateDOMTimerAlignmentInterval):
+        * page/Page.h:
+            - double -> std::chrono::milliseconds
+        * page/Settings.cpp:
+        (WebCore::Settings::setNeedsAdobeFrameReloadingQuirk):
+        (WebCore::Settings::setMinimumDOMTimerInterval):
+        * page/Settings.h:
+            - double -> std::chrono::milliseconds
+        * page/SuspendableTimer.h:
+        (WebCore::SuspendableTimer::startRepeating):
+        (WebCore::SuspendableTimer::startOneShot):
+        (WebCore::SuspendableTimer::repeatIntervalMS):
+        (WebCore::SuspendableTimer::augmentFireInterval):
+        (WebCore::SuspendableTimer::augmentRepeatInterval):
+            - added std::chrono::milliseconds interface.
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::setNextFireTime):
+            - restructured for new alignedFireTime signatured, moved zero-delay handling to here.
+              This change made because inside alignedFireTime fireTime will have already been truncated.
+        * platform/Timer.h:
+        (WebCore::TimerBase::msToSeconds):
+        (WebCore::TimerBase::secondsToMS):
+            - internal helper functions to bridge std::chrono::milliseconds to internal double.
+        (WebCore::TimerBase::startRepeating):
+        (WebCore::TimerBase::startOneShot):
+        (WebCore::TimerBase::repeatIntervalMS):
+        (WebCore::TimerBase::augmentFireInterval):
+        (WebCore::TimerBase::augmentRepeatInterval):
+            - expanded std::chrono::milliseconds interface.
+        (WebCore::TimerBase::alignedFireTime):
+            - changed to std::chrono::milliseconds, made return value Optional (null means no alignment).
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setMinimumTimerInterval):
+        * testing/InternalSettings.h:
+            - double -> std::chrono::milliseconds
+
 2016-03-07  Andreas Kling  <akling@apple.com>
 
         Make RenderStyle copy-on-write a bit less.

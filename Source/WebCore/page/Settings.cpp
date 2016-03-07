@@ -464,9 +464,9 @@ void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUn
     m_needsAdobeFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
 }
 
-void Settings::setMinimumDOMTimerInterval(double interval)
+void Settings::setMinimumDOMTimerInterval(std::chrono::milliseconds interval)
 {
-    double oldTimerInterval = m_minimumDOMTimerInterval;
+    auto oldTimerInterval = m_minimumDOMTimerInterval;
     m_minimumDOMTimerInterval = interval;
 
     if (!m_page)

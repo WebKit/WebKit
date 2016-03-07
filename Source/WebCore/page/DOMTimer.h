@@ -46,9 +46,9 @@ class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimer {
 public:
     virtual ~DOMTimer();
 
-    static double defaultMinimumInterval() { return 0.004; } // 4 milliseconds.
-    static double defaultAlignmentInterval() { return 0; }
-    static double hiddenPageAlignmentInterval() { return 1.0; } // 1 second.
+    static std::chrono::milliseconds defaultMinimumInterval() { return std::chrono::milliseconds(4); }
+    static std::chrono::milliseconds defaultAlignmentInterval() { return std::chrono::milliseconds::zero(); }
+    static std::chrono::milliseconds hiddenPageAlignmentInterval() { return std::chrono::milliseconds(1000); }
 
     // Creates a new timer owned by specified ScriptExecutionContext, starts it
     // and returns its Id.
@@ -65,7 +65,7 @@ private:
     DOMTimer(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, std::chrono::milliseconds interval, bool singleShot);
     friend class Internals;
 
-    double intervalClampedToMinimum() const;
+    std::chrono::milliseconds intervalClampedToMinimum() const;
 
     bool isDOMTimersThrottlingEnabled(Document&) const;
     void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
@@ -73,7 +73,7 @@ private:
     // SuspendableTimer
     void fired() override;
     void didStop() override;
-    double alignedFireTime(double) const override;
+    Optional<std::chrono::milliseconds> alignedFireTime(std::chrono::milliseconds) const override;
 
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const override;
@@ -89,7 +89,7 @@ private:
     std::unique_ptr<ScheduledAction> m_action;
     std::chrono::milliseconds m_originalInterval;
     TimerThrottleState m_throttleState;
-    double m_currentTimerInterval;
+    std::chrono::milliseconds m_currentTimerInterval;
     bool m_shouldForwardUserGesture;
 };
 

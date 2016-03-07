@@ -466,7 +466,7 @@ void InternalSettings::setImagesEnabled(bool enabled, ExceptionCode& ec)
 void InternalSettings::setMinimumTimerInterval(double intervalInSeconds, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    settings()->setMinimumDOMTimerInterval(intervalInSeconds);
+    settings()->setMinimumDOMTimerInterval(std::chrono::milliseconds((std::chrono::milliseconds::rep)(intervalInSeconds * 1000)));
 }
 
 void InternalSettings::setDefaultVideoPosterURL(const String& url, ExceptionCode& ec)

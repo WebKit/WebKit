@@ -367,13 +367,13 @@ void TimerBase::updateHeapIfNeeded(double oldTime)
     ASSERT(!inHeap() || hasValidHeapPosition());
 }
 
-void TimerBase::setNextFireTime(double newUnalignedTime)
+void TimerBase::setNextFireTime(double newTime)
 {
     ASSERT(canAccessThreadLocalDataForThread(m_thread));
     ASSERT(!m_wasDeleted);
 
-    if (m_unalignedNextFireTime != newUnalignedTime)
-        m_unalignedNextFireTime = newUnalignedTime;
+    if (m_unalignedNextFireTime != newTime)
+        m_unalignedNextFireTime = newTime;
 
     // Accessing thread global data is slow. Cache the heap pointer.
     if (!m_cachedThreadGlobalTimerHeap)
@@ -381,7 +381,12 @@ void TimerBase::setNextFireTime(double newUnalignedTime)
 
     // Keep heap valid while changing the next-fire time.
     double oldTime = m_nextFireTime;
-    double newTime = alignedFireTime(newUnalignedTime);
+    // Don't realign zero-delay timers.
+    if (newTime) {
+        if (auto newAlignedTime = alignedFireTime(secondsToMS(newTime)))
+            newTime = msToSeconds(newAlignedTime.value());
+    }
+
     if (oldTime != newTime) {
         m_nextFireTime = newTime;
         // FIXME: This should be part of ThreadTimers, or another per-thread structure.

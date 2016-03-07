@@ -1206,7 +1206,7 @@ void Page::setTimerThrottlingState(TimerThrottlingState state)
         return;
 
     m_timerThrottlingState = state;
-    m_timerThrottlingStateLastChangedTime = monotonicallyIncreasingTime();
+    m_timerThrottlingStateLastChangedTime = std::chrono::steady_clock::now();
 
     updateDOMTimerAlignmentInterval();
 
@@ -1221,8 +1221,7 @@ void Page::setTimerThrottlingState(TimerThrottlingState state)
 
 void Page::setTimerAlignmentIntervalIncreaseLimit(std::chrono::milliseconds limit)
 {
-    // FIXME: std::chrono-ify all timer allignment related code.
-    m_timerAlignmentIntervalIncreaseLimit = limit.count() * 0.001;
+    m_timerAlignmentIntervalIncreaseLimit = limit;
 
     // If (m_timerAlignmentIntervalIncreaseLimit < m_timerAlignmentInterval) then we need
     // to update m_timerAlignmentInterval, if greater then need to restart the increase timer.
@@ -1248,8 +1247,8 @@ void Page::updateDOMTimerAlignmentInterval()
         if (m_isPrerender)
             m_timerAlignmentInterval = m_timerAlignmentIntervalIncreaseLimit;
         else {
-            ASSERT(m_timerThrottlingStateLastChangedTime);
-            m_timerAlignmentInterval = monotonicallyIncreasingTime() - m_timerThrottlingStateLastChangedTime;
+            ASSERT(m_timerThrottlingStateLastChangedTime.time_since_epoch() != std::chrono::steady_clock::duration::zero());
+            m_timerAlignmentInterval = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - m_timerThrottlingStateLastChangedTime);
             // If we're below the limit, set the timer. If above, clamp to limit.
             if (m_timerAlignmentInterval < m_timerAlignmentIntervalIncreaseLimit)
                 needsIncreaseTimer = true;

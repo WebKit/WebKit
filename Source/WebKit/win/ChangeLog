@@ -1,3 +1,17 @@
+2016-03-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Convert DOMTimer to std::chrono::milliseconds
+        https://bugs.webkit.org/show_bug.cgi?id=155085
+
+        Reviewed by Andreas Kling.
+
+        DOMTimer currently uses a mix of millisecond (was int, now std::chrono) and second (as double)
+        time values. Constant conversion back and forth is a complete mess. Stop that.
+
+        * WebView.cpp:
+        (WebView::setMinimumTimerInterval):
+            - Convert double argument into std::chrono::milliseconds.
+
 2016-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Support Reflect.construct

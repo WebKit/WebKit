@@ -53,9 +53,8 @@
 namespace WebCore {
 
 static const std::chrono::milliseconds maxIntervalForUserGestureForwarding = std::chrono::milliseconds(1000); // One second matches Gecko.
-static const int minIntervalForNonUserObservableChangeTimers = 1000; // Empirically determined to maximize battery life.
+static const std::chrono::milliseconds minIntervalForNonUserObservableChangeTimers = std::chrono::milliseconds(1000); // Empirically determined to maximize battery life.
 static const int maxTimerNestingLevel = 5;
-static const double oneMillisecond = 0.001;
 
 class DOMTimerFireState {
 public:
@@ -387,53 +386,52 @@ void DOMTimer::updateTimerIntervalIfNecessary()
 {
     ASSERT(m_nestingLevel <= maxTimerNestingLevel);
 
-    double previousInterval = m_currentTimerInterval;
+    auto previousInterval = m_currentTimerInterval;
     m_currentTimerInterval = intervalClampedToMinimum();
-
-    if (WTF::areEssentiallyEqual(previousInterval, m_currentTimerInterval, oneMillisecond))
+    if (previousInterval == m_currentTimerInterval)
         return;
 
     if (repeatInterval()) {
-        ASSERT(WTF::areEssentiallyEqual(repeatInterval(), previousInterval, oneMillisecond));
-        LOG(DOMTimers, "%p - Updating DOMTimer's repeat interval from %g ms to %g ms due to throttling.", this, previousInterval * 1000., m_currentTimerInterval * 1000.);
+        ASSERT(repeatIntervalMS() == previousInterval);
+        LOG(DOMTimers, "%p - Updating DOMTimer's repeat interval from %lld ms to %lld ms due to throttling.", this, previousInterval.count(), m_currentTimerInterval.count());
         augmentRepeatInterval(m_currentTimerInterval - previousInterval);
     } else {
-        LOG(DOMTimers, "%p - Updating DOMTimer's fire interval from %g ms to %g ms due to throttling.", this, previousInterval * 1000., m_currentTimerInterval * 1000.);
+        LOG(DOMTimers, "%p - Updating DOMTimer's fire interval from %lld ms to %lld ms due to throttling.", this, previousInterval.count(), m_currentTimerInterval.count());
         augmentFireInterval(m_currentTimerInterval - previousInterval);
     }
 }
 
-double DOMTimer::intervalClampedToMinimum() const
+std::chrono::milliseconds DOMTimer::intervalClampedToMinimum() const
 {
     ASSERT(scriptExecutionContext());
     ASSERT(m_nestingLevel <= maxTimerNestingLevel);
 
-    double intervalInSeconds = std::max(oneMillisecond, m_originalInterval.count() * oneMillisecond);
+    auto interval = std::max(std::chrono::milliseconds(1), m_originalInterval);
 
     // Only apply throttling to repeating timers.
     if (m_nestingLevel < maxTimerNestingLevel)
-        return intervalInSeconds;
+        return interval;
 
     // Apply two throttles - the global (per Page) minimum, and also a per-timer throttle.
-    intervalInSeconds = std::max(intervalInSeconds, scriptExecutionContext()->minimumTimerInterval());
+    interval = std::max(interval, scriptExecutionContext()->minimumTimerInterval());
     if (m_throttleState == ShouldThrottle)
-        intervalInSeconds = std::max(intervalInSeconds, minIntervalForNonUserObservableChangeTimers * oneMillisecond);
-    return intervalInSeconds;
+        interval = std::max(interval, minIntervalForNonUserObservableChangeTimers);
+    return interval;
 }
 
-double DOMTimer::alignedFireTime(double fireTime) const
+Optional<std::chrono::milliseconds> DOMTimer::alignedFireTime(std::chrono::milliseconds fireTime) const
 {
-    if (double alignmentInterval = scriptExecutionContext()->timerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel)) {
-        // Don't mess with zero-delay timers.
-        if (!fireTime)
-            return fireTime;
-        static const double randomizedAlignment = randomNumber();
-        // Force alignment to randomizedAlignment fraction of the way between alignemntIntervals, e.g.
-        // if alignmentInterval is 10 and randomizedAlignment is 0.3 this will align to 3, 13, 23, ...
-        return (ceil(fireTime / alignmentInterval - randomizedAlignment) + randomizedAlignment) * alignmentInterval;
-    }
+    auto alignmentInterval = scriptExecutionContext()->timerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel);
+    if (alignmentInterval == std::chrono::milliseconds::zero())
+        return Nullopt;
+    
+    static const double randomizedProportion = randomNumber();
 
-    return fireTime;
+    // Force alignment to randomizedAlignment fraction of the way between alignemntIntervals, e.g.
+    // if alignmentInterval is 10 and randomizedAlignment is 0.3 this will align to 3, 13, 23, ...
+    auto randomizedOffset = std::chrono::duration_cast<std::chrono::milliseconds>(alignmentInterval * randomizedProportion);
+    auto adjustedFireTime = fireTime - randomizedOffset;
+    return adjustedFireTime - (adjustedFireTime % alignmentInterval) + alignmentInterval + randomizedOffset;
 }
 
 const char* DOMTimer::activeDOMObjectName() const
