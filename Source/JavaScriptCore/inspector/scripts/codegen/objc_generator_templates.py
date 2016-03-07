@@ -38,12 +38,12 @@ ${includes}
     HeaderPostlude = (
     """""")
 
-    ConversionHelpersPrelude = (
+    TypeConversionsHeaderPrelude = (
     """${includes}
 
 namespace Inspector {""")
 
-    ConversionHelpersPostlude = (
+    TypeConversionsHeaderPostlude = (
     """} // namespace Inspector
 """)
 
@@ -53,7 +53,7 @@ namespace Inspector {""")
     GenericHeaderPostlude = (
     """""")
 
-    ConversionHelpersStandard = (
+    TypeConversionsHeaderStandard = (
     """template<typename ObjCEnumType>
 ObjCEnumType fromProtocolString(const String& value);""")
 

@@ -1635,7 +1635,7 @@
 		A5EA710419F6DE720098F5EC /* generate_objc_backend_dispatcher_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70F019F6DE5A0098F5EC /* generate_objc_backend_dispatcher_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EA710519F6DE740098F5EC /* generate_objc_configuration_header.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70F119F6DE5A0098F5EC /* generate_objc_configuration_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EA710619F6DE760098F5EC /* generate_objc_configuration_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70F219F6DE5A0098F5EC /* generate_objc_configuration_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		A5EA710719F6DE780098F5EC /* generate_objc_conversion_helpers.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70F319F6DE5A0098F5EC /* generate_objc_conversion_helpers.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5EA710719F6DE780098F5EC /* generate_objc_protocol_type_conversions_header.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70F319F6DE5A0098F5EC /* generate_objc_protocol_type_conversions_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EA710819F6DE7A0098F5EC /* generate_objc_frontend_dispatcher_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70F419F6DE5A0098F5EC /* generate_objc_frontend_dispatcher_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EA710919F6DE7C0098F5EC /* generate_objc_header.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70F519F6DE5A0098F5EC /* generate_objc_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EA710A19F6DE7E0098F5EC /* generate_objc_internal_header.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70F619F6DE5A0098F5EC /* generate_objc_internal_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3836,7 +3836,7 @@
 		A5EA70F019F6DE5A0098F5EC /* generate_objc_backend_dispatcher_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_backend_dispatcher_implementation.py; sourceTree = "<group>"; };
 		A5EA70F119F6DE5A0098F5EC /* generate_objc_configuration_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_configuration_header.py; sourceTree = "<group>"; };
 		A5EA70F219F6DE5A0098F5EC /* generate_objc_configuration_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_configuration_implementation.py; sourceTree = "<group>"; };
-		A5EA70F319F6DE5A0098F5EC /* generate_objc_conversion_helpers.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_conversion_helpers.py; sourceTree = "<group>"; };
+		A5EA70F319F6DE5A0098F5EC /* generate_objc_protocol_type_conversions_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_protocol_type_conversions_header.py; sourceTree = "<group>"; };
 		A5EA70F419F6DE5A0098F5EC /* generate_objc_frontend_dispatcher_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_frontend_dispatcher_implementation.py; sourceTree = "<group>"; };
 		A5EA70F519F6DE5A0098F5EC /* generate_objc_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_header.py; sourceTree = "<group>"; };
 		A5EA70F619F6DE5A0098F5EC /* generate_objc_internal_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_internal_header.py; sourceTree = "<group>"; };
@@ -6849,10 +6849,10 @@
 				A5EA70F019F6DE5A0098F5EC /* generate_objc_backend_dispatcher_implementation.py */,
 				A5EA70F119F6DE5A0098F5EC /* generate_objc_configuration_header.py */,
 				A5EA70F219F6DE5A0098F5EC /* generate_objc_configuration_implementation.py */,
-				A5EA70F319F6DE5A0098F5EC /* generate_objc_conversion_helpers.py */,
 				A5EA70F419F6DE5A0098F5EC /* generate_objc_frontend_dispatcher_implementation.py */,
 				A5EA70F519F6DE5A0098F5EC /* generate_objc_header.py */,
 				A5EA70F619F6DE5A0098F5EC /* generate_objc_internal_header.py */,
+				A5EA70F319F6DE5A0098F5EC /* generate_objc_protocol_type_conversions_header.py */,
 				C4F4B6D71A05C76F005CAB76 /* generate_objc_protocol_types_implementation.py */,
 				C4703CCB192844CC0013FBEA /* generator.py */,
 				C4703CCA192844CC0013FBEA /* generator_templates.py */,
@@ -7427,7 +7427,7 @@
 				0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */,
 				A5EA710519F6DE740098F5EC /* generate_objc_configuration_header.py in Headers */,
 				A5EA710619F6DE760098F5EC /* generate_objc_configuration_implementation.py in Headers */,
-				A5EA710719F6DE780098F5EC /* generate_objc_conversion_helpers.py in Headers */,
+				A5EA710719F6DE780098F5EC /* generate_objc_protocol_type_conversions_header.py in Headers */,
 				0F338DF61BE93D550013C88F /* B3ConstrainedValue.h in Headers */,
 				A5EA710819F6DE7A0098F5EC /* generate_objc_frontend_dispatcher_implementation.py in Headers */,
 				A5EA710919F6DE7C0098F5EC /* generate_objc_header.py in Headers */,

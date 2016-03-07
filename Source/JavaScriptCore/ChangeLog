@@ -1,3 +1,42 @@
+2016-03-07  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: rename generated *EnumConversionHelpers.h to *TypeConversions.h
+        https://bugs.webkit.org/show_bug.cgi?id=155121
+        <rdar://problem/25010391>
+
+        Reviewed by Timothy Hatcher.
+
+        Split out this renaming from the work to generate factory method stubs for types.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/scripts/codegen/__init__.py:
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCConfigurationImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objc_conversion_helpers.py.
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/objc_generator_templates.py:
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        (generate_from_specification):
+
+        Rebaseline tests after changing generator order.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-03-07  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Improve and64() and or64() with immediate on x86

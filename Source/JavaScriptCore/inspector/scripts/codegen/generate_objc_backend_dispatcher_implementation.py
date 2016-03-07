@@ -52,7 +52,7 @@ class ObjCConfigurationImplementationGenerator(ObjCGenerator):
     def generate_output(self):
         secondary_headers = [
             '"%sInternal.h"' % self.protocol_name(),
-            '"%sEnumConversionHelpers.h"' % self.protocol_name(),
+            '"%sTypeConversions.h"' % self.protocol_name(),
             '<JavaScriptCore/InspectorValues.h>',
         ]
 

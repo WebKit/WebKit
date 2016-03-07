@@ -43,19 +43,19 @@ def add_newline(lines):
     lines.append('')
 
 
-class ObjCConversionHelpersGenerator(ObjCGenerator):
+class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
     def __init__(self, model, input_filepath):
         ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sEnumConversionHelpers.h' % self.protocol_name()
+        return '%sTypeConversions.h' % self.protocol_name()
 
     def domains_to_generate(self):
         return filter(ObjCGenerator.should_generate_domain_types_filter(self.model()), Generator.domains_to_generate(self))
 
     def generate_output(self):
         headers = [
-            '"%sArrayConversionHelpers.h"' % ObjCGenerator.OBJC_STATIC_PREFIX
+            '"%sArrayConversions.h"' % ObjCGenerator.OBJC_STATIC_PREFIX
         ]
 
         header_args = {
@@ -65,10 +65,10 @@ class ObjCConversionHelpersGenerator(ObjCGenerator):
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(ObjCTemplates.ConversionHelpersPrelude).substitute(None, **header_args))
-        sections.append(Template(ObjCTemplates.ConversionHelpersStandard).substitute(None))
+        sections.append(Template(ObjCTemplates.TypeConversionsHeaderPrelude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.TypeConversionsHeaderStandard).substitute(None))
         sections.extend(map(self._generate_enum_conversion_functions, domains))
-        sections.append(Template(ObjCTemplates.ConversionHelpersPostlude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.TypeConversionsHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
     def _generate_enum_conversion_functions(self, domain):

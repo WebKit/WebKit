@@ -49,7 +49,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
 
     def generate_output(self):
         secondary_headers = [
-            '"%sEnumConversionHelpers.h"' % self.protocol_name(),
+            '"%sTypeConversions.h"' % self.protocol_name(),
             '<JavaScriptCore/InspectorValues.h>',
         ]
 

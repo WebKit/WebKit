@@ -17,8 +17,8 @@ from generate_objc_backend_dispatcher_header import *
 from generate_objc_backend_dispatcher_implementation import *
 from generate_objc_configuration_header import *
 from generate_objc_configuration_implementation import *
-from generate_objc_conversion_helpers import *
 from generate_objc_frontend_dispatcher_implementation import *
 from generate_objc_header import *
 from generate_objc_internal_header import *
 from generate_objc_protocol_types_implementation import *
+from generate_objc_protocol_type_conversions_header import *

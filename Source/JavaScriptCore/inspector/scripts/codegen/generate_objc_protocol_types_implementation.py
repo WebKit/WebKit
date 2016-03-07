@@ -55,7 +55,7 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
 
     def generate_output(self):
         secondary_headers = [
-            '"%sEnumConversionHelpers.h"' % self.protocol_name(),
+            '"%sTypeConversions.h"' % self.protocol_name(),
             Generator.string_for_file_include('%sJSONObjectPrivate.h' % ObjCGenerator.OBJC_STATIC_PREFIX, Frameworks.WebInspector, self.model().framework),
             '<JavaScriptCore/InspectorValues.h>',
             '<wtf/Assertions.h>',

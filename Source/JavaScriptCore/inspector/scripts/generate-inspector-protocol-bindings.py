@@ -68,10 +68,10 @@ except ImportError, e:
     from generate_objc_backend_dispatcher_implementation import *
     from generate_objc_configuration_header import *
     from generate_objc_configuration_implementation import *
-    from generate_objc_conversion_helpers import *
     from generate_objc_frontend_dispatcher_implementation import *
     from generate_objc_header import *
     from generate_objc_internal_header import *
+    from generate_objc_protocol_type_conversions_header import *
     from generate_objc_protocol_types_implementation import *
 
 
@@ -145,10 +145,10 @@ def generate_from_specification(primary_specification_filepath=None,
         generators.append(ObjCBackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCConfigurationHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCConfigurationImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCConversionHelpersGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCFrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCInternalHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjCProtocolTypeConversionsHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
 
     elif protocol.framework is Frameworks.JavaScriptCore:
@@ -168,9 +168,8 @@ def generate_from_specification(primary_specification_filepath=None,
         generators.append(CppProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
 
     elif protocol.framework is Frameworks.WebKit and generate_frontend:
-        # FIXME <rdar://problem/23466925>: This list of generators for the frontend is a placeholder.
-        generators.append(ObjCConversionHelpersGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjCProtocolTypeConversionsHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
 
     elif protocol.framework is Frameworks.WebInspector:
@@ -178,10 +177,10 @@ def generate_from_specification(primary_specification_filepath=None,
         generators.append(ObjCBackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCConfigurationHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCConfigurationImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCConversionHelpersGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCFrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCInternalHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjCProtocolTypeConversionsHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
 
     single_output_file_contents = []
