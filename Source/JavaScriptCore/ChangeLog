@@ -1,5 +1,12 @@
 2016-03-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix build. This was a messed up merge.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+
+2016-03-06  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should know how to speculate StringOrOther
         https://bugs.webkit.org/show_bug.cgi?id=155094
 

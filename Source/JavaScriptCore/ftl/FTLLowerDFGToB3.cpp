@@ -5947,8 +5947,8 @@ private:
         LBasicBlock loop = m_out.newBlock();
         LBasicBlock notYetInstance = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
-        LBasicBlock loadPrototypeDirect = FTL_NEW_BLOCK(m_out, ("Instanceof defaultPrototypeFunction"));
-        LBasicBlock defaultHasInstanceSlow = FTL_NEW_BLOCK(m_out, ("Instanceof defaultPrototypeFunction"));
+        LBasicBlock loadPrototypeDirect = m_out.newBlock();
+        LBasicBlock defaultHasInstanceSlow = m_out.newBlock();
         
         LValue condition;
         if (m_node->child1().useKind() == UntypedUse)
