@@ -1,3 +1,16 @@
+2016-03-07  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][AcceleratedCompositing] Rendering issues on www.bbc.com.
+        https://bugs.webkit.org/show_bug.cgi?id=154912
+
+        Reviewed by Michael Catanzaro.
+
+        If we have a scroll layer, we should not include the scroll position in the visible rectangle,
+        since the scroll position is already reflected in the position of the scroll layer.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::flushPendingLayerChanges):
+
 2016-03-06  Gavin Barraclough  <barraclough@apple.com>
 
         Convert DOMTimer to std::chrono::milliseconds
