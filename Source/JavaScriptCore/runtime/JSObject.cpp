@@ -35,15 +35,16 @@
 #include "Exception.h"
 #include "Executable.h"
 #include "GetterSetter.h"
+#include "HeapSnapshotBuilder.h"
 #include "IndexingHeaderInlines.h"
 #include "JSBoundSlotBaseFunction.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Lookup.h"
 #include "NativeErrorConstructor.h"
 #include "Nodes.h"
 #include "ObjectPrototype.h"
-#include "JSCInlines.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "ProxyObject.h"
@@ -157,12 +158,11 @@ ALWAYS_INLINE void JSObject::copyButterfly(CopyVisitor& visitor, Butterfly* butt
     } 
 }
 
-ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* butterfly, size_t storageSize)
+ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* butterfly, Structure* structure)
 {
     ASSERT(butterfly);
     
-    Structure* structure = this->structure(visitor.vm());
-    
+    size_t storageSize = structure->outOfLineSize();
     size_t propertyCapacity = structure->outOfLineCapacity();
     size_t preCapacity;
     size_t indexingPayloadSizeInBytes;
@@ -177,7 +177,7 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
     size_t capacityInBytes = Butterfly::totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
 
     // Mark the properties.
-    visitor.appendValues(butterfly->propertyStorage() - storageSize, storageSize);
+    visitor.appendValuesHidden(butterfly->propertyStorage() - storageSize, storageSize);
     visitor.copyLater(
         this, ButterflyCopyToken,
         butterfly->base(preCapacity, propertyCapacity), capacityInBytes);
@@ -185,10 +185,10 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
     // Mark the array if appropriate.
     switch (this->indexingType()) {
     case ALL_CONTIGUOUS_INDEXING_TYPES:
-        visitor.appendValues(butterfly->contiguous().data(), butterfly->publicLength());
+        visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
         break;
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-        visitor.appendValues(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
+        visitor.appendValuesHidden(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
         if (butterfly->arrayStorage()->m_sparseMap)
             visitor.append(&butterfly->arrayStorage()->m_sparseMap);
         break;
@@ -217,7 +217,7 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Butterfly* butterfly = thisObject->m_butterfly.getWithoutBarrier();
     if (butterfly)
-        thisObject->visitButterfly(visitor, butterfly, thisObject->structure(visitor.vm())->outOfLineSize());
+        thisObject->visitButterfly(visitor, butterfly, thisObject->structure(visitor.vm()));
 
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
@@ -237,6 +237,44 @@ void JSObject::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken to
         thisObject->copyButterfly(visitor, butterfly, thisObject->structure()->outOfLineSize());
 }
 
+void JSObject::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+{
+    JSObject* thisObject = jsCast<JSObject*>(cell);
+    Base::heapSnapshot(cell, builder);
+
+    Structure* structure = thisObject->structure();
+    for (auto& entry : structure->getPropertiesConcurrently()) {
+        JSValue toValue = thisObject->getDirect(entry.offset);
+        if (toValue && toValue.isCell())
+            builder.appendPropertyNameEdge(thisObject, toValue.asCell(), entry.key);
+    }
+
+    Butterfly* butterfly = thisObject->m_butterfly.getWithoutBarrier();
+    if (butterfly) {
+        WriteBarrier<Unknown>* data;
+        uint32_t count = 0;
+
+        switch (thisObject->indexingType()) {
+        case ALL_CONTIGUOUS_INDEXING_TYPES:
+            data = butterfly->contiguous().data();
+            count = butterfly->publicLength();
+            break;
+        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+            data = butterfly->arrayStorage()->m_vector;
+            count = butterfly->arrayStorage()->vectorLength();
+            break;
+        default:
+            break;
+        }
+
+        for (uint32_t i = 0; i < count; ++i) {
+            JSValue toValue = data[i].get();
+            if (toValue && toValue.isCell())
+                builder.appendIndexEdge(thisObject, toValue.asCell(), i);
+        }
+    }
+}
+
 void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSFinalObject* thisObject = jsCast<JSFinalObject*>(cell);
@@ -248,13 +286,13 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     
     JSCell::visitChildren(thisObject, visitor);
 
-    Structure* structure = thisObject->structure();
+    Structure* structure = thisObject->structure(visitor.vm());
     Butterfly* butterfly = thisObject->butterfly();
     if (butterfly)
-        thisObject->visitButterfly(visitor, butterfly, structure->outOfLineSize());
+        thisObject->visitButterfly(visitor, butterfly, structure);
 
     size_t storageSize = structure->inlineSize();
-    visitor.appendValues(thisObject->inlineStorage(), storageSize);
+    visitor.appendValuesHidden(thisObject->inlineStorage(), storageSize);
 
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;

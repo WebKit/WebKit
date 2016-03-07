@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSEnvironmentRecord.h"
 
+#include "HeapSnapshotBuilder.h"
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -40,7 +41,27 @@ void JSEnvironmentRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSEnvironmentRecord* thisObject = jsCast<JSEnvironmentRecord*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.appendValues(thisObject->variables(), thisObject->symbolTable()->scopeSize());
+    visitor.appendValuesHidden(thisObject->variables(), thisObject->symbolTable()->scopeSize());
+}
+
+void JSEnvironmentRecord::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+{
+    JSEnvironmentRecord* thisObject = jsCast<JSEnvironmentRecord*>(cell);
+    Base::heapSnapshot(cell, builder);
+
+    ConcurrentJITLocker locker(thisObject->symbolTable()->m_lock);
+    SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
+    for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
+        SymbolTableEntry::Fast entry = it->value;
+        ASSERT(!entry.isNull());
+        ScopeOffset offset = entry.scopeOffset();
+        if (!thisObject->isValidScopeOffset(offset))
+            continue;
+
+        JSValue toValue = thisObject->variableAt(offset).get();
+        if (toValue && toValue.isCell())
+            builder.appendVariableNameEdge(thisObject, toValue.asCell(), it->key.get());
+    }
 }
 
 } // namespace JSC

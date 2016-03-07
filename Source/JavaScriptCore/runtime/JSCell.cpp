@@ -65,6 +65,10 @@ void JSCell::copyBackingStore(JSCell*, CopyVisitor&, CopyToken)
 {
 }
 
+void JSCell::heapSnapshot(JSCell*, HeapSnapshotBuilder&)
+{
+}
+
 bool JSCell::getString(ExecState* exec, String& stringValue) const
 {
     if (!isString())

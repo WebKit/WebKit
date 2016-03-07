@@ -70,7 +70,7 @@ void HeapSnapshotBuilder::appendNode(JSCell* cell)
     if (hasExistingNodeForCell(cell))
         return;
 
-    std::lock_guard<Lock> lock(m_appendingNodeMutex);
+    std::lock_guard<Lock> lock(m_buildingNodeMutex);
 
     m_snapshot->appendNode(HeapSnapshotNode(cell, getNextObjectIdentifier()));
 }
@@ -84,9 +84,39 @@ void HeapSnapshotBuilder::appendEdge(JSCell* from, JSCell* to)
     if (from == to)
         return;
 
-    std::lock_guard<Lock> lock(m_appendingEdgeMutex);
+    std::lock_guard<Lock> lock(m_buildingEdgeMutex);
 
     m_edges.append(HeapSnapshotEdge(from, to));
+}
+
+void HeapSnapshotBuilder::appendPropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName)
+{
+    ASSERT(m_profiler.activeSnapshotBuilder() == this);
+    ASSERT(to);
+
+    std::lock_guard<Lock> lock(m_buildingEdgeMutex);
+
+    m_edges.append(HeapSnapshotEdge(from, to, EdgeType::Property, propertyName));
+}
+
+void HeapSnapshotBuilder::appendVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName)
+{
+    ASSERT(m_profiler.activeSnapshotBuilder() == this);
+    ASSERT(to);
+
+    std::lock_guard<Lock> lock(m_buildingEdgeMutex);
+
+    m_edges.append(HeapSnapshotEdge(from, to, EdgeType::Variable, variableName));
+}
+
+void HeapSnapshotBuilder::appendIndexEdge(JSCell* from, JSCell* to, uint32_t index)
+{
+    ASSERT(m_profiler.activeSnapshotBuilder() == this);
+    ASSERT(to);
+
+    std::lock_guard<Lock> lock(m_buildingEdgeMutex);
+
+    m_edges.append(HeapSnapshotEdge(from, to, index));
 }
 
 bool HeapSnapshotBuilder::hasExistingNodeForCell(JSCell* cell)
@@ -221,6 +251,20 @@ String HeapSnapshotBuilder::json(std::function<bool (const HeapSnapshotNode&)> a
         json.appendNumber(toIdentifier);
         json.append(',');
         json.appendNumber(edgeTypeToNumber(edge.type));
+        switch (edge.type) {
+        case EdgeType::Property:
+        case EdgeType::Variable:
+            json.append(',');
+            json.appendQuotedJSONString(edge.u.name);
+            break;
+        case EdgeType::Index:
+            json.append(',');
+            json.appendNumber(edge.u.index);
+            break;
+        default:
+            // No data for this edge type.
+            break;
+        }
         json.append(']');
     };
 

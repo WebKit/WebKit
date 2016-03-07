@@ -1,3 +1,78 @@
+2016-03-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Heap Snapshot should include different Edge types and data (Property, Index, Variable)
+        https://bugs.webkit.org/show_bug.cgi?id=154937
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendHidden):
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::appendHidden):
+        (JSC::SlotVisitor::appendValuesHidden):
+        Add new visit methods to visit a reference without snapshotting the edge.
+
+        * heap/Heap.cpp:
+        (JSC::AddExtraHeapSnapshotEdges::AddExtraHeapSnapshotEdges):
+        (JSC::AddExtraHeapSnapshotEdges::operator()):
+        (JSC::Heap::addHeapSnapshotEdges):
+        (JSC::Heap::removeDeadHeapSnapshotNodes):
+        (JSC::Heap::collectImpl):
+        * heap/Heap.h:
+        After marking, visit the live cells for a chance to record extra
+        heap snapshotting information about the cell.
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::appendNode):
+        (JSC::HeapSnapshotBuilder::appendEdge):
+        (JSC::HeapSnapshotBuilder::appendPropertyNameEdge):
+        (JSC::HeapSnapshotBuilder::appendVariableNameEdge):
+        (JSC::HeapSnapshotBuilder::appendIndexEdge):
+        (JSC::HeapSnapshotBuilder::json):
+        * heap/HeapSnapshotBuilder.h:
+        (JSC::HeapSnapshotEdge::HeapSnapshotEdge):
+        Construct edges with extra data.
+
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::heapSnapshot):
+        * runtime/JSCell.h:
+        Add a new method to provide cells with an opportunity to provide
+        extra heap snapshotting information.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::visitChildren):
+        (JSC::JSObject::heapSnapshot):
+        (JSC::JSFinalObject::visitChildren):
+        * runtime/JSObject.h:
+        Capture object property names and index names when heap snapshotting.
+        Do not include them as internal edges in normal visitChildren.
+
+        * runtime/JSEnvironmentRecord.cpp:
+        (JSC::JSEnvironmentRecord::visitChildren):
+        (JSC::JSEnvironmentRecord::heapSnapshot):
+        * runtime/JSEnvironmentRecord.h:
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::visitChildren):
+        (JSC::JSSegmentedVariableObject::heapSnapshot):
+        * runtime/JSSegmentedVariableObject.h:
+        Capture scope variable names when heap snapshotting.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::propertyTable):
+        When performing a heap snapshotting collection, don't clear the
+        property table so that accessing the table during this GC is okay.
+
+        * tests/heapProfiler/driver/driver.js:
+        * tests/heapProfiler/property-edge-types.js: Added.
+        * tests/heapProfiler/variable-edge-types.js: Added.
+        Tests covering the different edge types and data we capture.
+
 2016-03-07  Saam barati  <sbarati@apple.com>
 
         [ES6] Implement Proxy.[[GetPrototypeOf]]

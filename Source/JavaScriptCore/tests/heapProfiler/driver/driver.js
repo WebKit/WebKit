@@ -240,3 +240,17 @@ function createHeapSnapshot() {
 
     return new HeapSnapshot(json);
 }
+
+function followPath(node, path) {
+    let current = node;
+    for (let component of path) {
+        let edges = null;
+        if (component.edge)
+            edges = current.outgoingEdges.filter((e) => e.data === component.edge);
+        else if (component.node)
+            edges = current.outgoingEdges.filter((e) => e.to.className === component.node);
+        assert(edges.length === 1, "Ambiguous or bad path component: " + JSON.stringify(component));
+        current = edges[0].to;
+    }
+    return current;
+}

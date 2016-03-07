@@ -129,8 +129,16 @@ void SlotVisitor::append(JSValue value)
     if (!value || !value.isCell())
         return;
 
-    if (m_heapSnapshotBuilder)
+    if (UNLIKELY(m_heapSnapshotBuilder))
         m_heapSnapshotBuilder->appendEdge(m_currentCell, value.asCell());
+
+    setMarkedAndAppendToMarkStack(value.asCell());
+}
+
+void SlotVisitor::appendHidden(JSValue value)
+{
+    if (!value || !value.isCell())
+        return;
 
     setMarkedAndAppendToMarkStack(value.asCell());
 }
@@ -167,7 +175,7 @@ void SlotVisitor::appendToMarkStack(JSCell* cell)
     m_bytesVisited += MarkedBlock::blockFor(cell)->cellSize();
     m_stack.append(cell);
 
-    if (m_heapSnapshotBuilder)
+    if (UNLIKELY(m_heapSnapshotBuilder))
         m_heapSnapshotBuilder->appendNode(cell);
 }
 

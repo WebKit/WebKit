@@ -67,8 +67,10 @@ public:
     
     template<typename T> void append(JITWriteBarrier<T>*);
     template<typename T> void append(WriteBarrierBase<T>*);
+    template<typename T> void appendHidden(WriteBarrierBase<T>*);
     template<typename Iterator> void append(Iterator begin , Iterator end);
     void appendValues(WriteBarrierBase<Unknown>*, size_t count);
+    void appendValuesHidden(WriteBarrierBase<Unknown>*, size_t count);
     
     template<typename T>
     void appendUnbarrieredPointer(T**);
@@ -119,6 +121,7 @@ private:
     friend class ParallelModeEnabler;
     
     JS_EXPORT_PRIVATE void append(JSValue); // This is private to encourage clients to use WriteBarrier<T>.
+    void appendHidden(JSValue);
 
     JS_EXPORT_PRIVATE void setMarkedAndAppendToMarkStack(JSCell*);
     void appendToMarkStack(JSCell*);

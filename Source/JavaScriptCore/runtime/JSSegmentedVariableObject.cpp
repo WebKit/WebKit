@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSSegmentedVariableObject.h"
 
+#include "HeapSnapshotBuilder.h"
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -63,10 +64,30 @@ void JSSegmentedVariableObject::visitChildren(JSCell* cell, SlotVisitor& slotVis
 {
     JSSegmentedVariableObject* thisObject = jsCast<JSSegmentedVariableObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    JSSymbolTableObject::visitChildren(thisObject, slotVisitor);
+    Base::visitChildren(thisObject, slotVisitor);
     
     for (unsigned i = thisObject->m_variables.size(); i--;)
-        slotVisitor.append(&thisObject->m_variables[i]);
+        slotVisitor.appendHidden(&thisObject->m_variables[i]);
+}
+
+void JSSegmentedVariableObject::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+{
+    JSSegmentedVariableObject* thisObject = jsCast<JSSegmentedVariableObject*>(cell);
+    Base::heapSnapshot(cell, builder);
+
+    ConcurrentJITLocker locker(thisObject->symbolTable()->m_lock);
+    SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
+    for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
+        SymbolTableEntry::Fast entry = it->value;
+        ASSERT(!entry.isNull());
+        ScopeOffset offset = entry.scopeOffset();
+        if (!thisObject->isValidScopeOffset(offset))
+            continue;
+
+        JSValue toValue = thisObject->variableAt(offset).get();
+        if (toValue && toValue.isCell())
+            builder.appendVariableNameEdge(thisObject, toValue.asCell(), it->key.get());
+    }
 }
 
 } // namespace JSC

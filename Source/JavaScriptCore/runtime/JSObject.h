@@ -99,6 +99,7 @@ public:
     JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*);
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
     JS_EXPORT_PRIVATE static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
+    JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
 
     JS_EXPORT_PRIVATE static String className(const JSObject*);
     JS_EXPORT_PRIVATE static String calculatedClassName(JSObject*);
@@ -785,7 +786,7 @@ protected:
     // To create derived types you likely want JSNonFinalObject, below.
     JSObject(VM&, Structure*, Butterfly* = 0);
         
-    void visitButterfly(SlotVisitor&, Butterfly*, size_t storageSize);
+    void visitButterfly(SlotVisitor&, Butterfly*, Structure*);
     void copyButterfly(CopyVisitor&, Butterfly*, size_t storageSize);
 
     // Call this if you know that the object is in a mode where it has array

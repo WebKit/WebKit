@@ -69,6 +69,12 @@ inline void SlotVisitor::append(WriteBarrierBase<T>* slot)
     append(slot->get());
 }
 
+template<typename T>
+inline void SlotVisitor::appendHidden(WriteBarrierBase<T>* slot)
+{
+    appendHidden(slot->get());
+}
+
 template<typename Iterator>
 inline void SlotVisitor::append(Iterator begin, Iterator end)
 {
@@ -80,6 +86,12 @@ inline void SlotVisitor::appendValues(WriteBarrierBase<Unknown>* barriers, size_
 {
     for (size_t i = 0; i < count; ++i)
         append(&barriers[i]);
+}
+
+inline void SlotVisitor::appendValuesHidden(WriteBarrierBase<Unknown>* barriers, size_t count)
+{
+    for (size_t i = 0; i < count; ++i)
+        appendHidden(&barriers[i]);
 }
 
 inline void SlotVisitor::addWeakReferenceHarvester(WeakReferenceHarvester* weakReferenceHarvester)

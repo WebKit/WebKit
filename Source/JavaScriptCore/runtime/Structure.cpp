@@ -1127,7 +1127,9 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (thisObject->isPinnedPropertyTable()) {
         ASSERT(thisObject->m_propertyTableUnsafe);
         visitor.append(&thisObject->m_propertyTableUnsafe);
-    } else if (thisObject->m_propertyTableUnsafe)
+    } else if (visitor.isBuildingHeapSnapshot())
+        visitor.append(&thisObject->m_propertyTableUnsafe);
+    else if (thisObject->m_propertyTableUnsafe)
         thisObject->m_propertyTableUnsafe.clear();
 
     visitor.append(&thisObject->m_inferredTypeTable);

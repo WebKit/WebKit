@@ -30,6 +30,7 @@
 
 namespace JSC {
 
+class HeapSnapshotBuilder;
 class JSArrayBufferView;
 struct HashTable;
 
@@ -118,6 +119,9 @@ struct MethodTable {
     typedef void (*DumpToStreamFunctionPtr)(const JSCell*, PrintStream&);
     DumpToStreamFunctionPtr dumpToStream;
 
+    typedef void (*HeapSnapshotFunctionPtr)(JSCell*, HeapSnapshotBuilder&);
+    HeapSnapshotFunctionPtr heapSnapshot;
+
     typedef size_t (*EstimatedSizeFunctionPtr)(JSCell*);
     EstimatedSizeFunctionPtr estimatedSize;
 };
@@ -171,6 +175,7 @@ struct MethodTable {
         &ClassName::setPrototype, \
         &ClassName::getPrototype, \
         &ClassName::dumpToStream, \
+        &ClassName::heapSnapshot, \
         &ClassName::estimatedSize \
     }, \
     ClassName::TypedArrayStorageType

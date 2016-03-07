@@ -85,6 +85,7 @@ public:
     JS_EXPORT_PRIVATE ScopeOffset addVariables(unsigned numberOfVariablesToAdd, JSValue);
     
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
+    JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
 
 protected:
     JSSegmentedVariableObject(VM& vm, Structure* structure, JSScope* scope)

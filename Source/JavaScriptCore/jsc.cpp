@@ -485,11 +485,6 @@ public:
         return simpleObject;
     }
 
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-    }
-
     static void visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
         SimpleObject* thisObject = jsCast<SimpleObject*>(cell);

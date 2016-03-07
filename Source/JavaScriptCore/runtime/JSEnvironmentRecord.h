@@ -111,6 +111,7 @@ protected:
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
+    static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
 };
 
 } // namespace JSC

@@ -768,6 +768,31 @@ bool Heap::isHeapSnapshotting() const
     return false;
 }
 
+struct GatherHeapSnapshotData : MarkedBlock::CountFunctor {
+    GatherHeapSnapshotData(HeapSnapshotBuilder& builder)
+        : m_builder(builder)
+    {
+    }
+
+    IterationStatus operator()(JSCell* cell)
+    {
+        cell->methodTable()->heapSnapshot(cell, m_builder);
+        return IterationStatus::Continue;
+    }
+
+    HeapSnapshotBuilder& m_builder;
+};
+
+void Heap::gatherExtraHeapSnapshotData(HeapProfiler& heapProfiler)
+{
+    GCPHASE(GatherExtraHeapSnapshotData);
+    if (HeapSnapshotBuilder* builder = heapProfiler.activeSnapshotBuilder()) {
+        HeapIterationScope heapIterationScope(*this);
+        GatherHeapSnapshotData functor(*builder);
+        m_objectSpace.forEachLiveCell(heapIterationScope, functor);
+    }
+}
+
 struct RemoveDeadHeapSnapshotNodes : MarkedBlock::CountFunctor {
     RemoveDeadHeapSnapshotNodes(HeapSnapshot& snapshot)
         : m_snapshot(snapshot)
@@ -783,17 +808,14 @@ struct RemoveDeadHeapSnapshotNodes : MarkedBlock::CountFunctor {
     HeapSnapshot& m_snapshot;
 };
 
-void Heap::removeDeadHeapSnapshotNodes()
+void Heap::removeDeadHeapSnapshotNodes(HeapProfiler& heapProfiler)
 {
     GCPHASE(RemoveDeadHeapSnapshotNodes);
-    HeapProfiler* heapProfiler = m_vm->heapProfiler();
-    if (UNLIKELY(heapProfiler)) {
-        if (HeapSnapshot* snapshot = heapProfiler->mostRecentSnapshot()) {
-            HeapIterationScope heapIterationScope(*this);
-            RemoveDeadHeapSnapshotNodes functor(*snapshot);
-            m_objectSpace.forEachDeadCell(heapIterationScope, functor);
-            snapshot->shrinkToFit();
-        }
+    if (HeapSnapshot* snapshot = heapProfiler.mostRecentSnapshot()) {
+        HeapIterationScope heapIterationScope(*this);
+        RemoveDeadHeapSnapshotNodes functor(*snapshot);
+        m_objectSpace.forEachDeadCell(heapIterationScope, functor);
+        snapshot->shrinkToFit();
     }
 }
 
@@ -1163,7 +1185,12 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
     removeDeadCompilerWorklistEntries();
     deleteUnmarkedCompiledCode();
     deleteSourceProviderCaches();
-    removeDeadHeapSnapshotNodes();
+
+    if (HeapProfiler* heapProfiler = m_vm->heapProfiler()) {
+        gatherExtraHeapSnapshotData(*heapProfiler);
+        removeDeadHeapSnapshotNodes(*heapProfiler);
+    }
+
     notifyIncrementalSweeper();
     writeBarrierCurrentlyExecutingCodeBlocks();
 

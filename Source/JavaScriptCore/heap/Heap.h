@@ -60,6 +60,7 @@ class FullGCActivityCallback;
 class GCActivityCallback;
 class GCAwareJITStubRoutine;
 class Heap;
+class HeapProfiler;
 class HeapRootVisitor;
 class HeapVerifier;
 class IncrementalSweeper;
@@ -329,7 +330,6 @@ private:
     void sweepArrayBuffers();
     void snapshotMarkedSpace();
     void deleteSourceProviderCaches();
-    void removeDeadHeapSnapshotNodes();
     void notifyIncrementalSweeper();
     void writeBarrierCurrentlyExecutingCodeBlocks();
     void resetAllocators();
@@ -344,6 +344,8 @@ private:
     void resumeCompilerThreads();
     void zombifyDeadObjects();
     void markDeadObjects();
+    void gatherExtraHeapSnapshotData(HeapProfiler&);
+    void removeDeadHeapSnapshotNodes(HeapProfiler&);
 
     void sweepAllLogicallyEmptyWeakBlocks();
     bool sweepNextLogicallyEmptyWeakBlock();

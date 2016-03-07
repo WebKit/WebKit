@@ -29,6 +29,7 @@
 #include <functional>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
+#include <wtf/text/UniquedStringImpl.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -62,9 +63,30 @@ struct HeapSnapshotEdge {
         , type(EdgeType::Internal)
     { }
 
+    HeapSnapshotEdge(JSCell* from, JSCell* to, EdgeType type, UniquedStringImpl* name)
+        : from(from)
+        , to(to)
+        , type(type)
+    {
+        ASSERT(type == EdgeType::Property || type == EdgeType::Variable);
+        u.name = name;
+    }
+
+    HeapSnapshotEdge(JSCell* from, JSCell* to, uint32_t index)
+        : from(from)
+        , to(to)
+        , type(EdgeType::Index)
+    {
+        u.index = index;
+    }
+
     JSCell* from;
     JSCell* to;
     EdgeType type;
+    union {
+        UniquedStringImpl* name;
+        uint32_t index;
+    } u;
 };
 
 class JS_EXPORT_PRIVATE HeapSnapshotBuilder {
@@ -84,6 +106,9 @@ public:
 
     // A reference from one cell to another.
     void appendEdge(JSCell* from, JSCell* to);
+    void appendPropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName);
+    void appendVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName);
+    void appendIndexEdge(JSCell* from, JSCell* to, uint32_t index);
 
     String json();
     String json(std::function<bool (const HeapSnapshotNode&)> allowNodeCallback);
@@ -96,9 +121,9 @@ private:
     HeapProfiler& m_profiler;
 
     // SlotVisitors run in parallel.
-    Lock m_appendingNodeMutex;
+    Lock m_buildingNodeMutex;
     std::unique_ptr<HeapSnapshot> m_snapshot;
-    Lock m_appendingEdgeMutex;
+    Lock m_buildingEdgeMutex;
     Vector<HeapSnapshotEdge> m_edges;
 };
 

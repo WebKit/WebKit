@@ -720,6 +720,7 @@ private:
     StructureTransitionTable m_transitionTable;
 
     // Should be accessed through propertyTable(). During GC, it may be set to 0 by another thread.
+    // During a Heap Snapshot GC we avoid clearing the table so it is safe to use.
     WriteBarrier<PropertyTable> m_propertyTableUnsafe;
 
     WriteBarrier<InferredTypeTable> m_inferredTypeTable;
