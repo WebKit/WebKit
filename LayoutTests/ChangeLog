@@ -1,3 +1,13 @@
+2016-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS Simulator] Three object-position tests failing after r197618
+        https://bugs.webkit.org/show_bug.cgi?id=155116
+
+        Mark two tests as image failures, and add new results for a compositing test.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/compositing/video/video-object-position-expected.txt: Added.
+
 2016-03-07  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Add missing test for grid-template shorthand

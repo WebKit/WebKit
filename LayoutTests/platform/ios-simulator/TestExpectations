@@ -2542,6 +2542,11 @@ platform/ios-simulator/ios/scrolling/touch-stacking.html [ Failure ]
 platform/ios-simulator/ios/touch [ Skip ]
 fast/events/ios/focused-input-should-assist-on-touch.html [ Skip ]
 
+# image inputs get rounded corners on iOS
+fast/css/object-position/object-position-input-image.html [ ImageOnlyFailure ]
+# iOS snapshot is retina, results differ.
+fast/css/object-position/object-position-img.html [ ImageOnlyFailure ]
+
 webkit.org/b/152276 platform/ios-simulator/ios/scrolling/scroll-events-back-forward-after-pageshow.html [ Failure ]
 webkit.org/b/152276 platform/ios-simulator/ios/scrolling/scroll-events-back-forward.html [ Failure ]
 
