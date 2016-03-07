@@ -3671,6 +3671,38 @@ void SpeculativeJIT::compileArithMul(Node* node)
 {
     switch (node->binaryUseKind()) {
     case Int32Use: {
+        if (node->child2()->isInt32Constant()) {
+            SpeculateInt32Operand op1(this, node->child1());
+            GPRTemporary result(this);
+
+            int32_t imm = node->child2()->asInt32();
+            GPRReg op1GPR = op1.gpr();
+            GPRReg resultGPR = result.gpr();
+
+            if (!shouldCheckOverflow(node->arithMode()))
+                m_jit.mul32(Imm32(imm), op1GPR, resultGPR);
+            else {
+                speculationCheck(Overflow, JSValueRegs(), 0,
+                    m_jit.branchMul32(MacroAssembler::Overflow, op1GPR, Imm32(imm), resultGPR));
+            }
+
+            // The only way to create negative zero with a constant is:
+            // -negative-op1 * 0.
+            // -zero-op1 * negative constant.
+            if (shouldCheckNegativeZero(node->arithMode())) {
+                if (!imm)
+                    speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Signed, op1GPR));
+                else if (imm < 0) {
+                    if (shouldCheckOverflow(node->arithMode()))
+                        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Zero, resultGPR));
+                    else
+                        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Zero, op1GPR));
+                }
+            }
+
+            int32Result(resultGPR, node);
+            return;
+        }
         SpeculateInt32Operand op1(this, node->child1());
         SpeculateInt32Operand op2(this, node->child2());
         GPRTemporary result(this);
@@ -3693,16 +3725,16 @@ void SpeculativeJIT::compileArithMul(Node* node)
         // Check for negative zero, if the users of this node care about such things.
         if (shouldCheckNegativeZero(node->arithMode())) {
             MacroAssembler::Jump resultNonZero = m_jit.branchTest32(MacroAssembler::NonZero, result.gpr());
-            speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, reg1, TrustedImm32(0)));
-            speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, reg2, TrustedImm32(0)));
+            speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Signed, reg1));
+            speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Signed, reg2));
             resultNonZero.link(&m_jit);
         }
 
         int32Result(result.gpr(), node);
         return;
     }
-    
-#if USE(JSVALUE64)   
+
+#if USE(JSVALUE64)
     case Int52RepUse: {
         ASSERT(shouldCheckOverflow(node->arithMode()));
         
