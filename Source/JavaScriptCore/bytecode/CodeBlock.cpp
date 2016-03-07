@@ -4210,6 +4210,8 @@ DFG::CapabilityLevel CodeBlock::capabilityLevel()
 
 void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler(RefCountedArray<Instruction>& instructions)
 {
+    if (!unlinkedCodeBlock()->hasOpProfileControlFlowBytecodeOffsets())
+        return;
     const Vector<size_t>& bytecodeOffsets = unlinkedCodeBlock()->opProfileControlFlowBytecodeOffsets();
     for (size_t i = 0, offsetsLength = bytecodeOffsets.size(); i < offsetsLength; i++) {
         // Because op_profile_control_flow is emitted at the beginning of every basic block, finding 

@@ -1,3 +1,18 @@
+2016-03-07  Andreas Kling  <akling@apple.com>
+
+        REGRESSION (r197303): Web Inspector crashes web process when inspecting an element on TOT
+        <https://webkit.org/b/154812>
+
+        Reviewed by Geoffrey Garen.
+
+        Guard against null pointer dereference for UnlinkedCodeBlocks that don't have any control flow
+        profiling data.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::hasOpProfileControlFlowBytecodeOffsets):
+
 2016-03-07  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Remove a useless "Move" from baseline-JIT op_mul's fast path
