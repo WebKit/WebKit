@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,57 +38,57 @@ namespace JSC {
 class Structure;
 
 typedef uint32_t SpeculatedType;
-static const SpeculatedType SpecNone               = 0x00000000; // We don't know anything yet.
-static const SpeculatedType SpecFinalObject        = 0x00000001; // It's definitely a JSFinalObject.
-static const SpeculatedType SpecArray              = 0x00000002; // It's definitely a JSArray.
-static const SpeculatedType SpecFunction           = 0x00000004; // It's definitely a JSFunction.
-static const SpeculatedType SpecInt8Array          = 0x00000008; // It's definitely an Int8Array or one of its subclasses.
-static const SpeculatedType SpecInt16Array         = 0x00000010; // It's definitely an Int16Array or one of its subclasses.
-static const SpeculatedType SpecInt32Array         = 0x00000020; // It's definitely an Int32Array or one of its subclasses.
-static const SpeculatedType SpecUint8Array         = 0x00000040; // It's definitely an Uint8Array or one of its subclasses.
-static const SpeculatedType SpecUint8ClampedArray  = 0x00000080; // It's definitely an Uint8ClampedArray or one of its subclasses.
-static const SpeculatedType SpecUint16Array        = 0x00000100; // It's definitely an Uint16Array or one of its subclasses.
-static const SpeculatedType SpecUint32Array        = 0x00000200; // It's definitely an Uint32Array or one of its subclasses.
-static const SpeculatedType SpecFloat32Array       = 0x00000400; // It's definitely an Uint16Array or one of its subclasses.
-static const SpeculatedType SpecFloat64Array       = 0x00000800; // It's definitely an Uint16Array or one of its subclasses.
+static const SpeculatedType SpecNone               = 0; // We don't know anything yet.
+static const SpeculatedType SpecFinalObject        = 1u << 0; // It's definitely a JSFinalObject.
+static const SpeculatedType SpecArray              = 1u << 1; // It's definitely a JSArray.
+static const SpeculatedType SpecFunction           = 1u << 2; // It's definitely a JSFunction.
+static const SpeculatedType SpecInt8Array          = 1u << 3; // It's definitely an Int8Array or one of its subclasses.
+static const SpeculatedType SpecInt16Array         = 1u << 4; // It's definitely an Int16Array or one of its subclasses.
+static const SpeculatedType SpecInt32Array         = 1u << 5; // It's definitely an Int32Array or one of its subclasses.
+static const SpeculatedType SpecUint8Array         = 1u << 6; // It's definitely an Uint8Array or one of its subclasses.
+static const SpeculatedType SpecUint8ClampedArray  = 1u << 7; // It's definitely an Uint8ClampedArray or one of its subclasses.
+static const SpeculatedType SpecUint16Array        = 1u << 8; // It's definitely an Uint16Array or one of its subclasses.
+static const SpeculatedType SpecUint32Array        = 1u << 9; // It's definitely an Uint32Array or one of its subclasses.
+static const SpeculatedType SpecFloat32Array       = 1u << 10; // It's definitely an Uint16Array or one of its subclasses.
+static const SpeculatedType SpecFloat64Array       = 1u << 11; // It's definitely an Uint16Array or one of its subclasses.
 static const SpeculatedType SpecTypedArrayView     = SpecInt8Array | SpecInt16Array | SpecInt32Array | SpecUint8Array | SpecUint8ClampedArray | SpecUint16Array | SpecUint32Array | SpecFloat32Array | SpecFloat64Array;
-static const SpeculatedType SpecDirectArguments    = 0x00001000; // It's definitely a DirectArguments object.
-static const SpeculatedType SpecScopedArguments    = 0x00002000; // It's definitely a ScopedArguments object.
-static const SpeculatedType SpecStringObject       = 0x00004000; // It's definitely a StringObject.
-static const SpeculatedType SpecObjectOther        = 0x00008000; // It's definitely an object but not JSFinalObject, JSArray, or JSFunction.
-static const SpeculatedType SpecObject             = 0x0000ffff; // Bitmask used for testing for any kind of object prediction.
-static const SpeculatedType SpecStringIdent        = 0x00010000; // It's definitely a JSString, and it's an identifier.
-static const SpeculatedType SpecStringVar          = 0x00020000; // It's definitely a JSString, and it's not an identifier.
-static const SpeculatedType SpecString             = 0x00030000; // It's definitely a JSString.
-static const SpeculatedType SpecSymbol             = 0x00040000; // It's definitely a Symbol.
-static const SpeculatedType SpecCellOther          = 0x00080000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString or a Symbol. FIXME: This shouldn't be part of heap-top or bytecode-top. https://bugs.webkit.org/show_bug.cgi?id=133078
-static const SpeculatedType SpecCell               = 0x000fffff; // It's definitely a JSCell.
-static const SpeculatedType SpecBoolInt32          = 0x00100000; // It's definitely an Int32 with value 0 or 1.
-static const SpeculatedType SpecNonBoolInt32       = 0x00200000; // It's definitely an Int32 with value other than 0 or 1.
-static const SpeculatedType SpecInt32              = 0x00300000; // It's definitely an Int32.
-static const SpeculatedType SpecInt52              = 0x00400000; // It's definitely an Int52 and we intend it to unbox it.
-static const SpeculatedType SpecMachineInt         = 0x00700000; // It's something that we can do machine int arithmetic on.
-static const SpeculatedType SpecInt52AsDouble      = 0x00800000; // It's definitely an Int52 and it's inside a double.
-static const SpeculatedType SpecInteger            = 0x00f00000; // It's definitely some kind of integer.
-static const SpeculatedType SpecNonIntAsDouble     = 0x01000000; // It's definitely not an Int52 but it's a real number and it's a double.
-static const SpeculatedType SpecDoubleReal         = 0x01800000; // It's definitely a non-NaN double.
-static const SpeculatedType SpecDoublePureNaN      = 0x02000000; // It's definitely a NaN that is sae to tag (i.e. pure).
-static const SpeculatedType SpecDoubleImpureNaN    = 0x04000000; // It's definitely a NaN that is unsafe to tag (i.e. impure).
-static const SpeculatedType SpecDoubleNaN          = 0x06000000; // It's definitely some kind of NaN.
-static const SpeculatedType SpecBytecodeDouble     = 0x03800000; // It's either a non-NaN or a NaN double, but it's definitely not impure NaN.
-static const SpeculatedType SpecFullDouble         = 0x07800000; // It's either a non-NaN or a NaN double.
-static const SpeculatedType SpecBytecodeRealNumber = 0x01b00000; // It's either an Int32 or a DoubleReal.
-static const SpeculatedType SpecFullRealNumber     = 0x01f00000; // It's either an Int32 or a DoubleReal, or a Int52.
-static const SpeculatedType SpecBytecodeNumber     = 0x03b00000; // It's either an Int32 or a Double, and the Double cannot be an impure NaN.
-static const SpeculatedType SpecFullNumber         = 0x07f00000; // It's either an Int32, Int52, or a Double, and the Double can be impure NaN.
-static const SpeculatedType SpecBoolean            = 0x10000000; // It's definitely a Boolean.
-static const SpeculatedType SpecOther              = 0x20000000; // It's definitely either Null or Undefined.
-static const SpeculatedType SpecMisc               = 0x30000000; // It's definitely either a boolean, Null, or Undefined.
-static const SpeculatedType SpecHeapTop            = 0x3bbfffff; // It can be any of the above, except for SpecInt52 and SpecDoubleImpureNaN.
-static const SpeculatedType SpecPrimitive          = 0x3bbf0000; // It's any non-Object JSValue. This is (~SpecObject & SpecHeapTop)
-static const SpeculatedType SpecEmpty              = 0x40000000; // It's definitely an empty value marker.
-static const SpeculatedType SpecBytecodeTop        = 0x7bbfffff; // It can be any of the above, except for SpecInt52 and SpecDoubleImpureNaN. This is (SpecHeapTop | SpecEmpty).
-static const SpeculatedType SpecFullTop            = 0x7fffffff; // It can be any of the above plus anything the DFG chooses.
+static const SpeculatedType SpecDirectArguments    = 1u << 12; // It's definitely a DirectArguments object.
+static const SpeculatedType SpecScopedArguments    = 1u << 13; // It's definitely a ScopedArguments object.
+static const SpeculatedType SpecStringObject       = 1u << 14; // It's definitely a StringObject.
+static const SpeculatedType SpecObjectOther        = 1u << 15; // It's definitely an object but not JSFinalObject, JSArray, or JSFunction.
+static const SpeculatedType SpecObject             = SpecFinalObject | SpecArray | SpecFunction | SpecTypedArrayView | SpecDirectArguments | SpecScopedArguments | SpecStringObject | SpecObjectOther; // Bitmask used for testing for any kind of object prediction.
+static const SpeculatedType SpecStringIdent        = 1u << 16; // It's definitely a JSString, and it's an identifier.
+static const SpeculatedType SpecStringVar          = 1u << 17; // It's definitely a JSString, and it's not an identifier.
+static const SpeculatedType SpecString             = SpecStringIdent | SpecStringVar; // It's definitely a JSString.
+static const SpeculatedType SpecSymbol             = 1u << 18; // It's definitely a Symbol.
+static const SpeculatedType SpecCellOther          = 1u << 19; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString or a Symbol. FIXME: This shouldn't be part of heap-top or bytecode-top. https://bugs.webkit.org/show_bug.cgi?id=133078
+static const SpeculatedType SpecCell               = SpecObject | SpecString | SpecSymbol | SpecCellOther; // It's definitely a JSCell.
+static const SpeculatedType SpecBoolInt32          = 1u << 20; // It's definitely an Int32 with value 0 or 1.
+static const SpeculatedType SpecNonBoolInt32       = 1u << 21; // It's definitely an Int32 with value other than 0 or 1.
+static const SpeculatedType SpecInt32              = SpecBoolInt32 | SpecNonBoolInt32; // It's definitely an Int32.
+static const SpeculatedType SpecInt52              = 1u << 22; // It's definitely an Int52 and we intend it to unbox it.
+static const SpeculatedType SpecMachineInt         = SpecInt32 | SpecInt52; // It's something that we can do machine int arithmetic on.
+static const SpeculatedType SpecInt52AsDouble      = 1u << 23; // It's definitely an Int52 and it's inside a double.
+static const SpeculatedType SpecInteger            = SpecMachineInt | SpecInt52AsDouble; // It's definitely some kind of integer.
+static const SpeculatedType SpecNonIntAsDouble     = 1u << 24; // It's definitely not an Int52 but it's a real number and it's a double.
+static const SpeculatedType SpecDoubleReal         = SpecNonIntAsDouble | SpecInt52AsDouble; // It's definitely a non-NaN double.
+static const SpeculatedType SpecDoublePureNaN      = 1u << 25; // It's definitely a NaN that is sae to tag (i.e. pure).
+static const SpeculatedType SpecDoubleImpureNaN    = 1u << 26; // It's definitely a NaN that is unsafe to tag (i.e. impure).
+static const SpeculatedType SpecDoubleNaN          = SpecDoublePureNaN | SpecDoubleImpureNaN; // It's definitely some kind of NaN.
+static const SpeculatedType SpecBytecodeDouble     = SpecDoubleReal | SpecDoublePureNaN; // It's either a non-NaN or a NaN double, but it's definitely not impure NaN.
+static const SpeculatedType SpecFullDouble         = SpecDoubleReal | SpecDoubleNaN; // It's either a non-NaN or a NaN double.
+static const SpeculatedType SpecBytecodeRealNumber = SpecInt32 | SpecDoubleReal; // It's either an Int32 or a DoubleReal.
+static const SpeculatedType SpecFullRealNumber     = SpecMachineInt | SpecDoubleReal; // It's either an Int32 or a DoubleReal, or a Int52.
+static const SpeculatedType SpecBytecodeNumber     = SpecInt32 | SpecBytecodeDouble; // It's either an Int32 or a Double, and the Double cannot be an impure NaN.
+static const SpeculatedType SpecFullNumber         = SpecMachineInt | SpecFullDouble; // It's either an Int32, Int52, or a Double, and the Double can be impure NaN.
+static const SpeculatedType SpecBoolean            = 1u << 27; // It's definitely a Boolean.
+static const SpeculatedType SpecOther              = 1u << 28; // It's definitely either Null or Undefined.
+static const SpeculatedType SpecMisc               = SpecBoolean | SpecOther; // It's definitely either a boolean, Null, or Undefined.
+static const SpeculatedType SpecHeapTop            = SpecCell | SpecBytecodeNumber | SpecMisc; // It can be any of the above, except for SpecInt52 and SpecDoubleImpureNaN.
+static const SpeculatedType SpecPrimitive          = SpecString | SpecSymbol | SpecBytecodeNumber | SpecMisc; // It's any non-Object JSValue. This is (~SpecObject & SpecHeapTop)
+static const SpeculatedType SpecEmpty              = 1u << 29; // It's definitely an empty value marker.
+static const SpeculatedType SpecBytecodeTop        = SpecHeapTop | SpecEmpty; // It can be any of the above, except for SpecInt52 and SpecDoubleImpureNaN. Corresponds to what could be found in a bytecode local.
+static const SpeculatedType SpecFullTop            = SpecBytecodeTop | SpecFullNumber; // It can be anything that bytecode could see plus exotic encodings of numbers.
 
 typedef bool (*SpeculatedTypeChecker)(SpeculatedType);
 

@@ -1,3 +1,29 @@
+2016-02-29  Filip Pizlo  <fpizlo@apple.com>
+
+        SpeculatedType should be easier to edit
+        https://bugs.webkit.org/show_bug.cgi?id=154840
+
+        Reviewed by Mark Lam.
+
+        We used to specify the bitmasks in SpeculatedType.h using hex codes. This used to work
+        great because we didn't have so many masks and you could use the mask to visually see
+        which ones overlapped. It also made it easy to visualize subset relationships.
+
+        But now we have a lot of masks with a lot of confusing overlaps, and it's no longer
+        possible to just see their relationship by looking at hex codes. Worse, the use of hex
+        codes makes it super annoying to move the bits around. For example, right now we have two
+        bits free, but if we wanted to reclaim them by editing the old hex masks, it would be a
+        nightmare.
+
+        So this patch replaces the hex masks with shift expressions (1u << 15 for example) and it
+        makes any derived masks (i.e. masks that are the bit-or of other masks) be expressed using
+        an or expression (SpecFoo | SpecBar | SpecBaz for example).
+
+        This makes it easier to see the relationships and it makes it easier to take bits for new
+        types.
+
+        * bytecode/SpeculatedType.h:
+
 2016-02-29  Keith Miller  <keith_miller@apple.com>
 
         OverridesHasInstance constant folding is wrong
