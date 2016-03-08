@@ -1,3 +1,20 @@
+2016-03-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Small clean up of how we use SSA's valuesAtHead
+        https://bugs.webkit.org/show_bug.cgi?id=155152
+
+        Reviewed by Filip Pizlo.
+
+        liveAtHead and valuesAtHead contain the same nodes,
+        we do not need the extra look up.
+
+        This also opens the way to use the same kind of liveness
+        analysis as Air (where live values at head do not use a set).
+
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::beginBasicBlock):
+        (JSC::DFG::InPlaceAbstractState::merge):
+
 2016-03-07  Brian Burg  <bburg@apple.com>
 
         Web Inspector: the protocol generator should generate factory method stubs for protocol types
