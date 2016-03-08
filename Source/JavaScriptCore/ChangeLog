@@ -1,3 +1,9 @@
+2016-03-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix CLOOP build.
+
+        * jit/JITOperations.h:
+
 2016-02-29  Filip Pizlo  <fpizlo@apple.com>
 
         Turn String.prototype.replace into an intrinsic
