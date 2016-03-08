@@ -1,3 +1,19 @@
+2016-03-08  Daniel Bates  <dabates@apple.com>
+
+        Support iterating over an OptionSet and checking if it is empty
+        https://bugs.webkit.org/show_bug.cgi?id=154941
+        <rdar://problem/24964187>
+
+        Reviewed by Darin Adler.
+
+        Add tests to ensure that we do not regression both iteration of an OptionSet and
+        determining whether an OptionSet is empty.
+
+        * TestWebKitAPI/Test.h:
+        (TestWebKitAPI::Util::assertStrongEnum): Helper function to assert two strong enum type for equality.
+        * TestWebKitAPI/Tests/WTF/OptionSet.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-03-08  Alexey Proskuryakov  <ap@apple.com>
 
         Add debug iOS Simulator bots to the dashboard

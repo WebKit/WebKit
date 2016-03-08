@@ -1,3 +1,33 @@
+2016-03-08  Daniel Bates  <dabates@apple.com>
+
+        Support iterating over an OptionSet and checking if it is empty
+        https://bugs.webkit.org/show_bug.cgi?id=154941
+        <rdar://problem/24964187>
+
+        Reviewed by Darin Adler.
+
+        Implements support for iterating over the enumerators in an OptionSet as well as
+        determining if the set is empty.
+
+        Iterating over an OptionSet is in Big Theta(N) where N is the number of items in
+        the set. More precisely, it is in Big Theta(log M) where M is the bitmask represented
+        by the bitwise OR-ing of all enumerators in the set.
+
+        * wtf/OptionSet.h: Added comment to describe the purpose of this class and its invariant -
+        the enumerators must be positive powers of two.
+        (WTF::OptionSet::Iterator::operator*): Returns the enumerator pointed to by the iterator.
+        (WTF::OptionSet::Iterator::operator++): Advance to the next smallest enumerator in the set.
+        (WTF::OptionSet::Iterator::operator==): Returns whether the iterator is equal to the specified iterator.
+        (WTF::OptionSet::Iterator::operator!=): Returns whether the iterator is not equal to the specified iterator.
+        (WTF::OptionSet::Iterator::Iterator): Added.
+        (WTF::OptionSet::fromRaw): Instantiate using specialized private constructor to allow
+        instantiation with a raw value of 0.
+        (WTF::OptionSet::OptionSet): Specialized constructor that asserts that the specified value
+        is a positive power of two. This variant is only compiled when assertions are enabled (i.e. !ASSERT_DISABLED).
+        (WTF::OptionSet::isEmpty): Returns whether the set is empty.
+        (WTF::OptionSet::begin): Returns an iterator to the enumerator with the smallest value in the set.
+        (WTF::OptionSet::end): Returns an iterator that represents the end sentinel of the set.
+
 2016-03-07  Keith Rollin  <krollin@apple.com>
 
         Enhance logging: Use "always on" macros
