@@ -211,11 +211,11 @@ static WKWebViewConfiguration *defaultConfiguration()
 - (void)_updateNewWindowKeyEquivalents
 {
     if ([[SettingsController shared] useWebKit2ByDefault]) {
-        [_newWebKit1WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
-        [_newWebKit2WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask];
+        [_newWebKit1WindowItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand | NSEventModifierFlagOption];
+        [_newWebKit2WindowItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
     } else {
-        [_newWebKit1WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask];
-        [_newWebKit2WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+        [_newWebKit1WindowItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
+        [_newWebKit2WindowItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand | NSEventModifierFlagOption];
     }
 }
 

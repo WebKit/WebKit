@@ -1,3 +1,16 @@
+2016-03-08  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        We intentionally don't use AppKitCompatibilityDeclarations.h here, since we want
+        MiniBrowser to build without WTF.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate _updateNewWindowKeyEquivalents]):
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController windowDidLoad]):
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+
 2016-03-08  Alexey Proskuryakov  <ap@apple.com>
 
         Add iOS simulator EWS that runs tests

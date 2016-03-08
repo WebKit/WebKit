@@ -39,7 +39,7 @@
 
 - (void)windowDidLoad
 {
-    self.window.styleMask |= NSFullSizeContentViewWindowMask;
+    self.window.styleMask |= NSWindowStyleMaskFullSizeContentView;
 
     [super windowDidLoad];
 }
