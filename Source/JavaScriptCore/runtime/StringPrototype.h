@@ -54,11 +54,13 @@ private:
 };
 
 EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceGeneric(
-    ExecState* exec, EncodedJSValue thisValue, EncodedJSValue searchValue,
-    EncodedJSValue replaceValue);
+    ExecState*, EncodedJSValue thisValue, EncodedJSValue searchValue, EncodedJSValue replaceValue);
+
+EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
+    ExecState*, JSString* thisValue, RegExpObject* searchValue);
 
 EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
-    ExecState* exec, JSString* thisValue, RegExpObject* searchValue, JSString* replaceValue);
+    ExecState*, JSString* thisValue, RegExpObject* searchValue, JSString* replaceValue);
 
 } // namespace JSC
 

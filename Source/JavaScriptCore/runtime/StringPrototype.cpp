@@ -446,7 +446,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     return jsString(exec, impl.release());
 }
 
-static NEVER_INLINE EncodedJSValue removeUsingRegExpSearch(ExecState* exec, JSString* string, const String& source, RegExp* regExp)
+static ALWAYS_INLINE EncodedJSValue removeUsingRegExpSearch(ExecState* exec, JSString* string, const String& source, RegExp* regExp)
 {
     size_t lastIndex = 0;
     unsigned startPosition = 0;
@@ -506,6 +506,8 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
             return removeUsingRegExpSearch(exec, string, source, regExp);
     }
 
+    // FIXME: This is wrong because we may be called directly from the FTL.
+    // https://bugs.webkit.org/show_bug.cgi?id=154874
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
 
     size_t lastIndex = 0;
@@ -662,6 +664,24 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
         sourceRanges.append(StringRange(lastIndex, sourceLen - lastIndex));
 
     return JSValue::encode(jsSpliceSubstringsWithSeparators(exec, string, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
+}
+
+EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
+    ExecState* exec, JSString* thisValue, RegExpObject* searchValue)
+{
+    RegExp* regExp = searchValue->regExp();
+    if (regExp->global()) {
+        // ES5.1 15.5.4.10 step 8.a.
+        searchValue->setLastIndex(exec, 0);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+        return removeUsingRegExpSearch(exec, thisValue, thisValue->value(exec), regExp);
+    }
+
+    CallData callData;
+    String replacementString = emptyString();
+    return replaceUsingRegExpSearch(
+        exec, thisValue, searchValue, callData, CallTypeNone, replacementString, JSValue());
 }
 
 EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
