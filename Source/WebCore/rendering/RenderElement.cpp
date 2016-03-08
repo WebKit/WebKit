@@ -1576,9 +1576,9 @@ PassRefPtr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleR
     auto& styleResolver = element()->styleResolver();
 
     if (pseudoStyleRequest.pseudoId == FIRST_LINE_INHERITED) {
-        RefPtr<RenderStyle> result = styleResolver.styleForElement(*element(), parentStyle);
+        auto result = styleResolver.styleForElement(*element(), parentStyle).renderStyle;
         result->setStyleType(FIRST_LINE_INHERITED);
-        return result.release();
+        return WTFMove(result);
     }
 
     return styleResolver.pseudoStyleForElement(*element(), pseudoStyleRequest, *parentStyle);

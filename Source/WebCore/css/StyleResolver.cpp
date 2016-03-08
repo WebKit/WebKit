@@ -267,7 +267,7 @@ StyleResolver::StyleResolver(Document& document)
         m_medium = std::make_unique<MediaQueryEvaluator>("all");
 
     if (root)
-        m_rootDefaultStyle = styleForElement(*root, m_document.renderStyle(), MatchOnlyUserAgentRules);
+        m_rootDefaultStyle = styleForElement(*root, m_document.renderStyle(), MatchOnlyUserAgentRules).renderStyle;
 
     if (m_rootDefaultStyle && view)
         m_medium = std::make_unique<MediaQueryEvaluator>(view->mediaType(), &view->frame(), m_rootDefaultStyle.get());
@@ -371,7 +371,7 @@ static inline bool isAtShadowBoundary(const Element* element)
     return parentNode && parentNode->isShadowRoot();
 }
 
-Ref<RenderStyle> StyleResolver::styleForElement(Element& element, RenderStyle* parentStyle, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
+ElementStyle StyleResolver::styleForElement(Element& element, RenderStyle* parentStyle, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
 {
     RELEASE_ASSERT(!m_inLoadPendingImages);
 
@@ -386,20 +386,22 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element& element, RenderStyle* p
         state.setParentStyle(RenderStyle::clone(state.style()));
     }
 
+    auto& style = *state.style();
+
     if (element.isLink()) {
-        state.style()->setIsLink(true);
+        style.setIsLink(true);
         EInsideLink linkState = state.elementLinkState();
         if (linkState != NotInsideLink) {
             bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassVisited);
             if (forceVisited)
                 linkState = InsideVisitedLink;
         }
-        state.style()->setInsideLink(linkState);
+        style.setInsideLink(linkState);
     }
 
     CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element);
 
-    ElementRuleCollector collector(element, state.style(), m_ruleSets, m_state.selectorFilter());
+    ElementRuleCollector collector(element, m_ruleSets, m_state.selectorFilter());
     collector.setRegionForStyling(regionForStyling);
     collector.setMedium(m_medium.get());
 
@@ -407,6 +409,15 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element& element, RenderStyle* p
         collector.matchUARules();
     else
         collector.matchAllRules(m_matchAuthorAndUserStyles, matchingBehavior != MatchAllRulesExcludingSMIL);
+
+    if (collector.matchedPseudoElementIds())
+        style.setHasPseudoStyles(collector.matchedPseudoElementIds());
+
+    // This is required for style sharing.
+    if (collector.didMatchUncommonAttributeSelector())
+        style.setUnique();
+
+    auto elementStyleRelations = Style::commitRelationsToRenderStyle(style, element, collector.styleRelations());
 
     applyMatchedProperties(collector.matchedResult(), element);
 
@@ -418,8 +429,7 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element& element, RenderStyle* p
 
     state.clear(); // Clear out for the next resolve.
 
-    // Now return the style.
-    return state.takeStyle();
+    return { state.takeStyle(), WTFMove(elementStyleRelations) };
 }
 
 Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
@@ -558,7 +568,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element& element, c
     // those rules.
 
     // Check UA, user and author rules.
-    ElementRuleCollector collector(element, m_state.style(), m_ruleSets, m_state.selectorFilter());
+    ElementRuleCollector collector(element, m_ruleSets, m_state.selectorFilter());
     collector.setPseudoStyleRequest(pseudoStyleRequest);
     collector.setMedium(m_medium.get());
     collector.matchUARules();
@@ -567,6 +577,8 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element& element, c
         collector.matchUserRules(false);
         collector.matchAuthorRules(false);
     }
+
+    ASSERT(!collector.matchedPseudoElementIds());
 
     if (collector.matchedResult().matchedProperties().isEmpty())
         return nullptr;
@@ -1040,7 +1052,7 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(Element* ele
 
     m_state = State(*element, nullptr);
 
-    ElementRuleCollector collector(*element, nullptr, m_ruleSets, m_state.selectorFilter());
+    ElementRuleCollector collector(*element, m_ruleSets, m_state.selectorFilter());
     collector.setMode(SelectorChecker::Mode::CollectingRules);
     collector.setPseudoStyleRequest(PseudoStyleRequest(pseudoId));
     collector.setMedium(m_medium.get());

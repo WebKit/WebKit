@@ -179,17 +179,20 @@ Ref<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& in
     }
 
     if (element.hasCustomStyleResolveCallbacks()) {
-        RenderStyle* shadowHostStyle = nullptr;
-        if (auto* shadowRoot = scope().shadowRoot)
-            shadowHostStyle = shadowRoot->host()->renderStyle();
-        if (RefPtr<RenderStyle> style = element.customStyleForRenderer(inheritedStyle, shadowHostStyle))
-            return style.releaseNonNull();
+        RenderStyle* shadowHostStyle = scope().shadowRoot ? scope().shadowRoot->host()->renderStyle() : nullptr;
+        if (auto customStyle = element.resolveCustomStyle(inheritedStyle, shadowHostStyle)) {
+            Style::commitRelationsToDocument(WTFMove(customStyle->relations));
+            return WTFMove(customStyle->renderStyle);
+        }
     }
 
     if (auto* sharingElement = scope().sharingResolver.resolve(element))
         return *sharingElement->renderStyle();
 
-    return scope().styleResolver.styleForElement(element, &inheritedStyle, MatchAllRules, nullptr, &scope().selectorFilter);
+    auto elementStyle = scope().styleResolver.styleForElement(element, &inheritedStyle, MatchAllRules, nullptr, &scope().selectorFilter);
+
+    Style::commitRelationsToDocument(WTFMove(elementStyle.relations));
+    return WTFMove(elementStyle.renderStyle);
 }
 
 #if ENABLE(CSS_REGIONS)

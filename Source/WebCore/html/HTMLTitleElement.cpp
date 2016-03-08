@@ -82,7 +82,7 @@ StringWithDirection HTMLTitleElement::computedTextWithDirection()
     if (RenderStyle* computedStyle = this->computedStyle())
         direction = computedStyle->direction();
     else {
-        auto style = resolveStyle(parentElement() ? parentElement()->renderStyle() : nullptr);
+        auto style = styleResolver().styleForElement(*this, parentElement() ? parentElement()->renderStyle() : nullptr).renderStyle;
         direction = style.get().direction();
     }
     return StringWithDirection(text(), direction);

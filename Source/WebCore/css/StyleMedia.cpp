@@ -61,13 +61,13 @@ bool StyleMedia::matchMedium(const String& query) const
     if (!documentElement)
         return false;
 
-    RefPtr<RenderStyle> rootStyle = document->ensureStyleResolver().styleForElement(*documentElement, document->renderStyle(), MatchOnlyUserAgentRules);
+    auto rootStyle = document->ensureStyleResolver().styleForElement(*documentElement, document->renderStyle(), MatchOnlyUserAgentRules).renderStyle;
 
     RefPtr<MediaQuerySet> media = MediaQuerySet::create();
     if (!media->parse(query))
         return false;
 
-    MediaQueryEvaluator screenEval(type(), m_frame, rootStyle.get());
+    MediaQueryEvaluator screenEval(type(), m_frame, rootStyle.ptr());
     return screenEval.eval(media.get());
 }
 

@@ -1,3 +1,165 @@
+2016-03-07  Antti Koivisto  <antti@apple.com>
+
+        ElementRuleCollector should not mutate document and style
+        https://bugs.webkit.org/show_bug.cgi?id=155113
+
+        Reviewed by Andreas Kling.
+
+        Move applying of style relations out of ElementRuleCollector and StyleResolver.
+        This gets us closer to making StyleResolver const for Element.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+
+            No need for style parameter anymore.
+
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        (WebCore::ElementRuleCollector::sortAndTransferMatchedRules):
+        (WebCore::ElementRuleCollector::ruleMatches):
+
+            Client will now do the style and element mutations. Just collect the data here.
+
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        (WebCore::ElementRuleCollector::commitStyleRelations): Deleted.
+
+            Moves to StyleRelations.cpp
+
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::hasMatchedRules):
+        (WebCore::ElementRuleCollector::matchedPseudoElementIds):
+        (WebCore::ElementRuleCollector::styleRelations):
+        (WebCore::ElementRuleCollector::didMatchUncommonAttributeSelector):
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::prepareEvaluator):
+        (WebCore::MediaQueryMatcher::evaluate):
+        * css/SelectorChecker.cpp:
+        (WebCore::addStyleRelation):
+        (WebCore::isFirstChildElement):
+        (WebCore::isFirstOfType):
+        (WebCore::countElementsBefore):
+        (WebCore::countElementsOfTypeBefore):
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::CheckingContext::CheckingContext):
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::isAtShadowBoundary):
+        (WebCore::StyleResolver::styleForElement):
+
+            Apply the style relations affecting current style immediately.
+            Pass the rest to the client.
+
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        * css/StyleResolver.h:
+        (WebCore::ElementStyle::ElementStyle):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAddStyleRelationIfResolvingStyle):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAddStyleRelation):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateIndirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::addStyleRelationFunction):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsActive):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsEmpty):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsFirstChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsHovered):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsLastChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsOnlyChild):
+        (WebCore::SelectorCompiler::makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChildOf):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthLastChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthLastChildOf):
+        * dom/Document.cpp:
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+
+            Apply style relations.
+
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+        * dom/Element.cpp:
+        (WebCore::Element::styleResolver):
+        (WebCore::Element::resolveStyle):
+        (WebCore::Element::didDetachRenderers):
+        (WebCore::Element::resolveCustomStyle):
+
+            Return ElementStyle (which contains style relations along with the render style).
+            Rename for consistency.
+
+        (WebCore::Element::cloneAttributesFromElement):
+        (WebCore::Element::customStyleForRenderer): Deleted.
+        * dom/Element.h:
+        (WebCore::Element::isVisibleInViewportChanged):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::clearHostElement):
+        (WebCore::PseudoElement::resolveCustomStyle):
+        (WebCore::PseudoElement::didAttachRenderers):
+        (WebCore::PseudoElement::customStyleForRenderer): Deleted.
+        * dom/PseudoElement.h:
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::computedTextWithDirection):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::hostInput):
+        (WebCore::SliderThumbElement::resolveCustomStyle):
+        (WebCore::SliderThumbElement::shadowPseudoId):
+        (WebCore::SliderContainerElement::createElementRenderer):
+        (WebCore::SliderContainerElement::resolveCustomStyle):
+        (WebCore::SliderContainerElement::shadowPseudoId):
+        (WebCore::SliderThumbElement::customStyleForRenderer): Deleted.
+        (WebCore::SliderContainerElement::customStyleForRenderer): Deleted.
+        * html/shadow/SliderThumbElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::create):
+        (WebCore::TextControlInnerElement::resolveCustomStyle):
+        (WebCore::TextControlInnerTextElement::renderer):
+        (WebCore::TextControlInnerTextElement::resolveCustomStyle):
+        (WebCore::TextControlPlaceholderElement::TextControlPlaceholderElement):
+        (WebCore::TextControlPlaceholderElement::resolveCustomStyle):
+        (WebCore::TextControlInnerElement::customStyleForRenderer): Deleted.
+        (WebCore::TextControlInnerTextElement::customStyleForRenderer): Deleted.
+        (WebCore::TextControlPlaceholderElement::customStyleForRenderer): Deleted.
+        * html/shadow/TextControlInnerElements.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::getUncachedPseudoStyle):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::computeStyleInRegion):
+        (WebCore::RenderNamedFlowFragment::computeChildrenStyleInRegion):
+        * style/StyleRelations.cpp: Added.
+        (WebCore::Style::commitRelationsToRenderStyle):
+
+            Commit relations affecting style that is being computed.
+
+        (WebCore::Style::commitRelationsToDocument):
+
+            Commit relations that mutate document.
+
+        * style/StyleRelations.h: Added.
+
+            Factor style relation data structures and functions to a file of their own.
+
+        (WebCore::Style::Relation::Relation):
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::styleSharingCandidateMatchesRuleSet):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::styleForElement):
+
+            Apply style relations.
+
+        * style/StyleTreeResolver.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::synchronizeSystemLanguage):
+        (WebCore::SVGElement::resolveCustomStyle):
+        (WebCore::SVGElement::customStyleForRenderer): Deleted.
+        * svg/SVGElement.h:
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::overrideComputedStyle):
+
 2016-03-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement fetch skeleton

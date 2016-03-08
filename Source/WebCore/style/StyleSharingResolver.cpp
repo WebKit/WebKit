@@ -322,7 +322,7 @@ bool SharingResolver::styleSharingCandidateMatchesRuleSet(const StyledElement& e
     if (!ruleSet)
         return false;
 
-    ElementRuleCollector collector(const_cast<StyledElement&>(element), nullptr, m_ruleSets, &m_selectorFilter);
+    ElementRuleCollector collector(const_cast<StyledElement&>(element), m_ruleSets, &m_selectorFilter);
     return collector.hasAnyMatchingRules(ruleSet);
 }
 

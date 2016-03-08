@@ -36,6 +36,7 @@
 #include "ScrollTypes.h"
 #include "SelectorChecker.h"
 #include "StyleInheritedData.h"
+#include "StyleRelations.h"
 #include "ViewportStyleResolver.h"
 #include <bitset>
 #include <memory>
@@ -123,6 +124,16 @@ public:
     RenderScrollbar* scrollbar;
 };
 
+struct ElementStyle {
+    ElementStyle(Ref<RenderStyle>&& renderStyle, std::unique_ptr<Style::Relations> relations = { })
+        : renderStyle(WTFMove(renderStyle))
+        , relations(WTFMove(relations))
+    { }
+
+    Ref<RenderStyle> renderStyle;
+    std::unique_ptr<Style::Relations> relations;
+};
+
 // This class selects a RenderStyle for a given element based on a collection of stylesheets.
 class StyleResolver {
     WTF_MAKE_NONCOPYABLE(StyleResolver); WTF_MAKE_FAST_ALLOCATED;
@@ -130,7 +141,7 @@ public:
     StyleResolver(Document&);
     ~StyleResolver();
 
-    Ref<RenderStyle> styleForElement(Element&, RenderStyle* parentStyle, RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
+    ElementStyle styleForElement(Element&, RenderStyle* parentStyle, RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
 
     void keyframeStylesForAnimation(Element&, const RenderStyle*, KeyframeList&);
 

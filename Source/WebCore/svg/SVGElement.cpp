@@ -786,11 +786,11 @@ void SVGElement::synchronizeSystemLanguage(SVGElement* contextElement)
     contextElement->synchronizeSystemLanguage();
 }
 
-RefPtr<RenderStyle> SVGElement::customStyleForRenderer(RenderStyle& parentStyle, RenderStyle*)
+Optional<ElementStyle> SVGElement::resolveCustomStyle(RenderStyle& parentStyle, RenderStyle*)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
     if (auto* styleElement = this->correspondingElement())
-        return styleElement->styleResolver().styleForElement(*styleElement, &parentStyle);
+        return styleElement->resolveStyle(&parentStyle);
 
     return resolveStyle(&parentStyle);
 }

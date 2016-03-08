@@ -28,6 +28,7 @@
 
 #include "RenderStyleConstants.h"
 #include "RenderTreePosition.h"
+#include "SelectorChecker.h"
 #include "SelectorFilter.h"
 #include "StyleChange.h"
 #include "StyleSharingResolver.h"
@@ -61,6 +62,7 @@ private:
     void resolveComposedTree();
     Change resolveElement(Element&);
     void resolveBeforeOrAfterPseudoElement(Element&, Change, PseudoId, RenderTreePosition&);
+
 
     void createRenderTreeRecursively(Element&, RenderStyle&, RenderTreePosition&, RefPtr<RenderStyle>&& resolvedStyle);
     void createRenderer(Element&, RenderTreePosition&, RefPtr<RenderStyle>&& resolvedStyle);

@@ -31,6 +31,7 @@
 #include "CSSSelector.h"
 #include "Element.h"
 #include "SpaceSplitString.h"
+#include "StyleRelations.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -76,29 +77,6 @@ public:
 
     SelectorChecker(Document&);
 
-    struct StyleRelation {
-        enum Type {
-            AffectedByActive,
-            AffectedByDrag,
-            AffectedByEmpty,
-            AffectedByHover,
-            AffectedByPreviousSibling,
-            AffectsNextSibling,
-            ChildrenAffectedByBackwardPositionalRules,
-            ChildrenAffectedByFirstChildRules,
-            ChildrenAffectedByPropertyBasedBackwardPositionalRules,
-            ChildrenAffectedByLastChildRules,
-            FirstChild,
-            LastChild,
-            NthChildIndex,
-            Unique,
-        };
-        Element& element;
-        Type type;
-        unsigned value;
-    };
-    using StyleRelations = Vector<StyleRelation, 8>;
-
     struct CheckingContext {
         CheckingContext(SelectorChecker::Mode resolvingMode)
             : resolvingMode(resolvingMode)
@@ -111,7 +89,7 @@ public:
         const ContainerNode* scope { nullptr };
 
         // FIXME: It would be nicer to have a separate object for return values. This requires some more work in the selector compiler.
-        StyleRelations styleRelations;
+        Style::Relations styleRelations;
         PseudoIdSet pseudoIDSet;
     };
 

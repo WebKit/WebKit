@@ -32,6 +32,7 @@
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderQuote.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 
@@ -76,9 +77,12 @@ void PseudoElement::clearHostElement()
     m_hostElement = nullptr;
 }
 
-RefPtr<RenderStyle> PseudoElement::customStyleForRenderer(RenderStyle& parentStyle, RenderStyle*)
+Optional<ElementStyle> PseudoElement::resolveCustomStyle(RenderStyle& parentStyle, RenderStyle*)
 {
-    return m_hostElement->renderer()->getCachedPseudoStyle(m_pseudoId, &parentStyle);
+    auto* style = m_hostElement->renderer()->getCachedPseudoStyle(m_pseudoId, &parentStyle);
+    if (!style)
+        return Nullopt;
+    return ElementStyle(*style);
 }
 
 void PseudoElement::didAttachRenderers()

@@ -45,7 +45,7 @@ public:
     Element* hostElement() const { return m_hostElement; }
     void clearHostElement();
 
-    RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
+    Optional<ElementStyle> resolveCustomStyle(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
     void didAttachRenderers() override;
     void didRecalcStyle(Style::Change) override;
     bool rendererIsNeeded(const RenderStyle&) override;

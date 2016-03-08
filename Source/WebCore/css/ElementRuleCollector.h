@@ -45,7 +45,7 @@ struct MatchedRule {
 
 class ElementRuleCollector {
 public:
-    ElementRuleCollector(Element&, RenderStyle*, const DocumentRuleSets&, const SelectorFilter*);
+    ElementRuleCollector(Element&, const DocumentRuleSets&, const SelectorFilter*);
     ElementRuleCollector(Element&, const RuleSet& authorStyle, const SelectorFilter*);
 
     void matchAllRules(bool matchAuthorAndUserStyles, bool includeSMILProperties);
@@ -67,6 +67,10 @@ public:
     bool hasMatchedRules() const { return !m_matchedRules.isEmpty(); }
     void clearMatchedRules();
 
+    const PseudoIdSet& matchedPseudoElementIds() const { return m_matchedPseudoElementIds; }
+    const Style::Relations& styleRelations() const { return m_styleRelations; }
+    bool didMatchUncommonAttributeSelector() const { return m_didMatchUncommonAttributeSelector; }
+
 private:
     void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
 
@@ -87,10 +91,7 @@ private:
 
     void addMatchedRule(const MatchedRule&);
 
-    void commitStyleRelations(const SelectorChecker::StyleRelations&);
-
     Element& m_element;
-    RenderStyle* m_style { nullptr };
     const RuleSet& m_authorStyle;
     const RuleSet* m_userStyle { nullptr };
     const SelectorFilter* m_selectorFilter { nullptr };
@@ -108,7 +109,10 @@ private:
 
     // Output.
     Vector<RefPtr<StyleRule>> m_matchedRuleList;
+    bool m_didMatchUncommonAttributeSelector { false };
     StyleResolver::MatchResult m_result;
+    Style::Relations m_styleRelations;
+    PseudoIdSet m_matchedPseudoElementIds;
 };
 
 } // namespace WebCore

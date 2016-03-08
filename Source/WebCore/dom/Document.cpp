@@ -2032,7 +2032,11 @@ Ref<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element& el
     ResourceLoadSuspender suspender;
 
     TemporaryChange<bool> change(m_ignorePendingStylesheets, true);
-    return element.resolveStyle(parentStyle);
+    auto elementStyle = element.resolveStyle(parentStyle);
+
+    Style::commitRelationsToDocument(WTFMove(elementStyle.relations));
+
+    return WTFMove(elementStyle.renderStyle);
 }
 
 bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsCheck dimensionsCheck)

@@ -44,6 +44,7 @@
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
+#include "StyleResolver.h"
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include "Document.h"
@@ -573,7 +574,7 @@ HTMLInputElement* SliderThumbElement::hostInput() const
     return downcast<HTMLInputElement>(shadowHost());
 }
 
-RefPtr<RenderStyle> SliderThumbElement::customStyleForRenderer(RenderStyle&, RenderStyle* hostStyle)
+Optional<ElementStyle> SliderThumbElement::resolveCustomStyle(RenderStyle&, RenderStyle* hostStyle)
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 
@@ -581,7 +582,7 @@ RefPtr<RenderStyle> SliderThumbElement::customStyleForRenderer(RenderStyle&, Ren
     static NeverDestroyed<const AtomicString> mediaSliderThumbShadowPseudoId("-webkit-media-slider-thumb", AtomicString::ConstructFromLiteral);
 
     if (!hostStyle)
-        return nullptr;
+        return Nullopt;
 
     switch (hostStyle->appearance()) {
     case MediaSliderPart:
@@ -596,7 +597,7 @@ RefPtr<RenderStyle> SliderThumbElement::customStyleForRenderer(RenderStyle&, Ren
         m_shadowPseudoId = sliderThumbShadowPseudoId;
     }
 
-    return nullptr;
+    return Nullopt;
 }
 
 const AtomicString& SliderThumbElement::shadowPseudoId() const
@@ -627,7 +628,7 @@ RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(Ref<Rende
     return createRenderer<RenderSliderContainer>(*this, WTFMove(style));
 }
 
-RefPtr<RenderStyle> SliderContainerElement::customStyleForRenderer(RenderStyle&, RenderStyle* hostStyle)
+Optional<ElementStyle> SliderContainerElement::resolveCustomStyle(RenderStyle&, RenderStyle* hostStyle)
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 
@@ -635,7 +636,7 @@ RefPtr<RenderStyle> SliderContainerElement::customStyleForRenderer(RenderStyle&,
     static NeverDestroyed<const AtomicString> sliderContainer("-webkit-slider-container", AtomicString::ConstructFromLiteral);
 
     if (!hostStyle)
-        return nullptr;
+        return Nullopt;
 
     switch (hostStyle->appearance()) {
     case MediaSliderPart:
@@ -650,7 +651,7 @@ RefPtr<RenderStyle> SliderContainerElement::customStyleForRenderer(RenderStyle&,
         m_shadowPseudoId = sliderContainer;
     }
 
-    return nullptr;
+    return Nullopt;
 }
 
 const AtomicString& SliderContainerElement::shadowPseudoId() const
