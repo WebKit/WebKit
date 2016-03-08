@@ -1,0 +1,26 @@
+<script src="resources/cookies-test-pre.js"></script>
+<script>
+description("This test checks that cookies set from a Set-Cookie header in private browsing mode are stored in the same cookie storage as cookies set with document.cookie.");
+
+debug("Cookies before setting (should be empty):" + document.cookie);
+
+document.cookie = "key1=value1";
+debug("Cookies before enabling private browsing (should be key1=value1):" + document.cookie);
+testCookies("key1=value1");
+
+if (window.testRunner) { testRunner.setPrivateBrowsingEnabled(true); }
+
+debug("Cookies after enabling private browsing (should be empty):" + document.cookie);
+testCookies(""); // We're using a different cookie storage now.  key1=value1 is still in the default cookie storage.
+document.cookie = "key2=value2";
+debug("Cookies after setting in private browsing (should be key2=value2):" + document.cookie);
+testCookies("key2=value2");
+clearCookies();
+
+if (window.testRunner) { testRunner.setPrivateBrowsingEnabled(false); }
+
+debug("Cookies after disabling private browsing (should be key1=value1):" + document.cookie);
+testCookies("key1=value1");
+
+</script>
+<script src="resources/cookies-test-post.js"></script>

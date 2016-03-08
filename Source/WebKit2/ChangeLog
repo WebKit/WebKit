@@ -1,3 +1,30 @@
+2016-03-07  Alex Christensen  <achristensen@webkit.org>
+
+        Fix cookies with private browsing and NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=155147
+        rdar://problem/25018279
+
+        Reviewed by Brady Eidson.
+
+        In the NetworkSession constructor, we look for a NetworkStorageSession in the SessionTracker
+        and use that NetworkStorageSession's CFHTTPCookieStorageRef in the NSURLSessionConfiguration.
+        NetworkStorageSessions were being set in SessionTracker's storageSessionMap after NetworkSessions
+        were created, causing the NSHTTPCookieStorage of the NSURLSession to be different from the
+        CFHTTPCookieStorageRef used by document.cookie in newly created private browsing sessions.
+        This fixes that problem by passing the NetworkStorageSession as a constructor parameter to the
+        NetworkSession so it can use the correct CFHTTPCookieStorageRef in its NSURLSessionConfiguration
+        before it is in the storageSessionMap.
+
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::sessionID):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::defaultSession):
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+
 2016-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         Correct bug in resource load statistics debug flag for legacy clients

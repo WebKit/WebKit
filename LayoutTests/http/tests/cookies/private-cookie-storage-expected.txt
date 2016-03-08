@@ -1,0 +1,18 @@
+This test checks that cookies set from a Set-Cookie header in private browsing mode are stored in the same cookie storage as cookies set with document.cookie.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Cookies before setting (should be empty):
+Cookies before enabling private browsing (should be key1=value1):key1=value1
+PASS cookie is 'key1=value1'.
+Cookies after enabling private browsing (should be empty):
+PASS cookie is ''.
+Cookies after setting in private browsing (should be key2=value2):key2=value2
+PASS cookie is 'key2=value2'.
+Cookies after disabling private browsing (should be key1=value1):key1=value1
+PASS cookie is 'key1=value1'.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

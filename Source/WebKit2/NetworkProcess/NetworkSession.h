@@ -39,6 +39,10 @@ OBJC_CLASS WKNetworkSessionDelegate;
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
+namespace WebCore {
+class NetworkStorageSession;
+}
+
 namespace WebKit {
 
 class CustomProtocolManager;
@@ -50,7 +54,7 @@ public:
         Normal,
         Ephemeral
     };
-    NetworkSession(Type, WebCore::SessionID, CustomProtocolManager*);
+    NetworkSession(Type, WebCore::SessionID, CustomProtocolManager*, WebCore::NetworkStorageSession*);
     ~NetworkSession();
 
     WebCore::SessionID sessionID() { return m_sessionID; }

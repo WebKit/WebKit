@@ -259,11 +259,11 @@ void NetworkSession::setCustomProtocolManager(CustomProtocolManager* customProto
 NetworkSession& NetworkSession::defaultSession()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<NetworkSession> session(NetworkSession::Type::Normal, WebCore::SessionID::defaultSessionID(), globalCustomProtocolManager().get());
+    static NeverDestroyed<NetworkSession> session(NetworkSession::Type::Normal, WebCore::SessionID::defaultSessionID(), globalCustomProtocolManager().get(), &WebCore::NetworkStorageSession::defaultStorageSession());
     return session;
 }
 
-NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID, CustomProtocolManager* customProtocolManager)
+NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID, CustomProtocolManager* customProtocolManager, WebCore::NetworkStorageSession* networkStorageSession)
     : m_sessionID(sessionID)
 {
     m_sessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this]);
@@ -279,8 +279,8 @@ NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID, CustomPr
     setCollectsTimingData();
 #endif
 
-    if (auto* storageSession = SessionTracker::storageSession(sessionID)) {
-        if (CFHTTPCookieStorageRef storage = storageSession->cookieStorage().get())
+    if (networkStorageSession) {
+        if (CFHTTPCookieStorageRef storage = networkStorageSession->cookieStorage().get())
             configuration.HTTPCookieStorage = [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage] autorelease];
     }
     m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_sessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];

@@ -1,3 +1,14 @@
+2016-03-07  Alex Christensen  <achristensen@webkit.org>
+
+        Fix cookies with private browsing and NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=155147
+        rdar://problem/25018279
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/cookies/private-cookie-storage-expected.txt: Added.
+        * http/tests/cookies/private-cookie-storage.html: Added.
+
 2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/track/track-cues-pause-on-exit.html as flaky on ElCapitan Debug WK2
