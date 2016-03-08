@@ -42,7 +42,7 @@ inline bool isSmall(void* object)
 
 inline bool isXLarge(void* object)
 {
-    return !test(object, ~superChunkMask);
+    return !test(object, ~xLargeMask);
 }
 
 } // namespace bmalloc

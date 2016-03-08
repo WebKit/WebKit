@@ -36,6 +36,7 @@
 #include "SmallPage.h"
 #include "VMHeap.h"
 #include "Vector.h"
+#include "XLargeMap.h"
 #include <array>
 #include <mutex>
 
@@ -61,7 +62,8 @@ public:
     void* allocateXLarge(std::lock_guard<StaticMutex>&, size_t);
     void* allocateXLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
     void* tryAllocateXLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
-    Range& findXLarge(std::unique_lock<StaticMutex>&, void*);
+    size_t xLargeSize(std::unique_lock<StaticMutex>&, void*);
+    void shrinkXLarge(std::unique_lock<StaticMutex>&, const Range&, size_t newSize);
     void deallocateXLarge(std::unique_lock<StaticMutex>&, void*);
 
     void scavenge(std::unique_lock<StaticMutex>&, std::chrono::milliseconds sleepDuration);
@@ -81,10 +83,13 @@ private:
     void mergeLarge(BeginTag*&, EndTag*&, Range&);
     void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
-    
+
+    XLargeRange splitAndAllocate(XLargeRange&, size_t alignment, size_t);
+
     void concurrentScavenge();
     void scavengeSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
     void scavengeLargeObjects(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
+    void scavengeXLargeObjects(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
 
     std::array<std::array<LineMetadata, smallLineCount>, smallMax / alignment> m_smallLineMetadata;
 
@@ -93,7 +98,8 @@ private:
     Vector<SmallPage*> m_smallPages;
 
     SegregatedFreeList m_largeObjects;
-    Vector<Range> m_xLargeObjects;
+    
+    XLargeMap m_xLargeMap;
 
     bool m_isAllocatingPages;
     AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;

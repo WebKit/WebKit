@@ -40,14 +40,17 @@ template<typename T>
 class Vector {
     static_assert(std::is_trivially_destructible<T>::value, "Vector must have a trivial destructor.");
 public:
+    typedef T* iterator;
+    typedef const T* const_iterator;
+
     Vector(const Vector&) = delete;
     Vector& operator=(const Vector&) = delete;
 
     Vector();
     ~Vector();
 
-    T* begin() { return m_buffer; }
-    T* end() { return m_buffer + m_size; }
+    iterator begin() { return m_buffer; }
+    iterator end() { return m_buffer + m_size; }
 
     size_t size() { return m_size; }
     size_t capacity() { return m_capacity; }
@@ -56,19 +59,23 @@ public:
     T& last() { return m_buffer[m_size - 1]; }
 
     void push(const T&);
-    void push(const T*, const T*);
+
     T pop();
     T pop(size_t);
-    T pop(const T* it) { return pop(it - begin()); }
+    T pop(const_iterator it) { return pop(it - begin()); }
+    
+    void insert(iterator, const T&);
 
     void shrink(size_t);
+
+    void shrinkToFit();
 
 private:
     static const size_t growFactor = 2;
     static const size_t shrinkFactor = 4;
     static const size_t initialCapacity = vmPageSize / sizeof(T);
 
-    void growCapacity(size_t size);
+    void growCapacity();
     void shrinkCapacity();
     void reallocateBuffer(size_t);
 
@@ -103,18 +110,8 @@ template<typename T>
 INLINE void Vector<T>::push(const T& value)
 {
     if (m_size == m_capacity)
-        growCapacity(m_size);
+        growCapacity();
     m_buffer[m_size++] = value;
-}
-
-template<typename T>
-void Vector<T>::push(const T* begin, const T* end)
-{
-    size_t newSize = m_size + (end - begin);
-    if (newSize > m_capacity)
-        growCapacity(newSize);
-    std::memcpy(this->end(), begin, (end - begin) * sizeof(T));
-    m_size = newSize;
 }
 
 template<typename T>
@@ -135,6 +132,20 @@ inline T Vector<T>::pop(size_t i)
 }
 
 template<typename T>
+void Vector<T>::insert(iterator it, const T& value)
+{
+    size_t index = it - begin();
+    size_t moveCount = end() - it;
+
+    if (m_size == m_capacity)
+        growCapacity();
+
+    std::memmove(&m_buffer[index + 1], &m_buffer[index], moveCount * sizeof(T));
+    m_buffer[index] = value;
+    m_size++;
+}
+
+template<typename T>
 inline void Vector<T>::shrink(size_t size)
 {
     BASSERT(size <= m_size);
@@ -147,7 +158,7 @@ template<typename T>
 void Vector<T>::reallocateBuffer(size_t newCapacity)
 {
     size_t vmSize = bmalloc::vmSize(newCapacity * sizeof(T));
-    T* newBuffer = static_cast<T*>(vmAllocate(vmSize));
+    T* newBuffer = vmSize ? static_cast<T*>(vmAllocate(vmSize)) : nullptr;
     if (m_buffer) {
         std::memcpy(newBuffer, m_buffer, m_size * sizeof(T));
         vmDeallocate(m_buffer, bmalloc::vmSize(m_capacity * sizeof(T)));
@@ -165,10 +176,17 @@ NO_INLINE void Vector<T>::shrinkCapacity()
 }
 
 template<typename T>
-NO_INLINE void Vector<T>::growCapacity(size_t size)
+NO_INLINE void Vector<T>::growCapacity()
 {
-    size_t newCapacity = max(initialCapacity, size * growFactor);
+    size_t newCapacity = max(initialCapacity, m_size * growFactor);
     reallocateBuffer(newCapacity);
+}
+
+template<typename T>
+void Vector<T>::shrinkToFit()
+{
+    if (m_size < m_capacity)
+        reallocateBuffer(m_size);
 }
 
 } // namespace bmalloc
