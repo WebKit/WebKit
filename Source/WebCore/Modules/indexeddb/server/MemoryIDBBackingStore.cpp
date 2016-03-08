@@ -55,12 +55,13 @@ MemoryIDBBackingStore::~MemoryIDBBackingStore()
 {
 }
 
-const IDBDatabaseInfo& MemoryIDBBackingStore::getOrEstablishDatabaseInfo()
+IDBError MemoryIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info)
 {
     if (!m_databaseInfo)
         m_databaseInfo = std::make_unique<IDBDatabaseInfo>(m_identifier.databaseName(), 0);
 
-    return *m_databaseInfo;
+    info = *m_databaseInfo;
+    return { };
 }
 
 void MemoryIDBBackingStore::setDatabaseInfo(const IDBDatabaseInfo& info)

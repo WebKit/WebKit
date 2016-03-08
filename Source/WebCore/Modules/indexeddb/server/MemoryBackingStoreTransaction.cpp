@@ -47,8 +47,12 @@ MemoryBackingStoreTransaction::MemoryBackingStoreTransaction(MemoryIDBBackingSto
     : m_backingStore(backingStore)
     , m_info(info)
 {
-    if (m_info.mode() == IndexedDB::TransactionMode::VersionChange)
-        m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(m_backingStore.getOrEstablishDatabaseInfo());
+    if (m_info.mode() == IndexedDB::TransactionMode::VersionChange) {
+        IDBDatabaseInfo info;
+        auto error = m_backingStore.getOrEstablishDatabaseInfo(info);
+        if (error.isNull())
+            m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(info);
+    }
 }
 
 MemoryBackingStoreTransaction::~MemoryBackingStoreTransaction()

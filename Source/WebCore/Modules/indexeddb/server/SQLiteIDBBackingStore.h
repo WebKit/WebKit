@@ -51,7 +51,7 @@ public:
     
     virtual ~SQLiteIDBBackingStore() override final;
 
-    virtual const IDBDatabaseInfo& getOrEstablishDatabaseInfo() override final;
+    virtual IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) override final;
 
     virtual IDBError beginTransaction(const IDBTransactionInfo&) override final;
     virtual IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier) override final;
@@ -75,7 +75,9 @@ public:
 
     virtual IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) override final;
     virtual void deleteBackingStore() override final;
+
     virtual bool supportsSimultaneousTransactions() override final { return false; }
+    virtual bool isEphemeral() override final { return false; }
 
     void unregisterCursor(SQLiteIDBCursor&);
 

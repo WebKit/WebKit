@@ -157,9 +157,9 @@ void IDBServer::deleteDatabase(const IDBRequestData& requestData)
     database->handleDelete(*connection, requestData);
 }
 
-void IDBServer::deleteUniqueIDBDatabase(UniqueIDBDatabase& database)
+void IDBServer::closeUniqueIDBDatabase(UniqueIDBDatabase& database)
 {
-    LOG(IndexedDB, "IDBServer::deleteUniqueIDBDatabase");
+    LOG(IndexedDB, "IDBServer::closeUniqueIDBDatabase");
 
     auto deletedDatabase = m_uniqueIDBDatabaseMap.take(database.identifier());
     ASSERT_UNUSED(deletedDatabase, deletedDatabase.get() == &database);

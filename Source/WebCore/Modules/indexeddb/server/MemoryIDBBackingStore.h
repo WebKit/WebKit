@@ -46,7 +46,7 @@ public:
     
     virtual ~MemoryIDBBackingStore() override final;
 
-    virtual const IDBDatabaseInfo& getOrEstablishDatabaseInfo() override final;
+    virtual IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) override final;
     void setDatabaseInfo(const IDBDatabaseInfo&);
 
     virtual IDBError beginTransaction(const IDBTransactionInfo&) override final;
@@ -71,7 +71,9 @@ public:
 
     virtual IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) override final;
     virtual void deleteBackingStore() override final;
+
     virtual bool supportsSimultaneousTransactions() override final { return true; }
+    virtual bool isEphemeral() override final { return true; }
 
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
     void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);
