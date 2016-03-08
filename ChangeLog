@@ -1,3 +1,12 @@
+2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GTK] Enable the SVG -> OTF Font Converter
+        https://bugs.webkit.org/show_bug.cgi?id=155191
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-03-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix GTK/EFL build after r197575 and add mandatory GnuTLS dependency
