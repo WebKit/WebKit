@@ -1,3 +1,13 @@
+2016-03-08  Alex Christensen  <achristensen@webkit.org>
+
+        arm64 build fix after r197793.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        (JSC::FixedVMPoolExecutableAllocator::initializeBulletproofJIT):
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator):
+        Use consistent ENABLE macro.  It looks like it was partially renamed.
+
 2016-03-08  Filip Pizlo  <fpizlo@apple.com>
 
         Regexp matching should incur less call overhead
