@@ -1,3 +1,19 @@
+2016-03-07  Keith Rollin  <krollin@apple.com>
+
+        Enhance logging: Use "always on" macros
+        https://bugs.webkit.org/show_bug.cgi?id=154499
+        <rdar://problem/24757730>
+
+        Reviewed by Chris Dumez.
+
+        Update LOG_ALWAYS and LOG_ALWAYS_ERROR macros to take an expression to
+        be evaluated. If the expression evaluates to True, the associated
+        message is logged. This facility is used to prevent logging from being
+        performed in private sessions, but it could be extended to prevent
+        logging under other circumstances as well.
+
+        * wtf/Assertions.h:
+
 2016-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Remove vcxproj build system

@@ -87,14 +87,22 @@ public:
     public:
         explicit ReliefLogger(const char *log)
             : m_logString(log)
+#if !LOG_ALWAYS_DISABLED
+            , m_initialMemory(platformMemoryUsage())
+#else
             , m_initialMemory(s_loggingEnabled ? platformMemoryUsage() : 0)
+#endif
         {
         }
 
         ~ReliefLogger()
         {
+#if !LOG_ALWAYS_DISABLED
+            logMemoryUsageChange();
+#else
             if (s_loggingEnabled)
-                platformLog();
+                logMemoryUsageChange();
+#endif
         }
 
         const char* logString() const { return m_logString; }
@@ -103,7 +111,7 @@ public:
 
     private:
         size_t platformMemoryUsage();
-        void platformLog();
+        void logMemoryUsageChange();
 
         const char* m_logString;
         size_t m_initialMemory;

@@ -1,3 +1,44 @@
+2016-03-07  Keith Rollin  <krollin@apple.com>
+
+        Enhance logging: Use "always on" macros
+        https://bugs.webkit.org/show_bug.cgi?id=154499
+        <rdar://problem/24757730>
+
+        Reviewed by Chris Dumez.
+
+        Make use of new logging macros by reporting on frame and resource
+        load activity.
+
+        Connection updated to report IPC errors, helping us identify when
+        messaging between processes breaks down.
+
+        ChildProcess updated to log if it is terminating early. Some
+        sysdiagnose logging from customers indicate that this is happening in
+        the wild.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::NetworkResourceLoader::isAlwaysOnLoggingAllowed):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForSyncReply):
+        * Shared/ChildProcess.cpp:
+        (WebKit::didCloseOnConnectionWorkQueue):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        (WebKit::WebResourceLoader::didReceiveResource):
+        (WebKit::WebResourceLoader::isAlwaysOnLoggingAllowed):
+        * WebProcess/Network/WebResourceLoader.h:
+
 2016-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         Reduce startup and shutdown cost of resource load statistics

@@ -57,6 +57,9 @@
 
 using namespace WebCore;
 
+#define WEBLOADERSTRATEGY_LOG_ALWAYS(...) LOG_ALWAYS(loadParameters.sessionID.isAlwaysOnLoggingAllowed(), __VA_ARGS__)
+#define WEBLOADERSTRATEGY_LOG_ALWAYS_ERROR(...) LOG_ALWAYS_ERROR(loadParameters.sessionID.isAlwaysOnLoggingAllowed(), __VA_ARGS__)
+
 namespace WebKit {
 
 WebLoaderStrategy::WebLoaderStrategy()
@@ -170,7 +173,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader* resourceLoader, CachedResou
     }
 #endif
 
-    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader->url().string().utf8().data(), static_cast<int>(resourceLoader->request().priority()));
+    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader->url().string().latin1().data(), static_cast<int>(resourceLoader->request().priority()));
 
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent;
     StoredCredentials allowStoredCredentials = resourceLoader->shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
@@ -200,13 +203,16 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader* resourceLoader, CachedResou
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials);
 
     if (!WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
+        WEBLOADERSTRATEGY_LOG_ALWAYS_ERROR("WebLoaderStrategy::scheduleLoad: Unable to schedule resource with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu", static_cast<int>(resourceLoader->request().priority()), loadParameters.webPageID, loadParameters.webFrameID);
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.
         scheduleInternallyFailedLoad(resourceLoader);
         return;
     }
-    
-    m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
+
+    auto webResourceLoader = WebResourceLoader::create(resourceLoader);
+    WEBLOADERSTRATEGY_LOG_ALWAYS("WebLoaderStrategy::scheduleLoad: Resource will be scheduled with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu, WebResourceLoader = %p", static_cast<int>(resourceLoader->request().priority()), loadParameters.webPageID, loadParameters.webFrameID, webResourceLoader.ptr());
+    m_webResourceLoaders.set(identifier, WTFMove(webResourceLoader));
 }
 
 void WebLoaderStrategy::scheduleInternallyFailedLoad(WebCore::ResourceLoader* resourceLoader)

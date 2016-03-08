@@ -1053,4 +1053,9 @@ bool Frame::isURLAllowed(const URL& url) const
     return true;
 }
 
+bool Frame::isAlwaysOnLoggingAllowed() const
+{
+    return page() && page()->isAlwaysOnLoggingAllowed();
+}
+
 } // namespace WebCore

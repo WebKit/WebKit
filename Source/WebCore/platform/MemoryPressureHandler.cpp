@@ -180,13 +180,37 @@ void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchro
     }
 }
 
+void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
+{
+#if !LOG_ALWAYS_DISABLED
+#define STRING_SPECIFICATION "%{public}s"
+#define MEMORYPRESSURE_LOG(...) LOG_ALWAYS(true, __VA_ARGS__)
+#else
+#define STRING_SPECIFICATION "%s"
+#define MEMORYPRESSURE_LOG(...) WTFLogAlways(__VA_ARGS__)
+#endif
+
+    size_t currentMemory = platformMemoryUsage();
+    if (currentMemory == static_cast<size_t>(-1) || m_initialMemory == static_cast<size_t>(-1)) {
+        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": (Unable to get dirty memory information for process)", m_logString);
+        return;
+    }
+
+    ssize_t memoryDiff = currentMemory - m_initialMemory;
+    if (memoryDiff < 0)
+        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": -dirty %ld bytes (from %lu to %lu)", m_logString, (memoryDiff * -1), m_initialMemory, currentMemory);
+    else if (memoryDiff > 0)
+        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": +dirty %ld bytes (from %lu to %lu)", m_logString, memoryDiff, m_initialMemory, currentMemory);
+    else
+        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": =dirty (at %lu bytes)", m_logString, currentMemory);
+}
+
 #if !PLATFORM(COCOA) && !OS(LINUX) && !PLATFORM(WIN)
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }
 void MemoryPressureHandler::respondToMemoryPressure(Critical, Synchronous) { }
 void MemoryPressureHandler::platformReleaseMemory(Critical) { }
-void MemoryPressureHandler::ReliefLogger::platformLog() { }
 size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage() { return 0; }
 #endif
 

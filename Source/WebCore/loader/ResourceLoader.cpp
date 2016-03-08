@@ -754,4 +754,9 @@ void ResourceLoader::didCreateQuickLookHandle(QuickLookHandle& handle)
 }
 #endif
 
+bool ResourceLoader::isAlwaysOnLoggingAllowed() const
+{
+    return frameLoader() && frameLoader()->isAlwaysOnLoggingAllowed();
+}
+
 }

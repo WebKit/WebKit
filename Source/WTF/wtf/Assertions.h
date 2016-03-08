@@ -384,12 +384,12 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication()
 
 #define WTF_LOGGING_PREFIX "#WK: "
 #if LOG_ALWAYS_DISABLED
-#define LOG_ALWAYS(format, ...)       ((void)0)
-#define LOG_ALWAYS_ERROR(format, ...) WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, format, ##__VA_ARGS__)
+#define LOG_ALWAYS(isAllowed, format, ...)       ((void)0)
+#define LOG_ALWAYS_ERROR(isAllowed, format, ...) WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, format, ##__VA_ARGS__)
 #else
 #define WTF_LOG_DEFAULT OS_LOG_DEFAULT
-#define LOG_ALWAYS(format, ...)       os_log(WTF_LOG_DEFAULT, WTF_LOGGING_PREFIX format, ##__VA_ARGS__)
-#define LOG_ALWAYS_ERROR(format, ...) os_log_error(WTF_LOG_DEFAULT, WTF_LOGGING_PREFIX format, ##__VA_ARGS__)
+#define LOG_ALWAYS(isAllowed, format, ...)       do { if (isAllowed) os_log(WTF_LOG_DEFAULT, WTF_LOGGING_PREFIX format, ##__VA_ARGS__); } while (0)
+#define LOG_ALWAYS_ERROR(isAllowed, format, ...) do { if (isAllowed) os_log_error(WTF_LOG_DEFAULT, WTF_LOGGING_PREFIX format, ##__VA_ARGS__); } while (0)
 #endif
 
 /* RELEASE_ASSERT */

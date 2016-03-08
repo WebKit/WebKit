@@ -207,23 +207,6 @@ void MemoryPressureHandler::platformReleaseMemory(Critical)
 #endif
 }
 
-void MemoryPressureHandler::ReliefLogger::platformLog()
-{
-    size_t currentMemory = platformMemoryUsage();
-    if (currentMemory == static_cast<size_t>(-1) || m_initialMemory == static_cast<size_t>(-1)) {
-        LOG(MemoryPressure, "%s (Unable to get dirty memory information for process)", m_logString);
-        return;
-    }
-
-    ssize_t memoryDiff = currentMemory - m_initialMemory;
-    if (memoryDiff < 0)
-        LOG(MemoryPressure, "Pressure relief: %s: -dirty %lu bytes (from %lu to %lu)", m_logString, static_cast<unsigned long>(memoryDiff * -1), static_cast<unsigned long>(m_initialMemory), static_cast<unsigned long>(currentMemory));
-    else if (memoryDiff > 0)
-        LOG(MemoryPressure, "Pressure relief: %s: +dirty %lu bytes (from %lu to %lu)", m_logString, static_cast<unsigned long>(memoryDiff), static_cast<unsigned long>(m_initialMemory), static_cast<unsigned long>(currentMemory));
-    else
-        LOG(MemoryPressure, "Pressure relief: %s: =dirty (at %lu bytes)", m_logString, static_cast<unsigned long>(currentMemory));
-}
-
 size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
     FILE* file = fopen(s_processStatus, "r");

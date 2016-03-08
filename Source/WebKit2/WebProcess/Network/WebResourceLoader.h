@@ -66,6 +66,8 @@ public:
 
     void detachFromCoreLoader();
 
+    bool isAlwaysOnLoggingAllowed() const;
+
 private:
     WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);
 

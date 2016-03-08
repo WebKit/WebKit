@@ -42,6 +42,7 @@ public:
     uint64_t sessionID() const { return m_sessionID; }
     bool operator==(SessionID sessionID) const { return m_sessionID == sessionID.m_sessionID; }
     bool operator!=(SessionID sessionID) const { return m_sessionID != sessionID.m_sessionID; }
+    bool isAlwaysOnLoggingAllowed() const { return !isEphemeral(); }
 
     static SessionID emptySessionID() { return SessionID(0); }
     static SessionID defaultSessionID() { return SessionID(1); }

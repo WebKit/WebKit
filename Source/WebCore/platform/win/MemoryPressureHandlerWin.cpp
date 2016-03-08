@@ -128,8 +128,4 @@ size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
     return 0;
 }
 
-void MemoryPressureHandler::ReliefLogger::platformLog()
-{
-}
-
 } // namespace WebCore

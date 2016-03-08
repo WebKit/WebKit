@@ -507,6 +507,8 @@ public:
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool controlled) { m_controlledByAutomation = controlled; }
 
+    bool isAlwaysOnLoggingAllowed() const;
+
 private:
     WEBCORE_EXPORT void initGroup();
 
