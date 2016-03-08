@@ -43,7 +43,6 @@
 #include "StyledElement.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/IncrementalSweeper.h>
-#include <sys/types.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
@@ -197,7 +196,7 @@ void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
         return;
     }
 
-    ssize_t memoryDiff = currentMemory - m_initialMemory;
+    ptrdiff_t memoryDiff = currentMemory - m_initialMemory;
     if (memoryDiff < 0)
         MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": -dirty %ld bytes (from %lu to %lu)", m_logString, (memoryDiff * -1), m_initialMemory, currentMemory);
     else if (memoryDiff > 0)

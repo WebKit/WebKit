@@ -1,3 +1,10 @@
+2016-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed Windows build fix after r197728.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::ReliefLogger::logMemoryUsageChange):
+
 2016-03-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197765.
