@@ -1,3 +1,20 @@
+2016-03-08  Andreas Kling  <akling@apple.com>
+
+        WeakBlock::visit() should check for a WeakHandleOwner before consulting mark bits.
+        <https://webkit.org/b/155154>
+
+        Reviewed by Darin Adler.
+
+        Reorder the checks in WeakBlock::visit() so we don't look at the mark bits in MarkedBlock
+        unless the current WeakImpl has a WeakHandleOwner we need to consult.
+
+        I was originally hoping to make an optimization that could skip over entire WeakBlocks
+        if they didn't have a single WeakHandleOwner, but it turns out that scenario is not as
+        common as I suspected.
+
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::visit):
+
 2016-03-07  Saam barati  <sbarati@apple.com>
 
         [ES6] Implement revocable proxies

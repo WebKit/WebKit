@@ -114,12 +114,12 @@ void WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
         if (weakImpl->state() != WeakImpl::Live)
             continue;
 
-        const JSValue& jsValue = weakImpl->jsValue();
-        if (m_markedBlock->isMarkedOrNewlyAllocated(jsValue.asCell()))
-            continue;
-
         WeakHandleOwner* weakHandleOwner = weakImpl->weakHandleOwner();
         if (!weakHandleOwner)
+            continue;
+
+        const JSValue& jsValue = weakImpl->jsValue();
+        if (m_markedBlock->isMarkedOrNewlyAllocated(jsValue.asCell()))
             continue;
 
         if (!weakHandleOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(jsValue)), weakImpl->context(), visitor))
