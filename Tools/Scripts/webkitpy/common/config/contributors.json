@@ -2748,16 +2748,6 @@
             "babu"
          ]
       },
-      "Sukolsak Sakshuwong": {
-         "emails" : [
-            "sukolsak@gmail.com",
-            "ssakshuwong@apple.com"
-         ],
-         "expertise" : "JavaScript/ECMAScript, WebAssembly",
-         "nicks" : [
-            "sukol"
-         ]
-      },
       "Szilard Ledan-Muntean" : {
          "emails" : [
             "szledan@inf.u-szeged.hu"
@@ -4914,6 +4904,16 @@
          "expertise" : "WebKit on Windows",
          "nicks" : [
             "sfalken"
+         ]
+      },
+      "Sukolsak Sakshuwong": {
+         "emails" : [
+            "sukolsak@gmail.com",
+            "ssakshuwong@apple.com"
+         ],
+         "expertise" : "JavaScript/ECMAScript, WebAssembly",
+         "nicks" : [
+            "sukol"
          ]
       },
       "Tim Horton" : {
