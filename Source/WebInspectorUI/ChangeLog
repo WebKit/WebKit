@@ -1,5 +1,28 @@
 2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Miscellaneous inspector fixes for typos / stale code
+        https://bugs.webkit.org/show_bug.cgi?id=155193
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/SourceCodeLocation.js:
+        (WebInspector.SourceCodeLocation.prototype._locationString):
+        Fix whitespace.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView):
+        Remove unused class name.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForFunction.didGetDetails):
+        Remove inferredName, as that was never sent by our backend and is getting removed.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._handleMouseUp):
+        Fix variable name typo.
+
+2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Images being blocked by CSP 2.0
         https://bugs.webkit.org/show_bug.cgi?id=155182
         <rdar://problem/25040640>

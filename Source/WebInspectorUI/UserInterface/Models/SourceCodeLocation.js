@@ -340,7 +340,7 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
             if (columnStyle === WebInspector.SourceCodeLocation.ColumnStyle.Hidden)
                 return prefix + name;
             let lineSuffix = displayURL ? ":" + lineString : WebInspector.UIString(" (line %s)").format(lineString);
-            return  prefix + name + lineSuffix;
+            return prefix + name + lineSuffix;
 
         default:
             console.error("Unknown nameStyle: " + nameStyle);

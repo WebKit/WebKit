@@ -1475,7 +1475,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
             let title = content.appendChild(document.createElement("div"));
             title.classList.add("title");
-            title.textContent = response.name || response.inferredName || response.displayName || WebInspector.UIString("(anonymous function)");
+            title.textContent = response.name || response.displayName || WebInspector.UIString("(anonymous function)");
             title.appendChild(functionSourceCodeLink);
 
             content.appendChild(wrapper);

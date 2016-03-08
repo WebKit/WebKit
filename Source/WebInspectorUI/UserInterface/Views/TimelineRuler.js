@@ -799,7 +799,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         document.removeEventListener("mousemove", this._mouseMoveEventListener);
         document.removeEventListener("mouseup", this._mouseUpEventListener);
 
-        delete this._mouseMovedEventListener;
+        delete this._mouseMoveEventListener;
         delete this._mouseUpEventListener;
         delete this._mouseDownPosition;
         delete this._lastMousePosition;

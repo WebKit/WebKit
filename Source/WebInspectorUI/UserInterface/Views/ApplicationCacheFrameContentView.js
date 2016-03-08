@@ -31,7 +31,7 @@ WebInspector.ApplicationCacheFrameContentView = class ApplicationCacheFrameConte
 
         super(representedObject);
 
-        this.element.classList.add("application-cache-frame", "table");
+        this.element.classList.add("application-cache-frame");
 
         this._frame = representedObject.frame;
 
