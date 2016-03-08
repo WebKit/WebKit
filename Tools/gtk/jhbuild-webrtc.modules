@@ -30,7 +30,6 @@
   <autotools id="gstreamer" autogenargs="--disable-gtk-doc">
     <if condition-set="macos">
       <autogenargs value="--disable-introspection"/>
-      <makeargs value="CFLAGS+=-Wno-error"/>
     </if>
 
     <dependencies>
@@ -44,7 +43,6 @@
              autogenargs="--disable-examples --disable-gtk-doc">
     <if condition-set="macos">
       <autogenargs value="--disable-introspection"/>
-      <makeargs value="CFLAGS+=-Wno-error"/>
     </if>
     <dependencies>
       <dep package="gstreamer"/>
@@ -56,7 +54,6 @@
   <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup --disable-gtk-doc">
     <if condition-set="macos">
       <autogenargs value="--disable-introspection"/>
-      <makeargs value="CFLAGS+=-Wno-error  OBJCFLAGS+=-Wno-error"/>
     </if>
     <dependencies>
       <dep package="gst-plugins-base"/>
@@ -67,7 +64,6 @@
   </autotools>
 
   <autotools id="gst-plugins-bad" autogenargs="--disable-examples --disable-gtk-doc --enable-openh264 --enable-opus --enable-srtp -- PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$JHBUILD_PREFIX/lib/pkgconfig">
-    <makeargs value="CFLAGS+=-Wno-error CXXFLAGS+=-Wno-error OBJCFLAGS+=-Wno-error"/>
     <if condition-set="macos">
       <autogenargs value="--disable-introspection"/>
     </if>
@@ -81,9 +77,6 @@
   </autotools>
 
   <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
-    <if condition-set="macos">
-      <makeargs value="CFLAGS+=-Wno-error"/>
-    </if>
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
@@ -96,9 +89,6 @@
    </autotools>
 
    <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" supports-non-srcdir-builds="no" autogen-sh="./autogen.sh; ./configure">
-     <if condition-set="macos">
-       <makeargs value="CFLAGS+=-Wno-error"/>
-     </if>
      <dependencies>
        <dep package="gst-plugins-base"/>
        <dep package="libusrsctp"/>
@@ -119,9 +109,6 @@
   </autotools>
 
   <autotools id="openwebrtc" autogenargs="--enable-bridge=no --enable-owr-gst=yes">
-     <if condition-set="macos">
-       <makeargs value="CFLAGS+=-Wno-error"/>
-     </if>
     <dependencies>
       <dep package="gst-plugins-openwebrtc"/>
       <dep package="libnice"/>

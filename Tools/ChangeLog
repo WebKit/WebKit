@@ -1,3 +1,16 @@
+2016-03-07  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK][jhbuild] OpenWebRTC build fails with GCC 6.0
+        https://bugs.webkit.org/show_bug.cgi?id=154839
+
+        Reviewed by Michael Catanzaro.
+
+        Add '-Wno-error' to jhbuildrc; remove it from the module sets for macos.
+
+        * gtk/jhbuild-webrtc.modules:
+        * gtk/jhbuild.modules:
+        * gtk/jhbuildrc:
+
 2016-03-07  Aakash Jain  <aakash_jain@apple.com>
 
         webkitpy should verify timestamp from CrashLogs while collecting all crash logs

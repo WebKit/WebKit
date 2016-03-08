@@ -35,3 +35,9 @@ autogenargs='--enable-introspection'
 buildroot = os.path.join(os.path.dirname(checkoutroot), "Build")
 
 os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(buildroot, 'Mesa', 'lib', 'gallium'))
+
+os.environ['CFLAGS'] = '-Wno-error'
+os.environ['CXXFLAGS'] = '-Wno-error'
+
+# For building gstreamer plugins on the Mac.
+os.environ['OBJCFLAGS'] = '-Wno-error'
