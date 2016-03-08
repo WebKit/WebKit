@@ -1,3 +1,24 @@
+2016-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r197062): [GTK] Transparent backgrounds no longer work after r197062
+        https://bugs.webkit.org/show_bug.cgi?id=155119
+
+        Reviewed by Martin Robinson.
+
+        This is because after r197062 we are now realizing the view too
+        early, even before the toplevel window has been realized, forcing
+        the toplevel window to be realized. If the RGBA visual is set on
+        the window after it has been realzied it doesn't have any
+        effect. We should wait until the toplevel window is realized to
+        realize the web view, giving time to the application to set RGBA
+        visual and background color. If the toplevel window is already
+        realized we realize the web view immediately, so that this doesn't
+        affect the tearing problems fixed in r197062.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (toplevelWindowRealized):
+        (webkitWebViewBaseSetToplevelOnScreenWindow):
+
 2016-03-07  Keith Rollin  <krollin@apple.com>
 
         Enhance logging: Use "always on" macros
