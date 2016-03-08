@@ -109,13 +109,11 @@ void FetchResponse::initializeWith(const Dictionary& init, ExceptionCode& ec)
 }
 
 FetchResponse::FetchResponse(ScriptExecutionContext& context, Type type, FetchBody&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
-    : ActiveDOMObject(&context)
+    : FetchBodyOwner(context, WTFMove(body))
     , m_type(type)
     , m_response(WTFMove(response))
-    , m_body(WTFMove(body))
     , m_headers(WTFMove(headers))
 {
-    suspendIfNeeded();
 }
 
 RefPtr<FetchResponse> FetchResponse::clone(ScriptExecutionContext* context, ExceptionCode& ec)

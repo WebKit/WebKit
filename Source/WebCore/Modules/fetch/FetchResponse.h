@@ -31,8 +31,7 @@
 
 #if ENABLE(FETCH_API)
 
-#include "ActiveDOMObject.h"
-#include "FetchBody.h"
+#include "FetchBodyOwner.h"
 #include "FetchHeaders.h"
 #include "ResourceResponse.h"
 
@@ -46,7 +45,7 @@ class Dictionary;
 
 typedef int ExceptionCode;
 
-class FetchResponse final : public RefCounted<FetchResponse>, public ActiveDOMObject {
+class FetchResponse final : public FetchBodyOwner {
 public:
     static Ref<FetchResponse> create(ScriptExecutionContext& context) { return adoptRef(*new FetchResponse(context, Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
     static Ref<FetchResponse> error(ScriptExecutionContext*);
@@ -66,14 +65,6 @@ public:
     FetchHeaders& headers() { return m_headers; }
     RefPtr<FetchResponse> clone(ScriptExecutionContext*, ExceptionCode&);
 
-    // Body API
-    bool isDisturbed() const { return m_body.isDisturbed(); }
-    void arrayBuffer(FetchBody::ArrayBufferPromise&& promise) { m_body.arrayBuffer(WTFMove(promise)); }
-    void formData(FetchBody::FormDataPromise&& promise) { m_body.formData(WTFMove(promise)); }
-    void blob(FetchBody::BlobPromise&& promise) { m_body.blob(WTFMove(promise)); }
-    void json(JSC::ExecState& state, FetchBody::JSONPromise&& promise) { m_body.json(state, WTFMove(promise)); }
-    void text(FetchBody::TextPromise&& promise) { m_body.text(WTFMove(promise)); }
-
 private:
     enum class Type { Basic, Cors, Default, Error, Opaque, OpaqueRedirect };
 
@@ -85,7 +76,6 @@ private:
 
     Type m_type;
     ResourceResponse m_response;
-    FetchBody m_body;
     Ref<FetchHeaders> m_headers;
     bool m_isLocked = false;
     bool m_isRedirected = false;

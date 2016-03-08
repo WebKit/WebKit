@@ -31,8 +31,7 @@
 
 #if ENABLE(FETCH_API)
 
-#include "ActiveDOMObject.h"
-#include "FetchBody.h"
+#include "FetchBodyOwner.h"
 #include "FetchHeaders.h"
 #include "FetchOptions.h"
 #include "ResourceRequest.h"
@@ -44,7 +43,7 @@ class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
-class FetchRequest final : public RefCounted<FetchRequest>, public ActiveDOMObject {
+class FetchRequest final : public FetchBodyOwner {
 public:
     static RefPtr<FetchRequest> create(ScriptExecutionContext&, FetchRequest*, const Dictionary&, ExceptionCode&);
     static RefPtr<FetchRequest> create(ScriptExecutionContext&, const String&, const Dictionary&, ExceptionCode&);
@@ -66,22 +65,12 @@ public:
 
     RefPtr<FetchRequest> clone(ScriptExecutionContext*, ExceptionCode&);
 
-    // Body API
-    bool isDisturbed() const { return m_body.isDisturbed(); }
-    void arrayBuffer(FetchBody::ArrayBufferPromise&& promise) { m_body.arrayBuffer(WTFMove(promise)); }
-    void formData(FetchBody::FormDataPromise&& promise) { m_body.formData(WTFMove(promise)); }
-    void blob(FetchBody::BlobPromise&& promise) { m_body.blob(WTFMove(promise)); }
-    void json(JSC::ExecState& state, FetchBody::JSONPromise&& promise) { m_body.json(state, WTFMove(promise)); }
-    void text(FetchBody::TextPromise&& promise) { m_body.text(WTFMove(promise)); }
-
     struct InternalRequest {
         ResourceRequest request;
         FetchOptions options;
         String referrer;
         String integrity;
     };
-
-    FetchBody& body() { return m_body; }
 
 private:
     FetchRequest(ScriptExecutionContext&, FetchBody&&, Ref<FetchHeaders>&&, InternalRequest&&);
@@ -90,18 +79,15 @@ private:
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 
-    FetchBody m_body;
     Ref<FetchHeaders> m_headers;
     InternalRequest m_internalRequest;
 };
 
 inline FetchRequest::FetchRequest(ScriptExecutionContext& context, FetchBody&& body, Ref<FetchHeaders>&& headers, InternalRequest&& internalRequest)
-    : ActiveDOMObject(&context)
-    , m_body(WTFMove(body))
+    : FetchBodyOwner(context, WTFMove(body))
     , m_headers(WTFMove(headers))
     , m_internalRequest(WTFMove(internalRequest))
 {
-    suspendIfNeeded();
 }
 
 } // namespace WebCore

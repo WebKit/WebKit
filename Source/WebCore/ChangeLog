@@ -1,3 +1,31 @@
+2016-03-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Commonalize handling of FetchBody by FetchRequest and FetchResponse
+        https://bugs.webkit.org/show_bug.cgi?id=154959
+
+        Reviewed by Darin Adler.
+
+        Introducing FetchBodyOwner class as base class of FetchRequest and FetchResponse.
+        This class is an ActiveDOMObject and is responsible of handling the Body API implemented by Request and Response.
+
+        Covered by existing tests.
+
+        * Modules/fetch/FetchBodyOwner.h: Added.
+        (WebCore::FetchBodyOwner::isDisturbed):
+        (WebCore::FetchBodyOwner::arrayBuffer):
+        (WebCore::FetchBodyOwner::formData):
+        (WebCore::FetchBodyOwner::blob):
+        (WebCore::FetchBodyOwner::json):
+        (WebCore::FetchBodyOwner::text):
+        (WebCore::FetchBodyOwner::body):
+        (WebCore::FetchBodyOwner::FetchBodyOwner):
+        * Modules/fetch/FetchRequest.h:
+        (WebCore::FetchRequest::FetchRequest):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::FetchResponse):
+        * Modules/fetch/FetchResponse.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-03-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix 32-bit build after r197726.
