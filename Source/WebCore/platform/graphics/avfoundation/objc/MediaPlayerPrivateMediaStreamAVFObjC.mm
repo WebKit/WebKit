@@ -42,6 +42,10 @@
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#import "VideoFullscreenLayerManager.h"
+#endif
+
 #pragma mark - Soft Linking
 
 #import "CoreMediaSoftLink.h"
@@ -57,6 +61,9 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
     : m_player(player)
     , m_weakPtrFactory(this)
     , m_clock(Clock::create())
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    , m_videoFullscreenLayerManager(VideoFullscreenLayerManager::create())
+#endif
 {
     LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(%p)", this);
 }
@@ -153,7 +160,11 @@ PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
     if (!m_videoBackgroundLayer || m_displayMode == None)
         return nullptr;
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    return m_videoFullscreenLayerManager->videoInlineLayer();
+#else
     return m_videoBackgroundLayer.get();
+#endif
 }
 
 MediaPlayerPrivateMediaStreamAVFObjC::DisplayMode MediaPlayerPrivateMediaStreamAVFObjC::currentDisplayMode() const
@@ -391,17 +402,25 @@ void MediaPlayerPrivateMediaStreamAVFObjC::createPreviewLayers()
     if (!m_videoBackgroundLayer) {
         m_videoBackgroundLayer = adoptNS([[CALayer alloc] init]);
         m_videoBackgroundLayer.get().name = @"MediaPlayerPrivateMediaStreamAVFObjC preview background layer";
+
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+        m_videoFullscreenLayerManager->setVideoLayer(m_videoBackgroundLayer.get(), snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size());
+#endif
     }
 
     if (!m_previewLayer) {
         m_previewLayer = m_mediaStreamPrivate->platformLayer();
         if (m_previewLayer) {
-            m_previewLayer.get().contentsGravity = kCAGravityResize;
+            m_previewLayer.get().contentsGravity = kCAGravityResizeAspect;
             m_previewLayer.get().anchorPoint = CGPointZero;
             if (!m_playing)
                 m_previewLayer.get().hidden = true;
 
             [m_videoBackgroundLayer addSublayer:m_previewLayer.get()];
+#if PLATFORM(MAC)
+            [m_previewLayer setFrame:[m_videoBackgroundLayer bounds]];
+            [m_previewLayer setAutoresizingMask:(kCALayerWidthSizable | kCALayerHeightSizable)];
+#endif
         }
     }
 
@@ -453,6 +472,18 @@ void MediaPlayerPrivateMediaStreamAVFObjC::didRemoveTrack(MediaStreamTrackPrivat
 {
     updateTracks();
 }
+
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer)
+{
+    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer);
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenFrame(FloatRect frame)
+{
+    m_videoFullscreenLayerManager->setVideoFullscreenFrame(frame);
+}
+#endif
 
 template <typename RefT, typename PassRefT>
 void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Type trackType, MediaStreamTrackPrivateVector& currentTracks, RefT (*itemFactory)(MediaStreamTrackPrivate&), MediaPlayer* player, void (MediaPlayer::*removedFunction)(PassRefT), void (MediaPlayer::*addedFunction)(PassRefT), std::function<void(RefT, int)> configureCallback)

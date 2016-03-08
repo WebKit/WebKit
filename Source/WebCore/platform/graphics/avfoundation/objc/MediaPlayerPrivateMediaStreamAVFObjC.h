@@ -46,6 +46,10 @@ class Clock;
 class MediaSourcePrivateClient;
 class VideoTrackPrivateMediaStream;
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+class VideoFullscreenLayerManager;
+#endif
+
 class MediaPlayerPrivateMediaStreamAVFObjC : public MediaPlayerPrivateInterface, public MediaStreamPrivate::Observer {
 public:
     explicit MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer*);
@@ -155,6 +159,11 @@ private:
     void didAddTrack(MediaStreamTrackPrivate&) override;
     void didRemoveTrack(MediaStreamTrackPrivate&) override;
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    void setVideoFullscreenLayer(PlatformLayer*) override;
+    void setVideoFullscreenFrame(FloatRect) override;
+#endif
+
     MediaPlayer* m_player { nullptr };
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
@@ -175,6 +184,10 @@ private:
     bool m_muted { false };
     bool m_haveEverPlayed { false };
     bool m_ended { false };
+
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;
+#endif
 };
     
 }

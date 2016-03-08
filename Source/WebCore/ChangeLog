@@ -1,3 +1,29 @@
+2016-03-08  Ada Chan  <adachan@apple.com>
+
+        Enable API related to the video fullscreen layer in MediaPlayerPrivateMediaStreamAVFObjC for Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=153239
+
+        Reviewed by Eric Carlson.
+
+        Reuse VideoFullscreenLayerManager to manage moving the video layer between the fullscreen
+        layer and the inline layer depending on the current presentation mode.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC):
+        Create m_videoFullscreenLayerManager.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::platformLayer):
+        Return the video inline layer from the VideoFullscreenLayerManager.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::createPreviewLayers):
+        Call VideoFullscreenLayerManager::setVideoLayer() with the m_videoBackgroundLayer. To make sure
+        the preview layer (a sublayer of m_videoBackgroundLayer) resize according to aspect ratio, set
+        its contents gravity to kCAGravityResizeAspect. Also, set its autoresizing mask so it'll resize
+        with its superlayer.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer):
+        Call VideoFullscreenLayerManager::setVideoFullscreenLayer().
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenFrame):
+        Call VideoFullscreenLayerManager::setVideoFullscreenFrame().
+
 2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Font Loading] Crash when a single load request causes multiple fonts to fail loading
