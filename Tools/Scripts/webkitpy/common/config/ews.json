@@ -21,6 +21,11 @@
         "port": "ios",
         "architecture": "armv7"
     },
+    "iOS Simulator EWS": {
+        "port": "ios-simulator-wk2",
+        "name": "ios-sim-ews",
+        "runTests": true
+    },
     "Mac EWS": {
         "port": "mac",
         "watchers": [
