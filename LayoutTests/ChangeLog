@@ -1,5 +1,14 @@
 2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking media/track/track-cues-pause-on-exit.html as flaky on ElCapitan Debug WK2
+        https://bugs.webkit.org/show_bug.cgi?id=155151
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2016-03-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking imported/w3c/indexeddb/idbcursor-advance-continue-async.htm as flaky on Yosemite Release WK2
         https://bugs.webkit.org/show_bug.cgi?id=154606
 
