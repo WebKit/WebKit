@@ -1,5 +1,12 @@
 2016-03-08  Alejandro G. Castro  <alex@igalia.com>
 
+        Unreviewed EFL build fix after r197752.
+
+        * platform/efl/TestExpectations: Avoid running the mediastream
+        tests until the support is implemented and compiled by default.
+
+2016-03-08  Alejandro G. Castro  <alex@igalia.com>
+
         [GTK] [EFL] Avoid running mediastream tests by default until we compile by default
         https://bugs.webkit.org/show_bug.cgi?id=153540
 
