@@ -862,6 +862,256 @@ void testMulLoadTwice()
     test(1);
 }
 
+void testMulAddArgsLeft()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* arg0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg0, arg1);
+    Value* added = root->appendNew<Value>(proc, Add, Origin(), multiplied, arg2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), added);
+
+    auto code = compile(proc);
+
+    auto testValues = int64Operands();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            for (auto c : testValues) {
+                CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value * b.value + c.value);
+            }
+        }
+    }
+}
+
+void testMulAddArgsRight()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* arg0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg1, arg2);
+    Value* added = root->appendNew<Value>(proc, Add, Origin(), arg0, multiplied);
+    root->appendNew<ControlValue>(proc, Return, Origin(), added);
+
+    auto code = compile(proc);
+
+    auto testValues = int64Operands();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            for (auto c : testValues) {
+                CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value + b.value * c.value);
+            }
+        }
+    }
+}
+
+void testMulAddArgsLeft32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* arg0 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg1 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* arg2 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg0, arg1);
+    Value* added = root->appendNew<Value>(proc, Add, Origin(), multiplied, arg2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), added);
+
+    auto code = compile(proc);
+
+    auto testValues = int32Operands();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            for (auto c : testValues) {
+                CHECK(invoke<int32_t>(*code, a.value, b.value, c.value) == a.value * b.value + c.value);
+            }
+        }
+    }
+}
+
+void testMulAddArgsRight32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* arg0 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg1 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* arg2 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg1, arg2);
+    Value* added = root->appendNew<Value>(proc, Add, Origin(), arg0, multiplied);
+    root->appendNew<ControlValue>(proc, Return, Origin(), added);
+
+    auto code = compile(proc);
+
+    auto testValues = int32Operands();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            for (auto c : testValues) {
+                CHECK(invoke<int32_t>(*code, a.value, b.value, c.value) == a.value + b.value * c.value);
+            }
+        }
+    }
+}
+
+void testMulSubArgsLeft()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* arg0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg0, arg1);
+    Value* added = root->appendNew<Value>(proc, Sub, Origin(), multiplied, arg2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), added);
+
+    auto code = compile(proc);
+
+    auto testValues = int64Operands();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            for (auto c : testValues) {
+                CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value * b.value - c.value);
+            }
+        }
+    }
+}
+
+void testMulSubArgsRight()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* arg0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg1, arg2);
+    Value* added = root->appendNew<Value>(proc, Sub, Origin(), arg0, multiplied);
+    root->appendNew<ControlValue>(proc, Return, Origin(), added);
+
+    auto code = compile(proc);
+
+    auto testValues = int64Operands();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            for (auto c : testValues) {
+                CHECK(invoke<int64_t>(*code, a.value, b.value, c.value) == a.value - b.value * c.value);
+            }
+        }
+    }
+}
+
+void testMulSubArgsLeft32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* arg0 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg1 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* arg2 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg0, arg1);
+    Value* added = root->appendNew<Value>(proc, Sub, Origin(), multiplied, arg2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), added);
+
+    auto code = compile(proc);
+
+    auto testValues = int32Operands();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            for (auto c : testValues) {
+                CHECK(invoke<int32_t>(*code, a.value, b.value, c.value) == a.value * b.value - c.value);
+            }
+        }
+    }
+}
+
+void testMulSubArgsRight32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* arg0 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg1 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* arg2 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg1, arg2);
+    Value* added = root->appendNew<Value>(proc, Sub, Origin(), arg0, multiplied);
+    root->appendNew<ControlValue>(proc, Return, Origin(), added);
+
+    auto code = compile(proc);
+
+    auto testValues = int32Operands();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            for (auto c : testValues) {
+                CHECK(invoke<int32_t>(*code, a.value, b.value, c.value) == a.value - b.value * c.value);
+            }
+        }
+    }
+}
+
+void testMulNegArgs()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* arg0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg0, arg1);
+    Value* zero = root->appendNew<Const64Value>(proc, Origin(), 0);
+    Value* added = root->appendNew<Value>(proc, Sub, Origin(), zero, multiplied);
+    root->appendNew<ControlValue>(proc, Return, Origin(), added);
+
+    auto code = compile(proc);
+
+    auto testValues = int64Operands();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            CHECK(invoke<int64_t>(*code, a.value, b.value) == -(a.value * b.value));
+        }
+    }
+}
+
+void testMulNegArgs32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* arg0 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg1 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg0, arg1);
+    Value* zero = root->appendNew<Const32Value>(proc, Origin(), 0);
+    Value* added = root->appendNew<Value>(proc, Sub, Origin(), zero, multiplied);
+    root->appendNew<ControlValue>(proc, Return, Origin(), added);
+
+    auto code = compile(proc);
+
+    auto testValues = int32Operands();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            CHECK(invoke<int32_t>(*code, a.value, b.value) == -(a.value * b.value));
+        }
+    }
+}
+
 void testMulArgDouble(double a)
 {
     Procedure proc;
@@ -11333,6 +11583,16 @@ void run(const char* filter)
     RUN(testMulArgs32(1, 1));
     RUN(testMulArgs32(1, 2));
     RUN(testMulLoadTwice());
+    RUN(testMulAddArgsLeft());
+    RUN(testMulAddArgsRight());
+    RUN(testMulAddArgsLeft32());
+    RUN(testMulAddArgsRight32());
+    RUN(testMulSubArgsLeft());
+    RUN(testMulSubArgsRight());
+    RUN(testMulSubArgsLeft32());
+    RUN(testMulSubArgsRight32());
+    RUN(testMulNegArgs());
+    RUN(testMulNegArgs32());
 
     RUN_UNARY(testMulArgDouble, floatingPointOperands<double>());
     RUN_BINARY(testMulArgsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());

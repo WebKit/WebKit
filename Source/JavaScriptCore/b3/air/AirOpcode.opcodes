@@ -215,6 +215,24 @@ Mul32 U:G:32, U:G:32, ZD:G:32
 Mul64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
 
+arm64: MultiplyAdd32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp, Tmp
+
+arm64: MultiplyAdd64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp, Tmp
+
+arm64: MultiplySub32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp, Tmp
+
+arm64: MultiplySub64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp, Tmp
+
+arm64: MultiplyNeg32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+
+arm64: MultiplyNeg64 U:G:64, U:G:64, ZD:G:64
+    Tmp, Tmp, Tmp
+
 arm64: Div32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
 
