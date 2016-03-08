@@ -132,6 +132,8 @@ private:
     ModelInterfaceTuple& ensureModelAndInterface(uint64_t contextId);
     WebVideoFullscreenModelContext& ensureModel(uint64_t contextId);
     PlatformWebVideoFullscreenInterface& ensureInterface(uint64_t contextId);
+    void addClientForContext(uint64_t contextId);
+    void removeClientForContext(uint64_t contextId);
 
     // Messages from WebVideoFullscreenManager
     void setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture);
@@ -182,7 +184,7 @@ private:
     WebPageProxy* m_page;
     HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;
     uint64_t m_controlsManagerContextId { 0 };
-
+    HashMap<uint64_t, int> m_clientCounts;
 };
     
 } // namespace WebKit

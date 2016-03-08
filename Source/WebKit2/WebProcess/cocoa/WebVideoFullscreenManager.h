@@ -129,6 +129,9 @@ protected:
     ModelInterfaceTuple& ensureModelAndInterface(uint64_t contextId);
     WebCore::WebVideoFullscreenModelVideoElement& ensureModel(uint64_t contextId);
     WebVideoFullscreenInterfaceContext& ensureInterface(uint64_t contextId);
+    void removeContext(uint64_t contextId);
+    void addClientForContext(uint64_t contextId);
+    void removeClientForContext(uint64_t contextId);
 
     // Interface to WebVideoFullscreenInterfaceContext
     void resetMediaState(uint64_t contextId);
@@ -171,6 +174,7 @@ protected:
     HashMap<WebCore::HTMLVideoElement*, uint64_t> m_videoElements;
     HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;
     uint64_t m_controlsManagerContextId { 0 };
+    HashMap<uint64_t, int> m_clientCounts;
 };
     
 } // namespace WebKit

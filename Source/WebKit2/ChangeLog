@@ -1,3 +1,73 @@
+2016-03-04  Ada Chan  <adachan@apple.com>
+
+        Fix lifetime issues regarding WebVideoFullscreenInterfaceMac
+        https://bugs.webkit.org/show_bug.cgi?id=155130
+
+        Reviewed by Beth Dakin.
+
+        Now that both fullscreen and video controls manager rely on WebVideoFullscreenInterface,
+        we now keep track of a "client count" for each context ID so we'll only remove it
+        from the context map after all the "clients" are done with it.
+
+        Before this change, every time WebVideoFullscreenManager::setUpVideoControlsManager()
+        is called, the existing interface is cleared and a new one is created even when there's
+        an existing interface for that. With this change, we reuse the existing interface for
+        the video element.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::invalidate):
+        Also clear out m_clientCounts.
+        (WebKit::WebVideoFullscreenManagerProxy::addClientForContext):
+        If the context ID is not in m_clientCounts yet, add the count of 1 to
+        that table for that ID. Otherwise, increment the count by 1.
+        (WebKit::WebVideoFullscreenManagerProxy::removeClientForContext):
+        Assert that we have added this context id to m_clientCounts before.
+        Decrement the count. If it reaches 0, remove this context ID from both
+        m_clientCounts and m_contextMap.
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID):
+        We have started a new fullscreen session using this interface. Call
+        addClientForContext() to update the client count.
+        (WebKit::WebVideoFullscreenManagerProxy::setUpVideoControlsManagerWithID):
+        If the current controls manager set up has the same context ID as the one
+        passed in, we don't have to do anything. Otherwise, if we have set up
+        the video controls manager with a different ID before, call removeClientForContext()
+        on the old ID to decrement its client count. Set m_controlsManagerContextId
+        to the new value and call addClientForContext() with it.
+        (WebKit::WebVideoFullscreenManagerProxy::didCleanupFullscreen):
+        Instead of removing the mapping from m_contextMap directly, reset the fullscreen
+        mode on the interface and call removeClientForContext(), which removes the mapping
+        only if there's no more client using the interface.
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::~WebVideoFullscreenManager):
+        Clear m_clientCounts.
+        (WebKit::WebVideoFullscreenManager::removeContext):
+        Add a helper method for removing the context.
+        (WebKit::WebVideoFullscreenManager::addClientForContext):
+        If the context ID is not in m_clientCounts yet, add the count of 1 to
+        that table for that ID. Otherwise, increment the count by 1.
+        (WebKit::WebVideoFullscreenManager::removeClientForContext):
+        Assert that we have added this context id to m_clientCounts before.
+        Decrement the count. If it reaches 0, remove this context ID from
+        m_clientCounts and call removeContext() to clean up this context.
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        We have started a new fullscreen session using this interface. Call
+        addClientForContext() to update the client count. Create a layer hosting
+        context if it's not there.
+        (WebKit::WebVideoFullscreenManager::setUpVideoControlsManager):
+        If we have set up a context for this video element before, see if it's
+        the one we are currently managing video controls for. If it is, return early.
+        Otherwise, call removeClientForContext() on the previous m_controlsManagerContextId
+        and update m_controlsManagerContextId to the context ID of this video element.
+        If there's no context created for this video element yet, set one up.
+        Send a SetUpVideoControlsManagerWithID message to the proxy object in the UI process
+        so it'll update its controls manager context ID. Also, conditionalize all of this
+        under PLATFORM(MAC) to be consistent with WebVideoFullscreenManagerProxy.
+        (WebKit::WebVideoFullscreenManager::didCleanupFullscreen):
+        Just reset the fullscreen mode on the interface and call removeClientForContext() which
+        only cleans up the context if there's no more client using it.
+
 2016-03-08  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add automation protocol methods for navigation
