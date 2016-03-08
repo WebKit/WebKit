@@ -1,3 +1,53 @@
+2016-03-08  Anders Carlsson  <andersca@apple.com>
+
+        Ignore deprecation warnings.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::stopNSAppRunLoop):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::mouseButtonForEvent):
+        (WebKit::mouseEventTypeForEvent):
+        (WebKit::clickCountForEvent):
+        (WebKit::globalPointForEvent):
+        (WebKit::pointForEvent):
+        (WebKit::textFromEvent):
+        (WebKit::unmodifiedTextFromEvent):
+        (WebKit::isKeypadEvent):
+        (WebKit::isKeyUpEvent):
+        (WebKit::modifiersForEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (toNSEventModifierFlags):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::becomeFirstResponder):
+        (WebKit::WebViewImpl::updateContentInsetsIfAutomatic):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        (WebKit::WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent):
+        (WebKit::WebViewImpl::createFullScreenWindow):
+        (WebKit::WebViewImpl::sendToolTipMouseExited):
+        (WebKit::WebViewImpl::sendToolTipMouseEntered):
+        (WebKit::applicationFlagsForDrag):
+        (WebKit::WebViewImpl::setLastMouseDownEvent):
+        (WebKit::WebViewImpl::doneWithKeyEvent):
+        (WebKit::WebViewImpl::collectKeyboardLayoutCommandsForEvent):
+        (WebKit::WebViewImpl::performKeyEquivalent):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::beginModal):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCanAttach):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::populate):
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::modifierFlagsFromWebEvent):
+        (WebKit::getEventTypeFromWebEvent):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::cssAlignmentValueForNSTextAlignment):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+
 2016-03-08  Oliver Hunt  <oliver@apple.com>
 
         Start moving to separated writable and executable mappings in the JIT

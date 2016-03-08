@@ -593,8 +593,11 @@ bool WebViewImpl::becomeFirstResponder()
     if (direction != NSDirectSelection) {
         NSEvent *event = [NSApp currentEvent];
         NSEvent *keyboardEvent = nil;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if ([event type] == NSKeyDown || [event type] == NSKeyUp)
             keyboardEvent = event;
+#pragma clang diagnostic pop
         m_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, { }), [](WebKit::CallbackBase::Error) { });
     }
     return true;
@@ -815,7 +818,10 @@ void WebViewImpl::updateContentInsetsIfAutomatic()
         return;
 
     NSWindow *window = m_view.window;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ((window.styleMask & NSFullSizeContentViewWindowMask) && !window.titlebarAppearsTransparent && ![m_view enclosingScrollView]) {
+#pragma clang diagnostic pop
         NSRect contentLayoutRect = [m_view convertRect:window.contentLayoutRect fromView:nil];
         CGFloat newTopContentInset = NSMaxY(contentLayoutRect) - NSHeight(contentLayoutRect);
         if (m_topContentInset != newTopContentInset)
@@ -1182,7 +1188,10 @@ void WebViewImpl::viewDidMoveToWindow()
 
         if (!m_flagsChangedEventMonitor) {
             auto weakThis = createWeakPtr();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             m_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask handler:[weakThis] (NSEvent *flagsChangedEvent) {
+#pragma clang diagnostic pop
                 if (weakThis)
                     weakThis->postFakeMouseMovedEventForFlagsChangedEvent(flagsChangedEvent);
                 return flagsChangedEvent;
@@ -1250,9 +1259,12 @@ NSView *WebViewImpl::hitTest(CGPoint point)
 
 void WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *flagsChangedEvent)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:flagsChangedEvent.window.mouseLocationOutsideOfEventStream
         modifierFlags:flagsChangedEvent.modifierFlags timestamp:flagsChangedEvent.timestamp windowNumber:flagsChangedEvent.windowNumber
         context:nullptr eventNumber:0 clickCount:0 pressure:0];
+#pragma clang diagnostic pop
     NativeWebMouseEvent webEvent(fakeEvent, m_lastPressureEvent.get(), m_view);
     m_page->handleMouseEvent(webEvent);
 }
@@ -1601,7 +1613,10 @@ NSView *WebViewImpl::fullScreenPlaceholderView()
 NSWindow *WebViewImpl::createFullScreenWindow()
 {
 #if ENABLE(FULLSCREEN_API)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return [[[WebCoreFullScreenWindow alloc] initWithContentRect:[[NSScreen mainScreen] frame] styleMask:(NSBorderlessWindowMask | NSResizableWindowMask) backing:NSBackingStoreBuffered defer:NO] autorelease];
+#pragma clang diagnostic pop
 #else
     return nil;
 #endif
@@ -2557,6 +2572,8 @@ void WebViewImpl::removeTrackingRects(NSTrackingRectTag *tags, int count)
 void WebViewImpl::sendToolTipMouseExited()
 {
     // Nothing matters except window, trackingNumber, and userData.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSMouseExited
                                                 location:NSMakePoint(0, 0)
                                            modifierFlags:0
@@ -2566,12 +2583,15 @@ void WebViewImpl::sendToolTipMouseExited()
                                              eventNumber:0
                                           trackingNumber:TRACKING_RECT_TAG
                                                 userData:m_trackingRectUserData];
+#pragma clang diagnostic pop
     [m_trackingRectOwner mouseExited:fakeEvent];
 }
 
 void WebViewImpl::sendToolTipMouseEntered()
 {
     // Nothing matters except window, trackingNumber, and userData.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSMouseEntered
                                                 location:NSMakePoint(0, 0)
                                            modifierFlags:0
@@ -2581,6 +2601,7 @@ void WebViewImpl::sendToolTipMouseEntered()
                                              eventNumber:0
                                           trackingNumber:TRACKING_RECT_TAG
                                                 userData:m_trackingRectUserData];
+#pragma clang diagnostic pop
     [m_trackingRectOwner mouseEntered:fakeEvent];
 }
 
@@ -2736,7 +2757,10 @@ static WebCore::DragApplicationFlags applicationFlagsForDrag(NSView *view, id <N
         flags |= WebCore::DragApplicationHasAttachedSheet;
     if (draggingInfo.draggingSource == view)
         flags |= WebCore::DragApplicationIsSource;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([NSApp currentEvent].modifierFlags & NSAlternateKeyMask)
+#pragma clang diagnostic pop
         flags |= WebCore::DragApplicationIsCopyKeyDown;
     return static_cast<WebCore::DragApplicationFlags>(flags);
 
@@ -3325,7 +3349,10 @@ void WebViewImpl::smartMagnifyWithEvent(NSEvent *event)
 
 void WebViewImpl::setLastMouseDownEvent(NSEvent *event)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     ASSERT(!event || event.type == NSLeftMouseDown || event.type == NSRightMouseDown || event.type == NSOtherMouseDown);
+#pragma clang diagnostic pop
 
     if (event == m_lastMouseDownEvent.get())
         return;
@@ -3362,8 +3389,11 @@ void WebViewImpl::didRestoreScrollPosition()
 
 void WebViewImpl::doneWithKeyEvent(NSEvent *event, bool eventWasHandled)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([event type] != NSKeyDown)
         return;
+#pragma clang diagnostic pop
 
     if (tryPostProcessPluginComplexTextInputKeyDown(event))
         return;
@@ -3439,8 +3469,11 @@ Vector<WebCore::KeypressCommand> WebViewImpl::collectKeyboardLayoutCommandsForEv
 {
     Vector<WebCore::KeypressCommand> commands;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([event type] != NSKeyDown)
         return commands;
+#pragma clang diagnostic pop
 
     ASSERT(!m_collectedKeypressCommands);
     m_collectedKeypressCommands = &commands;
@@ -3815,8 +3848,11 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
     // We get Esc key here after processing either Esc or Cmd+period. The former starts as a keyDown, and the latter starts as a key equivalent,
     // but both get transformed to a cancelOperation: command, executing which passes an Esc key event to -performKeyEquivalent:.
     // Don't interpret this event again, avoiding re-entrancy and infinite loops.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([[event charactersIgnoringModifiers] isEqualToString:@"\e"] && !([event modifierFlags] & NSDeviceIndependentModifierFlagsMask))
         return [m_view _web_superPerformKeyEquivalent:event];
+#pragma clang diagnostic pop
 
     if (m_keyDownEventBeingResent) {
         // WebCore has already seen the event, no need for custom processing.

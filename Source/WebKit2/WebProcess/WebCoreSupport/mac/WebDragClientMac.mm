@@ -65,7 +65,10 @@ static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const In
     RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
 
     [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:graphicsContext->platformContext() flipped:YES]];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [image drawInRect:NSMakeRect(0, 0, bitmap->size().width(), bitmap->size().height()) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1 respectFlipped:YES hints:nil];
+#pragma clang diagnostic pop
 
     [NSGraphicsContext setCurrentContext:savedContext.get()];
 

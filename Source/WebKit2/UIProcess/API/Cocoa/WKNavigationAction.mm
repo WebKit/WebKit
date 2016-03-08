@@ -62,6 +62,8 @@ static NSEventModifierFlags toNSEventModifierFlags(WebKit::WebEvent::Modifiers m
 {
     NSEventModifierFlags modifierFlags = 0;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (modifiers & WebKit::WebEvent::CapsLockKey)
         modifierFlags |= NSAlphaShiftKeyMask;
     if (modifiers & WebKit::WebEvent::ShiftKey)
@@ -72,7 +74,7 @@ static NSEventModifierFlags toNSEventModifierFlags(WebKit::WebEvent::Modifiers m
         modifierFlags |= NSAlternateKeyMask;
     if (modifiers & WebKit::WebEvent::MetaKey)
         modifierFlags |= NSCommandKeyMask;
-
+#pragma clang diagnostic pop
     return modifierFlags;
 }
 

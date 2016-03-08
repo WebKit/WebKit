@@ -1277,14 +1277,19 @@ void PDFPlugin::didEvaluateJavaScript(uint64_t, const WTF::String&)
     
 static NSUInteger modifierFlagsFromWebEvent(const WebEvent& event)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return (event.shiftKey() ? NSShiftKeyMask : 0)
         | (event.controlKey() ? NSControlKeyMask : 0)
         | (event.altKey() ? NSAlternateKeyMask : 0)
         | (event.metaKey() ? NSCommandKeyMask : 0);
+#pragma clang diagnostic pop
 }
     
 static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventType)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     switch (event.type()) {
     case WebEvent::KeyDown:
         eventType = NSKeyDown;
@@ -1331,6 +1336,7 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
     default:
         return false;
     }
+#pragma clang diagnostic pop
 }
     
 NSEvent *PDFPlugin::nsEventForWebMouseEvent(const WebMouseEvent& event)

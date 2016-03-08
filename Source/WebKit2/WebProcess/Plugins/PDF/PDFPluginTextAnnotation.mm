@@ -52,6 +52,8 @@ using namespace HTMLNames;
 
 static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignment)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     switch (alignment) {
     case NSLeftTextAlignment:
         return "left";
@@ -64,7 +66,7 @@ static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignmen
     case NSNaturalTextAlignment:
         return "-webkit-start";
     }
-
+#pragma clang diagnostic pop
     ASSERT_NOT_REACHED();
     return String();
 }
