@@ -246,6 +246,8 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, RenderBoxRegio
             break;
 
         currentBox = currentBox->containingBlock();
+        if (!currentBox)
+            break;
         region = currentBox->clampToStartAndEndRegions(region);
         currentBoxInfo = currentBox->renderBoxRegionInfo(region);
     }
@@ -2950,7 +2952,7 @@ Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& hei
     const RenderBox* containingBlockChild = this;
     LayoutUnit rootMarginBorderPaddingHeight = 0;
     bool isHorizontal = isHorizontalWritingMode();
-    while (!cb->isRenderView() && skipContainingBlockForPercentHeightCalculation(cb, isHorizontal != cb->isHorizontalWritingMode())) {
+    while (cb && !is<RenderView>(*cb) && skipContainingBlockForPercentHeightCalculation(cb, isHorizontal != cb->isHorizontalWritingMode())) {
         if (cb->isBody() || cb->isDocumentElementRenderer())
             rootMarginBorderPaddingHeight += cb->marginBefore() + cb->marginAfter() + cb->borderAndPaddingLogicalHeight();
         skippedAutoHeightContainingBlock = true;
@@ -3103,7 +3105,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
         case Calculated:
         {
             auto cb = isOutOfFlowPositioned() ? container() : containingBlock();
-            while (cb->isAnonymous() && !is<RenderView>(*cb)) {
+            while (cb && cb->isAnonymous() && !is<RenderView>(*cb)) {
                 cb = cb->containingBlock();
                 downcast<RenderBlock>(*cb).addPercentHeightDescendant(const_cast<RenderBox&>(*this));
             }
@@ -3133,7 +3135,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
                 // table cells using percentage heights.
                 // FIXME: This needs to be made block-flow-aware.  If the cell and image are perpendicular block-flows, this isn't right.
                 // https://bugs.webkit.org/show_bug.cgi?id=46997
-                while (cb && !cb->isRenderView() && (cb->style().logicalHeight().isAuto() || cb->style().logicalHeight().isPercentOrCalculated())) {
+                while (cb && !is<RenderView>(*cb) && (cb->style().logicalHeight().isAuto() || cb->style().logicalHeight().isPercentOrCalculated())) {
                     if (cb->isTableCell()) {
                         // Don't let table cells squeeze percent-height replaced elements
                         // <http://bugs.webkit.org/show_bug.cgi?id=15359>
@@ -4637,7 +4639,7 @@ void RenderBox::clearOverflow()
 static bool logicalWidthIsResolvable(const RenderBox& renderBox)
 {
     const RenderBox* box = &renderBox;
-    while (!box->isRenderView() && !box->isOutOfFlowPositioned()
+    while (box && !is<RenderView>(*box) && !box->isOutOfFlowPositioned()
 #if ENABLE(CSS_GRID_LAYOUT)
         && !box->hasOverrideContainingBlockLogicalWidth()
 #endif
@@ -4682,7 +4684,7 @@ bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* 
     const RenderBlock* cb = containingBlock;
     bool inQuirksMode = cb->document().inQuirksMode();
     bool skippedAutoHeightContainingBlock = false;
-    while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isOutOfFlowPositioned() && cb->style().logicalHeight().isAuto()) {
+    while (cb && !is<RenderView>(*cb) && !cb->isBody() && !cb->isTableCell() && !cb->isOutOfFlowPositioned() && cb->style().logicalHeight().isAuto()) {
         if (!inQuirksMode && !cb->isAnonymousBlock())
             break;
 #if ENABLE(CSS_GRID_LAYOUT)

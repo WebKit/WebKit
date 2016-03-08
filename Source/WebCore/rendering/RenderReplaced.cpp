@@ -251,7 +251,7 @@ static inline RenderBlock* firstContainingBlockWithLogicalWidth(const RenderRepl
     if (!containingBlock)
         return 0;
 
-    for (; !containingBlock->isRenderView() && !containingBlock->isBody(); containingBlock = containingBlock->containingBlock()) {
+    for (; containingBlock && !is<RenderView>(*containingBlock) && !containingBlock->isBody(); containingBlock = containingBlock->containingBlock()) {
         if (containingBlock->style().logicalWidth().isSpecified())
             return containingBlock;
     }

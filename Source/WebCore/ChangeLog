@@ -1,3 +1,47 @@
+2016-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        Crash in WebCore::RenderElement::containingBlockForObjectInFlow
+        https://bugs.webkit.org/show_bug.cgi?id=155109
+
+        Reviewed by Simon Fraser.
+
+        It's unsafe to call containingBlock() on RenderView.
+
+        Unable to reproduce.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::isSelfCollapsingBlock):
+        (WebCore::RenderBlock::selectionGaps):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::borderBoxRectInRegion):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::logicalWidthIsResolvable):
+        (WebCore::RenderBox::percentageLogicalHeightIsResolvableFromBlock):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent):
+        (WebCore::RenderFlowThread::offsetFromLogicalTopOfFirstRegion):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hasCompositedLayerInEnclosingPaginationChain):
+        (WebCore::RenderLayer::updatePagination):
+        (WebCore::inContainingBlockChain):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::isValidColumnSpanner):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment):
+        * rendering/RenderObject.cpp:
+        (WebCore::hasFixedPosInNamedFlowContainingBlock):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::firstContainingBlockWithLogicalWidth):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::subtreeSelectionBounds):
+        (WebCore::RenderView::repaintSubtreeSelection):
+        (WebCore::RenderView::clearSubtreeSelection):
+        (WebCore::RenderView::applySubtreeSelection):
+
 2016-03-07  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Add convenience function URL::procotolIsBlob()
