@@ -138,6 +138,8 @@ static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
 
 static NSControlSize scrollbarControlSizeToNSControlSize(ScrollbarControlSize controlSize)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     switch (controlSize) {
     case RegularScrollbar:
         return NSRegularControlSize;
@@ -147,6 +149,7 @@ static NSControlSize scrollbarControlSizeToNSControlSize(ScrollbarControlSize co
 
     ASSERT_NOT_REACHED();
     return NSRegularControlSize;
+#pragma clang diagnostic pop
 }
 
 void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)

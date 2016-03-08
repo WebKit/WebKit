@@ -1,3 +1,71 @@
+2016-03-08  Anders Carlsson  <andersca@apple.com>
+
+        Ignore deprecation warnings.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::computedAttributesForElement):
+        (HTMLConverter::_addMarkersToList):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::lastEventIsMouseUp):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+        * page/mac/TextIndicatorWindow.mm:
+        (WebCore::TextIndicatorWindow::setTextIndicator):
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::paint):
+        * platform/mac/CursorMac.mm:
+        (WebCore::createCustomCursor):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        * platform/mac/EventLoopMac.mm:
+        (WebCore::EventLoop::cycle):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::setDragImage):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::globalPointForEvent):
+        (WebCore::pointForEvent):
+        (WebCore::mouseButtonForEvent):
+        (WebCore::mouseEventTypeForEvent):
+        (WebCore::clickCountForEvent):
+        (WebCore::textFromEvent):
+        (WebCore::unmodifiedTextFromEvent):
+        (WebCore::keyIdentifierForKeyEvent):
+        (WebCore::isKeypadEvent):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::isKeyUpEvent):
+        (WebCore::modifiersForEvent):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::scrollbarControlSizeToNSControlSize):
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreThemeView window]):
+        (WebCore::controlSizeForFont):
+        (WebCore::controlSizeFromPixelSize):
+        (WebCore::setUpButtonCell):
+        (WebCore::stepperControlSizeForFont):
+        (WebCore::paintStepper):
+        (WebCore::ThemeMac::minimumControlSize):
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WebVideoFullscreenHUDWindow performKeyEquivalent:]):
+        (-[WebVideoFullscreenHUDWindowController init]):
+        (-[WebVideoFullscreenHUDWindowController keyDown:]):
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]):
+        * platform/mac/WebWindowAnimation.mm:
+        (WebWindowAnimationDurationFromDuration):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::updateCachedSystemFontDescription):
+        (WebCore::RenderThemeMac::controlSizeForFont):
+        (WebCore::RenderThemeMac::controlSizeForCell):
+        (WebCore::RenderThemeMac::controlSizeForSystemFont):
+        (WebCore::RenderThemeMac::paintProgressBar):
+        (WebCore::RenderThemeMac::popupMenuSize):
+        (WebCore::RenderThemeMac::sliderThumbHorizontal):
+        (WebCore::RenderThemeMac::sliderThumbVertical):
+
 2016-03-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix the 32bit build after r197782.

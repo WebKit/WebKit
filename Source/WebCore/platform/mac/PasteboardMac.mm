@@ -642,8 +642,11 @@ void Pasteboard::setDragImage(DragImageRef image, const IntPoint& location)
     // Hack: We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
     // up the stack from us because the CoreFoundation drag manager does not use the run loop by itself.
     // This is the most innocuous event to use, per Kristen Forster.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSEvent* event = [NSEvent mouseEventWithType:NSMouseMoved location:NSZeroPoint
         modifierFlags:0 timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:0 pressure:0];
+#pragma clang diagnostic pop
     [NSApp postEvent:event atStart:YES];
 }
 #endif

@@ -145,7 +145,10 @@ bool EventHandler::keyEvent(NSEvent *event)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     ASSERT([event type] == NSKeyDown || [event type] == NSKeyUp);
+#pragma clang diagnostic pop
 
     CurrentEventScope scope(event, nil);
     return keyEvent(PlatformEventFactory::createPlatformKeyboardEvent(event));
@@ -198,9 +201,12 @@ static bool lastEventIsMouseUp()
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return EventHandler::currentNSEvent() != currentEventAfterHandlingMouseDown
         && [currentEventAfterHandlingMouseDown type] == NSLeftMouseUp
         && [currentEventAfterHandlingMouseDown timestamp] >= [EventHandler::currentNSEvent() timestamp];
+#pragma clang diagnostic pop
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return false;
@@ -364,6 +370,8 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     switch ([currentNSEvent() type]) {
         case NSLeftMouseDragged:
         case NSOtherMouseDragged:
@@ -413,6 +421,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
         default:
             return false;
     }
+#pragma clang diagnostic pop
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return false;
@@ -465,8 +474,11 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
         return downcast<FrameView>(widget).frame().eventHandler().handleWheelEvent(wheelEvent);
     }
 
-    if ([currentNSEvent() type] != NSScrollWheel || m_sendingEventToSubview) 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if ([currentNSEvent() type] != NSScrollWheel || m_sendingEventToSubview)
         return false;
+#pragma clang diagnostic pop
 
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
@@ -569,6 +581,8 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 
     m_sendingEventToSubview = false;
     int eventType = [initiatingEvent type];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (eventType == NSLeftMouseDown || eventType == NSKeyDown) {
         NSEvent *fakeEvent = nil;
         if (eventType == NSLeftMouseDown) {
@@ -596,11 +610,10 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
                                           keyCode:[initiatingEvent keyCode]];
             [NSApp postEvent:fakeEvent atStart:YES];
         }
+
         // FIXME: We should really get the current modifierFlags here, but there's no way to poll
         // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
         // no up-to-date cache of them anywhere.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
                                        location:[[view->platformWidget() window] convertScreenToBase:[NSEvent mouseLocation]]
                                   modifierFlags:[initiatingEvent modifierFlags]

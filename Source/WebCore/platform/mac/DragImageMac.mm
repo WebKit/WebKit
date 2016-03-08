@@ -75,7 +75,10 @@ RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float d
     RetainPtr<NSImage> dissolvedImage = adoptNS([[NSImage alloc] initWithSize:[image.get() size]]);
     
     [dissolvedImage.get() lockFocus];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [image.get() drawAtPoint:NSZeroPoint fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositeCopy fraction:delta];
+#pragma clang diagnostic pop
     [dissolvedImage.get() unlockFocus];
 
     return dissolvedImage;
@@ -116,7 +119,10 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientationDescri
             [cocoaTransform.get() setTransformStruct:*(NSAffineTransformStruct*)&transform];
             [cocoaTransform.get() concat];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             [image->getNSImage() drawInRect:destRect fromRect:NSMakeRect(0, 0, size.width(), size.height()) operation:NSCompositeSourceOver fraction:1.0];
+#pragma clang diagnostic pop
             [rotatedDragImage.get() unlockFocus];
 
             return rotatedDragImage;
