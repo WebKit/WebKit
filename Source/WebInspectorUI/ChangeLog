@@ -1,3 +1,15 @@
+2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Images being blocked by CSP 2.0
+        https://bugs.webkit.org/show_bug.cgi?id=155182
+        <rdar://problem/25040640>
+
+        Reviewed by Daniel Bates.
+
+        * UserInterface/Main.html:
+        Allow Web Inspector to load file: and blob: image resources.
+        Also blob: media and font resources.
+
 2016-03-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Use half-pixel borders for data grids
