@@ -202,6 +202,12 @@ inline Optional<unsigned> Inst::shouldTryAliasingDef()
     case MoveConditionallyTest64:
     case MoveConditionallyDouble:
     case MoveConditionallyFloat:
+    case MoveDoubleConditionally32:
+    case MoveDoubleConditionally64:
+    case MoveDoubleConditionallyTest32:
+    case MoveDoubleConditionallyTest64:
+    case MoveDoubleConditionallyDouble:
+    case MoveDoubleConditionallyFloat:
         if (args.size() == 6)
             return 5;
         break;
