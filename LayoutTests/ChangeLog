@@ -1,3 +1,57 @@
+2016-03-07  Daniel Bates  <dabates@apple.com>
+
+        CSP: Source '*' should not match URLs with schemes blob, data, or filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=154122
+        <rdar://problem/24613336>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests to ensure that we do not regress our interpretation of * with respect to directives
+        img-src, media-src, style-src, and default-src.
+
+        When running in WebKitTestRunner, skip the tests fast/dom/HTMLImageElement/image-with-blob-url-blocked-by-csp-img-src-star.html
+        and media/video-with-blob-url-allowed-by-csp-media-src-star.html as they make use of eventSender.beginDragWithFiles(),
+        which is not implement. We will need to fix <https://bugs.webkit.org/show_bug.cgi?id=64285>
+        before we can run these tests in WebKitTestRunner.
+
+        * TestExpectations:
+        * fast/dom/HTMLImageElement/image-with-blob-url-blocked-by-csp-img-src-star-expected.html: Added.
+        * fast/dom/HTMLImageElement/image-with-blob-url-blocked-by-csp-img-src-star.html: Added.
+        * fast/dom/HTMLImageElement/image-with-data-url-allowed-by-csp-img-src-star-expected.html: Added.
+        * fast/dom/HTMLImageElement/image-with-data-url-allowed-by-csp-img-src-star.html: Added.
+        * fast/dom/HTMLImageElement/image-with-file-url-blocked-by-csp-img-src-star-expected.html: Added.
+        * fast/dom/HTMLImageElement/image-with-file-url-blocked-by-csp-img-src-star.html: Added.
+        * fast/dom/HTMLImageElement/resources/green.png: Added.
+        * fast/dom/HTMLLinkElement/link-with-blob-url-blocked-by-csp-style-src-star-expected.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-blob-url-blocked-by-csp-style-src-star.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-data-url-blocked-by-csp-style-src-star-expected.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-data-url-blocked-by-csp-style-src-star.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-file-url-blocked-by-csp-style-src-star-expected.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-file-url-blocked-by-csp-style-src-star.html: Added.
+        * fast/dom/HTMLLinkElement/resources/red-background-color.css: Added.
+        (#test):
+        * http/tests/security/contentSecurityPolicy/image-with-http-url-allowed-by-csp-img-src-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-with-http-url-allowed-by-csp-img-src-star.html: Added.
+        * http/tests/security/contentSecurityPolicy/image-with-https-url-allowed-by-csp-img-src-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-with-https-url-allowed-by-csp-img-src-star.html: Added.
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star.html: Added.
+        * http/tests/security/contentSecurityPolicy/link-with-http-url-allowed-by-csp-style-src-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/link-with-http-url-allowed-by-csp-style-src-star.html: Added.
+        * http/tests/security/contentSecurityPolicy/link-with-https-url-allowed-by-csp-style-src-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/link-with-https-url-allowed-by-csp-style-src-star.html: Added.
+        * http/tests/security/contentSecurityPolicy/video-with-http-url-allowed-by-csp-media-src-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/video-with-http-url-allowed-by-csp-media-src-star.html: Added.
+        * http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html: Added.
+        * media/video-with-blob-url-allowed-by-csp-media-src-star-expected.html: Added.
+        * media/video-with-blob-url-allowed-by-csp-media-src-star.html: Added.
+        * media/video-with-data-url-allowed-by-csp-media-src-star-expected.html: Added.
+        * media/video-with-data-url-allowed-by-csp-media-src-star.html: Added.
+        * media/video-with-file-url-blocked-by-csp-media-src-star-expected.html: Added.
+        * media/video-with-file-url-blocked-by-csp-media-src-star.html: Added.
+        * platform/wk2/TestExpectations:
+
 2016-03-07  Alex Christensen  <achristensen@webkit.org>
 
         Fix cookies with private browsing and NetworkSession

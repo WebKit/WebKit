@@ -625,6 +625,7 @@ platform/mac/fast/events/objc-event-api.html
 # https://bugs.webkit.org/show_bug.cgi?id=64285
 editing/pasteboard/file-drag-to-editable.html
 editing/pasteboard/file-input-files-access.html
+fast/dom/HTMLImageElement/image-with-blob-url-blocked-by-csp-img-src-star.html
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
 fast/events/data-transfer-files-attribute-identity.html
@@ -677,6 +678,7 @@ http/tests/local/formdata/send-form-data.html
 http/tests/local/formdata/send-form-data-with-empty-file-filename.html
 http/tests/local/formdata/upload-events.html
 http/tests/security/clipboard/clipboard-file-access.html
+media/video-with-blob-url-allowed-by-csp-media-src-star.html
 media/video-src-blob.html
 storage/indexeddb/noblobs.html
 storage/indexeddb/noblobs-private.html

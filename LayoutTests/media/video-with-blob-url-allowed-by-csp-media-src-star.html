@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="media-src *">
+<script src="media-file.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var fileInput;
+
+function testFinished()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function loadVideo(event)
+{
+    var video = document.createElement("video");
+    video.onloadedmetadata = testFinished;
+    video.onerror = testFinished;
+    video.src = window.URL.createObjectURL(event.target.files[0]);
+
+    document.body.removeChild(fileInput);
+    document.body.appendChild(video);
+}
+
+function runTest()
+{
+    if (!window.eventSender)
+        return;
+
+    var x = fileInput.offsetLeft + fileInput.offsetWidth / 2;
+    var y = fileInput.offsetTop + fileInput.offsetHeight / 2;
+
+    eventSender.beginDragWithFiles([findMediaFile("video", "content/test")]);
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+}
+
+window.onload = function ()
+{
+    fileInput = document.getElementById("file");
+    fileInput.onchange = loadVideo;
+    runTest();
+}
+</script>
+</head>
+<body>
+<p>This tests that loading a video with a blob URL is allowed when the page has Content Security Policy &quot;media-src *&quot;. To run this test by hand, select a video file. This test PASSED if the video loads and its first frame is shown below. Otherwise, it FAILED.</p>
+<input type="file" id="file">
+</body>
+</html>

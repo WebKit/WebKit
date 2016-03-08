@@ -854,6 +854,7 @@ webkit.org/b/153161 http/tests/security/contentSecurityPolicy/register-bypassing
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-01.html [ Failure ]
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-02.html [ Failure ]
 webkit.org/b/154522 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html
+webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Failure ]
 http/tests/security/contentSecurityPolicy/script-src-blocked-error-event.html [ Pass Failure ]
 
 # These state object tests purposefully stress a resource limit, and take multiple seconds to run.

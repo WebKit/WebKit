@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="media-src *">
+<style>
+video {
+    background-color: green;
+    width: 128px;
+    height: 128px;
+}
+</style>
+<script src="media-file.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function testFinished()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onload = function ()
+{
+    var video = document.getElementById("video");
+    video.onloadedmetadata = testFinished;
+    video.onerror = testFinished;
+    video.src = findMediaFile("video", "content/test");
+}
+</script>
+</head>
+<body>
+<p>This tests that loading a video with a file URL is allowed when the page has Content Security Policy &quot;media-src *&quot;. This test PASSED if you see a solid green square. Otherwise, it FAILED.</p>
+<video id="video"></video>
+</body>
+</html>

@@ -1,3 +1,44 @@
+2016-03-07  Daniel Bates  <dabates@apple.com>
+
+        CSP: Source '*' should not match URLs with schemes blob, data, or filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=154122
+        <rdar://problem/24613336>
+
+        Reviewed by Brent Fulgham.
+
+        Restrict matching of source expression * to HTTP or HTTPS URLs for all directives except
+        img-src and media-src. This policy is more restrictive than the policy described in section
+        Matching Source Expressions of the Content Security Policy 2.0 spec., <https://www.w3.org/TR/2015/CR-CSP2-20150721>,
+        which restricts matching * to schemes that are not blob, data, or filesystem.
+
+        For directive img-src we restrict matching of * to HTTP, HTTPS, and data URLs. For directive
+        media-src we restrict matching of * to HTTP, HTTPS, data URLs and blob URLs. We use a
+        more lenient interpretation of * for directives img-src and media-src than required by
+        the spec. to mitigate web compatibility issues.
+
+        Tests: fast/dom/HTMLImageElement/image-with-blob-url-blocked-by-csp-img-src-star.html
+               fast/dom/HTMLImageElement/image-with-data-url-allowed-by-csp-img-src-star.html
+               fast/dom/HTMLImageElement/image-with-file-url-blocked-by-csp-img-src-star.html
+               fast/dom/HTMLLinkElement/link-with-blob-url-blocked-by-csp-style-src-star.html
+               fast/dom/HTMLLinkElement/link-with-data-url-blocked-by-csp-style-src-star.html
+               fast/dom/HTMLLinkElement/link-with-file-url-blocked-by-csp-style-src-star.html
+               http/tests/security/contentSecurityPolicy/image-with-http-url-allowed-by-csp-img-src-star.html
+               http/tests/security/contentSecurityPolicy/image-with-https-url-allowed-by-csp-img-src-star.html
+               http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star.html
+               http/tests/security/contentSecurityPolicy/link-with-http-url-allowed-by-csp-style-src-star.html
+               http/tests/security/contentSecurityPolicy/link-with-https-url-allowed-by-csp-style-src-star.html
+               http/tests/security/contentSecurityPolicy/video-with-http-url-allowed-by-csp-media-src-star.html
+               http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html
+               media/video-with-blob-url-allowed-by-csp-media-src-star.html
+               media/video-with-data-url-allowed-by-csp-media-src-star.html
+               media/video-with-file-url-blocked-by-csp-media-src-star.html
+
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::isProtocolAllowedByStar): Added.
+        (WebCore::ContentSecurityPolicySourceList::matches): Modified to only match * if ContentSecurityPolicySourceList::isProtocolAllowedByStar().
+        evaluates to true.
+        * page/csp/ContentSecurityPolicySourceList.h:
+
 2016-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         Reduce startup and shutdown cost of resource load statistics
