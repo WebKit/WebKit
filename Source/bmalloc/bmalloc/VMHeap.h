@@ -62,7 +62,7 @@ private:
     LargeObject allocateLargeChunk(std::lock_guard<StaticMutex>&);
     void allocateSuperChunk(std::lock_guard<StaticMutex>&);
 
-    List<SmallPage> m_smallPages;
+    Vector<SmallPage*> m_smallPages;
     SegregatedFreeList m_largeObjects;
 
     Vector<SuperChunk*> m_smallChunks;
@@ -75,7 +75,7 @@ private:
 
 inline SmallPage* VMHeap::allocateSmallPage(std::lock_guard<StaticMutex>& lock)
 {
-    if (m_smallPages.isEmpty())
+    if (!m_smallPages.size())
         allocateSmallChunk(lock);
 
     SmallPage* page = m_smallPages.pop();

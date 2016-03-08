@@ -1,3 +1,17 @@
+2016-03-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r197722.
+        https://bugs.webkit.org/show_bug.cgi?id=155171
+
+        This change caused 800+ JSC test failures (Requested by
+        ryanhaddad on #webkit).
+
+        Reverted changeset:
+
+        "bmalloc: Use List<T> instead of Vector<T> in some places"
+        https://bugs.webkit.org/show_bug.cgi?id=155150
+        http://trac.webkit.org/changeset/197722
+
 2016-03-07  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Use List<T> instead of Vector<T> in some places

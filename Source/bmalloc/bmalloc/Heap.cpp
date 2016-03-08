@@ -93,7 +93,7 @@ void Heap::scavenge(std::unique_lock<StaticMutex>& lock, std::chrono::millisecon
 
 void Heap::scavengeSmallPages(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration)
 {
-    while (!m_smallPages.isEmpty()) {
+    while (m_smallPages.size()) {
         m_vmHeap.deallocateSmallPage(lock, m_smallPages.pop());
         waitUntilFalse(lock, sleepDuration, m_isAllocatingPages);
     }
@@ -177,11 +177,16 @@ void Heap::allocateSmallBumpRanges(std::lock_guard<StaticMutex>& lock, size_t si
 
 SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t sizeClass)
 {
-    if (!m_smallPagesWithFreeLines[sizeClass].isEmpty())
-        return m_smallPagesWithFreeLines[sizeClass].pop();
+    Vector<SmallPage*>& smallPagesWithFreeLines = m_smallPagesWithFreeLines[sizeClass];
+    while (smallPagesWithFreeLines.size()) {
+        SmallPage* page = smallPagesWithFreeLines.pop();
+        if (!page->refCount(lock) || page->sizeClass() != sizeClass) // Page was promoted to the pages list.
+            continue;
+        return page;
+    }
 
     SmallPage* page = [this, &lock]() {
-        if (!m_smallPages.isEmpty())
+        if (m_smallPages.size())
             return m_smallPages.pop();
 
         m_isAllocatingPages = true;
@@ -210,7 +215,6 @@ void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, SmallLine* li
     if (page->refCount(lock))
         return;
 
-    m_smallPagesWithFreeLines[page->sizeClass()].remove(page);
     m_smallPages.push(page);
     m_scavenger.run();
 }
