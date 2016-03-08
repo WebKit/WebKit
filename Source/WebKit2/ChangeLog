@@ -1,3 +1,10 @@
+2016-03-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative buildfix after r197728.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+
 2016-03-08  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Make WebAutomationSession::closeBrowsingContext work as expected
