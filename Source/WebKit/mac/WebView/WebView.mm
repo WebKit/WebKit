@@ -759,15 +759,7 @@ static void WebKitInitializeApplicationStatisticsStoragePathIfNecessary()
     if (initialized)
         return;
     
-    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
-    if (!appName)
-        appName = [[NSProcessInfo processInfo] processName];
-    
-    ASSERT(appName);
-    
-    NSString *supportDirectory = [NSString _webkit_localStorageDirectoryWithBundleIdentifier:appName];
-
-    resourceLoadStatisticsStore = &WebCore::ResourceLoadStatisticsStore::create(supportDirectory).leakRef();
+    resourceLoadStatisticsStore = &WebCore::ResourceLoadStatisticsStore::create().leakRef();
     ResourceLoadObserver::sharedObserver().setStatisticsStore(*resourceLoadStatisticsStore);
     
     initialized = YES;
@@ -2480,8 +2472,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
 
     settings.setResourceLoadStatisticsEnabled([preferences resourceLoadStatisticsEnabled]);
-    if (resourceLoadStatisticsStore)
-        resourceLoadStatisticsStore->readDataFromDiskIfNeeded();
 
 #if ENABLE(GAMEPAD)
     RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled([preferences gamepadsEnabled]);
@@ -4850,9 +4840,6 @@ static Vector<String> toStringVector(NSArray* patterns)
 + (void)_applicationWillTerminate
 {   
     applicationIsTerminating = YES;
-
-    if (resourceLoadStatisticsStore)
-        resourceLoadStatisticsStore->writeDataToDisk();
 
     if (fastDocumentTeardownEnabled())
         [self closeAllWebViews];

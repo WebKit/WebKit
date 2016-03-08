@@ -41,19 +41,9 @@
 
 namespace WebCore {
 
-Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create(const String& resourceLoadStatisticsDirectory)
-{
-    return adoptRef(*new ResourceLoadStatisticsStore(resourceLoadStatisticsDirectory));
-}
-
 Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
 {
     return adoptRef(*new ResourceLoadStatisticsStore());
-}
-    
-ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory)
-    : m_storagePath(resourceLoadStatisticsDirectory)
-{
 }
     
 bool ResourceLoadStatisticsStore::isPrevalentResource(const String& primaryDomain) const
@@ -76,43 +66,24 @@ ResourceLoadStatistics& ResourceLoadStatisticsStore::resourceStatisticsForPrimar
 
 typedef HashMap<String, ResourceLoadStatistics>::KeyValuePairType StatisticsValue;
 
-void ResourceLoadStatisticsStore::writeDataToDisk()
+std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData()
 {
     auto encoder = KeyedEncoder::encoder();
     
     encoder->encodeObjects("browsingStatistics", m_resourceStatisticsMap.begin(), m_resourceStatisticsMap.end(), [this](KeyedEncoder& encoderInner, const StatisticsValue& origin) {
         origin.value.encode(encoderInner);
     });
-    
-    writeEncoderToDisk(*encoder.get(), "full_browsing_session");
+
+    return encoder;
 }
 
-void ResourceLoadStatisticsStore::setStatisticsStorageDirectory(const String& path)
-{
-    m_storagePath = path;
-    readDataFromDiskIfNeeded();
-}
-
-String ResourceLoadStatisticsStore::persistentStoragePath(const String& label) const
-{
-    if (m_storagePath.isEmpty())
-        return emptyString();
-
-    // TODO Decide what to call this file
-    return pathByAppendingComponent(m_storagePath, label + "_resourceLog.plist");
-}
-
-void ResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
+void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
 {
     if (m_resourceStatisticsMap.size())
         return;
 
-    auto decoder = createDecoderFromDisk("full_browsing_session");
-    if (!decoder)
-        return;
-
     Vector<ResourceLoadStatistics> loadedStatistics;
-    bool succeeded = decoder->decodeObjects("browsingStatistics", loadedStatistics, [this](KeyedDecoder& decoderInner, ResourceLoadStatistics& statistics) {
+    bool succeeded = decoder.decodeObjects("browsingStatistics", loadedStatistics, [this](KeyedDecoder& decoderInner, ResourceLoadStatistics& statistics) {
         return statistics.decode(decoderInner);
     });
 
@@ -121,48 +92,6 @@ void ResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
 
     for (auto& statistics : loadedStatistics)
         m_resourceStatisticsMap.set(statistics.highLevelDomain, statistics);
-}
-
-std::unique_ptr<KeyedDecoder> ResourceLoadStatisticsStore::createDecoderFromDisk(const String& label) const
-{
-    String resourceLog = persistentStoragePath(label);
-    if (resourceLog.isEmpty())
-        return nullptr;
-    
-    RefPtr<SharedBuffer> rawData = SharedBuffer::createWithContentsOfFile(resourceLog);
-    if (!rawData)
-        return nullptr;
-    
-    return KeyedDecoder::decoder(reinterpret_cast<const uint8_t*>(rawData->data()), rawData->size());
-}
-    
-void ResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, const String& label) const
-{
-#if LOG_STATISTICS_TO_FILE
-    RefPtr<SharedBuffer> rawData = encoder.finishEncoding();
-    if (!rawData)
-        return;
-    
-    String resourceLog = persistentStoragePath(label);
-    if (resourceLog.isEmpty())
-        return;
-
-    if (!m_storagePath.isEmpty())
-        makeAllDirectories(m_storagePath);
-
-    auto handle = openFile(resourceLog, OpenForWrite);
-    if (!handle)
-        return;
-    
-    int64_t writtenBytes = writeToFile(handle, rawData->data(), rawData->size());
-    closeFile(handle);
-    
-    if (writtenBytes != static_cast<int64_t>(rawData->size()))
-        WTFLogAlways("ResourceLoadStatistics: We only wrote %lld out of %d bytes to disk", writtenBytes, rawData->size());
-#else
-    UNUSED_PARAM(encoder);
-    UNUSED_PARAM(label);
-#endif
 }
 
 String ResourceLoadStatisticsStore::statisticsForOrigin(const String& origin)

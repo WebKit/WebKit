@@ -29,7 +29,9 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
+#include <WebCore/KeyedCoding.h>
 #include <WebCore/ResourceLoadStatisticsStore.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 using namespace WebCore;
 
@@ -41,7 +43,9 @@ Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(const
 }
 
 WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory)
-    : m_resourceStatisticsStore(WebCore::ResourceLoadStatisticsStore::create(resourceLoadStatisticsDirectory))
+    : m_resourceStatisticsStore(WebCore::ResourceLoadStatisticsStore::create())
+    , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue"))
+    , m_storagePath(resourceLoadStatisticsDirectory)
 {
 }
 
@@ -52,6 +56,11 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(const Vector<WebCore::ResourceLoadStatistics>& origins)
 {
     coreStore().mergeStatistics(origins);
+    // TODO: Analyze statistics to recognize prevalent domains. <rdar://problem/24913272>
+    // TODO: Notify individual WebProcesses of prevalent domains. <rdar://problem/24703099>
+    auto encoder = coreStore().createEncoderFromData();
+    
+    writeEncoderToDisk(*encoder.get(), "full_browsing_session");
 }
 
 void WebResourceLoadStatisticsStore::setResourceLoadStatisticsEnabled(bool enabled)
@@ -74,24 +83,82 @@ void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
     if (!m_resourceLoadStatisticsEnabled)
         return;
 
-    coreStore().readDataFromDiskIfNeeded();
+    RefPtr<WebResourceLoadStatisticsStore> self(this);
+    m_statisticsQueue->dispatch([self] {
+        self->coreStore().clear();
+
+        auto decoder = self->createDecoderFromDisk("full_browsing_session");
+        if (!decoder)
+            return;
+
+        self->coreStore().readDataFromDecoder(*decoder);
+    });
 }
 
-void WebResourceLoadStatisticsStore::writeToDisk()
+void WebResourceLoadStatisticsStore::processWillOpenConnection(WebProcessProxy&, IPC::Connection& connection)
 {
-    if (!m_resourceLoadStatisticsEnabled)
-        return;
-    
-    coreStore().writeDataToDisk();
+    connection.addWorkQueueMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName(), &m_statisticsQueue.get(), this);
+}
+
+void WebResourceLoadStatisticsStore::processDidCloseConnection(WebProcessProxy&, IPC::Connection& connection)
+{
+    connection.removeWorkQueueMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName());
 }
 
 void WebResourceLoadStatisticsStore::applicationWillTerminate()
 {
-    if (!m_resourceLoadStatisticsEnabled)
-        return;
+    BinarySemaphore semaphore;
+    m_statisticsQueue->dispatch([this, &semaphore] {
+        // Make sure any ongoing work in our queue is finished before we terminate.
+        semaphore.signal();
+    });
+    semaphore.wait(std::numeric_limits<double>::max());
+}
 
-    // FIXME(154642): TEMPORARY CODE: This should not be done in one long operation when exiting.
-    writeToDisk();
+String WebResourceLoadStatisticsStore::persistentStoragePath(const String& label) const
+{
+    if (m_storagePath.isEmpty())
+        return emptyString();
+    
+    // TODO Decide what to call this file
+    return pathByAppendingComponent(m_storagePath, label + "_resourceLog.plist");
+}
+
+void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, const String& label) const
+{
+    RefPtr<SharedBuffer> rawData = encoder.finishEncoding();
+    if (!rawData)
+        return;
+    
+    String resourceLog = persistentStoragePath(label);
+    if (resourceLog.isEmpty())
+        return;
+    
+    if (!m_storagePath.isEmpty())
+        makeAllDirectories(m_storagePath);
+    
+    auto handle = openFile(resourceLog, OpenForWrite);
+    if (!handle)
+        return;
+    
+    int64_t writtenBytes = writeToFile(handle, rawData->data(), rawData->size());
+    closeFile(handle);
+    
+    if (writtenBytes != static_cast<int64_t>(rawData->size()))
+        WTFLogAlways("WebResourceLoadStatisticsStore: We only wrote %d out of %d bytes to disk", static_cast<unsigned>(writtenBytes), rawData->size());
+}
+
+std::unique_ptr<KeyedDecoder> WebResourceLoadStatisticsStore::createDecoderFromDisk(const String& label) const
+{
+    String resourceLog = persistentStoragePath(label);
+    if (resourceLog.isEmpty())
+        return nullptr;
+    
+    RefPtr<SharedBuffer> rawData = SharedBuffer::createWithContentsOfFile(resourceLog);
+    if (!rawData)
+        return nullptr;
+    
+    return KeyedDecoder::decoder(reinterpret_cast<const uint8_t*>(rawData->data()), rawData->size());
 }
 
 } // namespace WebKit

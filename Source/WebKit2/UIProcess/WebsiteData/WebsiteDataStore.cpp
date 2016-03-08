@@ -981,7 +981,8 @@ void WebsiteDataStore::webProcessWillOpenConnection(WebProcessProxy& webProcessP
     if (m_storageManager)
         m_storageManager->processWillOpenConnection(webProcessProxy, connection);
 
-    connection.addWorkQueueMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName(), &m_queue.get(), m_resourceLoadStatistics.get());
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->processWillOpenConnection(webProcessProxy, connection);
 }
 
 void WebsiteDataStore::webPageWillOpenConnection(WebPageProxy& webPageProxy, IPC::Connection& connection)
@@ -998,7 +999,8 @@ void WebsiteDataStore::webPageDidCloseConnection(WebPageProxy& webPageProxy, IPC
 
 void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)
 {
-    connection.removeWorkQueueMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName());
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->processDidCloseConnection(webProcessProxy, connection);
 
     if (m_storageManager)
         m_storageManager->processDidCloseConnection(webProcessProxy, connection);

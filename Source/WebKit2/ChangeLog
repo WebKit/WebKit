@@ -1,3 +1,43 @@
+2016-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Reduce startup and shutdown cost of resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=155120
+        <rdar://problem/25010167>
+
+        Reviewed by Andy Estes.
+
+        Use a dedicated WorkQueue to process resource load statistics data. Allow
+        processing to load (and save) previously stored statistics asynchronously so
+        that it does not delay startup.
+        
+        Now that we have a more rational storage situation, get rid of the 'writeToDisk'
+        method since it is no longer needed in the WK2 layer.
+
+        Move all of the Resource Load Statistics file handling code from WebCore to this
+        API layer.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore): Initialize
+        member variable with storage path, rather than passing to WebCore code.
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated): Revised to
+        use the new WorkQueue code.
+        (WebKit::WebResourceLoadStatisticsStore::setResourceLoadStatisticsEnabled): When
+        activating the feature, purge any old statistics before loading from disk.
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded): Added.
+        (WebKit::WebResourceLoadStatisticsStore::processWillOpenConnection): Added.
+        (WebKit::WebResourceLoadStatisticsStore::processDidCloseConnection): Added.
+        (WebKit::WebResourceLoadStatisticsStore::applicationWillTerminate): Make sure all
+        of the WorkQueue tasks are done before terminating.
+        (WebKit::WebResourceLoadStatisticsStore::persistentStoragePath): Moved from WebCore.
+        (WebKit::WebResourceLoadStatisticsStore::writeEncoderToDisk): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::createDecoderFromDisk): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::writeToDisk): Deleted.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        (WebKit::WebResourceLoadStatisticsStore::coreStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::webProcessWillOpenConnection): Call new WebResourceLoadStatisticsStore code.
+        (WebKit::WebsiteDataStore::webProcessDidCloseConnection): Ditto.
+
 2016-03-07  Alex Christensen  <achristensen@webkit.org>
 
         Fix cookies with private browsing and NetworkSession

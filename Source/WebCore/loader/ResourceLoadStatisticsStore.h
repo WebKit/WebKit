@@ -38,17 +38,16 @@ struct ResourceLoadStatistics;
 
 class ResourceLoadStatisticsStore : public RefCounted<ResourceLoadStatisticsStore> {
 public:
-    WEBCORE_EXPORT static Ref<ResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory);
     WEBCORE_EXPORT static Ref<ResourceLoadStatisticsStore> create();
 
-    WEBCORE_EXPORT void writeDataToDisk();
-    WEBCORE_EXPORT void readDataFromDiskIfNeeded();
-    WEBCORE_EXPORT void setStatisticsStorageDirectory(const String&);
+    WEBCORE_EXPORT std::unique_ptr<KeyedEncoder> createEncoderFromData();
+    WEBCORE_EXPORT void readDataFromDecoder(KeyedDecoder&);
 
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 
     bool isEmpty() const { return m_resourceStatisticsMap.isEmpty(); }
     size_t size() const { return m_resourceStatisticsMap.size(); }
+    void clear() { m_resourceStatisticsMap.clear(); }
 
     ResourceLoadStatistics& resourceStatisticsForPrimaryDomain(const String&);
 
@@ -63,14 +62,8 @@ public:
 
 private:
     ResourceLoadStatisticsStore() = default;
-    ResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory);
-    String persistentStoragePath(const String& label) const;
-
-    std::unique_ptr<KeyedDecoder> createDecoderFromDisk(const String& label) const;
-    void writeEncoderToDisk(KeyedEncoder&, const String& label) const;
 
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
-    String m_storagePath;
     std::function<void()> m_dataAddedHandler;
 };
     

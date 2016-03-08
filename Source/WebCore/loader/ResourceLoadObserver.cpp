@@ -62,6 +62,9 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     if (!Settings::resourceLoadStatisticsEnabled())
         return;
 
+    if (!m_store)
+        return;
+
     ASSERT(frame.document());
     ASSERT(topFrame.document());
     ASSERT(topFrame.page());
@@ -148,6 +151,9 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     if (!Settings::resourceLoadStatisticsEnabled())
         return;
 
+    if (!m_store)
+        return;
+
     bool needPrivacy = (frame && frame->page()) ? frame->page()->usesEphemeralSession() : false;
     if (needPrivacy)
         return;
@@ -208,6 +214,9 @@ void ResourceLoadObserver::logUserInteraction(const Document& document)
     if (!Settings::resourceLoadStatisticsEnabled())
         return;
 
+    if (!m_store)
+        return;
+
     bool needPrivacy = document.page() ? document.page()->usesEphemeralSession() : false;
     if (needPrivacy)
         return;
@@ -261,7 +270,7 @@ String ResourceLoadObserver::primaryDomain(const URL& url)
 
 String ResourceLoadObserver::statisticsForOrigin(const String& origin)
 {
-    return m_store->statisticsForOrigin(origin);
+    return m_store ? m_store->statisticsForOrigin(origin) : emptyString();
 }
 
 }

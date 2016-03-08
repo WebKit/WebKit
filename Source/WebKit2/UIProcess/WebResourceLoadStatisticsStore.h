@@ -33,13 +33,20 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+class WorkQueue;
+}
+
 namespace WebCore {
+class KeyedDecoder;
+class KeyedEncoder;
 struct ResourceLoadStatistics;
 }
 
 namespace WebKit {
 
 class WebProcessPool;
+class WebProcessProxy;
 
 class WebResourceLoadStatisticsStore : public IPC::Connection::WorkQueueMessageReceiver {
 public:
@@ -51,22 +58,31 @@ public:
     
     void resourceLoadStatisticsUpdated(const Vector<WebCore::ResourceLoadStatistics>& origins);
 
+    void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);
+    void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
     void applicationWillTerminate();
 
-    void writeToDisk();
     void readDataFromDiskIfNeeded();
 
     void mergeStatistics(const Vector<WebCore::ResourceLoadStatistics>&);
 
     WebCore::ResourceLoadStatisticsStore& coreStore() { return m_resourceStatisticsStore.get(); }
-    
+    const WebCore::ResourceLoadStatisticsStore& coreStore() const { return m_resourceStatisticsStore.get(); }
+
 private:
     explicit WebResourceLoadStatisticsStore(const String&);
-    
+
+    String persistentStoragePath(const String& label) const;
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-    
+
+    void writeEncoderToDisk(WebCore::KeyedEncoder&, const String& label) const;
+    std::unique_ptr<WebCore::KeyedDecoder> createDecoderFromDisk(const String& label) const;
+
     Ref<WebCore::ResourceLoadStatisticsStore> m_resourceStatisticsStore;
+    Ref<WTF::WorkQueue> m_statisticsQueue;
+    String m_storagePath;
     bool m_resourceLoadStatisticsEnabled { false };
 };
 

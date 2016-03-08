@@ -1,3 +1,27 @@
+2016-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Reduce startup and shutdown cost of resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=155120
+        <rdar://problem/25010167>
+
+        Reviewed by Andy Estes.
+
+        Move all file-related code out of WebCore.
+
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::create): Deleted path overload.
+        (WebCore::ResourceLoadStatisticsStore::createEncoderFromData): Added.
+        (WebCore::ResourceLoadStatisticsStore::readDataFromDecoder): Added.
+        (WebCore::ResourceLoadStatisticsStore::ResourceLoadStatisticsStore): Deleted.
+        (WebCore::ResourceLoadStatisticsStore::writeDataToDisk): Deleted.
+        (WebCore::ResourceLoadStatisticsStore::setStatisticsStorageDirectory): Deleted.
+        (WebCore::ResourceLoadStatisticsStore::persistentStoragePath): Deleted.
+        (WebCore::ResourceLoadStatisticsStore::readDataFromDiskIfNeeded): Deleted.
+        (WebCore::ResourceLoadStatisticsStore::createDecoderFromDisk): Deleted.
+        (WebCore::ResourceLoadStatisticsStore::writeEncoderToDisk): Deleted.
+        * loader/ResourceLoadStatisticsStore.h:
+        (WebCore::ResourceLoadStatisticsStore::clear): Added.
+
 2016-03-07  Zalan Bujtas  <zalan@apple.com>
 
         Crash in WebCore::RenderElement::containingBlockForObjectInFlow
