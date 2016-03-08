@@ -27,18 +27,24 @@
 #define SmallPage_h
 
 #include "BAssert.h"
+#include "List.h"
 #include "Mutex.h"
 #include "VMAllocate.h"
 #include <mutex>
 
 namespace bmalloc {
 
-class SmallPage {
+class SmallPage : public ListNode<SmallPage> {
 public:
     static const unsigned char maxRefCount = std::numeric_limits<unsigned char>::max();
     static_assert(smallLineCount < maxRefCount, "maximum line count must fit in SmallPage");
     
     static SmallPage* get(SmallLine*);
+
+    SmallPage()
+        : m_hasFreeLines(true)
+    {
+    }
 
     void ref(std::lock_guard<StaticMutex>&);
     bool deref(std::lock_guard<StaticMutex>&);

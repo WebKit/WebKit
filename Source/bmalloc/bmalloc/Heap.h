@@ -29,6 +29,7 @@
 #include "BumpRange.h"
 #include "Environment.h"
 #include "LineMetadata.h"
+#include "List.h"
 #include "Mutex.h"
 #include "SegregatedFreeList.h"
 #include "SmallChunk.h"
@@ -93,9 +94,9 @@ private:
 
     std::array<std::array<LineMetadata, smallLineCount>, smallMax / alignment> m_smallLineMetadata;
 
-    std::array<Vector<SmallPage*>, smallMax / alignment> m_smallPagesWithFreeLines;
+    std::array<List<SmallPage>, smallMax / alignment> m_smallPagesWithFreeLines;
 
-    Vector<SmallPage*> m_smallPages;
+    List<SmallPage> m_smallPages;
 
     SegregatedFreeList m_largeObjects;
     

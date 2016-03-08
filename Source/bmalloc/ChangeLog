@@ -1,3 +1,43 @@
+2016-03-07  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Use List<T> instead of Vector<T> in some places
+        https://bugs.webkit.org/show_bug.cgi?id=155150
+
+        Reviewed by Andreas Kling.
+
+        Vector<T> is expensive when you want a lot of them because our minimum
+        allocation size is the system page size.
+
+        * bmalloc.xcodeproj/project.pbxproj: Added a List<T> class.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::scavengeSmallPages):
+        (bmalloc::Heap::allocateSmallPage): Use the List<T> API. No need to check
+        for stale entries anymore because List<T> supports O(1) eager removal
+        and we remove eagerly now.
+
+        (bmalloc::Heap::deallocateSmallLine): Remove eagerly. This simplifies
+        the allocation code and it is also required for correctness since we
+        only have enough metadata to be in one list at a time.
+
+        * bmalloc/Heap.h: List!
+
+        * bmalloc/SmallChunk.h: Made this assert a little more precise since this
+        patch triggered the old version in a benign way.
+
+        (bmalloc::SmallChunk::SmallChunk): This code moved to the SmallPage
+        constructor.
+
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::SmallPage): Accomodate the List<T> data structure.
+        This is a net memory savings on Mac for heaps smaller than ~128MB and on
+        iOS for heaps smaller than ~512MB. The maximum memory saved is 512kB on
+        Mac and 2MB on iOS. For larger heaps, there's a memory cost of 0.4% on
+        Mac and 0.1% on iOS.
+
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateSmallPage): Use List<T> API.
+
 2016-03-03  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling in r197174.

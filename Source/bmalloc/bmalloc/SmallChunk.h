@@ -54,8 +54,8 @@ private:
 static_assert(!(vmPageSize % smallLineSize), "vmPageSize must be an even multiple of line size");
 static_assert(!(smallChunkSize % smallLineSize), "chunk size must be an even multiple of line size");
 static_assert(
-    sizeof(SmallChunk) - vmPageSize % sizeof(SmallChunk) < vmPageSize - 2 * smallMax,
-        "the first page of object memory in a small chunk can't allocate smallMax");
+    sizeof(SmallChunk) % vmPageSize + smallMax <= vmPageSize,
+    "the first page of object memory in a small chunk must be able to allocate smallMax");
 
 inline SmallChunk::SmallChunk(std::lock_guard<StaticMutex>& lock)
 {
