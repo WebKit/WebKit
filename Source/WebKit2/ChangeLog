@@ -1,3 +1,14 @@
+2016-03-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Grant explicit read access to ManagedPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=155173
+        <rdar://problem/24910550>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb: Add new
+        read permission.
+
 2016-03-08  Anders Carlsson  <andersca@apple.com>
 
         Ignore deprecation warnings.
