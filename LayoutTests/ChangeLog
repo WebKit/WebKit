@@ -1,3 +1,19 @@
+2016-03-08  Andreas Kling  <akling@apple.com>
+
+        ImageDocuments leak their world.
+        <https://webkit.org/b/155167>
+        <rdar://problem/24987363>
+
+        Reviewed by Antti Koivisto.
+
+        Made a little test that loads an image into an <iframe> 10 times and then
+        triggers a garbage collection and checks that all the documents got destroyed.
+
+        Prior to this change, all 10 ImageDocuments would remain alive at the end.
+
+        * fast/dom/ImageDocument-world-leak-expected.txt: Added.
+        * fast/dom/ImageDocument-world-leak.html: Added.
+
 2016-03-08  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed EFL build fix after r197752.

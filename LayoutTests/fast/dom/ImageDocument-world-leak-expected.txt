@@ -1,0 +1,4 @@
+Test that ImageDocuments don't leak their world.
+
+Number of live documents: 2 (was 2)
+

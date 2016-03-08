@@ -1,3 +1,36 @@
+2016-03-08  Andreas Kling  <akling@apple.com>
+
+        ImageDocuments leak their world.
+        <https://webkit.org/b/155167>
+        <rdar://problem/24987363>
+
+        Reviewed by Antti Koivisto.
+
+        ImageDocument uses a special code path in ImageLoader in order to manually
+        control how the image is loaded. It has to do this because the ImageDocument
+        is really just a synthetic wrapper around a main resource that's an image.
+
+        This custom loading code had a bug where it would create a new CachedImage
+        and neglect to set its CachedResource::m_state flag to Pending (which is
+        normally set by CachedResource::load(), but we don't call that for these.)
+
+        This meant that when ImageDocument called CachedImage::finishLoading() to
+        trigger the notifyFinished() callback path, the image would look at its
+        loading state and see that it was Unknown (not Pending), and conclude that
+        it hadn't loaded yet. So we never got the notifyFinished() signal.
+
+        The world leaks here because ImageLoader slaps a ref on its <img> element
+        while it waits for the loading operation to complete. Once finished, whether
+        successfully or with an error, it derefs the <img>.
+
+        Since we never fired notifyFinished(), we ended up with an extra ref on
+        these <img> forever, and then the element kept its document alive too.
+
+        Test: fast/dom/ImageDocument-world-leak.html
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+
 2016-03-07  Antti Koivisto  <antti@apple.com>
 
         ElementRuleCollector should not mutate document and style
