@@ -133,7 +133,8 @@ void ResourceLoadStatisticsStore::setNotificationCallback(std::function<void()> 
 
 void ResourceLoadStatisticsStore::fireDataModificationHandler()
 {
-    m_dataAddedHandler();
+    if (m_dataAddedHandler)
+        m_dataAddedHandler();
 }
 
 }
