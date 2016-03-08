@@ -1,3 +1,68 @@
+2016-03-08  Antti Koivisto  <antti@apple.com>
+
+        Make Element const in ElementRuleCollector
+        https://bugs.webkit.org/show_bug.cgi?id=155170
+
+        Reviewed by Andreas Kling.
+
+        More const.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+        (WebCore::ElementRuleCollector::matchAllRules):
+        * css/ElementRuleCollector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::matchesFocusPseudoClass):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAddStyleRelationIfResolvingStyle):
+        (WebCore::SelectorCompiler::addStyleRelationFunction):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateContextFunctionCallTest):
+        (WebCore::SelectorCompiler::elementIsActive):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsFirstChild):
+        (WebCore::SelectorCompiler::elementIsHovered):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsOnlyChild):
+        (WebCore::SelectorCompiler::makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown):
+        (WebCore::SelectorCompiler::isPlaceholderShown):
+        * cssjit/SelectorCompiler.h:
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::additionalPresentationAttributeStyle):
+        (WebCore::StyledElement::inlineStyle):
+        (WebCore::StyledElement::collectStyleForPresentationAttribute):
+        (WebCore::StyledElement::invalidateStyleAttribute):
+        (WebCore::StyledElement::presentationAttributeStyle):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::parseAttribute):
+        (WebCore::HTMLTableCellElement::additionalPresentationAttributeStyle):
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseAttribute):
+        (WebCore::HTMLTableColElement::additionalPresentationAttributeStyle):
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::leakBorderStyle):
+        (WebCore::HTMLTableElement::additionalPresentationAttributeStyle):
+        * html/HTMLTableElement.h:
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::create):
+        (WebCore::HTMLTableSectionElement::additionalPresentationAttributeStyle):
+        * html/HTMLTableSectionElement.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::didUnregisterNamedFlowContentElement):
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::boundNodeId):
+        (WebCore::InspectorDOMAgent::backendNodeIdForNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::handleMousePressImpl):
+        (WebCore::InspectorInstrumentation::forcePseudoStateImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::handleMousePress):
+        (WebCore::InspectorInstrumentation::forcePseudoState):
+
 2016-03-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Commonalize handling of FetchBody by FetchRequest and FetchResponse

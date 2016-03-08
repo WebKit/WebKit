@@ -103,7 +103,7 @@ public:
     void didChangeRegionOverset(Document&, WebKitNamedFlow&);
     void didRegisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement, Node* nextContentElement = nullptr);
     void didUnregisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement);
-    bool forcePseudoState(Element&, CSSSelector::PseudoClassType);
+    bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
 
     void getComputedStyleForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>>&) override;
     void getInlineStylesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::CSS::CSSStyle>& inlineStyle, RefPtr<Inspector::Protocol::CSS::CSSStyle>& attributes) override;

@@ -443,7 +443,7 @@ static StyleProperties* leakBorderStyle(CSSValueID value)
     return style.release().leakRef();
 }
 
-const StyleProperties* HTMLTableElement::additionalPresentationAttributeStyle()
+const StyleProperties* HTMLTableElement::additionalPresentationAttributeStyle() const
 {
     if (m_frameAttr)
         return 0;

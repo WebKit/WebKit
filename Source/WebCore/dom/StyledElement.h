@@ -43,7 +43,7 @@ class StyledElement : public Element {
 public:
     virtual ~StyledElement();
 
-    virtual const StyleProperties* additionalPresentationAttributeStyle() { return 0; }
+    virtual const StyleProperties* additionalPresentationAttributeStyle() const { return nullptr; }
     void invalidateStyleAttribute();
 
     const StyleProperties* inlineStyle() const { return elementData() ? elementData()->m_inlineStyle.get() : nullptr; }
@@ -60,7 +60,7 @@ public:
     
     CSSStyleDeclaration* cssomStyle() final;
 
-    const StyleProperties* presentationAttributeStyle();
+    const StyleProperties* presentationAttributeStyle() const;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) { }
 
     static void clearPresentationAttributeCache();
@@ -100,12 +100,12 @@ inline void StyledElement::invalidateStyleAttribute()
     setNeedsStyleRecalc(InlineStyleChange);
 }
 
-inline const StyleProperties* StyledElement::presentationAttributeStyle()
+inline const StyleProperties* StyledElement::presentationAttributeStyle() const
 {
     if (!elementData())
         return nullptr;
     if (elementData()->presentationAttributeStyleIsDirty())
-        rebuildPresentationAttributeStyle();
+        const_cast<StyledElement&>(*this).rebuildPresentationAttributeStyle();
     return elementData()->presentationAttributeStyle();
 }
 

@@ -117,7 +117,7 @@ void HTMLTableCellElement::parseAttribute(const QualifiedName& name, const Atomi
         HTMLTablePartElement::parseAttribute(name, value);
 }
 
-const StyleProperties* HTMLTableCellElement::additionalPresentationAttributeStyle()
+const StyleProperties* HTMLTableCellElement::additionalPresentationAttributeStyle() const
 {
     if (HTMLTableElement* table = findParentTable())
         return table->additionalCellStyle();

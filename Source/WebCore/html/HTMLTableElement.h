@@ -78,7 +78,7 @@ private:
     bool isURLAttribute(const Attribute&) const override;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.
-    const StyleProperties* additionalPresentationAttributeStyle() override;
+    const StyleProperties* additionalPresentationAttributeStyle() const override;
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 

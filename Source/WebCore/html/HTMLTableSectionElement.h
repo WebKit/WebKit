@@ -58,7 +58,7 @@ public:
 private:
     HTMLTableSectionElement(const QualifiedName& tagName, Document&);
 
-    const StyleProperties* additionalPresentationAttributeStyle() override;
+    const StyleProperties* additionalPresentationAttributeStyle() const override;
 };
 
 } // namespace WebCore

@@ -78,7 +78,7 @@ public:
     const bool includeEmptyRules;
 };
 
-ElementRuleCollector::ElementRuleCollector(Element& element, const DocumentRuleSets& ruleSets, const SelectorFilter* selectorFilter)
+ElementRuleCollector::ElementRuleCollector(const Element& element, const DocumentRuleSets& ruleSets, const SelectorFilter* selectorFilter)
     : m_element(element)
     , m_authorStyle(*ruleSets.authorStyle())
     , m_userStyle(ruleSets.userStyle())
@@ -87,7 +87,7 @@ ElementRuleCollector::ElementRuleCollector(Element& element, const DocumentRuleS
     ASSERT(!m_selectorFilter || m_selectorFilter->parentStackIsConsistent(element.parentNode()));
 }
 
-ElementRuleCollector::ElementRuleCollector(Element& element, const RuleSet& authorStyle, const SelectorFilter* selectorFilter)
+ElementRuleCollector::ElementRuleCollector(const Element& element, const RuleSet& authorStyle, const SelectorFilter* selectorFilter)
     : m_element(element)
     , m_authorStyle(authorStyle)
     , m_selectorFilter(selectorFilter)
@@ -520,7 +520,7 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
 
     // Now check author rules, beginning first with presentational attributes mapped from HTML.
     if (is<StyledElement>(m_element)) {
-        StyledElement& styledElement = downcast<StyledElement>(m_element);
+        auto& styledElement = downcast<StyledElement>(m_element);
         addElementStyleProperties(styledElement.presentationAttributeStyle());
 
         // Now we check additional mapped declarations.
@@ -541,7 +541,7 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         matchAuthorRules(false);
 
     if (matchAuthorAndUserStyles && is<StyledElement>(m_element)) {
-        StyledElement& styledElement = downcast<StyledElement>(m_element);
+        auto& styledElement = downcast<StyledElement>(m_element);
         // Now check our inline style attribute.
         if (styledElement.inlineStyle()) {
             // Inline style is immutable as long as there is no CSSOM wrapper.

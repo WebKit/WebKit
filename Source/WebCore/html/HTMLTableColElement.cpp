@@ -81,7 +81,7 @@ void HTMLTableColElement::parseAttribute(const QualifiedName& name, const Atomic
         HTMLTablePartElement::parseAttribute(name, value);
 }
 
-const StyleProperties* HTMLTableColElement::additionalPresentationAttributeStyle()
+const StyleProperties* HTMLTableColElement::additionalPresentationAttributeStyle() const
 {
     if (!hasTagName(colgroupTag))
         return nullptr;

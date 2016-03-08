@@ -55,7 +55,7 @@ protected:
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     bool isPresentationAttribute(const QualifiedName&) const override;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
-    const StyleProperties* additionalPresentationAttributeStyle() override;
+    const StyleProperties* additionalPresentationAttributeStyle() const override;
 
     bool isURLAttribute(const Attribute&) const override;
 

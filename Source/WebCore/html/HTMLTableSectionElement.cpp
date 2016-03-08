@@ -49,7 +49,7 @@ Ref<HTMLTableSectionElement> HTMLTableSectionElement::create(const QualifiedName
     return adoptRef(*new HTMLTableSectionElement(tagName, document));
 }
 
-const StyleProperties* HTMLTableSectionElement::additionalPresentationAttributeStyle()
+const StyleProperties* HTMLTableSectionElement::additionalPresentationAttributeStyle() const
 {
     if (HTMLTableElement* table = findParentTable())
         return table->additionalGroupStyle(true);

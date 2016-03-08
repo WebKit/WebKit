@@ -45,8 +45,8 @@ struct MatchedRule {
 
 class ElementRuleCollector {
 public:
-    ElementRuleCollector(Element&, const DocumentRuleSets&, const SelectorFilter*);
-    ElementRuleCollector(Element&, const RuleSet& authorStyle, const SelectorFilter*);
+    ElementRuleCollector(const Element&, const DocumentRuleSets&, const SelectorFilter*);
+    ElementRuleCollector(const Element&, const RuleSet& authorStyle, const SelectorFilter*);
 
     void matchAllRules(bool matchAuthorAndUserStyles, bool includeSMILProperties);
     void matchUARules();
@@ -91,7 +91,7 @@ private:
 
     void addMatchedRule(const MatchedRule&);
 
-    Element& m_element;
+    const Element& m_element;
     const RuleSet& m_authorStyle;
     const RuleSet* m_userStyle { nullptr };
     const SelectorFilter* m_selectorFilter { nullptr };

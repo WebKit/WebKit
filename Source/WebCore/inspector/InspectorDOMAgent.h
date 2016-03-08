@@ -179,7 +179,7 @@ public:
 
     int pushNodeToFrontend(ErrorString&, int documentNodeId, Node*);
     Node* nodeForId(int nodeId);
-    int boundNodeId(Node*);
+    int boundNodeId(const Node*);
     void setDOMListener(DOMListener*);
     BackendNodeId backendNodeIdForNode(Node*, const String& nodeGroup);
 

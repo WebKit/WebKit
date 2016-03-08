@@ -2184,7 +2184,7 @@ void SelectorCodeGenerator::generateAddStyleRelationIfResolvingStyle(Assembler::
     notResolvingStyle.link(&m_assembler);
 }
 
-static void addStyleRelationFunction(SelectorChecker::CheckingContext* checkingContext, Element* element)
+static void addStyleRelationFunction(SelectorChecker::CheckingContext* checkingContext, const Element* element)
 {
     checkingContext->styleRelations.append({ *element, Style::Relation::AffectedByActive, 1 });
 }
@@ -3048,7 +3048,7 @@ void SelectorCodeGenerator::generateContextFunctionCallTest(Assembler::JumpList&
     failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 }
 
-static bool elementIsActive(Element* element)
+static bool elementIsActive(const Element* element)
 {
     return element->active() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassActive);
 }
@@ -3154,7 +3154,7 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isFirstChildRegister));
 }
 
-static bool elementIsHovered(Element* element)
+static bool elementIsHovered(const Element* element)
 {
     return element->hovered() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassHover);
 }
@@ -3300,7 +3300,7 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isOnlyChildRegister));
 }
 
-static bool makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown(Element* element, SelectorChecker::CheckingContext* checkingContext)
+static bool makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown(const Element* element, SelectorChecker::CheckingContext* checkingContext)
 {
     if (is<HTMLTextFormControlElement>(*element)) {
         if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle)
@@ -3310,7 +3310,7 @@ static bool makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown(Element* 
     return false;
 }
 
-static bool isPlaceholderShown(Element* element)
+static bool isPlaceholderShown(const Element* element)
 {
     return is<HTMLTextFormControlElement>(*element) && downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
 }

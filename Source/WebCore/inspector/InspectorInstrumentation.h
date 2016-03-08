@@ -137,7 +137,7 @@ public:
     static void mouseDidMoveOverElement(Page&, const HitTestResult&, unsigned modifierFlags);
     static bool handleMousePress(Frame&);
     static bool handleTouchEvent(Frame&, Node&);
-    static bool forcePseudoState(Element&, CSSSelector::PseudoClassType);
+    static bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
 
     static void willSendXMLHttpRequest(ScriptExecutionContext*, const String& url);
     static void didInstallTimer(ScriptExecutionContext*, int timerId, std::chrono::milliseconds timeout, bool singleShot);
@@ -306,7 +306,7 @@ private:
     static void mouseDidMoveOverElementImpl(InstrumentingAgents&, const HitTestResult&, unsigned modifierFlags);
     static bool handleTouchEventImpl(InstrumentingAgents&, Node&);
     static bool handleMousePressImpl(InstrumentingAgents&);
-    static bool forcePseudoStateImpl(InstrumentingAgents&, Element&, CSSSelector::PseudoClassType);
+    static bool forcePseudoStateImpl(InstrumentingAgents&, const Element&, CSSSelector::PseudoClassType);
 
     static void willSendXMLHttpRequestImpl(InstrumentingAgents&, const String& url);
     static void didInstallTimerImpl(InstrumentingAgents&, int timerId, std::chrono::milliseconds timeout, bool singleShot, ScriptExecutionContext*);
@@ -626,7 +626,7 @@ inline bool InspectorInstrumentation::handleMousePress(Frame& frame)
     return false;
 }
 
-inline bool InspectorInstrumentation::forcePseudoState(Element& element, CSSSelector::PseudoClassType pseudoState)
+inline bool InspectorInstrumentation::forcePseudoState(const Element& element, CSSSelector::PseudoClassType pseudoState)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(element.document()))
