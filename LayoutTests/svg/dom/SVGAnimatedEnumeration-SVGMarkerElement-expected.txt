@@ -37,6 +37,13 @@ PASS markerElement.orientAngle.baseVal.value is 0
 PASS markerElement.orientAngle.baseVal.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_AUTO
 
+Switch to 'auto-start-reverse' value - by modifying the orient attribute.
+PASS markerElement.setAttribute('orient', 'auto-start-reverse') did not throw exception.
+PASS markerElement.orientAngle.baseVal.value is 0
+PASS markerElement.orientAngle.baseVal.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN
+PASS markerElement.getAttribute('orient') is "auto-start-reverse"
+
 Switch to 'Pi/2 rad' value - via setOrientToAngle()
 PASS anglePiHalfRad = svgElement.createSVGAngle(); anglePiHalfRad.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD, (Math.PI / 2).toFixed(2)) is undefined.
 PASS markerElement.setOrientToAngle(anglePiHalfRad) is undefined.
@@ -91,6 +98,14 @@ PASS markerElement.getAttribute('orient') is "10deg"
 PASS markerElement.orientType.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
 PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE
 PASS markerElement.getAttribute('orient') is "10deg"
+
+Test case sensitivity of attributes - try setting invalid values
+PASS markerElement.setAttribute('orient', 'AUTO-START-REVERSE') did not throw exception.
+FAIL markerElement.getAttribute('orient') should be AUTO-START-REVERSE. Was 10deg.
+PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE
+PASS markerElement.setAttribute('orient', 'AUTO') did not throw exception.
+FAIL markerElement.getAttribute('orient') should be AUTO. Was 10deg.
+PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE
 
 Switch back to 'auto' value
 PASS markerElement.orientType.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_AUTO is SVGMarkerElement.SVG_MARKER_ORIENT_AUTO

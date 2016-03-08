@@ -482,7 +482,7 @@ void RenderSVGShape::processMarkerPositions()
 
     ASSERT(m_path);
 
-    SVGMarkerData markerData(m_markerPositions);
+    SVGMarkerData markerData(m_markerPositions, SVGResourcesCache::cachedResourcesForRenderer(*this)->markerReverseStart());
     m_path->apply([&markerData](const PathElement& pathElement) {
         SVGMarkerData::updateFromPathElement(markerData, pathElement);
     });

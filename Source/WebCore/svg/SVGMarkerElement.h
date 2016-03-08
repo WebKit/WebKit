@@ -43,6 +43,7 @@ enum SVGMarkerOrientType {
     SVGMarkerOrientUnknown = 0,
     SVGMarkerOrientAuto,
     SVGMarkerOrientAngle,
+    SVGMarkerOrientAutoStartReverse,
 
     // Add new elements before here.
     SVGMarkerOrientMax
@@ -78,8 +79,11 @@ struct SVGPropertyTraits<SVGMarkerUnitsType> {
 };
 
 template<>
+inline unsigned SVGIDLEnumLimits<SVGMarkerOrientType>::highestExposedEnumValue() { return SVGMarkerOrientAngle; }
+
+template<>
 struct SVGPropertyTraits<SVGMarkerOrientType> {
-    static unsigned highestEnumValue() { return SVGMarkerOrientAngle; }
+    static unsigned highestEnumValue() { return SVGMarkerOrientAutoStartReverse; }
 
     // toString is not needed, synchronizeOrientType() handles this on its own.
 
@@ -87,6 +91,8 @@ struct SVGPropertyTraits<SVGMarkerOrientType> {
     {
         if (value == "auto")
             return SVGMarkerOrientAuto;
+        if (value == "auto-start-reverse")
+            return SVGMarkerOrientAutoStartReverse;
 
         ExceptionCode ec = 0;
         angle.setValueAsString(value, ec);
@@ -110,7 +116,8 @@ public:
     enum {
         SVG_MARKER_ORIENT_UNKNOWN = SVGMarkerOrientUnknown,
         SVG_MARKER_ORIENT_AUTO = SVGMarkerOrientAuto,
-        SVG_MARKER_ORIENT_ANGLE = SVGMarkerOrientAngle
+        SVG_MARKER_ORIENT_ANGLE = SVGMarkerOrientAngle,
+        SVG_MARKER_ORIENT_AUTOSTARTREVERSE = SVGMarkerOrientAutoStartReverse
     };
 
     static Ref<SVGMarkerElement> create(const QualifiedName&, Document&);
@@ -136,6 +143,8 @@ private:
     bool rendererIsNeeded(const RenderStyle&) override { return true; }
 
     bool selfHasRelativeLengths() const override;
+
+    void setOrient(SVGMarkerOrientType, const SVGAngle&);
 
     void synchronizeOrientType();
 

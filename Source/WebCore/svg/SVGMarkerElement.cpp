@@ -189,21 +189,9 @@ void SVGMarkerElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout();
 }
 
-void SVGMarkerElement::setOrientToAuto()
+void SVGMarkerElement::setOrient(SVGMarkerOrientType orientType, const SVGAngle& angle)
 {
-    setOrientTypeBaseValue(SVGMarkerOrientAuto);
-    setOrientAngleBaseValue(SVGAngle());
- 
-    // Mark orientAttr dirty - the next XML DOM access of that attribute kicks in synchronization.
-    m_orientAngle.shouldSynchronize = true;
-    m_orientType.shouldSynchronize = true;
-    invalidateSVGAttributes();
-    svgAttributeChanged(orientAnglePropertyInfo()->attributeName);
-}
-
-void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
-{
-    setOrientTypeBaseValue(SVGMarkerOrientAngle);
+    setOrientTypeBaseValue(orientType);
     setOrientAngleBaseValue(angle);
 
     // Mark orientAttr dirty - the next XML DOM access of that attribute kicks in synchronization.
@@ -211,6 +199,16 @@ void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
     m_orientType.shouldSynchronize = true;
     invalidateSVGAttributes();
     svgAttributeChanged(orientAnglePropertyInfo()->attributeName);
+}
+
+void SVGMarkerElement::setOrientToAuto()
+{
+    setOrient(SVGMarkerOrientAuto, { });
+}
+
+void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
+{
+    setOrient(SVGMarkerOrientAngle, angle);
 }
 
 RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
@@ -233,12 +231,17 @@ void SVGMarkerElement::synchronizeOrientType(SVGElement* contextElement)
     if (!ownerType.m_orientType.shouldSynchronize)
         return;
 
-    // If orient is not auto, the previous call to synchronizeOrientAngle already set the orientAttr to the right angle.
-    if (ownerType.m_orientType.value != SVGMarkerOrientAuto)
-        return;
-
     static NeverDestroyed<AtomicString> autoString("auto", AtomicString::ConstructFromLiteral);
-    ownerType.m_orientType.synchronize(&ownerType, orientTypePropertyInfo()->attributeName, autoString);
+    static NeverDestroyed<AtomicString> autoStartReverseString("auto-start-reverse", AtomicString::ConstructFromLiteral);
+
+    // If orient is not auto or auto-start-reverse, the previous call to synchronizeOrientAngle already set the orientAttr to the right angle.
+    if (ownerType.m_orientType.value == SVGMarkerOrientAuto) {
+        ownerType.m_orientType.synchronize(&ownerType, orientTypePropertyInfo()->attributeName, autoString);
+        return;
+    }
+
+    if (ownerType.m_orientType.value == SVGMarkerOrientAutoStartReverse)
+        ownerType.m_orientType.synchronize(&ownerType, orientTypePropertyInfo()->attributeName, autoStartReverseString);
 }
 
 Ref<SVGAnimatedProperty> SVGMarkerElement::lookupOrCreateOrientTypeWrapper(SVGElement* contextElement)

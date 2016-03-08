@@ -20,6 +20,8 @@
 #ifndef SVGResources_h
 #define SVGResources_h
 
+#include "RenderSVGResourceMarker.h"
+
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -52,6 +54,7 @@ public:
     RenderSVGResourceMarker* markerStart() const { return m_markerData ? m_markerData->markerStart : nullptr; }
     RenderSVGResourceMarker* markerMid() const { return m_markerData ? m_markerData->markerMid : nullptr; }
     RenderSVGResourceMarker* markerEnd() const { return m_markerData ? m_markerData->markerEnd : nullptr; }
+    bool markerReverseStart() const;
     RenderSVGResourceMasker* masker() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->masker : nullptr; }
     RenderSVGResourceFilter* filter() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->filter : nullptr; }
 

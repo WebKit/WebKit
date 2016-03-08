@@ -1,3 +1,29 @@
+2016-03-08  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [SVG2] Implement marker orient='auto-start-reverse'
+        https://bugs.webkit.org/show_bug.cgi?id=138456
+
+        Reviewed by Darin Adler.
+
+        * svg/animations/animate-marker-orient-from-angle-to-autostartreverse-expected.txt: Added.
+        * svg/animations/animate-marker-orient-from-angle-to-autostartreverse.html: Added.
+        * svg/animations/animate-marker-orienttype-4-expected.html: Added.
+        * svg/animations/animate-marker-orienttype-4.html: Added.
+          Verify output after animation has run - ensure animation reflected in visual result.
+        * svg/animations/script-tests/animate-marker-orient-from-angle-to-autostartreverse.js: Added.
+          Test DOM values at various snap-shot times throughout the animation.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/custom/marker-auto-start-reverse-expected.html: Added.
+        * svg/custom/marker-auto-start-reverse.html: Added.
+          Verify static result - start marker is oriented at 180 degrees to direction of path.
+        * svg/dom/SVGAnimatedEnumeration-SVGMarkerElement-expected.txt:
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGMarkerElement.js:
+          Check attributes are treated as case sensitive.
+          Check UNKNOWN is returned for enum value when auto-start-reverse set.
+
 2016-03-07  Chris Dumez  <cdumez@apple.com>
 
         Stop clamping HTMLElement.tabIndex to the range of a short

@@ -1,0 +1,48 @@
+<!doctype html>
+<!--
+  Test that the renderer uses the animated value of orientType.
+  To test this, the final animated value must be of a different type than the initial value.
+ -->
+<script>
+function doTest() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    var svg = document.querySelector("#svg");
+    svg.setCurrentTime(5);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="500" height="500" onload="doTest()">
+    <defs>
+        <marker id="arrow1" orient="auto-start-reverse" markerWidth="10" markerHeight="10" style="overflow:visible">
+            <path d="M50,0 L 0,-50 L0,50 z" fill="skyblue"/>
+            <animate attributeName="orient" from="auto-start-reverse" to="auto" begin="0s" dur="1s" fill="freeze"/>
+        </marker>
+         <marker id="arrow2" orient="90" markerWidth="10" markerHeight="10" style="overflow:visible">
+            <path d="M50,0 L 0,-50 L0,50 z" fill="skyblue"/>
+            <animate attributeName="orient" from="auto" to="auto-start-reverse" begin="0s" dur="1s" fill="freeze"/>
+        </marker>
+         <marker id="arrow3" orient="auto" markerWidth="10" markerHeight="10" style="overflow:visible">
+            <path d="M50,0 L 0,-50 L0,50 z" fill="skyblue"/>
+            <animate attributeName="orient" from="auto-start-reverse" to="77" begin="0s" dur="1s" fill="freeze"/>
+        </marker>
+         <marker id="arrow4" orient="123" markerWidth="10" markerHeight="10" style="overflow:visible">
+            <path d="M50,0 L 0,-50 L0,50 z" fill="skyblue"/>
+            <animate attributeName="orient" from="123" to="auto-start-reverse" begin="0s" dur="1s" fill="freeze"/>
+        </marker>
+        <path d="M50,0 L 0,-50 L0,50 z" transform="scale(0.8) translate(5)" id="pointer" fill="red"/>
+    </defs>
+    <use xlink:href="#pointer" transform="translate(200,200) rotate(0)"/>
+    <use xlink:href="#pointer" transform="translate(800,200) rotate(0)"/>
+    <path d="M 200,200 h 600" marker-start="url(#arrow1)" marker-end="url(#arrow1)" stroke="black"/>
+    <use xlink:href="#pointer" transform="translate(200,400) rotate(180)"/>
+    <use xlink:href="#pointer" transform="translate(800,400) rotate(0)"/>
+    <path d="M 200,400 h 600" marker-start="url(#arrow2)" marker-end="url(#arrow2)" stroke="black"/>
+    <use xlink:href="#pointer" transform="translate(200,600) rotate(77)"/>
+    <use xlink:href="#pointer" transform="translate(800,600) rotate(77)"/>
+    <path d="M 200,600 h 600" marker-start="url(#arrow3)" marker-end="url(#arrow3)" stroke="black"/>
+    <use xlink:href="#pointer" transform="translate(200,800) rotate(180)"/>
+    <use xlink:href="#pointer" transform="translate(800,800) rotate(0)"/>
+    <path d="M 200,800 h 600" marker-start="url(#arrow4)" marker-end="url(#arrow4)" stroke="black"/>
+</svg>

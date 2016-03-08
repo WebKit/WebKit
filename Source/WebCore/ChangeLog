@@ -1,3 +1,57 @@
+2016-03-08  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [SVG2] Implement marker orient='auto-start-reverse'
+        https://bugs.webkit.org/show_bug.cgi?id=138456
+
+        Reviewed by Darin Adler.
+
+        https://www.w3.org/TR/SVG2/painting.html#OrientAttribute
+        marker-start markers must be oriented at 180 degrees to the direction of the path when
+        the orient attribute of the marker is set to 'auto-start-reverse'.
+
+        To acheive this the SVGMarkerData class which calculates the angles for each marker on
+        a path must know whether the orient type is set to reverse the start marker. 
+
+        Tests: svg/animations/animate-marker-orient-from-angle-to-autostartreverse.html
+               svg/animations/animate-marker-orienttype-4.html
+               svg/custom/marker-auto-start-reverse.html
+
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::processMarkerPositions):
+          Create marker data, using animated value of orient to determine
+          if first marker should be reversed.
+        * rendering/svg/SVGMarkerData.h:
+        (WebCore::SVGMarkerData::SVGMarkerData):
+          Constructor now requires boolean indicating if start marker is 
+          reversed.
+        (WebCore::SVGMarkerData::currentAngle):
+          Take into account whether start marker should be reversed.
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::SVGResources::markerReverseStart):
+          New function to query whether start marker should be reversed.
+        * rendering/svg/SVGResources.h:
+          Add declaration for new function.
+        * svg/SVGAnimatedAngle.cpp:
+        (WebCore::SVGAnimatedAngleAnimator::calculateAnimatedValue):
+          Support animation including the value auto-start-reverse.
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::setOrient):
+          Combine duplicated functionality into one private method
+        (WebCore::SVGMarkerElement::setOrientToAuto):
+          Set orient type and angle correctly for orient=auto. Uses setOrient.
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+          Set orient type and angle correctly for orient=<angle>. Uses setOrient.
+        (WebCore::SVGMarkerElement::synchronizeOrientType):
+          Support auto-start-reverse as a possible case.
+        * svg/SVGMarkerElement.h:
+        (WebCore::SVGIDLEnumLimits<SVGMarkerOrientType>::highestExposedEnumValue):
+          Limit the orient DOM property so that the new enum value
+          required for auto-start-reverse is not exposed.
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::highestEnumValue):
+          Support auto-start-reverse.
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::fromString):
+          Support auto-start-reverse.
+
 2016-03-07  Keith Rollin  <krollin@apple.com>
 
         Enhance logging: Use "always on" macros

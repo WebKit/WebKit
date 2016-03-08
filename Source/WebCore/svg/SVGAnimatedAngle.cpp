@@ -36,7 +36,7 @@ std::unique_ptr<SVGAnimatedType> SVGAnimatedAngleAnimator::constructFromString(c
     std::pair<SVGAngle, unsigned>& animatedPair = animatedType->angleAndEnumeration();
 
     SVGAngle angle;
-    SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(string,  angle);
+    SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(string, angle);
     if (orientType > 0)
         animatedPair.second = orientType;
     if (orientType == SVGMarkerOrientAngle)
@@ -113,28 +113,25 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned
         return;
     }
 
-    // From 'auto' to 'auto'.
-    if (fromAngleAndEnumeration.second == SVGMarkerOrientAuto) {
-        animatedAngleAndEnumeration.first.setValue(0);
-        animatedAngleAndEnumeration.second = SVGMarkerOrientAuto;
+    if (fromAngleAndEnumeration.second == SVGMarkerOrientAngle) {
+        // Regular from angle to angle animation, with support for smooth interpolation, and additive and accumulated animation.
+        animatedAngleAndEnumeration.second = SVGMarkerOrientAngle;
+
+        SVGAngle& animatedSVGAngle = animatedAngleAndEnumeration.first;
+        const SVGAngle& toAtEndOfDurationSVGAngle = toAtEndOfDurationAngleAndEnumeration.first;
+        float animatedAngle = animatedSVGAngle.value();
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromAngleAndEnumeration.first.value(), toAngleAndEnumeration.first.value(), toAtEndOfDurationSVGAngle.value(), animatedAngle);
+        animatedSVGAngle.setValue(animatedAngle);
         return;
     }
 
-    // If the enumeration value is not angle or auto, its unknown.
-    if (fromAngleAndEnumeration.second != SVGMarkerOrientAngle) {
-        animatedAngleAndEnumeration.first.setValue(0);
+    // auto, auto-start-reverse, or unknown.
+    animatedAngleAndEnumeration.first.setValue(0);
+
+    if (fromAngleAndEnumeration.second == SVGMarkerOrientAuto || fromAngleAndEnumeration.second == SVGMarkerOrientAutoStartReverse)
+        animatedAngleAndEnumeration.second = fromAngleAndEnumeration.second;
+    else
         animatedAngleAndEnumeration.second = SVGMarkerOrientUnknown;
-        return;
-    }
-
-    // Regular from angle to angle animation, with all features like additive etc.
-    animatedAngleAndEnumeration.second = SVGMarkerOrientAngle;
-
-    SVGAngle& animatedSVGAngle = animatedAngleAndEnumeration.first;
-    const SVGAngle& toAtEndOfDurationSVGAngle = toAtEndOfDurationAngleAndEnumeration.first;
-    float animatedAngle = animatedSVGAngle.value();
-    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromAngleAndEnumeration.first.value(), toAngleAndEnumeration.first.value(), toAtEndOfDurationSVGAngle.value(), animatedAngle);
-    animatedSVGAngle.setValue(animatedAngle);
 }
 
 float SVGAnimatedAngleAnimator::calculateDistance(const String& fromString, const String& toString)

@@ -49,6 +49,14 @@ shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_U
 shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
 
 debug("");
+debug("Switch to 'auto-start-reverse' value - by modifying the orient attribute.");
+shouldNotThrow("markerElement.setAttribute('orient', 'auto-start-reverse')");
+shouldBe("markerElement.orientAngle.baseVal.value", "0");
+shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN");
+shouldBeEqualToString("markerElement.getAttribute('orient')", "auto-start-reverse");
+
+debug("");
 debug("Switch to 'Pi/2 rad' value - via setOrientToAngle()");
 shouldBeUndefined("anglePiHalfRad = svgElement.createSVGAngle(); anglePiHalfRad.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD, (Math.PI / 2).toFixed(2))");
 shouldBeUndefined("markerElement.setOrientToAngle(anglePiHalfRad)");
@@ -111,6 +119,22 @@ shouldBeEqualToString("markerElement.getAttribute('orient')", "10deg");
 shouldThrow("markerElement.orientType.baseVal = 0");
 shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
 shouldBeEqualToString("markerElement.getAttribute('orient')", "10deg");
+
+debug("");
+debug("Test case sensitivity of attributes - try setting invalid values");
+shouldNotThrow("markerElement.setAttribute('orient', 'AUTO-START-REVERSE')");
+// The line below fails as a result of https://bugs.webkit.org/show_bug.cgi?id=154141
+// The attribute value is not updated to the invalid value.
+// The expected result recognises this and should be updated when the above bug
+// is resolved.
+// What's important here though is that the DOM values are unchanged, and this
+// is demonstrated correctly.
+shouldBeEqualToString("markerElement.getAttribute('orient')", "AUTO-START-REVERSE");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+
+shouldNotThrow("markerElement.setAttribute('orient', 'AUTO')");
+shouldBeEqualToString("markerElement.getAttribute('orient')", "AUTO");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE"); 
 
 debug("");
 debug("Switch back to 'auto' value");

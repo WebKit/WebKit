@@ -305,6 +305,13 @@ void SVGResources::layoutDifferentRootIfNeeded(const RenderSVGRoot* svgRoot)
         markerEnd()->layoutIfNeeded();
 }
 
+bool SVGResources::markerReverseStart() const
+{
+    return m_markerData
+        && m_markerData->markerStart
+        && m_markerData->markerStart->markerElement().orientType() == SVGMarkerOrientAutoStartReverse;
+}
+
 void SVGResources::removeClientFromCache(RenderElement& renderer, bool markForInvalidation) const
 {
     if (!m_clipperFilterMaskerData && !m_markerData && !m_fillStrokeData && !m_linkedResource)
