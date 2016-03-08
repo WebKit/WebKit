@@ -1,5 +1,13 @@
 2016-03-08  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more unreviewed speculative buildfix after r197728.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+
+2016-03-08  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed speculative buildfix after r197728.
 
         * WebProcess/Network/WebLoaderStrategy.cpp:
