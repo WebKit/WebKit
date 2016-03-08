@@ -196,7 +196,7 @@ void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
         return;
     }
 
-    ptrdiff_t memoryDiff = currentMemory - m_initialMemory;
+    long memoryDiff = currentMemory - m_initialMemory;
     if (memoryDiff < 0)
         MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": -dirty %ld bytes (from %lu to %lu)", m_logString, (memoryDiff * -1), m_initialMemory, currentMemory);
     else if (memoryDiff > 0)

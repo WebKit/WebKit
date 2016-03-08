@@ -1,3 +1,10 @@
+2016-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix the 32bit build after r197782.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::ReliefLogger::logMemoryUsageChange):
+
 2016-03-08  Antonio Gomes  <tonikitoo@webkit.org>
 
         Scrolling does not work when the mouse down is handled by a node
