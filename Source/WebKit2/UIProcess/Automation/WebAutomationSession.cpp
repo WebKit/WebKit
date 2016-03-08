@@ -31,6 +31,7 @@
 #include "WebProcessPool.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <WebCore/URL.h>
 #include <WebCore/UUID.h>
 #include <wtf/HashMap.h>
 
@@ -141,11 +142,25 @@ void WebAutomationSession::getBrowsingContexts(Inspector::ErrorString& errorStri
             auto browsingContext = Inspector::Protocol::Automation::BrowsingContext::create()
                 .setHandle(handleForWebPageProxy(page))
                 .setActive(m_activeBrowsingContextHandle == handle)
+                .setUrl(page->pageLoadState().activeURL())
                 .release();
 
             contexts->addItem(browsingContext.copyRef());
         }
     }
+}
+
+void WebAutomationSession::getBrowsingContext(Inspector::ErrorString& errorString, const String& handle, RefPtr<Inspector::Protocol::Automation::BrowsingContext>& context)
+{
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    context = Inspector::Protocol::Automation::BrowsingContext::create()
+        .setHandle(handleForWebPageProxy(page))
+        .setActive(m_activeBrowsingContextHandle == handle)
+        .setUrl(page->pageLoadState().activeURL())
+        .release();
 }
 
 void WebAutomationSession::createBrowsingContext(Inspector::ErrorString& errorString, String* handle)
@@ -184,6 +199,44 @@ void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& error
     // FIXME: Verify this is enough. We still might want to go through the AutomationSessionClient
     // to get closer a user pressing focusing the window / page.
     page->setFocus(true);
+}
+
+void WebAutomationSession::navigateBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const String& url)
+{
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    page->loadRequest(WebCore::URL(WebCore::URL(), url));
+}
+
+void WebAutomationSession::goBackInBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
+{
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    page->goBack();
+}
+
+void WebAutomationSession::goForwardInBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
+{
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    page->goForward();
+}
+
+void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
+{
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    const bool reloadFromOrigin = false;
+    const bool contentBlockersEnabled = true;
+    page->reload(reloadFromOrigin, contentBlockersEnabled);
 }
 
 } // namespace WebKit

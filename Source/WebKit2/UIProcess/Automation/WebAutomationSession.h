@@ -80,9 +80,14 @@ public:
 
     // Inspector::AutomationBackendDispatcherHandler API
     void getBrowsingContexts(Inspector::ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>>&) override;
+    void getBrowsingContext(Inspector::ErrorString&, const String&, RefPtr<Inspector::Protocol::Automation::BrowsingContext>&) override;
     void createBrowsingContext(Inspector::ErrorString&, String*) override;
     void closeBrowsingContext(Inspector::ErrorString&, const String&) override;
     void switchToBrowsingContext(Inspector::ErrorString&, const String&) override;
+    void navigateBrowsingContext(Inspector::ErrorString&, const String& handle, const String& url) override;
+    void goBackInBrowsingContext(Inspector::ErrorString&, const String&) override;
+    void goForwardInBrowsingContext(Inspector::ErrorString&, const String&) override;
+    void reloadBrowsingContext(Inspector::ErrorString&, const String&) override;
 
 private:
     WebKit::WebPageProxy* webPageProxyForHandle(const String&);

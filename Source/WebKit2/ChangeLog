@@ -1,3 +1,22 @@
+2016-03-08  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add automation protocol methods for navigation
+
+        https://bugs.webkit.org/show_bug.cgi?id=155163
+        rdar://problem/25029054
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::getBrowsingContexts): Set url.
+        (WebKit::WebAutomationSession::getBrowsingContext): Added.
+        (WebKit::WebAutomationSession::navigateBrowsingContext): Added.
+        (WebKit::WebAutomationSession::goBackInBrowsingContext): Added.
+        (WebKit::WebAutomationSession::goForwardInBrowsingContext): Added.
+        (WebKit::WebAutomationSession::reloadBrowsingContext): Added.
+        * UIProcess/Automation/WebAutomationSession.h:
+
 2016-03-08  Nan Wang  <n_wang@apple.com>
 
         AX: Force allow user zoom

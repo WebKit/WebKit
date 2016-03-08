@@ -23,7 +23,8 @@
             "description": "A handle representing an open window or tab in the automation session.",
             "properties": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "Opaque handle for a browsing context (window or tab). Used as a key for window-related commands." },
-                { "name": "active", "type": "boolean", "description": "Whether the browsing context has focus at the time the command is handled." }
+                { "name": "active", "type": "boolean", "description": "Whether the browsing context has focus at the time the command is handled." },
+                { "name": "url", "type": "string", "description": "The URL loaded by the browsing context at the time the command is handled." }
             ]
         }
     ],
@@ -33,6 +34,16 @@
             "description": "Fetches information about all open browsing contexts (windows and tabs) in the automation session.",
             "returns": [
                 { "name": "contexts", "type": "array", "items": { "$ref": "BrowsingContext" }, "description": "All known browsing contexts available to the session." }
+            ]
+        },
+        {
+            "name": "getBrowsingContext",
+            "description": "Fetches information about the specified browsing context.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ],
+            "returns": [
+                { "name": "context", "$ref": "BrowsingContext", "description": "The browsing context available to the session." }
             ]
         },
         {
@@ -54,6 +65,35 @@
             "description": "Activates the specified browsing context.",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be made active." }
+            ]
+        },
+        {
+            "name": "navigateBrowsingContext",
+            "description": "Navigates a browsing context to a specified URL.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
+                { "name": "url", "type": "string", "description": "The URL to load in the browsing context." }
+            ]
+        },
+        {
+            "name": "goBackInBrowsingContext",
+            "description": "Navigates a browsing context to go back one page in history.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." }
+            ]
+        },
+        {
+            "name": "goForwardInBrowsingContext",
+            "description": "Navigates a browsing context to got forward one page in history.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." }
+            ]
+        },
+        {
+            "name": "reloadBrowsingContext",
+            "description": "Reloads the current page in a browsing context.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be reloaded." }
             ]
         }
     ]
