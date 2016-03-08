@@ -236,12 +236,16 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
 
     for (auto& pendingPromise : iterator->value) {
         if (newStatus == CSSFontFace::Status::Success) {
-            if (pendingPromise->hasOneRef())
+            if (pendingPromise->hasOneRef() && !pendingPromise->hasReachedTerminalState) {
                 pendingPromise->promise.resolve(pendingPromise->faces);
+                pendingPromise->hasReachedTerminalState = true;
+            }
         } else {
             ASSERT(newStatus == CSSFontFace::Status::Failure);
-            // The first resolution wins, so we can just reject early now.
-            pendingPromise->promise.reject(DOMCoreException::create(ExceptionCodeDescription(NETWORK_ERR)));
+            if (!pendingPromise->hasReachedTerminalState) {
+                pendingPromise->promise.reject(DOMCoreException::create(ExceptionCodeDescription(NETWORK_ERR)));
+                pendingPromise->hasReachedTerminalState = true;
+            }
         }
     }
 

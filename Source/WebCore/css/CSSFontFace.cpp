@@ -48,6 +48,17 @@
 
 namespace WebCore {
 
+template<typename T> void iterateClients(HashSet<CSSFontFace::Client*>& clients, T callback)
+{
+    Vector<Ref<CSSFontFace::Client>> clientsCopy;
+    clientsCopy.reserveInitialCapacity(clients.size());
+    for (auto* client : clients)
+        clientsCopy.uncheckedAppend(*client);
+
+    for (auto* client : clients)
+        callback(*client);
+}
+
 void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Document* document, bool isInitiatingElementInUserAgentShadowTree)
 {
     for (auto& src : srcList) {
@@ -89,15 +100,6 @@ CSSFontFace::~CSSFontFace()
 {
 }
 
-void CSSFontFace::notifyClientsOfFontPropertyChange()
-{
-    auto clientsCopy = m_clients;
-    for (auto* client : clientsCopy) {
-        if (m_clients.contains(client))
-            client->fontPropertyChanged(*this);
-    }
-}
-
 bool CSSFontFace::setFamilies(CSSValue& family)
 {
     if (!is<CSSValueList>(family))
@@ -110,11 +112,9 @@ bool CSSFontFace::setFamilies(CSSValue& family)
     RefPtr<CSSValueList> oldFamilies = m_families;
     m_families = &familyList;
 
-    auto clientsCopy = m_clients;
-    for (auto* client : clientsCopy) {
-        if (m_clients.contains(client))
-            client->fontPropertyChanged(*this, oldFamilies.get());
-    }
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontPropertyChanged(*this, oldFamilies.get());
+    });
 
     return true;
 }
@@ -142,7 +142,9 @@ bool CSSFontFace::setStyle(CSSValue& style)
     if (auto mask = calculateStyleMask(style)) {
         m_traitsMask = static_cast<FontTraitsMask>((static_cast<unsigned>(m_traitsMask) & (~FontStyleMask)) | mask.value());
 
-        notifyClientsOfFontPropertyChange();
+        iterateClients(m_clients, [&](Client& client) {
+            client.fontPropertyChanged(*this);
+        });
 
         return true;
     }
@@ -189,7 +191,9 @@ bool CSSFontFace::setWeight(CSSValue& weight)
     if (auto mask = calculateWeightMask(weight)) {
         m_traitsMask = static_cast<FontTraitsMask>((static_cast<unsigned>(m_traitsMask) & (~FontWeightMask)) | mask.value());
 
-        notifyClientsOfFontPropertyChange();
+        iterateClients(m_clients, [&](Client& client) {
+            client.fontPropertyChanged(*this);
+        });
 
         return true;
     }
@@ -209,7 +213,9 @@ bool CSSFontFace::setUnicodeRange(CSSValue& unicodeRange)
         m_ranges.append(UnicodeRange(range.from(), range.to()));
     }
 
-    notifyClientsOfFontPropertyChange();
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontPropertyChanged(*this);
+    });
 
     return true;
 }
@@ -222,7 +228,9 @@ bool CSSFontFace::setVariantLigatures(CSSValue& variantLigatures)
     m_variantSettings.historicalLigatures = ligatures.historicalLigatures;
     m_variantSettings.contextualAlternates = ligatures.contextualAlternates;
 
-    notifyClientsOfFontPropertyChange();
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontPropertyChanged(*this);
+    });
 
     return true;
 }
@@ -233,7 +241,9 @@ bool CSSFontFace::setVariantPosition(CSSValue& variantPosition)
         return false;
     m_variantSettings.position = downcast<CSSPrimitiveValue>(variantPosition);
 
-    notifyClientsOfFontPropertyChange();
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontPropertyChanged(*this);
+    });
 
     return true;
 }
@@ -244,7 +254,9 @@ bool CSSFontFace::setVariantCaps(CSSValue& variantCaps)
         return false;
     m_variantSettings.caps = downcast<CSSPrimitiveValue>(variantCaps);
 
-    notifyClientsOfFontPropertyChange();
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontPropertyChanged(*this);
+    });
 
     return true;
 }
@@ -258,7 +270,9 @@ bool CSSFontFace::setVariantNumeric(CSSValue& variantNumeric)
     m_variantSettings.numericOrdinal = numeric.ordinal;
     m_variantSettings.numericSlashedZero = numeric.slashedZero;
 
-    notifyClientsOfFontPropertyChange();
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontPropertyChanged(*this);
+    });
 
     return true;
 }
@@ -269,7 +283,9 @@ bool CSSFontFace::setVariantAlternates(CSSValue& variantAlternates)
         return false;
     m_variantSettings.alternates = downcast<CSSPrimitiveValue>(variantAlternates);
 
-    notifyClientsOfFontPropertyChange();
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontPropertyChanged(*this);
+    });
 
     return true;
 }
@@ -281,7 +297,9 @@ bool CSSFontFace::setVariantEastAsian(CSSValue& variantEastAsian)
     m_variantSettings.eastAsianWidth = eastAsian.width;
     m_variantSettings.eastAsianRuby = eastAsian.ruby;
 
-    notifyClientsOfFontPropertyChange();
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontPropertyChanged(*this);
+    });
 
     return true;
 }
@@ -298,7 +316,9 @@ bool CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
         m_featureSettings.insert(FontFeature(feature.tag(), feature.value()));
     }
 
-    notifyClientsOfFontPropertyChange();
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontPropertyChanged(*this);
+    });
 
     return true;
 }
@@ -380,8 +400,9 @@ void CSSFontFace::setStatus(Status newStatus)
         break;
     }
 
-    for (auto* client : m_clients)
-        client->fontStateChanged(*this, m_status, newStatus);
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontStateChanged(*this, m_status, newStatus);
+    });
 
     m_status = newStatus;
 }
@@ -397,8 +418,9 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource&)
     ASSERT(m_fontSelector);
     m_fontSelector->fontLoaded();
 
-    for (auto* client : m_clients)
-        client->fontLoaded(*this);
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontLoaded(*this);
+    });
 }
 
 size_t CSSFontFace::pump()

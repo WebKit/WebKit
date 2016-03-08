@@ -75,6 +75,10 @@ public:
 
     Vector<std::reference_wrapper<CSSFontFace>> matchingFaces(const String& font, const String& text, ExceptionCode&);
 
+    // CSSFontFace::Client needs to be able to be held in a RefPtr.
+    void ref() override { RefCounted<CSSFontFaceSet>::ref(); }
+    void deref() override { RefCounted<CSSFontFaceSet>::deref(); }
+
 private:
     CSSFontFaceSet();
 
@@ -95,7 +99,7 @@ private:
     Vector<Ref<CSSFontFace>> m_faces; // We should investigate moving m_faces to FontFaceSet and making it reference FontFaces. This may clean up the font loading design.
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_facesLookupTable;
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_locallyInstalledFacesLookupTable;
-    HashMap<String, HashMap<unsigned, std::unique_ptr<CSSSegmentedFontFace>>, ASCIICaseInsensitiveHash> m_cache;
+    HashMap<String, HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>, ASCIICaseInsensitiveHash> m_cache;
     size_t m_facesPartitionIndex { 0 }; // All entries in m_faces before this index are CSS-connected.
     Status m_status { Status::Loaded };
     HashSet<CSSFontFaceSetClient*> m_clients;

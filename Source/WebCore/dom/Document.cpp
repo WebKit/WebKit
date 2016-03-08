@@ -6706,6 +6706,7 @@ Document& Document::ensureTemplateDocument()
 
 Ref<FontFaceSet> Document::fonts()
 {
+    updateStyleIfNeeded();
     return fontSelector().fontFaceSet();
 }
 

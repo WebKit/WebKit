@@ -1,3 +1,52 @@
+2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] Crash when a single load request causes multiple fonts to fail loading
+        https://bugs.webkit.org/show_bug.cgi?id=155009
+
+        Reviewed by Simon Fraser.
+
+        In JavaScript, the first promise fulfillment/failure wins. However, in C++, any
+        subsequent fulfillments/failures cause a crash.
+
+        Test: fast/text/font-face-set-document-multiple-failure.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::iterateClients): Notifying a client may cause some other client
+        to be destroyed, thereby modifying the clients set. This function allows
+        for notifying clients in a resilient manner.
+        (WebCore::CSSFontFace::setStyle): Update to use iterateClients().
+        (WebCore::CSSFontFace::setWeight): Ditto.
+        (WebCore::CSSFontFace::setUnicodeRange): Ditto.
+        (WebCore::CSSFontFace::setVariantLigatures): Ditto.
+        (WebCore::CSSFontFace::setVariantPosition): Ditto.
+        (WebCore::CSSFontFace::setVariantCaps): Ditto.
+        (WebCore::CSSFontFace::setVariantNumeric): Ditto.
+        (WebCore::CSSFontFace::setVariantAlternates): Ditto.
+        (WebCore::CSSFontFace::setVariantEastAsian): Ditto.
+        (WebCore::CSSFontFace::setFeatureSettings): Ditto.
+        (WebCore::CSSFontFace::setStatus): Ditto.
+        (WebCore::CSSFontFace::notifyClientsOfFontPropertyChange): Deleted.
+        * css/CSSFontFace.h: Adding a way for clients to make sure they don't register
+        or deregister another client.
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::guardAgainstClientRegistrationChanges): Simple
+        ref()/deref() pair.
+        (WebCore::CSSFontFaceSet::stopGuardingAgainstClientRegistrationChanges):
+        * css/CSSFontFaceSet.h:
+        * css/FontFace.cpp: Ditto.
+        (WebCore::FontFace::guardAgainstClientRegistrationChanges):
+        (WebCore::FontFace::stopGuardingAgainstClientRegistrationChanges):
+        * css/FontFace.h:
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::faceFinished): Make sure that we only fulfil or reject
+        a promise once.
+        * css/FontFaceSet.h:
+        * dom/Document.cpp:
+        (WebCore::Document::fonts): The CSSFontFaces inside the CSSFontSelector get
+        created during style recalc. We may be in a state where there is a style
+        recalc pending. In order to make sure the Javascript API sees the current
+        state of the world, force a style recalc here (but only if one is pending).
+
 2016-03-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197793 and r197799.

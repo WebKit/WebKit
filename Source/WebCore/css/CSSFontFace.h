@@ -108,9 +108,11 @@ public:
     class Client {
     public:
         virtual ~Client() { }
-        virtual void fontLoaded(CSSFontFace&) { };
-        virtual void fontStateChanged(CSSFontFace&, Status oldState, Status newState) { UNUSED_PARAM(oldState); UNUSED_PARAM(newState); };
-        virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) { UNUSED_PARAM(oldFamilies); };
+        virtual void fontLoaded(CSSFontFace&) { }
+        virtual void fontStateChanged(CSSFontFace&, Status oldState, Status newState) { UNUSED_PARAM(oldState); UNUSED_PARAM(newState); }
+        virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) { UNUSED_PARAM(oldFamilies); }
+        virtual void ref() = 0;
+        virtual void deref() = 0;
     };
 
     // Pending => Loading  => TimedOut

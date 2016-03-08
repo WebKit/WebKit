@@ -101,6 +101,7 @@ private:
     public:
         Vector<RefPtr<FontFace>> faces;
         Promise promise;
+        bool hasReachedTerminalState { false };
     };
 
     FontFaceSet(Document&, const Vector<RefPtr<FontFace>>&);

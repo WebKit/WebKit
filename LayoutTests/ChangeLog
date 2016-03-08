@@ -1,3 +1,13 @@
+2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] Crash when a single load request causes multiple fonts to fail loading
+        https://bugs.webkit.org/show_bug.cgi?id=155009
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/font-face-set-document-multiple-failure-expected.txt: Added.
+        * fast/text/font-face-set-document-multiple-failure.html: Added.
+
 2016-03-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip fast/events/prevent-default-prevents-interaction-with-scrollbars.html on ios-simulator
