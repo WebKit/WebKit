@@ -60,7 +60,7 @@ void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& 
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
         RenderObject& object = *resolver.position().renderer();
         if (object.isOutOfFlowPositioned()) {
-            setStaticPositions(m_block, downcast<RenderBox>(object), width.shouldIndentText() ? IndentText : DoNotIndentText);
+            setStaticPositions(m_block, downcast<RenderBox>(object), width.shouldIndentText());
             if (object.style().isOriginalDisplayInlineType()) {
                 resolver.runs().addRun(new BidiRun(0, 1, object, resolver.context(), resolver.dir()));
                 lineInfo.incrementRunsFromLeadingWhitespace();
