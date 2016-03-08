@@ -210,15 +210,6 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/CoreTextSPI.h>
 #include <WebCore/Icon.h>
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
-#include <WebCore/SoftLinking.h>
-SOFT_LINK_LIBRARY(libAccessibility)
-SOFT_LINK(libAccessibility, _AXSForceAllowWebScaling, Boolean, (), ())
-SOFT_LINK_CONSTANT(libAccessibility, kAXSAllowForceWebScalingEnabledNotification, CFStringRef)
-#define kAXSAllowForceWebScalingEnabledNotification getkAXSAllowForceWebScalingEnabledNotification()
-#endif
-
 #endif
 
 #ifndef NDEBUG
@@ -270,15 +261,6 @@ private:
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageCounter, ("WebPage"));
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
-static void forceAlwaysUserScalableChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
-{
-    ASSERT(observer);
-    static_cast<WebPage*>(observer)->updateForceAlwaysUserScalable();
-}
-#endif
-
-    
 Ref<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParameters& parameters)
 {
     Ref<WebPage> page = adoptRef(*new WebPage(pageID, parameters));
@@ -564,9 +546,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
 #if PLATFORM(IOS)
     m_page->settings().setContentDispositionAttachmentSandboxEnabled(true);
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, forceAlwaysUserScalableChangedCallback, kAXSAllowForceWebScalingEnabledNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
-#endif
 #endif
 }
 
@@ -599,10 +578,6 @@ void WebPage::updateUserActivity()
 
 WebPage::~WebPage()
 {
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, nullptr, nullptr);
-#endif
-    
     if (m_backForwardList)
         m_backForwardList->detach();
 
@@ -2823,17 +2798,6 @@ void WebPage::preferencesDidChange(const WebPreferencesStore& store)
     updatePreferences(store);
 }
 
-#if PLATFORM(IOS)
-void WebPage::updateForceAlwaysUserScalable()
-{
-    bool forceAlwaysUserScalableEnabled = m_forceAlwaysUserScalable;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
-    forceAlwaysUserScalableEnabled |= _AXSForceAllowWebScaling();
-#endif
-    m_viewportConfiguration.setForceAlwaysUserScalable(forceAlwaysUserScalableEnabled);
-}
-#endif
-
 void WebPage::updatePreferences(const WebPreferencesStore& store)
 {
     Settings& settings = m_page->settings();
@@ -3107,8 +3071,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if PLATFORM(IOS)
     m_ignoreViewportScalingConstraints = store.getBoolValueForKey(WebPreferencesKey::ignoreViewportScalingConstraintsKey());
     m_viewportConfiguration.setCanIgnoreScalingConstraints(m_ignoreViewportScalingConstraints);
-    m_forceAlwaysUserScalable = store.getBoolValueForKey(WebPreferencesKey::forceAlwaysUserScalableKey());
-    updateForceAlwaysUserScalable();
+    m_viewportConfiguration.setForceAlwaysUserScalable(store.getBoolValueForKey(WebPreferencesKey::forceAlwaysUserScalableKey()));
 #endif
 }
 

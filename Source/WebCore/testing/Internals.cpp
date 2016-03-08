@@ -3518,22 +3518,4 @@ String Internals::composedTreeAsText(Node* node)
     return WebCore::composedTreeAsText(downcast<ContainerNode>(*node));
 }
 
-void Internals::setViewportForceAlwaysUserScalable(bool forceAlwaysUserScalableEnabled)
-{
-#if PLATFORM(IOS) || PLATFORM(MAC)
-    m_viewportConfiguration.setForceAlwaysUserScalable(forceAlwaysUserScalableEnabled);
-#else
-    UNUSED_PARAM(forceAlwaysUserScalableEnabled);
-#endif
-}
-
-double Internals::viewportConfigurationMaximumScale()
-{
-#if PLATFORM(IOS) || PLATFORM(MAC)
-    return m_viewportConfiguration.maximumScale();
-#else
-    return 0;
-#endif
-}
-
 }

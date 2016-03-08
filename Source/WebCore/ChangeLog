@@ -1,3 +1,17 @@
+2016-03-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r197766.
+        https://bugs.webkit.org/show_bug.cgi?id=155183
+
+        Has platform-specific code in non-platform files (Requested by
+        smfr on #webkit).
+
+        Reverted changeset:
+
+        "AX: Force allow user zoom"
+        https://bugs.webkit.org/show_bug.cgi?id=155056
+        http://trac.webkit.org/changeset/197766
+
 2016-03-08  Beth Dakin  <bdakin@apple.com>
 
         Add an event for when touch force changes
