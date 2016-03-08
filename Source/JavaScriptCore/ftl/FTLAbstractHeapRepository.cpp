@@ -57,7 +57,7 @@ AbstractHeapRepository::AbstractHeapRepository()
     FOR_EACH_ABSTRACT_FIELD(ABSTRACT_FIELD_INITIALIZATION)
 #undef ABSTRACT_FIELD_INITIALIZATION
     
-    , JSCell_freeListNext(JSCell_structureID)
+    , JSCell_freeListNext(JSCell_header)
     
 #define INDEXED_ABSTRACT_HEAP_INITIALIZATION(name, offset, size) , name(&root, #name, offset, size)
     FOR_EACH_INDEXED_ABSTRACT_HEAP(INDEXED_ABSTRACT_HEAP_INITIALIZATION)
@@ -75,6 +75,8 @@ AbstractHeapRepository::AbstractHeapRepository()
     RELEASE_ASSERT(JSCell_indexingType.offset() + 2 == JSCell_typeInfoFlags.offset());
     RELEASE_ASSERT(JSCell_indexingType.offset() + 3 == JSCell_cellState.offset());
 
+    JSCell_structureID.changeParent(&JSCell_header);
+    JSCell_usefulBytes.changeParent(&JSCell_header);
     JSCell_indexingType.changeParent(&JSCell_usefulBytes);
     JSCell_typeInfoType.changeParent(&JSCell_usefulBytes);
     JSCell_typeInfoFlags.changeParent(&JSCell_usefulBytes);
