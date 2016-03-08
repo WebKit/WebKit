@@ -6434,18 +6434,36 @@ private:
 
     void compileRegExpExec()
     {
-        LValue base = lowCell(m_node->child1());
-        LValue argument = lowCell(m_node->child2());
+        if (m_node->child1().useKind() == CellUse
+            && m_node->child2().useKind() == CellUse) {
+            LValue base = lowCell(m_node->child1());
+            LValue argument = lowCell(m_node->child2());
+            setJSValue(
+                vmCall(Int64, m_out.operation(operationRegExpExec), m_callFrame, base, argument));
+            return;
+        }
+        
+        LValue base = lowJSValue(m_node->child1());
+        LValue argument = lowJSValue(m_node->child2());
         setJSValue(
-            vmCall(Int64, m_out.operation(operationRegExpExec), m_callFrame, base, argument));
+            vmCall(Int64, m_out.operation(operationRegExpExecGeneric), m_callFrame, base, argument));
     }
 
     void compileRegExpTest()
     {
-        LValue base = lowCell(m_node->child1());
-        LValue argument = lowCell(m_node->child2());
+        if (m_node->child1().useKind() == CellUse
+            && m_node->child2().useKind() == CellUse) {
+            LValue base = lowCell(m_node->child1());
+            LValue argument = lowCell(m_node->child2());
+            setBoolean(
+                vmCall(Int32, m_out.operation(operationRegExpTest), m_callFrame, base, argument));
+            return;
+        }
+
+        LValue base = lowJSValue(m_node->child1());
+        LValue argument = lowJSValue(m_node->child2());
         setBoolean(
-            vmCall(Int32, m_out.operation(operationRegExpTest), m_callFrame, base, argument));
+            vmCall(Int32, m_out.operation(operationRegExpTestGeneric), m_callFrame, base, argument));
     }
 
     void compileNewRegexp()

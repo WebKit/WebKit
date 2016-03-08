@@ -879,8 +879,14 @@ private:
             
         case RegExpExec:
         case RegExpTest: {
-            fixEdge<CellUse>(node->child1());
-            fixEdge<CellUse>(node->child2());
+            // FIXME: These should probably speculate something stronger than cell.
+            // https://bugs.webkit.org/show_bug.cgi?id=154900
+            if (node->child1()->shouldSpeculateCell()
+                && node->child2()->shouldSpeculateCell()) {
+                fixEdge<CellUse>(node->child1());
+                fixEdge<CellUse>(node->child2());
+                break;
+            }
             break;
         }
 

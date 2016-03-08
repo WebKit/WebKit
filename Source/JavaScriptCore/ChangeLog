@@ -1,3 +1,43 @@
+2016-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        RegExpExec/RegExpTest should not unconditionally speculate cell
+        https://bugs.webkit.org/show_bug.cgi?id=154901
+
+        Reviewed by Benjamin Poulain.
+
+        This is a three part change. It all started with a simple goal: end the rage-recompiles in
+        Octane/regexp by enabling the DFG and FTL to do untyped RegExpExec/RegExpTest. This keeps us
+        in the optimized code when you do a regexp match on a number, for example.
+
+        While implementing this, I realized that DFGOperations.cpp was bad at exception checking. When
+        it did check for exceptions, it used exec->hadException() instead of vm.exception(). So I
+        fixed that. I also made sure that the regexp operations checked for exception after doing
+        toString().
+
+        Unfortunately, the introduction of untyped RegExpExec/RegExpTest caused a regression on
+        Octane/regexp. This was because we were simultaneously scheduling replacement and OSR compiles
+        of some large functions with the FTL JIT. The OSR compiles were not useful. This was a
+        regression from the previous changes to make OSR compiles happen sooner. The problem is that
+        this change also removed the throttling of OSR compiles even in those cases where we suspect
+        that replacement is more likely. This patch reintroduces that throttling, but only in the
+        replacement path.
+
+        This change ends up being neutral overall.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpExec):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpTest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        * tests/stress/regexp-exec-effect-after-exception.js: Added.
+
 2016-03-02  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] JSCell_freeListNext and JSCell_structureID are considered not overlapping
