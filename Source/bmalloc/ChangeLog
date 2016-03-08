@@ -1,3 +1,28 @@
+2016-03-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling in r197722.
+        https://bugs.webkit.org/show_bug.cgi?id=155171
+
+        The right calculation for our static_assert is actually:
+
+            sizeof(SmallChunk) % vmPageSize + 2 * smallMax <= vmPageSize
+
+        instead of:
+
+            sizeof(SmallChunk) % vmPageSize + smallMax <= vmPageSize
+
+        smallMax is not enough because line metadata might require us to begin
+        allocation at an offset as large as smallMax, so we need 2 * smallMax.
+
+        Once correct, this static_assert fires, and we fix it by increasing
+        the alignment of SmallChunk.
+
+        Restored changeset:
+
+        "bmalloc: Use List<T> instead of Vector<T> in some places"
+        https://bugs.webkit.org/show_bug.cgi?id=155150
+        http://trac.webkit.org/changeset/197722
+
 2016-03-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197722.

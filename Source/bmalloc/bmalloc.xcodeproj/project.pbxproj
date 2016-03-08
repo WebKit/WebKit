@@ -12,6 +12,7 @@
 		1400274C18F89C3D00115C97 /* SegregatedFreeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 146BEE1E18C841C50002D5A2 /* SegregatedFreeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 140FA00219CE429C00FFD3C8 /* BumpRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 140FA00419CE4B6800FFD3C8 /* LineMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		141D9B001C8E51C0000ABBA0 /* List.h in Headers */ = {isa = PBXBuildFile; fileRef = 141D9AFF1C8E51C0000ABBA0 /* List.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		143CB81C19022BC900B16A45 /* StaticMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143CB81A19022BC900B16A45 /* StaticMutex.cpp */; };
 		143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 143CB81B19022BC900B16A45 /* StaticMutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		143EF9AF1A9FABF6004F5C77 /* FreeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143EF9AD1A9FABF6004F5C77 /* FreeList.cpp */; };
@@ -86,6 +87,7 @@
 		1417F64618B54A700076FA3F /* EndTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EndTag.h; path = bmalloc/EndTag.h; sourceTree = "<group>"; };
 		1417F64F18B7280C0076FA3F /* Syscall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Syscall.h; path = bmalloc/Syscall.h; sourceTree = "<group>"; };
 		1417F65218BA88A00076FA3F /* AsyncTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncTask.h; path = bmalloc/AsyncTask.h; sourceTree = "<group>"; };
+		141D9AFF1C8E51C0000ABBA0 /* List.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = List.h; path = bmalloc/List.h; sourceTree = "<group>"; };
 		1421A87718EE462A00B4DD68 /* Algorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Algorithm.h; path = bmalloc/Algorithm.h; sourceTree = "<group>"; };
 		143CB81A19022BC900B16A45 /* StaticMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticMutex.cpp; path = bmalloc/StaticMutex.cpp; sourceTree = "<group>"; };
 		143CB81B19022BC900B16A45 /* StaticMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticMutex.h; path = bmalloc/StaticMutex.h; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 				14C919C818FCC59F0028DB43 /* BPlatform.h */,
 				14D9DB4517F2447100EAAB79 /* FixedVector.h */,
 				1413E460189DCE1E00546D68 /* Inline.h */,
+				141D9AFF1C8E51C0000ABBA0 /* List.h */,
 				144DCED617A649D90093B2F2 /* Mutex.h */,
 				14446A0717A61FA400F9EA1D /* PerProcess.h */,
 				144469FD17A61F1F00F9EA1D /* PerThread.h */,
@@ -353,6 +356,7 @@
 				14DD789818F48D4A00950702 /* Allocator.h in Headers */,
 				14DD78CB18F48D7500950702 /* PerProcess.h in Headers */,
 				14DD789318F48D0F00950702 /* ObjectType.h in Headers */,
+				141D9B001C8E51C0000ABBA0 /* List.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
