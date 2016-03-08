@@ -35,10 +35,12 @@ void RegExpCachedResult::visitChildren(SlotVisitor& visitor)
 {
     visitor.append(&m_lastInput);
     visitor.append(&m_lastRegExp);
-    visitor.append(&m_reifiedInput);
-    visitor.append(&m_reifiedResult);
-    visitor.append(&m_reifiedLeftContext);
-    visitor.append(&m_reifiedRightContext);
+    if (m_reified) {
+        visitor.append(&m_reifiedInput);
+        visitor.append(&m_reifiedResult);
+        visitor.append(&m_reifiedLeftContext);
+        visitor.append(&m_reifiedRightContext);
+    }
 }
 
 JSArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
@@ -49,6 +51,8 @@ JSArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
             m_reifiedResult.set(exec->vm(), owner, createRegExpMatchesArray(exec, exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get(), m_result.start));
         else
             m_reifiedResult.set(exec->vm(), owner, createEmptyRegExpMatchesArray(exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get()));
+        m_reifiedLeftContext.clear();
+        m_reifiedRightContext.clear();
         m_reified = true;
     }
     return m_reifiedResult.get();
