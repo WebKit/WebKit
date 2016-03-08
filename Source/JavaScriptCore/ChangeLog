@@ -1,3 +1,89 @@
+2016-03-07  Saam barati  <sbarati@apple.com>
+
+        [ES6] Implement revocable proxies
+        https://bugs.webkit.org/show_bug.cgi?id=154321
+
+        Reviewed by Mark Lam.
+
+        This patch is a straight forward implementation of Proxy.revocable
+        with respect to section 26.2.2.1 of the ECMAScript spec.
+        https://tc39.github.io/ecma262/#sec-proxy.revocable
+
+        This patch also fixes a bug in Proxy where we
+        were incorrectly caching "in", i.e, `"x" in proxy`.
+        We should never blatantly cache this because caching is observable
+        behavior by users of the language. We could come up with
+        a smarter caching scheme that caches only if the Proxy's
+        handler doesn't have a "has" property, i.e, we don't have
+        to call out to JS code. But for now, it's easiest to disable
+        caching.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::moduleRecordStructure):
+        (JSC::JSGlobalObject::moduleNamespaceObjectStructure):
+        (JSC::JSGlobalObject::proxyObjectStructure):
+        (JSC::JSGlobalObject::proxyRevokeStructure):
+        (JSC::JSGlobalObject::wasmModuleStructure):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::ProxyConstructor::create):
+        (JSC::ProxyConstructor::ProxyConstructor):
+        (JSC::makeRevocableProxy):
+        (JSC::proxyRevocableConstructorThrowError):
+        (JSC::ProxyConstructor::finishCreation):
+        (JSC::constructProxyObject):
+        * runtime/ProxyConstructor.h:
+        (JSC::ProxyConstructor::createStructure):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::finishCreation):
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::performPut):
+        (JSC::performProxyCall):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::performIsExtensible):
+        (JSC::ProxyObject::performDefineOwnProperty):
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::performSetPrototype):
+        (JSC::ProxyObject::performGetPrototype):
+        (JSC::ProxyObject::getPrototype):
+        (JSC::ProxyObject::revoke):
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyObject.h:
+        (JSC::ProxyObject::create):
+        * runtime/ProxyRevoke.cpp: Added.
+        (JSC::ProxyRevoke::create):
+        (JSC::ProxyRevoke::ProxyRevoke):
+        (JSC::ProxyRevoke::finishCreation):
+        (JSC::performProxyRevoke):
+        (JSC::ProxyRevoke::getCallData):
+        (JSC::ProxyRevoke::visitChildren):
+        * runtime/ProxyRevoke.h: Added.
+        (JSC::ProxyRevoke::createStructure):
+        (JSC::ProxyRevoke::proxy):
+        (JSC::ProxyRevoke::setProxyToNull):
+        * tests/stress/proxy-has-property.js:
+        (assert):
+        (assert.let.handler.has):
+        (assert.let.foo):
+        * tests/stress/proxy-revoke.js: Added.
+        (assert):
+        (throw.new.Error.):
+        (throw.new.Error):
+        (callAllHandlers):
+        (shouldThrowNullHandler):
+        (allHandlersShouldThrow):
+        (i.let.trap.of.traps.trap.string_appeared_here.func):
+        (i.let.trap.of.traps.else.func):
+        (i.Proxy.revocable):
+
 2016-03-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the ARM build after r197687

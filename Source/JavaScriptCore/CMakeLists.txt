@@ -764,6 +764,7 @@ set(JavaScriptCore_SOURCES
     runtime/PrototypeMap.cpp
     runtime/ProxyConstructor.cpp
     runtime/ProxyObject.cpp
+    runtime/ProxyRevoke.cpp
     runtime/ReflectObject.cpp
     runtime/RegExp.cpp
     runtime/RegExpCache.cpp

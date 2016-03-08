@@ -443,3 +443,23 @@ function assert(b) {
         assert(!called1);
     }
 }
+
+{
+    let called = false;
+    let handler = {
+        has: function(...args) {
+            called = true;
+            return Reflect.has(...args);
+        }
+    };
+    let proxy = new Proxy({}, handler);
+    let foo = function() {
+        assert(!Reflect.has(proxy, "x"));
+        assert(called);
+        called = false;
+    }
+    noInline(foo)
+    for (let i = 0; i < 10000; i++) {
+        foo();
+    }
+}

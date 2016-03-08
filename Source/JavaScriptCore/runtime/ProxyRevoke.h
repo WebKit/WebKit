@@ -23,19 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProxyConstructor_h
-#define ProxyConstructor_h
+#ifndef ProxyRevoke_h
+#define ProxyRevoke_h
 
 #include "InternalFunction.h"
 
 namespace JSC {
 
-class ProxyConstructor : public InternalFunction {
+class ProxyObject;
+
+class ProxyRevoke : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags;
 
-    static ProxyConstructor* create(VM&, Structure*);
+    static ProxyRevoke* create(VM&, Structure*, ProxyObject*);
 
     DECLARE_INFO;
 
@@ -44,16 +46,18 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
     }
 
-    void finishCreation(VM&, const char* name, JSGlobalObject*);
+    void finishCreation(VM&, const char* name, ProxyObject*);
+    static void visitChildren(JSCell*, SlotVisitor&);
+    JSValue proxy() { return m_proxy.get(); }
+    void setProxyToNull(VM& vm) { return m_proxy.set(vm, this, jsNull()); }
 
 private:
-    ProxyConstructor(VM&, Structure*);
-    static ConstructType getConstructData(JSCell*, ConstructData&);
+    ProxyRevoke(VM&, Structure*);
     static CallType getCallData(JSCell*, CallData&);
 
-    static EncodedJSValue getGetter(ExecState*, EncodedJSValue thisValue, PropertyName);
+    WriteBarrier<Unknown> m_proxy;
 };
 
 } // namespace JSC
 
-#endif // ProxyConstructor_h
+#endif // ProxyRevoke_h

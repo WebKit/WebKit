@@ -27,10 +27,13 @@
 #include "ProxyConstructor.h"
 
 #include "Error.h"
+#include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
+#include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "ProxyObject.h"
+#include "ProxyRevoke.h"
 #include "StructureInlines.h"
 
 namespace JSC {
@@ -42,7 +45,7 @@ const ClassInfo ProxyConstructor::s_info = { "Proxy", &Base::s_info, 0, CREATE_M
 ProxyConstructor* ProxyConstructor::create(VM& vm, Structure* structure)
 {
     ProxyConstructor* constructor = new (NotNull, allocateCell<ProxyConstructor>(vm.heap)) ProxyConstructor(vm, structure);
-    constructor->finishCreation(vm, "Proxy");
+    constructor->finishCreation(vm, "Proxy", structure->globalObject());
     return constructor;
 }
 
@@ -51,11 +54,42 @@ ProxyConstructor::ProxyConstructor(VM& vm, Structure* structure)
 {
 }
 
-void ProxyConstructor::finishCreation(VM& vm, const char* name)
+static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(ExecState* exec)
+{
+    if (exec->argumentCount() < 2)
+        return throwVMTypeError(exec, ASCIILiteral("Proxy.revocable needs to be called with two arguments: the target and the handler."));
+
+    VM& vm = exec->vm();
+    ArgList args(exec);
+    JSValue target = args.at(0);
+    JSValue handler = args.at(1);
+    ProxyObject* proxy = ProxyObject::create(exec, exec->lexicalGlobalObject()->proxyObjectStructure(), target, handler);
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+    ProxyRevoke* revoke = ProxyRevoke::create(vm, exec->lexicalGlobalObject()->proxyRevokeStructure(), proxy);
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+
+    JSObject* result = constructEmptyObject(exec);
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+    result->putDirect(vm, makeIdentifier(vm, "proxy"), proxy, None);
+    result->putDirect(vm, makeIdentifier(vm, "revoke"), revoke, None);
+
+    return JSValue::encode(result);
+}
+
+static EncodedJSValue JSC_HOST_CALL proxyRevocableConstructorThrowError(ExecState* exec)
+{
+    return throwVMTypeError(exec, ASCIILiteral("Proxy.revocable can not be constructed. It can only be called."));
+}
+
+void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm, name);
 
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, makeIdentifier(vm, "revocable"), JSFunction::create(vm, globalObject, 2, ASCIILiteral("revocable"), makeRevocableProxy, NoIntrinsic, proxyRevocableConstructorThrowError));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructProxyObject(ExecState* exec)
