@@ -104,6 +104,7 @@
     [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
     [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
     [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchforcechange;
     [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
     [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
     [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;

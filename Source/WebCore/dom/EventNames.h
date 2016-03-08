@@ -216,6 +216,7 @@ namespace WebCore {
     macro(tonechange) \
     macro(touchcancel) \
     macro(touchend) \
+    macro(touchforcechange) \
     macro(touchmove) \
     macro(touchstart) \
     macro(track) \
@@ -306,7 +307,7 @@ public:
     bool isGamepadEventType(const AtomicString& eventType) const;
 #endif
 
-    std::array<std::reference_wrapper<const AtomicString>, 4> touchEventNames() const;
+    std::array<std::reference_wrapper<const AtomicString>, 5> touchEventNames() const;
 
 private:
     EventNames(); // Private to prevent accidental call to EventNames() instead of eventNames().
@@ -332,7 +333,8 @@ inline bool EventNames::isTouchEventType(const AtomicString& eventType) const
     return eventType == touchstartEvent
         || eventType == touchmoveEvent
         || eventType == touchendEvent
-        || eventType == touchcancelEvent;
+        || eventType == touchcancelEvent
+        || eventType == touchforcechangeEvent;
 }
 
 inline bool EventNames::isWheelEventType(const AtomicString& eventType) const
@@ -341,9 +343,9 @@ inline bool EventNames::isWheelEventType(const AtomicString& eventType) const
         || eventType == mousewheelEvent;
 }
 
-inline std::array<std::reference_wrapper<const AtomicString>, 4> EventNames::touchEventNames() const
+inline std::array<std::reference_wrapper<const AtomicString>, 5> EventNames::touchEventNames() const
 {
-    return { { touchstartEvent, touchmoveEvent, touchendEvent, touchcancelEvent } };
+    return { { touchstartEvent, touchmoveEvent, touchendEvent, touchcancelEvent, touchforcechangeEvent } };
 }
 
 #if ENABLE(GAMEPAD)
