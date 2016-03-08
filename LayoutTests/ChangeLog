@@ -1,3 +1,17 @@
+2016-03-08  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] [EFL] Avoid running mediastream tests by default until we compile by default
+        https://bugs.webkit.org/show_bug.cgi?id=153540
+
+        Reviewed by Philippe Normand.
+
+        After bumping gstreamer to 1.6.3 in r196804 we can enable again
+        compilation of mediastream and running the tests. We have updated
+        the expectations accordingly.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2016-03-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement fetch skeleton

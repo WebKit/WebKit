@@ -82,7 +82,6 @@ class TestRunner:
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.TerminateTwice", "Test causes crash on the next test", 121970),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToHighAccuracy", "Test causes crash on the next test", 125068),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToLowAccuracy", "Test causes crash on the next test", 125068),
-        SkippedTest("WebKit2/UserMedia", "WebKit2.UserMediaBasic", "We will not test by default until the upgrade gstreamer to 1.9", 153540),
     ]
 
     SLOW = [

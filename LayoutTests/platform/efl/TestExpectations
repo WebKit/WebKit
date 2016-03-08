@@ -79,11 +79,6 @@ fast/text/arabic-times-new-roman.html [ Skip ]
 # Need to implement font feature seeting for EFL port since r188146.
 css3/font-feature-settings-rendering.html [ Skip ]
 
-# Requires MEDIA_STREAM support.
-webkit.org/b/87662 fast/mediastream [ Skip ]
-webkit.org/b/87662 fast/events/constructors/media-stream-event-constructor.html [ Skip ]
-webkit.org/b/87662 http/tests/media/media-stream [ Skip ]
-
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------
@@ -1696,6 +1691,10 @@ webkit.org/b/138307 media/encrypted-media/encrypted-media-can-play-type.html [ S
 # Requires POINTER_LOCK support.
 webkit.org/b/88080 pointer-lock [ Skip ]
 webkit.org/b/88080 http/tests/pointer-lock [ Skip ]
+
+# Requires MEDIA_STREAM support.
+webkit.org/b/87662 fast/mediastream [ Skip ]
+webkit.org/b/87662 fast/events/constructors/media-stream-event-constructor.html [ Skip ]
 
 # Requires INDIE_UI support
 webkit.org/b/111446 indieui [ Skip ]

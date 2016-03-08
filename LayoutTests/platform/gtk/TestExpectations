@@ -335,6 +335,37 @@ webkit.org/b/95582 batterystatus/event-after-navigation.html [ Timeout ]
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
+# Mediastream implementation is not complete yet.
+webkit.org/b/79203 fast/mediastream/MediaStream-MediaElement-srcObject.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/MediaStreamTrack.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/MediaStreamTrack-onended.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-createAnswer.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-createOffer.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-datachannel.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-dtmf.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-events.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-getConfiguration.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-have-local-offer.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-localDescription.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-remoteDescription.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stable.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
+webkit.org/b/79203 fast/events/constructors/media-stream-event-constructor.html [ Skip ]
+webkit.org/b/79203 webaudio/mediastreamaudiodestinationnode.html [ Skip ]
+webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Skip ]
+webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
+webkit.org/b/151344 fast/mediastream/MediaStream-add-remove-tracks.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/mock-media-source.html [ Skip ]
+
 # Text Autosizing is not yet enabled.
 webkit.org/b/99063 fast/text-autosizing [ Skip ]
 
@@ -632,10 +663,6 @@ media/controls [ Skip ]
 
 # WIRELESS_PLAYBACK_TARGET not enabled.
 media/airplay-target-availability.html
-
-# Mediastream implementation requires new Gstreamer/OpenWebRTC
-webkit.org/b/153540 fast/mediastream [ Skip ]
-webkit.org/b/153540 http/tests/media/media-stream [ Skip ]
 
 # Skip tests requiring UIScriptController
 webkit.org/b/153833 css3/touch-action/touch-action-manipulation-fast-clicks.html [ Skip ]

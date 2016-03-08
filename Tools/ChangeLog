@@ -1,3 +1,22 @@
+2016-03-08  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] [EFL] Avoid running mediastream tests by default until we compile by default
+        https://bugs.webkit.org/show_bug.cgi?id=153540
+
+        Reviewed by Philippe Normand.
+
+        After bumping gstreamer to 1.6.3 in r196804 we can enable again
+        compilation of mediastream and running the tests.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Enable again the UserMedia API test.
+        * Scripts/webkitperl/FeatureList.pm: Enable the compilation of the
+        mediastream by default.
+        * gtk/jhbuild-webrtc.modules: Removed the specific jhbuild modules
+        file.
+        * gtk/jhbuild.modules: Bumped the openwebrtc version to the one we
+        are currently using.
+
 2016-03-07  Jon Lee  <jonlee@apple.com>
 
         Update perf bot configuration for Animometer
