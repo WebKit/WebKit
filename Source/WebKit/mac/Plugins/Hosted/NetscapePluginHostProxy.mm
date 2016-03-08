@@ -230,8 +230,11 @@ void NetscapePluginHostProxy::beginModal()
     ASSERT(!m_placeholderWindow);
     ASSERT(!m_activationObserver);
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     m_placeholderWindow = adoptNS([[WebPlaceholderModalWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
-    
+#pragma clang diagnostic pop
+
     m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationWillBecomeActiveNotification object:NSApp queue:nil
                                                                          usingBlock:^(NSNotification *){ applicationDidBecomeActive(); }];
     

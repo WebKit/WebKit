@@ -1,3 +1,61 @@
+2016-03-08  Anders Carlsson  <andersca@apple.com>
+
+        Ignore deprecation warnings.
+
+        * Misc/WebNSEventExtras.m:
+        (-[NSEvent _web_isKeyEvent:]):
+        (-[NSEvent _web_isOptionTabKeyEvent]):
+        * Misc/WebNSViewExtras.m:
+        (-[NSView _web_dragShouldBeginFromMouseDown:withExpiration:xHysteresis:yHysteresis:]):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::beginModal):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::syntheticKeyDownWithCommandModifier):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView drawRect:]):
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::syntheticKeyDownWithCommandModifier):
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::populate):
+        (PopupMenuMac::show):
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::showContextMenu):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::canAttach):
+        (-[WebInspectorWindowController window]):
+        * WebInspector/WebNodeHighlight.mm:
+        (-[WebNodeHighlight initWithTargetView:inspectorController:]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView keyDown:keyDown:]):
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController init]):
+        (createBackgroundFullscreenWindow):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _postFakeMouseMovedEventForFlagsChangedEvent:]):
+        (-[WebHTMLView _setMouseDownEvent:_setMouseDownEvent:]):
+        (isQuickLookEvent):
+        (-[WebHTMLView hitTest:]):
+        (-[WebHTMLView _sendToolTipMouseExited]):
+        (-[WebHTMLView _sendToolTipMouseEntered]):
+        (mouseEventIsPartOfClickOrDrag):
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        (-[WebHTMLView acceptsFirstResponder]):
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (currentKeyboardEvent):
+        (-[WebHTMLView _handleStyleKeyEquivalent:]):
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView hitTest:]):
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        (-[WebPDFView _fakeKeyEventWithFunctionKey:]):
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController _buildUI]):
+        (-[WebTextCompletionController _placePopupWindow:]):
+        * WebView/WebView.mm:
+        (-[WebView applicationFlags:]):
+
 2016-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         Reduce startup and shutdown cost of resource load statistics

@@ -112,7 +112,10 @@ using namespace WebCore;
     [scrollView setDocumentView:_tableView];
     [_tableView release];
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     _popupWindow = [[NSWindow alloc] initWithContentRect:scrollFrame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+#pragma clang diagnostic pop
     [_popupWindow setAlphaValue:0.88f];
     [_popupWindow setContentView:scrollView];
     [scrollView release];
@@ -152,8 +155,8 @@ using namespace WebCore;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         maxWidth = ceilf([NSScrollView frameSizeForContentSize:NSMakeSize(maxWidth, 100.0f) hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder].width);
-#pragma clang diagnostic pop
         maxWidth = ceilf([NSWindow frameRectForContentRect:NSMakeRect(0.0f, 0.0f, maxWidth, 100.0f) styleMask:NSBorderlessWindowMask].size.width);
+#pragma clang diagnostic pop
         maxWidth += 5.0f;
         windowFrame.size.width = std::max(maxWidth, windowFrame.size.width);
     }

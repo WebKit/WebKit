@@ -91,7 +91,10 @@ using namespace WebCore;
     _inspectorController = inspectorController;
 
 #if !PLATFORM(IOS)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     int styleMask = NSBorderlessWindowMask;
+#pragma clang diagnostic pop
     NSRect contentRect = [NSWindow contentRectForFrameRect:[self _computeHighlightWindowFrame] styleMask:styleMask];
     _highlightWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
     [_highlightWindow setBackgroundColor:[NSColor clearColor]];

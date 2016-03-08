@@ -318,7 +318,10 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     // Override hitTest so we can override menuForEvent.
     NSEvent *event = [NSApp currentEvent];
     NSEventType type = [event type];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (type == NSRightMouseDown || (type == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask)))
+#pragma clang diagnostic pop
         return self;
 
     return [super hitTest:point];
@@ -998,6 +1001,8 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     int button = noButton;
     RefPtr<Event> event;
     switch ([nsEvent type]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         case NSLeftMouseUp:
             button = 0;
             break;
@@ -1013,6 +1018,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
             event = KeyboardEvent::create(pe, 0);
             break;
         }
+#pragma clang diagnostic pop
         default:
             break;
     }
@@ -1021,10 +1027,13 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 #if ENABLE(POINTER_LOCK)
             0, 0,
 #endif
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             [nsEvent modifierFlags] & NSControlKeyMask,
             [nsEvent modifierFlags] & NSAlternateKeyMask,
             [nsEvent modifierFlags] & NSShiftKeyMask,
             [nsEvent modifierFlags] & NSCommandKeyMask,
+#pragma clang diagnostic pop
             button, 0, WebCore::ForceAtClick, 0, true);
     }
 
@@ -1117,6 +1126,8 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     // FIXME 4400480: when PDFView implements the standard scrolling selectors that this
     // method is used to mimic, we can eliminate this method and call them directly.
     NSString *keyAsString = [NSString stringWithCharacters:&functionKey length:1];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return [NSEvent keyEventWithType:NSKeyDown
                             location:NSZeroPoint
                        modifierFlags:0
@@ -1127,6 +1138,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
          charactersIgnoringModifiers:keyAsString
                            isARepeat:NO
                              keyCode:0];
+#pragma clang diagnostic pop
 }
 
 - (void)_lookUpInDictionaryFromMenu:(id)sender

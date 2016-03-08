@@ -161,7 +161,10 @@ void WebNetscapePluginEventHandlerCocoa::syntheticKeyDownWithCommandModifier(int
     
     NPCocoaEvent event;
     initializeEvent(&event, NPCocoaEventKeyDown);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     event.data.key.modifierFlags = NSCommandKeyMask;
+#pragma clang diagnostic pop
     event.data.key.keyCode = keyCode;
     event.data.key.isARepeat = false;
     event.data.key.characters = (NPNSString *)characters.get();

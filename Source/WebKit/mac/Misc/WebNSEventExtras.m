@@ -35,7 +35,10 @@
 -(BOOL)_web_isKeyEvent:(unichar)key
 {
     int type = [self type];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (type != NSKeyDown && type != NSKeyUp)
+#pragma clang diagnostic pop
         return NO;
     
     NSString *chars = [self charactersIgnoringModifiers];
@@ -64,7 +67,10 @@
 
 - (BOOL)_web_isOptionTabKeyEvent
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return ([self modifierFlags] & NSAlternateKeyMask) && [self _web_isTabKeyEvent];
+#pragma clang diagnostic pop
 }
 
 - (BOOL)_web_isReturnOrEnterKeyEvent

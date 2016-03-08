@@ -466,12 +466,15 @@ void NetscapePluginInstanceProxy::syntheticKeyDownWithCommandModifier(int keyCod
 {
     NSData *charactersData = [NSData dataWithBytes:&character length:1];
 
-    _WKPHPluginInstanceKeyboardEvent(m_pluginHostProxy->port(), m_pluginID, 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    _WKPHPluginInstanceKeyboardEvent(m_pluginHostProxy->port(), m_pluginID,
                                      [NSDate timeIntervalSinceReferenceDate], 
                                      NPCocoaEventKeyDown, NSCommandKeyMask,
                                      const_cast<char*>(reinterpret_cast<const char*>([charactersData bytes])), [charactersData length], 
                                      const_cast<char*>(reinterpret_cast<const char*>([charactersData bytes])), [charactersData length], 
                                      false, keyCode, character);
+#pragma clang diagnostic pop
 }
 
 void NetscapePluginInstanceProxy::flagsChanged(NSEvent *event)

@@ -189,7 +189,10 @@ void WebInspectorFrontendClient::attachAvailabilityChanged(bool available)
 
 bool WebInspectorFrontendClient::canAttach()
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([[m_frontendWindowController window] styleMask] & NSFullScreenWindowMask)
+#pragma clang diagnostic pop
         return false;
 
     return canAttachWindow();
@@ -457,7 +460,10 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     if (window)
         return window;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSUInteger styleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSFullSizeContentViewWindowMask;
+#pragma clang diagnostic pop
     window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
     [window setDelegate:self];
     [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];

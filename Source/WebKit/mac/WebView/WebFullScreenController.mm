@@ -86,8 +86,11 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 #pragma mark Initialization
 - (id)init
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // Do not defer window creation, to make sure -windowNumber is created (needed by WebWindowScaleAnimation).
     NSWindow *window = [[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSClosableWindowMask backing:NSBackingStoreBuffered defer:NO];
+#pragma clang diagnostic pop
     self = [super initWithWindow:window];
     [window release];
     if (!self)
@@ -459,7 +462,10 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 static RetainPtr<NSWindow> createBackgroundFullscreenWindow(NSRect frame)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSWindow *window = [[NSWindow alloc] initWithContentRect:frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+#pragma clang diagnostic pop
     [window setOpaque:YES];
     [window setBackgroundColor:[NSColor blackColor]];
     [window setReleasedWhenClosed:NO];

@@ -82,9 +82,12 @@
     NSEvent *nextEvent, *firstEvent, *dragEvent, *mouseUp;
     BOOL dragIt;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([mouseDownEvent type] != NSLeftMouseDown) {
         return NO;
     }
+#pragma clang diagnostic pop
 
     nextEvent = nil;
     firstEvent = nil;
@@ -92,6 +95,8 @@
     mouseUp = nil;
     dragIt = NO;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     while ((nextEvent = [[self window] nextEventMatchingMask:(NSLeftMouseUpMask | NSLeftMouseDraggedMask)
                                                    untilDate:expiration
                                                       inMode:NSEventTrackingRunLoopMode
@@ -119,6 +124,7 @@
             break;
         }
     }
+#pragma clang diagnostic pop
 
     // Since we've been dequeuing the events (If we don't, we'll never see the mouse up...),
     // we need to push some of the events back on.  It makes sense to put the first and last

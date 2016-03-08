@@ -6020,7 +6020,10 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         flags |= DragApplicationHasAttachedSheet;
     if ([draggingInfo draggingSource] == self)
         flags |= DragApplicationIsSource;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+#pragma clang diagnostic pop
         flags |= DragApplicationIsCopyKeyDown;
     return static_cast<DragApplicationFlags>(flags);
 }

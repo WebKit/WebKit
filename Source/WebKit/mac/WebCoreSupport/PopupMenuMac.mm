@@ -90,7 +90,10 @@ void PopupMenuMac::populate()
         }
 
         RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [paragraphStyle setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
+#pragma clang diagnostic pop
         NSWritingDirection writingDirection = style.textDirection() == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
         [paragraphStyle setBaseWritingDirection:writingDirection];
         if (style.hasTextDirectionOverride()) {
@@ -191,6 +194,8 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
 
     NSControlSize controlSize;
     switch (m_client->menuStyle().menuSize()) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     case PopupMenuStyle::PopupMenuSizeNormal:
         controlSize = NSRegularControlSize;
         break;
@@ -200,6 +205,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
     case PopupMenuStyle::PopupMenuSizeMini:
         controlSize = NSMiniControlSize;
         break;
+#pragma clang diagnostic pop
     }
 
     WKPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, font, controlSize, !m_client->menuStyle().hasDefaultAppearance());
