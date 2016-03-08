@@ -252,7 +252,8 @@ public:
     // toNumber conversion is expected to be side effect free if an exception has
     // been set in the ExecState already.
     double toNumber(ExecState*) const;
-    JSString* toString(ExecState*) const;
+    JSString* toString(ExecState*) const; // On exception, this returns the empty string.
+    JSString* toStringOrNull(ExecState*) const; // On exception, this returns null, to make exception checks faster.
     Identifier toPropertyKey(ExecState*) const;
     WTF::String toWTFString(ExecState*) const;
     JSObject* toObject(ExecState*) const;
@@ -436,7 +437,7 @@ private:
 
     inline const JSValue asValue() const { return *this; }
     JS_EXPORT_PRIVATE double toNumberSlowCase(ExecState*) const;
-    JS_EXPORT_PRIVATE JSString* toStringSlowCase(ExecState*) const;
+    JS_EXPORT_PRIVATE JSString* toStringSlowCase(ExecState*, bool returnEmptyStringOnError) const;
     JS_EXPORT_PRIVATE WTF::String toWTFStringSlowCase(ExecState*) const;
     JS_EXPORT_PRIVATE JSObject* toObjectSlowCase(ExecState*, JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSValue toThisSlowCase(ExecState*, ECMAMode) const;
