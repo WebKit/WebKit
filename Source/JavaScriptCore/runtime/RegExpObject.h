@@ -66,7 +66,7 @@ public:
         return m_lastIndex.get();
     }
 
-    bool test(ExecState* exec, JSGlobalObject* globalObject, JSString* string) { return match(exec, globalObject, string); }
+    bool test(ExecState* exec, JSGlobalObject* globalObject, JSString* string) { return !!match(exec, globalObject, string); }
     JSValue exec(ExecState*, JSGlobalObject*, JSString*);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);

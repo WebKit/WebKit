@@ -54,6 +54,7 @@ public:
 
     MatchResult performMatch(VM&, RegExp*, JSString*, const String&, int startOffset, int** ovector);
     MatchResult performMatch(VM&, RegExp*, JSString*, const String&, int startOffset);
+    void recordMatch(VM&, RegExp*, JSString*, const MatchResult&);
 
     void setMultiline(bool multiline) { m_multiline = multiline; }
     bool multiline() const { return m_multiline; }
@@ -122,6 +123,12 @@ ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(VM& vm, RegExp* regExp
     if (result)
         m_cachedResult.record(vm, this, regExp, string, result);
     return result;
+}
+
+ALWAYS_INLINE void RegExpConstructor::recordMatch(VM& vm, RegExp* regExp, JSString* string, const MatchResult& result)
+{
+    ASSERT(result);
+    m_cachedResult.record(vm, this, regExp, string, result);
 }
 
 } // namespace JSC

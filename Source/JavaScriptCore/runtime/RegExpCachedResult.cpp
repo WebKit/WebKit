@@ -45,7 +45,10 @@ JSArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
 {
     if (!m_reified) {
         m_reifiedInput.set(exec->vm(), owner, m_lastInput.get());
-        m_reifiedResult.set(exec->vm(), owner, createRegExpMatchesArray(exec, exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get(), m_result));
+        if (m_result)
+            m_reifiedResult.set(exec->vm(), owner, createRegExpMatchesArray(exec, exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get(), m_result.start));
+        else
+            m_reifiedResult.set(exec->vm(), owner, createEmptyRegExpMatchesArray(exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get()));
         m_reified = true;
     }
     return m_reifiedResult.get();

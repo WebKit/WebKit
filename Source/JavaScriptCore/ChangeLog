@@ -1,3 +1,52 @@
+2016-03-07  Filip Pizlo  <fpizlo@apple.com>
+
+        RegExp.prototype.exec() should call into Yarr at most once
+        https://bugs.webkit.org/show_bug.cgi?id=155139
+
+        Reviewed by Saam Barati.
+
+        For apparently no good reason, RegExp.prototype.match() was calling into Yarr twice, almost
+        as if it was hoping that the non-matching case was so common that it was best to have the
+        matching case do the work all over again.
+
+        This is a 4% speed-up on Octane/regexp. It's also a matter of common sense: we should not be
+        in the business of presuming whether someone's match will succeed or fail. The increased
+        cost of running Yarr twice is so much larger than whatever savings we were getting from
+        running a match-only regexp that this is just not a good overall deal for the engine.
+
+        Also, it's interesting that we are seeing a 4% speed-up on regexp despite the fact that a
+        majority (almost a supermajority, I think) of calls into RegExp.prototype.match() are failed
+        matches. So, this change is a 4% speed-up despite being a slow down on the common case. That
+        tells you just how bad the old behavior was on the uncommon case.
+
+        * runtime/MatchResult.h:
+        (MatchResult::MatchResult):
+        (MatchResult::failed):
+        (MatchResult::operator bool):
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::lastResult):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::setMultiline):
+        (JSC::RegExpConstructor::multiline):
+        (JSC::RegExpConstructor::performMatch):
+        (JSC::RegExpConstructor::recordMatch):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createRegExpMatchesArray):
+        (JSC::createEmptyRegExpMatchesArray):
+        (JSC::createStructureImpl):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::put):
+        (JSC::getLastIndexAsUnsigned):
+        (JSC::RegExpObject::exec):
+        (JSC::RegExpObject::match):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::getLastIndex):
+        (JSC::RegExpObject::test):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+
 2016-03-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Heap Snapshot should include different Edge types and data (Property, Index, Variable)
