@@ -45,7 +45,8 @@ class BitmapTexture : public RefCounted<BitmapTexture> {
 public:
     enum Flag {
         NoFlag = 0,
-        SupportsAlpha = 0x01
+        SupportsAlpha = 0x01,
+        FBOAttachment = 0x02
     };
 
     enum UpdateContentsFlag {

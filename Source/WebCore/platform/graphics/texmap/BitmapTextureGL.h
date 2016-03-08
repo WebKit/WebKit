@@ -38,7 +38,7 @@ class FilterOperation;
 
 class BitmapTextureGL : public BitmapTexture {
 public:
-    BitmapTextureGL(PassRefPtr<GraphicsContext3D>);
+    BitmapTextureGL(PassRefPtr<GraphicsContext3D>, const Flags = NoFlag);
     virtual ~BitmapTextureGL();
 
     virtual IntSize size() const override;

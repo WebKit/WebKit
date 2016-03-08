@@ -58,7 +58,7 @@ BitmapTextureGL* toBitmapTextureGL(BitmapTexture* texture)
     return static_cast<BitmapTextureGL*>(texture);
 }
 
-BitmapTextureGL::BitmapTextureGL(PassRefPtr<GraphicsContext3D> context3D)
+BitmapTextureGL::BitmapTextureGL(PassRefPtr<GraphicsContext3D> context3D, const Flags flags)
     : m_id(0)
     , m_fbo(0)
     , m_rbo(0)
@@ -71,15 +71,19 @@ BitmapTextureGL::BitmapTextureGL(PassRefPtr<GraphicsContext3D> context3D)
     , m_type(GraphicsContext3D::UNSIGNED_BYTE)
 #endif
 {
-    // If GL_EXT_texture_format_BGRA8888 is supported in the OpenGLES
-    // internal and external formats need to be BGRA
-    m_internalFormat = GraphicsContext3D::RGBA;
-    m_format = GraphicsContext3D::BGRA;
-    if (m_context3D->isGLES2Compliant()) {
-        if (m_context3D->getExtensions()->supports("GL_EXT_texture_format_BGRA8888"))
-            m_internalFormat = GraphicsContext3D::BGRA;
-        else
-            m_format = GraphicsContext3D::RGBA;
+    if (flags & FBOAttachment)
+        m_internalFormat = m_format = GraphicsContext3D::RGBA;
+    else {
+        // If GL_EXT_texture_format_BGRA8888 is supported in the OpenGLES
+        // internal and external formats need to be BGRA
+        m_internalFormat = GraphicsContext3D::RGBA;
+        m_format = GraphicsContext3D::BGRA;
+        if (m_context3D->isGLES2Compliant()) {
+            if (m_context3D->getExtensions()->supports("GL_EXT_texture_format_BGRA8888"))
+                m_internalFormat = GraphicsContext3D::BGRA;
+            else
+                m_format = GraphicsContext3D::RGBA;
+        }
     }
 }
 
@@ -243,7 +247,7 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMa
             bool last = (i == filters.size() - 1) && (j == numPasses - 1);
             if (!last) {
                 if (!intermediateSurface)
-                    intermediateSurface = texmapGL.acquireTextureFromPool(contentSize());
+                    intermediateSurface = texmapGL.acquireTextureFromPool(contentSize(), BitmapTexture::SupportsAlpha | BitmapTexture::FBOAttachment);
                 texmapGL.bindSurface(intermediateSurface.get());
             }
 
