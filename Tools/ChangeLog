@@ -1,3 +1,15 @@
+2016-03-07  Jon Lee  <jonlee@apple.com>
+
+        Update perf bot configuration for Animometer
+        https://bugs.webkit.org/show_bug.cgi?id=155134
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/Animometer.patch: Refactor the patch
+        to work with the latest version of the harness.
+        * Scripts/webkitpy/benchmark_runner/data/plans/animometer.plan: Bump up the timeout,
+        and use the latest version of the harness.
+
 2016-03-07  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK][jhbuild] OpenWebRTC build fails with GCC 6.0

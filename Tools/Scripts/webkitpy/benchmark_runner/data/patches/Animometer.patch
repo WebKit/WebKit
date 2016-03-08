@@ -1,11 +1,13 @@
-diff --git a/runner/resources/animometer.js b/runner/resources/animometer.js
-index d3ac8db..230ac05 100644
---- a/runner/resources/animometer.js
-+++ b/runner/resources/animometer.js
-@@ -41,14 +41,62 @@ window.benchmarkRunnerClient = {
-         this._resultsDashboard.push(suitesSamplers);
-     },
-     
+diff --git a/PerformanceTests/Animometer/resources/debug-runner/animometer.js b/PerformanceTests/Animometer/resources/debug-runner/animometer.js
+index ffc71ba..02a5d49 100644
+--- a/resources/debug-runner/animometer.js
++++ b/resources/debug-runner/animometer.js
+@@ -119,6 +119,57 @@ Utilities.extendObject(window.benchmarkRunnerClient, {
+     {
+         this.progressBar.incrementRange();
+         this.results.calculateScore(testData);
++    },
++
 +    _computeTestReport: function(testName, testResults)
 +    {
 +        return [testResults[Strings.json.score]];
@@ -14,51 +16,39 @@ index d3ac8db..230ac05 100644
 +    _computeSuiteReports: function(suiteName, suiteResults)
 +    {
 +        var testsReports = {};
-+
-+        for (var testName in suiteResults[Strings.json.results.tests]) {
-+            var testReports = this._computeTestReport(testName, suiteResults[Strings.json.results.tests][testName]);
++        for (var testName in suiteResults) {
++            var testReports = this._computeTestReport(testName, suiteResults[testName]);
 +            testsReports[testName] = { "metrics": { "Score": { "current": testReports } } };
 +        }
-+
 +        return testsReports;
 +    },
 +
 +    _computeIterationReports: function(iterationResults)
 +    {
 +        var suitesReports = {};
-+
-+        for (var suiteName in iterationResults[Strings.json.results.suites]) {
-+            var testsReports = this._computeSuiteReports(suiteName, iterationResults[Strings.json.results.suites][suiteName]);
++        for (var suiteName in iterationResults[Strings.json.results.tests]) {
++            var testsReports = this._computeSuiteReports(suiteName, iterationResults[Strings.json.results.tests][suiteName]);
 +            suitesReports[suiteName] = { "metrics": { "Score": ["Geometric"] }, "tests": testsReports };
 +        }
-+
 +        return suitesReports;
 +    },
 +
 +    _computeResultsReports: function()
 +    {
-+        var json = this._resultsDashboard.toJSON(false, false);
-+        var iterationReports = this._computeIterationReports(json[Strings.json.results.iterations][0])
++        var results = this.results.results[0];
++        var iterationReports = this._computeIterationReports(results);
 +        return {"Animometer": {"metrics" : {"Score" : ["Geometric"]}, "tests" : iterationReports } };
 +    },
 +
-     didFinishLastIteration: function ()
-     {
--        var json = this._resultsDashboard.toJSON(true, true);
--        this.score = json[Strings.json.score];
--        this._resultsTable.showIterations(json[Strings.json.results.iterations], this.options);
--        sectionsManager.showJSON("json", json[Strings.json.results.iterations][0]);
--        suitesManager.updateLocalStorageFromJSON(json[Strings.json.results.iterations][0]);
--        benchmarkController.showResults();
++    didFinishLastIteration: function()
++    {
 +        // submit result to server
 +        var results = JSON.stringify(this._computeResultsReports());
 +        var xhr = new XMLHttpRequest();
 +        xhr.open("POST", "/report");
-+
 +        xhr.setRequestHeader("Content-type", "application/json");
 +        xhr.setRequestHeader("Content-length", results.length);
 +        xhr.setRequestHeader("Connection", "close");
-+
 +        xhr.onreadystatechange = function() {
 +            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
 +                closeRequest = new XMLHttpRequest();
@@ -66,43 +56,101 @@ index d3ac8db..230ac05 100644
 +                closeRequest.send()
 +            }
 +        }
-+
 +        xhr.send(results);
      }
- }
- 
-@@ -287,7 +335,13 @@ window.suitesManager =
- 
-             suite.tests.forEach(function(test) {
-                 var testElement = this._createTestElement(listElement, test, suiteCheckbox);
-+                if (index < 4) {
-+                    var testCheckbox = this._checkboxElement(testElement);
-+                    testCheckbox.checked = true;
-+                }
-             }, this);
-+            
-+            this._updateSuiteCheckboxState(suiteCheckbox);
-         }, this);
+ });
+
+@@ -255,10 +307,10 @@ window.suitesManager =
+         startButton.disabled = true;
      },
-     
-@@ -387,10 +441,8 @@ window.benchmarkController =
- {
+
+-    _onChangeSuiteCheckbox: function(event)
++    _onChangeSuiteCheckbox: function(suiteCheckbox)
+     {
+-        var selected = event.target.checked;
+-        event.target.testsElements.forEach(function(testElement) {
++        var selected = suiteCheckbox.checked;
++        suiteCheckbox.testsElements.forEach(function(testElement) {
+             var testCheckbox = this._checkboxElement(testElement);
+             testCheckbox.checked = selected;
+         }, this);
+@@ -279,7 +331,9 @@ window.suitesManager =
+
+         var suiteCheckbox = Utilities.createElement("input", { type: "checkbox" }, label);
+         suiteCheckbox.suite = suite;
+-        suiteCheckbox.onchange = this._onChangeSuiteCheckbox.bind(this);
++        suiteCheckbox.onchange = function(event) {
++            this._onChangeSuiteCheckbox(event.target);
++        }.bind(this);
+         suiteCheckbox.testsElements = [];
+
+         label.appendChild(document.createTextNode(" " + suite.name));
+@@ -428,45 +482,8 @@ window.suitesManager =
+ Utilities.extendObject(window.benchmarkController, {
      initialize: function()
      {
+-        document.forms["benchmark-options"].addEventListener("change", benchmarkController.onBenchmarkOptionsChanged, true);
+-        document.forms["graph-type"].addEventListener("change", benchmarkController.onGraphTypeChanged, true);
+-        document.forms["time-graph-options"].addEventListener("change", benchmarkController.onTimeGraphOptionsChanged, true);
+-        document.forms["complexity-graph-options"].addEventListener("change", benchmarkController.onComplexityGraphOptionsChanged, true);
 -        optionsManager.updateUIFromLocalStorage();
          suitesManager.createElements();
 -        suitesManager.updateUIFromLocalStorage();
+-        suitesManager.updateDisplay();
 -        suitesManager.updateEditsElementsState();
-+        setTimeout(benchmarkController.startTest, 3000);
+-
+-        var dropTarget = document.getElementById("drop-target");
+-        function stopEvent(e) {
+-            e.stopPropagation();
+-            e.preventDefault();
+-        }
+-        dropTarget.addEventListener("dragenter", stopEvent, false);
+-        dropTarget.addEventListener("dragover", stopEvent, false);
+-        dropTarget.addEventListener("dragleave", stopEvent, false);
+-        dropTarget.addEventListener("drop", function (e) {
+-            e.stopPropagation();
+-            e.preventDefault();
+-
+-            if (!e.dataTransfer.files.length)
+-                return;
+-
+-            var file = e.dataTransfer.files[0];
+-
+-            var reader = new FileReader();
+-            reader.filename = file.name;
+-            reader.onload = function(e) {
+-                var run = JSON.parse(e.target.result);
+-                benchmarkRunnerClient.results = new ResultsDashboard(run.options, run.data);
+-                benchmarkController.showResults();
+-            };
+-
+-            reader.readAsText(file);
+-            document.title = "File: " + reader.filename;
+-        }, false);
+-
++        setTimeout(benchmarkController.startBenchmark.bind(benchmarkController), 3000);
      },
- 
-     onChangeAdaptiveTestCheckbox: function()
-@@ -411,7 +463,7 @@ window.benchmarkController =
-         var options = optionsManager.updateLocalStorageFromUI();
+
+     onBenchmarkOptionsChanged: function(event)
+@@ -482,7 +499,20 @@ Utilities.extendObject(window.benchmarkController, {
+
+     startBenchmark: function()
+     {
+-        var options = optionsManager.updateLocalStorageFromUI();
++        var options = {
++            "test-interval": 20,
++            "display": "minimal",
++            "controller": "ramp",
++            "kalman-process-error": 1,
++            "kalman-measurement-error": 4,
++            "time-measurement": "performance"
++        };
++
++        for (var suiteIndex = 0; suiteIndex < 5; ++suiteIndex) {
++            var suiteCheckbox = document.querySelector("label[for=suite-" + suiteIndex + "] input[type=checkbox]");
++            suiteCheckbox.checked = true;
++            suitesManager._onChangeSuiteCheckbox(suiteCheckbox);
++        }
          var suites = suitesManager.updateLocalStorageFromUI();
-         sectionsManager.setupRunningSectionStyle(options);
--        this._runBenchmark(suites, options);
-+        benchmarkController._runBenchmark(suites, options);
-         sectionsManager.showSection("running");
+         this._startBenchmark(suites, options, "running-test");
      },
-     
