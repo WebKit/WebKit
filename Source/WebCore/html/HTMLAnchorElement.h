@@ -127,7 +127,7 @@ private:
     bool isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
     String target() const override;
-    short tabIndex() const final;
+    int tabIndex() const final;
     bool draggable() const final;
 
     void sendPings(const URL& destinationURL);

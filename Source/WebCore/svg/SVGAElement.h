@@ -57,7 +57,7 @@ private:
     bool isFocusable() const override;
     bool isURLAttribute(const Attribute&) const override;
     bool canStartSelection() const override;
-    short tabIndex() const override;
+    int tabIndex() const override;
 
     bool willRespondToMouseClickEvents() override;
 

@@ -171,7 +171,7 @@ private:
     bool isFormControlElement() const final { return true; }
     bool alwaysCreateUserAgentShadowRoot() const override { return true; }
 
-    short tabIndex() const final;
+    int tabIndex() const final;
 
     HTMLFormElement* virtualForm() const override;
     bool isValidFormControlElement() const;

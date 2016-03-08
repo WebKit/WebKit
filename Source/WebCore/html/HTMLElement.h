@@ -44,7 +44,7 @@ public:
 
     WEBCORE_EXPORT String title() const final;
 
-    short tabIndex() const override;
+    int tabIndex() const override;
 
     void setInnerText(const String&, ExceptionCode&);
     void setOuterText(const String&, ExceptionCode&);

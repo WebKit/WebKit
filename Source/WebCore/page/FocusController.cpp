@@ -490,7 +490,7 @@ Element* FocusController::findElementWithExactTabIndex(const FocusNavigationScop
 static Element* nextElementWithGreaterTabIndex(const FocusNavigationScope& scope, int tabIndex, KeyboardEvent& event)
 {
     // Search is inclusive of start
-    int winningTabIndex = std::numeric_limits<short>::max() + 1;
+    int winningTabIndex = std::numeric_limits<int>::max();
     Element* winner = nullptr;
     for (Node* node = &scope.rootNode(); node; node = scope.nextInScope(node)) {
         if (!is<Element>(*node))
@@ -607,7 +607,7 @@ Element* FocusController::previousFocusableElement(const FocusNavigationScope& s
     // There are no nodes before start with the same tabindex as start, so look for a node that:
     // 1) has the highest non-zero tabindex (that is less than start's tabindex), and
     // 2) comes last in the scope, if there's a tie.
-    startingTabIndex = (start && startingTabIndex) ? startingTabIndex : std::numeric_limits<short>::max();
+    startingTabIndex = (start && startingTabIndex) ? startingTabIndex : std::numeric_limits<int>::max();
     return previousElementWithLowerTabIndex(scope, last, startingTabIndex, *event);
 }
 

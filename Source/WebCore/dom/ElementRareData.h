@@ -47,8 +47,8 @@ public:
     void resetComputedStyle();
     void resetDynamicRestyleObservations();
     
-    short tabIndex() const { return m_tabIndex; }
-    void setTabIndexExplicitly(short index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
+    int tabIndex() const { return m_tabIndex; }
+    void setTabIndexExplicitly(int index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
     bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
     void clearTabIndexExplicitly() { m_tabIndex = 0; m_tabIndexWasSetExplicitly = false; }
 
@@ -108,7 +108,7 @@ public:
     void setHasPendingResources(bool has) { m_hasPendingResources = has; }
 
 private:
-    short m_tabIndex;
+    int m_tabIndex;
     unsigned short m_childIndex;
     unsigned m_tabIndexWasSetExplicitly : 1;
     unsigned m_needsFocusAppearanceUpdateSoonAfterAttach : 1;

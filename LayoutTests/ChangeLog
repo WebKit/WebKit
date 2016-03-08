@@ -1,3 +1,15 @@
+2016-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Stop clamping HTMLElement.tabIndex to the range of a short
+        https://bugs.webkit.org/show_bug.cgi?id=155159
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop outdated test.
+
+        * fast/dom/tabindex-clamp-expected.txt: Removed.
+        * fast/dom/tabindex-clamp.html: Removed.
+
 2016-03-07  Daniel Bates  <dabates@apple.com>
 
         CSP: Source '*' should not match URLs with schemes blob, data, or filesystem

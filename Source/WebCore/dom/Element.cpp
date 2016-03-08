@@ -209,7 +209,7 @@ void Element::clearTabIndexExplicitlyIfNeeded()
         elementRareData()->clearTabIndexExplicitly();
 }
 
-void Element::setTabIndexExplicitly(short tabIndex)
+void Element::setTabIndexExplicitly(int tabIndex)
 {
     ensureElementRareData().setTabIndexExplicitly(tabIndex);
 }
@@ -229,7 +229,7 @@ Element* Element::focusDelegate()
     return this;
 }
 
-short Element::tabIndex() const
+int Element::tabIndex() const
 {
     return hasRareData() ? elementRareData()->tabIndex() : 0;
 }

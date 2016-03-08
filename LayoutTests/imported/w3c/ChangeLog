@@ -1,3 +1,22 @@
+2016-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Stop clamping HTMLElement.tabIndex to the range of a short
+        https://bugs.webkit.org/show_bug.cgi?id=155159
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * web-platform-tests/html/dom/reflection-grouping-expected.txt:
+        * web-platform-tests/html/dom/reflection-metadata-expected.txt:
+        * web-platform-tests/html/dom/reflection-misc-expected.txt:
+        * web-platform-tests/html/dom/reflection-obsolete-expected.txt:
+        * web-platform-tests/html/dom/reflection-sections-expected.txt:
+        * web-platform-tests/html/dom/reflection-tabular-expected.txt:
+        * web-platform-tests/html/dom/reflection-text-expected.txt:
+
 2016-03-05  Sam Weinig  <sam@webkit.org>
 
         Update tests to match the latest version of the HTML5 spec.

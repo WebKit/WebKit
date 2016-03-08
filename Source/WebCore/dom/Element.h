@@ -274,7 +274,7 @@ public:
 
     virtual bool shouldUseInputMethod();
 
-    virtual short tabIndex() const;
+    virtual int tabIndex() const;
     void setTabIndex(int);
     virtual Element* focusDelegate();
 
@@ -515,7 +515,7 @@ protected:
     virtual void parserDidSetAttributes();
 
     void clearTabIndexExplicitlyIfNeeded();
-    void setTabIndexExplicitly(short);
+    void setTabIndexExplicitly(int);
 
     // classAttributeChanged() exists to share code between
     // parseAttribute (called via setAttribute()) and

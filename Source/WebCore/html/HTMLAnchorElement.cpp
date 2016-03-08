@@ -320,7 +320,7 @@ const AtomicString& HTMLAnchorElement::name() const
     return getNameAttribute();
 }
 
-short HTMLAnchorElement::tabIndex() const
+int HTMLAnchorElement::tabIndex() const
 {
     // Skip the supportsFocus check in HTMLElement.
     return Element::tabIndex();

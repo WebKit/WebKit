@@ -149,7 +149,7 @@ public:
 #endif
 
     bool hasTagName(const SVGQualifiedName& name) const { return hasLocalName(name.localName()); }
-    short tabIndex() const override;
+    int tabIndex() const override;
 
     void callClearTarget() { clearTarget(); }
 
