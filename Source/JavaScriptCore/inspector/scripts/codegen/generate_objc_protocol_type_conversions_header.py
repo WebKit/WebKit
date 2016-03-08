@@ -55,8 +55,10 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
 
     def generate_output(self):
         headers = [
-            '"%sArrayConversions.h"' % ObjCGenerator.OBJC_STATIC_PREFIX
+            '"%s.h"' % self.protocol_name(),
+            '"%sArrayConversions.h"' % ObjCGenerator.OBJC_STATIC_PREFIX,
         ]
+        headers.sort()
 
         header_args = {
             'includes': '\n'.join(['#import ' + header for header in headers]),

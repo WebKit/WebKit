@@ -22,3 +22,4 @@ from generate_objc_header import *
 from generate_objc_internal_header import *
 from generate_objc_protocol_types_implementation import *
 from generate_objc_protocol_type_conversions_header import *
+from generate_objc_protocol_type_conversions_implementation import *

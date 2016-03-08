@@ -1,3 +1,41 @@
+2016-03-07  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: the protocol generator should generate factory method stubs for protocol types
+        https://bugs.webkit.org/show_bug.cgi?id=155103
+        <rdar://problem/25002772>
+
+        Reviewed by Timothy Hatcher.
+
+        Generate stubs with unique names so that parsing methods can be used
+        reflectively at runtime, based on the protocol version that's loaded.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/scripts/codegen/__init__.py:
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py:
+        Added. For each type in a domain, add a method of the form
+        -[ProtocolTypeConversions _parseXXX:fromPayload]. This is in a category
+        method, and the selector is only ever looked up at runtime.
+
+        (ObjCProtocolTypeConversionsHeaderGenerator.generate_output):
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        (generate_from_specification):
+
+        Rebaseline test results with new generator output.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-03-07  Filip Pizlo  <fpizlo@apple.com>
 
         RegExp.prototype.exec() should call into Yarr at most once

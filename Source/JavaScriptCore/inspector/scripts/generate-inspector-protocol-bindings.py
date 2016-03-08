@@ -72,6 +72,7 @@ except ImportError, e:
     from generate_objc_header import *
     from generate_objc_internal_header import *
     from generate_objc_protocol_type_conversions_header import *
+    from generate_objc_protocol_type_conversions_implementation import *
     from generate_objc_protocol_types_implementation import *
 
 
@@ -149,6 +150,7 @@ def generate_from_specification(primary_specification_filepath=None,
         generators.append(ObjCHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCInternalHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCProtocolTypeConversionsHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjCProtocolTypeConversionsImplementationGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
 
     elif protocol.framework is Frameworks.JavaScriptCore:
@@ -170,6 +172,7 @@ def generate_from_specification(primary_specification_filepath=None,
     elif protocol.framework is Frameworks.WebKit and generate_frontend:
         generators.append(ObjCHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCProtocolTypeConversionsHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjCProtocolTypeConversionsImplementationGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
 
     elif protocol.framework is Frameworks.WebInspector:
