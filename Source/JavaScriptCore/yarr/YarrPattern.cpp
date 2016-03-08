@@ -28,7 +28,7 @@
 #include "YarrPattern.h"
 
 #include "Yarr.h"
-#include "YarrCanonicalizeUnicode.h"
+#include "YarrCanonicalize.h"
 #include "YarrParser.h"
 #include <wtf/Vector.h>
 
@@ -68,9 +68,14 @@ public:
 
     void putChar(UChar32 ch)
     {
-        // Handle ascii cases.
-        if (isASCII(ch)) {
-            if (m_isCaseInsensitive && isASCIIAlpha(ch)) {
+        if (!m_isCaseInsensitive) {
+            addSorted(ch);
+            return;
+        }
+
+        if (m_canonicalMode == CanonicalMode::UCS2 && isASCII(ch)) {
+            // Handle ASCII cases.
+            if (isASCIIAlpha(ch)) {
                 addSorted(m_matches, toASCIIUpper(ch));
                 addSorted(m_matches, toASCIILower(ch));
             } else
@@ -78,16 +83,10 @@ public:
             return;
         }
 
-        // Simple case, not a case-insensitive match.
-        if (!m_isCaseInsensitive) {
-            addSorted(m_matchesUnicode, ch);
-            return;
-        }
-
         // Add multiple matches, if necessary.
         const CanonicalizationRange* info = canonicalRangeInfoFor(ch, m_canonicalMode);
         if (info->type == CanonicalizeUnique)
-            addSorted(m_matchesUnicode, ch);
+            addSorted(ch);
         else
             putUnicodeIgnoreCase(ch, info);
     }

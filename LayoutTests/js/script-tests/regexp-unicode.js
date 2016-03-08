@@ -137,10 +137,10 @@ shouldBeUndefined('match6[1]');
 shouldBe('match6[2]', '"\u{10412}\u{10412}"');
 
 // Check unicode case insensitive matches
-shouldBeTrue('/\u1e9Abc/ui.test("abc")');
-shouldBeTrue('/abc/ui.test("\u1e9Abc")');
-shouldBeTrue('/tex\u1e97/ui.test("text")');
-shouldBeTrue('/text/ui.test("\u1e97ext")');
+shouldBeTrue('/\u017ftop/ui.test("stop")');
+shouldBeTrue('/stop/ui.test("\u017ftop")');
+shouldBeTrue('/\u212aelvin/ui.test("kelvin")');
+shouldBeTrue('/KELVIN/ui.test("\u212aelvin")');
 
 // Verify that without the unicode flag, \u{} doesn't parse to a unicode escapes, but to a counted match of the character 'u'.
 shouldBeTrue('/\\u{1}/.test("u")');

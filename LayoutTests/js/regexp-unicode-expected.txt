@@ -89,10 +89,10 @@ PASS match5[2] is "𐐒𐐒"
 PASS match6[0] is "a𐐒𐐒b𐐺𐐒"
 PASS match6[1] is undefined.
 PASS match6[2] is "𐐒𐐒"
-PASS /ẚbc/ui.test("abc") is true
-PASS /abc/ui.test("ẚbc") is true
-PASS /texẗ/ui.test("text") is true
-PASS /text/ui.test("ẗext") is true
+PASS /ſtop/ui.test("stop") is true
+PASS /stop/ui.test("ſtop") is true
+PASS /Kelvin/ui.test("kelvin") is true
+PASS /KELVIN/ui.test("Kelvin") is true
 PASS /\u{1}/.test("u") is true
 PASS /\u{4}/.test("u") is false
 PASS /\u{4}/.test("uuuu") is true

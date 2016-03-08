@@ -831,7 +831,7 @@ set(JavaScriptCore_SOURCES
     wasm/WASMReader.cpp
 
     yarr/RegularExpression.cpp
-    yarr/YarrCanonicalizeUnicode.cpp
+    yarr/YarrCanonicalizeUCS2.cpp
     yarr/YarrInterpreter.cpp
     yarr/YarrJIT.cpp
     yarr/YarrPattern.cpp
@@ -1082,6 +1082,16 @@ add_custom_command(
     VERBATIM)
 ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/yarr/YarrPattern.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h)
 
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/YarrCanonicalizeUnicode.cpp
+    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/generateYarrCanonicalizeUnicode
+    DEPENDS ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generateYarrCanonicalizeUnicode ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/YarrCanonicalizeUnicode.cpp
+    VERBATIM)
+
+list(APPEND JavaScriptCore_SOURCES
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/YarrCanonicalizeUnicode.cpp
+)
 
 #GENERATOR: "KeywordLookup.h": keyword decision tree used by the lexer
 add_custom_command(

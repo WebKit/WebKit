@@ -61,6 +61,7 @@ all : \
     KeywordLookup.h \
     RegExpJitTables.h \
     AirOpcode.h \
+    YarrCanonicalizeUnicode.cpp \
 #
 
 # JavaScript builtins.
@@ -271,6 +272,9 @@ JSReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
 
 AirOpcode.h: $(JavaScriptCore)/b3/air/opcode_generator.rb $(JavaScriptCore)/b3/air/AirOpcode.opcodes
 	$(RUBY) $^
+
+YarrCanonicalizeUnicode.cpp: $(JavaScriptCore)/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt
+	$(PYTHON) $(JavaScriptCore)/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt ./YarrCanonicalizeUnicode.cpp
 
 # Dynamically-defined targets are listed below. Static targets belong up top.
 

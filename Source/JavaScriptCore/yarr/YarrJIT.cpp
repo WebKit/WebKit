@@ -30,7 +30,7 @@
 #include "LinkBuffer.h"
 #include "Options.h"
 #include "Yarr.h"
-#include "YarrCanonicalizeUnicode.h"
+#include "YarrCanonicalize.h"
 
 #if ENABLE(YARR_JIT)
 

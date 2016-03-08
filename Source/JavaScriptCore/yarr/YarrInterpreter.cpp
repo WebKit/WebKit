@@ -28,7 +28,7 @@
 #include "YarrInterpreter.h"
 
 #include "Yarr.h"
-#include "YarrCanonicalizeUnicode.h"
+#include "YarrCanonicalize.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/DataLog.h>
 #include <wtf/text/CString.h>
@@ -377,9 +377,10 @@ public:
                 continue;
 
             if (pattern->m_ignoreCase) {
-                // The definition for canonicalize (see ES 6.0, 15.10.2.8) means that
-                // unicode values are never allowed to match against ascii ones.
-                if (isASCII(oldCh) || isASCII(ch)) {
+                // See ES 6.0, 21.2.2.8.2 for the definition of Canonicalize(). For non-Unicode
+                // patterns, Unicode values are never allowed to match against ASCII ones.
+                // For Unicode, we need to check all canonical equivalents of a character.
+                if (!unicode && (isASCII(oldCh) || isASCII(ch))) {
                     if (toASCIIUpper(oldCh) == toASCIIUpper(ch))
                         continue;
                 } else if (areCanonicallyEquivalent(oldCh, ch, unicode ? CanonicalMode::Unicode : CanonicalMode::UCS2))

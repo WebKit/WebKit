@@ -1,3 +1,42 @@
+2016-03-08  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Regular Expression canonicalization tables for Unicode need to be updated to use Unicode CaseFolding.txt
+        https://bugs.webkit.org/show_bug.cgi?id=155114
+
+        Reviewed by Darin Adler.
+
+        Extracted out the Unicode canonicalization table creation from
+        YarrCanonicalizeUnicode.js into a new Python script, generateYarrCanonicalizeUnicode.
+        That script generates the Unicode tables as the file YarrCanonicalizeUnicode.cpp in
+        DerivedSources/JavaScriptCore.
+
+        Updated the processing of ignore case to make the ASCII short cuts dependent on whether
+        or not we are a Unicode pattern.
+
+        Renamed yarr/YarrCanonicalizeUnicode.{cpp,js} back to their prior names,
+        YarrCanonicalizeUCS2.{cpp,js}.
+        Renamed yarr/YarrCanonicalizeUnicode.h to YarrCanonicalize.h as it declares both the
+        legacy UCS2 and Unicode tables.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * generateYarrCanonicalizeUnicode: Added.
+        * ucd: Added.
+        * ucd/CaseFolding.txt: Added.  The current verion, 8.0, of the Unicode CaseFolding table.
+        * yarr/YarrCanonicalizeUCS2.cpp: Copied from Source/JavaScriptCore/yarr/YarrCanonicalizeUnicode.cpp.
+        * yarr/YarrCanonicalize.h: Copied from Source/JavaScriptCore/yarr/YarrCanonicalizeUnicode.h.
+        * yarr/YarrCanonicalizeUCS2.js: Copied from Source/JavaScriptCore/yarr/YarrCanonicalizeUnicode.js.
+        (printHeader):
+        * yarr/YarrCanonicalizeUnicode.cpp: Removed.
+        * yarr/YarrCanonicalizeUnicode.h: Removed.
+        * yarr/YarrCanonicalizeUnicode.js: Removed.
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::tryConsumeBackReference):
+        * yarr/YarrJIT.cpp:
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::putChar):
+
 2016-03-08  Andreas Kling  <akling@apple.com>
 
         WeakBlock::visit() should check for a WeakHandleOwner before consulting mark bits.
