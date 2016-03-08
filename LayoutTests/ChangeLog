@@ -1,3 +1,13 @@
+2016-03-08  Nan Wang  <n_wang@apple.com>
+
+        AX: Force allow user zoom
+        https://bugs.webkit.org/show_bug.cgi?id=155056
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/force-user-scalable-expected.txt: Added.
+        * accessibility/ios-simulator/force-user-scalable.html: Added.
+
 2016-03-08  Andreas Kling  <akling@apple.com>
 
         ImageDocuments leak their world.

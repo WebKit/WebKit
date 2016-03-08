@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+static const double forceAlwaysUserScalableMaximumScale = 10.0;
+
 class TextStream;
 
 class ViewportConfiguration {
@@ -88,7 +90,7 @@ public:
     WEBCORE_EXPORT double initialScale() const;
     WEBCORE_EXPORT double initialScaleIgnoringContentSize() const;
     WEBCORE_EXPORT double minimumScale() const;
-    double maximumScale() const { return m_configuration.maximumScale; }
+    double maximumScale() const { return m_forceAlwaysUserScalable ? forceAlwaysUserScalableMaximumScale : m_configuration.maximumScale; }
     WEBCORE_EXPORT bool allowsUserScaling() const;
     bool allowsShrinkToFit() const;
 

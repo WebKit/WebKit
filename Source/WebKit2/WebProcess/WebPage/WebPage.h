@@ -931,6 +931,10 @@ public:
 
     bool isControlledByAutomation() const;
     void setControlledByAutomation(bool);
+    
+#if PLATFORM(IOS)
+    void updateForceAlwaysUserScalable();
+#endif
 
     void insertNewlineInQuotedContent();
 
@@ -1437,6 +1441,10 @@ private:
 
 #if PLATFORM(GTK)
     bool m_inputMethodEnabled { false };
+#endif
+
+#if PLATFORM(IOS)
+    bool m_forceAlwaysUserScalable { false };
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)

@@ -1,3 +1,23 @@
+2016-03-08  Nan Wang  <n_wang@apple.com>
+
+        AX: Force allow user zoom
+        https://bugs.webkit.org/show_bug.cgi?id=155056
+
+        Reviewed by Chris Fleizach.
+
+        Soft linked libAccessibility library so that we can observe the accessibility
+        setting change for the force always user scalable feature.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::forceAlwaysUserScalableChangedCallback):
+        (WebKit::WebPage::create):
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents):
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::preferencesDidChange):
+        (WebKit::WebPage::updateForceAlwaysUserScalable):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+
 2016-03-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more unreviewed speculative buildfix after r197728.
