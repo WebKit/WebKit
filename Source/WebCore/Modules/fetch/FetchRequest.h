@@ -31,6 +31,7 @@
 
 #if ENABLE(FETCH_API)
 
+#include "ActiveDOMObject.h"
 #include "FetchBody.h"
 #include "FetchHeaders.h"
 #include "FetchOptions.h"
@@ -43,7 +44,7 @@ class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
-class FetchRequest : public RefCounted<FetchRequest> {
+class FetchRequest final : public RefCounted<FetchRequest>, public ActiveDOMObject {
 public:
     static RefPtr<FetchRequest> create(ScriptExecutionContext&, FetchRequest*, const Dictionary&, ExceptionCode&);
     static RefPtr<FetchRequest> create(ScriptExecutionContext&, const String&, const Dictionary&, ExceptionCode&);
@@ -63,7 +64,7 @@ public:
     String redirect() const;
     const String& integrity() const { return m_internalRequest.integrity; }
 
-    RefPtr<FetchRequest> clone(ExceptionCode&);
+    RefPtr<FetchRequest> clone(ScriptExecutionContext*, ExceptionCode&);
 
     // Body API
     bool isDisturbed() const { return m_body.isDisturbed(); }
@@ -83,18 +84,24 @@ public:
     FetchBody& body() { return m_body; }
 
 private:
-    FetchRequest(FetchBody&&, Ref<FetchHeaders>&&, InternalRequest&&);
+    FetchRequest(ScriptExecutionContext&, FetchBody&&, Ref<FetchHeaders>&&, InternalRequest&&);
+
+    // ActiveDOMObject API.
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
 
     FetchBody m_body;
     Ref<FetchHeaders> m_headers;
     InternalRequest m_internalRequest;
 };
 
-inline FetchRequest::FetchRequest(FetchBody&& body, Ref<FetchHeaders>&& headers, InternalRequest&& internalRequest)
-    : m_body(WTFMove(body))
+inline FetchRequest::FetchRequest(ScriptExecutionContext& context, FetchBody&& body, Ref<FetchHeaders>&& headers, InternalRequest&& internalRequest)
+    : ActiveDOMObject(&context)
+    , m_body(WTFMove(body))
     , m_headers(WTFMove(headers))
     , m_internalRequest(WTFMove(internalRequest))
 {
+    suspendIfNeeded();
 }
 
 } // namespace WebCore

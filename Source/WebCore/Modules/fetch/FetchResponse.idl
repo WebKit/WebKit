@@ -28,16 +28,17 @@
 enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredirect" };
 
 [
+    ActiveDOMObject,
     Conditional=FETCH_API,
+    ConstructorCallWith=ScriptExecutionContext,
     GlobalContext=DOMWindow&WorkerGlobalScope,
-    ImplementationLacksVTable,
     InterfaceName=Response,
     JSBuiltinConstructor
 ]
 interface FetchResponse {
     // FIXME: NewObject does not seem to be supported for static methods.
-    static FetchResponse error();
-    [RaisesException, CallWith=ScriptExecutionContext] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
+    [CallWith=ScriptExecutionContext] static FetchResponse error();
+    [CallWith=ScriptExecutionContext, RaisesException] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
 
     readonly attribute ResponseType type;
 
@@ -50,7 +51,7 @@ interface FetchResponse {
     readonly attribute FetchHeaders headers;
     [Custom, RaisesException] readonly attribute ReadableStream? body;
 
-    [NewObject, RaisesException] FetchResponse clone();
+    [NewObject, CallWith=ScriptExecutionContext, RaisesException] FetchResponse clone();
 
     [Private, RaisesException] void initializeWith(Dictionary parameters);
 };

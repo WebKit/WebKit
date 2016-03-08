@@ -31,6 +31,7 @@
 
 #if ENABLE(FETCH_API)
 
+#include "ActiveDOMObject.h"
 #include "FetchBody.h"
 #include "FetchHeaders.h"
 #include "ResourceResponse.h"
@@ -45,10 +46,10 @@ class Dictionary;
 
 typedef int ExceptionCode;
 
-class FetchResponse : public RefCounted<FetchResponse> {
+class FetchResponse final : public RefCounted<FetchResponse>, public ActiveDOMObject {
 public:
-    static Ref<FetchResponse> create() { return adoptRef(*new FetchResponse(Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
-    static Ref<FetchResponse> error();
+    static Ref<FetchResponse> create(ScriptExecutionContext& context) { return adoptRef(*new FetchResponse(context, Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
+    static Ref<FetchResponse> error(ScriptExecutionContext*);
     static RefPtr<FetchResponse> redirect(ScriptExecutionContext*, const String&, int, ExceptionCode&);
     // FIXME: Binding generator should not require below method to handle optional status parameter.
     static RefPtr<FetchResponse> redirect(ScriptExecutionContext* context, const String& url, ExceptionCode& ec) { return redirect(context, url, 302, ec); }
@@ -63,7 +64,7 @@ public:
     const String& statusText() const { return m_response.httpStatusText(); }
 
     FetchHeaders& headers() { return m_headers; }
-    RefPtr<FetchResponse> clone(ExceptionCode&);
+    RefPtr<FetchResponse> clone(ScriptExecutionContext*, ExceptionCode&);
 
     // Body API
     bool isDisturbed() const { return m_body.isDisturbed(); }
@@ -76,7 +77,11 @@ public:
 private:
     enum class Type { Basic, Cors, Default, Error, Opaque, OpaqueRedirect };
 
-    FetchResponse(Type, FetchBody&&, Ref<FetchHeaders>&&, ResourceResponse&&);
+    FetchResponse(ScriptExecutionContext&, Type, FetchBody&&, Ref<FetchHeaders>&&, ResourceResponse&&);
+
+    // ActiveDOMObject API
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
 
     Type m_type;
     ResourceResponse m_response;

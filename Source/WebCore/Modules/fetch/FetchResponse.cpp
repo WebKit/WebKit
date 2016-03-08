@@ -48,9 +48,9 @@ static inline bool isNullBodyStatus(int status)
     return status == 101 || status == 204 || status == 205 || status == 304;
 }
 
-Ref<FetchResponse> FetchResponse::error()
+Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext* context)
 {
-    return adoptRef(*new FetchResponse(Type::Error, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
+    return adoptRef(*new FetchResponse(*context, Type::Error, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
 }
 
 RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext* context, const String& url, int status, ExceptionCode& ec)
@@ -65,7 +65,7 @@ RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext* context, c
         ec = TypeError;
         return nullptr;
     }
-    RefPtr<FetchResponse> redirectResponse = adoptRef(*new FetchResponse(Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
+    RefPtr<FetchResponse> redirectResponse = adoptRef(*new FetchResponse(*context, Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
     redirectResponse->m_response.setHTTPStatusCode(status);
     redirectResponse->m_headers->fastSet(HTTPHeaderName::Location, requestURL.string());
     return redirectResponse;
@@ -108,21 +108,23 @@ void FetchResponse::initializeWith(const Dictionary& init, ExceptionCode& ec)
     }
 }
 
-FetchResponse::FetchResponse(Type type, FetchBody&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
-    : m_type(type)
+FetchResponse::FetchResponse(ScriptExecutionContext& context, Type type, FetchBody&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
+    : ActiveDOMObject(&context)
+    , m_type(type)
     , m_response(WTFMove(response))
     , m_body(WTFMove(body))
     , m_headers(WTFMove(headers))
 {
+    suspendIfNeeded();
 }
 
-RefPtr<FetchResponse> FetchResponse::clone(ExceptionCode& ec)
+RefPtr<FetchResponse> FetchResponse::clone(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     if (m_body.isDisturbed() || m_isLocked) {
         ec = TypeError;
         return nullptr;
     }
-    RefPtr<FetchResponse> cloned = adoptRef(*new FetchResponse(m_type, FetchBody(m_body), FetchHeaders::create(headers()), ResourceResponse(m_response)));
+    RefPtr<FetchResponse> cloned = adoptRef(*new FetchResponse(*context, m_type, FetchBody(m_body), FetchHeaders::create(headers()), ResourceResponse(m_response)));
     cloned->m_isRedirected = m_isRedirected;
     return cloned;
 }
@@ -151,6 +153,16 @@ String FetchResponse::type() const
 JSC::JSValue JSFetchResponse::body(JSC::ExecState&) const
 {
     return JSC::jsNull();
+}
+
+const char* FetchResponse::activeDOMObjectName() const
+{
+    return "Response";
+}
+
+bool FetchResponse::canSuspendForDocumentSuspension() const
+{
+    return true;
 }
 
 } // namespace WebCore

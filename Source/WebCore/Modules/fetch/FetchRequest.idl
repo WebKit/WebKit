@@ -35,13 +35,13 @@ enum RequestRedirect { "follow", "error", "manual" };
 enum ReferrerPolicy { "", "no-referrer",  "no-referrer-when-downgrade", "origin-only", "origin-when-cross-origin", "unsafe-url" };
 
 [
+    ActiveDOMObject,
     Conditional=FETCH_API,
     ConstructorCallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     Constructor(FetchRequest input, [Default=Undefined] optional Dictionary init),
     Constructor(DOMString input, [Default=Undefined]  optional Dictionary init),
     GlobalContext=DOMWindow&WorkerGlobalScope,
-    ImplementationLacksVTable,
     InterfaceName=Request
 ]
 interface FetchRequest {
@@ -59,6 +59,6 @@ interface FetchRequest {
     readonly attribute RequestRedirect redirect;
     readonly attribute DOMString integrity;
 
-    [RaisesException, NewObject] FetchRequest clone();
+    [NewObject, CallWith=ScriptExecutionContext, RaisesException] FetchRequest clone();
 };
 FetchRequest implements FetchBody;
