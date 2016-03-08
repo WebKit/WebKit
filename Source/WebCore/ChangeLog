@@ -1,5 +1,84 @@
 2016-03-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Fetch API] Implement fetch skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=155111
+
+        Reviewed by Darin Adler.
+
+        Adding skeleton code to call fetch API from normal and worker scopes.
+        Fetch API implementation is limited to reject the promise.
+
+        Updating the binding generator to fix the case of overloaded promise-returning functions.
+        Made overloaded utility functions "static inline".
+
+        Tests: imported/w3c/web-platform-tests/fetch/api/basic/accept-header-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/accept-header.html
+               imported/w3c/web-platform-tests/fetch/api/basic/integrity-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/integrity.html
+               imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors.html
+               imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.html
+               imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers.html
+               imported/w3c/web-platform-tests/fetch/api/basic/request-headers-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/request-headers.html
+               imported/w3c/web-platform-tests/fetch/api/basic/scheme-about-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.html
+               imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.html
+               imported/w3c/web-platform-tests/fetch/api/basic/scheme-data-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.html
+               imported/w3c/web-platform-tests/fetch/api/basic/scheme-others-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.html
+               imported/w3c/web-platform-tests/fetch/api/basic/stream-response-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/stream-response.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/fetch/DOMWindowFetch.cpp: Added.
+        (WebCore::DOMWindowFetch::fetch):
+        * Modules/fetch/DOMWindowFetch.h: Added.
+        * Modules/fetch/DOMWindowFetch.idl: Added.
+        * Modules/fetch/WorkerGlobalScopeFetch.cpp: Added.
+        (WebCore::WorkerGlobalScopeFetch::fetch):
+        * Modules/fetch/WorkerGlobalScopeFetch.h: Added.
+        * Modules/fetch/WorkerGlobalScopeFetch.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Fixing the case of overloaded promise-returning functions.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod5):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod6):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod7):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod8):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod9):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod10):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod11):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod12):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2):
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod11):
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod12):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Promise):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod): Deleted.
+        (WebCore::jsTestObjConstructorFunctionClassMethod2): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionAny): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionPromise): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise): Deleted.
+        * bindings/scripts/test/TestObj.idl:
+
+2016-03-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Fetch API] Make FetchRequest and FetchResponse ActiveDOMObject
         https://bugs.webkit.org/show_bug.cgi?id=154729
 

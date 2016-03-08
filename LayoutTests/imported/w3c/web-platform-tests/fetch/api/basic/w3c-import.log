@@ -1,0 +1,50 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in Webkit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+
+Do NOT modify or remove this file
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/accept-header-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/accept-header.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/accept-header.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-data-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-others-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-response-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-response.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-response.js

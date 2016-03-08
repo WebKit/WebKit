@@ -2882,13 +2882,12 @@ sub GenerateImplementation
                 push(@implContent, "#if ${conditionalString}\n");
             }
 
-
+            my $functionReturn = "EncodedJSValue JSC_HOST_CALL";
             if (!$isCustom && $isOverloaded) {
                 # Append a number to an overloaded method's name to make it unique:
                 $functionName = $functionName . $function->{overloadIndex};
-                # Make this function static to avoid compiler warnings, since we
-                # don't generate a prototype for it in the header.
-                push(@implContent, "static ");
+                # Make this function static to avoid compiler warnings, since we don't generate a prototype for it in the header.
+                $functionReturn = "static inline EncodedJSValue";
             }
 
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementedAs"} || $codeGenerator->WK_lcfirst($function->signature->name);
@@ -2896,17 +2895,18 @@ sub GenerateImplementation
             if (IsReturningPromise($function) && !$isCustom) {
                 AddToImplIncludes("JSDOMPromise.h");
 
-                push(@implContent, "static inline EncodedJSValue ${functionName}Promise(ExecState*, JSPromiseDeferred*);\n");
-                push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* state)\n");
-                push(@implContent, "{\n");
+                push(@implContent, <<END);
+static EncodedJSValue ${functionName}Promise(ExecState*, JSPromiseDeferred*);
+${functionReturn} ${functionName}(ExecState* state)
+{
+    return JSValue::encode(callPromiseFunction(*state, ${functionName}Promise));
+}
 
-                push(@implContent, "    return JSValue::encode(callPromiseFunction(*state, ${functionName}Promise));\n");
-
-                push(@implContent, "}\n");
-                push(@implContent, "\nstatic inline EncodedJSValue ${functionName}Promise(ExecState* state, JSPromiseDeferred* promiseDeferred)\n");
+static inline EncodedJSValue ${functionName}Promise(ExecState* state, JSPromiseDeferred* promiseDeferred)
+END
             }
             else {
-                push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* state)\n");
+                push(@implContent, "${functionReturn} ${functionName}(ExecState* state)\n");
             }
 
             push(@implContent, "{\n");

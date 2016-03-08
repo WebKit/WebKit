@@ -1,3 +1,86 @@
+2016-03-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Implement fetch skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=155111
+
+        Reviewed by Darin Adler.
+
+        Importing basic fetch api tests.
+
+        * resources/ImportExpectations: Activating fetch/api/basic import.
+        * web-platform-tests/fetch/api/basic/accept-header-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/accept-header-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/accept-header-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/accept-header.html: Added.
+        * web-platform-tests/fetch/api/basic/accept-header.js: Added.
+        (promise_test):
+        * web-platform-tests/fetch/api/basic/integrity-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/integrity-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/integrity-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/integrity.html: Added.
+        * web-platform-tests/fetch/api/basic/integrity.js: Added.
+        (integrity):
+        * web-platform-tests/fetch/api/basic/mode-no-cors-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/mode-no-cors-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/mode-no-cors-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/mode-no-cors.html: Added.
+        * web-platform-tests/fetch/api/basic/mode-no-cors.js: Added.
+        (fetchNoCors):
+        * web-platform-tests/fetch/api/basic/mode-same-origin-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.html: Added.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.js: Added.
+        (fetchSameOrigin):
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.html: Added.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.js: Added.
+        (requestForbiddenHeaders):
+        * web-platform-tests/fetch/api/basic/request-headers-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-headers-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-headers-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/request-headers.html: Added.
+        * web-platform-tests/fetch/api/basic/request-headers.js: Added.
+        (requestHeaders):
+        * web-platform-tests/fetch/api/basic/scheme-about-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-about-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-about-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-about.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-about.js: Added.
+        (checkFetchResponse):
+        (checkKoUrl):
+        * web-platform-tests/fetch/api/basic/scheme-blob-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-blob-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-blob-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-blob.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-blob.js: Added.
+        (checkFetchResponse):
+        (checkKoUrl):
+        * web-platform-tests/fetch/api/basic/scheme-data-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-data-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-data-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-data.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-data.js: Added.
+        (checkFetchResponse):
+        (checkKoUrl):
+        * web-platform-tests/fetch/api/basic/scheme-others-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-others-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-others-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-others.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-others.js: Added.
+        (checkKoUrl):
+        * web-platform-tests/fetch/api/basic/stream-response-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/stream-response-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/stream-response-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/stream-response.html: Added.
+        * web-platform-tests/fetch/api/basic/stream-response.js: Added.
+        (streamBody):
+        (promise_test.):
+        (promise_test):
+        * web-platform-tests/fetch/api/basic/w3c-import.log: Added.
+
 2016-03-07  Chris Dumez  <cdumez@apple.com>
 
         Align HTMLCanvasElement.width / height with the specification

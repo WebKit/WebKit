@@ -1,0 +1,6 @@
+
+FAIL Fetching about:blank is OK promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetching about:unicorn is OK promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetching about:invalid.com is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+FAIL Fetching about:config is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+

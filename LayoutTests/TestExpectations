@@ -316,6 +316,9 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ Skip ]
 
+# Tests that are flaky as failing assertions print a new token generated for each test run.
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.html [ Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob-worker.html [ Failure ]
 
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]

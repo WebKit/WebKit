@@ -1,0 +1,11 @@
+
+FAIL Fetch with GET promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with HEAD promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with HEAD with body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with PUT without body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with PUT with body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with POST without body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with POST with body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with Chicken promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with Chicken with body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+

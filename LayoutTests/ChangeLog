@@ -1,3 +1,12 @@
+2016-03-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Implement fetch skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=155111
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: Marking some tests as flaky.
+
 2016-03-08  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [SVG2] Implement marker orient='auto-start-reverse'

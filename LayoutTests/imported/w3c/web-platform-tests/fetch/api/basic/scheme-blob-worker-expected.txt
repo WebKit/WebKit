@@ -1,0 +1,5 @@
+
+FAIL Fetching blob:http://localhost:8800/8807dca8-91bf-4414[...] is OK promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetching [GET] blob:http://www.localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+FAIL Fetching [POST] blob:http://localhost:8800/41805be3-d8cc-490f[...] is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+
