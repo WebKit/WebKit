@@ -233,6 +233,7 @@ fast/loader/stateobjects/pushstate-frequency-with-user-gesture.html [ Skip ]
 fast/scrolling/scroll-animator-basic-events.html [ Skip ]
 fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
 fast/scrolling/scroll-animator-select-list-events.html [ Skip ]
+fast/events/prevent-default-prevents-interaction-with-scrollbars.html [ Skip ]
 
 webkit.org/b/148695 fast/shadow-dom [ Pass ]
 webkit.org/b/149440 fast/shadow-dom/css-scoping-shadow-host-functional-rule.html [ ImageOnlyFailure ]
