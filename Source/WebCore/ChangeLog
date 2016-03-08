@@ -1,5 +1,13 @@
 2016-03-08  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, temporarily comment out static_assert while I investigate.
+
+        It still did not build on some platforms.
+
+        * dom/ElementRareData.cpp:
+
+2016-03-08  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, another build fix after r197726.
 
         * dom/ElementRareData.cpp:
