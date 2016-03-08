@@ -76,13 +76,13 @@ JSArray* createRegExpMatchesArray(
     if (UNLIKELY(globalObject->isHavingABadTime())) {
         array = JSArray::tryCreateUninitialized(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
         
-        array->initializeIndex(vm, 0, jsSubstring(vm, exec, input, result.start, result.end - result.start));
+        array->initializeIndex(vm, 0, jsSubstringOfResolved(vm, input, result.start, result.end - result.start));
         
         if (unsigned numSubpatterns = regExp->numSubpatterns()) {
             for (unsigned i = 1; i <= numSubpatterns; ++i) {
                 int start = subpatternResults[2 * i];
                 if (start >= 0)
-                    array->initializeIndex(vm, i, jsSubstring(vm, exec, input, start, subpatternResults[2 * i + 1] - start));
+                    array->initializeIndex(vm, i, JSRopeString::createSubstringOfResolved(vm, input, start, subpatternResults[2 * i + 1] - start));
                 else
                     array->initializeIndex(vm, i, jsUndefined());
             }
@@ -91,13 +91,13 @@ JSArray* createRegExpMatchesArray(
         array = tryCreateUninitializedRegExpMatchesArray(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
         RELEASE_ASSERT(array);
         
-        array->initializeIndex(vm, 0, jsSubstring(vm, exec, input, result.start, result.end - result.start), ArrayWithContiguous);
+        array->initializeIndex(vm, 0, jsSubstringOfResolved(vm, input, result.start, result.end - result.start), ArrayWithContiguous);
         
         if (unsigned numSubpatterns = regExp->numSubpatterns()) {
             for (unsigned i = 1; i <= numSubpatterns; ++i) {
                 int start = subpatternResults[2 * i];
                 if (start >= 0)
-                    array->initializeIndex(vm, i, jsSubstring(vm, exec, input, start, subpatternResults[2 * i + 1] - start), ArrayWithContiguous);
+                    array->initializeIndex(vm, i, JSRopeString::createSubstringOfResolved(vm, input, start, subpatternResults[2 * i + 1] - start), ArrayWithContiguous);
                 else
                     array->initializeIndex(vm, i, jsUndefined(), ArrayWithContiguous);
             }

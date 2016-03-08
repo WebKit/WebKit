@@ -266,7 +266,7 @@ public:
     };
 
 private:
-    JSRopeString(VM& vm)
+    ALWAYS_INLINE JSRopeString(VM& vm)
         : JSString(vm)
     {
     }
@@ -317,6 +317,18 @@ private:
         }
     }
 
+    ALWAYS_INLINE void finishCreationSubstringOfResolved(VM& vm, JSString* base, unsigned offset, unsigned length)
+    {
+        Base::finishCreation(vm);
+        ASSERT(!sumOverflows<int32_t>(offset, length));
+        ASSERT(offset + length <= base->length());
+        m_length = length;
+        setIs8Bit(base->is8Bit());
+        setIsSubstring(true);
+        substringBase().set(vm, this, base);
+        substringOffset() = offset;
+    }
+
     void finishCreation(VM& vm)
     {
         JSString::finishCreation(vm);
@@ -359,6 +371,13 @@ public:
     {
         JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
         newString->finishCreation(vm, exec, base, offset, length);
+        return newString;
+    }
+
+    ALWAYS_INLINE static JSString* createSubstringOfResolved(VM& vm, JSString* base, unsigned offset, unsigned length)
+    {
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
+        newString->finishCreationSubstringOfResolved(vm, base, offset, length);
         return newString;
     }
 
@@ -551,6 +570,18 @@ inline JSString* jsSubstring(VM& vm, ExecState* exec, JSString* s, unsigned offs
     if (!offset && length == s->length())
         return s;
     return JSRopeString::create(vm, exec, s, offset, length);
+}
+
+inline JSString* jsSubstringOfResolved(VM& vm, JSString* s, unsigned offset, unsigned length)
+{
+    ASSERT(offset <= static_cast<unsigned>(s->length()));
+    ASSERT(length <= static_cast<unsigned>(s->length()));
+    ASSERT(offset + length <= static_cast<unsigned>(s->length()));
+    if (!length)
+        return vm.smallStrings.emptyString();
+    if (!offset && length == s->length())
+        return s;
+    return JSRopeString::createSubstringOfResolved(vm, s, offset, length);
 }
 
 inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsigned length)

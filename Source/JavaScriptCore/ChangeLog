@@ -1,3 +1,28 @@
+2016-03-07  Filip Pizlo  <fpizlo@apple.com>
+
+        createRegExpMatchesArray should allocate substrings more quickly
+        https://bugs.webkit.org/show_bug.cgi?id=155160
+
+        Reviewed by Sam Weinig.
+
+        This was calling a version of jsSubstring() that isn't inlineable because it was doing a lot
+        of checks in finishCreation(). In particular, it was checking that the base string is not
+        itself a substring and that it's been resolved. We don't need those checks here, since the
+        string must have been resolved prior to regexp processing.
+
+        This patch is also smart about whether to do checks for the empty and full substrings. In
+        the matches array loop, these checks are super unlikely to be profitable, so we just
+        unconditionally allocate the substring.
+
+        This removes those checks and makes the allocation inlineable. It looks like a 1% speed-up
+        on Octane/regexp.
+
+        * runtime/JSString.h:
+        (JSC::jsSubstring):
+        (JSC::jsSubstringOfResolved):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createRegExpMatchesArray):
+
 2016-03-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Small clean up of how we use SSA's valuesAtHead
