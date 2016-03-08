@@ -43,6 +43,7 @@
 #include "StyledElement.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/IncrementalSweeper.h>
+#include <sys/types.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
