@@ -14514,7 +14514,7 @@ PASS canvas.width: setAttribute() to "1" followed by IDL get
 PASS canvas.width: setAttribute() to "\t7" followed by getAttribute() 
 PASS canvas.width: setAttribute() to "\t7" followed by IDL get 
 PASS canvas.width: setAttribute() to "\v7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to "\v7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to "\v7" followed by IDL get 
 PASS canvas.width: setAttribute() to "\f7" followed by getAttribute() 
 PASS canvas.width: setAttribute() to "\f7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
@@ -14528,39 +14528,39 @@ PASS canvas.width: setAttribute() to "\n7" followed by IDL get
 PASS canvas.width: setAttribute() to "\r7" followed by getAttribute() 
 PASS canvas.width: setAttribute() to "\r7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
 PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to "᠎7" followed by getAttribute() 
 PASS canvas.width: setAttribute() to "᠎7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to " 7" followed by getAttribute() 
 PASS canvas.width: setAttribute() to " 7" followed by IDL get 
 PASS canvas.width: setAttribute() to "　7" followed by getAttribute() 
-FAIL canvas.width: setAttribute() to "　7" followed by IDL get assert_equals: expected 300 but got 7
+PASS canvas.width: setAttribute() to "　7" followed by IDL get 
 PASS canvas.width: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS canvas.width: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS canvas.width: setAttribute() to undefined followed by getAttribute() 
@@ -14598,10 +14598,10 @@ PASS canvas.width: IDL set to "-0" should not throw
 PASS canvas.width: IDL set to "-0" followed by getAttribute() 
 PASS canvas.width: IDL set to "-0" followed by IDL get 
 PASS canvas.width: IDL set to 2147483648 should not throw 
-FAIL canvas.width: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "300" but got "-2147483648"
+PASS canvas.width: IDL set to 2147483648 followed by getAttribute() 
 PASS canvas.width: IDL set to 2147483648 followed by IDL get 
 PASS canvas.width: IDL set to 4294967295 should not throw 
-FAIL canvas.width: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "300" but got "-1"
+PASS canvas.width: IDL set to 4294967295 followed by getAttribute() 
 PASS canvas.width: IDL set to 4294967295 followed by IDL get 
 PASS canvas.height: typeof IDL attribute 
 PASS canvas.height: IDL get with DOM attribute unset 
@@ -14638,7 +14638,7 @@ PASS canvas.height: setAttribute() to "1" followed by IDL get
 PASS canvas.height: setAttribute() to "\t7" followed by getAttribute() 
 PASS canvas.height: setAttribute() to "\t7" followed by IDL get 
 PASS canvas.height: setAttribute() to "\v7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to "\v7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to "\v7" followed by IDL get 
 PASS canvas.height: setAttribute() to "\f7" followed by getAttribute() 
 PASS canvas.height: setAttribute() to "\f7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
@@ -14652,39 +14652,39 @@ PASS canvas.height: setAttribute() to "\n7" followed by IDL get
 PASS canvas.height: setAttribute() to "\r7" followed by getAttribute() 
 PASS canvas.height: setAttribute() to "\r7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
 PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to "᠎7" followed by getAttribute() 
 PASS canvas.height: setAttribute() to "᠎7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to " 7" followed by getAttribute() 
 PASS canvas.height: setAttribute() to " 7" followed by IDL get 
 PASS canvas.height: setAttribute() to "　7" followed by getAttribute() 
-FAIL canvas.height: setAttribute() to "　7" followed by IDL get assert_equals: expected 150 but got 7
+PASS canvas.height: setAttribute() to "　7" followed by IDL get 
 PASS canvas.height: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS canvas.height: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS canvas.height: setAttribute() to undefined followed by getAttribute() 
@@ -14722,10 +14722,10 @@ PASS canvas.height: IDL set to "-0" should not throw
 PASS canvas.height: IDL set to "-0" followed by getAttribute() 
 PASS canvas.height: IDL set to "-0" followed by IDL get 
 PASS canvas.height: IDL set to 2147483648 should not throw 
-FAIL canvas.height: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "150" but got "-2147483648"
+PASS canvas.height: IDL set to 2147483648 followed by getAttribute() 
 PASS canvas.height: IDL set to 2147483648 followed by IDL get 
 PASS canvas.height: IDL set to 4294967295 should not throw 
-FAIL canvas.height: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "150" but got "-1"
+PASS canvas.height: IDL set to 4294967295 followed by getAttribute() 
 PASS canvas.height: IDL set to 4294967295 followed by IDL get 
 FAIL canvas.itemScope: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
 FAIL canvas.itemScope: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined

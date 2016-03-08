@@ -28,9 +28,13 @@
     JSGenerateToNativeObject,
     ReportExtraMemoryCost
 ] interface HTMLCanvasElement : HTMLElement {
-
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     attribute long width;
     attribute long height;
+#else
+    attribute unsigned long width;
+    attribute unsigned long height;
+#endif
 
     [Custom, RaisesException] DOMString toDataURL(optional DOMString? type);
 

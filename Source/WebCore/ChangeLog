@@ -1,5 +1,32 @@
 2016-03-07  Chris Dumez  <cdumez@apple.com>
 
+        Align HTMLCanvasElement.width / height with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=155156
+
+        Reviewed by Ryosuke Niwa.
+
+        Align HTMLCanvasElement.width / height with the specification:
+        - https://html.spec.whatwg.org/multipage/scripting.html#dom-canvas-width
+        - https://html.spec.whatwg.org/multipage/scripting.html#attr-canvas-width
+
+        In particular, the following changes were made:
+        1. The attributes are now 'unsigned long' instead of 'long'
+        2. The corresponding content attributes are parsed as per the HTML rules
+           for passing non-negative integers.
+        3. Upon setting, if the value is out-of-range, the content attributes is
+           set to its default value.
+
+        No new tests, already covered by existing test.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::setHeight):
+        (WebCore::HTMLCanvasElement::setWidth):
+        (WebCore::HTMLCanvasElement::reset):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+
+2016-03-07  Chris Dumez  <cdumez@apple.com>
+
         Stop clamping HTMLElement.tabIndex to the range of a short
         https://bugs.webkit.org/show_bug.cgi?id=155159
 

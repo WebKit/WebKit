@@ -75,13 +75,13 @@ public:
     void removeObserver(CanvasObserver&);
 
     // Attributes and functions exposed to script
-    int width() const { return size().width(); }
-    int height() const { return size().height(); }
+    unsigned width() const { return size().width(); }
+    unsigned height() const { return size().height(); }
 
     const IntSize& size() const { return m_size; }
 
-    void setWidth(int);
-    void setHeight(int);
+    void setWidth(unsigned);
+    void setHeight(unsigned);
 
     void setSize(const IntSize& newSize)
     { 

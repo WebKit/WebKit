@@ -40,6 +40,7 @@
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
@@ -155,14 +156,14 @@ void HTMLCanvasElement::removeObserver(CanvasObserver& observer)
     m_observers.remove(&observer);
 }
 
-void HTMLCanvasElement::setHeight(int value)
+void HTMLCanvasElement::setHeight(unsigned value)
 {
-    setIntegralAttribute(heightAttr, value);
+    setAttributeWithoutSynchronization(heightAttr, AtomicString::number(limitToOnlyHTMLNonNegative(value, DefaultHeight)));
 }
 
-void HTMLCanvasElement::setWidth(int value)
+void HTMLCanvasElement::setWidth(unsigned value)
 {
-    setIntegralAttribute(widthAttr, value);
+    setAttributeWithoutSynchronization(widthAttr, AtomicString::number(limitToOnlyHTMLNonNegative(value, DefaultWidth)));
 }
 
 #if ENABLE(WEBGL)
@@ -330,16 +331,10 @@ void HTMLCanvasElement::reset()
     if (m_ignoreReset)
         return;
 
-    bool ok;
     bool hadImageBuffer = hasCreatedImageBuffer();
 
-    int w = getAttribute(widthAttr).toInt(&ok);
-    if (!ok || w < 0)
-        w = DefaultWidth;
-
-    int h = getAttribute(heightAttr).toInt(&ok);
-    if (!ok || h < 0)
-        h = DefaultHeight;
+    int w = limitToOnlyHTMLNonNegative(fastGetAttribute(widthAttr), DefaultWidth);
+    int h = limitToOnlyHTMLNonNegative(fastGetAttribute(heightAttr), DefaultHeight);
 
     if (m_contextStateSaver) {
         // Reset to the initial graphics context state.
