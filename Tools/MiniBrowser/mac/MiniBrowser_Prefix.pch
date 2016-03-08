@@ -30,7 +30,7 @@
 #if __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
 static const NSEventModifierFlags NSEventModifierFlagCommand =  NSCommandKeyMask;
 static const NSEventModifierFlags NSEventModifierFlagOption = NSAlternateKeyMask;
-static const NSWindowStyleMask NSWindowStyleMaskFullSizeContentView = NSFullSizeContentViewWindowMask;
+static const NSUInteger NSWindowStyleMaskFullSizeContentView = NSFullSizeContentViewWindowMask;
 #endif
 
 #endif

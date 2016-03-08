@@ -1,5 +1,11 @@
 2016-03-08  Anders Carlsson  <andersca@apple.com>
 
+        Use NSUInteger instead of NSWindowStyleMask.
+
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+
+2016-03-08  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         We intentionally don't use AppKitCompatibilityDeclarations.h here, since we want
