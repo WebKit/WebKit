@@ -67,7 +67,9 @@ public:
     }
 
     bool test(ExecState* exec, JSGlobalObject* globalObject, JSString* string) { return !!match(exec, globalObject, string); }
+    bool testInline(ExecState* exec, JSGlobalObject* globalObject, JSString* string) { return !!matchInline(exec, globalObject, string); }
     JSValue exec(ExecState*, JSGlobalObject*, JSString*);
+    JSValue execInline(ExecState*, JSGlobalObject*, JSString*);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
@@ -103,6 +105,7 @@ protected:
 
 private:
     MatchResult match(ExecState*, JSGlobalObject*, JSString*);
+    MatchResult matchInline(ExecState*, JSGlobalObject*, JSString*);
 
     WriteBarrier<RegExp> m_regExp;
     WriteBarrier<Unknown> m_lastIndex;

@@ -486,6 +486,8 @@
 		0F7B294B14C3CD2F007C3DB1 /* DFGCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */; };
 		0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC0977E1469EBC400CF2442 /* DFGCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7C11AD1BC3862C00C74CDB /* CopyBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C11AC1BC3862C00C74CDB /* CopyBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F7C39FB1C8F629300480151 /* RegExpInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C39FA1C8F629300480151 /* RegExpInlines.h */; };
+		0F7C39FD1C8F659500480151 /* RegExpObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C39FC1C8F659500480151 /* RegExpObjectInlines.h */; };
 		0F8023EA1613832B00A0BA45 /* ByValInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8023E91613832300A0BA45 /* ByValInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F8335B71639C1E6001443B5 /* ArrayAllocationProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8335B41639C1E3001443B5 /* ArrayAllocationProfile.cpp */; };
 		0F8335B81639C1EA001443B5 /* ArrayAllocationProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8335B51639C1E3001443B5 /* ArrayAllocationProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2636,6 +2638,8 @@
 		0F79085319A290B200F6310C /* DFGStructureRegistrationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStructureRegistrationPhase.cpp; path = dfg/DFGStructureRegistrationPhase.cpp; sourceTree = "<group>"; };
 		0F79085419A290B200F6310C /* DFGStructureRegistrationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureRegistrationPhase.h; path = dfg/DFGStructureRegistrationPhase.h; sourceTree = "<group>"; };
 		0F7C11AC1BC3862C00C74CDB /* CopyBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyBarrier.h; sourceTree = "<group>"; };
+		0F7C39FA1C8F629300480151 /* RegExpInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpInlines.h; sourceTree = "<group>"; };
+		0F7C39FC1C8F659500480151 /* RegExpObjectInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpObjectInlines.h; sourceTree = "<group>"; };
 		0F8023E91613832300A0BA45 /* ByValInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByValInfo.h; sourceTree = "<group>"; };
 		0F8335B41639C1E3001443B5 /* ArrayAllocationProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayAllocationProfile.cpp; sourceTree = "<group>"; };
 		0F8335B51639C1E3001443B5 /* ArrayAllocationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayAllocationProfile.h; sourceTree = "<group>"; };
@@ -5874,11 +5878,13 @@
 				86F75EFC151C062F007C9BA3 /* RegExpCachedResult.h */,
 				BCD202BD0E1706A7002C7E82 /* RegExpConstructor.cpp */,
 				BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */,
+				0F7C39FA1C8F629300480151 /* RegExpInlines.h */,
 				A1712B4011C7B235007A5315 /* RegExpKey.h */,
 				86F75EFD151C062F007C9BA3 /* RegExpMatchesArray.cpp */,
 				93CEDDFB0EA91EE600258EBE /* RegExpMatchesArray.h */,
 				F692A87B0255597D01FF60F7 /* RegExpObject.cpp */,
 				F692A87C0255597D01FF60F7 /* RegExpObject.h */,
+				0F7C39FC1C8F659500480151 /* RegExpObjectInlines.h */,
 				BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */,
 				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
 				0FB7F39115ED8E3800F167B2 /* Reject.h */,
@@ -7206,6 +7212,7 @@
 				0FBC0AE81496C7C700D4FBDD /* DFGExitProfile.h in Headers */,
 				A78A9775179738B8009DF744 /* DFGFailedFinalizer.h in Headers */,
 				A7BFF3C0179868940002F462 /* DFGFiltrationResult.h in Headers */,
+				0F7C39FB1C8F629300480151 /* RegExpInlines.h in Headers */,
 				A78A9777179738B8009DF744 /* DFGFinalizer.h in Headers */,
 				0F2BDC16151C5D4F00CD8910 /* DFGFixupPhase.h in Headers */,
 				0F9D339717FFC4E60073C2BC /* DFGFlushedAt.h in Headers */,
@@ -7925,6 +7932,7 @@
 				A709F2F017A0AC0400512E98 /* SlowPathCall.h in Headers */,
 				933040040E6A749400786E6A /* SmallStrings.h in Headers */,
 				BC18C4640E16F5CD00B34460 /* SourceCode.h in Headers */,
+				0F7C39FD1C8F659500480151 /* RegExpObjectInlines.h in Headers */,
 				BC18C4630E16F5CD00B34460 /* SourceProvider.h in Headers */,
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,

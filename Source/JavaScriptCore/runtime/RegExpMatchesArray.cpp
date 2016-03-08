@@ -26,89 +26,7 @@
 #include "config.h"
 #include "RegExpMatchesArray.h"
 
-#include "ButterflyInlines.h"
-#include "JSCInlines.h"
-
 namespace JSC {
-
-static const PropertyOffset indexPropertyOffset = 100;
-static const PropertyOffset inputPropertyOffset = 101;
-
-static JSArray* tryCreateUninitializedRegExpMatchesArray(VM& vm, Structure* structure, unsigned initialLength)
-{
-    unsigned vectorLength = std::max(BASE_VECTOR_LEN, initialLength);
-    if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
-        return 0;
-
-    void* temp;
-    if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)), &temp))
-        return 0;
-    Butterfly* butterfly = Butterfly::fromBase(temp, 0, structure->outOfLineCapacity());
-    butterfly->setVectorLength(vectorLength);
-    butterfly->setPublicLength(initialLength);
-
-    return JSArray::createWithButterfly(vm, structure, butterfly);
-}
-
-JSArray* createRegExpMatchesArray(
-    ExecState* exec, JSGlobalObject* globalObject, JSString* input, RegExp* regExp,
-    unsigned startOffset, MatchResult& result)
-{
-    SamplingRegion samplingRegion("createRegExpMatchesArray");
-    
-    VM& vm = globalObject->vm();
-    
-    Vector<int, 32> subpatternResults;
-    int position = regExp->match(vm, input->value(exec), startOffset, subpatternResults);
-    if (position == -1) {
-        result = MatchResult::failed();
-        return nullptr;
-    }
-
-    result.start = position;
-    result.end = subpatternResults[1];
-    
-    JSArray* array;
-
-    // FIXME: This should handle array allocation errors gracefully.
-    // https://bugs.webkit.org/show_bug.cgi?id=155144
-    
-    if (UNLIKELY(globalObject->isHavingABadTime())) {
-        array = JSArray::tryCreateUninitialized(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
-        
-        array->initializeIndex(vm, 0, jsSubstringOfResolved(vm, input, result.start, result.end - result.start));
-        
-        if (unsigned numSubpatterns = regExp->numSubpatterns()) {
-            for (unsigned i = 1; i <= numSubpatterns; ++i) {
-                int start = subpatternResults[2 * i];
-                if (start >= 0)
-                    array->initializeIndex(vm, i, JSRopeString::createSubstringOfResolved(vm, input, start, subpatternResults[2 * i + 1] - start));
-                else
-                    array->initializeIndex(vm, i, jsUndefined());
-            }
-        }
-    } else {
-        array = tryCreateUninitializedRegExpMatchesArray(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
-        RELEASE_ASSERT(array);
-        
-        array->initializeIndex(vm, 0, jsSubstringOfResolved(vm, input, result.start, result.end - result.start), ArrayWithContiguous);
-        
-        if (unsigned numSubpatterns = regExp->numSubpatterns()) {
-            for (unsigned i = 1; i <= numSubpatterns; ++i) {
-                int start = subpatternResults[2 * i];
-                if (start >= 0)
-                    array->initializeIndex(vm, i, JSRopeString::createSubstringOfResolved(vm, input, start, subpatternResults[2 * i + 1] - start), ArrayWithContiguous);
-                else
-                    array->initializeIndex(vm, i, jsUndefined(), ArrayWithContiguous);
-            }
-        }
-    }
-
-    array->putDirect(vm, indexPropertyOffset, jsNumber(result.start));
-    array->putDirect(vm, inputPropertyOffset, input);
-
-    return array;
-}
 
 JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* input, RegExp* regExp)
 {
@@ -139,8 +57,8 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* i
         }
     }
 
-    array->putDirect(vm, indexPropertyOffset, jsNumber(-1));
-    array->putDirect(vm, inputPropertyOffset, input);
+    array->putDirect(vm, RegExpMatchesArrayIndexPropertyOffset, jsNumber(-1));
+    array->putDirect(vm, RegExpMatchesArrayInputPropertyOffset, input);
     return array;
 }
 
@@ -149,9 +67,9 @@ static Structure* createStructureImpl(VM& vm, JSGlobalObject* globalObject, Inde
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
     PropertyOffset offset;
     structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->index, 0, offset);
-    ASSERT(offset == indexPropertyOffset);
+    ASSERT(offset == RegExpMatchesArrayIndexPropertyOffset);
     structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->input, 0, offset);
-    ASSERT(offset == inputPropertyOffset);
+    ASSERT(offset == RegExpMatchesArrayInputPropertyOffset);
     return structure;
 }
 
