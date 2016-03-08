@@ -39,7 +39,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     unsigned bitfields;
     RegionOversetState regionOversetState;
     LayoutSize sizeForResizing;
-    IntSize scrollOffset;
+    IntPoint savedLayerScrollPosition;
     void* pointers[7];
 };
 
