@@ -1947,3 +1947,5 @@ webkit.org/b/153380 webarchive/loading/missing-data.html [ Pass Crash ]
 webkit.org/b/153503 http/tests/appcache/404-resource-with-slow-main-resource.php [ Pass Failure ]
 
 webkit.org/b/153050 http/tests/security/cross-frame-access-custom.html [ Pass Failure ]
+
+webkit.org/b/155201 storage/domstorage/events/basic-body-attribute.html [ Pass Failure ]
