@@ -34,7 +34,8 @@
 namespace WebCore {
 
 struct SameSizeAsElementRareData : NodeRareData {
-    short indices[2];
+    int tabIndex;
+    unsigned short childIndex;
     unsigned bitfields;
     RegionOversetState regionOversetState;
     LayoutSize sizeForResizing;
