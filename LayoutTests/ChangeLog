@@ -1,3 +1,12 @@
+2016-03-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline WPT reflection tests for ios-simulator after r197726
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+
 2016-03-08  Nan Wang  <n_wang@apple.com>
 
         AX: Force allow user zoom
