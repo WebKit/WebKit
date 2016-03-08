@@ -1,3 +1,14 @@
+2016-03-08  Oliver Hunt  <oliver@apple.com>
+
+        Start moving to separated writable and executable mappings in the JIT
+        https://bugs.webkit.org/show_bug.cgi?id=155178
+
+        Reviewed by Filip Pizlo.
+
+        Update feature defines.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-03-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197766.

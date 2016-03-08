@@ -1,3 +1,76 @@
+2016-03-08  Oliver Hunt  <oliver@apple.com>
+
+        Start moving to separated writable and executable mappings in the JIT
+        https://bugs.webkit.org/show_bug.cgi?id=155178
+
+        Reviewed by Filip Pizlo.
+
+        Start moving to a separate writable and executable heap for the various
+        JITs.
+
+        As part of our work to harden the JIT against various attacks, we're
+        moving away from our current RWX heap and on to using separate RW and X
+        mappings. This means that simply leaking the location of the executable
+        mapping is not sufficient to compromise JSC, so we can continue to
+        use direct executable pointers in our GC objects (which we need for
+        performance), but keep the writable pointer in only a single location
+        so that we are less likely to leak the address. To further obscure the
+        address of the writable region we place it in an execute only region
+        of memory so that it is not possible to read the location from 
+        anywhere. That means an attacker must have at least partial control
+        of PC (to call jitMemCopy) before they can start to attack the JIT.
+
+        This work is initially ARM64 only, as we use as the jitMemCopy is
+        currently specific to that platform's calling conventions and layout.
+        We're just landing it in the current form so that we can at least
+        ensure it doesn't regress.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::ldp):
+        (JSC::ARM64Assembler::ldnp):
+        (JSC::ARM64Assembler::fillNops):
+        (JSC::ARM64Assembler::stp):
+        (JSC::ARM64Assembler::stnp):
+        (JSC::ARM64Assembler::replaceWithJump):
+        (JSC::ARM64Assembler::replaceWithLoad):
+        (JSC::ARM64Assembler::replaceWithAddressComputation):
+        (JSC::ARM64Assembler::setPointer):
+        (JSC::ARM64Assembler::repatchInt32):
+        (JSC::ARM64Assembler::repatchCompact):
+        (JSC::ARM64Assembler::linkJumpOrCall):
+        (JSC::ARM64Assembler::linkCompareAndBranch):
+        (JSC::ARM64Assembler::linkConditionalBranch):
+        (JSC::ARM64Assembler::linkTestAndBranch):
+        (JSC::ARM64Assembler::loadStoreRegisterPairOffset):
+        (JSC::ARM64Assembler::loadStoreRegisterPairNonTemporal):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        (JSC::LinkBuffer::allocate):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::sub64):
+        (JSC::MacroAssemblerARM64::load64):
+        (JSC::MacroAssemblerARM64::loadPair64):
+        (JSC::MacroAssemblerARM64::loadPair64WithNonTemporalAccess):
+        (JSC::MacroAssemblerARM64::load8):
+        (JSC::MacroAssemblerARM64::store64):
+        (JSC::MacroAssemblerARM64::storePair64):
+        (JSC::MacroAssemblerARM64::storePair64WithNonTemporalAccess):
+        (JSC::MacroAssemblerARM64::store8):
+        (JSC::MacroAssemblerARM64::branchAdd64):
+        (JSC::MacroAssemblerARM64::branchSub64):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        (JSC::FixedVMPoolExecutableAllocator::initializeBulletproofJIT):
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2016-03-08  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Regular Expression canonicalization tables for Unicode need to be updated to use Unicode CaseFolding.txt

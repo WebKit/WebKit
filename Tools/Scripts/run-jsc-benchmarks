@@ -2861,7 +2861,7 @@ begin
       nameKind = :auto
     end
     envs = []
-    while vm =~ /([a-zA-Z0-9_]+)=([a-zA-Z0-9_:.]+):/
+    while vm =~ /([a-zA-Z0-9_]+)=([a-zA-Z0-9_:.\/-]+):/
       envs << [$1, $2]
       vm = $~.post_match
     end
