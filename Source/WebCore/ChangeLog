@@ -1,3 +1,11 @@
+2016-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix 32-bit build after r197726.
+
+        Also, re-enable static_assert to check the ElementRareData size.
+
+        * dom/ElementRareData.cpp:
+
 2016-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r197721.
