@@ -57,6 +57,7 @@
     ;; On-disk WebKit2 framework location, to account for debug installations
     ;; outside of /System/Library/Frameworks
     (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
+(allow system-fsctl (fsctl-command (_IO "h" 47)))
 
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
