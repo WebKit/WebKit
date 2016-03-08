@@ -2950,7 +2950,9 @@ webkit.org/b/153315 fast/css3-text/css3-text-decoration/text-underline-position/
 
 webkit.org/b/153898 pageoverlay/overlay-small-frame-paints.html [ Pass Failure ]
 
-webkit.org/b/153933 css3/filters/huge-region-composited.html [ Pass Crash ]
+webkit.org/b/153933 css3/filters/huge-region.html [ Skip ]
+webkit.org/b/153933 css3/filters/huge-region-composited.html [ Skip ]
+webkit.org/b/153933 css3/filters/nested-filter.html [ Skip ]
 
 webkit.org/b/154055 perf/adding-radio-buttons.html [ Pass Failure ]
 
