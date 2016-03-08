@@ -1,3 +1,18 @@
+2016-03-08  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Make WebAutomationSession::closeBrowsingContext work as expected
+
+        https://bugs.webkit.org/show_bug.cgi?id=155162
+        rdar://problem/25027191
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::closeBrowsingContext):
+        Call closePage, the same method ultimately used by window.close().
+
+        * UIProcess/WebPageProxy.h: Make closePage public.
+
 2016-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r197062): [GTK] Transparent backgrounds no longer work after r197062

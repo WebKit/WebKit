@@ -170,9 +170,7 @@ void WebAutomationSession::closeBrowsingContext(Inspector::ErrorString& errorStr
     if (handle == m_activeBrowsingContextHandle)
         m_activeBrowsingContextHandle = emptyString();
 
-    // FIXME: Verify this is enough. We still might want to go through the AutomationSessionClient
-    // to get closer to a user pressing the close button.
-    page->tryClose();
+    page->closePage(false);
 }
 
 void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
