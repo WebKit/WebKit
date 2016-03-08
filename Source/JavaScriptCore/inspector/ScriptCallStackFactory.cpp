@@ -149,6 +149,7 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
     // Fallback to getting at least the line and sourceURL from the exception object if it has values and the exceptionStack doesn't.
     if (exception->value().isObject()) {
         JSObject* exceptionObject = exception->value().toObject(exec);
+        ASSERT(exceptionObject);
         int lineNumber;
         int columnNumber;
         String exceptionSourceURL;

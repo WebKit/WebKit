@@ -821,8 +821,12 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
 
     JSObject* thisObject = jsDynamicCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode));
 
-    if (!thisObject)
-        return JSValue::encode(exec->thisValue().synthesizePrototype(exec));
+    if (!thisObject) {
+        JSObject* prototype = exec->thisValue().synthesizePrototype(exec);
+        if (UNLIKELY(!prototype))
+            return JSValue::encode(JSValue());
+        return JSValue::encode(prototype);
+    }
 
     GlobalFuncProtoGetterFunctor functor(exec, thisObject);
     // This can throw but it's just unneeded extra work to check for it. The return

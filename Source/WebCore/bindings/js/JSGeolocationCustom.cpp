@@ -82,6 +82,7 @@ static RefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue va
 
     // Given the above test, this will always yield an object.
     JSObject* object = value.toObject(exec);
+    ASSERT(!exec->hadException());
 
     // Create the dictionary wrapper from the initializer object.
     JSDictionary dictionary(exec, object);

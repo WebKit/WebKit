@@ -81,7 +81,10 @@ ObjectPrototype* ObjectPrototype::create(VM& vm, JSGlobalObject* globalObject, S
 EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
-    return JSValue::encode(thisValue.toObject(exec));
+    JSObject* valueObj = thisValue.toObject(exec);
+    if (!valueObj)
+        return JSValue::encode(JSValue());
+    return JSValue::encode(valueObj);
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec)
@@ -90,13 +93,18 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec)
     auto propertyName = exec->argument(0).toPropertyKey(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsBoolean(thisValue.toObject(exec)->hasOwnProperty(exec, propertyName)));
+    JSObject* thisObject = thisValue.toObject(exec);
+    if (!thisObject)
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsBoolean(thisObject->hasOwnProperty(exec, propertyName)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
     JSObject* thisObj = thisValue.toObject(exec);
+    if (!thisObj)
+        return JSValue::encode(JSValue());
 
     if (!exec->argument(0).isObject())
         return JSValue::encode(jsBoolean(false));
@@ -265,6 +273,8 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
     if (thisValue.isUndefinedOrNull())
         return JSValue::encode(thisValue.isUndefined() ? vm.smallStrings.undefinedObjectString() : vm.smallStrings.nullObjectString());
     JSObject* thisObject = thisValue.toObject(exec);
+    if (!thisObject)
+        return JSValue::encode(JSValue());
 
     JSString* result = thisObject->structure(vm)->objectToStringValue();
     if (!result) {

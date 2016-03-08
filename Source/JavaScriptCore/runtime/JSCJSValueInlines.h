@@ -767,6 +767,8 @@ ALWAYS_INLINE bool JSValue::getPropertySlot(ExecState* exec, PropertyName proper
         if (isString() && asString(*this)->getStringPropertySlot(exec, propertyName, slot))
             return true;
         object = synthesizePrototype(exec);
+        if (UNLIKELY(!object))
+            return false;
     } else
         object = asObject(asCell());
     
@@ -788,6 +790,8 @@ ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, unsigned propertyName, Prope
         if (isString() && asString(*this)->getStringPropertySlot(exec, propertyName, slot))
             return slot.getValue(exec, propertyName);
         object = synthesizePrototype(exec);
+        if (UNLIKELY(!object))
+            return JSValue();
     } else
         object = asObject(asCell());
     

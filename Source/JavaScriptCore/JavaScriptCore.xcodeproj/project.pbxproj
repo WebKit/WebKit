@@ -1687,7 +1687,6 @@
 		A72028B61797601E0098028C /* JSCTestRunnerUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72028B41797601E0098028C /* JSCTestRunnerUtils.cpp */; };
 		A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A72028B51797601E0098028C /* JSCTestRunnerUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A72028BA1797603D0098028C /* JSFunctionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A72028B91797603D0098028C /* JSFunctionInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		A7280A2811557E3000D56957 /* JSObjectRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A79EDB0811531CD60019E912 /* JSObjectRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A729009C17976C6000317298 /* MacroAssemblerARMv7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A729009B17976C6000317298 /* MacroAssemblerARMv7.cpp */; };
@@ -3889,8 +3888,6 @@
 		A72028B41797601E0098028C /* JSCTestRunnerUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCTestRunnerUtils.cpp; sourceTree = "<group>"; };
 		A72028B51797601E0098028C /* JSCTestRunnerUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCTestRunnerUtils.h; sourceTree = "<group>"; };
 		A72028B91797603D0098028C /* JSFunctionInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFunctionInlines.h; sourceTree = "<group>"; };
-		A72700770DAC605600E548D7 /* JSNotAnObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotAnObject.h; sourceTree = "<group>"; };
-		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionHelpers.h; sourceTree = "<group>"; };
 		A729009B17976C6000317298 /* MacroAssemblerARMv7.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerARMv7.cpp; sourceTree = "<group>"; };
 		A7299D9B17D12837005F5FF9 /* JSSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSet.cpp; sourceTree = "<group>"; };
@@ -5735,8 +5732,6 @@
 				E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */,
 				E33E8D1A1B9013C300346B52 /* JSNativeStdFunction.cpp */,
 				E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */,
-				A72700780DAC605600E548D7 /* JSNotAnObject.cpp */,
-				A72700770DAC605600E548D7 /* JSNotAnObject.h */,
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
 				BC22A3990E16E14800AF21C8 /* JSObject.h */,
 				0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */,
@@ -9087,7 +9082,6 @@
 				E39DA4A61B7E8B7C0084F33A /* JSModuleRecord.cpp in Sources */,
 				0FB387921BFD31A100E3AB1E /* FTLCompile.cpp in Sources */,
 				E33E8D1C1B9013C300346B52 /* JSNativeStdFunction.cpp in Sources */,
-				A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */,
 				147F39D4107EC37600427A48 /* JSObject.cpp in Sources */,
 				1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */,
 				A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */,

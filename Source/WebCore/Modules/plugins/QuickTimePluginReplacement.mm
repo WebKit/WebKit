@@ -190,6 +190,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot* root)
     if (replacementFunction.isUndefinedOrNull())
         return false;
     JSC::JSObject* replacementObject = replacementFunction.toObject(exec);
+    ASSERT(!exec->hadException());
     JSC::CallData callData;
     JSC::CallType callType = replacementObject->methodTable()->getCallData(replacementObject, callData);
     if (callType == JSC::CallType::None)
@@ -220,8 +221,10 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot* root)
 
     // Get the scripting interface.
     value = replacement.get(exec, JSC::Identifier::fromString(exec, "scriptObject"));
-    if (!exec->hadException() && !value.isUndefinedOrNull())
+    if (!exec->hadException() && !value.isUndefinedOrNull()) {
         m_scriptObject = value.toObject(exec);
+        ASSERT(!exec->hadException());
+    }
 
     if (!m_scriptObject) {
         LOG(Plugins, "%p - Failed to find script object created by QuickTime plugin replacement.", this);

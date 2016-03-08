@@ -48,7 +48,6 @@
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
-#include "JSNotAnObject.h"
 #include "JSStackInlines.h"
 #include "JSString.h"
 #include "JSWithScope.h"

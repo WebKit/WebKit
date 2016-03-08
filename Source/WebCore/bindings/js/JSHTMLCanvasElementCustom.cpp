@@ -51,6 +51,7 @@ static void get3DContextAttributes(ExecState& state, RefPtr<CanvasContextAttribu
         return;
     
     JSObject* initializerObject = initializerValue.toObject(&state);
+    ASSERT(!state.hadException());
     JSDictionary dictionary(&state, initializerObject);
     
     GraphicsContext3D::Attributes graphicsAttrs;

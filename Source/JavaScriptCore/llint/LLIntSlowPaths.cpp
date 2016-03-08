@@ -681,6 +681,7 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_id)
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
     JSObject* baseObject = LLINT_OP_C(2).jsValue().toObject(exec);
+    LLINT_CHECK_EXCEPTION();
     bool couldDelete = baseObject->methodTable()->deleteProperty(baseObject, exec, codeBlock->identifier(pc[3].u.operand));
     LLINT_CHECK_EXCEPTION();
     if (!couldDelete && codeBlock->isStrictMode())
@@ -798,7 +799,8 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_val)
     LLINT_BEGIN();
     JSValue baseValue = LLINT_OP_C(2).jsValue();
     JSObject* baseObject = baseValue.toObject(exec);
-    
+    LLINT_CHECK_EXCEPTION();
+
     JSValue subscript = LLINT_OP_C(3).jsValue();
     
     bool couldDelete;

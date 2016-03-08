@@ -549,6 +549,7 @@ SLOW_PATH_DECL(slow_path_del_by_val)
     BEGIN();
     JSValue baseValue = OP_C(2).jsValue();
     JSObject* baseObject = baseValue.toObject(exec);
+    CHECK_EXCEPTION();
     
     JSValue subscript = OP_C(3).jsValue();
     
@@ -606,6 +607,7 @@ SLOW_PATH_DECL(slow_path_has_indexed_property)
 {
     BEGIN();
     JSObject* base = OP(2).jsValue().toObject(exec);
+    CHECK_EXCEPTION();
     JSValue property = OP(3).jsValue();
     pc[4].u.arrayProfile->observeStructure(base->structure(vm));
     ASSERT(property.isUInt32());
@@ -616,6 +618,7 @@ SLOW_PATH_DECL(slow_path_has_structure_property)
 {
     BEGIN();
     JSObject* base = OP(2).jsValue().toObject(exec);
+    CHECK_EXCEPTION();
     JSValue property = OP(3).jsValue();
     ASSERT(property.isString());
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(OP(4).jsValue().asCell());
@@ -628,6 +631,7 @@ SLOW_PATH_DECL(slow_path_has_generic_property)
 {
     BEGIN();
     JSObject* base = OP(2).jsValue().toObject(exec);
+    CHECK_EXCEPTION();
     JSValue property = OP(3).jsValue();
     bool result;
     if (property.isString())
@@ -656,6 +660,7 @@ SLOW_PATH_DECL(slow_path_get_property_enumerator)
         RETURN(JSPropertyNameEnumerator::create(vm));
 
     JSObject* base = baseValue.toObject(exec);
+    CHECK_EXCEPTION();
 
     RETURN(propertyNameEnumerator(exec, base));
 }

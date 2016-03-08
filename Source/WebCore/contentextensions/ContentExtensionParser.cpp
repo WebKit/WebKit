@@ -90,6 +90,7 @@ static std::error_code getTypeFlags(ExecState& exec, const JSValue& typeValue, R
         return { };
 
     const JSObject* object = typeValue.toObject(&exec);
+    ASSERT(!exec.hadException());
     if (!isJSArray(object))
         return ContentExtensionError::JSONInvalidTriggerFlagsArray;
 

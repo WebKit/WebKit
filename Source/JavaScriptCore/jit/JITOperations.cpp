@@ -1765,6 +1765,8 @@ EncodedJSValue JIT_OPERATION operationDeleteById(ExecState* exec, EncodedJSValue
     NativeCallFrameTracer tracer(&vm, exec);
 
     JSObject* baseObj = JSValue::decode(encodedBase).toObject(exec);
+    if (!baseObj)
+        JSValue::encode(JSValue());
     bool couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, exec, *identifier);
     JSValue result = jsBoolean(couldDelete);
     if (!couldDelete && exec->codeBlock()->isStrictMode())
@@ -1805,7 +1807,10 @@ EncodedJSValue JIT_OPERATION operationToObject(ExecState* exec, EncodedJSValue v
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    return JSValue::encode(JSValue::decode(value).toObject(exec));
+    JSObject* obj = JSValue::decode(value).toObject(exec);
+    if (!obj)
+        return JSValue::encode(JSValue());
+    return JSValue::encode(obj);
 }
 
 char* JIT_OPERATION operationSwitchCharWithUnknownKeyType(ExecState* exec, EncodedJSValue encodedKey, size_t tableIndex)
@@ -2042,6 +2047,8 @@ EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState* exec, Encode
         return JSValue::encode(jsBoolean(false));
 
     JSObject* base = baseValue.toObject(exec);
+    if (!base)
+        return JSValue::encode(JSValue());
     return JSValue::encode(jsBoolean(base->hasPropertyGeneric(exec, asString(propertyName)->toIdentifier(exec), PropertySlot::InternalMethodType::GetOwnProperty)));
 }
 

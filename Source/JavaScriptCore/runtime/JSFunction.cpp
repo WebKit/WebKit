@@ -39,7 +39,6 @@
 #include "JSCInlines.h"
 #include "JSFunctionInlines.h"
 #include "JSGlobalObject.h"
-#include "JSNotAnObject.h"
 #include "Interpreter.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"

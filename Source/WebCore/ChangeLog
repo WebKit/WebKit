@@ -1,3 +1,36 @@
+2016-03-08  Mark Lam  <mark.lam@apple.com>
+
+        synthesizePrototype() and friends need to be followed by exception checks (or equivalent).
+        https://bugs.webkit.org/show_bug.cgi?id=155169
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests because this issue is covered by existing tests when the fix for
+        https://bugs.webkit.org/show_bug.cgi?id=154865 lands.  That patch is waiting for
+        this patch to land first so as to not introduce test failures.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::installReplacement):
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        (WebCore::readAccelerationArgument):
+        (WebCore::readRotationRateArgument):
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::createPositionOptions):
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::get3DContextAttributes):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::construct):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::getTypeFlags):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::setPageScaleFactorProperty):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLMediaElement::getCurrentMediaControlsStatus):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+
 2016-03-08  Oliver Hunt  <oliver@apple.com>
 
         Start moving to separated writable and executable mappings in the JIT

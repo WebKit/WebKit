@@ -1,3 +1,82 @@
+2016-03-08  Mark Lam  <mark.lam@apple.com>
+
+        synthesizePrototype() and friends need to be followed by exception checks (or equivalent).
+        https://bugs.webkit.org/show_bug.cgi?id=155169
+
+        Reviewed by Geoffrey Garen.
+
+        With the exception checks, we may end up throwing new exceptions over an existing
+        one that has been thrown but not handled yet, thereby obscuring it.  It may also
+        mean that the VM will continue running on potentially unstable state, which may
+        have undesirable consequences.
+
+        I first observed this in some failed assertion while running tests on a patch for
+        https://bugs.webkit.org/show_bug.cgi?id=154865.
+
+        Performance is neutral with this patch (tested on x86_64).
+
+        1. Deleted JSNotAnObject, and removed all uses of it.
+
+        2. Added exception checks, when needed, following calls to synthesizePrototype()
+           and JSValue::toObject().
+
+           The cases that do not need an exception check are the ones that already ensures
+           that JSValue::toObject() is only called on a value that is convertible to an
+           object.  In those cases, I added an assertion that no exception was thrown
+           after the call.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStackFromException):
+        * interpreter/Interpreter.cpp:
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        (JSC::arrayProtoFuncValues):
+        (JSC::arrayProtoFuncEntries):
+        (JSC::arrayProtoFuncKeys):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toObjectSlowCase):
+        (JSC::JSValue::toThisSlowCase):
+        (JSC::JSValue::synthesizePrototype):
+        (JSC::JSValue::putToPrimitive):
+        (JSC::JSValue::putToPrimitiveByIndex):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::getPropertySlot):
+        (JSC::JSValue::get):
+        * runtime/JSFunction.cpp:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoGetter):
+        * runtime/JSNotAnObject.cpp: Removed.
+        * runtime/JSNotAnObject.h: Removed.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorDefineProperties):
+        (JSC::objectConstructorCreate):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncValueOf):
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncToString):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2016-03-08  Oliver Hunt  <oliver@apple.com>
 
         Start moving to separated writable and executable mappings in the JIT

@@ -709,7 +709,6 @@ set(JavaScriptCore_SOURCES
     runtime/JSModuleNamespaceObject.cpp
     runtime/JSModuleRecord.cpp
     runtime/JSNativeStdFunction.cpp
-    runtime/JSNotAnObject.cpp
     runtime/JSONObject.cpp
     runtime/JSObject.cpp
     runtime/JSPromise.cpp

@@ -451,7 +451,11 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("Properties can only be defined on Objects.")));
-    return JSValue::encode(defineProperties(exec, asObject(exec->argument(0)), exec->argument(1).toObject(exec)));
+    JSObject* targetObj = asObject(exec->argument(0));
+    JSObject* props = exec->argument(1).toObject(exec);
+    if (!props)
+        return JSValue::encode(JSValue());
+    return JSValue::encode(defineProperties(exec, targetObj, props));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)

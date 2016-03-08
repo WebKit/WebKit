@@ -32,7 +32,6 @@
 #include "JSCJSValueInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSNotAnObject.h"
 #include "NumberObject.h"
 #include "StructureInlines.h"
 #include <wtf/MathExtras.h>
@@ -90,7 +89,7 @@ JSObject* JSValue::toObjectSlowCase(ExecState* exec, JSGlobalObject* globalObjec
     ASSERT(isUndefinedOrNull());
     VM& vm = exec->vm();
     vm.throwException(exec, createNotAnObjectError(exec, *this));
-    return JSNotAnObject::create(vm);
+    return nullptr;
 }
 
 JSValue JSValue::toThisSlowCase(ExecState* exec, ECMAMode ecmaMode) const
@@ -125,7 +124,7 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
     ASSERT(isUndefinedOrNull());
     VM& vm = exec->vm();
     vm.throwException(exec, createNotAnObjectError(exec, *this));
-    return JSNotAnObject::create(vm);
+    return nullptr;
 }
 
 // ECMA 8.7.2
@@ -140,6 +139,8 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
 
     // Check if there are any setters or getters in the prototype chain
     JSObject* obj = synthesizePrototype(exec);
+    if (UNLIKELY(!obj))
+        return;
     JSValue prototype;
     if (propertyName != exec->propertyNames().underscoreProto) {
         for (; !obj->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
@@ -198,7 +199,12 @@ void JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSVa
         return;
     }
     
-    if (synthesizePrototype(exec)->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow))
+    JSObject* prototype = synthesizePrototype(exec);
+    if (UNLIKELY(!prototype)) {
+        ASSERT(exec->hadException());
+        return;
+    }
+    if (prototype->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow))
         return;
     
     if (shouldThrow)

@@ -34,7 +34,6 @@
 #include "ErrorHandlingScope.h"
 #include "Exception.h"
 #include "JSGlobalObjectFunctions.h"
-#include "JSNotAnObject.h"
 #include "Interpreter.h"
 #include "Nodes.h"
 #include "JSCInlines.h"
