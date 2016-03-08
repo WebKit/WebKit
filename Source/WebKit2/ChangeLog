@@ -1,3 +1,19 @@
+2016-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct bug in resource load statistics debug flag for legacy clients
+        https://bugs.webkit.org/show_bug.cgi?id=155118
+        <rdar://problem/25020088>
+
+        Reviewed by Andy Estes.
+
+        Some clients launch WebKit2 using the "legacy" configuration for the website data store.
+        The Resource Load Statistics code was not added to this type of configuration, which
+        prevents various WebKit2 clients from using this code.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration): Tell the legacy initializer where to
+        find the resource load statistics data.
+
 2016-03-07  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Add convenience function URL::procotolIsBlob()
