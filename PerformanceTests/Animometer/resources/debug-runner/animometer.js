@@ -490,7 +490,7 @@ Utilities.extendObject(window.benchmarkController, {
     showResults: function()
     {
         if (!this.addedKeyEvent) {
-            document.addEventListener("keypress", this.selectResults, false);
+            document.addEventListener("keypress", this.handleKeyPress, false);
             this.addedKeyEvent = true;
         }
 
@@ -509,17 +509,6 @@ Utilities.extendObject(window.benchmarkController, {
         sectionsManager.showSection("results", true);
 
         suitesManager.updateLocalStorageFromJSON(dashboard.results[0]);
-    },
-
-    showJSONResults: function()
-    {
-        var output = {
-            options: benchmarkRunnerClient.results.options,
-            data: benchmarkRunnerClient.results.data
-        };
-        var textarea = document.querySelector("#results-json textarea").textContent = JSON.stringify(output, null, 1);
-        document.querySelector("#results-json button").remove();
-        document.querySelector("#results-json div").classList.remove("hidden");
     },
 
     showTestGraph: function(testName, testResult, testData)

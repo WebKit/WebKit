@@ -1,5 +1,27 @@
 2016-03-03  Jon Lee  <jonlee@apple.com>
 
+        Add ability to retrieve raw data from release harness
+        https://bugs.webkit.org/show_bug.cgi?id=155026
+
+        Reviewed by Simon Fraser.
+
+        * Animometer/developer.html: Remove the special UI in the debug
+        harness.
+        * Animometer/resources/runner/animometer.css: Add styles for the
+        overlay.
+        * Animometer/resources/runner/animometer.js: Let 'j' show the JSON
+        results, but only if the overlay doesn't exist. Add 'esc' key to dismiss
+        the overlay.
+        (window.benchmarkController.selectResults): Cycle the cases around
+        so that the first 's' press selects both the benchmark score and
+        the individual test scores.
+        * Animometer/resources/debug-runner/animometer.css: Remove
+        unneeded rules.
+        * Animometer/resources/debug-runner/animometer.js: Make the same
+        call to handleKeyPress.
+
+2016-03-03  Jon Lee  <jonlee@apple.com>
+
         Make sure multiply test particles have at least some opacity
         https://bugs.webkit.org/show_bug.cgi?id=155027
 

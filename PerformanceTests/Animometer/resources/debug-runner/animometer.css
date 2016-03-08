@@ -353,14 +353,6 @@ label.tree-label {
     flex-direction: row;
 }
 
-#results-json {
-    margin-bottom: 3em;
-}
-
-#results-json textarea {
-    vertical-align: sub;
-}
-
 #test-graph {
     flex: 1 0 calc(100% - 40px);
 }

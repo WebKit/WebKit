@@ -93,15 +93,11 @@
                 </div>
                 <table id="results-header"></table>
             </div>
-            <div id="results-json">
-                <button class="small-button" onclick="benchmarkController.showJSONResults()">JSON results</button>
-                <div class="hidden">
-                    JSON:
-                    <textarea rows=1 onclick="this.focus();this.select()" readonly></textarea>
-                </div>
-            </div>
             <button onclick="benchmarkController.startBenchmark()">Test Again</button>
-            <p>'s': Select different data for copy/paste</p>
+            <p>
+                'j': Show JSON results<br/>
+                's': Select various results for copy/paste (use repeatedly to cycle)
+            </p>
         </section>
         <section id="test-graph">
             <header>
