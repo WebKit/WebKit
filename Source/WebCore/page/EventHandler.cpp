@@ -1577,6 +1577,16 @@ static LayoutPoint documentPointForWindowPoint(Frame& frame, const IntPoint& win
     return view ? view->windowToContents(windowPoint) : windowPoint;
 }
 
+static Scrollbar* scrollbarForMouseEvent(const MouseEventWithHitTestResults& mouseEvent, FrameView* view)
+{
+    if (view) {
+        if (auto* scrollbar = view->scrollbarAtPoint(mouseEvent.event().position()))
+            return scrollbar;
+    }
+    return mouseEvent.scrollbar();
+
+}
+
 bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouseEvent)
 {
     RefPtr<FrameView> protector(m_frame.view());
@@ -1693,35 +1703,25 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
             m_lastScrollbarUnderMouse = nullptr;
     }
 
-    if (swallowEvent) {
-        // scrollbars should get events anyway, even disabled controls might be scrollable
-        Scrollbar* scrollbar = mouseEvent.scrollbar();
-
-        updateLastScrollbarUnderMouse(scrollbar, true);
-
-        if (scrollbar)
-            passMousePressEventToScrollbar(mouseEvent, scrollbar);
-    } else {
+    if (!swallowEvent) {
         // Refetch the event target node if it currently is the shadow node inside an <input> element.
         // If a mouse event handler changes the input element type to one that has a widget associated,
         // we'd like to EventHandler::handleMousePressEvent to pass the event to the widget and thus the
         // event target node can't still be the shadow node.
         if (is<ShadowRoot>(*mouseEvent.targetNode()) && is<HTMLInputElement>(*downcast<ShadowRoot>(*mouseEvent.targetNode()).host()))
             mouseEvent = m_frame.document()->prepareMouseEvent(HitTestRequest(), documentPoint, platformMouseEvent);
+    }
 
-        FrameView* view = m_frame.view();
-        Scrollbar* scrollbar = view ? view->scrollbarAtPoint(platformMouseEvent.position()) : 0;
-        if (!scrollbar)
-            scrollbar = mouseEvent.scrollbar();
+    Scrollbar* scrollbar = scrollbarForMouseEvent(mouseEvent, m_frame.view());
+    updateLastScrollbarUnderMouse(scrollbar, true);
 
-        updateLastScrollbarUnderMouse(scrollbar, true);
-
-        if (scrollbar && passMousePressEventToScrollbar(mouseEvent, scrollbar))
+    bool passedToScrollbar = scrollbar && passMousePressEventToScrollbar(mouseEvent, scrollbar);
+    if (!swallowEvent) {
+        if (passedToScrollbar)
             swallowEvent = true;
         else
             swallowEvent = handleMousePressEvent(mouseEvent);
     }
-
     return swallowEvent;
 }
 

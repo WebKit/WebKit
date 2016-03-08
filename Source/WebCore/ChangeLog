@@ -1,3 +1,47 @@
+2016-03-08  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Scrolling does not work when the mouse down is handled by a node
+        https://bugs.webkit.org/show_bug.cgi?id=19033
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/events/prevent-default-prevents-interaction-with-scrollbars-.html
+
+        When a mouse press/down event happens on a scrollbar area, but event
+        is default prevented in the document level**, for example, event does not get
+        properly passed to scrollbars, although it should.
+
+        Problem started long ago with r17770, and was improved with r19596.
+        However, years later, the way Scrollbar* is obtained is still currently different
+        weither event is default prevented or not.
+
+        Patch uniforms the logic for both cases, and fixes the bug.
+
+        Note: code before used to look like
+
+        if (swallowEvent) {
+            <code>
+        } else {
+            <bleh>
+            <foo>
+        }
+
+        .. and now looks like
+
+        if (!swallowEvent)
+            <bleh>
+
+        <code>
+
+        if (!swallowEvent)
+            <foo>
+
+        ** e.g. document.addEventListener('mousedown', function (e) { e.preventDefault(); });
+
+        * page/EventHandler.cpp:
+        (WebCore::scrollbarForMouseEvent):
+        (WebCore::EventHandler::handleMousePressEvent):
+
 2016-03-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed Windows build fix after r197728.

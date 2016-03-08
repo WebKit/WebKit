@@ -1,3 +1,13 @@
+2016-03-08  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Scrolling does not work when the mouse down is handled by a node
+        https://bugs.webkit.org/show_bug.cgi?id=19033
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/prevent-default-prevents-interaction-with-scrollbars-expected.txt: Added.
+        * fast/events/prevent-default-prevents-interaction-with-scrollbars.html: Added.
+
 2016-03-08  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Regular Expression canonicalization tables for Unicode need to be updated to use Unicode CaseFolding.txt
