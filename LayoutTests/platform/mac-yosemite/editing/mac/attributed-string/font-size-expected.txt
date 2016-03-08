@@ -32,7 +32,7 @@ Alignment 4
     HeaderLevel: 0
 [small element]
     NSColor: #000000 (NSDeviceRGBColorSpace)
-    NSFont: Times-Roman 13.00 pt.
+    NSFont: Times-Roman 13.33 pt.
     NSKern: 0pt
     NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
     NSStrokeWidth: 0
@@ -382,7 +382,7 @@ Alignment 4
     HeaderLevel: 0
 [5pt]
     NSColor: #000000 (NSDeviceRGBColorSpace)
-    NSFont: Times-Roman 7.00 pt.
+    NSFont: Times-Roman 6.67 pt.
     NSKern: 0pt
     NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
     NSStrokeWidth: 0

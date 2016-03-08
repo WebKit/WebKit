@@ -21,9 +21,9 @@
 <script>
 description("Test that relative font sizes work when the parent is in viewport units.");
 standardResizeTest(function () {
-    shouldBeEqualToString("getComputedStyle(container).fontSize", Math.round(innerWidth / 20) + "px");
-    shouldBeEqualToString("getComputedStyle(ems).fontSize", Math.round(innerWidth / 5) + "px");
-    shouldBeEqualToString("getComputedStyle(percent).fontSize", Math.round(innerWidth / 40) + "px");
+    shouldBeEqualToString("getComputedStyle(container).fontSize", (innerWidth / 20) + "px");
+    shouldBeEqualToString("getComputedStyle(ems).fontSize", (innerWidth / 5) + "px");
+    shouldBeEqualToString("getComputedStyle(percent).fontSize", (innerWidth / 40) + "px");
 });
 </script>
 <script src="../../resources/js-test-post.js"></script>

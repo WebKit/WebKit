@@ -1,3 +1,23 @@
+2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font size computed style is innaccurate
+        https://bugs.webkit.org/show_bug.cgi?id=154705
+        <rdar://problem/23474068>
+
+        Reviewed by Timothy Hatcher.
+
+        Update expected results.
+
+        * css3/calc/font-size-fractional-expected.txt:
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html:
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size-expected.txt:
+        * editing/mac/attributed-string/font-size-expected.txt:
+        * editing/mac/attributed-string/vertical-align-expected.txt:
+        * platform/mac-mavericks/editing/mac/attributed-string/font-size-expected.txt:
+        * platform/mac-mavericks/editing/mac/attributed-string/vertical-align-expected.txt:
+        * platform/mac-yosemite/editing/mac/attributed-string/font-size-expected.txt:
+        * platform/mac-yosemite/editing/mac/attributed-string/vertical-align-expected.txt:
+
 2016-03-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking storage/domstorage/events/basic-body-attribute.html as flaky on ios-simulator-wk2
