@@ -40,6 +40,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RandomNumber.h>
 #include <wtf/StdLibExtras.h>
 
 #if PLATFORM(IOS)
@@ -422,8 +423,15 @@ double DOMTimer::intervalClampedToMinimum() const
 
 double DOMTimer::alignedFireTime(double fireTime) const
 {
-    if (double alignmentInterval = scriptExecutionContext()->timerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel))
-        return ceil(fireTime / alignmentInterval) * alignmentInterval;
+    if (double alignmentInterval = scriptExecutionContext()->timerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel)) {
+        // Don't mess with zero-delay timers.
+        if (!fireTime)
+            return fireTime;
+        static const double randomizedAlignment = randomNumber();
+        // Force alignment to randomizedAlignment fraction of the way between alignemntIntervals, e.g.
+        // if alignmentInterval is 10 and randomizedAlignment is 0.3 this will align to 3, 13, 23, ...
+        return (ceil(fireTime / alignmentInterval - randomizedAlignment) + randomizedAlignment) * alignmentInterval;
+    }
 
     return fireTime;
 }
