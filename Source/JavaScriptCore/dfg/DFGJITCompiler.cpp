@@ -56,6 +56,11 @@ JITCompiler::JITCompiler(Graph& dfg)
 {
     if (shouldDumpDisassembly() || m_graph.m_vm.m_perBytecodeProfiler)
         m_disassembler = std::make_unique<Disassembler>(dfg);
+#if ENABLE(FTL_JIT)
+    m_jitCode->tierUpInLoopHierarchy = WTFMove(m_graph.m_plan.tierUpInLoopHierarchy);
+    for (unsigned tierUpBytecode : m_graph.m_plan.tierUpAndOSREnterBytecodes)
+        m_jitCode->tierUpEntryTriggers.add(tierUpBytecode, 0);
+#endif
 }
 
 JITCompiler::~JITCompiler()
@@ -114,7 +119,7 @@ void JITCompiler::compileSetupRegistersForEntry()
 void JITCompiler::compileEntryExecutionFlag()
 {
 #if ENABLE(FTL_JIT)
-    if (m_graph.m_plan.canTierUpAndOSREnter)
+    if (m_graph.m_plan.canTierUpAndOSREnter())
         store8(TrustedImm32(0), &m_jitCode->neverExecutedEntry);
 #endif // ENABLE(FTL_JIT)
 }

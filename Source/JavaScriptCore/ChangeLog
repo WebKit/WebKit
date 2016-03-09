@@ -1,3 +1,105 @@
+2016-03-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Pick how to OSR Enter to FTL at runtime instead of compile time
+        https://bugs.webkit.org/show_bug.cgi?id=155217
+
+        Reviewed by Filip Pizlo.
+
+        This patch addresses 2 types of problems with tiering up to FTL
+        with OSR Entry in a loop:
+        -When there are nested loops, it is generally valuable to enter
+         an outer loop rather than an inner loop.
+        -When tiering up at a point that cannot OSR Enter, we are at
+         the mercy of the outer loop frequency to compile the right
+         entry point.
+
+        The first case is significant in the test "gaussian-blur".
+        That test has 4 nested loops. When we have an OSR Entry,
+        the analysis phases have to be pesimistic where we enter:
+        we do not really know what constraint can be proven from
+        the DFG code that was running.
+
+        In "gaussian-blur", integer-range analysis removes pretty
+        much all overflow checks in the inner loops of where we entered.
+        The more outside we enter, the better code we generate.
+
+        Since we spend the most iterations in the inner loop, we naturally
+        tend to OSR Enter into the 2 most inner loops, making the most
+        pessimistic assumptions.
+
+        To avoid such problems, I changed how we decide where to OSR Enter.
+        Previously, the last CheckTierUpAndOSREnter to cross the threshold
+        was where we take the entry point for FTL.
+
+        What happens now is that the entry point is not decied when
+        compiling the CheckTierUp variants. Instead, all the information
+        we need is gathered during compilation and keept on the JITCode
+        to be used at runtime.
+
+        When we try to tier up and decide to OSR Enter, we use the information
+        we have to pick a good outer loop for OSR Entry.
+
+        Now the problem is outer loop do not CheckTierUpAndOSREnter often,
+        wasting several miliseconds before entering the newly compiled FTL code.
+
+        To solve that, every CheckTierUpAndOSREnter has its own trigger that
+        bypass the counter. When the FTL Code is compiled, the trigger is set
+        and we enter through the right CheckTierUpAndOSREnter immediately.
+
+        ---
+
+        This new mechanism also solves a problem of ai-astar.
+        When we try to tier up in ai-astar, we had nothing to compile until
+        the outer loop is reached.
+
+        To make sure we reached the CheckTierUpAndOSREnter in a reasonable time,
+        we had CheckTierUpWithNestedTriggerAndOSREnter with a special trigger.
+
+        With the new mechanism, we can do much better:
+        -When we keep hitting CheckTierUpInLoop, we now have all the information
+         we need to already start compiling the outer loop.
+         Instead of waiting for the outer loop to be reached a few times, we compile
+         it as soon as the inner loop is hammering CheckTierUpInLoop.
+        -With the new triggers, the very next time we hit the outer loop, we OSR Enter.
+
+        This allow us to compile what we need sooner and enter sooner.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize): Deleted.
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC): Deleted.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Deleted.
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::compileEntryExecutionFlag):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::canTierUpAndOSREnter):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate): Deleted.
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        (JSC::DFG::TierUpCheckInjectionPhase::buildNaturalLoopToLoopHintMap):
+        (JSC::DFG::TierUpCheckInjectionPhase::findLoopsContainingLoopHintWithoutOSREnter): Deleted.
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::ToFTLForOSREntryDeferredCompilationCallback):
+        (JSC::DFG::Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilationCallback::create):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h:
+
 2016-03-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to constant-fold strings
