@@ -339,7 +339,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/VNodeTrackerCocoa.cpp
     platform/cocoa/WebCoreNSErrorExtras.mm
 
-    platform/crypto/mac/CryptoDigestMac.cpp
+    platform/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 
     platform/graphics/DisplayRefreshMonitor.cpp
     platform/graphics/DisplayRefreshMonitorManager.cpp

@@ -6542,7 +6542,7 @@
 		E1F80B8A183172A2007885C3 /* JSCryptoKeyPairCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */; };
 		E1F80B8D183172B5007885C3 /* JSCryptoKeyPair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F80B8B183172B5007885C3 /* JSCryptoKeyPair.cpp */; };
 		E1F80B8E183172B5007885C3 /* JSCryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */; };
-		E1FE13641834351100892F13 /* CryptoDigestMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE13621834351100892F13 /* CryptoDigestMac.cpp */; };
+		E1FE13641834351100892F13 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE13621834351100892F13 /* CryptoDigestCommonCrypto.cpp */; };
 		E1FE136718343A1000892F13 /* CryptoDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE136618343A1000892F13 /* CryptoDigest.h */; };
 		E1FE136A183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE1368183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.cpp */; };
 		E1FE136B183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE1369183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h */; };
@@ -14586,8 +14586,8 @@
 		E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyPairCustom.cpp; sourceTree = "<group>"; };
 		E1F80B8B183172B5007885C3 /* JSCryptoKeyPair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyPair.cpp; sourceTree = "<group>"; };
 		E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoKeyPair.h; sourceTree = "<group>"; };
-		E1FE13621834351100892F13 /* CryptoDigestMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoDigestMac.cpp; path = crypto/mac/CryptoDigestMac.cpp; sourceTree = "<group>"; };
-		E1FE136618343A1000892F13 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoDigest.h; path = crypto/CryptoDigest.h; sourceTree = "<group>"; };
+		E1FE13621834351100892F13 /* CryptoDigestCommonCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoDigestCommonCrypto.cpp; sourceTree = "<group>"; };
+		E1FE136618343A1000892F13 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoDigest.h; sourceTree = "<group>"; };
 		E1FE1368183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSA_OAEP.cpp; sourceTree = "<group>"; };
 		E1FE1369183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRSA_OAEP.h; sourceTree = "<group>"; };
 		E1FE136E183FECF000892F13 /* CryptoAlgorithmRSA_OAEPMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSA_OAEPMac.cpp; sourceTree = "<group>"; };
@@ -23236,18 +23236,18 @@
 		CE50D8CE1C8932ED0072EA5A /* crypto */ = {
 			isa = PBXGroup;
 			children = (
-				CE50D8CF1C8932FB0072EA5A /* mac */,
+				CE50D8CF1C8932FB0072EA5A /* commoncrypto */,
 				E1FE136618343A1000892F13 /* CryptoDigest.h */,
 			);
-			name = crypto;
+			path = crypto;
 			sourceTree = "<group>";
 		};
-		CE50D8CF1C8932FB0072EA5A /* mac */ = {
+		CE50D8CF1C8932FB0072EA5A /* commoncrypto */ = {
 			isa = PBXGroup;
 			children = (
-				E1FE13621834351100892F13 /* CryptoDigestMac.cpp */,
+				E1FE13621834351100892F13 /* CryptoDigestCommonCrypto.cpp */,
 			);
-			name = mac;
+			path = commoncrypto;
 			sourceTree = "<group>";
 		};
 		DF9AFD6F13FC31B00015FEB7 /* objc */ = {
@@ -29274,7 +29274,7 @@
 				E19AC3F01824DC7900349426 /* CryptoAlgorithmSHA256.cpp in Sources */,
 				E19AC3F21824DC7900349426 /* CryptoAlgorithmSHA384.cpp in Sources */,
 				E19AC3F41824DC7900349426 /* CryptoAlgorithmSHA512.cpp in Sources */,
-				E1FE13641834351100892F13 /* CryptoDigestMac.cpp in Sources */,
+				E1FE13641834351100892F13 /* CryptoDigestCommonCrypto.cpp in Sources */,
 				E157A8E418173A3A009F821D /* CryptoKey.cpp in Sources */,
 				E125F84D1824289D00D84CD9 /* CryptoKeyAES.cpp in Sources */,
 				E125F863182C303A00D84CD9 /* CryptoKeyDataOctetSequence.cpp in Sources */,

@@ -1,3 +1,17 @@
+2016-03-09  Daniel Bates  <dabates@apple.com>
+
+        Rename WebCore/platform/crypto/mac/CryptoDigestMac.cpp to WebCore/platform/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=155244
+
+        Reviewed by Alexey Proskuryakov.
+
+        The file WebCore/platform/crypto/mac/CryptoDigestMac.cpp is applicable to both iOS and OS X.
+        We should move and rename this file to reflect that is applicable to both of these platforms.
+
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp: Renamed from Source/WebCore/platform/crypto/mac/CryptoDigestMac.cpp.
+
 2016-03-09  Tim Horton  <timothy_horton@apple.com>
 
         Removing and re-adding a script message handler with the same name results in an unusable message handler
