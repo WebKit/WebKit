@@ -209,6 +209,11 @@ void ScrollingCoordinator::frameViewFixedObjectsDidChange(FrameView& frameView)
     updateSynchronousScrollingReasons(frameView);
 }
 
+GraphicsLayer* ScrollingCoordinator::scrollLayerForScrollableArea(ScrollableArea& scrollableArea)
+{
+    return scrollableArea.layerForScrolling();
+}
+
 GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView& frameView)
 {
     if (RenderView* renderView = frameView.frame().contentRenderer())

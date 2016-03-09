@@ -1,3 +1,17 @@
+2016-03-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r197825.
+        https://bugs.webkit.org/show_bug.cgi?id=155222
+
+        It broke the EFL build. It is not dead code. (Requested by
+        gyuyoung on #webkit).
+
+        Reverted changeset:
+
+        "Delete dead scrolling code"
+        https://bugs.webkit.org/show_bug.cgi?id=155210
+        http://trac.webkit.org/changeset/197825
+
 2016-03-08  Chris Dumez  <cdumez@apple.com>
 
         Element with maximum tabIndex cannot be returned by nextElementWithGreaterTabIndex()
