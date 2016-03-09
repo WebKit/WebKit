@@ -113,6 +113,9 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
             completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
             Block_release(completionHandlerCopy);
         });
+    } else {
+        ASSERT_NOT_REACHED();
+        completionHandler(nil);
     }
 }
 
@@ -137,6 +140,8 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
                     urlToStore = authenticationChallenge.failureResponse().url();
                 if (auto storageSession = WebKit::SessionTracker::storageSession(sessionID))
                     storageSession->credentialStorage().set(nonPersistentCredential, authenticationChallenge.protectionSpace(), urlToStore);
+                else
+                    ASSERT_NOT_REACHED();
 
                 completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), nonPersistentCredential.nsCredential());
             } else
@@ -145,6 +150,9 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
             Block_release(completionHandlerCopy);
         };
         networkDataTask->didReceiveChallenge(challenge, challengeCompletionHandler);
+    } else {
+        ASSERT_NOT_REACHED();
+        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
     }
 }
 
@@ -180,6 +188,9 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
             completionHandlerCopy(toNSURLSessionResponseDisposition(policyAction));
             Block_release(completionHandlerCopy);
         });
+    } else {
+        ASSERT_NOT_REACHED();
+        completionHandler(NSURLSessionResponseCancel);
     }
 }
 

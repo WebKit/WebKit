@@ -85,7 +85,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
             else
                 storageSession->credentialStorage().set(WebCore::Credential(m_user, m_password, WebCore::CredentialPersistenceNone), url);
         } else
-            RELEASE_ASSERT_NOT_REACHED();
+            ASSERT_NOT_REACHED();
 #endif
     }
 
@@ -154,6 +154,10 @@ void NetworkDataTask::didReceiveChallenge(const WebCore::AuthenticationChallenge
 
     if (m_client)
         m_client->didReceiveChallenge(challenge, completionHandler);
+    else {
+        ASSERT_NOT_REACHED();
+        completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, { });
+    }
 }
 
 void NetworkDataTask::didCompleteWithError(const WebCore::ResourceError& error)
@@ -166,6 +170,10 @@ void NetworkDataTask::didReceiveResponse(const WebCore::ResourceResponse& respon
 {
     if (m_client)
         m_client->didReceiveResponseNetworkSession(response, completionHandler);
+    else {
+        ASSERT_NOT_REACHED();
+        completionHandler(WebCore::PolicyAction::PolicyIgnore);
+    }
 }
 
 void NetworkDataTask::didReceiveData(RefPtr<WebCore::SharedBuffer>&& data)
@@ -222,13 +230,17 @@ void NetworkDataTask::willPerformHTTPRedirection(const WebCore::ResourceResponse
                     applyBasicAuthorizationHeader(request, m_initialCredential);
                 }
             } else
-                RELEASE_ASSERT_NOT_REACHED();
+                ASSERT_NOT_REACHED();
         }
 #endif
     }
     
     if (m_client)
         m_client->willPerformHTTPRedirection(redirectResponse, request, completionHandler);
+    else {
+        ASSERT_NOT_REACHED();
+        completionHandler({ });
+    }
 }
     
 void NetworkDataTask::scheduleFailure(FailureType type)
@@ -307,7 +319,7 @@ bool NetworkDataTask::tryPasswordBasedAuthentication(const WebCore::Authenticati
                 }
             }
         } else
-            RELEASE_ASSERT_NOT_REACHED();
+            ASSERT_NOT_REACHED();
     }
 #endif
 

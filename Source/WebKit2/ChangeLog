@@ -1,3 +1,28 @@
+2016-03-09  Alex Christensen  <achristensen@webkit.org>
+
+        Always call NSURLSession completion handlers
+        https://bugs.webkit.org/show_bug.cgi?id=155137
+
+        Reviewed by Darin Adler.
+
+        There are some edge cases which should not be hit, but if they are they would cause the
+        network process to hang and network resources to be leaked.  This can be avoided.
+        There are also a few release asserts that do not need to crash release builds.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::didReceiveChallenge):
+        (WebKit::NetworkDataTask::didCompleteWithError):
+        (WebKit::NetworkDataTask::didReceiveResponse):
+        (WebKit::NetworkDataTask::didReceiveData):
+        (WebKit::NetworkDataTask::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTask::scheduleFailure):
+        (WebKit::NetworkDataTask::tryPasswordBasedAuthentication):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+
 2016-03-08  Sam Weinig  <sam@webkit.org>
 
         Roll r197632 back in now that the bots have caught up.
