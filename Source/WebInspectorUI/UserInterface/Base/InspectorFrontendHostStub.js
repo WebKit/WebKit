@@ -163,6 +163,11 @@ if (!window.InspectorFrontendHost) {
         {
         },
 
+        unbufferedLog: function()
+        {
+            console.log.apply(console, arguments);
+        },
+
         // Private
 
         _sendPendingMessagesToBackendIfNeeded: function()

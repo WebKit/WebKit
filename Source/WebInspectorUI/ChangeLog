@@ -1,5 +1,20 @@
 2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Make debugging Test.html easier
+        https://bugs.webkit.org/show_bug.cgi?id=155207
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/InspectorFrontendHostStub.js: Renamed from Source/WebInspectorUI/UserInterface/Protocol/InspectorFrontendHostStub.js.
+        (window.InspectorFrontendHost.WebInspector.InspectorFrontendHostStub.prototype.unbufferedLog):
+        Add new stub for test function.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        Move the stub to the Base directory.
+
+2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Add a way to create a Heap Snapshot
         https://bugs.webkit.org/show_bug.cgi?id=155188
 
