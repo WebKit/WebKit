@@ -1,3 +1,15 @@
+2016-03-09  Alex Christensen  <achristensen@webkit.org>
+
+        Fix use-after-free when cancelling synchronous XHR when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=155253
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        Store the completion handler on the stack before calling didFail, which deletes the
+        NetworkLoad, so we don't access m_redirectCompletionHandler after deleting the NetworkLoad.
+
 2016-03-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197698.
