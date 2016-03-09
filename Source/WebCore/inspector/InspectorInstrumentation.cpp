@@ -48,6 +48,7 @@
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
 #include "InspectorLayerTreeAgent.h"
+#include "InspectorMemoryAgent.h"
 #include "InspectorNetworkAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorTimelineAgent.h"
@@ -1030,6 +1031,14 @@ void InspectorInstrumentation::playbackFinishedImpl(InstrumentingAgents& instrum
 {
     if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
         replayAgent->playbackFinished();
+}
+#endif
+
+#if ENABLE(RESOURCE_USAGE)
+void InspectorInstrumentation::didHandleMemoryPressureImpl(InstrumentingAgents& instrumentingAgents, Critical critical)
+{
+    if (InspectorMemoryAgent* memoryAgent = instrumentingAgents.inspectorMemoryAgent())
+        memoryAgent->didHandleMemoryPressure(critical);
 }
 #endif
 

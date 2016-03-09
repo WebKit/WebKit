@@ -27,19 +27,13 @@
 #import "MemoryPressureHandler.h"
 
 #import "IOSurfacePool.h"
-#import "GCController.h"
-#import "JSDOMWindow.h"
-#import "JSDOMWindowBase.h"
 #import "LayerPool.h"
 #import "Logging.h"
 #import "ResourceUsageThread.h"
-#import "WebCoreSystemInterface.h"
 #import <mach/mach.h>
 #import <mach/task_info.h>
 #import <malloc/malloc.h>
 #import <notify.h>
-#import <wtf/CurrentTime.h>
-#import <sys/sysctl.h>
 
 #if PLATFORM(IOS)
 #import "SystemMemory.h"

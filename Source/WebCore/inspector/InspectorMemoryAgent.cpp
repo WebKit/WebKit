@@ -28,6 +28,7 @@
 
 #if ENABLE(RESOURCE_USAGE)
 
+#include "InstrumentingAgents.h"
 #include "ResourceUsageThread.h"
 #include <inspector/InspectorEnvironment.h>
 #include <wtf/Stopwatch.h>
@@ -45,12 +46,26 @@ InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)
 
 void InspectorMemoryAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
+    m_instrumentingAgents.setInspectorMemoryAgent(this);
 }
 
 void InspectorMemoryAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
+    m_instrumentingAgents.setInspectorMemoryAgent(nullptr);
+
     ErrorString ignored;
     stopTracking(ignored);
+    disable(ignored);
+}
+
+void InspectorMemoryAgent::enable(ErrorString&)
+{
+    m_enabled = true;
+}
+
+void InspectorMemoryAgent::disable(ErrorString&)
+{
+    m_enabled = false;
 }
 
 void InspectorMemoryAgent::startTracking(ErrorString&)
@@ -77,6 +92,15 @@ void InspectorMemoryAgent::stopTracking(ErrorString&)
     m_tracking = false;
 
     m_frontendDispatcher->trackingComplete();
+}
+
+void InspectorMemoryAgent::didHandleMemoryPressure(Critical critical)
+{
+    if (!m_enabled)
+        return;
+
+    MemoryFrontendDispatcher::Severity severity = critical == Critical::Yes ? MemoryFrontendDispatcher::Severity::Critical : MemoryFrontendDispatcher::Severity::NonCritical;
+    m_frontendDispatcher->memoryPressure(m_environment.executionStopwatch()->elapsedTime(), severity);
 }
 
 void InspectorMemoryAgent::collectSample(const ResourceUsageData& data)

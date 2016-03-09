@@ -41,6 +41,9 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
         if (type === WebInspector.TimelineRecord.Type.Network)
             return new WebInspector.NetworkTimeline(type);
 
+        if (type === WebInspector.TimelineRecord.Type.Memory)
+            return new WebInspector.MemoryTimeline(type);
+
         return new WebInspector.Timeline(type);
     }
 

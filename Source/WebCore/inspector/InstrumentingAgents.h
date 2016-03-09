@@ -51,6 +51,7 @@ class InspectorDOMDebuggerAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorLayerTreeAgent;
+class InspectorMemoryAgent;
 class InspectorNetworkAgent;
 class InspectorPageAgent;
 class InspectorReplayAgent;
@@ -110,6 +111,11 @@ public:
     void setInspectorReplayAgent(InspectorReplayAgent* agent) { m_inspectorReplayAgent = agent; }
 #endif
 
+#if ENABLE(RESOURCE_USAGE)
+    InspectorMemoryAgent* inspectorMemoryAgent() const { return m_inspectorMemoryAgent; }
+    void setInspectorMemoryAgent(InspectorMemoryAgent* agent) { m_inspectorMemoryAgent = agent; }
+#endif
+
     InspectorDatabaseAgent* inspectorDatabaseAgent() const { return m_inspectorDatabaseAgent; }
     void setInspectorDatabaseAgent(InspectorDatabaseAgent* agent) { m_inspectorDatabaseAgent = agent; }
 
@@ -146,6 +152,9 @@ private:
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent { nullptr };
 #if ENABLE(WEB_REPLAY)
     InspectorReplayAgent* m_inspectorReplayAgent { nullptr };
+#endif
+#if ENABLE(RESOURCE_USAGE)
+    InspectorMemoryAgent* m_inspectorMemoryAgent { nullptr };
 #endif
     InspectorDatabaseAgent* m_inspectorDatabaseAgent { nullptr };
     InspectorApplicationCacheAgent* m_inspectorApplicationCacheAgent { nullptr };

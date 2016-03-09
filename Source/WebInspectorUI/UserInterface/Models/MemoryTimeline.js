@@ -23,27 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MemoryObserver = class MemoryObserver
+WebInspector.MemoryTimeline = class MemoryTimeline extends WebInspector.Timeline
 {
-    // Events defined by the "Memory" domain.
+    // Public
 
-    memoryPressure(timestamp, severity)
+    get memoryPressureEvents() { return this._pressureEvents; }
+
+    addMemoryPressureEvent(memoryPressureEvent)
     {
-        WebInspector.memoryManager.memoryPressure(timestamp, severity);
+        console.assert(memoryPressureEvent instanceof WebInspector.MemoryPressureEvent);
+
+        this._pressureEvents.push(memoryPressureEvent);
+
+        this.dispatchEventToListeners(WebInspector.MemoryTimeline.Event.MemoryPressureEventAdded, {memoryPressureEvent})
     }
 
-    trackingStart(timestamp)
-    {
-        WebInspector.timelineManager.memoryTrackingStart(timestamp);
-    }
+    // Protected
 
-    trackingUpdate(event)
+    reset(suppressEvents)
     {
-        WebInspector.timelineManager.memoryTrackingUpdate(event);
-    }
+        super.reset(suppressEvents);
 
-    trackingComplete()
-    {
-        WebInspector.timelineManager.memoryTrackingComplete();
+        this._pressureEvents = [];
     }
+};
+
+WebInspector.MemoryTimeline.Event = {
+    MemoryPressureEventAdded: "memory-timeline-memory-pressure-event-added",
 };

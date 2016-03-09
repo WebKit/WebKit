@@ -29,6 +29,7 @@
 #if ENABLE(RESOURCE_USAGE)
 
 #include "InspectorWebAgentBase.h"
+#include "MemoryPressureHandler.h"
 #include "ResourceUsageData.h"
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
@@ -48,14 +49,20 @@ public:
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // MemoryBackendDispatcherHandler
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
     void startTracking(ErrorString&) override;
     void stopTracking(ErrorString&) override;
+
+    // InspectorInstrumentation
+    void didHandleMemoryPressure(Critical);
 
 private:
     void collectSample(const ResourceUsageData&);
 
     std::unique_ptr<Inspector::MemoryFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::MemoryBackendDispatcher> m_backendDispatcher;
+    bool m_enabled { false };
     bool m_tracking { false };
 };
 

@@ -29,13 +29,11 @@
 #include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "FontCache.h"
-#include "FontCascade.h"
 #include "GCController.h"
 #include "HTMLMediaElement.h"
-#include "JSDOMWindow.h"
+#include "InspectorInstrumentation.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -178,6 +176,12 @@ void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchro
 #endif
         WTF::releaseFastMallocFreeMemory();
     }
+
+#if ENABLE(RESOURCE_USAGE)
+    Page::forEachPage([&](Page& page) {
+        InspectorInstrumentation::didHandleMemoryPressure(page, critical);
+    });
+#endif
 }
 
 void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()

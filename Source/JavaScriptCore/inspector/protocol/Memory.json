@@ -23,6 +23,14 @@
     ],
     "commands": [
         {
+            "name": "enable",
+            "description": "Enables Memory domain events."
+        },
+        {
+            "name": "disable",
+            "description": "Disables Memory domain events."
+        },
+        {
             "name": "startTracking",
             "description": "Start tracking memory. This will produce a `trackingStart` event."
         },
@@ -32,6 +40,14 @@
         }
     ],
     "events": [
+        {
+            "name": "memoryPressure",
+            "description": "Memory pressure was encountered.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" },
+                { "name": "severity", "type": "string", "enum": ["critical", "non-critical"], "description": "The severity of the memory pressure event." }
+            ]
+        },
         {
             "name": "trackingStart",
             "description": "Tracking started.",

@@ -1,5 +1,58 @@
 2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Memory Timeline should show MemoryPressure events
+        https://bugs.webkit.org/show_bug.cgi?id=155158
+        <rdar://problem/25026610>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Main.html:
+        New resources.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/Controllers/MemoryManager.js:
+        (WebInspector.MemoryManager):
+        (WebInspector.MemoryManager.prototype.memoryPressure):
+        * UserInterface/Protocol/MemoryObserver.js:
+        (WebInspector.MemoryObserver.prototype.memoryPressure):
+        New manager for Memory domain events.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.defaultInstruments):
+        (WebInspector.TimelineManager.prototype._memoryPressure):
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.addMemoryPressureEvent):
+        Add events to the Memory Timeline of the active recording.
+
+        * UserInterface/Models/MemoryTimeline.js:
+        (WebInspector.MemoryTimeline.prototype.get memoryPressureEvents):
+        (WebInspector.MemoryTimeline.prototype.addMemoryPressureEvent):
+        (WebInspector.MemoryTimeline.prototype.reset):
+        (WebInspector.MemoryTimeline):
+        * UserInterface/Models/Timeline.js:
+        (WebInspector.Timeline.create):
+        Create a specific MemoryTimeline to hold records and memory pressure events.
+
+        * UserInterface/Models/MemoryPressureEvent.js:
+        (WebInspector.MemoryPressureEvent):
+        (WebInspector.MemoryPressureEvent.fromPayload):
+        (WebInspector.MemoryPressureEvent.prototype.get timestamp):
+        (WebInspector.MemoryPressureEvent.prototype.get severity):
+        Model object for a memory pressure event.
+
+        * UserInterface/Views/MemoryTimelineOverviewGraph.css:
+        (.timeline-overview-graph.memory .memory-pressure-event):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        (WebInspector.MemoryTimelineOverviewGraph):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.reset):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype._visibleMemoryPressureEvents):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype._memoryTimelineMemoryPressureEventAdded):
+        Include markers for memory pressure events.
+
+2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Add Heap domain start/stop tracking commands
         https://bugs.webkit.org/show_bug.cgi?id=155190
 

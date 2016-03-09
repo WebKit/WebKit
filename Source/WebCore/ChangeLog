@@ -1,3 +1,40 @@
+2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Memory Timeline should show MemoryPressure events
+        https://bugs.webkit.org/show_bug.cgi?id=155158
+        <rdar://problem/25026610>
+
+        Reviewed by Brian Burg.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        When responding to memory pressure, notify page inspectors.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        Remove unused includes.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didHandleMemoryPressureImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::playbackStarted):
+        (WebCore::InspectorInstrumentation::playbackPaused):
+        (WebCore::InspectorInstrumentation::playbackFinished):
+        (WebCore::InspectorInstrumentation::playbackHitPosition):
+        (WebCore::InspectorInstrumentation::didHandleMemoryPressure):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorMemoryAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorMemoryAgent::enable):
+        (WebCore::InspectorMemoryAgent::disable):
+        (WebCore::InspectorMemoryAgent::didHandleMemoryPressure):
+        * inspector/InspectorMemoryAgent.h:
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorMemoryAgent):
+        (WebCore::InstrumentingAgents::setInspectorMemoryAgent):
+        Plumbing to notify the right active inspector.
+
 2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete dead scrolling code

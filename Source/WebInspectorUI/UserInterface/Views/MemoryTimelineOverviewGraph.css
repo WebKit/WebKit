@@ -44,6 +44,13 @@ body .timeline-overview > .graphs-container > .timeline-overview-graph.memory {
     color: hsl(0, 0%, 50%);
 }
 
+.timeline-overview-graph.memory .memory-pressure-event {
+    border-left: 1px solid black;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
 .timeline-overview-graph:nth-child(even) > .legend {
     background-color: hsl(0, 0%, 96%);
 }

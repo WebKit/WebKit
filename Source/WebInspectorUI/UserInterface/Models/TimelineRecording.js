@@ -274,6 +274,16 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, {sourceCodeTimeline});
     }
 
+    addMemoryPressureEvent(memoryPressureEvent)
+    {
+        let memoryTimeline = this._timelines.get(WebInspector.TimelineRecord.Type.Memory);
+        console.assert(memoryTimeline, this._timelines);
+        if (!memoryTimeline)
+            return;
+
+        memoryTimeline.addMemoryPressureEvent(memoryPressureEvent);
+    }
+
     computeElapsedTime(timestamp)
     {
         if (!timestamp || isNaN(timestamp))

@@ -23,27 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MemoryObserver = class MemoryObserver
+WebInspector.MemoryPressureEvent = class MemoryPressureEvent extends WebInspector.Object
 {
-    // Events defined by the "Memory" domain.
-
-    memoryPressure(timestamp, severity)
+    constructor(timestamp, severity)
     {
-        WebInspector.memoryManager.memoryPressure(timestamp, severity);
+        super();
+
+        this._timestamp = timestamp;
+        this._severity = severity;
     }
 
-    trackingStart(timestamp)
+    // Static
+
+    static fromPayload(timestamp, protocolSeverity)
     {
-        WebInspector.timelineManager.memoryTrackingStart(timestamp);
+        let severity;
+        switch (protocolSeverity) {
+        case MemoryAgent.MemoryPressureSeverity.Critical:
+            severity = WebInspector.MemoryPressureEvent.Severity.Critical;
+            break;
+        case MemoryAgent.MemoryPressureSeverity.NonCritical:
+            severity = WebInspector.MemoryPressureEvent.Severity.NonCritical;
+            break;
+        default:
+            console.error("Unexpected memory pressure severity", protocolSeverity);
+            severity = WebInspector.MemoryPressureEvent.Severity.NonCritical;
+            break;
+        }
+
+        return new WebInspector.MemoryPressureEvent(timestamp, severity);
     }
 
-    trackingUpdate(event)
-    {
-        WebInspector.timelineManager.memoryTrackingUpdate(event);
-    }
+    // Public
 
-    trackingComplete()
-    {
-        WebInspector.timelineManager.memoryTrackingComplete();
-    }
+    get timestamp() { return this._timestamp; }
+    get severity() { return this._severity; }
+};
+
+WebInspector.MemoryPressureEvent.Severity = {
+    Critical: Symbol("Critical"),
+    NonCritical: Symbol("NonCritical"),
 };
