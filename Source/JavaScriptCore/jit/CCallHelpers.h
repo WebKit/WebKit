@@ -2157,8 +2157,7 @@ public:
 
             // The new frame pointer is at framePointer + oldFrameSize - newFrameSize
             ASSERT(newFramePointer != oldFrameSizeGPR);
-            move(framePointerRegister, newFramePointer);
-            addPtr(oldFrameSizeGPR, newFramePointer);
+            addPtr(framePointerRegister, oldFrameSizeGPR, newFramePointer);
 
             // The new frame size is just the number of arguments plus the
             // frame header size, aligned
