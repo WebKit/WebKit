@@ -1,3 +1,13 @@
+2016-03-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unnecessary constructor
+        https://bugs.webkit.org/show_bug.cgi?id=155249
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ScriptTimelineDataGrid.js:
+        (WebInspector.ScriptTimelineDataGrid):
+
 2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timelines keeps switching to overview instead of keeping the selected timeline
