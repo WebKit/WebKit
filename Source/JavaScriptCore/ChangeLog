@@ -1,3 +1,10 @@
+2016-03-08  Oliver Hunt  <oliver@apple.com>
+
+        Fix ios bot build.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::initializeSeparatedWXHeaps):
+
 2016-03-08  Mark Lam  <mark.lam@apple.com>
 
         Implement Function.name support for getters/setters and inferring name of function properties.

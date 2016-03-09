@@ -54,7 +54,29 @@
 
 #if OS(DARWIN)
 #include <mach/mach.h>
-#include <mach/mach_vm.h>
+extern "C" {
+    /* Routine mach_vm_remap */
+#ifdef mig_external
+    mig_external
+#else
+    extern
+#endif /* mig_external */
+    kern_return_t mach_vm_remap
+    (
+     vm_map_t target_task,
+     mach_vm_address_t *target_address,
+     mach_vm_size_t size,
+     mach_vm_offset_t mask,
+     int flags,
+     vm_map_t src_task,
+     mach_vm_address_t src_address,
+     boolean_t copy,
+     vm_prot_t *cur_protection,
+     vm_prot_t *max_protection,
+     vm_inherit_t inheritance
+     );
+}
+
 #endif
 
 #endif
@@ -157,31 +179,33 @@ private:
             mach_task_self(), (mach_vm_address_t)jitBase, FALSE,
             &cur, &max, VM_INHERIT_DEFAULT);
 
-        RELEASE_ASSERT(ret == KERN_SUCCESS);
-
+        bool remapSucceeded = (ret == KERN_SUCCESS);
+        if (!remapSucceeded)
+            writableAddr = (mach_vm_address_t)jitBase;
 
         // Assemble a thunk that will serve as the means for writing into the JIT region.
         MacroAssemblerCodeRef writeThunk = jitWriteThunkGenerator(writableAddr, stubBase, stubSize);
 
         int result = 0;
 
+        if (!remapSucceeded) {
 #if defined(VM_PROT_EXECUTE_ONLY)
-        // Prevent reading the write thunk code.
-        result = mprotect(stubBase, stubSize, VM_PROT_EXECUTE_ONLY);
-        RELEASE_ASSERT(!result);
+            // Prevent reading the write thunk code.
+            result = mprotect(stubBase, stubSize, VM_PROT_EXECUTE_ONLY);
+            RELEASE_ASSERT(!result);
 #endif
-        
-        // Prevent writing into the executable JIT mapping.
-        result = mprotect(jitBase, jitSize, VM_PROT_READ | VM_PROT_EXECUTE);
-        RELEASE_ASSERT(!result);
 
-        // Prevent execution in the writable JIT mapping.
-        result = mprotect((void*)writableAddr, jitSize, VM_PROT_READ | VM_PROT_WRITE);
-        RELEASE_ASSERT(!result);
+            // Prevent writing into the executable JIT mapping.
+            result = mprotect(jitBase, jitSize, VM_PROT_READ | VM_PROT_EXECUTE);
+            RELEASE_ASSERT(!result);
 
-        // Zero out writableAddr to avoid leaking the address of the writable mapping.
-        memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
+            // Prevent execution in the writable JIT mapping.
+            result = mprotect((void*)writableAddr, jitSize, VM_PROT_READ | VM_PROT_WRITE);
+            RELEASE_ASSERT(!result);
 
+            // Zero out writableAddr to avoid leaking the address of the writable mapping.
+            memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
+        }
         jitWriteFunctionAddress = (uintptr_t)writeThunk.code().executableAddress();
     }
 
