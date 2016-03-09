@@ -1,3 +1,19 @@
+2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add a way to create a Heap Snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=155188
+
+        Reviewed by Brian Burg.
+
+        * inspector/agents/InspectorHeapAgent.h:
+        * inspector/protocol/Heap.json:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::snapshot):
+        Take a heap snapshot and return the JSON string result.
+
+        * inspector/protocol/Debugger.json:
+        Remove unused optional inferredName. Our displayName would be inferred.
+
 2016-03-08  Oliver Hunt  <oliver@apple.com>
 
         Fix ios bot build.

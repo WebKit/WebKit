@@ -1,5 +1,36 @@
 2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add a way to create a Heap Snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=155188
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        Add new Model resources.
+
+        * UserInterface/Models/HeapSnapshot.js: Added.
+        (WebInspector.HeapSnapshotClassCategory):
+        (WebInspector.HeapSnapshot):
+        (WebInspector.HeapSnapshot.fromPayload):
+        (WebInspector.HeapSnapshot.prototype.get rootNode):
+        (WebInspector.HeapSnapshot.prototype.get nodes):
+        (WebInspector.HeapSnapshot.prototype.get identifier):
+        (WebInspector.HeapSnapshot.prototype.get instances):
+        (WebInspector.HeapSnapshot.prototype.get categories):
+        (WebInspector.HeapSnapshot.prototype.get totalSize):
+        (WebInspector.HeapSnapshot.prototype.get totalObjectCount):
+        (WebInspector.HeapSnapshot.prototype.instancesWithClassName):
+        (WebInspector.HeapSnapshot.prototype.nodeWithObjectIdentifier):
+        * UserInterface/Models/HeapSnapshotEdge.js: Added.
+        (WebInspector.HeapSnapshotEdge):
+        (WebInspector.HeapSnapshotEdge.prototype.stringify):
+        * UserInterface/Models/HeapSnapshotNode.js: Added.
+        (WebInspector.HeapSnapshotNode):
+        Data structures for a HeapSnapshot.
+
+2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Miscellaneous inspector fixes for typos / stale code
         https://bugs.webkit.org/show_bug.cgi?id=155193
 

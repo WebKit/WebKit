@@ -26,6 +26,7 @@
 #ifndef InspectorHeapAgent_h
 #define InspectorHeapAgent_h
 
+#include "HeapSnapshot.h"
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
 #include "heap/HeapObserver.h"
@@ -50,15 +51,19 @@ public:
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
     void gc(ErrorString&) override;
+    void snapshot(ErrorString&, double* timestamp, String* snapshotData) override;
 
     // HeapObserver
     void willGarbageCollect() override;
     void didGarbageCollect(JSC::HeapOperation) override;
 
 private:
+    void clearHeapSnapshots();
+
     std::unique_ptr<HeapFrontendDispatcher> m_frontendDispatcher;
     RefPtr<HeapBackendDispatcher> m_backendDispatcher;
     InspectorEnvironment& m_environment;
+
     bool m_enabled { false };
     double m_gcStartTime { NAN };
 };

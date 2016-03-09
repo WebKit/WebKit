@@ -60,7 +60,6 @@
                 { "name": "location", "$ref": "Location", "description": "Location of the function." },
                 { "name": "name", "type": "string", "optional": true, "description": "Name of the function. Not present for anonymous functions." },
                 { "name": "displayName", "type": "string", "optional": true, "description": "Display name of the function(specified in 'displayName' property on the function object)." },
-                { "name": "inferredName", "type": "string", "optional": true, "description": "Name of the function inferred from its initial assignment." },
                 { "name": "scopeChain", "type": "array", "optional": true, "items": { "$ref": "Scope" }, "description": "Scope chain for this closure." }
             ],
             "description": "Information about the function."

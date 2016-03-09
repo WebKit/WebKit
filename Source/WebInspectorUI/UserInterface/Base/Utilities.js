@@ -94,6 +94,17 @@ Object.defineProperty(Object.prototype, "valueForCaseInsensitiveKey",
     }
 });
 
+Object.defineProperty(Map, "fromObject",
+{
+    value: function(object)
+    {
+        let map = new Map;
+        for (let key in object)
+            map.set(key, object[key]);
+        return map;
+    }
+});
+
 Object.defineProperty(Map.prototype, "take",
 {
     value: function(key)

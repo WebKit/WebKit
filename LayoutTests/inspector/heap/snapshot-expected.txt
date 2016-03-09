@@ -1,0 +1,11 @@
+Test for the Heap.snapshot command.
+
+
+== Running test suite: Heap.snapshot
+-- Running test case: TriggerSnapshot
+PASS: Should not have an error creating a snapshot.
+PASS: Snapshot size should be greater than 1kb.
+PASS: Snapshot object count should be greater than 100.
+PASS: Snapshot should include a class category for 'Window'.
+PASS: Snapshow should include at least one 'Window' instance.
+

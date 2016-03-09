@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Heap.snapshot");
+
+    suite.addTestCase({
+        name: "TriggerSnapshot",
+        description: "Calling Heap.snapshot should create a heap snapshot.",
+        test: (resolve, reject) => {
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+                InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+                let payload = JSON.parse(snapshotStringData);
+                let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
+                InspectorTest.expectThat(snapshot.totalSize > 1024, "Snapshot size should be greater than 1kb.");
+                InspectorTest.expectThat(snapshot.totalObjectCount > 100, "Snapshot object count should be greater than 100.");
+                InspectorTest.expectThat(snapshot.categories.get("Window"), "Snapshot should include a class category for 'Window'.");
+                InspectorTest.expectThat(snapshot.instancesWithClassName("Window").length > 0, "Snapshow should include at least one 'Window' instance.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for the Heap.snapshot command.</p>
+</body>
+</html>
