@@ -1,5 +1,12 @@
 2016-03-09  Oliver Hunt  <oliver@apple.com>
 
+        Fix old iOS
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::initializeSeparatedWXHeaps):
+
+2016-03-09  Oliver Hunt  <oliver@apple.com>
+
         Wincairo buildfix
         https://bugs.webkit.org/show_bug.cgi?id=155245
 

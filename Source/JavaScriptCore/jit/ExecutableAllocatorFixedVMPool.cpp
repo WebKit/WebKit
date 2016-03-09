@@ -181,7 +181,7 @@ private:
 
         bool remapSucceeded = (ret == KERN_SUCCESS);
         if (!remapSucceeded)
-            writableAddr = (mach_vm_address_t)jitBase;
+            return;
 
         // Assemble a thunk that will serve as the means for writing into the JIT region.
         MacroAssemblerCodeRef writeThunk = jitWriteThunkGenerator(writableAddr, stubBase, stubSize);
