@@ -1,3 +1,18 @@
+2016-03-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked
+        https://bugs.webkit.org/show_bug.cgi?id=155185
+        <rdar://problem/11101440>
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit2/CloseFromWithinCreatePage.cpp:
+        (TestWebKitAPI::TEST): Allow local file accesss to run test.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBMultiProcess.mm:
+        (TEST): Ditto.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBPersistence.mm:
+        (TEST): Ditto.
+
 2016-03-09  Tim Horton  <timothy_horton@apple.com>
 
         Removing and re-adding a script message handler with the same name results in an unusable message handler

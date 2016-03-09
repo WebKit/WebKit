@@ -30,6 +30,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
@@ -57,6 +58,10 @@ TEST(IndexedDB, IndexedDBMultiProcess)
     RetainPtr<IndexedDBMPMessageHandler> handler = adoptNS([[IndexedDBMPMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+
+    // Allow file URLs to load non-file resources
+    [configuration _setAllowUniversalAccessFromFileURLs:YES];
+
     [configuration.get().processPool _terminateDatabaseProcess];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

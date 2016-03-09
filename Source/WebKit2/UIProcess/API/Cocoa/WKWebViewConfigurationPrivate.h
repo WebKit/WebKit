@@ -49,6 +49,7 @@
 @property (nonatomic, setter=_setAllowsJavaScriptMarkup:) BOOL _allowsJavaScriptMarkup WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 @property (nonatomic, setter=_setConvertsPositionStyleOnCopy:) BOOL _convertsPositionStyleOnCopy WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 @property (nonatomic, setter=_setAllowsMetaRefresh:) BOOL _allowsMetaRefresh WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setAllowUniversalAccessFromFileURLs:) BOOL _allowUniversalAccessFromFileURLs WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setAlwaysRunsAtForegroundPriority:) BOOL _alwaysRunsAtForegroundPriority WK_AVAILABLE(NA, 9_0);

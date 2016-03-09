@@ -97,6 +97,7 @@ private:
     BOOL _allowsJavaScriptMarkup;
     BOOL _convertsPositionStyleOnCopy;
     BOOL _allowsMetaRefresh;
+    BOOL _allowUniversalAccessFromFileURLs;
 
 #if PLATFORM(IOS)
     LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
@@ -151,6 +152,7 @@ private:
     _allowsJavaScriptMarkup = YES;
     _convertsPositionStyleOnCopy = NO;
     _allowsMetaRefresh = YES;
+    _allowUniversalAccessFromFileURLs = NO;
 
     return self;
 }
@@ -232,6 +234,7 @@ private:
     configuration->_allowsJavaScriptMarkup = self->_allowsJavaScriptMarkup;
     configuration->_convertsPositionStyleOnCopy = self->_convertsPositionStyleOnCopy;
     configuration->_allowsMetaRefresh = self->_allowsMetaRefresh;
+    configuration->_allowUniversalAccessFromFileURLs = self->_allowUniversalAccessFromFileURLs;
 
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
@@ -474,6 +477,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAllowsJavaScriptMarkup:(BOOL)allowsJavaScriptMarkup
 {
     _allowsJavaScriptMarkup = allowsJavaScriptMarkup;
+}
+
+- (BOOL)_allowUniversalAccessFromFileURLs
+{
+    return _allowUniversalAccessFromFileURLs;
+}
+
+- (void)_setAllowUniversalAccessFromFileURLs:(BOOL)allowUniversalAccessFromFileURLs
+{
+    _allowUniversalAccessFromFileURLs = allowUniversalAccessFromFileURLs;
 }
 
 - (BOOL)_convertsPositionStyleOnCopy

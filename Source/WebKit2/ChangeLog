@@ -1,3 +1,23 @@
+2016-03-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked
+        https://bugs.webkit.org/show_bug.cgi?id=155185
+
+        Reviewed by Anders Carlsson.
+        <rdar://problem/11101440>
+
+        Tested by TestWebKitAPI tests IndexedDB.IndexedDBMultiProcess and IndexedDB.IndexedDBPersistence.
+
+        Allow Cocoa WKWebViewConfiguration access to the 'allowUniversalAccessFromFileURLs' setting.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (- [WKWebView _initializeWithConfiguration]): Set 'allowUniversalAccessFromFileURLsKey' in
+        page configuration.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _allowUniversalAccessFromFileURLs]): Added,
+        (-[WKWebViewConfiguration _setAllowUniversalAccessFromFileURLs:]): Added.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2016-03-09  Enrica Casucci  <enrica@apple.com>
 
         Add two finger tap on links.

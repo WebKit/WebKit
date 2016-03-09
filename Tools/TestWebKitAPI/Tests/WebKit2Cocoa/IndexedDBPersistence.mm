@@ -30,6 +30,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
@@ -71,6 +72,9 @@ TEST(IndexedDB, IndexedDBPersistence)
     RetainPtr<IndexedDBMessageHandler> handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+
+    // Allow file URLs to load non-file resources
+    [configuration _setAllowUniversalAccessFromFileURLs:YES];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
