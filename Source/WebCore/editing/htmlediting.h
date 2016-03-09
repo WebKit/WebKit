@@ -53,7 +53,6 @@ class VisibleSelection;
 
 // Functions returning Node
 
-Node* highestAncestor(Node*);
 Node* highestEditableRoot(const Position&, EditableType = ContentIsEditable);
 
 Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*),

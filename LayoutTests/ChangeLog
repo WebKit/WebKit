@@ -1,3 +1,21 @@
+2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename Node.treeRoot to rootNode and turn it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=155226
+
+        Reviewed by Antonio Gomes.
+        
+        Split Node-interface-treeRoot.html into two pieces, the one that doesn't invoke shadow DOM and the other that tests
+        shadow DOM related cases. I intend to upstream these tests to W3C at some point so keep them in testharness.js form.
+
+        * fast/dom/Node/rootNode-expected.txt: Added.
+        * fast/dom/Node/rootNode.html: Copied from LayoutTests/fast/shadow-dom/Node-interface-treeRoot.html.
+        * fast/shadow-dom/Node-interface-rootNode-expected.txt: Renamed from Node-interface-treeRoot-expected.txt.
+        * fast/shadow-dom/Node-interface-rootNode.html: Renamed from LayoutTests/fast/shadow-dom/Node-interface-treeRoot.html.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/efl/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2016-03-09  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Implement RegExp sticky flag and related functionality

@@ -795,15 +795,6 @@ bool canMergeLists(Element* firstList, Element* secondList)
     // Make sure there is no visible content between this li and the previous list
 }
 
-Node* highestAncestor(Node* node)
-{
-    ASSERT(node);
-    Node* parent = node;
-    while ((node = node->parentNode()))
-        parent = node;
-    return parent;
-}
-
 static Node* previousNodeConsideringAtomicNodes(const Node* node)
 {
     if (node->previousSibling()) {

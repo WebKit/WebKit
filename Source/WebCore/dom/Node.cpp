@@ -1110,6 +1110,18 @@ Element* Node::parentOrShadowHostElement() const
     return downcast<Element>(parent);
 }
 
+Node* Node::rootNode() const
+{
+    if (isInTreeScope())
+        return &treeScope().rootNode();
+
+    Node* node = const_cast<Node*>(this);
+    Node* highest = node;
+    for (; node; node = node->parentNode())
+        highest = node;
+    return highest;
+}
+
 Node::InsertionNotificationRequest Node::insertedInto(ContainerNode& insertionPoint)
 {
     ASSERT(insertionPoint.inDocument() || isContainerNode());

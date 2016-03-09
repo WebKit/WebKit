@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shadow DOM: Extensions to Node interface</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="Node interface must have rootNode attribute">
+<link rel="help" href="http://w3c.github.io/webcomponents/spec/shadow/#extensions-to-node-interface">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../resources/testharness.css'>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+test(function () {
+    assert_true('rootNode' in document.createElement('div').attachShadow({mode: 'closed'}), 'rootNode must be defined on a closed shadow root element');
+    assert_true('rootNode' in document.createElement('div').attachShadow({mode: 'open'}), 'rootNode must be defined on a open shadow root element');
+}, 'rootNode attribute must be defined on ShadowRoot interface');
+
+test(function () {
+    var closedShadowRoot = document.createElement('div').attachShadow({mode: 'closed'});
+    assert_equals(closedShadowRoot.rootNode, closedShadowRoot, 'rootNode on a closed shadow root must return the shadow root itself');
+
+    var openShadowRoot = document.createElement('div').attachShadow({mode: 'open'});
+    assert_equals(openShadowRoot.rootNode, openShadowRoot, 'rootNode on a open shadow root must return the shadow root itself');
+}, 'rootNode attribute must return the context object when it does not have any parent');
+
+test(function () {
+    var parent = document.createElement('div');
+
+    var hostWithClosedShadowRoot = document.createElement('div');
+    parent.appendChild(hostWithClosedShadowRoot);
+    var closedShadowRoot = hostWithClosedShadowRoot.attachShadow({mode: 'closed'});
+    assert_equals(closedShadowRoot.rootNode, closedShadowRoot, 'rootNode on a closed shadow root with a single ancestor on its host must return the shadow root itself');
+
+    var hostWithOpenShadowRoot = document.createElement('div');
+    parent.appendChild(hostWithOpenShadowRoot);
+    var openShadowRoot = hostWithOpenShadowRoot.attachShadow({mode: 'open'});
+    assert_equals(openShadowRoot.rootNode, openShadowRoot, 'rootNode on a open shadow root with a single ancestor on its host must return the shadow root itself');
+}, 'rootNode attribute must return the parent node of the context object when the context object has a single ancestor not in a document');
+
+test(function () {
+    var parent = document.createElement('div');
+    document.body.appendChild(parent);
+
+    var element = document.createElement('div');
+    parent.appendChild(element);
+    assert_equals(element.rootNode, document, 'rootNode on an element inside a document must return the document');
+
+    var text = document.createTextNode('');
+    parent.appendChild(text);
+    assert_equals(text.rootNode, document, 'rootNode on a text node inside a document must return the document');
+
+    var processingInstruction = document.createProcessingInstruction('target', 'data');
+    parent.appendChild(processingInstruction)
+    assert_equals(processingInstruction.rootNode, document, 'rootNode on a processing instruction node inside a document must return the document');
+}, 'rootNode attribute must return the document when a node is in document and not in a shadow tree');
+
+function testrootNodeOnNodeInsideShadowTree(mode) {
+    test(function () {
+        var host = document.createElement('div');
+        document.body.appendChild(host);
+
+        var shadowRoot = host.attachShadow({mode: mode});
+        var parent = document.createElement('p');
+        shadowRoot.appendChild(parent);
+
+        var element = document.createElement('span');
+        parent.appendChild(element);
+        assert_equals(element.rootNode, shadowRoot, 'rootNode on an element inside a shadow tree must return the shadow root');
+
+        var text = document.createTextNode('');
+        parent.appendChild(text);
+        assert_equals(text.rootNode, shadowRoot, 'rootNode on a text node inside a shadow tree must return the shadow root');
+
+        var processingInstruction = document.createProcessingInstruction('target', 'data');
+        parent.appendChild(processingInstruction);
+        assert_equals(processingInstruction.rootNode, shadowRoot, 'rootNode on a processing instruction node inside a shadow tree must return the shadow root');
+    }, 'rootNode attribute must return the ' + mode + ' shadow root of the context object when the shadow host is in a document');
+}
+
+testrootNodeOnNodeInsideShadowTree('open');
+testrootNodeOnNodeInsideShadowTree('closed');
+
+function testrootNodeOnNodeInsideNestedShadowTree(outerMode, innerMode) {
+    test(function () {
+        var outerHost = document.createElement('div');
+        document.body.appendChild(outerHost);
+        var outerShadowRoot = outerHost.attachShadow({mode: outerMode});
+
+        var innerHost = document.createElement('section');
+        outerShadowRoot.appendChild(innerHost);
+        var innerShadowRoot = innerHost.attachShadow({mode: innerMode});
+
+        var parent = document.createElement('p');
+        innerShadowRoot.appendChild(parent);
+
+        var element = document.createElement('span');
+        parent.appendChild(element);
+        assert_equals(element.rootNode, innerShadowRoot, 'rootNode on an element inside a shadow tree must return its root node');
+
+        var text = document.createTextNode('');
+        parent.appendChild(text);
+        assert_equals(text.rootNode, innerShadowRoot, 'rootNode on a text node inside a shadow tree must return its root node');
+
+        var processingInstruction = document.createProcessingInstruction('target', 'data');
+        parent.appendChild(processingInstruction);
+        assert_equals(processingInstruction.rootNode, innerShadowRoot, 'rootNode on a processing instruction node inside a shadow tree must return its root node');
+    }, 'rootNode attribute must return the root node of the context object when the context object is inside a ' + innerMode
+        + ' shadow root whose shadow host is in another ' + outerMode + ' shadow root');
+}
+
+testrootNodeOnNodeInsideNestedShadowTree('open', 'open');
+testrootNodeOnNodeInsideNestedShadowTree('open', 'closed');
+testrootNodeOnNodeInsideNestedShadowTree('closed', 'open');
+testrootNodeOnNodeInsideNestedShadowTree('closed', 'closed');
+
+</script>
+</body>
+</html>

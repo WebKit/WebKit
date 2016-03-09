@@ -1,0 +1,7 @@
+
+PASS rootNode attribute must be defined on Node interface 
+PASS rootNode attribute must return the context object when it does not have any parent 
+PASS rootNode attribute must return the parent node of the context object when the context object has a single ancestor not in a document 
+PASS rootNode attribute must return the document when a node is in document 
+PASS rootNode attribute must return a document fragment when a node is in the fragment 
+

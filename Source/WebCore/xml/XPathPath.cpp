@@ -88,12 +88,8 @@ Value LocationPath::evaluate() const
     // This is for compatibility with Firefox, and also seems like a more
     // logical treatment of where you would expect the "root" to be.
     Node* context = evaluationContext.node.get();
-    if (m_isAbsolute && !context->isDocumentNode())  {
-        if (context->inDocument())
-            context = context->ownerDocument();
-        else
-            context = context->highestAncestor();
-    }
+    if (m_isAbsolute && !context->isDocumentNode())
+        context = context->rootNode();
 
     NodeSet nodes;
     nodes.append(context);

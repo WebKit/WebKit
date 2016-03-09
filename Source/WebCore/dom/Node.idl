@@ -60,7 +60,7 @@
     readonly attribute Node             nextSibling;
     readonly attribute Document         ownerDocument;
 
-    [Conditional=SHADOW_DOM, ImplementedAs=highestAncestor] readonly attribute Node treeRoot;
+    readonly attribute Node rootNode;
 
     [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node insertBefore([CustomReturn] Node newChild,
                                                             Node refChild);

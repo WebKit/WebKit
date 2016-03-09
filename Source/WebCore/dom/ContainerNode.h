@@ -212,15 +212,6 @@ inline Node* Node::lastChild() const
     return downcast<ContainerNode>(*this).lastChild();
 }
 
-inline Node* Node::highestAncestor() const
-{
-    Node* node = const_cast<Node*>(this);
-    Node* highest = node;
-    for (; node; node = node->parentNode())
-        highest = node;
-    return highest;
-}
-
 inline bool Node::isTreeScope() const
 {
     return &treeScope().rootNode() == this;

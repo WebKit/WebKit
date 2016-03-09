@@ -1,3 +1,44 @@
+2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename Node.treeRoot to rootNode and turn it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=155226
+
+        Reviewed by Antonio Gomes.
+
+        Node.prototype.treeRoot has been merged into DOM spec from Shadow DOM spec and renamed to rootNode:
+        https://dom.spec.whatwg.org/#dom-node-rootnode
+
+        Rename the method and expose it unconditionally on Node.prototype.
+
+        Tests: fast/dom/Node/rootNode.html
+               fast/shadow-dom/Node-interface-rootNode.html
+
+        * dom/ContainerNode.h:
+        (WebCore::Node::highestAncestor): Deleted. There is no need for this function to be inlined.
+        * dom/Document.h: Now that both TreeScope and Node defines rootNode, we need to pick either.
+        Here, we pick TreeScope's definition since Document is by definition always in a document so there is
+        no need to even check inTreeScope().
+        * dom/Node.cpp:
+        (WebCore::Node::rootNode): Moved here. Also added a fast path for when "this" node is in a document
+        or a shadow root since TreeScope stores its root node as a member variable (m_rootNode).
+        * dom/Node.h:
+        * dom/Node.idl: Renamed the method and removed Conditional=SHADOW_DOM.
+        * dom/ShadowRoot.h: Similar to the change in Document.h. See above.
+        * editing/Editor.cpp:
+        (WebCore::correctSpellcheckingPreservingTextCheckingParagraph): Use rootNode instead of free function
+        defined in htmlediting.cpp, which was removed in this patch.
+        * editing/htmlediting.cpp:
+        (WebCore::highestAncestor): Deleted.
+        * editing/htmlediting.h:
+        * html/FormAssociatedElement.cpp:
+        (WebCore::computeRootNode): Added.
+        (WebCore::FormAssociatedElement::removedFrom): We can't use Node::rootNode here because this function
+        is called in the middle of removing a subtree, and some associated form element's inDocument flag may
+        not have been updated yet. So use computeRootNode to manually find the highest ancestor.
+        (WebCore::FormAssociatedElement::formRemovedFromTree): Ditto.
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::LocationPath::evaluate):
+
 2016-03-09  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Fixed All-in-One build.

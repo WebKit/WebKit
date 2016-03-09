@@ -77,6 +77,7 @@ PASS a["prefix"] is null
 PASS a["childNodes"] is [object NodeList]
 PASS a["nextSibling"] is [object Text]
 PASS a["ownerDocument"] is [object HTMLDocument]
+PASS a["rootNode"] is [object HTMLDocument]
 PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
 PASS a["localName"] is a
 PASS a["parentElement"] is [object HTMLBodyElement]

@@ -62,6 +62,8 @@ public:
 
     virtual ~ShadowRoot();
 
+    using TreeScope::rootNode;
+
     StyleResolver& styleResolver();
     AuthorStyleSheets& authorStyleSheets();
     
