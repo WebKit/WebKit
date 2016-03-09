@@ -1,3 +1,18 @@
+2016-03-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Allow to place positioned grid items on the padding
+        https://bugs.webkit.org/show_bug.cgi?id=155199
+
+        Reviewed by Sergio Villar Senin.
+
+        Add new tests and updated results in a current one.
+
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid.html:
+        * fast/css-grid-layout/grid-positioned-items-padding-expected.txt: Added.
+        * fast/css-grid-layout/grid-positioned-items-padding.html: Added.
+        * fast/css-grid-layout/grid-positioned-items-within-grid-implicit-track-expected.txt: Added.
+        * fast/css-grid-layout/grid-positioned-items-within-grid-implicit-track.html: Added.
+
 2016-03-09  Andreas Kling  <akling@apple.com>
 
         ImageDocuments leak their world.

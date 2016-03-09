@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+
+.grid {
+    -webkit-grid-template-columns: 100px 200px;
+    -webkit-grid-template-rows: 50px 150px;
+    width: 500px;
+    height: 300px;
+    border: 5px solid black;
+    margin: 30px;
+    padding: 15px;
+    /* Ensures that the grid container is the containing block of the absolutely positioned grid children. */
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: lime;
+}
+
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid')">
+
+<p>This test checks that positioned grid items can be placed directly on the padding.</p>
+
+<div class="grid">
+    <div class="absolute" style="-webkit-grid-column: auto / 1; -webkit-grid-row: auto / 1;"
+        data-offset-x="0" data-offset-y="0" data-expected-width="15" data-expected-height="15">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 1 / 2; -webkit-grid-row: auto / 1;"
+        data-offset-x="15" data-offset-y="0" data-expected-width="100" data-expected-height="15">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: auto / 1; -webkit-grid-row: 1 / 2;"
+        data-offset-x="0" data-offset-y="15" data-expected-width="15" data-expected-height="50">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 3 / auto; -webkit-grid-row: 3 / auto;"
+        data-offset-x="315" data-offset-y="215" data-expected-width="215" data-expected-height="115">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 2 / 3; -webkit-grid-row: 3 / auto;"
+        data-offset-x="115" data-offset-y="215" data-expected-width="200" data-expected-height="115">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 3 / auto; -webkit-grid-row: 2 / 3;"
+        data-offset-x="315" data-offset-y="65" data-expected-width="215" data-expected-height="150">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="absolute" style="-webkit-grid-column: -5 / 1; -webkit-grid-row: -5 / 1;"
+        data-offset-x="0" data-offset-y="0" data-expected-width="15" data-expected-height="15">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 1 / 2; -webkit-grid-row: -5 / 1;"
+        data-offset-x="15" data-offset-y="0" data-expected-width="100" data-expected-height="15">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: -5 / 1; -webkit-grid-row: 1 / 2;"
+        data-offset-x="0" data-offset-y="15" data-expected-width="15" data-expected-height="50">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 3 / 5; -webkit-grid-row: 3 / 5;"
+        data-offset-x="315" data-offset-y="215" data-expected-width="215" data-expected-height="115">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 2 / 3; -webkit-grid-row: 3 / 5;"
+        data-offset-x="115" data-offset-y="215" data-expected-width="200" data-expected-height="115">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 3 / 5; -webkit-grid-row: 2 / 3;"
+        data-offset-x="315" data-offset-y="65" data-expected-width="215" data-expected-height="150">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="absolute" style="-webkit-grid-column: span 2 / 1; -webkit-grid-row: span 2 / 1;"
+        data-offset-x="0" data-offset-y="0" data-expected-width="15" data-expected-height="15">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 1 / 2; -webkit-grid-row: span 2 / 1;"
+        data-offset-x="15" data-offset-y="0" data-expected-width="100" data-expected-height="15">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: span 2 / 1; -webkit-grid-row: 1 / 2;"
+        data-offset-x="0" data-offset-y="15" data-expected-width="15" data-expected-height="50">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 3 / span 2; -webkit-grid-row: 3 / span 2;"
+        data-offset-x="315" data-offset-y="215" data-expected-width="215" data-expected-height="115">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 2 / 3; -webkit-grid-row: 3 / span 2;"
+        data-offset-x="115" data-offset-y="215" data-expected-width="200" data-expected-height="115">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 3 / span 2; -webkit-grid-row: 2 / 3;"
+        data-offset-x="315" data-offset-y="65" data-expected-width="215" data-expected-height="150">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="absolute" style="-webkit-grid-column: foo / 1; -webkit-grid-row: foo / 1;"
+        data-offset-x="0" data-offset-y="0" data-expected-width="15" data-expected-height="15">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 1 / 2; -webkit-grid-row: foo / 1;"
+        data-offset-x="15" data-offset-y="0" data-expected-width="100" data-expected-height="15">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: foo / 1; -webkit-grid-row: 1 / 2;"
+        data-offset-x="0" data-offset-y="15" data-expected-width="15" data-expected-height="50">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 3 / foo; -webkit-grid-row: 3 / foo;"
+        data-offset-x="315" data-offset-y="215" data-expected-width="215" data-expected-height="115">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 2 / 3; -webkit-grid-row: 3 / foo;"
+        data-offset-x="115" data-offset-y="215" data-expected-width="200" data-expected-height="115">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 3 / foo; -webkit-grid-row: 2 / 3;"
+        data-offset-x="315" data-offset-y="65" data-expected-width="215" data-expected-height="150">
+    </div>
+</div>
+
+</body>

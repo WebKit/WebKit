@@ -1,0 +1,6 @@
+This test checks that positioned grid items can be placed directly on the padding.
+
+PASS
+PASS
+PASS
+PASS

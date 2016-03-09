@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+
+.grid {
+    -webkit-grid-template-columns: 200px 300px;
+    -webkit-grid-template-rows: 150px 250px;
+    -webkit-grid-auto-columns: 100px;
+    -webkit-grid-auto-rows: 50px;
+    width: 800px;
+    height: 600px;
+    border: 5px solid black;
+    margin: 30px;
+    padding: 15px;
+    /* Ensures that the grid container is the containing block of the absolutely positioned grid children. */
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: cyan;
+}
+
+.sixRowsAndSixColumns {
+    background: magenta;
+    -webkit-grid-row: -5 / 5;
+    -webkit-grid-column: -5 / 5;
+}
+
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid')">
+
+<p>This test checks that positioned grid items are placed properly (ignoring implicit tracks) even if the grid has implicit tracks.</p>
+
+<div class="grid">
+    <div class="sixRowsAndSixColumns"
+        data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: auto / 1; -webkit-grid-row: auto / 1;"
+        data-offset-x="0" data-offset-y="0" data-expected-width="215" data-expected-height="115">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="sixRowsAndSixColumns"
+        data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: auto / 2; -webkit-grid-row: auto / 2;"
+        data-offset-x="0" data-offset-y="0" data-expected-width="415" data-expected-height="265">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="sixRowsAndSixColumns"
+        data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 3 / auto; -webkit-grid-row: 3 / auto;"
+        data-offset-x="715" data-offset-y="515" data-expected-width="115" data-expected-height="115">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="sixRowsAndSixColumns"
+        data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 2 / auto; -webkit-grid-row: 2 / auto;"
+        data-offset-x="415" data-offset-y="265" data-expected-width="415" data-expected-height="365">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="sixRowsAndSixColumns"
+        data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: -4 / 1; -webkit-grid-row: -4 / 1;"
+        data-offset-x="0" data-offset-y="0" data-expected-width="215" data-expected-height="115">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="sixRowsAndSixColumns"
+        data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: -4 / 2; -webkit-grid-row: -4 / 2;"
+        data-offset-x="0" data-offset-y="0" data-expected-width="415" data-expected-height="265">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="sixRowsAndSixColumns"
+        data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 3 / 4; -webkit-grid-row: 3 / 4;"
+        data-offset-x="715" data-offset-y="515" data-expected-width="115" data-expected-height="115">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="sixRowsAndSixColumns"
+        data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
+    </div>
+    <div class="absolute" style="-webkit-grid-column: 2 / 4; -webkit-grid-row: 2 / 4;"
+        data-offset-x="415" data-offset-y="265" data-expected-width="415" data-expected-height="365">
+    </div>
+</div>
+
+</body>
