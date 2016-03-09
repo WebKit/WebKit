@@ -1,3 +1,15 @@
+2016-03-08  Aakash Jain  <aakash_jain@apple.com>
+
+        Booting multiple iOS simulator parallely fails sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=155208
+        <rdar://problem/25019651>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.setup_test_run): Increase the time delay between subsequent
+        simulator boot.
+
 2016-03-08  Alexey Proskuryakov  <ap@apple.com>
 
         Add iOS debug testers to flakiness dashboard
