@@ -41,6 +41,9 @@ namespace JSC { namespace DFG {
     macro(DoubleConstant, NodeResultDouble) \
     macro(Int52Constant, NodeResultInt52) \
     \
+    /* Lazy JSValue constant. We don't know the JSValue bits of it yet. */\
+    macro(LazyJSConstant, NodeResultJS) \
+    \
     /* Marker to indicate that an operation was optimized entirely and all that is left */\
     /* is to make one node alias another. CSE will later usually eliminate this node, */\
     /* though it may choose not to if it would corrupt predictions (very rare). */\

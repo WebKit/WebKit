@@ -585,7 +585,7 @@ public:
 
     inline void ref()
     {
-        ASSERT(!isCompilationThread());
+        ASSERT(!isCompilationThread() || !isAtomic());
 
         STRING_STATS_REF_STRING(*this);
 
@@ -594,7 +594,7 @@ public:
 
     inline void deref()
     {
-        ASSERT(!isCompilationThread());
+        ASSERT(!isCompilationThread() || !isAtomic());
 
         STRING_STATS_DEREF_STRING(*this);
 

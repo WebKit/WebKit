@@ -47,6 +47,7 @@ bool doesGC(Graph& graph, Node* node)
     case JSConstant:
     case DoubleConstant:
     case Int52Constant:
+    case LazyJSConstant:
     case Identity:
     case GetCallee:
     case GetArgumentCount:

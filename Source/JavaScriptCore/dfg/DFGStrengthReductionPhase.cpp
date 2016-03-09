@@ -291,7 +291,51 @@ private:
 
             break;
         }
-            
+
+        // FIXME: We have a lot of string constant-folding rules here. It would be great to
+        // move these to the abstract interpreter once AbstractValue can support LazyJSValue.
+        // https://bugs.webkit.org/show_bug.cgi?id=155204
+
+        case MakeRope:
+        case ValueAdd:
+        case StrCat: {
+            String leftString = m_node->child1()->tryGetString(m_graph);
+            if (!leftString)
+                break;
+            String rightString = m_node->child2()->tryGetString(m_graph);
+            if (!rightString)
+                break;
+            String extraString;
+            if (m_node->child3()) {
+                extraString = m_node->child3()->tryGetString(m_graph);
+                if (!extraString)
+                    break;
+            }
+
+            StringBuilder builder;
+            builder.append(leftString);
+            builder.append(rightString);
+            if (!!extraString)
+                builder.append(extraString);
+
+            m_node->convertToLazyJSConstant(
+                m_graph, LazyJSValue::newString(m_graph, builder.toString()));
+            m_changed = true;
+            break;
+        }
+
+        case GetArrayLength: {
+            if (m_node->arrayMode().type() == Array::Generic
+                || m_node->arrayMode().type() == Array::String) {
+                String string = m_node->child1()->tryGetString(m_graph);
+                if (!!string) {
+                    m_graph.convertToConstant(m_node, jsNumber(string.length()));
+                    m_changed = true;
+                }
+            }
+            break;
+        }
+
         default:
             break;
         }

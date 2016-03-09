@@ -1982,6 +1982,10 @@ void SpeculativeJIT::compile(Node* node)
         initConstantInfo(node);
         break;
 
+    case LazyJSConstant:
+        compileLazyJSConstant(node);
+        break;
+
     case Identity: {
         speculate(node, node->child1());
         switch (node->child1().useKind()) {

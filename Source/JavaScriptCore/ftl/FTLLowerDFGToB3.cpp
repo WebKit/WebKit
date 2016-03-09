@@ -446,6 +446,9 @@ private:
         case Int52Constant:
             compileInt52Constant();
             break;
+        case LazyJSConstant:
+            compileLazyJSConstant();
+            break;
         case DoubleRep:
             compileDoubleRep();
             break;
@@ -1042,6 +1045,18 @@ private:
         
         setInt52(m_out.constInt64(value << JSValue::int52ShiftAmount));
         setStrictInt52(m_out.constInt64(value));
+    }
+
+    void compileLazyJSConstant()
+    {
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        LazyJSValue value = m_node->lazyJSValue();
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                value.emit(jit, JSValueRegs(params[0].gpr()));
+            });
+        patchpoint->effects = Effects::none();
+        setJSValue(patchpoint);
     }
 
     void compileDoubleRep()

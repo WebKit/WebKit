@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGLazyJSValue.h"
 #include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
@@ -36,6 +37,11 @@ FrozenValue* FrozenValue::emptySingleton()
 {
     static FrozenValue empty;
     return &empty;
+}
+
+String FrozenValue::tryGetString(Graph& graph)
+{
+    return LazyJSValue(this).tryGetString(graph);
 }
 
 void FrozenValue::dumpInContext(PrintStream& out, DumpContext* context) const

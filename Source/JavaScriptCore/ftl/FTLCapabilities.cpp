@@ -44,6 +44,7 @@ inline CapabilityLevel canCompile(Node* node)
     
     switch (node->op()) {
     case JSConstant:
+    case LazyJSConstant:
     case GetLocal:
     case SetLocal:
     case PutStack:

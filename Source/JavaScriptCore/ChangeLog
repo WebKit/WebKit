@@ -1,3 +1,122 @@
+2016-03-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to constant-fold strings
+        https://bugs.webkit.org/show_bug.cgi?id=155200
+
+        Reviewed by Geoffrey Garen.
+
+        This adds constant-folding of string1 + string2 and string.length. The actual folding
+        rule is easy, but there are some gotchas.
+
+        The problem is that the DFG cannot allocate new JSString objects until we are on the
+        main thread. So, DFG IR must have a node for a JSValue string constant that hasn't been
+        created yet - i.e. it doesn't have any concrete JSValue bits yet.
+
+        We have the ability to speak of such things, using LazyJSValue. But that's a class, not
+        a node type. This patch now adds a node type, LazyJSConstant, which is a Node that holds
+        a LazyJSValue.
+
+        This puts us in a weird situation: AI uses JSValue to represent constants. It would take
+        a lot of work to change it to use LazyJSValue. So, this implements the constant folding
+        in StrengthReductionPhase. I created a bug and put a FIXME about moving these rules into
+        AI.
+
+        OTOH, our experience in B3 shows that constant folding in strength reduction is quite
+        nice. It would totally make sense to have strength reduction have constant folding rules
+        that mirror the rules in AI, or to factor out the AI constant folding rules, the same
+        way that B3 factors out those rules into Value methods.
+
+        Another issue is how to represent the cumulative result of possibly many foldings. I
+        initially considered adding LazyJSValue kinds that represented concatenation. Folding
+        the concatenation to a constant meand that this constant was actually a LazyJSValue that
+        represented the concatenation of two other things. But this would get super messy if we
+        wanted to fold an operation that uses the results of another folded operation.
+
+        So, the JIT thread folds string operations by creating a WTF::String that contains the
+        result. The DFG::Graph holds a +1 on the underlying StringImpl, so we can pass the
+        StringImpl* around without reference counting. The LazyJSValue now has a special kind
+        that means: we created this StringImpl* on the JIT thread, and once the JIT is done, we
+        will relinquish ownership of it. LazyJSValue has some magic to emit code for these
+        to-be-created-JSStrings while also transferring ownership of the StringImpl from the JIT
+        thread to the main thread and registering the JSString with the GC.
+
+        This just implements folding for concatenation and GetArrayLength. It's just a proof of
+        concept for evil things I want to do later.
+
+        This change is a 2.5x speed-up on the string concatenation microbenchmarks I added in
+        this patch.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGFrozenValue.cpp:
+        (JSC::DFG::FrozenValue::emptySingleton):
+        (JSC::DFG::FrozenValue::tryGetString):
+        (JSC::DFG::FrozenValue::dumpInContext):
+        * dfg/DFGFrozenValue.h:
+        (JSC::DFG::FrozenValue::strength):
+        * dfg/DFGGraph.h:
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::newString):
+        (JSC::DFG::LazyJSValue::getValue):
+        (JSC::DFG::equalToStringImpl):
+        (JSC::DFG::LazyJSValue::tryGetStringImpl):
+        (JSC::DFG::LazyJSValue::tryGetString):
+        (JSC::DFG::LazyJSValue::strictEqual):
+        (JSC::DFG::LazyJSValue::switchLookupValue):
+        (JSC::DFG::LazyJSValue::emit):
+        (JSC::DFG::LazyJSValue::dumpInContext):
+        * dfg/DFGLazyJSValue.h:
+        (JSC::DFG::LazyJSValue::LazyJSValue):
+        (JSC::DFG::LazyJSValue::knownStringImpl):
+        (JSC::DFG::LazyJSValue::kind):
+        (JSC::DFG::LazyJSValue::tryGetValue):
+        (JSC::DFG::LazyJSValue::character):
+        (JSC::DFG::LazyJSValue::stringImpl):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToIdentityOn):
+        (JSC::DFG::Node::convertToLazyJSConstant):
+        (JSC::DFG::Node::convertToPutHint):
+        (JSC::DFG::Node::convertToPutClosureVarHint):
+        (JSC::DFG::Node::tryGetString):
+        (JSC::DFG::Node::promotedLocationDescriptor):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToConstant):
+        (JSC::DFG::Node::convertToConstantStoragePointer):
+        (JSC::DFG::Node::castConstant):
+        (JSC::DFG::Node::hasLazyJSValue):
+        (JSC::DFG::Node::lazyJSValue):
+        (JSC::DFG::Node::initializationValueForActivation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSetRegExpObjectLastIndex):
+        (JSC::DFG::SpeculativeJIT::compileLazyJSConstant):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInt52Constant):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLazyJSConstant):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDoubleRep):
+
 2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Memory Timeline should show MemoryPressure events

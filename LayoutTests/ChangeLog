@@ -1,3 +1,21 @@
+2016-03-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to constant-fold strings
+        https://bugs.webkit.org/show_bug.cgi?id=155200
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/script-tests/strcat-const.js: Added.
+        (foo):
+        (bar):
+        * js/regress/script-tests/strcat-length-const.js: Added.
+        (foo):
+        (bar):
+        * js/regress/strcat-const-expected.txt: Added.
+        * js/regress/strcat-const.html: Added.
+        * js/regress/strcat-length-const-expected.txt: Added.
+        * js/regress/strcat-length-const.html: Added.
+
 2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Heap domain start/stop tracking commands

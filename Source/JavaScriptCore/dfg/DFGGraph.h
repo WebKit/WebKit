@@ -868,6 +868,7 @@ public:
     Bag<CallVarargsData> m_callVarargsData;
     Bag<LoadVarargsData> m_loadVarargsData;
     Bag<StackAccessData> m_stackAccessData;
+    Bag<LazyJSValue> m_lazyJSValues;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
     HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>> m_bytecodeKills;
@@ -880,6 +881,9 @@ public:
     unsigned m_localVars;
     unsigned m_nextMachineLocal;
     unsigned m_parameterSlots;
+    
+    HashSet<String> m_localStrings;
+    HashMap<const StringImpl*, String> m_copiedStrings;
 
 #if USE(JSVALUE32_64)
     std::unordered_map<int64_t, double*> m_doubleConstantsMap;

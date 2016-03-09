@@ -92,6 +92,7 @@ ExitMode mayExit(Graph& graph, Node* node)
     case SetArgument:
     case JSConstant:
     case DoubleConstant:
+    case LazyJSConstant:
     case Int52Constant:
     case MovHint:
     case SetLocal:

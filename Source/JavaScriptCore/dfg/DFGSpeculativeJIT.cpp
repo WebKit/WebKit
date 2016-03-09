@@ -7647,6 +7647,14 @@ void SpeculativeJIT::compileSetRegExpObjectLastIndex(Node* node)
     noResult(node);
 }
 
+void SpeculativeJIT::compileLazyJSConstant(Node* node)
+{
+    JSValueRegsTemporary result(this);
+    JSValueRegs resultRegs = result.regs();
+    node->lazyJSValue().emit(m_jit, resultRegs);
+    jsValueResult(resultRegs, node);
+}
+
 } } // namespace JSC::DFG
 
 #endif

@@ -1451,6 +1451,7 @@ private:
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:
         case JSConstant:
+        case LazyJSConstant:
         case DoubleConstant:
         case GetLocal:
         case GetCallee:

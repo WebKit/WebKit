@@ -141,6 +141,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setBuiltInConstant(node, *node->constant());
         break;
     }
+
+    case LazyJSConstant: {
+        LazyJSValue value = node->lazyJSValue();
+        switch (value.kind()) {
+        case LazyJSValue::KnownValue:
+            setConstant(node, value.value()->value());
+            break;
+        case LazyJSValue::SingleCharacterString:
+        case LazyJSValue::KnownStringImpl:
+        case LazyJSValue::NewStringImpl:
+            forNode(node).setType(m_graph, SpecString);
+            break;
+        }
+        break;
+    }
         
     case Identity: {
         forNode(node) = forNode(node->child1());

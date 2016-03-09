@@ -113,12 +113,17 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case Int52Constant:
         def(PureValue(node, node->constant()));
         return;
-        
+
     case Identity:
     case Phantom:
     case Check:
     case ExtractOSREntryLocal:
     case CheckStructureImmediate:
+        return;
+        
+    case LazyJSConstant:
+        // We should enable CSE of LazyJSConstant. It's a little annoying since LazyJSValue has
+        // more bits than we currently have in PureValue.
         return;
         
     case ArithIMul:

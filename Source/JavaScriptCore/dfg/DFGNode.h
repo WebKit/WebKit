@@ -494,6 +494,8 @@ struct Node {
         m_opInfo = bitwise_cast<uintptr_t>(value);
         children.reset();
     }
+
+    void convertToLazyJSConstant(Graph&, LazyJSValue);
     
     void convertToConstantStoragePointer(void* pointer)
     {
@@ -742,6 +744,19 @@ struct Node {
         RELEASE_ASSERT(result);
         return result;
     }
+
+    bool hasLazyJSValue()
+    {
+        return op() == LazyJSConstant;
+    }
+
+    LazyJSValue lazyJSValue()
+    {
+        ASSERT(hasLazyJSValue());
+        return *bitwise_cast<LazyJSValue*>(m_opInfo);
+    }
+
+    String tryGetString(Graph&);
 
     JSValue initializationValueForActivation() const
     {
