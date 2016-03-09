@@ -1293,14 +1293,14 @@ void SpeculativeJIT::compilePeepHoleBooleanBranch(Node* node, Node* branchNode, 
         notTaken = tmp;
     }
 
-    if (node->child1()->isBooleanConstant()) {
-        bool imm = node->child1()->asBoolean();
+    if (node->child1()->isInt32Constant()) {
+        int32_t imm = node->child1()->asInt32();
         SpeculateBooleanOperand op2(this, node->child2());
-        branch32(condition, JITCompiler::Imm32(static_cast<int32_t>(JSValue::encode(jsBoolean(imm)))), op2.gpr(), taken);
-    } else if (node->child2()->isBooleanConstant()) {
+        branch32(condition, JITCompiler::Imm32(imm), op2.gpr(), taken);
+    } else if (node->child2()->isInt32Constant()) {
         SpeculateBooleanOperand op1(this, node->child1());
-        bool imm = node->child2()->asBoolean();
-        branch32(condition, op1.gpr(), JITCompiler::Imm32(static_cast<int32_t>(JSValue::encode(jsBoolean(imm)))), taken);
+        int32_t imm = node->child2()->asInt32();
+        branch32(condition, op1.gpr(), JITCompiler::Imm32(imm), taken);
     } else {
         SpeculateBooleanOperand op1(this, node->child1());
         SpeculateBooleanOperand op2(this, node->child2());

@@ -1566,15 +1566,34 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
 
 void SpeculativeJIT::compileInt32Compare(Node* node, MacroAssembler::RelationalCondition condition)
 {
-    SpeculateInt32Operand op1(this, node->child1());
-    SpeculateInt32Operand op2(this, node->child2());
-    GPRTemporary result(this, Reuse, op1, op2);
-    
-    m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
-    
-    // If we add a DataFormatBool, we should use it here.
-    m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
-    jsValueResult(result.gpr(), m_currentNode, DataFormatJSBoolean);
+    if (node->child1()->isInt32Constant()) {
+        SpeculateInt32Operand op2(this, node->child2());
+        GPRTemporary result(this, Reuse, op2);
+        int32_t imm = node->child1()->asInt32();
+        m_jit.compare32(condition, JITCompiler::Imm32(imm), op2.gpr(), result.gpr());
+
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
+        jsValueResult(result.gpr(), m_currentNode, DataFormatJSBoolean);
+    } else if (node->child2()->isInt32Constant()) {
+        SpeculateInt32Operand op1(this, node->child1());
+        GPRTemporary result(this, Reuse, op1);
+        int32_t imm = node->child2()->asInt32();
+        m_jit.compare32(condition, op1.gpr(), JITCompiler::Imm32(imm), result.gpr());
+
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
+        jsValueResult(result.gpr(), m_currentNode, DataFormatJSBoolean);
+    } else {
+        SpeculateInt32Operand op1(this, node->child1());
+        SpeculateInt32Operand op2(this, node->child2());
+        GPRTemporary result(this, Reuse, op1, op2);
+        m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
+
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
+        jsValueResult(result.gpr(), m_currentNode, DataFormatJSBoolean);
+    }
 }
 
 void SpeculativeJIT::compileInt52Compare(Node* node, MacroAssembler::RelationalCondition condition)

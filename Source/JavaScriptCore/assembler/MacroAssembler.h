@@ -112,6 +112,7 @@ public:
     using MacroAssemblerBase::pop;
     using MacroAssemblerBase::jump;
     using MacroAssemblerBase::branch32;
+    using MacroAssemblerBase::compare32;
     using MacroAssemblerBase::move;
     using MacroAssemblerBase::add32;
     using MacroAssemblerBase::and32;
@@ -398,6 +399,11 @@ public:
     Jump branch32(RelationalCondition cond, Imm32 left, RegisterID right)
     {
         return branch32(commute(cond), right, left);
+    }
+
+    void compare32(RelationalCondition cond, Imm32 left, RegisterID right, RegisterID dest)
+    {
+        compare32(commute(cond), right, left, dest);
     }
 
     void branchTestPtr(ResultCondition cond, RegisterID reg, Label target)
@@ -1619,6 +1625,29 @@ public:
         }
         
         return branch32(cond, left, right.asTrustedImm32());
+    }
+
+    void compare32(RelationalCondition cond, RegisterID left, Imm32 right, RegisterID dest)
+    {
+        if (shouldBlind(right)) {
+            if (left != dest || haveScratchRegisterForBlinding()) {
+                RegisterID blindedConstantReg = dest;
+                if (left == dest)
+                    blindedConstantReg = scratchRegisterForBlinding();
+                loadXorBlindedConstant(xorBlindConstant(right), blindedConstantReg);
+                compare32(cond, left, blindedConstantReg, dest);
+                return;
+            }
+            // If we don't have a scratch register available for use, we'll just
+            // place a random number of nops.
+            uint32_t nopCount = random() & 3;
+            while (nopCount--)
+                nop();
+            compare32(cond, left, right.asTrustedImm32(), dest);
+            return;
+        }
+
+        compare32(cond, left, right.asTrustedImm32(), dest);
     }
 
     Jump branchAdd32(ResultCondition cond, RegisterID src, Imm32 imm, RegisterID dest)

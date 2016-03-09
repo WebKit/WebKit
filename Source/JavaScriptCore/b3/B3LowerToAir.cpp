@@ -1374,14 +1374,30 @@ private:
 
                 // Now handle test's that involve an immediate and a tmp.
 
-                if (leftImm && leftImm.isRepresentableAs<uint32_t>()) {
-                    if (Inst result = tryTest(Arg::Width32, leftImm, tmpPromise(right)))
-                        return result;
+                if (leftImm) {
+                    if ((width == Arg::Width32 && leftImm.value() == 0xffffffff)
+                        || (width == Arg::Width64 && leftImm.value() == -1)) {
+                        ArgPromise argPromise = tmpPromise(right);
+                        if (Inst result = tryTest(width, argPromise, argPromise))
+                            return result;
+                    }
+                    if (leftImm.isRepresentableAs<uint32_t>()) {
+                        if (Inst result = tryTest(Arg::Width32, leftImm, tmpPromise(right)))
+                            return result;
+                    }
                 }
 
-                if (rightImm && rightImm.isRepresentableAs<uint32_t>()) {
-                    if (Inst result = tryTest(Arg::Width32, tmpPromise(left), rightImm))
-                        return result;
+                if (rightImm) {
+                    if ((width == Arg::Width32 && rightImm.value() == 0xffffffff)
+                        || (width == Arg::Width64 && rightImm.value() == -1)) {
+                        ArgPromise argPromise = tmpPromise(left);
+                        if (Inst result = tryTest(width, argPromise, argPromise))
+                            return result;
+                    }
+                    if (rightImm.isRepresentableAs<uint32_t>()) {
+                        if (Inst result = tryTest(Arg::Width32, tmpPromise(left), rightImm))
+                            return result;
+                    }
                 }
 
                 // Finally, just do tmp's.

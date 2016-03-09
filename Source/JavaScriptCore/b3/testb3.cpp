@@ -150,10 +150,10 @@ Vector<Operand<FloatType>> floatingPointOperands()
 static Vector<Int64Operand> int64Operands()
 {
     Vector<Int64Operand> operands;
-    for (const auto& doubleOperand : floatingPointOperands<double>())
-        operands.append({ doubleOperand.name, bitwise_cast<int64_t>(doubleOperand.value) });
     operands.append({ "1", 1 });
     operands.append({ "-1", -1 });
+    operands.append({ "42", 42 });
+    operands.append({ "-42", -42 });
     operands.append({ "int64-max", std::numeric_limits<int64_t>::max() });
     operands.append({ "int64-min", std::numeric_limits<int64_t>::min() });
     operands.append({ "int32-max", std::numeric_limits<int32_t>::max() });
@@ -8822,7 +8822,8 @@ void genericTestCompare(
     }
 }
 
-int modelCompare(B3::Opcode opcode, int left, int right)
+template<typename InputType>
+InputType modelCompare(B3::Opcode opcode, InputType left, InputType right)
 {
     switch (opcode) {
     case Equal:
@@ -8838,13 +8839,17 @@ int modelCompare(B3::Opcode opcode, int left, int right)
     case GreaterEqual:
         return left >= right;
     case Above:
-        return static_cast<unsigned>(left) > static_cast<unsigned>(right);
+        return static_cast<typename std::make_unsigned<InputType>::type>(left) >
+            static_cast<typename std::make_unsigned<InputType>::type>(right);
     case Below:
-        return static_cast<unsigned>(left) < static_cast<unsigned>(right);
+        return static_cast<typename std::make_unsigned<InputType>::type>(left) <
+            static_cast<typename std::make_unsigned<InputType>::type>(right);
     case AboveEqual:
-        return static_cast<unsigned>(left) >= static_cast<unsigned>(right);
+        return static_cast<typename std::make_unsigned<InputType>::type>(left) >=
+            static_cast<typename std::make_unsigned<InputType>::type>(right);
     case BelowEqual:
-        return static_cast<unsigned>(left) <= static_cast<unsigned>(right);
+        return static_cast<typename std::make_unsigned<InputType>::type>(left) <=
+            static_cast<typename std::make_unsigned<InputType>::type>(right);
     case BitAnd:
         return !!(left & right);
     default:
@@ -8939,7 +8944,8 @@ void testCompareLoad(B3::Opcode opcode, B3::Opcode loadOpcode, int left, int rig
 
 void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
 {
-    int result = modelCompare(opcode, left, right);
+    int64_t result = modelCompare(opcode, left, right);
+    int32_t int32Result = modelCompare(opcode, static_cast<int32_t>(left), static_cast<int32_t>(right));
     
     // Test tmp-to-tmp.
     genericTestCompare(
@@ -8963,7 +8969,7 @@ void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
                 proc, Trunc, Origin(),
                 block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
         },
-        left, right, result);
+        left, right, int32Result);
 
     // Test imm-to-tmp.
     genericTestCompare(
@@ -8985,7 +8991,7 @@ void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
                 proc, Trunc, Origin(),
                 block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
         },
-        left, right, result);
+        left, right, int32Result);
 
     // Test tmp-to-imm.
     genericTestCompare(
@@ -9007,7 +9013,7 @@ void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
         [&] (BasicBlock* block, Procedure& proc) {
             return block->appendNew<Const32Value>(proc, Origin(), right);
         },
-        left, right, result);
+        left, right, int32Result);
 
     // Test imm-to-imm.
     genericTestCompare(
@@ -9027,7 +9033,7 @@ void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
         [&] (BasicBlock* block, Procedure& proc) {
             return block->appendNew<Const32Value>(proc, Origin(), right);
         },
-        left, right, result);
+        left, right, int32Result);
 
     testCompareLoad<int32_t>(opcode, Load, left, right);
     testCompareLoad<int8_t>(opcode, Load8S, left, right);
@@ -9036,37 +9042,11 @@ void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
     testCompareLoad<uint16_t>(opcode, Load16Z, left, right);
 }
 
-void testCompare(B3::Opcode opcode, int left, int right)
+void testCompare(B3::Opcode opcode, int64_t left, int64_t right)
 {
-    auto variants = [&] (int left, int right) {
-        testCompareImpl(opcode, left, right);
-        testCompareImpl(opcode, left, right + 1);
-        testCompareImpl(opcode, left, right - 1);
-
-        auto multipliedTests = [&] (int factor) {
-            testCompareImpl(opcode, left * factor, right);
-            testCompareImpl(opcode, left * factor, right + 1);
-            testCompareImpl(opcode, left * factor, right - 1);
-        
-            testCompareImpl(opcode, left, right * factor);
-            testCompareImpl(opcode, left, (right + 1) * factor);
-            testCompareImpl(opcode, left, (right - 1) * factor);
-        
-            testCompareImpl(opcode, left * factor, right * factor);
-            testCompareImpl(opcode, left * factor, (right + 1) * factor);
-            testCompareImpl(opcode, left * factor, (right - 1) * factor);
-        };
-
-        multipliedTests(10);
-        multipliedTests(100);
-        multipliedTests(1000);
-        multipliedTests(100000);
-    };
-
-    variants(left, right);
-    variants(-left, right);
-    variants(left, -right);
-    variants(-left, -right);
+    testCompareImpl(opcode, left, right);
+    testCompareImpl(opcode, left, right + 1);
+    testCompareImpl(opcode, left, right - 1);
 }
 
 void testEqualDouble(double left, double right, bool result)
@@ -10899,6 +10879,20 @@ void testCheckSelectCheckSelect()
     CHECK(invoke<int>(*code, true, false) == 667);
 }
 
+double b3Pow(double x, int y)
+{
+    if (y < 0 || y > 1000)
+        return pow(x, y);
+    double result = 1;
+    while (y) {
+        if (y & 1)
+            result *= x;
+        x *= x;
+        y >>= 1;
+    }
+    return result;
+}
+
 void testPowDoubleByIntegerLoop(double xOperand, int32_t yOperand)
 {
     Procedure proc;
@@ -10911,7 +10905,7 @@ void testPowDoubleByIntegerLoop(double xOperand, int32_t yOperand)
     BasicBlock* continuation = result.first;
     continuation->appendNew<ControlValue>(proc, Return, Origin(), result.second);
 
-    CHECK(isIdentical(compileAndRun<double>(proc, xOperand, yOperand), pow(xOperand, yOperand)));
+    CHECK(isIdentical(compileAndRun<double>(proc, xOperand, yOperand), b3Pow(xOperand, yOperand)));
 }
 
 void testTruncOrHigh()
@@ -12248,19 +12242,17 @@ void run(const char* filter)
     RUN(testCheckMulArgumentAliasing64());
     RUN(testCheckMulArgumentAliasing32());
 
-    RUN(testCompare(Equal, 42, 42));
-    RUN(testCompare(NotEqual, 42, 42));
-    RUN(testCompare(LessThan, 42, 42));
-    RUN(testCompare(GreaterThan, 42, 42));
-    RUN(testCompare(LessEqual, 42, 42));
-    RUN(testCompare(GreaterEqual, 42, 42));
-    RUN(testCompare(Below, 42, 42));
-    RUN(testCompare(Above, 42, 42));
-    RUN(testCompare(BelowEqual, 42, 42));
-    RUN(testCompare(AboveEqual, 42, 42));
-
-    RUN(testCompare(BitAnd, 42, 42));
-    RUN(testCompare(BitAnd, 42, 0));
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(Equal, a, b); }, int64Operands(), int64Operands());
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(NotEqual, a, b); }, int64Operands(), int64Operands());
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(LessThan, a, b); }, int64Operands(), int64Operands());
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(GreaterThan, a, b); }, int64Operands(), int64Operands());
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(LessEqual, a, b); }, int64Operands(), int64Operands());
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(GreaterEqual, a, b); }, int64Operands(), int64Operands());
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(Below, a, b); }, int64Operands(), int64Operands());
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(Above, a, b); }, int64Operands(), int64Operands());
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(BelowEqual, a, b); }, int64Operands(), int64Operands());
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(AboveEqual, a, b); }, int64Operands(), int64Operands());
+    RUN_BINARY([](int32_t a, int32_t b) { testCompare(BitAnd, a, b); }, int64Operands(), int64Operands());
 
     RUN(testEqualDouble(42, 42, true));
     RUN(testEqualDouble(0, -0, true));

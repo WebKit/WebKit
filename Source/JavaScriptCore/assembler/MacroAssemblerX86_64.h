@@ -701,19 +701,21 @@ public:
 
     void compare64(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
-        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
-            m_assembler.testq_rr(left, left);
-        else
-            m_assembler.cmpq_ir(right.m_value, left);
-        m_assembler.setCC_r(x86Condition(cond), dest);
-        m_assembler.movzbl_rr(dest, dest);
+        if (!right.m_value) {
+            if (auto resultCondition = commuteCompareToZeroIntoTest(cond)) {
+                test64(*resultCondition, left, left, dest);
+                return;
+            }
+        }
+
+        m_assembler.cmpq_ir(right.m_value, left);
+        set32(x86Condition(cond), dest);
     }
     
     void compare64(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmpq_rr(right, left);
-        m_assembler.setCC_r(x86Condition(cond), dest);
-        m_assembler.movzbl_rr(dest, dest);
+        set32(x86Condition(cond), dest);
     }
 
     void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
@@ -758,9 +760,9 @@ public:
 
     Jump branch64(RelationalCondition cond, RegisterID left, TrustedImm32 right)
     {
-        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value) {
-            m_assembler.testq_rr(left, left);
-            return Jump(m_assembler.jCC(x86Condition(cond)));
+        if (!right.m_value) {
+            if (auto resultCondition = commuteCompareToZeroIntoTest(cond))
+                return branchTest64(*resultCondition, left, left);
         }
         m_assembler.cmpq_ir(right.m_value, left);
         return Jump(m_assembler.jCC(x86Condition(cond)));
@@ -982,6 +984,28 @@ public:
     void moveConditionally64(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
     {
         m_assembler.cmpq_rr(right, left);
+
+        if (thenCase != dest && elseCase != dest) {
+            move(elseCase, dest);
+            elseCase = dest;
+        }
+
+        if (elseCase == dest)
+            cmov(x86Condition(cond), thenCase, dest);
+        else
+            cmov(x86Condition(invert(cond)), elseCase, dest);
+    }
+
+    void moveConditionally64(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        if (!right.m_value) {
+            if (auto resultCondition = commuteCompareToZeroIntoTest(cond)) {
+                moveConditionallyTest64(*resultCondition, left, left, thenCase, elseCase, dest);
+                return;
+            }
+        }
+
+        m_assembler.cmpq_ir(right.m_value, left);
 
         if (thenCase != dest && elseCase != dest) {
             move(elseCase, dest);
