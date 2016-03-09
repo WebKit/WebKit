@@ -1037,16 +1037,16 @@ public:
         jitAssertIsJSDouble(gpr);
         return gpr;
     }
-    FPRReg unboxDoubleWithoutAssertions(GPRReg gpr, FPRReg fpr)
+    FPRReg unboxDoubleWithoutAssertions(GPRReg gpr, GPRReg resultGPR, FPRReg fpr)
     {
-        add64(GPRInfo::tagTypeNumberRegister, gpr);
-        move64ToDouble(gpr, fpr);
+        add64(GPRInfo::tagTypeNumberRegister, gpr, resultGPR);
+        move64ToDouble(resultGPR, fpr);
         return fpr;
     }
-    FPRReg unboxDouble(GPRReg gpr, FPRReg fpr)
+    FPRReg unboxDouble(GPRReg gpr, GPRReg resultGPR, FPRReg fpr)
     {
         jitAssertIsJSDouble(gpr);
-        return unboxDoubleWithoutAssertions(gpr, fpr);
+        return unboxDoubleWithoutAssertions(gpr, resultGPR, fpr);
     }
     
     void boxDouble(FPRReg fpr, JSValueRegs regs)
@@ -1054,10 +1054,9 @@ public:
         boxDouble(fpr, regs.gpr());
     }
 
-    void unboxDoubleNonDestructive(JSValueRegs regs, FPRReg destFPR, GPRReg scratchGPR, FPRReg)
+    void unboxDoubleNonDestructive(JSValueRegs regs, FPRReg destFPR, GPRReg resultGPR, FPRReg)
     {
-        move(regs.payloadGPR(), scratchGPR);
-        unboxDouble(scratchGPR, destFPR);
+        unboxDouble(regs.payloadGPR(), resultGPR, destFPR);
     }
 
     // Here are possible arrangements of source, target, scratch:
