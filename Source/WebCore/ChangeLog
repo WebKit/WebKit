@@ -1,5 +1,13 @@
 2016-03-09  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline bindings tests after r197874.
+
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::JSattribute::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSattribute.h:
+
+2016-03-09  Chris Dumez  <cdumez@apple.com>
+
         focus() / blur() should be on HTMLElement / SVGElement, not Element
         https://bugs.webkit.org/show_bug.cgi?id=155216
 

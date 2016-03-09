@@ -65,6 +65,20 @@ private:
 
 typedef JSDOMConstructorNotConstructable<JSattribute> JSattributeConstructor;
 
+/* Hash table */
+
+static const struct CompactHashIndex JSattributeTableIndex[2] = {
+    { 0, -1 },
+    { -1, -1 },
+};
+
+
+static const HashTableValue JSattributeTableValues[] =
+{
+    { "readonly", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+};
+
+static const HashTable JSattributeTable = { 1, 1, true, JSattributeTableValues, JSattributeTableIndex };
 template<> JSValue JSattributeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -85,7 +99,6 @@ template<> const ClassInfo JSattributeConstructor::s_info = { "attribute", &Base
 static const HashTableValue JSattributePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSattributeConstructor) } },
-    { "readonly", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
 const ClassInfo JSattributePrototype::s_info = { "attributePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattributePrototype) };
@@ -96,7 +109,7 @@ void JSattributePrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSattributePrototypeTableValues, *this);
 }
 
-const ClassInfo JSattribute::s_info = { "attribute", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattribute) };
+const ClassInfo JSattribute::s_info = { "attribute", &Base::s_info, &JSattributeTable, CREATE_METHOD_TABLE(JSattribute) };
 
 JSattribute::JSattribute(Structure* structure, JSDOMGlobalObject& globalObject, Ref<attribute>&& impl)
     : JSDOMWrapper<attribute>(structure, globalObject, WTFMove(impl))
@@ -117,6 +130,15 @@ void JSattribute::destroy(JSC::JSCell* cell)
 {
     JSattribute* thisObject = static_cast<JSattribute*>(cell);
     thisObject->JSattribute::~JSattribute();
+}
+
+bool JSattribute::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
+{
+    auto* thisObject = jsCast<JSattribute*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    if (getStaticValueSlot<JSattribute, Base>(state, JSattributeTable, thisObject, propertyName, slot))
+        return true;
+    return false;
 }
 
 EncodedJSValue jsattributeReadonly(ExecState* state, EncodedJSValue thisValue, PropertyName)

@@ -38,11 +38,12 @@ public:
         return ptr;
     }
 
-    static const bool hasStaticPropertyTable = false;
+    static const bool hasStaticPropertyTable = true;
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* prototype(JSC::VM&, JSC::JSGlobalObject*);
     static attribute* toWrapped(JSC::JSValue);
+    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -53,6 +54,8 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
+public:
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:
     JSattribute(JSC::Structure*, JSDOMGlobalObject&, Ref<attribute>&&);
 
