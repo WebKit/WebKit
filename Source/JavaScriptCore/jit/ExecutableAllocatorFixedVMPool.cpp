@@ -153,7 +153,7 @@ private:
         remapFlags |= VM_FLAGS_RANDOM_ADDR;
 #endif
         kern_return_t ret = mach_vm_remap(mach_task_self(), &writableAddr, jitSize, 0,
-            VM_FLAGS_ANYWHERE | VM_FLAGS_RANDOM_ADDR,
+            remapFlags,
             mach_task_self(), (mach_vm_address_t)jitBase, FALSE,
             &cur, &max, VM_INHERIT_DEFAULT);
 
