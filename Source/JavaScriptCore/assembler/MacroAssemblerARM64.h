@@ -1161,7 +1161,7 @@ public:
 
     void load8(RegisterID src, PostIndex simm, RegisterID dest)
     {
-        m_assembler.ldr<8>(dest, src, simm);
+        m_assembler.ldrb(dest, src, simm);
     }
 
     void load8SignedExtendTo32(ImplicitAddress address, RegisterID dest)
@@ -1364,7 +1364,7 @@ public:
             return;
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.str<16>(src, address.base, memoryTempRegister);
+        m_assembler.strh(src, address.base, memoryTempRegister);
     }
 
     void store16(RegisterID src, BaseIndex address)
@@ -1403,7 +1403,7 @@ public:
             return;
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.str<8>(src, address.base, memoryTempRegister);
+        m_assembler.strb(src, address.base, memoryTempRegister);
     }
 
     void store8(TrustedImm32 imm, void* address)
@@ -1430,7 +1430,7 @@ public:
 
     void store8(RegisterID src, RegisterID dest, PostIndex simm)
     {
-        m_assembler.str<8>(src, dest, simm);
+        m_assembler.strb(src, dest, simm);
     }
 
     // Floating-point operations:
