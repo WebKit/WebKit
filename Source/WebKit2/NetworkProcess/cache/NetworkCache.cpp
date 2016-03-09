@@ -121,8 +121,6 @@ static Key makeCacheKey(const WebCore::ResourceRequest& request)
 #else
     String partition;
 #endif
-    if (partition.isEmpty())
-        partition = ASCIILiteral("No partition");
 
     // FIXME: This implements minimal Range header disk cache support. We don't parse
     // ranges so only the same exact range request will be served from the cache.
@@ -402,7 +400,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
         case UseDecision::Use:
             break;
         case UseDecision::Validate:
-            entry->setNeedsValidation();
+            entry->setNeedsValidation(true);
             break;
         default:
             entry = nullptr;
@@ -495,7 +493,6 @@ std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalReq
 
     WebCore::ResourceResponse response = existingEntry.response();
     WebCore::updateResponseHeadersAfterRevalidation(response, validatingResponse);
-    response.setSource(WebCore::ResourceResponse::Source::DiskCache);
 
     auto updateEntry = std::make_unique<Entry>(existingEntry.key(), response, existingEntry.buffer(), collectVaryingRequestHeaders(originalRequest, response));
     auto updateRecord = updateEntry->encodeAsStorageRecord();

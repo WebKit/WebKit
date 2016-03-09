@@ -188,10 +188,9 @@ bool Entry::needsValidation() const
     return m_response.source() == WebCore::ResourceResponse::Source::DiskCacheAfterValidation;
 }
 
-void Entry::setNeedsValidation()
+void Entry::setNeedsValidation(bool value)
 {
-    ASSERT(m_response.source() == WebCore::ResourceResponse::Source::DiskCache);
-    m_response.setSource(WebCore::ResourceResponse::Source::DiskCacheAfterValidation);
+    m_response.setSource(value ? WebCore::ResourceResponse::Source::DiskCacheAfterValidation : WebCore::ResourceResponse::Source::DiskCache);
 }
 
 void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const

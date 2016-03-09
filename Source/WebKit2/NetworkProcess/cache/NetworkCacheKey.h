@@ -54,6 +54,7 @@ public:
 
     bool isNull() const { return m_identifier.isNull(); }
 
+    bool hasPartition() const;
     const String& partition() const { return m_partition; }
     const String& identifier() const { return m_identifier; }
     const String& type() const { return m_type; }

@@ -139,6 +139,10 @@ void SpeculativeLoad::didComplete()
 
     m_networkLoad = nullptr;
 
+    // Make sure speculatively revalidated resources do not get validated by the NetworkResourceLoader again.
+    if (m_cacheEntryForValidation)
+        m_cacheEntryForValidation->setNeedsValidation(false);
+
     m_completionHandler(WTFMove(m_cacheEntryForValidation));
 }
 

@@ -66,7 +66,7 @@ public:
 #endif
 
     bool needsValidation() const;
-    void setNeedsValidation();
+    void setNeedsValidation(bool);
 
     const Storage::Record& sourceStorageRecord() const { return m_sourceStorageRecord; }
 

@@ -87,6 +87,11 @@ static inline Key makeSubresourcesKey(const Key& resourceKey)
 static inline ResourceRequest constructRevalidationRequest(const Entry& entry)
 {
     ResourceRequest revalidationRequest(entry.key().identifier());
+#if ENABLE(CACHE_PARTITIONING)
+    if (entry.key().hasPartition())
+        revalidationRequest.setCachePartition(entry.key().partition());
+#endif
+    ASSERT_WITH_MESSAGE(entry.key().range().isEmpty(), "range is not supported");
 
     String eTag = entry.response().httpHeaderField(HTTPHeaderName::ETag);
     if (!eTag.isEmpty())
@@ -344,7 +349,7 @@ void SpeculativeLoadManager::retrieveEntryFromStorage(const Key& key, const Retr
         }
 
         if (responseNeedsRevalidation(response, entry->timeStamp()))
-            entry->setNeedsValidation();
+            entry->setNeedsValidation(true);
 
         completionHandler(WTFMove(entry));
         return true;
@@ -369,9 +374,16 @@ void SpeculativeLoadManager::revalidateEntry(std::unique_ptr<Entry> entry, const
     ASSERT(entry->needsValidation());
 
     auto key = entry->key();
+
+    // Range is not supported.
+    if (!key.range().isEmpty())
+        return;
+
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculatively revalidating '%s':", key.identifier().utf8().data());
     auto revalidator = std::make_unique<SpeculativeLoad>(frameID, constructRevalidationRequest(*entry), WTFMove(entry), [this, key, frameID](std::unique_ptr<Entry> revalidatedEntry) {
         ASSERT(!revalidatedEntry || !revalidatedEntry->needsValidation());
+        ASSERT(!revalidatedEntry || revalidatedEntry->key() == key);
+
         auto protectRevalidator = m_pendingPreloads.take(key);
         LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculative revalidation completed for '%s':", key.identifier().utf8().data());
 

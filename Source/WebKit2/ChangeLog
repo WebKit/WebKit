@@ -1,3 +1,61 @@
+2016-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Speculative disk cache resource revalidations are sometimes wasted
+        https://bugs.webkit.org/show_bug.cgi?id=155187
+        <rdar://problem/25032905>
+
+        Reviewed by Antti Koivisto.
+
+        Speculative disk cache resource revalidations were sometimes wasted.
+
+        We would sometimes correctly revalidate a resource but the
+        NetworkResourceLoader then either:
+        1. Fail to reuse the speculatively validated entry
+        2. Reuse the speculatively validated entry but then validate it again
+
+        Bug 1 was caused by the revalidated entry key sometimes being
+        different from the cached entry key. This could happen when
+        revalidation fails (the server did not send back a 304) in
+        which case we call NetworkCache::store() which creates a new
+        cache Entry, generating a cache key from our revalidation
+        request. If the original request has a cache partition or a
+        range, then the keys would not match because we did not set
+        the cache partition or the range on the revalidation request.
+        This has been addressed by setting the cache partition on the
+        revalidation request in constructRevalidationRequest() and by
+        not doing revalidation if the original request had a 'range'
+        header.
+
+        Bug 2 was caused by us marking a speculatively revalidated entry
+        as "not needing revalidating" only in Cache::update(). Cache::update()
+        is only called in the case the revalidation was successful (server
+        returned a 304). If revalidation was not successful, Cache::store()
+        would be called instead was we would fail to update the
+        needsRevalidation flag. NetworkResourceLoader would then validate
+        again the resource that was already speculatively revalidated.
+        To address the problem, we now update the 'needsRevalidation' flag
+        as soon as the speculative revalidation completes, in
+        SpeculativeLoad::didComplete().
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::makeCacheKey):
+        (WebKit::NetworkCache::Cache::update):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::setNeedsValidation):
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::noPartitionString):
+        (WebKit::NetworkCache::Key::Key):
+        (WebKit::NetworkCache::Key::hasPartition):
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::didComplete):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveEntryFromStorage):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateEntry):
+
 2016-03-09  Brent Fulgham  <bfulgham@apple.com>
 
         Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked
