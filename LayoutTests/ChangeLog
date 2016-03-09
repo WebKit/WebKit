@@ -1,3 +1,15 @@
+2016-03-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked..
+        https://bugs.webkit.org/show_bug.cgi?id=155185
+        <rdar://problem/11101440>
+
+        Reviewed by Zalan Bujtas.
+
+        * storage/domstorage/localstorage/blocked-file-access-expected.txt: Added.
+        * storage/domstorage/localstorage/blocked-file-access.html: Added.
+        * storage/domstorage/localstorage/resources/blocked-example.html: Added.
+
 2016-03-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Allow to place positioned grid items on the padding

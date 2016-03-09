@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 11: PASS: window.localStorage is NOT accessible
+CONSOLE MESSAGE: line 12: Exception: SecurityError: DOM Exception 18
+
+Test that we cannot access localStorage from a file URL if unversal access is turned off.
