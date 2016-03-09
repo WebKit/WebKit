@@ -1,3 +1,50 @@
+2016-03-08  Sam Weinig  <sam@webkit.org>
+
+        Stop using the UserContentController for injecting the override style sheet from CaptionUserPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=155211
+
+        Reviewed by Dan Bernstein.
+
+        The UserContentController is going to become read only from WebCore's perspective. The CaptionUserPreferences
+        was relying on being able to set a UserStyleSheet on it, but this was really unnecessary complexity. Simplify
+        things by storing the style sheet's source directly on the Page and teaching ExtensionStyleSheets about it
+        explicitly.
+
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::updateInjectedStyleSheetCache):
+        If there is a captionUserPreferencesStyleSheet on the page, inject it.
+
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::updateCaptionStyleSheetOveride):
+        Greatly simplify the code. Now, all this does is set the style sheet on each page.
+
+        * page/Page.cpp:
+        (WebCore::Page::invalidateInjectedStyleSheetCacheInAllFrames):
+        Extract this out from UserContentController.
+
+        (WebCore::Page::setUserContentController):
+        Call the newly extracted invalidateInjectedStyleSheetCacheInAllFrames().
+
+        (WebCore::Page::captionUserPreferencesStyleSheet):
+        (WebCore::Page::setCaptionUserPreferencesStyleSheet):
+        Add getter/setter. When setting, invalidate the style sheet cache.
+
+        * page/Page.h:
+        Add new members and functions.
+
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::addUserStyleSheet):
+        (WebCore::UserContentController::removeUserStyleSheet):
+        (WebCore::UserContentController::removeUserStyleSheets):
+        (WebCore::UserContentController::removeAllUserContent):
+        Switch to calling invalidateInjectedStyleSheetCacheInAllFramesInAllPages().
+
+        (WebCore::UserContentController::invalidateInjectedStyleSheetCacheInAllFramesInAllPages):
+        Rename and implement in terms of Page::invalidateInjectedStyleSheetCacheInAllFrames().
+
+        * page/UserContentController.h:
+        Rename function.
+
 2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Memory Timeline should show MemoryPressure events

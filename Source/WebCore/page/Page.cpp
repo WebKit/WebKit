@@ -1126,6 +1126,17 @@ void Page::invalidateStylesForLink(LinkHash linkHash)
     }
 }
 
+void Page::invalidateInjectedStyleSheetCacheInAllFrames()
+{
+    for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+        Document* document = frame->document();
+        if (!document)
+            continue;
+        document->extensionStyleSheets().invalidateInjectedStyleSheetCache();
+        document->styleResolverChanged(DeferRecalcStyle);
+    }
+}
+
 void Page::setDebugger(JSC::Debugger* debugger)
 {
     if (m_debugger == debugger)
@@ -1818,12 +1829,7 @@ void Page::setUserContentController(UserContentController* userContentController
     if (m_userContentController)
         m_userContentController->addPage(*this);
 
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (Document *document = frame->document()) {
-            document->extensionStyleSheets().invalidateInjectedStyleSheetCache();
-            document->styleResolverChanged(DeferRecalcStyle);
-        }
-    }
+    invalidateInjectedStyleSheetCacheInAllFrames();
 }
 
 void Page::setStorageNamespaceProvider(Ref<StorageNamespaceProvider>&& storageNamespaceProvider)
@@ -2006,6 +2012,21 @@ void Page::setResourceUsageOverlayVisible(bool visible)
 bool Page::isAlwaysOnLoggingAllowed() const
 {
     return m_sessionID.isAlwaysOnLoggingAllowed();
+}
+
+String Page::captionUserPreferencesStyleSheet()
+{
+    return m_captionUserPreferencesStyleSheet;
+}
+
+void Page::setCaptionUserPreferencesStyleSheet(const String& styleSheet)
+{
+    if (m_captionUserPreferencesStyleSheet == styleSheet)
+        return;
+
+    m_captionUserPreferencesStyleSheet = styleSheet;
+    
+    invalidateInjectedStyleSheetCacheInAllFrames();
 }
 
 } // namespace WebCore

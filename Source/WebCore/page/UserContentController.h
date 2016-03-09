@@ -103,7 +103,7 @@ public:
 private:
     UserContentController();
 
-    void invalidateInjectedStyleSheetCacheInAllFrames();
+    void invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 
     HashSet<Page*> m_pages;
 

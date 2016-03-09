@@ -298,25 +298,9 @@ void CaptionUserPreferences::setCaptionsStyleSheetOverride(const String& overrid
 
 void CaptionUserPreferences::updateCaptionStyleSheetOveride()
 {
-    // Identify our override style sheet with a unique URL - a new scheme and a UUID.
-    static NeverDestroyed<URL> captionsStyleSheetURL(ParsedURLString, "user-captions-override:01F6AF12-C3B0-4F70-AF5E-A3E00234DC23");
-
-    auto& pages = m_pageGroup.pages();
-    for (auto& page : pages) {
-        if (auto* pageUserContentController = page->userContentController())
-            pageUserContentController->removeUserStyleSheet(mainThreadNormalWorld(), captionsStyleSheetURL);
-    }
-
     String captionsOverrideStyleSheet = captionsStyleSheetOverride();
-    if (captionsOverrideStyleSheet.isEmpty())
-        return;
-
-    for (auto& page : pages) {
-        if (auto* pageUserContentController = page->userContentController()) {
-            auto userStyleSheet = std::make_unique<UserStyleSheet>(captionsOverrideStyleSheet, captionsStyleSheetURL, Vector<String>(), Vector<String>(), InjectInAllFrames, UserStyleAuthorLevel);
-            pageUserContentController->addUserStyleSheet(mainThreadNormalWorld(), WTFMove(userStyleSheet), InjectInExistingDocuments);
-        }
-    }
+    for (auto& page : m_pageGroup.pages())
+        page->setCaptionUserPreferencesStyleSheet(captionsOverrideStyleSheet);
 }
 
 String CaptionUserPreferences::primaryAudioTrackLanguageOverride() const

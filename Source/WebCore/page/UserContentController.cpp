@@ -123,7 +123,7 @@ void UserContentController::addUserStyleSheet(DOMWrapperWorld& world, std::uniqu
     styleSheetsInWorld->append(WTFMove(userStyleSheet));
 
     if (injectionTime == InjectInExistingDocuments)
-        invalidateInjectedStyleSheetCacheInAllFrames();
+        invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
 void UserContentController::removeUserStyleSheet(DOMWrapperWorld& world, const URL& url)
@@ -151,7 +151,7 @@ void UserContentController::removeUserStyleSheet(DOMWrapperWorld& world, const U
     if (stylesheets.isEmpty())
         m_userStyleSheets->remove(it);
 
-    invalidateInjectedStyleSheetCacheInAllFrames();
+    invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
 void UserContentController::removeUserStyleSheets(DOMWrapperWorld& world)
@@ -162,7 +162,7 @@ void UserContentController::removeUserStyleSheets(DOMWrapperWorld& world)
     if (!m_userStyleSheets->remove(&world))
         return;
 
-    invalidateInjectedStyleSheetCacheInAllFrames();
+    invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -249,18 +249,14 @@ void UserContentController::removeAllUserContent()
 
     if (m_userStyleSheets) {
         m_userStyleSheets = nullptr;
-        invalidateInjectedStyleSheetCacheInAllFrames();
+        invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
     }
 }
 
-void UserContentController::invalidateInjectedStyleSheetCacheInAllFrames()
+void UserContentController::invalidateInjectedStyleSheetCacheInAllFramesInAllPages()
 {
-    for (auto& page : m_pages) {
-        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            frame->document()->extensionStyleSheets().invalidateInjectedStyleSheetCache();
-            frame->document()->styleResolverChanged(DeferRecalcStyle);
-        }
-    }
+    for (auto& page : m_pages)
+        page->invalidateInjectedStyleSheetCacheInAllFrames();
 }
 
 } // namespace WebCore
