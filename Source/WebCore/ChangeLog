@@ -1,3 +1,9 @@
+2016-03-09  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac build without video enabled after r197633.
+
+        * bindings/objc/DOM.mm:
+
 2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename Node.treeRoot to rootNode and turn it on by default

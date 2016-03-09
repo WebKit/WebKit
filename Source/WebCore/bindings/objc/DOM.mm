@@ -33,7 +33,6 @@
 #import "DOMElementInternal.h"
 #import "DOMHTMLCanvasElement.h"
 #import "DOMHTMLTableCellElementInternal.h"
-#import "DOMHTMLVideoElement.h"
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import "DOMRangeInternal.h"
@@ -55,6 +54,10 @@
 #import "WebScriptObjectPrivate.h"
 #import <JavaScriptCore/APICast.h>
 #import <wtf/HashMap.h>
+
+#if ENABLE(VIDEO)
+#import "DOMHTMLVideoElement.h"
+#endif
 
 #if PLATFORM(IOS)
 #import "FocusController.h"
