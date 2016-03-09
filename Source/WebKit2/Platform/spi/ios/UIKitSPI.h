@@ -316,6 +316,8 @@ typedef enum {
 
 @interface UITapGestureRecognizer ()
 @property (nonatomic, readonly) CGPoint location;
+@property (nonatomic) CGFloat allowableMovement;
+@property (nonatomic, readonly) CGPoint centroid;
 @end
 
 @class WebEvent;

@@ -1,3 +1,31 @@
+2016-03-09  Enrica Casucci  <enrica@apple.com>
+
+        Add two finger tap on links.
+        https://bugs.webkit.org/show_bug.cgi?id=155205
+        rdar://problem/22937516
+
+        Reviewed by Sam Weinig.
+
+        Adds two finger tap gesture recognizer. When performed
+        on a link, it calls the delegate.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView _twoFingerSingleTapGestureRecognized:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::handleTwoFingerTapAtPoint):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleTwoFingerTapAtPoint):
+
 2016-03-09  Alex Christensen  <achristensen@webkit.org>
 
         Always call NSURLSession completion handlers

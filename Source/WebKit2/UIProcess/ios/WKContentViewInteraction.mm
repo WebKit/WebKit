@@ -486,6 +486,14 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_longPressGestureRecognizer _setRequiresQuietImpulse:YES];
     [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 
+    _twoFingerSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerSingleTapGestureRecognized:)]);
+    [_twoFingerSingleTapGestureRecognizer setAllowableMovement:60];
+    [_twoFingerSingleTapGestureRecognizer setNumberOfTapsRequired:1];
+    [_twoFingerSingleTapGestureRecognizer setNumberOfTouchesRequired:2];
+    [_twoFingerSingleTapGestureRecognizer setDelaysTouchesEnded:NO];
+    [_twoFingerSingleTapGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
+
 #if HAVE(LINK_PREVIEW)
     [self _registerPreview];
 #endif
@@ -546,6 +554,9 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_twoFingerDoubleTapGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
 
+    [_twoFingerSingleTapGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
+
     _inspectorNodeSearchEnabled = NO;
     if (_inspectorNodeSearchGestureRecognizer) {
         [_inspectorNodeSearchGestureRecognizer setDelegate:nil];
@@ -572,6 +583,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self removeGestureRecognizer:_doubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
+    [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 }
 
 - (void)_addDefaultGestureRecognizers
@@ -582,6 +594,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
+    [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 }
 
 - (UIView*)unscaledView
@@ -1291,6 +1304,25 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     default:
         break;
     }
+}
+
+- (void)_twoFingerSingleTapGestureRecognized:(UITapGestureRecognizer *)gestureRecognizer
+{
+    _page->tapHighlightAtPosition(gestureRecognizer.centroid, ++_latestTapID);
+    _isTapHighlightIDValid = YES;
+    RetainPtr<WKContentView> view = self;
+    WKWebView *webView = _webView;
+    _page->handleTwoFingerTapAtPoint(roundedIntPoint(gestureRecognizer.centroid), [view, webView](const String& string, CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None)
+            return;
+        if (!string.isEmpty()) {
+            id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([webView UIDelegate]);
+            if ([uiDelegate respondsToSelector:@selector(_webView:alternateActionForURL:)])
+                [uiDelegate _webView:webView alternateActionForURL:[NSURL _web_URLWithWTFString:string]];
+            [view _finishInteraction];
+        } else
+            [view _cancelInteraction];
+    });
 }
 
 - (void)_longPressRecognized:(UILongPressGestureRecognizer *)gestureRecognizer

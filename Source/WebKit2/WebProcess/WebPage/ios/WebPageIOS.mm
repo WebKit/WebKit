@@ -630,6 +630,17 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
 #endif
 }
 
+void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uint64_t callbackID)
+{
+    FloatPoint adjustedPoint;
+    Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
+    Element* element = (nodeRespondingToClick && is<Element>(*nodeRespondingToClick)) ? downcast<Element>(nodeRespondingToClick) : nullptr;
+    String url;
+    if (element && element->isLink())
+        url = [(NSURL *)element->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element->getAttribute(HTMLNames::hrefAttr))) absoluteString];
+    send(Messages::WebPageProxy::StringCallback(url, callbackID));
+}
+
 void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint& position)
 {
     m_potentialTapNode = m_page->mainFrame().nodeRespondingToClickEvents(position, m_potentialTapLocation);

@@ -519,6 +519,7 @@ public:
     void didFinishDrawingPagesToPDF(const IPC::DataReference&);
     void contentSizeCategoryDidChange(const String& contentSizeCategory);
     void getLookupContextAtPoint(const WebCore::IntPoint&, std::function<void(const String&, CallbackBase::Error)>);
+    void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, std::function<void(const String&, CallbackBase::Error)>);
 #endif
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResult(const DataDetectionResult&);

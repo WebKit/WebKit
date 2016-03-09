@@ -92,6 +92,7 @@ messages -> WebPage LegacyReceiver {
     ExecuteEditCommandWithCallback(String name, uint64_t callbackID)
     GetLookupContextAtPoint(WebCore::IntPoint point, uint64_t callbackID)
     SetAllowsMediaDocumentInlinePlayback(bool allows)
+    HandleTwoFingerTapAtPoint(WebCore::IntPoint point, uint64_t callbackID)
 #endif
 
     SetControlledByAutomation(bool controlled)

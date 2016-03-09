@@ -104,6 +104,7 @@ struct WKAutoCorrectionData {
     RetainPtr<UITapGestureRecognizer> _doubleTapGestureRecognizer;
     RetainPtr<UITapGestureRecognizer> _nonBlockingDoubleTapGestureRecognizer;
     RetainPtr<UITapGestureRecognizer> _twoFingerDoubleTapGestureRecognizer;
+    RetainPtr<UITapGestureRecognizer> _twoFingerSingleTapGestureRecognizer;
     RetainPtr<WKInspectorNodeSearchGestureRecognizer> _inspectorNodeSearchGestureRecognizer;
 
     RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;
