@@ -1078,8 +1078,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case RegExpExec:
     case RegExpTest:
-        read(RegExpState);
-        write(RegExpState);
+        if (node->child1().useKind() == RegExpObjectUse
+            && node->child2().useKind() == StringUse) {
+            read(RegExpState);
+            write(RegExpState);
+            return;
+        }
+        read(World);
+        write(Heap);
         return;
 
     case StringReplace:

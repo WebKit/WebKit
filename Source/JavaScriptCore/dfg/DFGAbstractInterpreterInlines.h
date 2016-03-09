@@ -1554,10 +1554,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
             
     case RegExpExec:
+        if (node->child1().useKind() == RegExpObjectUse
+            && node->child2().useKind() == StringUse) {
+            // This doesn't clobber the world since there are no conversions to perform.
+        } else
+            clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).makeHeapTop();
         break;
 
     case RegExpTest:
+        if (node->child1().useKind() == RegExpObjectUse
+            && node->child2().useKind() == StringUse) {
+            // This doesn't clobber the world since there are no conversions to perform.
+        } else
+            clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(SpecBoolean);
         break;
             

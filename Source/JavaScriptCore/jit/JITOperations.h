@@ -144,6 +144,8 @@ typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EPS)(ExecState*, void*, si
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EPc)(ExecState*, Instruction*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJscC)(ExecState*, JSScope*, JSCell*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJscCJ)(ExecState*, JSScope*, JSCell*, EncodedJSValue);
+typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EReoJ)(ExecState*, RegExpObject*, EncodedJSValue);
+typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EReoJss)(ExecState*, RegExpObject*, JSString*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_ESS)(ExecState*, size_t, size_t);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_ESsiCI)(ExecState*, StructureStubInfo*, JSCell*, UniquedStringImpl*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_ESsiJI)(ExecState*, StructureStubInfo*, EncodedJSValue, UniquedStringImpl*);
@@ -202,6 +204,8 @@ typedef size_t JIT_OPERATION (*S_JITOperation_EGC)(ExecState*, JSGlobalObject*, 
 typedef size_t JIT_OPERATION (*S_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef size_t JIT_OPERATION (*S_JITOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef size_t JIT_OPERATION (*S_JITOperation_EOJss)(ExecState*, JSObject*, JSString*);
+typedef size_t JIT_OPERATION (*S_JITOperation_EReoJ)(ExecState*, RegExpObject*, EncodedJSValue);
+typedef size_t JIT_OPERATION (*S_JITOperation_EReoJss)(ExecState*, RegExpObject*, JSString*);
 typedef size_t JIT_OPERATION (*S_JITOperation_J)(EncodedJSValue);
 typedef SlowPathReturnType JIT_OPERATION (*Sprt_JITOperation_EZ)(ExecState*, int32_t);
 typedef void JIT_OPERATION (*V_JITOperation)();
