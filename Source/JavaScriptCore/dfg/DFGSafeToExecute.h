@@ -332,6 +332,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ForwardVarargs:
     case CopyRest:
     case StringReplace:
+    case GetRegExpObjectLastIndex:
+    case SetRegExpObjectLastIndex:
         return true;
 
     case BottomValue:

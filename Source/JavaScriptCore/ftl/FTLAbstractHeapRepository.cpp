@@ -39,6 +39,7 @@
 #include "JSPropertyNameEnumerator.h"
 #include "JSScope.h"
 #include "JSCInlines.h"
+#include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
 

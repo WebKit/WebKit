@@ -908,6 +908,16 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(AbstractHeap(ScopeProperties, node->scopeOffset().offset()));
         def(HeapLocation(ClosureVariableLoc, AbstractHeap(ScopeProperties, node->scopeOffset().offset()), node->child1()), LazyNode(node->child2().node()));
         return;
+
+    case GetRegExpObjectLastIndex:
+        read(RegExpObject_lastIndex);
+        def(HeapLocation(RegExpObjectLastIndexLoc, RegExpObject_lastIndex, node->child1()), LazyNode(node));
+        return;
+
+    case SetRegExpObjectLastIndex:
+        write(RegExpObject_lastIndex);
+        def(HeapLocation(RegExpObjectLastIndexLoc, RegExpObject_lastIndex, node->child1()), LazyNode(node->child2().node()));
+        return;
         
     case GetFromArguments: {
         AbstractHeap heap(DirectArgumentsProperties, node->capturedArgumentsOffset().offset());

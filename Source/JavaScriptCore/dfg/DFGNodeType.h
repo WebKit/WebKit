@@ -219,6 +219,8 @@ namespace JSC { namespace DFG {
     macro(PutGlobalVariable, NodeMustGenerate) \
     macro(NotifyWrite, NodeMustGenerate) \
     macro(VarInjectionWatchpoint, NodeMustGenerate) \
+    macro(GetRegExpObjectLastIndex, NodeResultJS) \
+    macro(SetRegExpObjectLastIndex, NodeMustGenerate) \
     macro(CheckCell, NodeMustGenerate) \
     macro(CheckNotEmpty, NodeMustGenerate) \
     macro(CheckBadCell, NodeMustGenerate) \

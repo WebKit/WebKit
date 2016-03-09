@@ -77,6 +77,8 @@ namespace JSC { namespace FTL {
     macro(JSSymbolTableObject_symbolTable, JSSymbolTableObject::offsetOfSymbolTable()) \
     macro(JSWrapperObject_internalValue, JSWrapperObject::internalValueOffset()) \
     macro(MarkedAllocator_freeListHead, MarkedAllocator::offsetOfFreeListHead()) \
+    macro(RegExpObject_lastIndex, RegExpObject::offsetOfLastIndex()) \
+    macro(RegExpObject_lastIndexIsWritable, RegExpObject::offsetOfLastIndexIsWritable()) \
     macro(ScopedArguments_overrodeThings, ScopedArguments::offsetOfOverrodeThings()) \
     macro(ScopedArguments_scope, ScopedArguments::offsetOfScope()) \
     macro(ScopedArguments_table, ScopedArguments::offsetOfTable()) \

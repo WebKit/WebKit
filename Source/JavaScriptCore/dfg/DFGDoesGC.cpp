@@ -113,6 +113,8 @@ bool doesGC(Graph& graph, Node* node)
     case SkipScope:
     case GetClosureVar:
     case PutClosureVar:
+    case GetRegExpObjectLastIndex:
+    case SetRegExpObjectLastIndex:
     case GetGlobalVar:
     case GetGlobalLexicalVariable:
     case PutGlobalVariable:

@@ -1072,9 +1072,19 @@ private:
                 && !m_graph.hasExitSite(node->origin.semantic, BadCache)
                 && !m_graph.hasExitSite(node->origin.semantic, BadIndexingType)
                 && !m_graph.hasExitSite(node->origin.semantic, ExoticObjectMode)) {
+                
                 auto uid = m_graph.identifiers()[node->identifierNumber()];
+                
                 if (uid == vm().propertyNames->length.impl()) {
                     attemptToMakeGetArrayLength(node);
+                    break;
+                }
+
+                if (uid == vm().propertyNames->lastIndex.impl()
+                    && node->child1()->shouldSpeculateRegExpObject()) {
+                    node->setOp(GetRegExpObjectLastIndex);
+                    node->clearFlags(NodeMustGenerate);
+                    fixEdge<RegExpObjectUse>(node->child1());
                     break;
                 }
             }
@@ -1087,6 +1097,23 @@ private:
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect: {
+            if (node->child1()->shouldSpeculateCellOrOther()
+                && !m_graph.hasExitSite(node->origin.semantic, BadType)
+                && !m_graph.hasExitSite(node->origin.semantic, BadCache)
+                && !m_graph.hasExitSite(node->origin.semantic, BadIndexingType)
+                && !m_graph.hasExitSite(node->origin.semantic, ExoticObjectMode)) {
+                
+                auto uid = m_graph.identifiers()[node->identifierNumber()];
+                
+                if (uid == vm().propertyNames->lastIndex.impl()
+                    && node->child1()->shouldSpeculateRegExpObject()) {
+                    node->setOp(SetRegExpObjectLastIndex);
+                    fixEdge<RegExpObjectUse>(node->child1());
+                    speculateForBarrier(node->child2());
+                    break;
+                }
+            }
+            
             fixEdge<CellUse>(node->child1());
             break;
         }
@@ -1267,6 +1294,8 @@ private:
         case KillStack:
         case GetStack:
         case StoreBarrier:
+        case GetRegExpObjectLastIndex:
+        case SetRegExpObjectLastIndex:
             // These are just nodes that we don't currently expect to see during fixup.
             // If we ever wanted to insert them prior to fixup, then we just have to create
             // fixup rules for them.
