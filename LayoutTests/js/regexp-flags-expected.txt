@@ -27,6 +27,10 @@ unicode flag
 PASS /a/uimg.flags is 'gimu'
 PASS new RegExp('a', 'uimg').flags is 'gimu'
 PASS flags.call({global: true, multiline: true, ignoreCase: true, unicode: true}) is 'gimu'
+sticky flag
+PASS /a/yimg.flags is 'gimy'
+PASS new RegExp('a', 'yimg').flags is 'gimy'
+PASS flags.call({global: true, multiline: true, ignoreCase: true, sticky: true}) is 'gimy'
 PASS successfullyParsed is true
 
 TEST COMPLETE

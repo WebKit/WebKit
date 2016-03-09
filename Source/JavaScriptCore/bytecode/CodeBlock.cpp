@@ -274,6 +274,10 @@ static CString regexpToSourceString(RegExp* regExp)
         postfix[index++] = 'i';
     if (regExp->multiline())
         postfix[index] = 'm';
+    if (regExp->sticky())
+        postfix[index++] = 'y';
+    if (regExp->unicode())
+        postfix[index++] = 'u';
 
     return toCString("/", regExp->pattern().impl(), postfix);
 }

@@ -1,3 +1,94 @@
+2016-03-09  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Implement RegExp sticky flag and related functionality
+        https://bugs.webkit.org/show_bug.cgi?id=155177
+
+        Reviewed by Saam Barati.
+
+        Implemented the ES6 RegExp sticky functionality.
+
+        There are two main behavior changes when the sticky flag is specified.
+        1) Matching starts at lastIndex and lastIndex is updated after the match.
+        2) The regular expression is only matched from the start position in the string.
+        See ES6 section 21.2.5.2.2 for details.
+
+        Changed both the Yarr interpreter and jit to not loop to the next character for sticky RegExp's.
+        Updated RegExp exec and match, and stringProtoFuncMatch to handle lastIndex changes.
+
+        Restructured the way flags are passed to and through YarrPatterns to use RegExpFlags instead of
+        individual bools.
+
+        Updated tests for 'y' flag and new behavior.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::regexpToSourceString):
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::findMagicComment):
+        * runtime/CommonIdentifiers.h:
+        * runtime/RegExp.cpp:
+        (JSC::regExpFlags):
+        (JSC::RegExpFunctionalTestCollector::outputOneTest):
+        (JSC::RegExp::finishCreation):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/RegExp.h:
+        * runtime/RegExpKey.h:
+        * runtime/RegExpObjectInlines.h:
+        (JSC::RegExpObject::execInline):
+        (JSC::RegExpObject::matchInline):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        (JSC::flagsString):
+        (JSC::regExpProtoGetterMultiline):
+        (JSC::regExpProtoGetterSticky):
+        (JSC::regExpProtoGetterUnicode):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        * tests/es6.yaml:
+        * tests/stress/static-getter-in-names.js:
+        (shouldBe):
+        * yarr/RegularExpression.cpp:
+        (JSC::Yarr::RegularExpression::Private::compile):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::tryConsumeBackReference):
+        (JSC::Yarr::Interpreter::matchAssertionBOL):
+        (JSC::Yarr::Interpreter::matchAssertionEOL):
+        (JSC::Yarr::Interpreter::matchAssertionWordBoundary):
+        (JSC::Yarr::Interpreter::matchDotStarEnclosure):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::Interpreter::Interpreter):
+        (JSC::Yarr::ByteCompiler::atomPatternCharacter):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+        (JSC::Yarr::BytecodePattern::estimatedSizeInBytes):
+        (JSC::Yarr::BytecodePattern::ignoreCase):
+        (JSC::Yarr::BytecodePattern::multiline):
+        (JSC::Yarr::BytecodePattern::sticky):
+        (JSC::Yarr::BytecodePattern::unicode):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::matchCharacterClass):
+        (JSC::Yarr::YarrGenerator::jumpIfCharNotEquals):
+        (JSC::Yarr::YarrGenerator::generateAssertionBOL):
+        (JSC::Yarr::YarrGenerator::generateAssertionEOL):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::generateDotStarEnclosure):
+        (JSC::Yarr::YarrGenerator::backtrack):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::YarrPatternConstructor):
+        (JSC::Yarr::YarrPatternConstructor::atomPatternCharacter):
+        (JSC::Yarr::YarrPatternConstructor::setupAlternativeOffsets):
+        (JSC::Yarr::YarrPatternConstructor::optimizeBOL):
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::reset):
+        (JSC::Yarr::YarrPattern::nonwordcharCharacterClass):
+        (JSC::Yarr::YarrPattern::ignoreCase):
+        (JSC::Yarr::YarrPattern::multiline):
+        (JSC::Yarr::YarrPattern::sticky):
+        (JSC::Yarr::YarrPattern::unicode):
+
 2016-03-09  Mark Lam  <mark.lam@apple.com>
 
         FunctionExecutable::ecmaName() should not be based on inferredName().

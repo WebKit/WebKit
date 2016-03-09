@@ -33,11 +33,7 @@ shouldBe("/a/uimg.flags", "'gimu'");
 shouldBe("new RegExp('a', 'uimg').flags", "'gimu'");
 shouldBe("flags.call({global: true, multiline: true, ignoreCase: true, unicode: true})", "'gimu'");
 
-if (RegExp.prototype.hasOwnProperty('sticky')) {
-  debug("sticky flag");
-  // when the engine supports "sticky", these tests will fail by design.
-  // Hopefully, only the expected output will need updating.
-  shouldBe("/a/yimg.flags", "'gimy'");
-  shouldBe("new RegExp('a', 'yimg').flags", "'gimy'");
-  shouldBe("flags.call({global: true, multiline: true, ignoreCase: true, sticky: true})", "'gimy'");
-}
+debug("sticky flag");
+shouldBe("/a/yimg.flags", "'gimy'");
+shouldBe("new RegExp('a', 'yimg').flags", "'gimy'");
+shouldBe("flags.call({global: true, multiline: true, ignoreCase: true, sticky: true})", "'gimy'");

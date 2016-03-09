@@ -339,9 +339,7 @@ struct BytecodePattern {
 public:
     BytecodePattern(std::unique_ptr<ByteDisjunction> body, Vector<std::unique_ptr<ByteDisjunction>>& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator)
         : m_body(WTFMove(body))
-        , m_ignoreCase(pattern.m_ignoreCase)
-        , m_multiline(pattern.m_multiline)
-        , m_unicode(pattern.m_unicode)
+        , m_flags(pattern.m_flags)
         , m_allocator(allocator)
     {
         m_body->terms.shrinkToFit();
@@ -357,11 +355,14 @@ public:
     }
 
     size_t estimatedSizeInBytes() const { return m_body->estimatedSizeInBytes(); }
+    
+    bool ignoreCase() const { return m_flags & FlagIgnoreCase; }
+    bool multiline() const { return m_flags & FlagMultiline; }
+    bool sticky() const { return m_flags & FlagSticky; }
+    bool unicode() const { return m_flags & FlagUnicode; }
 
     std::unique_ptr<ByteDisjunction> m_body;
-    bool m_ignoreCase;
-    bool m_multiline;
-    bool m_unicode;
+    RegExpFlags m_flags;
     // Each BytecodePattern is associated with a RegExp, each RegExp is associated
     // with a VM.  Cache a pointer to out VM's m_regExpAllocator.
     BumpPointerAllocator* m_allocator;

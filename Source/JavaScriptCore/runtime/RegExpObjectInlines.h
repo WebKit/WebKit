@@ -63,10 +63,10 @@ JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalObject, 
     String input = string->value(exec); // FIXME: Handle errors. https://bugs.webkit.org/show_bug.cgi?id=155145
     VM& vm = globalObject->vm();
 
-    bool global = regExp->global();
+    bool globalOrSticky = regExp->global() || regExp->sticky();
 
     unsigned lastIndex;
-    if (global) {
+    if (globalOrSticky) {
         lastIndex = getRegExpObjectLastIndexAsUnsigned(exec, this, input);
         if (lastIndex == UINT_MAX)
             return jsNull();
@@ -77,11 +77,12 @@ JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalObject, 
     JSArray* array =
         createRegExpMatchesArray(vm, globalObject, string, input, regExp, lastIndex, result);
     if (!array) {
-        if (global)
+        if (globalOrSticky)
             setLastIndex(exec, 0);
         return jsNull();
     }
-    if (global)
+
+    if (globalOrSticky)
         setLastIndex(exec, result.end);
     regExpConstructor->recordMatch(vm, regExp, string, result);
     return array;
@@ -95,7 +96,7 @@ MatchResult RegExpObject::matchInline(
     RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
     String input = string->value(exec); // FIXME: Handle errors. https://bugs.webkit.org/show_bug.cgi?id=155145
     VM& vm = globalObject->vm();
-    if (!regExp->global())
+    if (!regExp->global() && !regExp->sticky())
         return regExpConstructor->performMatch(vm, regExp, string, input, 0);
 
     unsigned lastIndex = getRegExpObjectLastIndexAsUnsigned(exec, this, input);

@@ -65,6 +65,12 @@ RegExpFlags regExpFlags(const String& string)
             flags = static_cast<RegExpFlags>(flags | FlagUnicode);
             break;
                 
+        case 'y':
+            if (flags & FlagSticky)
+                return InvalidFlags;
+            flags = static_cast<RegExpFlags>(flags | FlagSticky);
+            break;
+
         default:
             return InvalidFlags;
         }
@@ -98,6 +104,8 @@ void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, const String& 
             fputc('i', m_file);
         if (regExp->multiline())
             fputc('m', m_file);
+        if (regExp->sticky())
+            fputc('y', m_file);
         if (regExp->unicode())
             fputc('u', m_file);
         fprintf(m_file, "\n");
@@ -214,7 +222,7 @@ RegExp::RegExp(VM& vm, const String& patternString, RegExpFlags flags)
 void RegExp::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    Yarr::YarrPattern pattern(m_patternString, ignoreCase(), multiline(), unicode(), &m_constructionError);
+    Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError);
     if (m_constructionError)
         m_state = ParseError;
     else
@@ -254,7 +262,7 @@ RegExp* RegExp::create(VM& vm, const String& patternString, RegExpFlags flags)
 
 void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 {
-    Yarr::YarrPattern pattern(m_patternString, ignoreCase(), multiline(), unicode(), &m_constructionError);
+    Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError);
     if (m_constructionError) {
         RELEASE_ASSERT_NOT_REACHED();
 #if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
@@ -293,7 +301,7 @@ int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int, 32>
 
 void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 {
-    Yarr::YarrPattern pattern(m_patternString, ignoreCase(), multiline(), unicode(), &m_constructionError);
+    Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError);
     if (m_constructionError) {
         RELEASE_ASSERT_NOT_REACHED();
 #if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)

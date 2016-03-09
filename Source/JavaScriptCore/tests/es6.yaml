@@ -991,7 +991,7 @@
 - path: es6/Proxy_internal_get_calls_Promise_resolve_functions.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_RegExp.prototype.flags.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_RegExp.prototype.test.js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.match].js
@@ -1095,9 +1095,9 @@
 - path: es6/RegExp_y_and_u_flags_u_flag_Unicode_code_point_escapes.js
   cmd: runES6 :normal
 - path: es6/RegExp_y_and_u_flags_y_flag.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/RegExp_y_and_u_flags_y_flag_lastIndex.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/rest_parameters_arguments_object_interaction.js
   cmd: runES6 :normal
 - path: es6/rest_parameters_basic_functionality.js

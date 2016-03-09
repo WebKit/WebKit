@@ -1,3 +1,24 @@
+2016-03-09  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Implement RegExp sticky flag and related functionality
+        https://bugs.webkit.org/show_bug.cgi?id=155177
+
+        Reviewed by Saam Barati.
+
+        New and updated tests.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/regexp-flags-expected.txt:
+        * js/regexp-sticky-expected.txt: Added.
+        * js/regexp-sticky.html: Added.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/regexp-flags.js:
+        (RegExp.prototype.hasOwnProperty): Deleted check for sticky property.
+        * js/script-tests/regexp-sticky.js: New test.
+        (asString):
+        (testStickyExec):
+        (testStickyMatch):
+
 2016-03-09  Mark Lam  <mark.lam@apple.com>
 
         FunctionExecutable::ecmaName() should not be based on inferredName().

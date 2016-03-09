@@ -197,6 +197,7 @@
     macro(sourceCode) \
     macro(sourceURL) \
     macro(stack) \
+    macro(sticky) \
     macro(subarray) \
     macro(target) \
     macro(test) \

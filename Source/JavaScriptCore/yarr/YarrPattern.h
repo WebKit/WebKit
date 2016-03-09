@@ -27,6 +27,7 @@
 #ifndef YarrPattern_h
 #define YarrPattern_h
 
+#include "RegExpKey.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -299,8 +300,9 @@ struct TermChain {
     Vector<TermChain> hotTerms;
 };
 
+
 struct YarrPattern {
-    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, bool ignoreCase, bool multiline, bool unicode, const char** error);
+    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, RegExpFlags flags, const char** error);
 
     void reset()
     {
@@ -390,12 +392,15 @@ struct YarrPattern {
         return nonwordcharCached;
     }
 
-    bool m_ignoreCase : 1;
-    bool m_multiline : 1;
-    bool m_unicode : 1;
+    bool ignoreCase() const { return m_flags & FlagIgnoreCase; }
+    bool multiline() const { return m_flags & FlagMultiline; }
+    bool sticky() const { return m_flags & FlagSticky; }
+    bool unicode() const { return m_flags & FlagUnicode; }
+
     bool m_containsBackreferences : 1;
     bool m_containsBOL : 1;
     bool m_containsUnsignedLengthPattern : 1; 
+    RegExpFlags m_flags;
     unsigned m_numSubpatterns;
     unsigned m_maxBackReference;
     PatternDisjunction* m_body;

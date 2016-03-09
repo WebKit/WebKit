@@ -376,7 +376,7 @@ public:
             if (oldCh == ch)
                 continue;
 
-            if (pattern->m_ignoreCase) {
+            if (pattern->ignoreCase()) {
                 // See ES 6.0, 21.2.2.8.2 for the definition of Canonicalize(). For non-Unicode
                 // patterns, Unicode values are never allowed to match against ASCII ones.
                 // For Unicode, we need to check all canonical equivalents of a character.
@@ -396,15 +396,15 @@ public:
 
     bool matchAssertionBOL(ByteTerm& term)
     {
-        return (input.atStart(term.inputPosition)) || (pattern->m_multiline && testCharacterClass(pattern->newlineCharacterClass, input.readChecked(term.inputPosition + 1)));
+        return (input.atStart(term.inputPosition)) || (pattern->multiline() && testCharacterClass(pattern->newlineCharacterClass, input.readChecked(term.inputPosition + 1)));
     }
 
     bool matchAssertionEOL(ByteTerm& term)
     {
         if (term.inputPosition)
-            return (input.atEnd(term.inputPosition)) || (pattern->m_multiline && testCharacterClass(pattern->newlineCharacterClass, input.readChecked(term.inputPosition)));
+            return (input.atEnd(term.inputPosition)) || (pattern->multiline() && testCharacterClass(pattern->newlineCharacterClass, input.readChecked(term.inputPosition)));
 
-        return (input.atEnd()) || (pattern->m_multiline && testCharacterClass(pattern->newlineCharacterClass, input.read()));
+        return (input.atEnd()) || (pattern->multiline() && testCharacterClass(pattern->newlineCharacterClass, input.read()));
     }
 
     bool matchAssertionWordBoundary(ByteTerm& term)
@@ -1153,7 +1153,7 @@ public:
 
         if (((matchBegin && term.anchors.m_bol)
              || ((matchEnd != input.end()) && term.anchors.m_eol))
-            && !pattern->m_multiline)
+            && !pattern->multiline())
             return false;
 
         context->matchBegin = matchBegin;
@@ -1387,7 +1387,7 @@ public:
             if (offset > 0)
                 MATCH_NEXT();
 
-            if (input.atEnd())
+            if (input.atEnd() || pattern->sticky())
                 return JSRegExpNoMatch;
 
             input.next();
@@ -1541,9 +1541,9 @@ public:
 
     Interpreter(BytecodePattern* pattern, unsigned* output, const CharType* input, unsigned length, unsigned start)
         : pattern(pattern)
-        , unicode(pattern->m_unicode)
+        , unicode(pattern->unicode())
         , output(output)
-        , input(input, start, length, pattern->m_unicode)
+        , input(input, start, length, pattern->unicode())
         , allocatorPool(0)
         , remainingMatchCount(matchLimit)
     {
@@ -1612,7 +1612,7 @@ public:
 
     void atomPatternCharacter(UChar32 ch, unsigned inputPosition, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
     {
-        if (m_pattern.m_ignoreCase) {
+        if (m_pattern.ignoreCase()) {
             UChar32 lo = u_tolower(ch);
             UChar32 hi = u_toupper(ch);
 

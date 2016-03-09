@@ -276,7 +276,7 @@ class YarrPatternConstructor {
 public:
     YarrPatternConstructor(YarrPattern& pattern)
         : m_pattern(pattern)
-        , m_characterClassConstructor(pattern.m_ignoreCase, pattern.m_unicode ? CanonicalMode::Unicode : CanonicalMode::UCS2)
+        , m_characterClassConstructor(pattern.ignoreCase(), pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
         , m_invertParentheticalAssertion(false)
     {
         auto body = std::make_unique<PatternDisjunction>();
@@ -322,12 +322,12 @@ public:
     {
         // We handle case-insensitive checking of unicode characters which do have both
         // cases by handling them as if they were defined using a CharacterClass.
-        if (!m_pattern.m_ignoreCase || (isASCII(ch) && !m_pattern.m_unicode)) {
+        if (!m_pattern.ignoreCase() || (isASCII(ch) && !m_pattern.unicode())) {
             m_alternative->m_terms.append(PatternTerm(ch));
             return;
         }
 
-        const CanonicalizationRange* info = canonicalRangeInfoFor(ch, m_pattern.m_unicode ? CanonicalMode::Unicode : CanonicalMode::UCS2);
+        const CanonicalizationRange* info = canonicalRangeInfoFor(ch, m_pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2);
         if (info->type == CanonicalizeUnique) {
             m_alternative->m_terms.append(PatternTerm(ch));
             return;
@@ -601,7 +601,7 @@ public:
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoPatternCharacter;
                     alternative->m_hasFixedSize = false;
-                } else if (m_pattern.m_unicode) {
+                } else if (m_pattern.unicode()) {
                     currentInputPosition += U16_LENGTH(term.patternCharacter) * term.quantityCount;
                 } else
                     currentInputPosition += term.quantityCount;
@@ -613,7 +613,7 @@ public:
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoCharacterClass;
                     alternative->m_hasFixedSize = false;
-                } else if (m_pattern.m_unicode) {
+                } else if (m_pattern.unicode()) {
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoCharacterClass;
                     currentInputPosition += term.quantityCount;
@@ -733,7 +733,7 @@ public:
         // At this point, this is only valid for non-multiline expressions.
         PatternDisjunction* disjunction = m_pattern.m_body;
         
-        if (!m_pattern.m_containsBOL || m_pattern.m_multiline)
+        if (!m_pattern.m_containsBOL || m_pattern.multiline())
             return;
         
         PatternDisjunction* loopDisjunction = copyDisjunction(disjunction, true);
@@ -844,7 +844,7 @@ const char* YarrPattern::compile(const String& patternString)
 {
     YarrPatternConstructor constructor(*this);
 
-    if (const char* error = parse(constructor, patternString, m_unicode))
+    if (const char* error = parse(constructor, patternString, unicode()))
         return error;
     
     // If the pattern contains illegal backreferences reset & reparse.
@@ -858,7 +858,7 @@ const char* YarrPattern::compile(const String& patternString)
 #if !ASSERT_DISABLED
         const char* error =
 #endif
-            parse(constructor, patternString, m_unicode, numSubpatterns);
+            parse(constructor, patternString, unicode(), numSubpatterns);
 
         ASSERT(!error);
         ASSERT(numSubpatterns == m_numSubpatterns);
@@ -873,13 +873,11 @@ const char* YarrPattern::compile(const String& patternString)
     return 0;
 }
 
-YarrPattern::YarrPattern(const String& pattern, bool ignoreCase, bool multiline, bool unicode, const char** error)
-    : m_ignoreCase(ignoreCase)
-    , m_multiline(multiline)
-    , m_unicode(unicode)
-    , m_containsBackreferences(false)
+YarrPattern::YarrPattern(const String& pattern, RegExpFlags flags, const char** error)
+    : m_containsBackreferences(false)
     , m_containsBOL(false)
     , m_containsUnsignedLengthPattern(false)
+    , m_flags(flags)
     , m_numSubpatterns(0)
     , m_maxBackReference(0)
     , newlineCached(0)

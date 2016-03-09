@@ -1,0 +1,42 @@
+Test for ES6 sticky flag regular expression processing
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Repeating Pattern
+PASS Test lastIndex resets
+PASS Ignore Case
+PASS Alternates
+PASS BOL Anchored, starting at 0
+PASS BOL Anchored, starting at 1
+PASS EOL Anchored, not at EOL
+PASS EOL Anchored, at EOL
+PASS Lookahead Assertion
+PASS Lookahead Negative Assertion
+PASS Subpatterns - exec
+PASS Subpatterns - match
+PASS Fixed Count
+PASS Greedy
+PASS Non-greedy
+PASS Greedy/Non-greedy
+PASS Counted Range
+PASS Character Classes
+PASS Unmatched Greedy
+PASS Global Flag - exec
+PASS Global Flag - match
+PASS Unicode Flag - Any Character
+PASS Unicode & Ignore Case Flags
+PASS Multiline
+PASS Multiline with BOL Anchor
+PASS "123 1234 ".search(re) is 0
+PASS "123 1234 ".search(re) is 0
+PASS " 123 1234 ".search(re) is -1
+PASS re.test("123 1234 ") is true
+PASS re.lastIndex is 4
+PASS re.test("123 1234 ") is true
+PASS re.lastIndex is 9
+PASS re.test("123 1234 ") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
