@@ -19,7 +19,7 @@
     },
     "iOS EWS": {
         "port": "ios",
-        "architecture": "armv7"
+        "architecture": "armv7s"
     },
     "iOS Simulator EWS": {
         "port": "ios-simulator-wk2",

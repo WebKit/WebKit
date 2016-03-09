@@ -47,7 +47,7 @@ class IOSPort(ApplePort):
     port_name = "ios"
 
     ARCHITECTURES = ['armv7', 'armv7s', 'arm64']
-    DEFAULT_ARCHITECTURE = 'armv7'
+    DEFAULT_ARCHITECTURE = 'arm64'
     VERSION_FALLBACK_ORDER = ['ios-7', 'ios-8', 'ios-9']
 
     @classmethod

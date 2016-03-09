@@ -1,5 +1,24 @@
 2016-03-09  Alexey Proskuryakov  <ap@apple.com>
 
+        Stop building armv7 on iOS device builders
+        https://bugs.webkit.org/show_bug.cgi?id=155246
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Building both armv7 and
+        armv7s makes the bots unnecessarily slow. We can catch super rare v7-only regressions
+        elsewhere.
+
+        * Scripts/webkitpy/common/config/ews.json: Changed EWS to match, as we always want
+        EWS configuration to be verified by buildbot queues.
+
+        * Scripts/webkitdirs.pm:
+        * Scripts/webkitpy/port/ios.py:
+        Changed default to arm64. I think that the default is probably not used in any
+        practical scenarios, but it's nice to make it more sensible.
+
+2016-03-09  Alexey Proskuryakov  <ap@apple.com>
+
         Add iOS Simulator EWS to bot watcher's dashboard
         https://bugs.webkit.org/show_bug.cgi?id=155220
 

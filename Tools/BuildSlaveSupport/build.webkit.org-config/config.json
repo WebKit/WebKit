@@ -208,7 +208,7 @@
                     },
                     {
                       "name": "Apple iOS 9 Release (Build)", "type": "Build", "builddir": "ios-9-release",
-                      "platform": "ios-9", "configuration": "release", "architectures": ["armv7", "armv7s", "arm64"],
+                      "platform": "ios-9", "configuration": "release", "architectures": ["armv7s", "arm64"],
                       "slavenames": ["bot407"]
                     },
                     {
