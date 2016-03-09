@@ -1,5 +1,14 @@
 2016-03-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skipping js/regress/getter-richards-try-catch.html on ios-simulator debug
+        https://bugs.webkit.org/show_bug.cgi?id=155271
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-03-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skip two flaky tests on mac-wk1
         https://bugs.webkit.org/show_bug.cgi?id=155196
 
