@@ -255,6 +255,9 @@ fast/text/all-small-caps-whitespace.html [ Skip ]
 # <attachment> support is currently half-baked
 fast/attachment [ Skip ]
 
+# This test relies on EventSender.keydown(), which is not supported on iOS
+webkit.org/b/155233 fast/events/max-tabindex-focus.html [ Skip ]
+
 ###
 # Known failures
 ##
