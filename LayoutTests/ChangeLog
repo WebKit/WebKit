@@ -1,3 +1,12 @@
+2016-03-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Move two indexeddb test skips out of wk2/TestExpectations and in to TestExpectations.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2016-03-08  Mark Lam  <mark.lam@apple.com>
 
         Implement Function.name support for getters/setters and inferring name of function properties.

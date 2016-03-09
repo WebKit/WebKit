@@ -574,11 +574,6 @@ http/tests/security/feed-urls-from-remote.html
 # First two lines are reversed when test is flaky.
 fast/preloader/document-write-2.html [ Pass Failure ]
 
-# These two IDB tests are, by their nature, very slow.
-# Give them some extra time. (Why only for WebKit 2?)
-webkit.org/b/155028 storage/indexeddb/modern/256-open-databases.html [ Skip ]
-storage/indexeddb/modern/exceed-open-file-limit.html [ Skip ]
-
 ### END OF (3) Unclassified failures
 ########################################
 

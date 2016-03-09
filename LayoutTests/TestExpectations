@@ -960,5 +960,10 @@ storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 # Inspector doesn't support modern IDB yet
 webkit.org/b/154686 inspector/indexeddb/requestDatabaseNames.html [ Skip ]
 
+# These two IDB tests are, by their nature, very slow
+# Skip these until we have a fix for webkit.org/b/155041
+storage/indexeddb/modern/exceed-open-file-limit.html [ Skip ]
+webkit.org/b/155028 storage/indexeddb/modern/256-open-databases.html [ Skip ]
+
 ### END OF IndexedDB failures
 ########################################
