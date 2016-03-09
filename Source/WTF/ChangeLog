@@ -1,3 +1,15 @@
+2016-03-08  Oliver Hunt  <oliver@apple.com>
+
+        Start moving to separated writable and executable mappings in the JIT
+        https://bugs.webkit.org/show_bug.cgi?id=155178
+
+        Reviewed by Fil Pizlo.
+
+        Update feature defines.
+
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h: ARM64 for now.
+
 2016-03-08  Anders Carlsson  <andersca@apple.com>
 
         Add AppKit compatibility header

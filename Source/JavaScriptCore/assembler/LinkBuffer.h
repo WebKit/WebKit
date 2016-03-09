@@ -95,19 +95,19 @@ public:
         linkCode(macroAssembler, ownerUID, effort);
     }
 
-    LinkBuffer(VM& vm, MacroAssembler& macroAssembler, void* code, size_t size)
+    LinkBuffer(MacroAssembler& macroAssembler, void* code, size_t size, JITCompilationEffort effort = JITCompilationMustSucceed)
         : m_size(size)
 #if ENABLE(BRANCH_COMPACTION)
         , m_initialSize(0)
 #endif
         , m_didAllocate(false)
         , m_code(code)
-        , m_vm(&vm)
+        , m_vm(0)
 #ifndef NDEBUG
         , m_completed(false)
 #endif
     {
-        linkCode(macroAssembler, 0, JITCompilationCanFail);
+        linkCode(macroAssembler, 0, effort);
     }
 
     ~LinkBuffer()

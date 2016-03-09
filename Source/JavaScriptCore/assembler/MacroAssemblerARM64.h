@@ -761,6 +761,11 @@ public:
     {
         m_assembler.sub<64>(dest, dest, src);
     }
+
+    void sub64(RegisterID a, RegisterID b, RegisterID dest)
+    {
+        m_assembler.sub<64>(dest, a, b);
+    }
     
     void sub64(TrustedImm32 imm, RegisterID dest)
     {
@@ -960,6 +965,11 @@ public:
         load<64>(address, dest);
     }
 
+    void load64(RegisterID src, PostIndex simm, RegisterID dest)
+    {
+        m_assembler.ldr<64>(dest, src, simm);
+    }
+
     DataLabel32 load64WithAddressOffsetPatch(Address address, RegisterID dest)
     {
         DataLabel32 label(this);
@@ -974,6 +984,26 @@ public:
         DataLabelCompact label(this);
         m_assembler.ldr<64>(dest, address.base, address.offset);
         return label;
+    }
+
+    void loadPair64(RegisterID src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair64(src, TrustedImm32(0), dest1, dest2);
+    }
+
+    void loadPair64(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldp<64>(dest1, dest2, src, offset.m_value);
+    }
+
+    void loadPair64WithNonTemporalAccess(RegisterID src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair64WithNonTemporalAccess(src, TrustedImm32(0), dest1, dest2);
+    }
+
+    void loadPair64WithNonTemporalAccess(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldnp<64>(dest1, dest2, src, offset.m_value);
     }
 
     void abortWithReason(AbortReason reason)
@@ -1129,6 +1159,11 @@ public:
             cachedMemoryTempRegister().invalidate();
     }
 
+    void load8(RegisterID src, PostIndex simm, RegisterID dest)
+    {
+        m_assembler.ldr<8>(dest, src, simm);
+    }
+
     void load8SignedExtendTo32(ImplicitAddress address, RegisterID dest)
     {
         if (tryLoadSignedWithOffset<8>(dest, address.base, address.offset))
@@ -1212,6 +1247,11 @@ public:
         moveToCachedReg(imm, dataMemoryTempRegister());
         store64(dataTempRegister, address);
     }
+
+    void store64(RegisterID src, RegisterID dest, PostIndex simm)
+    {
+        m_assembler.str<64>(src, dest, simm);
+    }
     
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
@@ -1219,6 +1259,26 @@ public:
         signExtend32ToPtrWithFixedWidth(address.offset, getCachedMemoryTempRegisterIDAndInvalidate());
         m_assembler.str<64>(src, address.base, memoryTempRegister, ARM64Assembler::SXTW, 0);
         return label;
+    }
+
+    void storePair64(RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        storePair64(src1, src2, dest, TrustedImm32(0));
+    }
+
+    void storePair64(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
+    {
+        m_assembler.stp<64>(src1, src2, dest, offset.m_value);
+    }
+
+    void storePair64WithNonTemporalAccess(RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        storePair64WithNonTemporalAccess(src1, src2, dest, TrustedImm32(0));
+    }
+
+    void storePair64WithNonTemporalAccess(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
+    {
+        m_assembler.stnp<64>(src1, src2, dest, offset.m_value);
     }
 
     void store32(RegisterID src, ImplicitAddress address)
@@ -1366,6 +1426,11 @@ public:
 
         move(imm, getCachedDataTempRegisterIDAndInvalidate());
         store8(dataTempRegister, address);
+    }
+
+    void store8(RegisterID src, RegisterID dest, PostIndex simm)
+    {
+        m_assembler.str<8>(src, dest, simm);
     }
 
     // Floating-point operations:
@@ -2586,6 +2651,13 @@ public:
         return branchAdd64(cond, dest, imm, dest);
     }
 
+    Jump branchAdd64(RelationalCondition cond, TrustedImm32 imm, RegisterID dest)
+    {
+        ASSERT(isUInt12(imm.m_value));
+        m_assembler.add<64, S>(dest, dest, UInt12(imm.m_value));
+        return Jump(makeBranch(cond));
+    }
+
     Jump branchMul32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID scratch1, RegisterID scratch2, RegisterID dest)
     {
         ASSERT(cond != Signed);
@@ -2729,6 +2801,13 @@ public:
     Jump branchSub64(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
         return branchSub64(cond, dest, imm, dest);
+    }
+
+    Jump branchSub64(RelationalCondition cond, TrustedImm32 imm, RegisterID dest)
+    {
+        ASSERT(isUInt12(imm.m_value));
+        m_assembler.sub<64, S>(dest, dest, UInt12(imm.m_value));
+        return Jump(makeBranch(cond));
     }
 
 

@@ -1088,6 +1088,20 @@ public:
     }
 
     template<int datasize>
+    ALWAYS_INLINE void ldp(RegisterID rt, RegisterID rt2, RegisterID rn, unsigned pimm = 0)
+    {
+        CHECK_DATASIZE();
+        insn(loadStoreRegisterPairOffset(MEMPAIROPSIZE_INT(datasize), false, MemOp_LOAD, pimm, rn, rt, rt2));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void ldnp(RegisterID rt, RegisterID rt2, RegisterID rn, unsigned pimm = 0)
+    {
+        CHECK_DATASIZE();
+        insn(loadStoreRegisterPairNonTemporal(MEMPAIROPSIZE_INT(datasize), false, MemOp_LOAD, pimm, rn, rt, rt2));
+    }
+
+    template<int datasize>
     ALWAYS_INLINE void ldr(RegisterID rt, RegisterID rn, RegisterID rm)
     {
         ldr<datasize>(rt, rn, rm, UXTX, 0);
@@ -1474,8 +1488,10 @@ public:
     {
         RELEASE_ASSERT(!(size % sizeof(int32_t)));
         size_t n = size / sizeof(int32_t);
-        for (int32_t* ptr = static_cast<int32_t*>(base); n--;)
-            *ptr++ = nopPseudo();
+        for (int32_t* ptr = static_cast<int32_t*>(base); n--;) {
+            int insn = nopPseudo();
+            performJITMemcpy(ptr++, &insn, sizeof(int));
+        }
     }
     
     ALWAYS_INLINE void dmbSY()
@@ -1643,6 +1659,20 @@ public:
     {
         CHECK_DATASIZE();
         insn(loadStoreRegisterPairPreIndex(MEMPAIROPSIZE_INT(datasize), false, MemOp_STORE, simm, rn, rt, rt2));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void stp(RegisterID rt, RegisterID rt2, RegisterID rn, unsigned pimm = 0)
+    {
+        CHECK_DATASIZE();
+        insn(loadStoreRegisterPairOffset(MEMPAIROPSIZE_INT(datasize), false, MemOp_STORE, pimm, rn, rt, rt2));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void stnp(RegisterID rt, RegisterID rt2, RegisterID rn, unsigned pimm = 0)
+    {
+        CHECK_DATASIZE();
+        insn(loadStoreRegisterPairNonTemporal(MEMPAIROPSIZE_INT(datasize), false, MemOp_STORE, pimm, rn, rt, rt2));
     }
 
     template<int datasize>
@@ -2470,7 +2500,8 @@ public:
     {
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(where)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
-        *static_cast<int*>(where) = unconditionalBranchImmediate(false, static_cast<int>(offset));
+        int insn = unconditionalBranchImmediate(false, static_cast<int>(offset));
+        performJITMemcpy(where, &insn, sizeof(int));
         cacheFlush(where, sizeof(int));
     }
     
@@ -2494,7 +2525,8 @@ public:
             ASSERT(!S);
             ASSERT(!shift);
             ASSERT(!(imm12 & ~0xff8));
-            *static_cast<int*>(where) = loadStoreRegisterUnsignedImmediate(MemOpSize_64, false, MemOp_LOAD, encodePositiveImmediate<64>(imm12), rn, rd);
+            int insn = loadStoreRegisterUnsignedImmediate(MemOpSize_64, false, MemOp_LOAD, encodePositiveImmediate<64>(imm12), rn, rd);
+            performJITMemcpy(where, &insn, sizeof(int));
             cacheFlush(where, sizeof(int));
         }
 #if !ASSERT_DISABLED
@@ -2527,7 +2559,8 @@ public:
             ASSERT(!V);
             ASSERT(opc == MemOp_LOAD);
             ASSERT(!(imm12 & ~0x1ff));
-            *static_cast<int*>(where) = addSubtractImmediate(Datasize_64, AddOp_ADD, DontSetFlags, 0, imm12 * sizeof(void*), rn, rt);
+            int insn = addSubtractImmediate(Datasize_64, AddOp_ADD, DontSetFlags, 0, imm12 * sizeof(void*), rn, rt);
+            performJITMemcpy(where, &insn, sizeof(int));
             cacheFlush(where, sizeof(int));
         }
 #if !ASSERT_DISABLED
@@ -2557,9 +2590,11 @@ public:
     static void setPointer(int* address, void* valuePtr, RegisterID rd, bool flush)
     {
         uintptr_t value = reinterpret_cast<uintptr_t>(valuePtr);
-        address[0] = moveWideImediate(Datasize_64, MoveWideOp_Z, 0, getHalfword(value, 0), rd);
-        address[1] = moveWideImediate(Datasize_64, MoveWideOp_K, 1, getHalfword(value, 1), rd);
-        address[2] = moveWideImediate(Datasize_64, MoveWideOp_K, 2, getHalfword(value, 2), rd);
+        int buffer[3];
+        buffer[0] = moveWideImediate(Datasize_64, MoveWideOp_Z, 0, getHalfword(value, 0), rd);
+        buffer[1] = moveWideImediate(Datasize_64, MoveWideOp_K, 1, getHalfword(value, 1), rd);
+        buffer[2] = moveWideImediate(Datasize_64, MoveWideOp_K, 2, getHalfword(value, 2), rd);
+        performJITMemcpy(address, buffer, sizeof(int) * 3);
 
         if (flush)
             cacheFlush(address, sizeof(int) * 3);
@@ -2578,13 +2613,15 @@ public:
         ASSERT_UNUSED(expected, expected && !sf && (opc == MoveWideOp_Z || opc == MoveWideOp_N) && !hw);
         ASSERT(checkMovk<Datasize_32>(address[1], 1, rd));
 
+        int buffer[2];
         if (value >= 0) {
-            address[0] = moveWideImediate(Datasize_32, MoveWideOp_Z, 0, getHalfword(value, 0), rd);
-            address[1] = moveWideImediate(Datasize_32, MoveWideOp_K, 1, getHalfword(value, 1), rd);
+            buffer[0] = moveWideImediate(Datasize_32, MoveWideOp_Z, 0, getHalfword(value, 0), rd);
+            buffer[1] = moveWideImediate(Datasize_32, MoveWideOp_K, 1, getHalfword(value, 1), rd);
         } else {
-            address[0] = moveWideImediate(Datasize_32, MoveWideOp_N, 0, ~getHalfword(value, 0), rd);
-            address[1] = moveWideImediate(Datasize_32, MoveWideOp_K, 1, getHalfword(value, 1), rd);
+            buffer[0] = moveWideImediate(Datasize_32, MoveWideOp_N, 0, ~getHalfword(value, 0), rd);
+            buffer[1] = moveWideImediate(Datasize_32, MoveWideOp_K, 1, getHalfword(value, 1), rd);
         }
+        performJITMemcpy(where, &buffer, sizeof(int) * 2);
 
         cacheFlush(where, sizeof(int) * 2);
     }
@@ -2648,7 +2685,8 @@ public:
             imm12 = encodePositiveImmediate<32>(value);
         else
             imm12 = encodePositiveImmediate<64>(value);
-        *static_cast<int*>(where) = loadStoreRegisterUnsignedImmediate(size, V, opc, imm12, rn, rt);
+        int insn = loadStoreRegisterUnsignedImmediate(size, V, opc, imm12, rn, rt);
+        performJITMemcpy(where, &insn, sizeof(int));
 
         cacheFlush(where, sizeof(int));
     }
@@ -2845,7 +2883,8 @@ private:
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(from)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
 
-        *from = unconditionalBranchImmediate(isCall, static_cast<int>(offset));
+        int insn = unconditionalBranchImmediate(isCall, static_cast<int>(offset));
+        performJITMemcpy(from, &insn, sizeof(int));
     }
 
     template<bool isDirect>
@@ -2860,11 +2899,15 @@ private:
         ASSERT(!isDirect || useDirect);
 
         if (useDirect || isDirect) {
-            *from = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, condition == ConditionNE, static_cast<int>(offset), rt);
-            if (!isDirect)
-                *(from + 1) = nopPseudo();
+            int insn = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, condition == ConditionNE, static_cast<int>(offset), rt);
+            performJITMemcpy(from, &insn, sizeof(int));
+            if (!isDirect) {
+                insn = nopPseudo();
+                performJITMemcpy(from + 1, &insn, sizeof(int));
+            }
         } else {
-            *from = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, invert(condition) == ConditionNE, 2, rt);
+            int insn = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, invert(condition) == ConditionNE, 2, rt);
+            performJITMemcpy(from, &insn, sizeof(int));
             linkJumpOrCall<false>(from + 1, to);
         }
     }
@@ -2881,11 +2924,15 @@ private:
         ASSERT(!isDirect || useDirect);
 
         if (useDirect || isDirect) {
-            *from = conditionalBranchImmediate(static_cast<int>(offset), condition);
-            if (!isDirect)
-                *(from + 1) = nopPseudo();
+            int insn = conditionalBranchImmediate(static_cast<int>(offset), condition);
+            performJITMemcpy(from, &insn, sizeof(int));
+            if (!isDirect) {
+                insn = nopPseudo();
+                performJITMemcpy(from + 1, &insn, sizeof(int));
+            }
         } else {
-            *from = conditionalBranchImmediate(2, invert(condition));
+            int insn = conditionalBranchImmediate(2, invert(condition));
+            performJITMemcpy(from, &insn, sizeof(int));
             linkJumpOrCall<false>(from + 1, to);
         }
     }
@@ -2903,11 +2950,15 @@ private:
         ASSERT(!isDirect || useDirect);
 
         if (useDirect || isDirect) {
-            *from = testAndBranchImmediate(condition == ConditionNE, static_cast<int>(bitNumber), static_cast<int>(offset), rt);
-            if (!isDirect)
-                *(from + 1) = nopPseudo();
+            int insn = testAndBranchImmediate(condition == ConditionNE, static_cast<int>(bitNumber), static_cast<int>(offset), rt);
+            performJITMemcpy(from, &insn, sizeof(int));
+            if (!isDirect) {
+                insn = nopPseudo();
+                performJITMemcpy(from + 1, &insn, sizeof(int));
+            }
         } else {
-            *from = testAndBranchImmediate(invert(condition) == ConditionNE, static_cast<int>(bitNumber), 2, rt);
+            int insn = testAndBranchImmediate(invert(condition) == ConditionNE, static_cast<int>(bitNumber), 2, rt);
+            performJITMemcpy(from, &insn, sizeof(int));
             linkJumpOrCall<false>(from + 1, to);
         }
     }
@@ -3346,6 +3397,40 @@ private:
     ALWAYS_INLINE static int loadStoreRegisterPairPreIndex(MemPairOpSize size, bool V, MemOp opc, int immediate, RegisterID rn, RegisterID rt, RegisterID rt2)
     {
         return loadStoreRegisterPairPreIndex(size, V, opc, immediate, rn, xOrZrAsFPR(rt), xOrZrAsFPR(rt2));
+    }
+
+    // 'V' means vector
+    ALWAYS_INLINE static int loadStoreRegisterPairOffset(MemPairOpSize size, bool V, MemOp opc, int immediate, RegisterID rn, FPRegisterID rt, FPRegisterID rt2)
+    {
+        ASSERT(size < 3);
+        ASSERT(opc == (opc & 1)); // Only load or store, load signed 64 is handled via size.
+        ASSERT(V || (size != MemPairOp_LoadSigned_32) || (opc == MemOp_LOAD)); // There isn't an integer store signed.
+        unsigned immedShiftAmount = memPairOffsetShift(V, size);
+        int imm7 = immediate >> immedShiftAmount;
+        ASSERT((imm7 << immedShiftAmount) == immediate && isInt7(imm7));
+        return (0x29000000 | size << 30 | V << 26 | opc << 22 | (imm7 & 0x7f) << 15 | rt2 << 10 | xOrSp(rn) << 5 | rt);
+    }
+
+    ALWAYS_INLINE static int loadStoreRegisterPairOffset(MemPairOpSize size, bool V, MemOp opc, int immediate, RegisterID rn, RegisterID rt, RegisterID rt2)
+    {
+        return loadStoreRegisterPairOffset(size, V, opc, immediate, rn, xOrZrAsFPR(rt), xOrZrAsFPR(rt2));
+    }
+
+    // 'V' means vector
+    ALWAYS_INLINE static int loadStoreRegisterPairNonTemporal(MemPairOpSize size, bool V, MemOp opc, int immediate, RegisterID rn, FPRegisterID rt, FPRegisterID rt2)
+    {
+        ASSERT(size < 3);
+        ASSERT(opc == (opc & 1)); // Only load or store, load signed 64 is handled via size.
+        ASSERT(V || (size != MemPairOp_LoadSigned_32) || (opc == MemOp_LOAD)); // There isn't an integer store signed.
+        unsigned immedShiftAmount = memPairOffsetShift(V, size);
+        int imm7 = immediate >> immedShiftAmount;
+        ASSERT((imm7 << immedShiftAmount) == immediate && isInt7(imm7));
+        return (0x28000000 | size << 30 | V << 26 | opc << 22 | (imm7 & 0x7f) << 15 | rt2 << 10 | xOrSp(rn) << 5 | rt);
+    }
+
+    ALWAYS_INLINE static int loadStoreRegisterPairNonTemporal(MemPairOpSize size, bool V, MemOp opc, int immediate, RegisterID rn, RegisterID rt, RegisterID rt2)
+    {
+        return loadStoreRegisterPairNonTemporal(size, V, opc, immediate, rn, xOrZrAsFPR(rt), xOrZrAsFPR(rt2));
     }
 
     // 'V' means vector

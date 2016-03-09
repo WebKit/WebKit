@@ -1138,4 +1138,8 @@
 #define USE_OS_LOG 1
 #endif
 
+#if !CPU(ARM64) && defined(ENABLE_SEPARATED_WX_HEAP)
+#undef ENABLE_SEPARATED_WX_HEAP
+#endif
+
 #endif /* WTF_Platform_h */
