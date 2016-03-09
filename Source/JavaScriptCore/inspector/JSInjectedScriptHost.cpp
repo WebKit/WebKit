@@ -203,7 +203,7 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     JSObject* result = constructEmptyObject(exec);
     result->putDirect(exec->vm(), Identifier::fromString(exec, "location"), location);
 
-    String name = function->name(exec);
+    String name = function->name();
     if (!name.isEmpty())
         result->putDirect(exec->vm(), Identifier::fromString(exec, "name"), jsString(exec, name));
 

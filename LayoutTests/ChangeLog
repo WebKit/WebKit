@@ -1,3 +1,14 @@
+2016-03-08  Mark Lam  <mark.lam@apple.com>
+
+        Implement Function.name support for getters/setters and inferring name of function properties.
+        https://bugs.webkit.org/show_bug.cgi?id=154865
+
+        Reviewed by Geoffrey Garen.
+
+        * js/function-toString-vs-name-expected.txt: Added.
+        * js/function-toString-vs-name.html: Added.
+        * js/script-tests/function-toString-vs-name.js: Added.
+
 2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font size computed style is innaccurate

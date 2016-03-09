@@ -791,7 +791,7 @@
 - path: es6/Function_is_subclassable_Function.prototype.call.js
   cmd: runES6 :normal
 - path: es6/function_name_property_accessor_properties.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/function_name_property_bound_functions.js
   cmd: runES6 :normal
 - path: es6/function_name_property_class_expressions.js
@@ -811,7 +811,7 @@
 - path: es6/function_name_property_variables_class.js
   cmd: runES6 :fail
 - path: es6/function_name_property_variables_function.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/generators_%GeneratorPrototype%.constructor.js
   cmd: runES6 :normal
 - path: es6/generators_%GeneratorPrototype%.js

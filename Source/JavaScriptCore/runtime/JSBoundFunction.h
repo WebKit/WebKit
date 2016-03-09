@@ -40,7 +40,7 @@ public:
     typedef JSFunction Base;
     const static unsigned StructureFlags = ~ImplementsDefaultHasInstance & Base::StructureFlags;
 
-    static JSBoundFunction* create(VM&, ExecState*, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const String&);
+    static JSBoundFunction* create(VM&, ExecState*, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const String& name);
     
     static bool customHasInstance(JSObject*, ExecState*, JSValue);
 
@@ -48,9 +48,7 @@ public:
     JSValue boundThis() { return m_boundThis.get(); }
     JSValue boundArgs() { return m_boundArgs.get(); }
 
-    String toStringName(ExecState*);
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         ASSERT(globalObject);
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info()); 
@@ -64,7 +62,7 @@ protected:
 private:
     JSBoundFunction(VM&, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs);
     
-    void finishCreation(VM&, NativeExecutable*, int, const String&);
+    void finishCreation(VM&, NativeExecutable*, int length, const String& name);
 
     WriteBarrier<JSObject> m_targetFunction;
     WriteBarrier<Unknown> m_boundThis;

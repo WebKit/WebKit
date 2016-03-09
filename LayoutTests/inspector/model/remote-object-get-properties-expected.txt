@@ -220,7 +220,7 @@ ALL PROPERTIES:
 -----------------------------------------------------
 EXPRESSION: window.boundFunction
 type: function
-description: function () {
+description: function unboundFunction() {
     [native code]
 }
 

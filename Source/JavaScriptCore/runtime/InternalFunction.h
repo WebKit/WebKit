@@ -38,6 +38,8 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
+
     JS_EXPORT_PRIVATE const String& name(ExecState*);
     const String displayName(ExecState*);
     const String calculatedDisplayName(ExecState*);
@@ -55,6 +57,7 @@ protected:
     JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name);
 
     static CallType getCallData(JSCell*, CallData&);
+    WriteBarrier<JSString> m_originalName;
 };
 
 InternalFunction* asInternalFunction(JSValue);

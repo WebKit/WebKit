@@ -44,12 +44,25 @@ void InternalFunction::finishCreation(VM& vm, const String& name)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     ASSERT(methodTable()->getCallData != InternalFunction::info()->methodTable.getCallData);
-    putDirect(vm, vm.propertyNames->name, jsString(&vm, name), DontDelete | ReadOnly | DontEnum);
+    JSString* nameString = jsString(&vm, name);
+    m_originalName.set(vm, this, nameString);
+    putDirect(vm, vm.propertyNames->name, nameString, ReadOnly | DontEnum);
 }
 
-const String& InternalFunction::name(ExecState* exec)
+void InternalFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    return asString(getDirect(exec->vm(), exec->vm().propertyNames->name))->tryGetValue();
+    InternalFunction* thisObject = jsCast<InternalFunction*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    
+    visitor.append(&thisObject->m_originalName);
+}
+
+const String& InternalFunction::name(ExecState*)
+{
+    const String& name = m_originalName->tryGetValue();
+    ASSERT(name); // m_originalName was built from a String, and hence, there is no rope to resolve.
+    return name;
 }
 
 const String InternalFunction::displayName(ExecState* exec)

@@ -50,7 +50,7 @@ EncodedJSValue JSC_HOST_CALL boundSlotBaseFunctionCall(ExecState* exec)
     if (!getter)
         return JSValue::encode(jsUndefined());
 
-    const String& name = boundSlotBaseFunction->name(exec);
+    const String& name = boundSlotBaseFunction->name();
     return getter(exec, JSValue::encode(exec->thisValue()), PropertyName(Identifier::fromString(exec, name)));
 }
 
@@ -67,7 +67,8 @@ JSBoundSlotBaseFunction* JSBoundSlotBaseFunction::create(VM& vm, JSGlobalObject*
     JSBoundSlotBaseFunction* function = new (NotNull, allocateCell<JSBoundSlotBaseFunction>(vm.heap)) JSBoundSlotBaseFunction(vm, globalObject, globalObject->boundSlotBaseFunctionStructure(), type);
 
     // Can't do this during initialization because getHostFunction might do a GC allocation.
-    function->finishCreation(vm, executable, boundSlotBase, getterSetter, name);
+    String prefix = (type == Type::Getter) ? "get " : "set ";
+    function->finishCreation(vm, executable, boundSlotBase, getterSetter, makeString(prefix, name));
     return function;
 }
 

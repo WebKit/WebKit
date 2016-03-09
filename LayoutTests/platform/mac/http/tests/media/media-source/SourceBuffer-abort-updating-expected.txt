@@ -4,7 +4,7 @@ assert_unreached@http://127.0.0.1:8000/w3c/resources/testharness.js:1056:16
 http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-updating.html:33:29
 step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
 isTypeSupported@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-updating.html:32:18
-bound isTypeSupported@[native code]
+isTypeSupported@[native code]
 http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-updating.html:42:36
 step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
 async_test@http://127.0.0.1:8000/w3c/resources/testharness.js:460:26

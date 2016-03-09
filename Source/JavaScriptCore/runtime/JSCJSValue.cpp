@@ -207,6 +207,7 @@ void JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSVa
     if (prototype->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow))
         return;
     
+    if (shouldThrow && !exec->hadException())
     if (shouldThrow)
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
 }

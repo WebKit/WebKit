@@ -8,7 +8,7 @@ FAIL Test setting SourceBuffer.mode and SourceBuffer.timestampOffset while parsi
 assert_throws@http://127.0.0.1:8000/w3c/resources/testharness.js:947:19
 http://127.0.0.1:8000/media/media-source/mediasource-sourcebuffer-mode.html:114:32
 handleWaitCallback_@http://127.0.0.1:8000/media/media-source/mediasource-util.js:97:17
-bound @[native code]
+handleWaitCallback_@[native code]
 step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
 http://127.0.0.1:8000/w3c/resources/testharness.js:1189:33)
 

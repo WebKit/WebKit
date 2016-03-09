@@ -1,3 +1,92 @@
+2016-03-08  Mark Lam  <mark.lam@apple.com>
+
+        Implement Function.name support for getters/setters and inferring name of function properties.
+        https://bugs.webkit.org/show_bug.cgi?id=154865
+
+        Reviewed by Geoffrey Garen.
+
+        1. toString() no longer uses the value of Function.name as the name of the
+           function in the returned string, because ...
+
+            i. Function.name is supposed to be configurable.  Hence, it can be made
+               writable and can be set to any JSValue, or deleted.
+           ii. Function.prototype.toString() is supposed to produce a string that can be
+               eval'ed.  Hence, for JS functions, the function name in the produced
+               string must be a legal function name (and not some arbitrary value set in
+               Function.name).  For example, while a number is a legal value for
+               Function.name, it is not legal as the function name in the toString()
+               string.
+
+           Instead, we'll always use the original name from the JS source that the
+           function was parsed from.
+
+        2. JSFunction::name() now always return the original name, not the value of
+           the Function.name property.  As a result, it also no longer needs an
+           ExecState* arg.
+
+           If the original name is an empty string, JSFunction::name() will use the
+           inferred name.
+
+        3. For JS functions, the original name can be attained from their
+           FunctionExecutable object.
+
+           For host/native functions (which do not have a FunctionExecutable), we get the
+           "original" name from its NativeExecutable.
+
+        4. The m_hostFunctionStubMap now keys its NativeExecutable pointers using the
+           original name, in addition to the native function and constructor pointers.
+
+           This is needed because we want a different NativeExecutable for functions with
+           a different name (to satisfy (3) above).
+
+        5. Changed JSBoundFunction to store the name of its bound function in its
+           NativeExecutable.  This will later be used to generate the toString() string.
+           It's Function.name value is eagerly initialized at construction time.
+
+        6. Function.name for getters/setters are now prefixed with "get"/"set".
+           This was done both for the JSBoundSlotBaseFunctions and JS definable get/set
+           functions.
+
+        7. Added InternalFunction::m_originalName so that we can use it to generate the
+           toString() string.  We're storing it as a JSString instead of a WTF::String
+           only because we want InternalFunction to be continue to be trivially
+           destructible.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::functionDetails):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::finalize):
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITThunks.h:
+        * runtime/Executable.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        (JSC::InternalFunction::visitChildren):
+        (JSC::InternalFunction::name):
+        (JSC::InternalFunction::displayName):
+        * runtime/InternalFunction.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create):
+        (JSC::JSBoundFunction::visitChildren):
+        (JSC::JSBoundFunction::toStringName): Deleted.
+        * runtime/JSBoundFunction.h:
+        (JSC::JSBoundFunction::boundThis):
+        (JSC::JSBoundFunction::boundArgs):
+        (JSC::JSBoundFunction::createStructure):
+        * runtime/JSBoundSlotBaseFunction.cpp:
+        (JSC::boundSlotBaseFunctionCall):
+        (JSC::JSBoundSlotBaseFunction::create):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::initializeRareData):
+        (JSC::JSFunction::name):
+        (JSC::JSFunction::displayName):
+        (JSC::JSFunction::calculatedDisplayName):
+        (JSC::JSFunction::reifyName):
+        * runtime/JSFunction.h:
+        * tests/es6.yaml:
+
 2016-03-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197793 and r197799.
