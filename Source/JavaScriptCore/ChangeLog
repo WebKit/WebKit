@@ -1,3 +1,23 @@
+2016-03-09  Mark Lam  <mark.lam@apple.com>
+
+        Add dumping of function expression names in CodeBlock bytecode dump.
+        https://bugs.webkit.org/show_bug.cgi?id=155248
+
+        Reviewed by Filip Pizlo.
+
+        Because ...
+        [  19] new_func_exp      loc5, loc3, f0:foo
+
+        ... is more informative than
+        [  19] new_func_exp      loc5, loc3, f0
+
+        Anonymous functions will be dumped as <anon>.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpFunctionExpr):
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/CodeBlock.h:
+
 2016-03-09  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Implement RegExp sticky flag and related functionality

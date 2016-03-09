@@ -958,6 +958,7 @@ private:
         m_constantRegisters[index - FirstConstantRegisterIndex].set(m_globalObject->vm(), this, value);
     }
 
+    void dumpFunctionExpr(PrintStream&, int funcExprIndex);
     void dumpBytecode(
         PrintStream&, ExecState*, const Instruction* begin, const Instruction*&,
         const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
