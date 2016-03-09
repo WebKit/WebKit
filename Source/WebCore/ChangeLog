@@ -1,3 +1,26 @@
+2016-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Move attributes to the instance for most interfaces that have "Error" in their name
+        https://bugs.webkit.org/show_bug.cgi?id=155231
+
+        Reviewed by Darin Adler.
+
+        Our bindings generator was keeping attributes on the instances for
+        interfaces having "Error" or "Exception" in their name. The reason is
+        that interfaces that have "Error" in their prototype would not behave
+        correctly otherwise because "Error" incorrectly has its attributes on
+        the instance at the moment. However, in our bindings generator, the
+        condition to decide if an interface's prototype should be "Error" is
+        if $interface->isException. Therefore, we should use the same condition
+        to decide if we should keep attributes on the instance until "Error"
+        is updated to have its attributes on the prototype. Doing this for any
+        interface having "Error" or "Exception" in their name is overkill.
+
+        No new tests, already covered by existing test.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InterfaceRequiresAttributesOnInstance):
+
 2016-03-09  Daniel Bates  <dabates@apple.com>
 
         Rename WebCore/platform/crypto/mac/CryptoDigestMac.cpp to WebCore/platform/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp

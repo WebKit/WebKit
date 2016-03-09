@@ -673,9 +673,8 @@ sub InterfaceRequiresAttributesOnInstance
     # Some of them are unavoidable due to DOM weirdness, in which case we should
     # add an IDL attribute for them
 
-    # FIXME: These two should be fixed by removing the custom override of message, etc
-    return 1 if $interfaceName =~ "Exception";
-    return 1 if $interfaceName =~ "Error";
+    # FIXME: We should be able to drop this once <rdar://problem/24466097> is fixed.
+    return 1 if $interface->isException;
 
     return 1 if IsDOMGlobalObject($interface);
 

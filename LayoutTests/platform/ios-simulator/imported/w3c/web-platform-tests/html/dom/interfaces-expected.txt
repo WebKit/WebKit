@@ -2177,14 +2177,14 @@ PASS MediaError interface: constant MEDIA_ERR_DECODE on interface object
 PASS MediaError interface: constant MEDIA_ERR_DECODE on interface prototype object 
 PASS MediaError interface: constant MEDIA_ERR_SRC_NOT_SUPPORTED on interface object 
 PASS MediaError interface: constant MEDIA_ERR_SRC_NOT_SUPPORTED on interface prototype object 
-FAIL MediaError interface: attribute code assert_true: The prototype object must have a property "code" expected true got false
+PASS MediaError interface: attribute code 
 PASS MediaError must be primary interface of errorVideo.error 
 PASS Stringification of errorVideo.error 
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_ABORTED" with the proper type (0) 
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_NETWORK" with the proper type (1) 
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_DECODE" with the proper type (2) 
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_SRC_NOT_SUPPORTED" with the proper type (3) 
-FAIL MediaError interface: errorVideo.error must inherit property "code" with the proper type (4) assert_inherits: property "code" found on object expected in prototype chain
+PASS MediaError interface: errorVideo.error must inherit property "code" with the proper type (4) 
 PASS AudioTrackList interface: existence and properties of interface object 
 PASS AudioTrackList interface object length 
 PASS AudioTrackList interface object name 
@@ -4253,10 +4253,10 @@ PASS ErrorEvent interface object length
 PASS ErrorEvent interface object name 
 PASS ErrorEvent interface: existence and properties of interface prototype object 
 PASS ErrorEvent interface: existence and properties of interface prototype object's "constructor" property 
-FAIL ErrorEvent interface: attribute message assert_true: The prototype object must have a property "message" expected true got false
-FAIL ErrorEvent interface: attribute filename assert_true: The prototype object must have a property "filename" expected true got false
-FAIL ErrorEvent interface: attribute lineno assert_true: The prototype object must have a property "lineno" expected true got false
-FAIL ErrorEvent interface: attribute colno assert_true: The prototype object must have a property "colno" expected true got false
+PASS ErrorEvent interface: attribute message 
+PASS ErrorEvent interface: attribute filename 
+PASS ErrorEvent interface: attribute lineno 
+PASS ErrorEvent interface: attribute colno 
 FAIL ErrorEvent interface: attribute error assert_true: The prototype object must have a property "error" expected true got false
 PASS Navigator interface: existence and properties of interface object 
 PASS Navigator interface object length 
