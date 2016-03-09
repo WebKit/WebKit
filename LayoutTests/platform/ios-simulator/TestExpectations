@@ -603,11 +603,6 @@ ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 
 # html-templates tests that time-out:
-imported/w3c/html-templates/additions-to-serializing-xhtml-documents/outerhtml.html
-imported/w3c/html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001.html
-imported/w3c/html-templates/additions-to-the-steps-to-clone-a-node/template-clone-children.html
-imported/w3c/html-templates/definitions/template-contents-owner-document-type.html
-imported/w3c/html-templates/innerhtml-on-templates/innerhtml.html
 imported/w3c/html-templates/parsing-html-templates/additions-to-foster-parenting/template-is-a-foster-parent-element.html
 imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/generating-of-implied-end-tags.html
 imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-body-token.html
@@ -2548,7 +2543,6 @@ platform/ios-simulator/ios/scrolling/scrolling-content-clip-to-viewport.html [ F
 platform/ios-simulator/ios/scrolling/textarea-scroll-touch.html [ Failure ]
 platform/ios-simulator/ios/scrolling/touch-stacking.html [ Failure ]
 platform/ios-simulator/ios/touch [ Skip ]
-fast/events/ios/focused-input-should-assist-on-touch.html [ Skip ]
 
 # image inputs get rounded corners on iOS
 fast/css/object-position/object-position-input-image.html [ ImageOnlyFailure ]
@@ -2828,7 +2822,6 @@ imported/blink/fast/events/popup-forwarded-gesture.html [ Skip ]
 imported/blink/fast/forms/select/listbox-line-height.html [ ImageOnlyFailure Pass ]
 imported/blink/fast/forms/select/select-text-transform.html [ ImageOnlyFailure Pass ]
 imported/blink/fast/images/image-hover-display-alt.html [ ImageOnlyFailure Pass ]
-imported/blink/fast/images/image-hover-display-alt.html [ Pass Timeout ]
 imported/blink/fast/inline/reparent-inline-box.html [ Pass Timeout ]
 imported/blink/fast/multicol/client-rects-rtl.html [ ImageOnlyFailure Pass ]
 imported/blink/fast/multicol/composited-layer-single-fragment.html [ ImageOnlyFailure Pass ]

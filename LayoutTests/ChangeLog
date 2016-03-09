@@ -1,5 +1,14 @@
 2016-03-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cleaning up TestExpectations files to remove deleted tests and duplicate entries for ios-simulator.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
+2016-03-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skipping fast/events/max-tabindex-focus.html on ios-simulator
         https://bugs.webkit.org/show_bug.cgi?id=155233
 

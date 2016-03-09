@@ -931,9 +931,6 @@ storage/indexeddb/transaction-complete-workers-private.html
 storage/indexeddb/transaction-complete-workers.html
 storage/indexeddb/unprefix-workers.html
 
-# Need a different way to get database names to the web inspector
-inspector/indexeddb/requestDatabaseNames.html
-
 # Test's behavior specific to Legacy IDB with LevelDB backend
 # Modern IDB is spec-compliant without supporting this behavior
 storage/indexeddb/transaction-starvation.html [ Skip ]
