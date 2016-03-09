@@ -1,5 +1,26 @@
 2016-03-09  Chris Dumez  <cdumez@apple.com>
 
+        focus() / blur() should be on HTMLElement / SVGElement, not Element
+        https://bugs.webkit.org/show_bug.cgi?id=155216
+
+        Reviewed by Darin Adler.
+
+        focus() / blur() should be on HTMLElement / SVGElement, not Element:
+        - https://html.spec.whatwg.org/multipage/dom.html#htmlelement
+        - https://www.w3.org/TR/SVG2/types.html#InterfaceSVGElement
+
+        Chrome and Firefox match the specification.
+
+        Note that after this change, focus() / blur() is no longer exposed
+        on MathMLElement. This matches the MathML specification and is
+        consistent with Firefox and Chrome.
+
+        * dom/Element.idl:
+        * html/HTMLElement.idl:
+        * svg/SVGElement.idl:
+
+2016-03-09  Chris Dumez  <cdumez@apple.com>
+
         Move attributes to the instance for most interfaces that have "Error" in their name
         https://bugs.webkit.org/show_bug.cgi?id=155231
 

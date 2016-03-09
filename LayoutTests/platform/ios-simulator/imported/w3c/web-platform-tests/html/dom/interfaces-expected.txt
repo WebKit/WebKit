@@ -869,8 +869,8 @@ FAIL HTMLElement interface: attribute itemValue assert_true: The prototype objec
 PASS HTMLElement interface: attribute hidden 
 PASS HTMLElement interface: operation click() 
 PASS HTMLElement interface: attribute tabIndex 
-FAIL HTMLElement interface: operation focus() assert_own_property: interface prototype object missing non-static operation expected property "focus" missing
-FAIL HTMLElement interface: operation blur() assert_own_property: interface prototype object missing non-static operation expected property "blur" missing
+PASS HTMLElement interface: operation focus() 
+PASS HTMLElement interface: operation blur() 
 PASS HTMLElement interface: attribute accessKey 
 FAIL HTMLElement interface: attribute accessKeyLabel assert_true: The prototype object must have a property "accessKeyLabel" expected true got false
 PASS HTMLElement interface: attribute draggable 

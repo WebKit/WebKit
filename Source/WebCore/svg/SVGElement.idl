@@ -39,5 +39,10 @@
     attribute long tabIndex;
 
     CSSValue getPresentationAttribute([Default=Undefined] optional DOMString name);
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    void focus();
+    void blur();
+#endif
 };
 

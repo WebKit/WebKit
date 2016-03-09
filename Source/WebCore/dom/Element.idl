@@ -105,8 +105,11 @@
 
     [ImplementedAs=bindingsOffsetParent] readonly attribute Element offsetParent;
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     void focus();
     void blur();
+#endif
+
     void scrollIntoView(optional boolean alignWithTop);
 
     // WebKit extensions
@@ -123,7 +126,7 @@
 #endif
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString innerHTML;
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString outerHTML;
-             
+
 
     [Reflect=class] attribute DOMString className;
     [PutForwards=value] readonly attribute DOMTokenList classList;

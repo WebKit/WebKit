@@ -69,5 +69,10 @@
 #endif
 
     void click();
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    void focus();
+    void blur();
+#endif
 };
 
