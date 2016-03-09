@@ -1,3 +1,35 @@
+2016-03-09  Mark Lam  <mark.lam@apple.com>
+
+        FunctionExecutable::ecmaName() should not be based on inferredName().
+        https://bugs.webkit.org/show_bug.cgi?id=155203
+
+        Reviewed by Michael Saboff.
+
+        The ES6 rules for how a function name should be inferred closely matches JSC's
+        implementation with one exception:
+            var o = {}
+            o.foo = function() {}
+
+        JSC's inferredName for o.foo would be "foo".
+        ES6 specifies that o.foo.name is "".
+
+        The fix is to add a distinct FunctionExecutable::ecmaName() which applies the ES6
+        rules for inferring the initial value of Function.name.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createAssignResolve):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createProperty):
+        (JSC::ASTBuilder::makeAssignNode):
+        * parser/Nodes.h:
+        * runtime/Executable.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::reifyName):
+        * tests/es6.yaml:
+
 2016-03-09  Michael Saboff  <msaboff@apple.com>
 
         Harden JSC Root element functions from bad values

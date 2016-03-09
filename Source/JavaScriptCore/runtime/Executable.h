@@ -668,10 +668,8 @@ public:
     DerivedContextType derivedContextType() const { return m_unlinkedExecutable->derivedContextType(); }
     bool isClassConstructorFunction() const { return m_unlinkedExecutable->isClassConstructorFunction(); }
     const Identifier& name() { return m_unlinkedExecutable->name(); }
+    const Identifier& ecmaName() { return m_unlinkedExecutable->ecmaName(); }
     const Identifier& inferredName() { return m_unlinkedExecutable->inferredName(); }
-    // FIXME: ecmaName() needs to be reimplement to be based on ES6 rules of determining the inferred
-    // Function.name from non-computed names. https://bugs.webkit.org/show_bug.cgi?id=155203
-    const Identifier& ecmaName() { return inferredName(); }
     size_t parameterCount() const { return m_unlinkedExecutable->parameterCount(); } // Excluding 'this'!
     SourceParseMode parseMode() const { return m_unlinkedExecutable->parseMode(); }
 

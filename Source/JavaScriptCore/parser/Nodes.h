@@ -1841,6 +1841,8 @@ namespace JSC {
         
         void overrideName(const Identifier& ident) { m_ident = ident; }
         const Identifier& ident() { return m_ident; }
+        void setEcmaName(const Identifier& ecmaName) { ASSERT(!ecmaName.isNull()); m_ecmaName = ecmaName; }
+        const Identifier& ecmaName() { return m_ident.isEmpty() ? m_ecmaName : m_ident; }
         void setInferredName(const Identifier& inferredName) { ASSERT(!inferredName.isNull()); m_inferredName = inferredName; }
         const Identifier& inferredName() { return m_inferredName.isEmpty() ? m_ident : m_inferredName; }
 
@@ -1874,6 +1876,7 @@ namespace JSC {
 
     protected:
         Identifier m_ident;
+        Identifier m_ecmaName;
         Identifier m_inferredName;
         FunctionMode m_functionMode;
         unsigned m_startColumn;

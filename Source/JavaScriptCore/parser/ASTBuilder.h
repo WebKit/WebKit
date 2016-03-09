@@ -341,8 +341,11 @@ public:
 
     ExpressionNode* createAssignResolve(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* rhs, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end, AssignmentContext assignmentContext)
     {
-        if (rhs->isFuncExprNode() || rhs->isArrowFuncExprNode())
-            static_cast<FuncExprNode*>(rhs)->metadata()->setInferredName(ident);
+        if (rhs->isFuncExprNode() || rhs->isArrowFuncExprNode()) {
+            auto metadata = static_cast<FuncExprNode*>(rhs)->metadata();
+            metadata->setEcmaName(ident);
+            metadata->setInferredName(ident);
+        }
         AssignResolveNode* node = new (m_parserArena) AssignResolveNode(location, ident, rhs, assignmentContext);
         setExceptionLocation(node, start, divot, end);
         return node;
@@ -400,6 +403,7 @@ public:
     {
         ASSERT(name);
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
+        functionInfo.body->setEcmaName(*name);
         functionInfo.body->setInferredName(*name);
         SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
         FuncExprNode* funcExpr = new (m_parserArena) FuncExprNode(location, m_vm->propertyNames->nullIdentifier, functionInfo.body, source);
@@ -433,8 +437,11 @@ public:
 
     PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool, SuperBinding superBinding = SuperBinding::NotNeeded)
     {
-        if (node->isFuncExprNode())
-            static_cast<FuncExprNode*>(node)->metadata()->setInferredName(*propertyName);
+        if (node->isFuncExprNode()) {
+            auto metadata = static_cast<FuncExprNode*>(node)->metadata();
+            metadata->setEcmaName(*propertyName);
+            metadata->setInferredName(*propertyName);
+        }
         return new (m_parserArena) PropertyNode(*propertyName, node, type, putType, superBinding);
     }
     PropertyNode* createProperty(VM* vm, ParserArena& parserArena, double propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool)
@@ -1290,8 +1297,11 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
         if (op == OpEqual) {
-            if (expr->isFuncExprNode())
-                static_cast<FuncExprNode*>(expr)->metadata()->setInferredName(resolve->identifier());
+            if (expr->isFuncExprNode()) {
+                auto metadata = static_cast<FuncExprNode*>(expr)->metadata();
+                metadata->setEcmaName(resolve->identifier());
+                metadata->setInferredName(resolve->identifier());
+            }
             AssignResolveNode* node = new (m_parserArena) AssignResolveNode(location, resolve->identifier(), expr, AssignmentContext::AssignmentExpression);
             setExceptionLocation(node, start, divot, end);
             return node;
@@ -1309,8 +1319,11 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
     ASSERT(loc->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(loc);
     if (op == OpEqual) {
-        if (expr->isFuncExprNode())
+        if (expr->isFuncExprNode()) {
+            // We don't also set the ecma name here because ES6 specifies that the
+            // function should not pick up the name of the dot->identifier().
             static_cast<FuncExprNode*>(expr)->metadata()->setInferredName(dot->identifier());
+        }
         return new (m_parserArena) AssignDotNode(location, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), start, end);
     }
 

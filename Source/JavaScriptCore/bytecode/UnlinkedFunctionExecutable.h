@@ -75,6 +75,7 @@ public:
     }
 
     const Identifier& name() const { return m_name; }
+    const Identifier& ecmaName() const { return m_ecmaName; }
     const Identifier& inferredName() const { return m_inferredName; }
     unsigned parameterCount() const { return m_parameterCount; };
     SourceParseMode parseMode() const { return static_cast<SourceParseMode>(m_sourceParseMode); };
@@ -159,6 +160,7 @@ private:
     WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
 
     Identifier m_name;
+    Identifier m_ecmaName;
     Identifier m_inferredName;
     RefPtr<SourceProvider> m_sourceOverride;
 

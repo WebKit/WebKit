@@ -102,6 +102,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
     , m_sourceParseMode(static_cast<unsigned>(node->parseMode()))
     , m_name(node->ident())
+    , m_ecmaName(node->ecmaName())
     , m_inferredName(node->inferredName())
     , m_sourceOverride(WTFMove(sourceOverride))
 {

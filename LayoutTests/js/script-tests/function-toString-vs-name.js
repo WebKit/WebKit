@@ -158,15 +158,6 @@ section = "JS function";
     }) ();
     test(foo4, "", "function() {}");
 
-    // Test functions in object properties.
-    section = "Object property";
-    let o = {
-        prop1: function() {},
-        prop2: function namedProp2() {}
-    };
-    test(o.prop1, "prop1", "function() {}");
-    test(o.prop2, "namedProp2", "function namedProp2() {}");
-
     section = "bound JS function";
     {
         let o = {}
@@ -180,6 +171,32 @@ section = "JS function";
         test(boundFoo4, "bound ", "function () { [native code] }");
 
         test((function(){}).bind({}), "bound ", "function () { [native code] }");
+    }
+}
+
+section = "Object property";
+{
+    let o = {
+        prop1: function() {},
+        prop2: function namedProp2() {}
+    };
+    o.prop3 = function() { };
+    o.prop4 = function namedProp4() {};
+    test(o.prop1, "prop1", "function() {}");
+    test(o.prop2, "namedProp2", "function namedProp2() {}");
+    test(o.prop3, "", "function() {}");
+    test(o.prop4, "namedProp4", "function namedProp4() {}");
+
+    section = "bound Object property";
+    {
+        let boundProp1 = o.prop1.bind({});
+        test(boundProp1, "bound prop1", "function prop1() { [native code] }");
+        let boundFoo2 = o.prop2.bind({});
+        test(boundFoo2, "bound namedProp2", "function namedProp2() { [native code] }");
+        let boundFoo3 = o.prop3.bind({});
+        test(boundFoo3, "bound ", "function() { [native code] }");
+        let boundFoo4 = o.prop4.bind({});
+        test(boundFoo4, "bound namedProp4", "function namedProp4() { [native code] }");
     }
 }
 

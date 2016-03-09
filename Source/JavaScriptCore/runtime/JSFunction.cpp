@@ -595,10 +595,7 @@ void JSFunction::reifyName(ExecState* exec)
     unsigned initialAttributes = DontEnum | ReadOnly;
     const Identifier& propID = exec->propertyNames().name;
 
-    const Identifier& nameID = jsExecutable()->name();
-    String name = nameID.string();
-    if (name.isEmpty())
-        name = jsExecutable()->ecmaName().string();
+    String name = jsExecutable()->ecmaName().string();
 
     if (jsExecutable()->isGetter())
         name = makeString("get ", name);

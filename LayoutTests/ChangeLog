@@ -1,3 +1,14 @@
+2016-03-09  Mark Lam  <mark.lam@apple.com>
+
+        FunctionExecutable::ecmaName() should not be based on inferredName().
+        https://bugs.webkit.org/show_bug.cgi?id=155203
+
+        Reviewed by Michael Saboff.
+
+        * js/script-tests/function-toString-vs-name.js:
+        - Fixed up object property test section and added new test cases.
+        * platform/mac/http/tests/media/media-source/mediasource-sourcebuffer-mode-expected.txt:
+
 2016-03-09  Chris Dumez  <cdumez@apple.com>
 
         Align HTMLKeygenElement.keytype with the specification
