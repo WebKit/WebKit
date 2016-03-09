@@ -98,11 +98,26 @@ void HTMLKeygenElement::parseAttribute(const QualifiedName& name, const AtomicSt
     HTMLFormControlElement::parseAttribute(name, value);
 }
 
+bool HTMLKeygenElement::isKeytypeRSA() const
+{
+    const auto& keyType = fastGetAttribute(keytypeAttr);
+    return keyType.isNull() || equalLettersIgnoringASCIICase(keyType, "rsa");
+}
+
+void HTMLKeygenElement::setKeytype(const AtomicString& value)
+{
+    setAttributeWithoutSynchronization(keytypeAttr, value);
+}
+
+String HTMLKeygenElement::keytype() const
+{
+    return isKeytypeRSA() ? ASCIILiteral("rsa") : emptyString();
+}
+
 bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)
 {
     // Only RSA is supported at this time.
-    const AtomicString& keyType = fastGetAttribute(keytypeAttr);
-    if (!keyType.isNull() && !equalLettersIgnoringASCIICase(keyType, "rsa"))
+    if (!isKeytypeRSA())
         return false;
     String value = signedPublicKeyAndChallengeString(shadowSelect()->selectedIndex(), fastGetAttribute(challengeAttr), document().baseURL());
     if (value.isNull())

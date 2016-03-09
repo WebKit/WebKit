@@ -34,6 +34,9 @@ class HTMLKeygenElement final : public HTMLFormControlElementWithState {
 public:
     static Ref<HTMLKeygenElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
+    void setKeytype(const AtomicString&);
+    String keytype() const;
+
 private:
     HTMLKeygenElement(const QualifiedName&, Document&, HTMLFormElement*);
 
@@ -53,6 +56,8 @@ private:
     bool shouldSaveAndRestoreFormControlState() const override;
 
     bool canHaveUserAgentShadowRoot() const final { return true; }
+
+    bool isKeytypeRSA() const;
 
     HTMLSelectElement* shadowSelect() const;
 };

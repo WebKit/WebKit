@@ -1,3 +1,15 @@
+2016-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Align HTMLKeygenElement.keytype with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=155214
+
+        Reviewed by Darin Adler.
+
+        Add test coverage for HTMLKeygenElement.keytype.
+
+        * fast/dom/HTMLKeygenElement/keygen-keytype-expected.txt: Added.
+        * fast/dom/HTMLKeygenElement/keygen-keytype.html: Added.
+
 2016-03-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cleaning up TestExpectations files to remove deleted tests and duplicate entries for ios-simulator.

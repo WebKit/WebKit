@@ -33,7 +33,7 @@ interface HTMLKeygenElement : HTMLElement {
     [Reflect] attribute DOMString challenge;
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    [Reflect] attribute DOMString keytype;
+    attribute DOMString keytype;
     [Reflect] attribute DOMString name;
 
     readonly attribute DOMString type;

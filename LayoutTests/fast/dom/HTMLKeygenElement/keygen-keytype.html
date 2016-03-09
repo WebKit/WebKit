@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests the keygen.keytype attribute");
+
+var keygen = document.createElement("keygen");
+shouldBeEqualToString("keygen.keytype", "rsa");
+shouldBeNull("keygen.getAttribute('keytype')");
+
+evalAndLog("keygen.keytype = 'RSA'");
+shouldBeEqualToString("keygen.keytype", "rsa");
+shouldBeEqualToString("keygen.getAttribute('keytype')", "RSA");
+
+evalAndLog("keygen.keytype = 'INVALID'");
+shouldBeEqualToString("keygen.keytype", "");
+shouldBeEqualToString("keygen.getAttribute('keytype')", "INVALID");
+
+evalAndLog("keygen.keytype = 'rsa'");
+shouldBeEqualToString("keygen.keytype", "rsa");
+shouldBeEqualToString("keygen.getAttribute('keytype')", "rsa");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
