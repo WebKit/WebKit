@@ -110,6 +110,11 @@ void CSSFontFaceSource::fontLoaded(CachedFont& loadedFont)
     // If the font is in the cache, this will be synchronously called from CachedFont::addClient().
     if (m_status == Status::Pending)
         setStatus(Status::Loading);
+    else if (m_status == Status::Failure) {
+        // This function may be called twice if loading was cancelled.
+        ASSERT(m_font->errorOccurred());
+        return;
+    }
 
     if (m_font->errorOccurred())
         setStatus(Status::Failure);
