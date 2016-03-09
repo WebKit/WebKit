@@ -1,3 +1,30 @@
+2016-03-09  Tim Horton  <timothy_horton@apple.com>
+
+        Removing and re-adding a script message handler with the same name results in an unusable message handler
+        https://bugs.webkit.org/show_bug.cgi?id=155223
+
+        Reviewed by Sam Weinig.
+        Patch by Geoff Garen and myself.
+
+        New API test: WKUserContentController.ScriptMessageHandlerReplaceWithSameName.
+
+        * page/UserMessageHandler.h:
+        (WebCore::UserMessageHandler::descriptor):
+        * page/UserMessageHandlersNamespace.cpp:
+        (WebCore::UserMessageHandlersNamespace::handler):
+        This lazy removal mechanism combined with the fact that we only compare
+        handler name and world makes it such that m_messageHandlers could have
+        a stale UserMessageHandler with a UserMessageHandlerDescriptor that differed
+        only in client.
+
+        It is safe to compare the descriptors by pointer instead because m_messageHandler
+        holds a strong reference to its UserMessageHandlerDescriptors, and this will ensure
+        that the add-remove-add path (with identical name and world) causes a new
+        UserContentController to be created.
+
+        We also now clean up any stale UserMessageHandlers whenever we're about to
+        add a new one, by removing any which the UserContentController no longer knows about.
+
 2016-03-09  Chris Dumez  <cdumez@apple.com>
 
         Align HTMLKeygenElement.keytype with the specification

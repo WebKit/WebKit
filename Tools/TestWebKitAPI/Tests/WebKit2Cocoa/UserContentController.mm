@@ -264,6 +264,44 @@ TEST(WKUserContentController, ScriptMessageHandlerWithNavigation)
 }
 #endif
 
+TEST(WKUserContentController, ScriptMessageHandlerReplaceWithSameName)
+{
+    RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<WKUserContentController> userContentController = [configuration userContentController];
+    [userContentController addScriptMessageHandler:handler.get() name:@"handlerToReplace"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+
+    // Test that handlerToReplace was succesfully added.
+    [webView evaluateJavaScript:@"window.webkit.messageHandlers.handlerToReplace.postMessage('PASS1');" completionHandler:nil];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+
+    EXPECT_WK_STREQ(@"PASS1", (NSString *)[lastScriptMessage body]);
+
+    [userContentController removeScriptMessageHandlerForName:@"handlerToReplace"];
+    [userContentController addScriptMessageHandler:handler.get() name:@"handlerToReplace"];
+
+    // Test that handlerToReplace still works.
+    [webView evaluateJavaScript:@"window.webkit.messageHandlers.handlerToReplace.postMessage('PASS2');" completionHandler:nil];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+
+    EXPECT_WK_STREQ(@"PASS2", (NSString *)[lastScriptMessage body]);
+}
+
 static NSString *styleSheetSource = @"body { background-color: green !important; }";
 static NSString *backgroundColorScript = @"window.getComputedStyle(document.body, null).getPropertyValue('background-color')";
 static NSString *frameBackgroundColorScript = @"window.getComputedStyle(document.getElementsByTagName('iframe')[0].contentDocument.body, null).getPropertyValue('background-color')";
