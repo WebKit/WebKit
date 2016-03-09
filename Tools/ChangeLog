@@ -1,3 +1,12 @@
+2016-03-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Add iOS debug testers to flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=155206
+
+        Reviewed by Darin Adler.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+
 2016-03-08  Oliver Hunt  <oliver@apple.com>
 
         Start moving to separated writable and executable mappings in the JIT

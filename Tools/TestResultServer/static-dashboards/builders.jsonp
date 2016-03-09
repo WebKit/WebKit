@@ -18,6 +18,8 @@ LOAD_BUILDBOT_DATA([
                     "Apple Yosemite Debug WK2 (Tests)", 
                     "Apple Yosemite Release WK1 (Tests)", 
                     "Apple Yosemite Release WK2 (Tests)", 
+                    "Apple iOS 9 Simulator Debug WK1 (Tests)", 
+                    "Apple iOS 9 Simulator Debug WK2 (Tests)", 
                     "Apple iOS 9 Simulator Release WK1 (Tests)", 
                     "Apple iOS 9 Simulator Release WK2 (Tests)", 
                     "EFL Linux 64-bit Release WK2", 
