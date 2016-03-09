@@ -141,6 +141,10 @@ class IOSSimulatorWK2Port(DeprecatedPort):
         command.append("--sdk=iphonesimulator")
         return command
 
+    def run_webkit_tests_command(self, build_style=None):
+        command = super(IOSSimulatorWK2Port, self).run_webkit_tests_command(build_style)
+        command.append("--ios-simulator")
+        return command
 
 class MacPort(DeprecatedPort):
     port_flag_name = "mac"
