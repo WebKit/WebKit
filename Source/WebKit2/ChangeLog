@@ -1,3 +1,17 @@
+2016-03-09  Conrad Shultz  <conrad_shultz@apple.com>
+
+        WebsiteDataStore::Configuration::legacyWebsiteDataStoreConfiguration() should respect the passed-in configuration
+        https://bugs.webkit.org/show_bug.cgi?id=155250
+
+        Reviewed by Anders Carlsson.
+
+        Note that the legacy directories are already set by default in ProcessPoolConfiguration::createWithLegacyOptions(),
+        which is also where the shouldHaveLegacyDataStore flag, which will cause this code path to be reached, is set.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration):
+        Use the passed-in configuration to set the application cache, network cache, and media keys storage directories.
+
 2016-03-09  Chris Dumez  <cdumez@apple.com>
 
         Speculative disk cache resource revalidations are sometimes wasted

@@ -127,9 +127,9 @@ static WebsiteDataStore::Configuration legacyWebsiteDataStoreConfiguration(API::
 
     configuration.localStorageDirectory = processPoolConfiguration.localStorageDirectory();
     configuration.webSQLDatabaseDirectory = processPoolConfiguration.webSQLDatabaseDirectory();
-    configuration.applicationCacheDirectory = WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory();
-    configuration.mediaKeysStorageDirectory = WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory();
-    configuration.networkCacheDirectory = WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory();
+    configuration.applicationCacheDirectory = processPoolConfiguration.applicationCacheDirectory();
+    configuration.mediaKeysStorageDirectory = processPoolConfiguration.mediaKeysStorageDirectory();
+    configuration.networkCacheDirectory = processPoolConfiguration.diskCacheDirectory();
 
     // This is needed to support legacy WK2 clients, which did not have resource load statistics.
     configuration.resourceLoadStatisticsDirectory = API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory();
