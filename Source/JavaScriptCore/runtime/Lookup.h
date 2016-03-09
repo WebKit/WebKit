@@ -286,10 +286,13 @@ inline bool getStaticValueSlot(ExecState* exec, const HashTable& table, ThisImp*
 // 'slot.thisValue()' is the object the put was originally performed on (in the case of a proxy, the proxy itself).
 inline void putEntry(ExecState* exec, const HashTableValue* entry, JSObject* base, JSObject* thisValue, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    // If this is a function put it as an override property.
     if (entry->attributes() & BuiltinOrFunction) {
-        if (JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue))
-            thisObject->putDirect(exec->vm(), propertyName, value);
+        if (!(entry->attributes() & ReadOnly)) {
+            // If this is a function put it as an override property.
+            if (JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue))
+                thisObject->putDirect(exec->vm(), propertyName, value);
+        } else if (slot.isStrictMode())
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     } else if (entry->attributes() & Accessor) {
         if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
