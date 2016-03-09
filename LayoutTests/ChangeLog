@@ -1,3 +1,25 @@
+2016-03-09  Andreas Kling  <akling@apple.com>
+
+        ImageDocuments leak their world.
+        <https://webkit.org/b/155167>
+        <rdar://problem/24987363>
+
+        Reviewed by Antti Koivisto.
+
+        Made a little test that loads an image into an <iframe> 10 times and then
+        triggers a garbage collection and checks that all the documents got destroyed.
+
+        Prior to this change, all 10 ImageDocuments would remain alive at the end.
+
+        This got rolled out the first time because it failed on bots. It failed due
+        to expecting a specific number of documents to be live at the start of the
+        test, which was not reliable on bots since we appear to have more leaks(!)
+
+        Tweaked the test to check the delta in live document count instead.
+
+        * fast/dom/ImageDocument-world-leak-expected.txt: Added.
+        * fast/dom/ImageDocument-world-leak.html: Added.
+
 2016-03-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Fix auto-track sizing with min-size:auto and specific sizes
