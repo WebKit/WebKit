@@ -534,7 +534,7 @@ bool SQLiteStatement::returnDoubleResults(int col, Vector<double>& v)
 
 bool SQLiteStatement::isExpired()
 {
-    return !m_statement || sqlite3_expired(m_statement);
+    return !m_statement;
 }
 
 } // namespace WebCore
