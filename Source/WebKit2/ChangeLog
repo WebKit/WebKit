@@ -1,3 +1,13 @@
+2016-03-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Handling 'allowUniversalAccessFromFileURLs' on WKWebViewConfiguration causes test breakage
+        https://bugs.webkit.org/show_bug.cgi?id=155265
+
+        Unreviewed work-around to allow testing to continue.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Workaround build break.
+
 2016-03-09  Alex Christensen  <achristensen@webkit.org>
 
         Fix use-after-free when cancelling synchronous XHR when using NetworkSession

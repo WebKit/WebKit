@@ -152,7 +152,7 @@ private:
     _allowsJavaScriptMarkup = YES;
     _convertsPositionStyleOnCopy = NO;
     _allowsMetaRefresh = YES;
-    _allowUniversalAccessFromFileURLs = NO;
+    _allowUniversalAccessFromFileURLs = YES; //FIXME(155265): Workaround for test break
 
     return self;
 }
