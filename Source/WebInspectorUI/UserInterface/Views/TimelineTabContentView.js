@@ -450,7 +450,7 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
 
             // Show the timeline that was being shown to update the sidebar tree state.
             let currentTimelineView = this._displayedContentView.currentTimelineView;
-            let timelineType = currentTimelineView && currentTimelineView.representedObject instanceof WebInspector.Timeline ? currentTimelineView.type : null;
+            let timelineType = currentTimelineView && currentTimelineView.representedObject instanceof WebInspector.Timeline ? currentTimelineView.representedObject.type : null;
             this._showTimelineViewForType(timelineType);
 
             return;

@@ -474,9 +474,9 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         if (this._viewMode === WebInspector.TimelineOverview.ViewMode.RenderingFrames)
             cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = WebInspector.TimelineRecord.Type.RenderingFrame;
         else {
-            var selectedTreeElement = this._timelinesTreeOutline.selectedTreeElement;
-            if (selectedTreeElement)
-                cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = selectedTreeElement.representedObject.type;
+            var currentTimelineView = this._displayedContentView ? this._displayedContentView.currentTimelineView : null;
+            if (currentTimelineView && currentTimelineView.representedObject instanceof WebInspector.Timeline)
+                cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = currentTimelineView.representedObject.type;
             else
                 cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = WebInspector.TimelineSidebarPanel.OverviewTimelineIdentifierCookieValue;    
         }

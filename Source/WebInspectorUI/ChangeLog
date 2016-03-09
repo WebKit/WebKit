@@ -1,5 +1,22 @@
 2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Timelines keeps switching to overview instead of keeping the selected timeline
+        https://bugs.webkit.org/show_bug.cgi?id=155212
+        <rdar://problem/25052504>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.saveStateToCookie):
+        The sidebar was using out of date information in its tree outline causing it to
+        switch to the wrong sidebar. Use the up to date information from the recording view.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.prototype._recordingSelected):
+        Fix typo not getting the right timeline type.
+
+2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Memory Timeline should show MemoryPressure events
         https://bugs.webkit.org/show_bug.cgi?id=155158
         <rdar://problem/25026610>
