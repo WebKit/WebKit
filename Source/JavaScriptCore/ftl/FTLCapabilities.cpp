@@ -111,6 +111,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ExtractOSREntryLocal:
     case LoopHint:
     case SkipScope:
+    case GetGlobalObject:
     case CreateActivation:
     case NewArrowFunction:
     case NewFunction:

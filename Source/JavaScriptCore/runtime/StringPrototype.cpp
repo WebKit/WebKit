@@ -1035,7 +1035,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
         return throwVMTypeError(exec);
     JSString* string = thisValue.toString(exec);
     String s = string->value(exec);
-    VM* vm = &exec->vm();
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    VM* vm = &globalObject->vm();
 
     JSValue a0 = exec->argument(0);
 
@@ -1067,11 +1068,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
         if (!regExp->isValid())
             return throwVMError(exec, createSyntaxError(exec, regExp->errorMessage()));
     }
-    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
+    RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
     MatchResult result = regExpConstructor->performMatch(*vm, regExp, string, s, 0);
     // case without 'g' flag is handled like RegExp.prototype.exec
     if (!global)
-        return JSValue::encode(result ? createRegExpMatchesArray(exec, string, regExp, result) : jsNull());
+        return JSValue::encode(result ? createRegExpMatchesArray(exec, globalObject, string, regExp, result) : jsNull());
 
     // return array of matches
     MarkedArgumentBuffer list;

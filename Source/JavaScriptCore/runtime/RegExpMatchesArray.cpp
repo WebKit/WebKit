@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,30 +50,56 @@ static JSArray* tryCreateUninitializedRegExpMatchesArray(VM& vm, Structure* stru
     return JSArray::createWithButterfly(vm, structure, butterfly);
 }
 
-JSArray* createRegExpMatchesArray(ExecState* exec, JSString* input, RegExp* regExp, MatchResult result)
+JSArray* createRegExpMatchesArray(
+    ExecState* exec, JSGlobalObject* globalObject, JSString* input, RegExp* regExp,
+    MatchResult result)
 {
+    SamplingRegion samplingRegion("createRegExpMatchesArray");
+    
     ASSERT(result);
-    VM& vm = exec->vm();
-    JSArray* array = tryCreateUninitializedRegExpMatchesArray(vm, exec->lexicalGlobalObject()->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
-    RELEASE_ASSERT(array);
+    VM& vm = globalObject->vm();
 
-    SamplingRegion samplingRegion("Reifying substring properties");
-
-    array->initializeIndex(vm, 0, jsSubstring(exec, input, result.start, result.end - result.start), ArrayWithContiguous);
-
-    if (unsigned numSubpatterns = regExp->numSubpatterns()) {
-        Vector<int, 32> subpatternResults;
-        int position = regExp->match(vm, input->value(exec), result.start, subpatternResults);
-        ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == result.start);
-        ASSERT(result.start == static_cast<size_t>(subpatternResults[0]));
-        ASSERT(result.end == static_cast<size_t>(subpatternResults[1]));
-
-        for (unsigned i = 1; i <= numSubpatterns; ++i) {
-            int start = subpatternResults[2 * i];
-            if (start >= 0)
-                array->initializeIndex(vm, i, jsSubstring(exec, input, start, subpatternResults[2 * i + 1] - start), ArrayWithContiguous);
-            else
-                array->initializeIndex(vm, i, jsUndefined(), ArrayWithContiguous);
+    JSArray* array;
+    if (UNLIKELY(globalObject->isHavingABadTime())) {
+        array = JSArray::tryCreateUninitialized(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
+        
+        array->initializeIndex(vm, 0, jsSubstring(vm, exec, input, result.start, result.end - result.start));
+        
+        if (unsigned numSubpatterns = regExp->numSubpatterns()) {
+            Vector<int, 32> subpatternResults;
+            int position = regExp->match(vm, input->value(exec), result.start, subpatternResults);
+            ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == result.start);
+            ASSERT(result.start == static_cast<size_t>(subpatternResults[0]));
+            ASSERT(result.end == static_cast<size_t>(subpatternResults[1]));
+            
+            for (unsigned i = 1; i <= numSubpatterns; ++i) {
+                int start = subpatternResults[2 * i];
+                if (start >= 0)
+                    array->initializeIndex(vm, i, jsSubstring(vm, exec, input, start, subpatternResults[2 * i + 1] - start));
+                else
+                    array->initializeIndex(vm, i, jsUndefined());
+            }
+        }
+    } else {
+        array = tryCreateUninitializedRegExpMatchesArray(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
+        RELEASE_ASSERT(array);
+        
+        array->initializeIndex(vm, 0, jsSubstring(vm, exec, input, result.start, result.end - result.start), ArrayWithContiguous);
+        
+        if (unsigned numSubpatterns = regExp->numSubpatterns()) {
+            Vector<int, 32> subpatternResults;
+            int position = regExp->match(vm, input->value(exec), result.start, subpatternResults);
+            ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == result.start);
+            ASSERT(result.start == static_cast<size_t>(subpatternResults[0]));
+            ASSERT(result.end == static_cast<size_t>(subpatternResults[1]));
+            
+            for (unsigned i = 1; i <= numSubpatterns; ++i) {
+                int start = subpatternResults[2 * i];
+                if (start >= 0)
+                    array->initializeIndex(vm, i, jsSubstring(vm, exec, input, start, subpatternResults[2 * i + 1] - start), ArrayWithContiguous);
+                else
+                    array->initializeIndex(vm, i, jsUndefined(), ArrayWithContiguous);
+            }
         }
     }
 
@@ -83,15 +109,25 @@ JSArray* createRegExpMatchesArray(ExecState* exec, JSString* input, RegExp* regE
     return array;
 }
 
-Structure* createRegExpMatchesArrayStructure(VM& vm, JSGlobalObject& globalObject)
+static Structure* createStructureImpl(VM& vm, JSGlobalObject* globalObject, IndexingType indexingType)
 {
-    Structure* structure = globalObject.arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
     PropertyOffset offset;
-    structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->index, 0, offset);
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->index, 0, offset);
     ASSERT(offset == indexPropertyOffset);
-    structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->input, 0, offset);
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->input, 0, offset);
     ASSERT(offset == inputPropertyOffset);
     return structure;
+}
+
+Structure* createRegExpMatchesArrayStructure(VM& vm, JSGlobalObject* globalObject)
+{
+    return createStructureImpl(vm, globalObject, ArrayWithContiguous);
+}
+
+Structure* createRegExpMatchesArraySlowPutStructure(VM& vm, JSGlobalObject* globalObject)
+{
+    return createStructureImpl(vm, globalObject, ArrayWithSlowPutArrayStorage);
 }
 
 } // namespace JSC

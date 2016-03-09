@@ -879,11 +879,13 @@ private:
             
         case RegExpExec:
         case RegExpTest: {
-            if (node->child1()->shouldSpeculateRegExpObject()) {
-                fixEdge<RegExpObjectUse>(node->child1());
+            fixEdge<KnownCellUse>(node->child1());
+            
+            if (node->child2()->shouldSpeculateRegExpObject()) {
+                fixEdge<RegExpObjectUse>(node->child2());
 
-                if (node->child2()->shouldSpeculateString())
-                    fixEdge<StringUse>(node->child2());
+                if (node->child3()->shouldSpeculateString())
+                    fixEdge<StringUse>(node->child3());
             }
             break;
         }
@@ -1049,7 +1051,8 @@ private:
         case SkipScope:
         case GetScope:
         case GetGetter:
-        case GetSetter: {
+        case GetSetter:
+        case GetGlobalObject: {
             fixEdge<KnownCellUse>(node->child1());
             break;
         }

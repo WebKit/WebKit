@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2012 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2012, 2016 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -159,20 +159,20 @@ void RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
     Base::put(cell, exec, propertyName, value, slot);
 }
 
-JSValue RegExpObject::exec(ExecState* exec, JSString* string)
+JSValue RegExpObject::exec(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
-    if (MatchResult result = match(exec, string))
-        return createRegExpMatchesArray(exec, string, regExp(), result);
+    if (MatchResult result = match(exec, globalObject, string))
+        return createRegExpMatchesArray(exec, globalObject, string, regExp(), result);
     return jsNull();
 }
 
 // Shared implementation used by test and exec.
-MatchResult RegExpObject::match(ExecState* exec, JSString* string)
+MatchResult RegExpObject::match(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
     RegExp* regExp = this->regExp();
-    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
+    RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
     String input = string->value(exec);
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (!regExp->global())
         return regExpConstructor->performMatch(vm, regExp, string, input, 0);
 

@@ -212,6 +212,7 @@ namespace JSC { namespace DFG {
     macro(GetTypedArrayByteOffset, NodeResultInt32) \
     macro(GetScope, NodeResultJS) \
     macro(SkipScope, NodeResultJS) \
+    macro(GetGlobalObject, NodeResultJS) \
     macro(GetClosureVar, NodeResultJS) \
     macro(PutClosureVar, NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS) \

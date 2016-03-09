@@ -1554,17 +1554,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
             
     case RegExpExec:
-        if (node->child1().useKind() == RegExpObjectUse
-            && node->child2().useKind() == StringUse) {
+        if (node->child2().useKind() == RegExpObjectUse
+            && node->child3().useKind() == StringUse) {
             // This doesn't clobber the world since there are no conversions to perform.
         } else
             clobberWorld(node->origin.semantic, clobberLimit);
-        forNode(node).makeHeapTop();
+        if (JSValue globalObjectValue = forNode(node->child1()).m_value) {
+            if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(globalObjectValue)) {
+                if (!globalObject->isHavingABadTime()) {
+                    m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
+                    Structure* structure = globalObject->regExpMatchesArrayStructure();
+                    m_graph.registerStructure(structure);
+                    forNode(node).set(m_graph, structure);
+                    forNode(node).merge(SpecOther);
+                    break;
+                }
+            }
+        }
+        forNode(node).setType(m_graph, SpecOther | SpecArray);
         break;
 
     case RegExpTest:
-        if (node->child1().useKind() == RegExpObjectUse
-            && node->child2().useKind() == StringUse) {
+        if (node->child2().useKind() == RegExpObjectUse
+            && node->child3().useKind() == StringUse) {
             // This doesn't clobber the world since there are no conversions to perform.
         } else
             clobberWorld(node->origin.semantic, clobberLimit);
@@ -1878,6 +1890,33 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, *m_graph.freeze(JSValue(jsCast<JSScope*>(child.asCell())->next())));
             break;
         }
+        forNode(node).setType(m_graph, SpecObjectOther);
+        break;
+    }
+
+    case GetGlobalObject: {
+        JSValue child = forNode(node->child1()).value();
+        if (child) {
+            setConstant(node, *m_graph.freeze(JSValue(asObject(child)->globalObject())));
+            break;
+        }
+
+        if (forNode(node->child1()).m_structure.isFinite()) {
+            JSGlobalObject* globalObject = nullptr;
+            bool ok = true;
+            forNode(node->child1()).m_structure.forEach(
+                [&] (Structure* structure) {
+                    if (!globalObject)
+                        globalObject = structure->globalObject();
+                    else if (globalObject != structure->globalObject())
+                        ok = false;
+                });
+            if (globalObject && ok) {
+                setConstant(node, *m_graph.freeze(JSValue(globalObject)));
+                break;
+            }
+        }
+
         forNode(node).setType(m_graph, SpecObjectOther);
         break;
     }
