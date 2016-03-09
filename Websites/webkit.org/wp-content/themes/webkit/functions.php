@@ -51,13 +51,21 @@ add_filter('the_title', function( $title ) {
     return $title;
 });
 
+// For RSS feeds, convert relative URIs to absolute
+add_filter('the_content', function($content) {
+    if (!is_feed()) return $content;
+    $base = trailingslashit(get_site_url());
+    $content = preg_replace('/<a([^>]*) href="\/([^"]*)"/', '<a$1 href="' . $base . '$2"', $content);
+    $content = preg_replace('/<img([^>]*) src="\/([^"]*)"/', '<img$1 src="' . $base . '$2"', $content);
+    return $content;
+});
+
 // Hide category 41: Legacy from archives
 add_filter('pre_get_posts', function ($query) {
     if ( $query->is_home() )
         $query->set('cat', '-41');
     return $query;
 });
-
 
 include('widgets/post.php');
 include('widgets/icon.php');

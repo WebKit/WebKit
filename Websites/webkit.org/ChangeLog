@@ -1,3 +1,12 @@
+2016-03-09  Jonathan Davis  <jond@apple.com>
+
+        For RSS feeds, convert image and link relative URIs to absolute URIs
+        https://bugs.webkit.org/show_bug.cgi?id=155237
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/functions.php:
+
 2016-03-03  Saam barati  <sbarati@apple.com>
 
         Update style guide to reflect our style of only using "override" or "final" when overriding virtual methods
