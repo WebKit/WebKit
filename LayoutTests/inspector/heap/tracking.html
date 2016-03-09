@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Heap.startTracking and Heap.stopTracking");
+
+    suite.addTestCase({
+        name: "StartAndStopTrackingIncludeSnapshots",
+        test: function(resolve, reject) {
+            InspectorProtocol.awaitEvent({event: "Heap.trackingStart"}).then((messageObject) => {
+                ProtocolTest.log("Heap.trackingStart");
+                ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp when starting.");
+                ProtocolTest.expectThat(typeof messageObject.params.snapshotData === "string", "Should have snapshotData when starting.");
+                InspectorProtocol.sendCommand("Heap.stopTracking", {});
+            });
+
+            InspectorProtocol.awaitEvent({event: "Heap.trackingComplete"}).then((messageObject) => {
+                ProtocolTest.log("Heap.trackingComplete");
+                ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp when stopping.");
+                ProtocolTest.expectThat(typeof messageObject.params.snapshotData === "string", "Should have snapshotData when stopping.");
+                resolve();
+            });
+
+            InspectorProtocol.sendCommand("Heap.startTracking", {});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Heap.startTracking and Heap.stopTracking trigger trackingStart and trackingComplete events with expected data.</p>
+</body>
+</html>

@@ -38,6 +38,14 @@
                 { "name": "timestamp", "type": "number" },
                 { "name": "snapshotData", "$ref": "HeapSnapshotData" }
             ]
+        },
+        {
+            "name": "startTracking",
+            "description": "Start tracking heap changes. This will produce a `trackingStart` event."
+        },
+        {
+            "name": "stopTracking",
+            "description": "Stop tracking heap changes. This will produce a `trackingComplete` event."
         }
     ],
     "events": [
@@ -46,6 +54,22 @@
             "description": "Information about the garbage collection.",
             "parameters": [
                 { "name": "collection", "type": "GarbageCollection" }
+            ]
+        },
+        {
+            "name": "trackingStart",
+            "description": "Tracking started.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" },
+                { "name": "snapshotData", "$ref": "HeapSnapshotData", "description": "Snapshot at the start of tracking." }
+            ]
+        },
+        {
+            "name": "trackingComplete",
+            "description": "Tracking stopped.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" },
+                { "name": "snapshotData", "$ref": "HeapSnapshotData", "description": "Snapshot at the end of tracking." }
             ]
         }
     ]

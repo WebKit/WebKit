@@ -31,4 +31,18 @@ WebInspector.HeapObserver = class HeapObserver
     {
         WebInspector.heapManager.garbageCollected(collection);
     }
+
+    trackingStart(timestamp, snapshotData)
+    {
+        let payload = JSON.parse(snapshotData);
+        let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
+        // FIXME: Heap Allocations Timeline.
+    }
+
+    trackingComplete(timestamp, snapshotData)
+    {
+        let payload = JSON.parse(snapshotData);
+        let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
+        // FIXME: Heap Allocations Timeline.
+    }
 };

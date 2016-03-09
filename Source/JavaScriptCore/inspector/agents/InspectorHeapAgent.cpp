@@ -56,6 +56,7 @@ void InspectorHeapAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDis
 void InspectorHeapAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
     ErrorString ignored;
+    stopTracking(ignored);
     disable(ignored);
 }
 
@@ -107,6 +108,34 @@ void InspectorHeapAgent::snapshot(ErrorString&, double* timestamp, String* snaps
         }
         return true;
     });
+}
+
+void InspectorHeapAgent::startTracking(ErrorString& errorString)
+{
+    if (m_tracking)
+        return;
+
+    m_tracking = true;
+
+    double timestamp;
+    String snapshotData;
+    snapshot(errorString, &timestamp, &snapshotData);
+
+    m_frontendDispatcher->trackingStart(timestamp, snapshotData);
+}
+
+void InspectorHeapAgent::stopTracking(ErrorString& errorString)
+{
+    if (!m_tracking)
+        return;
+
+    m_tracking = false;
+
+    double timestamp;
+    String snapshotData;
+    snapshot(errorString, &timestamp, &snapshotData);
+
+    m_frontendDispatcher->trackingComplete(timestamp, snapshotData);
 }
 
 static Inspector::Protocol::Heap::GarbageCollection::Type protocolTypeForHeapOperation(HeapOperation operation)

@@ -1,5 +1,15 @@
 2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add Heap domain start/stop tracking commands
+        https://bugs.webkit.org/show_bug.cgi?id=155190
+
+        Reviewed by Brian Burg.
+
+        * inspector/heap/tracking-expected.txt: Added.
+        * inspector/heap/tracking.html: Added.
+
+2016-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Add a way to create a Heap Snapshot
         https://bugs.webkit.org/show_bug.cgi?id=155188
 

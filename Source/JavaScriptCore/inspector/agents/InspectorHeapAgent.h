@@ -52,6 +52,8 @@ public:
     void disable(ErrorString&) override;
     void gc(ErrorString&) override;
     void snapshot(ErrorString&, double* timestamp, String* snapshotData) override;
+    void startTracking(ErrorString&) override;
+    void stopTracking(ErrorString&) override;
 
     // HeapObserver
     void willGarbageCollect() override;
@@ -65,6 +67,7 @@ private:
     InspectorEnvironment& m_environment;
 
     bool m_enabled { false };
+    bool m_tracking { false };
     double m_gcStartTime { NAN };
 };
 
