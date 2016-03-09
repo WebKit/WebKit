@@ -49,7 +49,7 @@ void Output::initialize(AbstractHeapRepository& heaps)
     m_heaps = &heaps;
 }
 
-LBasicBlock Output::newBlock(const char*)
+LBasicBlock Output::newBlock()
 {
     LBasicBlock result = m_proc.addBlock(m_frequency);
 
@@ -232,7 +232,7 @@ void Output::branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBa
 
 void Output::check(LValue condition, WeightedTarget taken, Weight notTakenWeight)
 {
-    LBasicBlock continuation = FTL_NEW_BLOCK(*this, ("Output::check continuation"));
+    LBasicBlock continuation = newBlock();
     branch(condition, taken, WeightedTarget(continuation, notTakenWeight));
     appendTo(continuation);
 }

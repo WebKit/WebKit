@@ -1629,6 +1629,9 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
     case StringUse:
         return compileStringZeroLength(node);
 
+    case StringOrOtherUse:
+        return compileLogicalNotStringOrOther(node);
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -1716,6 +1719,11 @@ void SpeculativeJIT::emitBranch(Node* node)
 
     case StringUse: {
         emitStringBranch(node->child1(), taken, notTaken);
+        return;
+    }
+
+    case StringOrOtherUse: {
+        emitStringOrOtherBranch(node->child1(), taken, notTaken);
         return;
     }
 

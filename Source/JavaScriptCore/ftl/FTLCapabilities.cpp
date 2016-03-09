@@ -463,6 +463,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case FunctionUse:
                 case ObjectOrOtherUse:
                 case StringUse:
+                case StringOrOtherUse:
                 case KnownStringUse:
                 case KnownPrimitiveUse:
                 case StringObjectUse:
