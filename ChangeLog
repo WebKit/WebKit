@@ -1,5 +1,14 @@
 2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [EFL] Enable the SVG -> OTF Font Converter
+        https://bugs.webkit.org/show_bug.cgi?id=155192
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsEfl.cmake:
+
+2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [GTK] Enable the SVG -> OTF Font Converter
         https://bugs.webkit.org/show_bug.cgi?id=155191
 
