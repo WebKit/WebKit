@@ -1,3 +1,24 @@
+2016-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] RegExp#lastIndex should handle writable attribute when defining in defineOwnProperty path
+        https://bugs.webkit.org/show_bug.cgi?id=155093
+
+        Reviewed by Filip Pizlo.
+
+        Before this patch, `setLastIndex(ExecState* exec, size_t lastIndex)` always overwrites the existing value
+        regardless of writable attribute.
+        And when defining RegExp#lastIndex in defineOwnProperty, we need to define the value first
+        before making the attribute readonly. After changing the writable attribute, we cannot define the value.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::defineOwnProperty):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::setLastIndex):
+        * tests/stress/regexp-last-index-writable.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (regExpLastIndex):
+
 2016-03-05  Filip Pizlo  <fpizlo@apple.com>
 
         The most aggressive form of RegExpTest/RegExpExec should speculate more aggressively than just cell
