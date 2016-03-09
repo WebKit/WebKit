@@ -7,6 +7,8 @@
     -webkit-grid-template-rows: 30% 70%;
     width: 400px;
     height: 300px;
+    -webkit-grid-auto-columns: 200px;
+    -webkit-grid-auto-rows: 250px;
 }
 
 #bigGrid {
@@ -124,25 +126,25 @@
 
 <div style="position: relative">
 <div class="grid" data-expected-width="400" data-expected-height="300">
-    <div class="sizedToGridArea negativeOverflowRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="90"></div>
+    <div class="sizedToGridArea negativeOverflowRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="500"></div>
 </div>
 </div>
 
 <div style="position: relative">
 <div class="grid" data-expected-width="400" data-expected-height="300">
-    <div class="sizedToGridArea overflowRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="300"></div>
+    <div class="sizedToGridArea overflowRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="800"></div>
 </div>
 </div>
 
 <div style="position: relative">
 <div class="grid" data-expected-width="400" data-expected-height="300">
-    <div class="sizedToGridArea firstRowNegativeOverflowColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="90"></div>
+    <div class="sizedToGridArea firstRowNegativeOverflowColumn" data-offset-x="0" data-offset-y="0" data-expected-width="400" data-expected-height="90"></div>
 </div>
 </div>
 
 <div style="position: relative">
 <div class="grid" data-expected-width="400" data-expected-height="300">
-    <div class="sizedToGridArea firstRowOverflowColumn" data-offset-x="0" data-offset-y="0" data-expected-width="400" data-expected-height="90"></div>
+    <div class="sizedToGridArea firstRowOverflowColumn" data-offset-x="0" data-offset-y="0" data-expected-width="800" data-expected-height="90"></div>
 </div>
 </div>
 
@@ -154,7 +156,7 @@
 
 <div style="position: relative">
 <div class="grid" data-expected-width="400" data-expected-height="300">
-    <div class="sizedToGridArea autoSecondRowAutoFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="90"></div>
+    <div class="sizedToGridArea autoSecondRowAutoFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="200" data-expected-height="90"></div>
 </div>
 </div>
 
@@ -188,7 +190,7 @@
 
 <div style="position: relative">
 <div class="grid" id="bigGrid" data-expected-width="200" data-expected-height="100">
-    <div class="sizedToGridArea underflowSpanning" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="75"></div>
+    <div class="sizedToGridArea underflowSpanning" data-offset-x="0" data-offset-y="0" data-expected-width="300" data-expected-height="1325"></div>
 </div>
 
 <!-- Check that the end span is ignored when two opposing spans are specified-->

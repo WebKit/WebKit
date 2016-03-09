@@ -6249,7 +6249,7 @@ bool CSSParser::parseGridTemplateAreasRow(NamedGridAreaMap& gridAreaMap, const u
 
         auto gridAreaIterator = gridAreaMap.find(gridAreaName);
         if (gridAreaIterator == gridAreaMap.end())
-            gridAreaMap.add(gridAreaName, GridCoordinate(GridSpan::definiteGridSpan(rowCount, rowCount + 1), GridSpan::definiteGridSpan(currentColumn, lookAheadColumn)));
+            gridAreaMap.add(gridAreaName, GridCoordinate(GridSpan::translatedDefiniteGridSpan(rowCount, rowCount + 1), GridSpan::translatedDefiniteGridSpan(currentColumn, lookAheadColumn)));
         else {
             GridCoordinate& gridCoordinate = gridAreaIterator->value;
 
@@ -6266,7 +6266,7 @@ bool CSSParser::parseGridTemplateAreasRow(NamedGridAreaMap& gridAreaMap, const u
             if (lookAheadColumn != gridCoordinate.columns.resolvedFinalPosition())
                 return false;
 
-            gridCoordinate.rows = GridSpan::definiteGridSpan(gridCoordinate.rows.resolvedInitialPosition(), gridCoordinate.rows.resolvedFinalPosition() + 1);
+            gridCoordinate.rows = GridSpan::translatedDefiniteGridSpan(gridCoordinate.rows.resolvedInitialPosition(), gridCoordinate.rows.resolvedFinalPosition() + 1);
         }
         currentColumn = lookAheadColumn - 1;
     }

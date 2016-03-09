@@ -190,6 +190,9 @@ private:
 
     Optional<LayoutUnit> m_minContentHeight;
     Optional<LayoutUnit> m_maxContentHeight;
+
+    int m_smallestColumnStart;
+    int m_smallestRowStart;
 };
 
 } // namespace WebCore

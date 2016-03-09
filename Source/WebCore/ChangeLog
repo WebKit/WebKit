@@ -1,3 +1,82 @@
+2016-03-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Initial support for implicit grid before explicit grid
+        https://bugs.webkit.org/show_bug.cgi?id=155014
+
+        Reviewed by Darin Adler.
+
+        Change GridSpan to store int instead of unsigned. This allows us to
+        resolve positions before the explicit grid with negative values.
+
+        This patch adds a new type of GridSpan called "Untranslated".
+        This type is only used in populateExplicitGridAndOrderIterator().
+        Where we store the smallest negative position in both axis.
+
+        Then the GridSpans are translated into positive values, using the offset
+        calculated before. This is done in placeItemsOnGrid() and from that
+        moment the rest of the code uses "Definite" GridSpans, which returns
+        only positive positions (unsigned instead of int).
+        This allows us to don't have to modify the rest of the code, as it keeps
+        using GridSpans as before.
+
+        Let's use an example to explain how it works. Imagine that we've a 2
+        columns grid and 2 items placed like:
+        * Item A: grid-column: -5;
+        * Item B: grid-column: 1;
+
+        Initially we'll use "Unstranslated" GridSpans with the following values:
+        * Item A: GridSpan(-2, -1)
+        * Item B: GridSpan(0, 1)
+
+        Then we'll translate them using the smallest position as offset (-2)
+        so we've "Definite" GridSpans:
+        * Item A: GridSpan(0, 1)
+        * Item B: GridSpan(2, 3)
+
+        Test: fast/css-grid-layout/implicit-tracks-before-explicit.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateAreasRow):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::nextEmptyGridArea):
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::gridTrackSize):
+        (WebCore::RenderGrid::insertItemIntoGrid):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemsOnGrid): Deleted.
+        (WebCore::RenderGrid::layoutPositionedObject): Deleted.
+        * rendering/RenderGrid.h:
+        * rendering/style/GridCoordinate.h:
+        (WebCore::GridSpan::untranslatedDefiniteGridSpan):
+        (WebCore::GridSpan::translatedDefiniteGridSpan):
+        (WebCore::GridSpan::integerSpan):
+        (WebCore::GridSpan::untranslatedResolvedInitialPosition):
+        (WebCore::GridSpan::untranslatedResolvedFinalPosition):
+        (WebCore::GridSpan::resolvedInitialPosition):
+        (WebCore::GridSpan::resolvedFinalPosition):
+        (WebCore::GridSpan::begin):
+        (WebCore::GridSpan::end):
+        (WebCore::GridSpan::isTranslatedDefinite):
+        (WebCore::GridSpan::isIndefinite):
+        (WebCore::GridSpan::translate):
+        (WebCore::GridSpan::GridSpan):
+        (WebCore::GridSpan::operator==): Deleted.
+        (WebCore::GridSpan::GridSpanIterator::GridSpanIterator): Deleted.
+        (WebCore::GridSpan::GridSpanIterator::operator unsigned&): Deleted.
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionFromStyle):
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromStyle):
+        (WebCore::GridResolvedPosition::spanSizeForAutoPlacedItem): Deleted.
+
 2016-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Arabic text on Wikipedia is shown as boxes
