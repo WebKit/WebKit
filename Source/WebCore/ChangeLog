@@ -1,3 +1,19 @@
+2016-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Element with maximum tabIndex cannot be returned by nextElementWithGreaterTabIndex()
+        https://bugs.webkit.org/show_bug.cgi?id=155215
+
+        Reviewed by Ryosuke Niwa.
+
+        Element with maximum tabIndex cannot be returned by nextElementWithGreaterTabIndex()
+        due to a bug in r197726. This patch fixes the issue by only comparing
+        candidate.tabIndex to winningTabIndex if winner is non-null.
+
+        Test: fast/events/max-tabindex-focus.html
+
+        * page/FocusController.cpp:
+        (WebCore::nextElementWithGreaterTabIndex):
+
 2016-03-08  Sam Weinig  <sam@webkit.org>
 
         Stop using the UserContentController for injecting the override style sheet from CaptionUserPreferences

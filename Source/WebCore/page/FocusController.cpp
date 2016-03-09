@@ -495,10 +495,13 @@ static Element* nextElementWithGreaterTabIndex(const FocusNavigationScope& scope
     for (Node* node = &scope.rootNode(); node; node = scope.nextInScope(node)) {
         if (!is<Element>(*node))
             continue;
-        Element& element = downcast<Element>(*node);
-        if (isFocusableOrHasShadowTreeWithoutCustomFocusLogic(element, event) && element.tabIndex() > tabIndex && element.tabIndex() < winningTabIndex) {
-            winner = &element;
-            winningTabIndex = element.tabIndex();
+        Element& candidate = downcast<Element>(*node);
+        int candidateTabIndex = candidate.tabIndex();
+        if (isFocusableOrHasShadowTreeWithoutCustomFocusLogic(candidate, event) && candidateTabIndex > tabIndex) {
+            if (!winner || candidateTabIndex < winningTabIndex) {
+                winner = &candidate;
+                winningTabIndex = candidateTabIndex;
+            }
         }
     }
 
