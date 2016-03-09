@@ -1174,23 +1174,29 @@ EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionCreateElement(ExecState* exec)
 {
     JSLockHolder lock(exec);
-    JSValue arg = exec->argument(0);
-    return JSValue::encode(Element::create(exec->vm(), exec->lexicalGlobalObject(), arg.isNull() ? nullptr : jsCast<Root*>(exec->argument(0))));
+    Root* root = jsDynamicCast<Root*>(exec->argument(0));
+    if (!root)
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(Element::create(exec->vm(), exec->lexicalGlobalObject(), root));
 }
 
 EncodedJSValue JSC_HOST_CALL functionGetElement(ExecState* exec)
 {
     JSLockHolder lock(exec);
-    Element* result = jsCast<Root*>(exec->argument(0).asCell())->element();
+    Root* root = jsDynamicCast<Root*>(exec->argument(0));
+    if (!root)
+        return JSValue::encode(jsUndefined());
+    Element* result = root->element();
     return JSValue::encode(result ? result : jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState* exec)
 {
     JSLockHolder lock(exec);
-    Element* element = jsCast<Element*>(exec->argument(0));
-    Root* root = jsCast<Root*>(exec->argument(1));
-    element->setRoot(exec->vm(), root);
+    Element* element = jsDynamicCast<Element*>(exec->argument(0));
+    Root* root = jsDynamicCast<Root*>(exec->argument(1));
+    if (element && root)
+        element->setRoot(exec->vm(), root);
     return JSValue::encode(jsUndefined());
 }
 

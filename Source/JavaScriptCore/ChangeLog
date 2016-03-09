@@ -1,3 +1,18 @@
+2016-03-09  Michael Saboff  <msaboff@apple.com>
+
+        Harden JSC Root element functions from bad values
+        https://bugs.webkit.org/show_bug.cgi?id=155234
+
+        Reviewed by Saam Barati.
+
+        Changed jsCast() to jsDynamicCast() in Root related function to protect against being
+        called with non-Root arguments.
+
+        * jsc.cpp:
+        (functionCreateElement):
+        (functionGetElement):
+        (functionSetElementRoot):
+
 2016-03-09  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Pick how to OSR Enter to FTL at runtime instead of compile time
