@@ -67,7 +67,7 @@ JSBoundSlotBaseFunction* JSBoundSlotBaseFunction::create(VM& vm, JSGlobalObject*
     JSBoundSlotBaseFunction* function = new (NotNull, allocateCell<JSBoundSlotBaseFunction>(vm.heap)) JSBoundSlotBaseFunction(vm, globalObject, globalObject->boundSlotBaseFunctionStructure(), type);
 
     // Can't do this during initialization because getHostFunction might do a GC allocation.
-    String prefix = (type == Type::Getter) ? "get " : "set ";
+    const char* prefix = (type == Type::Getter) ? "get " : "set ";
     function->finishCreation(vm, executable, boundSlotBase, getterSetter, makeString(prefix, name));
     return function;
 }

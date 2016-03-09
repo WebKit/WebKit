@@ -1,3 +1,18 @@
+2016-03-08  Mark Lam  <mark.lam@apple.com>
+
+        Implement Function.name support for getters/setters and inferring name of function properties.
+        https://bugs.webkit.org/show_bug.cgi?id=154865
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        Follow up to the fix for this bug: adding a few small clean-ups for issues Joe
+        pointed out in the bug.
+
+        * runtime/JSBoundSlotBaseFunction.cpp:
+        (JSC::JSBoundSlotBaseFunction::create):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitiveByIndex):
+
 2016-03-08  Oliver Hunt  <oliver@apple.com>
 
         Start moving to separated writable and executable mappings in the JIT
