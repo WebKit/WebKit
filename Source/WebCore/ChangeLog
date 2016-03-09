@@ -1,3 +1,19 @@
+2016-03-09  Ada Chan  <adachan@apple.com>
+
+        Add a getter for WebVideoFullscreenInterfaceObjC and update its rate property
+        https://bugs.webkit.org/show_bug.cgi?id=155239
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+        Move the stub implementation of setVideoDimensions() to the mm file.
+        Declare a getter to WebVideoFullscreenInterfaceMacObjC.
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (WebCore::WebVideoFullscreenInterfaceMac::setRate):
+        Also update the rate property of WebVideoFullscreenInterfaceMacObjC.
+        (WebCore::WebVideoFullscreenInterfaceMac::setVideoDimensions):
+        Stub implementation of setVideoDimensions() has been moved to here.
+
 2016-03-09  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac build without video enabled after r197633.

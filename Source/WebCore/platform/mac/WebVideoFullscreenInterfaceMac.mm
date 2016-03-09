@@ -215,6 +215,10 @@ void WebVideoFullscreenInterfaceMac::setRate(bool isPlaying, float playbackRate)
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
 
     [controlsManager setRate:isPlaying ? playbackRate : 0.];
+
+#if USE(APPLE_INTERNAL_SDK)
+    [videoFullscreenInterfaceObjC() setRate:isPlaying ? playbackRate : 0.];
+#endif
 }
 
 void WebVideoFullscreenInterfaceMac::setSeekableRanges(const TimeRanges& timeRanges)
@@ -278,6 +282,10 @@ void WebVideoFullscreenInterfaceMac::preparedToReturnToInline(bool, const IntRec
 }
 
 void WebVideoFullscreenInterfaceMac::setExternalPlayback(bool, ExternalPlaybackTargetType, WTF::String)
+{
+}
+
+void WebVideoFullscreenInterfaceMac::setVideoDimensions(bool, float, float)
 {
 }
 
