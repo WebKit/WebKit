@@ -66,9 +66,7 @@ static const NSEventModifierFlags NSEventModifierFlagControl = NSControlKeyMask;
 static const NSEventModifierFlags NSEventModifierFlagCapsLock = NSAlphaShiftKeyMask;
 static const NSEventModifierFlags NSEventModifierFlagCommand =  NSCommandKeyMask;
 static const NSEventModifierFlags NSEventModifierFlagDeviceIndependentFlagsMask =  NSDeviceIndependentModifierFlagsMask;
-static const NSEventModifierFlags NSEventModifierFlagDeviceIndependentFlagsMask = NSDeviceIndependentModifierFlagsMask;
 static const NSEventModifierFlags NSEventModifierFlagFunction = NSFunctionKeyMask;
-static const NSEventModifierFlags NSEventModifierFlagNumericPad = NSNumericPadKeyMask;
 static const NSEventModifierFlags NSEventModifierFlagNumericPad = NSNumericPadKeyMask;
 static const NSEventModifierFlags NSEventModifierFlagShift = NSShiftKeyMask;
 
@@ -85,11 +83,14 @@ static const NSEventType NSEventTypeRightMouseDown = NSRightMouseDown;
 static const NSEventType NSEventTypeScrollWheel = NSScrollWheel;
 static const NSEventType NSEventTypeSystemDefined = NSSystemDefined;
 
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101100
 static const NSTextAlignment NSTextAlignmentRight = NSRightTextAlignment;
 static const NSTextAlignment NSTextAlignmentCenter = NSCenterTextAlignment;
 static const NSTextAlignment NSTextAlignmentLeft = NSLeftTextAlignment;
 static const NSTextAlignment NSTextAlignmentNatural = NSNaturalTextAlignment;
+#endif
 
+typedef NSUInteger NSWindowStyleMask;
 static const NSWindowStyleMask NSWindowStyleMaskBorderless = NSBorderlessWindowMask;
 static const NSWindowStyleMask NSWindowStyleMaskClosable = NSClosableWindowMask;
 static const NSWindowStyleMask NSWindowStyleMaskFullScreen = NSFullScreenWindowMask;
