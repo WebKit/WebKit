@@ -1,3 +1,13 @@
+2016-03-09  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Fixed All-in-One build.
+        https://bugs.webkit.org/show_bug.cgi?id=155241
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/cmake/WebKitMacros.cmake: Last item of WebCore_SOURCES was
+        not removed in PROCESS_ALLINONE_FILE.
+
 2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [EFL] Enable the SVG -> OTF Font Converter

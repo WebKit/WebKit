@@ -368,7 +368,7 @@ macro(PROCESS_ALLINONE_FILE _file_list _all_in_one_file _result_file_list)
     endforeach ()
 
     foreach (_allin ${_allins})
-        string(REGEX REPLACE ";[^;]*/${_allin};" ";" _new_result "${${_result_file_list}}")
+        string(REGEX REPLACE ";[^;]*/${_allin};" ";" _new_result "${${_result_file_list}};")
         set(${_result_file_list} ${_new_result})
     endforeach ()
 
