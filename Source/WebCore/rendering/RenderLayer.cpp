@@ -6051,11 +6051,6 @@ bool RenderLayer::hasCompositedMask() const
     return m_backing && m_backing->hasMaskLayer();
 }
 
-GraphicsLayer* RenderLayer::layerForScrolling() const
-{
-    return m_backing ? m_backing->scrollingContentsLayer() : nullptr;
-}
-
 GraphicsLayer* RenderLayer::layerForHorizontalScrollbar() const
 {
     return m_backing ? m_backing->layerForHorizontalScrollbar() : nullptr;

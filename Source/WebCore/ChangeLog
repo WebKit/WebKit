@@ -1,3 +1,31 @@
+2016-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete dead scrolling code
+        https://bugs.webkit.org/show_bug.cgi?id=155210
+
+        Reviewed by Simon Fraser.
+
+        No new tests because there is no behavior change.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layerForScrolling): Deleted.
+        * page/FrameView.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::scrollLayerForScrollableArea): Deleted.
+        * page/scrolling/ScrollingCoordinator.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::horizontalScrollbar):
+        (WebCore::ScrollableArea::verticalScrollbar):
+        (WebCore::ScrollableArea::tiledBacking):
+        (WebCore::ScrollableArea::layerForHorizontalScrollbar):
+        (WebCore::ScrollableArea::layerForVerticalScrollbar):
+        (WebCore::ScrollableArea::layerForScrollCorner):
+        (WebCore::ScrollableArea::layerForOverhangAreas):
+        (WebCore::ScrollableArea::layerForScrolling): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects): Deleted.
+        * rendering/RenderLayer.h:
+
 2016-03-08  Oliver Hunt  <oliver@apple.com>
 
         Start moving to separated writable and executable mappings in the JIT

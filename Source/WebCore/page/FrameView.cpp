@@ -852,14 +852,6 @@ void FrameView::restoreBackingStores()
     compositor.updateCompositingLayers(CompositingUpdateAfterLayout);
 }
 
-GraphicsLayer* FrameView::layerForScrolling() const
-{
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return nullptr;
-    return renderView->compositor().scrollLayer();
-}
-
 GraphicsLayer* FrameView::layerForHorizontalScrollbar() const
 {
     RenderView* renderView = this->renderView();

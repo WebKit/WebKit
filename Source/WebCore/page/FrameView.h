@@ -626,7 +626,6 @@ private:
     ScrollableArea* enclosingScrollableArea() const override;
     IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
     bool scrollAnimatorEnabled() const override;
-    GraphicsLayer* layerForScrolling() const override;
     GraphicsLayer* layerForHorizontalScrollbar() const override;
     GraphicsLayer* layerForVerticalScrollbar() const override;
     GraphicsLayer* layerForScrollCorner() const override;
