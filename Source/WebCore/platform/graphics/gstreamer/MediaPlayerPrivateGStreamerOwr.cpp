@@ -34,6 +34,7 @@
 #include <owr/owr.h>
 #include <owr/owr_gst_audio_renderer.h>
 #include <owr/owr_gst_video_renderer.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 GST_DEBUG_CATEGORY(webkit_openwebrtc_debug);
@@ -44,12 +45,7 @@ namespace WebCore {
 MediaPlayerPrivateGStreamerOwr::MediaPlayerPrivateGStreamerOwr(MediaPlayer* player)
     : MediaPlayerPrivateGStreamerBase(player)
 {
-    if (initializeGStreamerAndGStreamerDebugging()) {
-        LOG_MEDIA_MESSAGE("Creating MediaPlayerPrivateGStreamerOwr");
-
-        createVideoSink();
-        createGSTAudioSinkBin();
-    }
+    initializeGStreamerAndGStreamerDebugging();
 }
 
 MediaPlayerPrivateGStreamerOwr::~MediaPlayerPrivateGStreamerOwr()
@@ -117,13 +113,30 @@ float MediaPlayerPrivateGStreamerOwr::currentTime() const
 
 void MediaPlayerPrivateGStreamerOwr::load(const String &)
 {
-    notImplemented();
+    // Properly fail so the global MediaPlayer tries to fallback to the next MediaPlayerPrivate.
+    m_networkState = MediaPlayer::FormatError;
+    m_player->networkStateChanged();
 }
+
+#if ENABLE(MEDIA_SOURCE)
+void MediaPlayerPrivateGStreamerOwr::load(const String&, MediaSourcePrivateClient*)
+{
+    // Properly fail so the global MediaPlayer tries to fallback to the next MediaPlayerPrivate.
+    m_networkState = MediaPlayer::FormatError;
+    m_player->networkStateChanged();
+}
+#endif
 
 void MediaPlayerPrivateGStreamerOwr::load(MediaStreamPrivate& streamPrivate)
 {
     if (!initializeGStreamer())
         return;
+
+    if (!m_videoSink)
+        createVideoSink();
+
+    if (!m_audioSink)
+        createGSTAudioSinkBin();
 
     LOG_MEDIA_MESSAGE("Loading MediaStreamPrivate %p", &streamPrivate);
 
@@ -243,13 +256,17 @@ void MediaPlayerPrivateGStreamerOwr::registerMediaEngine(MediaEngineRegistrar re
     }
 }
 
-void MediaPlayerPrivateGStreamerOwr::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&)
+void MediaPlayerPrivateGStreamerOwr::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
     // Not supported in this media player.
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
+    types = cache;
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivateGStreamerOwr::supportsType(const MediaEngineSupportParameters&)
+MediaPlayer::SupportsType MediaPlayerPrivateGStreamerOwr::supportsType(const MediaEngineSupportParameters& parameters)
 {
+    if (parameters.isMediaStream)
+        return MediaPlayer::IsSupported;
     return MediaPlayer::IsNotSupported;
 }
 

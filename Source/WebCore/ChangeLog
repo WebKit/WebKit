@@ -1,3 +1,36 @@
+2016-03-09  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Fix MediaPlayerPrivate conflicts
+        https://bugs.webkit.org/show_bug.cgi?id=155236
+
+        Reviewed by Martin Robinson.
+
+        In some cases the mediastream player would be used to play
+        non-mediastream videos or MSE streams. The OWR player should be
+        used only for mediastreams and the MediaPlayerPrivateGStreamer
+        player should be used only for normal <video> elements and
+        MediaSource support.
+
+        This patch intends to fix the massive tests timeouts currently
+        happening on the GTK bots after r197752.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType): Bail out if
+        the type checked represents a mediastream.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        Prevent signal disconnection on possible NULL GObjects.
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerOwr::MediaPlayerPrivateGStreamerOwr):
+        Simplify constructor to the bare minimum.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::load): Create sinks only
+        if needed from the load method.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::getSupportedTypes):
+        Initialize the type cache to an empty static hashset.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::supportsType): This
+        player does support mediastreams and nothing else.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.h:
+
 2016-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked..

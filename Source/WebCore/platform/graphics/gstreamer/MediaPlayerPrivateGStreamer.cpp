@@ -1771,6 +1771,11 @@ void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String, ASCIICaseIns
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaEngineSupportParameters& parameters)
 {
+    // MediaStream playback is handled by the OpenWebRTC player.
+    if (parameters.isMediaStream)
+        return MediaPlayer::IsNotSupported;
+
+
     if (parameters.type.isNull() || parameters.type.isEmpty())
         return MediaPlayer::IsNotSupported;
 

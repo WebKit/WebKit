@@ -49,7 +49,7 @@ private:
 
     void load(const String&) override;
 #if ENABLE(MEDIA_SOURCE)
-    void load(const String&, MediaSourcePrivateClient*) override { }
+    void load(const String&, MediaSourcePrivateClient*) override;
 #endif
     void load(MediaStreamPrivate&) override;
     void cancelLoad() override { }
