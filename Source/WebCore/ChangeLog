@@ -1,3 +1,26 @@
+2016-03-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix auto-track sizing with min-size:auto and specific sizes
+        https://bugs.webkit.org/show_bug.cgi?id=155165
+
+        Reviewed by Darin Adler.
+
+        Specs recently changed the way auto tracks are sized. In the
+        previous versions, when sizing auto minimums, only the
+        min-width|height of the items spanning through the auto tracks
+        were used to size them. The new text specifies that for items
+        with a specified minimum size of auto, the behavior is
+        equivalent to a min-content minimum.
+
+        This means that from now on, auto tracks with min-size:auto
+        will no longer be smaller than min-content tracks (which was
+        pretty weird from the user POV).
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::minSizeForChild): use grid items
+        min-content contributions whenever the specified size is not
+        auto or when min-size is auto.
+
 2016-03-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Initial support for implicit grid before explicit grid

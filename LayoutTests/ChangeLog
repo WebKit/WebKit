@@ -1,3 +1,15 @@
+2016-03-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix auto-track sizing with min-size:auto and specific sizes
+        https://bugs.webkit.org/show_bug.cgi?id=155165
+
+        Reviewed by Darin Adler.
+
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-columns-expected.txt:
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-columns.html:
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-rows-expected.txt:
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-rows.html:
+
 2016-03-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Initial support for implicit grid before explicit grid

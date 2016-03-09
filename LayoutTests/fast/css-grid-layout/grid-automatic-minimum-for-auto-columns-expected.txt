@@ -7,6 +7,7 @@ PASS window.getComputedStyle(gridMinMaxMinContentAuto, '').getPropertyValue('-we
 PASS window.getComputedStyle(gridAutoMultipleItems, '').getPropertyValue('-webkit-grid-template-columns') is "30px"
 PASS window.getComputedStyle(gridMinMaxAutoAutoMultipleItemsOneWithoutMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "60px"
 PASS window.getComputedStyle(gridMinMaxAutoMaxContentMultipleItemsOneWithAutoMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "80px"
+PASS window.getComputedStyle(gridAutoAndAutoFixedWidthChildren, '').getPropertyValue('-webkit-grid-template-columns') is "200px 50px"
 
 Check that min-width is honored when sizing auto columns and spanning grid items.
 PASS window.getComputedStyle(gridAutoAndAutoOneSpanningOneNonSpannig, '').getPropertyValue('-webkit-grid-template-columns') is "35px 15px"
@@ -18,10 +19,10 @@ PASS window.getComputedStyle(gridMinMaxAutoMaxContentAndAutoMultipleSpanningMult
 
 Check the interactions between width and min-width and auto tracks.
 PASS window.getComputedStyle(gridAutoWithFixedWidthChild, '').getPropertyValue('-webkit-grid-template-columns') is "60px"
-PASS window.getComputedStyle(gridAutoWithFixedWidthChildAndMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "40px"
+PASS window.getComputedStyle(gridAutoWithFixedWidthChildAndMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "60px"
 PASS window.getComputedStyle(gridAutoWithFixedWidthChildAndHigherMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "90px"
 PASS window.getComputedStyle(gridAutoAndAutoOneSpanningFixedWidth, '').getPropertyValue('-webkit-grid-template-columns') is "25px 25px"
-PASS window.getComputedStyle(gridAutoAndAutoOneSpanningFixedWidthAndMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "25px 25px"
+PASS window.getComputedStyle(gridAutoAndAutoOneSpanningFixedWidthAndMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "30px 30px"
 PASS window.getComputedStyle(gridAutoAndAutoOneSpanningFixedWidthAndHigherMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "35px 35px"
 
 Check that borders and paddings are considering when computing min sizes.

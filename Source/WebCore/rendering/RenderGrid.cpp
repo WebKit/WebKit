@@ -736,13 +736,13 @@ LayoutUnit RenderGrid::minSizeForChild(RenderBox& child, GridTrackSizingDirectio
     if (hasOrthogonalWritingMode)
         return { };
 
-    const Length& childMinSize = direction == ForColumns ? child.style().logicalMinWidth() : child.style().logicalMinHeight();
-    if (childMinSize.isAuto()) {
-        // FIXME: Implement intrinsic aspect ratio support (transferred size in specs).
+    bool isRowAxis = direction == ForColumns;
+    const Length& childMinSize = isRowAxis ? child.style().logicalMinWidth() : child.style().logicalMinHeight();
+    const Length& childSize = isRowAxis ? child.style().logicalWidth() : child.style().logicalHeight();
+    if (!childSize.isAuto() || childMinSize.isAuto())
         return minContentForChild(child, direction, columnTracks);
-    }
 
-    if (direction == ForColumns)
+    if (isRowAxis)
         return child.computeLogicalWidthInRegionUsing(MinSize, childMinSize, contentLogicalWidth(), this, nullptr);
 
     return child.computeContentAndScrollbarLogicalHeightUsing(MinSize, childMinSize, child.logicalHeight()).valueOr(0);

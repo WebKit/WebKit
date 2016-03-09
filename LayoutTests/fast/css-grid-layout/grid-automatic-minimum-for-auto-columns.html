@@ -15,6 +15,7 @@
 
 .width50 { width: 50px; }
 .width60 { width: 60px; }
+.width200 { width: 200px; }
 
 .border5 { border: 5px solid #abc; }
 .padding8 { padding: 0px 8px 0px; }
@@ -87,6 +88,15 @@
 	<div class="thirdRowAutoColumn minWidth20">XXXX XXXX</div>
     </div>
 </div>
+
+
+<div class="constrainedContainer">
+    <div class="grid gridAutoAndAuto" id="gridAutoAndAutoFixedWidthChildren">
+	<div class="firstRowFirstColumn width200 minWidth50"></div>
+	<div class="firstRowSecondColumn width50"></div>
+    </div>
+</div>
+
 
 <div class="constrainedContainer">
     <div class="grid gridAutoAndAuto" id="gridAutoAndAutoOneSpanningOneNonSpannig">
@@ -239,6 +249,7 @@ testGridColumnsValues("gridMinMaxMinContentAuto", "40px");
 testGridColumnsValues("gridAutoMultipleItems", "30px");
 testGridColumnsValues("gridMinMaxAutoAutoMultipleItemsOneWithoutMinWidth", "60px");
 testGridColumnsValues("gridMinMaxAutoMaxContentMultipleItemsOneWithAutoMinWidth", "80px");
+testGridColumnsValues("gridAutoAndAutoFixedWidthChildren", "200px 50px");
 
 debug("");
 debug("Check that min-width is honored when sizing auto columns and spanning grid items.");
@@ -252,10 +263,10 @@ testGridColumnsValues("gridMinMaxAutoMaxContentAndAutoMultipleSpanningMultipleNo
 debug("");
 debug("Check the interactions between width and min-width and auto tracks.");
 testGridColumnsValues("gridAutoWithFixedWidthChild", "60px");
-testGridColumnsValues("gridAutoWithFixedWidthChildAndMinWidth", "40px");
+testGridColumnsValues("gridAutoWithFixedWidthChildAndMinWidth", "60px");
 testGridColumnsValues("gridAutoWithFixedWidthChildAndHigherMinWidth", "90px");
 testGridColumnsValues("gridAutoAndAutoOneSpanningFixedWidth", "25px 25px");
-testGridColumnsValues("gridAutoAndAutoOneSpanningFixedWidthAndMinWidth", "25px 25px");
+testGridColumnsValues("gridAutoAndAutoOneSpanningFixedWidthAndMinWidth", "30px 30px");
 testGridColumnsValues("gridAutoAndAutoOneSpanningFixedWidthAndHigherMinWidth", "35px 35px");
 
 debug("");

@@ -16,6 +16,7 @@
 .height30 { height: 30px; }
 .height50 { height: 50px; }
 .height60 { height: 60px; }
+.height200 { height: 200px; }
 
 .border5 { border: 5px solid #abc; }
 .padding8 { padding: 8px 0px; }
@@ -74,9 +75,16 @@
 </div>
 
 <div class="constrainedContainer">
+    <div class="grid gridAutoAndAuto" id="gridAutoAndAutoFixedHeightChildren">
+       <div class="firstRowFirstColumn height200"></div>
+       <div class="secondRowFirstColumn height50"></div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
     <div class="grid gridAutoAndAuto" id="gridAutoAndAutoOneSpanningOneNonSpannig">
-	<div class="firstRowFirstColumn">XX XX</div>
-	<div class="bothRowFirstColumn minHeight50">XXXXXX X XXX</div>
+        <div class="firstRowFirstColumn">XX XX</div>
+        <div class="bothRowFirstColumn minHeight50">XXXXXX X XXX</div>
     </div>
 </div>
 
@@ -220,11 +228,12 @@ debug("Check that min-height is honored when sizing auto rows.");
 testGridRowsValues("gridAuto", "40px");
 testGridRowsValues("gridAutoItemSmallerThanMinSize", "40px");
 testGridRowsValues("gridMinMaxAutoAuto", "40px");
-testGridRowsValues("gridMinMaxAutoMaxContent", "20px");
+testGridRowsValues("gridMinMaxAutoMaxContent", "30px");
 testGridRowsValues("gridMinMaxMinContentAuto", "60px");
 testGridRowsValues("gridAutoMultipleItems", "60px");
 testGridRowsValues("gridMinMaxAutoAutoMultipleItemsOneWithoutMinHeight", "50px");
 testGridRowsValues("gridMinMaxAutoMaxContentMultipleItemsOneWithAutoMinHeight", "60px");
+testGridRowsValues("gridAutoAndAutoFixedHeightChildren", "200px 50px");
 
 debug("");
 debug("Check that min-height is honored when sizing auto rows and spanning grid items.");
@@ -238,10 +247,10 @@ testGridRowsValues("gridMinMaxAutoMaxContentAndAutoMultipleSpanningMultipleNonSp
 debug("");
 debug("Check the interactions between height and min-height and auto tracks.");
 testGridRowsValues("gridAutoWithFixedHeightChild", "60px");
-testGridRowsValues("gridAutoWithFixedHeightChildAndMinHeight", "40px");
+testGridRowsValues("gridAutoWithFixedHeightChildAndMinHeight", "60px");
 testGridRowsValues("gridAutoWithFixedHeightChildAndHigherMinHeight", "90px");
 testGridRowsValues("gridAutoAndAutoOneSpanningFixedHeight", "25px 25px");
-testGridRowsValues("gridAutoAndAutoOneSpanningFixedHeightAndMinHeight", "25px 25px");
+testGridRowsValues("gridAutoAndAutoOneSpanningFixedHeightAndMinHeight", "30px 30px");
 testGridRowsValues("gridAutoAndAutoOneSpanningFixedHeightAndHigherMinHeight", "35px 35px");
 
 debug("");
