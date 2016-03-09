@@ -2703,3 +2703,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-elemen
 webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Pass ]
 
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
+
+# This test relies on iOS-specific font fallback.
+fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]

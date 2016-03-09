@@ -2824,8 +2824,9 @@ webkit.org/b/148470 svg/text/selection-doubleclick.svg [ Failure ]
 # Mocking the system language is not implemented in EFL.
 fast/text/international/system-language [ Failure ]
 fast/text/international/system-language/system-font-punctuation.html [ Missing ]
-# This test relies on iOS-specific font fallback.
+# These tests rely on iOS-specific font fallback.
 fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 

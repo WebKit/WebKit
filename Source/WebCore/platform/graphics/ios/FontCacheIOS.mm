@@ -109,7 +109,7 @@ RetainPtr<CTFontRef> platformLookupFallbackFont(CTFontRef font, FontWeight fontW
         auto familyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontFamilyNameAttribute)));
         if (fontFamilyShouldNotBeUsedForArabic(familyName.get())) {
             CFStringRef newFamilyName = isFontWeightBold(fontWeight) ? CFSTR("GeezaPro-Bold") : CFSTR("GeezaPro");
-            CFTypeRef keys[] = { kCTFontFamilyNameAttribute };
+            CFTypeRef keys[] = { kCTFontNameAttribute };
             CFTypeRef values[] = { newFamilyName };
             RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             fallbackFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fallbackFontDescriptor.get(), attributes.get()));

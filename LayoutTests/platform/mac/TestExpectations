@@ -1202,8 +1202,9 @@ webkit.org/b/147763 [ Yosemite ] accessibility/mac/loaded-notification.html [ Sk
 webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han.html [ ImageOnlyFailure ]
 webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
 
-# This test relies on iOS-specific font fallback.
+# These tests rely on iOS-specific font fallback.
 [ Yosemite ElCapitan ] fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ Pass ImageOnlyFailure ]
+[ Yosemite ElCapitan ] fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
 
 # Started to fail after r188390
 webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Failure ]

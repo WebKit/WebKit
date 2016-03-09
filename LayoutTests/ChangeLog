@@ -1,3 +1,20 @@
+2016-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Arabic text on Wikipedia is shown as boxes
+        https://bugs.webkit.org/show_bug.cgi?id=155129
+        <rdar://problem/24919902>
+
+        Reviewed by Darin Adler.
+
+        This test is iOS-specific.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * fast/text/arabic-blacklisted-expected.html: Added.
+        * fast/text/arabic-blacklisted.html: Added.
+
 2016-03-08  Chris Dumez  <cdumez@apple.com>
 
         Element with maximum tabIndex cannot be returned by nextElementWithGreaterTabIndex()

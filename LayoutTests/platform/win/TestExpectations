@@ -3357,3 +3357,6 @@ webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
 
 # Same thing with the "lang" attribute.
 webkit.org/b/137093 svg/custom/glyph-selection-lang-attribute.svg [ Failure ]
+
+# This test relies on iOS-specific font fallback.
+fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
