@@ -1,3 +1,10 @@
+2016-03-08  Sam Weinig  <sam@webkit.org>
+
+        Roll r197632 back in now that the bots have caught up.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textInputTraits]):
+
 2016-03-08  Oliver Hunt  <oliver@apple.com>
 
         Start moving to separated writable and executable mappings in the JIT
