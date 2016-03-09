@@ -1,3 +1,15 @@
+2016-03-09  Oliver Hunt  <oliver@apple.com>
+
+        Wincairo buildfix
+        https://bugs.webkit.org/show_bug.cgi?id=155245
+
+        Reviewed by Mark Lam.
+
+        Fix up exports for a few symbols
+
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+
 2016-03-09  Mark Lam  <mark.lam@apple.com>
 
         Add dumping of function expression names in CodeBlock bytecode dump.

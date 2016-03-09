@@ -89,11 +89,11 @@ static const double executablePoolReservationFraction = 0.15;
 static const double executablePoolReservationFraction = 0.25;
 #endif
 
-extern uintptr_t startOfFixedExecutableMemoryPool;
-extern uintptr_t endOfFixedExecutableMemoryPool;
+extern JS_EXPORTDATA uintptr_t startOfFixedExecutableMemoryPool;
+extern JS_EXPORTDATA uintptr_t endOfFixedExecutableMemoryPool;
 
 #if ENABLE(SEPARATED_WX_HEAP)
-extern uintptr_t jitWriteFunctionAddress;
+extern JS_EXPORTDATA uintptr_t jitWriteFunctionAddress;
 #endif
 #endif // ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
 
