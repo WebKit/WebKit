@@ -160,9 +160,10 @@ const CodeFeatures ArrowFunctionFeature =        1 << 8;
 const CodeFeatures ArrowFunctionContextFeature = 1 << 9;
 const CodeFeatures SuperCallFeature =            1 << 10;
 const CodeFeatures SuperPropertyFeature =        1 << 11;
+const CodeFeatures NewTargetFeature =            1 << 12;
 
 const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature | ModifiedParameterFeature | ArrowFunctionFeature | ArrowFunctionContextFeature |
-    SuperCallFeature | SuperPropertyFeature;
+    SuperCallFeature | SuperPropertyFeature | NewTargetFeature;
 
 typedef uint8_t InnerArrowFunctionCodeFeatures;
     

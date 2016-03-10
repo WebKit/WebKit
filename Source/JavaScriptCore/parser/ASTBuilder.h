@@ -179,6 +179,7 @@ public:
     }
     ExpressionNode* createNewTargetExpr(const JSTokenLocation location)
     {
+        usesNewTarget();
         return new (m_parserArena) NewTargetNode(location);
     }
     ExpressionNode* createResolve(const JSTokenLocation& location, const Identifier& ident, const JSTextPosition& start, const JSTextPosition& end)
@@ -955,6 +956,7 @@ private:
         m_evalCount++;
         m_scope.m_features |= EvalFeature;
     }
+    void usesNewTarget() { m_scope.m_features |= NewTargetFeature; }
     ExpressionNode* createIntegerLikeNumber(const JSTokenLocation& location, double d)
     {
         return new (m_parserArena) IntegerNode(location, d);

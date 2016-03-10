@@ -1,3 +1,27 @@
+2016-03-08  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        How we load new.target in arrow functions is broken
+        https://bugs.webkit.org/show_bug.cgi?id=155153
+
+        Reviewed by Saam Barati.
+
+        Fixed not correct approach of caching new.target. In current patch was added code feature
+        flag that shows that current function is using new.target, when generating byte code an arrow 
+        function we are loading new.target value to its register from arrow function lexical environment. 
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitLoadNewTargetFromArrowFunctionLexicalEnvironment):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::newTarget):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createNewTargetExpr):
+        (JSC::ASTBuilder::usesNewTarget):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::usesNewTarget):
+        * parser/ParserModes.h:
+        * tests/stress/arrowfunction-lexical-bind-newtarget.js:
+
 2016-03-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Get a RemoteObject or ObjectPreview from HeapSnapshot Object Identifier

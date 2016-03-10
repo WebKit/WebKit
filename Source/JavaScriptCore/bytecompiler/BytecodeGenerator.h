@@ -303,8 +303,7 @@ namespace JSC {
         RegisterID* argumentsRegister() { return m_argumentsRegister; }
         RegisterID* newTarget()
         {
-            return !m_codeBlock->isArrowFunction() || m_isNewTargetLoadedInArrowFunction
-                ? m_newTargetRegister : emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
+            return m_newTargetRegister;
         }
 
         RegisterID* scopeRegister() { return m_scopeRegister; }
@@ -938,7 +937,6 @@ namespace JSC {
         bool m_usesNonStrictEval { false };
         bool m_inTailPosition { false };
         bool m_needsToUpdateArrowFunctionContext;
-        bool m_isNewTargetLoadedInArrowFunction { false };
         DerivedContextType m_derivedContextType { DerivedContextType::None };
     };
 
