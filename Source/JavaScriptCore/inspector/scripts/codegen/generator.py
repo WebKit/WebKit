@@ -47,6 +47,7 @@ _ALWAYS_UPPERCASED_ENUM_VALUE_SUBSTRINGS = set(['API', 'CSS', 'DOM', 'HTML', 'JI
 
 # FIXME: This should be converted into a property in JSON.
 _TYPES_NEEDING_RUNTIME_CASTS = set([
+    "Runtime.ObjectPreview",
     "Runtime.RemoteObject",
     "Runtime.PropertyDescriptor",
     "Runtime.InternalPropertyDescriptor",

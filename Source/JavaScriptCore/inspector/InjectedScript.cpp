@@ -109,6 +109,23 @@ void InjectedScript::getFunctionDetails(ErrorString& errorString, const String& 
     *result = BindingTraits<Inspector::Protocol::Debugger::FunctionDetails>::runtimeCast(WTFMove(resultValue));
 }
 
+void InjectedScript::functionDetails(ErrorString& errorString, const Deprecated::ScriptValue& value, RefPtr<Protocol::Debugger::FunctionDetails>* result)
+{
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("functionDetails"), inspectorEnvironment()->functionCallHandler());
+    function.appendArgument(value);
+    function.appendArgument(true); // Preview only.
+
+    RefPtr<InspectorValue> resultValue;
+    makeCall(function, &resultValue);
+    if (!resultValue || resultValue->type() != InspectorValue::Type::Object) {
+        if (!resultValue->asString(errorString))
+            errorString = ASCIILiteral("Internal error");
+        return;
+    }
+
+    *result = BindingTraits<Inspector::Protocol::Debugger::FunctionDetails>::runtimeCast(WTFMove(resultValue));
+}
+
 void InjectedScript::getProperties(ErrorString& errorString, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getProperties"), inspectorEnvironment()->functionCallHandler());
@@ -252,6 +269,24 @@ RefPtr<Inspector::Protocol::Runtime::RemoteObject> InjectedScript::wrapTable(con
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
+}
+
+RefPtr<Inspector::Protocol::Runtime::ObjectPreview> InjectedScript::previewValue(const Deprecated::ScriptValue& value) const
+{
+    ASSERT(!hasNoValue());
+    Deprecated::ScriptFunctionCall wrapFunction(injectedScriptObject(), ASCIILiteral("previewValue"), inspectorEnvironment()->functionCallHandler());
+    wrapFunction.appendArgument(value);
+
+    bool hadException = false;
+    Deprecated::ScriptValue r = callFunctionWithEvalEnabled(wrapFunction, hadException);
+    if (hadException)
+        return nullptr;
+
+    RefPtr<InspectorObject> resultObject;
+    bool castSucceeded = r.toInspectorValue(scriptState())->asObject(resultObject);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);
+
+    return BindingTraits<Inspector::Protocol::Runtime::ObjectPreview>::runtimeCast(resultObject);
 }
 
 void InjectedScript::setExceptionValue(const Deprecated::ScriptValue& value)

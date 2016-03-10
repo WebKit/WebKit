@@ -18,7 +18,7 @@ function test()
                 InspectorTest.expectThat(snapshot.totalSize > 1024, "Snapshot size should be greater than 1kb.");
                 InspectorTest.expectThat(snapshot.totalObjectCount > 100, "Snapshot object count should be greater than 100.");
                 InspectorTest.expectThat(snapshot.categories.get("Window"), "Snapshot should include a class category for 'Window'.");
-                InspectorTest.expectThat(snapshot.instancesWithClassName("Window").length > 0, "Snapshow should include at least one 'Window' instance.");
+                InspectorTest.expectThat(snapshot.instancesWithClassName("Window").length > 0, "Snapshot should include at least one 'Window' instance.");
                 resolve();
             });
         }

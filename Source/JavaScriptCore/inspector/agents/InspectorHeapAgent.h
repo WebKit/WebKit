@@ -36,6 +36,7 @@
 
 namespace Inspector {
 
+class InjectedScriptManager;
 typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorHeapAgent final : public InspectorAgentBase, public HeapBackendDispatcherHandler, public JSC::HeapObserver {
@@ -54,6 +55,8 @@ public:
     void snapshot(ErrorString&, double* timestamp, String* snapshotData) override;
     void startTracking(ErrorString&) override;
     void stopTracking(ErrorString&) override;
+    void getPreview(ErrorString&, int heapObjectId, Inspector::Protocol::OptOutput<String>* resultString, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>& functionDetails, RefPtr<Inspector::Protocol::Runtime::ObjectPreview>& objectPreview) override;
+    void getRemoteObject(ErrorString&, int heapObjectId, const String* optionalObjectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) override;
 
     // HeapObserver
     void willGarbageCollect() override;
@@ -62,6 +65,9 @@ public:
 private:
     void clearHeapSnapshots();
 
+    Optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(ErrorString&, unsigned heapObjectIdentifier);
+
+    InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<HeapFrontendDispatcher> m_frontendDispatcher;
     RefPtr<HeapBackendDispatcher> m_backendDispatcher;
     InspectorEnvironment& m_environment;

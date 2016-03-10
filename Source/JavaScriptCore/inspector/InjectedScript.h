@@ -56,6 +56,7 @@ public:
     void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown);
     void evaluateOnCallFrame(ErrorString&, const Deprecated::ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex);
     void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>* result);
+    void functionDetails(ErrorString&, const Deprecated::ScriptValue&, RefPtr<Protocol::Debugger::FunctionDetails>* result);
     void getProperties(ErrorString&, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<Protocol::Array<Protocol::Runtime::PropertyDescriptor>>* result);
     void getDisplayableProperties(ErrorString&, const String& objectId, bool generatePreview, RefPtr<Protocol::Array<Protocol::Runtime::PropertyDescriptor>>* result);
     void getInternalProperties(ErrorString&, const String& objectId, bool generatePreview, RefPtr<Protocol::Array<Protocol::Runtime::InternalPropertyDescriptor>>* result);
@@ -65,6 +66,7 @@ public:
     Ref<Protocol::Array<Protocol::Debugger::CallFrame>> wrapCallFrames(const Deprecated::ScriptValue&) const;
     RefPtr<Protocol::Runtime::RemoteObject> wrapObject(const Deprecated::ScriptValue&, const String& groupName, bool generatePreview = false) const;
     RefPtr<Protocol::Runtime::RemoteObject> wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const;
+    RefPtr<Protocol::Runtime::ObjectPreview> previewValue(const Deprecated::ScriptValue&) const;
 
     void setExceptionValue(const Deprecated::ScriptValue&);
     void clearExceptionValue();

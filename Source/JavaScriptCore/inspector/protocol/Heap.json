@@ -46,6 +46,29 @@
         {
             "name": "stopTracking",
             "description": "Stop tracking heap changes. This will produce a `trackingComplete` event."
+        },
+        {
+            "name": "getPreview",
+            "description": "Returns a preview (string, Debugger.FunctionDetails, or Runtime.ObjectPreview) for a Heap.HeapObjectId.",
+            "parameters": [
+                { "name": "heapObjectId", "type": "integer", "description": "Identifier of the heap object within the snapshot." }
+            ],
+            "returns": [
+                { "name": "string", "type": "string", "optional": true, "description": "String value." },
+                { "name": "functionDetails", "$ref": "Debugger.FunctionDetails", "optional": true, "description": "Function details." },
+                { "name": "preview", "$ref": "Runtime.ObjectPreview", "optional": true, "description": "Object preview." }
+            ]
+        },
+        {
+            "name": "getRemoteObject",
+            "description": "Returns the strongly referenced Runtime.RemoteObject for a Heap.HeapObjectId.",
+            "parameters": [
+                { "name": "heapObjectId", "type": "integer", "description": "Identifier of the heap object within the snapshot." },
+                { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
+            ],
+            "returns": [
+                { "name": "result", "$ref": "Runtime.RemoteObject", "description": "Resulting object." }
+            ]
         }
     ],
     "events": [

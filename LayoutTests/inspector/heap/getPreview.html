@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerCreateStringObject() {
+    window.myString = "This is the test string.";
+}
+
+function triggerCreateFunctionObject() {
+    window.myFunction = function myFunctionName(alpha, beta) {
+        return alpha * beta;
+    };
+}
+
+function triggerCreateMapObject() {
+    window.myMap = new Map;
+    myMap.set("key", "value");
+}
+
+function triggerDeleteMapObject() {
+    window.myMap = null;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Heap.getPreview");
+
+    function jsonFilter(key, value) {
+        if (key === "scriptId")
+            return "<filtered>";
+        return value;
+    }
+
+    suite.addTestCase({
+        name: "GetPreviewNoSnapshot",
+        description: "Calling Heap.getPreview when no snapshot exists should result in an error.",
+        test: (resolve, reject) => {
+            HeapAgent.getPreview(1, (error, string, functionDetails, objectPreviewPayload) => {
+                InspectorTest.expectThat(error, "Should get an error when no snapshot exists.");
+                InspectorTest.pass(error);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "GetPreviewForString",
+        description: "Calling Heap.getPreview for a live string should return the value of that string.",
+        test: (resolve, reject) => {
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // All pre-existing objects.
+                InspectorTest.evaluateInPage("triggerCreateStringObject()");
+                HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
+                    InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+                    let payload = JSON.parse(snapshotStringData);
+                    let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
+
+                    let strings = snapshot.instancesWithClassName("string");
+                    let heapSnapshotNode = strings.reduce((result, x) => result.id < x.id ? x : result, strings[0]);
+                    HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
+                        InspectorTest.expectThat(!error, "Should not have an error getting preview.");
+                        InspectorTest.log("STRING: " + string);
+                        resolve();
+                    });
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "GetPreviewForFunction",
+        description: "Calling Heap.getPreview for a live Function should return function details for that value.",
+        test: (resolve, reject) => {
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // All pre-existing objects.
+                InspectorTest.evaluateInPage("triggerCreateFunctionObject()");
+                HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
+                    InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+                    let payload = JSON.parse(snapshotStringData);
+                    let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
+
+                    let functions = snapshot.instancesWithClassName("Function");
+                    let heapSnapshotNode = functions.reduce((result, x) => result.id < x.id ? x : result, functions[0]);
+                    HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
+                        InspectorTest.expectThat(!error, "Should not have an error getting preview.");
+                        InspectorTest.log("FUNCTION DETAILS: " + JSON.stringify(functionDetails, jsonFilter, 4));
+                        resolve();
+                    });
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "GetPreviewForObject",
+        description: "Calling Heap.getPreview for a live Object should return an object preview for that value.",
+        test: (resolve, reject) => {
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // All pre-existing objects.
+                InspectorTest.evaluateInPage("triggerCreateMapObject()");
+                HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
+                    InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+                    let payload = JSON.parse(snapshotStringData);
+                    let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
+
+                    let maps = snapshot.instancesWithClassName("Map");
+                    let heapSnapshotNode = maps.reduce((result, x) => result.id < x.id ? x : result, maps[0]);
+                    HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
+                        InspectorTest.expectThat(!error, "Should not have an error getting preview.");
+                        InspectorTest.log("OBJECT PREVIEW: " + JSON.stringify(objectPreviewPayload, jsonFilter, 4));
+                        resolve();
+                    });
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "GetPreviewBadIdentifier",
+        description: "Calling Heap.getPreview with a bad identifier should result in an error.",
+        test: (resolve, reject) => {
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+                InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+                HeapAgent.getPreview(9999999, (error, string, functionDetails, objectPreviewPayload) => {
+                    InspectorTest.expectThat(error, "Should get an error when no object for identifier exists.");
+                    InspectorTest.pass(error);
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "GetRemoteObjectCollectedObject",
+        description: "Calling Heap.getRemoteObject for an object that has been collected should result in an error.",
+        test: (resolve, reject) => {
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // All pre-existing objects.
+                InspectorTest.evaluateInPage("triggerCreateMapObject()");
+                HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
+                    InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+                    let payload = JSON.parse(snapshotStringData);
+                    let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
+
+                    InspectorTest.evaluateInPage("triggerDeleteMapObject()");
+                    HeapAgent.gc();
+
+                    let maps = snapshot.instancesWithClassName("Map");
+                    let heapSnapshotNode = maps.reduce((result, x) => result.id < x.id ? x : result, maps[0]);
+                    HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
+                        InspectorTest.expectThat(error, "Should get an error when object has been collected.");
+                        InspectorTest.pass(error);
+                        resolve();
+                    });
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for the Heap.getRemoteObject command.</p>
+</body>
+</html>

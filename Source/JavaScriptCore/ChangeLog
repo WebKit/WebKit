@@ -1,3 +1,40 @@
+2016-03-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Get a RemoteObject or ObjectPreview from HeapSnapshot Object Identifier
+        https://bugs.webkit.org/show_bug.cgi?id=155264
+        <rdar://problem/25070716>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::functionDetails):
+        (Inspector::InjectedScript::previewValue):
+        New InjectedScript methods for building Debugger.FunctionDetails
+        or Runtime.ObjectPreview protocol objects from a JSValue.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype.previewValue):
+        (InjectedScript.prototype.functionDetails):
+        (InjectedScript.prototype.getFunctionDetails):
+        (InjectedScript.RemoteObject.prototype._isPreviewableObjectInternal):
+        (InjectedScript.RemoteObject.prototype._createObjectPreviewForValue): Deleted.
+        (InjectedScript.RemoteObject.prototype._appendEntryPreviews): Deleted.
+        Share code around creating function details or object preview objects.
+
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::InspectorHeapAgent):
+        (Inspector::InspectorHeapAgent::nodeForHeapObjectIdentifier):
+        (Inspector::InspectorHeapAgent::getPreview):
+        (Inspector::InspectorHeapAgent::getRemoteObject):
+        * inspector/agents/InspectorHeapAgent.h:
+        * inspector/protocol/Heap.json:
+        New protocol methods that go from heap object identifier to a
+        remote object or some kind of preview.
+
+        * inspector/scripts/codegen/generator.py:
+        Allow runtime casts for ObjectPreview.
+
 2016-03-09  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Intl Constructors not web compatible with Object.create usage

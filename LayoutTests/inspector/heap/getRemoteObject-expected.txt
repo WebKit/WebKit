@@ -1,0 +1,25 @@
+Test for the Heap.getRemoteObject command.
+
+
+== Running test suite: Heap.getRemoteObject
+-- Running test case: GetRemoteObjectNoSnapshot
+PASS: Should get an error when no snapshot exists.
+PASS: No heap snapshot
+
+-- Running test case: GetRemoteObjectForWindow
+PASS: Should not have an error creating a snapshot.
+PASS: Should should include at least one 'Window' instance.
+PASS: Should not have an error getting remote object.
+Window
+
+-- Running test case: GetRemoteObjectBadIdentifier
+PASS: Should not have an error creating a snapshot.
+PASS: Should get an error when no object for identifier exists.
+PASS: No object for identifier, it may have been collected
+
+-- Running test case: GetRemoteObjectCollectedObject
+PASS: Should not have an error creating a snapshot.
+PASS: Should should include at least one 'Map' instance.
+PASS: Should get an error when object has been collected.
+PASS: No object for identifier, it may have been collected
+

@@ -1,3 +1,21 @@
+2016-03-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Get a RemoteObject or ObjectPreview from HeapSnapshot Object Identifier
+        https://bugs.webkit.org/show_bug.cgi?id=155264
+        <rdar://problem/25070716>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/heap/getPreview-expected.txt: Added.
+        * inspector/heap/getPreview.html: Added.
+        * inspector/heap/getRemoteObject-expected.txt: Added.
+        * inspector/heap/getRemoteObject.html: Added.
+        Test the new protocol methods in different scenarios.
+
+        * inspector/heap/snapshot-expected.txt:
+        * inspector/heap/snapshot.html:
+        Fix typo.
+
 2016-03-09  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Intl Constructors not web compatible with Object.create usage
