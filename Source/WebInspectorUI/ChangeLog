@@ -1,3 +1,30 @@
+2016-03-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TreeOutlineDataGridSynchronizer should be optional in TimelineDataGrid
+        https://bugs.webkit.org/show_bug.cgi?id=155318
+        <rdar://problem/25091949>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid):
+        TreeOutline is optional, and if non-null a tree outline synchronizer is created.
+
+        (WebInspector.TimelineDataGrid.prototype.shown):
+        (WebInspector.TimelineDataGrid.prototype.treeElementForDataGridNode):
+        (WebInspector.TimelineDataGrid.prototype.dataGridNodeForTreeElement):
+        (WebInspector.TimelineDataGrid.prototype.treeElementMatchesActiveScopeFilters):
+        Safety checks for the synchronizer.
+
+        (WebInspector.TimelineDataGrid.prototype.addRowInSortOrder):
+        treeElement is now an optional parameter. If non-null, a tree synchronizer
+        should exist. The third parameter has been overloaded, to allow passing
+        a parent tree element or data grid node.
+
+        (WebInspector.TimelineDataGrid.prototype._refreshDirtyDataGridNodes):
+        (WebInspector.TimelineDataGrid.prototype._sort):
+        Safety checks for the synchronizer.
+
 2016-03-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JavaScript Heap Allocations Timeline

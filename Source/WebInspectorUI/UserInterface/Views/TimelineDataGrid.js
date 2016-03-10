@@ -29,7 +29,8 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
     {
         super(columns, editCallback, deleteCallback);
 
-        this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(treeOutline, this, delegate);
+        if (treeOutline)
+            this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(treeOutline, this, delegate);
 
         this.element.classList.add("timeline");
 
@@ -89,7 +90,8 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
     {
         // May be overridden by subclasses. If so, they should call the superclass.
 
-        this._treeOutlineDataGridSynchronizer.synchronize();
+        if (this._treeOutlineDataGridSynchronizer)
+            this._treeOutlineDataGridSynchronizer.synchronize();
     }
 
     hidden()
@@ -106,11 +108,17 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
 
     treeElementForDataGridNode(dataGridNode)
     {
+        if (!this._treeOutlineDataGridSynchronizer)
+            return null;
+
         return this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
     }
 
     dataGridNodeForTreeElement(treeElement)
     {
+        if (!this._treeOutlineDataGridSynchronizer)
+            return null;
+
         return this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(treeElement);
     }
 
@@ -122,6 +130,9 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
 
     treeElementMatchesActiveScopeFilters(treeElement)
     {
+        if (!this._treeOutlineDataGridSynchronizer)
+            return false;
+
         var dataGridNode = this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(treeElement);
         console.assert(dataGridNode);
 
@@ -162,6 +173,38 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         }
     }
 
+    addRowInSortOrder(treeElement, dataGridNode, parentTreeElementOrDataGridNode)
+    {
+        let parentDataGridNode = parentTreeElementOrDataGridNode || this;
+        let childElement = dataGridNode;
+
+        if (treeElement) {
+            console.assert(this._treeOutlineDataGridSynchronizer);
+            if (!this._treeOutlineDataGridSynchronizer)
+                return;
+
+            this._treeOutlineDataGridSynchronizer.associate(treeElement, dataGridNode);
+
+            console.assert(!parentTreeElementOrDataGridNode || parentTreeElementOrDataGridNode instanceof WebInspector.TreeElement);
+
+            let parentTreeElement = parentTreeElementOrDataGridNode || this._treeOutlineDataGridSynchronizer.treeOutline;
+            parentDataGridNode = parentTreeElement.root ? this : this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(parentTreeElement);
+
+            parentTreeElementOrDataGridNode = parentTreeElement;
+            childElement = treeElement;
+        }
+
+        if (this.sortColumnIdentifier) {
+            let insertionIndex = insertionIndexForObjectInListSortedByFunction(dataGridNode, parentDataGridNode.children, this._sortComparator.bind(this));
+
+            // If parent is a tree element, the synchronizer will insert into the data grid.
+            parentTreeElementOrDataGridNode.insertChild(childElement, insertionIndex);
+        } else {
+            // If parent is a tree element, the synchronizer will append to the data grid.
+            parentTreeElementOrDataGridNode.appendChild(childElement);
+        }
+    }
+
     shouldIgnoreSelectionEvent()
     {
         return this._ignoreSelectionEvent || false;
@@ -197,7 +240,7 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
             this._scheduledDataGridNodeRefreshIdentifier = undefined;
         }
 
-        if (!this._dirtyDataGridNodes)
+        if (!this._dirtyDataGridNodes || !this._treeOutlineDataGridSynchronizer)
             return;
 
         var selectedNode = this.selectedNode;
@@ -247,23 +290,26 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
 
     _sort()
     {
-        var sortColumnIdentifier = this.sortColumnIdentifier;
+        let sortColumnIdentifier = this.sortColumnIdentifier;
         if (!sortColumnIdentifier)
             return;
 
-        var selectedNode = this.selectedNode;
+        let selectedNode = this.selectedNode;
         this._ignoreSelectionEvent = true;
 
-        this._treeOutlineDataGridSynchronizer.enabled = false;
+        let treeOutline;
+        if (this._treeOutlineDataGridSynchronizer) {
+            this._treeOutlineDataGridSynchronizer.enabled = false;
 
-        var treeOutline = this._treeOutlineDataGridSynchronizer.treeOutline;
-        if (treeOutline.selectedTreeElement)
-            treeOutline.selectedTreeElement.deselect(true);
+            treeOutline = this._treeOutlineDataGridSynchronizer.treeOutline;
+            if (treeOutline.selectedTreeElement)
+                treeOutline.selectedTreeElement.deselect(true);
+        }
 
         // Collect parent nodes that need their children sorted. So this in two phases since
         // traverseNextNode would get confused if we sort the tree while traversing it.
-        var parentDataGridNodes = [this];
-        var currentDataGridNode = this.children[0];
+        let parentDataGridNodes = [this];
+        let currentDataGridNode = this.children[0];
         while (currentDataGridNode) {
             if (currentDataGridNode.children.length)
                 parentDataGridNodes.push(currentDataGridNode);
@@ -271,22 +317,27 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         }
 
         // Sort the children of collected parent nodes.
-        for (var parentDataGridNode of parentDataGridNodes) {
-            var parentTreeElement = parentDataGridNode === this ? treeOutline : this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(parentDataGridNode);
-            console.assert(parentTreeElement);
-
-            var childDataGridNodes = parentDataGridNode.children.slice();
-
+        for (let parentDataGridNode of parentDataGridNodes) {
+            let childDataGridNodes = parentDataGridNode.children.slice();
             parentDataGridNode.removeChildren();
-            parentTreeElement.removeChildren();
+
+            let parentTreeElement;
+            if (this._treeOutlineDataGridSynchronizer) {
+                parentTreeElement = parentDataGridNode === this ? treeOutline : this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(parentDataGridNode);
+                console.assert(parentTreeElement);
+
+                parentTreeElement.removeChildren();
+            }
 
             childDataGridNodes.sort(this._sortComparator.bind(this));
 
-            for (var dataGridNode of childDataGridNodes) {
-                var treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
+            for (let dataGridNode of childDataGridNodes) {
+                let treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
                 console.assert(treeElement);
 
-                parentTreeElement.appendChild(treeElement);
+                if (parentTreeElement)
+                    parentTreeElement.appendChild(treeElement);
+
                 parentDataGridNode.appendChild(dataGridNode);
 
                 // Adding the tree element back to the tree outline subjects it to filters.
@@ -295,7 +346,8 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
             }
         }
 
-        this._treeOutlineDataGridSynchronizer.enabled = true;
+        if (this._treeOutlineDataGridSynchronizer)
+            this._treeOutlineDataGridSynchronizer.enabled = true;
 
         if (selectedNode)
             selectedNode.revealAndSelect();
