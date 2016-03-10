@@ -1,3 +1,19 @@
+2016-03-10  Frederic Wang  <fwang@igalia.com>
+
+        [GTK] Add support for WOFF2
+        https://bugs.webkit.org/show_bug.cgi?id=152616
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests (Covered by existing tests).
+
+        * CMakeLists.txt: Add woff2 source to the include directory and link WebCore against brotli and woff2.
+        * platform/graphics/WOFFFileFormat.cpp:
+        (WebCore::isWOFF): Recognize the signature of WOFF2 font.
+        (WebCore::convertWOFFToSfnt): If the font has the WOFF2 signature, then try and decompress it using the woff2 library.
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Add woff2 to the list of supported formats.
+
 2016-03-10  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix placement for unknown named grid lines

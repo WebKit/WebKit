@@ -56,6 +56,8 @@ find_package(OpenGLES2)
 
 WEBKIT_OPTION_BEGIN()
 
+set(USE_WOFF2 ON)
+
 # Set the default value for ENABLE_GLES2 automatically.
 # We are not enabling or disabling automatically a feature here, because
 # the feature is by default always on (ENABLE_OPENGL=ON).

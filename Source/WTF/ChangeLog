@@ -1,3 +1,12 @@
+2016-03-10  Frederic Wang  <fwang@igalia.com>
+
+        [GTK] Add support for WOFF2
+        https://bugs.webkit.org/show_bug.cgi?id=152616
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/FeatureDefines.h: Enable USE_WOFF2 flag on GTK.
+
 2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add runtime flags for shadow DOM and custom elements

@@ -1,3 +1,13 @@
+2016-03-10  Frederic Wang  <fwang@igalia.org>
+
+        [GTK] Add support for WOFF2
+        https://bugs.webkit.org/show_bug.cgi?id=152616
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/CMakeLists.txt: Build brotli and woff2 third-party libraries if WOFF2 is enabled.
+        * Source/cmake/OptionsGTK.cmake: Always enable WOFF2 on GTK.
+
 2016-03-09  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Fixed All-in-One build.

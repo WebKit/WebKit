@@ -19,6 +19,11 @@ if (ENABLE_API_TESTS)
     add_subdirectory(ThirdParty/gtest)
 endif ()
 
+if (USE_WOFF2)
+    add_subdirectory(ThirdParty/brotli)
+    add_subdirectory(ThirdParty/woff2)
+endif ()
+
 if (ENABLE_WEBKIT)
     add_subdirectory(WebKit)
 endif ()

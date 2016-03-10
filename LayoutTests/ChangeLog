@@ -1,3 +1,14 @@
+2016-03-10  Frederic Wang  <fwang@igalia.com>
+
+        [GTK] Add support for WOFF2
+        https://bugs.webkit.org/show_bug.cgi?id=152616
+
+        Reviewed by Carlos Garcia Campos.
+
+        * fast/text/woff2-expected.html: Adjust font-size to work around anti-aliasing effects.
+        * fast/text/woff2.html: Ditto.
+        * platform/gtk/TestExpectations: Update test expectation of woff2 test for GTK.
+
 2016-03-10  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix placement for unknown named grid lines

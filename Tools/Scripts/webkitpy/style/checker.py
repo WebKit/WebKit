@@ -240,13 +240,15 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming",
       "-readability/enum_casing"]),
 
-    # For third-party Python code, keep only the following checks--
+    # For third-party code, keep only the following checks--
     #
     #   No tabs: to avoid having to set the SVN allow-tabs property.
     #   No trailing white space: since this is easy to correct.
     #   No carriage-return line endings: since this is easy to correct.
     #
-    ([os.path.join('webkitpy', 'thirdparty')],
+    ([os.path.join('webkitpy', 'thirdparty'),
+      os.path.join('Source', 'ThirdParty', 'brotli'),
+      os.path.join('Source', 'ThirdParty', 'woff2')],
      ["-",
       "+pep8/W191",  # Tabs
       "+pep8/W291",  # Trailing white space

@@ -3383,6 +3383,11 @@ if (ENABLE_USER_MESSAGE_HANDLERS)
     )
 endif ()
 
+if (USE_WOFF2)
+  list(APPEND WebCore_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/woff2/src")
+  list(APPEND WebCore_LIBRARIES woff2)
+endif ()
+
 set(WebCoreTestSupport_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/testing"

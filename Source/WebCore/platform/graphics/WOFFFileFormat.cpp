@@ -30,6 +30,11 @@
 #include "SharedBuffer.h"
 #include <wtf/ByteOrder.h>
 
+#if USE(WOFF2)
+#include "woff2_common.h"
+#include "woff2_dec.h"
+#endif
+
 namespace WebCore {
 
 static bool readUInt32(SharedBuffer* buffer, size_t& offset, uint32_t& value)
@@ -75,7 +80,14 @@ bool isWOFF(SharedBuffer* buffer)
     size_t offset = 0;
     uint32_t signature;
 
-    return readUInt32(buffer, offset, signature) && signature == woffSignature;
+    if (!readUInt32(buffer, offset, signature))
+        return false;
+
+#if USE(WOFF2)
+    return signature == woffSignature || signature == woff2::kWoff2Signature;
+#else
+    return signature == woffSignature;
+#endif
 }
 
 bool convertWOFFToSfnt(SharedBuffer* woff, Vector<char>& sfnt)
@@ -86,7 +98,26 @@ bool convertWOFFToSfnt(SharedBuffer* woff, Vector<char>& sfnt)
 
     // Read the WOFF header.
     uint32_t signature;
-    if (!readUInt32(woff, offset, signature) || signature != woffSignature) {
+    if (!readUInt32(woff, offset, signature)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+#if USE(WOFF2)
+    if (signature == woff2::kWoff2Signature) {
+        const uint8_t* woffData = reinterpret_cast_ptr<const uint8_t*>(woff->data());
+        const size_t woffSize = woff->size();
+        const size_t sfntSize = woff2::ComputeWOFF2FinalSize(woffData, woffSize);
+
+        if (!sfnt.tryReserveCapacity(sfntSize))
+            return false;
+        sfnt.resize(sfntSize);
+
+        return woff2::ConvertWOFF2ToTTF(reinterpret_cast<uint8_t*>(sfnt.data()), sfnt.size(), woffData, woffSize);
+    }
+#endif
+
+    if (signature != woffSignature) {
         ASSERT_NOT_REACHED();
         return false;
     }

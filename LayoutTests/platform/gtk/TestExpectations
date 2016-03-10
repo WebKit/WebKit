@@ -616,9 +616,6 @@ webkit.org/b/148967 accessibility/aria-table-attributes.html [ Skip ]
 # Text marker tests are not supported
 webkit.org/b/153292 accessibility/text-marker [ Skip ]
 
-# WebKitGTK+ needs WOFF2 support.
-webkit.org/b/152616 fast/text/woff2.html [ ImageOnlyFailure ]
-
 # WebKitGTK+ doesn't have killring support.
 webkit.org/b/152379 editing/pasteboard/emacs-killring-alternating-append-prepend.html [ Failure ]
 webkit.org/b/152379 editing/pasteboard/emacs-killring-backward-delete-prepend.html [ Failure ]

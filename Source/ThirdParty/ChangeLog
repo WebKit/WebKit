@@ -1,3 +1,90 @@
+2016-03-10  Frederic Wang  <fwang@igalia.com>
+
+        [GTK] Add support for WOFF2
+        https://bugs.webkit.org/show_bug.cgi?id=152616
+
+        Reviewed by Carlos Garcia Campos.
+
+        We import the source of the third-party brotli and woff2 libraries because release packages do not exist yet.
+        The script to update source from upstream as well as the makefile to compile relevant files are based on similar code from Mozilla.
+
+        * brotli/CMakeLists.txt: Added. We force BROTLI_BUILD_PORTABLE by default, see https://github.com/google/brotli/issues/307.
+        * brotli/LICENSE: Added.
+        * brotli/README.webkit: Added.
+        * brotli/dec/Makefile: Added.
+        * brotli/dec/bit_reader.c: Added.
+        * brotli/dec/bit_reader.h: Added.
+        * brotli/dec/context.h: Added.
+        * brotli/dec/decode.c: Added.
+        * brotli/dec/decode.h: Added.
+        * brotli/dec/dictionary.c: Added.
+        * brotli/dec/dictionary.h: Added.
+        * brotli/dec/huffman.c: Added.
+        * brotli/dec/huffman.h: Added.
+        * brotli/dec/port.h: Added.
+        (BrotliRBit):
+        * brotli/dec/prefix.h: Added.
+        * brotli/dec/state.c: Added.
+        * brotli/dec/state.h: Added.
+        * brotli/dec/transform.h: Added.
+        * brotli/dec/types.h: Added.
+        * brotli/update.sh: Added. This script helps to get the latest version of the decoder source code.
+        * woff2/CMakeLists.txt: Added. We only compile the decoder files.
+        * woff2/LICENSE: Added.
+        * woff2/README.webkit: Added.
+        * woff2/src/buffer.h: Added.
+        (woff2::Failure):
+        (woff2::Buffer::Buffer):
+        (woff2::Buffer::Skip):
+        (woff2::Buffer::Read):
+        (woff2::Buffer::ReadU8):
+        (woff2::Buffer::ReadU16):
+        (woff2::Buffer::ReadS16):
+        (woff2::Buffer::ReadU24):
+        (woff2::Buffer::ReadU32):
+        (woff2::Buffer::ReadS32):
+        (woff2::Buffer::ReadTag):
+        (woff2::Buffer::ReadR64):
+        (woff2::Buffer::buffer):
+        (woff2::Buffer::offset):
+        (woff2::Buffer::length):
+        (woff2::Buffer::set_offset):
+        * woff2/src/file.h: Added.
+        (woff2::GetFileContent):
+        (woff2::SetFileContents):
+        * woff2/src/font.cc: Added.
+        * woff2/src/font.h: Added.
+        * woff2/src/glyph.cc: Added.
+        * woff2/src/glyph.h: Added.
+        (woff2::Glyph::Glyph):
+        * woff2/src/normalize.cc: Added.
+        * woff2/src/normalize.h: Added.
+        * woff2/src/port.h: Added.
+        (woff2::Log2Floor):
+        * woff2/src/round.h: Added.
+        (woff2::Round4):
+        * woff2/src/store_bytes.h: Added.
+        (woff2::StoreU32):
+        (woff2::Store16):
+        (woff2::StoreBytes):
+        * woff2/src/table_tags.cc: Added.
+        * woff2/src/table_tags.h: Added.
+        * woff2/src/transform.cc: Added.
+        * woff2/src/transform.h: Added.
+        * woff2/src/variable_length.cc: Added.
+        * woff2/src/variable_length.h: Added.
+        * woff2/src/woff2_common.cc: Added.
+        * woff2/src/woff2_common.h: Added.
+        (woff2::Table::operator<):
+        * woff2/src/woff2_compress.cc: Added.
+        * woff2/src/woff2_dec.cc: Added.
+        * woff2/src/woff2_dec.h: Added.
+        * woff2/src/woff2_decompress.cc: Added.
+        * woff2/src/woff2_enc.cc: Added.
+        * woff2/src/woff2_enc.h: Added.
+        (woff2::WOFF2Params::WOFF2Params):
+        * woff2/update.sh: Added. This script helps to get the latest upstream version.
+
 2016-01-09  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Allow overriding the frameworks directory independently of using a staging install path
