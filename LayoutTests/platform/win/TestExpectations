@@ -3360,3 +3360,7 @@ webkit.org/b/137093 svg/custom/glyph-selection-lang-attribute.svg [ Failure ]
 
 # This test relies on iOS-specific font fallback.
 fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
+
+# RTL Scrollbars are only implemented on OS X
+fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]

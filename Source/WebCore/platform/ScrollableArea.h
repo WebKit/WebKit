@@ -175,7 +175,9 @@ public:
     {
         return scrollbar->Widget::convertFromContainingView(parentPoint);
     }
-    
+
+    int horizontalScrollbarIntrusion() const;
+    int verticalScrollbarIntrusion() const;
     WEBCORE_EXPORT IntSize scrollbarIntrusion() const;
 
     virtual Scrollbar* horizontalScrollbar() const { return 0; }
@@ -309,6 +311,8 @@ public:
 
     virtual bool usesMockScrollAnimator() const { return false; }
     virtual void logMockScrollAnimatorMessage(const String&) const { };
+
+    static bool systemLanguageIsRTL();
 
 protected:
     WEBCORE_EXPORT ScrollableArea();

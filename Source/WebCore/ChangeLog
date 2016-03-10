@@ -1,3 +1,35 @@
+2016-03-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Main frame scrollbars should appear on the left on RTL systems
+        https://bugs.webkit.org/show_bug.cgi?id=155149
+
+        Reviewed by Simon Fraser.
+
+        A helper function, ScrollableArea::systemLanguageIsRTL() is used to determine
+        if we should be in this new mode. Once we have determined we should be in
+        this new mode, there are some scattered places where the geometry math
+        needed to be updated.
+
+        Tests: fast/scrolling/rtl-scrollbars-simple.html
+               fast/scrolling/rtl-scrollbars.html
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+        * platform/mac/ScrollableAreaMac.mm:
+        (WebCore::ScrollableArea::systemLanguageIsRTL):
+        * platform/ScrollableArea.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::scrollCornerRect):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimator::scrollbarsAreRTL):
+        * platform/spi/mac/NSScrollerImpSPI.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::positionForClipLayer):
+
 2016-03-07  Jer Noble  <jer.noble@apple.com>
 
         Add separate WK and WK2 preferences for requiring user gestures for video media, distinct from user gestures for media generally

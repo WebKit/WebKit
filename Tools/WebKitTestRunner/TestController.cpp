@@ -435,7 +435,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
         { 1, this },
         didReceiveMessageFromInjectedBundle,
         didReceiveSynchronousMessageFromInjectedBundle,
-        0 // getInjectedBundleInitializationUserData
+        getInjectedBundleInitializationUserData,
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient.base);
 
@@ -937,6 +937,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.useFlexibleViewport = parseBooleanTestHeaderValue(value);
         if (key == "useDataDetection")
             testOptions.useDataDetection = parseBooleanTestHeaderValue(value);
+        if (key == "rtlScrollbars")
+            testOptions.useRTLScrollbars = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
@@ -1135,6 +1137,11 @@ void TestController::didReceiveMessageFromInjectedBundle(WKContextRef context, W
 void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void* clientInfo)
 {
     *returnData = static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).leakRef();
+}
+
+WKTypeRef TestController::getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo)
+{
+    return static_cast<TestController*>(const_cast<void*>(clientInfo))->getInjectedBundleInitializationUserData().leakRef();
 }
 
 // WKPageInjectedBundleClient
@@ -1451,6 +1458,18 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
         ASSERT_NOT_REACHED();
     }
     return m_currentInvocation->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody);
+}
+
+WKRetainPtr<WKTypeRef> TestController::getInjectedBundleInitializationUserData()
+{
+    if (m_currentInvocation->options().useRTLScrollbars) {
+        WKRetainPtr<WKStringRef> key = adoptWK(WKStringCreateWithUTF8CString("UseRTLScrollbars"));
+        WKRetainPtr<WKBooleanRef> value = adoptWK(WKBooleanCreate(true));
+        const WKStringRef keyArray[] = { key.get() };
+        const WKTypeRef valueArray[] = { value.get() };
+        return adoptWK(WKDictionaryCreate(keyArray, valueArray, WTF_ARRAY_LENGTH(keyArray)));
+    }
+    return nullptr;
 }
 
 // WKContextClient

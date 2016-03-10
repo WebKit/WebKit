@@ -1335,3 +1335,7 @@ webkit.org/b/154709 [ ElCapitan+ ] fast/text/crash-complex-text-surrogate.html [
 webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
 
 webkit.org/b/155140 js/promises-tests/promises-tests-2-3-3.html [ Pass Failure ]
+
+# RTL Scrollbars are only implemented on certain OSes.
+[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
+[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]

@@ -419,7 +419,7 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
 
     float topContentInset = this->topContentInset();
     if (m_insetClipLayer && m_scrolledContentsLayer && topContentInset) {
-        m_insetClipLayer.get().position = FloatPoint(0, FrameView::yPositionForInsetClipLayer(position, topContentInset));
+        m_insetClipLayer.get().position = FloatPoint(m_insetClipLayer.get().position.x, FrameView::yPositionForInsetClipLayer(position, topContentInset));
         m_scrolledContentsLayer.get().position = FrameView::positionForRootContentLayer(position, scrollOrigin(), topContentInset, headerHeight());
         if (m_contentShadowLayer)
             m_contentShadowLayer.get().position = m_scrolledContentsLayer.get().position;

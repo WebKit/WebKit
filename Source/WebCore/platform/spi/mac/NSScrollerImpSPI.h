@@ -110,6 +110,7 @@ typedef NSUInteger NSOverlayScrollerState;
 @property(retain) NSScrollerImp *verticalScrollerImp;
 @property(retain) NSScrollerImp *horizontalScrollerImp;
 @property NSScrollerStyle scrollerStyle;
++ (NSUserInterfaceLayoutDirection)scrollerLayoutDirection;
 - (void)flashScrollers;
 - (void)hideOverlayScrollers;
 - (void)lockOverlayScrollerState:(NSOverlayScrollerState)state;

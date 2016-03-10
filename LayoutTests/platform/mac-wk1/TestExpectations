@@ -195,3 +195,7 @@ inspector/heap/getRemoteObject.html [ Skip ]
 
 # This test checks ScrollAnimator events only for main frame scrollbars that use native widgets in WK1.
 fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
+
+# RTL Scrollbars are only implemented in WK2
+fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]

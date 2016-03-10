@@ -2989,3 +2989,7 @@ svg/text/tspan-multiple-outline.svg [ ImageOnlyFailure ]
 webkit.org/b/155174 svg/animations/animate-marker-orient-from-angle-to-autostartreverse.html [ Skip ]
 
 webkit.org/b/155271 [ Debug ] js/regress/getter-richards-try-catch.html [ Skip ]
+
+# RTL Scrollbars are only implemented on OS X.
+fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]

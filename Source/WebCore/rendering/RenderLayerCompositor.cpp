@@ -1759,7 +1759,9 @@ void RenderLayerCompositor::updateScrollLayerPosition()
 
 FloatPoint RenderLayerCompositor::positionForClipLayer() const
 {
-    return FloatPoint(0, FrameView::yPositionForInsetClipLayer(m_renderView.frameView().scrollPosition(), m_renderView.frameView().topContentInset()));
+    return FloatPoint(
+        ScrollableArea::systemLanguageIsRTL() ? m_renderView.frameView().horizontalScrollbarIntrusion() : 0,
+        FrameView::yPositionForInsetClipLayer(m_renderView.frameView().scrollPosition(), m_renderView.frameView().topContentInset()));
 }
 
 void RenderLayerCompositor::frameViewDidScroll()

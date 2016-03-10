@@ -322,7 +322,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
             LayoutPoint scrollPositionForFixed = frameView.scrollPositionForFixedPosition();
 
             float topContentInset = frameView.topContentInset();
-            FloatPoint positionForInsetClipLayer = FloatPoint(0, FrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset));
+            FloatPoint positionForInsetClipLayer = FloatPoint(insetClipLayer ? insetClipLayer->position().x() : 0, FrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset));
             FloatPoint positionForContentsLayer = frameView.positionForRootContentLayer();
             FloatPoint positionForHeaderLayer = FloatPoint(scrollPositionForFixed.x(), FrameView::yPositionForHeaderLayer(scrollPosition, topContentInset));
             FloatPoint positionForFooterLayer = FloatPoint(scrollPositionForFixed.x(),

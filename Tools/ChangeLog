@@ -1,3 +1,29 @@
+2016-03-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Main frame scrollbars should appear on the left on RTL systems
+        https://bugs.webkit.org/show_bug.cgi?id=155149
+
+        Reviewed by Simon Fraser.
+
+        Setting the volatile default needs to be done early, so it is
+        plumbed through the injected bundle's initialization routine.
+
+        Control of RTL scrollbars is handled by putting the string
+        <!-- webkit-test-runner [ rtlScrollbars=true ] -->
+        on the first line of a test.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::shouldUseRTLScrollbars):
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::updateTestOptionsFromTestHeader):
+        (WTR::TestController::getInjectedBundleInitializationUserData):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::viewSupportsOptions):
+
 2016-03-08  Jer Noble  <jer.noble@apple.com>
 
         Add separate WK and WK2 preferences for requiring user gestures for video media, distinct from user gestures for media generally

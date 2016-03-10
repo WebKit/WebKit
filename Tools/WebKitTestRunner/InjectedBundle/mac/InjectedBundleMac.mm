@@ -37,7 +37,19 @@
 
 namespace WTR {
 
-void InjectedBundle::platformInitialize(WKTypeRef)
+static bool shouldUseRTLScrollbars(WKTypeRef initializationUserData)
+{
+    if (!initializationUserData || WKGetTypeID(initializationUserData) != WKDictionaryGetTypeID())
+        return false;
+
+    WKTypeRef item = WKDictionaryGetItemForKey(static_cast<WKDictionaryRef>(initializationUserData), adoptWK(WKStringCreateWithUTF8CString("UseRTLScrollbars")).get());
+    if (!item || WKGetTypeID(item) != WKBooleanGetTypeID())
+        return false;
+
+    return WKBooleanGetValue(static_cast<WKBooleanRef>(item));
+}
+
+void InjectedBundle::platformInitialize(WKTypeRef initializationUserData)
 {
     static const int NoFontSmoothing = 0;
     static const int BlueTintedAppearance = 1;
@@ -81,6 +93,13 @@ void InjectedBundle::platformInitialize(WKTypeRef)
         @"AppleEnableSwipeNavigateWithScrolls": @YES,
         @"com.apple.swipescrolldirection": @1,
     };
+
+    if (shouldUseRTLScrollbars(initializationUserData)) {
+        NSMutableDictionary *newDictionary = [dict mutableCopy];
+        [newDictionary setValue:@YES forKey:@"AppleTextDirection"];
+        [newDictionary setValue:@YES forKey:@"NSForceRightToLeftWritingDirection"];
+        dict = [newDictionary autorelease];
+    }
 
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
 

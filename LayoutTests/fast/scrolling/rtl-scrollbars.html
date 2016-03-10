@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+</head>
+<body style="height: 1000px; position: relative;">
+<div style="position: absolute; left: 0px; bottom: 0px;">This test makes sure that rtl scrollbars are on the left of the main frame.</div>
+<script>
+if (window.eventSender) {
+    eventSender.mouseMoveTo(4, 20);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(4, window.innerHeight - 20);
+    eventSender.mouseUp();
+}
+</script>
+</body>
+</html>
