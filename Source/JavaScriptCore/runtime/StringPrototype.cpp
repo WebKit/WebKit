@@ -1054,7 +1054,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
         }
-        if ((sticky = regExp->sticky())) {
+        sticky = regExp->sticky();
+        if (!global && sticky) {
             JSValue jsLastIndex = regExpObject->getLastIndex();
             unsigned lastIndex;
             if (LIKELY(jsLastIndex.isUInt32())) {
@@ -1103,7 +1104,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
 
     // return array of matches
     MarkedArgumentBuffer list;
-    size_t end = 0;
     while (result) {
         // We defend ourselves from crazy.
         const size_t maximumReasonableMatchSize = 1000000000;
@@ -1112,30 +1112,20 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
             return JSValue::encode(jsUndefined());
         }
         
-        end = result.end;
+        size_t end = result.end;
         size_t length = end - result.start;
         list.append(jsSubstring(exec, s, result.start, length));
         if (!length)
             ++end;
-        
-        if (global)
-            result = regExpConstructor->performMatch(*vm, regExp, string, s, end);
-        else
-            result = MatchResult();
+        result = regExpConstructor->performMatch(*vm, regExp, string, s, end);
     }
     if (list.isEmpty()) {
         // if there are no matches at all, it's important to return
         // Null instead of an empty array, because this matches
         // other browsers and because Null is a false value.
-        if (sticky)
-            regExpObject->setLastIndex(exec, 0);
-        
         return JSValue::encode(jsNull());
     }
-    
-    if (sticky)
-        regExpObject->setLastIndex(exec, end);
-    
+
     return JSValue::encode(constructArray(exec, static_cast<ArrayAllocationProfile*>(0), list));
 }
 

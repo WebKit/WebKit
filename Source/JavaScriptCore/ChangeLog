@@ -1,5 +1,17 @@
 2016-03-10  Michael Saboff  <msaboff@apple.com>
 
+        [ES6] RegExp sticky flag should be ignored in String.match when global flag is given
+        https://bugs.webkit.org/show_bug.cgi?id=155332
+
+        Reviewed by Saam Barati.
+
+        Removed logic from stringProtoFuncMatch that handles the case where both global and sticky flags are set.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+
+2016-03-10  Michael Saboff  <msaboff@apple.com>
+
         [ES6] Allow RegExp constructor to take pattern from an existing RegExp with new flags
         https://bugs.webkit.org/show_bug.cgi?id=155315
 
