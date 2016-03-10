@@ -1057,7 +1057,7 @@
 - path: es6/Proxy_isExtensible_handler.js
   cmd: runES6 :normal
 - path: es6/Proxy_JSON.stringify_support.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_ownKeys_handler.js
   cmd: runES6 :normal
 - path: es6/Proxy_preventExtensions_handler.js

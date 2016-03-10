@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSONObject.h"
 
+#include "ArrayConstructor.h"
 #include "BooleanObject.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
@@ -92,7 +93,7 @@ public:
 private:
     class Holder {
     public:
-        Holder(VM&, JSObject*);
+        Holder(VM&, ExecState*, JSObject*);
 
         JSObject* object() const { return m_object.get(); }
 
@@ -289,9 +290,10 @@ JSValue Stringifier::toJSONImpl(JSValue value, const PropertyNameForFunctionCall
 
 Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& builder, JSValue value, JSObject* holder, const PropertyNameForFunctionCall& propertyName)
 {
+    VM& vm = m_exec->vm();
     // Call the toJSON function.
     value = toJSON(value, propertyName);
-    if (m_exec->hadException())
+    if (vm.exception())
         return StringifyFailed;
 
     // Call the replacer function.
@@ -300,7 +302,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         args.append(propertyName.value(m_exec));
         args.append(value);
         value = call(m_exec, m_replacer.get(), m_replacerCallType, m_replacerCallData, holder, args);
-        if (m_exec->hadException())
+        if (vm.exception())
             return StringifyFailed;
     }
 
@@ -314,7 +316,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     value = unwrapBoxedPrimitive(m_exec, value);
 
-    if (m_exec->hadException())
+    if (vm.exception())
         return StringifyFailed;
 
     if (value.isBoolean()) {
@@ -364,14 +366,17 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
             return StringifyFailed;
         }
     }
+
     bool holderStackWasEmpty = m_holderStack.isEmpty();
-    m_holderStack.append(Holder(m_exec->vm(), object));
+    m_holderStack.append(Holder(vm, m_exec, object));
+    if (UNLIKELY(vm.exception()))
+        return StringifyFailed;
     if (!holderStackWasEmpty)
         return StringifySucceeded;
 
     do {
         while (m_holderStack.last().appendNextProperty(*this, builder)) {
-            if (m_exec->hadException())
+            if (vm.exception())
                 return StringifyFailed;
         }
         m_holderStack.removeLast();
@@ -408,9 +413,9 @@ inline void Stringifier::startNewLine(StringBuilder& builder) const
     builder.append(m_indent);
 }
 
-inline Stringifier::Holder::Holder(VM& vm, JSObject* object)
+inline Stringifier::Holder::Holder(VM& vm, ExecState* exec, JSObject* object)
     : m_object(vm, object)
-    , m_isArray(object->inherits(JSArray::info()))
+    , m_isArray(isArray(exec, object))
     , m_index(0)
 #ifndef NDEBUG
     , m_size(0)

@@ -130,26 +130,7 @@ CallType ArrayConstructor::getCallData(JSCell*, CallData& callData)
 // https://tc39.github.io/ecma262/#sec-isarray
 EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState* exec)
 {
-    JSValue argumentValue = exec->argument(0);
-
-    if (!argumentValue.isObject())
-        return JSValue::encode(jsBoolean(false));
-
-    JSObject* argument = jsCast<JSObject*>(argumentValue);
-    while (true) {
-        if (argument->inherits(JSArray::info()))
-            return JSValue::encode(jsBoolean(true));
-
-        if (argument->type() != ProxyObjectType)
-            return JSValue::encode(jsBoolean(false));
-
-        ProxyObject* proxy = jsCast<ProxyObject*>(argument);
-        if (proxy->isRevoked())
-            return throwVMTypeError(exec, ASCIILiteral("Array.isArray can not be called on a Proxy that has been revoked."));
-        argument = proxy->target();
-    }
-
-    ASSERT_NOT_REACHED();
+    return JSValue::encode(jsBoolean(isArray(exec, exec->argument(0))));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArrayConstructor(ExecState* exec)

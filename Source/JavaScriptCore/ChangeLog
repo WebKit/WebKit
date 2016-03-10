@@ -1,3 +1,35 @@
+2016-03-09  Saam barati  <sbarati@apple.com>
+
+        Add proper JSON.stringify support for Proxy when the target is an array
+        https://bugs.webkit.org/show_bug.cgi?id=155180
+
+        Reviewed by Darin Adler.
+
+        This patch makes the following type of program true:
+        `JSON.stringify(new Proxy([25], {})) === "[25]"`
+
+        We need to change the JSON stringifier to use the IsArray test
+        in section 7.2.2 of ES6 spec instead of the JSC inherits(JSArray::info())
+        test.
+
+        This patch also adds tests for general JSON.stringify support
+        of Proxy.
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::arrayConstructorIsArray):
+        (JSC::arrayConstructorPrivateFuncIsArrayConstructor):
+        * runtime/ArrayConstructor.h:
+        (JSC::isArray):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::object):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Stringifier::startNewLine):
+        (JSC::Stringifier::Holder::Holder):
+        * tests/es6.yaml:
+        * tests/stress/proxy-json.js: Added.
+        (assert):
+        (test):
+
 2016-03-09  Saam Barati  <sbarati@apple.com>
 
         ES6: Implement lexical scoping for function definitions in strict mode
