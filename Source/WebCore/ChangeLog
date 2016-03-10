@@ -1,5 +1,18 @@
 2016-03-09  Daniel Bates  <dabates@apple.com>
 
+        Fix the Windows build after <https://trac.webkit.org/changeset/197905>
+        (https://bugs.webkit.org/show_bug.cgi?id=155247)
+
+        We need to call the std::unique_ptr<CryptoDigest>() constructor directly
+        instead of using the convenience function std::make_unique<CryptoDigest>()
+        because std::make_unique<CryptoDigest>() cannot access the private constructor
+        CryptoDigest().
+
+        * platform/crypto/win/CryptoDigestWin.cpp:
+        (WebCore::CryptoDigest::create):
+
+2016-03-09  Daniel Bates  <dabates@apple.com>
+
         [Win] Implement CryptoDigest
         https://bugs.webkit.org/show_bug.cgi?id=155247
         <rdar://problem/25065843>

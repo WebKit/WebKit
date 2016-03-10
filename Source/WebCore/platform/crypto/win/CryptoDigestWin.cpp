@@ -51,11 +51,10 @@ CryptoDigest::~CryptoDigest()
 
 std::unique_ptr<CryptoDigest> CryptoDigest::create(Algorithm algorithm)
 {
-    auto digest = std::make_unique<CryptoDigest>();
+    std::unique_ptr<CryptoDigest> digest(new CryptoDigest);
     digest->m_context->algorithm = algorithm;
     if (!CryptAcquireContext(&digest->m_context->hContext, nullptr, nullptr /* use default provider */, PROV_RSA_AES, CRYPT_VERIFYCONTEXT))
         return nullptr;
-
     bool succeeded = false;
     switch (algorithm) {
     case CryptoDigest::Algorithm::SHA_1: {
