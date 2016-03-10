@@ -1,3 +1,10 @@
+2016-03-10  Jer Noble  <jer.noble@apple.com>
+
+        Partial roll-out of r197953; test fails because encode/decode support of those properties were never added.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Coding.mm:
+        (TEST): Deleted.
+
 2016-03-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Main frame scrollbars should appear on the left on RTL systems
