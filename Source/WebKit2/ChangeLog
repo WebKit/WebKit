@@ -1,3 +1,23 @@
+2016-03-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Handling 'allowUniversalAccessFromFileURLs' on WKWebViewConfiguration causes test breakage
+        https://bugs.webkit.org/show_bug.cgi?id=155265
+        <rdar://problem/11101440>
+
+        Reviewed by Andy Estes.
+
+        We require "AllowUniversalAccessFromFileURLs" to permit file URLs from accessing
+        localStorage. However, this setting is not available on the Cocoa WKPreference (by design).
+        Instead, you need to set this value on the WKWebViewConfiguration.
+        
+        Back out the work-around landed in r197889, 
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Remove test workaround.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Set the correct flag on
+        the WKWebViewConfiguration.
+
 2016-03-09  Enrica Casucci  <enrica@apple.com>
 
         Retrieve additional context for some data detector link for preview and action menu.

@@ -1,3 +1,17 @@
+2016-03-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Handling 'allowUniversalAccessFromFileURLs' on WKWebViewConfiguration causes test breakage
+        https://bugs.webkit.org/show_bug.cgi?id=155265
+        <rdar://problem/11101440>
+
+        Reviewed by Andy Estes.
+
+        WK2 localStorage tests need the 'AllowUniversalAccessFromFileURLs' preference set by default.
+        Tests that confirm blocking localStorage manually set the flag to "False" in the test.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration): Set the default state to the correct value.
+
 2016-03-09  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style: fix false-positive warnings about @try/@catch blocks in Objective-C++ source files

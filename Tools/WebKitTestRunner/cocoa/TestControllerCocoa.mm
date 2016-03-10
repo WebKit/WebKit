@@ -57,6 +57,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
 
     globalWebViewConfiguration.processPool = WTF::adoptNS([[WKProcessPool alloc] _initWithConfiguration:(_WKProcessPoolConfiguration *)contextConfiguration]).get();
     globalWebViewConfiguration.websiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context);
+    globalWebViewConfiguration._allowUniversalAccessFromFileURLs = YES;
 
 #if TARGET_OS_IPHONE
     globalWebViewConfiguration.allowsInlineMediaPlayback = YES;

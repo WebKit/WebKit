@@ -372,6 +372,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     preferences._logsPageMessagesToSystemConsoleEnabled = YES;
 #endif
     preferences._allowFileAccessFromFileURLs = YES;
+    [configuration _setAllowUniversalAccessFromFileURLs:YES];
     preferences._javaScriptRuntimeFlags = 0;
     if (isUnderTest()) {
         preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
