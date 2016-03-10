@@ -35,6 +35,8 @@ list(APPEND WebCore_SOURCES
 
     platform/cf/win/CertificateCFWin.cpp
 
+    platform/crypto/win/CryptoDigestWin.cpp
+
     platform/graphics/GLContext.cpp
     platform/graphics/GraphicsLayer.cpp
     platform/graphics/ImageSource.cpp

@@ -1,3 +1,26 @@
+2016-03-09  Daniel Bates  <dabates@apple.com>
+
+        [Win] Implement CryptoDigest
+        https://bugs.webkit.org/show_bug.cgi?id=155247
+        <rdar://problem/25065843>
+
+        Reviewed by Brent Fulgham.
+
+        Implement the CryptoDigest abstraction for Windows so that we can compute cryptographically
+        secure hashes. This will allow us to support Content Security Policy inline script and inline
+        stylesheet hashes on Windows.
+
+        * PlatformWin.cmake: Add file CryptoDigestWin.cpp.
+        * PlatformWinCairo.cmake: Ditto.
+        * platform/crypto/win/CryptoDigestWin.cpp: Added.
+        (WebCore::CryptoDigest::CryptoDigest): Instantiate a CryptoDigestContext object.
+        (WebCore::CryptoDigest::~CryptoDigest): Destroy the cryptographic service provider and hash
+        object if non-null.
+        (WebCore::CryptoDigest::create): Acquire a handle to a cryptographic service provider (HCRYPTPROV)
+        and a handle to a hash object (HCRYPTHASH).
+        (WebCore::CryptoDigest::addBytes): Add the contents of the specified buffer to the hash object.
+        (WebCore::CryptoDigest::computeHash): Compute and return a Vector of bytes that represent the digest.
+
 2016-03-09  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r197149): Missing availability checks when soft-linking DataDetectors.framework
