@@ -31,6 +31,7 @@
 
 #include "ConservativeRoots.h"
 #include "Interpreter.h"
+#include <wtf/PageBlock.h>
 
 namespace JSC {
 
@@ -46,7 +47,7 @@ static size_t commitSize()
 {
     static size_t size = 0;
     if (!size)
-        size = std::max(16 * 1024, getpagesize());
+        size = std::max(16 * 1024, static_cast<int>(WTF::pageSize()));
     return size;
 }
 
