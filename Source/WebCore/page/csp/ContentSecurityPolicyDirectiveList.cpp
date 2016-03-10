@@ -125,6 +125,11 @@ static inline bool checkHash(ContentSecurityPolicySourceListDirective* directive
     return !directive || directive->allows(hash);
 }
 
+static inline bool checkNonce(ContentSecurityPolicySourceListDirective* directive, const String& nonce)
+{
+    return !directive || directive->allows(nonce);
+}
+
 static inline bool checkMediaType(ContentSecurityPolicyMediaListDirective* directive, const String& type, const String& typeAttribute)
 {
     if (!directive)
@@ -288,6 +293,11 @@ bool ContentSecurityPolicyDirectiveList::allowInlineScriptWithHash(const Content
     return checkHash(operativeDirective(m_scriptSrc.get()), hash);
 }
 
+bool ContentSecurityPolicyDirectiveList::allowScriptWithNonce(const String& nonce) const
+{
+    return checkNonce(operativeDirective(m_scriptSrc.get()), nonce);
+}
+
 bool ContentSecurityPolicyDirectiveList::allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
     static NeverDestroyed<String> consoleMessage(ASCIILiteral("Refused to apply inline style because it violates the following Content Security Policy directive: "));
@@ -299,6 +309,11 @@ bool ContentSecurityPolicyDirectiveList::allowInlineStyle(const String& contextU
 bool ContentSecurityPolicyDirectiveList::allowInlineStyleWithHash(const ContentSecurityPolicyHash& hash) const
 {
     return checkHash(operativeDirective(m_styleSrc.get()), hash);
+}
+
+bool ContentSecurityPolicyDirectiveList::allowStyleWithNonce(const String& nonce) const
+{
+    return checkNonce(operativeDirective(m_styleSrc.get()), nonce);
 }
 
 bool ContentSecurityPolicyDirectiveList::allowEval(JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus reportingStatus) const

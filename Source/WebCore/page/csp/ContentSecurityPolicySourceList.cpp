@@ -132,6 +132,11 @@ bool ContentSecurityPolicySourceList::matches(const ContentSecurityPolicyHash& h
     return m_hashes.contains(hash);
 }
 
+bool ContentSecurityPolicySourceList::matches(const String& nonce) const
+{
+    return m_nonces.contains(nonce);
+}
+
 // source-list       = *WSP [ source *( 1*WSP source ) *WSP ]
 //                   / *WSP "'none'" *WSP
 //
@@ -151,6 +156,9 @@ void ContentSecurityPolicySourceList::parse(const UChar* begin, const UChar* end
         int port = 0;
         bool hostHasWildcard = false;
         bool portHasWildcard = false;
+
+        if (parseNonceSource(beginSource, position))
+            continue;
 
         if (parseHashSource(beginSource, position))
             continue;
@@ -395,6 +403,35 @@ bool ContentSecurityPolicySourceList::parsePort(const UChar* begin, const UChar*
     return ok;
 }
 
+static bool isBase64Character(UChar c)
+{
+    return isASCIIAlphanumeric(c) || c == '+' || c == '/' || c == '-' || c == '_';
+}
+
+// Match Blink's behavior of allowing an equal sign to appear anywhere in the value of the nonce
+// even though this does not match the behavior of Content Security Policy Level 3 spec.,
+// <https://w3c.github.io/webappsec-csp/> (29 February 2016).
+static bool isNonceCharacter(UChar c)
+{
+    return isBase64Character(c) || c == '=';
+}
+
+// nonce-source    = "'nonce-" nonce-value "'"
+// nonce-value     = base64-value
+bool ContentSecurityPolicySourceList::parseNonceSource(const UChar* begin, const UChar* end)
+{
+    static NeverDestroyed<String> noncePrefix("'nonce-", String::ConstructFromLiteral);
+    if (!StringView(begin, end - begin).startsWithIgnoringASCIICase(noncePrefix.get()))
+        return false;
+    const UChar* position = begin + noncePrefix.get().length();
+    const UChar* beginNonceValue = position;
+    skipWhile<UChar, isNonceCharacter>(position, end);
+    if (position >= end || position == beginNonceValue || *position != '\'')
+        return false;
+    m_nonces.add(String(beginNonceValue, position - beginNonceValue));
+    return true;
+}
+
 static bool parseHashAlgorithmAdvancingPosition(const UChar*& position, size_t length, ContentSecurityPolicyHashAlgorithm& algorithm)
 {
     static struct {
@@ -416,11 +453,6 @@ static bool parseHashAlgorithmAdvancingPosition(const UChar*& position, size_t l
         return true;
     }
     return false;
-}
-
-static bool isBase64Character(UChar c)
-{
-    return isASCIIAlphanumeric(c) || c == '+' || c == '/' || c == '-' || c == '_';
 }
 
 // hash-source    = "'" hash-algorithm "-" base64-value "'"

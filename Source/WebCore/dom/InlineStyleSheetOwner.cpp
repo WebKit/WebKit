@@ -135,7 +135,11 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     if (!isValidCSSContentType(element, m_contentType))
         return;
-    if (!document.contentSecurityPolicy()->allowInlineStyle(document.url(), m_startTextPosition.m_line, text, element.isInUserAgentShadowTree()))
+
+    ASSERT(document.contentSecurityPolicy());
+    const ContentSecurityPolicy& contentSecurityPolicy = *document.contentSecurityPolicy();
+    bool hasKnownNonce = contentSecurityPolicy.allowStyleWithNonce(element.fastGetAttribute(HTMLNames::nonceAttr), element.isInUserAgentShadowTree());
+    if (!contentSecurityPolicy.allowInlineStyle(document.url(), m_startTextPosition.m_line, text, hasKnownNonce))
         return;
 
     RefPtr<MediaQuerySet> mediaQueries;

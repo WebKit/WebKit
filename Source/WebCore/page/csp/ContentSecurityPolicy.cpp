@@ -39,6 +39,7 @@
 #include "FormData.h"
 #include "FormDataList.h"
 #include "Frame.h"
+#include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
 #include "JSMainThreadExecState.h"
 #include "ParsingUtilities.h"
@@ -186,6 +187,16 @@ bool isAllowedByAllWithContext(const CSPDirectiveListVector& policies, const Str
     return true;
 }
 
+template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const String& nonce) const>
+static bool isAllowedByAllWithNonce(const CSPDirectiveListVector& policies, const String& nonce)
+{
+    for (auto& policy : policies) {
+        if (!(policy.get()->*allowed)(nonce))
+            return false;
+    }
+    return true;
+}
+
 static CryptoDigest::Algorithm toCryptoDigestAlgorithm(ContentSecurityPolicyHashAlgorithm algorithm)
 {
     switch (algorithm) {
@@ -250,6 +261,30 @@ const TextEncoding& ContentSecurityPolicy::documentEncoding() const
     if (TextResourceDecoder* decoder = document.decoder())
         return decoder->encoding();
     return UTF8Encoding();
+}
+
+bool ContentSecurityPolicy::allowScriptWithNonce(const String& nonce, bool overrideContentSecurityPolicy) const
+{
+    if (overrideContentSecurityPolicy)
+        return true;
+    String strippedNonce = stripLeadingAndTrailingHTMLSpaces(nonce);
+    if (strippedNonce.isEmpty())
+        return false;
+    if (isAllowedByAllWithNonce<&ContentSecurityPolicyDirectiveList::allowScriptWithNonce>(m_policies, strippedNonce))
+        return true;
+    return false;
+}
+
+bool ContentSecurityPolicy::allowStyleWithNonce(const String& nonce, bool overrideContentSecurityPolicy) const
+{
+    if (overrideContentSecurityPolicy)
+        return true;
+    String strippedNonce = stripLeadingAndTrailingHTMLSpaces(nonce);
+    if (strippedNonce.isEmpty())
+        return false;
+    if (isAllowedByAllWithNonce<&ContentSecurityPolicyDirectiveList::allowStyleWithNonce>(m_policies, strippedNonce))
+        return true;
+    return false;
 }
 
 bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, const String& scriptContent, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const

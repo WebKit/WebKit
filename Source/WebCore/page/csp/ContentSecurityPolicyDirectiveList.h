@@ -52,8 +52,10 @@ public:
     bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineScriptWithHash(const ContentSecurityPolicyHash&) const;
+    bool allowScriptWithNonce(const String& nonce) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineStyleWithHash(const ContentSecurityPolicyHash&) const;
+    bool allowStyleWithNonce(const String& nonce) const;
     bool allowEval(JSC::ExecState*, ContentSecurityPolicy::ReportingStatus) const;
     bool allowPluginType(const String& type, const String& typeAttribute, const URL&, ContentSecurityPolicy::ReportingStatus) const;
 

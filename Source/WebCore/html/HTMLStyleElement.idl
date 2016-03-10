@@ -25,5 +25,7 @@ interface HTMLStyleElement : HTMLElement {
 
     // DOM Level 2 Style
     readonly attribute StyleSheet sheet;
+
+    [Reflect] attribute DOMString nonce;
 };
 

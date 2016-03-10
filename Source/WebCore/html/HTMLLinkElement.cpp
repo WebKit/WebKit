@@ -32,6 +32,7 @@
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventSender.h"
@@ -245,6 +246,13 @@ void HTMLLinkElement::process()
             priority = ResourceLoadPriority::VeryLow;
         CachedResourceRequest request(ResourceRequest(document().completeURL(url)), charset, priority);
         request.setInitiator(this);
+
+        if (document().contentSecurityPolicy()->allowStyleWithNonce(fastGetAttribute(HTMLNames::nonceAttr))) {
+            ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+            options.setContentSecurityPolicyImposition(ContentSecurityPolicyImposition::SkipPolicyCheck);
+            request.setOptions(options);
+        }
+
         m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(request);
         
         if (m_cachedSheet)

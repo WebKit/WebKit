@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'". Either the 'unsafe-inline' keyword, a hash ('sha256-SKwGvORdKBYTYiM4lxIkanDyKH8J0qJ5Ix8LGkKsbhw='), or a nonce ('nonce-...') is required to enable inline execution.
+CONSOLE MESSAGE: line 1: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'".
 
-CONSOLE MESSAGE: line 6: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'". Either the 'unsafe-inline' keyword, a hash ('sha256-cJwexfn/a5FXM2RqRmS0smWyEV/8Q3yAJM91YiT55c4='), or a nonce ('nonce-...') is required to enable inline execution.
+CONSOLE MESSAGE: line 6: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'".
 
 Style that does not match a 'nonce-*' expression in 'style-src' should not be applied to the page.
 

@@ -826,6 +826,13 @@ http/tests/security/contentSecurityPolicy/1.1/scripthash-ignore-unsafeinline.htm
 http/tests/security/contentSecurityPolicy/1.1/scripthash-malformed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/scripthash-tests.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/scripthash-unicode-normalization.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/scriptnonce-and-scripthash.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/scriptnonce-basic-blocked.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/scriptnonce-ignore-unsafeinline.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/scriptnonce-redirect.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-basics.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image-from-script.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image.html [ Pass ]
@@ -834,6 +841,8 @@ http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-imag
 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/stylehash-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/stylenonce-allowed.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/stylenonce-blocked.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html [ Pass ]
@@ -860,6 +869,8 @@ webkit.org/b/153155 http/tests/security/contentSecurityPolicy/style-src-blocked-
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked-error-event.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked-error-event.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylehash-svg-style-basic-blocked-error-event.html
+webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylenonce-basic-blocked-error-event.html
+webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylenonce-svg-style-basic-blocked-error-event.html
 webkit.org/b/153159 http/tests/security/contentSecurityPolicy/image-document-default-src-none.html [ Failure ]
 webkit.org/b/153160 http/tests/security/contentSecurityPolicy/object-src-does-not-affect-child.html [ Failure ]
 webkit.org/b/153160 http/tests/security/contentSecurityPolicy/plugin-in-iframe-with-csp.html [ Failure ]

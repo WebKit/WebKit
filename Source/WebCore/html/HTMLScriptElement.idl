@@ -29,5 +29,5 @@ interface HTMLScriptElement : HTMLElement {
     [Reflect, URL] attribute DOMString src;
     [Reflect] attribute DOMString type;
     attribute DOMString? crossOrigin;
-    [Reflect, Conditional=CSP_NEXT] attribute DOMString nonce;
+    [Reflect] attribute DOMString nonce;
 };

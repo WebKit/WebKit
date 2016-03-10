@@ -1,3 +1,26 @@
+2016-03-10  Daniel Bates  <dabates@apple.com>
+
+        CSP: Implement support for script and style nonces
+        https://bugs.webkit.org/show_bug.cgi?id=116508
+        <rdar://problem/24963980>
+
+        Reviewed by Brent Fulgham.
+
+        Update expected results due to differences between Blink and WebKit violation message formats.
+
+        Additionally mark script- and style- nonce tests as PASS in LayoutTests/TestExpectations so
+        that we run them.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-and-scripthash-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-and-scripthash.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-basic-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-ignore-unsafeinline-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce-expected.txt: Also update result
+        to reflect that we consider "'n-" an invalid source expression (as expected).
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-allowed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-blocked-expected.txt:
+
 2016-03-10  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] DumpRenderTree crashes when accessing window.testRunner.inspectorTestStubURL

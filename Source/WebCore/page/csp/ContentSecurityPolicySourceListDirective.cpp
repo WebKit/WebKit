@@ -47,6 +47,11 @@ bool ContentSecurityPolicySourceListDirective::allows(const URL& url)
     return m_sourceList.matches(url);
 }
 
+bool ContentSecurityPolicySourceListDirective::allows(const String& nonce) const
+{
+    return m_sourceList.matches(nonce);
+}
+
 bool ContentSecurityPolicySourceListDirective::allows(const ContentSecurityPolicyHash& hash) const
 {
     return m_sourceList.matches(hash);

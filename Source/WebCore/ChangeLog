@@ -1,3 +1,59 @@
+2016-03-10  Daniel Bates  <dabates@apple.com>
+
+        CSP: Implement support for script and style nonces
+        https://bugs.webkit.org/show_bug.cgi?id=116508
+        <rdar://problem/24963980>
+
+        Reviewed by Brent Fulgham.
+
+        Add support for script-src and style-src nonces as per sections Nonce usage for script elements
+        and Nonce usage for style elements of the Content Security Policy 2.0 spec., <https://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet): Check if the nonce for an HTML style element matches a known nonce.
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript): Check if the nonce for an HTML script element for an external JavaScript
+        script matches a known nonce. If it does then skip subsequent checks of the Content Security Policy when loading
+        the script.
+        (WebCore::ScriptElement::executeScript): Check if the nonce for an HTML script element for an inline JavaScript
+        script matches a known nonce.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process): Check if the nonce for an HTML link element matches a known nonce. If it does
+        then skip subsequent checks of the Content Security Policy when loading the stylesheet.
+        * html/HTMLScriptElement.idl: Unconditionally expose attribute nonce.
+        * html/HTMLStyleElement.idl: Ditto.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::isAllowedByAllWithNonce):
+        (WebCore::ContentSecurityPolicy::allowScriptWithNonce): Check if the nonce attribute value of a script element
+        matches a known nonce. This function delegates the check to ContentSecurityPolicyDirectiveList::allowScriptWithNonce().
+        (WebCore::ContentSecurityPolicy::allowStyleWithNonce): Check if the nonce attribute value of a style/link element
+        matches a known nonce. This function delegates the check to ContentSecurityPolicyDirectiveList::allowStyleWithNonce().
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::checkNonce): Checks if the directive allows the specified nonce.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowScriptWithNonce): Check if the specified nonce is in
+        the source list of the script-src directive (if specified) or the source list of the default-src directive (if specified).
+        (WebCore::ContentSecurityPolicyDirectiveList::allowStyleWithNonce): Check if the specified nonce is in
+        the source list of the style-src directive (if specified) or the source list of the default-src directive (if specified).
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::matches): Returns whether the specified nonce is in the HashSet of
+        nonces for the directive.
+        (WebCore::ContentSecurityPolicySourceList::parse): Modified to call ContentSecurityPolicySourceList::parseNonceSource()
+        to parse a nonce source expression.
+        (WebCore::isBase64Character): Moved function to be above function ContentSecurityPolicySourceList::parseNonceSource()
+        so that it can referenced from both ContentSecurityPolicySourceList::parseNonceSource() and ContentSecurityPolicySourceList::parseHashSource().
+        (WebCore::isNonceCharacter): Added. Matches Blink's definition of a valid nonce character. This definition differs
+        from the definition in the Content Security Policy Level 3 spec., <https://w3c.github.io/webappsec-csp/> (29 February 2016).
+        (WebCore::ContentSecurityPolicySourceList::parseNonceSource): Parses a source expression for a nonce value.
+        * page/csp/ContentSecurityPolicySourceList.h:
+        (WebCore::ContentSecurityPolicySourceList::allowInline): We only allow inline scripts/stylesheets if
+        'unsafe-inline' was specified in the source list and the source list does not contain any hash sources
+        or nonce sources.
+        * page/csp/ContentSecurityPolicySourceListDirective.cpp:
+        (WebCore::ContentSecurityPolicySourceListDirective::allows): Checks if the specified nonce is in the source list.
+        * page/csp/ContentSecurityPolicySourceListDirective.h:
+
 2016-03-08  Sam Weinig  <sam@webkit.org>
 
         Add a baseURL parameter to _WKUserStyleSheet
