@@ -117,6 +117,11 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
     // 12.3.3 Intl.DateTimeFormat.prototype.format (ECMA-402 2.0)
     // 1. Let dtf be this DateTimeFormat object.
     IntlDateTimeFormat* dtf = jsDynamicCast<IntlDateTimeFormat*>(state->thisValue());
+
+    // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
+    if (!dtf)
+        dtf = jsDynamicCast<IntlDateTimeFormat*>(state->thisValue().get(state, state->vm().propertyNames->intlSubstituteValuePrivateName));
+
     // 2. ReturnIfAbrupt(dtf).
     if (!dtf)
         return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat")));
@@ -148,6 +153,11 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(Exec
 {
     // 12.3.5 Intl.DateTimeFormat.prototype.resolvedOptions() (ECMA-402 2.0)
     IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(state->thisValue());
+
+    // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
+    if (!dateTimeFormat)
+        dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(state->thisValue().get(state, state->vm().propertyNames->intlSubstituteValuePrivateName));
+
     if (!dateTimeFormat)
         return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat")));
 

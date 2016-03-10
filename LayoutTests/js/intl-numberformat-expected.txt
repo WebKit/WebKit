@@ -194,6 +194,9 @@ PASS Intl.NumberFormat.prototype.resolvedOptions() is an instance of Object
 PASS Intl.NumberFormat.prototype.resolvedOptions() === Intl.NumberFormat.prototype.resolvedOptions() is false
 PASS Intl.NumberFormat.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat.
 PASS var options = Intl.NumberFormat.prototype.resolvedOptions(); delete options['locale']; JSON.stringify(options) is '{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":true}'
+PASS var legacy = Object.create(Intl.NumberFormat.prototype);Intl.NumberFormat.apply(legacy) is legacy
+PASS var legacy = Object.create(Intl.NumberFormat.prototype);Intl.NumberFormat.call(legacy, 'en-u-nu-arab').format(1.2345) is '١٫٢٣٥'
+PASS var incompat = {};Intl.NumberFormat.apply(incompat) is not incompat
 PASS successfullyParsed is true
 
 TEST COMPLETE

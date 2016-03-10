@@ -1,3 +1,18 @@
+2016-03-09  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Intl Constructors not web compatible with Object.create usage
+        https://bugs.webkit.org/show_bug.cgi?id=153679
+
+        Reviewed by Darin Adler.
+
+        Add tests for Object.create + contructor.call initialization of NumberFormat
+        and DateTimeFormat objects.
+
+        * js/intl-datetimeformat-expected.txt:
+        * js/intl-numberformat-expected.txt:
+        * js/script-tests/intl-datetimeformat.js:
+        * js/script-tests/intl-numberformat.js:
+
 2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         defineElement should upgrade existing unresolved custom elements

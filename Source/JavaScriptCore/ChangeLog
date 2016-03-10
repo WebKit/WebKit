@@ -1,3 +1,39 @@
+2016-03-09  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Intl Constructors not web compatible with Object.create usage
+        https://bugs.webkit.org/show_bug.cgi?id=153679
+
+        Reviewed by Darin Adler.
+
+        Add workaround for initializing NumberFormat and DateTimeFormat objects
+        using Object.create followed by constructor.call. This is necessary for
+        backwards compatibility with libraries relying on v1 behavior of Intl
+        constructors.
+
+        Collator does not get the workaround, since polyfills do not include it,
+        and there are not any known instances of v2 incompatible libraries.
+
+        The workaround involves checking for an object that inherits from the
+        *Format constructor, but was not actually initialized with that type. A
+        substitute instance is created and attached to the object using a private
+        name. The prototype functions then check for the private property to use
+        in place of the original object.
+
+        Since this behavior is not part of the v2 spec, it should be removed as
+        soon as the incompatible behavior is no longer in common use.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::callIntlDateTimeFormat):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        (JSC::IntlDateTimeFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::callIntlNumberFormat):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        (JSC::IntlNumberFormatPrototypeFuncResolvedOptions):
+
 2016-03-09  Saam barati  <sbarati@apple.com>
 
         Add proper JSON.stringify support for Proxy when the target is an array

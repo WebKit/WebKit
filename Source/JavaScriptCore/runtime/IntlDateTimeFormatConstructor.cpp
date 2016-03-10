@@ -117,17 +117,35 @@ static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState* state)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // NewTarget is always undefined when called as a function.
 
-    // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
     VM& vm = state->vm();
-    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, jsCast<IntlDateTimeFormatConstructor*>(state->callee()));
+    IntlDateTimeFormatConstructor* callee = jsCast<IntlDateTimeFormatConstructor*>(state->callee());
 
+    // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
+    JSValue thisValue = state->thisValue();
+    IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(thisValue);
+    if (!dateTimeFormat) {
+        JSValue prototype = callee->getDirect(vm, vm.propertyNames->prototype);
+        if (JSObject::defaultHasInstance(state, thisValue, prototype)) {
+            JSObject* thisObject = thisValue.toObject(state);
+            if (state->hadException())
+                return JSValue::encode(jsUndefined());
+
+            dateTimeFormat = IntlDateTimeFormat::create(vm, callee);
+            dateTimeFormat->initializeDateTimeFormat(*state, state->argument(0), state->argument(1));
+            if (state->hadException())
+                return JSValue::encode(jsUndefined());
+
+            thisObject->putDirect(vm, vm.propertyNames->intlSubstituteValuePrivateName, dateTimeFormat);
+            return JSValue::encode(thisValue);
+        }
+    }
+
+    // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
     // 3. ReturnIfAbrupt(dateTimeFormat).
-    ASSERT(dateTimeFormat);
+    dateTimeFormat = IntlDateTimeFormat::create(vm, callee);
 
     // 4. Return InitializeDateTimeFormat(dateTimeFormat, locales, options).
-    JSValue locales = state->argument(0);
-    JSValue options = state->argument(1);
-    dateTimeFormat->initializeDateTimeFormat(*state, locales, options);
+    dateTimeFormat->initializeDateTimeFormat(*state, state->argument(0), state->argument(1));
     return JSValue::encode(dateTimeFormat);
 }
 

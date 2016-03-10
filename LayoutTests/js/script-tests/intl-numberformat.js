@@ -338,3 +338,9 @@ shouldThrow("Intl.NumberFormat.prototype.resolvedOptions.call(5)", "'TypeError: 
 
 // Returns the default options.
 shouldBe("var options = Intl.NumberFormat.prototype.resolvedOptions(); delete options['locale']; JSON.stringify(options)", '\'{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":true}\'');
+
+// Legacy compatibility with ECMA-402 1.0
+let legacyInit = "var legacy = Object.create(Intl.NumberFormat.prototype);";
+shouldBe(legacyInit + "Intl.NumberFormat.apply(legacy)", "legacy");
+shouldBe(legacyInit + "Intl.NumberFormat.call(legacy, 'en-u-nu-arab').format(1.2345)", "'١٫٢٣٥'");
+shouldNotBe("var incompat = {};Intl.NumberFormat.apply(incompat)", "incompat");

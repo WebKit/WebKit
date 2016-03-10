@@ -2147,6 +2147,9 @@ PASS
     var resolved = Intl.DateTimeFormat("zh-TW", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
 PASS typeof Intl.DateTimeFormat("zh-TW", { hour: "numeric", minute: "numeric" }).format() === "string" is true
+PASS var legacy = Object.create(Intl.DateTimeFormat.prototype);Intl.DateTimeFormat.apply(legacy) is legacy
+PASS var legacy = Object.create(Intl.DateTimeFormat.prototype);Intl.DateTimeFormat.call(legacy, 'en-u-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '١٢/٢٥/٢٠١٥'
+PASS var incompat = {};Intl.DateTimeFormat.apply(incompat) is not incompat
 PASS successfullyParsed is true
 
 TEST COMPLETE

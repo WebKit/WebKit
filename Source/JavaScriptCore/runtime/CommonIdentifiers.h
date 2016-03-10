@@ -359,6 +359,7 @@
     macro(Collator) \
     macro(DateTimeFormat) \
     macro(NumberFormat) \
+    macro(intlSubstituteValue) \
     macro(thisTimeValue) \
     macro(newTargetLocal) \
     macro(derivedConstructor) \

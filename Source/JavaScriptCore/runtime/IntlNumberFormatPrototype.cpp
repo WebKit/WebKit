@@ -106,6 +106,11 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
     // 11.3.3 Intl.NumberFormat.prototype.format (ECMA-402 2.0)
     // 1. Let nf be this NumberFormat object.
     IntlNumberFormat* nf = jsDynamicCast<IntlNumberFormat*>(state->thisValue());
+
+    // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
+    if (!nf)
+        nf = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, state->vm().propertyNames->intlSubstituteValuePrivateName));
+
     if (!nf)
         return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat")));
     
@@ -136,6 +141,11 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(ExecSt
 {
     // 11.3.5 Intl.NumberFormat.prototype.resolvedOptions() (ECMA-402 2.0)
     IntlNumberFormat* numberFormat = jsDynamicCast<IntlNumberFormat*>(state->thisValue());
+
+    // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
+    if (!numberFormat)
+        numberFormat = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, state->vm().propertyNames->intlSubstituteValuePrivateName));
+
     if (!numberFormat)
         return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat")));
 

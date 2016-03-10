@@ -497,3 +497,9 @@ for (let locale of localesSample) {
     Object.keys(options).every(option => resolved[option] != null)`);
   shouldBeTrue(`typeof Intl.DateTimeFormat("${locale}", { hour: "numeric", minute: "numeric" }).format() === "string"`);
 }
+
+// Legacy compatibility with ECMA-402 1.0
+let legacyInit = "var legacy = Object.create(Intl.DateTimeFormat.prototype);";
+shouldBe(legacyInit + "Intl.DateTimeFormat.apply(legacy)", "legacy");
+shouldBe(legacyInit + "Intl.DateTimeFormat.call(legacy, 'en-u-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'١٢/٢٥/٢٠١٥'");
+shouldNotBe("var incompat = {};Intl.DateTimeFormat.apply(incompat)", "incompat");
