@@ -469,7 +469,7 @@
 		1AE00D6C18327C1200087DD7 /* StringReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D6A18327C1200087DD7 /* StringReference.h */; };
 		1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE117F511DBB30900981615 /* ProcessLauncher.cpp */; };
 		1AE286771C7E76510069AC4F /* _WKWebsiteDataSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AE286751C7E76510069AC4F /* _WKWebsiteDataSize.mm */; };
-		1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE286761C7E76510069AC4F /* _WKWebsiteDataSize.h */; };
+		1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE286761C7E76510069AC4F /* _WKWebsiteDataSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE2867A1C7F7BA60069AC4F /* WKWebsiteDataStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE286791C7F7BA60069AC4F /* WKWebsiteDataStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE286801C7F92C00069AC4F /* _WKWebsiteDataSizeInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2867F1C7F92BF0069AC4F /* _WKWebsiteDataSizeInternal.h */; };
 		1AE286831C7F93860069AC4F /* APIWebsiteDataRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE286811C7F93860069AC4F /* APIWebsiteDataRecord.cpp */; };
@@ -3048,7 +3048,6 @@
 		762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesRefPrivate.h; sourceTree = "<group>"; };
 		7A791EF81C7CFB1000C4C52B /* WebResourceLoadStatisticsStoreMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadStatisticsStoreMessages.h; sourceTree = "<group>"; };
 		7A791EF91C7CFB3700C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadStatisticsStoreMessageReceiver.cpp; sourceTree = "<group>"; };
-        
 		7A9CD8C01C77984900D9F6C7 /* WebResourceLoadStatisticsStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadStatisticsStore.cpp; sourceTree = "<group>"; };
 		7A9CD8C11C77984900D9F6C7 /* WebResourceLoadStatisticsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadStatisticsStore.h; sourceTree = "<group>"; };
 		7A9CD8C21C779AD600D9F6C7 /* WebResourceLoadStatisticsStore.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebResourceLoadStatisticsStore.messages.in; sourceTree = "<group>"; };

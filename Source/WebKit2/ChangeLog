@@ -1,3 +1,11 @@
+2016-03-09  Anders Carlsson  <andersca@apple.com>
+
+        _WKWebsiteDataSize.h should be an SPI header.
+
+        Rubber-stamped by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-03-09  Brent Fulgham  <bfulgham@apple.com>
 
         Handling 'allowUniversalAccessFromFileURLs' on WKWebViewConfiguration causes test breakage
