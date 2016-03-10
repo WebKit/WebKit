@@ -1784,6 +1784,11 @@ class CppStyleTest(CppStyleTestBase):
             '{\n'
             '}\n',
             '')
+        self.assert_multi_line_lint(
+            '    @try {\n'
+            '    } @catch (NSException *exception) {\n'
+            '    }\n',
+            '')
 
     def test_mismatching_spaces_in_parens(self):
         self.assert_lint('if (foo ) {', 'Extra space before ) in if'

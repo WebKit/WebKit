@@ -1,3 +1,16 @@
+2016-03-09  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: fix false-positive warnings about @try/@catch blocks in Objective-C++ source files
+        <http://webkit.org/b/155273>
+
+        Reviewed by Andy Estes.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing_for_function_call): Ignore @catch lines.
+        (check_braces): Ditto.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_brace_at_begin_of_line): Add test case.
+
 2016-03-09  Jason Marcell  <jmarcell@apple.com>
 
         Removing reference to Dashboard.Repository.Internal.trac from open source unit tests.

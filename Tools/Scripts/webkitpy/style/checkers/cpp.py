@@ -1476,7 +1476,7 @@ def check_spacing_for_function_call(line, line_number, error):
             error(line_number, 'whitespace/parens', 2,
                   'Extra space after (')
         if (search(r'\w\s+\(', function_call)
-            and not match(r'\s*(#|typedef|@property|@interface|@implementation)', function_call)):
+            and not match(r'\s*((#|typedef|@property|@interface|@implementation)|} @catch\b)', function_call)):
             error(line_number, 'whitespace/parens', 4,
                   'Extra space before ( in function call')
         # If the ) is followed only by a newline or a { + newline, assume it's
@@ -2426,7 +2426,7 @@ def check_braces(clean_lines, line_number, error):
                   'This { should be at the end of the previous line')
     elif (search(r'\)\s*(((const|override)\s*)*\s*)?{\s*$', line)
           and line.count('(') == line.count(')')
-          and not search(r'\b(if|for|while|switch|NS_ENUM)\b', line)
+          and not search(r'(\b(if|for|while|switch|NS_ENUM)|} @catch)\b', line)
           and not match(r'\s+[A-Z_][A-Z_0-9]+\b', line)):
         error(line_number, 'whitespace/braces', 4,
               'Place brace on its own line for function definitions.')
