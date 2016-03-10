@@ -1,3 +1,95 @@
+2016-03-10  Daniel Bates  <dabates@apple.com>
+
+        CSP: Implement support for inline script and inline style hashes
+        https://bugs.webkit.org/show_bug.cgi?id=155007
+        <rdar://problem/24964098>
+
+        Reviewed by Brent Fulgham.
+
+        Inspiration taken from the analogous implementation in Blink.
+
+        Add support for script-src and style-src hashes as per sections Hash usage for script elements
+        and Hash usage for style elements of the Content Security Policy 2.0 spec., <https://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+
+        Test: http/tests/security/contentSecurityPolicy/1.1/scripthash-tests.html
+
+        * WebCore.xcodeproj/project.pbxproj: Add file ContentSecurityPolicyHash.h. Also sort the list of files
+        in the group WebCore/page/csp.
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet): Pass the content of the stylesheet when querying whether
+        the stylesheet is allowed by the Content Security Policy.
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::executeScript): Pass the content of the inline JavaScript script when querying
+        whether the script is allowed by the Content Security Policy.
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::styleAttributeChanged): The Content Security Policy style-src hashes do not apply
+        to inline styles defined in the HTML style attribute. So, pass a null string (to indicate the absence of
+        content) when querying whether the inline style is allowed by the Content Security Policy.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::toCryptoDigestAlgorithm): Convenience function that maps a ContentSecurityPolicyHashAlgorithm
+        enumerator to a CryptoDigest::Algorithm enumerator.
+        (WebCore::isAllowedByAllWithHashFromContent): Computes the digest of the specified content for each
+        hash algorithm and checks if digest matches a hash that was specified in a policy.
+        (WebCore::ContentSecurityPolicy::documentEncoding): Added.
+        (WebCore::ContentSecurityPolicy::allowInlineScript): Check if the hash of the script matches a known
+        hash if applicable. Otherwise, fall back to checking the URL of the script.
+        (WebCore::ContentSecurityPolicy::allowInlineStyle): Check if the hash of the stylesheet matches a
+        known hash if applicable. Otherwise, fall back to checking the URL of the stylesheet.
+        * page/csp/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::addHashAlgorithmsForInlineScripts): Adds the specified set of
+        hash algorithms to the existing set of hash algorithms we know are used for inline scripts.
+        (WebCore::ContentSecurityPolicy::addHashAlgorithmsForInlineStylesheets): Adds the specified set of
+        hash algorithms to the existing set of hash algorithms we know are used for inline stylesheets.
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::checkEval): Make this a static, non-member function because it does not depend on any
+        instance or class variables. Mark this function as inline to give a hint to the compiler that it
+        should consider inlining the implementation of this function into the caller.
+        (WebCore::checkInline): Ditto.
+        (WebCore::checkSource): Ditto.
+        (WebCore::checkHash): Checks if the directive allows content with the specified hash.
+        (WebCore::checkMediaType): Make this a static, non-member function because it does not depend on
+        any instance or class variables. Mark this function as inline to give a hint to the compiler that
+        it should consider inlining the implementation of this function into the caller.
+        (WebCore::ContentSecurityPolicyDirectiveList::create): Modified as needed now that WebCore::checkEval()
+        is a static, non-member function.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineScriptWithHash): Added.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineStyleWithHash): Added.
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective): Modified to pass the hash algorithms seen
+        from parsing the directives script-src, style-src, and default-src to the ContentSecurityPolicy object.
+        (WebCore::ContentSecurityPolicyDirectiveList::checkEval): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::checkInline): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::checkSource): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::checkMediaType): Deleted.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        * page/csp/ContentSecurityPolicyHash.h: Added.
+        (WTF::DefaultHash<WebCore::ContentSecurityPolicyDigest>::Hash::hash): Compute the hash of a digest as
+        we would compute the hash of a string.
+        (WTF::DefaultHash<WebCore::ContentSecurityPolicyDigest>::Hash::equal): Compare digests for equality
+        by making use of Vector's equality operator.
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::matches): Checks if the hash is in the set of known hashes.
+        (WebCore::ContentSecurityPolicySourceList::parse): Modified to call ContentSecurityPolicySourceList::parseHashSource()
+        to try to parse the source list expression as a hash source. If this fails then we try to parse the
+        source expression as a scheme/host/port expression.
+        (WebCore::parseHashAlgorithmAdvancingPosition): Parses the hash algorithm from a hash source expression.
+        (WebCore::isBase64Character): Returns whether the specified character is a valid Base64/Base64url character,
+        excluding the padding character '='. Disregarding the omission of the padding character '=', this function
+        conforms to the ABNF grammar defined in section Source Lists of the Content Security Policy Level 3 spec.,
+        <https://w3c.github.io/webappsec-csp> (Editor’s Draft, 29 February 2016). We take the padding character '='
+        into account in ContentSecurityPolicySourceList::parseHashSource().
+        (WebCore::ContentSecurityPolicySourceList::parseHashSource): Parses a hash source expression per the ABNF
+        grammar described in section Source Lists of the Content Security Policy Level 3 spec.
+        * page/csp/ContentSecurityPolicySourceList.h:
+        (WebCore::ContentSecurityPolicySourceList::hashAlgorithmsUsed): Returns the set of hash algorithms seen from
+        parsing the source list.
+        (WebCore::ContentSecurityPolicySourceList::allowInline): We only allow inline scripts/stylesheets if
+        'unsafe-inline' was specified in the source list and the source list does not contain any hash sources.
+        * page/csp/ContentSecurityPolicySourceListDirective.cpp:
+        (WebCore::ContentSecurityPolicySourceListDirective::allows): Checks if the specified hash is in the source list.
+        * page/csp/ContentSecurityPolicySourceListDirective.h:
+        (WebCore::ContentSecurityPolicySourceListDirective::hashAlgorithmsUsed): Turns around and calls ContentSecurityPolicySourceList::hashAlgorithmsUsed().
+        
+
 2016-03-10  Chris Dumez  <cdumez@apple.com>
 
         Speculative revalidation requests do not have their 'first party for cookies' URL set

@@ -39,8 +39,11 @@ public:
     ContentSecurityPolicySourceListDirective(const String& name, const String& value, const ContentSecurityPolicy&);
 
     bool allows(const URL&);
+    bool allows(const ContentSecurityPolicyHash&) const;
     bool allowInline() const { return m_sourceList.allowInline(); }
     bool allowEval() const { return m_sourceList.allowEval(); }
+
+    OptionSet<ContentSecurityPolicyHashAlgorithm> hashAlgorithmsUsed() const { return m_sourceList.hashAlgorithmsUsed(); }
 
 private:
     ContentSecurityPolicySourceList m_sourceList;

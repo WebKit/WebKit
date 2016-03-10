@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: line 5: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-j+ToFnhur5mTSCwoyy4Fh'. It will be ignored.
-CONSOLE MESSAGE: line 5: Unrecognized Content-Security-Policy directive ''sha512-0tQJUSPHRGUYQIa2ByQWZSlUa5sI3e2tOEXF7sg5mjmsHk/EHDTTORIDyMPhDKgCmb7TIrwhLrq2kEvfjHQ==''.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha1-vMUNaexq6wlYKxWWPlJUOvhn67U=''. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-j+ToFnhur5mTSCwoyy4Fh'. It will be ignored.
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive ''sha512-0tQJUSPHRGUYQIa2ByQWZSlUa5sI3e2tOEXF7sg5mjmsHk/EHDTTORIDyMPhDKgCmb7TIrwhLrq2kEvfjHQ==''.
 
 

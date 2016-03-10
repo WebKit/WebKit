@@ -28,6 +28,7 @@
 #define ContentSecurityPolicyDirectiveList_h
 
 #include "ContentSecurityPolicy.h"
+#include "ContentSecurityPolicyHash.h"
 #include "ContentSecurityPolicyMediaListDirective.h"
 #include "ContentSecurityPolicySourceListDirective.h"
 #include "URL.h"
@@ -50,7 +51,9 @@ public:
     bool allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowInlineScriptWithHash(const ContentSecurityPolicyHash&) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowInlineStyleWithHash(const ContentSecurityPolicyHash&) const;
     bool allowEval(JSC::ExecState*, ContentSecurityPolicy::ReportingStatus) const;
     bool allowPluginType(const String& type, const String& typeAttribute, const URL&, ContentSecurityPolicy::ReportingStatus) const;
 
@@ -86,11 +89,6 @@ private:
 
     ContentSecurityPolicySourceListDirective* operativeDirective(ContentSecurityPolicySourceListDirective*) const;
     void reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const URL& blockedURL = URL(), const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = nullptr) const;
-
-    bool checkEval(ContentSecurityPolicySourceListDirective*) const;
-    bool checkInline(ContentSecurityPolicySourceListDirective*) const;
-    bool checkSource(ContentSecurityPolicySourceListDirective*, const URL&) const;
-    bool checkMediaType(ContentSecurityPolicyMediaListDirective*, const String& type, const String& typeAttribute) const;
 
     void setEvalDisabledErrorMessage(const String& errorMessage) { m_evalDisabledErrorMessage = errorMessage; }
 

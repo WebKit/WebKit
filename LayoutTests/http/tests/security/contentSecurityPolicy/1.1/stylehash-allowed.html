@@ -1,44 +1,36 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Security-Policy" content="style-src 'sha1-eYyYGmKWdhpUewohaXk9o8IaLSw=' 'sha256-hndjYvzUzy2Ykuad81Cwsl1FOXX/qYs/aDVyUyNZwBw=' 'sha384-bSVm1i3sjPBRM4TwZtYTDjk9JxZMExYHWbFmP1SxDhJH4ue0Wu9OPOkY5hcqRcSt' 'sha512-440MmBLtj9Kp5Bqloogn9BqGDylY8vFsv5/zXL1zH2fJVssCoskRig4gyM+9KqwvCSapSz5CVoUGHQcxv43UQg=='">
+        <meta http-equiv="Content-Security-Policy" content="style-src 'sha256-pAKi9r4/WB7fHydbE3F3t8i8602ij2JN8zHJpL2T5BM=' 'sha384-24Tf5u9STWAAJB2RRvecrrMSPtgnGnL8lx/mnxBm9P1mSHLW01CGK2U5WL6SAI/A' 'sha512-0x+WTjqWkJm9la1gVWtFpuSjwY+f1bJMQukr+nPcc3bgGSxakvxY01D7UvR4qEKEo/PWfsmJOgH2i8GKBFMYMQ=='">
     </head>
     <body>
         <p id="p1">This tests the result of a valid style hash. It passes if this text is green, and a "PASS" alert for p1 is fired.</p>
         <p id="p2">This tests the result of a valid style hash. It passes if this text is green, and a "PASS" alert for p2 is fired.</p>
         <p id="p3">This tests the result of a valid style hash. It passes if this text is green, and a "PASS" alert for p3 is fired.</p>
-        <p id="p4">This tests the result of a valid style hash. It passes if this text is green, and a "PASS" alert for p4 is fired.</p>
         <style>p#p1 { color: green; }</style>
         <style>p#p2 { color: green; }</style>
         <style>p#p3 { color: green; }</style>
-        <style>p#p4 { color: green; }</style>
         <script>
             if (window.testRunner)
                 testRunner.dumpAsText();
 
             var color = window.getComputedStyle(document.querySelector('#p1')).color;
             if (color === "rgb(0, 128, 0)")
-                alert("PASS (1/4): The '#p1' element's text is green, which means the style was correctly applied.");
+                alert("PASS (1/3): The '#p1' element's text is green, which means the style was correctly applied.");
             else
-                alert("FAIL (1/4): The '#p1' element's text is " + color + ", which means the style was incorrectly applied.");
+                alert("FAIL (1/3): The '#p1' element's text is " + color + ", which means the style was incorrectly applied.");
 
             var color = window.getComputedStyle(document.querySelector('#p2')).color;
             if (color === "rgb(0, 128, 0)")
-                alert("PASS (2/4): The '#p2' element's text is green, which means the style was correctly applied.");
+                alert("PASS (2/3): The '#p2' element's text is green, which means the style was correctly applied.");
             else
-                alert("FAIL (2/4): The '#p2' element's text is " + color + ", which means the style was incorrectly applied.");
+                alert("FAIL (2/3): The '#p2' element's text is " + color + ", which means the style was incorrectly applied.");
 
             var color = window.getComputedStyle(document.querySelector('#p3')).color;
             if (color === "rgb(0, 128, 0)")
-                alert("PASS (3/4): The '#p3' element's text is green, which means the style was correctly applied.");
+                alert("PASS (3/3): The '#p3' element's text is green, which means the style was correctly applied.");
             else
-                alert("FAIL (3/4): The '#p3' element's text is " + color + ", which means the style was incorrectly applied.");
-
-            var color = window.getComputedStyle(document.querySelector('#p4')).color;
-            if (color === "rgb(0, 128, 0)")
-                alert("PASS (4/4): The '#p4' element's text is green, which means the style was correctly applied.");
-            else
-                alert("FAIL (4/4): The '#p4' element's text is " + color + ", which means the style was incorrectly applied.");
+                alert("FAIL (3/3): The '#p3' element's text is " + color + ", which means the style was incorrectly applied.");
         </script>
     </body>
 </html>

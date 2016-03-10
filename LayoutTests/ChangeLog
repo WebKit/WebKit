@@ -1,3 +1,43 @@
+2016-03-10  Daniel Bates  <dabates@apple.com>
+
+        CSP: Implement support for inline script and inline style hashes
+        https://bugs.webkit.org/show_bug.cgi?id=155007
+        <rdar://problem/24964098>
+
+        Reviewed by Brent Fulgham.
+
+        Add new test http/tests/security/contentSecurityPolicy/1.1/scripthash-tests.html to ensure that
+        script hashes are interpreted correctly. Update many existing tests that had a hash source with
+        a SHA-1 hash to use a SHA-256 hash. The valid hash algorithms are SHA-256, SHA-384, and SHA-512
+        per the Content Security Policy Level 3 spec. At the time of writing, Blink also supports SHA-1.
+
+        * TestExpectations: Mark many CSP 1.1 tests as PASS so that we run them. Remove entries for tests
+        http/tests/security/contentSecurityPolicy/1.1/{script, style}hash-default-src.html as these tests
+        now pass.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/didRunInlineScriptEpilogue.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/didRunInlineScriptPrologue.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/testScriptHash.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed.html: Update test as SHA-1 is not
+        a supported hash algorithm per the Content Security Policy Level 3 spec.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-default-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-ignore-unsafeinline-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-ignore-unsafeinline.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-malformed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-tests-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-tests.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-unicode-normalization.html: Update test
+        as SHA-1 is not a supported hash algorithm per the Content Security Policy Level 3 spec.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-allowed-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-allowed.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked-error-event.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-default-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-svg-style-basic-blocked-error-event.html: Update test
+        as SHA-1 is not a supported hash algorithm per the Content Security Policy Level 3 spec.
+
 2016-03-10  Frederic Wang  <fwang@igalia.com>
 
         [GTK] Add support for WOFF2

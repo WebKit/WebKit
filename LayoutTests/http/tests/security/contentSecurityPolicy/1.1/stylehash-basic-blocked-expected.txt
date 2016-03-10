@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: line 6: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'sha1-pfeR5wMA6np45oqDTP6Pj3tLpJo='". Either the 'unsafe-inline' keyword, a hash ('sha256-pckGv9YvNcB5xy+Y4fbqhyo+ib850wyiuWeNbZvLi00='), or a nonce ('nonce-...') is required to enable inline execution.
+CONSOLE MESSAGE: line 6: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'sha256-FSRZotz4y83Ib8ZaoVj9eXKaeWXVUawM8zAPfYeYySs='".
 
-CONSOLE MESSAGE: line 7: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'sha1-pfeR5wMA6np45oqDTP6Pj3tLpJo='". Either the 'unsafe-inline' keyword, a hash ('sha256-QtAhp+kqgljyNFcV4FsL0pofPI/L7IVXid6JT5PtsZA='), or a nonce ('nonce-...') is required to enable inline execution.
+CONSOLE MESSAGE: line 7: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'sha256-FSRZotz4y83Ib8ZaoVj9eXKaeWXVUawM8zAPfYeYySs='".
 
-CONSOLE MESSAGE: line 8: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'sha1-pfeR5wMA6np45oqDTP6Pj3tLpJo='". Either the 'unsafe-inline' keyword, a hash ('sha256-QSqLgiKqPxCeZH1d3vWR+4HJOthCVhvG1P/AFaVJfR4='), or a nonce ('nonce-...') is required to enable inline execution.
+CONSOLE MESSAGE: line 8: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'sha256-FSRZotz4y83Ib8ZaoVj9eXKaeWXVUawM8zAPfYeYySs='".
 
 ALERT: PASS: The 'p' element's text is green, which means the style was correctly applied.
 This tests the effect of a valid style-hash value, with one valid style and several invalid ones. It passes if the valid style is applied and three console warnings are visible.

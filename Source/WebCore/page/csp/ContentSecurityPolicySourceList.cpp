@@ -33,6 +33,8 @@
 #include "SecurityOrigin.h"
 #include "URL.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 
@@ -125,6 +127,11 @@ bool ContentSecurityPolicySourceList::matches(const URL& url)
     return false;
 }
 
+bool ContentSecurityPolicySourceList::matches(const ContentSecurityPolicyHash& hash) const
+{
+    return m_hashes.contains(hash);
+}
+
 // source-list       = *WSP [ source *( 1*WSP source ) *WSP ]
 //                   / *WSP "'none'" *WSP
 //
@@ -144,6 +151,9 @@ void ContentSecurityPolicySourceList::parse(const UChar* begin, const UChar* end
         int port = 0;
         bool hostHasWildcard = false;
         bool portHasWildcard = false;
+
+        if (parseHashSource(beginSource, position))
+            continue;
 
         if (parseSource(beginSource, position, scheme, host, port, path, hostHasWildcard, portHasWildcard)) {
             // Wildcard hosts and keyword sources ('self', 'unsafe-inline',
@@ -383,6 +393,74 @@ bool ContentSecurityPolicySourceList::parsePort(const UChar* begin, const UChar*
     bool ok;
     port = charactersToIntStrict(begin, end - begin, &ok);
     return ok;
+}
+
+static bool parseHashAlgorithmAdvancingPosition(const UChar*& position, size_t length, ContentSecurityPolicyHashAlgorithm& algorithm)
+{
+    static struct {
+        NeverDestroyed<String> label;
+        ContentSecurityPolicyHashAlgorithm algorithm;
+    } labelToHashAlgorithmTable[] {
+        { ASCIILiteral("sha256"), ContentSecurityPolicyHashAlgorithm::SHA_256 },
+        { ASCIILiteral("sha384"), ContentSecurityPolicyHashAlgorithm::SHA_384 },
+        { ASCIILiteral("sha512"), ContentSecurityPolicyHashAlgorithm::SHA_512 },
+    };
+
+    StringView stringView(position, length);
+    for (auto& entry : labelToHashAlgorithmTable) {
+        String& label = entry.label.get();
+        if (!stringView.startsWithIgnoringASCIICase(label))
+            continue;
+        position += label.length();
+        algorithm = entry.algorithm;
+        return true;
+    }
+    return false;
+}
+
+static bool isBase64Character(UChar c)
+{
+    return isASCIIAlphanumeric(c) || c == '+' || c == '/' || c == '-' || c == '_';
+}
+
+// hash-source    = "'" hash-algorithm "-" base64-value "'"
+// hash-algorithm = "sha256" / "sha384" / "sha512"
+// base64-value  = 1*( ALPHA / DIGIT / "+" / "/" / "-" / "_" )*2( "=" )
+bool ContentSecurityPolicySourceList::parseHashSource(const UChar* begin, const UChar* end)
+{
+    if (begin == end)
+        return false;
+
+    const UChar* position = begin;
+    if (!skipExactly<UChar>(position, end, '\''))
+        return false;
+
+    ContentSecurityPolicyHashAlgorithm algorithm;
+    if (!parseHashAlgorithmAdvancingPosition(position, end - position, algorithm))
+        return false;
+
+    if (!skipExactly<UChar>(position, end, '-'))
+        return false;
+
+    const UChar* beginHashValue = position;
+    skipWhile<UChar, isBase64Character>(position, end);
+    skipExactly<UChar>(position, end, '=');
+    skipExactly<UChar>(position, end, '=');
+    if (position >= end || position == beginHashValue || *position != '\'')
+        return false;
+    Vector<uint8_t> digest;
+    StringView hashValue(beginHashValue, position - beginHashValue); // base64url or base64 encoded
+    // FIXME: Normalize Base64URL to Base64 instead of decoding twice. See <https://bugs.webkit.org/show_bug.cgi?id=155186>.
+    if (!base64Decode(hashValue.toStringWithoutCopying(), digest, Base64ValidatePadding)) {
+        if (!base64URLDecode(hashValue.toStringWithoutCopying(), digest))
+            return false;
+    }
+    if (digest.size() > maximumContentSecurityPolicyDigestLength)
+        return false;
+
+    m_hashes.add(std::make_pair(algorithm, digest));
+    m_hashAlgorithmsUsed |= algorithm;
+    return true;
 }
 
 } // namespace WebCore

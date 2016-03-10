@@ -29,8 +29,10 @@
 
 #include "ContentSecurityPolicyDirective.h"
 #include "ContentSecurityPolicyDirectiveList.h"
+#include "ContentSecurityPolicyHash.h"
 #include "ContentSecurityPolicySource.h"
 #include "ContentSecurityPolicySourceList.h"
+#include "CryptoDigest.h"
 #include "DOMStringList.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -45,6 +47,7 @@
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicyViolationEvent.h"
+#include "TextEncoding.h"
 #include <inspector/InspectorValues.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
@@ -183,6 +186,38 @@ bool isAllowedByAllWithContext(const CSPDirectiveListVector& policies, const Str
     return true;
 }
 
+static CryptoDigest::Algorithm toCryptoDigestAlgorithm(ContentSecurityPolicyHashAlgorithm algorithm)
+{
+    switch (algorithm) {
+    case ContentSecurityPolicyHashAlgorithm::SHA_256:
+        return CryptoDigest::Algorithm::SHA_256;
+    case ContentSecurityPolicyHashAlgorithm::SHA_384:
+        return CryptoDigest::Algorithm::SHA_384;
+    case ContentSecurityPolicyHashAlgorithm::SHA_512:
+        return CryptoDigest::Algorithm::SHA_512;
+    }
+    ASSERT_NOT_REACHED();
+    return CryptoDigest::Algorithm::SHA_512;
+}
+
+template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const ContentSecurityPolicyHash&) const>
+bool isAllowedByAllWithHashFromContent(const CSPDirectiveListVector& policies, const String& content, const TextEncoding& encoding, OptionSet<ContentSecurityPolicyHashAlgorithm> algorithms)
+{
+    // FIXME: Compute the digest with respect to the raw bytes received from the page.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=155184>.
+    CString contentCString = encoding.encode(content, EntitiesForUnencodables);
+    for (auto algorithm : algorithms) {
+        auto cryptoDigest = CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
+        cryptoDigest->addBytes(contentCString.data(), contentCString.length());
+        Vector<uint8_t> digest = cryptoDigest->computeHash();
+        for (auto& policy : policies) {
+            if ((policy.get()->*allowed)(std::make_pair(algorithm, digest)))
+                return true;
+        }
+    }
+    return false;
+}
+
 template<bool (ContentSecurityPolicyDirectiveList::*allowFromURL)(const URL&, ContentSecurityPolicy::ReportingStatus) const>
 bool isAllowedByAllWithURL(const CSPDirectiveListVector& policies, const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus)
 {
@@ -206,14 +241,37 @@ bool ContentSecurityPolicy::allowInlineEventHandlers(const String& contextURL, c
     return overrideContentSecurityPolicy || isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineEventHandlers>(m_policies, contextURL, contextLine, reportingStatus);
 }
 
-bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+// FIXME: We should compute the document encoding once and cache it instead of computing it on each invocation.
+const TextEncoding& ContentSecurityPolicy::documentEncoding() const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineScript>(m_policies, contextURL, contextLine, reportingStatus);
+    if (!is<Document>(m_scriptExecutionContext))
+        return UTF8Encoding();
+    Document& document = downcast<Document>(*m_scriptExecutionContext);
+    if (TextResourceDecoder* decoder = document.decoder())
+        return decoder->encoding();
+    return UTF8Encoding();
 }
 
-bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, const String& scriptContent, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    return overrideContentSecurityPolicy || m_overrideInlineStyleAllowed || isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineStyle>(m_policies, contextURL, contextLine, reportingStatus);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (!m_hashAlgorithmsForInlineScripts.isEmpty() && !scriptContent.isEmpty()
+        && isAllowedByAllWithHashFromContent<&ContentSecurityPolicyDirectiveList::allowInlineScriptWithHash>(m_policies, scriptContent, documentEncoding(), m_hashAlgorithmsForInlineScripts))
+        return true;
+    return isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineScript>(m_policies, contextURL, contextLine, reportingStatus);
+}
+
+bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, const String& styleContent, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+{
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (m_overrideInlineStyleAllowed)
+        return true;
+    if (!m_hashAlgorithmsForInlineStylesheets.isEmpty() && !styleContent.isEmpty()
+        && isAllowedByAllWithHashFromContent<&ContentSecurityPolicyDirectiveList::allowInlineStyleWithHash>(m_policies, styleContent, documentEncoding(), m_hashAlgorithmsForInlineStylesheets))
+        return true;
+    return isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineStyle>(m_policies, contextURL, contextLine, reportingStatus);
 }
 
 bool ContentSecurityPolicy::allowEval(JSC::ExecState* state, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
