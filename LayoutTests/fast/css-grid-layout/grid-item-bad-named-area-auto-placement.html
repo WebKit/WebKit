@@ -5,60 +5,66 @@
 <style>
 .grid {
     -webkit-grid-template-rows: 10px 20px;
+    -webkit-grid-auto-rows: 5px;
     -webkit-grid-template-columns: 30px 40px;
+    -webkit-grid-auto-columns: 15px;
     -webkit-grid-auto-flow: row;
 }
 
 .bothNamedGridLineRow {
     -webkit-grid-row: nonExistentArea / nonExistentArea;
     -webkit-grid-column: 1;
+    background-color: lime;
 }
 
 .bothNamedGridLineColumn {
     -webkit-grid-row: 1;
     -webkit-grid-column: nonExistentArea / span 3;
+    background-color: lime;
 }
 
 .namedGridLineSpanRow {
     -webkit-grid-row: nonExistentArea / span 5 firstRow;
     -webkit-grid-column: 1;
+    background-color: lime;
 }
 
 .namedGridLineSpanColumn {
     -webkit-grid-row: 1;
     -webkit-grid-column: nonExistentArea / span;
+    background-color: lime;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>
 <body onload="checkLayout('.grid')">
 
-<p>This test checks that unknown named area are treated as 'auto' by applying the auto-placement algorithm when mandated.</p>
+<p>This test checks that unknown named area are resolved properly considering all the implicit grid lines to have the given names.</p>
 
 <div style="position: relative">
     <div class="grid">
         <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="10"></div>
-        <div class="sizedToGridArea bothNamedGridLineRow" data-offset-x="0" data-offset-y="10" data-expected-width="30" data-expected-height="20"></div>
+        <div class="sizedToGridArea bothNamedGridLineRow" data-offset-x="0" data-offset-y="35" data-expected-width="30" data-expected-height="5"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid contentStart">
         <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="10"></div>
-        <div class="sizedToGridArea bothNamedGridLineColumn" data-offset-x="30" data-offset-y="0" data-expected-width="40" data-expected-height="10"></div>
+        <div class="sizedToGridArea bothNamedGridLineColumn" data-offset-x="85" data-offset-y="0" data-expected-width="45" data-expected-height="10"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid">
         <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="10"></div>
-        <div class="sizedToGridArea namedGridLineSpanRow" data-offset-x="0" data-offset-y="10" data-expected-width="30" data-expected-height="20"></div>
+        <div class="sizedToGridArea namedGridLineSpanRow" data-offset-x="0" data-offset-y="35" data-expected-width="30" data-expected-height="25"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid">
         <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="10"></div>
-        <div class="sizedToGridArea namedGridLineSpanColumn" data-offset-x="30" data-offset-y="0" data-expected-width="40" data-expected-height="10"></div>
+        <div class="sizedToGridArea namedGridLineSpanColumn" data-offset-x="85" data-offset-y="0" data-expected-width="15" data-expected-height="10"></div>
     </div>
 </div>
 

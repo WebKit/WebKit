@@ -1,3 +1,36 @@
+2016-03-10  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix placement for unknown named grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=155230
+
+        Reviewed by Sergio Villar Senin.
+
+        The spec has changed and now all the implicit lines should be considered
+        when we're resolving named grid lines with an unknown name.
+
+        The relevant part of the spec is
+        (http://dev.w3.org/csswg/css-grid/#line-placement):
+        "If a name is given as a <custom-ident>, only lines with that name
+         are counted. If not enough lines with that name exist,
+         all implicit grid lines are assumed to have that name
+         for the purpose of finding this position."
+
+        Modified the code to resolve named grid lines in GridResolvedPosition.
+        We need to keep the old behavior of considering "auto" unknown named
+        grid lines for the case of positioned grid items.
+
+        Test: fast/css-grid-layout/grid-item-unknown-named-grid-line-resolution.html
+
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::adjustGridPositionsFromStyle):
+        (WebCore::lookAheadForNamedGridLine):
+        (WebCore::lookBackForNamedGridLine):
+        (WebCore::resolveNamedGridLinePositionFromStyle):
+        (WebCore::definiteGridSpanWithNamedLineSpanAgainstOpposite):
+        (WebCore::resolveNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionFromStyle):
+
 2016-03-10  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] push media stream state to the UI process
