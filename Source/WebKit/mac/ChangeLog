@@ -1,3 +1,11 @@
+2016-03-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix for deprecated constant names.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+        (-[CarbonWindowAdapter sendSuperEvent:]):
+
 2016-03-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197943.
