@@ -182,6 +182,7 @@ public:
         usesNewTarget();
         return new (m_parserArena) NewTargetNode(location);
     }
+    NO_RETURN_DUE_TO_CRASH bool isNewTarget(ExpressionNode*) { RELEASE_ASSERT_NOT_REACHED(); }
     ExpressionNode* createResolve(const JSTokenLocation& location, const Identifier& ident, const JSTextPosition& start, const JSTextPosition& end)
     {
         if (m_vm->propertyNames->arguments == ident)

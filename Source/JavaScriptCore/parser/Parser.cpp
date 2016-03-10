@@ -3040,6 +3040,10 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         }
         m_parserState.nonTrivialExpressionCount++;
         hadAssignment = true;
+        if (!TreeBuilder::CreatesAST) { // We only need to do this check with the syntax checker.
+            if (UNLIKELY(context.isNewTarget(lhs)))
+                internalFailWithMessage(false, "new.target can't be the left hand side of an assignment expression");
+        }
         context.assignmentStackAppend(assignmentStack, lhs, start, tokenStartPosition(), m_parserState.assignmentCount, op);
         start = tokenStartPosition();
         m_parserState.assignmentCount++;
@@ -4005,6 +4009,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
             failWithMessage("Cannot parse subexpression of ", operatorString(true, lastOperator), "operator");
         failWithMessage("Cannot parse member expression");
     }
+    if (!TreeBuilder::CreatesAST) { // We only need to do this check with the syntax checker.
+        if (UNLIKELY(lastOperator && context.isNewTarget(expr)))
+            internalFailWithMessage(false, "new.target can't come after a prefix operator");
+    }
     bool isEvalOrArguments = false;
     if (strictMode() && !m_syntaxAlreadyValidated) {
         if (context.isResolve(expr))
@@ -4013,6 +4021,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     failIfTrueIfStrict(isEvalOrArguments && modifiesExpr, "Cannot modify '", m_parserState.lastIdentifier->impl(), "' in strict mode");
     switch (m_token.m_type) {
     case PLUSPLUS:
+        if (!TreeBuilder::CreatesAST) { // We only need to do this check with the syntax checker.
+            if (UNLIKELY(context.isNewTarget(expr)))
+                internalFailWithMessage(false, "new.target can't come before a postfix operator");
+        }
         m_parserState.nonTrivialExpressionCount++;
         m_parserState.nonLHSCount++;
         expr = context.makePostfixNode(location, expr, OpPlusPlus, subExprStart, lastTokenEndPosition(), tokenEndPosition());
@@ -4023,6 +4035,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
         next();
         break;
     case MINUSMINUS:
+        if (!TreeBuilder::CreatesAST) { // We only need to do this check with the syntax checker.
+            if (UNLIKELY(context.isNewTarget(expr)))
+                internalFailWithMessage(false, "new.target can't come before a postfix operator");
+        }
         m_parserState.nonTrivialExpressionCount++;
         m_parserState.nonLHSCount++;
         expr = context.makePostfixNode(location, expr, OpMinusMinus, subExprStart, lastTokenEndPosition(), tokenEndPosition());

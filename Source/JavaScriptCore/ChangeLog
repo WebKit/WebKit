@@ -1,3 +1,37 @@
+2016-03-10  Saam barati  <sbarati@apple.com>
+
+        Assignment to new.target should be an early error
+        https://bugs.webkit.org/show_bug.cgi?id=151148
+
+        Reviewed by Mark Lam.
+
+        This patch makes it so that any form of assignment to new.target
+        is an early syntax error.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createNewTargetExpr):
+        (JSC::ASTBuilder::isNewTarget):
+        (JSC::ASTBuilder::createResolve):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createThisExpr):
+        (JSC::SyntaxChecker::createSuperExpr):
+        (JSC::SyntaxChecker::createNewTargetExpr):
+        (JSC::SyntaxChecker::isNewTarget):
+        (JSC::SyntaxChecker::createResolve):
+        (JSC::SyntaxChecker::createObjectLiteral):
+        * tests/es6.yaml:
+        * tests/stress/new-target-syntax-errors.js: Added.
+        (shouldBeSyntaxError):
+        (shouldNotBeSyntaxError):
+        * tests/stress/new-target.js:
+        (Constructor):
+        (doWeirdThings):
+        (noAssign): Deleted.
+        (catch): Deleted.
+
 2016-03-08  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         How we load new.target in arrow functions is broken

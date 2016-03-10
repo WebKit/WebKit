@@ -160,6 +160,7 @@ public:
     ExpressionType createThisExpr(const JSTokenLocation&, ThisTDZMode) { return ThisExpr; }
     ExpressionType createSuperExpr(const JSTokenLocation&) { return SuperExpr; }
     ExpressionType createNewTargetExpr(const JSTokenLocation&) { return NewTargetExpr; }
+    ALWAYS_INLINE bool isNewTarget(ExpressionType type) { return type == NewTargetExpr; }
     ExpressionType createResolve(const JSTokenLocation&, const Identifier&, int, int) { return ResolveExpr; }
     ExpressionType createObjectLiteral(const JSTokenLocation&) { return ObjectLiteralExpr; }
     ExpressionType createObjectLiteral(const JSTokenLocation&, int) { return ObjectLiteralExpr; }

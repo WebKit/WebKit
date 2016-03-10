@@ -33,21 +33,6 @@ function Constructor() {
 }
 new Constructor();
 
-function noAssign() {
-    new.target = 1;
-}
-
-try {
-    new noAssign();
-    passed = false;
-} catch(e) { }
-try {
-    noAssign();
-    passed = false;
-} catch(e) { }
-
-test(passed, true, "new.target should not be a reference");
-
 // This is mostly to test that calling new on new.target deos the right thing.
 function doWeirdThings(arg) {
     if (new.target) {
