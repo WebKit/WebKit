@@ -29,7 +29,7 @@ WebInspector.DOMTreeDataGrid = class DOMTreeDataGrid extends WebInspector.DataGr
     constructor()
     {
         super({
-            name: {title: WebInspector.UIString("Node"), sortable: false}
+            name: {title: WebInspector.UIString("Node"), sortable: false, icon: true}
         });
 
         this._previousHoveredElement = null;

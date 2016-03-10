@@ -30,9 +30,7 @@ WebInspector.DOMTreeDataGridNode = class DOMTreeDataGridNode extends WebInspecto
     {
         super();
 
-        this._nameLabel = null;
         this._domNode = domNode;
-        this._updateNodeName();
     }
 
     get domNode()
@@ -47,37 +45,21 @@ WebInspector.DOMTreeDataGridNode = class DOMTreeDataGridNode extends WebInspecto
         if (columnIdentifier !== "name")
             return super.createCellContent(columnIdentifier, cell);
 
-        var cell = this._makeNameCell();
-        this._updateNameCellData();
-        return cell;
+        return this._createNameCellDocumentFragment();
     }
 
     // Private
 
-    _updateNodeName()
+    _createNameCellDocumentFragment()
     {
-        this.data = {name: WebInspector.displayNameForNode(this._domNode)};
-    }
+        let fragment = document.createDocumentFragment();
+        let mainTitle = WebInspector.displayNameForNode(this._domNode);
+        fragment.append(mainTitle);
 
-    _makeNameCell()
-    {
-        var fragment = document.createDocumentFragment();
-
-        fragment.appendChild(document.createElement("img")).classList.add("icon");
-
-        this._nameLabel = document.createElement("div");
-        this._nameLabel.classList.add("label");
-        fragment.appendChild(this._nameLabel);
-
-        var goToButton = fragment.appendChild(WebInspector.createGoToArrowButton());
+        let goToButton = fragment.appendChild(WebInspector.createGoToArrowButton());
         goToButton.addEventListener("click", this._goToArrowWasClicked.bind(this), false);
 
         return fragment;
-    }
-
-    _updateNameCellData()
-    {
-        this._nameLabel.textContent = this.data.name;
     }
 
     _goToArrowWasClicked()

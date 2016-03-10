@@ -1,3 +1,31 @@
+2016-03-09  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Nodes in Computed Styles > Container Regions formatted incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=155277
+        <rdar://problem/25072711>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeDataGrid.js:
+        (WebInspector.DOMTreeDataGrid):
+        Enable icon column property.
+
+        * UserInterface/Views/DOMTreeDataGridNode.js:
+        (WebInspector.DOMTreeDataGridNode):
+        Removed calls to unused methods.
+
+        (WebInspector.DOMTreeDataGridNode.prototype.createCellContent):
+        (WebInspector.DOMTreeDataGridNode.prototype._createNameCellDocumentFragment):
+        Simplified cell content creation.
+
+        (WebInspector.DOMTreeDataGridNode.prototype._updateNodeName): Deleted.
+        (WebInspector.DOMTreeDataGridNode.prototype._makeNameCell): Deleted.
+        Renamed _createNameCellDocumentFragment to be consistent with similar
+        methods in other data grid node classes.
+
+        (WebInspector.DOMTreeDataGridNode.prototype._updateNameCellData): Deleted.
+        No longer needed.
+
 2016-03-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unnecessary constructor
