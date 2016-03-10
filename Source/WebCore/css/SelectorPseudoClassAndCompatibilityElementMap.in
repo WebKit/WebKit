@@ -78,3 +78,7 @@ past
 #if ENABLE(SHADOW_DOM)
 host
 #endif
+
+#if ENABLE(CUSTOM_ELEMENTS)
+defined
+#endif

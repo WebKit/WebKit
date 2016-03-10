@@ -643,6 +643,11 @@ String CSSSelector::selectorText(const String& rightSide) const
                 str.appendLiteral(":host");
                 break;
 #endif
+#if ENABLE(CUSTOM_ELEMENTS)
+            case CSSSelector::PseudoClassDefined:
+                str.appendLiteral(":defined");
+                break;
+#endif
             case CSSSelector::PseudoClassUnknown:
                 ASSERT_NOT_REACHED();
             }

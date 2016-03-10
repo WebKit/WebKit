@@ -98,7 +98,7 @@ RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& t
     Element* wrappedElement = JSElement::toWrapped(newElement);
     if (!wrappedElement)
         return nullptr;
-    wrappedElement->setIsCustomElement();
+    wrappedElement->setCustomElementIsResolved();
     return wrappedElement;
 }
 

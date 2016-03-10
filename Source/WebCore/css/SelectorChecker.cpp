@@ -991,6 +991,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             // :host matches based on context. Cases that reach selector checker don't match.
             return false;
 #endif
+#if ENABLE(CUSTOM_ELEMENTS)
+        case CSSSelector::PseudoClassDefined:
+            return isDefinedElement(element);
+#endif
         case CSSSelector::PseudoClassWindowInactive:
             return isWindowInactive(element);
 

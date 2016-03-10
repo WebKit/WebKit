@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: The ':defined' pseudo-class applies to elements that are defined.</title>
+<link rel="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org"/>
+<link rel="help" href="https://w3c.github.io/webcomponents/spec/custom/#the-defined-element-pseudo-class-defined">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../resources/testharness.css'>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+var upgradeCandidate = document.createElement('my-element');
+
+test(function () {
+    assert_false(upgradeCandidate.matches(':defined'));
+}, 'The defined flag of a custom element must be set if a custom element has not been upgraded yet');
+
+var matchInsideConstructor;
+class MyElement extends HTMLElement {
+    constructor() {
+        super();
+        matchInsideConstructor = this.matches(':defined');
+    }
+}
+document.defineElement('my-element', MyElement);
+
+test(function () {
+    assert_true(upgradeCandidate.matches(':defined'));
+    assert_false(matchInsideConstructor, 'Upgrading a custom element must set defined flag after invoking the constructor');
+}, 'The defined flag of a custom element must be set when a custom element is successfully upgraded');
+
+test(function () {
+    var definedElement = document.createElement('my-element');
+    assert_true(definedElement.matches(':defined'));
+    assert_false(matchInsideConstructor, 'Creating a custom element must set defined flag after invoking the constructor');
+}, 'The defined flag of a custom element must be set if there is a matching definition');
+
+document.write('<my-other-element></my-other-element>');
+
+test(function () {
+    var parserCreatedUnfefinedElement = document.querySelector('my-other-element');
+    assert_false(parserCreatedUnfefinedElement.matches(':defined'));
+}, 'The defined flag of a custom element created by HTML parser must be unset if there is no matching definition');
+
+document.write('<my-element></my-element>');
+
+test(function () {
+    var parserCreatedDefinedElement = document.querySelector('my-element');
+    assert_true(parserCreatedDefinedElement.matches(':defined'));
+}, 'The defined flag of a custom element created by HTML parser must be set if there is a matching definition');
+
+class ReturnsAnotherNode extends HTMLElement {
+    constructor() {
+        super();
+        matchInsideConstructor = this.matches(':defined');
+        return document.createTextNode('');
+    }
+}
+document.defineElement('returns-another-node', ReturnsAnotherNode);
+
+document.write('<returns-another-node></returns-another-node>');
+
+test(function () {
+    assert_true(document.querySelector('returns-another-node').matches(':defined'));
+    assert_false(matchInsideConstructor,
+        'HTML parser must create a custom element with the defined flag initially unset');
+}, 'The defined flag of a custom element created by HTML parser must be set after checking the returned result is an instance of HTMLElement');
+
+test(function () {
+    var instance = document.createElement('returns-another-node-2');
+    try {
+        document.defineElement('returns-another-node-2', class extends ReturnsAnotherNode {});
+    } catch (e) { }
+    assert_false(instance.matches(':defined'));
+    assert_false(matchInsideConstructor,
+        'Creating a custom element must leave the defined flag unset when synchronous custom elements flag is not set');
+}, 'The defined flag of a custom element must be set after checking the returned result is an instance of HTMLElement when upgrading a custom element');
+
+</script>
+</body>
+</html>

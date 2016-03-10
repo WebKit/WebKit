@@ -63,6 +63,13 @@ ALWAYS_INLINE bool isEnabled(const Element& element)
         && !element.isDisabledFormControl();
 }
 
+#if ENABLE(CUSTOM_ELEMENTS)
+ALWAYS_INLINE bool isDefinedElement(const Element& element)
+{
+    return !element.isUnresolvedCustomElement();
+}
+#endif
+
 ALWAYS_INLINE bool isMediaDocument(const Element& element)
 {
     return element.document().isMediaDocument();

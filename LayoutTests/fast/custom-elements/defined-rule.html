@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Custom Elements: The ':defined' pseudo-class applies to elements that are defined.</title>
+    <link rel="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org"/>
+    <link rel="help" href="https://w3c.github.io/webcomponents/spec/custom/#the-defined-element-pseudo-class-defined">
+    <link rel="match" href="reference/green-box.html"/>
+</head>
+<body>
+    <style>
+        .box {
+            display: block;
+            width: 100px;
+            height: 25px;
+        }
+        my-defined-element { background: red; color: green; }
+        my-defined-element:defined { background: green; }
+        my-defined-element:not(:defined) { color: red; }
+
+        my-undefined-element { background: green; color: red; }
+        my-undefined-element:defined { background: red; }
+        my-undefined-element:not(:defined) { color: green; }
+
+        div.box { background: green; color: red; height: 50px; }
+        div:defined { color: green; }
+        div:not(:defined) { background: red; }
+    </style>
+    <p>Test passes if you see a single 100px by 100px green box below.</p>
+    <my-defined-element class="box">FAIL</my-defined-element>
+    <my-undefined-element class="box">FAIL</my-undefined-element>
+    <div class="box"></div>
+    <script>
+
+        document.defineElement('my-defined-element', class extends HTMLElement {});
+
+    </script>
+</body>
+</html>

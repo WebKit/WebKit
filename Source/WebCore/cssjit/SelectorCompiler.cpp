@@ -542,6 +542,11 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassEnabled:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isEnabled));
         return FunctionType::SimpleSelectorChecker;
+#if ENABLE(CUSTOM_ELEMENTS)
+    case CSSSelector::PseudoClassDefined:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDefinedElement));
+        return FunctionType::SimpleSelectorChecker;
+#endif
     case CSSSelector::PseudoClassFocus:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(SelectorChecker::matchesFocusPseudoClass));
         return FunctionType::SimpleSelectorChecker;

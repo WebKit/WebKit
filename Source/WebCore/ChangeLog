@@ -1,3 +1,37 @@
+2016-03-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add :defined support
+        https://bugs.webkit.org/show_bug.cgi?id=155108
+
+        Reviewed by Antti Koivisto.
+
+        Added :defined pseudo class which applies to a successfully instantiated custom element or a builtin element.
+        A new node flag, isUnresolvedCustomElement, which was added in r197917 tracks un-upgraded / unresolved custom
+        elements for which :defined should not apply.
+
+        Tests: fast/custom-elements/defined-pseudo-class.html
+               fast/custom-elements/defined-rule.html
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::constructElement): Unset isUnresolvedCustomElement now that HTMLElement's
+        constructor sets isUnresolvedCustomElement.
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement): Set isUnresolvedCustomElement to true since :defined should never apply to
+        a custom element inside its constructor as HTMLElement constructor does not set the defined flag:
+        https://w3c.github.io/webcomponents/spec/custom/#htmlelement-constructor
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText): Added the support for serializing :defined.
+        * css/CSSSelector.h:
+        (PseudoClassType): Added PseudoClassDefined for :defined.
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne): Added the support for :defined.
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isDefinedElement): Added. Returns true for any builtin element and a custom element after a successful
+        construction / upgrades.
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in: Added :defined.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType): Added the support for :defined.
+
 2016-03-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197943.

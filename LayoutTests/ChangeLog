@@ -1,3 +1,17 @@
+2016-03-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add :defined support
+        https://bugs.webkit.org/show_bug.cgi?id=155108
+
+        Reviewed by Antti Koivisto.
+
+        Added W3C style testharness.js tests and ref tests for :defined pseudo class.
+
+        * fast/custom-elements/defined-pseudo-class-expected.txt: Added.
+        * fast/custom-elements/defined-pseudo-class.html: Added.
+        * fast/custom-elements/defined-rule-expected.html: Added.
+        * fast/custom-elements/defined-rule.html: Added.
+
 2016-03-10  Daniel Bates  <dabates@apple.com>
 
         CSP: Implement support for script and style nonces
