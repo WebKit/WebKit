@@ -1,3 +1,14 @@
+2016-03-09  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added missing #if(SOUP) after r197591.
+        https://bugs.webkit.org/show_bug.cgi?id=155259
+
+        Reviewed by Alex Christensen.
+
+        No new tests needed.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+
 2016-03-09  Ada Chan  <adachan@apple.com>
 
         Add a getter for WebVideoFullscreenInterfaceObjC and update its rate property
