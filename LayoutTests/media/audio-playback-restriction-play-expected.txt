@@ -1,7 +1,7 @@
-Test that, when both RequireUserGestureForRateChange and RequireUserGestureForAudioRateChange is set, starting playback of an audio file requires a user gesture.
+Test that, when RequireUserGestureForAudioRateChange is set, starting playback of an audio file requires a user gesture.
 
 
-RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForRateChange,RequireUserGestureForAudioRateChange"))
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForAudioRateChange"))
 RUN(video.src = findMediaFile('audio', 'content/test'))
 EVENT(canplaythrough)
 RUN(video.play())

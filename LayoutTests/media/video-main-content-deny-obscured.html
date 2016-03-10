@@ -7,7 +7,7 @@
     <script>
     function go() {
         video = document.createElement('video');
-        run('internals.setMediaElementRestrictions(video, "RequireUserGestureForRateChange,OverrideUserGestureRequirementForMainContent")');
+        run('internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRateChange,OverrideUserGestureRequirementForMainContent")');
         document.body.insertBefore(video, document.body.firstChild);
 
         video.src = findMediaFile('video', 'content/test');

@@ -73,7 +73,7 @@ static String restrictionName(MediaElementSession::BehaviorRestrictions restrict
 
     CASE(NoRestrictions);
     CASE(RequireUserGestureForLoad);
-    CASE(RequireUserGestureForRateChange);
+    CASE(RequireUserGestureForVideoRateChange);
     CASE(RequireUserGestureForAudioRateChange);
     CASE(RequireUserGestureForFullscreen);
     CASE(RequirePageConsentToLoadMedia);
@@ -149,12 +149,12 @@ bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) con
     if (m_restrictions & OverrideUserGestureRequirementForMainContent && updateIsMainContent())
         return true;
 
-    if (m_restrictions & RequireUserGestureForRateChange && !ScriptController::processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForVideoRateChange && element.isVideo() && !ScriptController::processingUserGestureForMedia()) {
         LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE");
         return false;
     }
 
-    if (m_restrictions & RequireUserGestureForAudioRateChange && element.hasAudio() && !ScriptController::processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForAudioRateChange && (!element.isVideo() || element.hasAudio()) && !ScriptController::processingUserGestureForMedia()) {
         LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE");
         return false;
     }

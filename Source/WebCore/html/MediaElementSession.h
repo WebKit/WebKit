@@ -79,7 +79,7 @@ public:
     enum BehaviorRestrictionFlags {
         NoRestrictions = 0,
         RequireUserGestureForLoad = 1 << 0,
-        RequireUserGestureForRateChange = 1 << 1,
+        RequireUserGestureForVideoRateChange = 1 << 1,
         RequireUserGestureForFullscreen = 1 << 2,
         RequirePageConsentToLoadMedia = 1 << 3,
         RequirePageConsentToResumeMedia = 1 << 4,

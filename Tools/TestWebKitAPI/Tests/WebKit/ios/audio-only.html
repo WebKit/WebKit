@@ -3,10 +3,10 @@
 <head>
     <script>
     function go() {
-        var video = document.getElementsByTagName('video')[0];
+        var audio = document.getElementsByTagName('audio')[0];
         timeout = window.setTimeout(notPlaying, 250);
-        video.addEventListener('playing', playing);
-        video.play();
+        audio.addEventListener('playing', playing);
+        audio.play();
     }
 
     function playing() {
@@ -26,6 +26,6 @@
     </script>
 </head>
 <body onload="go()">
-    <video src="video-without-audio.mp4" webkit-playsinline></video>
+    <audio src="video-with-audio.mp4"></video>
 </body>
 </html>

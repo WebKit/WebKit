@@ -758,6 +758,16 @@ bool WKPreferencesGetMediaPlaybackRequiresUserGesture(WKPreferencesRef preferenc
     return toImpl(preferencesRef)->requiresUserGestureForMediaPlayback();
 }
 
+void WKPreferencesSetVideoPlaybackRequiresUserGesture(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setRequiresUserGestureForVideoPlayback(flag);
+}
+
+bool WKPreferencesGetVideoPlaybackRequiresUserGesture(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->requiresUserGestureForVideoPlayback();
+}
+
 void WKPreferencesSetAudioPlaybackRequiresUserGesture(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setRequiresUserGestureForAudioPlayback(flag);

@@ -248,8 +248,13 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)hyperlinkAuditingEnabled;
 - (void)setHyperlinkAuditingEnabled:(BOOL)enabled;
 
+// Deprecated. Use -setVideoPlaybackRequiresUserGesture and -setAudioPlaybackRequiresUserGesture instead.
 - (void)setMediaPlaybackRequiresUserGesture:(BOOL)flag;
+// Deprecated. Use -videoPlaybackRequiresUserGesture and -audioPlaybackRequiresUserGesture instead.
 - (BOOL)mediaPlaybackRequiresUserGesture;
+
+- (void)setVideoPlaybackRequiresUserGesture:(BOOL)flag;
+- (BOOL)videoPlaybackRequiresUserGesture;
 
 - (void)setAudioPlaybackRequiresUserGesture:(BOOL)flag;
 - (BOOL)audioPlaybackRequiresUserGesture;

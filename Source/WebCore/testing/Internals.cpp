@@ -3068,8 +3068,8 @@ void Internals::setMediaElementRestrictions(HTMLMediaElement* element, const Str
             restrictions |= MediaElementSession::NoRestrictions;
         if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforload"))
             restrictions |= MediaElementSession::RequireUserGestureForLoad;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforratechange"))
-            restrictions |= MediaElementSession::RequireUserGestureForRateChange;
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforvideoratechange"))
+            restrictions |= MediaElementSession::RequireUserGestureForVideoRateChange;
         if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforfullscreen"))
             restrictions |= MediaElementSession::RequireUserGestureForFullscreen;
         if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsenttoloadmedia"))

@@ -1,4 +1,4 @@
-RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForRateChange,OverrideUserGestureRequirementForMainContent"))
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRateChange,OverrideUserGestureRequirementForMainContent"))
 EVENT(canplaythrough)
 EVENT(playing)
 END OF TEST

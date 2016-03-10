@@ -2,12 +2,28 @@
 <html>
 <head>
     <script>
+    var timeout;
+
     function go() {
         var video = document.getElementsByTagName('video')[0];
-        video.addEventListener('playing', function() {
-            window.location = 'callback:playing';
-        });
+        timeout = window.setTimeout(notPlaying, 250);
+        video.addEventListener('playing', playing);
         video.play();
+    }
+
+    function playing() {
+        window.clearTimeout(timeout);
+        try {
+            window.webkit.messageHandlers.playingHandler.postMessage('playing');
+        } catch(e) {
+            window.location = 'callback:playing';
+        }
+    }
+
+    function notPlaying() {
+        try {
+            window.webkit.messageHandlers.playingHandler.postMessage('not playing');
+        } catch(e) { }
     }
    </script>
 </head>

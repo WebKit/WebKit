@@ -104,10 +104,13 @@ private:
     BOOL _alwaysRunsAtForegroundPriority;
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
+#endif
+
     BOOL _invisibleAutoplayNotPermitted;
     BOOL _mediaDataLoadsAutomatically;
+    BOOL _requiresUserActionForVideoPlayback;
     BOOL _requiresUserActionForAudioPlayback;
-#endif
+
 #if PLATFORM(MAC)
     BOOL _showsURLsInToolTips;
     BOOL _serviceControlsEnabled;
@@ -126,12 +129,18 @@ private:
     
 #if PLATFORM(IOS)
     _requiresUserActionForMediaPlayback = YES;
-    _requiresUserActionForAudioPlayback = YES;
     _allowsPictureInPictureMediaPlayback = YES;
     _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
-    _invisibleAutoplayNotPermitted = YES;
     _mediaDataLoadsAutomatically = NO;
+#else
+    _mediaDataLoadsAutomatically = YES;
+#endif
+    _requiresUserActionForVideoPlayback = NO;
+    _requiresUserActionForAudioPlayback = NO;
+    _invisibleAutoplayNotPermitted = NO;
+
+#if PLATFORM(IOS)
     _respectsImageOrientation = YES;
     _printsBackgrounds = YES;
 #endif
@@ -236,15 +245,17 @@ private:
     configuration->_allowsMetaRefresh = self->_allowsMetaRefresh;
     configuration->_allowUniversalAccessFromFileURLs = self->_allowUniversalAccessFromFileURLs;
 
+    configuration->_invisibleAutoplayNotPermitted = self->_invisibleAutoplayNotPermitted;
+    configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
+    configuration->_requiresUserActionForVideoPlayback = self->_requiresUserActionForVideoPlayback;
+    configuration->_requiresUserActionForAudioPlayback = self->_requiresUserActionForAudioPlayback;
+
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_inlineMediaPlaybackRequiresPlaysInlineAttribute = self->_inlineMediaPlaybackRequiresPlaysInlineAttribute;
-    configuration->_invisibleAutoplayNotPermitted = self->_invisibleAutoplayNotPermitted;
-    configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
+    configuration->_requiresUserActionForMediaPlayback = self->_requiresUserActionForMediaPlayback;
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
     configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
-    configuration->_requiresUserActionForMediaPlayback = self->_requiresUserActionForMediaPlayback;
-    configuration->_requiresUserActionForAudioPlayback = self->_requiresUserActionForAudioPlayback;
     configuration->_selectionGranularity = self->_selectionGranularity;
 #endif
 #if PLATFORM(MAC)
@@ -529,6 +540,7 @@ static NSString *defaultApplicationNameForUserAgent()
 {
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = requires;
 }
+#endif // PLATFORM(IOS)
 
 - (BOOL)_invisibleAutoplayNotPermitted
 {
@@ -550,6 +562,16 @@ static NSString *defaultApplicationNameForUserAgent()
     _mediaDataLoadsAutomatically = mediaDataLoadsAutomatically;
 }
 
+- (BOOL)_requiresUserActionForVideoPlayback
+{
+    return _requiresUserActionForVideoPlayback;
+}
+
+- (void)_setRequiresUserActionForVideoPlayback:(BOOL)requiresUserActionForVideoPlayback
+{
+    _requiresUserActionForVideoPlayback = requiresUserActionForVideoPlayback;
+}
+
 - (BOOL)_requiresUserActionForAudioPlayback
 {
     return _requiresUserActionForAudioPlayback;
@@ -559,8 +581,6 @@ static NSString *defaultApplicationNameForUserAgent()
 {
     _requiresUserActionForAudioPlayback = requiresUserActionForAudioPlayback;
 }
-
-#endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)
 - (BOOL)_showsURLsInToolTips

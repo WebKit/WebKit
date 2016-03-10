@@ -11,7 +11,7 @@
         video = document.getElementsByTagName('audio')[0];
 
         if (window.internals)
-            run('internals.setMediaElementRestrictions(video, "RequireUserGestureForRateChange,RequireUserGestureForAudioRateChange")');
+            run('internals.setMediaElementRestrictions(video, "RequireUserGestureForAudioRateChange")');
 
         waitForEventAndFail('error');
         waitForEvent('canplaythrough', canplaythrough);
@@ -36,7 +36,7 @@
 </head>
 
 <body onload="runTest()">
-    <p>Test that, when both RequireUserGestureForRateChange and RequireUserGestureForAudioRateChange is set, starting playback of an audio file requires a user gesture.</p>
+    <p>Test that, when RequireUserGestureForAudioRateChange is set, starting playback of an audio file requires a user gesture.</p>
     <audio controls autoplay></audio>
 </body>
 </html>

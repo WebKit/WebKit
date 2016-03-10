@@ -8,7 +8,7 @@
     function go() {
         mediaElement = video = document.createElement('video');
         // video.customProperty = 'custom';
-        run('internals.setMediaElementRestrictions(video, "RequireUserGestureForRateChange,OverrideUserGestureRequirementForMainContent")');
+        run('internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRateChange,OverrideUserGestureRequirementForMainContent")');
 
         video.src = findMediaFile('video', 'content/test');
         waitForEvent('canplaythrough', canPlayThrough);

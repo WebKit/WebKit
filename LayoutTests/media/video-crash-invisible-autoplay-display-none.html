@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+        function go() {
+            if (!window.internals)
+                consoleWrite('window.internals not found; test may not complete sucessfully in browser.');
+
+            video = document.createElement('video');
+            run('internals.setMediaElementRestrictions(video, "InvisibleAutoplayNotPermitted")');
+            document.body.appendChild(video);
+
+            waitForEvent('canplaythrough', canplaythrough);
+            setSrcByTagName('video', findMediaFile('video', 'content/test'));
+        }
+
+        function canplaythrough() {
+            run('runWithKeyDown(function() { video.play() })');
+            run('video.style.display = "none"');
+            run('video.clientHeight');
+            endTest();
+        }
+        </script>
+    </head>
+    <body onload="go()">
+        <div>Tests that clearing the InvisibleAutoplayNotPermitted restriction then destroying the RenderVideo after a style recalc does not cause a crash.</div>
+    </body>
+</html>

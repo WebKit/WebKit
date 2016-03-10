@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/RetainPtr.h>
 
 template<typename T>
@@ -98,6 +99,8 @@ TEST(Coding, WKWebViewConfiguration)
     [a setApplicationNameForUserAgent:@"Application Name"];
     [a setAllowsAirPlayForMediaPlayback:NO];
     [a setDataDetectorTypes:WKDataDetectorTypeAll];
+    [a _setRequiresUserActionForVideoPlayback:YES];
+    [a _setRequiresUserActionForAudioPlayback:YES];
 
 #if PLATFORM(IOS)
     [a setAllowsInlineMediaPlayback:YES];
@@ -112,6 +115,8 @@ TEST(Coding, WKWebViewConfiguration)
     EXPECT_TRUE([[a applicationNameForUserAgent] isEqualToString:[b applicationNameForUserAgent]]);
     EXPECT_EQ([a allowsAirPlayForMediaPlayback], [b allowsAirPlayForMediaPlayback]);
     EXPECT_EQ([a dataDetectorTypes], [b dataDetectorTypes]);
+    EXPECT_EQ([a _requiresUserActionForVideoPlayback], [b _requiresUserActionForVideoPlayback]);
+    EXPECT_EQ([a _requiresUserActionForVideoPlayback], [b _requiresUserActionForVideoPlayback]);
 
 #if PLATFORM(IOS)
     EXPECT_EQ([a allowsInlineMediaPlayback], [b allowsInlineMediaPlayback]);

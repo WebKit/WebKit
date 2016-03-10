@@ -1,3 +1,34 @@
+2016-03-07  Jer Noble  <jer.noble@apple.com>
+
+        Add separate WK and WK2 preferences for requiring user gestures for video media, distinct from user gestures for media generally
+        https://bugs.webkit.org/show_bug.cgi?id=155141
+
+        Reviewed by Beth Dakin.
+
+        Update layout tests to reflect new restriction name.
+
+        * media/audio-playback-restriction-play-expected.txt:
+        * media/audio-playback-restriction-play.html:
+        * media/no-autoplay-with-user-gesture-requirement.html:
+        * media/video-load-require-user-gesture.html:
+        * media/video-play-require-user-gesture.html:
+        * media/video-crash-invisible-autoplay-display-none-expected.txt: Added.
+        * media/video-crash-invisible-autoplay-display-none.html: Added.
+        * media/video-main-content-allow-expected.txt:
+        * media/video-main-content-allow-then-deny-expected.txt:
+        * media/video-main-content-allow-then-deny.html:
+        * media/video-main-content-allow.html:
+        * media/video-main-content-deny-display-none-expected.txt:
+        * media/video-main-content-deny-display-none.html:
+        * media/video-main-content-deny-not-in-dom-expected.txt:
+        * media/video-main-content-deny-not-in-dom.html:
+        * media/video-main-content-deny-not-visible-expected.txt:
+        * media/video-main-content-deny-not-visible.html:
+        * media/video-main-content-deny-obscured-expected.txt:
+        * media/video-main-content-deny-obscured.html:
+        * media/video-main-content-deny-too-small-expected.txt:
+        * media/video-main-content-deny-too-small.html:
+
 2016-03-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add :defined support

@@ -1,3 +1,29 @@
+2016-03-07  Jer Noble  <jer.noble@apple.com>
+
+        Add separate WK and WK2 preferences for requiring user gestures for video media, distinct from user gestures for media generally
+        https://bugs.webkit.org/show_bug.cgi?id=155141
+
+        Reviewed by Beth Dakin.
+
+        Rename RequireUserGestureForRateChange -> RequireUserGestureForVideoRateChange.
+        Rename Settings::requiresUserGestureForMediaPlayback -> Settings::videoPlaybackRequiresUserGesture.
+
+        Fix longstanding FIXME unifying our behavior restrictions between iOS and Mac.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::constructCommon): Rename.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Unify behavior restriction behavior.
+        (WebCore::HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture): Rename.
+        * html/MediaElementSession.cpp:
+        (WebCore::restrictionName): Rename.
+        (WebCore::MediaElementSession::playbackPermitted): Rename.
+        * html/MediaElementSession.h:
+        * page/Settings.cpp:
+        * page/Settings.in:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaElementRestrictions): Rename.
+
 2016-03-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add :defined support
