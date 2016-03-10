@@ -1,3 +1,47 @@
+2016-03-09  Jon Lee  <jonlee@apple.com>
+
+        Add a new image test
+        https://bugs.webkit.org/show_bug.cgi?id=155232
+
+        Reviewed by Dean Jackson.
+        Provisionally reviewed by Said Abou-Hallawa.
+
+        The image test renders PNGs and moves them with translate and rotate
+        transforms. Each particle has a lifetime, and when the lifetime ends or
+        the particle goes offscreen, it resets itself somewhere on the stage.
+
+        * Animometer/resources/debug-runner/tests.js: Remove the CSS bouncing PNG
+        images test, because this one tests the same technique.
+        * Animometer/resources/runner/tests.js: Added here as "Leaves".
+        * Animometer/tests/master/leaves.html: Added.
+        * Animometer/tests/master/resources/particles.js: Refactor out the parts
+        specific to the DOM particles test. Consequently make velocity a public
+        member.
+        (initialize): The options parameter is never used, so remove it.
+        (animate): Remove unused local variable.
+        * Animometer/tests/master/resources/leaves.js: Maintains a focal point that
+        moves back and forth across the canvas. That point affects the velocity
+        of the particles. When the focal point is on the leftmost side, it is
+        between [-6, -2], and set in reset(). When the focal point is on the rightmost
+        side, it will be from [2, 6].
+        * Animometer/tests/master/resources/dom-particles.js: Move JS specific to
+        this test here from particles.js.
+
+        New images.
+        * Animometer/tests/master/resources/compass100.png: Added.
+        * Animometer/tests/master/resources/console100.png: Added.
+        * Animometer/tests/master/resources/contribute100.png: Added.
+        * Animometer/tests/master/resources/debugger100.png: Added.
+        * Animometer/tests/master/resources/inspector100.png: Added.
+        * Animometer/tests/master/resources/layout100.png: Added.
+        * Animometer/tests/master/resources/performance100.png: Added.
+        * Animometer/tests/master/resources/script100.png: Added.
+        * Animometer/tests/master/resources/shortcuts100.png: Added.
+        * Animometer/tests/master/resources/standards100.png: Added.
+        * Animometer/tests/master/resources/storage100.png: Added.
+        * Animometer/tests/master/resources/styles100.png: Added.
+        * Animometer/tests/master/resources/timeline100.png: Added.
+
 2016-03-03  Jon Lee  <jonlee@apple.com>
 
         Add ability to retrieve raw data from release harness

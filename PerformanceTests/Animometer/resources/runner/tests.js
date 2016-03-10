@@ -21,6 +21,10 @@ Suites.push(new Suite("Animometer",
             name: "Canvas arcs"
         },
         {
+            url: "master/leaves.html",
+            name: "Leaves"
+        },
+        {
             url: "master/canvas-stage.html?pathType=linePath&lineJoin=round&lineCap=round",
             name: "Canvas line path, round join"
         },

@@ -8,59 +8,55 @@ function Particle(stage)
 
 Particle.prototype =
 {
+    sizeMinimum: 40,
+    sizeRange: 10,
+
     reset: function()
     {
-        var randSize = Math.pow(Pseudo.random(), 4) * 10 + 40;
+        var randSize = Math.round(Math.pow(Pseudo.random(), 4) * this.sizeRange + this.sizeMinimum);
         this.size = new Point(randSize, randSize);
         this.maxPosition = this.stage.size.subtract(this.size);
-
-        var emitLocation = this.stage.emitLocation[Stage.randomInt(0, this.stage.emitLocation.length - 1)];
-        this.position = new Point(emitLocation.x, emitLocation.y);
-
-        var angle = Stage.randomInt(0, this.stage.emitSteps) / this.stage.emitSteps * Math.PI * 2 + Stage.dateCounterValue(100) * this.stage.emissionSpin;
-        this._velocity = new Point(Math.sin(angle), Math.cos(angle))
-            .multiply(Stage.random(.5, 2.5));
     },
 
     animate: function(timeDelta)
     {
         this.rotater.next(timeDelta);
 
-        this.position = this.position.add(this._velocity.multiply(timeDelta));
-        this._velocity.y += 0.03;
+        this.position = this.position.add(this.velocity.multiply(timeDelta));
+        this.velocity.y += 0.03;
 
         // If particle is going to move off right side
         if (this.position.x > this.maxPosition.x) {
-            if (this._velocity.x > 0)
-                this._velocity.x *= -1;
+            if (this.velocity.x > 0)
+                this.velocity.x *= -1;
             this.position.x = this.maxPosition.x;
         } else if (this.position.x < 0) {
             // If particle is going to move off left side
-            if (this._velocity.x < 0)
-                this._velocity.x *= -1;
+            if (this.velocity.x < 0)
+                this.velocity.x *= -1;
             this.position.x = 0;
         }
 
         // If particle is going to move off bottom side
         if (this.position.y > this.maxPosition.y) {
             // Adjust direction but maintain magnitude
-            var magnitude = this._velocity.length();
-            this._velocity.x *= 1.5 + .005 * this.size.x;
-            this._velocity = this._velocity.normalize().multiply(magnitude);
-            if (Math.abs(this._velocity.y) < 0.7)
+            var magnitude = this.velocity.length();
+            this.velocity.x *= 1.5 + .005 * this.size.x;
+            this.velocity = this.velocity.normalize().multiply(magnitude);
+            if (Math.abs(this.velocity.y) < 0.7)
                 this.reset();
             else {
-                if (this._velocity.y > 0)
-                    this._velocity.y *= -0.999;
+                if (this.velocity.y > 0)
+                    this.velocity.y *= -0.999;
                 this.position.y = this.maxPosition.y;
             }
         } else if (this.position.y < 0) {
             // If particle is going to move off top side
-            var magnitude = this._velocity.length();
-            this._velocity.x *= 1.5 + .005 * this.size.x;
-            this._velocity = this._velocity.normalize().multiply(magnitude);
-            if (this._velocity.y < 0)
-                this._velocity.y *= -0.998;
+            var magnitude = this.velocity.length();
+            this.velocity.x *= 1.5 + .005 * this.size.x;
+            this.velocity = this.velocity.normalize().multiply(magnitude);
+            if (this.velocity.y < 0)
+                this.velocity.y *= -0.998;
             this.position.y = 0;
         }
 
@@ -79,9 +75,9 @@ ParticlesStage = Utilities.createSubclass(Stage,
         this.particles = [];
     }, {
 
-    initialize: function(benchmark, options)
+    initialize: function(benchmark)
     {
-        Stage.prototype.initialize.call(this, benchmark, options);
+        Stage.prototype.initialize.call(this, benchmark);
         this.emissionSpin = Stage.random(0, 3);
         this.emitSteps = Stage.randomInt(4, 6);
         this.emitLocation = [
@@ -93,7 +89,6 @@ ParticlesStage = Utilities.createSubclass(Stage,
 
     animate: function(timeDelta)
     {
-        var offset = Stage.dateFractionalValue();
         timeDelta /= 4;
         this.particles.forEach(function(particle) {
             particle.animate(timeDelta);
