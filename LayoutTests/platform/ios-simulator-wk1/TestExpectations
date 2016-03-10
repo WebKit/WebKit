@@ -876,10 +876,6 @@ fast/transforms/transformed-caret.html [ Failure ]
 fast/transforms/transformed-focused-text-input.html [ Failure ]
 fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 
-# Inspector protocol tests that fail:
-inspector/debugger/setBreakpoint-actions.html [ Failure ]
-inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
-
 # JavaScripts tests that fail:
 js/dom/deep-recursion-test.html [ Failure ]
 js/large-expressions.html [ Failure ]
@@ -989,10 +985,6 @@ fast/ruby/text-emphasis.html
 fast/text/emphasis-height-crash.html
 fast/text/emphasis-vertical.html
 fast/text/emphasis.html
-inspector/debugger/pause-dedicated-worker.html
-inspector/debugger/terminate-dedicated-worker-while-paused.html
-inspector/css/selector-dynamic-specificity.html
-inspector/model/remote-object-get-properties.html
 transitions/cubic-bezier-overflow-transform.html
 
 # Misc tests that time out:
@@ -1072,7 +1064,6 @@ http/tests/images/jpeg-partial-load.html
 http/tests/images/png-partial-load-no-alpha.html
 http/tests/incremental/frame-focus-before-load.html
 http/tests/incremental/pause-in-script-element.pl
-http/tests/inspector/page/loading-iframe-document-node.html
 http/tests/navigation/metaredirect-frames.html
 http/tests/security/frameNavigation/context-for-location-assign.html
 http/tests/cache/cached-main-resource.html [ Timeout ]
@@ -1233,10 +1224,6 @@ fast/text/vertical-rl-rtl-linebreak.html [ Failure ]
 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
 fast/writing-mode/broken-ideographic-font.html [ Failure ]
 fast/writing-mode/japanese-rl-text-with-broken-font.html [ Failure ]
-inspector/debugger/nested-inspectors.html [ Failure ]
-inspector/debugger/regress-133182.html [ Failure ]
-inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
-inspector/page/javascriptDialogEvents.html [ Failure ]
 platform/ios-simulator/ios/fast/text/underline-scaling.html [ Failure ]
 svg/custom/linking-uri-01-b.svg [ Failure ]
 compositing/masks/compositing-clip-path-mask-change.html [ ImageOnlyFailure ]

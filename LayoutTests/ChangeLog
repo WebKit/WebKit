@@ -1,3 +1,16 @@
+2016-03-10  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] DumpRenderTree crashes when accessing window.testRunner.inspectorTestStubURL
+        <http://webkit.org/b/155295>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        - Remove all "inspector/" tests.  They are already skipped in
+          platform/ios-simulator/TestExpectations, so no need to
+          resurrect them here.
+
 2016-03-10  Daniel Bates  <dabates@apple.com>
 
         CSP: Implement support for inline script and inline style hashes

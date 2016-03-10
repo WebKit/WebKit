@@ -1,3 +1,15 @@
+2016-03-10  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] DumpRenderTree crashes when accessing window.testRunner.inspectorTestStubURL
+        <http://webkit.org/b/155295>
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::inspectorTestStubURL): Always return nullptr for
+        PLATFORM(IOS).  This matches what we did in r192604 for
+        WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm.
+
 2016-03-10  Frederic Wang  <fwang@igalia.com>
 
         [GTK] Add support for WOFF2
