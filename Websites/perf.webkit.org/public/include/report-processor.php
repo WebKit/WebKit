@@ -63,18 +63,18 @@ class ReportProcessor {
             $hash = NULL;
             if ($slave_name && array_key_exists('slavePassword', $report)) {
                 $universal_password = config('universalSlavePassword');
-                if ($universal_password && $universal_password == $report['slavePassword'])
-                    $slave = $this->db->select_first_row('build_slaves', 'slave', array('name' => $slave_name));
+                if ($slave_name && $universal_password && $universal_password == $report['slavePassword'])
+                    $slave_id = $this->db->select_or_insert_row('build_slaves', 'slave', array('name' => $slave_name));
                 else {
                     $hash = hash('sha256', $report['slavePassword']);
                     $slave = $this->db->select_first_row('build_slaves', 'slave', array('name' => $slave_name, 'password_hash' => $hash));
+                    if ($slave)
+                        $slave_id = $slave['slave_id'];
                 }
-                if ($slave)
-                    $slave_id = $slave['slave_id'];
             } else if (array_key_exists('builderPassword', $report))
                 $hash = hash('sha256', $report['builderPassword']);
 
-            if (!$hash)
+            if (!$hash && !$slave_id)
                 $this->exit_with_error('BuilderNotFound');
             if (!$slave_id)
                 $builder_info['password_hash'] = $hash;

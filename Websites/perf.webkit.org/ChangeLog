@@ -1,5 +1,11 @@
 2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r196870.
+
+        * public/include/report-processor.php:
+
+2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add Size metric to perf dashboard
         https://bugs.webkit.org/show_bug.cgi?id=155266
 
