@@ -54,8 +54,8 @@ public:
     }
     WEBCORE_EXPORT ~UserMessageHandlerDescriptor();
 
-    WEBCORE_EXPORT const AtomicString& name();
-    WEBCORE_EXPORT DOMWrapperWorld& world();
+    const AtomicString& name();
+    DOMWrapperWorld& world();
 
     Client* client() const { return m_client; }
     void invalidateClient() { m_client = nullptr; }

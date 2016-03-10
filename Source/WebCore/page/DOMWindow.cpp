@@ -761,7 +761,15 @@ bool DOMWindow::shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld& world)
     if (!page)
         return false;
 
-    for (auto& descriptor : page->userContentProvider().userMessageHandlerDescriptors().values()) {
+    auto* userContentController = page->userContentController();
+    if (!userContentController)
+        return false;
+
+    auto* descriptorMap = userContentController->userMessageHandlerDescriptors();
+    if (!descriptorMap)
+        return false;
+
+    for (auto& descriptor : descriptorMap->values()) {
         if (&descriptor->world() == &world)
             return true;
     }
@@ -2160,10 +2168,11 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
 #if ENABLE(CONTENT_EXTENSIONS)
     if (firstFrame->document()
         && firstFrame->mainFrame().page()
+        && firstFrame->mainFrame().page()->userContentController()
         && firstFrame->mainFrame().document()
         && firstFrame->mainFrame().document()->loader()) {
-        ResourceLoadInfo resourceLoadInfo = { firstFrame->document()->completeURL(urlString), firstFrame->mainFrame().document()->url(), ResourceType::Popup };
-        Vector<ContentExtensions::Action> actions = firstFrame->mainFrame().page()->userContentProvider().actionsForResourceLoad(resourceLoadInfo, *firstFrame->mainFrame().document()->loader());
+        ResourceLoadInfo resourceLoadInfo = {firstFrame->document()->completeURL(urlString), firstFrame->mainFrame().document()->url(), ResourceType::Popup};
+        Vector<ContentExtensions::Action> actions = firstFrame->mainFrame().page()->userContentController()->actionsForResourceLoad(resourceLoadInfo, *firstFrame->mainFrame().document()->loader());
         for (const ContentExtensions::Action& action : actions) {
             if (action.type() == ContentExtensions::ActionType::BlockLoad)
                 return nullptr;

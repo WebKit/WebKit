@@ -56,9 +56,9 @@ WebPageGroupProxy::~WebPageGroupProxy()
 {
 }
 
-WebUserContentController& WebPageGroupProxy::userContentController()
+WebCore::UserContentController& WebPageGroupProxy::userContentController()
 {
-    return m_userContentController;
+    return m_userContentController->userContentController();
 }
 
 } // namespace WebKit

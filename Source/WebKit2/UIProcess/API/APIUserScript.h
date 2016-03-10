@@ -41,9 +41,11 @@ public:
         return adoptRef(*new UserScript(WTFMove(userScript), world));
     }
 
-    UserScript(WebCore::UserScript, API::UserContentWorld&);
-
-    uint64_t identifier() const { return m_identifier; }
+    UserScript(WebCore::UserScript userScript, API::UserContentWorld& world)
+        : m_userScript(userScript)
+        , m_world(world)
+    {
+    }
 
     const WebCore::UserScript& userScript() const { return m_userScript; }
     
@@ -51,7 +53,6 @@ public:
     const UserContentWorld& userContentWorld() const { return m_world; }
     
 private:
-    uint64_t m_identifier;
     WebCore::UserScript m_userScript;
     Ref<UserContentWorld> m_world;
 };

@@ -41,7 +41,6 @@
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
-#include "UserContentProvider.h"
 #include <wtf/NeverDestroyed.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -96,18 +95,7 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
     }
 };
 
-class EmptyUserContentProvider final : public UserContentProvider {
-    void forEachUserScript(const std::function<void(DOMWrapperWorld&, const UserScript&)>&) const override { }
-    void forEachUserStyleSheet(const std::function<void(const UserStyleSheet&)>&) const override { }
-#if ENABLE(USER_MESSAGE_HANDLERS)
-    const UserMessageHandlerDescriptorMap& userMessageHandlerDescriptors() const override { static NeverDestroyed<UserMessageHandlerDescriptorMap> map; return map.get(); }
-#endif
-#if ENABLE(CONTENT_EXTENSIONS)
-    ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() override { static NeverDestroyed<ContentExtensions::ContentExtensionsBackend> backend; return backend.get(); };
-#endif
-};
-
-class EmptyVisitedLinkStore final : public VisitedLinkStore {
+class EmptyVisitedLinkStore : public VisitedLinkStore {
     bool isLinkVisited(Page&, LinkHash, const URL&, const AtomicString&) override { return false; }
     void addVisitedLink(Page&, LinkHash) override { }
 };
@@ -144,7 +132,6 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
 
     pageConfiguration.databaseProvider = adoptRef(new EmptyDatabaseProvider);
     pageConfiguration.storageNamespaceProvider = adoptRef(new EmptyStorageNamespaceProvider);
-    pageConfiguration.userContentProvider = adoptRef(new EmptyUserContentProvider);
     pageConfiguration.visitedLinkStore = adoptRef(new EmptyVisitedLinkStore);
 
 #if USE(APPLE_INTERNAL_SDK)

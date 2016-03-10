@@ -53,9 +53,15 @@ UserMessageHandler* UserMessageHandlersNamespace::handler(const AtomicString& na
     if (!page)
         return nullptr;
     
-    auto& descriptors = page->userContentProvider().userMessageHandlerDescriptors();
-    
-    RefPtr<UserMessageHandlerDescriptor> descriptor = descriptors.get(std::make_pair(name, &world));
+    const auto* userContentController = page->userContentController();
+    if (!userContentController)
+        return nullptr;
+
+    const auto* userMessageHandlerDescriptors = userContentController->userMessageHandlerDescriptors();
+    if (!userMessageHandlerDescriptors)
+        return nullptr;
+
+    RefPtr<UserMessageHandlerDescriptor> descriptor = userMessageHandlerDescriptors->get(std::make_pair(name, &world));
     if (!descriptor)
         return nullptr;
 
@@ -64,7 +70,7 @@ UserMessageHandler* UserMessageHandlersNamespace::handler(const AtomicString& na
             return &handler.get();
     }
 
-    auto liveHandlers = descriptors.values();
+    auto liveHandlers = userMessageHandlerDescriptors->values();
     m_messageHandlers.removeAllMatching([liveHandlers](const Ref<UserMessageHandler>& handler) {
         for (const auto& liveHandler : liveHandlers) {
             if (liveHandler.get() == &handler->descriptor())

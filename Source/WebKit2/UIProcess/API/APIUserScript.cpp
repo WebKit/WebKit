@@ -39,19 +39,10 @@ static uint64_t generateIdentifier()
 
 WebCore::URL UserScript::generateUniqueURL()
 {
-    static uint64_t identifier;
-
     StringBuilder urlStringBuilder;
     urlStringBuilder.appendLiteral("user-script:");
-    urlStringBuilder.appendNumber(++identifier);
+    urlStringBuilder.appendNumber(generateIdentifier());
     return { { }, urlStringBuilder.toString() };
-}
-
-UserScript::UserScript(WebCore::UserScript userScript, API::UserContentWorld& world)
-    : m_identifier(generateIdentifier())
-    , m_userScript(userScript)
-    , m_world(world)
-{
 }
 
 

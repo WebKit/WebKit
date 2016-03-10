@@ -121,7 +121,7 @@ class ScrollingCoordinator;
 class Settings;
 class StorageNamespace;
 class StorageNamespaceProvider;
-class UserContentProvider;
+class UserContentController;
 class ValidationMessageClient;
 class ViewStateChangeObserver;
 class VisitedLinkStore;
@@ -450,8 +450,8 @@ public:
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
     void setStorageNamespaceProvider(Ref<StorageNamespaceProvider>&&);
 
-    UserContentProvider& userContentProvider();
-    WEBCORE_EXPORT void setUserContentProvider(Ref<UserContentProvider>&&);
+    UserContentController* userContentController() { return m_userContentController.get(); }
+    WEBCORE_EXPORT void setUserContentController(UserContentController*);
 
     VisitedLinkStore& visitedLinkStore();
     WEBCORE_EXPORT void setVisitedLinkStore(Ref<VisitedLinkStore>&&);
@@ -676,7 +676,7 @@ private:
     Ref<ApplicationCacheStorage> m_applicationCacheStorage;
     Ref<DatabaseProvider> m_databaseProvider;
     Ref<StorageNamespaceProvider> m_storageNamespaceProvider;
-    Ref<UserContentProvider> m_userContentProvider;
+    RefPtr<UserContentController> m_userContentController;
     Ref<VisitedLinkStore> m_visitedLinkStore;
     RefPtr<WheelEventTestTrigger> m_testTrigger;
 

@@ -280,6 +280,8 @@ namespace WebCore {
         Frame(Page&, HTMLFrameOwnerElement*, FrameLoaderClient&);
 
     private:
+        void injectUserScriptsForWorld(DOMWrapperWorld&, const UserScriptVector&, UserScriptInjectionTime);
+
         HashSet<FrameDestructionObserver*> m_destructionObservers;
 
         MainFrame& m_mainFrame;
