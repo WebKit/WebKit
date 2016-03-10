@@ -154,11 +154,6 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
     // Protected
 
-    treeElementPathComponentSelected(event)
-    {
-        // Nothing. The sidebar will soon be removed.
-    }
-
     layout()
     {
         // Always update timeline ruler.

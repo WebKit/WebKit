@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceTimelineDataGridNodePathComponent = class ResourceTimelineDataGridNodePathComponent extends WebInspector.HierarchicalPathComponent
+WebInspector.TimelineDataGridNodePathComponent = class TimelineDataGridNodePathComponent extends WebInspector.HierarchicalPathComponent
 {
-    constructor(resourceTimelineDataGridNode)
+    constructor(timelineDataGridNode, representedObject)
     {
-        var resource = resourceTimelineDataGridNode.record.resource;
-        var classNames = [WebInspector.ResourceTreeElement.ResourceIconStyleClassName, resource.type];
+        super(timelineDataGridNode.displayName(), timelineDataGridNode.iconClassNames(), representedObject || timelineDataGridNode.record);
 
-        super(resourceTimelineDataGridNode.data.name, classNames, resource);
-
-        this._resourceTimelineDataGridNode = resourceTimelineDataGridNode;
+        this._timelineDataGridNode = timelineDataGridNode;
     }
 
     // Public
 
-    get resourceTimelineDataGridNode()
+    get timelineDataGridNode()
     {
-        return this._resourceTimelineDataGridNode;
+        return this._timelineDataGridNode;
     }
 
     get previousSibling()
     {
-        if (!this._resourceTimelineDataGridNode.previousSibling)
+        let previousSibling = this._timelineDataGridNode.previousSibling;
+        while (previousSibling && previousSibling.hidden)
+            previousSibling = previousSibling.previousSibling;
+
+        if (!previousSibling)
             return null;
-        return new WebInspector.ResourceTimelineDataGridNodePathComponent(this._resourceTimelineDataGridNode.previousSibling);
+
+        return new WebInspector.TimelineDataGridNodePathComponent(previousSibling, this.representedObject);
     }
 
     get nextSibling()
     {
-        if (!this._resourceTimelineDataGridNode.nextSibling)
+        let nextSibling = this._timelineDataGridNode.nextSibling;
+        while (nextSibling && nextSibling.hidden)
+            nextSibling = nextSibling.nextSibling;
+
+        if (!nextSibling)
             return null;
-        return new WebInspector.ResourceTimelineDataGridNodePathComponent(this._resourceTimelineDataGridNode.nextSibling);
+
+        return new WebInspector.TimelineDataGridNodePathComponent(nextSibling, this.representedObject);
     }
 };

@@ -35,11 +35,6 @@ WebInspector.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDa
 
     // Public
 
-    get record()
-    {
-        return this._record;
-    }
-
     get records()
     {
         return [this._record];
@@ -73,7 +68,7 @@ WebInspector.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDa
 
         switch (columnIdentifier) {
         case "name":
-            cell.classList.add(WebInspector.TimelineTabContentView.iconClassNameForRecord(this._record));
+            cell.classList.add(...this.iconClassNames());
             return value;
 
         case "startTime":

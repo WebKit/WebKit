@@ -37,11 +37,6 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
 
     // Public
 
-    get record()
-    {
-        return this._record;
-    }
-
     get records()
     {
         return [this._record];
@@ -125,7 +120,7 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
 
         switch (columnIdentifier) {
         case "name":
-            cell.classList.add(WebInspector.TimelineTabContentView.iconClassNameForRecord(this._record));
+            cell.classList.add(...this.iconClassNames());
             return this._createNameCellDocumentFragment();
 
         case "startTime":
@@ -148,8 +143,7 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
     _createNameCellDocumentFragment(cellElement)
     {
         let fragment = document.createDocumentFragment();
-        let mainTitle = WebInspector.TimelineTabContentView.displayNameForRecord(this._record);
-        fragment.append(mainTitle);
+        fragment.append(this.displayName());
 
         if (this._record.eventType === WebInspector.ScriptTimelineRecord.EventType.TimerInstalled) {
             let subtitleElement = document.createElement("span");

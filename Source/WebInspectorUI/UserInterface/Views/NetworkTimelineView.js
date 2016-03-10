@@ -111,6 +111,18 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         return WebInspector.UIString("Resources");
     }
 
+    get selectionPathComponents()
+    {
+        if (!this._dataGrid.selectedNode || this._dataGrid.selectedNode.hidden)
+            return null;
+
+        console.assert(this._dataGrid.selectedNode instanceof WebInspector.ResourceTimelineDataGridNode);
+
+        let pathComponent = new WebInspector.TimelineDataGridNodePathComponent(this._dataGrid.selectedNode, this._dataGrid.selectedNode.resource);
+        pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
+        return [pathComponent];
+    }
+
     shown()
     {
         super.shown();
@@ -166,11 +178,14 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         console.error("Unknown tree element selected.", treeElement);
     }
 
-    treeElementPathComponentSelected(event)
+    dataGridNodePathComponentSelected(event)
     {
-        var dataGridNode = this._dataGrid.dataGridNodeForTreeElement(event.data.pathComponent.generalTreeElement);
-        if (!dataGridNode)
-            return;
+        let pathComponent = event.data.pathComponent;
+        console.assert(pathComponent instanceof WebInspector.TimelineDataGridNodePathComponent);
+
+        let dataGridNode = pathComponent.timelineDataGridNode;
+        console.assert(dataGridNode.dataGrid === this._dataGrid);
+
         dataGridNode.revealAndSelect();
     }
 

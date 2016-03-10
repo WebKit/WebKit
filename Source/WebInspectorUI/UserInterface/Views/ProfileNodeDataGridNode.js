@@ -70,7 +70,7 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
     {
         if (!this._cachedData) {
             this._cachedData = this._profileNode.computeCallInfoForTimeRange(this._rangeStartTime, this._rangeEndTime);
-            this._cachedData.name = this._titleForProfileNode();
+            this._cachedData.name = this.displayName();
             this._cachedData.location = this._profileNode.sourceCodeLocation;
         }
 
@@ -114,7 +114,7 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
 
         switch (columnIdentifier) {
         case "name":
-            cell.classList.add(this._iconClassNameForProfileNode());
+            cell.classList.add(...this.iconClassNames());
             return value;
 
         case "startTime":
@@ -129,9 +129,27 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
         return super.createCellContent(columnIdentifier, cell);
     }
 
-    // Private
+    displayName()
+    {
+        let title = this._profileNode.functionName;
+        if (!title) {
+            switch (this._profileNode.type) {
+            case WebInspector.ProfileNode.Type.Function:
+                title = WebInspector.UIString("(anonymous function)");
+                break;
+            case WebInspector.ProfileNode.Type.Program:
+                title = WebInspector.UIString("(program)");
+                break;
+            default:
+                title = WebInspector.UIString("(anonymous function)");
+                console.error("Unknown ProfileNode type: " + this._profileNode.type);
+            }
+        }
 
-    _iconClassNameForProfileNode()
+        return title;
+    }
+
+    iconClassNames()
     {
         let className;
         switch (this._profileNode.type) {
@@ -152,26 +170,6 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
         if (this._profileNode.functionName && this._profileNode.functionName.startsWith("on") && this._profileNode.functionName.length >= 5)
             className = WebInspector.CallFrameView.EventListenerIconStyleClassName;
 
-        return className;
-    }
-
-    _titleForProfileNode()
-    {
-        let title = this._profileNode.functionName;
-        if (!name) {
-            switch (this._profileNode.type) {
-            case WebInspector.ProfileNode.Type.Function:
-                title = WebInspector.UIString("(anonymous function)");
-                break;
-            case WebInspector.ProfileNode.Type.Program:
-                title = WebInspector.UIString("(program)");
-                break;
-            default:
-                title = WebInspector.UIString("(anonymous function)");
-                console.error("Unknown ProfileNode type: " + this._profileNode.type);
-            }
-        }
-
-        return title;
+        return [className];
     }
 };

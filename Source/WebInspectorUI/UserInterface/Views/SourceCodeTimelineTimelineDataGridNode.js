@@ -53,7 +53,7 @@ WebInspector.SourceCodeTimelineTimelineDataGridNode = class SourceCodeTimelineTi
     createCellContent(columnIdentifier, cell)
     {
         if (columnIdentifier === "name" && this.records.length) {
-            cell.classList.add(WebInspector.TimelineTabContentView.iconClassNameForRecord(this.records[0]));
+            cell.classList.add(...this.iconClassNames());
             return this._createNameCellContent(cell);
         }
 
@@ -68,7 +68,7 @@ WebInspector.SourceCodeTimelineTimelineDataGridNode = class SourceCodeTimelineTi
             return null;
 
         let fragment = document.createDocumentFragment();
-        let mainTitle = WebInspector.TimelineTabContentView.displayNameForRecord(this.records[0]);
+        let mainTitle = this.displayName();
         fragment.append(mainTitle);
 
         let sourceCodeLocation = this._sourceCodeTimeline.sourceCodeLocation;

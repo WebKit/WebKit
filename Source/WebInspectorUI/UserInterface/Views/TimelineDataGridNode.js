@@ -42,6 +42,11 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
 
     // Public
 
+    get record()
+    {
+        return this.records && this.records.length ? this.records[0] : null;;
+    }
+
     get records()
     {
         // Implemented by subclasses.
@@ -306,6 +311,18 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
             return;
 
         this._scheduledGraphRefreshIdentifier = requestAnimationFrame(this.refreshGraph.bind(this));
+    }
+
+    displayName()
+    {
+        // Can be overridden by subclasses.
+        return WebInspector.TimelineTabContentView.displayNameForRecord(this.record);
+    }
+
+    iconClassNames()
+    {
+        // Can be overridden by subclasses.
+        return [WebInspector.TimelineTabContentView.iconClassNameForRecord(this.record)];
     }
 
     // Protected

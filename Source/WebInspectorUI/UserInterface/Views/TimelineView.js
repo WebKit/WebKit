@@ -80,12 +80,8 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
     get selectionPathComponents()
     {
-        if (!this._contentTreeOutline.selectedTreeElement || this._contentTreeOutline.selectedTreeElement.hidden)
-            return null;
-
-        var pathComponent = new WebInspector.GeneralTreeElementPathComponent(this._contentTreeOutline.selectedTreeElement);
-        pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.treeElementPathComponentSelected, this);
-        return [pathComponent];
+        // Implemented by sub-classes if needed.
+        return null;
     }
 
     get zeroTime()

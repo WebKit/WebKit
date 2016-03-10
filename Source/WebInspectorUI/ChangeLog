@@ -1,5 +1,125 @@
 2016-03-09  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Timelines UI redesign: use DataGridNode for TimelineView selection path components
+        https://bugs.webkit.org/show_bug.cgi?id=154954
+        <rdar://problem/24947939>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch adds a new path component, TimelineDataGridNodePathComponent,
+        for creating a path component from the current grid selection. This is
+        needed since TimelineViews will no longer have an associated content tree
+        outline once the navigation sidebar is removed.
+
+        TimelineDataGridNode has new protected methods, "displayName" and
+        "iconClassNames", which are used to populate hierarchical path components,
+        create grid node data, and create cell content.
+
+        TimelineView subclasses share a certain amount of boilerplate code for
+        getting selection path components and handling path component selection.
+        In the future we may be able to reduce this code by introducing a new
+        DataGridTimelineView base class.
+
+        * UserInterface/Main.html:
+        Added/removed files.
+
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WebInspector.LayoutTimelineDataGridNode.prototype.get data):
+        (WebInspector.LayoutTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.LayoutTimelineDataGridNode):
+        (WebInspector.LayoutTimelineDataGridNode.prototype.get record): Deleted.
+        Moved to base class.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.LayoutTimelineView.prototype.dataGridNodePathComponentSelected):
+        (WebInspector.LayoutTimelineView.prototype.treeElementPathComponentSelected): Deleted.
+        TimelineView tree outlines are going away.
+
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WebInspector.MemoryTimelineView.prototype.treeElementPathComponentSelected): Deleted.
+        TimelineView tree outlines are going away.
+
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.NetworkTimelineView.prototype.dataGridNodePathComponentSelected):
+        (WebInspector.NetworkTimelineView.prototype.treeElementPathComponentSelected): Deleted.
+        TimelineView tree outlines are going away.
+
+        * UserInterface/Views/ProfileNodeDataGridNode.js:
+        (WebInspector.ProfileNodeDataGridNode.prototype.get data):
+        (WebInspector.ProfileNodeDataGridNode.prototype.createCellContent):
+        (WebInspector.ProfileNodeDataGridNode.prototype.displayName):
+        (WebInspector.ProfileNodeDataGridNode.prototype.iconClassNames):
+        (WebInspector.ProfileNodeDataGridNode):
+        (WebInspector.ProfileNodeDataGridNode.prototype._iconClassNameForProfileNode): Deleted.
+        (WebInspector.ProfileNodeDataGridNode.prototype._titleForProfileNode): Deleted.
+        Re-implemented as overrides of the base class methods "iconClassNames"
+        and "displayName".
+
+        * UserInterface/Views/RenderingFrameTimelineDataGridNode.js:
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.RenderingFrameTimelineDataGridNode):
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.get record): Deleted.
+        Moved to base class.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.displayName):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.iconClassNames):
+        Override base class methods, making it possible to remove ResourceTimelineDataGridNodePathComponent,
+        and treat all TimelineDataGridNodes in a uniform manner.
+
+        (WebInspector.ResourceTimelineDataGridNode.prototype._createNameCellDocumentFragment):
+        Replace duplicated code with call to "displayName".
+
+        * UserInterface/Views/ResourceTimelineDataGridNodePathComponent.js: Removed.
+        Replaced by more generic solution, TimelineDataGridNodePathComponent.
+
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WebInspector.ScriptDetailsTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.ScriptDetailsTimelineView.prototype.dataGridNodePathComponentSelected):
+        (WebInspector.ScriptDetailsTimelineView.prototype.treeElementPathComponentSelected): Deleted.
+        TimelineView tree outlines are going away.
+
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.ScriptTimelineDataGridNode.prototype._createNameCellDocumentFragment):
+        Replace duplicated code with call to "displayName".
+
+        (WebInspector.ScriptTimelineDataGridNode):
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get record): Deleted.
+        Moved to base class.
+
+        * UserInterface/Views/SourceCodeTimelineTimelineDataGridNode.js:
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype._createNameCellContent):
+        Replace duplicated code with call to "displayName".
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.get record):
+        Implemented in terms of the "records" getter, since all subclasses simply returned the
+        node's first (or only) record.
+
+        (WebInspector.TimelineDataGridNode.prototype.displayName):
+        (WebInspector.TimelineDataGridNode.prototype.iconClassNames):
+        Base class implementations, using utility methods in TimelineTabContentView
+        to get display data based on the node's timeline record. Can be overridden
+        by nodes that either don't have a timeline record (ProfileNodeDataGridNode)
+
+        * UserInterface/Views/TimelineDataGridNodePathComponent.js:
+        (WebInspector.TimelineDataGridNodePathComponent):
+        (WebInspector.TimelineDataGridNodePathComponent.prototype.get timelineDataGridNode):
+        (WebInspector.TimelineDataGridNodePathComponent.prototype.get previousSibling):
+        (WebInspector.TimelineDataGridNodePathComponent.prototype.get nextSibling):
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype.get selectionPathComponents):
+        Must be implemented by subclasses since not all TimelineViews use a DataGrid.
+
+2016-03-09  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Nodes in Computed Styles > Container Regions formatted incorrectly.
         https://bugs.webkit.org/show_bug.cgi?id=155277
         <rdar://problem/25072711>

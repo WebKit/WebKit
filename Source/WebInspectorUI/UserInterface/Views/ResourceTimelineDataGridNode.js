@@ -98,7 +98,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
 
         switch (columnIdentifier) {
         case "name":
-            cell.classList.add(WebInspector.ResourceTreeElement.ResourceIconStyleClassName, resource.type);
+            cell.classList.add(...this.iconClassNames());
             cell.title = resource.displayURL;
             this._updateStatus(cell);
             return this._createNameCellDocumentFragment();
@@ -141,12 +141,17 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         super.refresh();
     }
 
+    iconClassNames()
+    {
+        return [WebInspector.ResourceTreeElement.ResourceIconStyleClassName, this.resource.type];
+    }
+
     // Private
 
     _createNameCellDocumentFragment()
     {
         let fragment = document.createDocumentFragment();
-        let mainTitle = WebInspector.TimelineTabContentView.displayNameForRecord(this._record);
+        let mainTitle = this.displayName();
         fragment.append(mainTitle);
 
         // Show the host as the subtitle if it is different from the main resource or if this is the main frame's main resource.

@@ -126,16 +126,16 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
         var pathComponents = [];
 
         while (dataGridNode && !dataGridNode.root) {
-            var treeElement = this._dataGrid.treeElementForDataGridNode(dataGridNode);
-            console.assert(treeElement);
-            if (!treeElement)
-                break;
-
-            if (treeElement.hidden)
+            console.assert(dataGridNode instanceof WebInspector.TimelineDataGridNode);
+            if (dataGridNode.hidden)
                 return null;
 
-            var pathComponent = new WebInspector.GeneralTreeElementPathComponent(treeElement);
-            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.treeElementPathComponentSelected, this);
+            let representedObject = null;
+            if (dataGridNode instanceof WebInspector.ProfileNodeDataGridNode)
+                representedObject = dataGridNode.profileNode;
+
+            let pathComponent = new WebInspector.TimelineDataGridNodePathComponent(dataGridNode);
+            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
             pathComponents.unshift(pathComponent);
             dataGridNode = dataGridNode.parent;
         }
@@ -172,11 +172,11 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
         super.showContentViewForTreeElement(treeElement);
     }
 
-    treeElementPathComponentSelected(event)
+    dataGridNodePathComponentSelected(event)
     {
-        var dataGridNode = this._dataGrid.dataGridNodeForTreeElement(event.data.pathComponent.generalTreeElement);
-        if (!dataGridNode)
-            return;
+        let dataGridNode = event.data.pathComponent.timelineDataGridNode;
+        console.assert(dataGridNode.dataGrid === this._dataGrid);
+
         dataGridNode.revealAndSelect();
     }
 
