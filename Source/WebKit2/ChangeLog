@@ -1,3 +1,64 @@
+2016-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Speculative revalidation requests do not have their 'first party for cookies' URL set
+        https://bugs.webkit.org/show_bug.cgi?id=155284
+        <rdar://problem/25053203>
+
+        Reviewed by Antti Koivisto.
+
+        Speculative revalidation requests did not have their 'first party for cookies'
+        URL set. This means the underlying NSURLRequest has a nil mainDocumentURL.
+        Without a way to determine whether the cookie is in a third-party context,
+        CFNetwork defaults to accepting all cookies for these resources.
+
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WebKit::NetworkCache::Coder<WebCore::URL>::encode):
+        (WebKit::NetworkCache::Coder<WebCore::URL>::decode):
+        * NetworkProcess/cache/NetworkCacheCoders.h:
+        Add template specialization to support encoding / decoding WebCore::URL.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        Set the "first party for cookies" URL on the revalidation request.
+
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::registerSubresourceLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::saveToDiskIfReady):
+        Now keep the subresources' ResourceRequests, in addition to their key, so we can later
+        extract the 'first party for cookies' URL from the request and save it to disk.
+
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        Pass the ResourceRequest in addition to the key to
+        PendingFrameLoad::registerSubresourceLoad().
+
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateEntry):
+        Add an extra SubresourceInfo parameter, in addition to the Entry, so we
+        have access to the first party for cookies URL. Pass this URL to
+        constructRevalidationRequest().
+
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        Add an extra SubresourceInfo parameter, in addition to the Entry, so we
+        have access to the first party for cookies URL.
+
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        Pass the SubresourceInfo to preloadEntry().
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourceInfo::encode):
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourceInfo::decode):
+        Encode / Decode new firstPartyForCookies member.
+
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourcesEntry):
+        (WebKit::NetworkCache::SubresourcesEntry::updateSubresourceLoads):
+        Take SubresourceLoad objects in, instead of simple Key objects so we have
+        access to the ResourceRequest. We extract the first party for cookies URL
+        from the request and pass it to the SubresourceInfo constructor.
+
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourceInfo::SubresourceInfo):
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourceLoad::SubresourceLoad):
+
 2016-02-22  Jer Noble  <jer.noble@apple.com>
 
         Enable AVFoundationNSURLSessionEnabled by default

@@ -74,7 +74,7 @@ namespace WebCore {
         void setTimeoutInterval(double timeoutInterval);
         
         WEBCORE_EXPORT const URL& firstPartyForCookies() const;
-        void setFirstPartyForCookies(const URL& firstPartyForCookies);
+        WEBCORE_EXPORT void setFirstPartyForCookies(const URL&);
         
         WEBCORE_EXPORT const String& httpMethod() const;
         WEBCORE_EXPORT void setHTTPMethod(const String& httpMethod);

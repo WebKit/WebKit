@@ -41,6 +41,7 @@ namespace NetworkCache {
 class Entry;
 class SpeculativeLoad;
 class SubresourcesEntry;
+struct SubresourceInfo;
 
 class SpeculativeLoadManager {
 public:
@@ -55,9 +56,9 @@ public:
 private:
     enum class WasRevalidated { No, Yes };
     void addPreloadedEntry(std::unique_ptr<Entry>, const GlobalFrameID&, WasRevalidated);
-    void preloadEntry(const Key&, const GlobalFrameID&);
+    void preloadEntry(const Key&, const SubresourceInfo&, const GlobalFrameID&);
     void retrieveEntryFromStorage(const Key&, const RetrieveCompletionHandler&);
-    void revalidateEntry(std::unique_ptr<Entry>, const GlobalFrameID&);
+    void revalidateEntry(std::unique_ptr<Entry>, const SubresourceInfo&, const GlobalFrameID&);
     bool satisfyPendingRequests(const Key&, Entry*);
     void retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>);
     void startSpeculativeRevalidation(const GlobalFrameID&, SubresourcesEntry&);

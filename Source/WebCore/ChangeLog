@@ -1,3 +1,16 @@
+2016-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Speculative revalidation requests do not have their 'first party for cookies' URL set
+        https://bugs.webkit.org/show_bug.cgi?id=155284
+        <rdar://problem/25053203>
+
+        Reviewed by Antti Koivisto.
+
+        Export a few more symbols so they can be used in WebKit2.
+
+        * platform/URL.h:
+        * platform/network/ResourceRequestBase.h:
+
 2016-02-22  Jer Noble  <jer.noble@apple.com>
 
         Enable AVFoundationNSURLSessionEnabled by default

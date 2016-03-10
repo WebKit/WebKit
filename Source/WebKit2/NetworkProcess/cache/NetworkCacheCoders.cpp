@@ -145,6 +145,20 @@ bool Coder<String>::decode(Decoder& decoder, String& result)
     return decodeStringText<UChar>(decoder, length, result);
 }
 
+void Coder<WebCore::URL>::encode(Encoder& encoder, const WebCore::URL& url)
+{
+    encoder << url.string();
+}
+
+bool Coder<WebCore::URL>::decode(Decoder& decoder, WebCore::URL& url)
+{
+    String urlAsString;
+    if (!decoder.decode(urlAsString))
+        return false;
+    url = WebCore::URL(WebCore::ParsedURLString, urlAsString);
+    return true;
+}
+
 void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
 {
     // FIXME: Cocoa CertificateInfo is a CF object tree. Generalize CF type coding so we don't need to use ArgumentCoder here.

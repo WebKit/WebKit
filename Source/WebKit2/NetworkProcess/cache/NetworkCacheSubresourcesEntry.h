@@ -31,24 +31,43 @@
 #include "NetworkCacheDecoder.h"
 #include "NetworkCacheEncoder.h"
 #include "NetworkCacheStorage.h"
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/URL.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
 namespace NetworkCache {
 
+struct SubresourceInfo {
+    void encode(Encoder&) const;
+    static bool decode(Decoder&, SubresourceInfo&);
+
+    SubresourceInfo() = default;
+    SubresourceInfo(const WebCore::URL& firstPartyForCookies, bool isTransient = false)
+        : firstPartyForCookies(firstPartyForCookies)
+        , isTransient(isTransient)
+    { }
+
+    WebCore::URL firstPartyForCookies;
+    bool isTransient { false };
+};
+
+struct SubresourceLoad {
+    WTF_MAKE_NONCOPYABLE(SubresourceLoad); WTF_MAKE_FAST_ALLOCATED;
+public:
+    SubresourceLoad(const WebCore::ResourceRequest& request, const Key& key)
+        : request(request)
+        , key(key)
+    { }
+
+    WebCore::ResourceRequest request;
+    Key key;
+};
+
 class SubresourcesEntry {
     WTF_MAKE_NONCOPYABLE(SubresourcesEntry); WTF_MAKE_FAST_ALLOCATED;
 public:
-    struct SubresourceInfo {
-        void encode(Encoder& encoder) const { encoder << isTransient; }
-        static bool decode(Decoder& decoder, SubresourceInfo& info) { return decoder.decode(info.isTransient); }
-
-        SubresourceInfo() = default;
-        SubresourceInfo(bool isTransient) : isTransient(isTransient) { }
-
-        bool isTransient { false };
-    };
-    SubresourcesEntry(Key&&, const Vector<Key>& subresourceKeys);
+    SubresourcesEntry(Key&&, const Vector<std::unique_ptr<SubresourceLoad>>&);
     explicit SubresourcesEntry(const Storage::Record&);
 
     Storage::Record encodeAsStorageRecord() const;
@@ -58,7 +77,7 @@ public:
     std::chrono::system_clock::time_point timeStamp() const { return m_timeStamp; }
     const HashMap<Key, SubresourceInfo>& subresources() const { return m_subresources; }
 
-    void updateSubresourceKeys(const Vector<Key>&);
+    void updateSubresourceLoads(const Vector<std::unique_ptr<SubresourceLoad>>&);
 
 private:
     Key m_key;

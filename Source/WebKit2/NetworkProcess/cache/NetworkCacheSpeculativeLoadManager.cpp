@@ -84,9 +84,10 @@ static inline Key makeSubresourcesKey(const Key& resourceKey)
     return Key(resourceKey.partition(), subresourcesType(), resourceKey.range(), resourceKey.identifier());
 }
 
-static inline ResourceRequest constructRevalidationRequest(const Entry& entry)
+static inline ResourceRequest constructRevalidationRequest(const Entry& entry, const URL& firstPartyForCookies)
 {
     ResourceRequest revalidationRequest(entry.key().identifier());
+    revalidationRequest.setFirstPartyForCookies(firstPartyForCookies);
 #if ENABLE(CACHE_PARTITIONING)
     if (entry.key().hasPartition())
         revalidationRequest.setCachePartition(entry.key().partition());
@@ -162,10 +163,10 @@ public:
         ASSERT(m_didRetrieveExistingEntry);
     }
 
-    void registerSubresource(const Key& subresourceKey)
+    void registerSubresourceLoad(const ResourceRequest& request, const Key& subresourceKey)
     {
         ASSERT(RunLoop::isMain());
-        m_subresourceKeys.append(subresourceKey);
+        m_subresourceLoads.append(std::make_unique<SubresourceLoad>(request, subresourceKey));
         m_loadHysteresisActivity.impulse();
     }
 
@@ -207,27 +208,27 @@ private:
         if (!m_didFinishLoad || !m_didRetrieveExistingEntry)
             return;
 
-        if (m_subresourceKeys.isEmpty())
+        if (m_subresourceLoads.isEmpty())
             return;
 
 #if !LOG_DISABLED
         LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Saving to disk list of subresources for '%s':", m_mainResourceKey.identifier().utf8().data());
-        for (auto& subresourceKey : m_subresourceKeys)
-            LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) * Subresource: '%s'.", subresourceKey.identifier().utf8().data());
+        for (auto& subresourceLoad : m_subresourceLoads)
+            LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) * Subresource: '%s'.", subresourceLoad->key.identifier().utf8().data());
 #endif
 
         if (m_existingEntry) {
-            m_existingEntry->updateSubresourceKeys(m_subresourceKeys);
+            m_existingEntry->updateSubresourceLoads(m_subresourceLoads);
             m_storage.store(m_existingEntry->encodeAsStorageRecord(), [](const Data&) { });
         } else {
-            SubresourcesEntry entry(makeSubresourcesKey(m_mainResourceKey), m_subresourceKeys);
+            SubresourcesEntry entry(makeSubresourcesKey(m_mainResourceKey), m_subresourceLoads);
             m_storage.store(entry.encodeAsStorageRecord(), [](const Data&) { });
         }
     }
 
     Storage& m_storage;
     Key m_mainResourceKey;
-    Vector<Key> m_subresourceKeys;
+    Vector<std::unique_ptr<SubresourceLoad>> m_subresourceLoads;
     std::function<void()> m_loadCompletionHandler;
     HysteresisActivity m_loadHysteresisActivity;
     std::unique_ptr<SubresourcesEntry> m_existingEntry;
@@ -311,7 +312,7 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
     }
 
     if (auto* pendingFrameLoad = m_pendingFrameLoads.get(frameID))
-        pendingFrameLoad->registerSubresource(resourceKey);
+        pendingFrameLoad->registerSubresourceLoad(request, resourceKey);
 }
 
 void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, const GlobalFrameID& frameID, WasRevalidated wasRevalidated)
@@ -368,7 +369,7 @@ bool SpeculativeLoadManager::satisfyPendingRequests(const Key& key, Entry* entry
     return true;
 }
 
-void SpeculativeLoadManager::revalidateEntry(std::unique_ptr<Entry> entry, const GlobalFrameID& frameID)
+void SpeculativeLoadManager::revalidateEntry(std::unique_ptr<Entry> entry, const SubresourceInfo& subresourceInfo, const GlobalFrameID& frameID)
 {
     ASSERT(entry);
     ASSERT(entry->needsValidation());
@@ -379,8 +380,10 @@ void SpeculativeLoadManager::revalidateEntry(std::unique_ptr<Entry> entry, const
     if (!key.range().isEmpty())
         return;
 
+    ResourceRequest revalidationRequest = constructRevalidationRequest(*entry, subresourceInfo.firstPartyForCookies);
+
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculatively revalidating '%s':", key.identifier().utf8().data());
-    auto revalidator = std::make_unique<SpeculativeLoad>(frameID, constructRevalidationRequest(*entry), WTFMove(entry), [this, key, frameID](std::unique_ptr<Entry> revalidatedEntry) {
+    auto revalidator = std::make_unique<SpeculativeLoad>(frameID, revalidationRequest, WTFMove(entry), [this, key, frameID](std::unique_ptr<Entry> revalidatedEntry) {
         ASSERT(!revalidatedEntry || !revalidatedEntry->needsValidation());
         ASSERT(!revalidatedEntry || revalidatedEntry->key() == key);
 
@@ -399,10 +402,11 @@ void SpeculativeLoadManager::revalidateEntry(std::unique_ptr<Entry> entry, const
     m_pendingPreloads.add(key, WTFMove(revalidator));
 }
 
-void SpeculativeLoadManager::preloadEntry(const Key& key, const GlobalFrameID& frameID)
+void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo& subResourceInfo, const GlobalFrameID& frameID)
 {
     m_pendingPreloads.add(key, nullptr);
-    retrieveEntryFromStorage(key, [this, key, frameID](std::unique_ptr<Entry> entry) {
+    URLCapture firstPartyForCookies(subResourceInfo.firstPartyForCookies);
+    retrieveEntryFromStorage(key, [this, key, firstPartyForCookies, frameID](std::unique_ptr<Entry> entry) {
         m_pendingPreloads.remove(key);
 
         if (satisfyPendingRequests(key, entry.get())) {
@@ -415,7 +419,7 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const GlobalFrameID& f
             return;
 
         if (entry->needsValidation())
-            revalidateEntry(WTFMove(entry), frameID);
+            revalidateEntry(WTFMove(entry), firstPartyForCookies.url(), frameID);
         else
             addPreloadedEntry(WTFMove(entry), frameID, WasRevalidated::No);
     });
@@ -423,12 +427,13 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const GlobalFrameID& f
 
 void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& frameID, SubresourcesEntry& entry)
 {
-    for (auto& subresource : entry.subresources()) {
-        auto key = subresource.key;
-        if (!subresource.value.isTransient)
-            preloadEntry(key, frameID);
+    for (auto& subresourcePair : entry.subresources()) {
+        auto key = subresourcePair.key;
+        auto subresourceInfo = subresourcePair.value;
+        if (!subresourceInfo.isTransient)
+            preloadEntry(key, subresourceInfo, frameID);
         else {
-            LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Not preloading '%s' because it is marked as transient", subresource.key.identifier().utf8().data());
+            LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Not preloading '%s' because it is marked as transient", key.identifier().utf8().data());
             m_notPreloadedEntries.add(key, std::make_unique<ExpiringEntry>([this, key, frameID] {
                 logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::entryRightlyNotWarmedUpKey());
                 m_notPreloadedEntries.remove(key);

@@ -36,6 +36,21 @@
 namespace WebKit {
 namespace NetworkCache {
 
+void SubresourceInfo::encode(Encoder& encoder) const
+{
+    encoder << firstPartyForCookies;
+    encoder << isTransient;
+}
+
+bool SubresourceInfo::decode(Decoder& decoder, SubresourceInfo& info)
+{
+    if (!decoder.decode(info.firstPartyForCookies))
+        return false;
+    if (!decoder.decode(info.isTransient))
+        return false;
+    return true;
+}
+
 Storage::Record SubresourcesEntry::encodeAsStorageRecord() const
 {
     Encoder encoder;
@@ -69,23 +84,23 @@ SubresourcesEntry::SubresourcesEntry(const Storage::Record& storageEntry)
     ASSERT(m_key.type() == "subresources");
 }
 
-SubresourcesEntry::SubresourcesEntry(Key&& key, const Vector<Key>& subresourceKeys)
+SubresourcesEntry::SubresourcesEntry(Key&& key, const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads)
     : m_key(WTFMove(key))
     , m_timeStamp(std::chrono::system_clock::now())
 {
     ASSERT(m_key.type() == "subresources");
-    for (auto& key : subresourceKeys)
-        m_subresources.add(key, SubresourceInfo());
+    for (auto& subresourceLoad : subresourceLoads)
+        m_subresources.add(subresourceLoad->key, SubresourceInfo(subresourceLoad->request.firstPartyForCookies()));
 }
 
-void SubresourcesEntry::updateSubresourceKeys(const Vector<Key>& subresourceKeys)
+void SubresourcesEntry::updateSubresourceLoads(const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads)
 {
     auto oldSubresources = WTFMove(m_subresources);
 
     // Mark keys that are common with last load as non-Transient.
-    for (auto& key : subresourceKeys) {
-        bool isTransient = !oldSubresources.contains(key);
-        m_subresources.add(key, SubresourceInfo(isTransient));
+    for (auto& subresourceLoad : subresourceLoads) {
+        bool isTransient = !oldSubresources.contains(subresourceLoad->key);
+        m_subresources.add(subresourceLoad->key, SubresourceInfo(subresourceLoad->request.firstPartyForCookies(), isTransient));
     }
 }
 
