@@ -139,14 +139,6 @@ public:
     virtual bool isOpaque() const = 0;
     virtual void setOpaque(bool) = 0;
 
-    enum ContentsFormatFlag {
-        DeepColor       = 1 << 0,
-        SmoothedFonts   = 1 << 1,
-    };
-    typedef unsigned ContentsFormatFlags;
-    virtual void setContentsFormat(ContentsFormatFlags) = 0;
-    virtual ContentsFormatFlags contentsFormat() const = 0;
-
     virtual FloatRect bounds() const = 0;
     virtual void setBounds(const FloatRect&) = 0;
 

@@ -64,9 +64,6 @@ public:
     bool isOpaque() const override;
     void setOpaque(bool) override;
 
-    void setContentsFormat(ContentsFormatFlags) override;
-    ContentsFormatFlags contentsFormat() const override;
-
     FloatRect bounds() const override;
     void setBounds(const FloatRect&) override;
 
@@ -166,7 +163,6 @@ private:
     HashMap<String, RefPtr<PlatformCAAnimation>> m_animations;
     std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance;
-    ContentsFormatFlags m_contentsFormat { 0 };
 };
 
 }

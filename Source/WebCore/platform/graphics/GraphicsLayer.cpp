@@ -105,13 +105,6 @@ bool GraphicsLayer::supportsContentsTiling()
 }
 #endif
 
-#if !USE(CA)
-bool GraphicsLayer::supportsSmoothedFontsInNonOpaqueLayers()
-{
-    return false;
-}
-#endif
-
 GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& client)
     : m_client(client)
     , m_anchorPoint(0.5f, 0.5f, 0)
@@ -122,7 +115,6 @@ GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& client)
 #endif
     , m_type(type)
     , m_contentsOpaque(false)
-    , m_supportsSmoothedFonts(false)
     , m_preserves3D(false)
     , m_backfaceVisibility(true)
     , m_usingTiledBacking(false)

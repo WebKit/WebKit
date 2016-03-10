@@ -401,20 +401,6 @@ void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::MaskLayerChanged);
 }
 
-void PlatformCALayerRemote::setContentsFormat(ContentsFormatFlags formatFlags)
-{
-    if (formatFlags == m_properties.contentsFormatFlags)
-        return;
-
-    m_properties.contentsFormatFlags = formatFlags;
-    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ContentsFormatFlagsChanged);
-}
-
-PlatformCALayer::ContentsFormatFlags PlatformCALayerRemote::contentsFormat() const
-{
-    return m_properties.contentsFormatFlags;
-}
-
 void PlatformCALayerRemote::setClonedLayer(const PlatformCALayer* layer)
 {
     if (isEquivalentLayer(layer, m_properties.clonedLayerID))
