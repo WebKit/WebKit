@@ -636,7 +636,8 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     updateInfo.viewSize = m_webPage.size();
     updateInfo.deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
 
-    IntRect bounds = m_dirtyRegion.bounds();
+    // Always render the whole page when we don't render the background.
+    IntRect bounds = m_webPage.drawsBackground() ? m_dirtyRegion.bounds() : m_webPage.bounds();
     ASSERT(m_webPage.bounds().contains(bounds));
 
     IntSize bitmapSize = bounds.size();
@@ -649,12 +650,16 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     if (!bitmap->createHandle(updateInfo.bitmapHandle))
         return;
 
-    Vector<IntRect> rects = m_dirtyRegion.rects();
+    Vector<IntRect> rects;
+    if (m_webPage.drawsBackground()) {
+        rects = m_dirtyRegion.rects();
 
-    if (shouldPaintBoundsRect(bounds, rects)) {
-        rects.clear();
+        if (shouldPaintBoundsRect(bounds, rects)) {
+            rects.clear();
+            rects.append(bounds);
+        }
+    } else
         rects.append(bounds);
-    }
 
     updateInfo.scrollRect = m_scrollRect;
     updateInfo.scrollOffset = m_scrollOffset;

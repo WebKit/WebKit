@@ -1,3 +1,20 @@
+2016-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Artifacts when using web view background color
+        https://bugs.webkit.org/show_bug.cgi?id=155229
+
+        Reviewed by Mario Sanchez Prada.
+
+        This is because when using a web view color, we fill with the
+        color every rectangle updated by the web process, but we should
+        always fill the entire backing store before rendering the actual
+        contents on top.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display): Ensure the web process always
+        renders the whole visible rectangle when background is rendered by
+        the UI process.
+
 2016-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         Font antialiasing (smoothing) changes when elements are rendered into compositing layers
