@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-main-content-allow</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    function go() {
+        video = document.createElement('video');
+        run('internals.setMediaElementRestrictions(video, "RequireUserGestureForRateChange,OverrideUserGestureRequirementForMainContent")');
+        document.body.appendChild(video);
+
+        video.src = findMediaFile('video', 'content/test');
+        waitForEvent('canplaythrough', canPlayThrough);
+    }
+
+    function canPlayThrough() {
+        video.play();
+        waitForEventAndEnd('playing');
+        failTestIn(100);
+    }
+    </script>
+    <style>
+    video {
+        width: 600px;
+        height: 400px;
+    }
+    </style>
+</head>
+<body onload="go()">
+</body>
+</html>

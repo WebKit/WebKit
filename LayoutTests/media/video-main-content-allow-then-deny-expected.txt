@@ -1,0 +1,7 @@
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForRateChange,OverrideUserGestureRequirementForMainContent"))
+EVENT(canplaythrough)
+EVENT(playing)
+RUN(video.style.visibility = "hidden")
+EVENT(pause)
+END OF TEST
+

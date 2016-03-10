@@ -1,3 +1,39 @@
+2016-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Add heuristic for "main content" videos which override user gesture requirements
+        https://bugs.webkit.org/show_bug.cgi?id=155224
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/video-main-content-allow-then-deny.html
+               media/video-main-content-allow.html
+               media/video-main-content-deny-display-none.html
+               media/video-main-content-deny-not-in-dom.html
+               media/video-main-content-deny-not-visible.html
+               media/video-main-content-deny-obscured.html
+               media/video-main-content-deny-too-small.html
+
+        Add a new behavior "restriction" to MediaElementSession that allows media elements
+        to optionally overriding their own user gesture requirements if the session determines
+        that the media element is the page's "main content".
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didAttachRenderers):
+        (WebCore::HTMLMediaElement::updateShouldPlay):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::restrictionName):
+        (WebCore::MediaElementSession::MediaElementSession):
+        (WebCore::MediaElementSession::addBehaviorRestriction):
+        (WebCore::MediaElementSession::playbackPermitted):
+        (WebCore::MediaElementSession::dataLoadingPermitted):
+        (WebCore::isMainContent):
+        (WebCore::MediaElementSession::mainContentCheckTimerFired):
+        (WebCore::MediaElementSession::updateIsMainContent):
+        * html/MediaElementSession.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaElementRestrictions):
+
 2016-03-09  Konstantin Tokarev  <annulen@yandex.ru>
 
         Added missing #if(SOUP) after r197591.

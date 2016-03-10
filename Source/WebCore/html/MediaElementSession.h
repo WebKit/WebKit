@@ -41,7 +41,7 @@ class SourceBuffer;
 class MediaElementSession final : public PlatformMediaSession {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit MediaElementSession(PlatformMediaSessionClient&);
+    explicit MediaElementSession(HTMLMediaElement&);
     virtual ~MediaElementSession() { }
 
     void registerWithDocument(Document&);
@@ -92,6 +92,7 @@ public:
         MetadataPreloadingNotPermitted = 1 << 9,
         AutoPreloadingNotPermitted = 1 << 10,
         InvisibleAutoplayNotPermitted = 1 << 11,
+        OverrideUserGestureRequirementForMainContent = 1 << 12
     };
     typedef unsigned BehaviorRestrictions;
 
@@ -118,7 +119,10 @@ private:
 #if PLATFORM(IOS)
     bool requiresPlaybackTargetRouteMonitoring() const override;
 #endif
+    bool updateIsMainContent() const;
+    void mainContentCheckTimerFired();
 
+    HTMLMediaElement& m_element;
     BehaviorRestrictions m_restrictions;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -130,6 +134,9 @@ private:
 #if PLATFORM(IOS)
     bool m_hasPlaybackTargetAvailabilityListeners { false };
 #endif
+
+    mutable bool m_isMainContent { false };
+    Timer m_mainContentCheckTimer;
 };
 
 }

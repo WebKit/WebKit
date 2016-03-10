@@ -1,3 +1,25 @@
+2016-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Add heuristic for "main content" videos which override user gesture requirements
+        https://bugs.webkit.org/show_bug.cgi?id=155224
+
+        Reviewed by Eric Carlson.
+
+        * media/video-main-content-allow-expected.txt: Added.
+        * media/video-main-content-allow-then-deny-expected.txt: Added.
+        * media/video-main-content-allow-then-deny.html: Added.
+        * media/video-main-content-allow.html: Added.
+        * media/video-main-content-deny-display-none-expected.txt: Added.
+        * media/video-main-content-deny-display-none.html: Added.
+        * media/video-main-content-deny-not-in-dom-expected.txt: Added.
+        * media/video-main-content-deny-not-in-dom.html: Added.
+        * media/video-main-content-deny-not-visible-expected.txt: Added.
+        * media/video-main-content-deny-not-visible.html: Added.
+        * media/video-main-content-deny-obscured-expected.txt: Added.
+        * media/video-main-content-deny-obscured.html: Added.
+        * media/video-main-content-deny-too-small-expected.txt: Added.
+        * media/video-main-content-deny-too-small.html: Added.
+
 2016-03-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping js/regress/getter-richards-try-catch.html on ios-simulator debug

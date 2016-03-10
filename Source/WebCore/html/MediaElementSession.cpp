@@ -38,9 +38,12 @@
 #include "HTMLMediaElementEnums.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
+#include "HitTestResult.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
+#include "RenderView.h"
 #include "ScriptController.h"
 #include "SourceBuffer.h"
 
@@ -50,6 +53,12 @@
 #endif
 
 namespace WebCore {
+
+static const int elementMainContentMinimumWidth = 400;
+static const int elementMainContentMinimumHeight = 300;
+static const double elementMainContentCheckInterval = .250;
+
+static bool isMainContent(const HTMLMediaElement&);
 
 #if !LOG_DISABLED
 static String restrictionName(MediaElementSession::BehaviorRestrictions restriction)
@@ -75,6 +84,7 @@ static String restrictionName(MediaElementSession::BehaviorRestrictions restrict
 #endif
     CASE(RequireUserGestureForAudioRateChange);
     CASE(InvisibleAutoplayNotPermitted);
+    CASE(OverrideUserGestureRequirementForMainContent);
 
     return restrictionBuilder.toString();
 }
@@ -87,12 +97,14 @@ static bool pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& 
     return document.isMediaDocument() && !document.ownerElement() && page && page->allowsMediaDocumentInlinePlayback();
 }
 
-MediaElementSession::MediaElementSession(PlatformMediaSessionClient& client)
-    : PlatformMediaSession(client)
+MediaElementSession::MediaElementSession(HTMLMediaElement& element)
+    : PlatformMediaSession(element)
+    , m_element(element)
     , m_restrictions(NoRestrictions)
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     , m_targetAvailabilityChangedTimer(*this, &MediaElementSession::targetAvailabilityChangedTimerFired)
 #endif
+    , m_mainContentCheckTimer(*this, &MediaElementSession::mainContentCheckTimerFired)
 {
 }
 
@@ -118,6 +130,9 @@ void MediaElementSession::addBehaviorRestriction(BehaviorRestrictions restrictio
 {
     LOG(Media, "MediaElementSession::addBehaviorRestriction - adding %s", restrictionName(restriction).utf8().data());
     m_restrictions |= restriction;
+
+    if (restriction & OverrideUserGestureRequirementForMainContent)
+        m_mainContentCheckTimer.startRepeating(elementMainContentCheckInterval);
 }
 
 void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restriction)
@@ -129,6 +144,9 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
 bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) const
 {
     if (pageExplicitlyAllowsElementToAutoplayInline(element))
+        return true;
+
+    if (m_restrictions & OverrideUserGestureRequirementForMainContent && updateIsMainContent())
         return true;
 
     if (m_restrictions & RequireUserGestureForRateChange && !ScriptController::processingUserGestureForMedia()) {
@@ -146,6 +164,9 @@ bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) con
 
 bool MediaElementSession::dataLoadingPermitted(const HTMLMediaElement&) const
 {
+    if (m_restrictions & OverrideUserGestureRequirementForMainContent && updateIsMainContent())
+        return true;
+
     if (m_restrictions & RequireUserGestureForLoad && !ScriptController::processingUserGestureForMedia()) {
         LOG(Media, "MediaElementSession::dataLoadingPermitted - returning FALSE");
         return false;
@@ -447,6 +468,69 @@ size_t MediaElementSession::maximumMediaSourceBufferSize(const SourceBuffer& buf
     return bufferSize;
 }
 #endif
+
+static bool isMainContent(const HTMLMediaElement& element)
+{
+    if (!element.hasAudio() || !element.hasVideo())
+        return false;
+
+    // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.
+    RenderBox* renderer = downcast<RenderBox>(element.renderer());
+    if (!renderer)
+        return false;
+
+    if (renderer->clientWidth() < elementMainContentMinimumWidth
+        || renderer->clientHeight() < elementMainContentMinimumHeight)
+        return false;
+
+    // Elements which are hidden by style, or have been scrolled out of view, cannot be main content.
+    if (renderer->style().visibility() != VISIBLE
+        || renderer->visibleInViewportState() != RenderElement::VisibleInViewport)
+        return false;
+
+    // Main content elements must be in the main frame.
+    Document& document = element.document();
+    if (!document.frame() || !document.frame()->isMainFrame())
+        return false;
+
+    MainFrame& mainFrame = document.frame()->mainFrame();
+    if (!mainFrame.view() || !mainFrame.view()->renderView())
+        return false;
+
+    RenderView& mainRenderView = *mainFrame.view()->renderView();
+
+    // Hit test the area of the main frame where the element appears, to determine if the element is being obscured.
+    IntRect rectRelativeToView = element.clientRect();
+    ScrollPosition scrollPosition = mainFrame.view()->documentScrollPositionRelativeToViewOrigin();
+    IntRect rectRelativeToTopDocument(rectRelativeToView.location() + scrollPosition, rectRelativeToView.size());
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
+    HitTestResult result(rectRelativeToTopDocument.center());
+
+    // Elements which are obscured by other elements cannot be main content.
+    mainRenderView.hitTest(request, result);
+    Element* hitElement = result.innerElement();
+    if (hitElement != &element)
+        return false;
+
+    return true;
+}
+
+void MediaElementSession::mainContentCheckTimerFired()
+{
+    if (!hasBehaviorRestriction(OverrideUserGestureRequirementForMainContent))
+        return;
+
+    bool wasMainContent = m_isMainContent;
+    m_isMainContent = isMainContent(m_element);
+
+    if (m_isMainContent != wasMainContent)
+        m_element.updateShouldPlay();
+}
+
+bool MediaElementSession::updateIsMainContent() const
+{
+    return m_isMainContent = isMainContent(m_element);
+}
 
 }
 

@@ -452,6 +452,7 @@ public:
     void visibilityDidChange();
 
     void allowsMediaDocumentInlinePlaybackChanged();
+    void updateShouldPlay();
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
