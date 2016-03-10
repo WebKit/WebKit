@@ -4828,6 +4828,10 @@ void WebPage::didCommitLoad(WebFrame* frame)
     resetPrimarySnapshottedPlugIn();
 #endif
 
+#if USE(OS_STATE)
+    m_loadCommitTime = std::chrono::system_clock::now();
+#endif
+
     WebProcess::singleton().updateActivePages();
 
     updateMainFrameScrollOffsetPinning();

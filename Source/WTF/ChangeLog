@@ -1,3 +1,16 @@
+2016-03-09  Keith Rollin  <krollin@apple.com>
+
+        Add state dumping facility
+        https://bugs.webkit.org/show_bug.cgi?id=154930
+        <rdar://problem/24939135>
+
+        Reviewed by Anders Carlsson.
+
+        Add an OS_STATE flag to control the inclusion of process state dumping
+        functionality.
+
+        * wtf/Platform.h:
+
 2016-03-09  Oliver Hunt  <oliver@apple.com>
 
         Fix old iOS

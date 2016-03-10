@@ -934,6 +934,10 @@ public:
 
     void insertNewlineInQuotedContent();
 
+#if USE(OS_STATE)
+    std::chrono::system_clock::time_point loadCommitTime() const { return m_loadCommitTime; }
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1441,6 +1445,10 @@ private:
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     RefPtr<WebCore::MediaPlayerRequestInstallMissingPluginsCallback> m_installMediaPluginsCallback;
+#endif
+
+#if USE(OS_STATE)
+    std::chrono::system_clock::time_point m_loadCommitTime;
 #endif
 };
 

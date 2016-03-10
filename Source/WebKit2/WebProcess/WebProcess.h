@@ -216,6 +216,10 @@ private:
     void initializeWebProcess(WebProcessCreationParameters&&);
     void platformInitializeWebProcess(WebProcessCreationParameters&&);
 
+#if USE(OS_STATE)
+    void registerWithStateDumper();
+#endif
+
     void clearCachedCredentials();
 
     void platformTerminate();

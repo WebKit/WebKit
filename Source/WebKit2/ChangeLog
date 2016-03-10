@@ -1,3 +1,23 @@
+2016-03-09  Keith Rollin  <krollin@apple.com>
+
+        Add state dumping facility
+        https://bugs.webkit.org/show_bug.cgi?id=154930
+        <rdar://problem/24939135>
+
+        Reviewed by Anders Carlsson.
+
+        Collect the times at which pages are loaded. Dump them when an OS
+        state dump is triggered.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::lastPageLoadTime):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::registerWithStateDumper):
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2016-03-09  Anders Carlsson  <andersca@apple.com>
 
         _WKWebsiteDataSize.h should be an SPI header.
