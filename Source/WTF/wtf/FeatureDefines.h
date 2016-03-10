@@ -134,14 +134,6 @@
 #define ENABLE_RESPECT_EXIF_ORIENTATION 1
 #endif
 
-#if !defined(ENABLE_SHADOW_DOM)
-#define ENABLE_SHADOW_DOM 1
-#endif
-
-#if !defined(ENABLE_CUSTOM_ELEMENTS)
-#define ENABLE_CUSTOM_ELEMENTS 1
-#endif
-
 #if !defined(ENABLE_TEXT_CARET)
 #define ENABLE_TEXT_CARET 0
 #endif
@@ -256,14 +248,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 #define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
-#endif
-
-#if !defined(ENABLE_SHADOW_DOM)
-#define ENABLE_SHADOW_DOM 1
-#endif
-
-#if !defined(ENABLE_CUSTOM_ELEMENTS)
-#define ENABLE_CUSTOM_ELEMENTS 1
 #endif
 
 #if !defined(ENABLE_MAC_GESTURE_EVENTS) && USE(APPLE_INTERNAL_SDK)
@@ -693,14 +677,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_RUBBER_BANDING)
 #define ENABLE_RUBBER_BANDING 0
-#endif
-
-#if !defined(ENABLE_SHADOW_DOM)
-#define ENABLE_SHADOW_DOM 0
-#endif
-
-#if !defined(ENABLE_CUSTOM_ELEMENTS)
-#define ENABLE_CUSTOM_ELEMENTS 0
 #endif
 
 #if !defined(ENABLE_SMOOTH_SCROLLING)

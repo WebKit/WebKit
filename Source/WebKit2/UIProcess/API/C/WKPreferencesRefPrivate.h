@@ -402,6 +402,14 @@ WK_EXPORT bool WKPreferencesGetResourceUsageOverlayVisible(WKPreferencesRef);
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetMockCaptureDevicesEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetMockCaptureDevicesEnabled(WKPreferencesRef);
+    
+// Defaults to true
+WK_EXPORT void WKPreferencesSetShadowDOMEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetShadowDOMEnabled(WKPreferencesRef);
+
+// Defaults to false
+WK_EXPORT void WKPreferencesSetCustomElementsEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetCustomElementsEnabled(WKPreferencesRef);
 
 #ifdef __cplusplus
 }

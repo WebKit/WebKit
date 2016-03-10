@@ -1,3 +1,20 @@
+2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add runtime flags for shadow DOM and custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=155213
+
+        Reviewed by Dean Jackson.
+
+        Always enable shadow DOM and custom elements during testing.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setShadowDOMEnabled): Added.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2016-03-09  Brent Fulgham  <bfulgham@apple.com>
 
         Handling 'allowUniversalAccessFromFileURLs' on WKWebViewConfiguration causes test breakage

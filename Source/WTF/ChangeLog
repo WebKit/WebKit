@@ -1,3 +1,15 @@
+2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add runtime flags for shadow DOM and custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=155213
+
+        Reviewed by Dean Jackson.
+
+        Removed the manual overrides of ENABLE_SHADOW_DOM and ENABLE_CUSTOM_ELEMENTS as they were
+        making --no-shadow-dom and --no-custom-elements flags on build-webkit useless.
+
+        * wtf/FeatureDefines.h:
+
 2016-03-09  Keith Rollin  <krollin@apple.com>
 
         Add state dumping facility

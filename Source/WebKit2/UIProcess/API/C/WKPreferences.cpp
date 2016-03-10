@@ -1466,3 +1466,23 @@ bool WKPreferencesGetMockCaptureDevicesEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->mockCaptureDevicesEnabled();
 }
+
+void WKPreferencesSetShadowDOMEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setShadowDOMEnabled(flag);
+}
+
+bool WKPreferencesGetShadowDOMEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->shadowDOMEnabled();
+}
+
+void WKPreferencesSetCustomElementsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setShadowDOMEnabled(flag);
+}
+
+bool WKPreferencesGetCustomElementsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->shadowDOMEnabled();
+}

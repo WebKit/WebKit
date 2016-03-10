@@ -304,6 +304,10 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_testRunner->setShouldDumpFrameLoadCallbacks(booleanForKey(settings, "DumpFrameLoadDelegates"));
     m_testRunner->setUserStyleSheetEnabled(false);
     m_testRunner->setXSSAuditorEnabled(false);
+
+    m_testRunner->setShadowDOMEnabled(true);
+    m_testRunner->setCustomElementsEnabled(true);
+
     m_testRunner->setCloseRemainingWindowsWhenComplete(false);
     m_testRunner->setAcceptsEditing(true);
     m_testRunner->setTabKeyCyclesThroughElements(true);

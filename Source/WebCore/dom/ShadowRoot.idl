@@ -25,6 +25,7 @@
 
 [
     Conditional=SHADOW_DOM,
+    EnabledAtRuntime=ShadowDOM,
     JSGenerateToJSObject
 ] interface ShadowRoot : DocumentFragment {
     readonly attribute Element          activeElement;

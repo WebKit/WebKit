@@ -467,6 +467,12 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMockCaptureDevicesEnabled:(BOOL)flag;
 - (BOOL)mockCaptureDevicesEnabled;
 
+- (void)setShadowDOMEnabled:(BOOL)flag;
+- (BOOL)shadowDOMEnabled;
+
+- (void)setCustomElementsEnabled:(BOOL)flag;
+- (BOOL)customElementsEnabled;
+
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
 @property (nonatomic) BOOL mediaDataLoadsAutomatically;
 

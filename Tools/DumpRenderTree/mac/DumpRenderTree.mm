@@ -984,6 +984,9 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setMediaSourceEnabled:YES];
 #endif
 
+    [preferences setShadowDOMEnabled:YES];
+    [preferences setCustomElementsEnabled:YES];
+
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
 

@@ -171,9 +171,9 @@
 
     // Shadow DOM API
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [Conditional=SHADOW_DOM, RaisesException] ShadowRoot attachShadow(Dictionary options);
-    [Conditional=SHADOW_DOM, ImplementedAs=shadowRootForBindings, CallWith=ScriptState] readonly attribute ShadowRoot shadowRoot;
-    [Conditional=SHADOW_DOM, Reflect] attribute DOMString slot;
+    [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM, RaisesException] ShadowRoot attachShadow(Dictionary options);
+    [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM, ImplementedAs=shadowRootForBindings, CallWith=ScriptState] readonly attribute ShadowRoot shadowRoot;
+    [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM, Reflect] attribute DOMString slot;
 #endif
 
     // Event Handlers

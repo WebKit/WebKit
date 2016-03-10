@@ -1,5 +1,26 @@
 2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add runtime flags for shadow DOM and custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=155213
+
+        Reviewed by Dean Jackson.
+
+        Added new runtime flags for shadow DOM and custom elements.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setShadowDOMEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::shadowDOMEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::setCustomElementsEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::customElementsEnabled): Added.
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Node.idl:
+        * dom/NonDocumentTypeChildNode.idl:
+        * dom/ShadowRoot.idl:
+        * html/HTMLSlotElement.idl:
+
+2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         defineElement should upgrade existing unresolved custom elements
         https://bugs.webkit.org/show_bug.cgi?id=155107
 

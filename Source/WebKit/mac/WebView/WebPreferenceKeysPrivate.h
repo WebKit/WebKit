@@ -157,6 +157,8 @@
 #define WebKitGamepadsEnabledPreferenceKey @"WebKitGamepadsEnabled"
 #define WebKitServiceControlsEnabledPreferenceKey @"WebKitServiceControlsEnabled"
 #define WebKitMediaKeysStorageDirectoryKey @"WebKitMediaKeysStorageDirectory"
+#define WebKitShadowDOMEnabledPreferenceKey @"WebKitShadowDOMEnabled"
+#define WebKitCustomElementsEnabledPreferenceKey @"WebKitCustomElementsEnabled"
 
 #if !TARGET_OS_IPHONE
 // These are private both because callers should be using the cover methods and because the

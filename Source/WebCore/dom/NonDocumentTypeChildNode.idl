@@ -32,6 +32,6 @@
     readonly attribute Element nextElementSibling;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [Conditional=SHADOW_DOM] readonly attribute HTMLSlotElement assignedSlot;
+    [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM] readonly attribute HTMLSlotElement assignedSlot;
 #endif
 };

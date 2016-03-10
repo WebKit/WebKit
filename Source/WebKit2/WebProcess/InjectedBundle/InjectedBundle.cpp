@@ -192,6 +192,16 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     if (preference == "WebKitCSSCompositingEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSCompositingEnabled(enabled);
 #endif
+    
+#if ENABLE(SHADOW_DOM)
+    if (preference == "WebKitShadowDOMEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
+#endif
+
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (preference == "WebKitCustomElementsEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(enabled);
+#endif
 
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
 #define FOR_EACH_OVERRIDE_BOOL_PREFERENCE(macro) \

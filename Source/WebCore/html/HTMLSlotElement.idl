@@ -26,6 +26,7 @@
 // https://w3c.github.io/webcomponents/spec/shadow/#idl-def-HTMLSlotElement
 [
     Conditional=SHADOW_DOM,
+    EnabledAtRuntime=ShadowDOM,
     JSGenerateToNativeObject
 ] interface HTMLSlotElement : HTMLElement {
 

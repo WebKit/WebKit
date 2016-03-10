@@ -602,6 +602,12 @@ public:
 #if ENABLE(MEDIA_STREAM)
         [NSNumber numberWithBool:NO], WebKitMockCaptureDevicesEnabledPreferenceKey,
 #endif
+#if ENABLE(SHADOW_DOM)
+        [NSNumber numberWithBool:YES], WebKitShadowDOMEnabledPreferenceKey,
+#endif
+#if ENABLE(CUSTOM_ELEMENTS)
+        [NSNumber numberWithBool:NO], WebKitCustomElementsEnabledPreferenceKey,
+#endif
         nil];
 
 #if !PLATFORM(IOS)
@@ -2637,6 +2643,26 @@ static NSString *classIBCreatorID = nil;
 - (void)setMockCaptureDevicesEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitMockCaptureDevicesEnabledPreferenceKey];
+}
+
+- (BOOL)shadowDOMEnabled
+{
+    return [self _boolValueForKey:WebKitShadowDOMEnabledPreferenceKey];
+}
+
+- (void)setShadowDOMEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitShadowDOMEnabledPreferenceKey];
+}
+
+- (BOOL)customElementsEnabled
+{
+    return [self _boolValueForKey:WebKitCustomElementsEnabledPreferenceKey];
+}
+
+- (void)setCustomElementsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCustomElementsEnabledPreferenceKey];
 }
 
 @end
