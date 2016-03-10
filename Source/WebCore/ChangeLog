@@ -1,3 +1,24 @@
+2016-03-09  Gavin Barraclough  <barraclough@apple.com>
+
+        WebKit should adopt journal_mode=wal for all SQLite databases.
+        https://bugs.webkit.org/show_bug.cgi?id=133496
+
+        Reviewed by Brady Eidson & Darin Adler.
+
+        The statement intended to enable WAL mode is always failing because it is missing a
+        prepare(). Fix this. We were also previously permitting SQLITE_OK results - this
+        was in error (we were only getting these because stepping the unprepared statement
+        returned SQLITE_OK). Also set the SQLITE_OPEN_AUTOPROXY flag when opening the
+        database - this will improve perfomance when the database is accessed via an AFP
+        mount.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+            - call prepareAndStep(), only check for SQLITE_ROW result.
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+            - should set SQLITE_OPEN_AUTOPROXY flag when opening database.
+
 2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add runtime flags for shadow DOM and custom elements
