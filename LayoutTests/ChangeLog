@@ -1,3 +1,33 @@
+2016-03-10  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Allow RegExp constructor to take pattern from an existing RegExp with new flags
+        https://bugs.webkit.org/show_bug.cgi?id=155315
+
+        Reviewed by Saam Barati.
+
+        New and updated test for change.
+
+        * fast/regex/constructor-expected.txt:
+        * fast/regex/script-tests/constructor.js:
+        Changed test for new behavior.`
+
+        * js/regexp-old-regexp-new-flags-expected.txt: Added.
+        * js/regexp-old-regexp-new-flags.html: Added.
+        * js/script-tests/regexp-old-regexp-new-flags.js: Added.
+        New test.
+
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.3/S15.10.3.1_A2_T1-expected.txt: Removed.
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.3/S15.10.3.1_A2_T1.html: Removed.
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.3/S15.10.3.1_A2_T2-expected.txt: Removed.
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.3/S15.10.3.1_A2_T2.html: Removed.
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A2_T1-expected.txt: Removed.
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A2_T1.html: Removed.
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A2_T2-expected.txt: Removed.
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A2_T2.html: Removed.
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A8_T8-expected.txt: Removed.
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A8_T8.html: Removed.
+        Removed obsolete tests.
+
 2016-03-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Main frame scrollbars should appear on the left on RTL systems

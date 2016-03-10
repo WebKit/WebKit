@@ -1,3 +1,22 @@
+2016-03-10  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Allow RegExp constructor to take pattern from an existing RegExp with new flags
+        https://bugs.webkit.org/show_bug.cgi?id=155315
+
+        Reviewed by Saam Barati.
+
+        Changed to comply with section 21.2.3.1, step 5.  Eliminated syntax error.
+
+        In the process, change to get the VM at the top of the function.
+
+        Updated tests accordingly.
+
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * tests/es6.yaml: Changed miscellaneous_RegExp_constructor_can_alter_flags.js to normal.
+        * tests/mozilla/mozilla-tests.yaml: Disabled ecma_3/RegExp/15.10.4.1-5-n.js as it checks
+        for the old behavior of throwing a syntax error.
+
 2016-03-10  Saam barati  <sbarati@apple.com>
 
         [ES6] Make ToPropertyDescriptor spec compliant
@@ -82,6 +101,7 @@
         (noAssign): Deleted.
         (catch): Deleted.
 
+>>>>>>> .r197960
 2016-03-08  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         How we load new.target in arrow functions is broken
