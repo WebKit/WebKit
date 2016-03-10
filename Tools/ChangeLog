@@ -1,3 +1,112 @@
+2016-03-10  Lucas Forschler  <lforschler@apple.com>
+
+        <rdar://problem/25074204>
+        Unreviewed build fix attempt.
+        
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+        (determineConfiguration):
+        (determineArchitecture):
+        (determineNumberOfCPUs):
+        (jscPath):
+        (visualStudioInstallDir):
+        (msBuildInstallDir):
+        (visualStudioVersion):
+        (determineConfigurationProductDir):
+        (productDir):
+        (executableProductDir):
+        (jscProductDir):
+        (configuration):
+        (determineGenerateDsym):
+        (hasIOSDevelopmentCertificate):
+        (argumentsForXcode):
+        (XcodeOptions):
+        (XcodeOptionString):
+        (determinePassedConfiguration):
+        (passedConfiguration):
+        (checkFrameworks):
+        (checkForArgumentAndRemoveFromArrayRef):
+        (prohibitUnknownPort):
+        (determinePortName):
+        (portName):
+        (isEfl):
+        (isGtk):
+        (isWinCairo):
+        (isWin64):
+        (determineIsWin64):
+        (determineIsWin64FromArchitecture):
+        (isCygwin):
+        (isARM):
+        (isX86_64):
+        (isCrossCompilation):
+        (isAppleMacWebKit):
+        (isAppleWinWebKit):
+        (iOSSimulatorDevicesPath):
+        (createiOSSimulatorDevice):
+        (willUseIOSDeviceSDK):
+        (willUseIOSSimulatorSDK):
+        (isIOSWebKit):
+        (determineNmPath):
+        (nmPath):
+        (splitVersionString):
+        (determineOSXVersion):
+        (osXVersion):
+        (determineIOSVersion):
+        (iosVersion):
+        (isWindowsNT):
+        (debugger):
+        (determineDebugger):
+        (appendToEnvironmentVariableList):
+        (prependToEnvironmentVariableList):
+        (setUpGuardMallocIfNeeded):
+        (launcherName):
+        (checkRequiredSystemConfig):
+        (determineWindowsSourceDir):
+        (setupAppleWinEnv):
+        (setupCygwinEnv):
+        (buildXCodeProject):
+        (buildVisualStudioProject):
+        (isCachedArgumentfileOutOfDate):
+        (wrapperPrefixIfNeeded):
+        (canUseNinja):
+        (canUseNinjaGenerator):
+        (canUseEclipseNinjaGenerator):
+        (cmakeGeneratedBuildfile):
+        (generateBuildSystemFromCMakeProject):
+        (buildCMakeGeneratedProject):
+        (cleanCMakeGeneratedProject):
+        (buildCMakeProjectOrExit):
+        (cmakeBasedPortName):
+        (determineIsCMakeBuild):
+        (isCMakeBuild):
+        (promptUser):
+        (setPathForRunningWebKitApp):
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded):
+        (argumentsForRunAndDebugMacWebKitApp):
+        (setupMacWebKitEnvironment):
+        (setupIOSWebKitEnvironment):
+        (waitUntilIOSSimulatorDeviceIsInState):
+        (shutDownIOSSimulatorDevice):
+        (restartIOSSimulatorDevice):
+        (relaunchIOSSimulator):
+        (runIOSWebKitAppInSimulator):
+        (runIOSWebKitApp):
+        (execMacWebKitAppForDebugging):
+        (debugSafari):
+        (runSafari):
+        (runMiniBrowser):
+        (determineIsEfl): Deleted.
+        (determineIsGtk): Deleted.
+        (determineIsWinCairo): Deleted.
+        (willUseIOSDeviceSDKWhenBuilding): Deleted.
+        (willUseIOSSimulatorSDKWhenBuilding): Deleted.
+        (shouldTargetWebProcess): Deleted.
+        (determineShouldTargetWebProcess): Deleted.
+        (shouldUseXPCServiceForWebProcess): Deleted.
+        (determineShouldUseXPCServiceForWebProcess): Deleted.
+        (jhbuildWrapperPrefixIfNeeded): Deleted.
+        (canUseEclipse): Deleted.
+
 2016-03-03  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r188607. rdar://problem/24937998
