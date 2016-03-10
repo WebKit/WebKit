@@ -1,3 +1,14 @@
+2016-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Remove firing assertion after r197865.
+        https://bugs.webkit.org/show_bug.cgi?id=155137
+        rdar://problem/25096835
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveData:]):
+        This assertion was firing.  I'm looking into why.
+
 2016-03-07  Jer Noble  <jer.noble@apple.com>
 
         Add separate WK and WK2 preferences for requiring user gestures for video media, distinct from user gestures for media generally
