@@ -5,8 +5,8 @@
 CanvasLineSegment = Utilities.createClass(
     function(stage)
     {
-        var circle = Stage.randomInt(0, 2);
-        this._color = ["#e01040", "#10c030", "#e05010"][circle];
+        var circle = Stage.randomInt(0, 3);
+        this._color = ["#e01040", "#10c030", "#744CBA", "#e05010"][circle];
         this._lineWidth = Math.pow(Pseudo.random(), 12) * 20 + 3;
         this._omega = Pseudo.random() * 3 + 0.2;
         var theta = Stage.randomAngle();
@@ -133,32 +133,53 @@ CanvasLineSegmentStage = Utilities.createSubclass(SimpleCanvasStage,
         this.context.lineCap = options["lineCap"] || "butt";
         this.lineMinimum = 20;
         this.lineLengthMaximum = 40;
-        this.circleRadius = this.size.x / 3 / 2 - .8 * (this.lineMinimum + this.lineLengthMaximum);
+        this.circleRadius = this.size.x / 8 - .4 * (this.lineMinimum + this.lineLengthMaximum);
         this.circleX = [
-            .55 / 3 * this.size.x,
-            1.5 / 3 * this.size.x,
-            2.45 / 3 * this.size.x
+            5.5 / 32 * this.size.x,
+            12.5 / 32 * this.size.x,
+            19.5 / 32 * this.size.x,
+            26.5 / 32 * this.size.x,
         ];
         this.circleY = [
-            .6 * this.size.y,
-            .4 * this.size.y,
-            .6 * this.size.y
+            2.1 / 3 * this.size.y,
+            0.9 / 3 * this.size.y,
+            2.1 / 3 * this.size.y,
+            0.9 / 3 * this.size.y
         ];
+        this.halfSize = this.size.multiply(.5);
+        this.twoFifthsSizeX = this.size.x * .4;
     },
 
     animate: function()
     {
         var context = this.context;
-
         context.clearRect(0, 0, this.size.x, this.size.y);
-        context.lineWidth = 30;
-        for(var i = 0; i < 3; i++) {
-            context.strokeStyle = ["#e01040", "#10c030", "#e05010"][i];
-            context.fillStyle = ["#70051d", "#016112", "#702701"][i];
+
+        var angle = Stage.dateFractionalValue(3000) * Math.PI * 2;
+        var dx = this.twoFifthsSizeX * Math.cos(angle);
+        var dy = this.twoFifthsSizeX * Math.sin(angle);
+
+        var gradient = context.createLinearGradient(this.halfSize.x + dx, this.halfSize.y + dy, this.halfSize.x - dx, this.halfSize.y - dy);
+        var gradientStep = 0.5 + 0.5 * Math.sin(Stage.dateFractionalValue(5000) * Math.PI * 2);
+        var colorStopStep = Utilities.lerp(gradientStep, -.1, .1);
+        var brightnessStep = Math.round(Utilities.lerp(gradientStep, 32, 64));
+        var color1Step = "rgba(" + brightnessStep + "," + brightnessStep + "," + (brightnessStep << 1) + ",.4)";
+        var color2Step = "rgba(" + (brightnessStep << 1) + "," + (brightnessStep << 1) + "," + brightnessStep + ",.4)";
+        gradient.addColorStop(0, color1Step);
+        gradient.addColorStop(.2 + colorStopStep, color1Step);
+        gradient.addColorStop(.8 - colorStopStep, color2Step);
+        gradient.addColorStop(1, color2Step);
+
+        context.lineWidth = 15;
+        for(var i = 0; i < 4; i++) {
+            context.strokeStyle = ["#e01040", "#10c030", "#744CBA", "#e05010"][i];
+            context.fillStyle = ["#70051d", "#016112", "#2F0C6E", "#702701"][i];
             context.beginPath();
                 context.arc(this.circleX[i], this.circleY[i], this.circleRadius, 0, Math.PI*2);
-            context.stroke();
-            context.fill();
+                context.stroke();
+                context.fill();
+            context.fillStyle = gradient;
+                context.fill();
         }
 
         for (var i = this.offsetIndex, length = this.objects.length; i < length; ++i)

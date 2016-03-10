@@ -1,5 +1,31 @@
 2016-03-09  Jon Lee  <jonlee@apple.com>
 
+        Enhance existing Animometer tests
+        https://bugs.webkit.org/show_bug.cgi?id=155261
+
+        Reviewed by Simon Fraser.
+
+        * Animometer/tests/master/resources/canvas-tests.js: Add a gradient to
+        the filled circles. To expose more of the gradient, add another circle.
+        (SimpleCanvasStage.call.animate): For each frame, create a gradient with
+        undulating stop points and colors. Fill the circles twice; once with
+        the solid color, and once with the gradient.
+
+        * Animometer/tests/master/resources/dom-particles.js: Refactor the
+        emission variables into a separate stage for this test. Add a colorOffset
+        variable to make the colors of each particle slightly different, since
+        the ramp controller can add large numbers of particles all at once, which
+        would otherwise get all the same color.
+        * Animometer/tests/master/resources/particles.js:
+        (initialize): Remove the code specific to the SVG mask test.
+
+        * Animometer/tests/master/resources/image-data.js:
+        (initialize): Remove unused local variable.
+        * Animometer/tests/master/resources/multiply.js:
+        (initialize): Make the test harder by adding more total particles.
+
+2016-03-09  Jon Lee  <jonlee@apple.com>
+
         Add text tests
         https://bugs.webkit.org/show_bug.cgi?id=155257
 

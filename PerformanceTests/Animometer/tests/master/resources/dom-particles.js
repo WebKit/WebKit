@@ -22,7 +22,8 @@ DOMParticle = Utilities.createSubclass(Particle,
 
         this.element.style.width = this.size.x + "px";
         this.element.style.height = this.size.y + "px";
-        this.element.style.backgroundColor = Stage.rotatingColor(2000, .7, .45);
+        this.stage.colorOffset = (this.stage.colorOffset + 1) % 360;
+        this.element.style.backgroundColor = "hsl(" + this.stage.colorOffset + ", 70%, 45%)";
     },
 
     move: function()
@@ -31,7 +32,25 @@ DOMParticle = Utilities.createSubclass(Particle,
     }
 });
 
-Utilities.extendObject(ParticlesStage.prototype, {
+DOMParticleStage = Utilities.createSubclass(ParticlesStage,
+    function()
+    {
+        ParticlesStage.call(this);
+    }, {
+
+    initialize: function(benchmark)
+    {
+        ParticlesStage.prototype.initialize.call(this, benchmark);
+        this.emissionSpin = Stage.random(0, 3);
+        this.emitSteps = Stage.randomInt(4, 6);
+        this.emitLocation = [
+            new Point(this.size.x * .25, this.size.y * .333),
+            new Point(this.size.x * .5, this.size.y * .25),
+            new Point(this.size.x * .75, this.size.y * .333)
+        ];
+        this.colorOffset = Stage.randomInt(0, 359);
+    },
+
     createParticle: function()
     {
         return new DOMParticle(this);
@@ -43,13 +62,13 @@ Utilities.extendObject(ParticlesStage.prototype, {
     }
 });
 
-ParticlesBenchmark = Utilities.createSubclass(Benchmark,
+DOMParticleBenchmark = Utilities.createSubclass(Benchmark,
     function(options)
     {
-        Benchmark.call(this, new ParticlesStage(), options);
+        Benchmark.call(this, new DOMParticleStage(), options);
     }
 );
 
-window.benchmarkClass = ParticlesBenchmark;
+window.benchmarkClass = DOMParticleBenchmark;
 
 })();

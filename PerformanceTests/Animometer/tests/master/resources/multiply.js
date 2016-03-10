@@ -11,7 +11,7 @@ var MultiplyStage = Utilities.createSubclass(Stage,
     initialize: function(benchmark, options)
     {
         Stage.prototype.initialize.call(this, benchmark, options);
-        var tileSize = Math.round(this.size.height / 20);
+        var tileSize = Math.round(this.size.height / 25);
 
         // Fill the scene with elements
         var x = Math.round((this.size.width - tileSize) / 2);

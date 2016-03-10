@@ -75,18 +75,6 @@ ParticlesStage = Utilities.createSubclass(Stage,
         this.particles = [];
     }, {
 
-    initialize: function(benchmark)
-    {
-        Stage.prototype.initialize.call(this, benchmark);
-        this.emissionSpin = Stage.random(0, 3);
-        this.emitSteps = Stage.randomInt(4, 6);
-        this.emitLocation = [
-            new Point(this.size.x * .25, this.size.y * .333),
-            new Point(this.size.x * .5, this.size.y * .25),
-            new Point(this.size.x * .75, this.size.y * .333)
-        ];
-    },
-
     animate: function(timeDelta)
     {
         timeDelta /= 4;

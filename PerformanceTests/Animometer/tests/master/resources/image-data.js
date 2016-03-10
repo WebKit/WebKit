@@ -35,8 +35,6 @@ var ImageDataStage = Utilities.createSubclass(Stage,
     {
         Stage.prototype.initialize.call(this, benchmark);
 
-        var waitForLoad = new SimplePromise;
-
         var lastPromise;
         var images = this.images;
         this.imageSrcs.forEach(function(imageSrc) {
