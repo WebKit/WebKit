@@ -2,6 +2,11 @@ description(
 "This test checks that the following expressions or statements are valid ECMASCRIPT code or should throw parse error"
 );
 
+function testFailed(msg) {
+    description(msg);
+    throw new Error("Bad!");
+}
+
 function runTest(_a, expectSyntaxError)
 {
     var error;
@@ -399,13 +404,32 @@ valid("'use strict'; (function __proto__(){})")
 
 valid("'use strict'; function f1(a) { function f2(b) { return b; } return f2(a); } f1(5);")
 valid("'use strict'; function f1(a) { function f2(b) { function f3(c) { return c; } return f3(b); } return f2(a); } f1(5);")
-invalid("'use strict'; function f1(a) { if (a) { function f2(b) { return b; } return f2(a); } else return a; } f1(5);")
-invalid("'use strict'; function f1(a) { function f2(b) { if (b) { function f3(c) { return c; } return f3(b); } else return b; } return f2(a); } f1(5);")
+valid("'use strict'; function f1(a) { if (a) { function f2(b) { return b; } return f2(a); } else return a; } f1(5);")
+valid("'use strict'; function f1(a) { function f2(b) { if (b) { function f3(c) { return c; } return f3(b); } else return b; } return f2(a); } f1(5);")
+valid("'use strict'; function f1(a) {}; function f1(a) {};")
+invalid("'use strict'; { function f1(a) {}; function f1(a) {}; }")
+invalid("'use strict'; { let f1; function f1(a) {}; }")
+invalid("'use strict'; { function f1(a) {}; let f1; }")
+invalid("'use strict'; let f1; function f1(a) {};")
+invalid("'use strict'; function f1(a) {}; let f1; ")
+invalid("let f1; function f1(a) {};")
+invalid("let f1; { function f1(a) {}; }")
+invalid("{ function f1(a) {}; } let f1;")
+valid("{ let f1; function f1(a) {}; }")
+valid("{  function f1(a) {}; let f1; }")
+valid("switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; }")
+invalid("'use strict'; switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; }");
+invalid("'use strict'; switch('foo') { case 1: function foo() {}; break; case 2: let foo; break; }");
+invalid("'use strict'; switch('foo') { case 1: let foo; break; case 2: function foo() {}; break; }");
+valid("'use strict'; switch('foo') { case 1: { let foo; break; } case 2: function foo() {}; break; }");
+valid("'use strict'; switch('foo') { case 1: { function foo() { }; break; } case 2: function foo() {}; break; }");
+invalid("'use strict'; if (true) function foo() { }; ");
+valid("if (true) function foo() { }; ");
 
 valid("var str = \"'use strict'; function f1(a) { function f2(b) { return b; } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
 valid("var str = \"'use strict'; function f1(a) { function f2(b) { function f3(c) { return c; } return f3(b); } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
-invalid("var str = \"'use strict'; function f1(a) { if (a) { function f2(b) { return b; } return f2(a); } else return a; } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);", SyntaxError, undefined)
-invalid("var str = \"'use strict'; function f1(a) { function f2(b) { if (b) { function f3(c) { return c; } return f3(b); } else return b; } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);", SyntaxError, undefined)
+valid("var str = \"'use strict'; function f1(a) { if (a) { function f2(b) { return b; } return f2(a); } else return a; } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
+valid("var str = \"'use strict'; function f1(a) { function f2(b) { if (b) { function f3(c) { return c; } return f3(b); } else return b; } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
 
 valid("if (0) $foo; ")
 valid("if (0) _foo; ")

@@ -1,3 +1,163 @@
+2016-03-09  Saam Barati  <sbarati@apple.com>
+
+        ES6: Implement lexical scoping for function definitions in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=152844
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements block scoping for function definitions
+        in strict mode. The implementation works as follows:
+        
+        - If we're in sloppy mode, function declarations work exactly
+          as they did before this patch. I.e, function declarations are hoisted
+          and declared like "var" variables.
+        
+        - If you're in strict mode and at the top of a function scope or program
+          scope, function declarations still work like they used to. They are defined
+          like "var" variables. This is necessary for backwards compatibility
+          because ES5 strict mode allowed duplicate function declarations at the
+          top-most scope of a program/function.
+        
+        - If you're in strict mode and inside a block statement or a switch statement,
+          function declarations are now block scoped. All function declarations within
+          a block are hoisted to the beginning of the block. They are not hoisted out of the 
+          block like they are in sloppy mode. This allows for the following types of
+          programs:
+          ```
+          function foo() {
+              function bar() { return 20; }
+              {
+                  function bar() { return 30; }
+                  bar(); // 30
+              }
+              bar(); // 20
+          }
+          ```
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::instantiateLexicalVariables):
+        (JSC::BytecodeGenerator::emitPrefillStackTDZVariables):
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::initializeBlockScopedFunctions):
+        (JSC::BytecodeGenerator::popLexicalScope):
+        (JSC::BytecodeGenerator::liftTDZCheckIfPossible):
+        (JSC::BytecodeGenerator::pushTDZVariables):
+        (JSC::BytecodeGenerator::getVariablesUnderTDZ):
+        (JSC::BytecodeGenerator::emitNewRegExp):
+        (JSC::BytecodeGenerator::emitNewFunctionExpressionCommon):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        (JSC::BytecodeGenerator::emitNewArrowFunctionExpression):
+        * bytecompiler/BytecodeGenerator.h:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createSourceElements):
+        (JSC::ASTBuilder::features):
+        (JSC::ASTBuilder::numConstants):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        (JSC::ASTBuilder::createClassDeclStatement):
+        (JSC::ASTBuilder::createBlockStatement):
+        (JSC::ASTBuilder::createTryStatement):
+        (JSC::ASTBuilder::createSwitchStatement):
+        (JSC::ASTBuilder::Scope::Scope):
+        (JSC::ASTBuilder::funcDeclarations): Deleted.
+        * parser/NodeConstructors.h:
+        (JSC::CaseBlockNode::CaseBlockNode):
+        (JSC::SwitchNode::SwitchNode):
+        (JSC::BlockNode::BlockNode):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ScopeNode::singleStatement):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ModuleProgramNode::ModuleProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionNode::FunctionNode):
+        (JSC::VariableEnvironmentNode::VariableEnvironmentNode):
+        * parser/Nodes.h:
+        (JSC::VariableEnvironmentNode::VariableEnvironmentNode):
+        (JSC::VariableEnvironmentNode::lexicalVariables):
+        (JSC::VariableEnvironmentNode::functionStack):
+        (JSC::ScopeNode::captures):
+        (JSC::ScopeNode::varDeclarations):
+        (JSC::ScopeNode::neededConstants):
+        (JSC::ProgramNode::startColumn):
+        (JSC::ProgramNode::endColumn):
+        (JSC::EvalNode::startColumn):
+        (JSC::EvalNode::endColumn):
+        (JSC::ModuleProgramNode::startColumn):
+        (JSC::ModuleProgramNode::endColumn):
+        (JSC::ScopeNode::functionStack): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::didFinishParsing):
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseSwitchStatement):
+        (JSC::Parser<LexerType>::parseBlockStatement):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::getMetadata):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        * parser/Parser.h:
+        (JSC::Scope::declareVariable):
+        (JSC::Scope::declareFunction):
+        (JSC::Scope::appendFunction):
+        (JSC::Scope::takeFunctionDeclarations):
+        (JSC::Scope::declareLexicalVariable):
+        (JSC::Parser::currentVariableScope):
+        (JSC::Parser::currentLexicalDeclarationScope):
+        (JSC::Parser::currentFunctionScope):
+        (JSC::Parser::pushScope):
+        (JSC::Parser::popScopeInternal):
+        (JSC::Parser::declareVariable):
+        (JSC::Parser::declareFunction):
+        (JSC::Parser::hasDeclaredVariable):
+        (JSC::Parser::isFunctionMetadataNode):
+        (JSC::Parser<LexerType>::parse):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFuncDeclStatement):
+        (JSC::SyntaxChecker::createClassDeclStatement):
+        (JSC::SyntaxChecker::createBlockStatement):
+        (JSC::SyntaxChecker::createExprStatement):
+        (JSC::SyntaxChecker::createIfStatement):
+        (JSC::SyntaxChecker::createContinueStatement):
+        (JSC::SyntaxChecker::createTryStatement):
+        (JSC::SyntaxChecker::createSwitchStatement):
+        (JSC::SyntaxChecker::createWhileStatement):
+        (JSC::SyntaxChecker::createWithStatement):
+        (JSC::SyntaxChecker::createDoWhileStatement):
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironmentEntry::isExported):
+        (JSC::VariableEnvironmentEntry::isImported):
+        (JSC::VariableEnvironmentEntry::isImportedNamespace):
+        (JSC::VariableEnvironmentEntry::isFunction):
+        (JSC::VariableEnvironmentEntry::setIsCaptured):
+        (JSC::VariableEnvironmentEntry::setIsConst):
+        (JSC::VariableEnvironmentEntry::setIsExported):
+        (JSC::VariableEnvironmentEntry::setIsImported):
+        (JSC::VariableEnvironmentEntry::setIsImportedNamespace):
+        (JSC::VariableEnvironmentEntry::setIsFunction):
+        (JSC::VariableEnvironmentEntry::clearIsVar):
+        (JSC::VariableEnvironment::VariableEnvironment):
+        (JSC::VariableEnvironment::begin):
+        (JSC::VariableEnvironment::end):
+        * tests/es6.yaml:
+        * tests/stress/block-scoped-function-declarations.js: Added.
+        (assert):
+        (test):
+        (f.foo.bar):
+        (f.foo.):
+        (f.foo):
+        (f):
+        (assert.foo.):
+        (assert.foo):
+        (assert.foo.foo):
+        (assert.foo.bar):
+        (assert.foo.switch.case.1):
+        (assert.foo.switch.case.2):
+        (assert.foo.switch.foo):
+        (assert.foo.switch.bar):
+
 2016-03-09  Saam barati  <sbarati@apple.com>
 
         Array.isArray support for Proxy

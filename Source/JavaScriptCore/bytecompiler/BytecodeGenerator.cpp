@@ -566,7 +566,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     // All "addVar()"s needs to happen before "initializeDefaultParameterValuesAndSetupFunctionScopeStack()" is called
     // because a function's default parameter ExpressionNodes will use temporary registers.
-    m_TDZStack.append(std::make_pair(*parentScopeTDZVariables, false));
+    pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize);
     initializeDefaultParameterValuesAndSetupFunctionScopeStack(parameters, functionNode, functionSymbolTable, symbolTableConstantIndex, captures);
     
     // Loading |this| inside an arrow function must be done after initializeDefaultParameterValuesAndSetupFunctionScopeStack()
@@ -582,7 +582,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         emitPutDerivedConstructorToArrowFunctionContextScope();
     }
 
-    pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize);
+    bool shouldInitializeBlockScopedFunctions = false; // We generate top-level function declarations in ::generate().
+    pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode, const VariableEnvironment* parentScopeTDZVariables)
@@ -623,7 +624,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     }
     codeBlock->adoptVariables(variables);
 
-    m_TDZStack.append(std::make_pair(*parentScopeTDZVariables, false));
+    pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize);
 
     if (codeBlock->isArrowFunctionContext() && evalNode->usesThis())
         emitLoadThisFromArrowFunctionLexicalEnvironment();
@@ -633,7 +634,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
         emitPutThisToArrowFunctionContextScope();
     }
     
-    pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize);
+    bool shouldInitializeBlockScopedFunctions = false; // We generate top-level function declarations in ::generate().
+    pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode, const VariableEnvironment* parentScopeTDZVariables)
@@ -715,8 +717,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     else
         constantSymbolTable = addConstantValue(moduleEnvironmentSymbolTable->cloneScopePart(*m_vm));
 
-    m_TDZStack.append(std::make_pair(lexicalVariables, true));
-    m_symbolTableStack.append(SymbolTableStackEntry { Strong<SymbolTable>(*m_vm, moduleEnvironmentSymbolTable), m_topMostScope, false, constantSymbolTable->index() });
+    pushTDZVariables(lexicalVariables, TDZCheckOptimization::Optimize);
+    bool isWithScope = false;
+    m_symbolTableStack.append(SymbolTableStackEntry { Strong<SymbolTable>(*m_vm, moduleEnvironmentSymbolTable), m_topMostScope, isWithScope, constantSymbolTable->index() });
     emitPrefillStackTDZVariables(lexicalVariables, moduleEnvironmentSymbolTable);
 
     // makeFunction assumes that there's correct TDZ stack entries.
@@ -1742,7 +1745,7 @@ bool BytecodeGenerator::instantiateLexicalVariables(const VariableEnvironment& l
     {
         ConcurrentJITLocker locker(symbolTable->m_lock);
         for (auto& entry : lexicalVariables) {
-            ASSERT(entry.value.isLet() || entry.value.isConst());
+            ASSERT(entry.value.isLet() || entry.value.isConst() || entry.value.isFunction());
             ASSERT(!entry.value.isVar());
             SymbolTableEntry symbolTableEntry = symbolTable->get(locker, entry.key.get());
             ASSERT(symbolTableEntry.isNull());
@@ -1789,6 +1792,9 @@ void BytecodeGenerator::emitPrefillStackTDZVariables(const VariableEnvironment& 
         if (entry.value.isImported() && !entry.value.isImportedNamespace())
             continue;
 
+        if (entry.value.isFunction())
+            continue;
+
         SymbolTableEntry symbolTableEntry = symbolTable->get(entry.key.get());
         ASSERT(!symbolTableEntry.isNull());
         VarOffset offset = symbolTableEntry.varOffset();
@@ -1800,10 +1806,17 @@ void BytecodeGenerator::emitPrefillStackTDZVariables(const VariableEnvironment& 
     }
 }
 
-void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, TDZCheckOptimization tdzCheckOptimization, NestedScopeType nestedScopeType, RegisterID** constantSymbolTableResult)
+void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, TDZCheckOptimization tdzCheckOptimization, NestedScopeType nestedScopeType, RegisterID** constantSymbolTableResult, bool shouldInitializeBlockScopedFunctions)
 {
     VariableEnvironment& environment = node->lexicalVariables();
-    pushLexicalScopeInternal(environment, tdzCheckOptimization, nestedScopeType, constantSymbolTableResult, TDZRequirement::UnderTDZ, ScopeType::LetConstScope, ScopeRegisterType::Block);
+    RegisterID* constantSymbolTableResultTemp = nullptr;
+    pushLexicalScopeInternal(environment, tdzCheckOptimization, nestedScopeType, &constantSymbolTableResultTemp, TDZRequirement::UnderTDZ, ScopeType::LetConstScope, ScopeRegisterType::Block);
+
+    if (shouldInitializeBlockScopedFunctions)
+        initializeBlockScopedFunctions(environment, node->functionStack(), constantSymbolTableResultTemp);
+
+    if (constantSymbolTableResult && constantSymbolTableResultTemp)
+        *constantSymbolTableResult = constantSymbolTableResultTemp;
 }
 
 void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environment, TDZCheckOptimization tdzCheckOptimization, NestedScopeType nestedScopeType,
@@ -1869,13 +1882,67 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
         pushScopedControlFlowContext();
     }
 
-    m_symbolTableStack.append(SymbolTableStackEntry{ symbolTable, newScope, false, symbolTableConstantIndex });
-    bool canOptimizeTDZChecks = tdzCheckOptimization == TDZCheckOptimization::Optimize;
+    bool isWithScope = false;
+    m_symbolTableStack.append(SymbolTableStackEntry{ symbolTable, newScope, isWithScope, symbolTableConstantIndex });
     if (tdzRequirement == TDZRequirement::UnderTDZ)
-        m_TDZStack.append(std::make_pair(environment, canOptimizeTDZChecks));
+        pushTDZVariables(environment, tdzCheckOptimization);
 
     if (tdzRequirement == TDZRequirement::UnderTDZ)
         emitPrefillStackTDZVariables(environment, symbolTable.get());
+}
+
+void BytecodeGenerator::initializeBlockScopedFunctions(VariableEnvironment& environment, FunctionStack& functionStack, RegisterID* constantSymbolTable)
+{
+    /*
+     * We must transform block scoped function declarations in strict mode like so:
+     *
+     * function foo() {
+     *     if (c) {
+     *           function foo() { ... }
+     *           if (bar) { ... }
+     *           else { ... }
+     *           function baz() { ... }
+     *     }
+     * }
+     *
+     * to:
+     *
+     * function foo() {
+     *     if (c) {
+     *         let foo = function foo() { ... }
+     *         let baz = function baz() { ... }
+     *         if (bar) { ... }
+     *         else { ... }
+     *     }
+     * }
+     * 
+     * But without the TDZ checks.
+    */
+
+    if (!environment.size()) {
+        RELEASE_ASSERT(!functionStack.size());
+        return;
+    }
+
+    if (!functionStack.size())
+        return;
+
+    SymbolTable* symbolTable = m_symbolTableStack.last().m_symbolTable.get();
+    RegisterID* scope = m_symbolTableStack.last().m_scope;
+    RefPtr<RegisterID> temp = newTemporary();
+    int symbolTableIndex = constantSymbolTable ? constantSymbolTable->index() : 0;
+    for (FunctionMetadataNode* function : functionStack) {
+        const Identifier& name = function->ident();
+        auto iter = environment.find(name.impl());
+        RELEASE_ASSERT(iter != environment.end());
+        RELEASE_ASSERT(iter->value.isFunction());
+        // We purposefully don't hold the symbol table lock around this loop because emitNewFunctionExpressionCommon may GC.
+        SymbolTableEntry entry = symbolTable->get(name.impl()); 
+        RELEASE_ASSERT(!entry.isNull());
+        emitNewFunctionExpressionCommon(temp.get(), function);
+        bool isLexicallyScoped = true;
+        emitPutToScope(scope, variableForLocalEntry(name, entry, symbolTableIndex, isLexicallyScoped), temp.get(), DoNotThrowIfNotFound, Initialization);
+    }
 }
 
 void BytecodeGenerator::popLexicalScope(VariableEnvironmentNode* node)
@@ -2553,14 +2620,31 @@ void BytecodeGenerator::liftTDZCheckIfPossible(const Variable& variable)
     for (unsigned i = m_TDZStack.size(); i--;) {
         VariableEnvironment& environment = m_TDZStack[i].first;
         if (environment.contains(identifier)) {
-            bool isSyntacticallyAbleToOptimizeTDZ = m_TDZStack[i].second;
-            if (isSyntacticallyAbleToOptimizeTDZ) {
+            TDZCheckOptimization tdzCheckOptimizationCapability = m_TDZStack[i].second;
+            if (tdzCheckOptimizationCapability == TDZCheckOptimization::Optimize) {
                 bool wasRemoved = environment.remove(identifier);
                 RELEASE_ASSERT(wasRemoved);
             }
             break;
         }
     }
+}
+
+void BytecodeGenerator::pushTDZVariables(VariableEnvironment environment, TDZCheckOptimization optimization)
+{
+    if (!environment.size())
+        return;
+
+    Vector<UniquedStringImpl*, 4> functionsToRemove;
+    for (const auto& entry : environment) {
+        if (entry.value.isFunction())
+            functionsToRemove.append(entry.key.get());
+    }
+
+    for (UniquedStringImpl* function : functionsToRemove)
+        environment.remove(function);
+
+    m_TDZStack.append(std::make_pair(WTFMove(environment), optimization));
 }
 
 void BytecodeGenerator::getVariablesUnderTDZ(VariableEnvironment& result)
@@ -2683,9 +2767,8 @@ RegisterID* BytecodeGenerator::emitNewRegExp(RegisterID* dst, RegExp* regExp)
     return dst;
 }
 
-void BytecodeGenerator::emitNewFunctionExpressionCommon(RegisterID* dst, BaseFuncExprNode* func)
+void BytecodeGenerator::emitNewFunctionExpressionCommon(RegisterID* dst, FunctionMetadataNode* function)
 {
-    FunctionMetadataNode* function = func->metadata();
     unsigned index = m_codeBlock->addFunctionExpr(makeFunction(function));
 
     OpcodeID opcodeID = op_new_func_exp;
@@ -2711,14 +2794,14 @@ void BytecodeGenerator::emitNewFunctionExpressionCommon(RegisterID* dst, BaseFun
 
 RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func)
 {
-    emitNewFunctionExpressionCommon(dst, func);
+    emitNewFunctionExpressionCommon(dst, func->metadata());
     return dst;
 }
 
 RegisterID* BytecodeGenerator::emitNewArrowFunctionExpression(RegisterID* dst, ArrowFuncExprNode* func)
 {
     ASSERT(func->metadata()->parseMode() == SourceParseMode::ArrowFunctionMode);    
-    emitNewFunctionExpressionCommon(dst, func);
+    emitNewFunctionExpressionCommon(dst, func->metadata());
     return dst;
 }
 

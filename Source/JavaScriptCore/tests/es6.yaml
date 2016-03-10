@@ -753,7 +753,7 @@
 - path: es6/arrow_functions_no_prototype_property.js
   cmd: runES6 :normal
 - path: es6/block-level_function_declaration.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/destructuring_computed_properties.js
   cmd: runES6 :normal
 - path: es6/destructuring_defaults_in_parameters_separate_scope.js

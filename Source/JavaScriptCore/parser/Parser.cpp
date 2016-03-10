@@ -336,17 +336,17 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
         }
     }
 #endif // NDEBUG
-    didFinishParsing(sourceElements, context.funcDeclarations(), varDeclarations, features, context.numConstants());
+    didFinishParsing(sourceElements, scope->takeFunctionDeclarations(), varDeclarations, features, context.numConstants());
 
     return parseError;
 }
 
 template <typename LexerType>
-void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, DeclarationStacks::FunctionStack& funcStack, 
+void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, DeclarationStacks::FunctionStack&& funcStack, 
     VariableEnvironment& varDeclarations, CodeFeatures features, int numConstants)
 {
     m_sourceElements = sourceElements;
-    m_funcDeclarations.swap(funcStack);
+    m_funcDeclarations = WTFMove(funcStack);
     m_varDeclarations.swap(varDeclarations);
     m_features = features;
     m_numConstants = numConstants;
@@ -571,6 +571,9 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
         result = parseClassDeclaration(context);
         break;
 #endif
+    case FUNCTION:
+        result = parseFunctionDeclaration(context);
+        break;
     default:
         m_statementDepth--; // parseStatement() increments the depth.
         result = parseStatement(context, directive, directiveLiteralLength);
@@ -1424,7 +1427,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseSwitchStateme
     endSwitch();
     handleProductionOrFail(CLOSEBRACE, "}", "end", "body of a 'switch'");
     
-    TreeStatement result = context.createSwitchStatement(location, expr, firstClauses, defaultClause, secondClauses, startLine, endLine, lexicalScope->finalizeLexicalEnvironment());
+    TreeStatement result = context.createSwitchStatement(location, expr, firstClauses, defaultClause, secondClauses, startLine, endLine, lexicalScope->finalizeLexicalEnvironment(), lexicalScope->takeFunctionDeclarations());
     popScope(lexicalScope, TreeBuilder::NeedsFreeVariableInfo);
     return result;
 }
@@ -1562,11 +1565,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatemen
     int startOffset = m_token.m_data.offset;
     int start = tokenLine();
     VariableEnvironment emptyEnvironment;
+    DeclarationStacks::FunctionStack emptyFunctionStack;
     next();
     if (match(CLOSEBRACE)) {
         int endOffset = m_token.m_data.offset;
         next();
-        TreeStatement result = context.createBlockStatement(location, 0, start, m_lastTokenEndPosition.line, shouldPushLexicalScope ? currentScope()->finalizeLexicalEnvironment() : emptyEnvironment);
+        TreeStatement result = context.createBlockStatement(location, 0, start, m_lastTokenEndPosition.line, shouldPushLexicalScope ? currentScope()->finalizeLexicalEnvironment() : emptyEnvironment, shouldPushLexicalScope ? currentScope()->takeFunctionDeclarations() : WTFMove(emptyFunctionStack));
         context.setStartOffset(result, startOffset);
         context.setEndOffset(result, endOffset);
         if (shouldPushLexicalScope)
@@ -1578,7 +1582,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatemen
     matchOrFail(CLOSEBRACE, "Expected a closing '}' at the end of a block statement");
     int endOffset = m_token.m_data.offset;
     next();
-    TreeStatement result = context.createBlockStatement(location, subtree, start, m_lastTokenEndPosition.line, shouldPushLexicalScope ? currentScope()->finalizeLexicalEnvironment() : emptyEnvironment);
+    TreeStatement result = context.createBlockStatement(location, subtree, start, m_lastTokenEndPosition.line, shouldPushLexicalScope ? currentScope()->finalizeLexicalEnvironment() : emptyEnvironment, shouldPushLexicalScope ? currentScope()->takeFunctionDeclarations() : WTFMove(emptyFunctionStack));
     context.setStartOffset(result, startOffset);
     context.setEndOffset(result, endOffset);
     if (shouldPushLexicalScope)
@@ -1607,8 +1611,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         result = parseVariableDeclaration(context, DeclarationType::VarDeclaration);
         break;
     case FUNCTION:
-        failIfFalseIfStrict(m_statementDepth == 1, "Strict mode does not allow function declarations in a lexically nested statement");
-        result = parseFunctionDeclaration(context);
+        if (!strictMode())
+            result = parseFunctionDeclaration(context);
+        else
+            failWithMessage("Function declarations are only allowed inside blocks or switch statements in strict mode");
         break;
     case SEMICOLON: {
         JSTokenLocation location(tokenLocation());
@@ -2121,6 +2127,9 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     return true;
 }
 
+static NO_RETURN_DUE_TO_CRASH FunctionMetadataNode* getMetadata(ParserFunctionInfo<SyntaxChecker>&) { RELEASE_ASSERT_NOT_REACHED(); }
+static FunctionMetadataNode* getMetadata(ParserFunctionInfo<ASTBuilder>& info) { return info.body; }
+
 template <typename LexerType>
 template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDeclaration(TreeBuilder& context, ExportType exportType)
 {
@@ -2137,15 +2146,20 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
     failIfFalse((parseFunctionInfo(context, FunctionNeedsName, parseMode, true, ConstructorKind::None, SuperBinding::NotNeeded, functionKeywordStart, functionInfo, FunctionDefinitionType::Declaration)), "Cannot parse this function");
     failIfFalse(functionInfo.name, "Function statements must have a name");
 
-    DeclarationResultMask declarationResult = declareVariable(functionInfo.name);
+    std::pair<DeclarationResultMask, ScopeRef> functionDeclaration = declareFunction(functionInfo.name);
+    DeclarationResultMask declarationResult = functionDeclaration.first;
     failIfTrueIfStrict(declarationResult & DeclarationResult::InvalidStrictMode, "Cannot declare a function named '", functionInfo.name->impl(), "' in strict mode");
     if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
-        internalFailWithMessage(false, "Cannot declare a function that shadows a let/const/class variable '", functionInfo.name->impl(), "' in strict mode");
+        internalFailWithMessage(false, "Cannot declare a function that shadows a let/const/class/function variable '", functionInfo.name->impl(), "' in strict mode");
     if (exportType == ExportType::Exported) {
         semanticFailIfFalse(exportName(*functionInfo.name), "Cannot export a duplicate function name: '", functionInfo.name->impl(), "'");
         currentScope()->moduleScopeData().exportBinding(*functionInfo.name);
     }
-    return context.createFuncDeclStatement(location, functionInfo);
+
+    TreeStatement result = context.createFuncDeclStatement(location, functionInfo);
+    if (TreeBuilder::CreatesAST)
+        functionDeclaration.second->appendFunction(getMetadata(functionInfo));
+    return result;
 }
 
 template <typename LexerType>
@@ -2767,8 +2781,11 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         }
 
         if (localName) {
-            if (match(FUNCTION))
+            if (match(FUNCTION)) {
+                DepthManager statementDepth(&m_statementDepth);
+                m_statementDepth = 1;
                 result = parseFunctionDeclaration(context);
+            }
 #if ENABLE(ES6_CLASS_SYNTAX)
             else {
                 ASSERT(match(CLASSTOKEN));
@@ -2878,9 +2895,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             result = parseVariableDeclaration(context, DeclarationType::LetDeclaration, ExportType::Exported);
             break;
 
-        case FUNCTION:
+        case FUNCTION: {
+            DepthManager statementDepth(&m_statementDepth);
+            m_statementDepth = 1;
             result = parseFunctionDeclaration(context, ExportType::Exported);
             break;
+        }
 
 #if ENABLE(ES6_CLASS_SYNTAX)
         case CLASSTOKEN:

@@ -315,11 +315,11 @@ PASS Has syntax error: 'function f() { let x; var [x] = 20; }'
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
 PASS Has syntax error: ''use strict'; function f() { let x; var [x] = 20; }'
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
 PASS Has syntax error: 'function f() { let x;  function x(){} }'
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
 PASS Has syntax error: ''use strict'; function f() { let x;  function x(){} }'
 SyntaxError: Cannot declare a let variable twice: 'x'.
 SyntaxError: Cannot declare a let variable twice: 'x'.
@@ -345,11 +345,11 @@ PASS Has syntax error: 'function f() { const x = 20; var [x] = 20; }'
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
 PASS Has syntax error: ''use strict'; function f() { const x = 20; var [x] = 20; }'
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
 PASS Has syntax error: 'function f() { const x = 20;  function x(){} }'
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
 PASS Has syntax error: ''use strict'; function f() { const x = 20;  function x(){} }'
 SyntaxError: Cannot declare a const variable twice: 'x'.
 SyntaxError: Cannot declare a const variable twice: 'x'.
@@ -375,11 +375,11 @@ PASS Has syntax error: 'function f() { class x{}; var [x] = 20; }'
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
 PASS Has syntax error: ''use strict'; function f() { class x{}; var [x] = 20; }'
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
 PASS Has syntax error: 'function f() { class x{};  function x(){} }'
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
-SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'x' in strict mode.
 PASS Has syntax error: ''use strict'; function f() { class x{};  function x(){} }'
 SyntaxError: Cannot declare a class twice: 'x'.
 SyntaxError: Cannot declare a class twice: 'x'.

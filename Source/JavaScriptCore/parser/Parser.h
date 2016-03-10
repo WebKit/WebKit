@@ -368,6 +368,37 @@ struct Scope {
         return result;
     }
 
+    DeclarationResultMask declareFunction(const Identifier* ident, bool declareAsVar)
+    {
+        ASSERT(m_allowsVarDeclarations || m_allowsLexicalDeclarations);
+        DeclarationResultMask result = DeclarationResult::Valid;
+        bool isValidStrictMode = !isEvalOrArgumentsIdentifier(m_vm, ident);
+        if (!isValidStrictMode)
+            result |= DeclarationResult::InvalidStrictMode;
+        m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
+        auto addResult = declareAsVar ? m_declaredVariables.add(ident->impl()) : m_lexicalVariables.add(ident->impl());
+        addResult.iterator->value.setIsFunction();
+        if (declareAsVar) {
+            addResult.iterator->value.setIsVar();
+            if (m_lexicalVariables.contains(ident->impl()))
+                result |= DeclarationResult::InvalidDuplicateDeclaration;
+        } else {
+            addResult.iterator->value.setIsLet();
+            ASSERT_WITH_MESSAGE(!m_declaredVariables.size(), "We should only declare a function as a lexically scoped variable in scopes where var declarations aren't allowed. I.e, in strict mode and not at the top-level scope of a function or program.");
+            if (!addResult.isNewEntry) 
+                result |= DeclarationResult::InvalidDuplicateDeclaration;
+        }
+        return result;
+    }
+
+    void appendFunction(FunctionMetadataNode* node)
+    { 
+        ASSERT(node);
+        m_functionDeclarations.append(node);
+    }
+    DeclarationStacks::FunctionStack&& takeFunctionDeclarations() { return WTFMove(m_functionDeclarations); }
+    
+
     DeclarationResultMask declareLexicalVariable(const Identifier* ident, bool isConstant, DeclarationImportType importType = DeclarationImportType::NotImported)
     {
         ASSERT(m_allowsLexicalDeclarations);
@@ -691,6 +722,7 @@ private:
     IdentifierSet m_closedVariableCandidates;
     IdentifierSet m_writtenVariables;
     RefPtr<ModuleScopeData> m_moduleScopeData { };
+    DeclarationStacks::FunctionStack m_functionDeclarations;
 };
 
 typedef Vector<Scope, 10> ScopeStack;
@@ -923,6 +955,18 @@ private:
         return ScopeRef(&m_scopeStack, i);
     }
 
+    ScopeRef currentLexicalDeclarationScope()
+    {
+        unsigned i = m_scopeStack.size() - 1;
+        ASSERT(i < m_scopeStack.size());
+        while (!m_scopeStack[i].allowsLexicalDeclarations()) {
+            i--;
+            ASSERT(i < m_scopeStack.size());
+        }
+
+        return ScopeRef(&m_scopeStack, i);
+    }
+
     ScopeRef currentFunctionScope()
     {
         unsigned i = m_scopeStack.size() - 1;
@@ -959,7 +1003,7 @@ private:
         m_scopeStack.append(Scope(m_vm, isFunction, isGenerator, isStrict, isArrowFunction));
         return currentScope();
     }
-    
+
     void popScopeInternal(ScopeRef& scope, bool shouldTrackClosedVariables)
     {
         ASSERT_UNUSED(scope, scope.index() == m_scopeStack.size() - 1);
@@ -1001,22 +1045,30 @@ private:
         if (type == DeclarationType::VarDeclaration)
             return currentVariableScope()->declareVariable(ident);
 
-        unsigned i = m_scopeStack.size() - 1;
-        ASSERT(i < m_scopeStack.size());
         ASSERT(type == DeclarationType::LetDeclaration || type == DeclarationType::ConstDeclaration);
-
         // Lexical variables declared at a top level scope that shadow arguments or vars are not allowed.
         if (m_statementDepth == 1 && (hasDeclaredParameter(*ident) || hasDeclaredVariable(*ident)))
             return DeclarationResult::InvalidDuplicateDeclaration;
 
-        while (!m_scopeStack[i].allowsLexicalDeclarations()) {
-            i--;
-            ASSERT(i < m_scopeStack.size());
+        return currentLexicalDeclarationScope()->declareLexicalVariable(ident, type == DeclarationType::ConstDeclaration, importType);
+    }
+
+    std::pair<DeclarationResultMask, ScopeRef> declareFunction(const Identifier* ident)
+    {
+        if (m_statementDepth == 1 || !strictMode()) {
+            // Functions declared at the top-most scope (both in sloppy and strict mode) are declared as vars
+            // for backwards compatibility. This allows us to declare functions with the same name more than once.
+            // In sloppy mode, we always declare functions as vars.
+            bool declareAsVar = true;
+            ScopeRef variableScope = currentVariableScope();
+            return std::make_pair(variableScope->declareFunction(ident, declareAsVar), variableScope);
         }
 
-        return m_scopeStack[i].declareLexicalVariable(ident, type == DeclarationType::ConstDeclaration, importType);
+        bool declareAsVar = false;
+        ScopeRef lexicalVariableScope = currentLexicalDeclarationScope();
+        return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar), lexicalVariableScope);
     }
-    
+
     NEVER_INLINE bool hasDeclaredVariable(const Identifier& ident)
     {
         unsigned i = m_scopeStack.size() - 1;
@@ -1061,7 +1113,7 @@ private:
     Parser();
     String parseInner(const Identifier&, SourceParseMode);
 
-    void didFinishParsing(SourceElements*, DeclarationStacks::FunctionStack&, VariableEnvironment&, CodeFeatures, int);
+    void didFinishParsing(SourceElements*, DeclarationStacks::FunctionStack&&, VariableEnvironment&, CodeFeatures, int);
 
     // Used to determine type of error to report.
     bool isFunctionMetadataNode(ScopeNode*) { return false; }
@@ -1543,7 +1595,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     endColumn,
                                     m_sourceElements,
                                     m_varDeclarations,
-                                    m_funcDeclarations,
+                                    WTFMove(m_funcDeclarations),
                                     currentScope()->finalizeLexicalEnvironment(),
                                     m_parameters,
                                     *m_source,

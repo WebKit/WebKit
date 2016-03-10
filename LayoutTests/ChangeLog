@@ -1,3 +1,16 @@
+2016-03-09  Saam Barati  <sbarati@apple.com>
+
+        ES6: Implement lexical scoping for function definitions in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=152844
+
+        Reviewed by Geoffrey Garen.
+
+        * js/let-syntax-expected.txt:
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+        (testFailed):
+        (runTest):
+
 2016-03-09  Jer Noble  <jer.noble@apple.com>
 
         Add heuristic for "main content" videos which override user gesture requirements
