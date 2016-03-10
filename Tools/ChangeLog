@@ -1,3 +1,14 @@
+2016-03-09  Jason Marcell  <jmarcell@apple.com>
+
+        Removing reference to Dashboard.Repository.Internal.trac from open source unit tests.
+        https://bugs.webkit.org/show_bug.cgi?id=155274
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/tests.js:
+        (setup): Deleted. In bug 154180 we removed Dashboard.Repository.Internal which was causing an
+        error in the unit tests.
+
 2016-03-09  Aakash Jain  <aakash_jain@apple.com>
 
         use ulimit command to check process limit in webkitpy

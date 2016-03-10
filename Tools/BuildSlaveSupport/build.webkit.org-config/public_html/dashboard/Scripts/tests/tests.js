@@ -252,7 +252,6 @@ module("BuildBotQueue", {
     setup: function() {
         Dashboard.Repository.OpenSource.trac = new MockTrac();
         Dashboard.Repository.OpenSource.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
-        Dashboard.Repository.Internal.trac = new MockTrac();
         this.queue = new MockBuildbotQueue();
         this.queue.branches = [{
             name: "trunk",
