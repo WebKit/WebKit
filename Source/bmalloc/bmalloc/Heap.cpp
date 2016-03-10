@@ -30,7 +30,7 @@
 #include "PerProcess.h"
 #include "SmallChunk.h"
 #include "SmallLine.h"
-#include "SmallPage.h"
+#include "SmallRun.h"
 #include <thread>
 
 namespace bmalloc {
@@ -40,16 +40,16 @@ Heap::Heap(std::lock_guard<StaticMutex>&)
     , m_isAllocatingPages(false)
     , m_scavenger(*this, &Heap::concurrentScavenge)
 {
-    initializeLineMetadata();
+    initializeSmallRunMetadata();
 }
 
-void Heap::initializeLineMetadata()
+void Heap::initializeSmallRunMetadata()
 {
-    // We assume that m_smallLineMetadata is zero-filled.
+    // We assume that m_smallRunMetadata is zero-filled.
 
     for (size_t size = alignment; size <= smallMax; size += alignment) {
         size_t sizeClass = bmalloc::sizeClass(size);
-        auto& metadata = m_smallLineMetadata[sizeClass];
+        auto& metadata = m_smallRunMetadata[sizeClass];
 
         size_t object = 0;
         size_t line = 0;
@@ -84,17 +84,17 @@ void Heap::scavenge(std::unique_lock<StaticMutex>& lock, std::chrono::millisecon
 {
     waitUntilFalse(lock, sleepDuration, m_isAllocatingPages);
 
-    scavengeSmallPages(lock, sleepDuration);
+    scavengeSmallRuns(lock, sleepDuration);
     scavengeLargeObjects(lock, sleepDuration);
     scavengeXLargeObjects(lock, sleepDuration);
 
     sleep(lock, sleepDuration);
 }
 
-void Heap::scavengeSmallPages(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration)
+void Heap::scavengeSmallRuns(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration)
 {
-    while (!m_smallPages.isEmpty()) {
-        m_vmHeap.deallocateSmallPage(lock, m_smallPages.pop());
+    while (!m_smallRuns.isEmpty()) {
+        m_vmHeap.deallocateSmallRun(lock, m_smallRuns.pop());
         waitUntilFalse(lock, sleepDuration, m_isAllocatingPages);
     }
 }
@@ -126,22 +126,22 @@ void Heap::scavengeXLargeObjects(std::unique_lock<StaticMutex>& lock, std::chron
 void Heap::allocateSmallBumpRanges(std::lock_guard<StaticMutex>& lock, size_t sizeClass, BumpAllocator& allocator, BumpRangeCache& rangeCache)
 {
     BASSERT(!rangeCache.size());
-    SmallPage* page = allocateSmallPage(lock, sizeClass);
-    SmallLine* lines = page->begin();
-    BASSERT(page->hasFreeLines(lock));
+    SmallRun* run = allocateSmallRun(lock, sizeClass);
+    SmallLine* lines = run->begin();
+    BASSERT(run->hasFreeLines(lock));
 
     // Find a free line.
     for (size_t lineNumber = 0; lineNumber < smallLineCount; ++lineNumber) {
         if (lines[lineNumber].refCount(lock))
             continue;
 
-        LineMetadata& lineMetadata = m_smallLineMetadata[sizeClass][lineNumber];
+        LineMetadata& lineMetadata = m_smallRunMetadata[sizeClass][lineNumber];
         if (!lineMetadata.objectCount)
             continue;
 
-        // In a fragmented page, some free ranges might not fit in the cache.
+        // In a fragmented run, some free ranges might not fit in the cache.
         if (rangeCache.size() == rangeCache.capacity()) {
-            m_smallPagesWithFreeLines[sizeClass].push(page);
+            m_smallRunsWithFreeLines[sizeClass].push(run);
             BASSERT(allocator.canAllocate());
             return;
         }
@@ -149,20 +149,20 @@ void Heap::allocateSmallBumpRanges(std::lock_guard<StaticMutex>& lock, size_t si
         char* begin = lines[lineNumber].begin() + lineMetadata.startOffset;
         unsigned short objectCount = lineMetadata.objectCount;
         lines[lineNumber].ref(lock, lineMetadata.objectCount);
-        page->ref(lock);
+        run->ref(lock);
 
         // Merge with subsequent free lines.
         while (++lineNumber < smallLineCount) {
             if (lines[lineNumber].refCount(lock))
                 break;
 
-            LineMetadata& lineMetadata = m_smallLineMetadata[sizeClass][lineNumber];
+            LineMetadata& lineMetadata = m_smallRunMetadata[sizeClass][lineNumber];
             if (!lineMetadata.objectCount)
                 continue;
 
             objectCount += lineMetadata.objectCount;
             lines[lineNumber].ref(lock, lineMetadata.objectCount);
-            page->ref(lock);
+            run->ref(lock);
         }
 
         if (!allocator.canAllocate())
@@ -172,46 +172,45 @@ void Heap::allocateSmallBumpRanges(std::lock_guard<StaticMutex>& lock, size_t si
     }
 
     BASSERT(allocator.canAllocate());
-    page->setHasFreeLines(lock, false);
+    run->setHasFreeLines(lock, false);
 }
 
-SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t sizeClass)
+SmallRun* Heap::allocateSmallRun(std::lock_guard<StaticMutex>& lock, size_t sizeClass)
 {
-    if (!m_smallPagesWithFreeLines[sizeClass].isEmpty())
-        return m_smallPagesWithFreeLines[sizeClass].pop();
+    if (!m_smallRunsWithFreeLines[sizeClass].isEmpty())
+        return m_smallRunsWithFreeLines[sizeClass].pop();
 
-    SmallPage* page = [this, &lock]() {
-        if (!m_smallPages.isEmpty())
-            return m_smallPages.pop();
+    SmallRun* run = [this, &lock]() {
+        if (!m_smallRuns.isEmpty())
+            return m_smallRuns.pop();
 
         m_isAllocatingPages = true;
-        SmallPage* page = m_vmHeap.allocateSmallPage(lock);
-        return page;
+        return m_vmHeap.allocateSmallRun(lock);
     }();
 
-    page->setSizeClass(sizeClass);
-    return page;
+    run->setSizeClass(sizeClass);
+    return run;
 }
 
 void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, SmallLine* line)
 {
     BASSERT(!line->refCount(lock));
-    SmallPage* page = SmallPage::get(line);
-    page->deref(lock);
+    SmallRun* run = SmallRun::get(line);
+    run->deref(lock);
 
-    if (!page->hasFreeLines(lock)) {
-        page->setHasFreeLines(lock, true);
-        m_smallPagesWithFreeLines[page->sizeClass()].push(page);
+    if (!run->hasFreeLines(lock)) {
+        run->setHasFreeLines(lock, true);
+        m_smallRunsWithFreeLines[run->sizeClass()].push(run);
 
-        BASSERT(page->refCount(lock));
+        BASSERT(run->refCount(lock));
         return;
     }
 
-    if (page->refCount(lock))
+    if (run->refCount(lock))
         return;
 
-    m_smallPagesWithFreeLines[page->sizeClass()].remove(page);
-    m_smallPages.push(page);
+    m_smallRunsWithFreeLines[run->sizeClass()].remove(run);
+    m_smallRuns.push(run);
     m_scavenger.run();
 }
 

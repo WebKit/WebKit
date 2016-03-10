@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SmallPage_h
-#define SmallPage_h
+#ifndef SmallRun_h
+#define SmallRun_h
 
 #include "BAssert.h"
 #include "List.h"
@@ -34,14 +34,14 @@
 
 namespace bmalloc {
 
-class SmallPage : public ListNode<SmallPage> {
+class SmallRun : public ListNode<SmallRun> {
 public:
     static const unsigned char maxRefCount = std::numeric_limits<unsigned char>::max();
-    static_assert(smallLineCount < maxRefCount, "maximum line count must fit in SmallPage");
+    static_assert(smallLineCount < maxRefCount, "maximum line count must fit in SmallRun");
     
-    static SmallPage* get(SmallLine*);
+    static SmallRun* get(SmallLine*);
 
-    SmallPage()
+    SmallRun()
         : m_hasFreeLines(true)
     {
     }
@@ -65,13 +65,13 @@ private:
     unsigned char m_sizeClass;
 };
 
-inline void SmallPage::ref(std::lock_guard<StaticMutex>&)
+inline void SmallRun::ref(std::lock_guard<StaticMutex>&)
 {
     BASSERT(m_refCount < maxRefCount);
     ++m_refCount;
 }
 
-inline bool SmallPage::deref(std::lock_guard<StaticMutex>&)
+inline bool SmallRun::deref(std::lock_guard<StaticMutex>&)
 {
     BASSERT(m_refCount);
     --m_refCount;
@@ -80,4 +80,4 @@ inline bool SmallPage::deref(std::lock_guard<StaticMutex>&)
 
 } // namespace bmalloc
 
-#endif // SmallPage_h
+#endif // SmallRun_h

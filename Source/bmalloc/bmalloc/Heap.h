@@ -34,7 +34,7 @@
 #include "SegregatedFreeList.h"
 #include "SmallChunk.h"
 #include "SmallLine.h"
-#include "SmallPage.h"
+#include "SmallRun.h"
 #include "VMHeap.h"
 #include "Vector.h"
 #include "XLargeMap.h"
@@ -72,9 +72,9 @@ public:
 private:
     ~Heap() = delete;
     
-    void initializeLineMetadata();
+    void initializeSmallRunMetadata();
 
-    SmallPage* allocateSmallPage(std::lock_guard<StaticMutex>&, size_t sizeClass);
+    SmallRun* allocateSmallRun(std::lock_guard<StaticMutex>&, size_t sizeClass);
 
     void deallocateSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
     void deallocateLarge(std::lock_guard<StaticMutex>&, const LargeObject&);
@@ -88,15 +88,15 @@ private:
     XLargeRange splitAndAllocate(XLargeRange&, size_t alignment, size_t);
 
     void concurrentScavenge();
-    void scavengeSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
+    void scavengeSmallRuns(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
     void scavengeLargeObjects(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
     void scavengeXLargeObjects(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
 
-    std::array<std::array<LineMetadata, smallLineCount>, smallMax / alignment> m_smallLineMetadata;
+    std::array<RunMetadata, smallMax / alignment> m_smallRunMetadata;
 
-    std::array<List<SmallPage>, smallMax / alignment> m_smallPagesWithFreeLines;
+    std::array<List<SmallRun>, smallMax / alignment> m_smallRunsWithFreeLines;
 
-    List<SmallPage> m_smallPages;
+    List<SmallRun> m_smallRuns;
 
     SegregatedFreeList m_largeObjects;
     

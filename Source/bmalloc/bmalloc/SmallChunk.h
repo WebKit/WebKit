@@ -28,7 +28,7 @@
 
 #include "Sizes.h"
 #include "SmallLine.h"
-#include "SmallPage.h"
+#include "SmallRun.h"
 #include "VMAllocate.h"
 
 namespace bmalloc {
@@ -39,15 +39,15 @@ public:
 
     static SmallChunk* get(void*);
 
-    SmallPage* begin() { return SmallPage::get(SmallLine::get(m_memory)); }
-    SmallPage* end() { return m_pages.end(); }
+    SmallRun* begin() { return SmallRun::get(SmallLine::get(m_memory)); }
+    SmallRun* end() { return m_runs.end(); }
     
     SmallLine* lines() { return m_lines.begin(); }
-    SmallPage* pages() { return m_pages.begin(); }
+    SmallRun* runs() { return m_runs.begin(); }
     
 private:
     std::array<SmallLine, smallChunkSize / smallLineSize> m_lines;
-    std::array<SmallPage, smallChunkSize / vmPageSize> m_pages;
+    std::array<SmallRun, smallChunkSize / vmPageSize> m_runs;
     char m_memory[] __attribute__((aligned(2 * smallMax + 0)));
 };
 
@@ -63,11 +63,11 @@ inline SmallChunk::SmallChunk(std::lock_guard<StaticMutex>& lock)
     for (SmallLine* line = m_lines.begin(); line < SmallLine::get(m_memory); ++line) {
         line->ref(lock, 1);
 
-        SmallPage* page = SmallPage::get(line);
+        SmallRun* page = SmallRun::get(line);
         page->ref(lock);
     }
 
-    for (SmallPage* page = begin(); page != end(); ++page)
+    for (SmallRun* page = begin(); page != end(); ++page)
         page->setHasFreeLines(lock, true);
 }
 
@@ -98,23 +98,23 @@ inline char* SmallLine::end()
     return begin() + smallLineSize;
 }
 
-inline SmallPage* SmallPage::get(SmallLine* line)
+inline SmallRun* SmallRun::get(SmallLine* line)
 {
     SmallChunk* chunk = SmallChunk::get(line);
     size_t lineNumber = line - chunk->lines();
-    size_t pageNumber = lineNumber * smallLineSize / vmPageSize;
-    return &chunk->pages()[pageNumber];
+    size_t runNumber = lineNumber * smallLineSize / vmPageSize;
+    return &chunk->runs()[runNumber];
 }
 
-inline SmallLine* SmallPage::begin()
+inline SmallLine* SmallRun::begin()
 {
     SmallChunk* chunk = SmallChunk::get(this);
-    size_t pageNumber = this - chunk->pages();
-    size_t lineNumber = pageNumber * smallLineCount;
+    size_t runNumber = this - chunk->runs();
+    size_t lineNumber = runNumber * smallLineCount;
     return &chunk->lines()[lineNumber];
 }
 
-inline SmallLine* SmallPage::end()
+inline SmallLine* SmallRun::end()
 {
     return begin() + smallLineCount;
 }

@@ -1,3 +1,69 @@
+2016-03-10  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Rename SmallPage to SmallRun
+        https://bugs.webkit.org/show_bug.cgi?id=155320
+
+        Reviewed by Alex Christensen.
+
+        A page is a fixed-size set of lines.
+
+        A run is an variable-sized set of lines.
+
+        We want to start using runs because:
+
+            (a) we want to support varying the hardware page size by OS;
+
+            (b) we want to support allocations larger than our current page size.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::initializeSmallRunMetadata):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeSmallRuns):
+        (bmalloc::Heap::allocateSmallBumpRanges):
+        (bmalloc::Heap::allocateSmallRun):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::initializeLineMetadata): Deleted.
+        (bmalloc::Heap::scavengeSmallPages): Deleted.
+        (bmalloc::Heap::allocateSmallPage): Deleted.
+        * bmalloc/Heap.h:
+        * bmalloc/LineMetadata.h:
+        * bmalloc/SmallChunk.h:
+        (bmalloc::SmallChunk::begin):
+        (bmalloc::SmallChunk::end):
+        (bmalloc::SmallChunk::lines):
+        (bmalloc::SmallChunk::runs):
+        (bmalloc::SmallChunk::SmallChunk):
+        (bmalloc::SmallLine::end):
+        (bmalloc::SmallRun::get):
+        (bmalloc::SmallRun::begin):
+        (bmalloc::SmallRun::end):
+        (bmalloc::SmallChunk::pages): Deleted.
+        (bmalloc::SmallPage::get): Deleted.
+        (bmalloc::SmallPage::begin): Deleted.
+        (bmalloc::SmallPage::end): Deleted.
+        * bmalloc/SmallPage.h: Removed.
+        * bmalloc/SmallRun.h: Copied from Source/bmalloc/bmalloc/SmallPage.h.
+        (bmalloc::SmallRun::SmallRun):
+        (bmalloc::SmallRun::ref):
+        (bmalloc::SmallRun::deref):
+        (bmalloc::SmallPage::SmallPage): Deleted.
+        (bmalloc::SmallPage::ref): Deleted.
+        (bmalloc::SmallPage::deref): Deleted.
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::allocateSmallChunk):
+        (bmalloc::VMHeap::allocateLargeChunk):
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateSmallRun):
+        (bmalloc::VMHeap::allocateLargeObject):
+        (bmalloc::VMHeap::deallocateSmallRun):
+        (bmalloc::VMHeap::deallocateLargeObject):
+        (bmalloc::VMHeap::allocateSmallPage): Deleted.
+        (bmalloc::VMHeap::deallocateSmallPage): Deleted.
+
 2016-03-08  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling in r197722.
