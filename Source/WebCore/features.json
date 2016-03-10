@@ -231,7 +231,7 @@
             "status": "In Development",
             "enabled-by-default": true
         },
-        "url": "https://www.khronos.org/registry/webgl/specs/2.0/",
+        "url": "https://www.khronos.org/registry/webgl/specs/latest/2.0/",
         "keywords": ["webgl"],
         "category": "html"
     },

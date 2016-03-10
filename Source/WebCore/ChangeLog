@@ -1,3 +1,12 @@
+2016-03-10  Jonathan Davis  <jond@apple.com>
+
+        Fixed broken link for "WebGL 2" on the Feature Status page
+        https://bugs.webkit.org/show_bug.cgi?id=155235
+
+        Reviewed by Alex Christensen.
+
+        * features.json:
+
 2016-03-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Main frame scrollbars should appear on the left on RTL systems
