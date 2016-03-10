@@ -23,16 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Object
+WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Dialog
 {
-    constructor()
+    constructor(delegate)
     {
-        super();
+        super(delegate);
 
-        this._element = document.createElement("div");
-        this._element.className = "go-to-line-dialog";
+        this.element.classList.add("go-to-line-dialog");
 
-        var field = this._element.appendChild(document.createElement("div"));
+        let field = this.element.appendChild(document.createElement("div"));
 
         this._input = field.appendChild(document.createElement("input"));
         this._input.type = "text";
@@ -46,34 +45,6 @@ WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Object
         this._input.addEventListener("blur", this);
         this._clearIcon.addEventListener("mousedown", this);
         this._clearIcon.addEventListener("click", this);
-
-        this._dismissing = false;
-    }
-
-    // Public
-
-    present(parent)
-    {
-        parent.appendChild(this._element);
-        this._input.focus();
-        this._clear();
-    }
-
-    dismiss()
-    {
-        if (this._dismissing)
-            return;
-
-        var parent = this._element.parentNode;
-        if (!parent)
-            return;
-
-        this._dismissing = true;
-
-        parent.removeChild(this._element);
-
-        if (this.delegate && typeof this.delegate.goToLineDialogWasDismissed === "function")
-            this.delegate.goToLineDialogWasDismissed(this);
 
         this._dismissing = false;
     }
@@ -101,14 +72,18 @@ WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Object
         }
     }
 
+    didPresentDialog()
+    {
+        this._input.focus();
+        this._clear();
+    }
+
     // Private
 
     _handleInputEvent(event)
     {
-        if (this._input.value === "")
-            this._element.classList.remove(WebInspector.GoToLineDialog.NonEmptyClassName);
-        else
-            this._element.classList.add(WebInspector.GoToLineDialog.NonEmptyClassName);
+        let force = this._input.value !== "";
+        this.element.classList.toggle(WebInspector.GoToLineDialog.NonEmptyClassName, force);
     }
 
     _handleKeydownEvent(event)
@@ -121,19 +96,14 @@ WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Object
 
             event.preventDefault();
         } else if (event.keyCode === WebInspector.KeyboardShortcut.Key.Enter.keyCode) {
-            var value = parseInt(this._input.value, 10);
+            let value = parseInt(this._input.value, 10);
 
-            var valueIsValid = false;
-            if (this.delegate && typeof this.delegate.isGoToLineDialogValueValid === "function")
-                valueIsValid = this.delegate.isGoToLineDialogValueValid(this, value);
-
-            if (valueIsValid && this.delegate && typeof this.delegate.goToLineDialogValueWasValidated === "function") {
-                this.delegate.goToLineDialogValueWasValidated(this, value);
-                this.dismiss();
+            if (this.representedObjectIsValid(value)) {
+                this.dismiss(value);
                 return;
             }
 
-            this._input.select();
+            this._inputElement.select();
 
             InspectorFrontendHost.beep();
         }
@@ -160,7 +130,7 @@ WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Object
     _clear()
     {
         this._input.value = "";
-        this._element.classList.remove(WebInspector.GoToLineDialog.NonEmptyClassName);
+        this.element.classList.remove(WebInspector.GoToLineDialog.NonEmptyClassName);
     }
 };
 

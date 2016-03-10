@@ -1,5 +1,117 @@
 2016-03-10  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Add "Quick Open" dialog to debugger and resources tabs
+        https://bugs.webkit.org/show_bug.cgi?id=153028
+        <rdar://problem/24194239>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New placeholder text for open resource dialog field.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Keep a reference to the content element to use as global dialog parent,
+        and create keyboard shortcut for new dialog.
+
+        (WebInspector._showOpenResourceDialog):
+        Create dialog if needed, return if already visible.
+        (WebInspector.dialogWasDismissed):
+        Show represented object, if any, when dialog is dismissed.
+
+        * UserInterface/Main.html:
+        New files.
+
+        * UserInterface/Views/Dialog.js: Added.
+        Base class for modal dialog popovers. Implements basic setup and
+        teardown, and logic for validating and returning a represented object.
+
+        (WebInspector.Dialog):
+        (WebInspector.Dialog.prototype.get visible):
+        (WebInspector.Dialog.prototype.get delegate):
+        (WebInspector.Dialog.prototype.get representedObject):
+        (WebInspector.Dialog.prototype.present):
+        (WebInspector.Dialog.prototype.dismiss):
+        (WebInspector.Dialog.prototype.didPresetDialog):
+        (WebInspector.Dialog.prototype.representedObjectIsValid):
+
+        * UserInterface/Views/GoToLineDialog.js:
+        Subclass the Dialog base class.
+        (WebInspector.GoToLineDialog):
+        (WebInspector.GoToLineDialog.prototype.didPresentDialog):
+        Implement base class behavior hook. Replaces "present".
+        (WebInspector.GoToLineDialog.prototype._handleInputEvent):
+        (WebInspector.GoToLineDialog.prototype._handleKeydownEvent):
+        Line number validation handled by base class/delegate.
+        (WebInspector.GoToLineDialog.prototype._clear):
+        (WebInspector.GoToLineDialog.prototype.present): Deleted.
+        (WebInspector.GoToLineDialog.prototype.dismiss): Deleted.
+        No longer needed, handled by base class.
+
+        * UserInterface/Views/OpenResourceDialog.css: Added.
+        (.open-resource-dialog):
+        (.open-resource-dialog > .field):
+        (.open-resource-dialog > .field > input):
+        (.open-resource-dialog > .field > input::-webkit-input-placeholder):
+        (.open-resource-dialog > .field > img):
+        (.open-resource-dialog > .field > img:active):
+        (.open-resource-dialog.non-empty > .field > img):
+        (.open-resource-dialog > .tree-outline):
+        (.open-resource-dialog > .tree-outline .item):
+        (.open-resource-dialog > .tree-outline .item:first-child):
+        (.open-resource-dialog > .tree-outline .item.selected):
+        (.open-resource-dialog > .tree-outline .item.selected .subtitle):
+        Styles for "quick open" dialog.
+
+        * UserInterface/Views/OpenResourceDialog.js: Added.
+        New dialog type, based on the Quick Open dialog found in Xcode (and its
+        equivalent in most modern editors).
+
+        (WebInspector.OpenResourceDialog):
+        (WebInspector.OpenResourceDialog.prototype._populateResourceTreeOutline.createTreeElement):
+        (WebInspector.OpenResourceDialog.prototype._populateResourceTreeOutline):
+        Populate the auto-completion tree from the list of filtered resources.
+
+        (WebInspector.OpenResourceDialog.prototype.didPresentDialog):
+        Build resource list once, when the dialog is presented. Update the list
+        when resources are added/removed in a follow-up: https://webkit.org/b/155321.
+
+        (WebInspector.OpenResourceDialog.prototype._handleInputEvent):
+        (WebInspector.OpenResourceDialog.prototype._handleKeydownEvent):
+        Escape key: dismiss dialog if input is empty, otherwise clear input.
+        Enter key: dismiss dialog if object selected.
+        Key up/down: cycle through auto-completion tree items, if any.
+
+        (WebInspector.OpenResourceDialog.prototype._handleKeyupEvent):
+        (WebInspector.OpenResourceDialog.prototype._handleBlurEvent):
+        (WebInspector.OpenResourceDialog.prototype._handleMousedownEvent):
+        (WebInspector.OpenResourceDialog.prototype._handleClickEvent):
+        (WebInspector.OpenResourceDialog.prototype._clear):
+        (WebInspector.OpenResourceDialog.prototype._updateFilter):
+        Rebuild filter regular expressions and apply to all resources. Each
+        resource is given a weight based on the first matching filter. Filters
+        are ordered by relevancy, from most to least relevant. Filtered resources
+        are sorted based on weight. If no matches are found, the tree is hidden.
+
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype.get filterableData):
+        make filterable resource data more fine-grained. Priority should be given
+        to the resource's name, before the complete URL.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.showGoToLineDialog):
+        (WebInspector.SourceCodeTextEditor.prototype.dialogWasDismissed):
+        (WebInspector.SourceCodeTextEditor.prototype.goToLineDialogValueWasValidated): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype.goToLineDialogWasDismissed): Deleted.
+        Updated for new Dialog delegate behavior.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline.large .item .titles):
+        (.tree-outline.large .item .titles.no-subtitle): Deleted.
+        Styles for tree elements in "quick open" dialog auto-completion tree.
+
+2016-03-10  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: TreeOutlineDataGridSynchronizer should be optional in TimelineDataGrid
         https://bugs.webkit.org/show_bug.cgi?id=155318
         <rdar://problem/25091949>

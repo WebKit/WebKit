@@ -182,17 +182,13 @@ body.window-inactive .tree-outline .item.selected {
 }
 
 .tree-outline.large .item .titles {
-    top: 5px;
+    top: 10px;
     line-height: 11px;
 }
 
 .tree-outline .item .highlighted {
     background-color: hsla(53, 83%, 53%, 0.2);
     border-bottom: 1px solid hsl(47, 82%, 60%);
-}
-
-.tree-outline.large .item .titles.no-subtitle {
-    top: 10px;
 }
 
 .tree-outline .item .title::after {

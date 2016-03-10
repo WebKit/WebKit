@@ -83,7 +83,8 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
 
     get filterableData()
     {
-        return {text: [this._resource.url]};
+        let urlComponents = this._resource.urlComponents;
+        return {text: [urlComponents.lastPathComponent, urlComponents.path, this._resource.url]};
     }
 
     ondblclick()

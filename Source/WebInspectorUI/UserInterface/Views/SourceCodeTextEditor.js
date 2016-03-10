@@ -216,28 +216,24 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
     showGoToLineDialog()
     {
-        if (!this._goToLineDialog) {
-            this._goToLineDialog = new WebInspector.GoToLineDialog;
-            this._goToLineDialog.delegate = this;
-        }
+        if (!this._goToLineDialog)
+            this._goToLineDialog = new WebInspector.GoToLineDialog(this);
 
         this._goToLineDialog.present(this.element);
     }
 
-    isGoToLineDialogValueValid(goToLineDialog, lineNumber)
+    isDialogRepresentedObjectValid(goToLineDialog, lineNumber)
     {
         return !isNaN(lineNumber) && lineNumber > 0 && lineNumber <= this.lineCount;
     }
 
-    goToLineDialogValueWasValidated(goToLineDialog, lineNumber)
+    dialogWasDismissed(goToLineDialog)
     {
-        var position = new WebInspector.SourceCodePosition(lineNumber - 1, 0);
-        var range = new WebInspector.TextRange(lineNumber - 1, 0, lineNumber, 0);
-        this.revealPosition(position, range, false, true);
-    }
+        let lineNumber = goToLineDialog.representedObject;
+        let position = new WebInspector.SourceCodePosition(lineNumber - 1, 0);
+        let range = new WebInspector.TextRange(lineNumber - 1, 0, lineNumber, 0);
 
-    goToLineDialogWasDismissed()
-    {
+        this.revealPosition(position, range, false, true);
         this.focus();
     }
 

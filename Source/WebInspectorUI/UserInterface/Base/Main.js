@@ -227,9 +227,9 @@ WebInspector.contentLoaded = function()
     this.tabBar.addEventListener(WebInspector.TabBar.Event.NewTabItemClicked, this._newTabItemClicked, this);
     this.tabBar.addEventListener(WebInspector.TabBar.Event.OpenDefaultTab, this._openDefaultTab, this);
 
-    var contentElement = document.getElementById("content");
-    contentElement.setAttribute("role", "main");
-    contentElement.setAttribute("aria-label", WebInspector.UIString("Content"));
+    this._contentElement = document.getElementById("content");
+    this._contentElement.setAttribute("role", "main");
+    this._contentElement.setAttribute("aria-label", WebInspector.UIString("Content"));
 
     this.splitContentBrowser = new WebInspector.ContentBrowser(document.getElementById("split-content-browser"), this, true);
     this.splitContentBrowser.navigationBar.element.addEventListener("mousedown", this._consoleResizerMouseDown.bind(this));
@@ -254,6 +254,8 @@ WebInspector.contentLoaded = function()
     this._findKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "F", this._find.bind(this));
     this._saveKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this));
     this._saveAsKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._saveAs.bind(this));
+
+    this.openResourceKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Command | WebInspector.KeyboardShortcut.Modifier.Shift, "O", this._showOpenResourceDialog.bind(this));
 
     this.navigationSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Option, "L", this.toggleNavigationSidebar.bind(this));
     this.detailsSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Option, "R", this.toggleDetailsSidebar.bind(this));
@@ -463,6 +465,17 @@ WebInspector.isTabTypeAllowed = function(tabType)
 WebInspector.knownTabClasses = function()
 {
     return new Set(this._knownTabClassesByType.values());
+}
+
+WebInspector._showOpenResourceDialog = function()
+{
+    if (!this._openResourceDialog)
+        this._openResourceDialog = new WebInspector.OpenResourceDialog(this);
+
+    if (this._openResourceDialog.visible)
+        return;
+
+    this._openResourceDialog.present(this._contentElement);
 }
 
 WebInspector._createTabContentViewForType = function(tabType)
@@ -2395,4 +2408,15 @@ WebInspector._sharedWindowKeydownListener = function(event)
             break;
         }
     }
+};
+
+// OpenResourceDialog delegate
+
+WebInspector.dialogWasDismissed = function(dialog)
+{
+    let representedObject = dialog.representedObject;
+    if (!representedObject)
+        return;
+
+    WebInspector.showRepresentedObject(representedObject);
 };
