@@ -2200,8 +2200,15 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
 #if ENABLE(DATA_DETECTION)
                     info.isDataDetectorLink = DataDetection::isDataDetectorLink(element);
                     if (info.isDataDetectorLink) {
+                        const int dataDetectionExtendedContextLength = 350;
                         info.dataDetectorIdentifier = DataDetection::dataDetectorIdentifier(element);
                         info.dataDetectorResults = element->document().frame()->dataDetectionResults();
+                        if (DataDetection::requiresExtendedContext(element)) {
+                            RefPtr<Range> linkRange = Range::create(element->document());
+                            linkRange->selectNodeContents(element, ASSERT_NO_EXCEPTION);
+                            info.textBefore = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(linkRange->startPosition(), dataDetectionExtendedContextLength, DirectionBackward).get(), TextIteratorDefaultBehavior, true);
+                            info.textAfter = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(linkRange->endPosition(), dataDetectionExtendedContextLength, DirectionForward).get(), TextIteratorDefaultBehavior, true);
+                        }
                     }
 #endif
                 } else if (element->renderer() && element->renderer()->isRenderImage()) {

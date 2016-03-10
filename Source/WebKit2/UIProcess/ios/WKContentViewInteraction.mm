@@ -3829,9 +3829,20 @@ static bool isAssistableInputType(InputType type)
             DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
             if ([controller respondsToSelector:@selector(resultForURL:identifier:selectedText:results:context:extendedContext:)]) {
                 NSDictionary *newContext = nil;
+                RetainPtr<NSMutableDictionary> extendedContext;
                 DDResultRef ddResult = [controller resultForURL:dataForPreview[UIPreviewDataLink] identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&newContext];
                 if (ddResult)
                     dataForPreview[UIPreviewDataDDResult] = (__bridge id)ddResult;
+                if (!_positionInformation.textBefore.isEmpty() || !_positionInformation.textAfter.isEmpty()) {
+                    extendedContext = adoptNS([@{
+                        getkDataDetectorsLeadingText() : _positionInformation.textBefore,
+                        getkDataDetectorsTrailingText() : _positionInformation.textAfter,
+                    } mutableCopy]);
+                    
+                    if (newContext)
+                        [extendedContext addEntriesFromDictionary:newContext];
+                    newContext = extendedContext.get();
+                }
                 if (newContext)
                     dataForPreview[UIPreviewDataDDContext] = newContext;
             }

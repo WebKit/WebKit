@@ -63,3 +63,5 @@
 
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
 SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
+SOFT_LINK_CONSTANT(DataDetectorsUI, kDataDetectorsLeadingText, const NSString *)
+SOFT_LINK_CONSTANT(DataDetectorsUI, kDataDetectorsTrailingText, const NSString *)

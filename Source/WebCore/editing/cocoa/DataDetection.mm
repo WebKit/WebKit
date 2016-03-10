@@ -56,6 +56,11 @@ bool DataDetection::isDataDetectorLink(Element* element)
     return element->getAttribute(dataDetectorsURLScheme) == "true";
 }
 
+bool DataDetection::requiresExtendedContext(Element* element)
+{
+    return element->getAttribute(dataDetectorsAttributeTypeKey) == "calendar-event";
+}
+
 String DataDetection::dataDetectorIdentifier(Element* element)
 {
     return element->getAttribute(dataDetectorsAttributeResultKey);

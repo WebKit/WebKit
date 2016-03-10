@@ -1,3 +1,26 @@
+2016-03-09  Enrica Casucci  <enrica@apple.com>
+
+        Retrieve additional context for some data detector link for preview and action menu.
+        https://bugs.webkit.org/show_bug.cgi?id=155278
+        rdar://problem/24884951
+
+        Reviewed by Tim Horton.
+
+        Data detector results for items like calendar events, can be augmented
+        retrieving the text surrounding the link.
+
+        * Platform/spi/ios/DataDetectorsUISPI.h:
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2016-03-09  Gavin Barraclough  <barraclough@apple.com>
 
         Last opened tab does not receive SetHiddenPageTimerThrottlingIncreaseLimit message

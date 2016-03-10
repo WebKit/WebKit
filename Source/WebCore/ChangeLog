@@ -1,3 +1,23 @@
+2016-03-09  Enrica Casucci  <enrica@apple.com>
+
+        Retrieve additional context for some data detector link for preview and action menu.
+        https://bugs.webkit.org/show_bug.cgi?id=155278
+        rdar://problem/24884951
+
+        Reviewed by Tim Horton.
+
+        Adding helper function to compute a range by moving by a number of characters
+        from a given position and direction.
+        Adding function to check if the given data detector link element requires
+        an extended context.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::rangeExpandedByCharactersInDirectionAtWordBoundary):
+        * editing/VisibleUnits.h:
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::requiresExtendedContext):
+
 2016-03-09  Daniel Bates  <dabates@apple.com>
 
         Fix the Windows build after <https://trac.webkit.org/changeset/197905>

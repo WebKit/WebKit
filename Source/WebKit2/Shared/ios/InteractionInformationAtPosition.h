@@ -56,6 +56,8 @@ struct InteractionInformationAtPosition {
     String title;
     WebCore::IntRect bounds;
     RefPtr<ShareableBitmap> image;
+    String textBefore;
+    String textAfter;
 
     WebCore::TextIndicatorData linkIndicator;
 #if ENABLE(DATA_DETECTION)

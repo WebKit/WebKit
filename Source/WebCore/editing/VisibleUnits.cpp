@@ -1983,6 +1983,25 @@ VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position)
     return result;
 }
 
+PassRefPtr<Range> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePosition& position, int numberOfCharactersToExpand, SelectionDirection direction)
+{
+    Position start = position.deepEquivalent();
+    Position end = position.deepEquivalent();
+    for (int i = 0; i < numberOfCharactersToExpand; ++i) {
+        if (direction == DirectionBackward)
+            start = start.previous(Character);
+        else
+            end = end.next(Character);
+    }
+    
+    if (direction == DirectionBackward && !atBoundaryOfGranularity(start, WordGranularity, DirectionBackward))
+        start = startOfWord(start).deepEquivalent();
+    if (direction == DirectionForward && !atBoundaryOfGranularity(end, WordGranularity, DirectionForward))
+        end = endOfWord(end).deepEquivalent();
+
+    return makeRange(start, end);
+}    
+
 PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition& position, int numberOfCharactersToExpand)
 {
     Position start = position.deepEquivalent();
