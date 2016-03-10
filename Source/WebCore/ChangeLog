@@ -1,3 +1,36 @@
+2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extract EventPath.h/cpp out of EventDispatcher.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=155285
+
+        Reviewed by Chris Dumez.
+
+        Extracted EventPath.h/cpp out of EventDispatcher.cpp to add the support for Event.deepPath()
+        in webkit.org/b/153538. The new file defines member functions of EventPath and RelatedNodeRetargeter.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchScopedEvent):
+        (WebCore::EventDispatcher::dispatchEvent):
+        (WebCore::EventPath): Moved to EventPath.cpp.
+        (WebCore::eventTargetRespectingTargetRules): Moved to EventPath.h.
+        (WebCore::shouldEventCrossShadowBoundary): Moved to EventPath.cpp.
+        (WebCore::nodeOrHostIfPseudoElement): Ditto.
+        (WebCore::RelatedNodeRetargeter): Moved to EventPath.cpp.
+        * dom/EventPath.cpp: Added.
+        (WebCore::shouldEventCrossShadowBoundary): Moved from EventDispatcher.cpp.
+        (WebCore::nodeOrHostIfPseudoElement): Ditto.
+        (WebCore::EventPath::EventPath): Ditto.
+        (WebCore::RelatedNodeRetargeter): Ditto.
+        * dom/EventPath.h: Added.
+        (WebCore::EventPath::isEmpty):
+        (WebCore::EventPath::size):
+        (WebCore::EventPath::contextAt):
+        (WebCore::EventPath::lastContextIfExists):
+        (WebCore::EventPath::eventTargetRespectingTargetRules): Moved from EventDispatcher.cpp.
+
 2016-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         Font antialiasing (smoothing) changes when elements are rendered into compositing layers

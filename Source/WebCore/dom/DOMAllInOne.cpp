@@ -83,6 +83,7 @@
 #include "EventDispatcher.cpp"
 #include "EventListenerMap.cpp"
 #include "EventNames.cpp"
+#include "EventPath.cpp"
 #include "EventTarget.cpp"
 #include "ExceptionBase.cpp"
 #include "ExceptionCodePlaceholder.cpp"
