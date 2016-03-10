@@ -1,5 +1,17 @@
 2016-03-09  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: LayoutTimelineView path components should reflect grid row nesting
+        https://bugs.webkit.org/show_bug.cgi?id=155279
+        <rdar://problem/25075355>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype.get selectionPathComponents):
+        Walk grid nodes to build path component array.
+
+2016-03-09  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Timelines UI redesign: use DataGridNode for TimelineView selection path components
         https://bugs.webkit.org/show_bug.cgi?id=154954
         <rdar://problem/24947939>

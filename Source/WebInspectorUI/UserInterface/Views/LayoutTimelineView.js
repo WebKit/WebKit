@@ -104,15 +104,24 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
     get selectionPathComponents()
     {
-        if (!this._dataGrid.selectedNode || this._dataGrid.selectedNode.hidden)
+        let dataGridNode = this._dataGrid.selectedNode;
+        if (!dataGridNode || dataGridNode.hidden)
             return null;
 
-        let timelineDataGridNode = this._dataGrid.selectedNode;
-        console.assert(timelineDataGridNode instanceof WebInspector.TimelineDataGridNode);
+        let pathComponents = [];
 
-        let pathComponent = new WebInspector.TimelineDataGridNodePathComponent(timelineDataGridNode);
-        pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
-        return [pathComponent];
+        while (dataGridNode && !dataGridNode.root) {
+            console.assert(dataGridNode instanceof WebInspector.TimelineDataGridNode);
+            if (dataGridNode.hidden)
+                return null;
+
+            let pathComponent = new WebInspector.TimelineDataGridNodePathComponent(dataGridNode);
+            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
+            pathComponents.unshift(pathComponent);
+            dataGridNode = dataGridNode.parent;
+        }
+
+        return pathComponents;
     }
 
     shown()
