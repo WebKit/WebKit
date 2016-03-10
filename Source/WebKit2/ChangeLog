@@ -1,3 +1,15 @@
+2016-03-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] push media stream state to the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=155281
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame): Don't clear m_mediaState, it is done in
+          WebPageProxy::resetState. This reverts a change added in r197929.
+        
+
 2016-03-08  Sam Weinig  <sam@webkit.org>
 
         Add a baseURL parameter to _WKUserStyleSheet
