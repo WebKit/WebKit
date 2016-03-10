@@ -115,7 +115,7 @@ class InputGeneratorTests:
         return passed
 
     def main(self):
-        current_scm = detect_scm_system(os.curdir)
+        current_scm = detect_scm_system(os.path.dirname(os.path.abspath(__file__)))
         os.chdir(os.path.join(current_scm.checkout_root, 'Source'))
 
         all_tests_passed = True

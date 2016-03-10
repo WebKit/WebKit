@@ -1,3 +1,17 @@
+2016-03-10  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: should be able to run protocol and input generator scripts from any directory
+        https://bugs.webkit.org/show_bug.cgi?id=155307
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitpy/inspector/main.py:
+        (InspectorGeneratorTests.main):
+        * Scripts/webkitpy/replay/main.py:
+        (InputGeneratorTests.main):
+        Compute the current SCM based on the location of the script being executed, not
+        the $CWD which could be anything. There's rarely a good reason to use $CWD.
+
 2016-03-10  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] DumpRenderTree crashes when accessing window.testRunner.inspectorTestStubURL
