@@ -78,6 +78,9 @@ public:
     WEBCORE_EXPORT void setTilesOpaque(bool);
     bool tilesAreOpaque() const { return m_tilesAreOpaque; }
 
+    void setTileContentsFormatFlags(PlatformCALayer::ContentsFormatFlags) override;
+    PlatformCALayer::ContentsFormatFlags tileContentsFormatFlags() const { return m_contentsFormatFlags; }
+
     PlatformCALayer& rootLayer() { return *m_tileCacheLayer; }
     const PlatformCALayer& rootLayer() const { return *m_tileCacheLayer; }
 
@@ -205,6 +208,8 @@ private:
     VelocityData m_velocity;
 
     int m_marginSize { kDefaultTileSize };
+
+    PlatformCALayer::ContentsFormatFlags m_contentsFormatFlags { 0 };
 
     // m_marginTop and m_marginBottom are the height in pixels of the top and bottom margin tiles. The width
     // of those tiles will be equivalent to the width of the other tiles in the grid. m_marginRight and

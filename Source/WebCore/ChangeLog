@@ -1,3 +1,61 @@
+2016-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Font antialiasing (smoothing) changes when elements are rendered into compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=23364
+        rdar://problem/7288429
+
+        Reviewed by Tim Horton.
+
+        Improve the appearance of subpixel-antialiased ("smoothed") text in non-opaque layers
+        by opting in to a new CALayer backing store format.
+        
+        GraphicsLayer now has setSupportsSmoothedFonts(), which is called by RenderLayerBacking
+        when the platform has support for the new feature. Ideally this would only be set when
+        we know a layer has smoothed text drawn into it, but, for now, enable this for all
+        layers. The right thing happens with opaque layers under the hood.
+        
+        setSupportsSmoothedFonts() is turned into a PlatformCALayer contentsFormat flag, which
+        is ultimately passed to setBackingStoreFormat().
+        
+        We also need to propagate this flag to TileController tiles.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::supportsSmoothedFontsInNonOpaqueLayers):
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::supportsSmoothedFonts):
+        (WebCore::GraphicsLayer::setSupportsSmoothedFonts):
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayer::supportsSmoothedFontsInNonOpaqueLayers):
+        (WebCore::GraphicsLayerCA::setSupportsSmoothedFonts):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateContentsFormat):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator): Give the number a "shadow" when
+        the contents format says we support smoothed fonts.
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setTileContentsFormatFlags):
+        (WebCore::TileController::createTileLayer):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::updateTileLayerProperties):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::setBackingStoreFormat):
+        (PlatformCALayerCocoa::commonInit):
+        (PlatformCALayerCocoa::setContentsFormat):
+        (PlatformCALayer::drawLayerContents): Previously, we turned off font smoothing in
+        non-opaque layers to improve text appearance. We no longer need to do that when
+        the contents format has "SmoothedFonts".
+        * platform/ios/LegacyTileGridTile.mm:
+        (WebCore::setBackingStoreFormat):
+        (WebCore::LegacyTileGridTile::LegacyTileGridTile):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+
 2016-03-09  Gavin Barraclough  <barraclough@apple.com>
 
         WebKit should adopt journal_mode=wal for all SQLite databases.

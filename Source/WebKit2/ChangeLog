@@ -1,3 +1,22 @@
+2016-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Font antialiasing (smoothing) changes when elements are rendered into compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=23364
+        rdar://problem/7288429
+
+        Reviewed by Tim Horton.
+        
+        Send the ContentsFormat to the UI process (but nothing happens to it there yet).
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::setContentsFormat):
+        (WebKit::PlatformCALayerRemote::contentsFormat):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add runtime flags for shadow DOM and custom elements

@@ -211,6 +211,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
     if (changedProperties & OpaqueChanged)
         encoder << opaque;
 
+    if (changedProperties & ContentsFormatFlagsChanged)
+        encoder << contentsFormatFlags;
+
     if (changedProperties & MaskLayerChanged)
         encoder << maskLayerID;
 
@@ -371,6 +374,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
 
     if (result.changedProperties & OpaqueChanged) {
         if (!decoder.decode(result.opaque))
+            return false;
+    }
+
+    if (result.changedProperties & ContentsFormatFlagsChanged) {
+        if (!decoder.decode(result.contentsFormatFlags))
             return false;
     }
 

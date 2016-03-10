@@ -69,7 +69,7 @@
 #import <WebKitAdditions/LayerBackingStoreAdditions.mm>
 #else
 namespace WebCore {
-static void setBackingStoreFormat(CALayer *)
+static void setBackingStoreFormat(CALayer *, PlatformCALayer::ContentsFormatFlags)
 {
 }
 } // namespace WebCore
@@ -308,7 +308,7 @@ void PlatformCALayerCocoa::commonInit()
         [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
     if (m_layerType == LayerTypeWebLayer || m_layerType == LayerTypeTiledBackingTileLayer)
-        setBackingStoreFormat(m_layer.get());
+        setBackingStoreFormat(m_layer.get(), 0);
 
     // So that the scrolling thread's performance logging code can find all the tiles, mark this as being a tile.
     if (m_layerType == LayerTypeTiledBackingTileLayer)
@@ -543,6 +543,22 @@ void PlatformCALayerCocoa::setOpaque(bool value)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setOpaque:value];
     END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void PlatformCALayerCocoa::setContentsFormat(ContentsFormatFlags flags)
+{
+    if (flags == m_contentsFormatFlags)
+        return;
+
+    m_contentsFormatFlags = flags;
+
+    if (usesTiledBackingLayer()) {
+        WebTiledBackingLayer* tiledBackingLayer = static_cast<WebTiledBackingLayer*>(m_layer.get());
+        tiledBackingLayer.tiledBacking->setTileContentsFormatFlags(flags);
+        return;
+    }
+
+    setBackingStoreFormat(m_layer.get(), flags);
 }
 
 FloatRect PlatformCALayerCocoa::bounds() const
@@ -1056,7 +1072,7 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
     graphicsContext.setIsCALayerContext(true);
     graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
     
-    if (!layerContents->platformCALayerContentsOpaque()) {
+    if (!layerContents->platformCALayerContentsOpaque() && !(platformCALayer->contentsFormat() & SmoothedFonts)) {
         // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
         graphicsContext.setShouldSmoothFonts(false);
     }

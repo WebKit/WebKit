@@ -79,6 +79,8 @@ public:
     virtual void setTiledScrollingIndicatorPosition(const FloatPoint&) = 0;
     virtual void setTopContentInset(float) = 0;
 
+    virtual void setTileContentsFormatFlags(unsigned) = 0;
+
     virtual void setVelocity(const VelocityData&) = 0;
     
     enum {

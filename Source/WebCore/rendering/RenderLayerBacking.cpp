@@ -178,6 +178,10 @@ std::unique_ptr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const Str
     graphicsLayer->setAcceleratesDrawing(compositor().acceleratedDrawingEnabled());
     graphicsLayer->setUsesDisplayListDrawing(compositor().displayListDrawingEnabled());
 #endif
+
+    // FIXME: ideally we'd only do this if the layer contains smoothed text.
+    if (GraphicsLayer::supportsSmoothedFontsInNonOpaqueLayers())
+        graphicsLayer->setSupportsSmoothedFonts(true);
     
     return graphicsLayer;
 }

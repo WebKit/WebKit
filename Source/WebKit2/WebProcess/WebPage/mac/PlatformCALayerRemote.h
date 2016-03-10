@@ -76,6 +76,9 @@ public:
     bool isOpaque() const override;
     void setOpaque(bool) override;
 
+    void setContentsFormat(ContentsFormatFlags) override;
+    ContentsFormatFlags contentsFormat() const override;
+
     WebCore::FloatRect bounds() const override;
     void setBounds(const WebCore::FloatRect&) override;
 
