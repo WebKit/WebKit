@@ -205,7 +205,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
         }
     }
     if (constructor.isUndefined())
-        return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
+        return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
 
     MarkedArgumentBuffer args;
     args.append(jsNumber(length));

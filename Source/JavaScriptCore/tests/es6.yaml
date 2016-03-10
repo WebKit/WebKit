@@ -909,7 +909,7 @@
 - path: es6/Proxy_apply_handler.js
   cmd: runES6 :normal
 - path: es6/Proxy_Array.isArray_support.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_construct_handler.js
   cmd: runES6 :normal
 - path: es6/Proxy_constructor_requires_new.js

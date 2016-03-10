@@ -1,3 +1,33 @@
+2016-03-09  Saam barati  <sbarati@apple.com>
+
+        Array.isArray support for Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=155179
+
+        Reviewed by Mark Lam.
+
+        This patch implements Array.isArray to be compliant
+        with the ES6 spec. Specifically, it needs to interface
+        properly with Proxy arguments.
+        https://tc39.github.io/ecma262/#sec-isarray
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::getCallData):
+        (JSC::arrayConstructorIsArray):
+        (JSC::arrayConstructorPrivateFuncIsArrayConstructor):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::speciesConstructArray):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::revoke):
+        (JSC::ProxyObject::isRevoked):
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyObject.h:
+        (JSC::ProxyObject::target):
+        (JSC::ProxyObject::handler):
+        * tests/es6.yaml:
+        * tests/stress/proxy-is-array.js: Added.
+        (assert):
+        (test):
+
 2016-03-09  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Fix the ARM64 MacroAssembler after r197816

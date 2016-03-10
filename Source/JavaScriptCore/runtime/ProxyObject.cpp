@@ -1085,6 +1085,11 @@ void ProxyObject::revoke(VM& vm)
     m_handler.set(vm, this, jsNull());
 }
 
+bool ProxyObject::isRevoked() const
+{
+    return handler().isNull();
+}
+
 void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
