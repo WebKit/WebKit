@@ -35,7 +35,6 @@
 #include "WebUserContentControllerMessages.h"
 #include "WebUserContentControllerProxyMessages.h"
 #include <WebCore/DOMWrapperWorld.h>
-#include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/UserStyleSheet.h>
@@ -80,7 +79,6 @@ Ref<WebUserContentController> WebUserContentController::getOrCreate(uint64_t ide
 
 WebUserContentController::WebUserContentController(uint64_t identifier)
     : m_identifier(identifier)
-    , m_userContentController(UserContentController::create())
 {
     WebProcess::singleton().addMessageReceiver(Messages::WebUserContentController::messageReceiverName(), m_identifier, *this);
 }
@@ -93,7 +91,6 @@ WebUserContentController::~WebUserContentController()
 
     userContentControllers().remove(m_identifier);
 }
-
 
 void WebUserContentController::addUserContentWorlds(const Vector<std::pair<uint64_t, String>>& worlds)
 {
@@ -124,20 +121,21 @@ void WebUserContentController::removeUserContentWorlds(const Vector<uint64_t>& w
     }
 }
 
-void WebUserContentController::addUserScripts(const Vector<std::pair<uint64_t, WebCore::UserScript>>& userScripts)
+void WebUserContentController::addUserScripts(const Vector<WebUserScriptData>& userScripts)
 {
-    for (const auto& userScriptWorldPair : userScripts) {
-        auto it = worldMap().find(userScriptWorldPair.first);
+    for (const auto& userScriptData : userScripts) {
+        auto it = worldMap().find(userScriptData.worldIdentifier);
         if (it == worldMap().end()) {
-            WTFLogAlways("Trying to add a UserScript to a UserContentWorld (id=%" PRIu64 ") that does not exist.", userScriptWorldPair.first);
+            WTFLogAlways("Trying to add a UserScript to a UserContentWorld (id=%" PRIu64 ") that does not exist.", userScriptData.worldIdentifier);
             continue;
         }
 
-        m_userContentController->addUserScript(it->value.first->coreWorld(), std::make_unique<WebCore::UserScript>(userScriptWorldPair.second));
+        UserScript script = userScriptData.userScript;
+        addUserScriptInternal(*it->value.first, userScriptData.identifier, WTFMove(script));
     }
 }
 
-void WebUserContentController::removeUserScript(uint64_t worldIdentifier, const String& urlString)
+void WebUserContentController::removeUserScript(uint64_t worldIdentifier, uint64_t userScriptIdentifier)
 {
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
@@ -145,7 +143,7 @@ void WebUserContentController::removeUserScript(uint64_t worldIdentifier, const 
         return;
     }
 
-    m_userContentController->removeUserScript(it->value.first->coreWorld(), URL(URL(), urlString));
+    removeUserScriptInternal(*it->value.first, userScriptIdentifier);
 }
 
 void WebUserContentController::removeAllUserScripts(const Vector<uint64_t>& worldIdentifiers)
@@ -157,24 +155,25 @@ void WebUserContentController::removeAllUserScripts(const Vector<uint64_t>& worl
             return;
         }
 
-        m_userContentController->removeUserScripts(it->value.first->coreWorld());
+        removeUserScripts(*it->value.first);
     }
 }
 
-void WebUserContentController::addUserStyleSheets(const Vector<std::pair<uint64_t, WebCore::UserStyleSheet>>& userStyleSheets)
+void WebUserContentController::addUserStyleSheets(const Vector<WebUserStyleSheetData>& userStyleSheets)
 {
-    for (const auto& userStyleSheetWorldPair : userStyleSheets) {
-        auto it = worldMap().find(userStyleSheetWorldPair.first);
+    for (const auto& userStyleSheetData : userStyleSheets) {
+        auto it = worldMap().find(userStyleSheetData.worldIdentifier);
         if (it == worldMap().end()) {
-            WTFLogAlways("Trying to add a UserStyleSheet to a UserContentWorld (id=%" PRIu64 ") that does not exist.", userStyleSheetWorldPair.first);
+            WTFLogAlways("Trying to add a UserStyleSheet to a UserContentWorld (id=%" PRIu64 ") that does not exist.", userStyleSheetData.worldIdentifier);
             continue;
         }
-
-        m_userContentController->addUserStyleSheet(it->value.first->coreWorld(), std::make_unique<WebCore::UserStyleSheet>(userStyleSheetWorldPair.second), InjectInExistingDocuments);
+        
+        UserStyleSheet sheet = userStyleSheetData.userStyleSheet;
+        addUserStyleSheetInternal(*it->value.first, userStyleSheetData.identifier, WTFMove(sheet));
     }
 }
 
-void WebUserContentController::removeUserStyleSheet(uint64_t worldIdentifier, const String& urlString)
+void WebUserContentController::removeUserStyleSheet(uint64_t worldIdentifier, uint64_t userStyleSheetIdentifier)
 {
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
@@ -182,7 +181,7 @@ void WebUserContentController::removeUserStyleSheet(uint64_t worldIdentifier, co
         return;
     }
 
-    m_userContentController->removeUserStyleSheet(it->value.first->coreWorld(), URL(URL(), urlString));
+    removeUserStyleSheetInternal(*it->value.first, userStyleSheetIdentifier);
 }
 
 void WebUserContentController::removeAllUserStyleSheets(const Vector<uint64_t>& worldIdentifiers)
@@ -194,7 +193,7 @@ void WebUserContentController::removeAllUserStyleSheets(const Vector<uint64_t>& 
             return;
         }
 
-        m_userContentController->removeUserStyleSheets(it->value.first->coreWorld());
+        removeUserStyleSheets(*it->value.first);
     }
 }
 
@@ -253,7 +252,9 @@ void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScri
         RefPtr<WebUserMessageHandlerDescriptorProxy> descriptor = WebUserMessageHandlerDescriptorProxy::create(this, handle.name, handle.identifier);
 
         m_userMessageHandlerDescriptors.add(descriptor->identifier(), descriptor);
-        m_userContentController->addUserMessageHandlerDescriptor(descriptor->descriptor());
+
+        auto& coreDescriptor = descriptor->descriptor();
+        m_userMessageHandlerDescriptorsMap.add(std::make_pair(coreDescriptor.name(), &coreDescriptor.world()), &coreDescriptor);
     }
 #else
     UNUSED_PARAM(scriptMessageHandlers);
@@ -265,8 +266,10 @@ void WebUserContentController::removeUserScriptMessageHandler(uint64_t identifie
 #if ENABLE(USER_MESSAGE_HANDLERS)
     auto it = m_userMessageHandlerDescriptors.find(identifier);
     ASSERT(it != m_userMessageHandlerDescriptors.end());
-    
-    m_userContentController->removeUserMessageHandlerDescriptor(it->value->descriptor());
+
+    auto& coreDescriptor = it->value->descriptor();
+    m_userMessageHandlerDescriptorsMap.remove(std::make_pair(coreDescriptor.name(), &coreDescriptor.world()));
+
     m_userMessageHandlerDescriptors.remove(it);
 #else
     UNUSED_PARAM(identifier);
@@ -279,19 +282,168 @@ void WebUserContentController::addUserContentExtensions(const Vector<std::pair<S
     for (const auto& userContentExtension : userContentExtensions) {
         WebCompiledContentExtensionData contentExtensionData = userContentExtension.second;
         RefPtr<WebCompiledContentExtension> compiledContentExtension = WebCompiledContentExtension::create(WTFMove(contentExtensionData));
-        m_userContentController->addUserContentExtension(userContentExtension.first, compiledContentExtension);
+
+        m_contentExtensionBackend.addContentExtension(userContentExtension.first, WTFMove(compiledContentExtension));
     }
 }
 
 void WebUserContentController::removeUserContentExtension(const String& name)
 {
-    m_userContentController->removeUserContentExtension(name);
+    m_contentExtensionBackend.removeContentExtension(name);
 }
 
 void WebUserContentController::removeAllUserContentExtensions()
 {
-    m_userContentController->removeAllUserContentExtensions();
+    m_contentExtensionBackend.removeAllContentExtensions();
 }
 #endif
+
+
+
+void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, uint64_t userScriptIdentifier, UserScript&& userScript)
+{
+    auto& scriptsInWorld = m_userScripts.ensure(&world, [] { return Vector<std::pair<uint64_t, WebCore::UserScript>>(); }).iterator->value;
+    scriptsInWorld.append(std::make_pair(userScriptIdentifier, WTFMove(userScript)));
+}
+
+void WebUserContentController::addUserScript(InjectedBundleScriptWorld& world, UserScript&& userScript)
+{
+    addUserScriptInternal(world, 0, WTFMove(userScript));
+}
+
+void WebUserContentController::removeUserScriptWithURL(InjectedBundleScriptWorld& world, const URL& url)
+{
+    auto it = m_userScripts.find(&world);
+    if (it == m_userScripts.end())
+        return;
+
+    auto& scripts = it->value;
+    for (int i = scripts.size() - 1; i >= 0; --i) {
+        if (scripts[i].second.url() == url)
+            scripts.remove(i);
+    }
+
+    if (scripts.isEmpty())
+        m_userScripts.remove(it);
+}
+
+void WebUserContentController::removeUserScriptInternal(InjectedBundleScriptWorld& world, uint64_t userScriptIdentifier)
+{
+    auto it = m_userScripts.find(&world);
+    if (it == m_userScripts.end())
+        return;
+
+    auto& scripts = it->value;
+    for (int i = scripts.size() - 1; i >= 0; --i) {
+        if (scripts[i].first == userScriptIdentifier)
+            scripts.remove(i);
+    }
+
+    if (scripts.isEmpty())
+        m_userScripts.remove(it);
+}
+
+void WebUserContentController::removeUserScripts(InjectedBundleScriptWorld& world)
+{
+    m_userScripts.remove(&world);
+}
+
+void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWorld& world, uint64_t userStyleSheetIdentifier, UserStyleSheet&& userStyleSheet)
+{
+    auto& styleSheetsInWorld = m_userStyleSheets.ensure(&world, [] { return Vector<std::pair<uint64_t, WebCore::UserStyleSheet>>(); }).iterator->value;
+    styleSheetsInWorld.append(std::make_pair(userStyleSheetIdentifier, WTFMove(userStyleSheet)));
+
+    invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
+}
+
+void WebUserContentController::addUserStyleSheet(InjectedBundleScriptWorld& world, UserStyleSheet&& userStyleSheet)
+{
+    addUserStyleSheetInternal(world, 0, WTFMove(userStyleSheet));
+}
+
+void WebUserContentController::removeUserStyleSheetWithURL(InjectedBundleScriptWorld& world, const URL& url)
+{
+    auto it = m_userStyleSheets.find(&world);
+    if (it == m_userStyleSheets.end())
+        return;
+
+    auto& stylesheets = it->value;
+
+    bool sheetsChanged = false;
+    for (int i = stylesheets.size() - 1; i >= 0; --i) {
+        if (stylesheets[i].second.url() == url) {
+            stylesheets.remove(i);
+            sheetsChanged = true;
+        }
+    }
+
+    if (!sheetsChanged)
+        return;
+
+    if (stylesheets.isEmpty())
+        m_userStyleSheets.remove(it);
+
+    invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
+}
+
+void WebUserContentController::removeUserStyleSheetInternal(InjectedBundleScriptWorld& world, uint64_t userStyleSheetIdentifier)
+{
+    auto it = m_userStyleSheets.find(&world);
+    if (it == m_userStyleSheets.end())
+        return;
+
+    auto& stylesheets = it->value;
+
+    bool sheetsChanged = false;
+    for (int i = stylesheets.size() - 1; i >= 0; --i) {
+        if (stylesheets[i].first == userStyleSheetIdentifier) {
+            stylesheets.remove(i);
+            sheetsChanged = true;
+        }
+    }
+
+    if (!sheetsChanged)
+        return;
+
+    if (stylesheets.isEmpty())
+        m_userStyleSheets.remove(it);
+
+    invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
+}
+
+void WebUserContentController::removeUserStyleSheets(InjectedBundleScriptWorld& world)
+{
+    if (!m_userStyleSheets.remove(&world))
+        return;
+
+    invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
+}
+
+void WebUserContentController::removeAllUserContent()
+{
+    m_userScripts.clear();
+
+    if (!m_userStyleSheets.isEmpty()) {
+        m_userStyleSheets.clear();
+        invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
+    }
+}
+
+void WebUserContentController::forEachUserScript(const std::function<void(WebCore::DOMWrapperWorld&, const WebCore::UserScript&)>& functor) const
+{
+    for (const auto& worldAndUserScriptVector : m_userScripts) {
+        auto& world = worldAndUserScriptVector.key->coreWorld();
+        for (const auto& identifierUserScriptPair : worldAndUserScriptVector.value)
+            functor(world, identifierUserScriptPair.second);
+    }
+}
+
+void WebUserContentController::forEachUserStyleSheet(const std::function<void(const WebCore::UserStyleSheet&)>& functor) const
+{
+    for (auto& styleSheetVector : m_userStyleSheets.values()) {
+        for (const auto& identifierUserStyleSheetPair : styleSheetVector)
+            functor(identifierUserStyleSheetPair.second);
+    }
+}
 
 } // namespace WebKit

@@ -28,9 +28,19 @@
 
 #include "MessageReceiver.h"
 #include "WebScriptMessageHandler.h"
-#include <WebCore/UserContentController.h>
+#include "WebUserContentControllerDataTypes.h"
+#include <WebCore/UserContentProvider.h>
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
+
+#if ENABLE(CONTENT_EXTENSIONS)
+#include <WebCore/ContentExtensionsBackend.h>
+#endif
+
+namespace WebCore {
+namespace ContentExtensions {
+class CompiledContentExtension;
+}
+}
 
 namespace WebKit {
 
@@ -38,17 +48,31 @@ class InjectedBundleScriptWorld;
 class WebCompiledContentExtensionData;
 class WebUserMessageHandlerDescriptorProxy;
 
-class WebUserContentController final : public RefCounted<WebUserContentController>, private IPC::MessageReceiver  {
+class WebUserContentController final : public WebCore::UserContentProvider, private IPC::MessageReceiver {
 public:
     static Ref<WebUserContentController> getOrCreate(uint64_t identifier);
     virtual ~WebUserContentController();
 
-    WebCore::UserContentController& userContentController() { return m_userContentController; }
-
     uint64_t identifier() { return m_identifier; } 
+
+    void addUserScript(InjectedBundleScriptWorld&, WebCore::UserScript&&);
+    void removeUserScriptWithURL(InjectedBundleScriptWorld&, const WebCore::URL&);
+    void removeUserScripts(InjectedBundleScriptWorld&);
+    void addUserStyleSheet(InjectedBundleScriptWorld&, WebCore::UserStyleSheet&&);
+    void removeUserStyleSheetWithURL(InjectedBundleScriptWorld&, const WebCore::URL&);
+    void removeUserStyleSheets(InjectedBundleScriptWorld&);
+    void removeAllUserContent();
 
 private:
     explicit WebUserContentController(uint64_t identifier);
+
+    // WebCore::UserContentProvider
+    void forEachUserScript(const std::function<void(WebCore::DOMWrapperWorld&, const WebCore::UserScript&)>&) const override;
+    void forEachUserStyleSheet(const std::function<void(const WebCore::UserStyleSheet&)>&) const override;
+    const WebCore::UserMessageHandlerDescriptorMap& userMessageHandlerDescriptors() const override { return m_userMessageHandlerDescriptorsMap; }
+#if ENABLE(CONTENT_EXTENSIONS)
+    WebCore::ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() override { return m_contentExtensionBackend; }
+#endif
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
@@ -56,12 +80,12 @@ private:
     void addUserContentWorlds(const Vector<std::pair<uint64_t, String>>&);
     void removeUserContentWorlds(const Vector<uint64_t>&);
 
-    void addUserScripts(const Vector<std::pair<uint64_t, WebCore::UserScript>>&);
-    void removeUserScript(uint64_t worldIdentifier, const String& urlString);
+    void addUserScripts(const Vector<WebUserScriptData>&);
+    void removeUserScript(uint64_t worldIdentifier, uint64_t userScriptIdentifier);
     void removeAllUserScripts(const Vector<uint64_t>&);
 
-    void addUserStyleSheets(const Vector<std::pair<uint64_t, WebCore::UserStyleSheet>>&);
-    void removeUserStyleSheet(uint64_t worldIdentifier, const String& urlString);
+    void addUserStyleSheets(const Vector<WebUserStyleSheetData>&);
+    void removeUserStyleSheet(uint64_t worldIdentifier, uint64_t userScriptIdentifier);
     void removeAllUserStyleSheets(const Vector<uint64_t>&);
 
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>&);
@@ -73,11 +97,27 @@ private:
     void removeAllUserContentExtensions();
 #endif
 
+
+    void addUserScriptInternal(InjectedBundleScriptWorld&, uint64_t userScriptIdentifier, WebCore::UserScript&&);
+    void removeUserScriptInternal(InjectedBundleScriptWorld&, uint64_t userScriptIdentifier);
+    void addUserStyleSheetInternal(InjectedBundleScriptWorld&, uint64_t userStyleSheetIdentifier, WebCore::UserStyleSheet&&);
+    void removeUserStyleSheetInternal(InjectedBundleScriptWorld&, uint64_t userStyleSheetIdentifier);
+
+
     uint64_t m_identifier;
-    Ref<WebCore::UserContentController> m_userContentController;
-#if ENABLE(USER_MESSAGE_HANDLERS)
     HashMap<uint64_t, RefPtr<WebUserMessageHandlerDescriptorProxy>> m_userMessageHandlerDescriptors;
+
+    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<uint64_t, WebCore::UserScript>>> WorldToUserScriptMap;
+    WorldToUserScriptMap m_userScripts;
+
+    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<uint64_t, WebCore::UserStyleSheet>>> WorldToUserStyleSheetMap;
+    WorldToUserStyleSheetMap m_userStyleSheets;
+
+    WebCore::UserMessageHandlerDescriptorMap m_userMessageHandlerDescriptorsMap;
+#if ENABLE(CONTENT_EXTENSIONS)
+    WebCore::ContentExtensions::ContentExtensionsBackend m_contentExtensionBackend;
 #endif
+
 };
 
 } // namespace WebKit

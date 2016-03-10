@@ -36,7 +36,6 @@
 #include "DiagnosticLoggingClient.h"
 #include "DragClient.h"
 #include "EditorClient.h"
-#include "TextCheckerClient.h"
 #include "FloatRect.h"
 #include "FocusDirection.h"
 #include "FrameLoaderClient.h"
@@ -44,8 +43,17 @@
 #include "Page.h"
 #include "ProgressTrackerClient.h"
 #include "ResourceError.h"
+#include "TextCheckerClient.h"
 #include "VisitedLinkStore.h"
 #include <wtf/text/StringView.h>
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+#include "UserMessageHandlerDescriptor.h"
+#endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "CompiledContentExtension.h"
+#endif
 
 /*
  This file holds empty Client stubs for use by WebCore.

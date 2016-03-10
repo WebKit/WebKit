@@ -32,7 +32,6 @@
 
 namespace WebCore {
 class PageGroup;
-class UserContentController;
 }
 
 namespace WebKit {
@@ -50,7 +49,7 @@ public:
     bool isVisibleToHistoryClient() const { return m_data.visibleToHistoryClient; }
     WebCore::PageGroup* corePageGroup() const { return m_pageGroup; }
 
-    WebCore::UserContentController& userContentController();
+    WebUserContentController& userContentController();
 
 private:
     WebPageGroupProxy(const WebPageGroupData&);
