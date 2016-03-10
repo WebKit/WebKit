@@ -672,20 +672,29 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
     bool insideTemplateElement = !ownerDocument.frame();
     RefPtr<Element> element = HTMLElementFactory::createKnownElement(localName, ownerDocument, insideTemplateElement ? nullptr : form(), true);
     if (UNLIKELY(!element)) {
-
 #if ENABLE(CUSTOM_ELEMENTS)
-        auto* definitions = ownerDocumentForCurrentNode().customElementDefinitions();
-        if (customElementInterface && UNLIKELY(definitions)) {
-            if (auto* interface = definitions->findInterface(localName)) {
-                *customElementInterface = interface;
-                return nullptr;
+        if (customElementInterface) {
+            auto* definitions = ownerDocument.customElementDefinitions();
+            if (UNLIKELY(definitions)) {
+                if (auto* interface = definitions->findInterface(localName)) {
+                    *customElementInterface = interface;
+                    return nullptr;
+                }
             }
         }
 #else
         UNUSED_PARAM(customElementInterface);
 #endif
 
-        element = HTMLUnknownElement::create(QualifiedName(nullAtom, localName, xhtmlNamespaceURI), ownerDocumentForCurrentNode());
+        QualifiedName qualifiedName(nullAtom, localName, xhtmlNamespaceURI);
+#if ENABLE(CUSTOM_ELEMENTS)
+        if (CustomElementDefinitions::checkName(localName) == CustomElementDefinitions::NameStatus::Valid) {
+            element = HTMLElement::create(qualifiedName, ownerDocument);
+            element->setIsUnresolvedCustomElement();
+            ownerDocument.ensureCustomElementDefinitions().addUpgradeCandidate(*element);
+        } else
+#endif
+            element = HTMLUnknownElement::create(qualifiedName, ownerDocument);
     }
     ASSERT(element);
 

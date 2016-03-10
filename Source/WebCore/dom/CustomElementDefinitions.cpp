@@ -74,7 +74,33 @@ void CustomElementDefinitions::addElementDefinition(Ref<JSCustomElementInterface
     AtomicString localName = interface->name().localName();
     ASSERT(!m_nameMap.contains(localName));
     m_constructorMap.add(interface->constructor(), interface.ptr());
-    m_nameMap.add(localName, WTFMove(interface));
+    m_nameMap.add(localName, interface.copyRef());
+
+    auto candidateList = m_upgradeCandidatesMap.find(localName);
+    if (candidateList == m_upgradeCandidatesMap.end())
+        return;
+
+    Vector<RefPtr<Element>> list(WTFMove(candidateList->value));
+
+    m_upgradeCandidatesMap.remove(localName);
+
+    for (auto& candidate : list) {
+        ASSERT(candidate);
+        interface->upgradeElement(*candidate);
+    }
+
+    // We should not be adding more upgrade candidate for this local name.
+    ASSERT(!m_upgradeCandidatesMap.contains(localName));
+}
+
+void CustomElementDefinitions::addUpgradeCandidate(Element& candidate)
+{
+    auto result = m_upgradeCandidatesMap.ensure(candidate.localName(), [] {
+        return Vector<RefPtr<Element>>();
+    });
+    auto& nodeVector = result.iterator->value;
+    ASSERT(!nodeVector.contains(&candidate));
+    nodeVector.append(&candidate);
 }
 
 JSCustomElementInterface* CustomElementDefinitions::findInterface(const QualifiedName& name) const

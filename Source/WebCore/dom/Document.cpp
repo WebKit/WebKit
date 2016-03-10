@@ -899,7 +899,18 @@ static RefPtr<Element> createHTMLElementWithNameValidation(Document& document, c
         return nullptr;
     }
 
-    return HTMLUnknownElement::create(QualifiedName(nullAtom, localName, xhtmlNamespaceURI), document);
+    QualifiedName qualifiedName(nullAtom, localName, xhtmlNamespaceURI);
+
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (CustomElementDefinitions::checkName(localName) == CustomElementDefinitions::NameStatus::Valid) {
+        Ref<HTMLElement> element = HTMLElement::create(qualifiedName, document);
+        element->setIsUnresolvedCustomElement();
+        document.ensureCustomElementDefinitions().addUpgradeCandidate(element.get());
+        return WTFMove(element);
+    }
+#endif
+
+    return HTMLUnknownElement::create(qualifiedName, document);
 }
 
 RefPtr<Element> Document::createElementForBindings(const AtomicString& name, ExceptionCode& ec)
@@ -1080,10 +1091,17 @@ static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const Qual
     if (UNLIKELY(definitions)) {
         if (auto* interface = definitions->findInterface(name)) {
             Ref<HTMLElement> element = HTMLElement::create(name, document);
-            element->setIsCustomElement(); // Pre-upgrade element is still considered a custom element.
+            element->setIsUnresolvedCustomElement();
             LifecycleCallbackQueue::enqueueElementUpgrade(element.get(), *interface);
             return element;
         }
+    }
+    // FIXME: Should we also check the equality of prefix between the custom element and name?
+    if (CustomElementDefinitions::checkName(name.localName()) == CustomElementDefinitions::NameStatus::Valid) {
+        Ref<HTMLElement> element = HTMLElement::create(name, document);
+        element->setIsUnresolvedCustomElement();
+        document.ensureCustomElementDefinitions().addUpgradeCandidate(element.get());
+        return element;
     }
 #endif
     return HTMLUnknownElement::create(name, document);

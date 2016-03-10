@@ -1,3 +1,16 @@
+2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        defineElement should upgrade existing unresolved custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=155107
+
+        Reviewed by Darin Adler.
+
+        Added W3C style testharness.js tests for asynchronously defining custom elements.
+
+        * fast/custom-elements/upgrading/Node-cloneNode.html:
+        * fast/custom-elements/upgrading/upgrading-parser-created-element-expected.txt: Added.
+        * fast/custom-elements/upgrading/upgrading-parser-created-element.html: Added.
+
 2016-03-09  Saam Barati  <sbarati@apple.com>
 
         ES6: Implement lexical scoping for function definitions in strict mode

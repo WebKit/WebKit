@@ -1,3 +1,60 @@
+2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        defineElement should upgrade existing unresolved custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=155107
+
+        Reviewed by Darin Adler.
+
+        Added the support for upgrading existing unresolved custom elements when defineElement is called.
+
+        The current implementation upgrades elements in the order they were created and has the issue that
+        it keeps accumulating all elements with a hyphen in its name until defineElement is called as
+        documented in https://github.com/w3c/webcomponents/issues/419
+
+        This patch re-purposes IsEditingTextFlag to indicate that the node is an unresolved custom element.
+        Since isEditingText() is only called in textRendererIsNeeded only on Text nodes, it's mutually
+        exclusive with isUnresolvedCustomElement().
+
+        The list of unresolved custom elements is kept in m_upgradeCandidatesMap, a hash map of element names
+        to the list of unresolved elements with that name.
+
+        In addition, added the logic to use HTMLElement as the interface for unresolved custom element instead
+        of HTMLUnknownElement.
+
+        Test: fast/custom-elements/upgrading/upgrading-parser-created-element.html
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::upgradeElement): Clear the flag.
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::defineElement): Set the unique private name to keep the interface alive before
+        calling addElementDefinition as the call can now invoke author scripts.
+        * dom/CustomElementDefinitions.cpp:
+        (WebCore::CustomElementDefinitions::addElementDefinition): Upgrade existing unresolved elements kept
+        in m_upgradeCandidatesMap.
+        (WebCore::CustomElementDefinitions::addUpgradeCandidate): Added.
+        * dom/CustomElementDefinitions.h:
+        * dom/Document.cpp:
+        (WebCore::createHTMLElementWithNameValidation): Added the code to add the unresolved custom elements
+        to the upgrade candidates map. Also instantiate it as HTMLElement instead of HTMLUnknownElement.
+        (WebCore::createFallbackHTMLElement): Ditto.
+        * dom/Node.h:
+        (WebCore::Node::setIsCustomElement):
+        (WebCore::Node::isUnresolvedCustomElement): Added.
+        (WebCore::Node::setIsUnresolvedCustomElement): Added.
+        (WebCore::Node::setCustomElementIsResolved): Added. Clears IsEditingTextOrUnresolvedCustomElementFlag
+        and sets IsCustomElement.
+        (WebCore::Node::isEditingText): Check both IsEditingTextOrUnresolvedCustomElementFlag and IsTextFlag
+        for safety even though it's currently only used in textRendererIsNeeded which takes Text&.
+        * dom/make_names.pl:
+        (defaultParametersHash): Added customElementInterfaceName as a parameter.
+        (printWrapperFactoryCppFile): Generate the code to use customElementInterfaceName when the element
+        for which the wrapper is created has isUnresolvedCustomElement flag set.
+        * html/HTMLTagNames.in: Use HTMLElement for unresolved custom elements.
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface): Added the code to add
+        the unresolved custom elements to the upgrade candidates map. Also instantiate it as HTMLElement instead
+        of HTMLUnknownElement. 
+
 2016-03-09  Enrica Casucci  <enrica@apple.com>
 
         Retrieve additional context for some data detector link for preview and action menu.

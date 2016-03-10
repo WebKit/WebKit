@@ -216,6 +216,7 @@ sub defaultParametersHash
         'attrsNullNamespace' => 0,
         'fallbackInterfaceName' => '',
         'fallbackJSInterfaceName' => '',
+        'customElementInterfaceName' => '',
     );
 }
 
@@ -1318,6 +1319,20 @@ JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObje
         populate$parameters{namespace}WrapperMap(functions);
     if (auto function = functions.get().get(element->localName().impl()))
         return function(globalObject, element);
+END
+;
+
+    if ($parameters{customElementInterfaceName}) {
+        print F <<END
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (element->isUnresolvedCustomElement())
+        return CREATE_DOM_WRAPPER(globalObject, $parameters{customElementInterfaceName}, element.get());
+#endif
+END
+;
+    }
+
+    print F <<END
     return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackJSInterfaceName}, element.get());
 }
 

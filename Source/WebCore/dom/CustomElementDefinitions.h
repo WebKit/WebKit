@@ -49,6 +49,7 @@ class CustomElementDefinitions {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     void addElementDefinition(Ref<JSCustomElementInterface>&&);
+    void addUpgradeCandidate(Element&);
 
     JSCustomElementInterface* findInterface(const QualifiedName&) const;
     JSCustomElementInterface* findInterface(const AtomicString&) const;
@@ -59,6 +60,7 @@ public:
     static NameStatus checkName(const AtomicString& tagName);
 
 private:
+    HashMap<AtomicString, Vector<RefPtr<Element>>> m_upgradeCandidatesMap;
     HashMap<AtomicString, RefPtr<JSCustomElementInterface>> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap;
 };

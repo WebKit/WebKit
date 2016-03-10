@@ -180,10 +180,11 @@ JSValue JSDocument::defineElement(ExecState& state)
     // FIXME: 13. Let detachedCallback be Get(prototype, "detachedCallback"). Rethrow any exceptions.
     // FIXME: 14. Let attributeChangedCallback be Get(prototype, "attributeChangedCallback"). Rethrow any exceptions.
 
-    QualifiedName name(nullAtom, tagName, HTMLNames::xhtmlNamespaceURI);
-    definitions.addElementDefinition(JSCustomElementInterface::create(name, object, globalObject()));
     PrivateName uniquePrivateName;
     globalObject()->putDirect(globalObject()->vm(), uniquePrivateName, object);
+
+    QualifiedName name(nullAtom, tagName, HTMLNames::xhtmlNamespaceURI);
+    definitions.addElementDefinition(JSCustomElementInterface::create(name, object, globalObject()));
 
     // FIXME: 17. Let map be registry's upgrade candidates map.
     // FIXME: 18. Upgrade a newly-defined element given map and definition.
