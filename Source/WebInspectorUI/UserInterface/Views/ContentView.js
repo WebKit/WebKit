@@ -73,6 +73,9 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
 
             if (timelineType === WebInspector.TimelineRecord.Type.Memory)
                 return new WebInspector.MemoryTimelineView(representedObject, extraArguments);
+
+            if (timelineType === WebInspector.TimelineRecord.Type.HeapAllocations)
+                return new WebInspector.HeapAllocationsTimelineView(representedObject, extraArguments);
         }
 
         if (representedObject instanceof WebInspector.Breakpoint) {
@@ -134,6 +137,9 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
 
         if (representedObject instanceof WebInspector.CallingContextTree)
             return new WebInspector.ProfileView(representedObject, extraArguments);
+
+        if (representedObject instanceof WebInspector.HeapSnapshot)
+            return new WebInspector.HeapSnapshotClusterContentView(representedObject, extraArguments);
 
         if (typeof representedObject === "string" || representedObject instanceof String)
             return new WebInspector.TextContentView(representedObject, extraArguments);
@@ -230,6 +236,8 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         if (representedObject instanceof WebInspector.ContentFlow)
             return true;
         if (representedObject instanceof WebInspector.CallingContextTree)
+            return true;
+        if (representedObject instanceof WebInspector.HeapSnapshot)
             return true;
         if (typeof representedObject === "string" || representedObject instanceof String)
             return true;

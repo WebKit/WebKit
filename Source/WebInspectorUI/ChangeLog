@@ -1,3 +1,245 @@
+2016-03-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: JavaScript Heap Allocations Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=155287
+        <rdar://problem/25078088>
+
+        Reviewed by Timothy Hatcher.
+
+        Initial JavaScript Heap Allocations Timeline includes:
+
+            - Snapshot markers in the timeline
+            - Initial/Periodic/End snapshots during recording
+            - Ability to manually take a snapshot
+            - View of all objects in a Snapshot and Diff between snapshots
+              - Summary view - rough display of the size/count of large objects
+              - Instances view - view each of the individual objects
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/Images/Compare.svg: Added.
+        * UserInterface/Images/HeapSnapshot.svg: Added.
+        * UserInterface/Images/HeapSnapshotDiff.svg: Added.
+        * UserInterface/Images/HeapSnapshotInstances.svg: Added.
+        * UserInterface/Images/HeapSnapshotSummary.svg: Added.
+        * Localizations/en.lproj/localizedStrings.js:
+        New resources and strings.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.heapTrackingStarted):
+        (WebInspector.TimelineManager.prototype.heapTrackingCompleted):
+        (WebInspector.TimelineManager.prototype.heapSnapshotAdded):
+        * UserInterface/Protocol/HeapObserver.js:
+        (WebInspector.HeapObserver.prototype.trackingStart):
+        (WebInspector.HeapObserver.prototype.trackingComplete):
+        (WebInspector.HeapObserver):
+        Add snapshot records to the active recording's timeline.
+
+        * UserInterface/Models/HeapAllocationsInstrument.js: Added.
+        (WebInspector.HeapAllocationsInstrument):
+        (WebInspector.HeapAllocationsInstrument.supported):
+        (WebInspector.HeapAllocationsInstrument.prototype.get timelineRecordType):
+        (WebInspector.HeapAllocationsInstrument.prototype.startInstrumentation):
+        (WebInspector.HeapAllocationsInstrument.prototype.stopInstrumentation):
+        (WebInspector.HeapAllocationsInstrument.prototype._takeHeapSnapshot):
+        Start, stop, and periodic snapshots.
+
+        * UserInterface/Models/HeapAllocationsTimelineRecord.js:
+        (WebInspector.HeapAllocationsTimelineRecord):
+        (WebInspector.HeapAllocationsTimelineRecord.prototype.get timestamp):
+        (WebInspector.HeapAllocationsTimelineRecord.prototype.get heapSnapshot):
+        * UserInterface/Models/TimelineRecord.js:
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording):
+        (WebInspector.TimelineRecording.prototype.addRecord):
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph.createForTimeline):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.displayNameForTimeline):
+        (WebInspector.TimelineTabContentView.iconClassNameForTimeline):
+        (WebInspector.TimelineTabContentView.genericClassNameForTimeline):
+        (WebInspector.TimelineTabContentView.iconClassNameForRecord):
+        (WebInspector.TimelineTabContentView.displayNameForRecord):
+        New timeline and record type.
+
+        * UserInterface/Models/HeapSnapshotDiff.js: Added.
+        (WebInspector.HeapSnapshotDiff):
+        (WebInspector.HeapSnapshotDiff.prototype.get snapshot1):
+        (WebInspector.HeapSnapshotDiff.prototype.get snapshot2):
+        (WebInspector.HeapSnapshotDiff.prototype.get addedInstances):
+        (WebInspector.HeapSnapshotDiff.prototype.get removedInstances):
+        (WebInspector.HeapSnapshotDiff.prototype.get sizeDifference):
+        (WebInspector.HeapSnapshotDiff.prototype.get growth):
+        (WebInspector.HeapSnapshotDiff.prototype.snapshotForDiff):
+        Compare two snapshots and create a "diff snapshot" which is just
+        the newly added objects.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        (WebInspector.ContentView.isViewable):
+        A HeapSnapshot creates a HeapSnapshotClusterView.
+
+        * UserInterface/Views/HeapAllocationsTimelineDataGridNode.js: Added.
+        (WebInspector.HeapAllocationsTimelineDataGridNode):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.get record):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.get data):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.markAsBaseline):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.clearBaseline):
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.css: Copied from Source/WebInspectorUI/UserInterface/Protocol/HeapObserver.js.
+        (.timeline-overview-graph.heap-allocations):
+        (.timeline-overview-graph.heap-allocations > img.snapshot):
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.js: Added.
+        (WebInspector.HeapAllocationsTimelineOverviewGraph):
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype.reset):
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype.layout.xScale):
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype.layout):
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype._visibleRecords):
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype._heapAllocationTimelineRecordAdded):
+        * UserInterface/Views/HeapAllocationsTimelineView.css: Copied from Source/WebInspectorUI/UserInterface/Protocol/HeapObserver.js.
+        (.timeline-view.heap-allocations > .data-grid):
+        (.timeline-view.heap-allocations > .data-grid td .icon.heap-snapshot):
+        (.timeline-view.heap-allocations > .data-grid tr.baseline):
+        (.timeline-view.heap-allocations > .content-view-container):
+        (.timeline-view.heap-allocations > .content-view-container > .content-view):
+        * UserInterface/Views/HeapAllocationsTimelineView.js: Added.
+        (WebInspector.HeapAllocationsTimelineView):
+        (WebInspector.HeapAllocationsTimelineView.prototype.showHeapSnapshotList):
+        (WebInspector.HeapAllocationsTimelineView.prototype.showHeapSnapshotTimelineRecord):
+        (WebInspector.HeapAllocationsTimelineView.prototype.showHeapSnapshotDiff):
+        (WebInspector.HeapAllocationsTimelineView.prototype.get navigationItems):
+        (WebInspector.HeapAllocationsTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.HeapAllocationsTimelineView.prototype.get navigationSidebarTreeOutlineLabel):
+        (WebInspector.HeapAllocationsTimelineView.prototype.treeElementPathComponentSelected):
+        (WebInspector.HeapAllocationsTimelineView.prototype.userSelectedRecordFromOverview):
+        (WebInspector.HeapAllocationsTimelineView.prototype.closed):
+        (WebInspector.HeapAllocationsTimelineView.prototype.layout):
+        (WebInspector.HeapAllocationsTimelineView.prototype.reset):
+        (WebInspector.HeapAllocationsTimelineView.prototype._heapAllocationsTimelineRecordAdded):
+        (WebInspector.HeapAllocationsTimelineView.prototype._snapshotListPathComponentClicked):
+        (WebInspector.HeapAllocationsTimelineView.prototype._snapshotPathComponentSelected):
+        (WebInspector.HeapAllocationsTimelineView.prototype._currentContentViewDidChange):
+        (WebInspector.HeapAllocationsTimelineView.prototype._contentViewSelectionPathComponentDidChange):
+        (WebInspector.HeapAllocationsTimelineView.prototype._updateCompareHeapSnapshotButton):
+        (WebInspector.HeapAllocationsTimelineView.prototype._takeHeapSnapshotClicked):
+        (WebInspector.HeapAllocationsTimelineView.prototype._cancelSelectComparisonHeapSnapshots):
+        (WebInspector.HeapAllocationsTimelineView.prototype._compareHeapSnapshotsClicked):
+        (WebInspector.HeapAllocationsTimelineView.prototype._dataGridNodeSelected):
+        * UserInterface/Views/HeapSnapshotClassDataGridNode.js: Added.
+        (WebInspector.HeapSnapshotClassDataGridNode):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype.get data):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype.createCellContent):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype.sort):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._populate):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._fetchBatch):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._updateBatchedSort):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._updateBatchedChildren):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._removeFetchMoreDataGridNode):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._appendFetchMoreDataGridNode):
+        * UserInterface/Views/HeapSnapshotClusterContentView.js: Added.
+        (WebInspector.HeapSnapshotClusterContentView.createPathComponent):
+        (WebInspector.HeapSnapshotClusterContentView):
+        (WebInspector.HeapSnapshotClusterContentView.iconStyleClassNameForClassName):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.get heapSnapshot):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.get summaryContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.get instancesContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.get navigationItems):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.get selectionPathComponents):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.shown):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.closed):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.saveToCookie):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.restoreFromCookie):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.showSummary):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.showInstances):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._contentViewExtraArguments):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._pathComponentForContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._identifierForContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._showContentViewForIdentifier):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._pathComponentSelected):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._toggleShowInternalObjectsSetting):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._updateViewsForShowInternalObjectsSettingValue):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._updateShowInternalObjectsButtonNavigationItem):
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js: Added.
+        (WebInspector.HeapSnapshotInstanceDataGridNode):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.get data):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.get selectable):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.createCells):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.createCellContent):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.sort):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._contextMenuHandler.):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._contextMenuHandler):
+        * UserInterface/Views/HeapSnapshotInstanceFetchMoreDataGridNode.js: Added.
+        (WebInspector.HeapSnapshotInstanceFetchMoreDataGridNode):
+        (WebInspector.HeapSnapshotInstanceFetchMoreDataGridNode.prototype.createCellContent):
+        (WebInspector.HeapSnapshotInstanceFetchMoreDataGridNode.prototype.sort):
+        * UserInterface/Views/HeapSnapshotInstancesContentView.css: Added.
+        * UserInterface/Views/HeapSnapshotInstancesContentView.js: Added.
+        (WebInspector.HeapSnapshotInstancesContentView):
+        (WebInspector.HeapSnapshotInstancesContentView.prototype.get showInternalObjects):
+        (WebInspector.HeapSnapshotInstancesContentView.prototype.set showInternalObjects):
+        (WebInspector.HeapSnapshotInstancesContentView.prototype._sortDataGrid):
+        * UserInterface/Views/HeapSnapshotInstancesDataGridTree.js: Added.
+        (WebInspector.HeapSnapshotInstancesDataGridTree):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.buildSortComparator):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.get heapSnapshot):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.get includeInternalObjects):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.set includeInternalObjects):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.get children):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.appendChild):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.insertChild):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.removeChildren):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.set sortComparator):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.sort):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype._populateTopLevel):
+        * UserInterface/Views/HeapSnapshotSummaryContentView.css: Added.
+        * UserInterface/Views/HeapSnapshotSummaryContentView.js: Added.
+        (WebInspector.HeapSnapshotSummaryContentView.createChartContainer):
+        (WebInspector.HeapSnapshotSummaryContentView.appendLegendRow):
+        (WebInspector.HeapSnapshotSummaryContentView.appendEmptyMessage):
+        (WebInspector.HeapSnapshotSummaryContentView):
+        (WebInspector.HeapSnapshotSummaryContentView.prototype.layout):
+        * UserInterface/Views/PathComponentIcons.css:
+        (.heap-snapshot-summary-icon .icon):
+        (.heap-snapshot-instances-icon .icon):
+        (.snapshot-list-icon .icon):
+        (.snapshot-diff-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .snapshot-diff-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .call-trees-icon .icon): Deleted.
+        * UserInterface/Views/TextNavigationItem.css:
+        (.navigation-bar .item.text):
+        * UserInterface/Views/TextNavigationItem.js:
+        (WebInspector.TextNavigationItem):
+        (WebInspector.TextNavigationItem.prototype.get text):
+        (WebInspector.TextNavigationItem.prototype.set text):
+        * UserInterface/Views/TimelineIcons.css:
+        (.heap-snapshot-record .icon):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        New views.
+
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createElementForNodePreview):
+        (WebInspector.FormattedValue.createElementForFunctionWithName):
+        (WebInspector.FormattedValue.createObjectPreviewOrFormattedValueForObjectPreview):
+        Better display for a raw object preview.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.userSelectedRecord):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype.timelineOverviewUserSelectedRecord):
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.set allowsTimeRangeSelection):
+        (WebInspector.TimelineRuler.prototype._handleClick):
+        (WebInspector.TimelineRuler.prototype._handleMouseDown):
+        (WebInspector.TimelineRuler.prototype._handleMouseMove):
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.userSelectedRecordFromOverview):
+        Hook up a way for clicking in the TimelineOverview / TimelineRuler
+        to redispatch to an OverviewGraph element, and provide a patch for
+        the Overview -> RecordingContentView -> TimelineView for records.
+
 2016-03-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: LayoutTimelineView path components should reflect grid row nesting

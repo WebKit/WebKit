@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HeapObserver = class HeapObserver
+WebInspector.HeapAllocationsTimelineRecord = class HeapAllocationsTimelineRecord extends WebInspector.TimelineRecord
 {
-    // Events defined by the "Heap" domain.
-
-    garbageCollected(collection)
+    constructor(timestamp, heapSnapshot)
     {
-        WebInspector.heapManager.garbageCollected(collection);
+        super(WebInspector.TimelineRecord.Type.HeapAllocations, timestamp, timestamp);
+
+        console.assert(typeof timestamp === "number");
+        console.assert(heapSnapshot instanceof WebInspector.HeapSnapshot);
+
+        this._timestamp = timestamp;
+        this._heapSnapshot = heapSnapshot;
     }
 
-    trackingStart(timestamp, snapshotData)
-    {
-        let payload = JSON.parse(snapshotData);
-        let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-        WebInspector.timelineManager.heapTrackingStarted(timestamp, snapshot);
-    }
+    // Public
 
-    trackingComplete(timestamp, snapshotData)
-    {
-        let payload = JSON.parse(snapshotData);
-        let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-        WebInspector.timelineManager.heapTrackingCompleted(timestamp, snapshot);
-    }
+    get timestamp() { return this._timestamp; }
+    get heapSnapshot() { return this._heapSnapshot; }
 };

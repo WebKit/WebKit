@@ -65,6 +65,9 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
         if (timelineType === WebInspector.TimelineRecord.Type.Memory)
             return new WebInspector.MemoryTimelineOverviewGraph(timeline, timelineOverview);
 
+        if (timelineType === WebInspector.TimelineRecord.Type.HeapAllocations)
+            return new WebInspector.HeapAllocationsTimelineOverviewGraph(timeline, timelineOverview);
+
         throw new Error("Can't make a graph for an unknown timeline.");
     }
 

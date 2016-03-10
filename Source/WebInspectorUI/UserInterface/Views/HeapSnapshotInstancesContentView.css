@@ -1,0 +1,123 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.heap-snapshot > .data-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.heap-snapshot > .data-grid td .percentage {
+    width: 45px;
+    margin-left: 4px;
+    display: inline-block;
+}
+
+.heap-snapshot > .data-grid tr:not(.selected) td .object-id {
+    color: gray;
+}
+
+.heap-snapshot > .data-grid tr:not(.selected) td .preview-error {
+    color: red;
+}
+
+.heap-snapshot > .data-grid td .location {
+    margin-left: 1ex;
+    color: hsl(0, 0%, 60%);
+}
+
+.heap-snapshot > .data-grid:matches(:focus, .force-focus) tr.selected td .location {
+    color: hsl(0, 0%, 85%);
+}
+
+.heap-snapshot > .data-grid tr:matches(.selected, :hover) td .go-to-arrow {
+    float: none;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    margin-left: 2px;
+}
+
+.heap-snapshot > .data-grid td .more {
+    text-decoration: underline;
+    margin-right: 1ex;
+}
+
+.heap-snapshot .icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    margin-right: 3px;
+    content: url(../Images/TypeUndefined.svg);
+}
+
+.heap-snapshot .icon.native {
+    content: url(../Images/Native.svg);
+}
+
+.heap-snapshot .icon.boolean {
+    content: url(../Images/TypeBoolean.svg);
+}
+
+.heap-snapshot .icon.function {
+    content: url(../Images/Function.svg);
+}
+
+.heap-snapshot .icon.number {
+    content: url(../Images/TypeNumber.svg);
+}
+
+.heap-snapshot .icon.object {
+    content: url(../Images/TypeObject.svg);
+}
+
+.heap-snapshot .icon.node {
+    content: url(../Images/DOMElement.svg);
+}
+
+.heap-snapshot .icon.regex {
+    content: url(../Images/TypeRegex.svg);
+}
+
+.heap-snapshot .icon.string {
+    content: url(../Images/TypeString.svg);
+}
+
+.heap-snapshot .icon.symbol {
+    content: url(../Images/TypeSymbol.svg);
+}
+
+.heap-snapshot > .data-grid td .formatted-node-preview,
+.heap-snapshot > .data-grid td .object-preview {
+    text-indent: 0; /* Do not inherit the DataGrid's indent. */
+    display: inline-block;
+    height: 16px;
+}

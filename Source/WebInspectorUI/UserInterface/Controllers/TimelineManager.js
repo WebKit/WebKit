@@ -305,6 +305,29 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         // Called from WebInspector.MemoryObserver.
     }
 
+    heapTrackingStarted(timestamp, snapshot)
+    {
+        // Called from WebInspector.HeapObserver.
+
+        this._addRecord(new WebInspector.HeapAllocationsTimelineRecord(timestamp, snapshot));
+
+        this.capturingStarted(timestamp);
+    }
+
+    heapTrackingCompleted(timestamp, snapshot)
+    {
+        // Called from WebInspector.HeapObserver.
+
+        this._addRecord(new WebInspector.HeapAllocationsTimelineRecord(timestamp, snapshot));
+    }
+
+    heapSnapshotAdded(timestamp, snapshot)
+    {
+        // Called from WebInspector.HeapAllocationsInstrument.
+
+        this._addRecord(new WebInspector.HeapAllocationsTimelineRecord(timestamp, snapshot));
+    }
+
     // Private
 
     _processRecord(recordPayload, parentRecordPayload)

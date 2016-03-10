@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HeapObserver = class HeapObserver
+WebInspector.TextNavigationItem = class TextNavigationItem extends WebInspector.NavigationItem
 {
-    // Events defined by the "Heap" domain.
-
-    garbageCollected(collection)
+    constructor(identifier, label)
     {
-        WebInspector.heapManager.garbageCollected(collection);
+        super(identifier);
+
+        console.assert(identifier);
+
+        this._element.classList.add("text");
+        this._element.textContent = label || "";
     }
 
-    trackingStart(timestamp, snapshotData)
+    // Public
+
+    get text()
     {
-        let payload = JSON.parse(snapshotData);
-        let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-        WebInspector.timelineManager.heapTrackingStarted(timestamp, snapshot);
+        return this._element.textContent;
     }
 
-    trackingComplete(timestamp, snapshotData)
+    set text(x)
     {
-        let payload = JSON.parse(snapshotData);
-        let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-        WebInspector.timelineManager.heapTrackingCompleted(timestamp, snapshot);
+        this._element.textContent = x || "";
     }
 };

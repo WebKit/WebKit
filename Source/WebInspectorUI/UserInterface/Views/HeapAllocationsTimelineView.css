@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HeapObserver = class HeapObserver
-{
-    // Events defined by the "Heap" domain.
+.timeline-view.heap-allocations > .data-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 
-    garbageCollected(collection)
-    {
-        WebInspector.heapManager.garbageCollected(collection);
-    }
+.timeline-view.heap-allocations > .data-grid td .icon.heap-snapshot {
+    content: url(../Images/HeapSnapshot.svg);
+}
 
-    trackingStart(timestamp, snapshotData)
-    {
-        let payload = JSON.parse(snapshotData);
-        let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-        WebInspector.timelineManager.heapTrackingStarted(timestamp, snapshot);
-    }
+.timeline-view.heap-allocations > .data-grid tr.baseline {
+    background: hsl(129, 29%, 77%);
+}
 
-    trackingComplete(timestamp, snapshotData)
-    {
-        let payload = JSON.parse(snapshotData);
-        let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-        WebInspector.timelineManager.heapTrackingCompleted(timestamp, snapshot);
-    }
-};
+.timeline-view.heap-allocations > .content-view-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.timeline-view.heap-allocations > .content-view-container > .content-view {
+    border-top: 1px solid var(--border-color);
+}

@@ -142,3 +142,7 @@ body:not(.mac-platform, .windows-platform) .stopwatch-icon .icon {
 .animation-record .icon {
     content: url(../Images/TimelineRecordAnimation.svg);
 }
+
+.heap-snapshot-record .icon {
+    content: url(../Images/HeapSnapshot.svg);
+}

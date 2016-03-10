@@ -1,0 +1,174 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.content-view-container > .content-view.heap-snapshot-summary {
+    overflow: scroll;
+}
+
+.heap-snapshot-summary > .content {
+    width: 470px;
+    margin: 10px auto;
+}
+
+.heap-snapshot-summary > .content > .overview {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.heap-snapshot-summary > .content .subtitle {
+    font-family: '-webkit-system-font';
+    font-size: 14px;
+}
+
+.heap-snapshot-summary > .content > .overview {
+    display: flex;
+    justify-content: center;
+}
+
+.heap-snapshot-summary > .content > .overview > .chart {
+    width: 420px;
+    text-align: center;
+}
+
+.heap-snapshot-summary > .content > .overview > .chart > .subtitle {
+    margin-bottom: 1em;
+}
+
+.heap-snapshot-summary > .content > .overview > .chart > .container {
+    display: flex;
+    justify-content: center;
+}
+
+.heap-snapshot-summary > .content > .overview .total-size,
+.heap-snapshot-summary > .content > .overview .total-count,
+.heap-snapshot-summary > .content > .overview .average-allocation-size {
+    margin: auto;
+    color: hsl(0, 0%, 70%);
+}
+
+.heap-snapshot-summary .legend {
+    width: 120px;
+    padding-left: 20px;
+    text-align: left;
+}
+
+.heap-snapshot-summary .legend > .row {
+    position: relative;
+    height: 27px;
+}
+
+.heap-snapshot-summary .legend > .row > .swatch {
+    position: absolute;
+    top: 1px;
+    left: 0;
+    width: 1em;
+    height: 1em;
+}
+
+.heap-snapshot-summary .legend > .row > p {
+    margin: 0;
+}
+
+.heap-snapshot-summary .legend > .row > .label {
+    position: absolute;
+    top: 0;
+    left: 20px;
+}
+
+.heap-snapshot-summary .legend > .row > .size {
+    position: absolute;
+    top: 12px;
+    left: 20px;
+    color: hsl(0, 0%, 70%);
+}
+
+.heap-snapshot-summary .legend > .row > .swatch.top-class-1,
+.heap-snapshot-summary .legend > .row > .swatch.small {
+    border: 1px solid var(--memory-javascript-stroke-color);
+    background: var(--memory-javascript-fill-color);
+}
+
+.heap-snapshot-summary .legend > .row > .swatch.top-class-2,
+.heap-snapshot-summary .legend > .row > .swatch.medium {
+    border: 1px solid var(--memory-images-stroke-color);
+    background: var(--memory-images-fill-color);
+}
+
+.heap-snapshot-summary .legend > .row > .swatch.top-class-3,
+.heap-snapshot-summary .legend > .row > .swatch.large {
+    border: 1px solid var(--memory-layers-stroke-color);
+    background: var(--memory-layers-fill-color);
+}
+
+.heap-snapshot-summary .legend > .row > .swatch.top-class-4,
+.heap-snapshot-summary .legend > .row > .swatch.very-large {
+    border: 1px solid var(--memory-page-stroke-color);
+    background: var(--memory-page-fill-color);
+}
+
+.heap-snapshot-summary .legend > .row > .swatch.top-class-5 {
+    border: 1px solid var(--memory-extra-stroke-color);
+    background: var(--memory-extra-fill-color);
+}
+
+.heap-snapshot-summary .legend > .row > .swatch.other {
+    border: 1px solid var(--memory-max-comparison-stroke-color);
+    background: var(--memory-max-comparison-fill-color);
+}
+
+.heap-snapshot-summary .circle-chart > svg > path.top-class-1,
+.heap-snapshot-summary .circle-chart > svg > path.small {
+    stroke: var(--memory-javascript-stroke-color);
+    fill: var(--memory-javascript-fill-color);
+}
+
+.heap-snapshot-summary .circle-chart > svg > path.top-class-2,
+.heap-snapshot-summary .circle-chart > svg > path.medium {
+    stroke: var(--memory-images-stroke-color);
+    fill: var(--memory-images-fill-color);
+}
+
+.heap-snapshot-summary .circle-chart > svg > path.top-class-3,
+.heap-snapshot-summary .circle-chart > svg > path.large {
+    stroke: var(--memory-layers-stroke-color);
+    fill: var(--memory-layers-fill-color);
+}
+
+.heap-snapshot-summary .circle-chart > svg > path.top-class-4,
+.heap-snapshot-summary .circle-chart > svg > path.very-large {
+    stroke: var(--memory-page-stroke-color);
+    fill: var(--memory-page-fill-color);
+}
+
+.heap-snapshot-summary .circle-chart > svg > path.top-class-5 {
+    stroke: var(--memory-extra-stroke-color);
+    fill: var(--memory-extra-fill-color);
+}
+
+.heap-snapshot-summary .circle-chart > svg > path.other {
+    stroke: var(--memory-max-comparison-stroke-color);
+    fill: var(--memory-max-comparison-fill-color);
+}

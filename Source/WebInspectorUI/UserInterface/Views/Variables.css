@@ -67,6 +67,8 @@
     --memory-page-stroke-color: hsl(22, 40%, 50%);
     --memory-max-comparison-fill-color: hsl(220, 10%, 75%);
     --memory-max-comparison-stroke-color: hsl(220, 10%, 55%);
+    --memory-extra-fill-color: hsl(211, 53%, 70%);
+    --memory-extra-stroke-color: hsl(211, 53%, 55%);
 }
 
 body.window-inactive {

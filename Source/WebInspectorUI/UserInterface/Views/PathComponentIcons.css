@@ -31,6 +31,14 @@
     content: url(../Images/Response.svg);
 }
 
+.heap-snapshot-summary-icon .icon {
+    content: url(../Images/HeapSnapshotSummary.svg);
+}
+
+.heap-snapshot-instances-icon .icon {
+    content: url(../Images/HeapSnapshotInstances.svg);
+}
+
 .dom-element-icon .icon {
     content: url(../Images/DOMElement.svg);
 }
@@ -83,8 +91,22 @@
     content: url(../Images/CallTrees.svg);
 }
 
+.snapshot-list-icon .icon {
+    content: url(../Images/Events.svg);
+}
+
+.snapshot-diff-icon .icon {
+    content: url(../Images/HeapSnapshotDiff.svg);
+}
+
 /* FIXME: <https://webkit.org/b/155077> [GTK] Web Inspector: Add new GTK+ icons for different Script Timeline Views */
+/* FIXME: <https://webkit.org/b/155282> [GTK] Web Inspector: Add new GTK+ icons for different Heap Allocations Timeline Views (Heap Snapshots) */
 body:not(.mac-platform, .windows-platform) .events-icon .icon,
-body:not(.mac-platform, .windows-platform) .call-trees-icon .icon {
+body:not(.mac-platform, .windows-platform) .call-trees-icon .icon,
+body:not(.mac-platform, .windows-platform) .heap-snapshot-record .icon,
+body:not(.mac-platform, .windows-platform) .heap-snapshot-summary-icon .icon,
+body:not(.mac-platform, .windows-platform) .heap-snapshot-instances-icon .icon,
+body:not(.mac-platform, .windows-platform) .snapshot-list-icon .icon,
+body:not(.mac-platform, .windows-platform) .snapshot-diff-icon .icon {
     content: url(../Images/ResultLine.svg);
 }

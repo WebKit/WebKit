@@ -38,7 +38,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         this.element.classList.add("timeline-recording");
 
-        this._timelineOverview = new WebInspector.TimelineOverview(this._recording);
+        this._timelineOverview = new WebInspector.TimelineOverview(this._recording, this);
         this._timelineOverview.addEventListener(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
         this._timelineOverview.addEventListener(WebInspector.TimelineOverview.Event.RecordSelected, this._recordSelected, this);
         this._timelineOverview.addEventListener(WebInspector.TimelineOverview.Event.TimelineSelected, this._timelineSelected, this);
@@ -351,6 +351,25 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         return new WebInspector.GeneralTreeElement(iconClassName, title, representedObject, hasChildren);
     }
 
+    // TimelineOverview delegate
+
+    timelineOverviewUserSelectedRecord(timelineOverview, timelineRecord)
+    {
+        let timelineViewForRecord = null;
+        for (let timelineView of this._timelineViewMap.values()) {
+            if (timelineView.representedObject.type === timelineRecord.type) {
+                timelineViewForRecord = timelineView;
+                break;
+            }
+        }
+
+        if (!timelineViewForRecord)
+            return;
+
+        this._timelineContentBrowser.showContentView(timelineViewForRecord);
+        timelineViewForRecord.userSelectedRecordFromOverview(timelineRecord);
+    }
+
     // Private
 
     _currentContentViewDidChange(event)
@@ -364,7 +383,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         this._timelineOverview.viewMode = newViewMode;
 
-        if (timelineView) {
+        if (timelineView instanceof WebInspector.TimelineView) {
             this._timelineSidebarPanel.contentTreeOutline = timelineView.navigationSidebarTreeOutline;
             this._timelineSidebarPanel.contentTreeOutlineLabel = timelineView.navigationSidebarTreeOutlineLabel;
 

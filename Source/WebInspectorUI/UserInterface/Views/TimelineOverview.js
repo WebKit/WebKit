@@ -25,7 +25,7 @@
 
 WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 {
-    constructor(timelineRecording)
+    constructor(timelineRecording, delegate)
     {
         super();
 
@@ -44,6 +44,8 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.InstrumentRemoved, this._instrumentRemoved, this);
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
+
+        this._delegate = delegate;
 
         this.element.classList.add("timeline-overview");
         this.element.addEventListener("wheel", this._handleWheelEvent.bind(this));
@@ -374,6 +376,12 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         console.assert(overviewGraph.visible, "Record selected in hidden overview graph", record);
 
         overviewGraph.selectedRecord = record;
+    }
+
+    userSelectedRecord(record)
+    {
+        if (this._delegate && this._delegate.timelineOverviewUserSelectedRecord)
+            this._delegate.timelineOverviewUserSelectedRecord(this, record);
     }
 
     updateLayoutIfNeeded()

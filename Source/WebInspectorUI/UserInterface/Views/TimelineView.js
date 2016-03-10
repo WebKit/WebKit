@@ -245,6 +245,11 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
         this.showContentViewForTreeElement(treeElement);
     }
 
+    userSelectedRecordFromOverview(timelineRecord)
+    {
+        // Implemented by sub-classes if needed.
+    }
+
     // Private
 
     _treeSelectionDidChange(event)

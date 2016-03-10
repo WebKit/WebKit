@@ -122,6 +122,8 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
             return WebInspector.UIString("Rendering Frames");
         case WebInspector.TimelineRecord.Type.Memory:
             return WebInspector.UIString("Memory");
+        case WebInspector.TimelineRecord.Type.HeapAllocations:
+            return WebInspector.UIString("JavaScript Allocations");
         default:
             console.error("Unknown Timeline type:", timeline.type);
         }
@@ -137,6 +139,9 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         case WebInspector.TimelineRecord.Type.Layout:
             return "layout-icon";
         case WebInspector.TimelineRecord.Type.Memory:
+            return "memory-icon";
+        case WebInspector.TimelineRecord.Type.HeapAllocations:
+            // FIXME: HeapAllocation Timeline needs a new icon.
             return "memory-icon";
         case WebInspector.TimelineRecord.Type.Script:
             return "script-icon";
@@ -158,6 +163,8 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
             return "colors";
         case WebInspector.TimelineRecord.Type.Memory:
             return "memory";
+        case WebInspector.TimelineRecord.Type.HeapAllocations:
+            return "heap-allocations";
         case WebInspector.TimelineRecord.Type.Script:
             return "script";
         case WebInspector.TimelineRecord.Type.RenderingFrame:
@@ -224,6 +231,9 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         case WebInspector.TimelineRecord.Type.RenderingFrame:
             return WebInspector.TimelineRecordTreeElement.RenderingFrameRecordIconStyleClass;
 
+        case WebInspector.TimelineRecord.Type.HeapAllocations:
+            return "heap-snapshot-record";
+
         case WebInspector.TimelineRecord.Type.Memory:
             // Not used. Fall through to error just in case.
 
@@ -245,6 +255,8 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
             return WebInspector.ScriptTimelineRecord.EventType.displayName(timelineRecord.eventType, timelineRecord.details, includeDetailsInMainTitle);
         case WebInspector.TimelineRecord.Type.RenderingFrame:
             return WebInspector.UIString("Frame %d").format(timelineRecord.frameNumber);
+        case WebInspector.TimelineRecord.Type.HeapAllocations:
+            return WebInspector.UIString("Snapshot %d").format(timelineRecord.heapSnapshot.identifier);
         case WebInspector.TimelineRecord.Type.Memory:
             // Not used. Fall through to error just in case.
         default:

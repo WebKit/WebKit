@@ -803,27 +803,6 @@ InjectedScript.prototype = {
         return null;
     },
 
-    _nodeDescription: function(node)
-    {
-        var isXMLDocument = node.ownerDocument && !!node.ownerDocument.xmlVersion;
-        var description = isXMLDocument ? node.nodeName : node.nodeName.toLowerCase();
-
-        switch (node.nodeType) {
-        case 1: // Node.ELEMENT_NODE
-            if (node.id)
-                description += "#" + node.id;
-            if (node.hasAttribute("class")) {
-                // Using .getAttribute() is a workaround for SVG*Element.className returning SVGAnimatedString,
-                // which doesn't have any useful String methods. See <https://webkit.org/b/145363/>.
-                description += "." + node.getAttribute("class").trim().replace(/\s+/g, ".");
-            }
-            return description;
-
-        default:
-            return description;
-        }
-    },
-
     _classPreview: function(classConstructorValue)
     {
         return "class " + classConstructorValue.name;
@@ -878,7 +857,7 @@ InjectedScript.prototype = {
             return toString(obj);
 
         if (subtype === "node")
-            return this._nodeDescription(obj);
+            return this._nodePreview(obj);
 
         var className = InjectedScriptHost.internalConstructorName(obj);
         if (subtype === "array")

@@ -1,3 +1,16 @@
+2016-03-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: JavaScript Heap Allocations Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=155287
+        <rdar://problem/25078088>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._describe):
+        (InjectedScript.prototype._nodeDescription):
+        Provide the nicer node preview more often.
+
 2016-03-10  Saam barati  <sbarati@apple.com>
 
         Assignment to new.target should be an early error
