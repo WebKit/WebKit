@@ -1,3 +1,17 @@
+2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Size metric to perf dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=155266
+
+        Reviewed by Chris Dumez.
+
+        Added the "Size" metric and use bytes as its unit.
+
+        * public/js/helper-classes.js:
+        (PerfTestRuns):
+        * public/v2/data.js:
+        (RunsData.unitFromMetricName):
+
 2016-02-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add the support for universal slave password

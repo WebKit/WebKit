@@ -410,6 +410,7 @@ RunsData.unitFromMetricName = function (metricName)
         'Malloc': 'B',
         'Heap': 'B',
         'Allocations': 'B',
+        'Size': 'B',
         'Score': 'pt',
     }[suffix];
     return unit;
