@@ -1,3 +1,34 @@
+2016-03-09  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r197149): Missing availability checks when soft-linking DataDetectors.framework
+        <http://webkit.org/b/155258>
+
+        Reviewed by Andy Estes.
+
+        * Platform/mac/MenuUtilities.mm:
+        (WebKit::menuItemForTelephoneNumber):
+        (WebKit::menuForTelephoneNumber):
+        - Add check that returns early if DataDetectors.framework is not
+          available.
+
+        * Shared/mac/WebHitTestResultData.mm:
+        (WebKit::WebHitTestResultData::platformDecode):
+        - Add Debug assertion.  The soft-linked code should never be
+          called if there was no actionContext passed in.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly):
+        - Protect calls to DDActionsManager with availability check.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _clearImmediateActionState]):
+        (-[WKImmediateActionController immediateActionRecognizerWillBeginAnimation:]):
+        - Protect calls to DDActionsManager with availability check.
+        (-[WKImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedLink]):
+        - Add check that returns early if DataDetectors.framework is not
+          available.
+
 2016-03-09  Keith Rollin  <krollin@apple.com>
 
         Add state dumping facility

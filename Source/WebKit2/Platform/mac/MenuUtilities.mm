@@ -50,6 +50,9 @@ NSString *menuItemTitleForTelephoneNumberGroup()
 
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
 {
+    if (!DataDetectorsLibrary())
+        return nil;
+
     RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
     [actionContext setAllowedActionUTIs:@[ @"com.apple.dial" ]];
 
@@ -74,6 +77,9 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
 
 RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber)
 {
+    if (!DataDetectorsLibrary())
+        return nil;
+
     RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
     NSMutableArray *faceTimeItems = [NSMutableArray array];
     NSMenuItem *dialItem = nil;

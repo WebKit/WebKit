@@ -94,6 +94,9 @@ ServicesOverlayController::Highlight::~Highlight()
 
 void ServicesOverlayController::Highlight::setDDHighlight(DDHighlightRef highlight)
 {
+    if (!DataDetectorsLibrary())
+        return;
+
     if (!m_controller)
         return;
 
@@ -129,6 +132,9 @@ void ServicesOverlayController::Highlight::notifyFlushRequired(const GraphicsLay
 
 void ServicesOverlayController::Highlight::paintContents(const GraphicsLayer*, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect&)
 {
+    if (!DataDetectorsLibrary())
+        return;
+
     CGContextRef cgContext = graphicsContext.platformContext();
 
     CGLayerRef highlightLayer = DDHighlightGetLayerWithContext(ddHighlight(), cgContext);
@@ -425,6 +431,9 @@ void ServicesOverlayController::buildPotentialHighlightsIfNeeded()
 
 bool ServicesOverlayController::mouseIsOverHighlight(Highlight& highlight, bool& mouseIsOverButton) const
 {
+    if (!DataDetectorsLibrary())
+        return false;
+
     Boolean onButton;
     bool hovered = DDHighlightPointIsOnHighlight(highlight.ddHighlight(), (CGPoint)m_mousePosition, &onButton);
     mouseIsOverButton = onButton;

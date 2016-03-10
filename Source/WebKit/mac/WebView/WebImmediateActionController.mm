@@ -124,6 +124,9 @@ using namespace WebCore;
 
 - (void)_clearImmediateActionState
 {
+    if (!DataDetectorsLibrary())
+        return;
+
     DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
     if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
         [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
@@ -183,6 +186,9 @@ using namespace WebCore;
 
 - (void)immediateActionRecognizerWillBeginAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
 {
+    if (!DataDetectorsLibrary())
+        return;
+
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
@@ -409,6 +415,9 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
 - (id <NSImmediateActionAnimationController>)_animationControllerForDataDetectedText
 {
+    if (!DataDetectorsLibrary())
+        return nil;
+
     RefPtr<Range> detectedDataRange;
     FloatRect detectedDataBoundingBox;
     RetainPtr<DDActionContext> actionContext;
@@ -458,6 +467,9 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
 - (id <NSImmediateActionAnimationController>)_animationControllerForDataDetectedLink
 {
+    if (!DataDetectorsLibrary())
+        return nil;
+
     RetainPtr<DDActionContext> actionContext = adoptNS([allocDDActionContextInstance() init]);
 
     if (!actionContext)

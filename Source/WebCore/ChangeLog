@@ -1,3 +1,20 @@
+2016-03-09  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r197149): Missing availability checks when soft-linking DataDetectors.framework
+        <http://webkit.org/b/155258>
+
+        Reviewed by Andy Estes.
+
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::setDDHighlight):
+        (WebCore::ServicesOverlayController::Highlight::paintContents):
+        (WebCore::ServicesOverlayController::mouseIsOverHighlight):
+        - Add check that returns early if DataDetectors.framework is not
+          available.
+
+        * platform/spi/mac/DataDetectorsSPI.h:
+        - Mark Objective-C classses as optional.
+
 2016-03-09  Jer Noble  <jer.noble@apple.com>
 
         Add heuristic for "main content" videos which override user gesture requirements

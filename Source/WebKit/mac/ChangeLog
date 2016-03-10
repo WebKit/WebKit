@@ -1,3 +1,18 @@
+2016-03-09  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r197149): Missing availability checks when soft-linking DataDetectors.framework
+        <http://webkit.org/b/155258>
+
+        Reviewed by Andy Estes.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _clearImmediateActionState]):
+        (-[WebImmediateActionController immediateActionRecognizerWillBeginAnimation:]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]):
+        - Add check that returns early if DataDetectors.framework is not
+          available.
+
 2016-03-08  Oliver Hunt  <oliver@apple.com>
 
         Start moving to separated writable and executable mappings in the JIT

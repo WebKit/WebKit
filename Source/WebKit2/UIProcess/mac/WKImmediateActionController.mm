@@ -122,7 +122,8 @@ using namespace WebKit;
 
     if (_currentActionContext && _hasActivatedActionContext) {
         _hasActivatedActionContext = NO;
-        [getDDActionsManagerClass() didUseActions];
+        if (DataDetectorsLibrary())
+            [getDDActionsManagerClass() didUseActions];
     }
 
     _state = ImmediateActionState::None;
@@ -209,8 +210,10 @@ using namespace WebKit;
 
     if (_currentActionContext) {
         _hasActivatedActionContext = YES;
-        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
-            [self _cancelImmediateAction];
+        if (DataDetectorsLibrary()) {
+            if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
+                [self _cancelImmediateAction];
+        }
     }
 }
 
@@ -392,6 +395,9 @@ using namespace WebKit;
 
 - (id<NSImmediateActionAnimationController>)_animationControllerForDataDetectedText
 {
+    if (!DataDetectorsLibrary())
+        return nil;
+
     DDActionContext *actionContext = _hitTestResultData.detectedDataActionContext.get();
     if (!actionContext)
         return nil;
@@ -428,6 +434,9 @@ using namespace WebKit;
 
 - (id<NSImmediateActionAnimationController>)_animationControllerForDataDetectedLink
 {
+    if (!DataDetectorsLibrary())
+        return nil;
+
     RetainPtr<DDActionContext> actionContext = adoptNS([allocDDActionContextInstance() init]);
 
     if (!actionContext)

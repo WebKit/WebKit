@@ -99,9 +99,9 @@ typedef NSUInteger DDHighlightStyle;
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
 
-SOFT_LINK_CLASS(DataDetectors, DDAction)
-SOFT_LINK_CLASS(DataDetectors, DDActionContext)
-SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
+SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDAction)
+SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDActionContext)
+SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDActionsManager)
 
 SOFT_LINK_CONSTANT(DataDetectors, DDBinderPhoneNumberKey, CFStringRef)
 

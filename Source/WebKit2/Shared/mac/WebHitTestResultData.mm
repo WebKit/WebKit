@@ -69,6 +69,7 @@ bool WebHitTestResultData::platformDecode(IPC::ArgumentDecoder& decoder, WebHitT
 
     if (!hasActionContext)
         return true;
+    ASSERT(DataDetectorsLibrary());
 
     RetainPtr<CFDataRef> data;
     if (!IPC::decode(decoder, data))
