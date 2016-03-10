@@ -1,3 +1,28 @@
+2016-03-10  Saam barati  <sbarati@apple.com>
+
+        [ES6] Make ToPropertyDescriptor spec compliant
+        https://bugs.webkit.org/show_bug.cgi?id=155313
+
+        Reviewed by Mark Lam.
+
+        We were performing HasProperty(.) and Get(.) in the same operation.
+        This isn't valid according to the spec and it's user observable
+        behavior with Proxy. This patch fixes ToPropertyDescriptor to use
+        two distinct operations for HasProperty(.) and Get(.).
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ownEnumerablePropertyKeys):
+        (JSC::toPropertyDescriptor):
+        * tests/es6.yaml:
+        * tests/stress/to-property-key-correctness.js: Added.
+        (assert):
+        (test):
+        (test.let.handler.has):
+        (arrayEq):
+        (let.handler.has):
+        (let.target):
+        (set get let):
+
 2016-03-10  Brian Burg  <bburg@apple.com>
 
         Web Inspector: report the underlying parser error message when JSON parsing fails
