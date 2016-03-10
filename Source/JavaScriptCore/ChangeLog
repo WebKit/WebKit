@@ -1,3 +1,15 @@
+2016-03-10  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: report the underlying parser error message when JSON parsing fails
+        https://bugs.webkit.org/show_bug.cgi?id=155303
+        <rdar://problem/25088939>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        (generate_from_specification.load_specification):
+        Stringize the underlying error so we can see what it says.
+
 2016-03-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JavaScript Heap Allocations Timeline

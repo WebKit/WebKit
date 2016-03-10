@@ -123,7 +123,7 @@ def generate_from_specification(primary_specification_filepath=None,
                 parsed_json = json.load(input_file)
                 protocol.parse_specification(parsed_json, isSupplemental)
         except ValueError as e:
-            raise Exception("Error parsing valid JSON in file: " + filepath)
+            raise Exception("Error parsing valid JSON in file: " + filepath + "\nParse error: " + str(e))
 
     protocol = models.Protocol(framework_name)
     for specification in supplemental_specification_filepaths:
