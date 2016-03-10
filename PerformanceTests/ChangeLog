@@ -1,5 +1,31 @@
 2016-03-09  Jon Lee  <jonlee@apple.com>
 
+        Add text tests
+        https://bugs.webkit.org/show_bug.cgi?id=155257
+
+        Reviewed by Simon Fraser.
+
+        * Animometer/resources/extensions.js:
+        (UnitBezier.Utilities.createClass): Add a class that computes Bezier points
+        assuming that two of the control points are at (0,0) and (1,1). Taken from
+        WebCore/platform/graphics/UnitBezier.h
+        * Animometer/resources/runner/tests.js: Add a test for English text and one
+        for international text.
+        * Animometer/tests/master/international.html: Added.
+        * Animometer/tests/master/resources/text.js: Added. The test assumes there is
+        #template div which it will copy. The copies are placed behind the template, and
+        are set with different colors each frame. They are moved around with CSS transform.
+        * Animometer/tests/master/text.html: Added.
+
+        Remove the other text tests, since these ones cover the same techniques.
+        * Animometer/tests/text/layering-text.html: Removed.
+        * Animometer/tests/text/resources/layering-text.js: Removed.
+        * Animometer/tests/text/resources/text-boxes.js: Removed.
+        * Animometer/tests/text/text-boxes.html: Removed.
+        * Animometer/resources/debug-runner/tests.js:
+
+2016-03-09  Jon Lee  <jonlee@apple.com>
+
         Add a new image test
         https://bugs.webkit.org/show_bug.cgi?id=155232
 

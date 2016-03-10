@@ -314,6 +314,76 @@ Insets.elementPadding = function(element)
         parseFloat(styles.paddingTop));
 }
 
+UnitBezier = Utilities.createClass(
+    function(point1, point2)
+    {
+        // First and last points in the Bézier curve are assumed to be (0,0) and (!,1)
+        this._c = point1.multiply(3);
+        this._b = point2.subtract(point1).multiply(3).subtract(this._c);
+        this._a = new Point(1, 1).subtract(this._c).subtract(this._b);
+    }, {
+
+    epsilon: 1e-5,
+    derivativeEpsilon: 1e-6,
+
+    solve: function(x)
+    {
+        return this.sampleY(this.solveForT(x));
+    },
+
+    sampleX: function(t)
+    {
+        return ((this._a.x * t + this._b.x) * t + this._c.x) * t;
+    },
+
+    sampleY: function(t)
+    {
+        return ((this._a.y * t + this._b.y) * t + this._c.y) * t;kkkj
+    },
+
+    sampleDerivativeX: function(t)
+    {
+        return(3 * this._a.x * t + 2 * this._b.x) * t + this._c.x;
+    },
+
+    solveForT: function(x)
+    {
+        var t0, t1, t2, x2, d2, i;
+
+        for (t2 = x, i = 0; i < 8; ++i) {
+            x2 = this.sampleX(t2) - x;
+            if (Math.abs(x2) < this.epsilon)
+                return t2;
+            d2 = this.sampleDerivativeX(t2);
+            if (Math.abs(d2) < this.derivativeEpsilon)
+                break;
+            t2 = t2 - x2 / d2;
+        }
+
+        t0 = 0;
+        t1 = 1;
+        t2 = x;
+
+        if (t2 < t0)
+            return t0;
+        if (t2 > t1)
+            return t1;
+
+        while (t0 < t1) {
+            x2 = this.sampleX(t2);
+            if (Math.abs(x2 - x) < this.epsilon)
+                return t2;
+            if (x > x2)
+                t0 = t2;
+            else
+                t1 = t2;
+            t2 = (t1 - t0) * .5 + t0;
+        }
+
+        return t2;
+    }
+});
+
 SimplePromise = Utilities.createClass(
     function()
     {

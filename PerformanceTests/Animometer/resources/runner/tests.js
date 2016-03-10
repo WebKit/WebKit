@@ -33,12 +33,20 @@ Suites.push(new Suite("Animometer",
             name: "Canvas line segments"
         },
         {
+            url: "master/text.html",
+            name: "A to Z"
+        },
+        {
             url: "master/focus.html",
             name: "Focus"
         },
         {
             url: "master/image-data.html",
             name: "Images"
+        },
+        {
+            url: "master/international.html",
+            name: "Design"
         },
         {
             url: "master/particles.html",
