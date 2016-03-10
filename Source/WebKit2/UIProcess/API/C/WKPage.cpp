@@ -2697,6 +2697,21 @@ bool WKPageIsPlayingAudio(WKPageRef page)
     return toImpl(page)->isPlayingAudio();
 }
 
+WKMediaState WKPageGetMediaState(WKPageRef page)
+{
+    WebCore::MediaProducer::MediaStateFlags coreState = toImpl(page)->mediaStateFlags();
+    WKMediaState state = kWKMediaIsNotPlaying;
+
+    if (coreState & WebCore::MediaProducer::IsPlayingAudio)
+        state |= kWKMediaIsPlayingAudio;
+    if (coreState & WebCore::MediaProducer::IsPlayingVideo)
+        state |= kWKMediaIsPlayingVideo;
+    if (coreState & WebCore::MediaProducer::HasActiveMediaCaptureDevice)
+        state |= kWKMediaHasActiveCaptureDevice;
+
+    return state;
+}
+
 void WKPageClearWheelEventTestTrigger(WKPageRef pageRef)
 {
     toImpl(pageRef)->clearWheelEventTestTrigger();

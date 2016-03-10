@@ -181,7 +181,7 @@ bool MediaStreamPrivate::isProducingData() const
     return false;
 }
 
-bool MediaStreamPrivate::hasVideo()
+bool MediaStreamPrivate::hasVideo() const
 {
     for (auto& track : m_trackSet.values()) {
         if (track->type() == RealtimeMediaSource::Type::Video && track->enabled() && !track->ended())
@@ -190,13 +190,22 @@ bool MediaStreamPrivate::hasVideo()
     return false;
 }
 
-bool MediaStreamPrivate::hasAudio()
+bool MediaStreamPrivate::hasAudio() const
 {
     for (auto& track : m_trackSet.values()) {
         if (track->type() == RealtimeMediaSource::Type::Audio && track->enabled() && !track->ended())
             return true;
     }
     return false;
+}
+
+bool MediaStreamPrivate::muted() const
+{
+    for (auto& track : m_trackSet.values()) {
+        if (!track->muted())
+            return false;
+    }
+    return true;
 }
 
 FloatSize MediaStreamPrivate::intrinsicSize() const

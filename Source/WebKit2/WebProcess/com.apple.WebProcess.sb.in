@@ -308,3 +308,29 @@
     (global-name "com.apple.coremedia.endpointstream.xpc")
     (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
     (global-name "com.apple.coremedia.endpointpicker.xpc"))
+
+
+
+
+
+;; Camera access
+(allow device-camera)
+(allow file-read*
+    (literal "/Library/Preferences/com.apple.coremedia")
+    (home-literal "/Library/Preferences/com.apple.coremedia"))
+(allow mach-lookup (extension "com.apple.app-sandbox.mach"))
+(allow mach-lookup
+    (global-name "com.apple.cmio.AppleCameraAssistant")
+    ;; Apple DAL assistants
+    (global-name "com.apple.cmio.VDCAssistant")
+    (global-name "com.apple.cmio.AVCAssistant")
+    (global-name "com.apple.cmio.IIDCVideoAssistant")
+    ;; QuickTimeIIDCDigitizer assistant
+    (global-name "com.apple.IIDCAssistant"))
+(allow iokit-open
+    ;; QuickTimeUSBVDCDigitizer
+    (iokit-user-client-class "IOUSBDeviceUserClientV2")
+    (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
+
+;; Microphone
+(allow device-microphone)

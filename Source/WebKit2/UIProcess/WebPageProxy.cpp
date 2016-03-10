@@ -3088,6 +3088,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     }
 
     m_pageLoadState.commitChanges();
+    m_mediaState = MediaProducer::IsNotPlaying;
     if (m_navigationClient) {
         if (frame->isMainFrame())
             m_navigationClient->didCommitNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
@@ -6000,16 +6001,18 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
     if (state == m_mediaState)
         return;
 
+    MediaProducer::MediaStateFlags playingMediaMask = MediaProducer::IsPlayingAudio | MediaProducer::IsPlayingVideo;
     MediaProducer::MediaStateFlags oldState = m_mediaState;
     m_mediaState = state;
 
-    if ((oldState & MediaProducer::IsPlayingAudio) == (m_mediaState & MediaProducer::IsPlayingAudio))
-        return;
-
 #if PLATFORM(MAC)
-    m_pageClient.isPlayingMediaDidChange();
+    if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
+        m_pageClient.isPlayingMediaDidChange();
 #endif
-    m_uiClient->isPlayingAudioDidChange(*this);
+
+    playingMediaMask |= MediaProducer::HasActiveMediaCaptureDevice;
+    if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
+        m_uiClient->isPlayingAudioDidChange(*this);
 }
 
 bool WebPageProxy::isPlayingVideoWithAudio() const

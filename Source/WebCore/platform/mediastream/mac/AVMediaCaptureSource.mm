@@ -132,6 +132,7 @@ AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceType* device, const At
 {
     setName(device.localizedName);
     setPersistentID(device.uniqueID);
+    setMuted(true);
 }
 
 AVMediaCaptureSource::~AVMediaCaptureSource()
@@ -225,6 +226,7 @@ void AVMediaCaptureSource::captureSessionIsRunningDidChange(bool state)
             return;
 
         m_isRunning = state;
+        setMuted(!m_isRunning);
     });
 }
 

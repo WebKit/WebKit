@@ -1,3 +1,33 @@
+2016-03-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] push media stream state to the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=155281
+
+        Reviewed by Darin Adler.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream): Register with the document as an audio producer.
+        (WebCore::MediaStream::~MediaStream): Unregister.
+        (WebCore::MediaStream::setIsActive): Update document status.
+        (WebCore::MediaStream::pageMutedStateDidChange): Mute/unmute according to the page mute setting.
+        (WebCore::MediaStream::mediaState): Return state.
+        (WebCore::MediaStream::statusDidChange): Call document.updateIsPlayingMedia.
+        (WebCore::MediaStream::characteristicsChanged): Track stream mute state.
+        (WebCore::MediaStream::scheduleActiveStateChange): m_isActive -> m_active.
+        * Modules/mediastream/MediaStream.h:
+
+        * page/MediaProducer.h: Add HasActiveMediaCaptureDevice.
+
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::hasVideo): Make const.
+        (WebCore::MediaStreamPrivate::hasAudio): Ditto.
+        (WebCore::MediaStreamPrivate::muted): New.
+        * platform/mediastream/MediaStreamPrivate.h:
+
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::AVMediaCaptureSource): Initialize muted to true.
+        (WebCore::AVMediaCaptureSource::captureSessionIsRunningDidChange): Set muted.
+
 2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extract EventPath.h/cpp out of EventDispatcher.cpp

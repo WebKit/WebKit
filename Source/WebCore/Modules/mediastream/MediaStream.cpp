@@ -35,6 +35,7 @@
 #include "ExceptionCode.h"
 #include "MediaStreamRegistry.h"
 #include "MediaStreamTrackEvent.h"
+#include "Page.h"
 #include "RealtimeMediaSource.h"
 #include "URL.h"
 #include <wtf/NeverDestroyed.h>
@@ -82,6 +83,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrack
     setIsActive(m_private->active());
     m_private->addObserver(*this);
     MediaStreamRegistry::shared().registerStream(*this);
+    document()->addAudioProducer(this);
 }
 
 MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPrivate>&& streamPrivate)
@@ -99,14 +101,20 @@ MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPriv
         track->addObserver(this);
         m_trackSet.add(track->id(), WTFMove(track));
     }
+    document()->addAudioProducer(this);
 }
 
 MediaStream::~MediaStream()
 {
+    // Set isActive to false immediately so an callbacks triggered by shutting down, e.g.
+    // mediaState(), are short circuited.
+    m_isActive = false;
     MediaStreamRegistry::shared().unregisterStream(*this);
     m_private->removeObserver(*this);
     for (auto& track : m_trackSet.values())
         track->removeObserver(this);
+    if (Document* document = this->document())
+        document->removeAudioProducer(this);
 }
 
 RefPtr<MediaStream> MediaStream::clone()
@@ -233,12 +241,65 @@ bool MediaStream::internalRemoveTrack(RefPtr<MediaStreamTrack>&& track, StreamMo
 
 void MediaStream::setIsActive(bool active)
 {
-    m_isActive = active;
-    if (!active)
+    if (m_isActive == active)
         return;
 
-    if (Document* document = downcast<Document>(scriptExecutionContext()))
-        document->setHasActiveMediaStreamTrack();
+    m_isActive = active;
+    statusDidChange();
+}
+
+void MediaStream::pageMutedStateDidChange()
+{
+    if (!m_isActive)
+        return;
+
+    Document* document = this->document();
+    if (!document)
+        return;
+
+    bool pageMuted = document->page()->isMuted();
+    if (m_externallyMuted == pageMuted)
+        return;
+
+    m_externallyMuted = pageMuted;
+    if (pageMuted)
+        m_private->stopProducingData();
+    else
+        m_private->startProducingData();
+}
+
+MediaProducer::MediaStateFlags MediaStream::mediaState() const
+{
+    MediaStateFlags state = IsNotPlaying;
+
+    if (!m_isActive)
+        return state;
+
+    if (m_externallyMuted || m_private->isProducingData())
+        state |= HasActiveMediaCaptureDevice;
+
+    if (m_private->hasAudio() || m_private->hasVideo())
+        state |= HasAudioOrVideo;
+
+    return state;
+}
+
+void MediaStream::statusDidChange()
+{
+    if (Document* document = this->document()) {
+        if (m_isActive)
+            document->setHasActiveMediaStreamTrack();
+        document->updateIsPlayingMedia();
+    }
+}
+
+void MediaStream::characteristicsChanged()
+{
+    bool muted = m_private->muted();
+    if (m_isMuted != muted) {
+        m_isMuted = muted;
+        statusDidChange();
+    }
 }
 
 void MediaStream::scheduleActiveStateChange()
@@ -299,6 +360,11 @@ void MediaStream::removeObserver(MediaStream::Observer* observer)
     size_t pos = m_observers.find(observer);
     if (pos != notFound)
         m_observers.remove(pos);
+}
+
+Document* MediaStream::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
 }
 
 } // namespace WebCore

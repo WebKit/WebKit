@@ -118,6 +118,16 @@ WK_EXPORT bool WKPageIsPlayingAudio(WKPageRef page);
 WK_EXPORT void WKPageSetMuted(WKPageRef page, bool muted);
 
 enum {
+    kWKMediaIsNotPlaying = 0,
+    kWKMediaIsPlayingAudio = 1 << 0,
+    kWKMediaIsPlayingVideo = 1 << 1,
+    kWKMediaHasActiveCaptureDevice = 1 << 2,
+};
+typedef uint32_t WKMediaState;
+
+WK_EXPORT WKMediaState WKPageGetMediaState(WKPageRef page);
+
+enum {
     kWKMediaEventTypePlayPause,
     kWKMediaEventTypeTrackNext,
     kWKMediaEventTypeTrackPrevious

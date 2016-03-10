@@ -91,8 +91,9 @@ public:
     RefPtr<Image> currentFrameImage();
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
-    bool hasVideo();
-    bool hasAudio();
+    bool hasVideo() const;
+    bool hasAudio() const;
+    bool muted() const;
 
     FloatSize intrinsicSize() const;
 
