@@ -1,3 +1,17 @@
+2016-03-10  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix Changelog. git merged poorly.
+
+2016-03-10  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix testapi.
+
+        * API/tests/TypedArrayCTest.cpp:
+        (testAccess):
+        (testConstructors):
+        (forEachTypedArrayType):
+        (testTypedArrayCAPI):
+
 2016-03-10  Saam barati  <sbarati@apple.com>
 
         [ES6] Make RegExp.prototype.toString spec compliant
@@ -54,16 +68,6 @@
         (JSC::DFG::SpeculativeJIT::compileArithAdd):
         * tests/stress/arith-add-with-constant-overflow.js: Added.
         (opaqueAdd):
-
-2016-03-10  Keith Miller  <keith_miller@apple.com>
-
-        Unreviewed, fix testapi.
-
-        * API/tests/TypedArrayCTest.cpp:
-        (testAccess):
-        (testConstructors):
-        (forEachTypedArrayType):
-        (testTypedArrayCAPI):
 
 2016-03-10  Keith Miller  <keith_miller@apple.com>
 
