@@ -215,7 +215,6 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
     setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-    setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
     SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
 #endif
 

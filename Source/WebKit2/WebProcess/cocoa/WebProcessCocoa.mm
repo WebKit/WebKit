@@ -52,6 +52,7 @@
 #import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/NSAccessibilitySPI.h>
 #import <WebCore/PageCache.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/pthreadSPI.h>
 #import <WebCore/VNodeTracker.h>
 #import <WebCore/WebCoreNSURLExtras.h>
@@ -128,6 +129,8 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& parameters)
 {
+    WebCore::setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
+
 #if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
     SandboxExtension::consumePermanently(parameters.webSQLDatabaseDirectoryExtensionHandle);

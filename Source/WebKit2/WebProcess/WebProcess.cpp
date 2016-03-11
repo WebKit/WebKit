@@ -347,7 +347,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     enableSmoothedLayerText(parameters.enabledSmoothedLayerText);
         
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-    setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
     SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
 #endif
 

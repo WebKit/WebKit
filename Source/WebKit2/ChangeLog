@@ -1,3 +1,31 @@
+2016-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r198040): WebKit2.DocumentStartUserScriptAlertCrashTest API test is crashing in debug
+        https://bugs.webkit.org/show_bug.cgi?id=155382
+
+        Reviewed by Alexey Proskuryakov.
+
+        r198040 introduced an assertion to make sure we never call
+        applicationBundleIsEqualTo() before setApplicationBundleIdentifier()
+        is called. This new assertion found a bug as it turns out we were
+        calling setApplicationBundleIdentifier() too late during the
+        WebProcess initialization and some runtime applications checks were
+        already done by then.
+
+        To address the problem, this patch moves the
+        setApplicationBundleIdentifier() call as early as possible during
+        the WebProcess and the NetworkProcess initialization. It also moves
+        it to the Cocoa specific files for clarity.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2016-03-11  Enrica Casucci  <enrica@apple.com>
 
         Use only selected text for Look up.
