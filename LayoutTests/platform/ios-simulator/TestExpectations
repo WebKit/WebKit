@@ -2993,3 +2993,6 @@ webkit.org/b/155271 [ Debug ] js/regress/getter-richards-try-catch.html [ Skip ]
 # RTL Scrollbars are only implemented on OS X.
 fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]
+
+webkit.org/b/155372 [ Debug ] css3/masking/mask-luminance-svg.html [ Pass Crash ]
+webkit.org/b/155372 [ Debug ] css3/masking/mask-svg-script-none-to-png.html [ Pass Crash]

@@ -1,5 +1,16 @@
 2016-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking css3/masking/mask-luminance-svg.html and css3/masking/mask-svg-script-none-to-png.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=155372.
+
+        Unreviewed test gardening.
+
+        These two tests are flaky crashes on ios-simulator debug.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-03-11  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r197984.
 
         This change caused an existing LayoutTest to fail
