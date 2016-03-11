@@ -378,6 +378,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
             newViewMode = WebInspector.TimelineOverview.ViewMode.Timelines;
 
         this._timelineOverview.viewMode = newViewMode;
+        this._updateTimelineOverviewHeight();
 
         if (timelineView) {
             this._updateTimelineViewSelection(timelineView);

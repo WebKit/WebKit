@@ -1,5 +1,17 @@
 2016-03-11  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Wrong TimelineOverview height after switching from Events to Frames
+        https://bugs.webkit.org/show_bug.cgi?id=155366
+        <rdar://problem/25111028>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        Update the overview height after setting a new view mode.
+
+2016-03-11  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Make it possible to disable TimelineRuler UI
         https://bugs.webkit.org/show_bug.cgi?id=155348
         <rdar://problem/25103505>
