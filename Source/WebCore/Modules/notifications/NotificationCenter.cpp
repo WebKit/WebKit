@@ -59,11 +59,11 @@ NotificationCenter::NotificationCenter(ScriptExecutionContext* context, Notifica
 
 RefPtr<Notification> NotificationCenter::createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
 {
-    if (!m_client) {
+    if (!m_client || !scriptExecutionContext()) {
         ec = INVALID_STATE_ERR;
         return nullptr;
     }
-    return Notification::create(title, body, iconURI, scriptExecutionContext(), ec, this);
+    return Notification::create(title, body, iconURI, *scriptExecutionContext(), ec, this);
 }
 
 int NotificationCenter::checkPermission()

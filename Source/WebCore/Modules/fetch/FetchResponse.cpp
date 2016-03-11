@@ -48,15 +48,15 @@ static inline bool isNullBodyStatus(int status)
     return status == 101 || status == 204 || status == 205 || status == 304;
 }
 
-Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext* context)
+Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext& context)
 {
-    return adoptRef(*new FetchResponse(*context, Type::Error, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
+    return adoptRef(*new FetchResponse(context, Type::Error, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
 }
 
-RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext* context, const String& url, int status, ExceptionCode& ec)
+RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext& context, const String& url, int status, ExceptionCode& ec)
 {
     // FIXME: Tighten the URL parsing algorithm according https://url.spec.whatwg.org/#concept-url-parser.
-    URL requestURL = context->completeURL(url);
+    URL requestURL = context.completeURL(url);
     if (!requestURL.isValid() || !requestURL.user().isEmpty() || !requestURL.pass().isEmpty()) {
         ec = TypeError;
         return nullptr;
@@ -65,7 +65,7 @@ RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext* context, c
         ec = TypeError;
         return nullptr;
     }
-    RefPtr<FetchResponse> redirectResponse = adoptRef(*new FetchResponse(*context, Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
+    RefPtr<FetchResponse> redirectResponse = adoptRef(*new FetchResponse(context, Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
     redirectResponse->m_response.setHTTPStatusCode(status);
     redirectResponse->m_headers->fastSet(HTTPHeaderName::Location, requestURL.string());
     return redirectResponse;
@@ -116,13 +116,13 @@ FetchResponse::FetchResponse(ScriptExecutionContext& context, Type type, FetchBo
 {
 }
 
-RefPtr<FetchResponse> FetchResponse::clone(ScriptExecutionContext* context, ExceptionCode& ec)
+RefPtr<FetchResponse> FetchResponse::clone(ScriptExecutionContext& context, ExceptionCode& ec)
 {
     if (m_body.isDisturbed() || m_isLocked) {
         ec = TypeError;
         return nullptr;
     }
-    RefPtr<FetchResponse> cloned = adoptRef(*new FetchResponse(*context, m_type, FetchBody(m_body), FetchHeaders::create(headers()), ResourceResponse(m_response)));
+    RefPtr<FetchResponse> cloned = adoptRef(*new FetchResponse(context, m_type, FetchBody(m_body), FetchHeaders::create(headers()), ResourceResponse(m_response)));
     cloned->m_isRedirected = m_isRedirected;
     return cloned;
 }

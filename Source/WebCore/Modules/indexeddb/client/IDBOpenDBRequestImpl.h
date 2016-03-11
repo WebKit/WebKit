@@ -42,8 +42,8 @@ class IDBConnectionToServer;
 
 class IDBOpenDBRequest : public IDBRequest {
 public:
-    static Ref<IDBOpenDBRequest> createDeleteRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&);
-    static Ref<IDBOpenDBRequest> createOpenRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version);
+    static Ref<IDBOpenDBRequest> createDeleteRequest(IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&);
+    static Ref<IDBOpenDBRequest> createOpenRequest(IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
 
     ~IDBOpenDBRequest() final;
     
@@ -60,7 +60,7 @@ public:
     bool dispatchEvent(Event&) final;
 
 private:
-    IDBOpenDBRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version, IndexedDB::RequestType);
+    IDBOpenDBRequest(IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version, IndexedDB::RequestType);
 
     void onError(const IDBResultData&);
     void onSuccess(const IDBResultData&);

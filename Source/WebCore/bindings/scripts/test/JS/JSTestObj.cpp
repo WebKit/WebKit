@@ -1478,7 +1478,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* state, En
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAttribute(scriptContext)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAttribute(*scriptContext)));
     return JSValue::encode(result);
 }
 
@@ -1514,7 +1514,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* sta
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAttributeRaises(scriptContext, ec)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAttributeRaises(*scriptContext, ec)));
     setDOMException(state, ec);
     return JSValue::encode(result);
 }
@@ -1533,7 +1533,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecSt
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateAttribute(*state, scriptContext)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateAttribute(*state, *scriptContext)));
     return JSValue::encode(result);
 }
 
@@ -1552,7 +1552,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateAttributeRaises(*state, scriptContext, ec)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateAttributeRaises(*state, *scriptContext, ec)));
     setDOMException(state, ec);
     return JSValue::encode(result);
 }
@@ -1571,7 +1571,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttrib
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateWithSpacesAttribute(*state, scriptContext)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateWithSpacesAttribute(*state, *scriptContext)));
     return JSValue::encode(result);
 }
 
@@ -2697,7 +2697,7 @@ void setJSTestObjWithScriptExecutionContextAttribute(ExecState* state, EncodedJS
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
-    impl.setWithScriptExecutionContextAttribute(scriptContext, nativeValue);
+    impl.setWithScriptExecutionContextAttribute(*scriptContext, nativeValue);
 }
 
 
@@ -2734,7 +2734,7 @@ void setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* state, Enc
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
-    impl.setWithScriptExecutionContextAttributeRaises(scriptContext, nativeValue);
+    impl.setWithScriptExecutionContextAttributeRaises(*scriptContext, nativeValue);
 }
 
 
@@ -2754,7 +2754,7 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* st
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
-    impl.setWithScriptExecutionContextAndScriptStateAttribute(*state, scriptContext, nativeValue);
+    impl.setWithScriptExecutionContextAndScriptStateAttribute(*state, *scriptContext, nativeValue);
 }
 
 
@@ -2774,7 +2774,7 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecSta
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
-    impl.setWithScriptExecutionContextAndScriptStateAttributeRaises(*state, scriptContext, nativeValue);
+    impl.setWithScriptExecutionContextAndScriptStateAttributeRaises(*state, *scriptContext, nativeValue);
 }
 
 
@@ -2794,7 +2794,7 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(Exe
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
-    impl.setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(*state, scriptContext, nativeValue);
+    impl.setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(*state, *scriptContext, nativeValue);
 }
 
 
@@ -3704,7 +3704,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
-    impl.withScriptExecutionContext(scriptContext);
+    impl.withScriptExecutionContext(*scriptContext);
     return JSValue::encode(jsUndefined());
 }
 
@@ -3719,7 +3719,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
-    impl.withScriptExecutionContextAndScriptState(*state, scriptContext);
+    impl.withScriptExecutionContextAndScriptState(*state, *scriptContext);
     return JSValue::encode(jsUndefined());
 }
 
@@ -3735,7 +3735,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateObjException(*state, scriptContext, ec)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateObjException(*state, *scriptContext, ec)));
 
     setDOMException(state, ec);
     if (UNLIKELY(state->hadException()))
@@ -3754,7 +3754,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateWithSpaces(*state, scriptContext)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateWithSpaces(*state, *scriptContext)));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(result);

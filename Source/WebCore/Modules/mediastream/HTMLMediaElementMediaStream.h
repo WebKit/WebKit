@@ -28,17 +28,16 @@
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(VIDEO)
 
-#include <wtf/PassRefPtr.h>
-
 namespace WebCore {
 
 class HTMLMediaElement;
 class MediaStream;
+class ScriptExecutionContext;
 
 class HTMLMediaElementMediaStream {
 public:
     static MediaStream* srcObject(HTMLMediaElement&);
-    static void setSrcObject(HTMLMediaElement&, MediaStream*);
+    static void setSrcObject(ScriptExecutionContext&, HTMLMediaElement&, MediaStream*);
 };
 
 } // namespace WebCore

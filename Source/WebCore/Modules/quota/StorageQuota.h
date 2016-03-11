@@ -55,9 +55,9 @@ public:
         return adoptRef(*new StorageQuota(type));
     }
 
-    void queryUsageAndQuota(ScriptExecutionContext*, PassRefPtr<StorageUsageCallback>, PassRefPtr<StorageErrorCallback>);
+    void queryUsageAndQuota(ScriptExecutionContext&, PassRefPtr<StorageUsageCallback>, PassRefPtr<StorageErrorCallback>);
 
-    void requestQuota(ScriptExecutionContext*, unsigned long long newQuotaInBytes, PassRefPtr<StorageQuotaCallback>, PassRefPtr<StorageErrorCallback>);
+    void requestQuota(ScriptExecutionContext&, unsigned long long newQuotaInBytes, PassRefPtr<StorageQuotaCallback>, PassRefPtr<StorageErrorCallback>);
 
     ~StorageQuota();
 

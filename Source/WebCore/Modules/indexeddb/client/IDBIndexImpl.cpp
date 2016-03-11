@@ -41,8 +41,8 @@
 namespace WebCore {
 namespace IDBClient {
 
-IDBIndex::IDBIndex(ScriptExecutionContext* context, const IDBIndexInfo& info, IDBObjectStore& objectStore)
-    : ActiveDOMObject(context)
+IDBIndex::IDBIndex(ScriptExecutionContext& context, const IDBIndexInfo& info, IDBObjectStore& objectStore)
+    : ActiveDOMObject(&context)
     , m_info(info)
     , m_objectStore(objectStore)
 {
@@ -98,7 +98,7 @@ bool IDBIndex::multiEntry() const
     return m_info.multiEntry();
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, IDBKeyRange* range, const String& directionString, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext& context, IDBKeyRange* range, const String& directionString, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::openCursor");
 
@@ -127,10 +127,10 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context
         rangeData.upperKey = IDBKeyData::maximum();
 
     auto info = IDBCursorInfo::indexCursor(m_objectStore.modernTransaction(), m_objectStore.info().identifier(), m_info.identifier(), rangeData, direction, IndexedDB::CursorType::KeyAndValue);
-    return m_objectStore.modernTransaction().requestOpenCursor(*context, *this, info);
+    return m_objectStore.modernTransaction().requestOpenCursor(context, *this, info);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::openCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
@@ -142,40 +142,25 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context
     return openCursor(context, keyRange.get(), direction, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::count");
 
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
-
-    return doCount(*context, IDBKeyRangeData::allKeys(), ec);
+    return doCount(context, IDBKeyRangeData::allKeys(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext& context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::count");
 
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
-
-    return doCount(*context, range ? IDBKeyRangeData(range) : IDBKeyRangeData::allKeys(), ec);
+    return doCount(context, range ? IDBKeyRangeData(range) : IDBKeyRangeData::allKeys(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::count");
 
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
-
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
@@ -183,7 +168,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, con
         return nullptr;
     }
 
-    return doCount(*context, IDBKeyRangeData(idbKey.get()), ec);
+    return doCount(context, IDBKeyRangeData(idbKey.get()), ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBIndex::doCount(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
@@ -209,7 +194,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doCount(ScriptExecutionContext& context, c
     return transaction.requestCount(context, *this, range);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, IDBKeyRange* range, const String& directionString, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext& context, IDBKeyRange* range, const String& directionString, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::openKeyCursor");
 
@@ -232,10 +217,10 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* cont
     }
 
     auto info = IDBCursorInfo::indexCursor(m_objectStore.modernTransaction(), m_objectStore.info().identifier(), m_info.identifier(), range, direction, IndexedDB::CursorType::KeyOnly);
-    return m_objectStore.modernTransaction().requestOpenCursor(*context, *this, info);
+    return m_objectStore.modernTransaction().requestOpenCursor(context, *this, info);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::openKeyCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
@@ -246,28 +231,18 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* cont
     return openKeyCursor(context, keyRange.get(), direction, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext& context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::get");
 
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
-
-    return doGet(*context, IDBKeyRangeData(range), ec);
+    return doGet(context, IDBKeyRangeData(range), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::get");
 
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
-
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
@@ -275,7 +250,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext* context, const
         return nullptr;
     }
 
-    return doGet(*context, IDBKeyRangeData(idbKey.get()), ec);
+    return doGet(context, IDBKeyRangeData(idbKey.get()), ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBIndex::doGet(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
@@ -301,28 +276,18 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doGet(ScriptExecutionContext& context, con
     return transaction.requestGetValue(context, *this, range);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext& context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::getKey");
 
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
-
-    return doGetKey(*context, IDBKeyRangeData(range), ec);
+    return doGetKey(context, IDBKeyRangeData(range), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::getKey");
 
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
-
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
@@ -330,7 +295,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, co
         return nullptr;
     }
 
-    return doGetKey(*context, IDBKeyRangeData(idbKey.get()), ec);
+    return doGetKey(context, IDBKeyRangeData(idbKey.get()), ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBIndex::doGetKey(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)

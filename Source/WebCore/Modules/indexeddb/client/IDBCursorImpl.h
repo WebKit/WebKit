@@ -58,8 +58,8 @@ public:
     RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&) final;
     void advance(unsigned long, ExceptionCodeWithMessage&) final;
     void continueFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) final;
-    void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) final;
-    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) final;
+    void continueFunction(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) final;
+    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext&, ExceptionCodeWithMessage&) final;
 
     void continueFunction(const IDBKeyData&, ExceptionCodeWithMessage&);
 

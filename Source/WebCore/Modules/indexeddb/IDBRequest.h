@@ -66,7 +66,7 @@ public:
     virtual const String& readyState() const = 0;
 
 protected:
-    IDBRequest(ScriptExecutionContext*);
+    IDBRequest(ScriptExecutionContext&);
 };
 
 } // namespace WebCore

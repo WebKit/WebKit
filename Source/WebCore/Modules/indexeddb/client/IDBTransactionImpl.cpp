@@ -162,7 +162,7 @@ RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& object
         return nullptr;
     }
 
-    auto objectStore = IDBObjectStore::create(scriptExecutionContext(), *info, *this);
+    auto objectStore = IDBObjectStore::create(*scriptExecutionContext(), *info, *this);
     m_referencedObjectStores.set(objectStoreName, &objectStore.get());
 
     return adoptRef(&objectStore.leakRef());
@@ -473,7 +473,7 @@ Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& 
     ASSERT(isVersionChange());
     ASSERT(scriptExecutionContext());
 
-    Ref<IDBObjectStore> objectStore = IDBObjectStore::create(scriptExecutionContext(), info, *this);
+    Ref<IDBObjectStore> objectStore = IDBObjectStore::create(*scriptExecutionContext(), info, *this);
     m_referencedObjectStores.set(info.name(), &objectStore.get());
 
     auto operation = createTransactionOperation(*this, &IDBTransaction::didCreateObjectStoreOnServer, &IDBTransaction::createObjectStoreOnServer, info);
@@ -509,7 +509,7 @@ std::unique_ptr<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStor
     auto operation = createTransactionOperation(*this, &IDBTransaction::didCreateIndexOnServer, &IDBTransaction::createIndexOnServer, info);
     scheduleOperation(WTFMove(operation));
 
-    return std::make_unique<IDBIndex>(scriptExecutionContext(), info, objectStore);
+    return std::make_unique<IDBIndex>(*scriptExecutionContext(), info, objectStore);
 }
 
 void IDBTransaction::createIndexOnServer(TransactionOperation& operation, const IDBIndexInfo& info)

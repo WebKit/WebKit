@@ -161,8 +161,10 @@ namespace WebCore {
         Element* frameElement() const;
 
         void focus(ScriptExecutionContext* = nullptr);
+        void focus(ScriptExecutionContext& context) { focus(&context); }
         void blur();
         WEBCORE_EXPORT void close(ScriptExecutionContext* = nullptr);
+        void close(ScriptExecutionContext& context) { close(&context); }
         void print();
         void stop();
 

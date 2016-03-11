@@ -47,7 +47,7 @@ class MediaKeys;
 
 class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CDMSessionClient {
 public:
-    static Ref<MediaKeySession> create(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
+    static Ref<MediaKeySession> create(ScriptExecutionContext&, MediaKeys*, const String& keySystem);
     ~MediaKeySession();
 
     const String& keySystem() const { return m_keySystem; }
@@ -80,7 +80,7 @@ public:
     bool hasPendingActivity() const override;
 
 protected:
-    MediaKeySession(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
+    MediaKeySession(ScriptExecutionContext&, MediaKeys*, const String& keySystem);
     void keyRequestTimerFired();
     void addKeyTimerFired();
 

@@ -28,6 +28,6 @@
 ] partial interface HTMLMediaElement
 {
 #if (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT) && (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C)
-    attribute MediaStream? srcObject;
+    [SetterCallWith=ScriptExecutionContext] attribute MediaStream? srcObject;
 #endif
 };

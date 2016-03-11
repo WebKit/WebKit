@@ -96,6 +96,7 @@ typedef Vector<CueInterval> CueList;
 
 #if ENABLE(MEDIA_STREAM)
 class MediaStream;
+class ScriptExecutionContext;
 #endif
 
 class HTMLMediaElement
@@ -156,7 +157,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     MediaStream* srcObject() const { return m_mediaStreamSrcObject.get(); }
-    void setSrcObject(MediaStream*);
+    void setSrcObject(ScriptExecutionContext&, MediaStream*);
 #endif
 
 // network state

@@ -59,8 +59,8 @@ Notification::Notification()
 }
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
-Notification::Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
-    : ActiveDOMObject(context)
+Notification::Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext& context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
+    : ActiveDOMObject(&context)
     , m_title(title)
     , m_body(body)
     , m_state(Idle)
@@ -98,7 +98,7 @@ Notification::~Notification()
 }
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
-Ref<Notification> Notification::create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
+Ref<Notification> Notification::create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext& context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
 { 
     auto notification = adoptRef(*new Notification(title, body, iconURI, context, ec, provider));
     notification.get().suspendIfNeeded();
@@ -221,10 +221,10 @@ void Notification::taskTimerFired()
 
 
 #if ENABLE(NOTIFICATIONS)
-const String Notification::permission(ScriptExecutionContext* context)
+const String Notification::permission(ScriptExecutionContext& context)
 {
-    ASSERT(downcast<Document>(*context).page());
-    return permissionString(NotificationController::from(downcast<Document>(*context).page())->client()->checkPermission(context));
+    ASSERT(downcast<Document>(context).page());
+    return permissionString(NotificationController::from(downcast<Document>(context).page())->client()->checkPermission(&context));
 }
 
 const String Notification::permissionString(NotificationClient::Permission permission)
@@ -242,10 +242,10 @@ const String Notification::permissionString(NotificationClient::Permission permi
     return String();
 }
 
-void Notification::requestPermission(ScriptExecutionContext* context, PassRefPtr<NotificationPermissionCallback> callback)
+void Notification::requestPermission(ScriptExecutionContext& context, PassRefPtr<NotificationPermissionCallback> callback)
 {
-    ASSERT(downcast<Document>(*context).page());
-    NotificationController::from(downcast<Document>(*context).page())->client()->requestPermission(context, callback);
+    ASSERT(downcast<Document>(context).page());
+    NotificationController::from(downcast<Document>(context).page())->client()->requestPermission(&context, callback);
 }
 #endif
 

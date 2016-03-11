@@ -63,7 +63,7 @@ public:
     String redirect() const;
     const String& integrity() const { return m_internalRequest.integrity; }
 
-    RefPtr<FetchRequest> clone(ScriptExecutionContext*, ExceptionCode&);
+    RefPtr<FetchRequest> clone(ScriptExecutionContext&, ExceptionCode&);
 
     struct InternalRequest {
         ResourceRequest request;

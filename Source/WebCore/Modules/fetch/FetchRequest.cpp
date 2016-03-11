@@ -435,7 +435,7 @@ String FetchRequest::redirect() const
     return String();
 }
 
-RefPtr<FetchRequest> FetchRequest::clone(ScriptExecutionContext* context, ExceptionCode& ec)
+RefPtr<FetchRequest> FetchRequest::clone(ScriptExecutionContext& context, ExceptionCode& ec)
 {
     if (isDisturbed()) {
         ec = TypeError;
@@ -443,7 +443,7 @@ RefPtr<FetchRequest> FetchRequest::clone(ScriptExecutionContext* context, Except
     }
 
     // FIXME: Validate body teeing.
-    return adoptRef(*new FetchRequest(*context, FetchBody(m_body), FetchHeaders::create(m_headers.get()), FetchRequest::InternalRequest(m_internalRequest)));
+    return adoptRef(*new FetchRequest(context, FetchBody(m_body), FetchHeaders::create(m_headers.get()), FetchRequest::InternalRequest(m_internalRequest)));
 }
 
 const char* FetchRequest::activeDOMObjectName() const

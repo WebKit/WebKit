@@ -90,37 +90,34 @@ void DOMURL::setHref(const String& url, ExceptionCode& ec)
         ec = TypeError;
 }
 
-String DOMURL::createObjectURL(ScriptExecutionContext* scriptExecutionContext, Blob* blob)
+String DOMURL::createObjectURL(ScriptExecutionContext& scriptExecutionContext, Blob* blob)
 {
-    if (!scriptExecutionContext || !blob)
+    if (!blob)
         return String();
     return createPublicURL(scriptExecutionContext, blob);
 }
 
-String DOMURL::createPublicURL(ScriptExecutionContext* scriptExecutionContext, URLRegistrable* registrable)
+String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, URLRegistrable* registrable)
 {
-    URL publicURL = BlobURL::createPublicURL(scriptExecutionContext->securityOrigin());
+    URL publicURL = BlobURL::createPublicURL(scriptExecutionContext.securityOrigin());
     if (publicURL.isEmpty())
         return String();
 
-    scriptExecutionContext->publicURLManager().registerURL(scriptExecutionContext->securityOrigin(), publicURL, registrable);
+    scriptExecutionContext.publicURLManager().registerURL(scriptExecutionContext.securityOrigin(), publicURL, registrable);
 
     return publicURL.string();
 }
 
-void DOMURL::revokeObjectURL(ScriptExecutionContext* scriptExecutionContext, const String& urlString)
+void DOMURL::revokeObjectURL(ScriptExecutionContext& scriptExecutionContext, const String& urlString)
 {
-    if (!scriptExecutionContext)
-        return;
-
     URL url(URL(), urlString);
     ResourceRequest request(url);
 #if ENABLE(CACHE_PARTITIONING)
-    request.setDomainForCachePartition(scriptExecutionContext->topOrigin()->domainForCachePartition());
+    request.setDomainForCachePartition(scriptExecutionContext.topOrigin()->domainForCachePartition());
 #endif
-    MemoryCache::removeRequestFromSessionCaches(*scriptExecutionContext, request);
+    MemoryCache::removeRequestFromSessionCaches(scriptExecutionContext, request);
 
-    scriptExecutionContext->publicURLManager().revoke(url);
+    scriptExecutionContext.publicURLManager().revoke(url);
 }
 
 } // namespace WebCore

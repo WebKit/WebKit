@@ -51,6 +51,10 @@ public:
     void forward();
     void go(int distance);
 
+    void back(ScriptExecutionContext& context) { back(&context); }
+    void forward(ScriptExecutionContext& context) { forward(&context); }
+    void go(ScriptExecutionContext& context, int distance) { go(&context, distance); }
+
     void back(ScriptExecutionContext*);
     void forward(ScriptExecutionContext*);
     void go(ScriptExecutionContext*, int distance);

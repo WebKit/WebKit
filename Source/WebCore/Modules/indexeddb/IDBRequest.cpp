@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-IDBRequest::IDBRequest(ScriptExecutionContext* context)
-    : ActiveDOMObject(context)
+IDBRequest::IDBRequest(ScriptExecutionContext& context)
+    : ActiveDOMObject(&context)
 {
 }
 

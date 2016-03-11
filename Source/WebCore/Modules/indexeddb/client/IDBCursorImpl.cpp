@@ -220,14 +220,9 @@ void IDBCursor::continueFunction(ScriptExecutionContext* context, ExceptionCodeW
     continueFunction(IDBKeyData(), ec);
 }
 
-void IDBCursor::continueFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCodeWithMessage& ec)
+void IDBCursor::continueFunction(ScriptExecutionContext& context, const Deprecated::ScriptValue& keyValue, ExceptionCodeWithMessage& ec)
 {
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return;
-    }
-
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> key;
     if (!keyValue.jsValue().isUndefined())
         key = scriptValueToIDBKey(&requestState, keyValue);
@@ -293,14 +288,9 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned long coun
     transaction().iterateCursor(*this, key, count);
 }
 
-RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::deleteFunction");
-
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
 
     if (sourcesDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;

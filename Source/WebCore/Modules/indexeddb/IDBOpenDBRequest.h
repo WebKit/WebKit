@@ -38,7 +38,7 @@ public:
     virtual ~IDBOpenDBRequest() { }
 
 protected:
-    IDBOpenDBRequest(ScriptExecutionContext*);
+    IDBOpenDBRequest(ScriptExecutionContext&);
 };
 
 } // namespace WebCore

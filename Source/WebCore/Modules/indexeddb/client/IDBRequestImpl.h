@@ -104,7 +104,7 @@ public:
     IndexedDB::RequestType requestType() const { return m_requestType; }
 
 protected:
-    IDBRequest(IDBConnectionToServer&, ScriptExecutionContext*);
+    IDBRequest(IDBConnectionToServer&, ScriptExecutionContext&);
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
     IDBRequest(ScriptExecutionContext&, IDBCursor&, IDBTransaction&);
     IDBRequest(ScriptExecutionContext&, IDBIndex&, IDBTransaction&);

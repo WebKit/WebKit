@@ -48,10 +48,10 @@ typedef int ExceptionCode;
 class FetchResponse final : public FetchBodyOwner {
 public:
     static Ref<FetchResponse> create(ScriptExecutionContext& context) { return adoptRef(*new FetchResponse(context, Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
-    static Ref<FetchResponse> error(ScriptExecutionContext*);
-    static RefPtr<FetchResponse> redirect(ScriptExecutionContext*, const String&, int, ExceptionCode&);
+    static Ref<FetchResponse> error(ScriptExecutionContext&);
+    static RefPtr<FetchResponse> redirect(ScriptExecutionContext&, const String&, int, ExceptionCode&);
     // FIXME: Binding generator should not require below method to handle optional status parameter.
-    static RefPtr<FetchResponse> redirect(ScriptExecutionContext* context, const String& url, ExceptionCode& ec) { return redirect(context, url, 302, ec); }
+    static RefPtr<FetchResponse> redirect(ScriptExecutionContext& context, const String& url, ExceptionCode& ec) { return redirect(context, url, 302, ec); }
 
     void initializeWith(const Dictionary&, ExceptionCode&);
 
@@ -63,7 +63,7 @@ public:
     const String& statusText() const { return m_response.httpStatusText(); }
 
     FetchHeaders& headers() { return m_headers; }
-    RefPtr<FetchResponse> clone(ScriptExecutionContext*, ExceptionCode&);
+    RefPtr<FetchResponse> clone(ScriptExecutionContext&, ExceptionCode&);
 
 private:
     enum class Type { Basic, Cors, Default, Error, Opaque, OpaqueRedirect };

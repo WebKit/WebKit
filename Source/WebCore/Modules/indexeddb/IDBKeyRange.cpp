@@ -49,15 +49,15 @@ IDBKeyRange::IDBKeyRange(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, LowerBo
 {
 }
 
-Deprecated::ScriptValue IDBKeyRange::lowerValue(ScriptExecutionContext* context) const
+Deprecated::ScriptValue IDBKeyRange::lowerValue(ScriptExecutionContext& context) const
 {
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     return idbKeyToScriptValue(&requestState, m_lower);
 }
 
-Deprecated::ScriptValue IDBKeyRange::upperValue(ScriptExecutionContext* context) const
+Deprecated::ScriptValue IDBKeyRange::upperValue(ScriptExecutionContext& context) const
 {
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     return idbKeyToScriptValue(&requestState, m_upper);
 }
 
@@ -71,9 +71,9 @@ RefPtr<IDBKeyRange> IDBKeyRange::only(RefPtr<IDBKey>&& key, ExceptionCode& ec)
     return create(WTFMove(key));
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext& context, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
 {
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> key = scriptValueToIDBKey(&requestState, keyValue);
     if (!key || !key->isValid()) {
         ec = IDBDatabaseException::DataError;
@@ -83,9 +83,9 @@ RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext* context, const Dep
     return create(WTFMove(key));
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext* context, const Deprecated::ScriptValue& boundValue, bool open, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext& context, const Deprecated::ScriptValue& boundValue, bool open, ExceptionCode& ec)
 {
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> bound = scriptValueToIDBKey(&requestState, boundValue);
     if (!bound || !bound->isValid()) {
         ec = IDBDatabaseException::DataError;
@@ -95,9 +95,9 @@ RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext* context, con
     return IDBKeyRange::create(WTFMove(bound), nullptr, open ? LowerBoundOpen : LowerBoundClosed, UpperBoundOpen);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext* context, const Deprecated::ScriptValue& boundValue, bool open, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext& context, const Deprecated::ScriptValue& boundValue, bool open, ExceptionCode& ec)
 {
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> bound = scriptValueToIDBKey(&requestState, boundValue);
     if (!bound || !bound->isValid()) {
         ec = IDBDatabaseException::DataError;
@@ -107,9 +107,9 @@ RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext* context, con
     return IDBKeyRange::create(nullptr, WTFMove(bound), LowerBoundOpen, open ? UpperBoundOpen : UpperBoundClosed);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext* context, const Deprecated::ScriptValue& lowerValue, const Deprecated::ScriptValue& upperValue, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext& context, const Deprecated::ScriptValue& lowerValue, const Deprecated::ScriptValue& upperValue, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
 {
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> lower = scriptValueToIDBKey(&requestState, lowerValue);
     RefPtr<IDBKey> upper = scriptValueToIDBKey(&requestState, upperValue);
 

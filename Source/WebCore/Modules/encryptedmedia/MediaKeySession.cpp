@@ -40,15 +40,15 @@
 
 namespace WebCore {
 
-Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext* context, MediaKeys* keys, const String& keySystem)
+Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context, MediaKeys* keys, const String& keySystem)
 {
     auto session = adoptRef(*new MediaKeySession(context, keys, keySystem));
     session->suspendIfNeeded();
     return session;
 }
 
-MediaKeySession::MediaKeySession(ScriptExecutionContext* context, MediaKeys* keys, const String& keySystem)
-    : ActiveDOMObject(context)
+MediaKeySession::MediaKeySession(ScriptExecutionContext& context, MediaKeys* keys, const String& keySystem)
+    : ActiveDOMObject(&context)
     , m_keys(keys)
     , m_keySystem(keySystem)
     , m_asyncEventQueue(*this)

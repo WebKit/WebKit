@@ -67,10 +67,14 @@ public:
 
     virtual RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&) = 0;
     virtual void advance(unsigned long, ExceptionCodeWithMessage&) = 0;
-    // FIXME: Try to modify the code generator so this overload is unneeded.
+
+    // FIXME: We should not need that method (taking a ScriptExecutionContext pointer and not a reference)
+    // but InspectorIndexedDBAgent wants to call it with a null context. 
     virtual void continueFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) = 0;
-    virtual void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) = 0;
+    // FIXME: Try to modify the code generator so this overload is unneeded.
+    void continueFunction(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec) { continueFunction(&context, ec); }
+    virtual void continueFunction(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext&, ExceptionCodeWithMessage&) = 0;
 
     virtual bool isKeyCursor() const = 0;
 

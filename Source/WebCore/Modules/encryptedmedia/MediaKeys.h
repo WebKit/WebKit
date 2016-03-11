@@ -47,7 +47,7 @@ public:
     static RefPtr<MediaKeys> create(const String& keySystem, ExceptionCode&);
     virtual ~MediaKeys();
 
-    RefPtr<MediaKeySession> createSession(ScriptExecutionContext*, const String& mimeType, Uint8Array* initData, ExceptionCode&);
+    RefPtr<MediaKeySession> createSession(ScriptExecutionContext&, const String& mimeType, Uint8Array* initData, ExceptionCode&);
 
     static bool isTypeSupported(const String& keySystem, const String& mimeType);
 

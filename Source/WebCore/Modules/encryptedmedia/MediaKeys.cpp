@@ -83,7 +83,7 @@ MediaKeys::~MediaKeys()
     }
 }
 
-RefPtr<MediaKeySession> MediaKeys::createSession(ScriptExecutionContext* context, const String& type, Uint8Array* initData, ExceptionCode& ec)
+RefPtr<MediaKeySession> MediaKeys::createSession(ScriptExecutionContext& context, const String& type, Uint8Array* initData, ExceptionCode& ec)
 {
     // From <http://www.w3.org/TR/2014/WD-encrypted-media-20140218/#dom-createsession>:
     // The createSession(type, initData) method must run the following steps:

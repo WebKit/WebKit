@@ -42,7 +42,7 @@ class ScriptExecutionContext;
 
 class DOMURLMediaStream {
 public:
-    static String createObjectURL(ScriptExecutionContext*, MediaStream*);
+    static String createObjectURL(ScriptExecutionContext&, MediaStream*);
 };
 
 } // namespace WebCore

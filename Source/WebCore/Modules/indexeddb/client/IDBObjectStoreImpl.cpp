@@ -46,13 +46,13 @@
 namespace WebCore {
 namespace IDBClient {
 
-Ref<IDBObjectStore> IDBObjectStore::create(ScriptExecutionContext* context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
+Ref<IDBObjectStore> IDBObjectStore::create(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
 {
     return adoptRef(*new IDBObjectStore(context, info, transaction));
 }
 
-IDBObjectStore::IDBObjectStore(ScriptExecutionContext* context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
-    : ActiveDOMObject(context)
+IDBObjectStore::IDBObjectStore(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
+    : ActiveDOMObject(&context)
     , m_info(info)
     , m_originalInfo(info)
     , m_transaction(transaction)
@@ -114,22 +114,22 @@ bool IDBObjectStore::autoIncrement() const
     return m_info.autoIncrement();
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, keyRange, IDBCursor::directionNext(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, key, IDBCursor::directionNext(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* range, const String& directionString, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, IDBKeyRange* range, const String& directionString, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::openCursor");
 
@@ -150,11 +150,11 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* c
         return nullptr;
 
     auto info = IDBCursorInfo::objectStoreCursor(m_transaction.get(), m_info.identifier(), range, direction);
-    Ref<IDBRequest> request = m_transaction->requestOpenCursor(*context, *this, info);
+    Ref<IDBRequest> request = m_transaction->requestOpenCursor(context, *this, info);
     return WTFMove(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
     if (ec.code) {
@@ -165,14 +165,9 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* c
     return openCursor(context, keyRange.get(), direction, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::get");
-
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
 
     if (!m_transaction->isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
@@ -186,7 +181,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context,
         return nullptr;
     }
 
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
@@ -194,18 +189,13 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context,
         return nullptr;
     }
 
-    Ref<IDBRequest> request = m_transaction->requestGetRecord(*context, *this, idbKey.get());
+    Ref<IDBRequest> request = m_transaction->requestGetRecord(context, *this, idbKey.get());
     return WTFMove(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::get");
-
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
 
     if (!m_transaction->isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
@@ -224,7 +214,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context,
         return nullptr;
     }
 
-    Ref<IDBRequest> request = m_transaction->requestGetRecord(*context, *this, keyRangeData);
+    Ref<IDBRequest> request = m_transaction->requestGetRecord(context, *this, keyRangeData);
     return WTFMove(request);
 }
 
@@ -358,12 +348,12 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue 
     return adoptRef(request.leakRef());
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     return doDelete(context, keyRange, ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::doDelete(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::doDelete(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::deleteFunction");
 
@@ -397,18 +387,18 @@ RefPtr<IDBRequest> IDBObjectStore::doDelete(ScriptExecutionContext* context, IDB
         return nullptr;
     }
 
-    Ref<IDBRequest> request = m_transaction->requestDeleteRecord(*context, *this, keyRangeData);
+    Ref<IDBRequest> request = m_transaction->requestDeleteRecord(context, *this, keyRangeData);
     return WTFMove(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     return modernDelete(context, key.jsValue(), ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::modernDelete(ScriptExecutionContext* context, JSC::JSValue key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::modernDelete(ScriptExecutionContext& context, JSC::JSValue key, ExceptionCodeWithMessage& ec)
 {
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
@@ -419,7 +409,7 @@ RefPtr<IDBRequest> IDBObjectStore::modernDelete(ScriptExecutionContext* context,
     return doDelete(context, &IDBKeyRange::create(idbKey.get()).get(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::clear(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::clear");
 
@@ -446,18 +436,13 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* contex
         return nullptr;
     }
 
-    Ref<IDBRequest> request = m_transaction->requestClearObjectStore(*context, *this);
+    Ref<IDBRequest> request = m_transaction->requestClearObjectStore(context, *this);
     return adoptRef(request.leakRef());
 }
 
-RefPtr<WebCore::IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext&, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::createIndex %s", name.utf8().data());
-
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
 
     if (m_deleted) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -544,7 +529,7 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, Excepti
         return nullptr;
     }
 
-    auto index = std::make_unique<IDBIndex>(scriptExecutionContext(), *info, *this);
+    auto index = std::make_unique<IDBIndex>(*scriptExecutionContext(), *info, *this);
     RefPtr<IDBIndex> refIndex = index.get();
     m_referencedIndexes.set(indexName, WTFMove(index));
 
@@ -597,28 +582,18 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCodeWithMessage& e
     m_transaction->deleteIndex(m_info.identifier(), name);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
-
-    return doCount(*context, IDBKeyRangeData::allKeys(), ec);
+    return doCount(context, IDBKeyRangeData::allKeys(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
-
-    DOMRequestState requestState(context);
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
@@ -626,19 +601,14 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* contex
         return nullptr;
     }
 
-    return doCount(*context, IDBKeyRangeData(idbKey.get()), ec);
+    return doCount(context, IDBKeyRangeData(idbKey.get()), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
-    if (!context) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        return nullptr;
-    }
-
-    return doCount(*context, range ? IDBKeyRangeData(range) : IDBKeyRangeData::allKeys(), ec);
+    return doCount(context, range ? IDBKeyRangeData(range) : IDBKeyRangeData::allKeys(), ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::doCount(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)

@@ -38,9 +38,9 @@ MediaStream* HTMLMediaElementMediaStream::srcObject(HTMLMediaElement& mediaEleme
     return mediaElement.srcObject();
 }
 
-void HTMLMediaElementMediaStream::setSrcObject(HTMLMediaElement& mediaElement, MediaStream* mediaStream)
+void HTMLMediaElementMediaStream::setSrcObject(ScriptExecutionContext& context, HTMLMediaElement& mediaElement, MediaStream* mediaStream)
 {
-    mediaElement.setSrcObject(mediaStream);
+    mediaElement.setSrcObject(context, mediaStream);
 }
 
 } // namespace WebCore

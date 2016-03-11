@@ -1,3 +1,167 @@
+2016-03-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [CallWith=ScriptExecutionContext] should pass ScriptExecutionContext to the implementation by reference
+        https://bugs.webkit.org/show_bug.cgi?id=155297
+
+        Reviewed by Darin Adler.
+
+        Changing the binding generator to pass ScriptExecutionContext by reference.
+        Updating DOM classes accordingly.
+
+        Covered by existing tests.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::create):
+        (WebCore::MediaKeySession::MediaKeySession):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::createSession):
+        * Modules/encryptedmedia/MediaKeys.h:
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::clone):
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::error):
+        (WebCore::FetchResponse::redirect):
+        (WebCore::FetchResponse::clone):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/indexeddb/IDBCursor.h:
+        (WebCore::IDBCursor::continueFunction):
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::lowerValue):
+        (WebCore::IDBKeyRange::upperValue):
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        * Modules/indexeddb/IDBKeyRange.h:
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::IDBOpenDBRequest):
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::continueFunction):
+        (WebCore::IDBClient::IDBCursor::deleteFunction):
+        * Modules/indexeddb/client/IDBCursorImpl.h:
+        * Modules/indexeddb/client/IDBFactoryImpl.cpp:
+        (WebCore::IDBClient::shouldThrowSecurityException):
+        (WebCore::IDBClient::IDBFactory::getDatabaseNames):
+        (WebCore::IDBClient::IDBFactory::open):
+        (WebCore::IDBClient::IDBFactory::openInternal):
+        (WebCore::IDBClient::IDBFactory::deleteDatabase):
+        (WebCore::IDBClient::IDBFactory::cmp):
+        * Modules/indexeddb/client/IDBFactoryImpl.h:
+        * Modules/indexeddb/client/IDBIndexImpl.cpp:
+        (WebCore::IDBClient::IDBIndex::IDBIndex):
+        (WebCore::IDBClient::IDBIndex::openCursor):
+        (WebCore::IDBClient::IDBIndex::count):
+        (WebCore::IDBClient::IDBIndex::openKeyCursor):
+        (WebCore::IDBClient::IDBIndex::get):
+        (WebCore::IDBClient::IDBIndex::getKey):
+        * Modules/indexeddb/client/IDBIndexImpl.h:
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::create):
+        (WebCore::IDBClient::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBClient::IDBObjectStore::openCursor):
+        (WebCore::IDBClient::IDBObjectStore::get):
+        (WebCore::IDBClient::IDBObjectStore::deleteFunction):
+        (WebCore::IDBClient::IDBObjectStore::doDelete):
+        (WebCore::IDBClient::IDBObjectStore::modernDelete):
+        (WebCore::IDBClient::IDBObjectStore::clear):
+        (WebCore::IDBClient::IDBObjectStore::createIndex):
+        (WebCore::IDBClient::IDBObjectStore::index):
+        (WebCore::IDBClient::IDBObjectStore::count):
+        * Modules/indexeddb/client/IDBObjectStoreImpl.h:
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::createDeleteRequest):
+        (WebCore::IDBClient::IDBOpenDBRequest::createOpenRequest):
+        (WebCore::IDBClient::IDBOpenDBRequest::IDBOpenDBRequest):
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.h:
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::IDBRequest):
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::objectStore):
+        (WebCore::IDBClient::IDBTransaction::createObjectStore):
+        (WebCore::IDBClient::IDBTransaction::createIndex):
+        * Modules/mediasource/DOMURLMediaSource.cpp:
+        (WebCore::DOMURLMediaSource::createObjectURL):
+        * Modules/mediasource/DOMURLMediaSource.h:
+        * Modules/mediastream/DOMURLMediaStream.cpp:
+        (WebCore::DOMURLMediaStream::createObjectURL):
+        * Modules/mediastream/DOMURLMediaStream.h:
+        * Modules/mediastream/HTMLMediaElementMediaStream.cpp:
+        (WebCore::HTMLMediaElementMediaStream::setSrcObject):
+        * Modules/mediastream/HTMLMediaElementMediaStream.h:
+        * Modules/mediastream/HTMLMediaElementMediaStream.idl:
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::Notification):
+        (WebCore::Notification::create):
+        (WebCore::Notification::permission):
+        (WebCore::Notification::requestPermission):
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::createNotification):
+        * Modules/notifications/NotificationClient.h:
+        * Modules/quota/StorageInfo.cpp:
+        (WebCore::StorageInfo::queryUsageAndQuota):
+        (WebCore::StorageInfo::requestQuota):
+        * Modules/quota/StorageInfo.h:
+        * Modules/quota/StorageQuota.h:
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        (WebCore::JSIDBObjectStore::createIndex):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallWith):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjWithScriptExecutionContextAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContext):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptState):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces):
+        * fileapi/FileReaderSync.cpp:
+        (WebCore::FileReaderSync::readAsArrayBuffer):
+        (WebCore::FileReaderSync::readAsBinaryString):
+        (WebCore::FileReaderSync::readAsText):
+        (WebCore::FileReaderSync::readAsDataURL):
+        (WebCore::FileReaderSync::startLoading):
+        * fileapi/FileReaderSync.h:
+        (WebCore::FileReaderSync::readAsText):
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::createObjectURL):
+        (WebCore::DOMURL::createPublicURL):
+        (WebCore::DOMURL::revokeObjectURL):
+        * html/DOMURL.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setSrcObject):
+        * html/HTMLMediaElement.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNames):
+        * page/DOMWindow.h:
+        * page/History.h:
+        (WebCore::History::back):
+        (WebCore::History::forward):
+        (WebCore::History::go):
+
 2016-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix rendering of slider input elements

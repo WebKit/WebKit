@@ -40,18 +40,18 @@ class IDBFactory : public WebCore::IDBFactory {
 public:
     static Ref<IDBFactory> create(IDBConnectionToServer&);
 
-    RefPtr<WebCore::IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&) final;
+    RefPtr<WebCore::IDBRequest> getDatabaseNames(ScriptExecutionContext&, ExceptionCode&) final;
 
-    RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&) final;
-    RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&) final;
-    RefPtr<WebCore::IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&) final;
+    RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, ExceptionCode&) final;
+    RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCode&) final;
+    RefPtr<WebCore::IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const String& name, ExceptionCode&) final;
 
-    short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCodeWithMessage&) final;
+    short cmp(ScriptExecutionContext&, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCodeWithMessage&) final;
 
 private:
     IDBFactory(IDBConnectionToServer&);
     
-    RefPtr<IDBOpenDBRequest> openInternal(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&);
+    RefPtr<IDBOpenDBRequest> openInternal(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCode&);
     
     Ref<IDBConnectionToServer> m_connectionToServer;
 };

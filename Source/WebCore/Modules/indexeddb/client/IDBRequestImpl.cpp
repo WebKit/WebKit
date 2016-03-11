@@ -64,7 +64,7 @@ Ref<IDBRequest> IDBRequest::createGet(ScriptExecutionContext& context, IDBIndex&
     return adoptRef(*new IDBRequest(context, index, requestedRecordType, transaction));
 }
 
-IDBRequest::IDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context)
+IDBRequest::IDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext& context)
     : IDBOpenDBRequest(context)
     , m_connection(connection)
     , m_resourceIdentifier(connection)
@@ -73,7 +73,7 @@ IDBRequest::IDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBTransaction& transaction)
-    : IDBOpenDBRequest(&context)
+    : IDBOpenDBRequest(context)
     , m_transaction(&transaction)
     , m_connection(transaction.serverConnection())
     , m_resourceIdentifier(transaction.serverConnection())
@@ -83,7 +83,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTransaction& transaction)
-    : IDBOpenDBRequest(&context)
+    : IDBOpenDBRequest(context)
     , m_transaction(&transaction)
     , m_connection(transaction.serverConnection())
     , m_resourceIdentifier(transaction.serverConnection())
@@ -96,7 +96,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTransaction& transaction)
-    : IDBOpenDBRequest(&context)
+    : IDBOpenDBRequest(context)
     , m_transaction(&transaction)
     , m_connection(transaction.serverConnection())
     , m_resourceIdentifier(transaction.serverConnection())

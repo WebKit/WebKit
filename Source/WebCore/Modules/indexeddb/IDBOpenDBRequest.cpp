@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context)
+IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext& context)
     : IDBRequest(context)
 {
 }

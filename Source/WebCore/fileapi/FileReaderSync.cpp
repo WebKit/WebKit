@@ -44,7 +44,7 @@ FileReaderSync::FileReaderSync()
 {
 }
 
-RefPtr<ArrayBuffer> FileReaderSync::readAsArrayBuffer(ScriptExecutionContext* scriptExecutionContext, Blob* blob, ExceptionCode& ec)
+RefPtr<ArrayBuffer> FileReaderSync::readAsArrayBuffer(ScriptExecutionContext& scriptExecutionContext, Blob* blob, ExceptionCode& ec)
 {
     if (!blob) {
         ec = NOT_FOUND_ERR;
@@ -57,7 +57,7 @@ RefPtr<ArrayBuffer> FileReaderSync::readAsArrayBuffer(ScriptExecutionContext* sc
     return loader.arrayBufferResult();
 }
 
-String FileReaderSync::readAsBinaryString(ScriptExecutionContext* scriptExecutionContext, Blob* blob, ExceptionCode& ec)
+String FileReaderSync::readAsBinaryString(ScriptExecutionContext& scriptExecutionContext, Blob* blob, ExceptionCode& ec)
 {
     if (!blob) {
         ec = NOT_FOUND_ERR;
@@ -69,7 +69,7 @@ String FileReaderSync::readAsBinaryString(ScriptExecutionContext* scriptExecutio
     return loader.stringResult();
 }
 
-String FileReaderSync::readAsText(ScriptExecutionContext* scriptExecutionContext, Blob* blob, const String& encoding, ExceptionCode& ec)
+String FileReaderSync::readAsText(ScriptExecutionContext& scriptExecutionContext, Blob* blob, const String& encoding, ExceptionCode& ec)
 {
     if (!blob) {
         ec = NOT_FOUND_ERR;
@@ -82,7 +82,7 @@ String FileReaderSync::readAsText(ScriptExecutionContext* scriptExecutionContext
     return loader.stringResult();
 }
 
-String FileReaderSync::readAsDataURL(ScriptExecutionContext* scriptExecutionContext, Blob* blob, ExceptionCode& ec)
+String FileReaderSync::readAsDataURL(ScriptExecutionContext& scriptExecutionContext, Blob* blob, ExceptionCode& ec)
 {
     if (!blob) {
         ec = NOT_FOUND_ERR;
@@ -95,9 +95,9 @@ String FileReaderSync::readAsDataURL(ScriptExecutionContext* scriptExecutionCont
     return loader.stringResult();
 }
 
-void FileReaderSync::startLoading(ScriptExecutionContext* scriptExecutionContext, FileReaderLoader& loader, Blob* blob, ExceptionCode& ec)
+void FileReaderSync::startLoading(ScriptExecutionContext& scriptExecutionContext, FileReaderLoader& loader, Blob* blob, ExceptionCode& ec)
 {
-    loader.start(scriptExecutionContext, blob);
+    loader.start(&scriptExecutionContext, blob);
     ec = FileException::ErrorCodeToExceptionCode(loader.errorCode());
 }
 
