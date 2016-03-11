@@ -37,7 +37,7 @@
     margin-top: 1px;
     margin-right: 0;
     border: 1px solid hsla(0, 0%, 25%, 0.4);
-    border-radius: 4px;
+    border-radius: 5px 0px 0px 5px;
 }
 
 .visual-style-property-container.input-color-picker > .visual-style-property-value-container > .inline-swatch.color:hover {

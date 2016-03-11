@@ -1,3 +1,18 @@
+2016-03-10  Daniel Strokis  <dstrokis@icloud.com>
+
+        Web Inspector: color swatch and border are misaligned in Visual Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=154471
+
+        Reviewed by Timothy Hatcher.
+
+        Color swatches in the Visual Styles sidebar now have only their left corners rounded (thanks to Matt Baker for the idea).
+
+        * UserInterface/Views/InlineSwatch.css:
+        (.inline-swatch > span):
+        (.inline-swatch): Deleted.
+        * UserInterface/Views/VisualStyleColorPicker.css:
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .inline-swatch.color):
+
 2016-03-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Timelines UI redesign: remove navigation sidebar
