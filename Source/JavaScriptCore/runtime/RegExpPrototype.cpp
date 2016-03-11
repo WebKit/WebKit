@@ -208,18 +208,22 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
-    JSValue sourceValue = thisObject->get(exec, exec->propertyNames().source);
-    if (exec->hadException())
+    VM& vm = exec->vm();
+    JSValue sourceValue = thisObject->get(exec, vm.propertyNames->source);
+    if (vm.exception())
         return JSValue::encode(jsUndefined());
     String source = sourceValue.toString(exec)->value(exec);
-    if (exec->hadException())
+    if (vm.exception())
         return JSValue::encode(jsUndefined());
 
-    auto flags = flagsString(exec, thisObject);
-    if (exec->hadException())
+    JSValue flagsValue = thisObject->get(exec, vm.propertyNames->flags);
+    if (vm.exception())
+        return JSValue::encode(jsUndefined());
+    String flags = flagsValue.toString(exec)->value(exec);
+    if (vm.exception())
         return JSValue::encode(jsUndefined());
 
-    return JSValue::encode(jsMakeNontrivialString(exec, '/', source, '/', flags.data()));
+    return JSValue::encode(jsMakeNontrivialString(exec, '/', source, '/', flags));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState* exec)

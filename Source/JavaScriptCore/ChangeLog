@@ -1,3 +1,33 @@
+2016-03-10  Saam barati  <sbarati@apple.com>
+
+        [ES6] Make RegExp.prototype.toString spec compliant
+        https://bugs.webkit.org/show_bug.cgi?id=155341
+
+        Reviewed by Filip Pizlo.
+
+        Before we were directly calling into the flagsString
+        function. Instead, we must get the "flags" property
+        of the thisObject. This will usually call into the flags
+        getter, but not always. Specifically, you can you a Proxy
+        to observe this behavior.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+        (JSC::regExpProtoGetterGlobal):
+        * tests/es6.yaml:
+        * tests/es6/Proxy_internal_get_calls_RegExp.prototype.toString.js: Added.
+        (test.get var):
+        (test.):
+        * tests/stress/regexp-prototype-tostring.js: Added.
+        (assert):
+        (test):
+        (test.get var):
+        (test.):
+        (let.handler.get switch):
+        (let.handler):
+        (get test):
+        (test.get RegExp):
+
 2016-03-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add register reuse for ArithAdd of an Int32 and constant in DFG

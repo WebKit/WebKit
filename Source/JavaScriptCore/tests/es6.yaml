@@ -994,6 +994,8 @@
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_RegExp.prototype.test.js
   cmd: runES6 :fail
+- path: es6/Proxy_internal_get_calls_RegExp.prototype.toString.js
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.match].js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.replace].js

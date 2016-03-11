@@ -10,11 +10,11 @@ shouldBe("RegExp.prototype.toString.call(new RegExp)", "'/(?:)/'");
 shouldBe("RegExp.prototype.toString.call(new RegExp('a'))", "'/a/'");
 shouldBe("RegExp.prototype.toString.call(new RegExp('\\\\\\\\'))", "'/\\\\\\\\/'");
 
-shouldBe("RegExp.prototype.toString.call({})", "'/undefined/'");
-shouldBe("RegExp.prototype.toString.call({source: 'hi'})", "'/hi/'");
-shouldBe("RegExp.prototype.toString.call({ __proto__: { source: 'yo' } })", "'/yo/'");
-shouldBe("RegExp.prototype.toString.call({source: ''})", "'//'");
-shouldBe("RegExp.prototype.toString.call({source: '/'})", "'///'");
+shouldBe("RegExp.prototype.toString.call({})", "'/undefined/undefined'");
+shouldBe("RegExp.prototype.toString.call({source: 'hi'})", "'/hi/undefined'");
+shouldBe("RegExp.prototype.toString.call({ __proto__: { source: 'yo' } })", "'/yo/undefined'");
+shouldBe("RegExp.prototype.toString.call({source: ''})", "'//undefined'");
+shouldBe("RegExp.prototype.toString.call({source: '/'})", "'///undefined'");
 
 shouldThrow("RegExp.prototype.toString.call(undefined)");
 shouldThrow("RegExp.prototype.toString.call(null)");

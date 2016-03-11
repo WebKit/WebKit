@@ -11,11 +11,11 @@ PASS typeof Object.getOwnPropertyDescriptor(RegExp.prototype, 'toString').value 
 PASS RegExp.prototype.toString.call(new RegExp) is '/(?:)/'
 PASS RegExp.prototype.toString.call(new RegExp('a')) is '/a/'
 PASS RegExp.prototype.toString.call(new RegExp('\\\\')) is '/\\\\/'
-PASS RegExp.prototype.toString.call({}) is '/undefined/'
-PASS RegExp.prototype.toString.call({source: 'hi'}) is '/hi/'
-PASS RegExp.prototype.toString.call({ __proto__: { source: 'yo' } }) is '/yo/'
-PASS RegExp.prototype.toString.call({source: ''}) is '//'
-PASS RegExp.prototype.toString.call({source: '/'}) is '///'
+PASS RegExp.prototype.toString.call({}) is '/undefined/undefined'
+PASS RegExp.prototype.toString.call({source: 'hi'}) is '/hi/undefined'
+PASS RegExp.prototype.toString.call({ __proto__: { source: 'yo' } }) is '/yo/undefined'
+PASS RegExp.prototype.toString.call({source: ''}) is '//undefined'
+PASS RegExp.prototype.toString.call({source: '/'}) is '///undefined'
 PASS RegExp.prototype.toString.call(undefined) threw exception TypeError: Type error.
 PASS RegExp.prototype.toString.call(null) threw exception TypeError: Type error.
 PASS RegExp.prototype.toString.call(false) threw exception TypeError: Type error.
