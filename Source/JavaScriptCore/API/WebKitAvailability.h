@@ -46,6 +46,10 @@
 #define __NSi_10_11 introduced=10.0 // Use 10.0 to indicate that everything is available.
 #endif
 
+#ifndef __NSi_10_12 // Building from trunk rather than SDK.
+#define __NSi_10_12 introduced=10.0 // Use 10.0 to indicate that everything is available.
+#endif
+
 #ifndef __AVAILABILITY_INTERNAL__MAC_10_9
 #define __AVAILABILITY_INTERNAL__MAC_10_9
 #endif
