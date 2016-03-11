@@ -1,3 +1,15 @@
+2016-03-11  Anders Carlsson  <andersca@apple.com>
+
+        Creating and releasing a WKBackForwardListItem crashes
+        https://bugs.webkit.org/show_bug.cgi?id=155376
+        rdar://problem/17377712
+
+        Reviewed by Dan Bernstein.
+
+        Make init unavailable.
+
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h:
+
 2016-03-11  Beth Dakin  <bdakin@apple.com>
 
         Follow-up to:

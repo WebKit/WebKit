@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKBackForwardListItem : NSObject
 
+- (instancetype)init NS_UNAVAILABLE;
+
 /*! @abstract The URL of the webpage represented by this item.
  */
 @property (readonly, copy) NSURL *URL;
