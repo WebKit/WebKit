@@ -29,6 +29,9 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <runtime/JSCInlines.h>
+#include <runtime/TypedArrayInlines.h>
+#include <runtime/Uint8ClampedArray.h>
 #include <wtf/Assertions.h>
 
 #if USE(ACCELERATE)
