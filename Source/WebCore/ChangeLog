@@ -1,3 +1,95 @@
+2016-03-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION: GuardMallloc crash in SVGListPropertyTearOff<SVGPointList>::processIncomingListItemWrapper
+        https://bugs.webkit.org/show_bug.cgi?id=154969
+
+        Reviewed by Darin Adler.
+
+        The life cycle of the SVGAnimatedPropertyTearOff::m_baseVal and m_animVal
+        was not correct. Like what was done in SVGAnimatedListPropertyTearOff,
+        m_baseVal and m_animVal have to be raw RefCounted pointers. When requested
+        through, SVGAnimatedPropertyTearOff::baseVal() and animVal() they are
+        encapsulated in a RefPtr to ensure they existence as long as they are
+        referenced. When the animated property object (which is stored in either
+        m_baseVal or m_animVal) is not referenced by anyone, it is going to be
+        deleted. In the destructor of their class, SVGAnimatedPropertyTearOff
+        will be notified of this deletion through propertyWillBeDeleted() to clean
+        its member m_baseVal or m_animVal.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): Now all the SVG animated property return RefPtrs. In
+        addition to that, SVGViewSpec.transform also returns
+        RefPtr<SVGTransformListPropertyTearOff>.
+        
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        (WebCore::SVGAnimatedListPropertyTearOff::animVal):
+        (WebCore::SVGAnimatedListPropertyTearOff::currentAnimatedValue):
+        (WebCore::SVGAnimatedListPropertyTearOff::animationStarted):
+        (WebCore::SVGAnimatedListPropertyTearOff::animationEnded):
+        (WebCore::SVGAnimatedListPropertyTearOff::synchronizeWrappersIfNeeded):
+        (WebCore::SVGAnimatedListPropertyTearOff::isAnimating):
+        (WebCore::SVGAnimatedListPropertyTearOff::propertyWillBeDeleted):
+        Change propertyWillBeDeleted() to be virtual and make it takes an SVGProperty*.
+        Rename m_animatingAnimVal to be m_animatedProperty. Add isAnimating() which
+        returns true if m_animatedProperty is not null. Use isAnimating() instead of
+        m_isAnimating because it's deleted from the base class.
+        
+        * svg/properties/SVGAnimatedProperty.cpp:
+        (WebCore::SVGAnimatedProperty::SVGAnimatedProperty):
+        (WebCore::SVGAnimatedProperty::~SVGAnimatedProperty):
+        * svg/properties/SVGAnimatedProperty.h:
+        (WebCore::SVGAnimatedProperty::isAnimating):
+        (WebCore::SVGAnimatedProperty::propertyWillBeDeleted):
+        Delete m_isAnimating since its value can be deduced from the value of
+        m_animatedProperty in the derived class. Add propertyWillBeDeleted() and
+        isAnimating() as virtual functions with the default behavior.
+        
+        * svg/properties/SVGAnimatedPropertyTearOff.h:
+        (WebCore::SVGAnimatedPropertyTearOff::baseVal):
+        (WebCore::SVGAnimatedPropertyTearOff::animVal):
+        Like SVGAnimatedListPropertyTearOff::baseVal() and animVal() create the
+        value if it does not exist. Keep a raw RefCounted pointer but return a
+        RefPtr.
+
+        (WebCore::SVGAnimatedPropertyTearOff::isAnimating):
+        (WebCore::SVGAnimatedPropertyTearOff::propertyWillBeDeleted):
+        Override virtual functions.
+        
+        (WebCore::SVGAnimatedPropertyTearOff::currentAnimatedValue):
+        (WebCore::SVGAnimatedPropertyTearOff::animationStarted):
+        (WebCore::SVGAnimatedPropertyTearOff::animationEnded):
+        (WebCore::SVGAnimatedPropertyTearOff::animValWillChange):
+        (WebCore::SVGAnimatedPropertyTearOff::animValDidChange):
+        Replace m_isAnimating with isAnimating(). Ensure that we get a new animated
+        property through animVal() and store it in a RefPtr to ensure it will not
+        go away while animating.
+        
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h:
+        (WebCore::SVGAnimatedStaticPropertyTearOff::isAnimating):
+        (WebCore::SVGAnimatedStaticPropertyTearOff::currentAnimatedValue):
+        (WebCore::SVGAnimatedStaticPropertyTearOff::animationStarted):
+        (WebCore::SVGAnimatedStaticPropertyTearOff::animationEnded):
+        (WebCore::SVGAnimatedStaticPropertyTearOff::animValWillChange):
+        (WebCore::SVGAnimatedStaticPropertyTearOff::animValDidChange):
+        Add isAnimating() and replace all the instances of m_isAnimating with calls
+        to isAnimating().
+        
+        * svg/properties/SVGPropertyTearOff.h:
+        (WebCore::SVGPropertyTearOff::animatedProperty):
+        (WebCore::SVGPropertyTearOff::setAnimatedProperty):
+        (WebCore::SVGPropertyTearOff::contextElement):
+        (WebCore::SVGPropertyTearOff::SVGPropertyTearOff):
+        (WebCore::SVGPropertyTearOff::~SVGPropertyTearOff):
+        SVGPropertyTearOff is what SVGAnimatedPropertyTearOff creates for its 
+        baseVal() and animVal() values. These values can be null anytime once
+        they are not referenced. The SVGAnimatedPropertyTearOff holds only raw
+        RefCounted pointer for them. So (1) SVGPropertyTearOff needs to hold a
+        RefPtr for its SVGAnimatedProperty and (2) it needs to notify its
+        SVGAnimatedProperty when it's deleted by calling propertyWillBeDeleted()
+        from the destructor. Also there is no need to get the contextElement()
+        and save it in class member, m_contextElement since it can be always be
+        retrieved from SVGAnimatedProperty::contextElement().
+
 2016-03-10  Jonathan Davis  <jond@apple.com>
 
         Fixed broken link for "WebGL 2" on the Feature Status page

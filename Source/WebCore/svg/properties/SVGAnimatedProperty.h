@@ -1,6 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,19 +29,21 @@
 namespace WebCore {
 
 class SVGElement;
+class SVGProperty;
 
 class SVGAnimatedProperty : public RefCounted<SVGAnimatedProperty> {
 public:
     SVGElement* contextElement() const { return m_contextElement.get(); }
     const QualifiedName& attributeName() const { return m_attributeName; }
     AnimatedPropertyType animatedPropertyType() const { return m_animatedPropertyType; }
-    bool isAnimating() const { return m_isAnimating; }
     bool isReadOnly() const { return m_isReadOnly; }
     void setIsReadOnly() { m_isReadOnly = true; }
 
     void commitChange();
 
+    virtual bool isAnimating() const { return false; }
     virtual bool isAnimatedListTearOff() const { return false; }
+    virtual void propertyWillBeDeleted(const SVGProperty&) { }
 
     // Caching facilities.
     typedef HashMap<SVGAnimatedPropertyDescription, SVGAnimatedProperty*, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;
@@ -92,7 +95,6 @@ private:
     AnimatedPropertyType m_animatedPropertyType;
 
 protected:
-    bool m_isAnimating;
     bool m_isReadOnly;
 };
 

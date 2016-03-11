@@ -4317,11 +4317,10 @@ sub NativeToJSValue
         return "toJSNewlyCreated(state, $globalObject, WTF::getPtr($value))";
     }
 
-    # $type has to be used here because SVGViewSpec.transform is of type SVGTransformList.
-    if ($codeGenerator->IsSVGTypeNeedingTearOff($type) and $type =~ /(?<!String)List$/) {
+    if ($codeGenerator->IsSVGAnimatedType($interfaceName) or ($interfaceName eq "SVGViewSpec" and $type eq "SVGTransformList")) {
         # Convert from abstract RefPtr<ListProperty> to real type, so the right toJS() method can be invoked.
         $value = "static_cast<" . GetNativeType($type) . ">($value" . ".get())";
-    } elsif ($codeGenerator->IsSVGAnimatedType($interfaceName) or $interfaceName eq "SVGViewSpec") {
+    } elsif ($interfaceName eq "SVGViewSpec") {
         # Convert from abstract SVGProperty to real type, so the right toJS() method can be invoked.
         $value = "static_cast<" . GetNativeType($type) . ">($value)";
     } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($type) and not $interfaceName =~ /List$/) {
