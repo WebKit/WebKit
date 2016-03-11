@@ -67,7 +67,7 @@ static bool isForbiddenHeaderName(const String& name)
             break;
         }
     }
-    return name.startsWithIgnoringASCIICase(ASCIILiteral("Sec-")) || name.startsWithIgnoringASCIICase(ASCIILiteral("Proxy-"));
+    return startsWithLettersIgnoringASCIICase(name, "sec-") || startsWithLettersIgnoringASCIICase(name, "proxy-");
 }
 
 static bool isForbiddenResponseHeaderName(const String& name)

@@ -503,6 +503,7 @@ bool equalIgnoringASCIICase(const String&, const String&);
 bool equalIgnoringASCIICase(const String&, const char*);
 
 template<unsigned length> bool equalLettersIgnoringASCIICase(const String&, const char (&lowercaseLetters)[length]);
+template<unsigned length> bool startsWithLettersIgnoringASCIICase(const String&, const char (&lowercaseLetters)[length]);
 
 inline bool equalIgnoringNullity(const String& a, const String& b) { return equalIgnoringNullity(a.impl(), b.impl()); }
 template<size_t inlineCapacity> inline bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, const String& b) { return equalIgnoringNullity(a, b.impl()); }
@@ -724,6 +725,11 @@ inline bool equalIgnoringASCIICase(const String& a, const String& b)
 inline bool equalIgnoringASCIICase(const String& a, const char* b)
 {
     return equalIgnoringASCIICase(a.impl(), b);
+}
+
+template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const String& string, const char (&lowercaseLetters)[length])
+{
+    return startsWithLettersIgnoringASCIICase(string.impl(), lowercaseLetters);
 }
 
 }

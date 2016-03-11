@@ -1,3 +1,14 @@
+2016-03-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        WTF should have a similar function as equalLettersIgnoringASCIICase to match beginning of strings
+        https://bugs.webkit.org/show_bug.cgi?id=153419
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringOperators.cpp:
+        (TestWebKitAPI::TEST): Adding test case for startsWithLettersIgnoringASCIICase.
+
+
 2016-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         Font antialiasing (smoothing) changes when elements are rendered into compositing layers

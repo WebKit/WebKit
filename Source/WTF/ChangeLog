@@ -1,3 +1,25 @@
+2016-03-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        WTF should have a similar function as equalLettersIgnoringASCIICase to match beginning of strings
+        https://bugs.webkit.org/show_bug.cgi?id=153419
+
+        Reviewed by Darin Adler.
+
+        Introducing startsWithLettersIgnoringASCIICase, to check the beginning of a string.
+        Moving some code from WTF::equalLettersIgnoringASCIICaseCommonWithoutLength in
+        WTF::hasPrefixWithLettersIgnoringASCIICaseCommon to enable reuse in
+        WTF::startsWithLettersIgnoringASCIICaseCommon.
+
+        * wtf/text/StringCommon.h:
+        (WTF::hasPrefixWithLettersIgnoringASCIICaseCommon):
+        (WTF::equalLettersIgnoringASCIICaseCommonWithoutLength):
+        (WTF::startsWithLettersIgnoringASCIICaseCommonWithoutLength):
+        (WTF::startsWithLettersIgnoringASCIICaseCommon):
+        * wtf/text/StringImpl.h:
+        (WTF::startsWithLettersIgnoringASCIICase):
+        * wtf/text/WTFString.h:
+        (WTF::startsWithLettersIgnoringASCIICase):
+
 2016-03-10  Frederic Wang  <fwang@igalia.com>
 
         [GTK] Add support for WOFF2

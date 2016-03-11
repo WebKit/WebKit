@@ -1181,6 +1181,16 @@ inline bool equalIgnoringASCIICase(const StringImpl* a, const char* b)
     return a && equalIgnoringASCIICase(*a, b);
 }
 
+template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const StringImpl& string, const char (&lowercaseLetters)[length])
+{
+    return startsWithLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
+}
+
+template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const StringImpl* string, const char (&lowercaseLetters)[length])
+{
+    return string && startsWithLettersIgnoringASCIICase(*string, lowercaseLetters);
+}
+
 template<unsigned length> inline bool equalLettersIgnoringASCIICase(const StringImpl& string, const char (&lowercaseLetters)[length])
 {
     return equalLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
