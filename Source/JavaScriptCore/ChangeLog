@@ -1,5 +1,29 @@
 2016-03-06  Benjamin Poulain  <benjamin@webkit.org>
 
+        [JSC] Improve DFG's Int32 ArithMul if one operand is a constant
+        https://bugs.webkit.org/show_bug.cgi?id=155066
+
+        Reviewed by Filip Pizlo.
+
+        When multiplying an integer by a constant, DFG was doing quite
+        a bit worse than baseline JIT.
+        We were loading the constant into a register, doing the multiply,
+        the checking the result and both operands for negative zero.
+
+        This patch changes:
+        -Use the multiply-by-immediate form on x86.
+        -Do as few checks as possible to detect negative-zero.
+
+        In most cases, this reduce the negative-zero checks
+        to zero or one TEST+JUMP.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::mul32):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+
+2016-03-06  Benjamin Poulain  <benjamin@webkit.org>
+
         [JSC] Remove a superfluous Move in front of every double unboxing
         https://bugs.webkit.org/show_bug.cgi?id=155064
 

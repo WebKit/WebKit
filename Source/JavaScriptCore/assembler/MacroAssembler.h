@@ -115,6 +115,7 @@ public:
     using MacroAssemblerBase::compare32;
     using MacroAssemblerBase::move;
     using MacroAssemblerBase::add32;
+    using MacroAssemblerBase::mul32;
     using MacroAssemblerBase::and32;
     using MacroAssemblerBase::branchAdd32;
     using MacroAssemblerBase::branchMul32;
@@ -1486,6 +1487,27 @@ public:
             addPtr(key.value2, dest);
         } else
             addPtr(imm.asTrustedImm32(), dest);
+    }
+
+    void mul32(Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            if (src != dest || haveScratchRegisterForBlinding()) {
+                if (src == dest) {
+                    move(src, scratchRegisterForBlinding());
+                    src = scratchRegisterForBlinding();
+                }
+                loadXorBlindedConstant(xorBlindConstant(imm), dest);
+                mul32(src, dest);
+                return;
+            }
+            // If we don't have a scratch register available for use, we'll just
+            // place a random number of nops.
+            uint32_t nopCount = random() & 3;
+            while (nopCount--)
+                nop();
+        }
+        mul32(imm.asTrustedImm32(), src, dest);
     }
 
     void and32(Imm32 imm, RegisterID dest)
