@@ -1,3 +1,47 @@
+2016-03-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Use DeferredWrapper directly in FetchBody promise handling
+        https://bugs.webkit.org/show_bug.cgi?id=155291
+
+        Reviewed by Darin Adler.
+
+        Moved from typed DOMPromise to DeferredWrapper as there can only be one promise resolved.
+        Started preparing the handling of blobs translation to other resolved types.
+
+        Fixed the case of empty body, in which case promises should resolve with empty objects (strings, buffers...) and not null.
+
+        Added Consumer structure to handle asynchronous resolution/rejection of promises.
+        Added preliminary API to resolve promises based on data stored as a Blob.
+        FetchBodyOwner will be responsible to do/stop blob loading.
+
+        Tests: imported/w3c/web-platform-tests/fetch/api/request/request-consume-empty.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-consume-empty.html
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::processIfEmptyOrDisturbed): Fixed empty body case.
+        (WebCore::FetchBody::arrayBuffer):
+        (WebCore::FetchBody::blob):
+        (WebCore::FetchBody::json):
+        (WebCore::FetchBody::text):
+        (WebCore::FetchBody::consume):
+        (WebCore::FetchBody::consumeText):
+        (WebCore::FetchBody::loadingType):
+        (WebCore::FetchBody::consumeBlob):
+        (WebCore::FetchBody::resolveAsJSON):
+        (WebCore::FetchBody::loadingFailed):
+        (WebCore::FetchBody::loadedAsBlob):
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::formData):
+        (WebCore::FetchBody::Consumer::Consumer):
+        * Modules/fetch/FetchBody.idl:
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::arrayBuffer):
+        (WebCore::FetchBodyOwner::blob):
+        (WebCore::FetchBodyOwner::formData):
+        (WebCore::FetchBodyOwner::json):
+        (WebCore::FetchBodyOwner::text):
+        (WebCore::FetchBodyOwner::loadBlob):
+
 2016-03-11  Yoav Weiss  <yoav@yoav.ws>
 
         Avoid applying link tags with an invalid media attribute

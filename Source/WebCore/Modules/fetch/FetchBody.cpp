@@ -31,8 +31,10 @@
 
 #if ENABLE(FETCH_API)
 
+#include "DOMRequestState.h"
 #include "Dictionary.h"
 #include "ExceptionCode.h"
+#include "FetchBodyOwner.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
@@ -82,96 +84,136 @@ FetchBody FetchBody::extractFromBody(FetchBody* body)
     return FetchBody(WTFMove(*body));
 }
 
-template<typename T> inline bool FetchBody::processIfEmptyOrDisturbed(DOMPromise<T, ExceptionCode>& promise)
+bool FetchBody::processIfEmptyOrDisturbed(Consumer::Type type, DeferredWrapper& promise)
 {
     if (m_type == Type::None) {
-        promise.resolve(T());
-        return true;
+        switch (type) {
+        case Consumer::Type::Text:
+            promise.resolve(String());
+            return true;
+        case Consumer::Type::Blob:
+            promise.resolve<RefPtr<Blob>>(Blob::create());
+            return true;
+        case Consumer::Type::JSON:
+            promise.reject<ExceptionCode>(SYNTAX_ERR);
+            return true;
+        case Consumer::Type::ArrayBuffer:
+            promise.resolve(ArrayBuffer::create(nullptr, 0));
+            return true;
+        default:
+            ASSERT_NOT_REACHED();
+            promise.reject<ExceptionCode>(0);
+            return true;
+        };
     }
 
     if (m_isDisturbed) {
-        promise.reject(TypeError);
+        promise.reject<ExceptionCode>(TypeError);
         return true;
     }
     m_isDisturbed = true;
     return false;
 }
 
-void FetchBody::arrayBuffer(ArrayBufferPromise&& promise)
+void FetchBody::arrayBuffer(FetchBodyOwner& owner, DeferredWrapper&& promise)
 {
-    if (processIfEmptyOrDisturbed(promise))
+    if (processIfEmptyOrDisturbed(Consumer::Type::ArrayBuffer, promise))
+        return;
+    consume(owner, Consumer::Type::ArrayBuffer, WTFMove(promise));
+}
+
+void FetchBody::blob(FetchBodyOwner& owner, DeferredWrapper&& promise)
+{
+    if (processIfEmptyOrDisturbed(Consumer::Type::Blob, promise))
+        return;
+
+    consume(owner, Consumer::Type::Blob, WTFMove(promise));
+}
+
+void FetchBody::json(FetchBodyOwner& owner, DeferredWrapper&& promise)
+{
+    if (processIfEmptyOrDisturbed(Consumer::Type::JSON, promise))
         return;
 
     if (m_type == Type::Text) {
-        // FIXME: Ideally we would like to have an ArrayBuffer directly from m_text.
-        Vector<char> data = extractFromText();
-        RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(data.data(), data.size());
-        promise.resolve(buffer);
+        resolveAsJSON(owner.scriptExecutionContext(), m_text, WTFMove(promise));
         return;
     }
-    // FIXME: Support other types.
-    promise.reject(0);
+    consume(owner, Consumer::Type::JSON, WTFMove(promise));
 }
 
-void FetchBody::formData(FormDataPromise&& promise)
+void FetchBody::text(FetchBodyOwner& owner, DeferredWrapper&& promise)
 {
-    if (m_type == Type::None || m_isDisturbed) {
-        promise.reject(TypeError);
-        return;
-    }
-    m_isDisturbed = true;
-
-    // FIXME: Support other types.
-    promise.reject(0);
-}
-
-void FetchBody::blob(BlobPromise&& promise)
-{
-    if (processIfEmptyOrDisturbed(promise))
-        return;
-
-    if (m_type == Type::Blob) {
-        promise.resolve(m_blob);
-        return;
-    }
-    if (m_type == Type::Text) {
-        String contentType = Blob::normalizedContentType(extractMIMETypeFromMediaType(m_mimeType));
-        promise.resolve(Blob::create(extractFromText(), contentType));
-        return;
-    }
-
-    // FIXME: Support other types.
-    promise.reject(0);
-}
-
-void FetchBody::text(TextPromise&& promise)
-{
-    if (processIfEmptyOrDisturbed(promise))
+    if (processIfEmptyOrDisturbed(Consumer::Type::Text, promise))
         return;
 
     if (m_type == Type::Text) {
         promise.resolve(m_text);
         return;
     }
-    // FIXME: Support other types.
-    promise.reject(0);
+    consume(owner, Consumer::Type::Text, WTFMove(promise));
 }
 
-void FetchBody::json(JSC::ExecState& state, JSONPromise&& promise)
+void FetchBody::consume(FetchBodyOwner& owner, Consumer::Type type, DeferredWrapper&& promise)
 {
-    if (processIfEmptyOrDisturbed(promise))
-        return;
-
     if (m_type == Type::Text) {
-        JSC::JSValue value = JSC::JSONParse(&state, m_text);
-        if (!value)
-            promise.reject(SYNTAX_ERR);
-        else
-            promise.resolve(value);
+        consumeText(type, WTFMove(promise));
         return;
     }
+    if (m_type == Type::Blob) {
+        consumeBlob(owner, type, WTFMove(promise));
+        return;
+    }
+
     // FIXME: Support other types.
-    promise.reject(0);
+    promise.reject<ExceptionCode>(0);
+}
+
+void FetchBody::consumeText(Consumer::Type type, DeferredWrapper&& promise)
+{
+    ASSERT(type == Consumer::Type::ArrayBuffer || type == Consumer::Type::Blob);
+
+    if (type == Consumer::Type::ArrayBuffer) {
+        Vector<char> data = extractFromText();
+        promise.resolve<RefPtr<ArrayBuffer>>(ArrayBuffer::create(data.data(), data.size()));
+        return;
+    }
+    String contentType = Blob::normalizedContentType(extractMIMETypeFromMediaType(m_mimeType));
+    promise.resolve<RefPtr<Blob>>(Blob::create(extractFromText(), contentType));
+}
+
+FetchLoadingType FetchBody::loadingType(Consumer::Type type)
+{
+    switch (type) {
+    case Consumer::Type::JSON:
+    case Consumer::Type::Text:
+        return FetchLoadingType::Text;
+    case Consumer::Type::Blob:
+        return FetchLoadingType::Blob;
+    case Consumer::Type::ArrayBuffer:
+        return FetchLoadingType::ArrayBuffer;
+    default:
+        ASSERT_NOT_REACHED();
+        return FetchLoadingType::ArrayBuffer;
+    };
+}
+
+void FetchBody::consumeBlob(FetchBodyOwner& owner, Consumer::Type type, DeferredWrapper&& promise)
+{
+    ASSERT(m_blob);
+
+    m_consumer = Consumer({type, WTFMove(promise)});
+    owner.loadBlob(*m_blob, loadingType(type));
+}
+
+void FetchBody::resolveAsJSON(ScriptExecutionContext* context, const String& data, DeferredWrapper&& promise)
+{
+    DOMRequestState state(context);
+    JSC::JSValue value = JSC::JSONParse(state.exec(), data);
+    if (!value)
+        promise.reject<ExceptionCode>(SYNTAX_ERR);
+    else
+        promise.resolve(value);
 }
 
 Vector<char> FetchBody::extractFromText() const
@@ -182,6 +224,20 @@ Vector<char> FetchBody::extractFromText() const
     Vector<char> value(data.length());
     memcpy(value.data(), data.data(), data.length());
     return value;
+}
+
+void FetchBody::loadingFailed()
+{
+    ASSERT(m_consumer);
+    m_consumer->promise.reject<ExceptionCode>(0);
+    m_consumer = Nullopt;
+}
+
+void FetchBody::loadedAsBlob(Blob& blob)
+{
+    ASSERT(m_consumer);
+    m_consumer->promise.resolve(&blob);
+    m_consumer = Nullopt;
 }
 
 }

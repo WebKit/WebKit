@@ -1,0 +1,7 @@
+
+PASS Consume response's body as text 
+PASS Consume response's body as blob 
+PASS Consume response's body as arrayBuffer 
+PASS Consume response's body as json 
+FAIL Consume response's body as formData promise_test: Unhandled rejection with value: undefined
+

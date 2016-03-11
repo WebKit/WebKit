@@ -1,3 +1,15 @@
+2016-03-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Use DeferredWrapper directly in FetchBody promise handling
+        https://bugs.webkit.org/show_bug.cgi?id=155291
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/fetch/api/request/request-consume-empty-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-consume-empty.html: Added.
+        * web-platform-tests/fetch/api/response/response-consume-empty-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-consume-empty.html: Added.
+
 2016-03-09  Chris Dumez  <cdumez@apple.com>
 
         focus() / blur() should be on HTMLElement / SVGElement, not Element

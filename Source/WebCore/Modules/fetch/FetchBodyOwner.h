@@ -36,17 +36,21 @@
 
 namespace WebCore {
 
+enum class FetchLoadingType { Text, ArrayBuffer, Blob };
+
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject {
 public:
     FetchBodyOwner(ScriptExecutionContext&, FetchBody&&);
 
     // Exposed Body API
     bool isDisturbed() const { return m_body.isDisturbed(); }
-    void arrayBuffer(FetchBody::ArrayBufferPromise&& promise) { m_body.arrayBuffer(WTFMove(promise)); }
-    void formData(FetchBody::FormDataPromise&& promise) { m_body.formData(WTFMove(promise)); }
-    void blob(FetchBody::BlobPromise&& promise) { m_body.blob(WTFMove(promise)); }
-    void json(JSC::ExecState& state, FetchBody::JSONPromise&& promise) { m_body.json(state, WTFMove(promise)); }
-    void text(FetchBody::TextPromise&& promise) { m_body.text(WTFMove(promise)); }
+    void arrayBuffer(DeferredWrapper&& promise) { m_body.arrayBuffer(*this, WTFMove(promise)); }
+    void blob(DeferredWrapper&& promise) { m_body.blob(*this, WTFMove(promise)); }
+    void formData(DeferredWrapper&& promise) { m_body.formData(*this, WTFMove(promise)); }
+    void json(DeferredWrapper&& promise) { m_body.json(*this, WTFMove(promise)); }
+    void text(DeferredWrapper&& promise) { m_body.text(*this, WTFMove(promise)); }
+
+    void loadBlob(Blob&, FetchLoadingType);
 
 protected:
     FetchBody m_body;
@@ -57,6 +61,17 @@ inline FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, FetchBody
     , m_body(WTFMove(body))
 {
     suspendIfNeeded();
+}
+
+inline void FetchBodyOwner::loadBlob(Blob& blob, FetchLoadingType type)
+{
+    if (type == FetchLoadingType::Blob) {
+        // FIXME: Clone blob.
+        m_body.loadedAsBlob(blob);
+        return;
+    }
+    // FIXME: Implement blob loading.
+    m_body.loadingFailed();
 }
 
 } // namespace WebCore
