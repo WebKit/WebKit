@@ -148,7 +148,7 @@ public:
     {
         createRareDataIfNecessary();
         unsigned size = m_rareData->m_regexps.size();
-        m_rareData->m_regexps.append(WriteBarrier<RegExp>(*m_vm, this, r));
+        m_rareData->m_regexps.append(WriteBarrier<RegExp>(*vm(), this, r));
         return size;
     }
     unsigned numberOfRegExps() const
@@ -170,7 +170,7 @@ public:
     {
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
-        m_constantRegisters.last().set(*m_vm, this, v);
+        m_constantRegisters.last().set(*vm(), this, v);
         m_constantsSourceCodeRepresentation.append(sourceCodeRepresentation);
         return result;
     }
@@ -249,7 +249,7 @@ public:
     {
         unsigned size = m_functionDecls.size();
         m_functionDecls.append(WriteBarrier<UnlinkedFunctionExecutable>());
-        m_functionDecls.last().set(*m_vm, this, n);
+        m_functionDecls.last().set(*vm(), this, n);
         return size;
     }
     UnlinkedFunctionExecutable* functionDecl(int index) { return m_functionDecls[index].get(); }
@@ -258,7 +258,7 @@ public:
     {
         unsigned size = m_functionExprs.size();
         m_functionExprs.append(WriteBarrier<UnlinkedFunctionExecutable>());
-        m_functionExprs.last().set(*m_vm, this, n);
+        m_functionExprs.last().set(*vm(), this, n);
         return size;
     }
     UnlinkedFunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
@@ -269,7 +269,7 @@ public:
     void addExceptionHandler(const UnlinkedHandlerInfo& handler) { createRareDataIfNecessary(); return m_rareData->m_exceptionHandlers.append(handler); }
     UnlinkedHandlerInfo& exceptionHandler(int index) { ASSERT(m_rareData); return m_rareData->m_exceptionHandlers[index]; }
 
-    VM* vm() const { return m_vm; }
+    VM* vm() const;
 
     UnlinkedArrayProfile addArrayProfile() { return m_arrayProfileCount++; }
     unsigned numberOfArrayProfiles() { return m_arrayProfileCount; }
@@ -345,8 +345,16 @@ public:
     ALWAYS_INLINE unsigned startColumn() const { return 0; }
     unsigned endColumn() const { return m_endColumn; }
 
-    void addOpProfileControlFlowBytecodeOffset(size_t offset) { m_opProfileControlFlowBytecodeOffsets.append(offset); }
-    const Vector<size_t>& opProfileControlFlowBytecodeOffsets() const { return m_opProfileControlFlowBytecodeOffsets; }
+    void addOpProfileControlFlowBytecodeOffset(size_t offset)
+    {
+        createRareDataIfNecessary();
+        m_rareData->m_opProfileControlFlowBytecodeOffsets.append(offset);
+    }
+    const Vector<size_t>& opProfileControlFlowBytecodeOffsets() const
+    {
+        ASSERT(m_rareData);
+        return m_rareData->m_opProfileControlFlowBytecodeOffsets;
+    }
 
     void dumpExpressionRangeInfo(); // For debugging purpose only.
 
@@ -369,10 +377,9 @@ private:
 
     void getLineAndColumn(ExpressionRangeInfo&, unsigned& line, unsigned& column);
 
-    std::unique_ptr<UnlinkedInstructionStream> m_unlinkedInstructions;
-
     int m_numParameters;
-    VM* m_vm;
+
+    std::unique_ptr<UnlinkedInstructionStream> m_unlinkedInstructions;
 
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
@@ -398,16 +405,16 @@ private:
 
     Vector<unsigned> m_jumpTargets;
 
+    Vector<unsigned> m_propertyAccessInstructions;
+
     // Constant Pools
     Vector<Identifier> m_identifiers;
     Vector<WriteBarrier<Unknown>> m_constantRegisters;
     Vector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
-    std::array<unsigned, LinkTimeConstantCount> m_linkTimeConstants;
     typedef Vector<WriteBarrier<UnlinkedFunctionExecutable>> FunctionExpressionVector;
     FunctionExpressionVector m_functionDecls;
     FunctionExpressionVector m_functionExprs;
-
-    Vector<unsigned> m_propertyAccessInstructions;
+    std::array<unsigned, LinkTimeConstantCount> m_linkTimeConstants;
 
     unsigned m_arrayProfileCount;
     unsigned m_arrayAllocationProfileCount;
@@ -432,17 +439,18 @@ public:
         Vector<UnlinkedStringJumpTable> m_stringSwitchJumpTables;
 
         Vector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
+
+        struct TypeProfilerExpressionRange {
+            unsigned m_startDivot;
+            unsigned m_endDivot;
+        };
+        HashMap<unsigned, TypeProfilerExpressionRange> m_typeProfilerInfoMap;
+        Vector<size_t> m_opProfileControlFlowBytecodeOffsets;
     };
 
 private:
     std::unique_ptr<RareData> m_rareData;
     Vector<ExpressionRangeInfo> m_expressionInfo;
-    struct TypeProfilerExpressionRange {
-        unsigned m_startDivot;
-        unsigned m_endDivot;
-    };
-    HashMap<unsigned, TypeProfilerExpressionRange> m_typeProfilerInfoMap;
-    Vector<size_t> m_opProfileControlFlowBytecodeOffsets;
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
