@@ -43,6 +43,7 @@
 #import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKNSURLExtras.h"
+#import "WKPreviewActionIdentifiersPrivate.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewInternal.h"
@@ -52,9 +53,11 @@
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
+#import "_WKElementAction.h"
 #import "_WKFocusedElementInfo.h"
 #import "_WKFormInputSession.h"
 #import "_WKInputDelegate.h"
+#import "_WKPreviewAction.h"
 #import "_WKPreviewElementInfoInternal.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
@@ -3748,6 +3751,7 @@ static bool isAssistableInputType(InputType type)
     _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
     if ([_previewItemController respondsToSelector:@selector(presentationSecondaryGestureRecognizer)])
         _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
+    _uiDelegateProvidedPreviewingViewController = NO;
 }
 
 - (void)_unregisterPreview
@@ -3756,6 +3760,7 @@ static bool isAssistableInputType(InputType type)
     _previewGestureRecognizer = nil;
     _previewSecondaryGestureRecognizer = nil;
     _previewItemController = nil;
+    _uiDelegateProvidedPreviewingViewController = NO;
 }
 
 - (BOOL)_interactionShouldBeginFromPreviewItemController:(UIPreviewItemController *)controller forPosition:(CGPoint)position
@@ -3867,6 +3872,26 @@ static bool isAssistableInputType(InputType type)
     return _positionInformation.bounds;
 }
 
+static NSString *previewIdentifierForElementAction(_WKElementAction *action)
+{
+    switch (action.type) {
+    case _WKElementActionTypeOpen:
+        return _WKPreviewIdentifierOpen;
+    case _WKElementActionTypeCopy:
+        return _WKPreviewIdentifierCopy;
+#if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
+    case _WKElementActionTypeAddToReadingList:
+        return _WKPreviewIdentifierAddToReadingList;
+#endif
+    case _WKElementActionTypeShare:
+        return _WKPreviewIdentifierShare;
+    default:
+        return nil;
+    }
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
 - (UIViewController *)_presentedViewControllerForPreviewItemController:(UIPreviewItemController *)controller
 {
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
@@ -3891,11 +3916,20 @@ static bool isAssistableInputType(InputType type)
 
         RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
 
-        RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()];
+        auto actions = [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()];
         if ([uiDelegate respondsToSelector:@selector(_webView:previewingViewControllerForElement:defaultActions:)]) {
+            auto previewActions = adoptNS([[NSMutableArray alloc] init]);
+            for (_WKElementAction *elementAction in actions.get()) {
+                _WKPreviewAction *previewAction = [_WKPreviewAction actionWithIdentifier:previewIdentifierForElementAction(elementAction) title:[elementAction title] style:UIPreviewActionStyleDefault handler:^(UIPreviewAction *, UIViewController *) {
+                    [elementAction runActionWithElementInfo:elementInfo.get()];
+                }];
+                [previewActions addObject:previewAction];
+            }
             auto previewElementInfo = adoptNS([[_WKPreviewElementInfo alloc] _initWithLinkURL:targetURL]);
-            if (UIViewController *controller = [uiDelegate _webView:_webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:actions.get()])
+            if (UIViewController *controller = [uiDelegate _webView:_webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:previewActions.get()]) {
+                _uiDelegateProvidedPreviewingViewController = YES;
                 return controller;
+            }
         }
 
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
@@ -3940,7 +3974,7 @@ static bool isAssistableInputType(InputType type)
         return;
     }
 
-    if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)]) {
+    if (_uiDelegateProvidedPreviewingViewController && [uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)]) {
         [uiDelegate _webView:_webView commitPreviewedViewController:viewController];
         return;
     }

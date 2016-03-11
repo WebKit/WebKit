@@ -29,8 +29,8 @@
 
 #import <WebKit/WKSecurityOrigin.h>
 #import <WebKit/_WKActivatedElementInfo.h>
+#import <WebKit/_WKPreviewAction.h>
 
-@class UIPreviewActionItem;
 @class UIScrollView;
 @class UIViewController;
 @class _WKContextMenuElementInfo;
@@ -83,9 +83,10 @@ struct UIEdgeInsets;
 // shouldPreviewElement. Returning NO in shouldPreviewElement will prevent the other methods from being invoked.
 // The client can provide a custom preview by returning their own UIViewController from
 // previewingViewControllerForElement:defaultActions:. Returning nil will result in the default preview behavior
-// for that element.
+// for that element. If the client want to use the defaultActions, then the client is responsible for
+// returning those actions in their UIViewController's implementation of previewActionItems.
 - (BOOL)_webView:(WKWebView *)webView shouldPreviewElement:(_WKPreviewElementInfo *)elementInfo;
-- (UIViewController *)_webView:(WKWebView *)webView previewingViewControllerForElement:(_WKPreviewElementInfo *)elementInfo defaultActions:(NSArray<UIPreviewActionItem *> *)previewActions WK_AVAILABLE(NA, WK_IOS_TBA);
+- (UIViewController *)_webView:(WKWebView *)webView previewingViewControllerForElement:(_WKPreviewElementInfo *)elementInfo defaultActions:(NSArray <id <_WKPreviewActionItem>> *)previewActions WK_AVAILABLE(NA, WK_IOS_TBA);
 - (void)_webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_AVAILABLE(NA, WK_IOS_TBA);
 
 - (UIViewController *)_presentingViewControllerForWebView:(WKWebView *)webView WK_AVAILABLE(NA, WK_IOS_TBA);
