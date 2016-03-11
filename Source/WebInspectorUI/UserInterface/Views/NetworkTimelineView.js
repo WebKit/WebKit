@@ -31,9 +31,6 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
 
         console.assert(timeline.type === WebInspector.TimelineRecord.Type.Network);
 
-        this.navigationSidebarTreeOutline.disclosureButtons = false;
-        this.navigationSidebarTreeOutline.element.classList.add("network");
-
         let columns = {name: {}, domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}};
 
         columns.name.title = WebInspector.UIString("Name");
@@ -90,7 +87,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         for (var column in columns)
             columns[column].sortable = true;
 
-        this._dataGrid = new WebInspector.TimelineDataGrid(this.navigationSidebarTreeOutline, columns);
+        this._dataGrid = new WebInspector.TimelineDataGrid(null, columns);
         this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("network-timeline-view-sort", "requestSent");
@@ -102,14 +99,10 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
         this._pendingRecords = [];
+        this._resourceDataGridNodeMap = new Map;
     }
 
     // Public
-
-    get navigationSidebarTreeOutlineLabel()
-    {
-        return WebInspector.UIString("Resources");
-    }
 
     get selectionPathComponents()
     {
@@ -189,14 +182,6 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         dataGridNode.revealAndSelect();
     }
 
-    treeElementSelected(treeElement, selectedByUser)
-    {
-        if (this._dataGrid.shouldIgnoreSelectionEvent())
-            return;
-
-        super.treeElementSelected(treeElement, selectedByUser);
-    }
-
     layout()
     {
         this._processPendingRecords();
@@ -209,16 +194,17 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         if (!this._pendingRecords.length)
             return;
 
-        for (var resourceTimelineRecord of this._pendingRecords) {
-            // Skip the record if it already exists in the tree.
-            var treeElement = this.navigationSidebarTreeOutline.findTreeElement(resourceTimelineRecord.resource);
-            if (treeElement)
+        for (let resourceTimelineRecord of this._pendingRecords) {
+            // Skip the record if it already exists in the grid.
+            // FIXME: replace with this._dataGrid.findDataGridNode(resourceTimelineRecord.resource) once <https://webkit.org/b/155305> is fixed.
+            let dataGridNode = this._resourceDataGridNodeMap.get(resourceTimelineRecord.resource);
+            if (dataGridNode)
                 continue;
 
-            treeElement = new WebInspector.ResourceTreeElement(resourceTimelineRecord.resource);
-            var dataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, false, this);
+            dataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, false, this);
+            this._resourceDataGridNodeMap.set(resourceTimelineRecord.resource, dataGridNode);
 
-            this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);
+            this._dataGrid.addRowInSortOrder(null, dataGridNode);
         }
 
         this._pendingRecords = [];
@@ -236,7 +222,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
 
     _dataGridFiltersDidChange(event)
     {
-        this.timelineSidebarPanel.updateFilter();
+        // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
     }
 
     _dataGridNodeSelected(event)

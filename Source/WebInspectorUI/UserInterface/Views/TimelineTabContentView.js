@@ -33,10 +33,6 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
 
         super(identifier || "timeline", "timeline", tabBarItem, WebInspector.TimelineSidebarPanel, detailsSidebarPanels);
 
-        // FIXME: Remove these when the TimelineSidebarPanel is removed. https://bugs.webkit.org/show_bug.cgi?id=154973
-        this.contentBrowser.navigationBar.removeNavigationItem(this._showNavigationSidebarItem);
-        this.navigationSidebarPanel.hide();
-
         // Maintain an invisible tree outline containing tree elements for all recordings.
         // The visible recording's tree element is selected when the content view changes.
         this._recordingTreeElementMap = new Map;
@@ -423,7 +419,7 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
     {
         console.assert(recording instanceof WebInspector.TimelineRecording, recording);
 
-        let recordingTreeElement = new WebInspector.GeneralTreeElement(WebInspector.TimelineSidebarPanel.StopwatchIconStyleClass, recording.displayName, null, recording);
+        let recordingTreeElement = new WebInspector.GeneralTreeElement(WebInspector.TimelineTabContentView.StopwatchIconStyleClass, recording.displayName, null, recording);
         this._recordingTreeElementMap.set(recording, recordingTreeElement);
         this._recordingsTreeOutline.appendChild(recordingTreeElement);
     }
@@ -555,3 +551,4 @@ WebInspector.TimelineTabContentView.Type = "timeline";
 WebInspector.TimelineTabContentView.ShowingTimelineRecordingContentViewCookieKey = "timeline-sidebar-panel-showing-timeline-recording-content-view";
 WebInspector.TimelineTabContentView.SelectedTimelineViewIdentifierCookieKey = "timeline-sidebar-panel-selected-timeline-view-identifier";
 WebInspector.TimelineTabContentView.OverviewTimelineIdentifierCookieValue = "overview";
+WebInspector.TimelineTabContentView.StopwatchIconStyleClass = "stopwatch-icon";

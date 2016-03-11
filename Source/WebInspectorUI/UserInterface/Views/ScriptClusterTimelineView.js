@@ -31,8 +31,6 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
 
         console.assert(timeline.type === WebInspector.TimelineRecord.Type.Script);
 
-        this._extraArguments = extraArguments;
-
         this._currentContentViewSetting = new WebInspector.Setting("script-cluster-timeline-view-current-view", WebInspector.ScriptClusterTimelineView.EventsIdentifier);
 
         let showSelectorArrows = this._canShowProfileView();
@@ -52,8 +50,8 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         }
 
         // FIXME: We should be able to create these lazily.
-        this._eventsContentView = new WebInspector.ScriptDetailsTimelineView(this.representedObject, this._extraArguments);
-        this._profileContentView = this._canShowProfileView() ? new WebInspector.ScriptProfileTimelineView(this.representedObject, this._extraArguments) : null;
+        this._eventsContentView = new WebInspector.ScriptDetailsTimelineView(this.representedObject, extraArguments);
+        this._profileContentView = this._canShowProfileView() ? new WebInspector.ScriptProfileTimelineView(this.representedObject, extraArguments) : null;
 
         this._showContentViewForIdentifier(this._currentContentViewSetting.value);
 

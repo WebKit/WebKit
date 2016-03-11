@@ -31,8 +31,6 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
 
         console.assert(WebInspector.TimelineRecord.Type.RenderingFrame);
 
-        this.navigationSidebarTreeOutline.element.classList.add("rendering-frame");
-
         var scopeBarItems = [];
         for (var key in WebInspector.RenderingFrameTimelineView.DurationFilter) {
             var value = WebInspector.RenderingFrameTimelineView.DurationFilter[key];
@@ -78,7 +76,7 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         for (var column in columns)
             columns[column].sortable = true;
 
-        this._dataGrid = new WebInspector.TimelineDataGrid(this.navigationSidebarTreeOutline, columns, this);
+        this._dataGrid = new WebInspector.TimelineDataGrid(null, columns, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("rendering-frame-timeline-view-sort", "startTime");
         this._dataGrid.sortOrderSetting = new WebInspector.Setting("rendering-frame-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
@@ -109,11 +107,6 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
 
     // Public
 
-    get navigationSidebarTreeOutlineLabel()
-    {
-        return WebInspector.UIString("Records");
-    }
-
     shown()
     {
         super.shown();
@@ -138,23 +131,19 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
 
     get selectionPathComponents()
     {
-        var dataGridNode = this._dataGrid.selectedNode;
-        if (!dataGridNode)
+        let dataGridNode = this._dataGrid.selectedNode;
+        if (!dataGridNode || dataGridNode.hidden)
             return null;
 
-        var pathComponents = [];
+        let pathComponents = [];
 
         while (dataGridNode && !dataGridNode.root) {
-            var treeElement = this._dataGrid.treeElementForDataGridNode(dataGridNode);
-            console.assert(treeElement);
-            if (!treeElement)
-                break;
-
-            if (treeElement.hidden)
+            console.assert(dataGridNode instanceof WebInspector.TimelineDataGridNode);
+            if (dataGridNode.hidden)
                 return null;
 
-            var pathComponent = new WebInspector.GeneralTreeElementPathComponent(treeElement);
-            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.treeElementPathComponentSelected, this);
+            let pathComponent = new WebInspector.TimelineDataGridNodePathComponent(dataGridNode);
+            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
             pathComponents.unshift(pathComponent);
             dataGridNode = dataGridNode.parent;
         }
@@ -209,28 +198,11 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         super.showContentViewForTreeElement(treeElement);
     }
 
-    treeElementDeselected(treeElement)
+    dataGridNodePathComponentSelected(event)
     {
-        var dataGridNode = this._dataGrid.dataGridNodeForTreeElement(treeElement);
-        if (!dataGridNode)
-            return;
+        let dataGridNode = event.data.pathComponent.timelineDataGridNode;
+        console.assert(dataGridNode.dataGrid === this._dataGrid);
 
-        dataGridNode.deselect();
-    }
-
-    treeElementSelected(treeElement, selectedByUser)
-    {
-        if (this._dataGrid.shouldIgnoreSelectionEvent())
-            return;
-
-        super.treeElementSelected(treeElement, selectedByUser);
-    }
-
-    treeElementPathComponentSelected(event)
-    {
-        var dataGridNode = this._dataGrid.dataGridNodeForTreeElement(event.data.pathComponent.generalTreeElement);
-        if (!dataGridNode)
-            return;
         dataGridNode.revealAndSelect();
     }
 
@@ -253,54 +225,45 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         if (!this._pendingRecords.length)
             return;
 
-        for (var renderingFrameTimelineRecord of this._pendingRecords) {
+        for (let renderingFrameTimelineRecord of this._pendingRecords) {
             console.assert(renderingFrameTimelineRecord instanceof WebInspector.RenderingFrameTimelineRecord);
 
-            var treeElement = new WebInspector.TimelineRecordTreeElement(renderingFrameTimelineRecord);
-            var dataGridNode = new WebInspector.RenderingFrameTimelineDataGridNode(renderingFrameTimelineRecord, this.zeroTime);
-            this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);
+            let dataGridNode = new WebInspector.RenderingFrameTimelineDataGridNode(renderingFrameTimelineRecord, this.zeroTime);
+            this._dataGrid.addRowInSortOrder(null, dataGridNode);
 
-            var stack = [{children: renderingFrameTimelineRecord.children, parentTreeElement: treeElement, index: 0}];
+            let stack = [{children: renderingFrameTimelineRecord.children, parentDataGridNode: dataGridNode, index: 0}];
             while (stack.length) {
-                var entry = stack.lastValue;
+                let entry = stack.lastValue;
                 if (entry.index >= entry.children.length) {
                     stack.pop();
                     continue;
                 }
 
-                var childRecord = entry.children[entry.index];
-                var childTreeElement = null;
+                let childRecord = entry.children[entry.index];
+                let childDataGridNode = null;
                 if (childRecord.type === WebInspector.TimelineRecord.Type.Layout) {
-                    childTreeElement = new WebInspector.TimelineRecordTreeElement(childRecord, WebInspector.SourceCodeLocation.NameStyle.Short);
-                    if (childRecord.width && childRecord.height) {
-                        let subtitle = document.createElement("span");
-                        subtitle.textContent = WebInspector.UIString("%d \u2A09 %d").format(childRecord.width, childRecord.height);
-                        childTreeElement.subtitle = subtitle;
-                    }
-                    var layoutDataGridNode = new WebInspector.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
+                    childDataGridNode = new WebInspector.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
 
-                    this._dataGrid.addRowInSortOrder(childTreeElement, layoutDataGridNode, entry.parentTreeElement);
+                    this._dataGrid.addRowInSortOrder(null, childDataGridNode, entry.parentDataGridNode);
                 } else if (childRecord.type === WebInspector.TimelineRecord.Type.Script) {
-                    var rootNodes = [];
+                    let rootNodes = [];
                     if (childRecord.profile) {
                         // FIXME: Support using the bottom-up tree once it is implemented.
                         rootNodes = childRecord.profile.topDownRootNodes;
                     }
 
-                    childTreeElement = new WebInspector.TimelineRecordTreeElement(childRecord, WebInspector.SourceCodeLocation.NameStyle.Short, rootNodes.length);
-                    var scriptDataGridNode = new WebInspector.ScriptTimelineDataGridNode(childRecord, this.zeroTime);
+                    childDataGridNode = new WebInspector.ScriptTimelineDataGridNode(childRecord, this.zeroTime);
 
-                    this._dataGrid.addRowInSortOrder(childTreeElement, scriptDataGridNode, entry.parentTreeElement);
+                    this._dataGrid.addRowInSortOrder(null, childDataGridNode, entry.parentDataGridNode);
 
-                    for (var profileNode of rootNodes) {
-                        var profileNodeTreeElement = new WebInspector.ProfileNodeTreeElement(profileNode, this);
-                        var profileNodeDataGridNode = new WebInspector.ProfileNodeDataGridNode(profileNode, this.zeroTime, this.startTime, this.endTime);
-                        this._dataGrid.addRowInSortOrder(profileNodeTreeElement, profileNodeDataGridNode, childTreeElement);
+                    for (let profileNode of rootNodes) {
+                        let profileNodeDataGridNode = new WebInspector.ProfileNodeDataGridNode(profileNode, this.zeroTime, this.startTime, this.endTime);
+                        this._dataGrid.addRowInSortOrder(null, profileNodeDataGridNode, childDataGridNode);
                     }
                 }
 
-                if (childTreeElement && childRecord.children.length)
-                    stack.push({children: childRecord.children, parentTreeElement: childTreeElement, index: 0});
+                if (childDataGridNode && childRecord.children.length)
+                    stack.push({children: childRecord.children, parentDataGridNode: childDataGridNode, index: 0});
                 ++entry.index;
             }
         }
@@ -326,7 +289,7 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
 
     _scopeBarSelectionDidChange(event)
     {
-        this.timelineSidebarPanel.updateFilter();
+        // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
     }
 };
 

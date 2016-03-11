@@ -1,3 +1,141 @@
+2016-03-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Timelines UI redesign: remove navigation sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=153036
+        <rdar://problem/24195627>
+
+        Reviewed by Timothy Hatcher.
+
+        Removed TimelineView methods used by the sidebar to setup the content tree
+        outline and handle tree element events, which are no longer used. Tree elements
+        are no longer created by TimelineViews as records are processed.
+
+        * UserInterface/Main.html:
+        Removed files.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+        Removed tree outline event listeners and data grid parameter.
+        (WebInspector.LayoutTimelineView.prototype._processPendingRecords):
+        (WebInspector.LayoutTimelineView.prototype._dataGridFiltersDidChange):
+        (WebInspector.LayoutTimelineView.prototype._hoveredOrSelectedRecord):
+        Get record from data grid node instead of tree element.
+        (WebInspector.LayoutTimelineView.prototype.get navigationSidebarTreeOutlineLabel): Deleted.
+        (WebInspector.LayoutTimelineView.prototype._mouseOverTreeOutline): Deleted.
+        (WebInspector.LayoutTimelineView.prototype._mouseLeaveTreeOutline): Deleted.
+        No longer needed, highlighting performed by data grid event handlers.
+
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WebInspector.MemoryTimelineView.prototype.get navigationSidebarTreeOutlineLabel): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter): Deleted.
+        Removed hack which was specific to TimelineSidebarPanel.
+
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        Removed sidebar styles and tree outline data grid parameter.
+        (WebInspector.NetworkTimelineView.prototype._processPendingRecords):
+        (WebInspector.NetworkTimelineView.prototype._dataGridFiltersDidChange):
+        (WebInspector.NetworkTimelineView.prototype.get navigationSidebarTreeOutlineLabel): Deleted.
+        (WebInspector.NetworkTimelineView.prototype.treeElementSelected): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        (WebInspector.OverviewTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.OverviewTimelineView.prototype.dataGridNodePathComponentSelected):
+        Create path components from the grid selection. This should have been
+        included in https://webkit.org/b/154954.
+
+        (WebInspector.OverviewTimelineView.prototype._compareDataGridNodesByStartTime.getStartTime):
+        (WebInspector.OverviewTimelineView.prototype._compareDataGridNodesByStartTime):
+        (WebInspector.OverviewTimelineView.prototype._insertDataGridNode):
+        (WebInspector.OverviewTimelineView.prototype._addResourceToDataGridIfNeeded):
+        (WebInspector.OverviewTimelineView.prototype._addSourceCodeTimeline):
+        Refactored to accept grid nodes instead of tree elements.
+
+        (WebInspector.OverviewTimelineView.prototype._processPendingRepresentedObjects):
+        (WebInspector.OverviewTimelineView.prototype.get navigationSidebarTreeOutlineLabel): Deleted.
+        (WebInspector.OverviewTimelineView.prototype.shown):
+        (WebInspector.OverviewTimelineView.prototype.treeElementPathComponentSelected): Deleted.
+        (WebInspector.OverviewTimelineView.prototype._compareTreeElementsByDetails): Deleted.
+        Not used anywhere.
+
+        (WebInspector.OverviewTimelineView.prototype._compareTreeElementsByStartTime.getStartTime): Deleted.
+        (WebInspector.OverviewTimelineView.prototype._compareTreeElementsByStartTime): Deleted.
+        (WebInspector.OverviewTimelineView.prototype._insertTreeElement): Deleted.
+        (WebInspector.OverviewTimelineView.prototype._addResourceToTreeIfNeeded): Deleted.
+        Reimplemented as _compareDataGridNodesByStartTime, _insertDataGridNode and _addResourceToDataGridIfNeeded.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        Removed sidebar styles and tree outline data grid parameter.
+
+        (WebInspector.RenderingFrameTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.RenderingFrameTimelineView.prototype.dataGridNodePathComponentSelected):
+        Create path components from the grid selection. This should have been
+        included in https://webkit.org/b/154954.
+
+        (WebInspector.RenderingFrameTimelineView.prototype._processPendingRecords):
+        (WebInspector.RenderingFrameTimelineView.prototype._scopeBarSelectionDidChange):
+        (WebInspector.RenderingFrameTimelineView.prototype.get navigationSidebarTreeOutlineLabel): Deleted.
+        (WebInspector.RenderingFrameTimelineView.prototype.treeElementDeselected): Deleted.
+        (WebInspector.RenderingFrameTimelineView.prototype.treeElementSelected): Deleted.
+        (WebInspector.RenderingFrameTimelineView.prototype.treeElementPathComponentSelected): Deleted.
+
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView):
+        Don't hold reference to extraArguments, just pass to subviews.
+
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WebInspector.ScriptDetailsTimelineView):
+        Removed sidebar styles and tree outline data grid parameter.
+        (WebInspector.ScriptDetailsTimelineView.prototype._processPendingRecords):
+        (WebInspector.ScriptDetailsTimelineView.prototype._dataGridFiltersDidChange):
+        (WebInspector.ScriptDetailsTimelineView.prototype.get navigationSidebarTreeOutlineLabel): Deleted.
+        (WebInspector.ScriptDetailsTimelineView.prototype.treeElementSelected): Deleted.
+        (WebInspector.ScriptDetailsTimelineView.prototype.dataGridNodeForTreeElement): Deleted.
+        (WebInspector.ScriptDetailsTimelineView.prototype.populateProfileNodeTreeElement): Deleted.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype.addRowInSortOrder):
+        Fixed failure when treeElement and parentTreeElementOrDataGridNode are both null.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        Removed extraArguments and sidebar panel references.
+        (WebInspector.TimelineRecordingContentView.prototype.contentBrowserTreeElementForRepresentedObject):
+        Use icon style from the tab, instead of the sidebar.
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        Removed updates to the sidebar.
+        (WebInspector.TimelineRecordingContentView.prototype._pathComponentSelected):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        (WebInspector.TimelineRecordingContentView.prototype._instrumentAdded):
+        Removed sidebar reference when creating new TimelineViews.
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+
+        * UserInterface/Views/TimelineSidebarPanel.css: Removed.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView):
+        Removed hidden sidebar FIXME.
+        (WebInspector.TimelineTabContentView.prototype._addRecording):
+        New location for sidebar style class constant StopwatchIconStyleClass.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype.get navigationItems): Deleted.
+        (WebInspector.TimelineView.prototype.get navigationSidebarTreeOutline): Deleted.
+        (WebInspector.TimelineView.prototype.get navigationSidebarTreeOutlineLabel): Deleted.
+        (WebInspector.TimelineView.prototype.get timelineSidebarPanel): Deleted.
+        (WebInspector.TimelineView.prototype.treeElementPathComponentSelected): Deleted.
+        (WebInspector.TimelineView.prototype.treeElementDeselected): Deleted.
+        (WebInspector.TimelineView.prototype.treeElementSelected): Deleted.
+        (WebInspector.TimelineView.prototype._treeSelectionDidChange): Deleted.
+        Sidebar logic for panel and content tree outline removed.
+
 2016-03-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Enable Memory Timelines by default if supported

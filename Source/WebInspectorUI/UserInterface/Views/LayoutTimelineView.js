@@ -31,8 +31,6 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         console.assert(timeline.type === WebInspector.TimelineRecord.Type.Layout, timeline);
 
-        this.navigationSidebarTreeOutline.element.classList.add("layout");
-
         let columns = {name: {}, location: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
 
         columns.name.title = WebInspector.UIString("Type");
@@ -70,7 +68,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         for (var column in columns)
             columns[column].sortable = true;
 
-        this._dataGrid = new WebInspector.LayoutTimelineDataGrid(this.navigationSidebarTreeOutline, columns);
+        this._dataGrid = new WebInspector.LayoutTimelineDataGrid(null, columns);
         this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
 
@@ -84,8 +82,6 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         this._dataGrid.element.addEventListener("mouseover", this._mouseOverDataGrid.bind(this));
         this._dataGrid.element.addEventListener("mouseleave", this._mouseLeaveDataGrid.bind(this));
-        this.navigationSidebarTreeOutline.element.addEventListener("mouseover", this._mouseOverTreeOutline.bind(this));
-        this.navigationSidebarTreeOutline.element.addEventListener("mouseleave", this._mouseLeaveTreeOutline.bind(this));
 
         this.element.classList.add("layout");
         this.addSubview(this._dataGrid);
@@ -96,11 +92,6 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
     }
 
     // Public
-
-    get navigationSidebarTreeOutlineLabel()
-    {
-        return WebInspector.UIString("Records");
-    }
 
     get selectionPathComponents()
     {
@@ -213,29 +204,27 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
             return;
 
         for (var layoutTimelineRecord of this._pendingRecords) {
-            var treeElement = new WebInspector.TimelineRecordTreeElement(layoutTimelineRecord, WebInspector.SourceCodeLocation.NameStyle.Short);
-            var dataGridNode = new WebInspector.LayoutTimelineDataGridNode(layoutTimelineRecord, this.zeroTime);
+            let dataGridNode = new WebInspector.LayoutTimelineDataGridNode(layoutTimelineRecord, this.zeroTime);
 
-            this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);
+            this._dataGrid.addRowInSortOrder(null, dataGridNode);
 
-            var stack = [{children: layoutTimelineRecord.children, parentTreeElement: treeElement, index: 0}];
+            let stack = [{children: layoutTimelineRecord.children, parentDataGridNode: dataGridNode, index: 0}];
             while (stack.length) {
-                var entry = stack.lastValue;
+                let entry = stack.lastValue;
                 if (entry.index >= entry.children.length) {
                     stack.pop();
                     continue;
                 }
 
-                var childRecord = entry.children[entry.index];
+                let childRecord = entry.children[entry.index];
                 console.assert(childRecord.type === WebInspector.TimelineRecord.Type.Layout, childRecord);
 
-                var childTreeElement = new WebInspector.TimelineRecordTreeElement(childRecord, WebInspector.SourceCodeLocation.NameStyle.Short);
-                var layoutDataGridNode = new WebInspector.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
-                console.assert(entry.parentTreeElement, "entry without parent!");
-                this._dataGrid.addRowInSortOrder(childTreeElement, layoutDataGridNode, entry.parentTreeElement);
+                let childDataGridNode = new WebInspector.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
+                console.assert(entry.parentDataGridNode, "entry without parent!");
+                this._dataGrid.addRowInSortOrder(null, childDataGridNode, entry.parentDataGridNode);
 
-                if (childTreeElement && childRecord.children.length)
-                    stack.push({children: childRecord.children, parentTreeElement: childTreeElement, index: 0});
+                if (childDataGridNode && childRecord.children.length)
+                    stack.push({children: childRecord.children, parentDataGridNode: childDataGridNode, index: 0});
                 ++entry.index;
             }
         }
@@ -259,7 +248,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
     _dataGridFiltersDidChange(event)
     {
-        this.timelineSidebarPanel.updateFilter();
+        // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
     }
 
     _dataGridNodeSelected(event)
@@ -317,14 +306,8 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         if (this._hoveredDataGridNode)
             return this._hoveredDataGridNode.record;
 
-        if (this._hoveredTreeElement)
-            return this._hoveredTreeElement.record;
-
-        if (this._dataGrid.selectedNode) {
-            var treeElement = this._dataGrid.treeElementForDataGridNode(this._dataGrid.selectedNode);
-            if (treeElement.revealed())
-                return this._dataGrid.selectedNode.record;
-        }
+        if (this._dataGrid.selectedNode && this._dataGrid.selectedNode.revealed)
+            return this._dataGrid.selectedNode.record;
 
         return null;
     }
@@ -342,22 +325,6 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
     _mouseLeaveDataGrid(event)
     {
         this._hoveredDataGridNode = null;
-        this._updateHighlight();
-    }
-
-    _mouseOverTreeOutline(event)
-    {
-        var hoveredTreeElement = this.navigationSidebarTreeOutline.treeElementFromNode(event.target);
-        if (!hoveredTreeElement)
-            return;
-
-        this._hoveredTreeElement = hoveredTreeElement;
-        this._updateHighlight();
-    }
-
-    _mouseLeaveTreeOutline(event)
-    {
-        this._hoveredTreeElement = null;
         this._updateHighlight();
     }
 };

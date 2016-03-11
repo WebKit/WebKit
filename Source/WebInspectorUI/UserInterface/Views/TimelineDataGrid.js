@@ -153,29 +153,9 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         return true;
     }
 
-    addRowInSortOrder(treeElement, dataGridNode, parentElement)
-    {
-        this._treeOutlineDataGridSynchronizer.associate(treeElement, dataGridNode);
-
-        parentElement = parentElement || this._treeOutlineDataGridSynchronizer.treeOutline;
-        var parentNode = parentElement.root ? this : this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(parentElement);
-
-        console.assert(parentNode);
-
-        if (this.sortColumnIdentifier) {
-            var insertionIndex = insertionIndexForObjectInListSortedByFunction(dataGridNode, parentNode.children, this._sortComparator.bind(this));
-
-            // Insert into the parent, which will cause the synchronizer to insert into the data grid.
-            parentElement.insertChild(treeElement, insertionIndex);
-        } else {
-            // Append to the parent, which will cause the synchronizer to append to the data grid.
-            parentElement.appendChild(treeElement);
-        }
-    }
-
     addRowInSortOrder(treeElement, dataGridNode, parentTreeElementOrDataGridNode)
     {
-        let parentDataGridNode = parentTreeElementOrDataGridNode || this;
+        let parentDataGridNode;
         let childElement = dataGridNode;
 
         if (treeElement) {
@@ -192,6 +172,9 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
 
             parentTreeElementOrDataGridNode = parentTreeElement;
             childElement = treeElement;
+        } else {
+            parentTreeElementOrDataGridNode = parentTreeElementOrDataGridNode || this;
+            parentDataGridNode = parentTreeElementOrDataGridNode;
         }
 
         if (this.sortColumnIdentifier) {

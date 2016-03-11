@@ -111,11 +111,6 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
     // Public
 
-    get navigationSidebarTreeOutlineLabel()
-    {
-        return WebInspector.UIString("Records");
-    }
-
     shown()
     {
         super.shown();
