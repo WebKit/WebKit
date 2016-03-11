@@ -1,5 +1,16 @@
 2016-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking imported/blink/fast/multicol/dynamic/multicol-with-abspos-svg-with-foreignobject-with-multicol-crash.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=155339
+
+        Unreviewed test gardening.
+
+        This test is a flaky crash on ios-simulator debug.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-03-11  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking inspector/heap/getPreview.html as flaky on mac-wk2
         https://bugs.webkit.org/show_bug.cgi?id=155312
 
