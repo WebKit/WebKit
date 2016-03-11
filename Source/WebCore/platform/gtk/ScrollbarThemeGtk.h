@@ -66,19 +66,17 @@ private:
     void updateThemeProperties();
     GRefPtr<GtkStyleContext> getOrCreateStyleContext(ScrollbarOrientation = VerticalScrollbar);
 
-    IntSize buttonSize(Scrollbar&);
-
-    struct Properties {
-        int thumbFatness;
-        int troughBorderWidth;
-        int stepperSize;
-        int stepperSpacing;
-        gboolean troughUnderSteppers;
-    };
+    IntSize buttonSize(Scrollbar&, ScrollbarPart);
+    int stepperSize(Scrollbar&, ScrollbarPart);
+    int thumbFatness(Scrollbar&);
+    int thumbFatness(GtkStyleContext*, ScrollbarOrientation = VerticalScrollbar);
+    void getTroughBorder(Scrollbar&, GtkBorder*);
+    void getTroughBorder(GtkStyleContext*, GtkBorder*);
+    int scrollbarThickness(GtkStyleContext*, ScrollbarOrientation = VerticalScrollbar);
+    void getStepperSpacing(Scrollbar&, ScrollbarPart, GtkBorder*);
+    bool troughUnderSteppers(Scrollbar&);
 
     GRefPtr<GtkStyleContext> m_cachedStyleContext;
-    Properties m_cachedProperties;
-    int m_minThumbLength;
     gboolean m_hasForwardButtonStartPart;
     gboolean m_hasForwardButtonEndPart;
     gboolean m_hasBackButtonStartPart;
