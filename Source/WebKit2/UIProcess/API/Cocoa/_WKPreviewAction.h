@@ -35,12 +35,5 @@ WK_CLASS_AVAILABLE(NA, WK_IOS_TBA)
 @property(nonatomic, copy, readonly) NSString *identifier;
 
 @end
-WK_CLASS_AVAILABLE(NA, WK_IOS_TBA)
-
-@interface _WKPreviewAction : UIPreviewAction <NSCopying, _WKPreviewActionItem>
-
-+ (instancetype)actionWithIdentifier:(NSString *)identifier title:(NSString *)title style:(UIPreviewActionStyle)style handler:(void (^)(UIPreviewAction *action, UIViewController *previewViewController))handler;
-
-@end
 
 #endif // WK_API_ENABLED && TARGET_OS_IPHONE

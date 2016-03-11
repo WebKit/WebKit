@@ -57,7 +57,7 @@
 #import "_WKFocusedElementInfo.h"
 #import "_WKFormInputSession.h"
 #import "_WKInputDelegate.h"
-#import "_WKPreviewAction.h"
+#import "_WKPreviewActionInternal.h"
 #import "_WKPreviewElementInfoInternal.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>

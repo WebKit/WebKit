@@ -23,20 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKPreviewActionInternal.h"
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED && TARGET_OS_IPHONE
 
-@implementation _WKPreviewAction
-@synthesize identifier=_identifier;
+#import "_WKPreviewAction.h"
 
-+ (instancetype)actionWithIdentifier:(NSString *)identifier title:(NSString *)title style:(UIPreviewActionStyle)style handler:(void (^)(UIPreviewAction *action, UIViewController *previewViewController))handler
-{
-    _WKPreviewAction *action = [self actionWithTitle:title style:style handler:handler];
-    action->_identifier = identifier;
-    return action;
-}
+@interface _WKPreviewAction : UIPreviewAction <NSCopying, _WKPreviewActionItem>
+
++ (instancetype)actionWithIdentifier:(NSString *)identifier title:(NSString *)title style:(UIPreviewActionStyle)style handler:(void (^)(UIPreviewAction *action, UIViewController *previewViewController))handler;
 
 @end
 

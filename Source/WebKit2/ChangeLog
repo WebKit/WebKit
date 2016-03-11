@@ -1,3 +1,18 @@
+2016-03-11  Beth Dakin  <bdakin@apple.com>
+
+        _WKPreviewAction should be in an internal header
+        https://bugs.webkit.org/show_bug.cgi?id=155370
+
+        Reviewed by Tim Horton.
+
+        Move _WKPreviewAction to an Internal header since only the protocol needs to 
+        be SPI.
+        * UIProcess/API/Cocoa/_WKPreviewAction.h:
+        * UIProcess/API/Cocoa/_WKPreviewAction.mm:
+        * UIProcess/API/Cocoa/_WKPreviewActionInternal.h: Added.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Reflect.set without receiver support
