@@ -6144,6 +6144,14 @@ RefPtr<PlatformMediaResourceLoader> HTMLMediaElement::mediaPlayerCreateResourceL
     return adoptRef(*new MediaResourceLoader(document(), fastGetAttribute(HTMLNames::crossoriginAttr)));
 }
 
+bool HTMLMediaElement::mediaPlayerShouldUsePersistentCache() const
+{
+    if (!document().page())
+        return false;
+
+    return document().page()->chrome().client().mediaShouldUsePersistentCache();
+}
+
 bool HTMLMediaElement::mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
     Frame* frame = document().frame();

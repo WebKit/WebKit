@@ -335,6 +335,7 @@ private:
 #endif
 
     void didInvalidateDocumentMarkerRects() override;
+    bool mediaShouldUsePersistentCache() const override;
 
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;

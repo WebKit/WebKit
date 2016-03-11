@@ -1,3 +1,17 @@
+2016-03-10  Jeremy Jones  <jeremyj@apple.com>
+
+        Set AVURLAssetUsesNoPersistentCacheKey on AVAsset to match caching policy.
+        https://bugs.webkit.org/show_bug.cgi?id=155117
+        rdar://problem/6802240
+
+        Reviewed by Simon Fraser.
+
+        Implement mediaShouldUsePersistentCache to disable media caching when NSURLCache is disabled.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::mediaShouldUsePersistentCache): Added.
+
 2016-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         Font antialiasing (smoothing) changes when elements are rendered into compositing layers

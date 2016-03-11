@@ -365,6 +365,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
     , m_mainFrameProgressCompleted(false)
     , m_shouldDispatchFakeMouseMoveEvents(true)
+    , m_mediaShouldUsePersistentCache(parameters.mediaShouldUsePersistentCache)
 {
     ASSERT(m_pageID);
 

@@ -1,3 +1,28 @@
+2016-03-10  Jeremy Jones  <jeremyj@apple.com>
+
+        Set AVURLAssetUsesNoPersistentCacheKey on AVAsset to match caching policy.
+        https://bugs.webkit.org/show_bug.cgi?id=155117
+        rdar://problem/6802240
+
+        Reviewed by Simon Fraser.
+
+        Make AVAsset AVURLAssetUsesNoPersistentCacheKey match !m_websiteDataStore->isPersistent()
+        This will prevent persistent media caches when webkit is using in-memory caching.
+
+        * Shared/WebPageCreationParameters.cpp: Add mediaShouldUsePersistentCache.
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters): Add mediaShouldUsePersistentCache.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mediaShouldUsePersistentCache): Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_mediaUsesPersistentCache): Added.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::mediaShouldUsePersistentCache): Added.
+
 2016-03-10  Nan Wang  <n_wang@apple.com>
 
         AX: Force allow user zoom

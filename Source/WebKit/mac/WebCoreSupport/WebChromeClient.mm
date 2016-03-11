@@ -1053,3 +1053,8 @@ void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, 
 }
 
 #endif
+
+bool WebChromeClient::mediaShouldUsePersistentCache() const
+{
+    return [[NSURLCache sharedURLCache] diskCapacity] > 0;
+}

@@ -470,6 +470,8 @@ public:
 
     virtual void didInvalidateDocumentMarkerRects() { }
 
+    virtual bool mediaShouldUsePersistentCache() const { return true; }
+
 protected:
     virtual ~ChromeClient() { }
 };
