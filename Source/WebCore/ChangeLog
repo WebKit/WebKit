@@ -1,3 +1,27 @@
+2016-03-11  Yoav Weiss  <yoav@yoav.ws>
+
+        Avoid applying link tags with an invalid media attribute
+        https://bugs.webkit.org/show_bug.cgi?id=143262
+
+        Reviewed by Brent Fulgham.
+
+        In current HTML spec, unlike HTML4, the UA must not apply <link> based resources
+        when the media attribute does not match:
+        https://html.spec.whatwg.org/multipage/semantics.html#attr-link-media
+
+        An invalid media attribute parsing creates a non-empty MediaQuerySet
+        containing a single query with no expressions and no media type.
+        (and with its m_ignored flag off)
+
+        In order to ignore such MediaQueries, I added an extra check that makes sure
+        that the queries handled by MediaQueryEvaluator::eval have either expressions
+        or a media type, and if not, they are ignored.
+
+        Test: fast/dom/HTMLLinkElement/link-stylesheet-invalid-media.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::eval):
+
 2016-03-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [CallWith=ScriptExecutionContext] should pass ScriptExecutionContext to the implementation by reference

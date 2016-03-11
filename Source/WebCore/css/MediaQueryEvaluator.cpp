@@ -136,7 +136,7 @@ bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* sty
     for (size_t i = 0; i < queries.size() && !result; ++i) {
         MediaQuery* query = queries[i].get();
 
-        if (query->ignored())
+        if (query->ignored() || (!query->expressions().size() && query->mediaType().isEmpty()))
             continue;
 
         if (mediaTypeMatch(query->mediaType())) {

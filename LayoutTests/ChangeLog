@@ -1,3 +1,22 @@
+2016-03-11  Yoav Weiss  <yoav@yoav.ws>
+
+        Avoid applying link tags with an invalid media attribute
+        https://bugs.webkit.org/show_bug.cgi?id=143262
+
+        Reviewed by Brent Fulgham.
+
+        These tests make sure that when <link rel=stylesheet> is present with an invalid
+        media attribute, the styles are not being applied.
+
+        * fast/dom/HTMLLinkElement/link-stylesheet-invalid-media-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/link-stylesheet-invalid-media.html: Added.
+        * fast/dom/HTMLLinkElement/link-stylesheet-media-type-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/link-stylesheet-media-type.html: Added.
+
+        These tests test the old HTML4 behavior and are no longer relevant.
+        * fast/media/media-descriptor-syntax-05.html: Removed.
+        * fast/media/media-descriptor-syntax-05-expected.html: Removed.
+
 2016-03-11  Frederic Wang  <fwang@igalia.com>
 
         Skip content-editable-as-textarea.html on GTK as it uses AX API.
