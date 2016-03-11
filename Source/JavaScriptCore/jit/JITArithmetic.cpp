@@ -822,8 +822,8 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
-    JSValueRegs resultRegs = leftRegs;
-    GPRReg scratchGPR = regT2;
+    JSValueRegs resultRegs = JSValueRegs(regT2);
+    GPRReg scratchGPR = regT3;
     FPRReg scratchFPR = InvalidFPRReg;
 #else
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
