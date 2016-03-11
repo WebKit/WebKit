@@ -1,3 +1,9 @@
+2016-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.10.8 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2016-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.10.7 release.

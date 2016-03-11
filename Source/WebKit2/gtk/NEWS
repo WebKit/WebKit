@@ -1,4 +1,21 @@
 =================
+WebKitGTK+ 2.10.8
+=================
+
+What's new in WebKitGTK+ 2.10.8?
+
+  - Limit the number of tiles according to the visible area. This was causing a huge memory
+    consumption with some websites.
+  - Fix flickering and rendering artifacts when entering accelerated compositing mode
+    before the web view is realized.
+  - Fix rendering of form controls and scrollbars with GTK+ >= 3.19.
+  - Fix HTTP authentication dialog rendering when accelerated compositing mode is enabled.
+  - Fix rendering artifacts when using a web view background color.
+  - Fix a crash when creating a WebKitWebView without providing a WebKitWebContext.
+  - Fix several crashes and rendering issues.
+  - Security fixes: CVE-2016-1726.
+
+=================
 WebKitGTK+ 2.10.7
 =================
 
