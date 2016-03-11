@@ -1,3 +1,15 @@
+2016-03-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r197984.
+
+        This change caused an existing LayoutTest to fail
+
+        Reverted changeset:
+
+        "WebKit should not be redirected to an invalid URL"
+        https://bugs.webkit.org/show_bug.cgi?id=155263
+        http://trac.webkit.org/changeset/197984
+
 2016-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Reflect.set without receiver support
