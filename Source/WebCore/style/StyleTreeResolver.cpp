@@ -790,7 +790,7 @@ public:
         : m_element(element)
         , m_previousDisplay(currentStyle ? currentStyle->display() : NONE)
         , m_previousVisibility(currentStyle ? currentStyle->visibility() : HIDDEN)
-        , m_previousImplicitVisibility(WKObservingContentChanges() && WKContentChange() != WKContentVisibilityChange ? elementImplicitVisibility(element) : VISIBLE)
+        , m_previousImplicitVisibility(WKObservingContentChanges() && WKObservedContentChange() != WKContentVisibilityChange ? elementImplicitVisibility(element) : VISIBLE)
     {
     }
     ~CheckForVisibilityChangeOnRecalcStyle()

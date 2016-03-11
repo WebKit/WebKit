@@ -1,3 +1,22 @@
+2016-03-10  Maksim Kisilev <mkisilev@yandex-team.ru>
+
+        Fix typo in StyleTreeResolver.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=139946
+
+        Reviewed by Andy Estes.
+
+        The constructor for CheckForVisibilityChangeOnRecalcStyle was improperly comparing the
+        result of WKContentChange() (which is not a function) to WKContentVisibilityChange. I
+        believe the above cast would implicitly resolve to WKContentNoChange in all cases,
+        whether a visibility change had been observed or not.
+        
+        This patch corrects this problem. I would expect that this might affect some content
+        visibility change behavior, but I'm not sure what the appropriate test case would be
+        since this was apparently found through code inspection.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::CheckForVisibilityChangeOnRecalcStyle::CheckForVisibilityChangeOnRecalcStyle):
+
 2016-03-11  Chris Dumez  <cdumez@apple.com>
 
         iOS-sim debug: WebCoreNSURLSessionTest.BasicOperation and WebCoreNSURLSessionTest.InvalidateEmpty asserting
