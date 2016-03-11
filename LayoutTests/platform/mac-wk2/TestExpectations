@@ -302,6 +302,8 @@ webkit.org/b/154606 [ Release Yosemite ] imported/w3c/indexeddb/idbcursor-advanc
 
 webkit.org/b/155151 [ Debug ElCapitan ] media/track/track-cues-pause-on-exit.html [ Pass Timeout ]
 
+webkit.org/b/155312 inspector/heap/getPreview.html [ Pass Timeout ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
