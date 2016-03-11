@@ -30,15 +30,17 @@ function assign(target/*[*/, /*...*/sources/*] */)
     if (target == null)
         throw new @TypeError("can't convert " + target + " to object");
 
-    var objTarget = @Object(target);
-    for (var s = 1, argumentsLength = arguments.length; s < argumentsLength; ++s) {
-        var nextSource = arguments[s];
+    let objTarget = @Object(target);
+    for (let s = 1, argumentsLength = arguments.length; s < argumentsLength; ++s) {
+        let nextSource = arguments[s];
         if (nextSource != null) {
-            var from = @Object(nextSource);
-            var keys = @ownEnumerablePropertyKeys(from);
-            for (var i = 0, keysLength = keys.length; i < keysLength; ++i) {
-                var nextKey = keys[i];
-                objTarget[nextKey] = from[nextKey];
+            let from = @Object(nextSource);
+            let keys = @Reflect.ownKeys(from);
+            for (let i = 0, keysLength = keys.length; i < keysLength; ++i) {
+                let nextKey = keys[i];
+                let descriptor = @Reflect.getOwnPropertyDescriptor(from, nextKey);
+                if (descriptor !== @undefined && descriptor.enumerable)
+                    objTarget[nextKey] = from[nextKey];
             }
         }
     }

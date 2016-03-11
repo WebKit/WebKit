@@ -1,3 +1,23 @@
+2016-03-11  Saam barati  <sbarati@apple.com>
+
+        [ES6] Make Object.assign spec compliant
+        https://bugs.webkit.org/show_bug.cgi?id=155375
+
+        Reviewed by Michael Saboff.
+
+        This is a straight forward implementation of Object.assign
+        in the spec.
+        https://tc39.github.io/ecma262/#sec-object.assign
+        Before, weren't performing all of the specified operations.
+        Now, we are.
+
+        * builtins/ObjectConstructor.js:
+        (assign):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * tests/es6.yaml:
+
 2016-03-11  Mark Lam  <mark.lam@apple.com>
 
         Implement Function.name and Function#toString for ES6 class.
