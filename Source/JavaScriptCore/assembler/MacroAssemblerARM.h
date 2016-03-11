@@ -1201,6 +1201,12 @@ public:
             m_assembler.vmov_f64(dest, src);
     }
 
+    void moveZeroToDouble(FPRegisterID reg)
+    {
+        static double zeroConstant = 0.;
+        loadDouble(TrustedImmPtr(&zeroConstant), reg);
+    }
+
     void addDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.vadd_f64(dest, dest, src);
