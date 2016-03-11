@@ -61,6 +61,11 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             m_jit.sub32(recovery->src(), recovery->dest());
             m_jit.or64(GPRInfo::tagTypeNumberRegister, recovery->dest());
             break;
+
+        case SpeculativeAddImmediate:
+            m_jit.sub32(AssemblyHelpers::Imm32(recovery->immediate()), recovery->dest());
+            m_jit.or64(GPRInfo::tagTypeNumberRegister, recovery->dest());
+            break;
             
         case BooleanSpeculationCheck:
             m_jit.xor64(AssemblyHelpers::TrustedImm32(static_cast<int32_t>(ValueFalse)), recovery->dest());

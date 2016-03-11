@@ -48,8 +48,9 @@ struct Node;
 
 // This enum describes the types of additional recovery that
 // may need be performed should a speculation check fail.
-enum SpeculationRecoveryType {
+enum SpeculationRecoveryType : uint8_t {
     SpeculativeAdd,
+    SpeculativeAddImmediate,
     BooleanSpeculationCheck
 };
 
@@ -60,22 +61,34 @@ enum SpeculationRecoveryType {
 class SpeculationRecovery {
 public:
     SpeculationRecovery(SpeculationRecoveryType type, GPRReg dest, GPRReg src)
-        : m_type(type)
+        : m_src(src)
         , m_dest(dest)
-        , m_src(src)
+        , m_type(type)
+    {
+    }
+
+    SpeculationRecovery(SpeculationRecoveryType type, GPRReg dest, int32_t immediate)
+        : m_immediate(immediate)
+        , m_dest(dest)
+        , m_type(type)
     {
     }
 
     SpeculationRecoveryType type() { return m_type; }
     GPRReg dest() { return m_dest; }
     GPRReg src() { return m_src; }
+    int32_t immediate() { return m_immediate; }
 
 private:
+    // different recovery types may required different additional information here.
+    union {
+        GPRReg m_src;
+        int32_t m_immediate;
+    };
+    GPRReg m_dest;
+
     // Indicates the type of additional recovery to be performed.
     SpeculationRecoveryType m_type;
-    // different recovery types may required different additional information here.
-    GPRReg m_dest;
-    GPRReg m_src;
 };
 
 // === OSRExit ===

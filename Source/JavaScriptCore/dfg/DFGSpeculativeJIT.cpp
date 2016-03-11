@@ -3256,19 +3256,26 @@ void SpeculativeJIT::compileArithAdd(Node* node)
 
         if (node->child2()->isInt32Constant()) {
             SpeculateInt32Operand op1(this, node->child1());
+            GPRTemporary result(this, Reuse, op1);
+
+            GPRReg gpr1 = op1.gpr();
             int32_t imm2 = node->child2()->asInt32();
+            GPRReg gprResult = result.gpr();
 
             if (!shouldCheckOverflow(node->arithMode())) {
-                GPRTemporary result(this, Reuse, op1);
-                m_jit.add32(Imm32(imm2), op1.gpr(), result.gpr());
-                int32Result(result.gpr(), node);
+                m_jit.add32(Imm32(imm2), gpr1, gprResult);
+                int32Result(gprResult, node);
                 return;
             }
 
-            GPRTemporary result(this);
-            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchAdd32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
+            MacroAssembler::Jump check = m_jit.branchAdd32(MacroAssembler::Overflow, gpr1, Imm32(imm2), gprResult);
+            if (gpr1 == gprResult) {
+                speculationCheck(Overflow, JSValueRegs(), 0, check,
+                    SpeculationRecovery(SpeculativeAddImmediate, gpr1, imm2));
+            } else
+                speculationCheck(Overflow, JSValueRegs(), 0, check);
 
-            int32Result(result.gpr(), node);
+            int32Result(gprResult, node);
             return;
         }
                 
