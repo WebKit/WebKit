@@ -1,3 +1,29 @@
+2016-03-10  Jer Noble  <jer.noble@apple.com>
+
+        Add WebCore, WebKit, & WebKit2 preference/setting to enable Main Content heuristic.
+        https://bugs.webkit.org/show_bug.cgi?id=155326
+        <rdar://problem/25095408>
+
+        Reviewed by Beth Dakin.
+
+        Add SPI to get and set the new preference.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMainContentUserGestureOverrideEnabled):
+        (WKPreferencesGetMainContentUserGestureOverrideEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _mainContentUserGestureOverrideEnabled]):
+        (-[WKWebViewConfiguration _setMainContentUserGestureOverrideEnabled:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-03-10  Alex Christensen  <achristensen@webkit.org>
 
         Remove firing assertion after r197865.

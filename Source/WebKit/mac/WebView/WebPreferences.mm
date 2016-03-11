@@ -2248,6 +2248,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitRequiresUserGestureForAudioPlaybackPreferenceKey];
 }
 
+- (BOOL)overrideUserGestureRequirementForMainContent
+{
+    return [self _boolValueForKey:WebKitMainContentUserGestureOverrideEnabledPreferenceKey];
+}
+
+- (void)setOverrideUserGestureRequirementForMainContent:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMainContentUserGestureOverrideEnabledPreferenceKey];
+}
+
 - (BOOL)mediaPlaybackAllowsInline
 {
     return [self _boolValueForKey:WebKitAllowsInlineMediaPlaybackPreferenceKey];

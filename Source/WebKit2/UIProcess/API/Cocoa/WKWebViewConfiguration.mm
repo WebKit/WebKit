@@ -110,6 +110,7 @@ private:
     BOOL _mediaDataLoadsAutomatically;
     BOOL _requiresUserActionForVideoPlayback;
     BOOL _requiresUserActionForAudioPlayback;
+    BOOL _mainContentUserGestureOverrideEnabled;
 
 #if PLATFORM(MAC)
     BOOL _showsURLsInToolTips;
@@ -138,6 +139,7 @@ private:
 #endif
     _requiresUserActionForVideoPlayback = NO;
     _requiresUserActionForAudioPlayback = NO;
+    _mainContentUserGestureOverrideEnabled = NO;
     _invisibleAutoplayNotPermitted = NO;
 
 #if PLATFORM(IOS)
@@ -249,6 +251,7 @@ private:
     configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
     configuration->_requiresUserActionForVideoPlayback = self->_requiresUserActionForVideoPlayback;
     configuration->_requiresUserActionForAudioPlayback = self->_requiresUserActionForAudioPlayback;
+    configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
 
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
@@ -580,6 +583,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setRequiresUserActionForAudioPlayback:(BOOL)requiresUserActionForAudioPlayback
 {
     _requiresUserActionForAudioPlayback = requiresUserActionForAudioPlayback;
+}
+
+- (BOOL)_mainContentUserGestureOverrideEnabled
+{
+    return _mainContentUserGestureOverrideEnabled;
+}
+
+- (void)_setMainContentUserGestureOverrideEnabled:(BOOL)mainContentUserGestureOverrideEnabled
+{
+    _mainContentUserGestureOverrideEnabled = mainContentUserGestureOverrideEnabled;
 }
 
 #if PLATFORM(MAC)

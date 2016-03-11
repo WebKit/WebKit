@@ -778,6 +778,16 @@ bool WKPreferencesGetAudioPlaybackRequiresUserGesture(WKPreferencesRef preferenc
     return toImpl(preferencesRef)->requiresUserGestureForAudioPlayback();
 }
 
+void WKPreferencesSetMainContentUserGestureOverrideEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setMainContentUserGestureOverrideEnabled(flag);
+}
+
+bool WKPreferencesGetMainContentUserGestureOverrideEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mainContentUserGestureOverrideEnabled();
+}
+
 void WKPreferencesSetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setAllowsInlineMediaPlayback(flag);

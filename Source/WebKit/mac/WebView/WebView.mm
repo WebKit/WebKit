@@ -2334,6 +2334,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     BOOL mediaPlaybackRequiresUserGesture = [preferences mediaPlaybackRequiresUserGesture];
     settings.setVideoPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture || [preferences videoPlaybackRequiresUserGesture]);
     settings.setAudioPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture || [preferences audioPlaybackRequiresUserGesture]);
+    settings.setMainContentUserGestureOverrideEnabled([preferences overrideUserGestureRequirementForMainContent]);
     settings.setAllowsInlineMediaPlayback([preferences mediaPlaybackAllowsInline]);
     settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute([preferences inlineMediaPlaybackRequiresPlaysInlineAttribute]);
     settings.setInvisibleAutoplayNotPermitted([preferences invisibleAutoplayNotPermitted]);

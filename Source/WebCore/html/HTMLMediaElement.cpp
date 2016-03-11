@@ -450,6 +450,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
         m_captionDisplayMode = document.page()->group().captionPreferences().captionDisplayMode();
 #endif
 
+    if (settings && settings->mainContentUserGestureOverrideEnabled())
+        m_mediaSession->addBehaviorRestriction(MediaElementSession::OverrideUserGestureRequirementForMainContent);
+
 #if ENABLE(MEDIA_SESSION)
     m_elementID = nextElementID();
     elementIDsToElements().add(m_elementID, this);
