@@ -33,6 +33,7 @@
 #include "FloatQuad.h"
 #include "LayoutRect.h"
 #include "Path.h"
+#include "Range.h"
 #include "TextIteratorBehavior.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
