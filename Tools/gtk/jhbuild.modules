@@ -456,7 +456,7 @@
   </autotools>
 
   <autotools id="llvm"
-             autogenargs="--enable-optimized --disable-terminfo --disable-zlib --enable-targets=host --disable-backtraces --disable-crash-overrides --disable-expensive-checks --disable-debug-runtime --disable-assertions --enable-shared">
+             autogenargs="--enable-optimized --disable-terminfo --disable-zlib --enable-targets=host --disable-backtraces --disable-crash-overrides --disable-expensive-checks --disable-debug-runtime --disable-assertions --enable-shared --enable-bindings=none">
     <branch repo="llvm.org"
             module="/releases/3.7.0/llvm-3.7.0.src.tar.xz" version="3.7.0" checkoutdir="llvm-3.7.0"
             hash="sha256:ab45895f9dcdad1e140a3a79fd709f64b05ad7364e308c0e582c5b02e9cc3153"/>
