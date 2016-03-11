@@ -1,3 +1,67 @@
+2016-03-11  Chris Dumez  <cdumez@apple.com>
+
+        iOS-sim debug: WebCoreNSURLSessionTest.BasicOperation and WebCoreNSURLSessionTest.InvalidateEmpty asserting
+        https://bugs.webkit.org/show_bug.cgi?id=155256
+
+        Reviewed by Alexey Proskuryakov.
+
+        r197628 consolidated the runtime application checking code for iOS and
+        Mac. However, while the new code works fine for WebKit2, it is unsafe
+        on WebKit1 / iOS and hits assertion in debug. The reason is that
+        applicationBundleIdentifier() for getting called from several threads
+        (WebThread, UIThread).
+
+        To address the problem, this patch renames applicationBundleIdentifier()
+        to applicationBundleIdentifierOverride() and only initializes the
+        override upon WebProcess and Network process initialization. We therefore
+        do not initialize the override in WebKit1 or in the WebKit2 UIProcess.
+        When the override is not set, we fall back to using the main bundle
+        identifier (which does the right thing for WebKit1 / WebKit2 UIProcess)
+        but without caching it to avoid thread safety issues.
+
+        No new tests, already covered by API tests currently crashing.
+
+        * platform/RuntimeApplicationChecks.mm:
+        (WebCore::applicationBundleIdentifierOverride):
+        - Renamed applicationBundleIdentifier() to applicationBundleIdentifierOverride()
+          and only initialize upon initialization of the WebProcess or the Network
+          process.
+        - In debug, set a flag to indicate that the override was already queried.
+
+        (WebCore::applicationBundleIdentifier):
+        New utility function that is returns the application bundle override if it is
+        set and fallback to calling [[NSBundle mainBundle] bundleIdentifier] otherwise.
+
+        (WebCore::setApplicationBundleIdentifier):
+        Add assertions to make sure that:
+        1. This is always called from the main thread.
+        2. The application bundle identifier has not been queried *before* getting
+           overriden as this would indicate a bug in our code and we would have wrongly
+           returned the main bundle identifier in such case.
+
+        (WebCore::MacApplication::isAppleMail):
+        (WebCore::MacApplication::isIBooks):
+        (WebCore::MacApplication::isITunes):
+        (WebCore::MacApplication::isMicrosoftMessenger):
+        (WebCore::MacApplication::isAdobeInstaller):
+        (WebCore::MacApplication::isMicrosoftOutlook):
+        (WebCore::MacApplication::isQuickenEssentials):
+        (WebCore::MacApplication::isAperture):
+        (WebCore::MacApplication::isVersions):
+        (WebCore::MacApplication::isHRBlock):
+        (WebCore::MacApplication::isHipChat):
+        (WebCore::IOSApplication::isMobileSafari):
+        (WebCore::IOSApplication::isDumpRenderTree):
+        (WebCore::IOSApplication::isMobileStore):
+        (WebCore::IOSApplication::isFacebook):
+        (WebCore::IOSApplication::isDaijisenDictionary):
+        (WebCore::IOSApplication::isNASAHD):
+        (WebCore::IOSApplication::isTheEconomistOnIphone):
+        (WebCore::IOSApplication::isWebProcess):
+        (WebCore::IOSApplication::isIBooks):
+        Drop assertions making sure the cached flag is correct. We now have
+        an assertion to detect this earlier in setApplicationBundleIdentifier().
+
 2016-03-10  Jer Noble  <jer.noble@apple.com>
 
         Web Audio becomes distorted after sample rate changes
