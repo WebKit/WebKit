@@ -175,6 +175,15 @@ void TileController::setTilesOpaque(bool opaque)
     tileGrid().updateTileLayerProperties();
 }
 
+void TileController::setTileContentsFormatFlags(PlatformCALayer::ContentsFormatFlags flags)
+{
+    if (flags == m_contentsFormatFlags)
+        return;
+
+    m_contentsFormatFlags = flags;
+    tileGrid().updateTileLayerProperties();
+}
+
 void TileController::setVisibleRect(const FloatRect& rect)
 {
     if (rect == m_visibleRect)
@@ -675,6 +684,7 @@ RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect,
     layer->setBorderWidth(m_tileDebugBorderWidth);
     layer->setEdgeAntialiasingMask(0);
     layer->setOpaque(m_tilesAreOpaque);
+    layer->setContentsFormat(m_contentsFormatFlags);
 #ifndef NDEBUG
     layer->setName("Tile");
 #endif

@@ -191,6 +191,7 @@ public:
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
+    void enableSmoothedLayerText(bool);
     
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&);
@@ -463,8 +464,9 @@ private:
     HashSet<String> m_schemesToRegisterAsCachePartitioned;
 #endif
 
-    bool m_alwaysUsesComplexTextCodePath;
-    bool m_shouldUseFontSmoothing;
+    bool m_alwaysUsesComplexTextCodePath { false };
+    bool m_shouldUseFontSmoothing { true };
+    bool m_enabledSmoothedLayerText { true };
 
     Vector<String> m_fontWhitelist;
 

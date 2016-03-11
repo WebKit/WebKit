@@ -28,11 +28,13 @@
 
 #if PLATFORM(IOS)
 
+#include "BlockExceptions.h"
 #include "Color.h"
 #include "LegacyTileCache.h"
 #include "LegacyTileGrid.h"
 #include "LegacyTileLayer.h"
 #include "LegacyTileLayerPool.h"
+#include "PlatformCALayer.h"
 #include "QuartzCoreSPI.h"
 #include "WAKWindow.h"
 #include <algorithm>
@@ -43,7 +45,7 @@
 #import <WebKitAdditions/LayerBackingStoreAdditions.mm>
 #else
 namespace WebCore {
-static void setBackingStoreFormat(CALayer *)
+static void setBackingStoreFormat(CALayer *, PlatformCALayer::ContentsFormatFlags)
 {
 }
 } // namespace WebCore
@@ -71,7 +73,7 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
         m_tileLayer = adoptNS([[LegacyTileLayer alloc] init]);
     }
     LegacyTileLayer* layer = m_tileLayer.get();
-    setBackingStoreFormat(layer);
+    setBackingStoreFormat(layer, 0);
     [layer setTileGrid:tileGrid];
     [layer setOpaque:m_tileGrid->tileCache().tilesOpaque()];
     [layer setEdgeAntialiasingMask:0];

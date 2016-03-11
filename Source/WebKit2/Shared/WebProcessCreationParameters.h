@@ -103,10 +103,11 @@ struct WebProcessCreationParameters {
 
     CacheModel cacheModel;
 
-    bool shouldAlwaysUseComplexTextCodePath;
-    bool shouldEnableMemoryPressureReliefLogging;
+    bool shouldAlwaysUseComplexTextCodePath { false };
+    bool shouldEnableMemoryPressureReliefLogging { false };
     bool shouldSuppressMemoryPressureHandler { false };
-    bool shouldUseFontSmoothing;
+    bool shouldUseFontSmoothing { true };
+    bool enabledSmoothedLayerText { true };
     bool resourceLoadStatisticsEnabled { false };
 
     Vector<String> fontWhitelist;
@@ -138,8 +139,8 @@ struct WebProcessCreationParameters {
     String uiProcessBundleResourcePath;
     SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;
 
-    bool shouldEnableJIT;
-    bool shouldEnableFTLJIT;
+    bool shouldEnableJIT { false };
+    bool shouldEnableFTLJIT { false };
     
     RefPtr<API::Data> bundleParameterData;
 
@@ -152,12 +153,12 @@ struct WebProcessCreationParameters {
     HashMap<WebCore::SessionID, HashMap<unsigned, double>> plugInAutoStartOriginHashes;
     Vector<String> plugInAutoStartOrigins;
 
-    bool memoryCacheDisabled;
+    bool memoryCacheDisabled { false };
 
 #if ENABLE(SERVICE_CONTROLS)
-    bool hasImageServices;
-    bool hasSelectionServices;
-    bool hasRichContentServices;
+    bool hasImageServices { false };
+    bool hasSelectionServices { false };
+    bool hasRichContentServices { false };
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

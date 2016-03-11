@@ -148,8 +148,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_visitedLinkStore(VisitedLinkStore::create())
     , m_visitedLinksPopulated(false)
     , m_plugInAutoStartProvider(this)
-    , m_alwaysUsesComplexTextCodePath(false)
-    , m_shouldUseFontSmoothing(true)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
     , m_websiteDataStore(m_configuration->shouldHaveLegacyDataStore() ? API::WebsiteDataStore::create(legacyWebsiteDataStoreConfiguration(m_configuration)).ptr() : nullptr)
@@ -586,6 +584,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
     parameters.shouldUseFontSmoothing = m_shouldUseFontSmoothing;
+    parameters.enabledSmoothedLayerText = m_enabledSmoothedLayerText;
 
     // FIXME: This leaves UI process and WebProcess disagreeing about the state if the client hasn't set the path.
     // iconDatabasePath is non-empty by default, but m_iconDatabase isn't enabled in UI process unless setDatabasePath is called explicitly.
@@ -870,6 +869,12 @@ void WebProcessPool::setShouldUseFontSmoothing(bool useFontSmoothing)
 {
     m_shouldUseFontSmoothing = useFontSmoothing;
     sendToAllProcesses(Messages::WebProcess::SetShouldUseFontSmoothing(useFontSmoothing));
+}
+
+void WebProcessPool::enableSmoothedLayerText(bool enableSmoothedText)
+{
+    m_enabledSmoothedLayerText = enableSmoothedText;
+    sendToAllProcesses(Messages::WebProcess::EnableSmoothedLayerText(enableSmoothedText));
 }
 
 void WebProcessPool::registerURLSchemeAsEmptyDocument(const String& urlScheme)

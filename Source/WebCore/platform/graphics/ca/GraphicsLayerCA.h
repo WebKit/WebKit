@@ -95,6 +95,8 @@ public:
     WEBCORE_EXPORT void setBackgroundColor(const Color&) override;
 
     WEBCORE_EXPORT void setContentsOpaque(bool) override;
+    WEBCORE_EXPORT void setSupportsSmoothedFonts(bool) override;
+
     WEBCORE_EXPORT void setBackfaceVisibility(bool) override;
 
     // return true if we started an animation
@@ -391,6 +393,7 @@ private:
     void updateMasksToBounds();
     void updateContentsVisibility();
     void updateContentsOpaque(float pageScaleFactor);
+    void updateContentsFormat();
     void updateBackfaceVisibility();
     void updateStructuralLayer();
     void updateDrawsContent();
@@ -455,43 +458,44 @@ private:
     bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, double timeOffset);
 
     enum LayerChange : uint64_t {
-        NoChange =                      0,
-        NameChanged =                   1LLU << 1,
-        ChildrenChanged =               1LLU << 2, // also used for content layer, and preserves-3d, and size if tiling changes?
-        GeometryChanged =               1LLU << 3,
-        TransformChanged =              1LLU << 4,
-        ChildrenTransformChanged =      1LLU << 5,
-        Preserves3DChanged =            1LLU << 6,
-        MasksToBoundsChanged =          1LLU << 7,
-        DrawsContentChanged =           1LLU << 8,
-        BackgroundColorChanged =        1LLU << 9,
-        ContentsOpaqueChanged =         1LLU << 10,
-        BackfaceVisibilityChanged =     1LLU << 11,
-        OpacityChanged =                1LLU << 12,
-        AnimationChanged =              1LLU << 13,
-        DirtyRectsChanged =             1LLU << 14,
-        ContentsImageChanged =          1LLU << 15,
-        ContentsPlatformLayerChanged =  1LLU << 16,
-        ContentsColorLayerChanged =     1LLU << 17,
-        ContentsRectsChanged =          1LLU << 18,
-        MasksToBoundsRectChanged =      1LLU << 19,
-        MaskLayerChanged =              1LLU << 20,
-        ReplicatedLayerChanged =        1LLU << 21,
-        ContentsNeedsDisplay =          1LLU << 22,
-        AcceleratesDrawingChanged =     1LLU << 23,
-        ContentsScaleChanged =          1LLU << 24,
-        ContentsVisibilityChanged =     1LLU << 25,
-        CoverageRectChanged =           1LLU << 26,
-        FiltersChanged =                1LLU << 27,
-        BackdropFiltersChanged =        1LLU << 28,
-        BackdropFiltersRectChanged =    1LLU << 29,
-        TilingAreaChanged =             1LLU << 30,
-        TilesAdded =                    1LLU << 31,
-        DebugIndicatorsChanged =        1LLU << 32,
-        CustomAppearanceChanged =       1LLU << 33,
-        BlendModeChanged =              1LLU << 34,
-        ShapeChanged =                  1LLU << 35,
-        WindRuleChanged =               1LLU << 36,
+        NoChange                        = 0,
+        NameChanged                     = 1LLU << 1,
+        ChildrenChanged                 = 1LLU << 2, // also used for content layer, and preserves-3d, and size if tiling changes?
+        GeometryChanged                 = 1LLU << 3,
+        TransformChanged                = 1LLU << 4,
+        ChildrenTransformChanged        = 1LLU << 5,
+        Preserves3DChanged              = 1LLU << 6,
+        MasksToBoundsChanged            = 1LLU << 7,
+        DrawsContentChanged             = 1LLU << 8,
+        BackgroundColorChanged          = 1LLU << 9,
+        ContentsOpaqueChanged           = 1LLU << 10,
+        ContentsFormatChanged           = 1LLU << 11,
+        BackfaceVisibilityChanged       = 1LLU << 12,
+        OpacityChanged                  = 1LLU << 13,
+        AnimationChanged                = 1LLU << 14,
+        DirtyRectsChanged               = 1LLU << 15,
+        ContentsImageChanged            = 1LLU << 16,
+        ContentsPlatformLayerChanged    = 1LLU << 17,
+        ContentsColorLayerChanged       = 1LLU << 18,
+        ContentsRectsChanged            = 1LLU << 19,
+        MasksToBoundsRectChanged        = 1LLU << 20,
+        MaskLayerChanged                = 1LLU << 21,
+        ReplicatedLayerChanged          = 1LLU << 22,
+        ContentsNeedsDisplay            = 1LLU << 23,
+        AcceleratesDrawingChanged       = 1LLU << 24,
+        ContentsScaleChanged            = 1LLU << 25,
+        ContentsVisibilityChanged       = 1LLU << 26,
+        CoverageRectChanged             = 1LLU << 27,
+        FiltersChanged                  = 1LLU << 28,
+        BackdropFiltersChanged          = 1LLU << 29,
+        BackdropFiltersRectChanged      = 1LLU << 30,
+        TilingAreaChanged               = 1LLU << 31,
+        TilesAdded                      = 1LLU << 32,
+        DebugIndicatorsChanged          = 1LLU << 33,
+        CustomAppearanceChanged         = 1LLU << 34,
+        BlendModeChanged                = 1LLU << 35,
+        ShapeChanged                    = 1LLU << 36,
+        WindRuleChanged                 = 1LLU << 37,
     };
     typedef uint64_t LayerChangeFlags;
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };

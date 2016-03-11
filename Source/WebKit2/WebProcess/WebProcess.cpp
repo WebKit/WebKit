@@ -76,6 +76,7 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPage.h>
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/Language.h>
@@ -343,6 +344,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     if (parameters.shouldUseFontSmoothing)
         setShouldUseFontSmoothing(true);
 
+    enableSmoothedLayerText(parameters.enabledSmoothedLayerText);
+        
 #if PLATFORM(COCOA) || USE(CFNETWORK)
     setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
     SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
@@ -474,6 +477,11 @@ void WebProcess::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)
 {
     WebCore::FontCascade::setShouldUseSmoothing(useFontSmoothing);
+}
+
+void WebProcess::enableSmoothedLayerText(bool smoothedLayerText)
+{
+    WebCore::GraphicsLayer::setSmoothedLayerTextEnabled(smoothedLayerText);
 }
 
 void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const

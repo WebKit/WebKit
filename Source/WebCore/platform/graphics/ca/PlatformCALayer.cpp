@@ -80,17 +80,22 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
         CGContextSetRGBFillColor(context, 0, 0.5f, 0.25f, 1);
     
     CGContextFillRect(context, indicatorBox);
-    
-    if (platformCALayer->acceleratesDrawing())
-        CGContextSetRGBFillColor(context, 1, 0, 0, 1);
-    else
-        CGContextSetRGBFillColor(context, 1, 1, 1, 1);
 
     if (platformCALayer->owner()->isUsingDisplayListDrawing(platformCALayer)) {
         CGContextSetRGBStrokeColor(context, 0, 0, 0, 0.65);
         CGContextSetLineWidth(context, 2);
         CGContextStrokeRect(context, indicatorBox);
     }
+    
+    if (!platformCALayer->isOpaque() && (platformCALayer->contentsFormat() & SmoothedFonts)) {
+        CGContextSetRGBFillColor(context, 1, 1, 1, 0.4);
+        platformCALayer->drawTextAtPoint(context, indicatorBox.origin.x + 7, indicatorBox.origin.y + 24, CGSizeMake(1, -1), 22, text, strlen(text));
+    }
+
+    if (platformCALayer->acceleratesDrawing())
+        CGContextSetRGBFillColor(context, 1, 0, 0, 1);
+    else
+        CGContextSetRGBFillColor(context, 1, 1, 1, 1);
     
     platformCALayer->drawTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, CGSizeMake(1, -1), 22, text, strlen(text));
     

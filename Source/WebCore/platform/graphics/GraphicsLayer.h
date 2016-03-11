@@ -364,6 +364,9 @@ public:
     bool contentsOpaque() const { return m_contentsOpaque; }
     virtual void setContentsOpaque(bool b) { m_contentsOpaque = b; }
 
+    bool supportsSmoothedFonts() const { return m_supportsSmoothedFonts; }
+    virtual void setSupportsSmoothedFonts(bool b) { m_supportsSmoothedFonts = b; }
+
     bool backfaceVisibility() const { return m_backfaceVisibility; }
     virtual void setBackfaceVisibility(bool b) { m_backfaceVisibility = b; }
 
@@ -540,6 +543,10 @@ public:
     static bool supportsBackgroundColorContent();
     static bool supportsLayerType(Type);
     static bool supportsContentsTiling();
+    static bool supportsSmoothedLayerText();
+
+    WEBCORE_EXPORT static void setSmoothedLayerTextEnabled(bool);
+    WEBCORE_EXPORT static bool smoothedLayerTextEnabled();
 
     void updateDebugIndicators();
 
@@ -613,6 +620,7 @@ protected:
     const Type m_type;
 
     bool m_contentsOpaque : 1;
+    bool m_supportsSmoothedFonts : 1;
     bool m_preserves3D: 1;
     bool m_backfaceVisibility : 1;
     bool m_usingTiledBacking : 1;

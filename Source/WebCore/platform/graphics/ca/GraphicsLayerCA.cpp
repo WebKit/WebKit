@@ -309,6 +309,26 @@ bool GraphicsLayer::supportsBackgroundColorContent()
     return true;
 }
 
+static bool isSmoothedLayerTextEnabled = true;
+
+bool GraphicsLayer::supportsSmoothedLayerText()
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    return isSmoothedLayerTextEnabled;
+#endif
+    return false;
+}
+
+void GraphicsLayer::setSmoothedLayerTextEnabled(bool flag)
+{
+    isSmoothedLayerTextEnabled = flag;
+}
+
+bool GraphicsLayer::smoothedLayerTextEnabled()
+{
+    return isSmoothedLayerTextEnabled;
+}
+
 std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
     std::unique_ptr<GraphicsLayer> graphicsLayer;
@@ -707,6 +727,15 @@ void GraphicsLayerCA::setContentsOpaque(bool opaque)
 
     GraphicsLayer::setContentsOpaque(opaque);
     noteLayerPropertyChanged(ContentsOpaqueChanged);
+}
+
+void GraphicsLayerCA::setSupportsSmoothedFonts(bool supportsSmoothedFonts)
+{
+    if (m_supportsSmoothedFonts == supportsSmoothedFonts)
+        return;
+
+    GraphicsLayer::setSupportsSmoothedFonts(supportsSmoothedFonts);
+    noteLayerPropertyChanged(ContentsFormatChanged);
 }
 
 void GraphicsLayerCA::setBackfaceVisibility(bool visible)
@@ -1580,6 +1609,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsOpaqueChanged)
         updateContentsOpaque(pageScaleFactor);
 
+    if (m_uncommittedChanges & ContentsFormatChanged)
+        updateContentsFormat();
+
     if (m_uncommittedChanges & BackfaceVisibilityChanged)
         updateBackfaceVisibility();
 
@@ -1887,6 +1919,20 @@ void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         for (auto& layer : layerCloneMap->values())
             layer->setOpaque(contentsOpaque);
+    }
+}
+
+void GraphicsLayerCA::updateContentsFormat()
+{
+    PlatformCALayer::ContentsFormatFlags formatFlags = 0;
+    if (supportsSmoothedFonts())
+        formatFlags |= PlatformCALayer::SmoothedFonts;
+
+    m_layer->setContentsFormat(formatFlags);
+
+    if (LayerMap* layerCloneMap = m_layerClones.get()) {
+        for (auto& layer : layerCloneMap->values())
+            layer->setContentsFormat(formatFlags);
     }
 }
 

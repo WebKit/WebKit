@@ -42,6 +42,7 @@ messages -> WebProcess LegacyReceiver {
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     SetShouldUseFontSmoothing(bool useFontSmoothing)
+    EnableSmoothedLayerText(bool smoothedLayerText)
     SetResourceLoadStatisticsEnabled(bool resourceLoadStatisticsEnabled);
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
