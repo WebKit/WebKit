@@ -2696,7 +2696,7 @@ bool setJSTestObjWithScriptExecutionContextAttribute(ExecState* state, EncodedJS
         return false;
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return;
+        return false;
     impl.setWithScriptExecutionContextAttribute(*scriptContext, nativeValue);
     return true;
 }
@@ -2733,7 +2733,7 @@ bool setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* state, Enc
         return false;
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return;
+        return false;
     impl.setWithScriptExecutionContextAttributeRaises(*scriptContext, nativeValue);
     return true;
 }
@@ -2753,7 +2753,7 @@ bool setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* st
         return false;
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return;
+        return false;
     impl.setWithScriptExecutionContextAndScriptStateAttribute(*state, *scriptContext, nativeValue);
     return true;
 }
@@ -2773,7 +2773,7 @@ bool setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecSta
         return false;
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return;
+        return false;
     impl.setWithScriptExecutionContextAndScriptStateAttributeRaises(*state, *scriptContext, nativeValue);
     return true;
 }
@@ -2793,7 +2793,7 @@ bool setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(Exe
         return false;
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return;
+        return false;
     impl.setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(*state, *scriptContext, nativeValue);
     return true;
 }
