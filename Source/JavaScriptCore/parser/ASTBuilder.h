@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -346,7 +346,8 @@ public:
             auto metadata = static_cast<FuncExprNode*>(rhs)->metadata();
             metadata->setEcmaName(ident);
             metadata->setInferredName(ident);
-        }
+        } else if (rhs->isClassExprNode())
+            static_cast<ClassExprNode*>(rhs)->setEcmaName(ident);
         AssignResolveNode* node = new (m_parserArena) AssignResolveNode(location, ident, rhs, assignmentContext);
         setExceptionLocation(node, start, divot, end);
         return node;
@@ -364,10 +365,11 @@ public:
         return node;
     }
 
-    ClassExprNode* createClassExpr(const JSTokenLocation& location, const Identifier& name, VariableEnvironment& classEnvironment, ExpressionNode* constructor,
+    ClassExprNode* createClassExpr(const JSTokenLocation& location, const ParserClassInfo<ASTBuilder>& classInfo, VariableEnvironment& classEnvironment, ExpressionNode* constructor,
         ExpressionNode* parentClass, PropertyListNode* instanceMethods, PropertyListNode* staticMethods)
     {
-        return new (m_parserArena) ClassExprNode(location, name, classEnvironment, constructor, parentClass, instanceMethods, staticMethods);
+        SourceCode source = m_sourceCode->subExpression(classInfo.startOffset, classInfo.endOffset, classInfo.startLine, classInfo.startColumn);
+        return new (m_parserArena) ClassExprNode(location, *classInfo.className, source, classEnvironment, constructor, parentClass, instanceMethods, staticMethods);
     }
 
     ExpressionNode* createFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)
@@ -442,7 +444,8 @@ public:
             auto metadata = static_cast<FuncExprNode*>(node)->metadata();
             metadata->setEcmaName(*propertyName);
             metadata->setInferredName(*propertyName);
-        }
+        } else if (node->isClassExprNode())
+            static_cast<ClassExprNode*>(node)->setEcmaName(*propertyName);
         return new (m_parserArena) PropertyNode(*propertyName, node, type, putType, superBinding);
     }
     PropertyNode* createProperty(VM* vm, ParserArena& parserArena, double propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool)
@@ -1301,7 +1304,8 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
                 auto metadata = static_cast<FuncExprNode*>(expr)->metadata();
                 metadata->setEcmaName(resolve->identifier());
                 metadata->setInferredName(resolve->identifier());
-            }
+            } else if (expr->isClassExprNode())
+                static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
             AssignResolveNode* node = new (m_parserArena) AssignResolveNode(location, resolve->identifier(), expr, AssignmentContext::AssignmentExpression);
             setExceptionLocation(node, start, divot, end);
             return node;

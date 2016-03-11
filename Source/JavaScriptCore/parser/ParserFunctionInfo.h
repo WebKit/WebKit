@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,11 @@ struct ParserFunctionInfo {
 
 template <class TreeBuilder>
 struct ParserClassInfo {
-    const Identifier* className = 0;
+    const Identifier* className { nullptr };
+    unsigned startOffset { 0 };
+    unsigned endOffset { 0 };
+    int startLine { 0 };
+    unsigned startColumn { 0 };
 };
 
 }

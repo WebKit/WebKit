@@ -5,6 +5,46 @@
 </head>
 <body>
 <script src="script-tests/function-toString-vs-name.js"></script>
+
+<script>
+failures = "";
+
+section = "global class statements with identical class bodies from different scripts";
+</script>
+<!-- Case 1: A global class statement: -->
+    <script>class globalClass1 { constructor(x) { return x; } stuff() { return 5; } }</script>
+
+<!-- Case 2: Same class body as Case 1 but indented. -->
+        <script>class globalClass2 { constructor(x) { return x; } stuff() { return 5; } }</script>
+
+<!-- Case 3: Same class body indented on the same line. -->
+<script>class globalClass3 { constructor(x) { return x; } stuff() { return 5; } }</script>
+
+<script>
+section = "global class expressions with identical class bodies from different scripts";
+</script>
+<!-- Case 1: A global class expression: -->
+    <script>var globalClassExpr1 = class { constructor(x) { return x; } stuff() { return 5; } }</script>
+
+<!-- Case 2: Same class body as Case 1 but indented. -->
+        <script>var globalClassExpr2 = class { constructor(x) { return x; } stuff() { return 5; } }</script>
+
+<!-- Case 3: Same class body indented on the same line. -->
+<script>var globalClassExpr3 = class { constructor(x) { return x; } stuff() { return 5; } }</script>
+
+<script>
+test(globalClass1, "globalClass1", "class globalClass1 { constructor(x) { return x; } stuff() { return 5; } }");
+test(globalClass2, "globalClass2", "class globalClass2 { constructor(x) { return x; } stuff() { return 5; } }");
+test(globalClass3, "globalClass3", "class globalClass3 { constructor(x) { return x; } stuff() { return 5; } }");
+
+test(globalClassExpr1, "globalClassExpr1", "class { constructor(x) { return x; } stuff() { return 5; } }");
+test(globalClassExpr2, "globalClassExpr2", "class { constructor(x) { return x; } stuff() { return 5; } }");
+test(globalClassExpr3, "globalClassExpr3", "class { constructor(x) { return x; } stuff() { return 5; } }");
+
+if (failureCount)
+    throw Error("Found " + failureCount + " failures:\n" + failures);
+</script>
+
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>

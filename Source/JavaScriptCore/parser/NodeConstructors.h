@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2009, 2013, 2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -890,27 +890,27 @@ namespace JSC {
     }
 
     
-    inline BaseFuncExprNode::BaseFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
+    inline BaseFuncExprNode::BaseFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
         : ExpressionNode(location)
-        , m_metadata(m_metadata)
+        , m_metadata(metadata)
     {
         m_metadata->finishParsing(source, ident, FunctionExpression);
     }
 
-    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
-        : BaseFuncExprNode(location, ident, m_metadata, source)
+    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
+        : BaseFuncExprNode(location, ident, metadata, source)
     {
     }
 
-    inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
+    inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
         : StatementNode(location)
-        , m_metadata(m_metadata)
+        , m_metadata(metadata)
     {
         m_metadata->finishParsing(source, ident, FunctionDeclaration);
     }
 
-    inline ArrowFuncExprNode::ArrowFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
-        : BaseFuncExprNode(location, ident, m_metadata, source)
+    inline ArrowFuncExprNode::ArrowFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
+        : BaseFuncExprNode(location, ident, metadata, source)
     {
     }
 
@@ -927,10 +927,12 @@ namespace JSC {
     {
     }
 
-    inline ClassExprNode::ClassExprNode(const JSTokenLocation& location, const Identifier& name, VariableEnvironment& classEnvironment, ExpressionNode* constructorExpression, ExpressionNode* classHeritage, PropertyListNode* instanceMethods, PropertyListNode* staticMethods)
+    inline ClassExprNode::ClassExprNode(const JSTokenLocation& location, const Identifier& name, const SourceCode& classSource, VariableEnvironment& classEnvironment, ExpressionNode* constructorExpression, ExpressionNode* classHeritage, PropertyListNode* instanceMethods, PropertyListNode* staticMethods)
         : ExpressionNode(location)
         , VariableEnvironmentNode(classEnvironment)
+        , m_classSource(classSource)
         , m_name(name)
+        , m_ecmaName(&name)
         , m_constructorExpression(constructorExpression)
         , m_classHeritage(classHeritage)
         , m_instanceMethods(instanceMethods)

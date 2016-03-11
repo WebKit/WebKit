@@ -1,7 +1,7 @@
 /*
 *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
 *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
-*  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015 Apple Inc. All rights reserved.
+*  Copyright (C) 2003-2009, 2012-2013, 2015-2016 Apple Inc. All rights reserved.
 *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
 *  Copyright (C) 2007 Maks Orlovich
 *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -3220,11 +3220,16 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     RefPtr<RegisterID> constructor;
 
     // FIXME: Make the prototype non-configurable & non-writable.
-    if (m_constructorExpression)
+    if (m_constructorExpression) {
+        ASSERT(m_constructorExpression->isFuncExprNode());
+        FunctionMetadataNode* metadata = static_cast<FuncExprNode*>(m_constructorExpression)->metadata();
+        metadata->setEcmaName(ecmaName());
+        metadata->setClassSource(m_classSource);
         constructor = generator.emitNode(dst, m_constructorExpression);
-    else {
+    } else {
         constructor = generator.emitNewDefaultConstructor(generator.finalDestination(dst),
-            m_classHeritage ? ConstructorKind::Derived : ConstructorKind::Base, m_name);
+            m_classHeritage ? ConstructorKind::Derived : ConstructorKind::Base,
+            m_name, ecmaName(), m_classSource);
     }
 
     const auto& propertyNames = generator.propertyNames();

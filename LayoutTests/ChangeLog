@@ -1,3 +1,23 @@
+2016-03-11  Mark Lam  <mark.lam@apple.com>
+
+        Implement Function.name and Function#toString for ES6 class.
+        https://bugs.webkit.org/show_bug.cgi?id=155336
+
+        Reviewed by Geoffrey Garen.
+
+        * js/class-syntax-name-expected.txt:
+        * js/script-tests/class-syntax-name.js:
+        (shouldBe):
+        (shouldBeTrue):
+        - Rebased expected result.
+
+        * js/function-toString-vs-name.html:
+        * js/script-tests/function-toString-vs-name.js:
+        - Added new tests for class.
+
+        * platform/mac/inspector/model/remote-object-expected.txt:
+        - Rebased expected result.
+
 2016-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/blink/fast/multicol/dynamic/multicol-with-abspos-svg-with-foreignobject-with-multicol-crash.html as flaky

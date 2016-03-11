@@ -218,6 +218,306 @@ section = "object shorthand method";
     }
 }
 
+section = "class from statement";
+(function () {
+    class foo {}
+    class bar {}
+    class bax { static name() {} }
+    let baz = bar;
+    class goo extends foo {}
+
+    test(foo, "foo", "class foo {}");
+    test(bar, "bar", "class bar {}");
+    shouldBe("typeof bax.name of ", "bax", typeof bax.name, "function");
+    shouldBe("toString of ", "bax", bax.toString(), "class bax { static name() {} }");
+    test(baz, "bar", "class bar {}");
+    test(goo, "goo", "class goo extends foo {}");
+
+    section = "bound class from statement";
+    {
+        let bound1 = foo.bind({});
+        test(bound1, "bound foo", "function foo() { [native code] }");
+        let bound2 = bar.bind({});
+        test(bound2, "bound bar", "function bar() { [native code] }");
+        let bound3 = bax.bind({});
+        test(bound3, "bound ", "function() { [native code] }"); // bax.name is not a string.
+        let bound4 = baz.bind({});
+        test(bound4, "bound bar", "function bar() { [native code] }");
+        let bound5 = goo.bind({});
+        test(bound5, "bound goo", "function goo() { [native code] }");
+    }
+})();
+
+section = "class with constructor from statement";
+(function () {
+    class foo { constructor(x) {} }
+    class bar { constructor() {} }
+    class bax { static name() {} constructor() {} }
+    let baz = bar;
+    class goo extends foo { constructor() { super(5); } }
+
+    test(foo, "foo", "class foo { constructor(x) {} }");
+    test(bar, "bar", "class bar { constructor() {} }");
+    shouldBe("typeof bax.name of ", "bax", typeof bax.name, "function");
+    shouldBe("toString of ", "bax", bax.toString(), "class bax { static name() {} constructor() {} }");
+    test(baz, "bar", "class bar { constructor() {} }");
+    test(goo, "goo", "class goo extends foo { constructor() { super(5); } }");
+
+    section = "bound class with constructor from statement";
+    {
+        let bound1 = foo.bind({});
+        test(bound1, "bound foo", "function foo() { [native code] }");
+        let bound2 = bar.bind({});
+        test(bound2, "bound bar", "function bar() { [native code] }");
+        let bound3 = bax.bind({});
+        test(bound3, "bound ", "function() { [native code] }"); // bax.name is not a string.
+        let bound4 = baz.bind({});
+        test(bound4, "bound bar", "function bar() { [native code] }");
+        let bound5 = goo.bind({});
+        test(bound5, "bound goo", "function goo() { [native code] }");
+    }
+})();
+
+section = "class from expression";
+(function () {
+    let foo = class namedFoo {}
+    let bar = class {}
+    let bax = class { static name() {} }
+    let baz = bar;
+    let goo = class extends foo {}
+
+    test(foo, "namedFoo", "class namedFoo {}");
+    test(bar, "bar", "class {}");
+    shouldBe("typeof bax.name of ", "bax", typeof bax.name, "function");
+    shouldBe("toString of ", "bax", bax.toString(), "class { static name() {} }");
+    test(baz, "bar", "class {}");
+    test(goo, "goo", "class extends foo {}");
+
+    section = "bound class from expression";
+    {
+        let bound1 = foo.bind({});
+        test(bound1, "bound namedFoo", "function namedFoo() { [native code] }");
+        let bound2 = bar.bind({});
+        test(bound2, "bound bar", "function bar() { [native code] }");
+        let bound3 = bax.bind({});
+        test(bound3, "bound ", "function() { [native code] }"); // bax.name is not a string.
+        let bound4 = baz.bind({});
+        test(bound4, "bound bar", "function bar() { [native code] }");
+        let bound5 = goo.bind({});
+        test(bound5, "bound goo", "function goo() { [native code] }");
+    }
+})();
+
+section = "class with constructor from expression";
+(function () {
+    let foo = class namedFoo { constructor(x) {} }
+    let bar = class { constructor() {} }
+    let bax = class { static name() {} constructor() {} }
+    let baz = bar;
+    let goo = class extends foo { constructor() { super(x) } }
+
+    test(foo, "namedFoo", "class namedFoo { constructor(x) {} }");
+    test(bar, "bar", "class { constructor() {} }");
+    shouldBe("typeof bax.name of ", "bax", typeof bax.name, "function");
+    shouldBe("toString of ", "bax", bax.toString(), "class { static name() {} constructor() {} }");
+    test(baz, "bar", "class { constructor() {} }");
+    test(goo, "goo", "class extends foo { constructor() { super(x) } }");
+
+    section = "bound class with constructor from expression";
+    {
+        let bound1 = foo.bind({});
+        test(bound1, "bound namedFoo", "function namedFoo() { [native code] }");
+        let bound2 = bar.bind({});
+        test(bound2, "bound bar", "function bar() { [native code] }");
+        let bound3 = bax.bind({});
+        test(bound3, "bound ", "function() { [native code] }"); // bax.name is not a string.
+        let bound4 = baz.bind({});
+        test(bound4, "bound bar", "function bar() { [native code] }");
+        let bound5 = goo.bind({});
+        test(bound5, "bound goo", "function goo() { [native code] }");
+    }
+})();
+
+section = "class in object property";
+(function () {
+    class gooBase {}
+    let o = {
+        foo: class {},
+        bar: class {},
+        bax: class { static name() {} },
+        goo: class extends gooBase {},
+    };
+    o.bay = o.bar;
+    o.baz = class {};
+
+    test(o.foo, "foo", "class {}");
+    test(o.bar, "bar", "class {}");
+    shouldBe("typeof o.bax.name of ", "o.bax", typeof o.bax.name, "function");
+    shouldBe("toString of ", "o.bax", o.bax.toString(), "class { static name() {} }");
+    test(o.bay, "bar", "class {}");
+    test(o.baz, "", "class {}");
+    test(o.goo, "goo", "class extends gooBase {}");
+
+    section = "bound class in object property";
+    {
+        let bound1 = o.foo.bind({});
+        test(bound1, "bound foo", "function foo() { [native code] }");
+        let bound2 = o.bar.bind({});
+        test(bound2, "bound bar", "function bar() { [native code] }");
+        let bound3 = o.bax.bind({});
+        test(bound3, "bound ", "function() { [native code] }"); // bax.name is not a string.
+        let bound4 = o.bay.bind({});
+        test(bound4, "bound bar", "function bar() { [native code] }");
+        let bound5 = o.baz.bind({});
+        test(bound5, "bound ", "function() { [native code] }");
+        let bound6 = o.goo.bind({});
+        test(bound6, "bound goo", "function goo() { [native code] }");
+    }
+})();
+
+section = "class with constructor in object property";
+(function () {
+    class gooBase { constructor(x) {} }
+    let o = {
+        foo: class { constructor(x) {} },
+        bar: class { constructor() {} },
+        bax: class { static name() {} constructor() {} },
+        goo: class extends gooBase { constructor() { super(5); } },
+    };
+    o.bay = o.bar;
+    o.baz = class { constructor() {} };
+
+    test(o.foo, "foo", "class { constructor(x) {} }");
+    test(o.bar, "bar", "class { constructor() {} }");
+    shouldBe("typeof o.bax.name of ", "o.bax", typeof o.bax.name, "function");
+    shouldBe("toString of ", "o.bax", o.bax.toString(), "class { static name() {} constructor() {} }");
+    test(o.bay, "bar", "class { constructor() {} }");
+    test(o.baz, "", "class { constructor() {} }");
+    test(o.goo, "goo", "class extends gooBase { constructor() { super(5); } }");
+
+    section = "bound class with constructor in object property";
+    {
+        let bound1 = o.foo.bind({});
+        test(bound1, "bound foo", "function foo() { [native code] }");
+        let bound2 = o.bar.bind({});
+        test(bound2, "bound bar", "function bar() { [native code] }");
+        let bound3 = o.bax.bind({});
+        test(bound3, "bound ", "function() { [native code] }"); // bax.name is not a string.
+        let bound4 = o.bay.bind({});
+        test(bound4, "bound bar", "function bar() { [native code] }");
+        let bound5 = o.baz.bind({});
+        test(bound5, "bound ", "function() { [native code] }");
+        let bound6 = o.goo.bind({});
+        test(bound6, "bound goo", "function goo() { [native code] }");
+    }
+})();
+
+section = "global class statement";
+// Checking if there are CodeCache badness that can result from global class statements
+// with identical bodies.
+class globalCS1 { constructor(x) { return x; } stuff() { return 5; } }
+// Identical class body as CS1.
+class globalCS2 { constructor(x) { return x; } stuff() { return 5; } }
+// Identical constructor as CS2 & CS1, but different otherwise.
+class globalCS3 { constructor(x) { return x; } stuff3() { return 15; } }
+
+test(globalCS1, "globalCS1", "class globalCS1 { constructor(x) { return x; } stuff() { return 5; } }");
+test(globalCS2, "globalCS2", "class globalCS2 { constructor(x) { return x; } stuff() { return 5; } }");
+test(globalCS3, "globalCS3", "class globalCS3 { constructor(x) { return x; } stuff3() { return 15; } }");
+
+section = "global class expression";
+// Checking if there are CodeCache badness that can result from global class expressions
+// with identical bodies.
+var globalCE1 = class { constructor(x) { return x; } stuff() { return 5; } }
+// Identical class body as CSE1.
+var globalCE2 = class { constructor(x) { return x; } stuff() { return 5; } }
+// Identical constructor as CSE2 & CSE1, but different otherwise.
+var globalCE3 = class { constructor(x) { return x; } stuff3() { return 15; } }
+
+test(globalCE1, "globalCE1", "class { constructor(x) { return x; } stuff() { return 5; } }");
+test(globalCE2, "globalCE2", "class { constructor(x) { return x; } stuff() { return 5; } }");
+test(globalCE3, "globalCE3", "class { constructor(x) { return x; } stuff3() { return 15; } }");
+
+section = "class statements in eval";
+// Checking if there are CodeCache badness that can result from class statements in
+// identical eval statements.
+(function () {
+    let body1 = "class foo { constructor(x) { return x; } stuff() { return 5; } }";
+    // Identical class body as body1.
+    let body2 = "class foo { constructor(x) { return x; } stuff() { return 5; } }";
+    // Identical constructor as body1 & body2, but different otherwise.
+    let body3 = "class foo3 { constructor(x) { return x; } stuff3() { return 15; } }";
+
+    let bar1 = eval(body1);
+    let bar2 = eval(body2);
+    let bar3 = eval(body3);
+    let bar4 = eval(body1);
+
+    test(bar1, "foo", "class foo { constructor(x) { return x; } stuff() { return 5; } }");
+    test(bar2, "foo", "class foo { constructor(x) { return x; } stuff() { return 5; } }");
+    test(bar3, "foo3", "class foo3 { constructor(x) { return x; } stuff3() { return 15; } }");
+    test(bar4, "foo", "class foo { constructor(x) { return x; } stuff() { return 5; } }");
+})();
+
+section = "class expressions in eval";
+// Checking if there are CodeCache badness that can result from class expressions in
+// identical eval statements.
+(function () {
+    let body1 = "var foo = class { constructor(x) { return x; } stuff() { return 5; } }; foo";
+    // Identical class body as body1.
+    let body2 = "var foo = class { constructor(x) { return x; } stuff() { return 5; } }; foo";
+    // Identical constructor as body1 & body2, but different otherwise.
+    let body3 = "var foo3 = class { constructor(x) { return x; } stuff3() { return 15; } }; foo3";
+
+    let bar1 = eval(body1);
+    let bar2 = eval(body2);
+    let bar3 = eval(body3);
+    let bar4 = eval(body1);
+
+    test(bar1, "foo", "class { constructor(x) { return x; } stuff() { return 5; } }");
+    test(bar2, "foo", "class { constructor(x) { return x; } stuff() { return 5; } }");
+    test(bar3, "foo3", "class { constructor(x) { return x; } stuff3() { return 15; } }");
+    test(bar4, "foo", "class { constructor(x) { return x; } stuff() { return 5; } }");
+})();
+
+section = "class statements in dynamically created Functions";
+// Checking if there are CodeCache badness that can result from dynamically created
+// Function objects with class statements in identical bodies.
+(function () {
+    let body1 = "class foo { constructor(x) { return x; } stuff() { return 5; } } return foo;";
+    // Identical class body as body1.
+    let body2 = "class foo { constructor(x) { return x; } stuff() { return 5; } } return foo;";
+    // Identical constructor as body1 & body2, but different otherwise.
+    let body3 = "class foo3 { constructor(x) { return x; } stuff3() { return 15; } } return foo3;";
+
+    let bar1 = new Function(body1);
+    let bar2 = new Function(body2);
+    let bar3 = new Function(body3);
+
+    test(bar1(), "foo", "class foo { constructor(x) { return x; } stuff() { return 5; } }");
+    test(bar2(), "foo", "class foo { constructor(x) { return x; } stuff() { return 5; } }");
+    test(bar3(), "foo3", "class foo3 { constructor(x) { return x; } stuff3() { return 15; } }");
+})();
+
+section = "class expressions in dynamically created Functions";
+// Checking if there are CodeCache badness that can result from dynamically created
+// Function objects with class expressions in identical bodies.
+(function () {
+    let body1 = "var foo = class { constructor(x) { return x; } stuff() { return 5; } }; return foo;";
+    // Identical class body as body1.
+    let body2 = "var foo = class { constructor(x) { return x; } stuff() { return 5; } }; return foo;";
+    // Identical constructor as body1 & body2, but different otherwise.
+    let body3 = "var foo3 = class { constructor(x) { return x; } stuff3() { return 15; } }; return foo3;";
+
+    let bar1 = new Function(body1);
+    let bar2 = new Function(body2);
+    let bar3 = new Function(body3);
+
+    test(bar1(), "foo", "class { constructor(x) { return x; } stuff() { return 5; } }");
+    test(bar2(), "foo", "class { constructor(x) { return x; } stuff() { return 5; } }");
+    test(bar3(), "foo3", "class { constructor(x) { return x; } stuff3() { return 15; } }");
+})();
+
 // FIXME: Uncomment these when we've added support for Function.name of computed properties.
 // section = "Object computed string property";
 // {

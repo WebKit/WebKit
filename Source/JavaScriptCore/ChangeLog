@@ -1,3 +1,137 @@
+2016-03-11  Mark Lam  <mark.lam@apple.com>
+
+        Implement Function.name and Function#toString for ES6 class.
+        https://bugs.webkit.org/show_bug.cgi?id=155336
+
+        Reviewed by Geoffrey Garen.
+
+        The only thing that the ES6 spec says about toString with regards to class
+        objects is:
+
+        "The string representation must have the syntax of a FunctionDeclaration,
+        FunctionExpression, GeneratorDeclaration, GeneratorExpression, ClassDeclaration,
+        ClassExpression, ArrowFunction, MethodDefinition, or GeneratorMethod depending
+        upon the actual characteristics of the object."
+
+        Previously, invoking toString() on a class object will return the function
+        source string of the class' constructor function.  This does not conform to the
+        spec in that the toString string for a class does not have the syntax of a
+        ClassDeclaration or ClassExpression.
+
+        This is now fixed by doing the following:
+
+        1. Added "m_classSource" to FunctionExecutable (and correspondingly to
+           UnlinkedFunctionExecutable, FunctionMetadataNode, and ClassExprNode).
+           m_classSource is the SourceCode for the code range "class ... { ... }".
+
+           Since the class constructor function is the in memory representation of the
+           class object, only class constructor functions will have its m_classSource
+           set.  m_classSource will be "null" (by default) for all other functions.
+           This is how we know if a FunctionExecutable is for a class.
+
+           Note: FunctionExecutable does not have its own m_classSource.  It always gets
+           it from its UnlinkedFunctionExecutable.  This is ok to do because our CodeCache
+           currently does not cache UnlinkedFunctionExecutables for class constructors.
+
+        2. The ClassExprNode now tracks the SourceCode range for the class expression.
+           This is used to set m_classSource in the UnlinkedFunctionExecutable at
+           bytecode generation time, and the FunctionExecutable later at bytecode
+           linking time.
+
+        3. Function.prototype.toString() now checks if the function is for a class.
+           If so, it returns the string for the class source instead of just the
+           function source for the class constructor.
+
+           Note: the class source is static from the time the class was parsed.  This
+           can introduces some weirdness at runtime.  Consider the following:
+
+               var v1 = class {}
+               v1.toString(); // yields "class {}".
+
+               class c2 extends v1 {}
+
+               c2.__proto__ === v1; // yields true i.e. c2 extends v1.
+               c2.toString(); // yields "class c2 extends v1 {}" which is fine.
+
+               v1 = {}; // point v1 to something else now.
+
+               c2.__proto__ === v1; // now yields false i.e. c2 no longer extends v1.
+                                    // c2 actually extends the class that v1 used to
+                                    // point to, but ...
+               c2.toString(); // still yields "class c2 extends v1 {}" which is no longer true.
+
+           It is unclear how we can best implement toString() to avoid this issue.
+           The above behavior is how Chrome (Version 51.0.2671.0 canary (64-bit))
+           currently implements toString() of a class, and we do the same in this patch.
+           In Firefox (45.0), toString() of a class will yield the function source of it
+           constructor function, which is not better.
+
+        In this patch, we also added ES6 compliance for Function.name on class objects:
+
+        4. The ClassExprNode now has a m_ecmaName string for tracking the inferred
+           name of a class according to the ES6 spec.  The ASTBuilder now mirrors its
+           handling of FuncExprNodes to ClassExprNodes in setting the nodes' m_ecmaName
+           where relevant.
+
+           The m_ecmaName is later used to set the m_ecmaName of the FunctionExecutable
+           of the class constructor, which in turn is used to populate the initial value
+           of the Function.name property.
+
+        5. Also renamed some variable names (/m_metadata/metadata/) to be consistent with
+           webkit naming convention.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewArrowFunctionExpression):
+        (JSC::BytecodeGenerator::emitNewDefaultConstructor):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createAssignResolve):
+        (JSC::ASTBuilder::createYield):
+        (JSC::ASTBuilder::createClassExpr):
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createProperty):
+        (JSC::ASTBuilder::makeAssignNode):
+        * parser/NodeConstructors.h:
+        (JSC::FunctionParameters::FunctionParameters):
+        (JSC::BaseFuncExprNode::BaseFuncExprNode):
+        (JSC::FuncExprNode::FuncExprNode):
+        (JSC::FuncDeclNode::FuncDeclNode):
+        (JSC::ArrowFuncExprNode::ArrowFuncExprNode):
+        (JSC::ClassDeclNode::ClassDeclNode):
+        (JSC::ClassExprNode::ClassExprNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isDestructuringNode):
+        (JSC::ExpressionNode::isFuncExprNode):
+        (JSC::ExpressionNode::isArrowFuncExprNode):
+        (JSC::ExpressionNode::isClassExprNode):
+        (JSC::ExpressionNode::isCommaNode):
+        (JSC::ExpressionNode::isSimpleArray):
+        (JSC::ExpressionNode::isAdd):
+        * parser/Parser.cpp:
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClass):
+        * parser/ParserFunctionInfo.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createEmptyLetExpression):
+        (JSC::SyntaxChecker::createYield):
+        (JSC::SyntaxChecker::createClassExpr):
+        (JSC::SyntaxChecker::createFunctionExpr):
+        (JSC::SyntaxChecker::createFunctionMetadata):
+        (JSC::SyntaxChecker::createArrowFunctionExpr):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::finishCreation):
+        * runtime/Executable.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * tests/es6.yaml:
+
 2016-03-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197994.
@@ -579,7 +713,6 @@
         (noAssign): Deleted.
         (catch): Deleted.
 
->>>>>>> .r197960
 2016-03-08  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         How we load new.target in arrow functions is broken

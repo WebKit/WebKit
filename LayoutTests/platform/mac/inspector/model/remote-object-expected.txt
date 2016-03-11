@@ -4748,7 +4748,7 @@ EXPRESSION: Person = class Person { constructor(name){} get fullName(){} methodN
     "_objectId": "<filtered>",
     "_description": "Person"
   },
-  "_functionDescription": "function Person(name){}"
+  "_functionDescription": "class Person { constructor(name){} get fullName(){} methodName(p1, p2){} }"
 }
 
 -----------------------------------------------------
@@ -4771,7 +4771,7 @@ EXPRESSION: Alpha = class A { methodA(){} }; Beta = class B extends Alpha { meth
     "_objectId": "<filtered>",
     "_description": "B"
   },
-  "_functionDescription": "function B() { super(...arguments); }"
+  "_functionDescription": "class B extends Alpha { methodB(){} }"
 }
 
 -----------------------------------------------------

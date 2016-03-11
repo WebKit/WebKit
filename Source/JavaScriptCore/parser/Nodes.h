@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2013, 2015-2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -166,6 +166,7 @@ namespace JSC {
         virtual bool isDestructuringNode() const { return false; }
         virtual bool isFuncExprNode() const { return false; }
         virtual bool isArrowFuncExprNode() const { return false; }
+        virtual bool isClassExprNode() const { return false; }
         virtual bool isCommaNode() const { return false; }
         virtual bool isSimpleArray() const { return false; }
         virtual bool isAdd() const { return false; }
@@ -1844,7 +1845,7 @@ namespace JSC {
         
         void overrideName(const Identifier& ident) { m_ident = ident; }
         const Identifier& ident() { return m_ident; }
-        void setEcmaName(const Identifier& ecmaName) { ASSERT(!ecmaName.isNull()); m_ecmaName = ecmaName; }
+        void setEcmaName(const Identifier& ecmaName) { m_ecmaName = ecmaName; }
         const Identifier& ecmaName() { return m_ident.isEmpty() ? m_ecmaName : m_ident; }
         void setInferredName(const Identifier& inferredName) { ASSERT(!inferredName.isNull()); m_inferredName = inferredName; }
         const Identifier& inferredName() { return m_inferredName.isEmpty() ? m_ident : m_inferredName; }
@@ -1862,6 +1863,8 @@ namespace JSC {
         void setEndPosition(JSTextPosition);
 
         const SourceCode& source() const { return m_source; }
+        const SourceCode& classSource() const { return m_classSource; }
+        void setClassSource(const SourceCode& source) { m_classSource = source; }
 
         int startStartOffset() const { return m_startStartOffset; }
         bool isInStrictContext() const { return m_isInStrictContext; }
@@ -1888,6 +1891,7 @@ namespace JSC {
         int m_functionNameStart;
         int m_parametersStart;
         SourceCode m_source;
+        SourceCode m_classSource;
         int m_startStartOffset;
         unsigned m_parameterCount;
         int m_lastLine;
@@ -1974,15 +1978,22 @@ namespace JSC {
     public:
         using ParserArenaDeletable::operator new;
 
-        ClassExprNode(const JSTokenLocation&, const Identifier&, VariableEnvironment& classEnvironment, ExpressionNode* constructorExpresssion,
+        ClassExprNode(const JSTokenLocation&, const Identifier&, const SourceCode& classSource,
+            VariableEnvironment& classEnvironment, ExpressionNode* constructorExpresssion,
             ExpressionNode* parentClass, PropertyListNode* instanceMethods, PropertyListNode* staticMethods);
 
         const Identifier& name() { return m_name; }
+        const Identifier& ecmaName() { return m_ecmaName ? *m_ecmaName : m_name; }
+        void setEcmaName(const Identifier& name) { m_ecmaName = m_name.isNull() ? &name : &m_name; }
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
+        bool isClassExprNode() const override { return true; }
+
+        SourceCode m_classSource;
         const Identifier& m_name;
+        const Identifier* m_ecmaName;
         ExpressionNode* m_constructorExpression;
         ExpressionNode* m_classHeritage;
         PropertyListNode* m_instanceMethods;

@@ -801,7 +801,7 @@
 - path: es6/function_name_property_isnt_writable_is_configurable.js
   cmd: runES6 :normal
 - path: es6/function_name_property_object_methods_class.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/function_name_property_object_methods_function.js
   cmd: runES6 :normal
 - path: es6/function_name_property_shorthand_methods_no_lexical_binding.js
@@ -809,7 +809,7 @@
 - path: es6/function_name_property_symbol-keyed_methods.js
   cmd: runES6 :fail
 - path: es6/function_name_property_variables_class.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/function_name_property_variables_function.js
   cmd: runES6 :normal
 - path: es6/generators_%GeneratorPrototype%.constructor.js

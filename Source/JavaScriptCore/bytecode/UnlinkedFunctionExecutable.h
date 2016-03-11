@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,9 +76,14 @@ public:
 
     const Identifier& name() const { return m_name; }
     const Identifier& ecmaName() const { return m_ecmaName; }
+    void setEcmaName(const Identifier& name) { m_ecmaName = name; }
     const Identifier& inferredName() const { return m_inferredName; }
     unsigned parameterCount() const { return m_parameterCount; };
     SourceParseMode parseMode() const { return static_cast<SourceParseMode>(m_sourceParseMode); };
+
+    const SourceCode& classSource() const { return m_classSource; };
+    void setClassSource(const SourceCode& source) { m_classSource = source; };
+
     bool isInStrictContext() const { return m_isInStrictContext; }
     FunctionMode functionMode() const { return static_cast<FunctionMode>(m_functionMode); }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
@@ -163,6 +168,7 @@ private:
     Identifier m_ecmaName;
     Identifier m_inferredName;
     RefPtr<SourceProvider> m_sourceOverride;
+    SourceCode m_classSource;
 
     VariableEnvironment m_parentScopeTDZVariables;
 

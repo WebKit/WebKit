@@ -12,24 +12,24 @@ PASS class { constructor() {} }:::SyntaxError: Class statements must have a name
 PASS 'use strict'; class { constructor() {} }:::SyntaxError: Class statements must have a name.
 PASS class A { constructor() {} }
 PASS 'use strict'; class A { constructor() {} }
-PASS class A { constructor() {} }; A.toString():::'function A() {}'
-PASS 'use strict'; class A { constructor() {} }; A.toString():::'function A() {}'
+PASS class A { constructor() {} }; A.toString():::'class A { constructor() {} }'
+PASS 'use strict'; class A { constructor() {} }; A.toString():::'class A { constructor() {} }'
 PASS class A { constructor() {} }; (new A) instanceof A
 PASS 'use strict'; class A { constructor() {} }; (new A) instanceof A
-PASS class A { constructor() { this.base = A; } }; (new A).base.toString():::'function A() { this.base = A; }'
-PASS 'use strict'; class A { constructor() { this.base = A; } }; (new A).base.toString():::'function A() { this.base = A; }'
+PASS class A { constructor() { this.base = A; } }; (new A).base.toString():::'class A { constructor() { this.base = A; } }'
+PASS 'use strict'; class A { constructor() { this.base = A; } }; (new A).base.toString():::'class A { constructor() { this.base = A; } }'
 PASS class A { constructor() {} }; class B extends A {};
 PASS 'use strict'; class A { constructor() {} }; class B extends A {};
-PASS class A { constructor() {} }; class B extends A { constructor() {} }; B.toString():::'function B() {}'
-PASS 'use strict'; class A { constructor() {} }; class B extends A { constructor() {} }; B.toString():::'function B() {}'
+PASS class A { constructor() {} }; class B extends A { constructor() {} }; B.toString():::'class B extends A { constructor() {} }'
+PASS 'use strict'; class A { constructor() {} }; class B extends A { constructor() {} }; B.toString():::'class B extends A { constructor() {} }'
 PASS class A { constructor() {} }; class B extends A {}; (new B) instanceof A
 PASS 'use strict'; class A { constructor() {} }; class B extends A {}; (new B) instanceof A
 PASS class A { constructor() {} }; class B extends A {}; (new B) instanceof B
 PASS 'use strict'; class A { constructor() {} }; class B extends A {}; (new B) instanceof B
-PASS class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).base.toString():::'function A() {}'
-PASS 'use strict'; class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).base.toString():::'function A() {}'
-PASS class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).derived.toString():::'function B() { super(); this.base = A; this.derived = B; }'
-PASS 'use strict'; class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).derived.toString():::'function B() { super(); this.base = A; this.derived = B; }'
+PASS class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).base.toString():::'class A { constructor() {} }'
+PASS 'use strict'; class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).base.toString():::'class A { constructor() {} }'
+PASS class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).derived.toString():::'class B extends A { constructor() { super(); this.base = A; this.derived = B; } }'
+PASS 'use strict'; class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).derived.toString():::'class B extends A { constructor() { super(); this.base = A; this.derived = B; } }'
 
 Class expression
 PASS A:::ReferenceError: Can't find variable: A
@@ -52,8 +52,8 @@ PASS typeof (new (class A {})):::"object"
 PASS 'use strict'; typeof (new (class A {})):::"object"
 PASS (new (class A { constructor() { this.base = A; } })).base
 PASS 'use strict'; (new (class A { constructor() { this.base = A; } })).base
-PASS (new (class A { constructor() { this.base = A; } })).base.toString():::"function A() { this.base = A; }"
-PASS 'use strict'; (new (class A { constructor() { this.base = A; } })).base.toString():::"function A() { this.base = A; }"
+PASS (new (class A { constructor() { this.base = A; } })).base.toString():::"class A { constructor() { this.base = A; } }"
+PASS 'use strict'; (new (class A { constructor() { this.base = A; } })).base.toString():::"class A { constructor() { this.base = A; } }"
 PASS class A {}; (class B extends A {})
 PASS 'use strict'; class A {}; (class B extends A {})
 PASS class A {}; (class B extends A {}); B:::ReferenceError: Can't find variable: B
@@ -64,36 +64,36 @@ PASS class A {}; new (class B extends A { constructor() { super(); this.base = A
 PASS 'use strict'; class A {}; new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })
 PASS class A {}; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })) instanceof A
 PASS 'use strict'; class A {}; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })) instanceof A
-PASS class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).base.toString():::'function A() {}'
-PASS 'use strict'; class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).base.toString():::'function A() {}'
-PASS class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).derived.toString():::'function B() { super(); this.base = A; this.derived = B; }'
-PASS 'use strict'; class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).derived.toString():::'function B() { super(); this.base = A; this.derived = B; }'
+PASS class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).base.toString():::'class A { constructor() {} }'
+PASS 'use strict'; class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).base.toString():::'class A { constructor() {} }'
+PASS class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).derived.toString():::'class B extends A { constructor() { super(); this.base = A; this.derived = B; } }'
+PASS 'use strict'; class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).derived.toString():::'class B extends A { constructor() { super(); this.base = A; this.derived = B; } }'
 
 Class expression assignment to variable
 PASS A:::ReferenceError: Can't find variable: A
 PASS 'use strict'; A:::ReferenceError: Can't find variable: A
 PASS var VarA = class {}
 PASS 'use strict'; var VarA = class {}
-PASS var VarA = class { constructor() {} }; VarA.toString():::'function () {}'
-PASS 'use strict'; var VarA = class { constructor() {} }; VarA.toString():::'function () {}'
+PASS var VarA = class { constructor() {} }; VarA.toString():::'class { constructor() {} }'
+PASS 'use strict'; var VarA = class { constructor() {} }; VarA.toString():::'class { constructor() {} }'
 PASS VarA:::ReferenceError: Can't find variable: VarA
 PASS 'use strict'; VarA:::ReferenceError: Can't find variable: VarA
 PASS var VarA = class A { constructor() {} }
 PASS 'use strict'; var VarA = class A { constructor() {} }
-PASS var VarA = class A { constructor() {} }; VarA.toString():::'function A() {}'
-PASS 'use strict'; var VarA = class A { constructor() {} }; VarA.toString():::'function A() {}'
+PASS var VarA = class A { constructor() {} }; VarA.toString():::'class A { constructor() {} }'
+PASS 'use strict'; var VarA = class A { constructor() {} }; VarA.toString():::'class A { constructor() {} }'
 PASS var VarA = class A { constructor() {} }; A.toString():::ReferenceError: Can't find variable: A
 PASS 'use strict'; var VarA = class A { constructor() {} }; A.toString():::ReferenceError: Can't find variable: A
 PASS var VarA = class A { constructor() {} }; (new VarA) instanceof VarA
 PASS 'use strict'; var VarA = class A { constructor() {} }; (new VarA) instanceof VarA
-PASS var VarA = class A { constructor() { this.base = A; } }; (new VarA).base.toString():::'function A() { this.base = A; }'
-PASS 'use strict'; var VarA = class A { constructor() { this.base = A; } }; (new VarA).base.toString():::'function A() { this.base = A; }'
+PASS var VarA = class A { constructor() { this.base = A; } }; (new VarA).base.toString():::'class A { constructor() { this.base = A; } }'
+PASS 'use strict'; var VarA = class A { constructor() { this.base = A; } }; (new VarA).base.toString():::'class A { constructor() { this.base = A; } }'
 PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} };
 PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} };
 PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; B:::ReferenceError: Can't find variable: B
 PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; B:::ReferenceError: Can't find variable: B
-PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; VarB.toString():::'function B() {}'
-PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; VarB.toString():::'function B() {}'
+PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; VarB.toString():::'class B extends VarA { constructor() {} }'
+PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; VarB.toString():::'class B extends VarA { constructor() {} }'
 PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { }; (new VarB) instanceof VarA
 PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { }; (new VarB) instanceof VarA
 PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { }; (new VarB) instanceof VarB
@@ -118,7 +118,7 @@ PASS class A {}; var result = A; result
 PASS 'use strict'; class A {}; var result = A; result
 PASS eval('var Foo = 10'); Foo:::10
 PASS 'use strict'; eval('var Foo = 10'); Foo:::ReferenceError: Can't find variable: Foo
-PASS eval('class Bar { constructor() {} }; Bar.toString()');:::'function Bar() {}'
+PASS eval('class Bar { constructor() {} }; Bar.toString()');:::'class Bar { constructor() {} }'
 PASS 'use strict'; eval('class Bar { constructor() {} }'); Bar.toString():::ReferenceError: Can't find variable: Bar
 PASS successfullyParsed
 

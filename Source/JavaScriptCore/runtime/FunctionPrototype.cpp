@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2015-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -89,7 +89,11 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
             return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(), "() {\n    [native code]\n}"));
 
         FunctionExecutable* executable = function->jsExecutable();
-        
+        if (executable->isClass()) {
+            StringView classSource = executable->classSource().view();
+            return JSValue::encode(jsString(exec, classSource.toStringWithoutCopying()));
+        }
+
         String functionHeader = executable->isArrowFunction() ? "" : "function ";
         
         StringView source = executable->source().provider()->getRange(

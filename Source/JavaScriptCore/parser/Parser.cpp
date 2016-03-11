@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2006-2010, 2013, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -2193,6 +2193,9 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
 {
     ASSERT(match(CLASSTOKEN));
     JSTokenLocation location(tokenLocation());
+    info.startLine = location.line;
+    info.startColumn = tokenColumn();
+    info.startOffset = location.startOffset;
     next();
 
     AutoPopScopeRef classScope(this, pushScope());
@@ -2203,7 +2206,6 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     const Identifier* className = nullptr;
     if (match(IDENT)) {
         className = m_token.m_data.ident;
-        info.className = className;
         next();
         failIfTrue(classScope->declareLexicalVariable(className, true) & DeclarationResult::InvalidStrictMode, "'", className->impl(), "' is not a valid class name");
     } else if (requirements == FunctionNeedsName) {
@@ -2214,6 +2216,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     } else
         className = &m_vm->propertyNames->nullIdentifier;
     ASSERT(className);
+    info.className = className;
 
     TreeExpression parentClass = 0;
     if (consume(EXTENDS)) {
@@ -2343,9 +2346,10 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         }
     }
 
+    info.endOffset = tokenLocation().endOffset - 1;
     consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a class body");
 
-    auto classExpression = context.createClassExpr(location, *className, classScope->finalizeLexicalEnvironment(), constructor, parentClass, instanceMethods, staticMethods);
+    auto classExpression = context.createClassExpr(location, info, classScope->finalizeLexicalEnvironment(), constructor, parentClass, instanceMethods, staticMethods);
     popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
     return classExpression;
 }
