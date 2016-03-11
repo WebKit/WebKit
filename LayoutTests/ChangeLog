@@ -1,3 +1,16 @@
+2016-03-10  Andy VanWagoner  <andy@instructure.com>
+
+        Add shouldNotBe to standalone test harness
+        https://bugs.webkit.org/show_bug.cgi?id=155300
+
+        Reviewed by Saam Barati.
+
+        Copy over the shouldNotBe function from js-test-pre. This fixes errors
+        introduced be new Intl tests.
+
+        * resources/standalone-pre.js:
+        (shouldNotBe):
+
 2016-03-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline two inspector tests after r197954 changed the results.
