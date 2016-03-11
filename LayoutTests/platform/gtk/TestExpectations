@@ -87,6 +87,7 @@ webkit.org/b/98348 accessibility/internal-link-anchors2.html [ WontFix Missing ]
 # Things specific to AX API (at least at the moment)
 webkit.org/b/98348 accessibility/radio-button-group-members.html [ Skip ]
 webkit.org/b/141074 accessibility/auto-filled-value.html [ Skip ]
+webkit.org/b/133148 accessibility/content-editable-as-textarea.html [ Skip ]
 
 # Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
 webkit.org/b/98925 fast/viewport/viewport-legacy-handheldfriendly.html [ Skip ]
@@ -1444,7 +1445,6 @@ webkit.org/b/132128 fast/text/international/embed-bidi-style-in-isolate-crash.ht
 
 webkit.org/b/132266 js/slow-stress/emscripten-memops.html [ Timeout Pass ]
 
-webkit.org/b/133148 accessibility/content-editable-as-textarea.html [ Crash Timeout ]
 webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Timeout Crash Pass ]

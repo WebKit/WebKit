@@ -1,3 +1,11 @@
+2016-03-11  Frederic Wang  <fwang@igalia.com>
+
+        Skip content-editable-as-textarea.html on GTK as it uses AX API.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2016-03-10  Jer Noble  <jer.noble@apple.com>
 
         CRASH at WebCore::RenderView::updateVisibleViewportRect
