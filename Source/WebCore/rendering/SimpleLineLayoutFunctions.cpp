@@ -106,10 +106,9 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         if (paintRect.y() > visualOverflowRect.maxY() || paintRect.maxY() < visualOverflowRect.y())
             continue;
 
-        TextRun textRun(run.text());
-        textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         // x position indicates the line offset from the rootbox. It's always 0 in case of simple line layout.
-        textRun.setXPos(0);
+        TextRun textRun(run.text(), 0, run.expansion(), run.expansionBehavior());
+        textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin = FloatPoint(rect.x() + paintOffset.x(), roundToDevicePixel(run.baselinePosition() + paintOffset.y(), deviceScaleFactor));
         textPainter.paintText(textRun, textRun.length(), rect, textOrigin);
         if (textDecorationPainter) {

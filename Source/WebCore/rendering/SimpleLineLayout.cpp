@@ -74,7 +74,7 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasNonSupportedChild              = 1LLU  << 9,
     FlowHasUnsupportedFloat               = 1LLU  << 10,
     FlowHasUnsupportedUnderlineDecoration = 1LLU  << 11,
-    FlowIsJustifyAligned                  = 1LLU  << 12,
+    FlowHasJustifiedNonLatinText          = 1LLU  << 12,
     FlowHasOverflowVisible                = 1LLU  << 13,
     FlowIsNotLTR                          = 1LLU  << 14,
     FlowHasLineBoxContainProperty         = 1LLU  << 15,
@@ -186,6 +186,8 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasSVGFont, reasons, includeReasons);
 
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
+        if (style.textAlign() == JUSTIFY && !textRenderer.originalText().containsOnlyLatin1())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasJustifiedNonLatinText, reasons, includeReasons);
         if (textRenderer.isCombineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
         if (textRenderer.isCounter())
@@ -213,8 +215,6 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
     if ((style.textDecorationsInEffect() & TextDecorationUnderline) && style.textUnderlinePosition() == TextUnderlinePositionUnder)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedUnderlineDecoration, reasons, includeReasons);
-    if (style.textAlign() == JUSTIFY)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsJustifyAligned, reasons, includeReasons);
     // Non-visible overflow should be pretty easy to support.
     if (style.overflowX() != OVISIBLE || style.overflowY() != OVISIBLE)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowVisible, reasons, includeReasons);
@@ -409,6 +409,28 @@ public:
     bool fits(float extra) const { return m_availableWidth >= m_runsWidth + extra; }
     bool firstCharacterFits() const { return m_firstCharacterFits; }
     float width() const { return m_runsWidth; }
+    std::pair<unsigned, bool> expansionOpportunityCount(unsigned from, unsigned to) const
+    {
+        // linebreak runs are special.
+        if (from == to)
+            return std::make_pair(0, false);
+        unsigned expansionOpportunityCount = 0;
+        auto previousFragmentType = TextFragmentIterator::TextFragment::ContentEnd;
+        for (const auto& fragment : m_fragments) {
+            if (fragment.end() <= from)
+                continue;
+            auto currentFragmentType = fragment.type();
+            auto expansionOpportunity = this->expansionOpportunity(currentFragmentType, previousFragmentType);
+            if (expansionOpportunity)
+                ++expansionOpportunityCount;
+            previousFragmentType = currentFragmentType;
+            if (fragment.end() >= to)
+                return std::make_pair(expansionOpportunityCount, expansionOpportunity);
+        }
+        ASSERT_NOT_REACHED();
+        return std::make_pair(expansionOpportunityCount, false);
+    }
+
     bool isEmpty() const
     {
         if (!m_fragments.size())
@@ -508,6 +530,12 @@ public:
     }
 
 private:
+    bool expansionOpportunity(TextFragmentIterator::TextFragment::Type currentFragmentType, TextFragmentIterator::TextFragment::Type previousFragmentType) const
+    {
+        return (currentFragmentType == TextFragmentIterator::TextFragment::Whitespace
+            || (currentFragmentType == TextFragmentIterator::TextFragment::NonWhitespace && previousFragmentType == TextFragmentIterator::TextFragment::NonWhitespace));
+    }
+
     float m_availableWidth { 0 };
     float m_logicalLeftOffset { 0 };
     TextFragmentIterator::TextFragment m_overflowedFragment;
@@ -723,20 +751,75 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
     return (fragment.type() == TextFragmentIterator::TextFragment::ContentEnd && line.overflowedFragment().isEmpty()) || line.overflowedFragment().type() == TextFragmentIterator::TextFragment::ContentEnd;
 }
 
-static void closeLineEndingAndAdjustRuns(LineState& line, Layout::RunVector& runs, unsigned previousRunCount, unsigned& lineCount, const TextFragmentIterator& textFragmentIterator)
+static ExpansionBehavior expansionBehavior(bool isAfterExpansion, bool lastRunOnLine)
 {
-    if (previousRunCount == runs.size())
-        return;
+    ExpansionBehavior expansionBehavior;
+    expansionBehavior = isAfterExpansion ? ForbidLeadingExpansion : AllowLeadingExpansion;
+    expansionBehavior |= lastRunOnLine ? ForbidTrailingExpansion : AllowTrailingExpansion;
+    return expansionBehavior;
+}
+
+static void justifyRuns(const LineState& line, Layout::RunVector& runs, Optional<unsigned> lastRunIndexOfPreviousLine)
+{
     ASSERT(runs.size());
+    auto widthToDistribute = line.availableWidth() - line.width();
+    if (widthToDistribute <= 0)
+        return;
+
+    auto firstRunIndex = lastRunIndexOfPreviousLine ? lastRunIndexOfPreviousLine.value() + 1 : 0;
+    auto lastRunIndex = runs.size() - 1;
+    ASSERT(firstRunIndex <= lastRunIndex);
+    Vector<std::pair<unsigned, ExpansionBehavior>> expansionOpportunityList;
+    unsigned expansionOpportunityCountOnThisLine = 0;
+    auto isAfterExpansion = true;
+    for (auto i = firstRunIndex; i <= lastRunIndex; ++i) {
+        const auto& run = runs.at(i);
+        unsigned opportunityCountInRun = 0;
+        std::tie(opportunityCountInRun, isAfterExpansion) = line.expansionOpportunityCount(run.start, run.end);
+        expansionOpportunityList.append(std::make_pair(opportunityCountInRun, expansionBehavior(isAfterExpansion, i == lastRunIndex)));
+        expansionOpportunityCountOnThisLine += opportunityCountInRun;
+    }
+    if (!expansionOpportunityCountOnThisLine)
+        return;
+
+    ASSERT(expansionOpportunityList.size() == lastRunIndex - firstRunIndex + 1);
+    auto expansion = widthToDistribute / expansionOpportunityCountOnThisLine;
+    float accumulatedExpansion = 0;
+    for (auto i = firstRunIndex; i <= lastRunIndex; ++i) {
+        auto& run = runs.at(i);
+        unsigned opportunityCountInRun;
+        std::tie(opportunityCountInRun, run.expansionBehavior) = expansionOpportunityList.at(i - firstRunIndex);
+        run.expansion = opportunityCountInRun * expansion;
+        run.logicalLeft += accumulatedExpansion;
+        run.logicalRight += (accumulatedExpansion + run.expansion);
+        accumulatedExpansion += run.expansion;
+    }
+}
+
+static void closeLineEndingAndAdjustRuns(LineState& line, Layout::RunVector& runs, Optional<unsigned> lastRunIndexOfPreviousLine, unsigned& lineCount,
+    const TextFragmentIterator& textFragmentIterator, bool lastLine)
+{
+    if (!runs.size() || (lastRunIndexOfPreviousLine && runs.size() - 1 == lastRunIndexOfPreviousLine.value()))
+        return;
     removeTrailingWhitespace(line, runs, textFragmentIterator);
     if (!runs.size())
         return;
     // Adjust runs' position by taking line's alignment into account.
-    if (float lineLogicalLeft = computeLineLeft(textFragmentIterator.style().textAlign, line.availableWidth(), line.width(), line.logicalLeftOffset())) {
-        for (unsigned i = previousRunCount; i < runs.size(); ++i) {
-            runs[i].logicalLeft += lineLogicalLeft;
-            runs[i].logicalRight += lineLogicalLeft;
-        }
+    const auto& style = textFragmentIterator.style();
+    auto textAlign = style.textAlign;
+    // Fallback to LEFT alignment both for non-collapsable content and for the last line.
+    if (textAlign == JUSTIFY && (!style.collapseWhitespace || lastLine))
+        textAlign = LEFT;
+
+    auto lineLogicalLeft = line.logicalLeftOffset();
+    if (textAlign == JUSTIFY)
+        justifyRuns(line, runs, lastRunIndexOfPreviousLine);
+    else
+        lineLogicalLeft = computeLineLeft(textAlign, line.availableWidth(), line.width(), line.logicalLeftOffset());
+    auto firstRunIndex = lastRunIndexOfPreviousLine ? lastRunIndexOfPreviousLine.value() + 1 : 0;
+    for (auto i = firstRunIndex; i < runs.size(); ++i) {
+        runs[i].logicalLeft += lineLogicalLeft;
+        runs[i].logicalRight += lineLogicalLeft;
     }
     runs.last().isEndOfLine = true;
     ++lineCount;
@@ -749,14 +832,16 @@ static void createTextRuns(Layout::RunVector& runs, RenderBlockFlow& flow, unsig
     LineState line;
     bool isEndOfContent = false;
     TextFragmentIterator textFragmentIterator = TextFragmentIterator(flow);
+    Optional<unsigned> lastRunIndexOfPreviousLine;
     do {
         flow.setLogicalHeight(lineHeight * lineCount + borderAndPaddingBefore);
         LineState previousLine = line;
-        unsigned previousRunCount = runs.size();
         line = LineState();
         updateLineConstrains(flow, line, !lineCount);
         isEndOfContent = createLineRuns(line, previousLine, runs, textFragmentIterator);
-        closeLineEndingAndAdjustRuns(line, runs, previousRunCount, lineCount, textFragmentIterator);
+        closeLineEndingAndAdjustRuns(line, runs, lastRunIndexOfPreviousLine, lineCount, textFragmentIterator, isEndOfContent);
+        if (runs.size())
+            lastRunIndexOfPreviousLine = runs.size() - 1;
     } while (!isEndOfContent);
 }
 
@@ -829,8 +914,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case FlowHasUnsupportedUnderlineDecoration:
         stream << "text-underline-position: under";
         break;
-    case FlowIsJustifyAligned:
-        stream << "text-align: justify";
+    case FlowHasJustifiedNonLatinText:
+        stream << "text-align: justify with non-latin text";
         break;
     case FlowHasOverflowVisible:
         stream << "overflow: visible";

@@ -1,3 +1,15 @@
+2016-03-10  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add text-align: justify support.
+        https://bugs.webkit.org/show_bug.cgi?id=155006
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline based on simple line layout output.
+
+        * fast/text/whitespace/023-expected.txt:
+        * platform/mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+
 2016-03-10  Nan Wang  <n_wang@apple.com>
 
         AX: Force allow user zoom

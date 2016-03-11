@@ -26,6 +26,7 @@
 #ifndef SimpleLineLayout_h
 #define SimpleLineLayout_h
 
+#include "TextFlags.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,6 +60,9 @@ struct Run {
     unsigned isEndOfLine : 1;
     float logicalLeft;
     float logicalRight;
+    // TODO: Move these optional items out of SimpleLineLayout::Run to a supplementary structure.
+    float expansion { 0 };
+    ExpansionBehavior expansionBehavior { ForbidLeadingExpansion | ForbidTrailingExpansion };
 };
 
 class Layout {

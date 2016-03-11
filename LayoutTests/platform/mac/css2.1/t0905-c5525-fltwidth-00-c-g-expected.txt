@@ -46,7 +46,7 @@ layer at (0,0) size 785x794
           text run at (233,306) width 152: "ignore this float text"
           text run at (0,324) width 257: "ignore this float text ignore this float"
       RenderBlock {DIV} at (0,154) size 769x468 [color=#C0C0C0]
-        RenderText {#text} at (384,0) size 770x468
+        RenderText {#text} at (384,0) size 769x468
           text run at (384,0) width 385: "this is some dummy text this is some dummy text this is"
           text run at (384,18) width 98: "some dummy "
           text run at (481,18) width 288: "text this is some dummy text this is some"
@@ -88,7 +88,7 @@ layer at (0,0) size 785x794
           text run at (569,360) width 200: "some dummy text this is some"
           text run at (0,378) width 244: "dummy text this is some dummy text "
           text run at (243,378) width 460: "this is some dummy text this is some dummy text this is some dummy "
-          text run at (702,378) width 68: "text this is"
+          text run at (702,378) width 67: "text this is"
           text run at (0,396) width 365: "some dummy text this is some dummy text this is some "
           text run at (364,396) width 405: "dummy text this is some dummy text this is some dummy text"
           text run at (0,414) width 47: "this is "
