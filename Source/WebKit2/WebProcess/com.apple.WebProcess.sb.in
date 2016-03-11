@@ -308,3 +308,6 @@
     (global-name "com.apple.coremedia.endpointstream.xpc")
     (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
     (global-name "com.apple.coremedia.endpointpicker.xpc"))
+
+;; Data Detectors
+(allow file-read* (subpath "/private/var/db/datadetectors/sys"))
