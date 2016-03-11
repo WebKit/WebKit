@@ -1,0 +1,6 @@
+http://127.0.0.1:8000/navigation/resources/redirect-to-invalid-url-frame.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/navigation/resources/redirect-to-invalid-url-frame.php, main document URL http://127.0.0.1:8000/navigation/redirect-to-invalid-url.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/navigation/redirect-to-invalid-url.html - didFinishLoading
+http://127.0.0.1:8000/navigation/resources/redirect-to-invalid-url-frame.php - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/navigation/resources/redirect-to-invalid-url-frame.php">
+Test passes if WebKit doesn't request the redirected URL.
+
+

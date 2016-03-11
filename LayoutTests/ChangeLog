@@ -1,3 +1,15 @@
+2016-03-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit should not be redirected to an invalid URL
+        https://bugs.webkit.org/show_bug.cgi?id=155263
+        <rdar://problem/22820172>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/navigation/redirect-to-invalid-url-expected.txt: Added.
+        * http/tests/navigation/redirect-to-invalid-url.html: Added.
+        * http/tests/navigation/resources/redirect-to-invalid-url-frame.php: Added.
+
 2016-03-10  Nan Wang  <n_wang@apple.com>
 
         AX: Implement bounds/position and index related text marker functions using TextIterator
