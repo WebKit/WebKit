@@ -46,7 +46,7 @@ static const unsigned lengths[numLengths] =
     10,
 };
 
-static const unsigned byteSizes[kJSTypedArrayTypeNone] =
+static const unsigned byteSizes[kJSTypedArrayTypeArrayBuffer] =
 {
     1, // kJSTypedArrayTypeInt8Array
     2, // kJSTypedArrayTypeInt16Array
@@ -59,9 +59,8 @@ static const unsigned byteSizes[kJSTypedArrayTypeNone] =
     8, // kJSTypedArrayTypeFloat64Array
 };
 
-static const char* typeToString[kJSTypedArrayTypeNone] =
+static const char* typeToString[kJSTypedArrayTypeArrayBuffer] =
 {
-
     "kJSTypedArrayTypeInt8Array",
     "kJSTypedArrayTypeInt16Array",
     "kJSTypedArrayTypeInt32Array",
@@ -91,7 +90,7 @@ static int assertEqualsAsNumber(JSGlobalContextRef context, JSValueRef value, do
 
 static int testAccess(JSGlobalContextRef context, JSObjectRef typedArray, JSTypedArrayType type, unsigned elementLength, void* expectedPtr = nullptr, JSObjectRef expectedBuffer = nullptr, unsigned expectedOffset = 0)
 {
-    JSValueRef exception;
+    JSValueRef exception = nullptr;
     // Test typedArray basic functions.
     JSTypedArrayType actualType = JSValueGetTypedArrayType(context, typedArray, &exception);
     if (type != actualType || exception) {
@@ -151,7 +150,7 @@ static int testAccess(JSGlobalContextRef context, JSObjectRef typedArray, JSType
 static int testConstructors(JSGlobalContextRef context, JSTypedArrayType type, unsigned length)
 {
     int failed = 0;
-    JSValueRef exception;
+    JSValueRef exception = nullptr;
     JSObjectRef typedArray;
 
     // Test create with length.
@@ -210,7 +209,7 @@ template <typename Functor>
 static int forEachTypedArrayType(const Functor& functor)
 {
     int failed = 0;
-    for (unsigned i = 0; i < kJSTypedArrayTypeNone; i++)
+    for (unsigned i = 0; i < kJSTypedArrayTypeArrayBuffer; i++)
         failed = failed || functor(static_cast<JSTypedArrayType>(i));
     return failed;
 }
@@ -262,6 +261,8 @@ int testTypedArrayCAPI()
 
     if (!failed)
         printf("PASS: Typed Array C API Tests.\n");
+    else
+        printf("FAIL: Some Typed Array C API Tests failed.\n");
 
     return failed;
 }

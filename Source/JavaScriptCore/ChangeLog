@@ -57,6 +57,16 @@
 
 2016-03-10  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix testapi.
+
+        * API/tests/TypedArrayCTest.cpp:
+        (testAccess):
+        (testConstructors):
+        (forEachTypedArrayType):
+        (testTypedArrayCAPI):
+
+2016-03-10  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, build fix for r197983, hopefully.
 
         * API/WebKitAvailability.h:
