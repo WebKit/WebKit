@@ -7,23 +7,23 @@ var EXPECT_LOAD = false;
 var SAMEORIGIN_ORIGIN = "http://127.0.0.1:8000";
 var CROSSORIGIN_ORIGIN = "http://localhost:8080";
 
-window.jsTestIsAsync = true;
-window.wasPostTestScriptParsed = true;
-
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+function done() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
 
 window.addEventListener("message", function (e) {
     if (window.parent != window) {
         window.parent.postMessage(e.data, "*");
-    } else {
-        if (e.data)
-            testFailed("The inner IFrame failed.");
-        else
-            testPassed("The inner IFrame passed.");
-
-        finishJSTest();
+        return;
     }
+    done();
 });
 
 function injectNestedIframe(policy, parent, child, expectation) {
@@ -40,10 +40,10 @@ function injectNestedIframe(policy, parent, child, expectation) {
     document.body.appendChild(iframe);
 }
 
-function injectIFrame(policy, sameOrigin, expectBlock) {
+function injectIFrame(policy, sameOrigin) {
     var iframe = document.createElement("iframe");
-    iframe.addEventListener("load", iframeLoaded(expectBlock));
-    iframe.addEventListener("error", iframeLoaded(expectBlock));
+    iframe.addEventListener("load", handleFrameEvent);
+    iframe.addEventListener("error", handleFrameEvent);
 
     var url = "/security/contentSecurityPolicy/resources/frame-ancestors.pl?policy=" + policy;
     if (!sameOrigin)
@@ -53,33 +53,12 @@ function injectIFrame(policy, sameOrigin, expectBlock) {
     document.body.appendChild(iframe);
 }
 
-function iframeLoaded(expectBlock) {
-    return function(ev) {
-        var failed = true;
-        try {
-            console.log("IFrame load event fired: the IFrame's location is '" + ev.target.contentWindow.location.href + "'.");
-            if (expectBlock) {
-                testFailed("The IFrame should have been blocked (or cross-origin). It wasn't.");
-                failed = true;
-            } else {
-                testPassed("The IFrame should not have been blocked. It wasn't.");
-                failed = false;
-            }
-        } catch (ex) {
-            debug("IFrame load event fired: the IFrame is cross-origin (or was blocked).");
-            if (expectBlock) {
-                testPassed("The IFrame should have been blocked (or cross-origin). It was.");
-                failed = false;
-            } else {
-                testFailed("The IFrame should not have been blocked. It was.");
-                failed = true;
-            }
-        }
-        if (window.parent != window)
-            window.parent.postMessage(failed, '*');
-        else
-            finishJSTest();
-    };
+function handleFrameEvent(event) {
+    if (window.parent != window) {
+        window.parent.postMessage(null, '*');
+        return;
+    }
+    done();
 }
 
 function crossOriginFrameShouldBeBlocked(policy) {

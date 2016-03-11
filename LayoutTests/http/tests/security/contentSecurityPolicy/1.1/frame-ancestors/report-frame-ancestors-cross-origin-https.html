@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+function navigateToReport()
+{
+    window.location = "http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-report.php?test=/security/contentSecurityPolicy/1.1/report-frame-ancestors-cross-origin.html";
+}
+</script>
+</head>
+<iframe src="https://localhost:8443/security/contentSecurityPolicy/resources/echo-intertag.pl?header=Content-Security-Policy%3A+frame-ancestors+%27none%27%3B+report-uri+../../resources/save-report.php%3Ftest%3D/security/contentSecurityPolicy/1.1/report-frame-ancestors-cross-origin.html&q=FAIL" onload="navigateToReport()"></iframe>
+</body>
+</html>

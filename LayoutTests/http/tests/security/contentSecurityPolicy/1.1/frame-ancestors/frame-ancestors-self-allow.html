@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="/js-test-resources/js-test.js"></script>
     <script src="../../resources/frame-ancestors-test.js"></script>
 </head>
 <body>
-    <script>
-        description("A 'frame-ancestors' CSP directive with a value 'self' should allow rendering.");
-
-        sameOriginFrameShouldBeAllowed("'self'");
-    </script>
+<p>A 'frame-ancestors' CSP directive with a value 'self' should allow rendering. This test PASSED if you see content in the iframe below. Otherwise, it FAILED.</p>
+<script>
+    sameOriginFrameShouldBeAllowed("'self'");
+</script>
 </body>
 </html>
 

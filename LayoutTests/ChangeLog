@@ -1,3 +1,100 @@
+2016-03-10  Daniel Bates  <dabates@apple.com>
+
+        CSP: Implement frame-ancestors directive
+        https://bugs.webkit.org/show_bug.cgi?id=154345
+        <rdar://problem/24702161>
+
+        Reviewed by Brent Fulgham.
+
+        Adds new tests to ensure we ignore directive frame-ancestors when defined a policy delivered
+        in an HTML meta element or in a report-only policy (i.e. delivered via HTTP header Content-
+        Security-Policy-Report-Only). Also adds new test to ensure that we send a violation report
+        when the directive frame-ancestors is violated.
+
+        Updated many existing tests and test results that unnecessarily depended on a DOM SecurityError
+        exception being thrown when accessing the content of a cross-origin frame. It is sufficient
+        and more direct to test directive frame-ancestors by dumping the contents of all children frames
+        on the page. We design the tests such that a child frame that was blocked by the frame-ancestors
+        directive is expected to have no content. A child frame that was allowed by the frame-ancestors
+        directive is expected to have content.
+
+        * TestExpectations: Mark frame-ancestors tests as PASS so that we run them.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-in-meta-element-ignored-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-in-meta-element-ignored.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-in-report-only-ignored-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-in-report-only-ignored.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-none-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-none-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-self-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-self-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-star-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-star-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-url-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-url-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-url-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-url-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-none-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-none-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-self-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-self-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-star-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-star-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-url-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-url-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-url-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-url-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-none-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-none-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-self-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-self-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-star-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-star-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-url-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-url-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-url-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-url-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-none-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-none-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-self-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-self-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-star-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-star-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-url-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-url-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-url-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-url-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-none-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-none-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-protocolless-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-protocolless-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-self-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-self-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-self-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-self-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-star-allow-crossorigin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-star-allow-crossorigin.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-star-allow-sameorigin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-star-allow-sameorigin.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-url-allow-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-url-allow.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-url-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-url-block.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/echo-intertag.pl: Added.
+        * http/tests/security/contentSecurityPolicy/resources/frame-ancestors-test.js:
+        (done): Added.
+        (injectIFrame): Modified to make use of handleFrameEvent().
+        (handleFrameEvent): Added.
+        (iframeLoaded): Deleted.
+        * http/tests/security/contentSecurityPolicy/resources/frame-in-frame.pl:
+
 2016-03-10  Andy VanWagoner  <andy@instructure.com>
 
         Add shouldNotBe to standalone test harness

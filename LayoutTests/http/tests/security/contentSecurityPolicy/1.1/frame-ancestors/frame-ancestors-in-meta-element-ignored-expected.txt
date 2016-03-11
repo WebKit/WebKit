@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: The Content Security Policy directive 'frame-ancestors' is ignored when delivered via an HTML meta element.
+Tests that loading a page in an <iframe> with Content Security Policy "frame-ancestors 'none'" is allowed. This test PASSED if you see the word PASS below. Otherwise, it FAILED.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS

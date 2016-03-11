@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="/js-test-resources/js-test.js"></script>
     <script src="../../resources/frame-ancestors-test.js"></script>
 </head>
 <body>
-    <script>
-        description("A 'frame-ancestors' CSP directive with a value 'none' should block rendering in nested frames.");
-
-        testNestedIFrame("'none'", SAME_ORIGIN, SAME_ORIGIN, EXPECT_BLOCK); 
-    </script>
+<p>A 'frame-ancestors' CSP directive with a value 'none' should block rendering in nested frames. This test PASSED if you do not see any content in the inner-most nested iframe below. Otherwise, it FAILED.</p>
+<script>
+    testNestedIFrame("'none'", SAME_ORIGIN, SAME_ORIGIN, EXPECT_BLOCK);
+</script>
 </body>
 </html>

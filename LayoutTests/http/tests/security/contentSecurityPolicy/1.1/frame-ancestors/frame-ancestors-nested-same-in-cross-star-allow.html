@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="/js-test-resources/js-test.js"></script>
     <script src="../../resources/frame-ancestors-test.js"></script>
 </head>
 <body>
-    <script>
-        description("A 'frame-ancestors' CSP directive with a value '*' should render in nested frames.");
-
-        testNestedIFrame("*", CROSS_ORIGIN, SAME_ORIGIN, EXPECT_LOAD); 
-    </script>
+<p>A 'frame-ancestors' CSP directive with a value '*' should render in nested frames. This test PASSED if you see content in the inner-most nested iframe below. Otherwise, it FAILED.</p>
+<script>
+    testNestedIFrame("*", CROSS_ORIGIN, SAME_ORIGIN, EXPECT_LOAD);
+</script>
 </body>
 </html>

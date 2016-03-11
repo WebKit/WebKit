@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+</script>
+</head>
+<p>Tests that loading a page in an &lt;iframe&gt; with Content Security Policy &quot;frame-ancestors 'none'&quot; is allowed. This test PASSED if you see the word PASS below. Otherwise, it FAILED.</p>
+<iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-intertag.pl?head=%3Cmeta+http-equiv%3D%22Content-Security-Policy%22+content%3D%22frame-ancestors+%27none%27%22%3E&q=PASS"></iframe>
+</html>

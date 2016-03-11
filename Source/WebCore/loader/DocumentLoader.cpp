@@ -36,6 +36,7 @@
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
 #include "ContentExtensionError.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentParser.h"
@@ -615,6 +616,18 @@ void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool 
     }
 }
 
+void DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(unsigned long identifier, const ResourceResponse& response)
+{
+    InspectorInstrumentation::continueAfterXFrameOptionsDenied(m_frame, *this, identifier, response);
+    m_frame->document()->enforceSandboxFlags(SandboxOrigin);
+    if (HTMLFrameOwnerElement* ownerElement = m_frame->ownerElement())
+        ownerElement->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
+
+    // The load event might have detached this frame. In that case, the load will already have been cancelled during detach.
+    if (FrameLoader* frameLoader = this->frameLoader())
+        cancelMainResourceLoad(frameLoader->cancelledError(m_request));
+}
+
 void DocumentLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
 {
 #if ENABLE(CONTENT_FILTERING)
@@ -634,24 +647,25 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
     if (willLoadFallback)
         return;
 
+    ASSERT(m_identifierForLoadWithoutResourceLoader || m_mainResource);
+    unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
+    ASSERT(identifier);
+
+    ContentSecurityPolicy contentSecurityPolicy(SecurityOrigin::create(response.url()), m_frame);
+    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders(response));
+    if (!contentSecurityPolicy.allowFrameAncestors(*m_frame, response.url())) {
+        stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
+        return;
+    }
+
     const auto& commonHeaders = response.httpHeaderFields().commonHeaders();
     auto it = commonHeaders.find(HTTPHeaderName::XFrameOptions);
     if (it != commonHeaders.end()) {
         String content = it->value;
-        ASSERT(m_identifierForLoadWithoutResourceLoader || m_mainResource);
-        unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
-        ASSERT(identifier);
         if (frameLoader()->shouldInterruptLoadForXFrameOptions(content, response.url(), identifier)) {
-            InspectorInstrumentation::continueAfterXFrameOptionsDenied(m_frame, *this, identifier, response);
             String message = "Refused to display '" + response.url().stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
-            frame()->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier);
-            frame()->document()->enforceSandboxFlags(SandboxOrigin);
-            if (HTMLFrameOwnerElement* ownerElement = frame()->ownerElement())
-                ownerElement->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
-
-            // The load event might have detached this frame. In that case, the load will already have been cancelled during detach.
-            if (frameLoader())
-                cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
+            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier);
+            stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
             return;
         }
     }

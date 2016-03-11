@@ -71,6 +71,8 @@ public:
     bool allowFormAction(const URL&, ContentSecurityPolicy::ReportingStatus) const;
     bool allowBaseURI(const URL&, ContentSecurityPolicy::ReportingStatus) const;
 
+    bool allowFrameAncestors(const Frame&, const URL&, ContentSecurityPolicy::ReportingStatus) const;
+
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
     ContentSecurityPolicy::ReflectedXSSDisposition reflectedXSSDisposition() const { return m_reflectedXSSDisposition; }
     bool isReportOnly() const { return m_reportOnly; }
@@ -98,6 +100,7 @@ private:
     bool checkInlineAndReportViolation(ContentSecurityPolicySourceListDirective*, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine, bool isScript) const;
 
     bool checkSourceAndReportViolation(ContentSecurityPolicySourceListDirective*, const URL&, const String& effectiveDirective) const;
+    bool checkFrameAncestorsAndReportViolation(ContentSecurityPolicySourceListDirective*, const Frame&, const URL&, const String& effectiveDirective) const;
     bool checkMediaTypeAndReportViolation(ContentSecurityPolicyMediaListDirective*, const String& type, const String& typeAttribute, const String& consoleMessage) const;
 
     bool denyIfEnforcingPolicy() const { return m_reportOnly; }
@@ -119,6 +122,7 @@ private:
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_defaultSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_fontSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_formAction;
+    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_frameAncestors;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_frameSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_imgSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_mediaSrc;

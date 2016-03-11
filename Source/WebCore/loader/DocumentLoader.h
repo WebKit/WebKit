@@ -329,6 +329,8 @@ namespace WebCore {
         void stopLoadingForPolicyChange();
         ResourceError interruptedForPolicyChangeError() const;
 
+        void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(unsigned long identifier, const ResourceResponse&);
+
 #if HAVE(RUNLOOP_TIMER)
         typedef RunLoopTimer<DocumentLoader> DocumentLoaderTimer;
 #else

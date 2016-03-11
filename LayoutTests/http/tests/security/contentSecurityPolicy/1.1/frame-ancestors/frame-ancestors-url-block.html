@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="/js-test-resources/js-test.js"></script>
     <script src="../../resources/frame-ancestors-test.js"></script>
 </head>
 <body>
-    <script>
-        description("A 'frame-ancestors' CSP directive with a URL which doesn't match this origin should be blocked.");
-
-        crossOriginFrameShouldBeBlocked("http://example.com/");
-    </script>
+<p>A 'frame-ancestors' CSP directive with a URL which doesn't match this origin should be blocked. This test PASSED if you do not see any content in the iframe below. Otherwise, it FAILED.</p>
+<script>
+    crossOriginFrameShouldBeBlocked("http://example.com/");
+</script>
 </body>
 </html>

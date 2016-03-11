@@ -56,7 +56,7 @@ class ContentSecurityPolicy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ContentSecurityPolicy(ScriptExecutionContext&);
-    explicit ContentSecurityPolicy(const SecurityOrigin&);
+    explicit ContentSecurityPolicy(const SecurityOrigin&, const Frame* = nullptr);
     ~ContentSecurityPolicy();
 
     void copyStateFrom(const ContentSecurityPolicy*);
@@ -77,7 +77,8 @@ public:
         Inherited,
     };
     ContentSecurityPolicyResponseHeaders responseHeaders() const;
-    void didReceiveHeaders(const ContentSecurityPolicyResponseHeaders&);
+    enum ReportParsingErrors { No, Yes };
+    void didReceiveHeaders(const ContentSecurityPolicyResponseHeaders&, ReportParsingErrors = ReportParsingErrors::Yes);
     void processHTTPEquiv(const String& content, ContentSecurityPolicyHeaderType type) { didReceiveHeader(content, type, ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta); }
 
     enum class ReportingStatus {
@@ -103,6 +104,7 @@ public:
     bool allowConnectToSource(const URL&, bool overrideContentSecurityPolicy = false, ContentSecurityPolicy::ReportingStatus = ContentSecurityPolicy::ReportingStatus::SendReport) const;
     bool allowFormAction(const URL&, bool overrideContentSecurityPolicy = false, ContentSecurityPolicy::ReportingStatus = ContentSecurityPolicy::ReportingStatus::SendReport) const;
     bool allowBaseURI(const URL&, bool overrideContentSecurityPolicy = false, ContentSecurityPolicy::ReportingStatus = ContentSecurityPolicy::ReportingStatus::SendReport) const;
+    bool allowFrameAncestors(const Frame&, const URL&, bool overrideContentSecurityPolicy = false, ContentSecurityPolicy::ReportingStatus = ContentSecurityPolicy::ReportingStatus::SendReport) const;
 
     void setOverrideAllowInlineStyle(bool);
 
@@ -160,13 +162,16 @@ private:
 
     const TextEncoding& documentEncoding() const;
 
+    // We can never have both a script execution context and a frame.
     ScriptExecutionContext* m_scriptExecutionContext { nullptr };
+    const Frame* m_frame { nullptr };
     std::unique_ptr<ContentSecurityPolicySource> m_selfSource;
     String m_selfSourceProtocol;
     CSPDirectiveListVector m_policies;
     String m_lastPolicyEvalDisabledErrorMessage;
     SandboxFlags m_sandboxFlags;
     bool m_overrideInlineStyleAllowed { false };
+    bool m_isReportingEnabled { true };
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineScripts;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;
 };

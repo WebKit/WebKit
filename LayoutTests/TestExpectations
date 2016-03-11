@@ -808,6 +808,7 @@ webkit.org/b/52185 fast/css/vertical-align-baseline-rowspan-010.html [ ImageOnly
 # Content Security Policy failures
 webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
 http/tests/security/contentSecurityPolicy/1.1/child-src [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/frame-ancestors [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/form-action-src-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/form-action-src-default-ignored.html [ Pass ]

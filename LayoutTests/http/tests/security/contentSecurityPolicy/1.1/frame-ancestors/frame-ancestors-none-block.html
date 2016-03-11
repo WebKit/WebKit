@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="/js-test-resources/js-test.js"></script>
     <script src="../../resources/frame-ancestors-test.js"></script>
 </head>
 <body>
-    <script>
-        description("A 'frame-ancestors' CSP directive with a value 'none' should block rendering.");
-
-        sameOriginFrameShouldBeBlocked("'none'");
-    </script>
+<p>A 'frame-ancestors' CSP directive with a value 'none' should block rendering. This test PASSED if you do not see any content in the iframe below. Otherwise, it FAILED.</p>
+<script>
+    sameOriginFrameShouldBeBlocked("'none'");
+</script>
 </body>
 </html>
 

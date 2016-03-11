@@ -1,3 +1,62 @@
+2016-03-10  Daniel Bates  <dabates@apple.com>
+
+        CSP: Implement frame-ancestors directive
+        https://bugs.webkit.org/show_bug.cgi?id=154345
+        <rdar://problem/24702161>
+
+        Reviewed by Brent Fulgham.
+
+        Add support for the Content Security Policy directive frame-ancestors per the Content Security
+        Policy 2.0 spec., <https://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+
+        Tests: http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-in-meta-element-ignored.html
+               http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-in-report-only-ignored.html
+               http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin-https.html
+               http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin.html
+               http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin-https.html
+               http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied): Extracted from DocumentLoader::responseReceived().
+        (WebCore::DocumentLoader::responseReceived): Extracted logic to cancel a load and dispatch a DOM Load
+        event at the frame owner into DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied().
+        Make use of this function when loading of the frame is blocked by either the Content Security Policy or
+        the X-Frame-Option policy. We explicitly instantiate a ContentSecurityPolicy object with a SecurityOrigin
+        and Frame instead of using ScriptExecutionContext m_frame->document() because m_frame->document() is not
+        in a stable state (for instance, Document::m_url has not been initialized) as we are in the process of
+        loading the underlying document data for it.
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument): Pass ContentSecurityPolicy::ReportParsingErrors::No to silence
+        errors raised when parsing the Content Security Policy headers to avoid duplicate error messages. Any
+        parsing errors would have been raised when we parsed the Content Security Policy in DocumentLoader.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::ContentSecurityPolicy): Modified to take an optional pointer to a Frame (defaults
+        to nullptr). The specified Frame is used to support emitting console messages for violations/syntax errors and
+        send violation reports. We make use of this constructor variant in DocumentLoader to support emitting console
+        message and sending violation reports in the context of DocumentLoader where its associated Document is not in a
+        stable state and making use of a Frame seems less error prone.
+        (WebCore::ContentSecurityPolicy::didReceiveHeaders): Modified to take argument reportParsingErrors as
+        to whether to silence parsing errors when parsing the specified headers.
+        (WebCore::isAllowedByAllWithFrame): Helper function to query a ContentSecurityPolicyDirectiveList function
+        passing a Frame and URL for each Content Security Policy.
+        (WebCore::ContentSecurityPolicy::allowFrameAncestors): Calls WebCore::isAllowedByAllWithFrame().
+        (WebCore::ContentSecurityPolicy::reportViolation): Modified to support sending a violation report when
+        we have a Frame and no ScriptExecutionContext (such as when we are instantiated in DocumentLoader).
+        Additionally, we only will send a report if reporting is enabled (i.e. ContentSecurityPolicy::m_isReportingEnabled == true).
+        (WebCore::ContentSecurityPolicy::logToConsole): Modified to support logging a message to the console
+        we have a Frame and no ScriptExecutionContext. We also only allow logging if reporting is enabled.
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::checkFrameAncestors): Added.
+        (WebCore::ContentSecurityPolicyDirectiveList::checkFrameAncestorsAndReportViolation): Added.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowFrameAncestors): Added.
+        (WebCore::ContentSecurityPolicyDirectiveList::parse): Ignore the directive frame-ancestors when defined
+        in a policy given in an HTML meta element and report such use as invalid.
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective): Parse the directive frame-ancestors.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        * page/csp/ContentSecurityPolicyResponseHeaders.h: Mark constructor "explicit".
+
 2016-03-10  Jer Noble  <jer.noble@apple.com>
 
         Add WebCore, WebKit, & WebKit2 preference/setting to enable Main Content heuristic.

@@ -43,7 +43,7 @@ enum class ContentSecurityPolicyHeaderType {
 
 class ContentSecurityPolicyResponseHeaders {
 public:
-    ContentSecurityPolicyResponseHeaders(const ResourceResponse&);
+    explicit ContentSecurityPolicyResponseHeaders(const ResourceResponse&);
 
     ContentSecurityPolicyResponseHeaders isolatedCopy() const;
 

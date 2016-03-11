@@ -27,6 +27,8 @@
 #include "config.h"
 #include "ContentSecurityPolicyDirectiveList.h"
 
+#include "Document.h"
+#include "Frame.h"
 #include "ParsingUtilities.h"
 #include "SecurityContext.h"
 #include <wtf/NeverDestroyed.h>
@@ -51,6 +53,7 @@ static const char baseURI[] = "base-uri";
 static const char childSrc[] = "child-src";
 static const char formAction[] = "form-action";
 static const char pluginTypes[] = "plugin-types";
+static const char frameAncestors[] = "frame-ancestors";
 #if ENABLE(CSP_NEXT)
 static const char reflectedXSS[] = "reflected-xss";
 #endif
@@ -128,6 +131,17 @@ static inline bool checkHash(ContentSecurityPolicySourceListDirective* directive
 static inline bool checkNonce(ContentSecurityPolicySourceListDirective* directive, const String& nonce)
 {
     return !directive || directive->allows(nonce);
+}
+
+static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective* directive, const Frame& frame)
+{
+    if (!directive)
+        return true;
+    for (Frame* current = frame.tree().parent(); current; current = current->tree().parent()) {
+        if (!directive->allows(current->document()->url()))
+            return false;
+    }
+    return true;
 }
 
 static inline bool checkMediaType(ContentSecurityPolicyMediaListDirective* directive, const String& type, const String& typeAttribute)
@@ -261,6 +275,14 @@ bool ContentSecurityPolicyDirectiveList::checkSourceAndReportViolation(ContentSe
         suffix = " Note that '" + effectiveDirective + "' was not explicitly set, so 'default-src' is used as a fallback.";
 
     reportViolation(directive->text(), effectiveDirective, makeString(prefix, url.stringCenterEllipsizedToLength(), "' because it violates the following Content Security Policy directive: \"", directive->text(), "\".", suffix, '\n'), url);
+    return denyIfEnforcingPolicy();
+}
+
+bool ContentSecurityPolicyDirectiveList::checkFrameAncestorsAndReportViolation(ContentSecurityPolicySourceListDirective* directive, const Frame& frame, const URL& url, const String& effectiveDirective) const
+{
+    if (checkFrameAncestors(directive, frame))
+        return true;
+    reportViolation(directive->text(), effectiveDirective, makeString("Refused to display '", url.stringCenterEllipsizedToLength(), "' in a frame because an ancestor violates the following Content Security Policy directive: \"", directive->text(), "\".", '\n'), url);
     return denyIfEnforcingPolicy();
 }
 
@@ -416,6 +438,13 @@ bool ContentSecurityPolicyDirectiveList::allowBaseURI(const URL& url, ContentSec
     return m_reportOnly || checkSource(m_baseURI.get(), url);
 }
 
+bool ContentSecurityPolicyDirectiveList::allowFrameAncestors(const Frame& frame, const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+{
+    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+        return checkFrameAncestorsAndReportViolation(m_frameAncestors.get(), frame, url, frameAncestors);
+    return m_reportOnly || checkFrameAncestors(m_frameAncestors.get(), frame);
+}
+
 // policy            = directive-list
 // directive-list    = [ directive *( ";" [ directive ] ) ]
 //
@@ -438,7 +467,8 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
             ASSERT(!name.isEmpty());
             switch (policyFrom) {
             case ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta:
-                if (equalLettersIgnoringASCIICase(name, sandbox) || equalLettersIgnoringASCIICase(name, reportURI)) {
+                if (equalLettersIgnoringASCIICase(name, sandbox) || equalLettersIgnoringASCIICase(name, reportURI)
+                    || equalLettersIgnoringASCIICase(name, frameAncestors)) {
                     m_policy.reportInvalidDirectiveInHTTPEquivMeta(name);
                     break;
                 }
@@ -637,7 +667,13 @@ void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const 
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_formAction);
     else if (equalLettersIgnoringASCIICase(name, baseURI))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_baseURI);
-    else if (equalLettersIgnoringASCIICase(name, pluginTypes))
+    else if (equalLettersIgnoringASCIICase(name, frameAncestors)) {
+        if (m_reportOnly) {
+            m_policy.reportInvalidDirectiveInReportOnlyMode(name);
+            return;
+        }
+        setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_frameAncestors);
+    } else if (equalLettersIgnoringASCIICase(name, pluginTypes))
         setCSPDirective<ContentSecurityPolicyMediaListDirective>(name, value, m_pluginTypes);
     else if (equalLettersIgnoringASCIICase(name, sandbox))
         applySandboxPolicy(name, value);
