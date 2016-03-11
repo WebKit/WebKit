@@ -1,5 +1,12 @@
 2016-03-10  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the build again.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::constructURLStringForResult):
+
+2016-03-10  Tim Horton  <timothy_horton@apple.com>
+
         Fix the build.
 
         * editing/cocoa/DataDetection.mm:
