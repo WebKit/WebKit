@@ -2335,7 +2335,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.add32(scratch.gpr(), result.gpr());
             m_jit.xor32(scratch.gpr(), result.gpr());
             if (shouldCheckOverflow(node->arithMode()))
-                speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::Equal, result.gpr(), MacroAssembler::TrustedImm32(1 << 31)));
+                speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Signed, result.gpr()));
             int32Result(result.gpr(), node);
             break;
         }

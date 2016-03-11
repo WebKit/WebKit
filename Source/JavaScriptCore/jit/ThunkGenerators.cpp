@@ -910,7 +910,7 @@ MacroAssemblerCodeRef absThunkGenerator(VM* vm)
     jit.rshift32(SpecializedThunkJIT::regT0, MacroAssembler::TrustedImm32(31), SpecializedThunkJIT::regT1);
     jit.add32(SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT0);
     jit.xor32(SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT0);
-    jit.appendFailure(jit.branch32(MacroAssembler::Equal, SpecializedThunkJIT::regT0, MacroAssembler::TrustedImm32(1 << 31)));
+    jit.appendFailure(jit.branchTest32(MacroAssembler::Signed, SpecializedThunkJIT::regT0));
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     // Shame about the double int conversion here.
