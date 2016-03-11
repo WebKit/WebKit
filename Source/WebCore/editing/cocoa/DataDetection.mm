@@ -44,7 +44,10 @@
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
 #import "htmlediting.h"
+
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/DataDetectorsAdditions.h>
+#endif
 
 const char *dataDetectorsURLScheme = "x-apple-data-detectors";
 const char *dataDetectorsAttributeTypeKey = "x-apple-data-detectors-type";
