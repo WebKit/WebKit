@@ -30,6 +30,8 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/_WKFocusedElementInfo.h>
 
+@class UITextSuggestion;
+
 @protocol _WKFormInputSession <NSObject>
 
 @property (nonatomic, readonly, getter=isValid) BOOL valid;
@@ -39,6 +41,7 @@
 #if TARGET_OS_IPHONE
 @property (nonatomic, copy) NSString *accessoryViewCustomButtonTitle;
 @property (nonatomic, strong) UIView *customInputView WK_AVAILABLE(NA, WK_IOS_TBA);
+@property (nonatomic, copy) NSArray<UITextSuggestion *> *suggestions WK_AVAILABLE(NA, WK_IOS_TBA);
 #endif
 
 @end

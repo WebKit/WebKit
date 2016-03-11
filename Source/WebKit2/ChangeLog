@@ -1,3 +1,18 @@
+2016-03-11  Chelsea Pugh  <cpugh@apple.com>
+
+        [iOS] Allow clients to specify text suggestions to be used for a form input session
+        https://bugs.webkit.org/show_bug.cgi?id=155343
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/_WKFormInputSession.h:
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession suggestions]): Add a getter for suggestions.
+        (-[WKFormInputSession setSuggestions:]): Add a setter, which calls setSuggestions with our suggestions on the input delegate.
+        (-[WKContentView insertTextSuggestion:]): Call _webView:insertTextSuggestion:inInputSession: on our input delegate so clients know 
+        a text suggestion was tapped.
+
 2016-03-11  Anders Carlsson  <andersca@apple.com>
 
         Creating and releasing a WKBackForwardListItem crashes

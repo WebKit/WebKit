@@ -260,6 +260,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     RetainPtr<NSObject <NSSecureCoding>> _userObject;
     RetainPtr<WKFocusedElementInfo> _focusedElementInfo;
     RetainPtr<UIView> _customInputView;
+    RetainPtr<NSArray<UITextSuggestion *>> _suggestions;
 }
 
 - (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo userObject:(NSObject <NSSecureCoding> *)userObject
@@ -316,6 +317,24 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
     _customInputView = customInputView;
     [_contentView reloadInputViews];
+}
+
+- (NSArray<UITextSuggestion *> *)suggestions
+{
+    return _suggestions.get();
+}
+
+- (void)setSuggestions:(NSArray<UITextSuggestion *> *)suggestions
+{
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+    id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)_contentView.inputDelegate;
+    _suggestions = adoptNS([suggestions copy]);
+    // FIXME 25102224: Remove this dispatch_after once race condition causing keyboard suggestions to overwrite
+    // the suggestions being set is resolved
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+        [suggestionDelegate setSuggestions:suggestions];
+    });
+#endif
 }
 
 - (void)invalidate
@@ -2603,6 +2622,15 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     [self.inputDelegate selectionDidChange:self];
 }
+    
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+- (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion
+{
+    id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
+    if ([inputDelegate respondsToSelector:@selector(_webView:insertTextSuggestion:inInputSession:)])
+        [inputDelegate _webView:_webView insertTextSuggestion:textSuggestion inInputSession:_formInputSession.get()];
+}
+#endif
 
 - (NSString *)textInRange:(UITextRange *)range
 {
