@@ -1,3 +1,15 @@
+2016-03-11  Jer Noble  <jer.noble@apple.com>
+
+        [ios-sim debug] API tests RequiresUserActionForPlaybackTest.DoesNotRequireUserActionForMediaPlayback and RequiresUserActionForAudioButNotVideoPlayback asserting
+        https://bugs.webkit.org/show_bug.cgi?id=155365
+
+        Reviewed by Darin Adler.
+
+        Allow tests running on iOS simulator to play video inline, avoiding this assert.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RequiresUserActionForPlayback.mm:
+        (RequiresUserActionForPlaybackTest::SetUp):
+
 2016-03-11  Frederic Wang  <fwang@igalia.com>
 
         [jhbuild] Disable LLVM OCaml bindings.
