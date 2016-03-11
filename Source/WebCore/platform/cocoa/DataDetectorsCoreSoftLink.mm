@@ -35,7 +35,6 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDScannerCreate, DDSca
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDScannerScanQuery, Boolean, (DDScannerRef scanner, DDScanQueryRef query), (scanner, query))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDScanQueryCreate, DDScanQueryRef, (CFAllocatorRef allocator), (allocator))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDScannerCopyResultsWithOptions, CFArrayRef, (DDScannerRef scanner, DDScannerCopyResultsOptions options), (scanner, options))
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDScannerEnableOptionalSource, void, (DDScannerRef scanner, DDScannerSource source, Boolean enable), (scanner, source, enable))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDResultGetRange, CFRange, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDResultGetType, CFStringRef, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDResultGetCategory, DDResultCategory, (DDResultRef result), (result))
@@ -59,4 +58,8 @@ SOFT_LINK_POINTER_FOR_SOURCE(WebCore, DataDetectorsCore, DDBinderSignatureBlockK
 SOFT_LINK_POINTER_FOR_SOURCE(WebCore, DataDetectorsCore, DDURLScheme, NSString *)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, DataDetectorsCore, DDScannerCopyResultsOptionsForPassiveUse, DDScannerCopyResultsOptions)
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDScannerEnableOptionalSource, void, (DDScannerRef scanner, DDScannerSource source, Boolean enable), (scanner, source, enable))
 #endif
+
+#endif // PLATFORM(IOS)

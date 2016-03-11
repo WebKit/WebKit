@@ -434,8 +434,10 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
     RetainPtr<DDScanQueryRef> scanQuery = adoptCF(softLink_DataDetectorsCore_DDScanQueryCreate(NULL));
     buildQuery(scanQuery.get(), contextRange.get());
     
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     if (types & DataDetectorTypeSpotlightSuggestion)
         softLink_DataDetectorsCore_DDScannerEnableOptionalSource(scanner.get(), DDScannerSourceSpotlight, true);
+#endif
     
     // FIXME: we should add a timeout to this call to make sure it doesn't take too much time.
     if (!softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), scanQuery.get()))
