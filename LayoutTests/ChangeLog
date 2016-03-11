@@ -1,3 +1,15 @@
+2016-03-10  Jer Noble  <jer.noble@apple.com>
+
+        CRASH at WebCore::RenderView::updateVisibleViewportRect
+        https://bugs.webkit.org/show_bug.cgi?id=155209
+        <rdar://problem/23997530>
+
+        Reviewed by Simon Fraser.
+
+        (These files were mistakenly landed in a previous commit:)
+        * media/video-crash-invisible-autoplay-display-none-expected.txt: Added.
+        * media/video-crash-invisible-autoplay-display-none.html: Added.
+
 2016-03-10  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add text-align: justify support.

@@ -1,3 +1,21 @@
+2016-03-10  Jer Noble  <jer.noble@apple.com>
+
+        CRASH at WebCore::RenderView::updateVisibleViewportRect
+        https://bugs.webkit.org/show_bug.cgi?id=155209
+        <rdar://problem/23997530>
+
+        Reviewed by Simon Fraser.
+
+        Test: media/video-crash-invisible-autoplay-display-none.html
+
+        Between the time when the video element's renderer is created and destroyed, we may have unset the
+        InvisibleAutoplayNotPermitted restriction. So rather than check for that restriction before
+        unregistering for the "visible in viewport" notification, unregister only if the renderer
+        was previously registered.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::willDetachRenderers):
+
 2016-03-10  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add text-align: justify support.
