@@ -56,10 +56,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         case SpeculativeAdd:
             m_jit.sub32(recovery->src(), recovery->dest());
             break;
-
-        case SpeculativeAddImmediate:
-            m_jit.sub32(AssemblyHelpers::Imm32(recovery->immediate()), recovery->dest());
-            break;
             
         case BooleanSpeculationCheck:
             break;
