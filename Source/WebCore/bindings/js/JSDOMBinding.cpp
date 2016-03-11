@@ -701,9 +701,10 @@ void throwSequenceTypeError(JSC::ExecState& state)
     throwTypeError(state, "Value is not a sequence");
 }
 
-void throwSetterTypeError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
+bool throwSetterTypeError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
 {
     throwTypeError(state, makeString("The ", interfaceName, '.', attributeName, " setter can only be used on instances of ", interfaceName));
+    return false;
 }
 
 EncodedJSValue throwThisTypeError(JSC::ExecState& state, const char* interfaceName, const char* functionName)

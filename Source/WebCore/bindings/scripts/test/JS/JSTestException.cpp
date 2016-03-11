@@ -36,7 +36,7 @@ namespace WebCore {
 
 JSC::EncodedJSValue jsTestExceptionName(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestExceptionConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestExceptionConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestExceptionConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestExceptionPrototype : public JSC::JSNonFinalObject {
 public:
@@ -164,16 +164,16 @@ EncodedJSValue jsTestExceptionConstructor(ExecState* state, EncodedJSValue thisV
     return JSValue::encode(JSTestException::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestExceptionConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestExceptionConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSTestExceptionPrototype* domObject = jsDynamicCast<JSTestExceptionPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSTestException::getConstructor(VM& vm, const JSGlobalObject* globalObject)

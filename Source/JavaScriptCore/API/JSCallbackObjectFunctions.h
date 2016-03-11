@@ -222,7 +222,7 @@ JSValue JSCallbackObject<Parent>::defaultValue(const JSObject* object, ExecState
 }
 
 template <class Parent>
-void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
     JSContextRef ctx = toRef(exec);
@@ -244,13 +244,13 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName p
                 if (exception)
                     exec->vm().throwException(exec, toJS(exec, exception));
                 if (result || exception)
-                    return;
+                    return result;
             }
             
             if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
                 if (StaticValueEntry* entry = staticValues->get(name)) {
                     if (entry->attributes & kJSPropertyAttributeReadOnly)
-                        return;
+                        return false;
                     if (JSObjectSetPropertyCallback setProperty = entry->setProperty) {
                         JSValueRef exception = 0;
                         bool result;
@@ -261,7 +261,7 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName p
                         if (exception)
                             exec->vm().throwException(exec, toJS(exec, exception));
                         if (result || exception)
-                            return;
+                            return result;
                     }
                 }
             }
@@ -272,9 +272,8 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName p
                     if (Parent::getOwnPropertySlot(thisObject, exec, propertyName, getSlot))
                         return Parent::put(thisObject, exec, propertyName, value, slot);
                     if (entry->attributes & kJSPropertyAttributeReadOnly)
-                        return;
-                    thisObject->JSCallbackObject<Parent>::putDirect(exec->vm(), propertyName, value); // put as override property
-                    return;
+                        return false;
+                    return thisObject->JSCallbackObject<Parent>::putDirect(exec->vm(), propertyName, value); // put as override property
                 }
             }
         }
@@ -284,7 +283,7 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName p
 }
 
 template <class Parent>
-void JSCallbackObject<Parent>::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyIndex, JSValue value, bool shouldThrow)
+bool JSCallbackObject<Parent>::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyIndex, JSValue value, bool shouldThrow)
 {
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
     JSContextRef ctx = toRef(exec);
@@ -306,13 +305,13 @@ void JSCallbackObject<Parent>::putByIndex(JSCell* cell, ExecState* exec, unsigne
             if (exception)
                 exec->vm().throwException(exec, toJS(exec, exception));
             if (result || exception)
-                return;
+                return result;
         }
 
         if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
             if (StaticValueEntry* entry = staticValues->get(propertyName.impl())) {
                 if (entry->attributes & kJSPropertyAttributeReadOnly)
-                    return;
+                    return false;
                 if (JSObjectSetPropertyCallback setProperty = entry->setProperty) {
                     JSValueRef exception = 0;
                     bool result;
@@ -323,7 +322,7 @@ void JSCallbackObject<Parent>::putByIndex(JSCell* cell, ExecState* exec, unsigne
                     if (exception)
                         exec->vm().throwException(exec, toJS(exec, exception));
                     if (result || exception)
-                        return;
+                        return result;
                 }
             }
         }
@@ -331,7 +330,7 @@ void JSCallbackObject<Parent>::putByIndex(JSCell* cell, ExecState* exec, unsigne
         if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
             if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.impl())) {
                 if (entry->attributes & kJSPropertyAttributeReadOnly)
-                    return;
+                    return false;
                 break;
             }
         }

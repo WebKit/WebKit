@@ -73,7 +73,7 @@ bool JSDOMStringMap::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsign
     return deleteProperty(cell, exec, Identifier::from(exec, index));
 }
 
-bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
+bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&, bool& putResult)
 {
     if (propertyName.isSymbol())
         return false;
@@ -85,6 +85,7 @@ bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSV
     ExceptionCode ec = 0;
     wrapped().setItem(propertyNameToString(propertyName), stringValue, ec);
     setDOMException(exec, ec);
+    putResult = !ec;
     return !ec;
 }
 

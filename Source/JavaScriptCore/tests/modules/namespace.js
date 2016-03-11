@@ -27,6 +27,12 @@ shouldBe('Tea' in namespace, false);
 shouldBe(namespace.__proto__, undefined);
 shouldBe(Reflect.isExtensible(namespace), false);
 
+shouldBe(Reflect.set(namespace, 'Extended', 42), false);
+shouldBe('Extended' in namespace, false);
+
+shouldBe(Reflect.set(namespace, 42, 42), false);
+shouldBe(42 in namespace, false);
+
 shouldThrow(() => {
     namespace.value = 20;
 }, `TypeError: Attempted to assign to readonly property.`);

@@ -53,7 +53,7 @@ ALWAYS_INLINE bool JSObject::canPerformFastPutInline(ExecState* exec, VM& vm, Pr
 }
 
 // ECMA 8.6.2.2
-ALWAYS_INLINE void JSObject::putInline(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+ALWAYS_INLINE bool JSObject::putInline(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
     ASSERT(value);
@@ -62,18 +62,19 @@ ALWAYS_INLINE void JSObject::putInline(JSCell* cell, ExecState* exec, PropertyNa
     
     // Try indexed put first. This is required for correctness, since loads on property names that appear like
     // valid indices will never look in the named property storage.
-    if (Optional<uint32_t> index = parseIndex(propertyName)) {
-        putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
-        return;
-    }
+    if (Optional<uint32_t> index = parseIndex(propertyName))
+        return putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
 
     if (thisObject->canPerformFastPutInline(exec, vm, propertyName)) {
         ASSERT(!thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName));
-        if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot)
-            && slot.isStrictMode())
-            throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
-    } else
-        thisObject->putInlineSlow(exec, propertyName, value, slot);
+        if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot)) {
+            if (slot.isStrictMode())
+                throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
+            return false;
+        }
+        return true;
+    }
+    return thisObject->putInlineSlow(exec, propertyName, value, slot);
 }
 
 } // namespace JSC

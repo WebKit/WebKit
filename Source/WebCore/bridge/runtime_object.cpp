@@ -161,25 +161,27 @@ bool RuntimeObject::getOwnPropertySlot(JSObject* object, ExecState *exec, Proper
     return instance->getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-void RuntimeObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool RuntimeObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
     if (!thisObject->m_instance) {
         throwInvalidAccessError(exec);
-        return;
+        return false;
     }
     
     RefPtr<Instance> instance = thisObject->m_instance;
     instance->begin();
 
     // Set the value of the property.
+    bool result = false;
     Field *aField = instance->getClass()->fieldNamed(propertyName, instance.get());
     if (aField)
-        aField->setValueToInstance(exec, instance.get(), value);
+        result = aField->setValueToInstance(exec, instance.get(), value);
     else if (!instance->setValueOfUndefinedField(exec, propertyName, value))
-        instance->put(thisObject, exec, propertyName, value, slot);
+        result = instance->put(thisObject, exec, propertyName, value, slot);
 
     instance->end();
+    return result;
 }
 
 bool RuntimeObject::deleteProperty(JSCell*, ExecState*, PropertyName)

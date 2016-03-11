@@ -786,7 +786,8 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
             JSModuleNamespaceObject* namespaceObject = importedModule->getModuleNamespace(exec);
             if (exec->hadException())
                 return;
-            symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, importEntry.localName, namespaceObject, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true);
+            bool putResult = false;
+            symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, importEntry.localName, namespaceObject, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
         } else {
             Resolution resolution = importedModule->resolveExport(exec, importEntry.importName);
             switch (resolution.type) {
@@ -816,8 +817,10 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
     for (const auto& variable : m_declaredVariables) {
         SymbolTableEntry entry = symbolTable->get(variable.key.get());
         VarOffset offset = entry.varOffset();
-        if (!offset.isStack())
-            symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, Identifier::fromUid(exec, variable.key.get()), jsUndefined(), /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true);
+        if (!offset.isStack()) {
+            bool putResult = false;
+            symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, Identifier::fromUid(exec, variable.key.get()), jsUndefined(), /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
+        }
     }
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduledeclarationinstantiation
@@ -837,7 +840,8 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
                     unlinkedFunctionExecutable->typeProfilingEndOffset());
             }
             JSFunction* function = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, moduleProgramExecutable->source()), moduleEnvironment);
-            symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, unlinkedFunctionExecutable->name(), function, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true);
+            bool putResult = false;
+            symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, unlinkedFunctionExecutable->name(), function, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
         }
     }
 

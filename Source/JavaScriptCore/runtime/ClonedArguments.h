@@ -62,7 +62,7 @@ public:
 private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     

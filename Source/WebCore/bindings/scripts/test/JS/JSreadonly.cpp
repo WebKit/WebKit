@@ -33,7 +33,7 @@ namespace WebCore {
 // Attributes
 
 JSC::EncodedJSValue jsreadonlyConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSreadonlyConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSreadonlyConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSreadonlyPrototype : public JSC::JSNonFinalObject {
 public:
@@ -123,16 +123,16 @@ EncodedJSValue jsreadonlyConstructor(ExecState* state, EncodedJSValue thisValue,
     return JSValue::encode(JSreadonly::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSreadonlyConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSreadonlyConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSreadonlyPrototype* domObject = jsDynamicCast<JSreadonlyPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSreadonly::getConstructor(VM& vm, const JSGlobalObject* globalObject)

@@ -33,7 +33,7 @@ namespace WebCore {
 // Attributes
 
 JSC::EncodedJSValue jsTestGenerateIsReachableConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestGenerateIsReachableConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestGenerateIsReachableConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestGenerateIsReachablePrototype : public JSC::JSNonFinalObject {
 public:
@@ -123,16 +123,16 @@ EncodedJSValue jsTestGenerateIsReachableConstructor(ExecState* state, EncodedJSV
     return JSValue::encode(JSTestGenerateIsReachable::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestGenerateIsReachableConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestGenerateIsReachableConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSTestGenerateIsReachablePrototype* domObject = jsDynamicCast<JSTestGenerateIsReachablePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSTestGenerateIsReachable::getConstructor(VM& vm, const JSGlobalObject* globalObject)

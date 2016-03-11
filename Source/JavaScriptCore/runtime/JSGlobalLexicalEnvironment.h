@@ -47,7 +47,7 @@ public:
     }
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     bool isEmpty() const { return !symbolTable()->size(); }
     

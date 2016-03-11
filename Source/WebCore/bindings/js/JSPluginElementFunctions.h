@@ -41,7 +41,7 @@ namespace WebCore {
     JSC::EncodedJSValue pluginElementPropertyGetter(JSC::ExecState*,
     JSC::EncodedJSValue, JSC::PropertyName);
     bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&, JSHTMLElement*);
-    bool pluginElementCustomPut(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSHTMLElement*, JSC::PutPropertySlot&);
+    bool pluginElementCustomPut(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSHTMLElement*, JSC::PutPropertySlot&, bool& putResult);
     JSC::CallType pluginElementGetCallData(JSHTMLElement*, JSC::CallData&);
 
     template <class Type, class Base> bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot, Type* element)

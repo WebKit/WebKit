@@ -320,7 +320,7 @@ bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState* exec, Property
     return true;
 }
 
-bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
+bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&, bool& putResult)
 {
     CSSPropertyInfo propertyInfo = cssPropertyIDForJSCSSPropertyName(propertyName);
     if (!propertyInfo.propertyID)
@@ -341,7 +341,7 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, PropertyName propertyNa
 
     ExceptionCode ec = 0;
     CSSPropertyID propertyID = static_cast<CSSPropertyID>(propertyInfo.propertyID);
-    wrapped().setPropertyInternal(propertyID, propValue, important, ec);
+    putResult = wrapped().setPropertyInternal(propertyID, propValue, important, ec);
     setDOMException(exec, ec);
 
     return true;

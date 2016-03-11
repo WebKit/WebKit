@@ -34,7 +34,7 @@ namespace WebCore {
 // Attributes
 
 JSC::EncodedJSValue jsTestClassWithJSBuiltinConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestClassWithJSBuiltinConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestClassWithJSBuiltinConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestClassWithJSBuiltinConstructorPrototype : public JSC::JSNonFinalObject {
 public:
@@ -129,16 +129,16 @@ EncodedJSValue jsTestClassWithJSBuiltinConstructorConstructor(ExecState* state, 
     return JSValue::encode(JSTestClassWithJSBuiltinConstructor::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestClassWithJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestClassWithJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicCast<JSTestClassWithJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSTestClassWithJSBuiltinConstructor::getConstructor(VM& vm, const JSGlobalObject* globalObject)

@@ -39,7 +39,7 @@ public:
     CField(NPIdentifier ident) : _fieldIdentifier(ident) { }
 
     JSValue valueFromInstance(ExecState*, const Instance*) const override;
-    void setValueToInstance(ExecState*, const Instance*, JSValue) const override;
+    bool setValueToInstance(ExecState*, const Instance*, JSValue) const override;
 
     NPIdentifier identifier() const { return _fieldIdentifier; }
 

@@ -40,7 +40,7 @@ class PutPropertySlot {
 public:
     enum Type { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomValue, CustomAccessor };
     enum Context { UnknownContext, PutById, PutByIdEval };
-    typedef void (*PutValueFunc)(ExecState*, EncodedJSValue thisObject, EncodedJSValue value);
+    typedef bool (*PutValueFunc)(ExecState*, EncodedJSValue thisObject, EncodedJSValue value);
 
     PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext, bool isInitialization = false)
         : m_type(Uncachable)

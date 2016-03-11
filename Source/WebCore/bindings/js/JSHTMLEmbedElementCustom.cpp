@@ -38,9 +38,9 @@ bool JSHTMLEmbedElement::getOwnPropertySlotDelegate(ExecState* exec, PropertyNam
     return pluginElementCustomGetOwnPropertySlot<JSHTMLEmbedElement, Base>(exec, propertyName, slot, this);
 }
 
-bool JSHTMLEmbedElement::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSHTMLEmbedElement::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot, bool& putResult)
 {
-    return pluginElementCustomPut(exec, propertyName, value, this, slot);
+    return pluginElementCustomPut(exec, propertyName, value, this, slot, putResult);
 }
 
 CallType JSHTMLEmbedElement::getCallData(JSCell* cell, CallData& callData)

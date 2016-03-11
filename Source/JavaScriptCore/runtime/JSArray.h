@@ -156,7 +156,7 @@ public:
     }
         
 protected:
-    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);

@@ -71,6 +71,7 @@ struct HashTableValue;
 
 JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, const String&);
 extern JS_EXPORTDATA const char* StrictModeReadonlyPropertyWriteError;
+extern JS_EXPORTDATA const char* UnconfigurablePropertyChangeAccessMechanismError;
 
 COMPILE_ASSERT(None < FirstInternalAttribute, None_is_below_FirstInternalAttribute);
 COMPILE_ASSERT(ReadOnly < FirstInternalAttribute, ReadOnly_is_below_FirstInternalAttribute);
@@ -171,18 +172,18 @@ public:
         return m_butterfly.get(this)->vectorLength();
     }
     
-    static void putInline(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool putInline(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     
-    JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    JS_EXPORT_PRIVATE static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    JS_EXPORT_PRIVATE static bool putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         
-    ALWAYS_INLINE void putByIndexInline(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+    ALWAYS_INLINE bool putByIndexInline(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
     {
         if (canSetIndexQuickly(propertyName)) {
             setIndexQuickly(exec->vm(), propertyName, value);
-            return;
+            return true;
         }
-        methodTable(exec->vm())->putByIndex(this, exec, propertyName, value, shouldThrow);
+        return methodTable(exec->vm())->putByIndex(this, exec, propertyName, value, shouldThrow);
     }
         
     // This is similar to the putDirect* methods:
@@ -204,7 +205,7 @@ public:
     }
 
     // A non-throwing version of putDirect and putDirectIndex.
-    JS_EXPORT_PRIVATE void putDirectMayBeIndex(ExecState*, PropertyName, JSValue);
+    JS_EXPORT_PRIVATE bool putDirectMayBeIndex(ExecState*, PropertyName, JSValue);
         
     bool hasIndexingHeader() const
     {
@@ -497,15 +498,15 @@ public:
     //  - accessors are not called.
     //  - attributes will be respected (after the call the property will exist with the given attributes)
     //  - the property name is assumed to not be an index.
-    void putDirect(VM&, PropertyName, JSValue, unsigned attributes = 0);
-    void putDirect(VM&, PropertyName, JSValue, PutPropertySlot&);
+    bool putDirect(VM&, PropertyName, JSValue, unsigned attributes = 0);
+    bool putDirect(VM&, PropertyName, JSValue, PutPropertySlot&);
     void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned attributes = 0);
-    void putDirectNonIndexAccessor(VM&, PropertyName, JSValue, unsigned attributes);
-    void putDirectAccessor(ExecState*, PropertyName, JSValue, unsigned attributes);
-    JS_EXPORT_PRIVATE void putDirectCustomAccessor(VM&, PropertyName, JSValue, unsigned attributes);
+    bool putDirectNonIndexAccessor(VM&, PropertyName, JSValue, unsigned attributes);
+    bool putDirectAccessor(ExecState*, PropertyName, JSValue, unsigned attributes);
+    JS_EXPORT_PRIVATE bool putDirectCustomAccessor(VM&, PropertyName, JSValue, unsigned attributes);
 
-    void putGetter(ExecState*, PropertyName, JSValue, unsigned attributes);
-    void putSetter(ExecState*, PropertyName, JSValue, unsigned attributes);
+    bool putGetter(ExecState*, PropertyName, JSValue, unsigned attributes);
+    bool putSetter(ExecState*, PropertyName, JSValue, unsigned attributes);
 
     JS_EXPORT_PRIVATE bool hasProperty(ExecState*, PropertyName) const;
     JS_EXPORT_PRIVATE bool hasProperty(ExecState*, unsigned propertyName) const;
@@ -631,8 +632,8 @@ public:
     void putDirect(VM& vm, PropertyOffset offset, JSValue value) { locationForOffset(offset)->set(vm, this, value); }
     void putDirectUndefined(PropertyOffset offset) { locationForOffset(offset)->setUndefined(); }
 
-    JS_EXPORT_PRIVATE void putDirectNativeIntrinsicGetter(VM&, JSGlobalObject*, Identifier, NativeFunction, Intrinsic, unsigned attributes);
-    JS_EXPORT_PRIVATE void putDirectNativeFunction(VM&, JSGlobalObject*, const PropertyName&, unsigned functionLength, NativeFunction, Intrinsic, unsigned attributes);
+    JS_EXPORT_PRIVATE bool putDirectNativeIntrinsicGetter(VM&, JSGlobalObject*, Identifier, NativeFunction, Intrinsic, unsigned attributes);
+    JS_EXPORT_PRIVATE bool putDirectNativeFunction(VM&, JSGlobalObject*, const PropertyName&, unsigned functionLength, NativeFunction, Intrinsic, unsigned attributes);
     JS_EXPORT_PRIVATE JSFunction* putDirectBuiltinFunction(VM&, JSGlobalObject*, const PropertyName&, FunctionExecutable*, unsigned attributes);
     JSFunction* putDirectBuiltinFunctionWithoutTransition(VM&, JSGlobalObject*, const PropertyName&, FunctionExecutable*, unsigned attributes);
     JS_EXPORT_PRIVATE void putDirectNativeFunctionWithoutTransition(VM&, JSGlobalObject*, const PropertyName&, unsigned functionLength, NativeFunction, Intrinsic, unsigned attributes);
@@ -703,7 +704,7 @@ public:
     // is equivalent to:
     //
     // foo->attemptToInterceptPutByIndexOnHole(...);
-    bool attemptToInterceptPutByIndexOnHoleForPrototype(ExecState*, JSValue thisValue, unsigned propertyName, JSValue, bool shouldThrow);
+    bool attemptToInterceptPutByIndexOnHoleForPrototype(ExecState*, JSValue thisValue, unsigned propertyName, JSValue, bool shouldThrow, bool& putResult);
         
     // Returns 0 if int32 storage cannot be created - either because
     // indexing should be sparse, we're having a bad time, or because
@@ -849,8 +850,8 @@ protected:
     bool defineOwnNonIndexProperty(ExecState*, PropertyName, const PropertyDescriptor&, bool throwException);
 
     template<IndexingType indexingShape>
-    void putByIndexBeyondVectorLengthWithoutAttributes(ExecState*, unsigned propertyName, JSValue);
-    void putByIndexBeyondVectorLengthWithArrayStorage(ExecState*, unsigned propertyName, JSValue, bool shouldThrow, ArrayStorage*);
+    bool putByIndexBeyondVectorLengthWithoutAttributes(ExecState*, unsigned propertyName, JSValue);
+    bool putByIndexBeyondVectorLengthWithArrayStorage(ExecState*, unsigned propertyName, JSValue, bool shouldThrow, ArrayStorage*);
 
     bool increaseVectorLength(VM&, unsigned newLength);
     void deallocateSparseIndexMap();
@@ -859,7 +860,7 @@ protected:
         
     void notifyPresenceOfIndexedAccessors(VM&);
         
-    bool attemptToInterceptPutByIndexOnHole(ExecState*, unsigned index, JSValue, bool shouldThrow);
+    bool attemptToInterceptPutByIndexOnHole(ExecState*, unsigned index, JSValue, bool shouldThrow, bool& putResult);
         
     // Call this if you want setIndexQuickly to succeed and you're sure that
     // the array is contiguous.
@@ -904,7 +905,7 @@ private:
     bool putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&);
     bool canPerformFastPutInline(ExecState* exec, VM&, PropertyName);
 
-    JS_EXPORT_PRIVATE NEVER_INLINE void putInlineSlow(ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineSlow(ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     bool getNonIndexPropertySlot(ExecState*, PropertyName, PropertySlot&);
     bool getOwnNonIndexPropertySlot(VM&, Structure&, PropertyName, PropertySlot&);
@@ -913,9 +914,9 @@ private:
 
     JS_EXPORT_PRIVATE const HashTableValue* findPropertyHashEntry(PropertyName) const;
         
-    void putIndexedDescriptor(ExecState*, SparseArrayEntry*, const PropertyDescriptor&, PropertyDescriptor& old);
+    bool putIndexedDescriptor(ExecState*, SparseArrayEntry*, const PropertyDescriptor&, PropertyDescriptor& old);
         
-    void putByIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    bool putByIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
     bool putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState*, unsigned propertyName, JSValue, unsigned attributes, PutDirectIndexMode, ArrayStorage*);
     JS_EXPORT_PRIVATE bool putDirectIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, unsigned attributes, PutDirectIndexMode);
         
@@ -1468,19 +1469,19 @@ inline bool JSObject::putOwnDataProperty(VM& vm, PropertyName propertyName, JSVa
     return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
 }
 
-inline void JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
+inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
     ASSERT(!value.isCustomGetterSetter());
     PutPropertySlot slot(this);
-    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
+    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
 }
 
-inline void JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     ASSERT(!value.isGetterSetter());
     ASSERT(!value.isCustomGetterSetter());
-    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, 0, slot);
+    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, 0, slot);
 }
 
 inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)

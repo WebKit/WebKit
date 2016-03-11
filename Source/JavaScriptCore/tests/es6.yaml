@@ -1079,7 +1079,7 @@
 - path: es6/Reflect_Reflect.construct_sets_new.target_meta_property.js
   cmd: runES6 :normal
 - path: es6/Reflect_Reflect.set.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.match].js
   cmd: runES6 :fail
 - path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.replace].js

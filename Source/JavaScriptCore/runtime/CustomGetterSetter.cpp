@@ -37,14 +37,25 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(CustomGetterSetter);
 
 const ClassInfo CustomGetterSetter::s_info = { "CustomGetterSetter", 0, 0, CREATE_METHOD_TABLE(CustomGetterSetter) };
 
-void callCustomSetter(ExecState* exec, JSValue customGetterSetter, bool isAccessor, JSObject* base, JSValue thisValue, JSValue value)
+bool callCustomSetter(ExecState* exec, CustomGetterSetter::CustomSetter setter, bool isAccessor, JSValue thisValue, JSValue value)
+{
+    ASSERT(setter);
+    bool result = setter(exec, JSValue::encode(thisValue), JSValue::encode(value));
+    // Always return true if there is a setter and it is observed as an accessor to users.
+    if (isAccessor)
+        return true;
+    return result;
+}
+
+bool callCustomSetter(ExecState* exec, JSValue customGetterSetter, bool isAccessor, JSObject* base, JSValue thisValue, JSValue value)
 {
     CustomGetterSetter::CustomSetter setter = jsCast<CustomGetterSetter*>(customGetterSetter)->setter();
+    // Return false since there is no setter.
     if (!setter)
-        return;
+        return false;
     if (!isAccessor)
         thisValue = base;
-    setter(exec, JSValue::encode(thisValue), JSValue::encode(value));
+    return callCustomSetter(exec, setter, isAccessor, thisValue, value);
 }
 
 } // namespace JSC

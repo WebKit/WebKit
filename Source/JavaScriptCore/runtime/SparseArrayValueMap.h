@@ -44,7 +44,7 @@ struct SparseArrayEntry : public WriteBarrier<Unknown> {
 
     void get(JSObject*, PropertySlot&) const;
     void get(PropertyDescriptor&) const;
-    void put(ExecState*, JSValue thisValue, SparseArrayValueMap*, JSValue, bool shouldThrow);
+    bool put(ExecState*, JSValue thisValue, SparseArrayValueMap*, JSValue, bool shouldThrow);
     JSValue getNonSparseMode() const;
 
     unsigned attributes;
@@ -106,7 +106,7 @@ public:
     }
 
     // These methods may mutate the contents of the map
-    void putEntry(ExecState*, JSObject*, unsigned, JSValue, bool shouldThrow);
+    bool putEntry(ExecState*, JSObject*, unsigned, JSValue, bool shouldThrow);
     bool putDirect(ExecState*, JSObject*, unsigned, JSValue, unsigned attributes, PutDirectIndexMode);
     AddResult add(JSObject*, unsigned);
     iterator find(unsigned i) { return m_map.find(i); }

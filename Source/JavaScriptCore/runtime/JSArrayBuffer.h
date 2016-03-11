@@ -52,7 +52,7 @@ public:
     
 protected:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     

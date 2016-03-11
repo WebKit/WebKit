@@ -98,7 +98,7 @@ void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
+bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&, bool& putResult)
 {
     // Only perform the custom put if the object doesn't have a native property by this name.
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
@@ -119,13 +119,14 @@ bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue 
         // if true, tells the caller not to execute the generic put). It does not indicate whether
         // putDelegate() did successfully complete the operation or not (which it didn't in this
         // case due to the exception).
+        putResult = false;
         return true;
     }
 
     ExceptionCode ec = 0;
     wrapped().setItem(propertyNameToString(propertyName), stringValue, ec);
     setDOMException(exec, ec);
-
+    putResult = !ec;
     return true;
 }
 

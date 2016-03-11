@@ -103,7 +103,8 @@ void JSDOMWindowBase::updateDocument()
 {
     ASSERT(m_wrapped->document());
     ExecState* exec = globalExec();
-    symbolTablePutWithAttributesTouchWatchpointSet(this, exec, exec->vm().propertyNames->document, toJS(exec, this, m_wrapped->document()), DontDelete | ReadOnly);
+    bool putResult = false;
+    symbolTablePutWithAttributesTouchWatchpointSet(this, exec, exec->vm().propertyNames->document, toJS(exec, this, m_wrapped->document()), DontDelete | ReadOnly, putResult);
 }
 
 ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const

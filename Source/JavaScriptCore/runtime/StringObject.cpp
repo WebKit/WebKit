@@ -25,6 +25,7 @@
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
 #include "PropertyNameArray.h"
+#include "Reject.h"
 
 namespace JSC {
 
@@ -60,25 +61,25 @@ bool StringObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, 
     return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
-void StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().length) {
         if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-        return;
+        return false;
     }
     if (Optional<uint32_t> index = parseIndex(propertyName))
         return putByIndex(cell, exec, index.value(), value, slot.isStrictMode());
     return JSObject::put(cell, exec, propertyName, value, slot);
 }
 
-void StringObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+bool StringObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     StringObject* thisObject = jsCast<StringObject*>(cell);
     if (thisObject->internalValue()->canGetIndex(propertyName)) {
         if (shouldThrow)
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-        return;
+        return false;
     }
     return JSObject::putByIndex(cell, exec, propertyName, value, shouldThrow);
 }

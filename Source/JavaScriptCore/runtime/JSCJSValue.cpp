@@ -128,19 +128,17 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
 }
 
 // ECMA 8.7.2
-void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     VM& vm = exec->vm();
 
-    if (Optional<uint32_t> index = parseIndex(propertyName)) {
-        putToPrimitiveByIndex(exec, index.value(), value, slot.isStrictMode());
-        return;
-    }
+    if (Optional<uint32_t> index = parseIndex(propertyName))
+        return putToPrimitiveByIndex(exec, index.value(), value, slot.isStrictMode());
 
     // Check if there are any setters or getters in the prototype chain
     JSObject* obj = synthesizePrototype(exec);
     if (UNLIKELY(!obj))
-        return;
+        return false;
     JSValue prototype;
     if (propertyName != exec->propertyNames().underscoreProto) {
         for (; !obj->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
@@ -148,7 +146,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             if (prototype.isNull()) {
                 if (slot.isStrictMode())
                     throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-                return;
+                return false;
             }
         }
     }
@@ -160,19 +158,15 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             if (attributes & ReadOnly) {
                 if (slot.isStrictMode())
                     exec->vm().throwException(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
-                return;
+                return false;
             }
 
             JSValue gs = obj->getDirect(offset);
-            if (gs.isGetterSetter()) {
-                callSetter(exec, *this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
-                return;
-            }
+            if (gs.isGetterSetter())
+                return callSetter(exec, *this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
 
-            if (gs.isCustomGetterSetter()) {
-                callCustomSetter(exec, gs, attributes & CustomAccessor, obj, slot.thisValue(), value);
-                return;
-            }
+            if (gs.isCustomGetterSetter())
+                return callCustomSetter(exec, gs, attributes & CustomAccessor, obj, slot.thisValue(), value);
 
             // If there's an existing property on the object or one of its 
             // prototypes it should be replaced, so break here.
@@ -181,34 +175,35 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
 
         prototype = obj->getPrototype(vm, exec);
         if (vm.exception())
-            return;
+            return false;
         if (prototype.isNull())
             break;
     }
     
     if (slot.isStrictMode())
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-    return;
+    return false;
 }
 
-void JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(*this, shouldThrow);
-        putToPrimitive(exec, Identifier::from(exec, propertyName), value, slot);
-        return;
+        return putToPrimitive(exec, Identifier::from(exec, propertyName), value, slot);
     }
     
     JSObject* prototype = synthesizePrototype(exec);
     if (UNLIKELY(!prototype)) {
         ASSERT(exec->hadException());
-        return;
+        return false;
     }
-    if (prototype->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow))
-        return;
+    bool putResult = false;
+    if (prototype->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow, putResult))
+        return putResult;
     
     if (shouldThrow)
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+    return false;
 }
 
 void JSValue::dump(PrintStream& out) const

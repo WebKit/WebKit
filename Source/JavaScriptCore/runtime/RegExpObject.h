@@ -72,7 +72,7 @@ public:
     JSValue execInline(ExecState*, JSGlobalObject*, JSString*);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     DECLARE_EXPORT_INFO;
 

@@ -78,16 +78,16 @@ bool JSProxy::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsig
     return thisObject->target()->methodTable(exec->vm())->getOwnPropertySlotByIndex(thisObject->target(), exec, propertyName, slot);
 }
 
-void JSProxy::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSProxy::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(cell);
-    thisObject->target()->methodTable(exec->vm())->put(thisObject->target(), exec, propertyName, value, slot);
+    return thisObject->target()->methodTable(exec->vm())->put(thisObject->target(), exec, propertyName, value, slot);
 }
 
-void JSProxy::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+bool JSProxy::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(cell);
-    thisObject->target()->methodTable(exec->vm())->putByIndex(thisObject->target(), exec, propertyName, value, shouldThrow);
+    return thisObject->target()->methodTable(exec->vm())->putByIndex(thisObject->target(), exec, propertyName, value, shouldThrow);
 }
 
 bool JSProxy::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)

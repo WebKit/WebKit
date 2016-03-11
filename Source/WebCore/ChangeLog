@@ -1,3 +1,193 @@
+2016-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.set without receiver support
+        https://bugs.webkit.org/show_bug.cgi?id=155024
+
+        Reviewed by Geoffrey Garen.
+
+        CustomSetter returns boolean value that indicates the result of [[Set]].
+        According to this change, this patch modifies the CodeGeneratorJS and test results.
+
+        Currently, DOM elements' [[Set]] return true when the setter is found.
+        This is good for the first step.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::putDelegate):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::throwSetterTypeError):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::putDelegate):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::updateDocument):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+        (WebCore::JSDOMWindow::putByIndex):
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::putDelegate):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::putDelegate):
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::putDelegate):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::putDelegate):
+        (WebCore::JSLocationPrototype::putDelegate):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginElementCustomPut):
+        * bindings/js/JSPluginElementFunctions.h:
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::putDelegate):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GeneratePrototypeDeclaration):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::setJSTestActiveDOMObjectConstructor):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::setJSTestClassWithJSBuiltinConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::setJSTestCustomConstructorWithNoInterfaceObjectConstructor):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::setJSTestCustomNamedGetterConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::setJSTestEventConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::setJSTestEventTargetConstructor):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::setJSTestExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::setJSTestGenerateIsReachableConstructor):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::setJSTestInterfaceConstructor):
+        (WebCore::JSTestInterface::put):
+        (WebCore::JSTestInterface::putByIndex):
+        (WebCore::setJSTestInterfaceConstructorImplementsStaticAttr):
+        (WebCore::setJSTestInterfaceImplementsStr2):
+        (WebCore::setJSTestInterfaceImplementsStr3):
+        (WebCore::setJSTestInterfaceImplementsNode):
+        (WebCore::setJSTestInterfaceConstructorSupplementalStaticAttr):
+        (WebCore::setJSTestInterfaceSupplementalStr2):
+        (WebCore::setJSTestInterfaceSupplementalStr3):
+        (WebCore::setJSTestInterfaceSupplementalNode):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::setJSTestJSBuiltinConstructorConstructor):
+        (WebCore::setJSTestJSBuiltinConstructorTestAttributeRWCustom):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::setJSTestMediaQueryListListenerConstructor):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::setJSTestNamedConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::setJSTestNodeConstructor):
+        (WebCore::setJSTestNodeName):
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        (WebCore::setJSTestNondeterministicConstructor):
+        (WebCore::setJSTestNondeterministicNondeterministicWriteableAttr):
+        (WebCore::setJSTestNondeterministicNondeterministicExceptionAttr):
+        (WebCore::setJSTestNondeterministicNondeterministicGetterExceptionAttr):
+        (WebCore::setJSTestNondeterministicNondeterministicSetterExceptionAttr):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjConstructor):
+        (WebCore::setJSTestObjConstructorStaticStringAttr):
+        (WebCore::setJSTestObjTestSubObjEnabledBySettingConstructor):
+        (WebCore::setJSTestObjEnumAttr):
+        (WebCore::setJSTestObjByteAttr):
+        (WebCore::setJSTestObjOctetAttr):
+        (WebCore::setJSTestObjShortAttr):
+        (WebCore::setJSTestObjUnsignedShortAttr):
+        (WebCore::setJSTestObjLongAttr):
+        (WebCore::setJSTestObjLongLongAttr):
+        (WebCore::setJSTestObjUnsignedLongLongAttr):
+        (WebCore::setJSTestObjStringAttr):
+        (WebCore::setJSTestObjTestObjAttr):
+        (WebCore::setJSTestObjLenientTestObjAttr):
+        (WebCore::setJSTestObjStringAttrTreatingNullAsEmptyString):
+        (WebCore::setJSTestObjXMLObjAttr):
+        (WebCore::setJSTestObjCreate):
+        (WebCore::setJSTestObjReflectedStringAttr):
+        (WebCore::setJSTestObjReflectedIntegralAttr):
+        (WebCore::setJSTestObjReflectedUnsignedIntegralAttr):
+        (WebCore::setJSTestObjReflectedBooleanAttr):
+        (WebCore::setJSTestObjReflectedURLAttr):
+        (WebCore::setJSTestObjReflectedCustomIntegralAttr):
+        (WebCore::setJSTestObjReflectedCustomBooleanAttr):
+        (WebCore::setJSTestObjReflectedCustomURLAttr):
+        (WebCore::setJSTestObjTypedArrayAttr):
+        (WebCore::setJSTestObjAttrWithGetterException):
+        (WebCore::setJSTestObjAttrWithGetterExceptionWithMessage):
+        (WebCore::setJSTestObjAttrWithSetterException):
+        (WebCore::setJSTestObjAttrWithSetterExceptionWithMessage):
+        (WebCore::setJSTestObjStringAttrWithGetterException):
+        (WebCore::setJSTestObjStringAttrWithSetterException):
+        (WebCore::setJSTestObjStrictTypeCheckingAttribute):
+        (WebCore::setJSTestObjCustomAttr):
+        (WebCore::setJSTestObjOnfoo):
+        (WebCore::setJSTestObjWithScriptStateAttribute):
+        (WebCore::setJSTestObjWithCallWithAndSetterCallWithAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttribute):
+        (WebCore::setJSTestObjWithScriptStateAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::setJSTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::setJSTestObjConditionalAttr1):
+        (WebCore::setJSTestObjConditionalAttr2):
+        (WebCore::setJSTestObjConditionalAttr3):
+        (WebCore::setJSTestObjConditionalAttr4Constructor):
+        (WebCore::setJSTestObjConditionalAttr5Constructor):
+        (WebCore::setJSTestObjConditionalAttr6Constructor):
+        (WebCore::setJSTestObjAnyAttribute):
+        (WebCore::setJSTestObjMutablePoint):
+        (WebCore::setJSTestObjImmutablePoint):
+        (WebCore::setJSTestObjStrawberry):
+        (WebCore::setJSTestObjStrictFloat):
+        (WebCore::setJSTestObjId):
+        (WebCore::setJSTestObjReplaceableAttribute):
+        (WebCore::setJSTestObjNullableLongSettableAttribute):
+        (WebCore::setJSTestObjNullableStringSettableAttribute):
+        (WebCore::setJSTestObjNullableStringValue):
+        (WebCore::setJSTestObjAttributeWithReservedEnumType):
+        (WebCore::setJSTestObjPutForwardsAttribute):
+        (WebCore::setJSTestObjPutForwardsNullableAttribute):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::setJSTestOverloadedConstructorsConstructor):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::setJSTestOverrideBuiltinsConstructor):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::setJSTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::setJSTestSerializedScriptValueInterfaceValue):
+        (WebCore::setJSTestSerializedScriptValueInterfaceCachedValue):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::setJSTestTypedefsConstructor):
+        (WebCore::setJSTestTypedefsUnsignedLongLongAttr):
+        (WebCore::setJSTestTypedefsImmutableSerializedScriptValue):
+        (WebCore::setJSTestTypedefsAttrWithGetterException):
+        (WebCore::setJSTestTypedefsAttrWithSetterException):
+        (WebCore::setJSTestTypedefsStringAttrWithGetterException):
+        (WebCore::setJSTestTypedefsStringAttrWithSetterException):
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::setJSattributeConstructor):
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::setJSreadonlyConstructor):
+        * bridge/c/c_runtime.cpp:
+        (JSC::Bindings::CField::setValueToInstance):
+        * bridge/c/c_runtime.h:
+        * bridge/jsc/BridgeJSC.h:
+        (JSC::Bindings::Instance::put):
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcField::setValueToInstance):
+        (JSC::Bindings::ObjcArray::setValueAt):
+        (JSC::Bindings::ObjcFallbackObjectImp::put):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::put):
+        (JSC::RuntimeArray::putByIndex):
+        * bridge/runtime_array.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::put):
+        * bridge/runtime_object.h:
+
 2016-03-11  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r197956): WebContent process crashes on launch due to unrecognized selector

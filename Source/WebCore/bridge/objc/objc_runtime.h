@@ -46,7 +46,7 @@ public:
     ObjcField(CFStringRef name);
     
     virtual JSValue valueFromInstance(ExecState*, const Instance*) const;
-    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const;
+    virtual bool setValueToInstance(ExecState*, const Instance*, JSValue) const;
 
 private:
     IvarStructPtr _ivar;
@@ -78,8 +78,8 @@ class ObjcArray : public Array {
 public:
     ObjcArray(ObjectStructPtr, RefPtr<RootObject>&&);
 
-    virtual void setValueAt(ExecState *exec, unsigned int index, JSValue aValue) const;
-    virtual JSValue valueAt(ExecState *exec, unsigned int index) const;
+    virtual bool setValueAt(ExecState*, unsigned int index, JSValue aValue) const;
+    virtual JSValue valueAt(ExecState*, unsigned int index) const;
     virtual unsigned int getLength() const;
     
     ObjectStructPtr getObjcArray() const { return _array.get(); }
@@ -125,7 +125,7 @@ private:
     ObjcFallbackObjectImp(JSGlobalObject*, Structure*, ObjcInstance*, const String& propertyName);
     static void destroy(JSCell*);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static CallType getCallData(JSCell*, CallData&);
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);

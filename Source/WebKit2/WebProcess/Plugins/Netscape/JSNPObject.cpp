@@ -297,27 +297,27 @@ bool JSNPObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     return false;
 }
 
-void JSNPObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
+bool JSNPObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
     JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (!thisObject->m_npObject) {
         throwInvalidAccessError(exec);
-        return;
+        return false;
     }
 
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
     // If the propertyName is symbol.
     if (!npIdentifier)
-        return;
+        return false;
     
     if (!thisObject->m_npObject->_class->hasProperty || !thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
         // FIXME: Should we throw an exception here?
-        return;
+        return false;
     }
 
     if (!thisObject->m_npObject->_class->setProperty)
-        return;
+        return false;
 
     NPVariant variant;
     thisObject->m_objectMap->convertJSValueToNPVariant(exec, value, variant);
@@ -327,9 +327,10 @@ void JSNPObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
     // the call has finished.
     NPRuntimeObjectMap::PluginProtector protector(thisObject->m_objectMap);
 
+    bool result = false;
     {
         JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
-        thisObject->m_npObject->_class->setProperty(thisObject->m_npObject, npIdentifier, &variant);
+        result = thisObject->m_npObject->_class->setProperty(thisObject->m_npObject, npIdentifier, &variant);
 
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
 
@@ -337,6 +338,7 @@ void JSNPObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
     }
 
     releaseNPVariantValue(&variant);
+    return result;
 }
 
 bool JSNPObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)

@@ -40,14 +40,14 @@ namespace WebCore {
 // Attributes
 
 JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestSerializedScriptValueInterfaceValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestSerializedScriptValueInterfaceValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceReadonlyValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceCachedValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestSerializedScriptValueInterfaceCachedValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestSerializedScriptValueInterfaceCachedValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePorts(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestSerializedScriptValueInterfacePrototype : public JSC::JSNonFinalObject {
 public:
@@ -223,49 +223,49 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* state,
     return JSValue::encode(JSTestSerializedScriptValueInterface::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestSerializedScriptValueInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestSerializedScriptValueInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSTestSerializedScriptValueInterfacePrototype* domObject = jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-void setJSTestSerializedScriptValueInterfaceValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestSerializedScriptValueInterfaceValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestSerializedScriptValueInterface", "value");
-        return;
+        return throwSetterTypeError(*state, "TestSerializedScriptValueInterface", "value");
     }
     auto& impl = castedThis->wrapped();
     RefPtr<SerializedScriptValue> nativeValue = SerializedScriptValue::create(state, value, 0, 0);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setValue(nativeValue);
+    return true;
 }
 
 
-void setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestSerializedScriptValueInterface", "cachedValue");
-        return;
+        return throwSetterTypeError(*state, "TestSerializedScriptValueInterface", "cachedValue");
     }
     auto& impl = castedThis->wrapped();
     RefPtr<SerializedScriptValue> nativeValue = SerializedScriptValue::create(state, value, 0, 0);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setCachedValue(nativeValue);
+    return true;
 }
 
 

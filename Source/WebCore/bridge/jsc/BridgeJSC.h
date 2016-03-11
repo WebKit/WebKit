@@ -52,7 +52,7 @@ class RuntimeObject;
 class Field {
 public:
     virtual JSValue valueFromInstance(ExecState*, const Instance*) const = 0;
-    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const = 0;
+    virtual bool setValueToInstance(ExecState*, const Instance*, JSValue) const = 0;
 
     virtual ~Field() { }
 };
@@ -105,7 +105,7 @@ public:
     WEBCORE_EXPORT virtual ~Instance();
 
     virtual bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&) { return false; }
-    virtual void put(JSObject*, ExecState*, PropertyName, JSValue, PutPropertySlot&) { }
+    virtual bool put(JSObject*, ExecState*, PropertyName, JSValue, PutPropertySlot&) { return false; }
 
 protected:
     virtual void virtualBegin() { }
@@ -124,7 +124,7 @@ public:
     explicit Array(RefPtr<RootObject>&&);
     virtual ~Array();
 
-    virtual void setValueAt(ExecState*, unsigned index, JSValue) const = 0;
+    virtual bool setValueAt(ExecState*, unsigned index, JSValue) const = 0;
     virtual JSValue valueAt(ExecState*, unsigned index) const = 0;
     virtual unsigned int getLength() const = 0;
 

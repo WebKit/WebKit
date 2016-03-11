@@ -119,14 +119,14 @@ bool pluginElementCustomGetOwnPropertySlot(ExecState* exec, PropertyName propert
     return true;
 }
 
-bool pluginElementCustomPut(ExecState* exec, PropertyName propertyName, JSValue value, JSHTMLElement* element, PutPropertySlot& slot)
+bool pluginElementCustomPut(ExecState* exec, PropertyName propertyName, JSValue value, JSHTMLElement* element, PutPropertySlot& slot, bool& putResult)
 {
     JSObject* scriptObject = pluginScriptObject(exec, element);
     if (!scriptObject)
         return false;
     if (!scriptObject->hasProperty(exec, propertyName))
         return false;
-    scriptObject->methodTable()->put(scriptObject, exec, propertyName, value, slot);
+    putResult = scriptObject->methodTable()->put(scriptObject, exec, propertyName, value, slot);
     return true;
 }
 

@@ -40,7 +40,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionM
 // Attributes
 
 JSC::EncodedJSValue jsTestMediaQueryListListenerConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestMediaQueryListListenerConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestMediaQueryListListenerConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestMediaQueryListListenerPrototype : public JSC::JSNonFinalObject {
 public:
@@ -131,16 +131,16 @@ EncodedJSValue jsTestMediaQueryListListenerConstructor(ExecState* state, Encoded
     return JSValue::encode(JSTestMediaQueryListListener::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestMediaQueryListListenerConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestMediaQueryListListenerConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSTestMediaQueryListListenerPrototype* domObject = jsDynamicCast<JSTestMediaQueryListListenerPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSTestMediaQueryListListener::getConstructor(VM& vm, const JSGlobalObject* globalObject)

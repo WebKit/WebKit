@@ -147,8 +147,8 @@ public:
     const ClassInfo* classInfo() const;
     const MethodTable* methodTable() const;
     const MethodTable* methodTable(VM&) const;
-    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);

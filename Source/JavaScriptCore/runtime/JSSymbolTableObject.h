@@ -149,7 +149,7 @@ enum class SymbolTablePutMode {
 template<SymbolTablePutMode symbolTablePutMode, typename SymbolTableObjectType>
 inline bool symbolTablePut(
     SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes,
-    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors, WatchpointSet*& set)
+    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors, WatchpointSet*& set, bool& putResult)
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
 
@@ -170,6 +170,7 @@ inline bool symbolTablePut(
         if (fastEntry.isReadOnly() && !ignoreReadOnlyErrors) {
             if (shouldThrowReadOnlyError)
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            putResult = false;
             return true;
         }
 
@@ -188,17 +189,18 @@ inline bool symbolTablePut(
     // the right for barriers to be able to trigger GC. And I don't want to hold VM
     // locks while GC'ing.
     reg->set(vm, object, value);
+    putResult = true;
     return true;
 }
 
 template<typename SymbolTableObjectType>
 inline bool symbolTablePutTouchWatchpointSet(
     SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName, JSValue value,
-    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors)
+    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors, bool& putResult)
 {
     WatchpointSet* set = nullptr;
     unsigned attributes = 0;
-    bool result = symbolTablePut<SymbolTablePutMode::WithoutAttributes>(object, exec, propertyName, value, attributes, shouldThrowReadOnlyError, ignoreReadOnlyErrors, set);
+    bool result = symbolTablePut<SymbolTablePutMode::WithoutAttributes>(object, exec, propertyName, value, attributes, shouldThrowReadOnlyError, ignoreReadOnlyErrors, set, putResult);
     if (set)
         VariableWriteFireDetail::touch(set, object, propertyName);
     return result;
@@ -207,11 +209,11 @@ inline bool symbolTablePutTouchWatchpointSet(
 template<typename SymbolTableObjectType>
 inline bool symbolTablePutInvalidateWatchpointSet(
     SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName, JSValue value,
-    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors)
+    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors, bool& putResult)
 {
     WatchpointSet* set = nullptr;
     unsigned attributes = 0;
-    bool result = symbolTablePut<SymbolTablePutMode::WithoutAttributes>(object, exec, propertyName, value, attributes, shouldThrowReadOnlyError, ignoreReadOnlyErrors, set);
+    bool result = symbolTablePut<SymbolTablePutMode::WithoutAttributes>(object, exec, propertyName, value, attributes, shouldThrowReadOnlyError, ignoreReadOnlyErrors, set, putResult);
     if (set)
         set->invalidate(VariableWriteFireDetail(object, propertyName)); // Don't mess around - if we had found this statically, we would have invalidated it.
     return result;
@@ -220,12 +222,12 @@ inline bool symbolTablePutInvalidateWatchpointSet(
 template<typename SymbolTableObjectType>
 inline bool symbolTablePutWithAttributesTouchWatchpointSet(
     SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName,
-    JSValue value, unsigned attributes)
+    JSValue value, unsigned attributes, bool& putResult)
 {
     WatchpointSet* set = nullptr;
     bool shouldThrowReadOnlyError = false;
     bool ignoreReadOnlyErrors = true;
-    bool result = symbolTablePut<SymbolTablePutMode::WithAttributes>(object, exec, propertyName, value, attributes, shouldThrowReadOnlyError, ignoreReadOnlyErrors, set);
+    bool result = symbolTablePut<SymbolTablePutMode::WithAttributes>(object, exec, propertyName, value, attributes, shouldThrowReadOnlyError, ignoreReadOnlyErrors, set, putResult);
     if (set)
         VariableWriteFireDetail::touch(set, object, propertyName);
     return result;

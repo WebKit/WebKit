@@ -1,3 +1,22 @@
+2016-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.set without receiver support
+        https://bugs.webkit.org/show_bug.cgi?id=155024
+
+        Reviewed by Geoffrey Garen.
+
+        NPJSObject::setProperty may call `methodTable()->put` operation, but we intentionally do not propagate it to the caller's ::put.
+        In the current implementation, we just use the result of ::setProperty call.
+        This is `true` when ::setProperty attempts to call `methodTable()->put`.
+        In ::setProperty, after calling `methodTable()->put`, ::setProperty function clears the exception state.
+        So this is not the same semantics to the simple data property store. Rather, this is like the accessor.
+        In ECMA262 [[Set]], it returns true if there is a setter. So we just use the returned value of ::setProperty.
+        This indicates that there is a setter for the given [[Set]] operation.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::put):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2016-03-10  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r197986): Don't try to link to undefined $(WEBKIT_SYSTEM_INTERFACE_LIBRARY)

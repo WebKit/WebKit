@@ -628,16 +628,17 @@ bool JSGlobalObject::hasLegacyProfiler() const
     return globalObjectMethodTable()->supportsLegacyProfiling(this);
 }
 
-void JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
     bool shouldThrowReadOnlyError = slot.isStrictMode();
     bool ignoreReadOnlyErrors = false;
-    if (symbolTablePutTouchWatchpointSet(thisObject, exec, propertyName, value, shouldThrowReadOnlyError, ignoreReadOnlyErrors))
-        return;
-    Base::put(thisObject, exec, propertyName, value, slot);
+    bool putResult = false;
+    if (symbolTablePutTouchWatchpointSet(thisObject, exec, propertyName, value, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult))
+        return putResult;
+    return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
 bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)

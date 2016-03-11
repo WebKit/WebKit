@@ -47,7 +47,7 @@ public:
     static void destroy(JSCell*);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
     static CallType getCallData(JSCell*, CallData&);

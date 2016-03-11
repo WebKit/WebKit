@@ -168,7 +168,7 @@ void ClonedArguments::getOwnPropertyNames(JSObject* object, ExecState* exec, Pro
     Base::getOwnPropertyNames(thisObject, exec, array, mode);
 }
 
-void ClonedArguments::put(JSCell* cell, ExecState* exec, PropertyName ident, JSValue value, PutPropertySlot& slot)
+bool ClonedArguments::put(JSCell* cell, ExecState* exec, PropertyName ident, JSValue value, PutPropertySlot& slot)
 {
     ClonedArguments* thisObject = jsCast<ClonedArguments*>(cell);
     VM& vm = exec->vm();
@@ -178,11 +178,10 @@ void ClonedArguments::put(JSCell* cell, ExecState* exec, PropertyName ident, JSV
         || ident == vm.propertyNames->iteratorSymbol) {
         thisObject->materializeSpecialsIfNecessary(exec);
         PutPropertySlot dummy = slot; // Shadow the given PutPropertySlot to prevent caching.
-        Base::put(thisObject, exec, ident, value, dummy);
-        return;
+        return Base::put(thisObject, exec, ident, value, dummy);
     }
     
-    Base::put(thisObject, exec, ident, value, slot);
+    return Base::put(thisObject, exec, ident, value, slot);
 }
 
 bool ClonedArguments::deleteProperty(JSCell* cell, ExecState* exec, PropertyName ident)

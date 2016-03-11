@@ -60,8 +60,9 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
     return true;
 }
 
-bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot, bool& putResult)
 {
+    putResult = false;
     Frame* frame = wrapped().frame();
     if (!frame)
         return true;
@@ -75,7 +76,7 @@ bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue
     const HashTableValue* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
     if (!entry) {
         if (sameDomainAccess)
-            JSObject::put(this, exec, propertyName, value, slot);
+            putResult = JSObject::put(this, exec, propertyName, value, slot);
         return true;
     }
 
@@ -137,8 +138,9 @@ JSValue JSLocation::toStringFunction(ExecState& state)
     return jsStringWithCache(&state, wrapped().toString());
 }
 
-bool JSLocationPrototype::putDelegate(ExecState* exec, PropertyName propertyName, JSValue, PutPropertySlot&)
+bool JSLocationPrototype::putDelegate(ExecState* exec, PropertyName propertyName, JSValue, PutPropertySlot&, bool& putResult)
 {
+    putResult = false;
     return (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf);
 }
 

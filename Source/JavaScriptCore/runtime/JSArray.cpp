@@ -91,7 +91,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         // a. If the [[Value]] field of Desc is absent, then
         // a.i. Return the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", Desc, and Throw as arguments.
         if (descriptor.isAccessorDescriptor())
-            return reject(exec, throwException, "Attempting to change access mechanism for an unconfigurable property.");
+            return reject(exec, throwException, UnconfigurablePropertyChangeAccessMechanismError);
         // from ES5.1 8.12.9 10.a.
         if (!array->isLengthWritable() && descriptor.writablePresent() && descriptor.writable())
             return reject(exec, throwException, "Attempting to change writable attribute of unconfigurable property.");
@@ -190,7 +190,7 @@ bool JSArray::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName
 }
 
 // ECMA 15.4.5.1
-void JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSArray* thisObject = jsCast<JSArray*>(cell);
 
@@ -198,13 +198,12 @@ void JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSVa
         unsigned newLength = value.toUInt32(exec);
         if (value.toNumber(exec) != static_cast<double>(newLength)) {
             exec->vm().throwException(exec, createRangeError(exec, ASCIILiteral("Invalid array length")));
-            return;
+            return false;
         }
-        thisObject->setLength(exec, newLength, slot.isStrictMode());
-        return;
+        return thisObject->setLength(exec, newLength, slot.isStrictMode());
     }
 
-    JSObject::put(thisObject, exec, propertyName, value, slot);
+    return JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
 bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
@@ -644,7 +643,8 @@ void JSArray::push(ExecState* exec, JSValue value)
         
     case ArrayWithSlowPutArrayStorage: {
         unsigned oldLength = length();
-        if (attemptToInterceptPutByIndexOnHole(exec, oldLength, value, true)) {
+        bool putResult = false;
+        if (attemptToInterceptPutByIndexOnHole(exec, oldLength, value, true, putResult)) {
             if (!exec->hadException() && oldLength < 0xFFFFFFFFu)
                 setLength(exec, oldLength + 1, true);
             return;

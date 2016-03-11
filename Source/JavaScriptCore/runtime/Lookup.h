@@ -284,27 +284,40 @@ inline bool getStaticValueSlot(ExecState* exec, const HashTable& table, ThisImp*
 // 'base' means the object holding the property (possibly in the prototype chain of the object put was called on).
 // 'thisValue' is the object that put is being applied to (in the case of a proxy, the proxy target).
 // 'slot.thisValue()' is the object the put was originally performed on (in the case of a proxy, the proxy itself).
-inline void putEntry(ExecState* exec, const HashTableValue* entry, JSObject* base, JSObject* thisValue, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+inline bool putEntry(ExecState* exec, const HashTableValue* entry, JSObject* base, JSObject* thisValue, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (entry->attributes() & BuiltinOrFunction) {
         if (!(entry->attributes() & ReadOnly)) {
             // If this is a function put it as an override property.
             if (JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue))
                 thisObject->putDirect(exec->vm(), propertyName, value);
-        } else if (slot.isStrictMode())
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-    } else if (entry->attributes() & Accessor) {
+            return true;
+        }
         if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-    } else if (!(entry->attributes() & ReadOnly)) {
+        return false;
+    }
+
+    if (entry->attributes() & Accessor) {
+        if (slot.isStrictMode())
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+        return false;
+    }
+
+    if (!(entry->attributes() & ReadOnly)) {
+        bool isAccessor = entry->attributes() & CustomAccessor;
         JSValue updateThisValue = entry->attributes() & CustomAccessor ? slot.thisValue() : JSValue(base);
-        entry->propertyPutter()(exec, JSValue::encode(updateThisValue), JSValue::encode(value));
-        if (entry->attributes() & CustomAccessor)
+        bool result = callCustomSetter(exec, entry->propertyPutter(), isAccessor, updateThisValue, value);
+        if (isAccessor)
             slot.setCustomAccessor(base, entry->propertyPutter());
         else
             slot.setCustomValue(base, entry->propertyPutter());
-    } else if (slot.isStrictMode())
+        return result;
+    }
+
+    if (slot.isStrictMode())
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+    return false;
 }
 
 /**
@@ -312,14 +325,14 @@ inline void putEntry(ExecState* exec, const HashTableValue* entry, JSObject* bas
  * It looks up a hash entry for the property to be set.  If an entry
  * is found it sets the value and returns true, else it returns false.
  */
-inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSObject* base, JSValue value, const HashTable& table, PutPropertySlot& slot)
+inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSObject* base, JSValue value, const HashTable& table, PutPropertySlot& slot, bool& putResult)
 {
     const HashTableValue* entry = table.entry(propertyName);
 
     if (!entry)
         return false;
 
-    putEntry(exec, entry, base, base, propertyName, value, slot);
+    putResult = putEntry(exec, entry, base, base, propertyName, value, slot);
     return true;
 }
 

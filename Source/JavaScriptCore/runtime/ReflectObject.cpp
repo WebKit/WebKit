@@ -43,6 +43,7 @@ static EncodedJSValue JSC_HOST_CALL reflectObjectGetPrototypeOf(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState*);
+static EncodedJSValue JSC_HOST_CALL reflectObjectSet(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectSetPrototypeOf(ExecState*);
 
 }
@@ -69,6 +70,7 @@ const ClassInfo ReflectObject::s_info = { "Reflect", &Base::s_info, &reflectObje
     isExtensible             reflectObjectIsExtensible             DontEnum|Function 1
     ownKeys                  reflectObjectOwnKeys                  DontEnum|Function 1
     preventExtensions        reflectObjectPreventExtensions        DontEnum|Function 1
+    set                      reflectObjectSet                      DontEnum|Function 3
     setPrototypeOf           reflectObjectSetPrototypeOf           DontEnum|Function 2
 @end
 */
@@ -232,6 +234,28 @@ EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(JSValue());
     return JSValue::encode(jsBoolean(result));
+}
+
+// https://tc39.github.io/ecma262/#sec-reflect.set
+EncodedJSValue JSC_HOST_CALL reflectObjectSet(ExecState* exec)
+{
+    JSValue target = exec->argument(0);
+    if (!target.isObject())
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.set requires the first argument be an object")));
+    JSObject* targetObject = asObject(target);
+
+    auto propertyName = exec->argument(1).toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSValue receiver = target;
+    if (exec->argumentCount() >= 4)
+        receiver = exec->argument(3);
+
+    // Do not raise any readonly errors that happen in strict mode.
+    bool isStrictMode = false;
+    PutPropertySlot slot(receiver, isStrictMode);
+    return JSValue::encode(jsBoolean(targetObject->methodTable(exec->vm())->put(targetObject, exec, propertyName, exec->argument(2), slot)));
 }
 
 // https://tc39.github.io/ecma262/#sec-reflect.setprototypeof

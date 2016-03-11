@@ -111,18 +111,16 @@ bool JSDataView::getOwnPropertySlot(
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-void JSDataView::put(
+bool JSDataView::put(
     JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value,
     PutPropertySlot& slot)
 {
     JSDataView* thisObject = jsCast<JSDataView*>(cell);
     if (propertyName == exec->propertyNames().byteLength
-        || propertyName == exec->propertyNames().byteOffset) {
-        reject(exec, slot.isStrictMode(), "Attempting to write to read-only typed array property.");
-        return;
-    }
+        || propertyName == exec->propertyNames().byteOffset)
+        return reject(exec, slot.isStrictMode(), "Attempting to write to read-only typed array property.");
 
-    Base::put(thisObject, exec, propertyName, value, slot);
+    return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
 bool JSDataView::defineOwnProperty(

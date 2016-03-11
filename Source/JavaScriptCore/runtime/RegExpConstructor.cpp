@@ -47,8 +47,8 @@ static EncodedJSValue regExpConstructorDollar7(ExecState*, EncodedJSValue, Prope
 static EncodedJSValue regExpConstructorDollar8(ExecState*, EncodedJSValue, PropertyName);
 static EncodedJSValue regExpConstructorDollar9(ExecState*, EncodedJSValue, PropertyName);
 
-static void setRegExpConstructorInput(ExecState*, EncodedJSValue, EncodedJSValue);
-static void setRegExpConstructorMultiline(ExecState*, EncodedJSValue, EncodedJSValue);
+static bool setRegExpConstructorInput(ExecState*, EncodedJSValue, EncodedJSValue);
+static bool setRegExpConstructorMultiline(ExecState*, EncodedJSValue, EncodedJSValue);
 
 } // namespace JSC
 
@@ -234,16 +234,22 @@ EncodedJSValue regExpConstructorRightContext(ExecState* exec, EncodedJSValue thi
     return JSValue::encode(asRegExpConstructor(JSValue::decode(thisValue))->getRightContext(exec));
 }
 
-void setRegExpConstructorInput(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
+bool setRegExpConstructorInput(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
 {
-    if (auto constructor = jsDynamicCast<RegExpConstructor*>(JSValue::decode(thisValue)))
+    if (auto constructor = jsDynamicCast<RegExpConstructor*>(JSValue::decode(thisValue))) {
         constructor->setInput(exec, JSValue::decode(value).toString(exec));
+        return true;
+    }
+    return false;
 }
 
-void setRegExpConstructorMultiline(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
+bool setRegExpConstructorMultiline(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
 {
-    if (auto constructor = jsDynamicCast<RegExpConstructor*>(JSValue::decode(thisValue)))
+    if (auto constructor = jsDynamicCast<RegExpConstructor*>(JSValue::decode(thisValue))) {
         constructor->setMultiline(JSValue::decode(value).toBoolean(exec));
+        return true;
+    }
+    return false;
 }
 
 inline Structure* getRegExpStructure(ExecState* exec, JSGlobalObject* globalObject, JSValue newTarget)

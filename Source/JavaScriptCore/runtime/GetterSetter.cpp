@@ -85,14 +85,14 @@ JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
     return call(exec, getter, callType, callData, base, ArgList());
 }
 
-void callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue value, ECMAMode ecmaMode)
+bool callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue value, ECMAMode ecmaMode)
 {
     GetterSetter* getterSetterObj = jsCast<GetterSetter*>(getterSetter);
 
     if (getterSetterObj->isSetterNull()) {
         if (ecmaMode == StrictMode)
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-        return;
+        return false;
     }
 
     JSObject* setter = getterSetterObj->setter();
@@ -103,6 +103,7 @@ void callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue val
     CallData callData;
     CallType callType = setter->methodTable(exec->vm())->getCallData(setter, callData);
     call(exec, setter, callType, callData, base, args);
+    return true;
 }
 
 } // namespace JSC

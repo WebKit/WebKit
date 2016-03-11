@@ -38,13 +38,15 @@ bool JSGlobalLexicalEnvironment::getOwnPropertySlot(JSObject* object, ExecState*
     return symbolTableGet(thisObject, propertyName, slot);
 }
 
-void JSGlobalLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSGlobalLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSGlobalLexicalEnvironment* thisObject = jsCast<JSGlobalLexicalEnvironment*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
     bool alwaysThrowWhenAssigningToConstProperty = true;
     bool ignoreConstAssignmentError = slot.isInitialization();
-    symbolTablePutTouchWatchpointSet(thisObject, exec, propertyName, value, alwaysThrowWhenAssigningToConstProperty, ignoreConstAssignmentError);
+    bool putResult = false;
+    symbolTablePutTouchWatchpointSet(thisObject, exec, propertyName, value, alwaysThrowWhenAssigningToConstProperty, ignoreConstAssignmentError, putResult);
+    return putResult;
 }
 
 } // namespace JSC

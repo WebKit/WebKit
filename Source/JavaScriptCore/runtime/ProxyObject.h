@@ -65,9 +65,9 @@ public:
     JSObject* target() const { return m_target.get(); }
     JSValue handler() const { return m_handler.get(); }
 
-    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
-    void putByIndexCommon(ExecState*, JSValue thisValue, unsigned propertyName, JSValue putValue, bool shouldThrow);
+    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    bool putByIndexCommon(ExecState*, JSValue thisValue, unsigned propertyName, JSValue putValue, bool shouldThrow);
     JSValue performGetPrototype(ExecState*);
     void revoke(VM&);
     bool isRevoked() const;
@@ -100,7 +100,7 @@ private:
     template <typename DefaultDeleteFunction>
     bool performDelete(ExecState*, PropertyName, DefaultDeleteFunction);
     template <typename PerformDefaultPutFunction>
-    void performPut(ExecState*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction);
+    bool performPut(ExecState*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction);
     bool performPreventExtensions(ExecState*);
     bool performIsExtensible(ExecState*);
     bool performDefineOwnProperty(ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);

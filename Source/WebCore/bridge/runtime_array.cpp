@@ -111,31 +111,29 @@ bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, ExecState *exec, 
     return JSObject::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
-void RuntimeArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool RuntimeArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
         exec->vm().throwException(exec, createRangeError(exec, "Range error"));
-        return;
+        return false;
     }
     
-    if (Optional<uint32_t> index = parseIndex(propertyName)) {
-        thisObject->getConcreteArray()->setValueAt(exec, index.value(), value);
-        return;
-    }
+    if (Optional<uint32_t> index = parseIndex(propertyName))
+        return thisObject->getConcreteArray()->setValueAt(exec, index.value(), value);
     
-    JSObject::put(thisObject, exec, propertyName, value, slot);
+    return JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool)
+bool RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool)
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (index >= thisObject->getLength()) {
         exec->vm().throwException(exec, createRangeError(exec, "Range error"));
-        return;
+        return false;
     }
     
-    thisObject->getConcreteArray()->setValueAt(exec, index, value);
+    return thisObject->getConcreteArray()->setValueAt(exec, index, value);
 }
 
 bool RuntimeArray::deleteProperty(JSCell*, ExecState*, PropertyName)

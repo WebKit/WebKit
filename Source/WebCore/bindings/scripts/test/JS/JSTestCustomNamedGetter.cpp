@@ -40,7 +40,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnothe
 // Attributes
 
 JSC::EncodedJSValue jsTestCustomNamedGetterConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestCustomNamedGetterConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestCustomNamedGetterConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestCustomNamedGetterPrototype : public JSC::JSNonFinalObject {
 public:
@@ -166,16 +166,16 @@ EncodedJSValue jsTestCustomNamedGetterConstructor(ExecState* state, EncodedJSVal
     return JSValue::encode(JSTestCustomNamedGetter::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestCustomNamedGetterConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestCustomNamedGetterConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSTestCustomNamedGetterPrototype* domObject = jsDynamicCast<JSTestCustomNamedGetterPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, const JSGlobalObject* globalObject)

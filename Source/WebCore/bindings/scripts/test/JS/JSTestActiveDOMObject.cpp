@@ -42,7 +42,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMess
 
 JSC::EncodedJSValue jsTestActiveDOMObjectExcitingAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestActiveDOMObjectConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestActiveDOMObjectConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestActiveDOMObjectConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestActiveDOMObjectPrototype : public JSC::JSNonFinalObject {
 public:
@@ -174,16 +174,16 @@ EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue
     return JSValue::encode(JSTestActiveDOMObject::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSTestActiveDOMObjectPrototype* domObject = jsDynamicCast<JSTestActiveDOMObjectPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSTestActiveDOMObject::getConstructor(VM& vm, const JSGlobalObject* globalObject)

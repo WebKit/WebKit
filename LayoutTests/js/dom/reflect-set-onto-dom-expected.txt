@@ -1,0 +1,73 @@
+Test ensures Reflect.set functionality with DOM objects.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+CustomAccessor setters for DOM objects. These setters are treated as setters in ECMA262. Reflect.set returns true because a setter is found.
+PASS Reflect.set(document.body, "scrollTop", "#Hello") is true
+PASS Reflect.get(document.body, "scrollTop") is not "#Hello"
+PASS Reflect.set(document.body, "scrollTop", 0) is true
+PASS Reflect.get(document.body, "scrollTop") is 0
+CustomAccessor with ReadOnly
+PASS Reflect.set(document, "compatMode", false) is false
+PASS Reflect.get(document, "compatMode") is "BackCompat"
+CustomAccessor without setter for DOM objects
+PASS Reflect.set(window.history, "length", "http://www.example.com") is false
+PASS Reflect.get(window.history, "length") is not "http://www.example.com"
+CustomValue setters.
+PASS Reflect.set(window, "Event", "http://www.example.com") is true
+PASS Reflect.get(window, "Event") is "http://www.example.com"
+CustomValue setters with writable=false.
+PASS Reflect.defineProperty(window, "MouseEvent", {
+    writable: false
+}) is true
+PASS Reflect.set(window, "MouseEvent", "http://www.example.com") is false
+PASS Reflect.get(window, "MouseEvent") is originalMouseEvent
+putDelegate CustomAccessor setters for DOM objects.
+PASS Reflect.set(document.location, "hash", "#Hello") is true
+PASS Reflect.get(document.location, "hash") is "#Hello"
+PASS Reflect.set(document.location, "hash", "#OUT") is true
+PASS Reflect.get(document.location, "hash") is "#OUT"
+PASS Reflect.set(document.location, 0, "#Hello") is true
+PASS Reflect.get(document.location, 0) is "#Hello"
+PASS Reflect.set(document.location, 0, "#OUT") is true
+PASS Reflect.get(document.location, 0) is "#OUT"
+putDelegate CustomAccessor without setter for DOM objects
+PASS Reflect.set(document.location, "origin", "http://www.example.com") is false
+NPAPI object with Reflect.set
+PASS Reflect.set(npobject, "Cocoa", "Sweet") is true
+PASS Reflect.get(npobject, "Cocoa") is "Sweet"
+PASS Reflect.defineProperty(npobject, "Cocoa", {
+    writable: false
+}) is true
+PASS Reflect.set(npobject, "Cocoa", "Hello") is false
+PASS Reflect.get(npobject, "Cocoa") is "Sweet"
+PASS Reflect.set(npobject, 0, "Sweet") is true
+PASS Reflect.get(npobject, 0) is "Sweet"
+PASS Reflect.defineProperty(npobject, 0, {
+    writable: false
+}) is true
+PASS Reflect.set(npobject, 0, "Hello") is false
+PASS Reflect.get(npobject, 0) is "Sweet"
+DOMStringMap
+PASS Reflect.get(document.body.dataset, "cocoa") is "cappuccino"
+PASS Reflect.set(document.body.dataset, "cocoa", "sweet") is true
+PASS Reflect.get(document.body.dataset, "cocoa") is "sweet"
+PASS Reflect.set(document.body.dataset, "cocoa-cappuccino", "sweet") threw exception Error: SyntaxError: DOM Exception 12.
+PASS Reflect.set(document.body.dataset, 0, "sweet") is true
+PASS Reflect.get(document.body.dataset, 0) is "sweet"
+CustomIndexedSetter
+PASS Reflect.get(select, 0).value is "cocoa"
+PASS Reflect.get(select, "length") is 3
+PASS Reflect.set(select, 0, option) is true
+PASS Reflect.get(select, 0).value is "mocha"
+PASS Reflect.get(select, "length") is 3
+PASS Reflect.set(select, 42, option) is true
+PASS Reflect.get(select, "length") is 42
+PASS Reflect.set(select, 44, option2) is true
+PASS Reflect.get(select, 44).value is "kilimanjaro"
+PASS Reflect.set(select, 20, "Kilimanjaro") threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

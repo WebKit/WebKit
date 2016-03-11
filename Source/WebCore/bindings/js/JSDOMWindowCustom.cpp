@@ -342,32 +342,35 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     return jsDOMWindowGetOwnPropertySlotNamedItemGetter(thisObject, *frame, exec, Identifier::from(exec, index), slot);
 }
 
-void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     auto* thisObject = jsCast<JSDOMWindow*>(cell);
     if (!thisObject->wrapped().frame())
-        return;
+        return false;
 
     String errorMessage;
     if (!shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), errorMessage)) {
         // We only allow setting "location" attribute cross-origin.
-        if (propertyName == exec->propertyNames().location)
-            lookupPut(exec, propertyName, thisObject, value, *s_info.staticPropHashTable, slot);
-        else
-            thisObject->printErrorMessage(errorMessage);
-        return;
+        if (propertyName == exec->propertyNames().location) {
+            bool putResult = false;
+            if (lookupPut(exec, propertyName, thisObject, value, *s_info.staticPropHashTable, slot, putResult))
+                return putResult;
+            return false;
+        }
+        thisObject->printErrorMessage(errorMessage);
+        return false;
     }
 
-    Base::put(thisObject, exec, propertyName, value, slot);
+    return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
-void JSDOMWindow::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool shouldThrow)
+bool JSDOMWindow::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool shouldThrow)
 {
     auto* thisObject = jsCast<JSDOMWindow*>(cell);
     if (!thisObject->wrapped().frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped()))
-        return;
+        return false;
     
-    Base::putByIndex(thisObject, exec, index, value, shouldThrow);
+    return Base::putByIndex(thisObject, exec, index, value, shouldThrow);
 }
 
 bool JSDOMWindow::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)

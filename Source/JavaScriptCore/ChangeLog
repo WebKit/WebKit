@@ -1,3 +1,197 @@
+2016-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.set without receiver support
+        https://bugs.webkit.org/show_bug.cgi?id=155024
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements Reflect.set.
+        The challenge in this patch is Reflect.set requires boolean result of [[Set]],
+        this is not propagated in the previous JSC put implementation.
+
+        This patch changes the put and putByIndex signature from `void put(...)` and `void putByIndex(...)` to `bool put(...)` and `bool putByIndex(...)`,
+        more consistent style to the ECMA262 spec's [[Set]].
+
+        This patch modifies so many part of WebKit. But almost all the changes are mechanical ones.
+
+        Currently, this patch does not support receiver modification support.
+        This will be supported in the subsequent patch[1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=155294
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::put):
+        (JSC::JSCallbackObject<Parent>::putByIndex):
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::put):
+        * debugger/DebuggerScope.h:
+        * jsc.cpp:
+        (WTF::RuntimeArray::put):
+        * runtime/ClassInfo.h:
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::put):
+        * runtime/ClonedArguments.h:
+        * runtime/CustomGetterSetter.cpp:
+        (JSC::callCustomSetter):
+        * runtime/CustomGetterSetter.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::put):
+        (JSC::GenericArguments<Type>::putByIndex):
+        * runtime/GetterSetter.cpp:
+        (JSC::callSetter):
+        * runtime/GetterSetter.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::put):
+        (JSC::JSArray::push):
+        * runtime/JSArray.h:
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::put):
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::put):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        (JSC::JSValue::putToPrimitiveByIndex):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::put):
+        (JSC::JSValue::putInline):
+        (JSC::JSValue::putByIndex):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::put):
+        (JSC::JSCell::putByIndex):
+        * runtime/JSCell.h:
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::put):
+        * runtime/JSDataView.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::put):
+        (JSC::JSGenericTypedArrayView<Adaptor>::putByIndex):
+        * runtime/JSGlobalLexicalEnvironment.cpp:
+        (JSC::JSGlobalLexicalEnvironment::put):
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::put):
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::put):
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::put):
+        (JSC::JSModuleNamespaceObject::putByIndex):
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::putGetter):
+        (JSC::JSObject::putSetter):
+        (JSC::JSObject::putDirectAccessor):
+        (JSC::JSObject::putDirectCustomAccessor):
+        (JSC::JSObject::putDirectNonIndexAccessor):
+        (JSC::JSObject::putIndexedDescriptor):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHole):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectNativeIntrinsicGetter):
+        (JSC::JSObject::putDirectNativeFunction):
+        (JSC::JSObject::putDirectMayBeIndex):
+        (JSC::validateAndApplyPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline):
+        (JSC::JSObject::putDirect):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putInline):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::put):
+        (JSC::JSProxy::putByIndex):
+        * runtime/JSProxy.h:
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutTouchWatchpointSet):
+        (JSC::symbolTablePutInvalidateWatchpointSet):
+        (JSC::symbolTablePutWithAttributesTouchWatchpointSet):
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        (JSC::lookupPut):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performPut):
+        (JSC::ProxyObject::put):
+        (JSC::ProxyObject::putByIndexCommon):
+        (JSC::ProxyObject::putByIndex):
+        * runtime/ProxyObject.h:
+        * runtime/PutPropertySlot.h:
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectSet):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::setRegExpConstructorInput):
+        (JSC::setRegExpConstructorMultiline):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::defineOwnProperty):
+        (JSC::regExpObjectSetLastIndexStrict):
+        (JSC::regExpObjectSetLastIndexNonStrict):
+        (JSC::RegExpObject::put):
+        * runtime/RegExpObject.h:
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::putEntry):
+        (JSC::SparseArrayEntry::put):
+        * runtime/SparseArrayValueMap.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        (JSC::StringObject::putByIndex):
+        * runtime/StringObject.h:
+        * tests/es6.yaml:
+        * tests/modules/namespace.js:
+        * tests/stress/reflect-set.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (receiverCase.object2.set Cocoa):
+        (receiverCase):
+        (proxyCase):
+        (objectCase.set get shouldBe):
+        (objectCase.get shouldBe):
+        (arrayCase.set get shouldBe):
+        (arrayCase.get shouldBe):
+        (arrayBufferCase.set get shouldBe):
+        (arrayBufferCase.get shouldBe):
+        (set get shouldBe):
+        (get shouldBe):
+        (argumentCase.test1):
+        (argumentCase.test2):
+        (argumentCase.test3):
+        (argumentCase.test4.set get shouldBe):
+        (argumentCase.test5.get shouldBe):
+        (argumentStrictCase.test1):
+        (argumentStrictCase.test2):
+        (argumentStrictCase.test3):
+        (argumentStrictCase.test4.set get shouldBe):
+        (argumentStrictCase.test5.get shouldBe):
+        (stringObjectCase.set get shouldBe):
+        (stringObjectCase.get shouldBe):
+        (customSetter.test1):
+        (customSetter.test2):
+        (customSetter.test3):
+        (customSetter):
+        (regExpLastIndex):
+        (functionCase.func):
+
 2016-03-10  Brian Burg  <bburg@apple.com>
 
         Web Inspector: generated initWithPayload: protocol object initializers should recursively decode array and object members

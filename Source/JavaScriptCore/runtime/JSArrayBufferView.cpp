@@ -164,17 +164,15 @@ void JSArrayBufferView::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 }
 
-void JSArrayBufferView::put(
+bool JSArrayBufferView::put(
     JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value,
     PutPropertySlot& slot)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
-    if (propertyName == exec->propertyNames().buffer) {
-        reject(exec, slot.isStrictMode(), "Attempting to write to read-only typed array property.");
-        return;
-    }
+    if (propertyName == exec->propertyNames().buffer)
+        return reject(exec, slot.isStrictMode(), "Attempting to write to read-only typed array property.");
     
-    Base::put(thisObject, exec, propertyName, value, slot);
+    return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
 bool JSArrayBufferView::defineOwnProperty(

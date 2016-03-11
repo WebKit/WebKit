@@ -98,15 +98,15 @@ bool DebuggerScope::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
     return result;
 }
 
-void DebuggerScope::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool DebuggerScope::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     DebuggerScope* scope = jsCast<DebuggerScope*>(cell);
     ASSERT(scope->isValid());
     if (!scope->isValid())
-        return;
+        return false;
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
     slot.setThisValue(JSValue(thisObject));
-    thisObject->methodTable()->put(thisObject, exec, propertyName, value, slot);
+    return thisObject->methodTable()->put(thisObject, exec, propertyName, value, slot);
 }
 
 bool DebuggerScope::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)

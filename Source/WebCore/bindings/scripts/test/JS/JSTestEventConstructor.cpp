@@ -39,7 +39,7 @@ namespace WebCore {
 JSC::EncodedJSValue jsTestEventConstructorAttr1(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestEventConstructorAttr2(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestEventConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestEventConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestEventConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestEventConstructorPrototype : public JSC::JSNonFinalObject {
 public:
@@ -202,16 +202,16 @@ EncodedJSValue jsTestEventConstructorConstructor(ExecState* state, EncodedJSValu
     return JSValue::encode(JSTestEventConstructor::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestEventConstructorConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestEventConstructorConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSTestEventConstructorPrototype* domObject = jsDynamicCast<JSTestEventConstructorPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSTestEventConstructor::getConstructor(VM& vm, const JSGlobalObject* globalObject)

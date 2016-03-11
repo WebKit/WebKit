@@ -80,21 +80,22 @@ bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, ExecState* exec,
     return false;
 }
 
-void JSLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
     bool shouldThrowReadOnlyError = slot.isStrictMode() || thisObject->isLexicalScope();
     bool ignoreReadOnlyErrors = false;
-    if (symbolTablePutInvalidateWatchpointSet(thisObject, exec, propertyName, value, shouldThrowReadOnlyError, ignoreReadOnlyErrors))
-        return;
+    bool putResult = false;
+    if (symbolTablePutInvalidateWatchpointSet(thisObject, exec, propertyName, value, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult))
+        return putResult;
 
     // We don't call through to JSObject because __proto__ and getter/setter 
     // properties are non-standard extensions that other implementations do not
     // expose in the lexicalEnvironment object.
     ASSERT(!thisObject->hasGetterSetterProperties());
-    thisObject->putOwnDataProperty(exec->vm(), propertyName, value, slot);
+    return thisObject->putOwnDataProperty(exec->vm(), propertyName, value, slot);
 }
 
 bool JSLexicalEnvironment::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)

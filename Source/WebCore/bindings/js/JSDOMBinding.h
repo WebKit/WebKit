@@ -89,7 +89,7 @@ void throwInvalidStateError(JSC::ExecState&, const char* message);
 void throwArrayElementTypeError(JSC::ExecState&);
 void throwAttributeTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName, const char* expectedType);
 WEBCORE_EXPORT void throwSequenceTypeError(JSC::ExecState&);
-WEBCORE_EXPORT void throwSetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
+WEBCORE_EXPORT bool throwSetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
 
 WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues);
 JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName);

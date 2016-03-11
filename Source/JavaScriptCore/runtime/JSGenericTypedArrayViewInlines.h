@@ -303,18 +303,16 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot(
 }
 
 template<typename Adaptor>
-void JSGenericTypedArrayView<Adaptor>::put(
+bool JSGenericTypedArrayView<Adaptor>::put(
     JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value,
     PutPropertySlot& slot)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
     
-    if (Optional<uint32_t> index = parseIndex(propertyName)) {
-        putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
-        return;
-    }
+    if (Optional<uint32_t> index = parseIndex(propertyName))
+        return putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
     
-    Base::put(thisObject, exec, propertyName, value, slot);
+    return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
 template<typename Adaptor>
@@ -364,19 +362,17 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
 }
 
 template<typename Adaptor>
-void JSGenericTypedArrayView<Adaptor>::putByIndex(
+bool JSGenericTypedArrayView<Adaptor>::putByIndex(
     JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
     
     if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(JSValue(thisObject), shouldThrow);
-        thisObject->methodTable()->put(
-            thisObject, exec, Identifier::from(exec, propertyName), value, slot);
-        return;
+        return thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
     }
     
-    thisObject->setIndex(exec, propertyName, value);
+    return thisObject->setIndex(exec, propertyName, value);
 }
 
 template<typename Adaptor>

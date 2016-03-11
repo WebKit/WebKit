@@ -38,9 +38,9 @@ bool JSHTMLObjectElement::getOwnPropertySlotDelegate(ExecState* exec, PropertyNa
     return pluginElementCustomGetOwnPropertySlot<JSHTMLObjectElement, Base>(exec, propertyName, slot, this);
 }
 
-bool JSHTMLObjectElement::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSHTMLObjectElement::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot, bool& putResult)
 {
-    return pluginElementCustomPut(exec, propertyName, value, this, slot);
+    return pluginElementCustomPut(exec, propertyName, value, this, slot, putResult);
 }
 
 CallType JSHTMLObjectElement::getCallData(JSCell* cell, CallData& callData)

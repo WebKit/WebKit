@@ -50,10 +50,10 @@ struct MethodTable {
     typedef ConstructType (*GetConstructDataFunctionPtr)(JSCell*, ConstructData&);
     GetConstructDataFunctionPtr getConstructData;
 
-    typedef void (*PutFunctionPtr)(JSCell*, ExecState*, PropertyName propertyName, JSValue, PutPropertySlot&);
+    typedef bool (*PutFunctionPtr)(JSCell*, ExecState*, PropertyName propertyName, JSValue, PutPropertySlot&);
     PutFunctionPtr put;
 
-    typedef void (*PutByIndexFunctionPtr)(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    typedef bool (*PutByIndexFunctionPtr)(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
     PutByIndexFunctionPtr putByIndex;
 
     typedef bool (*DeletePropertyFunctionPtr)(JSCell*, ExecState*, PropertyName);

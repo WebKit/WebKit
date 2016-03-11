@@ -1,3 +1,17 @@
+2016-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.set without receiver support
+        https://bugs.webkit.org/show_bug.cgi?id=155024
+
+        Reviewed by Geoffrey Garen.
+
+        As the same to NPJSObject, we just propagate the returned value of NetscapePluginInstanceProxy::setProperty.
+
+        * Plugins/Hosted/ProxyInstance.h:
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyField::setValueToInstance):
+        (WebKit::ProxyInstance::setFieldValue):
+
 2016-03-10  Jeremy Jones  <jeremyj@apple.com>
 
         Set AVURLAssetUsesNoPersistentCacheKey on AVAsset to match caching policy.

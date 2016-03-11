@@ -1040,9 +1040,9 @@ sub GenerateHeader
 
     # Getters
     if ($overridesPut) {
-        push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
-        push(@headerContent, "    static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);\n");
-        push(@headerContent, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n") if $interface->extendedAttributes->{"CustomNamedSetter"};
+        push(@headerContent, "    static bool put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
+        push(@headerContent, "    static bool putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);\n");
+        push(@headerContent, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&, bool& putResult);\n") if $interface->extendedAttributes->{"CustomNamedSetter"};
     }
 
     if (!$hasParent) {
@@ -1340,7 +1340,7 @@ sub GenerateHeader
             push(@headerContent, "JSC::EncodedJSValue ${getter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);\n");
             if (!IsReadonly($attribute)) {
                 my $setter = GetAttributeSetterName($interfaceName, $className, $interface, $attribute);
-                push(@headerContent, "void ${setter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+                push(@headerContent, "bool ${setter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
             }
             push(@headerContent, "#endif\n") if $conditionalString;
         }
@@ -1888,7 +1888,7 @@ sub GenerateImplementation
             push(@implContent, "JSC::EncodedJSValue ${getter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);\n");
             if (!IsReadonly($attribute)) {
                 my $setter = GetAttributeSetterName($interfaceName, $className, $interface, $attribute);
-                push(@implContent, "void ${setter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+                push(@implContent, "bool ${setter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
             }
             push(@implContent, "#endif\n") if $conditionalString;
         }
@@ -1899,7 +1899,7 @@ sub GenerateImplementation
         }
 
         my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
-        push(@implContent, "void ${constructorFunctionName}(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+        push(@implContent, "bool ${constructorFunctionName}(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
 
         push(@implContent, "\n");
     }
@@ -2143,12 +2143,13 @@ sub GenerateImplementation
     }
 
     if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
-        push(@implContent, "void ${className}Prototype::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\n");
+        push(@implContent, "bool ${className}Prototype::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\n");
         push(@implContent, "{\n");
         push(@implContent, "    auto* thisObject = jsCast<${className}Prototype*>(cell);\n");
-        push(@implContent, "    if (thisObject->putDelegate(state, propertyName, value, slot))\n");
-        push(@implContent, "        return;\n");
-        push(@implContent, "    Base::put(thisObject, state, propertyName, value, slot);\n");
+        push(@implContent, "    bool putResult = false;\n");
+        push(@implContent, "    if (thisObject->putDelegate(state, propertyName, value, slot, putResult))\n");
+        push(@implContent, "        return putResult;\n");
+        push(@implContent, "    return Base::put(thisObject, state, propertyName, value, slot);\n");
         push(@implContent, "}\n\n");
     }
 
@@ -2538,18 +2539,18 @@ sub GenerateImplementation
 
         my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
 
-        push(@implContent, "void ${constructorFunctionName}(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
+        push(@implContent, "bool ${constructorFunctionName}(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
         push(@implContent, "{\n");
         push(@implContent, "    JSValue value = JSValue::decode(encodedValue);\n");
         push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue));\n");
         push(@implContent, "    if (UNLIKELY(!domObject)) {\n");
         push(@implContent, "        throwVMTypeError(state);\n");
-        push(@implContent, "        return;\n");
+        push(@implContent, "        return false;\n");
         push(@implContent, "    }\n");
 
         push(@implContent, "    // Shadowing a built-in constructor\n");
 
-        push(@implContent, "    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);\n");
+        push(@implContent, "    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);\n");
         push(@implContent, "}\n\n");
     }
     my $hasCustomSetter = $interface->extendedAttributes->{"CustomNamedSetter"}
@@ -2557,26 +2558,27 @@ sub GenerateImplementation
 
     if ($hasCustomSetter) {
         if (!$interface->extendedAttributes->{"CustomPutFunction"}) {
-            push(@implContent, "void ${className}::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\n");
+            push(@implContent, "bool ${className}::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\n");
             push(@implContent, "{\n");
             push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
             if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
                 push(@implContent, "    if (Optional<uint32_t> index = parseIndex(propertyName)) {\n");
                 push(@implContent, "        thisObject->indexSetter(state, index.value(), value);\n");
-                push(@implContent, "        return;\n");
+                push(@implContent, "        return true;\n");
                 push(@implContent, "    }\n");
             }
             if ($interface->extendedAttributes->{"CustomNamedSetter"}) {
-                push(@implContent, "    if (thisObject->putDelegate(state, propertyName, value, slot))\n");
-                push(@implContent, "        return;\n");
+                push(@implContent, "    bool putResult = false;\n");
+                push(@implContent, "    if (thisObject->putDelegate(state, propertyName, value, slot, putResult))\n");
+                push(@implContent, "        return putResult;\n");
             }
 
-            push(@implContent, "    Base::put(thisObject, state, propertyName, value, slot);\n");
+            push(@implContent, "    return Base::put(thisObject, state, propertyName, value, slot);\n");
             push(@implContent, "}\n\n");
 
             if ($interface->extendedAttributes->{"CustomIndexedSetter"} || $interface->extendedAttributes->{"CustomNamedSetter"}) {
-                push(@implContent, "void ${className}::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)\n");
+                push(@implContent, "bool ${className}::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
                 push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
@@ -2584,18 +2586,19 @@ sub GenerateImplementation
                 if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
                     push(@implContent, "    if (index <= MAX_ARRAY_INDEX) {\n");
                     push(@implContent, "        thisObject->indexSetter(state, index, value);\n");
-                    push(@implContent, "        return;\n");
+                    push(@implContent, "        return true;\n");
                     push(@implContent, "    }\n");
                 }
 
                 if ($interface->extendedAttributes->{"CustomNamedSetter"}) {
                     push(@implContent, "    Identifier propertyName = Identifier::from(state, index);\n");
                     push(@implContent, "    PutPropertySlot slot(thisObject, shouldThrow);\n");
-                    push(@implContent, "    if (thisObject->putDelegate(state, propertyName, value, slot))\n");
-                    push(@implContent, "        return;\n");
+                    push(@implContent, "    bool putResult = false;\n");
+                    push(@implContent, "    if (thisObject->putDelegate(state, propertyName, value, slot, putResult))\n");
+                    push(@implContent, "        return putResult;\n");
                 }
 
-                push(@implContent, "    Base::putByIndex(cell, state, index, value, shouldThrow);\n");
+                push(@implContent, "    return Base::putByIndex(cell, state, index, value, shouldThrow);\n");
                 push(@implContent, "}\n\n");
             }
         }
@@ -2619,7 +2622,7 @@ sub GenerateImplementation
             my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
-            push(@implContent, "void ${putFunctionName}(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
+            push(@implContent, "bool ${putFunctionName}(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
             push(@implContent, "{\n");
             push(@implContent, "    JSValue value = JSValue::decode(encodedValue);\n");
             push(@implContent, "    UNUSED_PARAM(thisValue);\n") if !$attribute->isStatic;
@@ -2631,7 +2634,7 @@ sub GenerateImplementation
                 }
                 push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                 if ($attribute->signature->extendedAttributes->{"LenientThis"}) {
-                    push(@implContent, "        return;\n");
+                    push(@implContent, "        return false;\n");
                 } elsif (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
                     # Fallback to trying to searching the prototype chain for compatibility reasons.
                     push(@implContent, "        JSObject* thisObject = JSValue::decode(thisValue).getObject();\n");
@@ -2643,8 +2646,7 @@ sub GenerateImplementation
                     push(@implContent, "            return throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
                     push(@implContent, "        reportDeprecatedSetterError(*state, \"$interfaceName\", \"$name\");\n");
                 } else {
-                    push(@implContent, "        throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
-                    push(@implContent, "        return;\n");
+                    push(@implContent, "        return throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
                 }
                 push(@implContent, "    }\n");
             }
@@ -2654,11 +2656,12 @@ sub GenerateImplementation
                 } else {
                     push(@implContent, "    if (!shouldAllowAccessToFrame(state, castedThis->wrapped().frame()))\n");
                 }
-                push(@implContent, "        return;\n");
+                push(@implContent, "        return false;\n");
             }
 
             if (HasCustomSetter($attribute->signature->extendedAttributes)) {
                 push(@implContent, "    castedThis->set$implSetterFunctionName(*state, value);\n");
+                push(@implContent, "    return true;\n");
             } elsif ($type eq "EventHandler") {
                 $implIncludes{"JSEventListener.h"} = 1;
                 my $eventName = EventHandlerAttributeEventName($attribute);
@@ -2673,6 +2676,7 @@ sub GenerateImplementation
                         : "setEventHandlerAttribute";
                     push(@implContent, "    $setter(*state, *castedThis, castedThis->wrapped(), $eventName, value);\n");
                 }
+                push(@implContent, "    return true;\n");
             } elsif ($attribute->signature->type =~ /Constructor$/) {
                 my $constructorType = $attribute->signature->type;
                 $constructorType =~ s/Constructor$//;
@@ -2683,10 +2687,10 @@ sub GenerateImplementation
                     AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{"Conditional"});
                 }
                 push(@implContent, "    // Shadowing a built-in constructor.\n");
-                push(@implContent, "    castedThis->putDirect(state->vm(), Identifier::fromString(state, \"$name\"), value);\n");
+                push(@implContent, "    return castedThis->putDirect(state->vm(), Identifier::fromString(state, \"$name\"), value);\n");
             } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
                 push(@implContent, "    // Shadowing a built-in object.\n");
-                push(@implContent, "    castedThis->putDirect(state->vm(), Identifier::fromString(state, \"$name\"), value);\n");
+                push(@implContent, "    return castedThis->putDirect(state->vm(), Identifier::fromString(state, \"$name\"), value);\n");
             } else {
                 if (!$attribute->isStatic) {
                     my $putForwards = $attribute->signature->extendedAttributes->{"PutForwards"};
@@ -2696,7 +2700,7 @@ sub GenerateImplementation
                         if ($attribute->signature->isNullable) {
                             push(@implContent, "    RefPtr<${attributeType}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
                             push(@implContent, "    if (!forwardedImpl)\n");
-                            push(@implContent, "        return;\n");
+                            push(@implContent, "        return false;\n");
                             push(@implContent, "    auto& impl = *forwardedImpl;\n");
                         } else {
                             # Attribute is not nullable, the implementation is expected to return a reference.
@@ -2726,14 +2730,14 @@ sub GenerateImplementation
                     if ($codeGenerator->IsWrapperType($argType)) {
                         push(@implContent, "    if (UNLIKELY(!value.isUndefinedOrNull() && !value.inherits(JS${argType}::info()))) {\n");
                         push(@implContent, "        throwAttributeTypeError(*state, \"$interfaceName\", \"$name\", \"$argType\");\n");
-                        push(@implContent, "        return;\n");
+                        push(@implContent, "        return false;\n");
                         push(@implContent, "    };\n");
                     }
                 }
 
                 push(@implContent, "    " . GetNativeTypeFromSignature($attribute->signature) . " nativeValue = " . JSValueToNative($attribute->signature, "value", $attribute->signature->extendedAttributes->{"Conditional"}) . ";\n");
                 push(@implContent, "    if (UNLIKELY(state->hadException()))\n");
-                push(@implContent, "        return;\n");
+                push(@implContent, "        return false;\n");
 
                 if ($codeGenerator->IsEnumType($type)) {
                     my @enumValues = $codeGenerator->ValidEnumValues($type);
@@ -2742,13 +2746,13 @@ sub GenerateImplementation
                         push(@enumChecks, "nativeValue != \"$enumValue\"");
                     }
                     push (@implContent, "    if (" . join(" && ", @enumChecks) . ")\n");
-                    push (@implContent, "        return;\n");
+                    push (@implContent, "        return false;\n");
                 }
 
                 if ($attribute->signature->type eq "double" or $attribute->signature->type eq "float") {
                     push(@implContent, "    if (!std::isfinite(nativeValue)) {\n");
                     push(@implContent, "        setDOMException(state, TypeError);\n");
-                    push(@implContent, "        return;\n");
+                    push(@implContent, "        return false;\n");
                     push(@implContent, "    }\n");
                 }
 
@@ -2756,7 +2760,7 @@ sub GenerateImplementation
                     if ($svgPropertyType) {
                         push(@implContent, "    if (impl.isReadOnly()) {\n");
                         push(@implContent, "        setDOMException(state, NO_MODIFICATION_ALLOWED_ERR);\n");
-                        push(@implContent, "        return;\n");
+                        push(@implContent, "        return false;\n");
                         push(@implContent, "    }\n");
                         $implIncludes{"ExceptionCode.h"} = 1;
                     }
@@ -2780,6 +2784,7 @@ sub GenerateImplementation
                             push(@implContent, "    impl.commitChange();\n");
                         }
                     }
+                    push(@implContent, "    return true;\n");
                 } else {
                     my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
                     if ($codeGenerator->IsTypedArrayType($attribute->signature->type) and not $attribute->signature->type eq "ArrayBuffer") {
@@ -2798,12 +2803,13 @@ sub GenerateImplementation
                         $functionName = "impl.${functionName}";
                     }
 
-                    unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"SetterCallWith"}, \@implContent, ""));
-                    unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, ""));
+                    unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"SetterCallWith"}, \@implContent, "false"));
+                    unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, "false"));
 
                     push(@arguments, "ec") if $setterRaisesException;
                     push(@implContent, "    ${functionName}(" . join(", ", @arguments) . ");\n");
                     push(@implContent, "    setDOMException(state, ec);\n") if $setterRaisesException;
+                    push(@implContent, "    return true;\n");
                 }
             }
 
@@ -4654,8 +4660,8 @@ sub GeneratePrototypeDeclaration
 
     if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
         push(@$outputArray, "\n");
-        push(@$outputArray, "    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
-        push(@$outputArray, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
+        push(@$outputArray, "    static bool put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
+        push(@$outputArray, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&, bool& putResult);\n");
     }
 
     # Custom defineOwnProperty function

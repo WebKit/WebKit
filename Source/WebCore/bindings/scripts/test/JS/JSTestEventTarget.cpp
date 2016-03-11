@@ -42,7 +42,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(JSC::Ex
 // Attributes
 
 JSC::EncodedJSValue jsTestEventTargetConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestEventTargetConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestEventTargetConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestEventTargetPrototype : public JSC::JSNonFinalObject {
 public:
@@ -165,16 +165,16 @@ EncodedJSValue jsTestEventTargetConstructor(ExecState* state, EncodedJSValue thi
     return JSValue::encode(JSTestEventTarget::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestEventTargetConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestEventTargetConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSTestEventTargetPrototype* domObject = jsDynamicCast<JSTestEventTargetPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 void JSTestEventTarget::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)

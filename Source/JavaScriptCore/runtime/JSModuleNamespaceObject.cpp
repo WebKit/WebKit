@@ -151,17 +151,19 @@ bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec
     return true;
 }
 
-void JSModuleNamespaceObject::put(JSCell*, ExecState* exec, PropertyName, JSValue, PutPropertySlot& slot)
+bool JSModuleNamespaceObject::put(JSCell*, ExecState* exec, PropertyName, JSValue, PutPropertySlot& slot)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-set-p-v-receiver
     if (slot.isStrictMode())
         throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
+    return false;
 }
 
-void JSModuleNamespaceObject::putByIndex(JSCell*, ExecState* exec, unsigned, JSValue, bool shouldThrow)
+bool JSModuleNamespaceObject::putByIndex(JSCell*, ExecState* exec, unsigned, JSValue, bool shouldThrow)
 {
     if (shouldThrow)
         throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
+    return false;
 }
 
 bool JSModuleNamespaceObject::deleteProperty(JSCell* cell, ExecState*, PropertyName propertyName)

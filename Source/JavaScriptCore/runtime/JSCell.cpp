@@ -108,25 +108,23 @@ ConstructType JSCell::getConstructData(JSCell*, ConstructData& constructData)
     return ConstructType::None;
 }
 
-void JSCell::put(JSCell* cell, ExecState* exec, PropertyName identifier, JSValue value, PutPropertySlot& slot)
+bool JSCell::put(JSCell* cell, ExecState* exec, PropertyName identifier, JSValue value, PutPropertySlot& slot)
 {
-    if (cell->isString() || cell->isSymbol()) {
-        JSValue(cell).putToPrimitive(exec, identifier, value, slot);
-        return;
-    }
+    if (cell->isString() || cell->isSymbol())
+        return JSValue(cell).putToPrimitive(exec, identifier, value, slot);
+
     JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
-    thisObject->methodTable(exec->vm())->put(thisObject, exec, identifier, value, slot);
+    return thisObject->methodTable(exec->vm())->put(thisObject, exec, identifier, value, slot);
 }
 
-void JSCell::putByIndex(JSCell* cell, ExecState* exec, unsigned identifier, JSValue value, bool shouldThrow)
+bool JSCell::putByIndex(JSCell* cell, ExecState* exec, unsigned identifier, JSValue value, bool shouldThrow)
 {
     if (cell->isString() || cell->isSymbol()) {
         PutPropertySlot slot(cell, shouldThrow);
-        JSValue(cell).putToPrimitive(exec, Identifier::from(exec, identifier), value, slot);
-        return;
+        return JSValue(cell).putToPrimitive(exec, Identifier::from(exec, identifier), value, slot);
     }
     JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
-    thisObject->methodTable(exec->vm())->putByIndex(thisObject, exec, identifier, value, shouldThrow);
+    return thisObject->methodTable(exec->vm())->putByIndex(thisObject, exec, identifier, value, shouldThrow);
 }
 
 bool JSCell::deleteProperty(JSCell* cell, ExecState* exec, PropertyName identifier)

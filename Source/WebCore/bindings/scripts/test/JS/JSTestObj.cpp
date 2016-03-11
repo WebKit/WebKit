@@ -202,159 +202,159 @@ JSC::EncodedJSValue jsTestObjReadOnlyStringAttr(JSC::ExecState*, JSC::EncodedJSV
 JSC::EncodedJSValue jsTestObjReadOnlyTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjConstructorStaticReadOnlyLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjConstructorStaticStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjConstructorStaticStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjConstructorStaticStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjConstructorTestSubObj(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjTestSubObjEnabledBySettingConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjTestSubObjEnabledBySettingConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjTestSubObjEnabledBySettingConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjEnumAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjEnumAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjEnumAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjByteAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjByteAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjByteAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjOctetAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjOctetAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjOctetAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjUnsignedShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjUnsignedShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjUnsignedShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjLongLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjLongLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjLongLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjUnsignedLongLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjUnsignedLongLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjUnsignedLongLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjLenientTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjLenientTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjLenientTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjUnforgeableAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjStringAttrTreatingNullAsEmptyString(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjStringAttrTreatingNullAsEmptyString(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjStringAttrTreatingNullAsEmptyString(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjXMLObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjXMLObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjXMLObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjCreate(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjCreate(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjCreate(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjReadOnlySymbolAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjConstructorStaticReadOnlySymbolAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjReflectedStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjReflectedStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjReflectedStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjReflectedIntegralAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjReflectedIntegralAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjReflectedIntegralAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjReflectedUnsignedIntegralAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjReflectedUnsignedIntegralAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjReflectedUnsignedIntegralAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjReflectedBooleanAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjReflectedBooleanAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjReflectedBooleanAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjReflectedURLAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjReflectedURLAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjReflectedURLAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjReflectedStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjReflectedStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjReflectedStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjReflectedCustomIntegralAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjReflectedCustomIntegralAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjReflectedCustomIntegralAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjReflectedCustomBooleanAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjReflectedCustomBooleanAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjReflectedCustomBooleanAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjReflectedCustomURLAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjReflectedCustomURLAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjReflectedCustomURLAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttrWithGetterExceptionWithMessage(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjAttrWithGetterExceptionWithMessage(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjAttrWithGetterExceptionWithMessage(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttrWithSetterExceptionWithMessage(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjAttrWithSetterExceptionWithMessage(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjAttrWithSetterExceptionWithMessage(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStringAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjStringAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjStringAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStrictTypeCheckingAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjStrictTypeCheckingAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjStrictTypeCheckingAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjCustomAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjCustomAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjCustomAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjOnfoo(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjOnfoo(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjOnfoo(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptStateAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjWithScriptStateAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjWithScriptStateAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithCallWithAndSetterCallWithAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjWithCallWithAndSetterCallWithAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjWithCallWithAndSetterCallWithAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjWithScriptExecutionContextAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjWithScriptExecutionContextAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptStateAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjWithScriptStateAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjWithScriptStateAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjWithScriptExecutionContextAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjWithScriptExecutionContextAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjWithScriptArgumentsAndCallStackAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjWithScriptArgumentsAndCallStackAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #if ENABLE(Condition1)
 JSC::EncodedJSValue jsTestObjConditionalAttr1(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjConditionalAttr1(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjConditionalAttr1(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
 JSC::EncodedJSValue jsTestObjConditionalAttr2(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjConditionalAttr2(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjConditionalAttr2(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
 JSC::EncodedJSValue jsTestObjConditionalAttr3(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjConditionalAttr3(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjConditionalAttr3(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition1)
 JSC::EncodedJSValue jsTestObjConditionalAttr4Constructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjConditionalAttr4Constructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjConditionalAttr4Constructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
 JSC::EncodedJSValue jsTestObjConditionalAttr5Constructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjConditionalAttr5Constructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjConditionalAttr5Constructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
 JSC::EncodedJSValue jsTestObjConditionalAttr6Constructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjConditionalAttr6Constructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjConditionalAttr6Constructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 JSC::EncodedJSValue jsTestObjCachedAttribute1(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjCachedAttribute2(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjAnyAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjAnyAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjAnyAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjContentDocument(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjMutablePoint(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjMutablePoint(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjMutablePoint(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjImmutablePoint(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjImmutablePoint(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjImmutablePoint(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStrawberry(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjStrawberry(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjStrawberry(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStrictFloat(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjStrictFloat(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjStrictFloat(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjDescription(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjId(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjId(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjId(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjHash(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjReplaceableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjReplaceableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjReplaceableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjNullableDoubleAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjNullableLongAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjNullableBooleanAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjNullableStringAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjNullableLongSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjNullableLongSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjNullableLongSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjNullableStringSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjNullableStringSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjNullableStringSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjNullableStringValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjNullableStringValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjNullableStringValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjAttributeWithReservedEnumType(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjAttributeWithReservedEnumType(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjAttributeWithReservedEnumType(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjPutForwardsAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjPutForwardsAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjPutForwardsAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjPutForwardsNullableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjPutForwardsNullableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjPutForwardsNullableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-void setJSTestObjConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+bool setJSTestObjConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestObjPrototype : public JSC::JSNonFinalObject {
 public:
@@ -2047,1100 +2047,1097 @@ EncodedJSValue jsTestObjConstructor(ExecState* state, EncodedJSValue thisValue, 
     return JSValue::encode(JSTestObj::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestObjConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSTestObjPrototype* domObject = jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state);
-        return;
+        return false;
     }
     // Shadowing a built-in constructor
-    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
+    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-void setJSTestObjConstructorStaticStringAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjConstructorStaticStringAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     TestObj::setStaticStringAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjTestSubObjEnabledBySettingConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjTestSubObjEnabledBySettingConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "TestSubObjEnabledBySetting");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "TestSubObjEnabledBySetting");
     }
     // Shadowing a built-in constructor.
-    castedThis->putDirect(state->vm(), Identifier::fromString(state, "TestSubObjEnabledBySetting"), value);
+    return castedThis->putDirect(state->vm(), Identifier::fromString(state, "TestSubObjEnabledBySetting"), value);
 }
 
 
-void setJSTestObjEnumAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjEnumAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "enumAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "enumAttr");
     }
     auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     if (nativeValue != "" && nativeValue != "EnumValue1" && nativeValue != "EnumValue2" && nativeValue != "EnumValue3")
-        return;
+        return false;
     impl.setEnumAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjByteAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjByteAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "byteAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "byteAttr");
     }
     auto& impl = castedThis->wrapped();
     int8_t nativeValue = toInt8(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setByteAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjOctetAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjOctetAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "octetAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "octetAttr");
     }
     auto& impl = castedThis->wrapped();
     uint8_t nativeValue = toUInt8(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setOctetAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjShortAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjShortAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "shortAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "shortAttr");
     }
     auto& impl = castedThis->wrapped();
     int16_t nativeValue = toInt16(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setShortAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjUnsignedShortAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjUnsignedShortAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "unsignedShortAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "unsignedShortAttr");
     }
     auto& impl = castedThis->wrapped();
     uint16_t nativeValue = toUInt16(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setUnsignedShortAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjLongAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjLongAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "longAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "longAttr");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setLongAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjLongLongAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjLongLongAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "longLongAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "longLongAttr");
     }
     auto& impl = castedThis->wrapped();
     long long nativeValue = toInt64(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setLongLongAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjUnsignedLongLongAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjUnsignedLongLongAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "unsignedLongLongAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "unsignedLongLongAttr");
     }
     auto& impl = castedThis->wrapped();
     unsigned long long nativeValue = toUInt64(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setUnsignedLongLongAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjStringAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjStringAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "stringAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "stringAttr");
     }
     auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setStringAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjTestObjAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjTestObjAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "testObjAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "testObjAttr");
     }
     auto& impl = castedThis->wrapped();
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setTestObjAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjLenientTestObjAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjLenientTestObjAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        return;
+        return false;
     }
     auto& impl = castedThis->wrapped();
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setLenientTestObjAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjStringAttrTreatingNullAsEmptyString(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjStringAttrTreatingNullAsEmptyString(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "stringAttrTreatingNullAsEmptyString");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "stringAttrTreatingNullAsEmptyString");
     }
     auto& impl = castedThis->wrapped();
     String nativeValue = valueToStringTreatingNullAsEmptyString(state, value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setStringAttrTreatingNullAsEmptyString(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjXMLObjAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjXMLObjAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "XMLObjAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "XMLObjAttr");
     }
     auto& impl = castedThis->wrapped();
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setXMLObjAttr(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjCreate(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjCreate(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "create");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "create");
     }
     auto& impl = castedThis->wrapped();
     bool nativeValue = value.toBoolean(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setCreate(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjReflectedStringAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjReflectedStringAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "reflectedStringAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "reflectedStringAttr");
     }
     auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjReflectedIntegralAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjReflectedIntegralAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "reflectedIntegralAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "reflectedIntegralAttr");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjReflectedUnsignedIntegralAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjReflectedUnsignedIntegralAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "reflectedUnsignedIntegralAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "reflectedUnsignedIntegralAttr");
     }
     auto& impl = castedThis->wrapped();
     unsigned nativeValue = toUInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjReflectedBooleanAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjReflectedBooleanAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "reflectedBooleanAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "reflectedBooleanAttr");
     }
     auto& impl = castedThis->wrapped();
     bool nativeValue = value.toBoolean(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjReflectedURLAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjReflectedURLAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "reflectedURLAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "reflectedURLAttr");
     }
     auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattrAttr, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjReflectedStringAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjReflectedStringAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "reflectedStringAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "reflectedStringAttr");
     }
     auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjReflectedCustomIntegralAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjReflectedCustomIntegralAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "reflectedCustomIntegralAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "reflectedCustomIntegralAttr");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjReflectedCustomBooleanAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjReflectedCustomBooleanAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "reflectedCustomBooleanAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "reflectedCustomBooleanAttr");
     }
     auto& impl = castedThis->wrapped();
     bool nativeValue = value.toBoolean(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjReflectedCustomURLAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjReflectedCustomURLAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "reflectedCustomURLAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "reflectedCustomURLAttr");
     }
     auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjTypedArrayAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjTypedArrayAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "typedArrayAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "typedArrayAttr");
     }
     auto& impl = castedThis->wrapped();
     RefPtr<Float32Array> nativeValue = toFloat32Array(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setTypedArrayAttr(nativeValue.get());
+    return true;
 }
 
 
-void setJSTestObjAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "attrWithGetterException");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "attrWithGetterException");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setAttrWithGetterException(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjAttrWithGetterExceptionWithMessage(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjAttrWithGetterExceptionWithMessage(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "attrWithGetterExceptionWithMessage");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "attrWithGetterExceptionWithMessage");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setAttrWithGetterExceptionWithMessage(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "attrWithSetterException");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "attrWithSetterException");
     }
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setAttrWithSetterException(nativeValue, ec);
     setDOMException(state, ec);
+    return true;
 }
 
 
-void setJSTestObjAttrWithSetterExceptionWithMessage(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjAttrWithSetterExceptionWithMessage(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "attrWithSetterExceptionWithMessage");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "attrWithSetterExceptionWithMessage");
     }
     auto& impl = castedThis->wrapped();
     ExceptionCodeWithMessage ec;
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setAttrWithSetterExceptionWithMessage(nativeValue, ec);
     setDOMException(state, ec);
+    return true;
 }
 
 
-void setJSTestObjStringAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjStringAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "stringAttrWithGetterException");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "stringAttrWithGetterException");
     }
     auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setStringAttrWithGetterException(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjStringAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjStringAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "stringAttrWithSetterException");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "stringAttrWithSetterException");
     }
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setStringAttrWithSetterException(nativeValue, ec);
     setDOMException(state, ec);
+    return true;
 }
 
 
-void setJSTestObjStrictTypeCheckingAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjStrictTypeCheckingAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "strictTypeCheckingAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "strictTypeCheckingAttribute");
     }
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(!value.isUndefinedOrNull() && !value.inherits(JSTestObj::info()))) {
         throwAttributeTypeError(*state, "TestObj", "strictTypeCheckingAttribute", "TestObj");
-        return;
+        return false;
     };
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setStrictTypeCheckingAttribute(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjCustomAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjCustomAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "customAttr");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "customAttr");
     }
     castedThis->setCustomAttr(*state, value);
+    return true;
 }
 
 
-void setJSTestObjOnfoo(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjOnfoo(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "onfoo");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "onfoo");
     }
     setEventHandlerAttribute(*state, *castedThis, castedThis->wrapped(), eventNames().fooEvent, value);
+    return true;
 }
 
 
-void setJSTestObjWithScriptStateAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjWithScriptStateAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "withScriptStateAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "withScriptStateAttribute");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setWithScriptStateAttribute(*state, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjWithCallWithAndSetterCallWithAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjWithCallWithAndSetterCallWithAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "withCallWithAndSetterCallWithAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "withCallWithAndSetterCallWithAttribute");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setWithCallWithAndSetterCallWithAttribute(*state, activeDOMWindow(state), firstDOMWindow(state), nativeValue);
+    return true;
 }
 
 
-void setJSTestObjWithScriptExecutionContextAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjWithScriptExecutionContextAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "withScriptExecutionContextAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "withScriptExecutionContextAttribute");
     }
     auto& impl = castedThis->wrapped();
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
     impl.setWithScriptExecutionContextAttribute(*scriptContext, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjWithScriptStateAttributeRaises(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjWithScriptStateAttributeRaises(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "withScriptStateAttributeRaises");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "withScriptStateAttributeRaises");
     }
     auto& impl = castedThis->wrapped();
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setWithScriptStateAttributeRaises(*state, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "withScriptExecutionContextAttributeRaises");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "withScriptExecutionContextAttributeRaises");
     }
     auto& impl = castedThis->wrapped();
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
     impl.setWithScriptExecutionContextAttributeRaises(*scriptContext, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "withScriptExecutionContextAndScriptStateAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "withScriptExecutionContextAndScriptStateAttribute");
     }
     auto& impl = castedThis->wrapped();
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
     impl.setWithScriptExecutionContextAndScriptStateAttribute(*state, *scriptContext, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "withScriptExecutionContextAndScriptStateAttributeRaises");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "withScriptExecutionContextAndScriptStateAttributeRaises");
     }
     auto& impl = castedThis->wrapped();
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
     impl.setWithScriptExecutionContextAndScriptStateAttributeRaises(*state, *scriptContext, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "withScriptExecutionContextAndScriptStateWithSpacesAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "withScriptExecutionContextAndScriptStateWithSpacesAttribute");
     }
     auto& impl = castedThis->wrapped();
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
     impl.setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(*state, *scriptContext, nativeValue);
+    return true;
 }
 
 
-void setJSTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "withScriptArgumentsAndCallStackAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "withScriptArgumentsAndCallStackAttribute");
     }
     auto& impl = castedThis->wrapped();
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setWithScriptArgumentsAndCallStackAttribute(nativeValue);
+    return true;
 }
 
 
 #if ENABLE(Condition1)
-void setJSTestObjConditionalAttr1(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjConditionalAttr1(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "conditionalAttr1");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "conditionalAttr1");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setConditionalAttr1(nativeValue);
+    return true;
 }
 
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-void setJSTestObjConditionalAttr2(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjConditionalAttr2(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "conditionalAttr2");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "conditionalAttr2");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setConditionalAttr2(nativeValue);
+    return true;
 }
 
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-void setJSTestObjConditionalAttr3(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjConditionalAttr3(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "conditionalAttr3");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "conditionalAttr3");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setConditionalAttr3(nativeValue);
+    return true;
 }
 
 #endif
 
 #if ENABLE(Condition1)
-void setJSTestObjConditionalAttr4Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjConditionalAttr4Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "conditionalAttr4");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "conditionalAttr4");
     }
     // Shadowing a built-in constructor.
-    castedThis->putDirect(state->vm(), Identifier::fromString(state, "conditionalAttr4"), value);
+    return castedThis->putDirect(state->vm(), Identifier::fromString(state, "conditionalAttr4"), value);
 }
 
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-void setJSTestObjConditionalAttr5Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjConditionalAttr5Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "conditionalAttr5");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "conditionalAttr5");
     }
     // Shadowing a built-in constructor.
-    castedThis->putDirect(state->vm(), Identifier::fromString(state, "conditionalAttr5"), value);
+    return castedThis->putDirect(state->vm(), Identifier::fromString(state, "conditionalAttr5"), value);
 }
 
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-void setJSTestObjConditionalAttr6Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjConditionalAttr6Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "conditionalAttr6");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "conditionalAttr6");
     }
     // Shadowing a built-in constructor.
-    castedThis->putDirect(state->vm(), Identifier::fromString(state, "conditionalAttr6"), value);
+    return castedThis->putDirect(state->vm(), Identifier::fromString(state, "conditionalAttr6"), value);
 }
 
 #endif
 
-void setJSTestObjAnyAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjAnyAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "anyAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "anyAttribute");
     }
     auto& impl = castedThis->wrapped();
     Deprecated::ScriptValue nativeValue = { state->vm(), value };
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setAnyAttribute(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjMutablePoint(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjMutablePoint(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "mutablePoint");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "mutablePoint");
     }
     auto& impl = castedThis->wrapped();
     SVGPropertyTearOff<SVGPoint>* nativeValue = JSSVGPoint::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setMutablePoint(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjImmutablePoint(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjImmutablePoint(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "immutablePoint");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "immutablePoint");
     }
     auto& impl = castedThis->wrapped();
     SVGPropertyTearOff<SVGPoint>* nativeValue = JSSVGPoint::toWrapped(value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setImmutablePoint(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjStrawberry(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjStrawberry(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "strawberry");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "strawberry");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setBlueberry(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjStrictFloat(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjStrictFloat(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "strictFloat");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "strictFloat");
     }
     auto& impl = castedThis->wrapped();
     float nativeValue = value.toFloat(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setStrictFloat(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjId(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjId(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "id");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "id");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setId(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjReplaceableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjReplaceableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "replaceableAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "replaceableAttribute");
     }
     // Shadowing a built-in object.
-    castedThis->putDirect(state->vm(), Identifier::fromString(state, "replaceableAttribute"), value);
+    return castedThis->putDirect(state->vm(), Identifier::fromString(state, "replaceableAttribute"), value);
 }
 
 
-void setJSTestObjNullableLongSettableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjNullableLongSettableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "nullableLongSettableAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "nullableLongSettableAttribute");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setNullableLongSettableAttribute(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjNullableStringSettableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjNullableStringSettableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "nullableStringSettableAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "nullableStringSettableAttribute");
     }
     auto& impl = castedThis->wrapped();
     String nativeValue = valueToStringWithUndefinedOrNullCheck(state, value);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setNullableStringSettableAttribute(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjNullableStringValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjNullableStringValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "nullableStringValue");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "nullableStringValue");
     }
     auto& impl = castedThis->wrapped();
     int nativeValue = toInt32(state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setNullableStringValue(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjAttributeWithReservedEnumType(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjAttributeWithReservedEnumType(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "attributeWithReservedEnumType");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "attributeWithReservedEnumType");
     }
     auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     if (nativeValue != "" && nativeValue != "OptionalValue1" && nativeValue != "OptionalValue2" && nativeValue != "OptionalValue3")
-        return;
+        return false;
     impl.setAttributeWithReservedEnumType(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjPutForwardsAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjPutForwardsAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "putForwardsAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "putForwardsAttribute");
     }
     Ref<TestNode> forwardedImpl = castedThis->wrapped().putForwardsAttribute();
     auto& impl = forwardedImpl.get();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setName(nativeValue);
+    return true;
 }
 
 
-void setJSTestObjPutForwardsNullableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestObjPutForwardsNullableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*state, "TestObj", "putForwardsNullableAttribute");
-        return;
+        return throwSetterTypeError(*state, "TestObj", "putForwardsNullableAttribute");
     }
     RefPtr<TestNode> forwardedImpl = castedThis->wrapped().putForwardsNullableAttribute();
     if (!forwardedImpl)
-        return;
+        return false;
     auto& impl = *forwardedImpl;
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
-        return;
+        return false;
     impl.setName(nativeValue);
+    return true;
 }
 
 

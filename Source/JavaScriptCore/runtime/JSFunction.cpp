@@ -424,13 +424,12 @@ void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, 
     Base::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
-    if (thisObject->isHostOrBuiltinFunction()) {
-        Base::put(thisObject, exec, propertyName, value, slot);
-        return;
-    }
+    if (thisObject->isHostOrBuiltinFunction())
+        return Base::put(thisObject, exec, propertyName, value, slot);
+
     if (propertyName == exec->propertyNames().prototype) {
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
@@ -440,23 +439,21 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
             thisObject->m_rareData->clear("Store to prototype property of a function");
         // Don't allow this to be cached, since a [[Put]] must clear m_rareData.
         PutPropertySlot dontCache(thisObject);
-        Base::put(thisObject, exec, propertyName, value, dontCache);
-        return;
+        return Base::put(thisObject, exec, propertyName, value, dontCache);
     }
     if (thisObject->jsExecutable()->isStrictMode() && (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller)) {
         // This will trigger the property to be reified, if this is not already the case!
         bool okay = thisObject->hasProperty(exec, propertyName);
         ASSERT_UNUSED(okay, okay);
-        Base::put(thisObject, exec, propertyName, value, slot);
-        return;
+        return Base::put(thisObject, exec, propertyName, value, slot);
     }
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller) {
         if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-        return;
+        return false;
     }
     thisObject->reifyLazyPropertyIfNeeded(exec, propertyName);
-    Base::put(thisObject, exec, propertyName, value, slot);
+    return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
 bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
@@ -526,7 +523,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
     }
     if (descriptor.isAccessorDescriptor()) {
         if (throwException)
-            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change access mechanism for an unconfigurable property.")));
+            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError)));
         return false;
     }
     if (descriptor.writablePresent() && descriptor.writable()) {

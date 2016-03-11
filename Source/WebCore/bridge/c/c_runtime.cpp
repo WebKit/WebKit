@@ -61,7 +61,7 @@ JSValue CField::valueFromInstance(ExecState* exec, const Instance* inst) const
     return jsUndefined();
 }
 
-void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue aValue) const
+bool CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue aValue) const
 {
     const CInstance* instance = static_cast<const CInstance*>(inst);
     NPObject* obj = instance->getObject();
@@ -69,14 +69,17 @@ void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue a
         NPVariant variant;
         convertValueToNPVariant(exec, aValue, &variant);
 
+        bool result = false;
         {
             JSLock::DropAllLocks dropAllLocks(exec);
-            obj->_class->setProperty(obj, _fieldIdentifier, &variant);
+            result = obj->_class->setProperty(obj, _fieldIdentifier, &variant);
             CInstance::moveGlobalExceptionToExecState(exec);
         }
 
         _NPN_ReleaseVariantValue(&variant);
+        return result;
     }
+    return false;
 }
 
 } }

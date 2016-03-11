@@ -49,7 +49,7 @@ public:
     JSC::Bindings::Field* fieldNamed(JSC::PropertyName);
 
     JSC::JSValue fieldValue(JSC::ExecState*, const JSC::Bindings::Field*) const;
-    void setFieldValue(JSC::ExecState*, const JSC::Bindings::Field*, JSC::JSValue) const;
+    bool setFieldValue(JSC::ExecState*, const JSC::Bindings::Field*, JSC::JSValue) const;
     
 
     NetscapePluginInstanceProxy* instanceProxy() { return m_instanceProxy; }

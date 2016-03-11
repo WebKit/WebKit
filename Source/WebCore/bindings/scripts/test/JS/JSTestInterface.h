@@ -44,9 +44,9 @@ public:
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* prototype(JSC::VM&, JSC::JSGlobalObject*);
     static TestInterface* toWrapped(JSC::JSValue);
-    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
-    static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);
-    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
+    static bool put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
+    static bool putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);
+    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&, bool& putResult);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
