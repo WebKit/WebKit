@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "WKFoundation.h"
 
 #if WK_API_ENABLED && TARGET_OS_IPHONE
 

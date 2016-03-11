@@ -1,5 +1,16 @@
 2016-03-11  Beth Dakin  <bdakin@apple.com>
 
+        Follow-up to:
+
+        _WKPreviewAction should be in an internal header
+        https://bugs.webkit.org/show_bug.cgi?id=155370
+
+        Rubber-stamped by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/_WKPreviewActionInternal.h:
+
+2016-03-11  Beth Dakin  <bdakin@apple.com>
+
         _WKPreviewAction should be in an internal header
         https://bugs.webkit.org/show_bug.cgi?id=155370
 
