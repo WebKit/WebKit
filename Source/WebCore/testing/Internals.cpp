@@ -207,6 +207,16 @@
 #include "MediaPlaybackTargetContext.h"
 #endif
 
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+#if __has_include(<AccessibilitySupport.h>)
+#include <AccessibilitySupport.h>
+#else
+extern "C" {
+void _AXSSetForceAllowWebScaling(Boolean);
+}
+#endif
+#endif
+
 using JSC::CallData;
 using JSC::CallType;
 using JSC::CodeBlock;
@@ -405,6 +415,10 @@ void Internals::resetToConsistentState(Page* page)
 #endif
 
     page->setShowAllPlugins(false);
+    
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+    _AXSSetForceAllowWebScaling(false);
+#endif
 }
 
 Internals::Internals(Document* document)
@@ -3518,6 +3532,15 @@ String Internals::composedTreeAsText(Node* node)
     if (!is<ContainerNode>(node))
         return "";
     return WebCore::composedTreeAsText(downcast<ContainerNode>(*node));
+}
+
+void Internals::setViewportForceAlwaysUserScalable(bool scalable)
+{
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+    _AXSSetForceAllowWebScaling(scalable);
+#else
+    UNUSED_PARAM(scalable);
+#endif
 }
 
 }

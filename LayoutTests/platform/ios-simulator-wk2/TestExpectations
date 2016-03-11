@@ -1947,3 +1947,6 @@ webkit.org/b/153503 http/tests/appcache/404-resource-with-slow-main-resource.php
 webkit.org/b/153050 http/tests/security/cross-frame-access-custom.html [ Pass Failure ]
 
 webkit.org/b/155201 storage/domstorage/events/basic-body-attribute.html [ Pass Failure ]
+
+# Forcing always allow user scalable is not supported on certain OS version.
+webkit.org/b/155056 fast/viewport/ios/force-always-user-scalable.html [ Skip ]

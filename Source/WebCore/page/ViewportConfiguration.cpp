@@ -189,6 +189,9 @@ double ViewportConfiguration::minimumScale() const
 
     // If not, we still need to sanity check our value.
     double minimumScale = m_configuration.minimumScale;
+    
+    if (m_forceAlwaysUserScalable)
+        minimumScale = std::min(minimumScale, forceAlwaysUserScalableMinimumScale);
 
     const FloatSize& minimumLayoutSize = m_minimumLayoutSize;
     double contentWidth = m_contentSize.width();

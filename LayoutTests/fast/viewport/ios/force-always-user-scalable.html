@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<meta name="viewport" content="width=device-width, maximum-scale=1">
+<script id="ui-script" type="text/plain">
+    (function() {
+        uiController.zoomToScale(3.5, function() {
+            uiController.uiScriptComplete(uiController.zoomScale);
+        });
+    })();
+</script>
+
+<script id="ui-script2" type="text/plain">
+    (function() {
+        uiController.uiScriptComplete(uiController.maximumZoomScale);
+    })();
+</script>
+</head>
+
+<body onload="runTest();">
+<p id="result">This test has to run in iOS WebKitTestRunner.</p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that after we set forceAlwaysUserScalable, maximum-scale will be ignored.");
+
+    window.internals.setViewportForceAlwaysUserScalable(true);
+    if (window.testRunner) {
+        window.jsTestIsAsync = true;
+    }
+
+    function runTest()
+    {
+        if (testRunner.runUIScript) {
+            var uiScript = document.getElementById('ui-script').text;
+            testRunner.runUIScript(uiScript, function(result) {
+                debug("Final zoom scale was: " + result);
+                
+                // Reset user scalable, the maximumScale should be reset to the author specified value.
+                var uiScript2 = document.getElementById('ui-script2').text;
+                testRunner.runUIScript(uiScript2, function(result) {
+                    debug("Maximum zoom scale was: " + result);
+                    
+                    window.internals.setViewportForceAlwaysUserScalable(false);
+                    testRunner.runUIScript(uiScript2, function(result) {
+                        debug("Maximum zoom scale was reset to: " + result);
+                        finishJSTest();
+                    });
+                });
+            });
+        }
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

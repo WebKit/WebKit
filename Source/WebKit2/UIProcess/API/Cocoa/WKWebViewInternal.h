@@ -111,6 +111,8 @@ struct PrintInfo;
 - (void)_navigationGestureDidBegin;
 - (void)_navigationGestureDidEnd;
 
+- (void)_updateForceAlwaysUserScalable;
+
 @property (nonatomic, readonly) BOOL _isBackground;
 
 @property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;

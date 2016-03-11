@@ -93,6 +93,7 @@ messages -> WebPage LegacyReceiver {
     GetLookupContextAtPoint(WebCore::IntPoint point, uint64_t callbackID)
     SetAllowsMediaDocumentInlinePlayback(bool allows)
     HandleTwoFingerTapAtPoint(WebCore::IntPoint point, uint64_t callbackID)
+    UpdateForceAlwaysUserScalable()
 #endif
 
     SetControlledByAutomation(bool controlled)

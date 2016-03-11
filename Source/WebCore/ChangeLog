@@ -1,3 +1,27 @@
+2016-03-10  Nan Wang  <n_wang@apple.com>
+
+        AX: Force allow user zoom
+        https://bugs.webkit.org/show_bug.cgi?id=155056
+
+        Reviewed by Simon Fraser.
+
+        Override the maximum/minimum scale factor when forceAlwaysUserScalable is true.
+
+        Test: fast/viewport/ios/force-always-user-scalable.html
+
+        * Configurations/WebCoreTestSupport.xcconfig:
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::minimumScale):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::maximumScale):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::composedTreeAsText):
+        (WebCore::Internals::setViewportForceAlwaysUserScalable):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-03-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebKit should not be redirected to an invalid URL

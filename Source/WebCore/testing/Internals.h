@@ -475,6 +475,8 @@ public:
 #endif
 
     String composedTreeAsText(Node*);
+    
+    void setViewportForceAlwaysUserScalable(bool);
 
 private:
     explicit Internals(Document*);

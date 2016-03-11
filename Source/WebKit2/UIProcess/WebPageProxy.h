@@ -520,6 +520,7 @@ public:
     void contentSizeCategoryDidChange(const String& contentSizeCategory);
     void getLookupContextAtPoint(const WebCore::IntPoint&, std::function<void(const String&, CallbackBase::Error)>);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, std::function<void(const String&, CallbackBase::Error)>);
+    void updateForceAlwaysUserScalable();
 #endif
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResult(const DataDetectionResult&);

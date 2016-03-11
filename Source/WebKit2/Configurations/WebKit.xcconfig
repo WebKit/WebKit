@@ -45,6 +45,8 @@ UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-un
 
 OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) $(ASAN_OTHER_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM) -framework WebKitLegacy -sub_umbrella WebKitLegacy;
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -sub_umbrella WebCore;
+OTHER_LDFLAGS_PLATFORM[sdk=iphoneos*] = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -lAccessibility;
+OTHER_LDFLAGS_PLATFORM[sdk=iphonesimulator*] = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -lAccessibility;
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebKit.order;

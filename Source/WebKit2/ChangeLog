@@ -1,3 +1,36 @@
+2016-03-10  Nan Wang  <n_wang@apple.com>
+
+        AX: Force allow user zoom
+        https://bugs.webkit.org/show_bug.cgi?id=155056
+
+        Reviewed by Simon Fraser.
+
+        Linked libAccessibility library so that we can observe the accessibility
+        setting change for the force always user scalable feature.
+
+        * Configurations/WebKit.xcconfig:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (shouldAllowPictureInPictureMediaPlayback):
+        (forceAlwaysUserScalableChangedCallback):
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView dealloc]):
+        (-[WKWebView _navigationGestureDidEnd]):
+        (-[WKWebView _updateForceAlwaysUserScalable]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setViewportConfigurationMinimumLayoutSize):
+        (WebKit::WebPageProxy::updateForceAlwaysUserScalable):
+        (WebKit::WebPageProxy::setMaximumUnobscuredSize):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::disableInspectorNodeSearch):
+        (WebKit::WebPage::updateForceAlwaysUserScalable):
+        (WebKit::innerFrameQuad):
+
 2016-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         Font antialiasing (smoothing) changes when elements are rendered into compositing layers

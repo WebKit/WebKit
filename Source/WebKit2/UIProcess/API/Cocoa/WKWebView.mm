@@ -112,6 +112,16 @@
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/QuartzCoreSPI.h>
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+#if __has_include(<AccessibilitySupport.h>)
+#include <AccessibilitySupport.h>
+#else
+extern "C" {
+CFStringRef kAXSAllowForceWebScalingEnabledNotification;
+}
+#endif
+#endif
+
 @interface UIScrollView (UIScrollViewInternal)
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary*)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
 - (BOOL)_isScrollingToTop;
@@ -314,6 +324,15 @@ static bool shouldAllowPictureInPictureMediaPlayback()
     return shouldAllowPictureInPictureMediaPlayback;
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+static void forceAlwaysUserScalableChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    ASSERT(observer);
+    WKWebView* webview = static_cast<WKWebView*>(observer);
+    [webview _updateForceAlwaysUserScalable];
+}
+#endif
+
 #endif
 
 #if ENABLE(DATA_DETECTION)
@@ -459,6 +478,10 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
     [center addObserver:self selector:@selector(_windowDidRotate:) name:UIWindowDidRotateNotification object:nil];
     [center addObserver:self selector:@selector(_contentSizeCategoryDidChange:) name:UIContentSizeCategoryDidChangeNotification object:nil];
     _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
+    
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), forceAlwaysUserScalableChangedCallback, kAXSAllowForceWebScalingEnabledNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
+#endif
 
     [[_configuration _contentProviderRegistry] addPage:*_page];
 #endif
@@ -543,6 +566,9 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
 
     [_remoteObjectRegistry _invalidate];
     [[_configuration _contentProviderRegistry] removePage:*_page];
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), nullptr, nullptr);
+#endif
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_scrollView setInternalDelegate:nil];
 #endif
@@ -2046,6 +2072,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     _frozenVisibleContentRect = Nullopt;
     _frozenUnobscuredContentRect = Nullopt;
+}
+
+- (void)_updateForceAlwaysUserScalable
+{
+    _page->updateForceAlwaysUserScalable();
 }
 
 #endif // PLATFORM(IOS)
