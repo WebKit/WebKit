@@ -101,6 +101,7 @@ AudioDestinationIOS::AudioDestinationIOS(AudioIOCallback& callback, double sampl
     : m_outputUnit(0)
     , m_callback(callback)
     , m_renderBus(AudioBus::create(2, kRenderBufferSize, false))
+    , m_spareBus(AudioBus::create(2, kRenderBufferSize, true))
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {
@@ -199,19 +200,47 @@ void AudioDestinationIOS::stop()
         setIsPlaying(false);
 }
 
+static void assignAudioBuffersToBus(AudioBuffer* buffers, AudioBus& bus, UInt32 numberOfBuffers, UInt32 numberOfFrames, UInt32 frameOffset, UInt32 framesThisTime)
+{
+    for (UInt32 i = 0; i < numberOfBuffers; ++i) {
+        UInt32 bytesPerFrame = buffers[i].mDataByteSize / numberOfFrames;
+        UInt32 byteOffset = frameOffset * bytesPerFrame;
+        float* memory = reinterpret_cast<float*>(reinterpret_cast<char*>(buffers[i].mData) + byteOffset);
+        bus.setChannelMemory(i, memory, framesThisTime);
+    }
+}
+
 // Pulls on our provider to get rendered audio stream.
 OSStatus AudioDestinationIOS::render(UInt32 numberOfFrames, AudioBufferList* ioData)
 {
     AudioBuffer* buffers = ioData->mBuffers;
-    for (UInt32 frameOffset = 0; frameOffset + kRenderBufferSize <= numberOfFrames; frameOffset += kRenderBufferSize) {
-        UInt32 remainingFrames = std::min<UInt32>(kRenderBufferSize, numberOfFrames - frameOffset);
-        for (UInt32 i = 0; i < ioData->mNumberBuffers; ++i) {
-            UInt32 bytesPerFrame = buffers[i].mDataByteSize / numberOfFrames;
-            UInt32 byteOffset = frameOffset * bytesPerFrame;
-            float* memory = (float*)((char*)buffers[i].mData + byteOffset);
-            m_renderBus->setChannelMemory(i, memory, remainingFrames);
+    UInt32 numberOfBuffers = ioData->mNumberBuffers;
+    UInt32 framesRemaining = numberOfFrames;
+    UInt32 frameOffset = 0;
+    while (framesRemaining > 0) {
+        if (m_firstSpareFrame && m_lastSpareFrame) {
+            ASSERT(m_firstSpareFrame < m_lastSpareFrame);
+            UInt32 framesThisTime = m_lastSpareFrame - m_firstSpareFrame;
+            assignAudioBuffersToBus(buffers, *m_renderBus, numberOfBuffers, numberOfFrames, frameOffset, framesThisTime);
+            m_renderBus->copyFromRange(*m_spareBus, m_firstSpareFrame, m_lastSpareFrame);
+            frameOffset += framesThisTime;
+            framesRemaining -= framesThisTime;
+            m_firstSpareFrame = 0;
+            m_lastSpareFrame = 0;
         }
-        m_callback.render(0, m_renderBus.get(), remainingFrames);
+
+        UInt32 framesThisTime = std::min<UInt32>(kRenderBufferSize, framesRemaining);
+        assignAudioBuffersToBus(buffers, *m_renderBus, numberOfBuffers, numberOfFrames, frameOffset, framesThisTime);
+
+        if (framesThisTime < kRenderBufferSize) {
+            m_callback.render(0, m_spareBus.get(), kRenderBufferSize);
+            m_renderBus->copyFromRange(*m_spareBus, 0, framesThisTime);
+            m_firstSpareFrame = framesThisTime;
+            m_lastSpareFrame = kRenderBufferSize - 1;
+        } else
+            m_callback.render(0, m_renderBus.get(), framesThisTime);
+        frameOffset += framesThisTime;
+        framesRemaining -= framesThisTime;
     }
 
     return noErr;

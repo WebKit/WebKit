@@ -213,6 +213,33 @@ void AudioBus::scale(float scale)
         channel(i)->scale(scale);
 }
 
+void AudioBus::copyFromRange(const AudioBus& sourceBus, unsigned startFrame, unsigned endFrame)
+{
+    if (!topologyMatches(sourceBus)) {
+        ASSERT_NOT_REACHED();
+        zero();
+        return;
+    }
+
+    size_t numberOfSourceFrames = sourceBus.length();
+    bool isRangeSafe = startFrame < endFrame && endFrame <= numberOfSourceFrames;
+    ASSERT(isRangeSafe);
+    if (!isRangeSafe) {
+        zero();
+        return;
+    }
+
+    unsigned numberOfChannels = this->numberOfChannels();
+    ASSERT(numberOfChannels <= MaxBusChannels);
+    if (numberOfChannels > MaxBusChannels) {
+        zero();
+        return;
+    }
+
+    for (unsigned i = 0; i < numberOfChannels; ++i)
+        channel(i)->copyFromRange(sourceBus.channel(i), startFrame, endFrame);
+}
+
 void AudioBus::copyFrom(const AudioBus& sourceBus, ChannelInterpretation channelInterpretation)
 {
     if (&sourceBus == this)
