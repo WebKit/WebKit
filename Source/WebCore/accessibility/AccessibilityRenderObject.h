@@ -173,6 +173,8 @@ public:
     VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;
+    IntRect boundsForRange(const RefPtr<Range>) const override;
+    IntRect boundsForRects(LayoutRect&, LayoutRect&, RefPtr<Range>) const;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     bool supportsARIAFlowTo() const override;
     void ariaFlowToElements(AccessibilityChildrenVector&) const override;
@@ -200,6 +202,7 @@ public:
     
     String doAXStringForRange(const PlainTextRange&) const override;
     IntRect doAXBoundsForRange(const PlainTextRange&) const override;
+    IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override;
     
     String stringValueForMSAA() const override;
     String stringRoleForMSAA() const override;

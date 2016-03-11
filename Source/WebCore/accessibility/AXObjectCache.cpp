@@ -1506,8 +1506,9 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
                         currentNode = childNode;
                         hasReplacedNodeOrBR = true;
                     } else if (currentNode != previousNode) {
-                        // We should set the currentNode to previous one in case this is the last iteration.
-                        currentNode = previousNode;
+                        // We should set the start offset and length for the current node in case this is the last iteration.
+                        lastStartOffset = 1;
+                        lastLength = 0;
                         continue;
                     }
                 }
@@ -1695,6 +1696,10 @@ CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(RefPtr<Range> r
     if (!range)
         return CharacterOffset();
     
+    // When getting the end CharacterOffset at node boundary, we don't want to collapse to the previous node.
+    if (!isStart && !range->endOffset())
+        return characterOffsetForNodeAndOffset(range->endContainer(), 0, TraverseOptionIncludeStart);
+    
     // If it's end text marker, we want to go to the end of the range, and stay within the range.
     bool stayWithinRange = !isStart;
     
@@ -1775,12 +1780,35 @@ void AXObjectCache::textMarkerDataForCharacterOffset(TextMarkerData& textMarkerD
     setTextMarkerDataWithCharacterOffset(textMarkerData, characterOffset);
 }
 
+bool AXObjectCache::shouldSkipBoundary(const CharacterOffset& previous, const CharacterOffset& next)
+{
+    // Match the behavior of VisiblePosition, we should skip the node boundary when there's no visual space or new line character.
+    if (previous.isNull() || next.isNull())
+        return false;
+    
+    if (previous.node == next.node)
+        return false;
+    
+    if (next.startIndex > 0 || next.offset > 0)
+        return false;
+    
+    CharacterOffset newLine = startCharacterOffsetOfLine(next);
+    if (next.isEqual(newLine))
+        return false;
+    
+    return true;
+}
+    
 void AXObjectCache::textMarkerDataForNextCharacterOffset(TextMarkerData& textMarkerData, const CharacterOffset& characterOffset)
 {
     CharacterOffset next = characterOffset;
+    CharacterOffset previous = characterOffset;
     do {
         next = nextCharacterOffset(next, false);
+        if (shouldSkipBoundary(previous, next))
+            next = nextCharacterOffset(next, false);
         textMarkerDataForCharacterOffset(textMarkerData, next);
+        previous = next;
     } while (textMarkerData.ignored);
 }
 
@@ -1958,7 +1986,10 @@ CharacterOffset AXObjectCache::startCharacterOffsetOfWord(const CharacterOffset&
         if (c.isEqual(endOfParagraph))
             return c;
         
-        c = nextCharacterOffset(characterOffset);
+        // We should consider the node boundary that splits words. Otherwise VoiceOver won't see it as space.
+        c = nextCharacterOffset(characterOffset, false);
+        if (shouldSkipBoundary(characterOffset, c))
+            c = nextCharacterOffset(c, false);
         if (c.isNull())
             return characterOffset;
     }
@@ -2106,6 +2137,10 @@ CharacterOffset AXObjectCache::nextBoundary(const CharacterOffset& characterOffs
     if (it.atEnd() && next == string.size())
         return end;
     
+    // We should consider the node boundary that splits words.
+    if (searchFunction == endWordBoundary && next - prefixLength == 1)
+        return nextCharacterOffset(characterOffset, false);
+    
     // The endSentenceBoundary function will include a line break at the end of the sentence.
     if (searchFunction == endSentenceBoundary && string[next - 1] == '\n')
         next--;
@@ -2160,7 +2195,7 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
     
     int characterCount = characterOffset.offset - (string.size() - suffixLength - next);
     // We don't want to go to the previous node if the node is at the start of a new line.
-    if (characterCount < 0 && (characterOffsetNodeIsBR(characterOffset) || string[string.size() - 1] == '\n'))
+    if (characterCount < 0 && (characterOffsetNodeIsBR(characterOffset) || string[string.size() - suffixLength - 1] == '\n'))
         characterCount = 0;
     return characterOffsetForNodeAndOffset(*characterOffset.node, characterCount, TraverseOptionIncludeStart);
 }
@@ -2281,6 +2316,133 @@ CharacterOffset AXObjectCache::previousSentenceStartCharacterOffset(const Charac
         previous = previousCharacterOffset(previous);
     
     return startCharacterOffsetOfSentence(previous);
+}
+
+LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& renderer, const CharacterOffset& characterOffset)
+{
+    if (characterOffset.isNull()) {
+        renderer = nullptr;
+        return IntRect();
+    }
+    
+    Node* node = characterOffset.node;
+    
+    renderer = node->renderer();
+    if (!renderer)
+        return LayoutRect();
+    
+    InlineBox* inlineBox = nullptr;
+    int caretOffset;
+    // Use a collapsed range to get the position.
+    RefPtr<Range> range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
+    Position startPosition = range->startPosition();
+    startPosition.getInlineBoxAndOffset(DOWNSTREAM, inlineBox, caretOffset);
+    
+    if (inlineBox)
+        renderer = &inlineBox->renderer();
+    
+    return renderer->localCaretRect(inlineBox, caretOffset);
+}
+
+IntRect AXObjectCache::absoluteCaretBoundsForCharacterOffset(const CharacterOffset& characterOffset)
+{
+    RenderBlock* caretPainter = nullptr;
+    
+    // First compute a rect local to the renderer at the selection start.
+    RenderObject* renderer = nullptr;
+    LayoutRect localRect = localCaretRectForCharacterOffset(renderer, characterOffset);
+    
+    localRect = localCaretRectInRendererForRect(localRect, characterOffset.node, renderer, caretPainter);
+    return absoluteBoundsForLocalCaretRect(caretPainter, localRect);
+}
+
+CharacterOffset AXObjectCache::characterOffsetForPoint(const IntPoint &point, AccessibilityObject* obj)
+{
+    if (!obj)
+        return CharacterOffset();
+    
+    VisiblePosition vp = obj->visiblePositionForPoint(point);
+    RefPtr<Range> range = makeRange(vp, vp);
+    return startOrEndCharacterOffsetForRange(range, true);
+}
+
+CharacterOffset AXObjectCache::characterOffsetForPoint(const IntPoint &point)
+{
+    RefPtr<Range> caretRange = m_document.caretRangeFromPoint(LayoutPoint(point));
+    return startOrEndCharacterOffsetForRange(caretRange, true);
+}
+
+CharacterOffset AXObjectCache::characterOffsetForBounds(const IntRect& rect, bool first)
+{
+    if (rect.isEmpty())
+        return CharacterOffset();
+    
+    IntPoint corner = first ? rect.minXMinYCorner() : rect.maxXMaxYCorner();
+    CharacterOffset characterOffset = characterOffsetForPoint(corner);
+    
+    if (rect.contains(absoluteCaretBoundsForCharacterOffset(characterOffset).center()))
+        return characterOffset;
+    
+    // If the initial position is located outside the bounds adjust it incrementally as needed.
+    CharacterOffset nextCharOffset = nextCharacterOffset(characterOffset, false);
+    CharacterOffset previousCharOffset = previousCharacterOffset(characterOffset, false);
+    while (!nextCharOffset.isNull() || !previousCharOffset.isNull()) {
+        if (rect.contains(absoluteCaretBoundsForCharacterOffset(nextCharOffset).center()))
+            return nextCharOffset;
+        if (rect.contains(absoluteCaretBoundsForCharacterOffset(previousCharOffset).center()))
+            return previousCharOffset;
+        
+        nextCharOffset = nextCharacterOffset(nextCharOffset, false);
+        previousCharOffset = previousCharacterOffset(previousCharOffset, false);
+    }
+    
+    return CharacterOffset();
+}
+
+// FIXME: Remove VisiblePosition code after implementing this using CharacterOffset.
+CharacterOffset AXObjectCache::endCharacterOffsetOfLine(const CharacterOffset& characterOffset)
+{
+    if (characterOffset.isNull())
+        return CharacterOffset();
+    
+    VisiblePosition vp = visiblePositionFromCharacterOffset(characterOffset);
+    VisiblePosition endLine = endOfLine(vp);
+    
+    return characterOffsetFromVisiblePosition(endLine);
+}
+
+CharacterOffset AXObjectCache::startCharacterOffsetOfLine(const CharacterOffset& characterOffset)
+{
+    if (characterOffset.isNull())
+        return CharacterOffset();
+    
+    VisiblePosition vp = visiblePositionFromCharacterOffset(characterOffset);
+    VisiblePosition startLine = startOfLine(vp);
+    
+    return characterOffsetFromVisiblePosition(startLine);
+}
+
+CharacterOffset AXObjectCache::characterOffsetForIndex(int index, const AccessibilityObject* obj)
+{
+    if (!obj)
+        return CharacterOffset();
+    
+    // Since this would only work on rendered nodes, using VisiblePosition to create a collapsed
+    // range should be fine.
+    VisiblePosition vp = obj->visiblePositionForIndex(index);
+    RefPtr<Range> range = makeRange(vp, vp);
+    
+    return startOrEndCharacterOffsetForRange(range, true);
+}
+
+int AXObjectCache::indexForCharacterOffset(const CharacterOffset& characterOffset, AccessibilityObject* obj)
+{
+    // Create a collapsed range so that we can get the VisiblePosition from it.
+    RefPtr<Range> range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
+    if (!range)
+        return 0;
+    VisiblePosition vp = range->startPosition();
+    return obj->indexForVisiblePosition(vp);
 }
 
 const Element* AXObjectCache::rootAXEditableElement(const Node* node)

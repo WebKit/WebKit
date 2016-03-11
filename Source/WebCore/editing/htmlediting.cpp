@@ -1320,9 +1320,14 @@ LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition& caret
     RenderObject* renderer;
     LayoutRect localRect = caretPosition.localCaretRect(renderer);
 
+    return localCaretRectInRendererForRect(localRect, caretPosition.deepEquivalent().deprecatedNode(), renderer, caretPainter);
+}
+
+LayoutRect localCaretRectInRendererForRect(LayoutRect& localRect, Node* node, RenderObject* renderer, RenderBlock*& caretPainter)
+{
     // Get the renderer that will be responsible for painting the caret
     // (which is either the renderer we just found, or one of its containers).
-    caretPainter = rendererForCaretPainting(caretPosition.deepEquivalent().deprecatedNode());
+    caretPainter = rendererForCaretPainting(node);
 
     // Compute an offset between the renderer and the caretPainter.
     while (renderer != caretPainter) {

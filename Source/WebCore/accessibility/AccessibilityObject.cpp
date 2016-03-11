@@ -1198,6 +1198,20 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForRange(const Pla
     return VisiblePositionRange(startPosition, endPosition);
 }
 
+RefPtr<Range> AccessibilityObject::rangeForPlainTextRange(const PlainTextRange& range) const
+{
+    unsigned textLength = getLengthForTextRange();
+    if (range.start + range.length > textLength)
+        return nullptr;
+    
+    if (AXObjectCache* cache = axObjectCache()) {
+        CharacterOffset start = cache->characterOffsetForIndex(range.start, this);
+        CharacterOffset end = cache->characterOffsetForIndex(range.start + range.length, this);
+        return cache->rangeForUnorderedCharacterOffsets(start, end);
+    }
+    return nullptr;
+}
+
 VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosition& visiblePosition) const
 {
     VisiblePosition startPosition = startOfLine(visiblePosition);

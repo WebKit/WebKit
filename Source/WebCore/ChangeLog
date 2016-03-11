@@ -1,3 +1,76 @@
+2016-03-10  Nan Wang  <n_wang@apple.com>
+
+        AX: Implement bounds/position and index related text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=154976
+
+        Reviewed by Chris Fleizach.
+
+        Implemented position and index related text marker calls with TextIterator. Also fixed some
+        VoiceOver navigation issues.
+
+        Test: accessibility/mac/text-marker-for-index.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::traverseToOffsetInRange):
+        (WebCore::AXObjectCache::startOrEndCharacterOffsetForRange):
+        (WebCore::AXObjectCache::textMarkerDataForCharacterOffset):
+        (WebCore::AXObjectCache::shouldSkipBoundary):
+        (WebCore::AXObjectCache::textMarkerDataForNextCharacterOffset):
+        (WebCore::AXObjectCache::startCharacterOffsetOfWord):
+        (WebCore::AXObjectCache::nextBoundary):
+        (WebCore::AXObjectCache::previousBoundary):
+        (WebCore::AXObjectCache::previousSentenceStartCharacterOffset):
+        (WebCore::AXObjectCache::localCaretRectForCharacterOffset):
+        (WebCore::AXObjectCache::absoluteCaretBoundsForCharacterOffset):
+        (WebCore::AXObjectCache::characterOffsetForPoint):
+        (WebCore::AXObjectCache::characterOffsetForBounds):
+        (WebCore::AXObjectCache::endCharacterOffsetOfLine):
+        (WebCore::AXObjectCache::startCharacterOffsetOfLine):
+        (WebCore::AXObjectCache::characterOffsetForIndex):
+        (WebCore::AXObjectCache::indexForCharacterOffset):
+        (WebCore::AXObjectCache::rootAXEditableElement):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::visiblePositionRangeForRange):
+        (WebCore::AccessibilityObject::rangeForPlainTextRange):
+        (WebCore::AccessibilityObject::lineRangeForPosition):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::boundsForVisiblePositionRange):
+        (WebCore::AccessibilityObject::boundsForRange):
+        (WebCore::AccessibilityObject::setSelectedVisiblePositionRange):
+        (WebCore::AccessibilityObject::doAXStringForRange):
+        (WebCore::AccessibilityObject::doAXBoundsForRange):
+        (WebCore::AccessibilityObject::doAXBoundsForRangeUsingCharacterOffset):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::nodeIsTextControl):
+        (WebCore::AccessibilityRenderObject::boundsForRects):
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange):
+        (WebCore::AccessibilityRenderObject::boundsForRange):
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange):
+        (WebCore::AccessibilityRenderObject::doAXBoundsForRange):
+        (WebCore::AccessibilityRenderObject::doAXBoundsForRangeUsingCharacterOffset):
+        (WebCore::AccessibilityRenderObject::accessibilityImageMapHitTest):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper positionForTextMarker:]):
+        (-[WebAccessibilityObjectWrapper textMarkerRange]):
+        (-[WebAccessibilityObjectWrapper textMarkerRangeForSelection]):
+        (-[WebAccessibilityObjectWrapper textMarkerForPosition:]):
+        (-[WebAccessibilityObjectWrapper _stringForRange:attributed:]):
+        (-[WebAccessibilityObjectWrapper frameForTextMarkers:]):
+        (-[WebAccessibilityObjectWrapper textMarkerForPoint:]):
+        (-[WebAccessibilityObjectWrapper nextMarkerForCharacterOffset:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForRange:]):
+        (-[WebAccessibilityObjectWrapper _convertToNSRange:]):
+        (-[WebAccessibilityObjectWrapper _indexForTextMarker:]):
+        (-[WebAccessibilityObjectWrapper _textMarkerForIndex:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        * editing/htmlediting.cpp:
+        (WebCore::localCaretRectInRendererForCaretPainting):
+        (WebCore::localCaretRectInRendererForRect):
+        * editing/htmlediting.h:
+
 2016-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         Font antialiasing (smoothing) changes when elements are rendered into compositing layers

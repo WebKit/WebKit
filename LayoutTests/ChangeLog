@@ -1,3 +1,15 @@
+2016-03-10  Nan Wang  <n_wang@apple.com>
+
+        AX: Implement bounds/position and index related text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=154976
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/text-marker-for-index-expected.txt: Added.
+        * accessibility/mac/text-marker-for-index.html: Added.
+        * accessibility/mac/text-marker-word-nav-expected.txt:
+        * accessibility/mac/text-marker-word-nav.html:
+
 2016-03-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Test gardening after r197933

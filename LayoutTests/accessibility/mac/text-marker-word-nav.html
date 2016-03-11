@@ -39,6 +39,11 @@ some<br>text
 test audio <audio controls><source src="test.mp3" type="audio/mpeg"></audio>file
 </div>
 
+<p id="text8">
+<strong>Edit</strong>
+text
+</p>
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -64,13 +69,13 @@ test audio <audio controls><source src="test.mp3" type="audio/mpeg"></audio>file
         // At "T" in "Thisis", should return the word as "Thisislongword".
         currentMarker = advanceAndVerify(currentMarker, 2, text);
         // At " " before "I", the word should be "I'll".
-        currentMarker = advanceAndVerify(currentMarker, 15, text);
+        currentMarker = advanceAndVerify(currentMarker, 14, text);
         // At " " before "try", the word should excludes "."
-        currentMarker = advanceAndVerify(currentMarker, 6, text);
+        currentMarker = advanceAndVerify(currentMarker, 5, text);
         
         // Check the case with contenteditable
         // At "e" in "editable", the word should NOT include "Content" before it.
-        currentMarker = advanceAndVerify(currentMarker, 19, text);
+        currentMarker = advanceAndVerify(currentMarker, 18, text);
         
         // Check the case with replaced node, the replaced node should be considered a word.
         var text2 = accessibilityController.accessibleElementById("text2");
@@ -89,6 +94,8 @@ test audio <audio controls><source src="test.mp3" type="audio/mpeg"></audio>file
         var text4 = accessibilityController.accessibleElementById("text4");
         textMarkerRange = text4.textMarkerRangeForElement(text4);
         currentMarker = text4.startTextMarkerForTextMarkerRange(textMarkerRange);
+        // Make sure when we are at the beginning of line, it won't go to previous node.
+        currentMarker = advanceAndVerify(currentMarker, 0, text4);
         currentMarker = advanceAndVerify(currentMarker, 2, text4);
         currentMarker = advanceAndVerify(currentMarker, 1, text4);
         currentMarker = advanceAndVerify(currentMarker, 1, text4);
@@ -123,12 +130,18 @@ test audio <audio controls><source src="test.mp3" type="audio/mpeg"></audio>file
         currentMarker = advanceAndVerify(currentMarker, 1, text7);
         currentMarker = advanceAndVerify(currentMarker, 1, text7);
         
+        // For node with text node children, we should treat the visual space as word boundary.
+        var text8 = accessibilityController.accessibleElementById("text8");
+        textMarkerRange = text8.textMarkerRangeForElement(text8);
+        currentMarker = text8.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(currentMarker, 4, text8);
+        
         // Check the word marker runs from start to end, and backwards.
         // Make sure it won't hang.
         verifyDocument(text);
         
         function advanceAndVerify(currentMarker, offset, obj) {
-            var previousMarker;
+            var previousMarker = currentMarker;
             for (var i = 0; i < offset; i++) {
                 previousMarker = currentMarker;
                 currentMarker = obj.nextTextMarker(previousMarker);

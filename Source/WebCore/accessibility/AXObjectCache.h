@@ -200,6 +200,7 @@ public:
     CharacterOffset nextCharacterOffset(const CharacterOffset&, bool ignoreNextNodeStart = true);
     CharacterOffset previousCharacterOffset(const CharacterOffset&, bool ignorePreviousNodeEnd = true);
     void startOrEndTextMarkerDataForRange(TextMarkerData&, RefPtr<Range>, bool);
+    CharacterOffset startOrEndCharacterOffsetForRange(RefPtr<Range>, bool);
     AccessibilityObject* accessibilityObjectForTextMarkerData(TextMarkerData&);
     RefPtr<Range> rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&);
     static RefPtr<Range> rangeForNodeContents(Node*);
@@ -220,6 +221,19 @@ public:
     RefPtr<Range> sentenceForCharacterOffset(const CharacterOffset&);
     CharacterOffset nextSentenceEndCharacterOffset(const CharacterOffset&);
     CharacterOffset previousSentenceStartCharacterOffset(const CharacterOffset&);
+    
+    // Bounds
+    CharacterOffset characterOffsetForPoint(const IntPoint&, AccessibilityObject*);
+    IntRect absoluteCaretBoundsForCharacterOffset(const CharacterOffset&);
+    CharacterOffset characterOffsetForBounds(const IntRect&, bool);
+    
+    // Lines
+    CharacterOffset endCharacterOffsetOfLine(const CharacterOffset&);
+    CharacterOffset startCharacterOffsetOfLine(const CharacterOffset&);
+    
+    // Index
+    CharacterOffset characterOffsetForIndex(int, const AccessibilityObject*);
+    int indexForCharacterOffset(const CharacterOffset&, AccessibilityObject*);
 
     enum AXNotification {
         AXActiveDescendantChanged,
@@ -321,7 +335,6 @@ protected:
     void setTextMarkerDataWithCharacterOffset(TextMarkerData&, const CharacterOffset&);
     UChar32 characterAfter(const CharacterOffset&);
     UChar32 characterBefore(const CharacterOffset&);
-    CharacterOffset startOrEndCharacterOffsetForRange(RefPtr<Range>, bool);
     CharacterOffset characterOffsetForNodeAndOffset(Node&, int, TraverseOption = TraverseOptionDefault);
     CharacterOffset previousBoundary(const CharacterOffset&, BoundarySearchFunction);
     CharacterOffset nextBoundary(const CharacterOffset&, BoundarySearchFunction);
@@ -331,6 +344,9 @@ protected:
     CharacterOffset endCharacterOffsetOfParagraph(const CharacterOffset&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
     CharacterOffset startCharacterOffsetOfSentence(const CharacterOffset&);
     CharacterOffset endCharacterOffsetOfSentence(const CharacterOffset&);
+    CharacterOffset characterOffsetForPoint(const IntPoint&);
+    LayoutRect localCaretRectForCharacterOffset(RenderObject*&, const CharacterOffset&);
+    bool shouldSkipBoundary(const CharacterOffset&, const CharacterOffset&);
 
 private:
     AccessibilityObject* rootWebArea();

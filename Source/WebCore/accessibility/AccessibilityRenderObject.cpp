@@ -1962,6 +1962,26 @@ bool AccessibilityRenderObject::nodeIsTextControl(const Node* node) const
     return false;
 }
 
+IntRect AccessibilityRenderObject::boundsForRects(LayoutRect& rect1, LayoutRect& rect2, RefPtr<Range> dataRange) const
+{
+    LayoutRect ourRect = rect1;
+    ourRect.unite(rect2);
+    
+    // if the rectangle spans lines and contains multiple text chars, use the range's bounding box intead
+    if (rect1.maxY() != rect2.maxY()) {
+        LayoutRect boundingBox = dataRange->absoluteBoundingBox();
+        String rangeString = plainText(dataRange.get());
+        if (rangeString.length() > 1 && !boundingBox.isEmpty())
+            ourRect = boundingBox;
+    }
+    
+#if PLATFORM(MAC)
+    return m_renderer->view().frameView().contentsToScreen(snappedIntRect(ourRect));
+#else
+    return snappedIntRect(ourRect);
+#endif
+}
+
 IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     if (visiblePositionRange.isNull())
@@ -1985,23 +2005,39 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
         }
     }
     
-    LayoutRect ourrect = rect1;
-    ourrect.unite(rect2);
+    RefPtr<Range> dataRange = makeRange(range.start, range.end);
+    return boundsForRects(rect1, rect2, dataRange);
+}
+
+IntRect AccessibilityRenderObject::boundsForRange(const RefPtr<Range> range) const
+{
+    if (!range)
+        return IntRect();
     
-    // if the rectangle spans lines and contains multiple text chars, use the range's bounding box intead
-    if (rect1.maxY() != rect2.maxY()) {
-        RefPtr<Range> dataRange = makeRange(range.start, range.end);
-        LayoutRect boundingBox = dataRange->absoluteBoundingBox();
-        String rangeString = plainText(dataRange.get());
-        if (rangeString.length() > 1 && !boundingBox.isEmpty())
-            ourrect = boundingBox;
+    AXObjectCache* cache = this->axObjectCache();
+    if (!cache)
+        return IntRect();
+    
+    CharacterOffset start = cache->startOrEndCharacterOffsetForRange(range, true);
+    CharacterOffset end = cache->startOrEndCharacterOffsetForRange(range, false);
+    
+    LayoutRect rect1 = cache->absoluteCaretBoundsForCharacterOffset(start);
+    LayoutRect rect2 = cache->absoluteCaretBoundsForCharacterOffset(end);
+    
+    // readjust for position at the edge of a line. This is to exclude line rect that doesn't need to be accounted in the range bounds.
+    if (rect2.y() != rect1.y()) {
+        CharacterOffset endOfFirstLine = cache->endCharacterOffsetOfLine(start);
+        if (start.isEqual(endOfFirstLine)) {
+            start = cache->nextCharacterOffset(start, false);
+            rect1 = cache->absoluteCaretBoundsForCharacterOffset(start);
+        }
+        if (end.isEqual(endOfFirstLine)) {
+            end = cache->previousCharacterOffset(end, false);
+            rect2 = cache->absoluteCaretBoundsForCharacterOffset(end);
+        }
     }
     
-#if PLATFORM(MAC)
-    return m_renderer->view().frameView().contentsToScreen(snappedIntRect(ourrect));
-#else
-    return snappedIntRect(ourrect);
-#endif
+    return boundsForRects(rect1, rect2, range);
 }
     
 void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePositionRange& range) const
@@ -2193,6 +2229,13 @@ IntRect AccessibilityRenderObject::doAXBoundsForRange(const PlainTextRange& rang
 {
     if (allowsTextRanges())
         return boundsForVisiblePositionRange(visiblePositionRangeForRange(range));
+    return IntRect();
+}
+
+IntRect AccessibilityRenderObject::doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange& range) const
+{
+    if (allowsTextRanges())
+        return boundsForRange(rangeForPlainTextRange(range));
     return IntRect();
 }
 
