@@ -1,3 +1,32 @@
+2016-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Scrollbars are broken once again with current GTK+ master
+        https://bugs.webkit.org/show_bug.cgi?id=155292
+
+        Reviewed by Michael Catanzaro.
+
+        Most of the trough theming properties have been moved to the
+        scrollbar, and a new gadget "contents" has been added between the
+        scrollbar and its children.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::getOrCreateStyleContext): Add
+        left/bottom style classes to ensure the scrollbars border is taken
+        into account and rendered.
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground): Also create
+        style context for contents gadget.
+        (WebCore::ScrollbarThemeGtk::paintThumb): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintButton): Ditto.
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness): Take the
+        scrollbar border into account.
+        (WebCore::ScrollbarThemeGtk::buttonSize): Also create style
+        context for contents gadget.
+        (WebCore::ScrollbarThemeGtk::getStepperSpacing): Ditto.
+        (WebCore::ScrollbarThemeGtk::minimumThumbLength): Ditto.
+        (WebCore::ScrollbarThemeGtk::thumbFatness): Ditto.
+        (WebCore::ScrollbarThemeGtk::getTroughBorder): Take the scrollbar
+        border into account.
+
 2016-03-10  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r197983): Build fails due to missing inline method
