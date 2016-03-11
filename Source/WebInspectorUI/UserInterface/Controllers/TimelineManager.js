@@ -53,14 +53,24 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
     static defaultInstruments()
     {
-        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
-            return [new WebInspector.ScriptInstrument];
+        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript) {
+            let defaults = [new WebInspector.ScriptInstrument];
+            if (WebInspector.HeapAllocationsInstrument.supported())
+                defaults.push(new WebInspector.HeapAllocationsInstrument);
+            return defaults;
+        }
 
         let defaults = [
             new WebInspector.NetworkInstrument,
             new WebInspector.LayoutInstrument,
             new WebInspector.ScriptInstrument,
         ];
+
+        if (WebInspector.MemoryInstrument.supported())
+            defaults.push(new WebInspector.MemoryInstrument);
+
+        if (WebInspector.HeapAllocationsInstrument.supported())
+            defaults.push(new WebInspector.HeapAllocationsInstrument);
 
         if (WebInspector.FPSInstrument.supported())
             defaults.push(new WebInspector.FPSInstrument);

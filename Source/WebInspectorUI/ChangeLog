@@ -1,3 +1,14 @@
+2016-03-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Enable Memory Timelines by default if supported
+        https://bugs.webkit.org/show_bug.cgi?id=155333
+        <rdar://problem/25097319>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.defaultInstruments):
+
 2016-03-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add "Quick Open" dialog to debugger and resources tabs
