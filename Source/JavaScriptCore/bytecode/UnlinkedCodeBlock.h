@@ -355,6 +355,10 @@ public:
         ASSERT(m_rareData);
         return m_rareData->m_opProfileControlFlowBytecodeOffsets;
     }
+    bool hasOpProfileControlFlowBytecodeOffsets() const
+    {
+        return m_rareData && !m_rareData->m_opProfileControlFlowBytecodeOffsets.isEmpty();
+    }
 
     void dumpExpressionRangeInfo(); // For debugging purpose only.
 
