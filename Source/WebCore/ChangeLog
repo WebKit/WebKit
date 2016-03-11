@@ -1,3 +1,16 @@
+2016-03-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit should not be redirected to an invalid URL
+        https://bugs.webkit.org/show_bug.cgi?id=155263
+        <rdar://problem/22820172>
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/navigation/redirect-to-invalid-url.html
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+
 2016-03-10  Maksim Kisilev <mkisilev@yandex-team.ru>
 
         Fix typo in StyleTreeResolver.cpp
