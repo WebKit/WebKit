@@ -1,3 +1,34 @@
+2016-03-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Make it possible to disable TimelineRuler UI
+        https://bugs.webkit.org/show_bug.cgi?id=155348
+        <rdar://problem/25103505>
+
+        Reviewed by Timothy Hatcher.
+
+        Adds an "enabled" property to TimelineRuler, allowing the selection UI
+        to be disabled without removing the current selection.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler.allows-time-range-selection:not(.disabled)):
+        (.timeline-ruler > .selection-drag):
+        (.timeline-ruler:not(.disabled) > .selection-drag):
+        (.timeline-ruler:not(.disabled) > .selection-drag:active):
+        (.timeline-ruler.disabled > .selection-handle):
+        (.timeline-ruler.allows-time-range-selection): Deleted.
+        (.timeline-ruler > .selection-drag:active): Deleted.
+        Updated ruler styles for "disabled" state: pointer events are disabled,
+        selection handles hidden, and the default cursor is shown.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler):
+        (WebInspector.TimelineRuler.prototype.get enabled):
+        (WebInspector.TimelineRuler.prototype.set enabled):
+        New property.
+        (WebInspector.TimelineRuler.prototype._handleClick):
+        Corrected code which always reset the pointer events to "all", instead
+        of setting it back to the original value.
+
 2016-03-10  Daniel Strokis  <dstrokis@icloud.com>
 
         Web Inspector: color swatch and border are misaligned in Visual Styles sidebar

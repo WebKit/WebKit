@@ -29,7 +29,7 @@
     z-index: 1;
 }
 
-.timeline-ruler.allows-time-range-selection {
+.timeline-ruler.allows-time-range-selection:not(.disabled) {
     pointer-events: all;
 }
 
@@ -157,11 +157,14 @@ body.window-inactive .timeline-ruler > .header > .divider {
     position: absolute;
     top: 0;
     height: 23px;
+}
+
+.timeline-ruler:not(.disabled) > .selection-drag {
     cursor: -webkit-grab;
     pointer-events: all;
 }
 
-.timeline-ruler > .selection-drag:active {
+.timeline-ruler:not(.disabled) > .selection-drag:active {
     cursor: -webkit-grabbing;
 }
 
@@ -176,6 +179,10 @@ body.window-inactive .timeline-ruler > .header > .divider {
     cursor: col-resize;
     pointer-events: all;
     z-index: 15;
+}
+
+.timeline-ruler.disabled > .selection-handle {
+    display: none;
 }
 
 .timeline-ruler.selection-hidden > :matches(.selection-drag, .selection-handle, .shaded-area) {

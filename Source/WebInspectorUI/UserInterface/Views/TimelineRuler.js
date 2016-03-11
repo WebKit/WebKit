@@ -53,11 +53,26 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         this._minimumSelectionDuration = 0.01;
         this._formatLabelCallback = null;
         this._timeRangeSelectionChanged = false;
+        this._enabled = true;
 
         this._markerElementMap = new Map;
     }
 
     // Public
+
+    get enabled()
+    {
+        return this._enabled;
+    }
+
+    set enabled(x)
+    {
+        if (this._enabled === x)
+            return;
+
+        this._enabled = x;
+        this.element.classList.toggle(WebInspector.TreeElementStatusButton.DisabledStyleClassName, !this._enabled);
+    }
 
     get allowsClippedLabels()
     {
@@ -700,12 +715,15 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     _handleClick(event)
     {
-        if (this._mouseMoved)
+        if (!this._enabled)
+            return;
+
+        if (!this._mouseMoved)
             return;
 
         this.element.style.pointerEvents = "none";
         let newTarget = document.elementFromPoint(event.pageX, event.pageY);
-        this.element.style.pointerEvents = "all";
+        this.element.style.pointerEvents = null;
 
         if (newTarget && newTarget.click)
             newTarget.click();
