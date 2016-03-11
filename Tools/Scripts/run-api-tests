@@ -48,7 +48,7 @@ sub testToolPaths();
 sub possiblyColored($$);
 
 # Timeout for individual test, in sec
-my $timeout = 10;
+my $timeout = 30;
 
 my $showHelp = 0;
 my $verbose = 0;

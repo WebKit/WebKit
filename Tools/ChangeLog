@@ -1,3 +1,24 @@
+2016-03-11  Alexey Proskuryakov  <ap@apple.com>
+
+        [ios-sim debug] API test WTF_Lock.ContendedShortSection and WTF_ParkingLot.UnparkOneFifty timing out
+        https://bugs.webkit.org/show_bug.cgi?id=155276
+
+        [ios-sim] API test WTF_Condition.TenProducersTenConsumersOneSlot timing out
+        https://bugs.webkit.org/show_bug.cgi?id=155345
+
+        [iOS Simulator] API test timeout: WTF_ParkingLot.UnparkOneFiftyThenFiftyAll
+        https://bugs.webkit.org/show_bug.cgi?id=153997
+        <rdar://problem/23580034>
+
+        <rdar://problem/23580018> TestWebKitAPI Timeout: WTF_ParkingLot.UnparkOneFifty
+
+        Rubber-stamped by Filip Pizlo.
+
+        * Scripts/run-api-tests: These tests are pretty slow. Increase API test timeout.
+
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp: Start running WTF_ParkingLot.UnparkOneFiftyThenFiftyAll
+        on iOS again.
+
 2016-03-11  Jer Noble  <jer.noble@apple.com>
 
         [ios-sim debug] API tests RequiresUserActionForPlaybackTest.DoesNotRequireUserActionForMediaPlayback and RequiresUserActionForAudioButNotVideoPlayback asserting
