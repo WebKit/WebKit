@@ -1,3 +1,16 @@
+2016-03-11  Enrica Casucci  <enrica@apple.com>
+
+        Use only selected text for Look up.
+        https://bugs.webkit.org/show_bug.cgi?id=155380
+
+        Reviewed by Tim Horton.
+
+        The corresponding piece that uses the extended context for Look up
+        is not ready yet. For the moment default to retrieving the selected text.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _lookup:]):
+
 2016-03-11  Chelsea Pugh  <cpugh@apple.com>
 
         [iOS] Allow clients to specify text suggestions to be used for a form input session

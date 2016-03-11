@@ -1610,10 +1610,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     return (_page->editorState().isContentRichlyEditable) ? richTypes : plainTextTypes;
 }
 
-- (void)_lookup:(CGPoint)point
+- (void)_lookup:(id)sender
 {
     RetainPtr<WKContentView> view = self;
-    _page->getLookupContextAtPoint(WebCore::IntPoint(point), [view](const String& string, CallbackBase::Error error) {
+    _page->getSelectionOrContentsAsString([view](const String& string, CallbackBase::Error error) {
         if (error != CallbackBase::Error::None)
             return;
         if (!string)
