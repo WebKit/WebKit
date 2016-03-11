@@ -1,3 +1,22 @@
+2016-03-10  Enrica Casucci  <enrica@apple.com>
+
+        Expose additional WKDataDetectorTypes.
+        https://bugs.webkit.org/show_bug.cgi?id=155331
+        rdar://problem/24175813
+
+        Reviewed by Tim Horton.
+
+        Adding support for additional data detector types (tracking
+        numbers, flight information and spotlight suggestions).
+
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::constructURLStringForResult):
+        (WebCore::DataDetection::detectContentInRange):
+        * platform/cocoa/DataDetectorsCoreSoftLink.h:
+        * platform/cocoa/DataDetectorsCoreSoftLink.mm:
+        * platform/spi/cocoa/DataDetectorsCoreSPI.h:
+
 2016-03-10  Daniel Bates  <dabates@apple.com>
 
         CSP: Implement frame-ancestors directive

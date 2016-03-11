@@ -67,6 +67,9 @@ typedef NS_OPTIONS(NSUInteger, WKDataDetectorTypes) {
     WKDataDetectorTypeLink = 1 << 1,
     WKDataDetectorTypeAddress = 1 << 2,
     WKDataDetectorTypeCalendarEvent = 1 << 3,
+    WKDataDetectorTypeTrackingNumber = 1 << 4,
+    WKDataDetectorTypeFlightNumber = 1 << 5,
+    WKDataDetectorTypeSpotlightSuggestion = 1 << 6,
     WKDataDetectorTypeAll = NSUIntegerMax
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 

@@ -32,6 +32,7 @@
 #import <DataDetectorsCore/DDScannerResult.h>
 #import <DataDetectorsCore/DataDetectorsCore.h>
 #if PLATFORM(IOS)
+#import <DataDetectorsCore/DDOptionalSource.h>
 #import <DataDetectorsCore/DDURLifier.h>
 #endif
 #else // !USE(APPLE_INTERNAL_SDK)
@@ -47,6 +48,8 @@ enum {
     DDScannerCopyResultsOptionsNoOverlap = 1 << 0,
     DDScannerCopyResultsOptionsCoalesceSignatures = 1 << 1,
 };
+
+typedef CFIndex DDScannerSource;
 
 enum {
     DDURLifierPhoneNumberDetectionNone = 0,
@@ -112,6 +115,10 @@ typedef struct __DDScanner *DDScannerRef;
 
 typedef CFIndex DDScannerCopyResultsOptions;
 typedef CFIndex DDScannerOptions;
+
+enum {
+    DDScannerSourceSpotlight = 1<<1,
+};
 
 extern "C" {
 

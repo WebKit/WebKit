@@ -1,3 +1,18 @@
+2016-03-10  Enrica Casucci  <enrica@apple.com>
+
+        Expose additional WKDataDetectorTypes.
+        https://bugs.webkit.org/show_bug.cgi?id=155331
+        rdar://problem/24175813
+
+        Reviewed by Tim Horton.
+
+        Adding API to enable data detection of tracking numbers,
+        flight number and spotlight suggestions.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (fromWKDataDetectorTypes):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+
 2016-03-10  Beth Dakin  <bdakin@apple.com>
 
         defaultActions in UIDelegate method 

@@ -333,7 +333,13 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
         value |= WebCore::DataDetectorTypeAddress;
     if (types & WKDataDetectorTypeCalendarEvent)
         value |= WebCore::DataDetectorTypeCalendarEvent;
-    
+    if (types & WKDataDetectorTypeTrackingNumber)
+        value |= WebCore::DataDetectorTypeTrackingNumber;
+    if (types & WKDataDetectorTypeFlightNumber)
+        value |= WebCore::DataDetectorTypeFlightNumber;
+    if (types & WKDataDetectorTypeSpotlightSuggestion)
+        value |= WebCore::DataDetectorTypeSpotlightSuggestion;
+
     return static_cast<WebCore::DataDetectorTypes>(value);
 }
 #endif

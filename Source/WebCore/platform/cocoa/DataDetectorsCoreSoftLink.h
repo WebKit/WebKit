@@ -36,6 +36,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerCreate, DDSca
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerScanQuery, Boolean, (DDScannerRef scanner, DDScanQueryRef query), (scanner, query))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScanQueryCreate, DDScanQueryRef, (CFAllocatorRef allocator), (allocator))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerCopyResultsWithOptions, CFArrayRef, (DDScannerRef scanner, DDScannerCopyResultsOptions options), (scanner, options))
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerEnableOptionalSource, void, (DDScannerRef scanner, DDScannerSource source, Boolean enable), (scanner, source, enable))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDResultGetRange, CFRange, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDResultGetType, CFStringRef, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDResultGetCategory, DDResultCategory, (DDResultRef result), (result))
