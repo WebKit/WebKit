@@ -63,7 +63,7 @@ static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(ExecState* exec)
     ArgList args(exec);
     JSValue target = args.at(0);
     JSValue handler = args.at(1);
-    ProxyObject* proxy = ProxyObject::create(exec, exec->lexicalGlobalObject()->proxyObjectStructure(), target, handler);
+    ProxyObject* proxy = ProxyObject::create(exec, exec->lexicalGlobalObject(), target, handler);
     if (vm.exception())
         return JSValue::encode(JSValue());
     ProxyRevoke* revoke = ProxyRevoke::create(vm, exec->lexicalGlobalObject()->proxyRevokeStructure(), proxy);
@@ -100,7 +100,7 @@ static EncodedJSValue JSC_HOST_CALL constructProxyObject(ExecState* exec)
     ArgList args(exec);
     JSValue target = args.at(0);
     JSValue handler = args.at(1);
-    return JSValue::encode(ProxyObject::create(exec, exec->lexicalGlobalObject()->proxyObjectStructure(), target, handler));
+    return JSValue::encode(ProxyObject::create(exec, exec->lexicalGlobalObject(), target, handler));
 }
 
 ConstructType ProxyConstructor::getConstructData(JSCell*, ConstructData& constructData)

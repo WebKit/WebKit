@@ -45,6 +45,17 @@ ProxyObject::ProxyObject(VM& vm, Structure* structure)
 {
 }
 
+Structure* ProxyObject::structureForTarget(JSGlobalObject* globalObject, JSValue target)
+{
+    if (!target.isObject())
+        return globalObject->proxyObjectStructure();
+
+    JSObject* targetAsObject = jsCast<JSObject*>(target);
+    CallData ignoredCallData;
+    bool isCallable = targetAsObject->methodTable()->getCallData(targetAsObject, ignoredCallData) != CallType::None;
+    return isCallable ? globalObject->callableProxyObjectStructure() : globalObject->proxyObjectStructure();
+}
+
 void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValue handler)
 {
     Base::finishCreation(vm);
@@ -67,6 +78,10 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
 
     CallData ignoredCallData;
     m_isCallable = targetAsObject->methodTable(vm)->getCallData(targetAsObject, ignoredCallData) != CallType::None;
+    if (m_isCallable) {
+        TypeInfo info = structure(vm)->typeInfo();
+        RELEASE_ASSERT(info.implementsHasInstance() && info.implementsDefaultHasInstance());
+    }
 
     ConstructData ignoredConstructData;
     m_isConstructible = jsCast<JSObject*>(target)->methodTable(vm)->getConstructData(jsCast<JSObject*>(target), ignoredConstructData) != ConstructType::None;

@@ -1,3 +1,45 @@
+2016-03-10  Saam barati  <sbarati@apple.com>
+
+        [ES6] Instanceof isn't spec compliant when the RHS is a Proxy with a target that is a function
+        https://bugs.webkit.org/show_bug.cgi?id=155329
+
+        Reviewed by Mark Lam.
+
+        We use type info flags on the structure to dictate whether or not 
+        the RHS of an instanceof is a valid RHS (i.e, a function). The solution
+        to make Proxy a valid RHS when the Proxy's target is callable is to have
+        two different structures for ProxyObject: one for a non-callable target 
+        and one for a callable target.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::moduleRecordStructure):
+        (JSC::JSGlobalObject::moduleNamespaceObjectStructure):
+        (JSC::JSGlobalObject::proxyObjectStructure):
+        (JSC::JSGlobalObject::callableProxyObjectStructure):
+        (JSC::JSGlobalObject::proxyRevokeStructure):
+        (JSC::JSGlobalObject::wasmModuleStructure):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::makeRevocableProxy):
+        (JSC::constructProxyObject):
+        (JSC::ProxyConstructor::getConstructData):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::ProxyObject):
+        (JSC::ProxyObject::structureForTarget):
+        (JSC::ProxyObject::finishCreation):
+        * runtime/ProxyObject.h:
+        (JSC::ProxyObject::create):
+        (JSC::ProxyObject::createStructure):
+        * tests/es6.yaml:
+        * tests/stress/proxy-instanceof.js: Added.
+        (assert):
+        (test):
+        (C):
+        (test.let.handler.get if):
+        (test.let.handler):
+
 2016-03-10  Michael Saboff  <msaboff@apple.com>
 
         [ES6] RegExp sticky flag should be ignored in String.match when global flag is given
