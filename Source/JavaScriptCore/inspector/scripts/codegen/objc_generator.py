@@ -479,8 +479,12 @@ class ObjCGenerator(Generator):
                 return 'fromProtocolString<%s>(%s)' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
             else:
                 return 'fromProtocolString<%s>(%s)' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
-        if isinstance(_type, (ObjectType, ArrayType)):
-            return 'payload[@"%s"]' % member.member_name
+        if isinstance(_type, ObjectType):
+            objc_class = self.objc_class_for_type(member.type)
+            return '[[%s alloc] initWithPayload:payload[@"%s"]]' % (objc_class, member.member_name)
+        if isinstance(_type, ArrayType):
+            objc_class = self.objc_class_for_type(member.type.element_type)
+            return 'objcArrayFromPayload<%s>(payload[@"%s"])' % (objc_class, member.member_name)
 
     # JSON object setter/getter selectors for types.
 

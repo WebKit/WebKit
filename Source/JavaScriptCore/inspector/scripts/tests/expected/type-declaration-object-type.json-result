@@ -1522,7 +1522,7 @@ using namespace Inspector;
     if (!(self = [super init]))
         return nil;
 
-    self.columnNames = payload[@"columnNames"];
+    self.columnNames = objcArrayFromPayload<NSString>(payload[@"columnNames"]);
 
     self.notes = payload[@"notes"];
 
@@ -1532,9 +1532,9 @@ using namespace Inspector;
 
     self.payload = payload[@"payload"];
 
-    self.error = payload[@"error"];
+    self.error = [[TestProtocolDatabaseError alloc] initWithPayload:payload[@"error"]];
 
-    self.errorList = payload[@"errorList"];
+    self.errorList = objcArrayFromPayload<TestProtocolDatabaseError>(payload[@"errorList"]);
 
     return self;
 }
@@ -1620,7 +1620,7 @@ using namespace Inspector;
         return nil;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"columnNames"], @"columnNames");
-    self.columnNames = payload[@"columnNames"];
+    self.columnNames = objcArrayFromPayload<NSString>(payload[@"columnNames"]);
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"notes"], @"notes");
     self.notes = payload[@"notes"];
@@ -1635,10 +1635,10 @@ using namespace Inspector;
     self.payload = payload[@"payload"];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"error"], @"error");
-    self.error = payload[@"error"];
+    self.error = [[TestProtocolDatabaseError alloc] initWithPayload:payload[@"error"]];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"errorList"], @"errorList");
-    self.errorList = payload[@"errorList"];
+    self.errorList = objcArrayFromPayload<TestProtocolDatabaseError>(payload[@"errorList"]);
 
     return self;
 }
@@ -1860,7 +1860,7 @@ using namespace Inspector;
         return nil;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"columnNames"], @"columnNames");
-    self.columnNames = payload[@"columnNames"];
+    self.columnNames = objcArrayFromPayload<NSString>(payload[@"columnNames"]);
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"notes"], @"notes");
     self.notes = payload[@"notes"];
@@ -1875,7 +1875,7 @@ using namespace Inspector;
     self.payload = payload[@"payload"];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"error"], @"error");
-    self.error = payload[@"error"];
+    self.error = [[TestProtocolDatabaseError alloc] initWithPayload:payload[@"error"]];
 
     return self;
 }

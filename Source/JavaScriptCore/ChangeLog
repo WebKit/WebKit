@@ -1,3 +1,28 @@
+2016-03-10  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: generated initWithPayload: protocol object initializers should recursively decode array and object members
+        https://bugs.webkit.org/show_bug.cgi?id=155337
+        <rdar://problem/25098357>
+
+        Reviewed by Timothy Hatcher.
+
+        In cases where an object member is itself an object or array, we were
+        not calling initWithPayload: on the object member itself. So, this caused
+        a runtime error when constructing the outer object because the generated
+        code casted the NSDictionary/NSArray into the member's protocol object type.
+
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.payload_to_objc_expression_for_member):
+        Do a straightforward call to initWithPayload: for objects. For arrays,
+        call a templated helper function which does the same thing. The helper
+        is used to make this array decoding fit into a single generated expression.
+
+        Rebaseline relevant test results.
+
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-03-10  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, fix Changelog. git merged poorly.

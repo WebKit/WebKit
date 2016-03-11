@@ -1394,7 +1394,7 @@ using namespace Inspector;
     self.identifier = [payload[@"id"] integerValue];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"tree"], @"tree");
-    self.tree = payload[@"tree"];
+    self.tree = [[TestProtocolTestRecursiveObject1 alloc] initWithPayload:payload[@"tree"]];
 
     return self;
 }
@@ -1476,7 +1476,7 @@ using namespace Inspector;
     if (!(self = [super init]))
         return nil;
 
-    self.obj = payload[@"obj"];
+    self.obj = [[TestProtocolTestRecursiveObject2 alloc] initWithPayload:payload[@"obj"]];
 
     return self;
 }
@@ -1500,7 +1500,7 @@ using namespace Inspector;
     if (!(self = [super init]))
         return nil;
 
-    self.obj = payload[@"obj"];
+    self.obj = [[TestProtocolTestRecursiveObject1 alloc] initWithPayload:payload[@"obj"]];
 
     return self;
 }
