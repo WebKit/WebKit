@@ -1,3 +1,18 @@
+2016-03-07  Miguel Gomez  <magomez@igalia.com>
+
+        [TextureMapper] [BitmapTexturePool] Use appropriate list size when freeing textures
+        https://bugs.webkit.org/show_bug.cgi?id=155105
+
+        Reviewed by Žan Doberšek.
+
+        Use appropriate list size when releasing the textures used as attachment.
+        This is a fix for the patch to https://bugs.webkit.org/show_bug.cgi?id=154965.
+
+        No new tests because no new functionality was added.
+
+        * platform/graphics/texmap/BitmapTexturePool.cpp:
+        (WebCore::BitmapTexturePool::releaseUnusedTexturesTimerFired):
+
 2016-03-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Improve codegen of Compare and Test

@@ -92,7 +92,7 @@ void BitmapTexturePool::releaseUnusedTexturesTimerFired()
 
         for (size_t i = 0; i < m_attachmentTextures.size(); ++i) {
             if (m_attachmentTextures[i].m_lastUsedTime < minUsedTime) {
-                m_attachmentTextures.remove(i, m_textures.size() - i);
+                m_attachmentTextures.remove(i, m_attachmentTextures.size() - i);
                 break;
             }
         }
