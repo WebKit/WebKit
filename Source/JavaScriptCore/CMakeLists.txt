@@ -54,6 +54,7 @@ set(JavaScriptCore_SOURCES
     API/JSContextRef.cpp
     API/JSObjectRef.cpp
     API/JSProfilerPrivate.cpp
+    API/JSTypedArray.cpp
     API/JSScriptRef.cpp
     API/JSStringRef.cpp
     API/JSValueRef.cpp

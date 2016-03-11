@@ -42,7 +42,7 @@ bool ArrayBuffer::transfer(ArrayBufferContents& result)
         return false;
     }
 
-    bool isNeuterable = !m_pinCount;
+    bool isNeuterable = !m_pinCount && !m_locked;
 
     if (!isNeuterable) {
         m_contents.copyTo(result);

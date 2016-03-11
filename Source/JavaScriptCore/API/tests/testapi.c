@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2015-2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,13 +44,13 @@
 #include "ExecutionTimeLimitTest.h"
 #include "GlobalContextWithFinalizerTest.h"
 #include "PingPongStackOverflowTest.h"
+#include "TypedArrayCTest.h"
 
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
 #endif
 
 bool assertTrue(bool value, const char* message);
-extern void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
 static JSGlobalContextRef context;
 int failed;
@@ -1113,7 +1113,6 @@ static void checkConstnessInJSObjectNames()
     val.name = "something";
 }
 
-
 int main(int argc, char* argv[])
 {
 #if OS(WINDOWS)
@@ -1137,6 +1136,8 @@ int main(int argc, char* argv[])
 #if JSC_OBJC_API_ENABLED
     testObjectiveCAPI();
 #endif
+
+
 
     const char *scriptPath = "testapi.js";
     if (argc > 1) {
@@ -1891,6 +1892,7 @@ int main(int argc, char* argv[])
         JSGlobalContextRelease(context);
     }
 
+    failed = testTypedArrayCAPI() || failed;
     failed = testExecutionTimeLimit() || failed;
     failed = testGlobalContextWithFinalizer() || failed;
     failed = testPingPongStackOverflow() || failed;

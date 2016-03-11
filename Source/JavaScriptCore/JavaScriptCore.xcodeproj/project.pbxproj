@@ -1177,8 +1177,12 @@
 		52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C952B719A289850069B386 /* TypeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C952B619A289850069B386 /* TypeProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C952B819A28A1C0069B386 /* TypeProfiler.cpp */; };
+		53486BB71C1795C300F6F3AF /* JSTypedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 53486BB61C1795C300F6F3AF /* JSTypedArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53486BBB1C18E84500F6F3AF /* JSTypedArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53486BBA1C18E84500F6F3AF /* JSTypedArray.cpp */; };
+		534902851C7276B70012BCB8 /* TypedArrayCTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 534902821C7242C80012BCB8 /* TypedArrayCTest.cpp */; };
 		534C457C1BC72411007476A7 /* JSTypedArrayViewConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 534C457B1BC72411007476A7 /* JSTypedArrayViewConstructor.h */; };
 		534C457E1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 534C457D1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp */; };
+		53529A4C1C457B75000B49C6 /* APIUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 53529A4B1C457B75000B49C6 /* APIUtils.h */; };
 		5370B4F51BF26202005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */; };
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };
@@ -3300,9 +3304,14 @@
 		52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeType.h; sourceTree = "<group>"; };
 		52C952B619A289850069B386 /* TypeProfiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeProfiler.h; sourceTree = "<group>"; };
 		52C952B819A28A1C0069B386 /* TypeProfiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfiler.cpp; sourceTree = "<group>"; };
+		53486BB61C1795C300F6F3AF /* JSTypedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypedArray.h; sourceTree = "<group>"; };
+		53486BBA1C18E84500F6F3AF /* JSTypedArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArray.cpp; sourceTree = "<group>"; };
+		534902821C7242C80012BCB8 /* TypedArrayCTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TypedArrayCTest.cpp; path = API/tests/TypedArrayCTest.cpp; sourceTree = "<group>"; };
+		534902831C7242C80012BCB8 /* TypedArrayCTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TypedArrayCTest.h; path = API/tests/TypedArrayCTest.h; sourceTree = "<group>"; };
 		534C457A1BC703DC007476A7 /* TypedArrayConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = TypedArrayConstructor.js; sourceTree = "<group>"; };
 		534C457B1BC72411007476A7 /* JSTypedArrayViewConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypedArrayViewConstructor.h; sourceTree = "<group>"; };
 		534C457D1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewConstructor.cpp; sourceTree = "<group>"; };
+		53529A4B1C457B75000B49C6 /* APIUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUtils.h; sourceTree = "<group>"; };
 		5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AdaptiveInferredPropertyValueWatchpointBase.cpp; sourceTree = "<group>"; };
 		5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdaptiveInferredPropertyValueWatchpointBase.h; sourceTree = "<group>"; };
 		53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGenericTypedArrayViewPrototypeFunctions.h; sourceTree = "<group>"; };
@@ -4896,6 +4905,8 @@
 				FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */,
 				FEF040521AAEC4ED00BD28B0 /* CompareAndSwapTest.h */,
 				C29ECB021804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.h */,
+				534902821C7242C80012BCB8 /* TypedArrayCTest.cpp */,
+				534902831C7242C80012BCB8 /* TypedArrayCTest.h */,
 				C29ECB011804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm */,
 				C203281E1981979D0088B499 /* CustomGlobalObjectClassTest.c */,
 				C203281F1981979D0088B499 /* CustomGlobalObjectClassTest.h */,
@@ -5183,6 +5194,7 @@
 			children = (
 				C211B574176A224D000E2A23 /* APICallbackFunction.h */,
 				1482B78A0A4305AB00517CFC /* APICast.h */,
+				53529A4B1C457B75000B49C6 /* APIUtils.h */,
 				1CAA8B4A0D32C39A0041BCFF /* JavaScript.h */,
 				1CAA8B4B0D32C39A0041BCFF /* JavaScriptCore.h */,
 				BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */,
@@ -5231,6 +5243,8 @@
 				146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */,
 				146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */,
 				1A28D4A7177B71C80007FA3C /* JSStringRefPrivate.h */,
+				53486BBA1C18E84500F6F3AF /* JSTypedArray.cpp */,
+				53486BB61C1795C300F6F3AF /* JSTypedArray.h */,
 				86E3C606167BAB87006D760A /* JSValue.h */,
 				86E3C60D167BAB87006D760A /* JSValue.mm */,
 				86E3C60E167BAB87006D760A /* JSValueInternal.h */,
@@ -7110,6 +7124,7 @@
 				0F7C11AD1BC3862C00C74CDB /* CopyBarrier.h in Headers */,
 				0F5A52D017ADD717008ECB2D /* CopyToken.h in Headers */,
 				C2239D1816262BDD005AC5FD /* CopyVisitor.h in Headers */,
+				53486BB71C1795C300F6F3AF /* JSTypedArray.h in Headers */,
 				C2239D1916262BDD005AC5FD /* CopyVisitorInlines.h in Headers */,
 				C218D1401655CFD50062BB81 /* CopyWorkList.h in Headers */,
 				C4F4B6F41A05C944005CAB76 /* cpp_generator.py in Headers */,
@@ -7183,6 +7198,7 @@
 				0F3C1F1B1B868E7900ABB08B /* DFGClobbersExitState.h in Headers */,
 				0F04396E1B03DC0B009598B7 /* DFGCombinedLiveness.h in Headers */,
 				0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */,
+				53529A4C1C457B75000B49C6 /* APIUtils.h in Headers */,
 				0FEA0A32170D40BF00BB722C /* DFGCommonData.h in Headers */,
 				0F725CB01C506D3B00AD943A /* B3FoldPathConstants.h in Headers */,
 				0F38B01817CFE75500B144D3 /* DFGCompilationKey.h in Headers */,
@@ -8558,6 +8574,7 @@
 				FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */,
 				65570F5A1AA4C3EA009B3C23 /* Regress141275.mm in Sources */,
 				FEB51F6C1A97B688001F921C /* Regress141809.mm in Sources */,
+				534902851C7276B70012BCB8 /* TypedArrayCTest.cpp in Sources */,
 				1440F6100A4F85670005F061 /* testapi.c in Sources */,
 				86D2221A167EF9440024C804 /* testapi.mm in Sources */,
 			);
@@ -8588,6 +8605,7 @@
 				43AB26C71C1A535C00D82AE6 /* B3MathExtras.cpp in Sources */,
 				0FEC85781BDACDC70080FF74 /* AirGenerate.cpp in Sources */,
 				0FEC85931BDB1E100080FF74 /* AirGenerated.cpp in Sources */,
+				53486BBB1C18E84500F6F3AF /* JSTypedArray.cpp in Sources */,
 				0FEC857B1BDACDC70080FF74 /* AirHandleCalleeSaves.cpp in Sources */,
 				0FEC857D1BDACDC70080FF74 /* AirInsertionSet.cpp in Sources */,
 				0FEC857F1BDACDC70080FF74 /* AirInst.cpp in Sources */,

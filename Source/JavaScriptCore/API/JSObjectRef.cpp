@@ -29,6 +29,7 @@
 #include "JSObjectRefPrivate.h"
 
 #include "APICast.h"
+#include "APIUtils.h"
 #include "ButterflyInlines.h"
 #include "CodeBlock.h"
 #include "CopiedSpaceInlines.h"
@@ -61,26 +62,6 @@
 #endif
 
 using namespace JSC;
-
-enum class ExceptionStatus {
-    DidThrow,
-    DidNotThrow
-};
-
-static ExceptionStatus handleExceptionIfNeeded(ExecState* exec, JSValueRef* returnedExceptionRef)
-{
-    if (exec->hadException()) {
-        Exception* exception = exec->exception();
-        if (returnedExceptionRef)
-            *returnedExceptionRef = toRef(exec, exception->value());
-        exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exception);
-#endif
-        return ExceptionStatus::DidThrow;
-    }
-    return ExceptionStatus::DidNotThrow;
-}
 
 JSClassRef JSClassCreate(const JSClassDefinition* definition)
 {

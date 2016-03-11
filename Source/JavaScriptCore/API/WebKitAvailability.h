@@ -67,10 +67,13 @@
 #if defined(BUILDING_GTK__)
 #undef CF_AVAILABLE
 #define CF_AVAILABLE(_mac, _ios)
+#undef CF_ENUM_AVAILABLE
+#define CF_ENUM_AVAILABLE(_mac, _ios)
 #endif
 
 #else
 #define CF_AVAILABLE(_mac, _ios)
+#define CF_ENUM_AVAILABLE(_mac, _ios)
 #endif
 
 #endif /* __WebKitAvailability__ */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "JSValueRef.h"
 
 #include "APICast.h"
+#include "APIUtils.h"
 #include "DateInstance.h"
 #include "Exception.h"
 #include "JSAPIWrapperObject.h"
@@ -52,26 +53,6 @@
 #endif
 
 using namespace JSC;
-
-enum class ExceptionStatus {
-    DidThrow,
-    DidNotThrow
-};
-
-static ExceptionStatus handleExceptionIfNeeded(ExecState* exec, JSValueRef* returnedExceptionRef)
-{
-    if (exec->hadException()) {
-        Exception* exception = exec->exception();
-        if (returnedExceptionRef)
-            *returnedExceptionRef = toRef(exec, exception->value());
-        exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exception);
-#endif
-        return ExceptionStatus::DidThrow;
-    }
-    return ExceptionStatus::DidNotThrow;
-}
 
 #if PLATFORM(MAC)
 static bool evernoteHackNeeded()

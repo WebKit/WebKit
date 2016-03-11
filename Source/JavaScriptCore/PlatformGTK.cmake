@@ -24,6 +24,7 @@ install(FILES API/JavaScript.h
               API/JSContextRef.h
               API/JSObjectRef.h
               API/JSStringRef.h
+              API/JSTypedArray.h
               API/JSValueRef.h
               API/WebKitAvailability.h
         DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/JavaScriptCore"

@@ -1,3 +1,117 @@
+2016-03-10  Keith Miller  <keith_miller@apple.com>
+
+        Typed Arrays have no public facing API
+        https://bugs.webkit.org/show_bug.cgi?id=120112
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds a new C-API (an Obj-C API will follow in the future) for Typed Arrays. The API has two sets of
+        functions. One for Typed Arrays and another for Array Buffers. This API is intended to reflect the use of Typed
+        Array objects in JS code. There is a method for each of the core TypedArray and Array Buffer methods.
+        Originally, we were planning on using a separate non-JS object as the backing store instead of a JS Array Buffer
+        but we decide to defer that idea since there was no good CF/NS API that met all the constraints we needed
+        (Discussed further below). We also wanted to want until Shared Array Buffers had reached a more finished state
+        to see what impact they might have on an API.
+
+        The API has the following Typed Array construction methods:
+        1) Create with length (the backing buffer is zero initialized). -- JSObjectMakeTypedArray
+        2) Create with an existing pointer and a destructor. -- JSObjectMakeTypedArrayFromBytesNoCopy
+        3) Create with an Array Buffer object. -- JSObjectMakeTypedArrayFromArrayBuffer
+        4) Create with an Array Buffer object with a given offset and length. -- JSObjectMakeTypedArrayFromArrayBufferWithOffset
+
+        The API has the following functions on Typed Array JSObjectRefs:
+        5) Get access to a temporary void* of the backing store's data. -- JSObjectGetTypedArrayBytesPtr
+        6) Get the length of a Typed Array object (returns 0 if it is not a Typed Array object). -- JSObjectGetTypedArrayLength
+        7) Get the byte length of a Typed Array object (returns 0 if it is not a Typed Array object). -- JSObjectGetTypedArrayByteLength
+        8) Get the byte offset of a Typed Array object (returns 0 if it is not a Typed Array object). -- JSObjectGetTypedArrayByteOffset
+        9) Get a Typed Array object's Array Buffer  backing store. -- JSObjectGetTypedArrayBuffer
+
+        The API has the following Array Buffer construction method:
+        10) Create with an existing pointer and a destructor. -- JSObjectMakeArrayBufferWithBytesNoCopy
+
+        The API has the following functions on Array Buffer JSObjectRefs:
+        11) Get access to a temporary void* of the backing store's data. -- JSObjectGetArrayBufferBytesPtr
+        12) Get the byte length of an Array Buffer object (returns 0 if it is not an Array Buffer object). -- JSObjectGetArrayBufferByteLength
+
+        The API adds the following new typedefs and enumerations:
+        13) A typedef representing the function pointer type used to deallocate byte pointers provided to constructors. -- JSTypedArrayByesDeallocator
+        14) An enumeration indicating the Typed Array API type of a JSValueRef. -- JSTypedArrayType
+
+        Finally, The API has the following function to get Typed Array Types:
+        15)  Get the Typed Array type of a JS value. -- JSValueGetTypedArrayType
+
+        There are a couple of things to note about these functions. Calling JSObjectGetTypedArrayBytesPtr (5) or
+        JSObjectGetArrayBufferBytesPtr (12) will pin and lock the ArrayBuffer's data for the remaining lifetime of that
+        ArrayBuffer. This is because, currently, we do not have finalizers for our Array Buffers or Typed Arrays with a
+        backing ArrayBuffer and adding one would likely incur a non-trivial cost to GC. Also, we do not have a direct
+        way to make a Typed Array from a pointer with an offset as we do not expect using offsets to be a common use
+        case of the API.
+
+        While it would have been nice to integrate our backing store with CFData or one of its subclasses, it is not
+        possible to force a CFData/CFMutableData to be both writable and have a fixed size/backing store pointer.
+        NSData is not writable and CFMutableData can have a fixed pointer if it is allocated with a non-zero capacity
+        but there is no way for us to force an existing CFMutableData into this state.
+
+        * API/APIUtils.h: Copied from Source/JavaScriptCore/runtime/ArrayBuffer.cpp.
+        (handleExceptionIfNeeded):
+        (setException):
+        * API/JSBase.h:
+        * API/JSObjectRef.cpp:
+        (handleExceptionIfNeeded): Deleted.
+        * API/JSTypedArray.cpp: Added.
+        (toJSTypedArrayType):
+        (toTypedArrayType):
+        (createTypedArray):
+        (JSValueGetTypedArrayType):
+        (JSObjectMakeTypedArray):
+        (JSObjectMakeTypedArrayWithBytesNoCopy):
+        (JSObjectMakeTypedArrayWithArrayBuffer):
+        (JSObjectMakeTypedArrayWithArrayBufferAndOffset):
+        (JSObjectGetTypedArrayBytesPtr):
+        (JSObjectGetTypedArrayLength):
+        (JSObjectGetTypedArrayByteLength):
+        (JSObjectGetTypedArrayByteOffset):
+        (JSObjectGetTypedArrayBuffer):
+        (JSObjectMakeArrayBufferWithBytesNoCopy):
+        (JSObjectGetArrayBufferBytesPtr):
+        (JSObjectGetArrayBufferByteLength):
+        * API/JSTypedArray.h: Added.
+        * API/JSValueRef.cpp:
+        (handleExceptionIfNeeded): Deleted.
+        * API/JSValueRef.h:
+        * API/JavaScript.h:
+        * API/WebKitAvailability.h:
+        * API/tests/TypedArrayCTest.cpp: Added.
+        (id):
+        (freePtr):
+        (assertEqualsAsNumber):
+        (testAccess):
+        (testConstructors):
+        (forEachTypedArrayType):
+        (testTypedArrayCAPI):
+        * API/tests/TypedArrayCTest.h: Added.
+        * API/tests/testapi.c:
+        (main):
+        * CMakeLists.txt:
+        * ForwardingHeaders/JavaScriptCore/JSTypedArray.h: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBuffer::transfer):
+        * runtime/ArrayBuffer.h:
+        (JSC::arrayBufferDestructorNull):
+        (JSC::arrayBufferDestructorDefault):
+        (JSC::ArrayBufferContents::ArrayBufferContents):
+        (JSC::ArrayBufferContents::transfer):
+        (JSC::ArrayBuffer::createAdopted):
+        (JSC::ArrayBuffer::createFromBytes):
+        (JSC::ArrayBuffer::ArrayBuffer):
+        (JSC::ArrayBuffer::pinAndLock):
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBufferContents::~ArrayBufferContents):
+        * shell/PlatformWin.cmake:
+
 2016-03-10  Saam barati  <sbarati@apple.com>
 
         [ES6] Instanceof isn't spec compliant when the RHS is a Proxy with a target that is a function

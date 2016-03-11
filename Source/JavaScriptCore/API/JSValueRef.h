@@ -52,6 +52,36 @@ typedef enum {
     kJSTypeObject
 } JSType;
 
+/*!
+ @enum JSTypedArrayType
+ @abstract     A constant identifying the Typed Array type of a JSObjectRef.
+ @constant     kJSTypedArrayTypeInt8Array            Int8Array
+ @constant     kJSTypedArrayTypeInt16Array           Int16Array
+ @constant     kJSTypedArrayTypeInt32Array           Int32Array
+ @constant     kJSTypedArrayTypeUint8Array           Uint8Array
+ @constant     kJSTypedArrayTypeUint8ClampedArray    Uint8ClampedArray
+ @constant     kJSTypedArrayTypeUint16Array          Uint16Array
+ @constant     kJSTypedArrayTypeUint32Array          Uint32Array
+ @constant     kJSTypedArrayTypeFloat32Array         Float32Array
+ @constant     kJSTypedArrayTypeFloat64Array         Float64Array
+ @constant     kJSTypedArrayTypeArrayBuffer          ArrayBuffer
+ @constant     kJSTypedArrayTypeNone                 Not a Typed Array
+
+ */
+typedef enum {
+    kJSTypedArrayTypeInt8Array,
+    kJSTypedArrayTypeInt16Array,
+    kJSTypedArrayTypeInt32Array,
+    kJSTypedArrayTypeUint8Array,
+    kJSTypedArrayTypeUint8ClampedArray,
+    kJSTypedArrayTypeUint16Array,
+    kJSTypedArrayTypeUint32Array,
+    kJSTypedArrayTypeFloat32Array,
+    kJSTypedArrayTypeFloat64Array,
+    kJSTypedArrayTypeArrayBuffer,
+    kJSTypedArrayTypeNone,
+} JSTypedArrayType CF_ENUM_AVAILABLE(10_12, 10_0);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -146,6 +176,16 @@ JS_EXPORT bool JSValueIsArray(JSContextRef ctx, JSValueRef value) CF_AVAILABLE(1
 @result         true if value is a date, otherwise false.
 */
 JS_EXPORT bool JSValueIsDate(JSContextRef ctx, JSValueRef value) CF_AVAILABLE(10_11, 9_0);
+
+/*!
+@function
+@abstract           Returns a JavaScript value's Typed Array type.
+@param ctx          The execution context to use.
+@param value        The JSValue whose Typed Array type to return.
+@param exception    A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+@result             A value of type JSTypedArrayType that identifies value's Typed Array type, or kJSTypedArrayTypeNone if the value is not a Typed Array object.
+ */
+JS_EXPORT JSTypedArrayType JSValueGetTypedArrayType(JSContextRef ctx, JSValueRef value, JSValueRef* exception) CF_AVAILABLE(10_12, 10_0);
 
 /* Comparing values */
 
