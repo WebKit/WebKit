@@ -21,7 +21,7 @@ PAUSE #5: $exception => thrown string
 PAUSE #6: $exception => 123.456
 PAUSE #7: $exception => null
 PAUSE #8: $exception => Object
-PAUSE #9: $exception => body
+PAUSE #9: $exception => <body>
 PAUSE #10: $exception => TypeError: undefined is not an object (evaluating '[].x.x')
 STEPPED OUT TO CATCH BLOCK: $exception === e ? true
 PAUSE #11: $exception => thrown string

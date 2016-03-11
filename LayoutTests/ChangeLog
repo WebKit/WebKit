@@ -1,3 +1,12 @@
+2016-03-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline two inspector tests after r197954 changed the results.
+
+        Unreviewed test gardening.
+
+        * inspector/debugger/command-line-api-exception-expected.txt:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+
 2016-03-10  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Allow RegExp constructor to take pattern from an existing RegExp with new flags

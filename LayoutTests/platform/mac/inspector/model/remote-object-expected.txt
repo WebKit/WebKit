@@ -1744,12 +1744,12 @@ EXPRESSION: document.body
   "_type": "object",
   "_subtype": "node",
   "_objectId": "<filtered>",
-  "_description": "body",
+  "_description": "<body>",
   "_preview": {
     "_listeners": null,
     "_type": "object",
     "_subtype": "node",
-    "_description": "body",
+    "_description": "<body>",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -1794,12 +1794,12 @@ EXPRESSION: div = document.createElement('div'); div.className = 'foo bar'; div
   "_type": "object",
   "_subtype": "node",
   "_objectId": "<filtered>",
-  "_description": "div.foo.bar",
+  "_description": "<div class=\"foo bar\">",
   "_preview": {
     "_listeners": null,
     "_type": "object",
     "_subtype": "node",
-    "_description": "div.foo.bar",
+    "_description": "<div class=\"foo bar\">",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -1844,12 +1844,12 @@ EXPRESSION: span = document.createElement('span'); span.id = 'foo'; span
   "_type": "object",
   "_subtype": "node",
   "_objectId": "<filtered>",
-  "_description": "span#foo",
+  "_description": "<span id=\"foo\">",
   "_preview": {
     "_listeners": null,
     "_type": "object",
     "_subtype": "node",
-    "_description": "span#foo",
+    "_description": "<span id=\"foo\">",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -1894,12 +1894,12 @@ EXPRESSION: input = document.createElement('input'); input.type = 'password'; in
   "_type": "object",
   "_subtype": "node",
   "_objectId": "<filtered>",
-  "_description": "input",
+  "_description": "<input type=\"password\">",
   "_preview": {
     "_listeners": null,
     "_type": "object",
     "_subtype": "node",
-    "_description": "input",
+    "_description": "<input type=\"password\">",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -1944,12 +1944,12 @@ EXPRESSION: text = document.createTextNode('text content'); text
   "_type": "object",
   "_subtype": "node",
   "_objectId": "<filtered>",
-  "_description": "#text",
+  "_description": "#text \"text content\"",
   "_preview": {
     "_listeners": null,
     "_type": "object",
     "_subtype": "node",
-    "_description": "#text",
+    "_description": "#text \"text content\"",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -1994,12 +1994,12 @@ EXPRESSION: comment = document.createComment('comment content'); comment
   "_type": "object",
   "_subtype": "node",
   "_objectId": "<filtered>",
-  "_description": "#comment",
+  "_description": "<!--comment content-->",
   "_preview": {
     "_listeners": null,
     "_type": "object",
     "_subtype": "node",
-    "_description": "#comment",
+    "_description": "<!--comment content-->",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -2047,12 +2047,12 @@ EXPRESSION: svgElement = document.createElementNS('http://www.w3.org/2000/svg', 
   "_type": "object",
   "_subtype": "node",
   "_objectId": "<filtered>",
-  "_description": "rect.test",
+  "_description": "<rect class=\"test\">",
   "_preview": {
     "_listeners": null,
     "_type": "object",
     "_subtype": "node",
-    "_description": "rect.test",
+    "_description": "<rect class=\"test\">",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -2573,7 +2573,7 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
           "_listeners": null,
           "_type": "object",
           "_subtype": "node",
-          "_description": "body",
+          "_description": "<body>",
           "_lossless": false,
           "_overflow": true,
           "_properties": [
@@ -3000,7 +3000,7 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
           "_listeners": null,
           "_type": "object",
           "_subtype": "node",
-          "_description": "body",
+          "_description": "<body>",
           "_lossless": false,
           "_overflow": true,
           "_properties": [
