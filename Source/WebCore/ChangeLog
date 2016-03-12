@@ -1,3 +1,32 @@
+2016-03-11  John Wilander  <wilander@apple.com>
+
+        Move prevalent resource classifier from WebCore to WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=155242
+        <rdar://problem/24913272>
+
+        Reviewed by Andy Estes.
+
+        No new tests since we have yet to decide how to set up tests for prevalent resources.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logFrameNavigation):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+            - Removed calls to old classifier in WebCore.
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::encodeHashCountedSet):
+        (WebCore::ResourceLoadStatistics::checkAndSetAsPrevalentResourceIfNecessary): Deleted.
+        (WebCore::ResourceLoadStatistics::hasPrevalentResourceCharacteristics): Deleted.
+        * loader/ResourceLoadStatistics.h:
+            - Deleted old classification functions.
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::create):
+        (WebCore::ResourceLoadStatisticsStore::fireDataModificationHandler):
+        (WebCore::ResourceLoadStatisticsStore::hasEnoughDataForStatisticsProcessing):
+            - New function to allow for checks before calls to processStatistics.
+        (WebCore::ResourceLoadStatisticsStore::processStatistics):
+            - New function that receives a lamda and executes it on every entry in its statistics map.
+        * loader/ResourceLoadStatisticsStore.h:
+
 2016-03-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebKit should not be redirected to an invalid URL

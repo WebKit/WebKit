@@ -142,7 +142,6 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
         }
     }
 
-    targetStatistics.checkAndSetAsPrevalentResourceIfNecessary(m_store->size());
     m_store->fireDataModificationHandler();
 }
     
@@ -205,7 +204,6 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
         targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
     }
     
-    targetStatistics.checkAndSetAsPrevalentResourceIfNecessary(m_store->size());
     m_store->fireDataModificationHandler();
 }
     

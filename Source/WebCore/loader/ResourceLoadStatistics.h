@@ -42,11 +42,6 @@ struct ResourceLoadStatistics {
 
     ResourceLoadStatistics() = default;
 
-    bool checkAndSetAsPrevalentResourceIfNecessary(unsigned originsVisitedSoFar);
-
-    bool hasPrevalentRedirection() const;
-    bool hasPrevalentResourceCharacteristics() const;
-
     void encode(KeyedEncoder&) const;
     bool decode(KeyedDecoder&);
 

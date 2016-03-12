@@ -5824,9 +5824,6 @@
 				86E67A22190F411800004AB7 /* ProcessThrottler.cpp */,
 				86E67A21190F411800004AB7 /* ProcessThrottler.h */,
 				83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */,
-				7A9CD8C01C77984900D9F6C7 /* WebResourceLoadStatisticsStore.cpp */,
-				7A9CD8C11C77984900D9F6C7 /* WebResourceLoadStatisticsStore.h */,
-				7A9CD8C21C779AD600D9F6C7 /* WebResourceLoadStatisticsStore.messages.in */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */,
@@ -5923,6 +5920,9 @@
 				BC111B0D112F5E4F00337BAB /* WebProcessProxy.cpp */,
 				BC032DCF10F4389F0058C15A /* WebProcessProxy.h */,
 				BCEE7AB312817095009827DA /* WebProcessProxy.messages.in */,
+				7A9CD8C01C77984900D9F6C7 /* WebResourceLoadStatisticsStore.cpp */,
+				7A9CD8C11C77984900D9F6C7 /* WebResourceLoadStatisticsStore.h */,
+				7A9CD8C21C779AD600D9F6C7 /* WebResourceLoadStatisticsStore.messages.in */,
 			);
 			path = UIProcess;
 			sourceTree = "<group>";

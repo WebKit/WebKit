@@ -60,6 +60,8 @@ public:
 
     void fireDataModificationHandler();
 
+    WEBCORE_EXPORT bool hasEnoughDataForStatisticsProcessing();
+    WEBCORE_EXPORT void processStatistics(std::function<void(ResourceLoadStatistics&)>&&);
 private:
     ResourceLoadStatisticsStore() = default;
 

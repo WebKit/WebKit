@@ -1,3 +1,22 @@
+2016-03-11  John Wilander  <wilander@apple.com>
+
+        Move prevalent resource classifier from WebCore to WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=155242
+        <rdar://problem/24913272>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::create):
+        (WebKit::WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore):
+        (WebKit::hasPrevalentResourceCharacteristics):
+        (WebKit::classifyPrevalentResources):
+            - Moved these two functions from WebCore.
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+            - Calls processStatistics with a lamda function to classify prevalent resources.
+        * WebKit2.xcodeproj/project.pbxproj:
+            - Fixed the ordering of source files.
+
 2016-03-11  Sam Weinig  <sam@webkit.org>
 
         WebKit needs a new sandbox profile addition for DataDetectors

@@ -30,12 +30,20 @@
 #include "WebProcessPool.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include <WebCore/KeyedCoding.h>
-#include <WebCore/ResourceLoadStatisticsStore.h>
+#include <WebCore/ResourceLoadStatistics.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+// Sub frame classification thresholds
+static const unsigned subframeUnderTopFrameOriginsThreshold = 3;
+    
+// Subresource classification thresholds
+static const unsigned subresourceUnderTopFrameOriginsThreshold = 5;
+static const unsigned subresourceHasBeenRedirectedFromToUniqueDomainsThreshold = 3;
+static const unsigned redirectedToOtherPrevalentResourceOriginsThreshold = 2;
 
 Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(const String& resourceLoadStatisticsDirectory)
 {
@@ -53,11 +61,37 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 {
 }
 
+static inline bool hasPrevalentResourceCharacteristics(const ResourceLoadStatistics& resourceStatistic)
+{
+    return resourceStatistic.subframeUnderTopFrameOrigins.size() > subframeUnderTopFrameOriginsThreshold
+        || resourceStatistic.subresourceUnderTopFrameOrigins.size() > subresourceUnderTopFrameOriginsThreshold
+        || resourceStatistic.subresourceUniqueRedirectsTo.size() > subresourceHasBeenRedirectedFromToUniqueDomainsThreshold
+        || resourceStatistic.redirectedToOtherPrevalentResourceOrigins.size() > redirectedToOtherPrevalentResourceOriginsThreshold;
+}
+    
+static inline void classifyPrevalentResources(ResourceLoadStatistics& resourceStatistic, Vector<String>& prevalentResources, Vector<String>& prevalentResourcesWithUserInteraction)
+{
+    if (resourceStatistic.isPrevalentResource || hasPrevalentResourceCharacteristics(resourceStatistic)) {
+        resourceStatistic.isPrevalentResource = true;
+        if (resourceStatistic.hadUserInteraction)
+            prevalentResourcesWithUserInteraction.append(resourceStatistic.highLevelDomain);
+        else
+            prevalentResources.append(resourceStatistic.highLevelDomain);
+    }
+}
+
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(const Vector<WebCore::ResourceLoadStatistics>& origins)
 {
     coreStore().mergeStatistics(origins);
-    // TODO: Analyze statistics to recognize prevalent domains. <rdar://problem/24913272>
-    // TODO: Notify individual WebProcesses of prevalent domains. <rdar://problem/24703099>
+
+    Vector<String> prevalentResources, prevalentResourcesWithUserInteraction;
+    if (coreStore().hasEnoughDataForStatisticsProcessing()) {
+        coreStore().processStatistics([this, &prevalentResources, &prevalentResourcesWithUserInteraction] (ResourceLoadStatistics& resourceStatistic) {
+            classifyPrevalentResources(resourceStatistic, prevalentResources, prevalentResourcesWithUserInteraction);
+        });
+    }
+
+    // FIXME: Notify individual WebProcesses of prevalent domains using the two vectors populated by the classifier. <rdar://problem/24703099>
     auto encoder = coreStore().createEncoderFromData();
     
     writeEncoderToDisk(*encoder.get(), "full_browsing_session");

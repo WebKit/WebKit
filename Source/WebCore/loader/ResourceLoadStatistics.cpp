@@ -32,37 +32,6 @@
 
 namespace WebCore {
 
-static const unsigned minimumOriginsVisitedForPrevalenceClassification = 100;
-
-// Sub frame thresholds
-static const unsigned subframeUnderTopFrameOriginsThresholdAbsolute = 3;
-
-// Subresource thresholds
-static const unsigned subresourceUnderTopFrameOriginsThresholdAbsolute = 5;
-static const unsigned subresourceHasBeenRedirectedFromToUniqueDomainsThresholdAbsolute = 3;
-static const unsigned redirectedToOtherPrevalentResourceOriginsThresholdAbsolute = 2;
-
-bool ResourceLoadStatistics::checkAndSetAsPrevalentResourceIfNecessary(unsigned originsVisitedSoFar)
-{
-    if (originsVisitedSoFar < minimumOriginsVisitedForPrevalenceClassification || isPrevalentResource)
-        return false;
-
-    if (hasPrevalentResourceCharacteristics()) {
-        isPrevalentResource = true;
-        return true;
-    }
-
-    return false;
-}
-
-bool ResourceLoadStatistics::hasPrevalentResourceCharacteristics() const
-{
-    return subframeUnderTopFrameOrigins.size() > subframeUnderTopFrameOriginsThresholdAbsolute
-        || subresourceUnderTopFrameOrigins.size() > subresourceUnderTopFrameOriginsThresholdAbsolute
-        || subresourceUniqueRedirectsTo.size() > subresourceHasBeenRedirectedFromToUniqueDomainsThresholdAbsolute
-        || redirectedToOtherPrevalentResourceOrigins.size() > redirectedToOtherPrevalentResourceOriginsThresholdAbsolute;
-}
-
 typedef WTF::HashMap<String, unsigned, StringHash, HashTraits<String>, HashTraits<unsigned>>::KeyValuePairType ResourceLoadStatisticsValue;
 
 static void encodeHashCountedSet(KeyedEncoder& encoder, const String& label, const HashCountedSet<String>& hashCountedSet)

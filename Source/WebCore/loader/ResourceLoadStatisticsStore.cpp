@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+static const unsigned minimumOriginsLoadedForProcessing = 100;
+
 Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
 {
     return adoptRef(*new ResourceLoadStatisticsStore());
@@ -137,4 +139,15 @@ void ResourceLoadStatisticsStore::fireDataModificationHandler()
         m_dataAddedHandler();
 }
 
+bool ResourceLoadStatisticsStore::hasEnoughDataForStatisticsProcessing()
+{
+    return m_resourceStatisticsMap.size() >= minimumOriginsLoadedForProcessing;
+}
+
+void ResourceLoadStatisticsStore::processStatistics(std::function<void(ResourceLoadStatistics&)>&& processFunction)
+{
+    ASSERT(hasEnoughDataForStatisticsProcessing());
+    for (auto& resourceStatistic : m_resourceStatisticsMap.values())
+        processFunction(resourceStatistic);
+}
 }
