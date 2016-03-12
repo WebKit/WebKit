@@ -24,18 +24,20 @@
  */
 
 .tab-bar {
+    position: absolute;
+    top: var(--toolbar-height);
+    left: 0;
+    right: 0;
+    height: var(--tab-bar-height);
+
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-
-    position: relative;
 
     border-bottom: 1px solid hsl(0, 0%, 65%);
 
     background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
     background-size: 100% 200%;
-
-    height: 24px;
 
     white-space: nowrap;
     overflow: hidden;

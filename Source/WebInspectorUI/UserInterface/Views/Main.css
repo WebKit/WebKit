@@ -28,9 +28,6 @@
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-
     font-family: -apple-system, sans-serif;
     font-size: 11px;
 
@@ -118,14 +115,17 @@ input[type=range]::-webkit-slider-runnable-track::before {
 }
 
 #main {
+    position: absolute;
+    top: calc(var(--toolbar-height) + var(--tab-bar-height));
+    left: 0;
+    right: 0;
+    bottom: 0;
+
     display: flex;
-    flex: 1;
-    min-height: 0;
 
     background-color: white;
 
     /* The position and z-index are needed to make negative z-index work in the DOM tree. */
-    position: relative;
     z-index: 0;
 }
 

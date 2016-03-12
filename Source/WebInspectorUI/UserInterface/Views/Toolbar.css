@@ -24,16 +24,20 @@
  */
 
 .toolbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--toolbar-height);
+
     display: flex;
+    padding-top: 3px;
+    padding-bottom: 3px;
 
     white-space: nowrap;
     overflow: hidden;
 
     outline: none;
-
-    padding-top: 3px;
-    padding-bottom: 3px;
-    height: 36px;
 }
 
 body:not(.mavericks) .toolbar,
@@ -49,7 +53,10 @@ body.window-inactive:not(.mavericks) .toolbar {
 
 body.mac-platform:not(.docked, .mavericks) .toolbar {
     padding-top: 21px;
-    height: 54px;
+}
+
+body.mac-platform:not(.docked, .mavericks) {
+    --toolbar-height: 54px;
 }
 
 .toolbar .control-section {

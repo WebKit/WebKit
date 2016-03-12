@@ -1,3 +1,26 @@
+2016-03-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Convert toolbar and tab bar to position absolute to reduce repaint areas
+        https://bugs.webkit.org/show_bug.cgi?id=155386
+
+        Reviewed by Timothy Hatcher.
+
+        Using CSS flexbox causes unnecessary large repaints.
+        Convert top level elements (.toolbar, .tab-bar, #main)
+        from flexbox to "position: absolute".
+
+        * UserInterface/Views/Main.css:
+        (#main):
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar):
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar):
+        (body.mac-platform:not(.docked, .mavericks) .toolbar):
+        (body.mac-platform:not(.docked, .mavericks)):
+        (body.window-inactive:not(.mavericks) .toolbar): Deleted.
+        * UserInterface/Views/Variables.css:
+        (:root):
+
 2016-03-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Wrong TimelineOverview height after switching from Events to Frames
