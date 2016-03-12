@@ -320,8 +320,8 @@ macro doCallToJavaScript(makeCall, doReturn)
     loadp CallerFrame[cfr], cfr
 
 .calleeFramePopped:
-    loadp Callee[cfr], temp3 # VM.topCallFrame
-    loadp ScopeChain[cfr], temp4
+    loadp Callee + PayloadOffset[cfr], temp3 # VM.topCallFrame
+    loadp ScopeChain + PayloadOffset[cfr], temp4
     storep temp4, [temp3]
 
     doReturn(extraStackSpace)
@@ -598,7 +598,7 @@ end
 
 
 macro branchIfException(label)
-    loadp ScopeChain[cfr], t3
+    loadp ScopeChain + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     bieq VM::m_exception + TagOffset[t3], EmptyValueTag, .noException
@@ -1574,7 +1574,7 @@ _llint_op_get_by_pname:
     loadp JSCell::m_structure[t2], t0
     bpneq t0, JSPropertyNameIterator::m_cachedStructure[t3], .opGetByPnameSlow
     loadi 24[PC], t0
-    loadi [cfr, t0, 8], t0
+    loadi PayloadOffset[cfr, t0, 8], t0
     subi 1, t0
     biaeq t0, JSPropertyNameIterator::m_numCacheableSlots[t3], .opGetByPnameSlow
     bilt t0, JSPropertyNameIterator::m_cachedStructureInlineCapacity[t3], .opGetByPnameInlineProperty
@@ -2002,7 +2002,7 @@ _llint_op_next_pname:
     loadi 20[PC], t2
     loadi PayloadOffset[cfr, t2, 8], t2
     loadp JSPropertyNameIterator::m_jsStrings[t2], t3
-    loadi [t3, t0, 8], t3
+    loadi PayloadOffset[t3, t0, 8], t3
     addi 1, t0
     storei t0, PayloadOffset[cfr, t1, 8]
     loadi 4[PC], t1
@@ -2039,7 +2039,7 @@ _llint_op_catch:
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
     # The throwing code must have known that we were throwing to the interpreter,
     # and have set VM::targetInterpreterPCForThrow.
-    loadp ScopeChain[cfr], t3
+    loadp ScopeChain + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
@@ -2122,7 +2122,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     storei CellTag, ScopeChain + TagOffset[cfr]
     storei t1, ScopeChain + PayloadOffset[cfr]
     if X86
-        loadp ScopeChain[cfr], t3
+        loadp PayloadOffset + ScopeChain[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         storep cfr, VM::topCallFrame[t3]
@@ -2135,11 +2135,11 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         move t0, cfr
         call executableOffsetToFunction[t1]
         addp 16 - 4, sp
-        loadp ScopeChain[cfr], t3
+        loadp PayloadOffset + ScopeChain[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
-        loadp ScopeChain[cfr], t3
+        loadp PayloadOffset + ScopeChain[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         storep cfr, VM::topCallFrame[t3]
@@ -2155,11 +2155,11 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         end
         call executableOffsetToFunction[t1]
         restoreReturnAddressBeforeReturn(t3)
-        loadp ScopeChain[cfr], t3
+        loadp PayloadOffset + ScopeChain[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     elsif C_LOOP
-        loadp ScopeChain[cfr], t3
+        loadp PayloadOffset + ScopeChain[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         storep cfr, VM::topCallFrame[t3]
@@ -2172,7 +2172,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         move t2, cfr
         cloopCallNative executableOffsetToFunction[t1]
         restoreReturnAddressBeforeReturn(t3)
-        loadp ScopeChain[cfr], t3
+        loadp PayloadOffset + ScopeChain[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     else
@@ -2212,7 +2212,7 @@ macro resolveScope()
     addi 1, t2
 
 .resolveScopeAfterActivationCheck:
-    loadp ScopeChain[cfr], t0
+    loadp ScopeChain + PayloadOffset[cfr], t0
     btiz t2, .resolveScopeLoopEnd
 
 .resolveScopeLoop:
@@ -2271,7 +2271,7 @@ _llint_op_resolve_scope:
 
 macro loadWithStructureCheck(operand, slowPath)
     loadisFromInstruction(operand, t0)
-    loadp [cfr, t0, 8], t0
+    loadp PayloadOffset[cfr, t0, 8], t0
     loadpFromInstruction(5, t1)
     bpneq JSCell::m_structure[t0], t1, slowPath
 end

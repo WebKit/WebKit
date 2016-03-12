@@ -1,5 +1,15 @@
 2016-03-12  Tomas Popela  <tpopela@redhat.com>
 
+        [CLoop] - Fix CLoop on the 32-bit Big-Endians
+        https://bugs.webkit.org/show_bug.cgi?id=137020
+
+        Reviewed by Mark Lam.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+
+2016-03-12  Tomas Popela  <tpopela@redhat.com>
+
         LLINT op_put_to_scope and op_get_from_scope should use loadpFromInstruction to get operand from instruction
         https://bugs.webkit.org/show_bug.cgi?id=132333
 
