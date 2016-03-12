@@ -24,8 +24,8 @@
  */
 
 #include "config.h"
-#include "test.h"
 
+#include "Test.h"
 #include <wtf/WeakPtr.h>
 
 namespace TestWebKitAPI {

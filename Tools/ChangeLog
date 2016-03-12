@@ -1,5 +1,13 @@
 2016-03-12  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r178615): Fix incorrect case in included header for WeakPtr.cpp
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp: Change "test.h" to
+        "Test.h" to fix incorrect case.  This was discovered when adding
+        WeakPtr.cpp to CMakeLists.txt for the patch on Bug 155394.
+
+2016-03-12  David Kilzer  <ddkilzer@apple.com>
+
         run-webkit-tests: handle Darwin framework/library environment variables more consistently
         <http://webkit.org/b/155392>
 
