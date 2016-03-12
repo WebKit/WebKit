@@ -1066,8 +1066,8 @@ void RenderBlock::addOverflowFromPositionedObjects()
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
         if (positionedObject->style().position() != FixedPosition) {
             LayoutUnit x = positionedObject->x();
-            if (style().shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
-                x -= verticalScrollbarWidth();
+            if (style().shouldPlaceBlockDirectionScrollbarOnLeft())
+                x += (style().isLeftToRightDirection() ? 1 : -1) * verticalScrollbarWidth();
             addOverflowFromChild(positionedObject, LayoutSize(x, positionedObject->y()));
         }
     }
@@ -2285,6 +2285,8 @@ LayoutUnit RenderBlock::textIndentOffset() const
 LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderRegion* region) const
 {
     LayoutUnit logicalLeftOffset = style().isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop();
+    if (style().shouldPlaceBlockDirectionScrollbarOnLeft())
+        logicalLeftOffset += verticalScrollbarWidth();
     if (!region)
         return logicalLeftOffset;
     LayoutRect boxRect = borderBoxRectInRegion(region);
@@ -2294,6 +2296,8 @@ LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderRegion* region) const
 LayoutUnit RenderBlock::logicalRightOffsetForContent(RenderRegion* region) const
 {
     LayoutUnit logicalRightOffset = style().isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop();
+    if (style().shouldPlaceBlockDirectionScrollbarOnLeft())
+        logicalRightOffset += verticalScrollbarWidth();
     logicalRightOffset += availableLogicalWidth();
     if (!region)
         return logicalRightOffset;

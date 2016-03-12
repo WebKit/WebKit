@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+</head>
+<body>
+<div id="element" style="overflow: scroll; width: 700px; height: 500px;">
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices dapibus nunc, id porttitor quam mollis id. Morbi tincidunt mi neque, eget convallis ante convallis at. Donec gravida leo lacus, sit amet cursus ex vehicula eget. Vivamus vitae elit vel felis luctus posuere at in arcu. Ut eu bibendum lectus. Aliquam erat volutpat. Nullam nisl urna, malesuada eget feugiat vitae, tempus vel diam. Curabitur venenatis finibus egestas. Sed imperdiet molestie fermentum. Nullam pulvinar ultrices justo, eu gravida lacus sodales ac. Donec efficitur porttitor nisi, sit amet aliquam libero vulputate consectetur. Sed malesuada diam at euismod aliquam. Vestibulum maximus eu purus vitae porttitor.</p>
+
+<p>Etiam ut ipsum vitae neque malesuada accumsan. Nam sit amet turpis quis magna condimentum euismod at sed ante. Sed a metus ac tortor cursus mollis. Aenean vitae libero eu lorem egestas faucibus. Fusce eget velit sollicitudin, efficitur erat sit amet, auctor massa. Donec non est dolor. Phasellus efficitur fringilla euismod. Aliquam finibus sapien non volutpat venenatis. Maecenas id urna sit amet magna feugiat sagittis vel et ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas molestie hendrerit dolor, imperdiet posuere est. Etiam molestie dictum tincidunt.</p>
+
+<p>Cras tincidunt lorem eu nisl tempor elementum. Vivamus tempor mi eu ligula eleifend, ut posuere metus imperdiet. Nam tristique commodo commodo. Proin vitae auctor ante. Mauris ullamcorper vitae urna in lacinia. Praesent euismod scelerisque felis, nec eleifend nulla vulputate non. Mauris nec rutrum diam. Morbi vitae magna sollicitudin, pellentesque diam vitae, faucibus turpis. Sed pellentesque eros quis condimentum cursus. Ut id viverra dui. Integer convallis nulla vel ipsum pretium, eget imperdiet ligula tincidunt.</p>
+
+<p>Sed lacus enim, pretium et sapien vel, auctor euismod ex. Nulla vestibulum nulla ut nisi tincidunt condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lobortis id mauris dignissim vehicula. Vivamus sed ex ipsum. Vivamus suscipit neque quis ultrices posuere. Sed dignissim sapien non sapien venenatis, at lacinia felis efficitur.</p>
+
+<p>Nunc viverra nulla eget lacus imperdiet, et ullamcorper augue viverra. Nunc maximus consectetur malesuada. Nulla eget volutpat turpis. Nulla nec cursus purus, at consectetur sem. Sed pretium ipsum eu risus bibendum lacinia. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec laoreet nunc et lacus consequat, ut malesuada tortor bibendum. Maecenas vitae erat consectetur, lacinia libero nec, placerat leo. Suspendisse rutrum nisl nec urna tempus ultricies. Cras pharetra tortor quis lorem ultrices pharetra. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Pellentesque consectetur nunc malesuada, accumsan leo vel, cursus massa. In sodales libero nec ligula maximus ullamcorper. Maecenas porttitor condimentum dignissim.</p>
+
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a risus nisi. Maecenas ut metus gravida, tincidunt arcu nec, ultrices dui. Vivamus at pretium purus, in feugiat odio. Phasellus facilisis mi id condimentum congue. Aenean sollicitudin risus a accumsan facilisis. Sed ac fringilla felis. Morbi malesuada vehicula sapien.</p>
+</div>
+<script>
+if (window.eventSender) {
+	var element = document.getElementById("element");
+    eventSender.mouseMoveTo(11, 20);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(11, element.clientHeight - 20);
+    eventSender.mouseUp();
+}
+</script>
+</body>
+</html>

@@ -1185,12 +1185,8 @@ public:
     Isolation isolation() const { return IsolationAuto; }
     bool hasIsolation() const { return false; }
 #endif
- 
-#if USE(RTL_SCROLLBAR)
-    bool shouldPlaceBlockDirectionScrollbarOnLogicalLeft() const { return !isLeftToRightDirection() && isHorizontalWritingMode(); }
-#else
-    bool shouldPlaceBlockDirectionScrollbarOnLogicalLeft() const { return false; }
-#endif
+
+    bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
 
 #if ENABLE(CSS_TRAILING_WORD)
     TrailingWord trailingWord() const { return static_cast<TrailingWord>(rareInheritedData->trailingWord); }

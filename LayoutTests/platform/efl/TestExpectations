@@ -2961,3 +2961,8 @@ webkit.org/b/153772 fast/shadow-dom/slot-removal-crash-2.html [ Timeout ]
 # RTL Scrollbars are only implemented on OS X
 fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow-contents.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow-padding.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow-simple.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow.html [ ImageOnlyFailure ]

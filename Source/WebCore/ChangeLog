@@ -1,3 +1,37 @@
+2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Scrollbars of overflow:scroll divs should appear on the left on RTL systems
+        https://bugs.webkit.org/show_bug.cgi?id=155385
+
+        Reviewed by Simon Fraser.
+
+        There is already some existing setup for RTL scrollbars. This patch hooks up this
+        existing support to the OS X triggering mechanism introduced in r197956. It also
+        fixes up the existing support to function even when the direction of the
+        RTL-scrollbar div is LTR (this means the contents of the div must be pushed
+        over by the width of the scrollbar).
+
+        Tests: fast/scrolling/rtl-scrollbars-overflow-contents.html
+               fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html
+               fast/scrolling/rtl-scrollbars-overflow-padding.html
+               fast/scrolling/rtl-scrollbars-overflow-simple.html
+               fast/scrolling/rtl-scrollbars-overflow.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverflowFromPositionedObjects):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::determineLogicalLeftPositionForChild):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::overflowClipRect):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeScrollDimensions):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::shouldPlaceBlockDirectionScrollbarOnLogicalLeft):
+        * rendering/style/RenderStyle.h:
+
 2016-03-12  Zalan Bujtas  <zalan@apple.com>
 
         [Forms: focus] focus rings around text fields do not follow contour (border-radius)

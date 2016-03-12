@@ -1339,3 +1339,8 @@ webkit.org/b/155140 js/promises-tests/promises-tests-2-3-3.html [ Pass Failure ]
 # RTL Scrollbars are only implemented on certain OSes.
 [ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
 [ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]
+[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow-contents.html [ ImageOnlyFailure ]
+[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ ImageOnlyFailure ]
+[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow-padding.html [ ImageOnlyFailure ]
+[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow-simple.html [ ImageOnlyFailure ]
+[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow.html [ ImageOnlyFailure ]
