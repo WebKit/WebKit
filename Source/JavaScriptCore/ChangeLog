@@ -1,3 +1,19 @@
+2016-03-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove a few jumps from DFG
+        https://bugs.webkit.org/show_bug.cgi?id=155347
+
+        Reviewed by Mark Lam.
+
+        Usually, setting ValueTrue or ValueFalse is set
+        by Compare+Or. There are 3 places in DFG with branches instead.
+
+        This patch changes them to the usual pattern.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+
 2016-03-11  Saam barati  <sbarati@apple.com>
 
         [ES6] Make Object.assign spec compliant
