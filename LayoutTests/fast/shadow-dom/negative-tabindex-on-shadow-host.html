@@ -7,7 +7,7 @@ To manually test, press tab key four times. It should traverse focusable element
 <div id="first" tabindex="1" onfocus="log(this)">1. First sequentially focusable element outside shadow trees</div>
 <div id="host-with-negative-tabindex" tabindex="-1" onfocus="log(this)">Shadow host with a negative tabindex</div>
 <div id="host-with-no-tabindex" onfocus="log(this)">4.2. Shadow host with no tabindex</div>
-<div id="host-with-positive-tabindex" tabindex="2" onfocus="log(this)">2. / 3.2. Shadow host with a positive tabindex</div>
+<div id="host-with-positive-tabindex" tabindex="2" onfocus="log(this)">2. Shadow host with a positive tabindex</div>
 <div tabindex="0" onfocus="log(this)">5. Last sequentially focusable element outside shadow trees</div>
 </div>
 <pre></pre>
@@ -23,7 +23,7 @@ document.getElementById('host-with-no-tabindex').attachShadow({mode: 'closed'}).
 
 document.getElementById('host-with-positive-tabindex').attachShadow({mode: 'closed'}).innerHTML = `
     <slot></slot>
-    <div tabindex="0" onfocus="log(this)">3.1. Focusable element inside a shadow host with a positive tabindex</div>
+    <div tabindex="0" onfocus="log(this)">3. Focusable element inside a shadow host with a positive tabindex</div>
 `;
 
 function log(element) {

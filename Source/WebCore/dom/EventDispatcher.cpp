@@ -177,8 +177,11 @@ bool EventDispatcher::dispatchEvent(Node* origin, Event& event)
     if (is<HTMLInputElement>(*node))
         downcast<HTMLInputElement>(*node).willDispatchEvent(event, clickHandlingState);
 
-    if (!event.propagationStopped() && !eventPath.isEmpty())
+    if (!event.propagationStopped() && !eventPath.isEmpty()) {
+        event.setEventPath(eventPath);
         dispatchEventInDOM(event, eventPath, windowEventContext);
+        event.clearEventPath();
+    }
 
     event.setTarget(EventPath::eventTargetRespectingTargetRules(*node));
     event.setCurrentTarget(nullptr);

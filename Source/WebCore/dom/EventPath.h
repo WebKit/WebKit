@@ -48,6 +48,8 @@ public:
 
     EventContext* lastContextIfExists() { return m_path.isEmpty() ? nullptr : m_path.last().get(); }
 
+    Vector<EventTarget*> computePathDisclosedToTarget(const EventTarget&) const;
+
     static EventTarget* eventTargetRespectingTargetRules(Node& referenceNode)
     {
         if (is<PseudoElement>(referenceNode))

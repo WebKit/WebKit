@@ -4856,10 +4856,16 @@ END
                 if ($attribute->signature->extendedAttributes->{"InitializedByEventConstructor"}) {
                     my $attributeName = $attribute->signature->name;
                     my $attributeImplName = $attribute->signature->extendedAttributes->{"ImplementedAs"} || $attributeName;
+                    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
+
+                    push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+
                     push(@implContent, <<END);
     if (!dictionary.tryGetProperty("${attributeName}", eventInit.${attributeImplName}))
         return false;
 END
+                    push(@implContent, "#endif\n") if $conditionalString;
+
                 }
             }
 

@@ -1,3 +1,27 @@
+2016-03-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Event.deepPath() and Event.scoped
+        https://bugs.webkit.org/show_bug.cgi?id=153538
+        <rdar://problem/24363836>
+
+        Reviewed by Darin Adler.
+
+        Added a W3C style testharness.js tests for Event.prototype.scoped, Event.prototype.scopedRelatedTarget,
+        Event.prototype.deepPath() and a test that uses eventSender to verify the values of the scoped and
+        scopedRelatedTarget flags on trusted events.
+
+        * fast/shadow-dom/Extensions-to-Event-Interface-expected.txt: Added.
+        * fast/shadow-dom/Extensions-to-Event-Interface.html: Added.
+        * fast/shadow-dom/event-with-related-target.html:
+        * fast/shadow-dom/resources: Added.
+        * fast/shadow-dom/resources/event-path-test-helpers.js: Added. Extracted from event-with-related-target.html.
+        * fast/shadow-dom/trusted-event-scoped-flags-expected.txt: Added.
+        * fast/shadow-dom/trusted-event-scoped-flags.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-get-expected.txt:
+        * http/tests/workers/worker-importScriptsOnError-expected.txt:
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * platform/ios-simulator/fast/shadow-dom/trusted-event-scoped-flags-expected.txt: Added.
+
 2016-03-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebKit should not be redirected to an invalid URL

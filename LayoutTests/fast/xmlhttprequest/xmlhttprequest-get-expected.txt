@@ -48,6 +48,9 @@ cancelBubble : 'false'
 cancelable : 'false'
 clipboardData : 'undefined'
 currentTarget : '[object XMLHttpRequest]'
+deepPath : 'function deepPath() {
+    [native code]
+}'
 defaultPrevented : 'false'
 eventPhase : '2'
 initEvent : 'function initEvent() {
@@ -60,7 +63,9 @@ position : '174'
 preventDefault : 'function preventDefault() {
     [native code]
 }'
+relatedTargetScoped : 'false'
 returnValue : 'true'
+scoped : 'true'
 srcElement : '[object XMLHttpRequest]'
 stopImmediatePropagation : 'function stopImmediatePropagation() {
     [native code]

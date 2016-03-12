@@ -47,6 +47,7 @@ public:
     virtual ~EventContext();
 
     Node* node() const { return m_node.get(); }
+    EventTarget* currentTarget() const { return m_currentTarget.get(); }
     EventTarget* target() const { return m_target.get(); }
     bool currentTargetSameAsTarget() const { return m_currentTarget.get() == m_target.get(); }
     virtual void handleLocalEvents(Event&) const;

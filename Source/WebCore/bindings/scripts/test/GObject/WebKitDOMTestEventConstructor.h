@@ -69,6 +69,17 @@ webkit_dom_test_event_constructor_get_attr1(WebKitDOMTestEventConstructor* self)
 WEBKIT_API gchar*
 webkit_dom_test_event_constructor_get_attr2(WebKitDOMTestEventConstructor* self);
 
+/**
+ * webkit_dom_test_event_constructor_get_attr3:
+ * @self: A #WebKitDOMTestEventConstructor
+ *
+ * Returns: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gchar*
+webkit_dom_test_event_constructor_get_attr3(WebKitDOMTestEventConstructor* self);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DOM_USE_UNSTABLE_API */

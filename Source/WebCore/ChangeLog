@@ -1,3 +1,60 @@
+2016-03-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Event.deepPath() and Event.scoped
+        https://bugs.webkit.org/show_bug.cgi?id=153538
+        <rdar://problem/24363836>
+
+        Reviewed by Darin Adler.
+
+        Added the support for deepPath(), scoped, and relatedTargetScoped on Event.prototype for shadow DOM:
+        http://w3c.github.io/webcomponents/spec/shadow/#extensions-to-event-interface
+        and updated the EventPath class to respect scoped and relatedTargetScoped flags as specified at:
+        http://w3c.github.io/webcomponents/spec/shadow/#get-the-parent
+
+        Tests: fast/shadow-dom/Extensions-to-Event-Interface.html
+               fast/shadow-dom/trusted-event-scoped-flags.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition): Added the support for Conditional for InitializedByEventConstructor.
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/ObjC/DOMTestEventConstructor.h:
+        * bindings/scripts/test/ObjC/DOMTestEventConstructor.mm:
+        * bindings/scripts/test/TestEventConstructor.idl: Added a test case for using InitializedByEventConstructor
+        with Conditional.
+        * dom/Event.cpp:
+        (WebCore::Event::Event): Initialize m_scoped and m_relatedTargetScoped from EventInit dictionary.
+        (WebCore::Event::scoped): Added. Implements http://w3c.github.io/webcomponents/spec/shadow/#scoped-flag
+        (WebCore::Event::deepPath): Added.
+        * dom/Event.h:
+        (WebCore::Event::relatedTargetScoped): Added. Overridden by FocusEvent and MouseEvent to implement
+        http://w3c.github.io/webcomponents/spec/shadow/#relatedtargetscoped-flag
+        (WebCore::Event::setEventPath): Added.
+        (WebCore::Event::clearEventPath): Added.
+        * dom/Event.idl: Added scoped, relatedTargetScoped, and deepPath() conditionally enabled for shadow DOM.
+        * dom/EventContext.h:
+        (WebCore::EventContext::currentTarget):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent): Set the event path while the event is being dispatched.
+        * dom/EventPath.cpp:
+        (WebCore::shouldEventCrossShadowBoundary): Check event.scoped flag instead of hard-coding a list of events here
+        which has been moved to Event::scoped. See above.
+        (WebCore::EventPath::setRelatedTarget): Check m_event.relatedTargetScoped() instead of hard-coding a list of
+        events here. relatedTargetScoped is overridden by FocusEvent and MouseEvent.
+        (WebCore::EventPath::hasEventListeners): Fixed the misleading variable name.
+        (WebCore::isUnclosedNodeOf): Added. Implements http://w3c.github.io/webcomponents/spec/shadow/#dfn-unclosed-node
+        (WebCore::EventPath::computePathDisclosedToTarget): Added. Implements the algorithm to filter event targets:
+        http://w3c.github.io/webcomponents/spec/shadow/#widl-Event-deepPath-sequence-EventTarget
+        * dom/EventPath.h:
+        * dom/FocusEvent.cpp:
+        (WebCore::FocusEvent::relatedTargetScoped): Returns true when this is a trusted event per:
+        http://w3c.github.io/webcomponents/spec/shadow/#relatedtargetscoped-flag
+        * dom/FocusEvent.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::relatedTargetScoped): Ditto.
+        * dom/MouseEvent.h:
+
 2016-03-11  John Wilander  <wilander@apple.com>
 
         Move prevalent resource classifier from WebCore to WebKit.

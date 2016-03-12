@@ -36,12 +36,15 @@
 namespace WebCore {
 
 class DataTransfer;
+class EventPath;
 class EventTarget;
 class HTMLIFrameElement;
 
 struct EventInit {
     bool bubbles { false };
     bool cancelable { false };
+    bool scoped { false };
+    bool relatedTargetScoped { false };
 };
 
 enum EventInterface {
@@ -114,7 +117,14 @@ public:
 
     bool bubbles() const { return m_canBubble; }
     bool cancelable() const { return m_cancelable; }
+    bool scoped() const;
+    virtual bool relatedTargetScoped() const { return m_relatedTargetScoped; }
+
     DOMTimeStamp timeStamp() const { return m_createTime; }
+
+    void setEventPath(const EventPath& path) { m_eventPath = &path; }
+    void clearEventPath() { m_eventPath = nullptr; }
+    Vector<EventTarget*> deepPath() const;
 
     void stopPropagation() { m_propagationStopped = true; }
     void stopImmediatePropagation() { m_immediatePropagationStopped = true; }
@@ -198,6 +208,8 @@ private:
     AtomicString m_type;
     bool m_canBubble { false };
     bool m_cancelable { false };
+    bool m_scoped { false };
+    bool m_relatedTargetScoped { false };
 
     bool m_propagationStopped { false };
     bool m_immediatePropagationStopped { false };
@@ -208,6 +220,7 @@ private:
 
     unsigned short m_eventPhase { 0 };
     EventTarget* m_currentTarget { nullptr };
+    const EventPath* m_eventPath { nullptr };
     RefPtr<EventTarget> m_target;
     DOMTimeStamp m_createTime;
 

@@ -67,6 +67,14 @@
     return IMPL->attr2();
 }
 
+#if ENABLE(SPECIAL_EVENT)
+- (NSString *)attr3
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->attr3();
+}
+#endif
+
 @end
 
 WebCore::TestEventConstructor* core(DOMTestEventConstructor *wrapper)

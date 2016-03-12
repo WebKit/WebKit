@@ -1,0 +1,67 @@
+
+world
+PASS input.type = "radio"; log(input, "change"); input.click(); eventType is "change"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS log(form, "reset"); form.reset(); eventType is "reset"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS form.focus(); log(input, "focus"); input.focus(); eventType is "focus"
+PASS scoped is false
+PASS relatedTargetScoped is true
+
+PASS log(input, "blur"); form.focus(); eventType is "blur"
+PASS scoped is false
+PASS relatedTargetScoped is true
+
+PASS input.type = "text"; log(input, "mousemove"); eventSender.mouseMoveTo(x, y); eventType is "mousemove"
+PASS scoped is false
+PASS relatedTargetScoped is false
+
+PASS log(input, "mousedown"); eventSender.mouseDown(); eventType is "mousedown"
+PASS scoped is false
+PASS relatedTargetScoped is false
+
+PASS log(input, "mouseup"); eventSender.mouseUp(); eventType is "mouseup"
+PASS scoped is false
+PASS relatedTargetScoped is false
+
+PASS log(input, "mouseout"); eventSender.mouseMoveTo(0, 0); eventType is "mouseout"
+PASS scoped is false
+PASS relatedTargetScoped is true
+
+PASS log(input, "mouseover"); eventSender.mouseMoveTo(x, y); eventType is "mouseover"
+PASS scoped is false
+PASS relatedTargetScoped is true
+
+input.value = "hello"; eventSender.mouseMoveTo(input.offsetLeft + 1, y); eventSender.mouseDown();
+PASS log(input, "select"); eventSender.mouseMoveTo(input.offsetLeft + input.offsetWidth - 2, y); eventSender.mouseUp(); eventType is "select"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS log(editableElement, "selectstart"); eventSender.mouseMoveTo(editableElement.offsetLeft + 1, y); eventSender.mouseDown(); eventType is "selectstart"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS eventType is "load"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS eventType is "error"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS eventType is "scroll"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS eventType is "resize"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

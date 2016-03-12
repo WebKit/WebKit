@@ -189,6 +189,11 @@ bool MouseEvent::canTriggerActivationBehavior(const Event& event)
     return event.type() == eventNames().clickEvent && (!is<MouseEvent>(event) || downcast<MouseEvent>(event).button() != RightButton);
 }
 
+bool MouseEvent::relatedTargetScoped() const
+{
+    return (isTrusted() && m_relatedTarget) || UIEvent::relatedTargetScoped();
+}
+
 int MouseEvent::which() const
 {
     // For the DOM, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.

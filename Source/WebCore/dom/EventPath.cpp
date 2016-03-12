@@ -49,21 +49,8 @@ static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shad
     }
 #endif
 
-    // WebKit never allowed selectstart event to cross the the shadow DOM boundary.
-    // Changing this breaks existing sites.
-    // See https://bugs.webkit.org/show_bug.cgi?id=52195 for details.
-    const AtomicString& eventType = event.type();
     bool targetIsInShadowRoot = targetNode && &targetNode->treeScope().rootNode() == &shadowRoot;
-    return !targetIsInShadowRoot
-        || !(eventType == eventNames().abortEvent
-        || eventType == eventNames().changeEvent
-        || eventType == eventNames().errorEvent
-        || eventType == eventNames().loadEvent
-        || eventType == eventNames().resetEvent
-        || eventType == eventNames().resizeEvent
-        || eventType == eventNames().scrollEvent
-        || eventType == eventNames().selectEvent
-        || eventType == eventNames().selectstartEvent);
+    return !targetIsInShadowRoot || !event.scoped();
 }
 
 static Node* nodeOrHostIfPseudoElement(Node* node)
@@ -174,10 +161,7 @@ void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
     RelatedNodeRetargeter retargeter(*relatedNode, downcast<MouseOrFocusEventContext>(*m_path[0]).node()->treeScope());
 
     bool originIsRelatedTarget = &origin == relatedNode;
-    // FIXME: We should add a new flag on Event instead.
-    bool shouldTrimEventPath = m_event.type() == eventNames().mouseoverEvent
-        || m_event.type() == eventNames().mousemoveEvent
-        || m_event.type() == eventNames().mouseoutEvent;
+    bool relatedTargetScoped = m_event.relatedTargetScoped();
     Node& rootNodeInOriginTreeScope = origin.treeScope().rootNode();
     TreeScope* previousTreeScope = nullptr;
     size_t originalEventPathSize = m_path.size();
@@ -189,14 +173,14 @@ void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
             retargeter.moveToNewTreeScope(previousTreeScope, currentTreeScope);
 
         Node* currentRelatedNode = retargeter.currentNode(currentTreeScope);
-        if (UNLIKELY(shouldTrimEventPath && !originIsRelatedTarget && context.target() == currentRelatedNode)) {
+        if (UNLIKELY(relatedTargetScoped && !originIsRelatedTarget && context.target() == currentRelatedNode)) {
             m_path.shrink(contextIndex);
             break;
         }
 
         context.setRelatedTarget(currentRelatedNode);
 
-        if (UNLIKELY(shouldTrimEventPath && originIsRelatedTarget && context.node() == &rootNodeInOriginTreeScope)) {
+        if (UNLIKELY(relatedTargetScoped && originIsRelatedTarget && context.node() == &rootNodeInOriginTreeScope)) {
             m_path.shrink(contextIndex + 1);
             break;
         }
@@ -251,12 +235,51 @@ void EventPath::retargetTouchLists(const TouchEvent& touchEvent)
 
 bool EventPath::hasEventListeners(const AtomicString& eventType) const
 {
-    for (auto& eventPath : m_path) {
-        if (eventPath->node()->hasEventListeners(eventType))
+    for (auto& context : m_path) {
+        if (context->node()->hasEventListeners(eventType))
             return true;
     }
 
     return false;
+}
+
+// http://w3c.github.io/webcomponents/spec/shadow/#dfn-unclosed-node
+static bool isUnclosedNodeOf(const Node& a, const Node& b)
+{
+    // Use Vector instead of HashSet since we expect the number of ancestor tree scopes to be small.
+    Vector<TreeScope*, 8> treeScopesOpenToB;
+
+    for (auto* scope = &b.treeScope(); scope; scope = scope->parentTreeScope())
+        treeScopesOpenToB.append(scope);
+
+    for (auto* treeScopeThatCanAccessA = &a.treeScope(); treeScopeThatCanAccessA; treeScopeThatCanAccessA = treeScopeThatCanAccessA->parentTreeScope()) {
+        for (auto* openToB : treeScopesOpenToB) {
+            if (openToB == treeScopeThatCanAccessA)
+                return true;
+        }
+        auto& root = treeScopeThatCanAccessA->rootNode();
+        if (is<ShadowRoot>(root) && downcast<ShadowRoot>(root).type() != ShadowRoot::Type::Open)
+            break;
+    }
+
+    return false;
+}
+
+Vector<EventTarget*> EventPath::computePathDisclosedToTarget(const EventTarget& target) const
+{
+    Vector<EventTarget*> path;
+    const Node* targetNode = const_cast<EventTarget&>(target).toNode();
+    if (!targetNode)
+        return path;
+
+    for (auto& context : m_path) {
+        if (Node* nodeInPath = context->currentTarget()->toNode()) {
+            if (isUnclosedNodeOf(*nodeInPath, *targetNode))
+                path.append(context->currentTarget());
+        }
+    }
+
+    return path;
 }
 
 RelatedNodeRetargeter::RelatedNodeRetargeter(Node& relatedNode, TreeScope& targetTreeScope)

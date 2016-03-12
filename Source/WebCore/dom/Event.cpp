@@ -23,6 +23,7 @@
 #include "config.h"
 #include "Event.h"
 
+#include "EventPath.h"
 #include "EventTarget.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
@@ -59,6 +60,8 @@ Event::Event(const AtomicString& eventType, const EventInit& initializer)
     , m_type(eventType)
     , m_canBubble(initializer.bubbles)
     , m_cancelable(initializer.cancelable)
+    , m_scoped(initializer.scoped)
+    , m_relatedTargetScoped(initializer.relatedTargetScoped)
     , m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
 {
 }
@@ -81,6 +84,26 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     m_type = eventTypeArg;
     m_canBubble = canBubbleArg;
     m_cancelable = cancelableArg;
+}
+
+bool Event::scoped() const
+{
+    if (m_scoped)
+        return true;
+
+    // http://w3c.github.io/webcomponents/spec/shadow/#scoped-flag
+    if (!isTrusted())
+        return false;
+
+    return m_type == eventNames().abortEvent
+        || m_type == eventNames().changeEvent
+        || m_type == eventNames().errorEvent
+        || m_type == eventNames().loadEvent
+        || m_type == eventNames().resetEvent
+        || m_type == eventNames().resizeEvent
+        || m_type == eventNames().scrollEvent
+        || m_type == eventNames().selectEvent
+        || m_type == eventNames().selectstartEvent;
 }
 
 EventInterface Event::eventInterface() const
@@ -161,6 +184,13 @@ void Event::setTarget(RefPtr<EventTarget>&& target)
     m_target = WTFMove(target);
     if (m_target)
         receivedTarget();
+}
+
+Vector<EventTarget*> Event::deepPath() const
+{
+    if (!m_eventPath)
+        return Vector<EventTarget*>();
+    return m_eventPath->computePathDisclosedToTarget(*m_target);
 }
 
 void Event::receivedTarget()

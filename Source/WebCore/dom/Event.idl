@@ -57,7 +57,11 @@
     readonly attribute unsigned short   eventPhase;
     [InitializedByEventConstructor] readonly attribute boolean bubbles;
     [InitializedByEventConstructor] readonly attribute boolean cancelable;
+    [InitializedByEventConstructor, Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM] readonly attribute boolean scoped;
+    [InitializedByEventConstructor, Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM] readonly attribute boolean relatedTargetScoped;
     readonly attribute DOMTimeStamp     timeStamp;
+
+    [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM] sequence<Node> deepPath();
 
     void               stopPropagation();
     void               preventDefault();

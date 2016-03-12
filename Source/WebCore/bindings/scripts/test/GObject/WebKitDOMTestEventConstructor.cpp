@@ -71,6 +71,7 @@ enum {
     PROP_0,
     PROP_ATTR1,
     PROP_ATTR2,
+    PROP_ATTR3,
 };
 
 static void webkit_dom_test_event_constructor_finalize(GObject* object)
@@ -93,6 +94,9 @@ static void webkit_dom_test_event_constructor_get_property(GObject* object, guin
         break;
     case PROP_ATTR2:
         g_value_take_string(value, webkit_dom_test_event_constructor_get_attr2(self));
+        break;
+    case PROP_ATTR3:
+        g_value_take_string(value, webkit_dom_test_event_constructor_get_attr3(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -139,6 +143,16 @@ static void webkit_dom_test_event_constructor_class_init(WebKitDOMTestEventConst
             "",
             WEBKIT_PARAM_READABLE));
 
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_ATTR3,
+        g_param_spec_string(
+            "attr3",
+            "TestEventConstructor:attr3",
+            "read-only gchar* TestEventConstructor:attr3",
+            "",
+            WEBKIT_PARAM_READABLE));
+
 }
 
 static void webkit_dom_test_event_constructor_init(WebKitDOMTestEventConstructor* request)
@@ -163,5 +177,20 @@ gchar* webkit_dom_test_event_constructor_get_attr2(WebKitDOMTestEventConstructor
     WebCore::TestEventConstructor* item = WebKit::core(self);
     gchar* result = convertToUTF8String(item->attr2());
     return result;
+}
+
+gchar* webkit_dom_test_event_constructor_get_attr3(WebKitDOMTestEventConstructor* self)
+{
+#if ENABLE(SPECIAL_EVENT)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_EVENT_CONSTRUCTOR(self), 0);
+    WebCore::TestEventConstructor* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->attr3());
+    return result;
+#else
+    UNUSED_PARAM(self);
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Special Event")
+    return 0;
+#endif /* ENABLE(SPECIAL_EVENT) */
 }
 

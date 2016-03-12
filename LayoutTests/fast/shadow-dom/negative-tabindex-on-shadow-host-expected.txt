@@ -2,9 +2,8 @@ Tests for setting a negative tabindex on shadow host. Elements inside such a sha
 To manually test, press tab key four times. It should traverse focusable elements in the increasing numerical order.
 
 1. First sequentially focusable element outside shadow trees
-2. / 3.2. Shadow host with a positive tabindex
-3.1. Focusable element inside a shadow host with a positive tabindex
-2. / 3.2. Shadow host with a positive tabindex
+2. Shadow host with a positive tabindex
+3. Focusable element inside a shadow host with a positive tabindex
 4.1. Focusable element inside a shadow host with no tabindex
 4.2. Shadow host with no tabindex
 5. Last sequentially focusable element outside shadow trees

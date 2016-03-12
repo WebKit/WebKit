@@ -48,6 +48,8 @@ DISPLAYABLE PROPERTIES:
     eventPhase
     bubbles
     cancelable
+    scoped
+    relatedTargetScoped
     timeStamp
     defaultPrevented
     srcElement
@@ -65,12 +67,15 @@ ALL PROPERTIES:
     eventPhase
     bubbles
     cancelable
+    scoped
+    relatedTargetScoped
     timeStamp
     defaultPrevented
     srcElement
     returnValue
     cancelBubble
     clipboardData
+    deepPath
     stopPropagation
     preventDefault
     initEvent

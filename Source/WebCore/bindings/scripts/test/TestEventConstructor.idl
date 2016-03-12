@@ -34,4 +34,5 @@
     // Attributes
     readonly attribute DOMString attr1;
     [InitializedByEventConstructor] readonly attribute DOMString attr2;
+    [InitializedByEventConstructor, Conditional=SPECIAL_EVENT] readonly attribute DOMString attr3;
 };

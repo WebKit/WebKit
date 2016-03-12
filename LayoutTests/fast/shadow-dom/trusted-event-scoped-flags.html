@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<body>
+<form><input></form>
+<div id="editor" contenteditable>world</div>
+<div id="console"></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+var eventType;
+var scoped;
+var relatedTargetScoped;
+
+function logEvent(event) {
+    eventType = event.type;
+    scoped = event.scoped;
+    relatedTargetScoped = event.relatedTargetScoped;
+}
+
+function checkFlags(code, expected) {
+    shouldBeEqualToString(code ? code + '; eventType' : 'eventType', expected.eventType);
+    shouldBe('scoped', expected.scoped.toString());
+    shouldBe('relatedTargetScoped', expected.relatedTargetScoped.toString());
+    debug('');
+}
+
+var lastTarget;
+var lastEventName;
+function log(target, eventName) {
+    eventType = undefined;
+    scoped = undefined;
+    relatedTargetScoped = undefined;
+    if (lastTarget)
+        lastTarget.removeEventListener(lastEventName, logEvent);
+    target.addEventListener(eventName, logEvent);
+    lastTarget = target;
+    lastEventName = eventName;
+}
+
+var input = document.querySelector('input');
+var form = document.querySelector('form');
+form.tabIndex = 0;
+
+checkFlags('input.type = "radio"; log(input, "change"); input.click()', {eventType: 'change', scoped: true, relatedTargetScoped: false});
+checkFlags('log(form, "reset"); form.reset()', {eventType: 'reset', scoped: true, relatedTargetScoped: false});
+
+checkFlags('form.focus(); log(input, "focus"); input.focus()', {eventType: 'focus', scoped: false, relatedTargetScoped: true});
+checkFlags('log(input, "blur"); form.focus()', {eventType: 'blur', scoped: false, relatedTargetScoped: true});
+
+if (!window.eventSender)
+    testFailed('This test requires eventSender');
+else {
+    testRunner.waitUntilDone();
+
+    eventSender.dragMode = false;
+
+    var x = input.offsetLeft + input.offsetWidth / 2;
+    var y = input.offsetTop + input.offsetHeight / 2;
+
+    checkFlags('input.type = "text"; log(input, "mousemove"); eventSender.mouseMoveTo(x, y)', {eventType: 'mousemove', scoped: false, relatedTargetScoped: false});
+    checkFlags('log(input, "mousedown"); eventSender.mouseDown()', {eventType: 'mousedown', scoped: false, relatedTargetScoped: false});
+    checkFlags('log(input, "mouseup"); eventSender.mouseUp()', {eventType: 'mouseup', scoped: false, relatedTargetScoped: false});
+    checkFlags('log(input, "mouseout"); eventSender.mouseMoveTo(0, 0)', {eventType: 'mouseout', scoped: false, relatedTargetScoped: true});
+    checkFlags('log(input, "mouseover"); eventSender.mouseMoveTo(x, y)', {eventType: 'mouseover', scoped: false, relatedTargetScoped: true});
+
+    evalAndLog('input.value = "hello"; eventSender.mouseMoveTo(input.offsetLeft + 1, y); eventSender.mouseDown();');
+    checkFlags('log(input, "select"); eventSender.mouseMoveTo(input.offsetLeft + input.offsetWidth - 2, y); eventSender.mouseUp()',
+        {eventType: 'select', scoped: true, relatedTargetScoped: false});
+
+    var editableElement = document.getElementById('editor');
+    y = editableElement.offsetTop + editableElement.offsetHeight / 2;
+    checkFlags('log(editableElement, "selectstart"); eventSender.mouseMoveTo(editableElement.offsetLeft + 1, y); eventSender.mouseDown()',
+        {eventType: 'selectstart', scoped: true, relatedTargetScoped: false});
+}
+
+function testLoadEvent() {
+    var scriptThatLoads = document.createElement('script');
+    scriptThatLoads.src = "resources/event-path-test-helpers.js";
+    scriptThatLoads.onload = function (event) {
+        logEvent(event);
+        checkFlags('', {eventType: 'load', scoped: true, relatedTargetScoped: false});
+        testErrorEvent();
+    }
+    document.body.appendChild(scriptThatLoads);
+}
+
+function testErrorEvent() {
+    var scriptThatFailsToLoad = document.createElement('script');
+    scriptThatFailsToLoad.src = "bad.js";
+    scriptThatFailsToLoad.onerror = function (event) {
+        logEvent(event);
+        checkFlags('', {eventType: 'error', scoped: true, relatedTargetScoped: false});
+        testScrollEvent();
+    }
+    document.body.appendChild(scriptThatFailsToLoad);
+}
+
+function testScrollEvent() {
+    document.body.style.marginBottom = '1000px';
+    log(window, 'scroll');
+    setTimeout(function () {
+        window.scrollTo(0, 1000);
+        setTimeout(function () {
+            checkFlags('', {eventType: 'scroll', scoped: true, relatedTargetScoped: false});
+            window.scrollTo(0, 0);
+            testResizeEvent();
+        }, 0);
+    }, 0);
+}
+
+function testResizeEvent() {
+    var iframe = document.createElement('iframe');
+    iframe.style.width = '100px';
+    iframe.style.height = '100px';
+
+    iframe.onload = function () {
+        iframe.contentDocument.body.getBoundingClientRect();
+        log(iframe.contentWindow, "resize");
+        setTimeout(function () {
+            iframe.style.width = '200px';
+            iframe.style.height = '200px';
+            iframe.contentDocument.body.getBoundingClientRect();
+            setTimeout(function () {
+                checkFlags('', {eventType: 'resize', scoped: true, relatedTargetScoped: false});
+                finishJSTest();
+            }, 0);
+        }, 0);
+    }
+
+    document.body.appendChild(iframe);
+}
+
+testLoadEvent();
+
+// FIXME: Test abort and loadedmetadata events.
+
+jsTestIsAsync = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

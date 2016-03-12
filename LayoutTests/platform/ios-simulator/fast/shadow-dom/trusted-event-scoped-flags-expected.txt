@@ -1,0 +1,67 @@
+
+world
+PASS input.type = "radio"; log(input, "change"); input.click(); eventType is "change"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS log(form, "reset"); form.reset(); eventType is "reset"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS form.focus(); log(input, "focus"); input.focus(); eventType is "focus"
+PASS scoped is false
+PASS relatedTargetScoped is true
+
+PASS log(input, "blur"); form.focus(); eventType is "blur"
+PASS scoped is false
+PASS relatedTargetScoped is true
+
+FAIL input.type = "text"; log(input, "mousemove"); eventSender.mouseMoveTo(x, y); eventType should be mousemove (of type string). Was undefined (of type undefined).
+FAIL scoped should be false (of type boolean). Was undefined (of type undefined).
+FAIL relatedTargetScoped should be false (of type boolean). Was undefined (of type undefined).
+
+FAIL log(input, "mousedown"); eventSender.mouseDown(); eventType should be mousedown (of type string). Was undefined (of type undefined).
+FAIL scoped should be false (of type boolean). Was undefined (of type undefined).
+FAIL relatedTargetScoped should be false (of type boolean). Was undefined (of type undefined).
+
+FAIL log(input, "mouseup"); eventSender.mouseUp(); eventType should be mouseup (of type string). Was undefined (of type undefined).
+FAIL scoped should be false (of type boolean). Was undefined (of type undefined).
+FAIL relatedTargetScoped should be false (of type boolean). Was undefined (of type undefined).
+
+FAIL log(input, "mouseout"); eventSender.mouseMoveTo(0, 0); eventType should be mouseout (of type string). Was undefined (of type undefined).
+FAIL scoped should be false (of type boolean). Was undefined (of type undefined).
+FAIL relatedTargetScoped should be true (of type boolean). Was undefined (of type undefined).
+
+FAIL log(input, "mouseover"); eventSender.mouseMoveTo(x, y); eventType should be mouseover (of type string). Was undefined (of type undefined).
+FAIL scoped should be false (of type boolean). Was undefined (of type undefined).
+FAIL relatedTargetScoped should be true (of type boolean). Was undefined (of type undefined).
+
+input.value = "hello"; eventSender.mouseMoveTo(input.offsetLeft + 1, y); eventSender.mouseDown();
+FAIL log(input, "select"); eventSender.mouseMoveTo(input.offsetLeft + input.offsetWidth - 2, y); eventSender.mouseUp(); eventType should be select (of type string). Was undefined (of type undefined).
+FAIL scoped should be true (of type boolean). Was undefined (of type undefined).
+FAIL relatedTargetScoped should be false (of type boolean). Was undefined (of type undefined).
+
+FAIL log(editableElement, "selectstart"); eventSender.mouseMoveTo(editableElement.offsetLeft + 1, y); eventSender.mouseDown(); eventType should be selectstart (of type string). Was undefined (of type undefined).
+FAIL scoped should be true (of type boolean). Was undefined (of type undefined).
+FAIL relatedTargetScoped should be false (of type boolean). Was undefined (of type undefined).
+
+PASS eventType is "load"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS eventType is "error"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS eventType is "scroll"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS eventType is "resize"
+PASS scoped is true
+PASS relatedTargetScoped is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
