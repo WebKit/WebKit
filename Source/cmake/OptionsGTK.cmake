@@ -419,10 +419,15 @@ if (USE_LIBHYPHEN)
     endif ()
 endif ()
 
-# Override the cached variables, gtk-doc and gobject-introspection do not really work when cross-building or when building on Mac.
-if (CMAKE_CROSSCOMPILING OR APPLE)
+# Override the cached variables, gtk-doc and gobject-introspection do not really work when cross-building.
+if (CMAKE_CROSSCOMPILING)
     set(ENABLE_GTKDOC OFF)
     set(ENABLE_INTROSPECTION OFF)
+endif ()
+
+# Override the cached variable, gtk-doc does not really work when building on Mac.
+if (APPLE)
+    set(ENABLE_GTKDOC OFF)
 endif ()
 
 set(DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR ${DERIVED_SOURCES_DIR}/webkitdom)

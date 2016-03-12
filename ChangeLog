@@ -1,3 +1,12 @@
+2016-03-12  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
+
+        [GTK][Mac] Don't force ENABLE_INTROSPECTION=OFF on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=152650
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-03-10  Frederic Wang  <fwang@igalia.org>
 
         [GTK] Add support for WOFF2
