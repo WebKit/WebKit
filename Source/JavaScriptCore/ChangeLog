@@ -1,3 +1,20 @@
+2016-03-12  Tomas Popela  <tpopela@redhat.com>
+
+        LLINT op_put_to_scope and op_get_from_scope should use loadpFromInstruction to get operand from instruction
+        https://bugs.webkit.org/show_bug.cgi?id=132333
+
+        Unreviewed.
+
+        When loading operand variable from instruction in
+        _llint_op_get_from_scope and _llint_op_put_to_scope use
+        loadpFromInstruction instead of loadisFromInstruction. Also when
+        saving the operand in LLIntSlowPaths.cpp use the same way as in
+        CodeBlock.cpp.
+
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2016-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Fix the build in Windows.

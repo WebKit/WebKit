@@ -2277,7 +2277,7 @@ macro loadWithStructureCheck(operand, slowPath)
 end
 
 macro getProperty()
-    loadisFromInstruction(6, t3)
+    loadpFromInstruction(6, t3)
     loadPropertyAtVariableOffset(t3, t0, t1, t2)
     valueProfile(t1, t2, 28, t0)
     loadisFromInstruction(1, t0)
@@ -2297,7 +2297,7 @@ end
 
 macro getClosureVar()
     loadp JSVariableObject::m_registers[t0], t0
-    loadisFromInstruction(6, t3)
+    loadpFromInstruction(6, t3)
     loadp TagOffset[t0, t3, 8], t1
     loadp PayloadOffset[t0, t3, 8], t2
     valueProfile(t1, t2, 28, t0)
@@ -2356,7 +2356,7 @@ _llint_op_get_from_scope:
 macro putProperty()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2, t3)
-    loadisFromInstruction(6, t1)
+    loadpFromInstruction(6, t1)
     storePropertyAtVariableOffset(t1, t0, t2, t3)
 end
 
@@ -2374,7 +2374,7 @@ macro putClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2, t3)
     loadp JSVariableObject::m_registers[t0], t0
-    loadisFromInstruction(6, t1)
+    loadpFromInstruction(6, t1)
     storei t2, TagOffset[t0, t1, 8]
     storei t3, PayloadOffset[t0, t1, 8]
 end
