@@ -29,7 +29,6 @@
 
 #import <WebKit/WKSecurityOrigin.h>
 #import <WebKit/_WKActivatedElementInfo.h>
-#import <WebKit/_WKPreviewAction.h>
 
 @class UIScrollView;
 @class UIViewController;
@@ -37,7 +36,6 @@
 @class _WKActivatedElementInfo;
 @class _WKElementAction;
 @class _WKFrameHandle;
-@class _WKPreviewElementInfo;
 
 @protocol WKUIDelegatePrivate <WKUIDelegate>
 
@@ -78,17 +76,6 @@ struct UIEdgeInsets;
 - (UIEdgeInsets)_webView:(WKWebView *)webView finalObscuredInsetsForScrollView:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset WK_AVAILABLE(NA, 9_0);
 - (UIViewController *)_webView:(WKWebView *)webView previewViewControllerForURL:(NSURL *)url defaultActions:(WK_ARRAY(_WKElementAction *) *)actions elementInfo:(_WKActivatedElementInfo *)elementInfo WK_AVAILABLE(NA, 9_0);
 - (UIViewController *)_webView:(WKWebView *)webView previewViewControllerForAnimatedImageAtURL:(NSURL *)url defaultActions:(WK_ARRAY(_WKElementAction *) *)actions elementInfo:(_WKActivatedElementInfo *)elementInfo imageSize:(CGSize)imageSize WK_AVAILABLE(NA, 9_0);
-
-// If a client wants to disable previews entirely for the given element, they should return NO in
-// shouldPreviewElement. Returning NO in shouldPreviewElement will prevent the other methods from being invoked.
-// The client can provide a custom preview by returning their own UIViewController from
-// previewingViewControllerForElement:defaultActions:. Returning nil will result in the default preview behavior
-// for that element. If the client want to use the defaultActions, then the client is responsible for
-// returning those actions in their UIViewController's implementation of previewActionItems.
-- (BOOL)_webView:(WKWebView *)webView shouldPreviewElement:(_WKPreviewElementInfo *)elementInfo;
-- (UIViewController *)_webView:(WKWebView *)webView previewingViewControllerForElement:(_WKPreviewElementInfo *)elementInfo defaultActions:(NSArray <id <_WKPreviewActionItem>> *)previewActions WK_AVAILABLE(NA, WK_IOS_TBA);
-- (void)_webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_AVAILABLE(NA, WK_IOS_TBA);
-
 - (UIViewController *)_presentingViewControllerForWebView:(WKWebView *)webView WK_AVAILABLE(NA, WK_IOS_TBA);
 #else
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element WK_AVAILABLE(WK_MAC_TBA, NA);

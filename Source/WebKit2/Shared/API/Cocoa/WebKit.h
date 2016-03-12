@@ -25,6 +25,7 @@
 
 #import <WebKit/WKBackForwardList.h>
 #import <WebKit/WKBackForwardListItem.h>
+#import <WebKit/WKElementInfo.h>
 #import <WebKit/WKError.h>
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKFrameInfo.h>
@@ -33,6 +34,9 @@
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKNavigationResponse.h>
 #import <WebKit/WKPreferences.h>
+#import <WebKit/WKPreviewActionItem.h>
+#import <WebKit/WKPreviewActionItemIdentifiers.h>
+#import <WebKit/WKPreviewElementInfo.h>
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKScriptMessage.h>
 #import <WebKit/WKScriptMessageHandler.h>

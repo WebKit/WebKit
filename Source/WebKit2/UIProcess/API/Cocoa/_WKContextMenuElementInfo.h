@@ -27,12 +27,12 @@
 
 #if WK_API_ENABLED && !TARGET_OS_IPHONE
 
-#import <WebKit/_WKElementInfo.h>
+#import <WebKit/WKElementInfo.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(WK_MAC_TBA, NA)
-@interface _WKContextMenuElementInfo : _WKElementInfo
+@interface _WKContextMenuElementInfo : WKElementInfo
 
 @end
 

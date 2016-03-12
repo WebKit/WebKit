@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKPreviewActionInternal.h"
+#import "WKPreviewElementInfo.h"
 
 #if WK_API_ENABLED && TARGET_OS_IPHONE
 
-@implementation _WKPreviewAction
-@synthesize identifier=_identifier;
+@interface WKPreviewElementInfo ()
 
-+ (instancetype)actionWithIdentifier:(NSString *)identifier title:(NSString *)title style:(UIPreviewActionStyle)style handler:(void (^)(UIPreviewAction *action, UIViewController *previewViewController))handler
-{
-    _WKPreviewAction *action = [self actionWithTitle:title style:style handler:handler];
-    action->_identifier = identifier;
-    return action;
-}
+- (instancetype)_initWithLinkURL:(NSURL *)url;
 
 @end
 

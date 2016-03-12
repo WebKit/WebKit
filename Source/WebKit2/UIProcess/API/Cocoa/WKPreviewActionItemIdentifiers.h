@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKPreviewElementInfo.h"
 
-#if WK_API_ENABLED && TARGET_OS_IPHONE
+#import <WebKit/WKFoundation.h>
 
-@interface _WKPreviewElementInfo ()
+#if WK_API_ENABLED
 
-- (instancetype)_initWithLinkURL:(NSURL *)url;
+#import <Foundation/Foundation.h>
 
-@end
+WK_EXTERN NSString * const WKPreviewActionItemIdentifierOpen WK_AVAILABLE(NA, WK_IOS_TBA);
+WK_EXTERN NSString * const WKPreviewActionItemIdentifierAddToReadingList WK_AVAILABLE(NA, WK_IOS_TBA);
+WK_EXTERN NSString * const WKPreviewActionItemIdentifierCopy WK_AVAILABLE(NA, WK_IOS_TBA);
+WK_EXTERN NSString * const WKPreviewActionItemIdentifierShare WK_AVAILABLE(NA, WK_IOS_TBA);
 
-#endif // WK_API_ENABLED
+#endif

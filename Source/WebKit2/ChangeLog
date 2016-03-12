@@ -1,3 +1,65 @@
+2016-03-12  Beth Dakin  <bdakin@apple.com>
+
+        Make preview inline navigation work API
+        https://bugs.webkit.org/show_bug.cgi?id=155383
+        -and corresponding-
+        rdar://problem/25117985
+
+        Reviewed by Dan Bernstein.
+
+        With this patch:
+        _WKElementInfo is now WKElementInfo in file and class names. Header is now 
+        public.
+
+        _WKPreviewElementInfo is now WKPreviewElementInfo in file and class names. 
+        Header is now public.
+
+        _WKPreviewAction is now WKPreviewActionItem in filenames (header is now 
+        public), the protocol _WKPreviewActionItem is now WKPreviewActionItem, and 
+        the _WKPreviewAction class is now WKPreviewAction. (The internal header is 
+        still project, of course.)
+        and
+        WKPreviewActionIdentifiersPrivate.h/mm is now
+        WKPreviewActionItemIdentifiers.h/mm and all the the identifiers have been 
+        updated. Header is now public.
+
+        * Shared/API/Cocoa/WebKit.h:
+        * UIProcess/API/Cocoa/WKElementInfo.h: Copied from UIProcess/API/Cocoa/_WKElementInfo.h.
+        * UIProcess/API/Cocoa/WKElementInfo.mm: Copied from UIProcess/API/Cocoa/_WKElementInfo.mm.
+        (-[WKElementInfo copyWithZone:]):
+        (-[_WKElementInfo copyWithZone:]): Deleted.
+        * UIProcess/API/Cocoa/WKElementInfoInternal.h: Copied from UIProcess/API/Cocoa/_WKElementInfoInternal.h.
+        * UIProcess/API/Cocoa/WKPreviewActionIdentifiersPrivate.h: Removed.
+        * UIProcess/API/Cocoa/WKPreviewActionIdentifiersPrivate.mm: Removed.
+        * UIProcess/API/Cocoa/WKPreviewActionItem.h: Copied from UIProcess/API/Cocoa/_WKPreviewAction.h.
+        * UIProcess/API/Cocoa/WKPreviewActionItem.mm: Copied from UIProcess/API/Cocoa/_WKPreviewAction.mm.
+        * UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.h: Copied from UIProcess/API/Cocoa/WKPreviewActionIdentifiersPrivate.h.
+        * UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.mm: Copied from UIProcess/API/Cocoa/WKPreviewActionIdentifiersPrivate.mm.
+        * UIProcess/API/Cocoa/WKPreviewActionItemInternal.h: Copied from UIProcess/API/Cocoa/_WKPreviewActionInternal.h.
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.h: Copied from UIProcess/API/Cocoa/_WKPreviewElementInfo.h.
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.mm: Copied from UIProcess/API/Cocoa/_WKPreviewElementInfo.mm.
+        (-[WKPreviewElementInfo _initWithLinkURL:]):
+        (-[_WKPreviewElementInfo _initWithLinkURL:]): Deleted.
+        * UIProcess/API/Cocoa/WKPreviewElementInfoInternal.h: Copied from UIProcess/API/Cocoa/_WKPreviewElementInfoInternal.h.
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/_WKContextMenuElementInfo.h:
+        * UIProcess/API/Cocoa/_WKElementInfo.h: Removed.
+        * UIProcess/API/Cocoa/_WKElementInfo.mm: Removed.
+        * UIProcess/API/Cocoa/_WKElementInfoInternal.h: Removed.
+        * UIProcess/API/Cocoa/_WKPreviewAction.h: Removed.
+        * UIProcess/API/Cocoa/_WKPreviewAction.mm: Removed.
+        * UIProcess/API/Cocoa/_WKPreviewActionInternal.h: Removed.
+        * UIProcess/API/Cocoa/_WKPreviewElementInfo.h: Removed.
+        * UIProcess/API/Cocoa/_WKPreviewElementInfo.mm: Removed.
+        * UIProcess/API/Cocoa/_WKPreviewElementInfoInternal.h: Removed.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (previewIdentifierForElementAction):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        (-[WKContentView _previewItemController:commitPreview:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-03-12  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
 
         [GTK][Mac] Use DYLD_LIBRARY_PATH on OSX rather then LD_LIBRARY_PATH

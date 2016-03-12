@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKElementInfo.h"
+#import "config.h"
+#import "WKPreviewActionItemInternal.h"
 
-#import <wtf/RetainPtr.h>
+#if WK_API_ENABLED && TARGET_OS_IPHONE
 
-#if WK_API_ENABLED
+@implementation WKPreviewAction
+@synthesize identifier=_identifier;
 
-@interface _WKElementInfo () {
-@package
-    RetainPtr<NSURL> _linkURL;
++ (instancetype)actionWithIdentifier:(NSString *)identifier title:(NSString *)title style:(UIPreviewActionStyle)style handler:(void (^)(UIPreviewAction *action, UIViewController *previewViewController))handler
+{
+    WKPreviewAction *action = [self actionWithTitle:title style:style handler:handler];
+    action->_identifier = identifier;
+    return action;
 }
 
 @end
 
-#endif // WK_API_ENABLED
+#endif // WK_API_ENABLED && TARGET_OS_IPHONE

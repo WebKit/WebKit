@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKElementInfoInternal.h"
+#import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && TARGET_OS_IPHONE
 
-@implementation _WKElementInfo
+#import <UIKit/UIViewController.h>
 
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
+WK_AVAILABLE(NA, WK_IOS_TBA)
+@protocol WKPreviewActionItem <UIPreviewActionItem>
 
-- (NSURL *)linkURL
-{
-    return _linkURL.get();
-}
+@property (nonatomic, copy, readonly) NSString *identifier;
 
 @end
 

@@ -23,16 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#include "config.h"
+#include "WKPreviewActionItemIdentifiers.h"
 
-#if WK_API_ENABLED && TARGET_OS_IPHONE
+#if WK_API_ENABLED
 
-#import "_WKPreviewAction.h"
+NSString * const WKPreviewActionItemIdentifierOpen = @"WKPreviewActionItemIdentifierOpen";
+NSString * const WKPreviewActionItemIdentifierAddToReadingList = @"WKPreviewActionItemIdentifierAddToReadingList";
+NSString * const WKPreviewActionItemIdentifierCopy = @"WKPreviewActionItemIdentifierCopy";
+NSString * const WKPreviewActionItemIdentifierShare = @"WKPreviewActionItemIdentifierShare";
 
-@interface _WKPreviewAction : UIPreviewAction <NSCopying, _WKPreviewActionItem>
-
-+ (instancetype)actionWithIdentifier:(NSString *)identifier title:(NSString *)title style:(UIPreviewActionStyle)style handler:(void (^)(UIPreviewAction *action, UIViewController *previewViewController))handler;
-
-@end
-
-#endif // WK_API_ENABLED && TARGET_OS_IPHONE
+#endif

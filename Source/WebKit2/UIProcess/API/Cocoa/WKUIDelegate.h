@@ -28,11 +28,13 @@
 #if WK_API_ENABLED
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WKPreviewActionItem.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class WKFrameInfo;
 @class WKNavigationAction;
+@class WKPreviewElementInfo;
 @class WKWebViewConfiguration;
 @class WKWindowFeatures;
 
@@ -113,6 +115,43 @@ NS_ASSUME_NONNULL_BEGIN
  If you do not implement this method, the web view will behave as if the user selected the Cancel button.
  */
 - (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(nullable NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString * WK_NULLABLE_SPECIFIER result))completionHandler;
+
+#if TARGET_OS_IPHONE
+
+/*! @abstract Allows your app to determine whether or not the given element should show a preview.
+ @param webView The web view invoking the delegate method.
+ @param elementInfo The elementInfo for the element the user has started touching.
+ @discussion To disable previews entirely for the given element, return NO. Returning NO will prevent 
+ webView:previewingViewControllerForElement:defaultActions: and webView:commitPreviewingViewController:
+ from being invoked.
+ 
+ This method will only be invoked for elements that have default preview in WebKit, which is
+ limited to links. In the future, it could be invoked for additional elements.
+ */
+- (BOOL)webView:(WKWebView *)webView shouldPreviewElement:(WKPreviewElementInfo *)elementInfo WK_AVAILABLE(NA, WK_IOS_TBA);
+
+/*! @abstract Allows your app to provide a custom view controller to show when the given element is peeked.
+ @param webView The web view invoking the delegate method.
+ @param elementInfo The elementInfo for the element the user is peeking.
+ @param defaultActions An array of the actions that WebKit would use as previewActionItems for this element by 
+ default. These actions would be used if allowsLinkPreview is YES but these delegate methods have not been 
+ implemented, or if this delegate method returns nil.
+ @discussion Returning a view controller will result in that view controller being displayed as a peek preview.
+ To use the defaultActions, your app is responsible for returning whichever of those actions it wants in your 
+ view controller's implementation of -previewActionItems.
+ 
+ Returning nil will result in WebKit's default preview behavior. webView:commitPreviewingViewController: will only be invoked
+ if a non-nil view controller was returned.
+ */
+- (nullable UIViewController *)webView:(WKWebView *)webView previewingViewControllerForElement:(WKPreviewElementInfo *)elementInfo defaultActions:(NSArray <id <WKPreviewActionItem>> *)previewActions WK_AVAILABLE(NA, WK_IOS_TBA);
+
+/*! @abstract Allows your app to pop to the view controller it created.
+ @param webView The web view invoking the delegate method.
+ @param previewingViewController The view controller that is being popped.
+ */
+- (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_AVAILABLE(NA, WK_IOS_TBA);
+
+#endif // TARGET_OS_IPHONE
 
 @end
 

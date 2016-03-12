@@ -23,26 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKPreviewElementInfoInternal.h"
+#import <WebKit/WKFoundation.h>
 
-#import "_WKElementInfoInternal.h"
-#import <wtf/RetainPtr.h>
+#if WK_API_ENABLED
 
-#if WK_API_ENABLED && PLATFORM(IOS)
+NS_ASSUME_NONNULL_BEGIN
 
-@implementation _WKPreviewElementInfo
+WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
+@interface WKElementInfo : NSObject <NSCopying>
 
-- (instancetype)_initWithLinkURL:(NSURL *)url
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _linkURL = adoptNS([url copy]);
-
-    return self;
-}
+@property (nonatomic, readonly) NSURL *linkURL;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif
