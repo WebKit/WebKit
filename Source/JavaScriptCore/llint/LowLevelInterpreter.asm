@@ -299,21 +299,13 @@ macro assertNotConstant(index)
 end
 
 macro functionForCallCodeBlockGetter(targetRegister)
-    if JSVALUE64
-        loadp Callee[cfr], targetRegister
-    else
-        loadp Callee + PayloadOffset[cfr], targetRegister
-    end
+    loadp Callee[cfr], targetRegister
     loadp JSFunction::m_executable[targetRegister], targetRegister
     loadp FunctionExecutable::m_codeBlockForCall[targetRegister], targetRegister
 end
 
 macro functionForConstructCodeBlockGetter(targetRegister)
-    if JSVALUE64
-        loadp Callee[cfr], targetRegister
-    else
-        loadp Callee + PayloadOffset[cfr], targetRegister
-    end
+    loadp Callee[cfr], targetRegister
     loadp JSFunction::m_executable[targetRegister], targetRegister
     loadp FunctionExecutable::m_codeBlockForConstruct[targetRegister], targetRegister
 end
