@@ -838,8 +838,11 @@ class Port(object):
             'XDG_RUNTIME_DIR',
 
             # Darwin:
+            'DYLD_FRAMEWORK_PATH',
             'DYLD_LIBRARY_PATH',
             'HOME',
+            '__XPC_DYLD_FRAMEWORK_PATH',
+            '__XPC_DYLD_LIBRARY_PATH',
 
             # CYGWIN:
             'HOMEDRIVE',

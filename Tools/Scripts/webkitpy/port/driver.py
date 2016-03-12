@@ -311,10 +311,18 @@ class Driver(object):
             self._start(pixel_tests, per_test_args)
             self._run_post_start_tasks()
 
+    def _append_environment_variable_path(self, environment, variable, path):
+        if variable in environment:
+            environment[variable] = environment[variable] + os.pathsep + path
+        else:
+            environment[variable] = path
+
     def _setup_environ_for_driver(self, environment):
-        environment['DYLD_LIBRARY_PATH'] = str(self._port._build_path())
-        environment['__XPC_DYLD_LIBRARY_PATH'] = environment['DYLD_LIBRARY_PATH']
-        environment['DYLD_FRAMEWORK_PATH'] = str(self._port._build_path())
+        build_root_path = str(self._port._build_path())
+        self._append_environment_variable_path(environment, 'DYLD_LIBRARY_PATH', build_root_path)
+        self._append_environment_variable_path(environment, '__XPC_DYLD_LIBRARY_PATH', build_root_path)
+        self._append_environment_variable_path(environment, 'DYLD_FRAMEWORK_PATH', build_root_path)
+        self._append_environment_variable_path(environment, '__XPC_DYLD_FRAMEWORK_PATH', build_root_path)
         # Use an isolated temp directory that can be deleted after testing (especially important on Mac, as
         # CoreMedia disk cache is in the temp directory).
         environment['TMPDIR'] = str(self._driver_tempdir)

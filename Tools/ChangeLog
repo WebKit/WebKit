@@ -1,3 +1,32 @@
+2016-03-12  David Kilzer  <ddkilzer@apple.com>
+
+        run-webkit-tests: handle Darwin framework/library environment variables more consistently
+        <http://webkit.org/b/155392>
+
+        Reviewed by Daniel Bates.
+
+        These changes will make it possible to pass through environment
+        variables from the run-webkit-tests command-line.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.setup_environ_for_server): Add DYLD_FRAMEWORK_PATH,
+        __XPC_DYLD_FRAMEWORK_PATH and __XPC_DYLD_LIBRARY_PATH to the
+        list of variables to keep from the run-webkit-test environment.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._append_environment_variable_path): Add method to append
+        a path to an environment variable, or set the path if the
+        variable doesn't exist.
+        (Driver._setup_environ_for_driver): Extract build_root_path into
+        a local variable.  Use Driver._append_environment_variable_path
+        to extend DYLD_LIBRARY_PATH, __XPC_DYLD_LIBRARY_PATH,
+        DYLD_FRAMEWORK_PATH and __XPC_DYLD_FRAMEWORK_PATH instead of
+        overwriting them.
+
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test__append_environment_variable_path): Add test
+        method to test Driver._append_environment_variable_path.
+
 2016-03-11  Alexey Proskuryakov  <ap@apple.com>
 
         [ios-sim debug] API test WTF_Lock.ContendedShortSection and WTF_ParkingLot.UnparkOneFifty timing out

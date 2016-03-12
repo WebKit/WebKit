@@ -38,6 +38,7 @@ from webkitpy.port.port_testcase import TestWebKitPort
 
 from webkitpy.tool.mocktool import MockOptions
 
+import os
 import sys
 
 class DriverOutputTest(unittest.TestCase):
@@ -281,3 +282,28 @@ class DriverTest(unittest.TestCase):
         driver = Driver(port, 0, pixel_tests=True)
         driver.start(True, [])
         self.assertTrue(driver._server_process.started)
+
+    def test__append_environment_variable_path(self):
+        port = self.make_port()
+        driver = Driver(port, None, pixel_tests=False)
+
+        environment = {}
+        variable = 'DYLD_FAKE_PATH'
+        path = '/tmp/fake-dyld-path'
+        driver._append_environment_variable_path(environment, variable, path)
+        self.assertEqual(environment[variable], path)
+
+        base_value = ''
+        environment[variable] = base_value
+        driver._append_environment_variable_path(environment, variable, path)
+        self.assertEqual(environment[variable], base_value + os.pathsep + path)
+
+        base_value = '/usr/lib'
+        environment[variable] = base_value
+        driver._append_environment_variable_path(environment, variable, path)
+        self.assertEqual(environment[variable], base_value + os.pathsep + path)
+
+        base_value = os.pathsep.join(['/usr/lib', '/usr/local/lib'])
+        environment[variable] = base_value
+        driver._append_environment_variable_path(environment, variable, path)
+        self.assertEqual(environment[variable], base_value + os.pathsep + path)
