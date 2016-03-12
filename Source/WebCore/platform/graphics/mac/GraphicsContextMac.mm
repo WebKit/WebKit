@@ -85,14 +85,22 @@ void GraphicsContext::drawFocusRing(const Path& path, float /* width */, float /
 }
 
 #if PLATFORM(MAC)
-void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float offset, double timeOffset, bool& needsRedraw)
+void GraphicsContext::drawFocusRing(const Path& path, double timeOffset, bool& needsRedraw)
+{
+    if (paintingDisabled() || path.isNull())
+        return;
+    
+    needsRedraw = drawFocusRingToContextAtTime(platformContext(), path.platformPath(), timeOffset);
+}
+
+void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, double timeOffset, bool& needsRedraw)
 {
     if (paintingDisabled())
         return;
 
     RetainPtr<CGMutablePathRef> focusRingPath = adoptCF(CGPathCreateMutable());
-    for (auto& rect : rects)
-        CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rect, -offset, -offset));
+    for (const auto& rect : rects)
+        CGPathAddRect(focusRingPath.get(), 0, CGRect(rect));
 
     needsRedraw = drawFocusRingToContextAtTime(platformContext(), focusRingPath.get(), timeOffset);
 }

@@ -1,3 +1,23 @@
+2016-03-12  Zalan Bujtas  <zalan@apple.com>
+
+        [Forms: focus] focus rings around text fields do not follow contour (border-radius)
+        https://bugs.webkit.org/show_bug.cgi?id=154099
+        rdar://problem/9988429
+
+        Reviewed by Tim Horton.
+
+        Unfortunately there's no proper way to test native focusring drawing.
+        These tests attempt to verify that we don't end up painting sharp corners.
+
+        * fast/inline/hidpi-outline-auto-with-border-radius-horizontal-ltr-expected.html: Added.
+        * fast/inline/hidpi-outline-auto-with-border-radius-horizontal-ltr.html: Added.
+        * fast/inline/hidpi-outline-auto-with-border-radius-horizontal-rtl-expected.html: Added.
+        * fast/inline/hidpi-outline-auto-with-border-radius-horizontal-rtl.html: Added.
+        * fast/inline/hidpi-outline-auto-with-border-radius-vertical-ltr-expected.html: Added.
+        * fast/inline/hidpi-outline-auto-with-border-radius-vertical-ltr.html: Added.
+        * fast/inline/hidpi-outline-auto-with-border-radius-vertical-rtl-expected.html: Added.
+        * fast/inline/hidpi-outline-auto-with-border-radius-vertical-rtl.html: Added.
+
 2016-03-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Event.deepPath() and Event.scoped

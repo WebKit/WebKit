@@ -162,6 +162,13 @@ namespace WebCore {
         WEBCORE_EXPORT void apply(const PathApplierFunction&) const;
         void transform(const AffineTransform&);
 
+        static float circleControlPoint()
+        {
+            // Approximation of control point positions on a bezier to simulate a quarter of a circle.
+            // This is 1-kappa, where kappa = 4 * (sqrt(2) - 1) / 3
+            return 0.447715;
+        }
+
         void addBeziersForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
 
 #if USE(CG)

@@ -38,6 +38,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "FlowThreadController.h"
+#include "PathUtilities.h"
 #include "RenderBlock.h"
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
@@ -2087,13 +2088,24 @@ void RenderElement::paintFocusRing(PaintInfo& paintInfo, const LayoutPoint& pain
 
     Vector<LayoutRect> focusRingRects;
     addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
+    float outlineOffset = style.outlineOffset();
     Vector<FloatRect> pixelSnappedFocusRingRects;
     float deviceScaleFactor = document().deviceScaleFactor();
-    for (const auto& rect : focusRingRects)
+    for (auto rect : focusRingRects) {
+        rect.inflate(outlineOffset);
         pixelSnappedFocusRingRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
+    }
 #if PLATFORM(MAC)
     bool needsRepaint;
-    paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, style.outlineOffset(), document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
+    if (style.hasBorderRadius()) {
+        Path path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedFocusRingRects, style.border(), outlineOffset, style.direction(), style.writingMode());
+        if (path.isEmpty()) {
+            for (auto rect : pixelSnappedFocusRingRects)
+                path.addRect(rect);
+        }
+        paintInfo.context().drawFocusRing(path, document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
+    } else
+        paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
     if (needsRepaint)
         document().page()->focusController().setFocusedElementNeedsRepaint();
 #else

@@ -1,3 +1,42 @@
+2016-03-12  Zalan Bujtas  <zalan@apple.com>
+
+        [Forms: focus] focus rings around text fields do not follow contour (border-radius)
+        https://bugs.webkit.org/show_bug.cgi?id=154099
+        rdar://problem/9988429
+
+        Reviewed by Tim Horton.
+
+        This patch enables outline-style: auto to follow the curve of border-radius.
+        When both border-radius and outline-style: auto are set, the native focusring painting will take the border-radius values
+        into account. This is only for outline-style: auto, other non-auto outline styles paint as if there
+        was no border-radius set.
+        It supports both single and multiline content with joint rectangles.
+        However in case of disjoint rectangles, we fallback to the non-radius drawing.
+
+        Tests: fast/inline/hidpi-outline-auto-with-border-radius-horizontal-ltr.html
+               fast/inline/hidpi-outline-auto-with-border-radius-horizontal-rtl.html
+               fast/inline/hidpi-outline-auto-with-border-radius-vertical-ltr.html
+               fast/inline/hidpi-outline-auto-with-border-radius-vertical-rtl.html
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addBeziersForRoundedRect):
+        * platform/graphics/Path.h:
+        (WebCore::Path::circleControlPoint):
+        * platform/graphics/PathUtilities.cpp:
+        (WebCore::polygonsForRect):
+        (WebCore::PathUtilities::pathsWithShrinkWrappedRects):
+        (WebCore::startAndEndPointsForCorner):
+        (WebCore::cornerType):
+        (WebCore::controlPointsForBezierCurve):
+        (WebCore::adjustedtRadiiForHuggingCurve):
+        (WebCore::PathUtilities::pathWithShrinkWrappedRectsForOutline):
+        * platform/graphics/PathUtilities.h:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintFocusRing):
+
 2016-03-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Event.deepPath() and Event.scoped
