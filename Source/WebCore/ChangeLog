@@ -1,3 +1,26 @@
+2016-03-13  Antti Koivisto  <antti@apple.com>
+
+        ComposedTreeIterator fails to traverse slots if root is shadow host
+        https://bugs.webkit.org/show_bug.cgi?id=155407
+
+        Reviewed by Darin Adler.
+
+        Test: fast/shadow-dom/composed-tree-shadow-subtree.html
+
+        * dom/ComposedTreeIterator.cpp:
+        (WebCore::ComposedTreeIterator::ComposedTreeIterator):
+
+            Traversal functions assume m_contextStack is deeper than 1 before they need to enter slot traversal code paths.
+            Call initializeContextStack in case of shadow host which does the right thing.
+
+        (WebCore::ComposedTreeIterator::traverseSiblingInSlot):
+        (WebCore::composedTreeAsText):
+
+            Add option to include pointers as debugging aid.
+
+        * dom/ComposedTreeIterator.h:
+        (WebCore::composedTreeChildren):
+
 2016-03-12  Sam Weinig  <sam@webkit.org>
 
         WebKit can easily crash below NetworkSession::dataTaskForIdentifier() with NSURLSession enabled

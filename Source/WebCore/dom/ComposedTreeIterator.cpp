@@ -67,8 +67,13 @@ ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root)
         }
     }
 #endif
-    auto& effectiveRoot = root.shadowRoot() ? *root.shadowRoot() : root;
-    m_contextStack.uncheckedAppend(Context(effectiveRoot));
+    if (auto* shadowRoot = root.shadowRoot()) {
+        auto* firstChild = shadowRoot->firstChild();
+        initializeContextStack(root, firstChild ? *firstChild : root);
+        return;
+    }
+
+    m_contextStack.uncheckedAppend(Context(root));
 }
 
 ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root, Node& current)
@@ -222,7 +227,7 @@ void ComposedTreeIterator::traverseSiblingInSlot(int direction)
 }
 #endif
 
-String composedTreeAsText(ContainerNode& root)
+String composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode mode)
 {
     TextStream stream;
     auto descendants = composedTreeDescendants(root);
@@ -230,13 +235,18 @@ String composedTreeAsText(ContainerNode& root)
         writeIndent(stream, it.depth());
 
         if (is<Text>(*it)) {
-            stream << "#text\n";
+            stream << "#text";
+            if (mode == ComposedTreeAsTextMode::WithPointers)
+                stream << " " << &*it;
+            stream << "\n";
             continue;
         }
         auto& element = downcast<Element>(*it);
         stream << element.localName();
         if (element.shadowRoot())
             stream << " (shadow root)";
+        if (mode == ComposedTreeAsTextMode::WithPointers)
+            stream << " " << &*it;
         stream << "\n";
     }
     return stream.release();
