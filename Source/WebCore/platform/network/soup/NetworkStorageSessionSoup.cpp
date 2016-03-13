@@ -36,8 +36,9 @@
 
 namespace WebCore {
 
-NetworkStorageSession::NetworkStorageSession(std::unique_ptr<SoupNetworkSession> session)
-    : m_session(WTFMove(session))
+NetworkStorageSession::NetworkStorageSession(SessionID sessionID, std::unique_ptr<SoupNetworkSession> session)
+    : m_sessionID(sessionID)
+    , m_session(WTFMove(session))
 {
 }
 
@@ -55,19 +56,19 @@ static std::unique_ptr<NetworkStorageSession>& defaultSession()
 NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 {
     if (!defaultSession())
-        defaultSession() = std::make_unique<NetworkStorageSession>(nullptr);
+        defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), nullptr);
     return *defaultSession();
 }
 
-std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(const String&)
+std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(SessionID sessionID, const String&)
 {
-    auto session = std::make_unique<NetworkStorageSession>(SoupNetworkSession::createPrivateBrowsingSession());
+    auto session = std::make_unique<NetworkStorageSession>(sessionID, SoupNetworkSession::createPrivateBrowsingSession());
     return session;
 }
 
 void NetworkStorageSession::switchToNewTestingSession()
 {
-    defaultSession() = std::make_unique<NetworkStorageSession>(SoupNetworkSession::createTestingSession());
+    defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), SoupNetworkSession::createTestingSession());
 }
 
 SoupNetworkSession& NetworkStorageSession::soupNetworkSession() const

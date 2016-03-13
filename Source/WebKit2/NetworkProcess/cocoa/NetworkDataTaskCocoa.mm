@@ -51,7 +51,7 @@ static void applyBasicAuthorizationHeader(WebCore::ResourceRequest& request, con
 
 NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::StoredCredentials storedCredentials, WebCore::ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     : m_failureTimer(*this, &NetworkDataTask::failureTimerFired)
-    , m_session(session)
+    , m_session(&session)
     , m_client(&client)
     , m_storedCredentials(storedCredentials)
     , m_lastHTTPMethod(requestWithCredentials.httpMethod())
@@ -79,13 +79,10 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
         url = request.url();
     
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
-        if (auto storageSession = SessionTracker::storageSession(m_session.sessionID())) {
-            if (m_user.isEmpty() && m_password.isEmpty())
-                m_initialCredential = storageSession->credentialStorage().get(url);
-            else
-                storageSession->credentialStorage().set(WebCore::Credential(m_user, m_password, WebCore::CredentialPersistenceNone), url);
-        } else
-            ASSERT_NOT_REACHED();
+        if (m_user.isEmpty() && m_password.isEmpty())
+            m_initialCredential = m_session->networkStorageSession().credentialStorage().get(url);
+        else
+            m_session->networkStorageSession().credentialStorage().set(WebCore::Credential(m_user, m_password, WebCore::CredentialPersistenceNone), url);
 #endif
     }
 
@@ -104,13 +101,13 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
     }
 
     if (storedCredentials == WebCore::AllowStoredCredentials) {
-        m_task = [m_session.m_sessionWithCredentialStorage dataTaskWithRequest:nsRequest];
-        ASSERT(!m_session.m_dataTaskMapWithCredentials.contains([m_task taskIdentifier]));
-        m_session.m_dataTaskMapWithCredentials.add([m_task taskIdentifier], this);
+        m_task = [m_session->m_sessionWithCredentialStorage dataTaskWithRequest:nsRequest];
+        ASSERT(!m_session->m_dataTaskMapWithCredentials.contains([m_task taskIdentifier]));
+        m_session->m_dataTaskMapWithCredentials.add([m_task taskIdentifier], this);
     } else {
-        m_task = [m_session.m_sessionWithoutCredentialStorage dataTaskWithRequest:nsRequest];
-        ASSERT(!m_session.m_dataTaskMapWithoutCredentials.contains([m_task taskIdentifier]));
-        m_session.m_dataTaskMapWithoutCredentials.add([m_task taskIdentifier], this);
+        m_task = [m_session->m_sessionWithoutCredentialStorage dataTaskWithRequest:nsRequest];
+        ASSERT(!m_session->m_dataTaskMapWithoutCredentials.contains([m_task taskIdentifier]));
+        m_session->m_dataTaskMapWithoutCredentials.add([m_task taskIdentifier], this);
     }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
@@ -125,11 +122,11 @@ NetworkDataTask::~NetworkDataTask()
     ASSERT(isMainThread());
     if (m_task) {
         if (m_storedCredentials == WebCore::StoredCredentials::AllowStoredCredentials) {
-            ASSERT(m_session.m_dataTaskMapWithCredentials.get([m_task taskIdentifier]) == this);
-            m_session.m_dataTaskMapWithCredentials.remove([m_task taskIdentifier]);
+            ASSERT(m_session->m_dataTaskMapWithCredentials.get([m_task taskIdentifier]) == this);
+            m_session->m_dataTaskMapWithCredentials.remove([m_task taskIdentifier]);
         } else {
-            ASSERT(m_session.m_dataTaskMapWithoutCredentials.get([m_task taskIdentifier]) == this);
-            m_session.m_dataTaskMapWithoutCredentials.remove([m_task taskIdentifier]);
+            ASSERT(m_session->m_dataTaskMapWithoutCredentials.get([m_task taskIdentifier]) == this);
+            m_session->m_dataTaskMapWithoutCredentials.remove([m_task taskIdentifier]);
         }
     }
 }
@@ -221,16 +218,13 @@ void NetworkDataTask::willPerformHTTPRedirection(const WebCore::ResourceResponse
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
         if (m_user.isEmpty() && m_password.isEmpty() && !redirectResponse.isNull()) {
-            if (auto storageSession = SessionTracker::storageSession(m_session.sessionID())) {
-                auto credential = storageSession->credentialStorage().get(request.url());
-                if (!credential.isEmpty()) {
-                    m_initialCredential = credential;
+            auto credential = m_session->networkStorageSession().credentialStorage().get(request.url());
+            if (!credential.isEmpty()) {
+                m_initialCredential = credential;
 
-                    // FIXME: Support Digest authentication, and Proxy-Authorization.
-                    applyBasicAuthorizationHeader(request, m_initialCredential);
-                }
-            } else
-                ASSERT_NOT_REACHED();
+                // FIXME: Support Digest authentication, and Proxy-Authorization.
+                applyBasicAuthorizationHeader(request, m_initialCredential);
+            }
         }
 #endif
     }
@@ -298,28 +292,25 @@ bool NetworkDataTask::tryPasswordBasedAuthentication(const WebCore::Authenticati
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
     if (m_storedCredentials == WebCore::AllowStoredCredentials) {
-        if (auto storageSession = SessionTracker::storageSession(m_session.sessionID())) {
-            if (!m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
-                // The stored credential wasn't accepted, stop using it.
-                // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
-                // but the observable effect should be very minor, if any.
-                storageSession->credentialStorage().remove(challenge.protectionSpace());
-            }
+        if (!m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
+            // The stored credential wasn't accepted, stop using it.
+            // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
+            // but the observable effect should be very minor, if any.
+            m_session->networkStorageSession().credentialStorage().remove(challenge.protectionSpace());
+        }
 
-            if (!challenge.previousFailureCount()) {
-                auto credential = storageSession->credentialStorage().get(challenge.protectionSpace());
-                if (!credential.isEmpty() && credential != m_initialCredential) {
-                    ASSERT(credential.persistence() == WebCore::CredentialPersistenceNone);
-                    if (challenge.failureResponse().httpStatusCode() == 401) {
-                        // Store the credential back, possibly adding it as a default for this directory.
-                        storageSession->credentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
-                    }
-                    completionHandler(AuthenticationChallengeDisposition::UseCredential, credential);
-                    return true;
+        if (!challenge.previousFailureCount()) {
+            auto credential = m_session->networkStorageSession().credentialStorage().get(challenge.protectionSpace());
+            if (!credential.isEmpty() && credential != m_initialCredential) {
+                ASSERT(credential.persistence() == WebCore::CredentialPersistenceNone);
+                if (challenge.failureResponse().httpStatusCode() == 401) {
+                    // Store the credential back, possibly adding it as a default for this directory.
+                    m_session->networkStorageSession().credentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
+                completionHandler(AuthenticationChallengeDisposition::UseCredential, credential);
+                return true;
             }
-        } else
-            ASSERT_NOT_REACHED();
+        }
     }
 #endif
 

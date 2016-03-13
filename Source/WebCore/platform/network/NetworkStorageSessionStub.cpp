@@ -30,11 +30,13 @@
 #include "NetworkStorageSession.h"
 
 #include "NetworkingContext.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-NetworkStorageSession::NetworkStorageSession(NetworkingContext* context)
-    : m_context(context)
+NetworkStorageSession::NetworkStorageSession(SessionID sessionID, NetworkingContext* context)
+    : m_sessionID(sessionID)
+    , m_context(context)
 {
 }
 
@@ -47,16 +49,23 @@ NetworkingContext* NetworkStorageSession::context() const
     return m_context.get();
 }
 
-std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(const String&)
+std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(SessionID sessionID, const String&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
+static std::unique_ptr<NetworkStorageSession>& defaultSession()
+{
+    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
+    return session;
+}
+
 NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(NetworkStorageSession, session, (0));
-    return session;
+    if (!defaultSession())
+        defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), nullptr);
+    return *defaultSession();
 }
 
 void NetworkStorageSession::switchToNewTestingSession()

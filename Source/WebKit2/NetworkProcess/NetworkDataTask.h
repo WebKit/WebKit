@@ -121,6 +121,7 @@ public:
     }
     void setPendingDownloadLocation(const String& filename, const SandboxExtension::Handle&);
     const String& pendingDownloadLocation() { return m_pendingDownloadLocation; }
+
     WebCore::ResourceRequest currentRequest();
     String suggestedFilename();
     void willPerformHTTPRedirection(const WebCore::ResourceResponse&, WebCore::ResourceRequest&&, RedirectCompletionHandler);
@@ -141,7 +142,7 @@ private:
     void failureTimerFired();
     void scheduleFailure(FailureType);
     
-    NetworkSession& m_session;
+    RefPtr<NetworkSession> m_session;
     NetworkDataTaskClient* m_client;
     PendingDownload* m_pendingDownload { nullptr };
     DownloadID m_pendingDownloadID;

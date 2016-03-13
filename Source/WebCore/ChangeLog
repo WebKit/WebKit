@@ -1,3 +1,37 @@
+2016-03-12  Sam Weinig  <sam@webkit.org>
+
+        WebKit can easily crash below NetworkSession::dataTaskForIdentifier() with NSURLSession enabled
+        <rdar://problem/25129946>
+        https://bugs.webkit.org/show_bug.cgi?id=155401
+
+        Reviewed by Alex Christensen.
+
+        Add a SessionID as a member of NetworkStorageSession. This allows us to avoid having HashMaps
+        to map between the two types.
+
+        * platform/network/NetworkStorageSession.h:
+        (WebCore::NetworkStorageSession::sessionID):
+        (WebCore::NetworkStorageSession::credentialStorage):
+        (WebCore::NetworkStorageSession::platformSession):
+        * platform/network/NetworkStorageSessionStub.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::context):
+        (WebCore::NetworkStorageSession::createPrivateBrowsingSession):
+        (WebCore::defaultSession):
+        (WebCore::NetworkStorageSession::defaultStorageSession):
+        (WebCore::NetworkStorageSession::switchToNewTestingSession):
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::switchToNewTestingSession):
+        (WebCore::NetworkStorageSession::defaultStorageSession):
+        (WebCore::NetworkStorageSession::createPrivateBrowsingSession):
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::defaultStorageSession):
+        (WebCore::NetworkStorageSession::createPrivateBrowsingSession):
+        (WebCore::NetworkStorageSession::switchToNewTestingSession):
+        (WebCore::NetworkStorageSession::soupNetworkSession):
+
 2016-03-13  Jon Lee  <jonlee@apple.com>
 
         getUserMedia requests from the main frame should be treated the same as requests from an iframe with the same origin

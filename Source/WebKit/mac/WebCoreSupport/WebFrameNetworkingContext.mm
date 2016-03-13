@@ -33,6 +33,7 @@
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Page.h>
 #import <WebCore/ResourceError.h>
+#import <WebCore/SessionID.h>
 #import <WebCore/Settings.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -56,7 +57,7 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
     if (privateSession())
         return;
 
-    privateSession() = NetworkStorageSession::createPrivateBrowsingSession([[NSBundle mainBundle] bundleIdentifier]);
+    privateSession() = NetworkStorageSession::createPrivateBrowsingSession(SessionID::legacyPrivateSessionID(), [[NSBundle mainBundle] bundleIdentifier]);
 }
 
 void WebFrameNetworkingContext::destroyPrivateBrowsingSession()

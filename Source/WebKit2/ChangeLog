@@ -1,3 +1,76 @@
+2016-03-12  Sam Weinig  <sam@webkit.org>
+
+        WebKit can easily crash below NetworkSession::dataTaskForIdentifier() with NSURLSession enabled
+        <rdar://problem/25129946>
+        https://bugs.webkit.org/show_bug.cgi?id=155401
+
+        Reviewed by Alex Christensen.
+
+        The issue was that NSURLSessionDataTasks can continue to invoke their NSURLSession's delegate methods
+        after -[NSURLSession invalidateAndCancel] is called. So, when the NetworkSession was destroyed, and
+        still had outstanding data tasks, the session delegate would get called, try to use the session, and
+        crash. To fix this I:
+        
+        - Made NetworkSession RefCounted.
+        - Gave NetworkSession two delegates, one for each NSURLSession.
+        - Made each delegate have a strong reference to the NetworkSession that gets cleared out in the
+          newly implemented URLSession:didBecomeInvalidWithError: method.
+        - Changed from simply destroying the NetworkSession in SessionTracker::destroySession(), to derefing
+          it and explicitly calling invalidateAndCancel on the two associated NSURLSessions (which in turn 
+          eventually cause the URLSession:didBecomeInvalidWithError: to fire).
+        - To ensure the correct lifetime of the WebCore::NetworkStorageSession, I made it a member of the
+          NetworkSession. This also allowed some simplification inside SessionTracker.
+
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::setPendingDownload):
+        (WebKit::NetworkDataTask::pendingDownloadLocation):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::sessionID):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::~NetworkDataTask):
+        (WebKit::NetworkDataTask::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTask::tryPasswordBasedAuthentication):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate initWithNetworkSession:]):
+        (-[WKNetworkSessionDelegate URLSession:didBecomeInvalidWithError:]):
+        (WebKit::NetworkSession::setCustomProtocolManager):
+        (WebKit::NetworkSession::create):
+        (WebKit::NetworkSession::defaultSession):
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::invalidateAndCancel):
+        (WebKit::NetworkSession::networkStorageSession):
+        (WebKit::NetworkSession::clearCredentials):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        * Shared/SessionTracker.cpp:
+        (WebKit::identifierBase):
+        (WebKit::SessionTracker::getIdentifierBase):
+        (WebKit::SessionTracker::setIdentifierBase):
+        (WebKit::staticSessionMap):
+        (WebKit::SessionTracker::networkSession):
+        (WebKit::SessionTracker::storageSession):
+        (WebKit::staticStorageSessionMap):
+        (WebKit::SessionTracker::sessionID):
+        (WebKit::SessionTracker::setSession):
+        (WebKit::SessionTracker::destroySession):
+        (WebKit::SessionTracker::forEachNetworkStorageSession):
+        (WebKit::storageSessionToID): Deleted.
+        (WebKit::SessionTracker::storageSessionMap): Deleted.
+        * Shared/SessionTracker.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        (WebKit::WebFrameNetworkingContext::localFileContentSniffingEnabled):
+        (WebKit::WebFrameNetworkingContext::scheduledRunLoopPairs):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        (WebKit::WebFrameNetworkingContext::WebFrameNetworkingContext):
+
 2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete dead SVG Font code

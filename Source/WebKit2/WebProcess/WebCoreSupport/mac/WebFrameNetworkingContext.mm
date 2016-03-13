@@ -58,15 +58,13 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID
     else
         base = SessionTracker::getIdentifierBase();
 
-    auto networkStorageSession = NetworkStorageSession::createPrivateBrowsingSession(base + '.' + String::number(sessionID.sessionID()));
+    auto networkStorageSession = NetworkStorageSession::createPrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
 #if USE(NETWORK_SESSION)
-    auto networkSession = std::make_unique<NetworkSession>(NetworkSession::Type::Ephemeral, sessionID, nullptr, networkStorageSession.get());
+    auto networkSession = NetworkSession::create(NetworkSession::Type::Ephemeral, sessionID, nullptr, WTFMove(networkStorageSession));
+    SessionTracker::setSession(sessionID, WTFMove(networkSession));
+#else
+    SessionTracker::setSession(sessionID, WTFMove(networkStorageSession));
 #endif
-    SessionTracker::setSession(sessionID, WTFMove(networkStorageSession)
-#if USE(NETWORK_SESSION)
-        , WTFMove(networkSession)
-#endif
-    );
 }
 
 void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy policy)
@@ -76,10 +74,9 @@ void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAc
     if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage())
         CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 
-    for (const auto& session : SessionTracker::storageSessionMap().values()) {
-        if (session)
-            CFHTTPCookieStorageSetCookieAcceptPolicy(session->cookieStorage().get(), policy);
-    }
+    SessionTracker::forEachNetworkStorageSession([&] (const NetworkStorageSession& networkStorageSession) {
+        CFHTTPCookieStorageSetCookieAcceptPolicy(networkStorageSession.cookieStorage().get(), policy);
+    });
 }
     
 bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
@@ -90,7 +87,7 @@ bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
 SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
 {
     if (!frame() || !frame()->page())
-        return 0;
+        return nullptr;
     return frame()->page()->scheduledRunLoopPairs();
 }
 

@@ -42,24 +42,28 @@ class NetworkSession;
 class SessionTracker {
     WTF_MAKE_NONCOPYABLE(SessionTracker);
 public:
-    // FIXME: storageSessionMap()'s returned map does not include default session.
-    static const HashMap<WebCore::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>>& storageSessionMap();
-
     static const String& getIdentifierBase();
-    static WebCore::NetworkStorageSession* storageSession(WebCore::SessionID);
-    static WebCore::SessionID sessionID(const WebCore::NetworkStorageSession&);
-    static void setSession(WebCore::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>
-#if USE(NETWORK_SESSION)
-        , std::unique_ptr<NetworkSession>
-#endif
-    );
-    static void destroySession(WebCore::SessionID);
     static void setIdentifierBase(const String&);
+
+    static WebCore::NetworkStorageSession* storageSession(WebCore::SessionID);
+    
+    // FIXME: Remove uses of this as it is just a member access into NetworkStorageSession.
+    static WebCore::SessionID sessionID(const WebCore::NetworkStorageSession&);
+
+#if USE(NETWORK_SESSION)
+    static void setSession(WebCore::SessionID, Ref<NetworkSession>&&);
+#else
+    static void setSession(WebCore::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>);
+#endif
+    static void destroySession(WebCore::SessionID);
     
 #if USE(NETWORK_SESSION)
     // FIXME: A NetworkSession and a NetworkStorageSession should be the same object once NETWORK_SESSION is used by default.
     static NetworkSession* networkSession(WebCore::SessionID);
 #endif
+
+    // FIXME: This does not include the default network storage sesion in it's iteration.
+    static void forEachNetworkStorageSession(std::function<void(const WebCore::NetworkStorageSession&)>);
 };
 
 } // namespace WebKit

@@ -100,15 +100,14 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
     else
         base = SessionTracker::getIdentifierBase();
 
-    auto networkStorageSession = NetworkStorageSession::createPrivateBrowsingSession(base + '.' + String::number(sessionID.sessionID()));
+    auto networkStorageSession = NetworkStorageSession::createPrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
+
 #if USE(NETWORK_SESSION)
-    auto networkSession = std::make_unique<NetworkSession>(NetworkSession::Type::Ephemeral, sessionID, NetworkProcess::singleton().supplement<CustomProtocolManager>(), networkStorageSession.get());
+    auto networkSession = NetworkSession::create(NetworkSession::Type::Ephemeral, sessionID, NetworkProcess::singleton().supplement<CustomProtocolManager>(), WTFMove(networkStorageSession));
+    SessionTracker::setSession(sessionID, WTFMove(networkSession));
+#else
+    SessionTracker::setSession(sessionID, WTFMove(networkStorageSession));
 #endif
-    SessionTracker::setSession(sessionID, WTFMove(networkStorageSession)
-#if USE(NETWORK_SESSION)
-        , WTFMove(networkSession)
-#endif
-    );
 }
 
 }

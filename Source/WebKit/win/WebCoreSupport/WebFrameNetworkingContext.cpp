@@ -87,7 +87,7 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
     } else
         base = identifierBase();
 
-    privateSession() = NetworkStorageSession::createPrivateBrowsingSession(base);
+    privateSession() = NetworkStorageSession::createPrivateBrowsingSession(SessionID::legacyPrivateSessionID(), base);
 #endif
 }
 
