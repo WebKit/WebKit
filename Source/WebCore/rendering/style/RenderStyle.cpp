@@ -1974,6 +1974,22 @@ void RenderStyle::setScrollSnapCoordinates(Vector<LengthSize> coordinates)
 
 #endif
 
+bool RenderStyle::hasReferenceFilterOnly() const
+{
+    if (!hasFilter())
+        return false;
+
+    const FilterOperations& filterOperations = rareNonInheritedData->m_filter->m_operations;
+    if (filterOperations.size() != 1)
+        return false;
+
+    const FilterOperation& filterOperation = *filterOperations.at(0);
+    if (filterOperation.type() != FilterOperation::REFERENCE)
+        return false;
+
+    return true;
+}
+
 void RenderStyle::checkVariablesInCustomProperties()
 {
     if (!rareInheritedData->m_customProperties->containsVariables())

@@ -1,3 +1,22 @@
+2016-03-12  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r188647): Teamtreehouse website sidebar buttons are not rendered
+        https://bugs.webkit.org/show_bug.cgi?id=155400
+        <rdar://problem/24818602>
+
+        Reviewed by Anders Carlsson.
+
+        Add tests with SVG content that uses CSS filter
+        shorthands. These particular filters are no-ops
+        so should not affect rendering. If they actually
+        tried to do something you wouldn't see them work
+        until we enable shorthand filters on SVG content.
+
+        * css3/filters/filters-on-svg-element-expected.html: Added.
+        * css3/filters/filters-on-svg-element.html: Added.
+        * css3/filters/filters-on-svg-root-expected.html: Added.
+        * css3/filters/filters-on-svg-root.html: Added.
+
 2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Scrollbars of overflow:scroll divs should appear on the left on RTL systems

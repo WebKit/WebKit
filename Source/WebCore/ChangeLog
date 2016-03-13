@@ -1,3 +1,30 @@
+2016-03-12  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r188647): Teamtreehouse website sidebar buttons are not rendered
+        https://bugs.webkit.org/show_bug.cgi?id=155400
+        <rdar://problem/24818602>
+
+        Reviewed by Anders Carlsson.
+
+        When we unprefixed CSS filters we accidentally
+        stopped SVG elements that use the CSS filter shorthands
+        from rendering. We still don't actually support
+        the shorthands in this case, but we should render
+        the element without the filter.
+
+        Tests: css3/filters/filters-on-svg-element.html
+               css3/filters/filters-on-svg-root.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::hasReferenceFilterOnly): Add
+        this new function that tells us if we have the
+        style of filter that we can handle in SVG content.
+        * rendering/style/RenderStyle.h:
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+        We can mark an element as ready to render if it
+        has a shorthand filter.
+
 2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete dead SVG Font code
