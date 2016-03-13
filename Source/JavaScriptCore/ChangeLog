@@ -1,3 +1,15 @@
+2016-03-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added new port JSCOnly.
+        https://bugs.webkit.org/show_bug.cgi?id=154512
+
+        Reviewed by Michael Catanzaro.
+
+        This port allows to build JavaScriptCore engine with minimal
+        dependencies.
+
+        * PlatformJSCOnly.cmake: Added.
+
 2016-03-12  Mark Lam  <mark.lam@apple.com>
 
         http://kangax.github.io/compat-table/esnext/ crashes reliably.

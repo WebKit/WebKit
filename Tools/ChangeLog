@@ -1,3 +1,23 @@
+2016-03-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added new port JSCOnly.
+        https://bugs.webkit.org/show_bug.cgi?id=154512
+
+        Reviewed by Michael Catanzaro.
+
+        This port allows to build JavaScriptCore engine with minimal
+        dependencies.
+
+        * Scripts/build-jsc:
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+        (executableProductDir):
+        (determinePortName):
+        (isJSCOnly):
+        (wrapperPrefixIfNeeded):
+        (generateBuildSystemFromCMakeProject):
+        (buildCMakeGeneratedProject):
+
 2016-03-13  David Kilzer  <ddkilzer@apple.com>
 
         TestWebKitAPI: fix linker warnings

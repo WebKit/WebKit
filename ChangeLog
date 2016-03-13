@@ -1,3 +1,16 @@
+2016-03-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added new port JSCOnly.
+        https://bugs.webkit.org/show_bug.cgi?id=154512
+
+        Reviewed by Michael Catanzaro.
+
+        This port allows to build JavaScriptCore engine with minimal
+        dependencies.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsJSCOnly.cmake: Added.
+
 2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete dead SVG Font code
