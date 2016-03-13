@@ -45,7 +45,7 @@ public:
 private:
     ScrollingTreeFrameScrollingNodeMac(ScrollingTree&, ScrollingNodeID);
 
-    void releaseReferencesToScrollbarPaintersOnTheMainThread();
+    void releaseReferencesToScrollerImpsOnTheMainThread();
 
     // ScrollingTreeNode member functions.
     void updateBeforeChildren(const ScrollingStateNode&) override;
@@ -103,8 +103,8 @@ private:
     RetainPtr<CALayer> m_contentShadowLayer;
     RetainPtr<CALayer> m_headerLayer;
     RetainPtr<CALayer> m_footerLayer;
-    RetainPtr<ScrollbarPainter> m_verticalScrollbarPainter;
-    RetainPtr<ScrollbarPainter> m_horizontalScrollbarPainter;
+    RetainPtr<NSScrollerImp> m_verticalScrollerImp;
+    RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
     FloatPoint m_probableMainThreadScrollPosition;
     bool m_lastScrollHadUnfilledPixels { false };
     bool m_hadFirstUpdate { false };

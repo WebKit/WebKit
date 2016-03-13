@@ -60,26 +60,26 @@ Ref<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeMac::create(
 ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeFrameScrollingNode(scrollingTree, nodeID)
     , m_scrollController(*this)
-    , m_verticalScrollbarPainter(nullptr)
-    , m_horizontalScrollbarPainter(nullptr)
+    , m_verticalScrollerImp(nullptr)
+    , m_horizontalScrollerImp(nullptr)
 {
 }
 
 ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac()
 {
-    releaseReferencesToScrollbarPaintersOnTheMainThread();
+    releaseReferencesToScrollerImpsOnTheMainThread();
 }
 
-void ScrollingTreeFrameScrollingNodeMac::releaseReferencesToScrollbarPaintersOnTheMainThread()
+void ScrollingTreeFrameScrollingNodeMac::releaseReferencesToScrollerImpsOnTheMainThread()
 {
-    if (m_verticalScrollbarPainter || m_horizontalScrollbarPainter) {
+    if (m_verticalScrollerImp || m_horizontalScrollerImp) {
         // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
         // on a non-main thread. rdar://problem/24535055
-        ScrollbarPainter retainedVerticalScrollbarPainter = m_verticalScrollbarPainter.leakRef();
-        ScrollbarPainter retainedHorizontalScrollbarPainter = m_horizontalScrollbarPainter.leakRef();
-        WTF::callOnMainThread([retainedVerticalScrollbarPainter, retainedHorizontalScrollbarPainter] {
-            [retainedVerticalScrollbarPainter release];
-            [retainedHorizontalScrollbarPainter release];
+        NSScrollerImp *retainedVerticalScrollerImp = m_verticalScrollerImp.leakRef();
+        NSScrollerImp *retainedHorizontalScrollerImp = m_horizontalScrollerImp.leakRef();
+        WTF::callOnMainThread([retainedVerticalScrollerImp, retainedHorizontalScrollerImp] {
+            [retainedVerticalScrollerImp release];
+            [retainedHorizontalScrollerImp release];
         });
     }
 }
@@ -123,9 +123,9 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
         m_footerLayer = scrollingStateNode.footerLayer();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::PainterForScrollbar)) {
-        releaseReferencesToScrollbarPaintersOnTheMainThread();
-        m_verticalScrollbarPainter = scrollingStateNode.verticalScrollbarPainter();
-        m_horizontalScrollbarPainter = scrollingStateNode.horizontalScrollbarPainter();
+        releaseReferencesToScrollerImpsOnTheMainThread();
+        m_verticalScrollerImp = scrollingStateNode.verticalScrollerImp();
+        m_horizontalScrollerImp = scrollingStateNode.horizontalScrollerImp();
     }
 
     bool logScrollingMode = !m_hadFirstUpdate;
@@ -191,12 +191,12 @@ void ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEve
         return;
 
     if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseBegan) {
-        [m_verticalScrollbarPainter setUsePresentationValue:YES];
-        [m_horizontalScrollbarPainter setUsePresentationValue:YES];
+        [m_verticalScrollerImp setUsePresentationValue:YES];
+        [m_horizontalScrollerImp setUsePresentationValue:YES];
     }
     if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded || wheelEvent.momentumPhase() == PlatformWheelEventPhaseCancelled) {
-        [m_verticalScrollbarPainter setUsePresentationValue:NO];
-        [m_horizontalScrollbarPainter setUsePresentationValue:NO];
+        [m_verticalScrollerImp setUsePresentationValue:NO];
+        [m_horizontalScrollerImp setUsePresentationValue:NO];
     }
 
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
@@ -442,22 +442,22 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
         }
     }
 
-    if (m_verticalScrollbarPainter || m_horizontalScrollbarPainter) {
+    if (m_verticalScrollerImp || m_horizontalScrollerImp) {
         [CATransaction begin];
         [CATransaction lock];
 
-        if ([m_verticalScrollbarPainter shouldUsePresentationValue]) {
+        if ([m_verticalScrollerImp shouldUsePresentationValue]) {
             float presentationValue;
             float overhangAmount;
             ScrollableArea::computeScrollbarValueAndOverhang(position.y(), totalContentsSize().height(), viewportRect.height(), presentationValue, overhangAmount);
-            [m_verticalScrollbarPainter setPresentationValue:presentationValue];
+            [m_verticalScrollerImp setPresentationValue:presentationValue];
         }
 
-        if ([m_horizontalScrollbarPainter shouldUsePresentationValue]) {
+        if ([m_horizontalScrollerImp shouldUsePresentationValue]) {
             float presentationValue;
             float overhangAmount;
             ScrollableArea::computeScrollbarValueAndOverhang(position.x(), totalContentsSize().width(), viewportRect.width(), presentationValue, overhangAmount);
-            [m_horizontalScrollbarPainter setPresentationValue:presentationValue];
+            [m_horizontalScrollerImp setPresentationValue:presentationValue];
         }
         [CATransaction unlock];
         [CATransaction commit];

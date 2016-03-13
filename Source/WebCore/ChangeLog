@@ -1,3 +1,77 @@
+2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Remove typedef from NSScrollerImp to ScrollbarPainter
+        https://bugs.webkit.org/show_bug.cgi?id=155379
+
+        Reviewed by Beth Dakin.
+
+        There's no reason to not call them what they are.
+
+        No new tests because there is no behavior change.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars):
+        (WebCore::ScrollingStateFrameScrollingNode::setScrollbarPaintersFromScrollbars): Deleted.
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars):
+        (WebCore::ScrollingStateFrameScrollingNode::setScrollbarPaintersFromScrollbars): Deleted.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::releaseReferencesToScrollerImpsOnTheMainThread):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::releaseReferencesToScrollbarPaintersOnTheMainThread): Deleted.
+        * platform/ScrollbarThemeComposite.h:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (scrollbarPainterForScrollbar):
+        (-[WebScrollerImpDelegate setUpAlphaAnimation:scrollerPainter:part:animateAlphaTo:duration:]):
+        (-[WebScrollerImpDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[WebScrollerImpDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (-[WebScrollerImpDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        (-[WebScrollerImpDelegate scrollerImp:animateExpansionTransitionWithDuration:]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::mouseEnteredScrollbar):
+        (WebCore::ScrollAnimatorMac::mouseExitedScrollbar):
+        (WebCore::ScrollAnimatorMac::mouseIsDownInScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::invalidateScrollbarPartLayers):
+        (WebCore::ScrollAnimatorMac::verticalScrollbarLayerDidChange):
+        (WebCore::ScrollAnimatorMac::horizontalScrollbarLayerDidChange):
+        (WebCore::ScrollAnimatorMac::shouldScrollbarParticipateInHitTesting):
+        (WebCore::ScrollAnimatorMac::notifyContentAreaScrolled):
+        (WebCore::ScrollAnimatorMac::cancelAnimations):
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        (WebCore::ScrollAnimatorMac::initialScrollbarPaintTimerFired):
+        (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:animateAlphaTo:duration:]): Deleted.
+        (-[WebScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]): Deleted.
+        (-[WebScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]): Deleted.
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]): Deleted.
+        (-[WebScrollbarPainterDelegate scrollerImp:animateExpansionTransitionWithDuration:]): Deleted.
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::scrollbarMap):
+        (+[WebScrollbarPrefsObserver appearancePrefsChanged:]):
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        (WebCore::ScrollbarThemeMac::setNewPainterForScrollbar):
+        (WebCore::ScrollbarThemeMac::painterForScrollbar):
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        (WebCore::ScrollbarThemeMac::updateScrollbarOverlayStyle):
+        (WebCore::ScrollbarThemeMac::hasThumb):
+        (WebCore::ScrollbarThemeMac::setPaintCharacteristicsForScrollbar):
+        (WebCore::scrollbarPainterPaint):
+
 2016-03-12  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r188647): Teamtreehouse website sidebar buttons are not rendered

@@ -46,8 +46,8 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(ScrollingStat
 ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const ScrollingStateFrameScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
     : ScrollingStateScrollingNode(stateNode, adoptiveTree)
 #if PLATFORM(MAC)
-    , m_verticalScrollbarPainter(stateNode.verticalScrollbarPainter())
-    , m_horizontalScrollbarPainter(stateNode.horizontalScrollbarPainter())
+    , m_verticalScrollerImp(stateNode.verticalScrollerImp())
+    , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
 #endif
     , m_nonFastScrollableRegion(stateNode.nonFastScrollableRegion())
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
@@ -216,7 +216,7 @@ void ScrollingStateFrameScrollingNode::setFixedElementsLayoutRelativeToFrame(boo
 }
 
 #if !PLATFORM(MAC)
-void ScrollingStateFrameScrollingNode::setScrollbarPaintersFromScrollbars(Scrollbar*, Scrollbar*)
+void ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*, Scrollbar*)
 {
 }
 #endif

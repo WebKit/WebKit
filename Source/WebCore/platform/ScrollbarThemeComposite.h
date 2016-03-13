@@ -30,9 +30,6 @@
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSScrollerImp;
-typedef NSScrollerImp *ScrollbarPainter;
-#else
-typedef void* ScrollbarPainter;
 #endif
 
 namespace WebCore {

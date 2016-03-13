@@ -127,7 +127,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
 
     Scrollbar* verticalScrollbar = frameView.verticalScrollbar();
     Scrollbar* horizontalScrollbar = frameView.horizontalScrollbar();
-    node->setScrollbarPaintersFromScrollbars(verticalScrollbar, horizontalScrollbar);
+    node->setScrollerImpsFromScrollbars(verticalScrollbar, horizontalScrollbar);
     
     node->setFrameScaleFactor(frameView.frame().frameScaleFactor());
     node->setHeaderHeight(frameView.headerHeight());

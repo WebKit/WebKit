@@ -37,10 +37,10 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS WebScrollAnimationHelperDelegate;
-OBJC_CLASS WebScrollbarPainterControllerDelegate;
-OBJC_CLASS WebScrollbarPainterDelegate;
+OBJC_CLASS WebScrollerImpPairDelegate;
+OBJC_CLASS WebScrollerImpDelegate;
 
-typedef id ScrollbarPainterController;
+typedef id ScrollerImpPair;
 
 namespace WebCore {
 
@@ -69,10 +69,10 @@ private:
     RetainPtr<id> m_scrollAnimationHelper;
     RetainPtr<WebScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
 
-    RetainPtr<ScrollbarPainterController> m_scrollbarPainterController;
-    RetainPtr<WebScrollbarPainterControllerDelegate> m_scrollbarPainterControllerDelegate;
-    RetainPtr<WebScrollbarPainterDelegate> m_horizontalScrollbarPainterDelegate;
-    RetainPtr<WebScrollbarPainterDelegate> m_verticalScrollbarPainterDelegate;
+    RetainPtr<ScrollerImpPair> m_scrollbarPainterController;
+    RetainPtr<WebScrollerImpPairDelegate> m_scrollbarPainterControllerDelegate;
+    RetainPtr<WebScrollerImpDelegate> m_horizontalScrollerImpDelegate;
+    RetainPtr<WebScrollerImpDelegate> m_verticalScrollerImpDelegate;
 
     void initialScrollbarPaintTimerFired();
     Timer m_initialScrollbarPaintTimer;

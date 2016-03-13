@@ -35,23 +35,23 @@
 
 namespace WebCore {
     
-void ScrollingStateFrameScrollingNode::setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar)
+void ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar)
 {
     ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
     if (scrollbarTheme.isMockTheme())
         return;
     ScrollbarThemeMac& macTheme = static_cast<ScrollbarThemeMac&>(scrollbarTheme);
 
-    ScrollbarPainter verticalPainter = verticalScrollbar && verticalScrollbar->supportsUpdateOnSecondaryThread()
+    NSScrollerImp *verticalPainter = verticalScrollbar && verticalScrollbar->supportsUpdateOnSecondaryThread()
         ? macTheme.painterForScrollbar(*verticalScrollbar) : nullptr;
-    ScrollbarPainter horizontalPainter = horizontalScrollbar && horizontalScrollbar->supportsUpdateOnSecondaryThread()
+    NSScrollerImp *horizontalPainter = horizontalScrollbar && horizontalScrollbar->supportsUpdateOnSecondaryThread()
         ? macTheme.painterForScrollbar(*horizontalScrollbar) : nullptr;
 
-    if (m_verticalScrollbarPainter == verticalPainter && m_horizontalScrollbarPainter == horizontalPainter)
+    if (m_verticalScrollerImp == verticalPainter && m_horizontalScrollerImp == horizontalPainter)
         return;
 
-    m_verticalScrollbarPainter = verticalPainter;
-    m_horizontalScrollbarPainter = horizontalPainter;
+    m_verticalScrollerImp = verticalPainter;
+    m_horizontalScrollerImp = horizontalPainter;
 
     setPropertyChanged(PainterForScrollbar);
 }

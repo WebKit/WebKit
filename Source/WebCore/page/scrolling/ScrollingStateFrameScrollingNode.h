@@ -114,10 +114,10 @@ public:
     WEBCORE_EXPORT void setFixedElementsLayoutRelativeToFrame(bool);
 
 #if PLATFORM(MAC)
-    ScrollbarPainter verticalScrollbarPainter() const { return m_verticalScrollbarPainter.get(); }
-    ScrollbarPainter horizontalScrollbarPainter() const { return m_horizontalScrollbarPainter.get(); }
+    NSScrollerImp *verticalScrollerImp() const { return m_verticalScrollerImp.get(); }
+    NSScrollerImp *horizontalScrollerImp() const { return m_horizontalScrollerImp.get(); }
 #endif
-    void setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
+    void setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
 
     void dumpProperties(TextStream&, int indent) const override;
 
@@ -133,8 +133,8 @@ private:
     LayerRepresentation m_footerLayer;
 
 #if PLATFORM(MAC)
-    RetainPtr<ScrollbarPainter> m_verticalScrollbarPainter;
-    RetainPtr<ScrollbarPainter> m_horizontalScrollbarPainter;
+    RetainPtr<NSScrollerImp> m_verticalScrollerImp;
+    RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
 #endif
 
     Region m_nonFastScrollableRegion;

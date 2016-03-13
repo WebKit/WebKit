@@ -53,11 +53,11 @@ using namespace WebCore;
 
 namespace WebCore {
 
-typedef HashMap<Scrollbar*, RetainPtr<ScrollbarPainter>> ScrollbarPainterMap;
+typedef HashMap<Scrollbar*, RetainPtr<NSScrollerImp>> ScrollerImpMap;
 
-static ScrollbarPainterMap* scrollbarMap()
+static ScrollerImpMap* scrollbarMap()
 {
-    static ScrollbarPainterMap* map = new ScrollbarPainterMap;
+    static ScrollerImpMap* map = new ScrollerImpMap;
     return map;
 }
 
@@ -86,8 +86,8 @@ static ScrollbarPainterMap* scrollbarMap()
     static_cast<ScrollbarThemeMac&>(theme).preferencesChanged();
     if (scrollbarMap()->isEmpty())
         return;
-    ScrollbarPainterMap::iterator end = scrollbarMap()->end();
-    for (ScrollbarPainterMap::iterator it = scrollbarMap()->begin(); it != end; ++it) {
+    ScrollerImpMap::iterator end = scrollbarMap()->end();
+    for (ScrollerImpMap::iterator it = scrollbarMap()->begin(); it != end; ++it) {
         it->key->styleChanged();
         it->key->invalidate();
     }
@@ -158,7 +158,7 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)
         return;
 
     bool isHorizontal = scrollbar.orientation() == HorizontalScrollbar;
-    ScrollbarPainter scrollbarPainter = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(scrollbar.controlSize()) horizontal:isHorizontal replacingScrollerImp:nil];
+    NSScrollerImp *scrollbarPainter = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(scrollbar.controlSize()) horizontal:isHorizontal replacingScrollerImp:nil];
     scrollbarMap()->add(&scrollbar, scrollbarPainter);
     updateEnabledState(scrollbar);
     updateScrollbarOverlayStyle(scrollbar);
@@ -169,14 +169,14 @@ void ScrollbarThemeMac::unregisterScrollbar(Scrollbar& scrollbar)
     scrollbarMap()->remove(&scrollbar);
 }
 
-void ScrollbarThemeMac::setNewPainterForScrollbar(Scrollbar& scrollbar, ScrollbarPainter newPainter)
+void ScrollbarThemeMac::setNewPainterForScrollbar(Scrollbar& scrollbar, NSScrollerImp *newPainter)
 {
     scrollbarMap()->set(&scrollbar, newPainter);
     updateEnabledState(scrollbar);
     updateScrollbarOverlayStyle(scrollbar);
 }
 
-ScrollbarPainter ScrollbarThemeMac::painterForScrollbar(Scrollbar& scrollbar)
+NSScrollerImp *ScrollbarThemeMac::painterForScrollbar(Scrollbar& scrollbar)
 {
     return scrollbarMap()->get(&scrollbar).get();
 }
@@ -221,7 +221,7 @@ void ScrollbarThemeMac::preferencesChanged()
 int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    ScrollbarPainter scrollbarPainter = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(controlSize) horizontal:NO replacingScrollerImp:nil];
+    NSScrollerImp *scrollbarPainter = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(controlSize) horizontal:NO replacingScrollerImp:nil];
     [scrollbarPainter setExpanded:YES];
     return [scrollbarPainter trackBoxWidth];
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -240,7 +240,7 @@ void ScrollbarThemeMac::usesOverlayScrollbarsChanged()
 void ScrollbarThemeMac::updateScrollbarOverlayStyle(Scrollbar& scrollbar)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    ScrollbarPainter painter = painterForScrollbar(scrollbar);
+    NSScrollerImp *painter = painterForScrollbar(scrollbar);
     switch (scrollbar.scrollableArea().scrollbarOverlayStyle()) {
     case ScrollbarOverlayStyleDefault:
         [painter setKnobStyle:NSScrollerKnobStyleDefault];
@@ -282,7 +282,7 @@ bool ScrollbarThemeMac::hasThumb(Scrollbar& scrollbar)
 {
     int minLengthForThumb;
 
-    ScrollbarPainter painter = scrollbarMap()->get(&scrollbar).get();
+    NSScrollerImp *painter = scrollbarMap()->get(&scrollbar).get();
     minLengthForThumb = [painter knobMinLength] + [painter trackOverlapEndInset] + [painter knobOverlapEndInset]
         + 2 * ([painter trackEndInset] + [painter knobEndInset]);
 
@@ -489,7 +489,7 @@ void ScrollbarThemeMac::updateEnabledState(Scrollbar& scrollbar)
 void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(Scrollbar& scrollbar)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    ScrollbarPainter painter = painterForScrollbar(scrollbar);
+    NSScrollerImp *painter = painterForScrollbar(scrollbar);
 
     float value;
     float overhang;
@@ -506,7 +506,7 @@ void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(Scrollbar& scrollbar
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-static void scrollbarPainterPaint(ScrollbarPainter scrollbarPainter, bool enabled)
+static void scrollbarPainterPaint(NSScrollerImp *scrollbarPainter, bool enabled)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     // Use rectForPart: here; it will take the expansion transition progress into account.
