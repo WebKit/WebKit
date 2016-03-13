@@ -22,9 +22,7 @@
 #ifndef WidthIterator_h
 #define WidthIterator_h
 
-#include "FontCascade.h"
-#include "SVGGlyph.h"
-#include "TextRun.h"
+#include <unicode/umachine.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -55,12 +53,6 @@ public:
     const TextRun& run() const { return m_run; }
     float runWidthSoFar() const { return m_runWidthSoFar; }
 
-#if ENABLE(SVG_FONTS)
-    String lastGlyphName() const { return m_lastGlyphName; }
-    void setLastGlyphName(const String& name) { m_lastGlyphName = name; }
-    Vector<SVGGlyph::ArabicForm>& arabicForms() { return m_arabicForms; }
-#endif
-
     const FontCascade* m_font;
 
     const TextRun& m_run;
@@ -72,13 +64,8 @@ public:
     bool m_isAfterExpansion;
     float m_finalRoundingWidth;
 
-#if ENABLE(SVG_FONTS)
-    String m_lastGlyphName;
-    Vector<SVGGlyph::ArabicForm> m_arabicForms;
-#endif
-
 private:
-    GlyphData glyphDataForCharacter(UChar32, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache);
+    GlyphData glyphDataForCharacter(UChar32, bool mirror);
     template <typename TextIterator>
     inline unsigned advanceInternal(TextIterator&, GlyphBuffer*);
 

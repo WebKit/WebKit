@@ -26,80 +26,35 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGGlyphMap.h"
 #include "SVGParserUtilities.h"
 
 namespace WebCore {
 
-// Describe an SVG <hkern>/<vkern> element already matched on the first symbol.
-struct SVGKerning {
-    float kerning;
-    UnicodeRanges unicodeRange2;
-    HashSet<String> unicodeName2;
-    HashSet<String> glyphName2;
-
-    SVGKerning()
-        : kerning(0)
-    { }
-};
-
 // Describe an SVG <hkern>/<vkern> element
-struct SVGKerningPair : public SVGKerning {
+struct SVGKerningPair {
     UnicodeRanges unicodeRange1;
     HashSet<String> unicodeName1;
     HashSet<String> glyphName1;
+
+    UnicodeRanges unicodeRange2;
+    HashSet<String> unicodeName2;
+    HashSet<String> glyphName2;
+    float kerning { 0 };
 };
-
-typedef Vector<SVGKerning> SVGKerningVector;
-
-struct SVGKerningMap {
-    HashMap<String, std::unique_ptr<SVGKerningVector>> unicodeMap;
-    HashMap<String, std::unique_ptr<SVGKerningVector>> glyphMap;
-    Vector<SVGKerningPair> kerningUnicodeRangeMap;
-
-    bool isEmpty() const { return unicodeMap.isEmpty() && glyphMap.isEmpty() && kerningUnicodeRangeMap.isEmpty(); }
-    void clear();
-    void insert(const SVGKerningPair&);
-};
-
-class SVGMissingGlyphElement;
 
 class SVGFontElement final : public SVGElement
                            , public SVGExternalResourcesRequired {
 public:
     static Ref<SVGFontElement> create(const QualifiedName&, Document&);
 
-    void invalidateGlyphCache();
-    void collectGlyphsForString(const String&, Vector<SVGGlyph>&);
-    void collectGlyphsForGlyphName(const String&, Vector<SVGGlyph>&);
-
-    float horizontalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const;
-    float verticalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const;
-
-    // Used by Font/WidthIterator.
-    SVGGlyph svgGlyphForGlyph(Glyph);
-    Glyph missingGlyph();
-
-    const SVGMissingGlyphElement* firstMissingGlyphElement() const;
-    bool horizontalKerningMapIsEmpty() const { return m_horizontalKerningMap.isEmpty(); }
-
 private:
     SVGFontElement(const QualifiedName&, Document&);
 
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
-    void ensureGlyphCache();
-    void registerLigaturesInGlyphCache(Vector<String>&);
-
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFontElement)
         DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
-
-    SVGKerningMap m_horizontalKerningMap;
-    SVGKerningMap m_verticalKerningMap;
-    SVGGlyphMap m_glyphMap;
-    Glyph m_missingGlyph;
-    bool m_isGlyphCacheValid;
 };
 
 } // namespace WebCore

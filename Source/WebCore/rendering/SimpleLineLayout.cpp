@@ -182,8 +182,6 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
     auto& primaryFont = style.fontCascade().primaryFont();
     if (primaryFont.isLoading())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsMissingPrimaryFont, reasons, includeReasons);
-    if (primaryFont.isSVGFont())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasSVGFont, reasons, includeReasons);
 
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
         if (style.textAlign() == JUSTIFY && !textRenderer.originalText().containsOnlyLatin1())

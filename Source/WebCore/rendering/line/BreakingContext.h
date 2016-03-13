@@ -65,9 +65,8 @@ struct WordMeasurement {
 };
 
 struct WordTrailingSpace {
-    WordTrailingSpace(RenderText& renderer, const RenderStyle& style, TextLayout* textLayout = nullptr)
-        : m_renderer(renderer)
-        , m_style(style)
+    WordTrailingSpace(const RenderStyle& style, TextLayout* textLayout = nullptr)
+        : m_style(style)
         , m_textLayout(textLayout)
     {
     }
@@ -79,7 +78,7 @@ struct WordTrailingSpace {
 
         const FontCascade& font = m_style.fontCascade();
         if (font.enableKerning() && !m_textLayout)
-            m_width = font.width(RenderBlock::constructTextRun(&m_renderer, font, &space, 1, m_style), &fallbackFonts) + font.wordSpacing();
+            m_width = font.width(RenderBlock::constructTextRun(&space, 1, m_style), &fallbackFonts) + font.wordSpacing();
         m_state = WordTrailingSpaceState::Computed;
         return m_width;
     }
@@ -88,7 +87,6 @@ private:
     enum class WordTrailingSpaceState { Uninitialized, Computed };
     WordTrailingSpaceState m_state { WordTrailingSpaceState::Uninitialized };
     WTF::Optional<float> m_width;
-    RenderText& m_renderer;
     const RenderStyle& m_style;
     TextLayout* m_textLayout { nullptr };
 };
@@ -608,7 +606,7 @@ inline void updateCounterIfNeeded(RenderText& renderText)
 inline float measureHyphenWidth(RenderText& renderer, const FontCascade& font, HashSet<const Font*>* fallbackFonts = 0)
 {
     const RenderStyle& style = renderer.style();
-    return font.width(RenderBlock::constructTextRun(&renderer, font, style.hyphenString().string(), style), fallbackFonts);
+    return font.width(RenderBlock::constructTextRun(style.hyphenString().string(), style), fallbackFonts);
 }
 
 ALWAYS_INLINE float textWidth(RenderText& text, unsigned from, unsigned len, const FontCascade& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace, HashSet<const Font*>& fallbackFonts, TextLayout* layout = nullptr)
@@ -622,7 +620,7 @@ ALWAYS_INLINE float textWidth(RenderText& text, unsigned from, unsigned len, con
     if (layout)
         return FontCascade::width(*layout, from, len, &fallbackFonts);
 
-    TextRun run = RenderBlock::constructTextRun(&text, font, &text, from, len, style);
+    TextRun run = RenderBlock::constructTextRun(&text, from, len, style);
     run.setCharactersLength(text.textLength() - from);
     ASSERT(run.charactersLength() >= run.length());
 
@@ -671,7 +669,7 @@ inline void tryHyphenating(RenderText& text, const FontCascade& font, const Atom
         return;
 
     const RenderStyle& style = text.style();
-    TextRun run = RenderBlock::constructTextRun(&text, font, &text, lastSpace, pos - lastSpace, style);
+    TextRun run = RenderBlock::constructTextRun(&text, lastSpace, pos - lastSpace, style);
     run.setCharactersLength(text.textLength() - lastSpace);
     ASSERT(run.charactersLength() >= run.length());
 
@@ -782,7 +780,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     UChar lastCharacterFromPreviousRenderText = m_renderTextInfo.lineBreakIterator.lastCharacter();
     UChar lastCharacter = m_renderTextInfo.lineBreakIterator.lastCharacter();
     UChar secondToLastCharacter = m_renderTextInfo.lineBreakIterator.secondToLastCharacter();
-    WordTrailingSpace wordTrailingSpace(renderText, style, textLayout);
+    WordTrailingSpace wordTrailingSpace(style, textLayout);
     for (; m_current.offset() < renderText.textLength(); m_current.fastIncrementInTextNode()) {
         bool previousCharacterIsSpace = m_currentCharacterIsSpace;
         bool previousCharacterIsWS = m_currentCharacterIsWS;

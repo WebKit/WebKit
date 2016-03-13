@@ -79,14 +79,10 @@ private:
     CachedResourceHandle<CachedFont> m_font; // For remote fonts, a pointer to our cached resource.
     CSSFontFace& m_face; // Our owning font face.
 
-#if ENABLE(SVG_OTF_CONVERTER)
     RefPtr<SharedBuffer> m_generatedOTFBuffer;
-#endif
 
-#if ENABLE(SVG_FONTS) || ENABLE(SVG_OTF_CONVERTER)
     RefPtr<SVGFontFaceElement> m_svgFontFaceElement;
     std::unique_ptr<FontCustomPlatformData> m_inDocumentCustomPlatformData;
-#endif
 
     Status m_status { Status::Pending };
 };

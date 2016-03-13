@@ -483,9 +483,6 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
         // Apply dx/dy value adjustments to current text position, if needed.
         updateRelativePositionAdjustmentsIfNeeded(data.dx, data.dy);
 
-        // Calculate SVG Fonts kerning, if needed.
-        float kerning = spacingLayout.calculateSVGKerning(m_isVerticalText, visualMetrics.glyph());
-
         // Calculate CSS 'kerning', 'letter-spacing' and 'word-spacing' for next character, if needed.
         float spacing = spacingLayout.calculateCSSKerningAndSpacing(&svgStyle, lengthContext, currentCharacter);
 
@@ -497,7 +494,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
                 if (y != SVGTextLayoutAttributes::emptyValue())
                     m_textPathCurrentOffset = y + m_textPathStartOffset;
 
-                m_textPathCurrentOffset += m_dy - kerning;
+                m_textPathCurrentOffset += m_dy;
                 m_dy = 0;
 
                 // Apply dx/dy correction and setup translations that move to the glyph midpoint.
@@ -508,7 +505,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
                 if (x != SVGTextLayoutAttributes::emptyValue())
                     m_textPathCurrentOffset = x + m_textPathStartOffset;
 
-                m_textPathCurrentOffset += m_dx - kerning;
+                m_textPathCurrentOffset += m_dx;
                 m_dx = 0;
 
                 // Apply dx/dy correction and setup translations that move to the glyph midpoint.
@@ -548,13 +545,10 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
                 angle -= 90;
         } else {
             // Apply all previously calculated shift values.
-            if (m_isVerticalText) {
+            if (m_isVerticalText)
                 x += baselineShift;
-                y -= kerning;
-            } else {
-                x -= kerning;
+            else
                 y -= baselineShift;
-            }
 
             x += m_dx;
             y += m_dy;
@@ -562,7 +556,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
 
         // Determine whether we have to start a new fragment.
         bool shouldStartNewFragment = m_dx || m_dy || m_isVerticalText || m_inPathLayout || angle || angle != lastAngle
-            || orientationAngle || kerning || applySpacingToNextCharacter || definesTextLength;
+            || orientationAngle || applySpacingToNextCharacter || definesTextLength;
 
         // If we already started a fragment, close it now.
         if (didStartTextFragment && shouldStartNewFragment) {

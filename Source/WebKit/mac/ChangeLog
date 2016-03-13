@@ -1,3 +1,12 @@
+2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete dead SVG Font code
+        https://bugs.webkit.org/show_bug.cgi?id=154718
+
+        Reviewed by Antti Koivisto.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Reflect.set without receiver support

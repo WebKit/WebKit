@@ -129,7 +129,7 @@ void RenderListBox::updateFromElement()
             if (!text.isEmpty()) {
                 applyTextTransform(style(), text, ' ');
                 // FIXME: Why is this always LTR? Can't text direction affect the width?
-                TextRun textRun = constructTextRun(this, itemFont, text, style(), AllowTrailingExpansion);
+                TextRun textRun = constructTextRun(text, style(), AllowTrailingExpansion);
                 float textWidth = itemFont.width(textRun);
                 width = std::max(width, textWidth);
             }

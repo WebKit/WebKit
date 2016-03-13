@@ -34,16 +34,11 @@ class SVGTextLayoutEngineSpacing {
 public:
     SVGTextLayoutEngineSpacing(const FontCascade&);
 
-    float calculateSVGKerning(bool isVerticalText, const SVGTextMetrics::Glyph& currentGlyph);
     float calculateCSSKerningAndSpacing(const SVGRenderStyle*, SVGElement* lengthContext, const UChar* currentCharacter);
 
 private:
     const FontCascade& m_font;
     const UChar* m_lastCharacter;
-
-#if ENABLE(SVG_FONTS)
-    SVGTextMetrics::Glyph m_lastGlyph;
-#endif
 };
 
 } // namespace WebCore

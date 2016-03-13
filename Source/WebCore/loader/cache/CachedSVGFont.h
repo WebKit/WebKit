@@ -50,9 +50,7 @@ private:
     SVGFontElement* maybeInitializeExternalSVGFontElement(const AtomicString& remoteURI);
     SVGFontFaceElement* firstFontFace(const AtomicString& remoteURI);
 
-#if ENABLE(SVG_OTF_CONVERTER)
     RefPtr<SharedBuffer> m_convertedFont;
-#endif
     RefPtr<SVGDocument> m_externalSVGDocument;
     SVGFontElement* m_externalSVGFontElement;
 };

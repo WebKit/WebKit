@@ -46,7 +46,6 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "SVGTextRunRenderingContext.h"
 #include "Text.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
@@ -206,7 +205,7 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
 
     String hyphenatedStringBuffer;
     bool respectHyphen = ePos == m_len && hasHyphen();
-    TextRun textRun = constructTextRun(lineStyle, font, respectHyphen ? &hyphenatedStringBuffer : 0);
+    TextRun textRun = constructTextRun(lineStyle, respectHyphen ? &hyphenatedStringBuffer : 0);
 
     LayoutRect selectionRect = LayoutRect(LayoutPoint(logicalLeft(), selectionTop), LayoutSize(m_logicalWidth, selectionHeight));
     // Avoid computing the font width when the entire line box is selected as an optimization.
@@ -513,7 +512,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 
     String hyphenatedStringBuffer;
-    TextRun textRun = constructTextRun(lineStyle, font, string, maximumLength, hasHyphen() ? &hyphenatedStringBuffer : nullptr);
+    TextRun textRun = constructTextRun(lineStyle, string, maximumLength, hasHyphen() ? &hyphenatedStringBuffer : nullptr);
     if (hasHyphen())
         length = textRun.length();
 
@@ -650,7 +649,7 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
 
     String hyphenatedStringBuffer;
     bool respectHyphen = ePos == length && hasHyphen();
-    TextRun textRun = constructTextRun(style, font, string, renderer().textLength() - m_start, respectHyphen ? &hyphenatedStringBuffer : nullptr);
+    TextRun textRun = constructTextRun(style, string, renderer().textLength() - m_start, respectHyphen ? &hyphenatedStringBuffer : nullptr);
     if (respectHyphen)
         ePos = textRun.length();
 
@@ -688,7 +687,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const F
 
     LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight());
-    TextRun textRun = constructTextRun(style, font);
+    TextRun textRun = constructTextRun(style);
     font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), compositionColor);
 }
@@ -781,7 +780,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
         int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
         int selHeight = selectionHeight();
         FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
-        TextRun run = constructTextRun(style, font);
+        TextRun run = constructTextRun(style);
 
         LayoutRect selectionRect = LayoutRect(startPoint, FloatSize(0, selHeight));
         font.adjustSelectionRectForText(run, selectionRect, startPosition, endPosition);
@@ -826,7 +825,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPo
 
     int sPos = std::max<int>(marker.startOffset() - m_start, 0);
     int ePos = std::min<int>(marker.endOffset() - m_start, m_len);
-    TextRun run = constructTextRun(style, font);
+    TextRun run = constructTextRun(style);
     font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
 
     if (selectionRect.isEmpty())
@@ -987,7 +986,7 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
 
     const RenderStyle& lineStyle = this->lineStyle();
     const FontCascade& font = fontToUse(lineStyle, renderer());
-    return font.offsetForPosition(constructTextRun(lineStyle, font), lineOffset - logicalLeft(), includePartialGlyphs);
+    return font.offsetForPosition(constructTextRun(lineStyle), lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
 float InlineTextBox::positionForOffset(int offset) const
@@ -1004,12 +1003,12 @@ float InlineTextBox::positionForOffset(int offset) const
     int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
     LayoutRect selectionRect = LayoutRect(logicalLeft(), 0, 0, 0);
-    TextRun run = constructTextRun(lineStyle, font);
+    TextRun run = constructTextRun(lineStyle);
     font.adjustSelectionRectForText(run, selectionRect, from, to);
     return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()).maxX();
 }
 
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const FontCascade& font, String* hyphenatedStringBuffer) const
+TextRun InlineTextBox::constructTextRun(const RenderStyle& style, String* hyphenatedStringBuffer) const
 {
     ASSERT(renderer().text());
 
@@ -1020,10 +1019,10 @@ TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const FontCasc
     if (string.length() != length || startPos)
         string = string.substringSharingImpl(startPos, length);
 
-    return constructTextRun(style, font, string, renderer().textLength() - startPos, hyphenatedStringBuffer);
+    return constructTextRun(style, string, renderer().textLength() - startPos, hyphenatedStringBuffer);
 }
 
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const FontCascade& font, String string, unsigned maximumLength, String* hyphenatedStringBuffer) const
+TextRun InlineTextBox::constructTextRun(const RenderStyle& style, String string, unsigned maximumLength, String* hyphenatedStringBuffer) const
 {
     unsigned length = string.length();
 
@@ -1038,8 +1037,6 @@ TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const FontCasc
 
     TextRun run(string, textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath());
     run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-    if (font.primaryFont().isSVGFont())
-        run.setRenderingContext(SVGTextRunRenderingContext::create(renderer()));
 
     // Propagate the maximum length of the characters buffer to the TextRun, even when we're only processing a substring.
     run.setCharactersLength(maximumLength);

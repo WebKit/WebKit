@@ -21,7 +21,6 @@
 #include "SVGTextMetrics.h"
 
 #include "RenderSVGInlineText.h"
-#include "SVGTextRunRenderingContext.h"
 #include "WidthIterator.h"
 
 namespace WebCore {
@@ -49,7 +48,9 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& textRenderer, const TextRun&
     int length = 0;
 
     // Calculate width/height using the scaled font, divide this result by the scalingFactor afterwards.
-    m_width = scaledFont.width(run, length, m_glyph.name) / scalingFactor;
+    m_width = scaledFont.width(run) / scalingFactor;
+    length = run.length();
+    m_glyph.name = "";
     m_height = scaledFont.fontMetrics().floatHeight() / scalingFactor;
 
     m_glyph.unicodeString = run.is8Bit() ? String(run.characters8(), length) : String(run.characters16(), length);
@@ -70,9 +71,6 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText& text, unsigned pos
                 , style.direction()
                 , isOverride(style.unicodeBidi()) /* directionalOverride */);
 
-    if (style.fontCascade().primaryFont().isSVGFont())
-        run.setRenderingContext(SVGTextRunRenderingContext::create(text));
-
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
 
@@ -87,19 +85,13 @@ SVGTextMetrics SVGTextMetrics::measureCharacterRange(RenderSVGInlineText& text, 
     return SVGTextMetrics(text, constructTextRun(text, position, length));
 }
 
-SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& text, unsigned position, unsigned length, float width, const String& glyphName)
+SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& text, unsigned length, float width)
 {
-    bool needsContext = text.style().fontCascade().primaryFont().isSVGFont();
     float scalingFactor = text.scalingFactor();
     ASSERT(scalingFactor);
 
     m_width = width / scalingFactor;
     m_height = text.scaledFont().fontMetrics().floatHeight() / scalingFactor;
-    if (needsContext) {
-        m_glyph.isValid = true;
-        m_glyph.unicodeString = text.text()->substring(position, length);
-        m_glyph.name = glyphName;
-    }
 
     m_length = length;
 }

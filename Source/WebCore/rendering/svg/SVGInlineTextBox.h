@@ -74,8 +74,8 @@ private:
     bool acquirePaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, RenderStyle*);
     void releasePaintingResource(GraphicsContext*&, const Path*);
 
-    bool prepareGraphicsContextForTextPainting(GraphicsContext*&, float scalingFactor, TextRun&, RenderStyle*);
-    void restoreGraphicsContextAfterTextPainting(GraphicsContext*&, TextRun&);
+    bool prepareGraphicsContextForTextPainting(GraphicsContext*&, float scalingFactor, RenderStyle*);
+    void restoreGraphicsContextAfterTextPainting(GraphicsContext*&);
 
     void paintDecoration(GraphicsContext&, TextDecoration, const SVGTextFragment&);
     void paintDecorationWithStyle(GraphicsContext&, TextDecoration, const SVGTextFragment&, RenderBoxModelObject& decorationRenderer);

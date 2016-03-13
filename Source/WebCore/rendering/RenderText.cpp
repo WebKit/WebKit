@@ -492,7 +492,7 @@ ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, int start, 
         return w;
     }
 
-    TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, this, start, len, style);
+    TextRun run = RenderBlock::constructTextRun(this, start, len, style);
     run.setCharactersLength(textLength() - start);
     ASSERT(run.charactersLength() >= run.length());
 
@@ -627,7 +627,7 @@ void RenderText::trimmedPrefWidths(float leadWidth,
         const FontCascade& font = style.fontCascade(); // FIXME: This ignores first-line.
         if (stripFrontSpaces) {
             const UChar space = ' ';
-            float spaceWidth = font.width(RenderBlock::constructTextRun(this, font, &space, 1, style));
+            float spaceWidth = font.width(RenderBlock::constructTextRun(&space, 1, style));
             maxW -= spaceWidth;
         } else
             maxW += font.wordSpacing();
@@ -720,7 +720,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth)
 static inline float hyphenWidth(RenderText* renderer, const FontCascade& font)
 {
     const RenderStyle& style = renderer->style();
-    return font.width(RenderBlock::constructTextRun(renderer, font, style.hyphenString().string(), style));
+    return font.width(RenderBlock::constructTextRun(style.hyphenString().string(), style));
 }
 
 static float maxWordFragmentWidth(RenderText* renderer, const RenderStyle& style, const FontCascade& font, StringView word, int minimumPrefixLength, unsigned minimumSuffixLength, int& suffixStart, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
@@ -747,7 +747,7 @@ static float maxWordFragmentWidth(RenderText* renderer, const RenderStyle& style
         fragmentWithHyphen.append(word.substring(suffixStart, fragmentLength));
         fragmentWithHyphen.append(style.hyphenString());
 
-        TextRun run = RenderBlock::constructTextRun(renderer, font, fragmentWithHyphen.toString(), style);
+        TextRun run = RenderBlock::constructTextRun(fragmentWithHyphen.toString(), style);
         run.setCharactersLength(fragmentWithHyphen.length());
         run.setCharacterScanForCodePath(!renderer->canUseSimpleFontCodePath());
         float fragmentWidth = font.width(run, &fallbackFonts, &glyphOverflow);
@@ -794,7 +794,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
 
     // Non-zero only when kerning is enabled, in which case we measure words with their trailing
     // space, then subtract its width.
-    WordTrailingSpace wordTrailingSpace(*this, style);
+    WordTrailingSpace wordTrailingSpace(style);
     // If automatic hyphenation is allowed, we keep track of the width of the widest word (or word
     // fragment) encountered so far, and only try hyphenating words that are wider.
     float maxWordWidth = std::numeric_limits<float>::max();
@@ -973,7 +973,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
                     m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
             } else {
-                TextRun run = RenderBlock::constructTextRun(this, font, this, i, 1, style);
+                TextRun run = RenderBlock::constructTextRun(this, i, 1, style);
                 run.setCharactersLength(len - i);
                 ASSERT(run.charactersLength() >= run.length());
                 run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
@@ -1320,7 +1320,7 @@ float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float
         } else
             w = widthFromCache(f, from, len, xPos, fallbackFonts, glyphOverflow, style);
     } else {
-        TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, this, from, len, style);
+        TextRun run = RenderBlock::constructTextRun(this, from, len, style);
         run.setCharactersLength(textLength() - from);
         ASSERT(run.charactersLength() >= run.length());
 

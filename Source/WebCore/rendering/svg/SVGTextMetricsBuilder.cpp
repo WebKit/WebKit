@@ -23,7 +23,6 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
-#include "SVGTextRunRenderingContext.h"
 
 namespace WebCore {
 
@@ -67,11 +66,7 @@ void SVGTextMetricsBuilder::advanceSimpleText()
     float currentWidth = m_simpleWidthIterator->runWidthSoFar() - m_totalWidth;
     m_totalWidth = m_simpleWidthIterator->runWidthSoFar();
 
-#if ENABLE(SVG_FONTS)
-    m_currentMetrics = SVGTextMetrics(*m_text, m_textPosition, metricsLength, currentWidth, m_simpleWidthIterator->lastGlyphName());
-#else
-    m_currentMetrics = SVGTextMetrics(*m_text, m_textPosition, metricsLength, currentWidth, emptyString());
-#endif
+    m_currentMetrics = SVGTextMetrics(*m_text, metricsLength, currentWidth);
 }
 
 void SVGTextMetricsBuilder::advanceComplexText()

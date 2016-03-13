@@ -116,25 +116,7 @@ public:
     void setCharacterScanForCodePath(bool scan) { m_characterScanForCodePath = scan; }
     StringView text() const { return m_text; }
 
-    class RenderingContext : public RefCounted<RenderingContext> {
-    public:
-        virtual ~RenderingContext() { }
-
-#if ENABLE(SVG_FONTS)
-        virtual GlyphData glyphDataForCharacter(const FontCascade&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache) = 0;
-        virtual void drawSVGGlyphs(GraphicsContext&, const Font&, const GlyphBuffer&, int from, int to, const FloatPoint&) const = 0;
-        virtual float floatWidthUsingSVGFont(const FontCascade&, const TextRun&, int& charsConsumed, String& glyphName) const = 0;
-        virtual bool applySVGKerning(const Font*, WidthIterator&, GlyphBuffer*, int from) const = 0;
-        virtual std::unique_ptr<GlyphToPathTranslator> createGlyphToPathTranslator(const Font&, const TextRun*, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&) const = 0;
-#endif
-    };
-
-    RenderingContext* renderingContext() const { return m_renderingContext.get(); }
-    void setRenderingContext(PassRefPtr<RenderingContext> context) { m_renderingContext = context; }
-
 private:
-    RefPtr<RenderingContext> m_renderingContext;
-
     StringView m_text;
     unsigned m_charactersLength; // Marks the end of the characters buffer. Default equals to length of m_text.
 

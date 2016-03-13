@@ -466,8 +466,6 @@ bool HarfBuzzShaper::shapeHarfBuzzRuns(bool shouldSetDirection)
         unsigned runIndex = m_run.rtl() ? m_harfBuzzRuns.size() - i - 1 : i;
         HarfBuzzRun* currentRun = m_harfBuzzRuns[runIndex].get();
         const Font* currentFontData = currentRun->fontData();
-        if (currentFontData->isSVGFont())
-            return false;
 
         hb_buffer_set_script(harfBuzzBuffer.get(), currentRun->script());
         if (shouldSetDirection)

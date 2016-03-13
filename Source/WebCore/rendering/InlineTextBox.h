@@ -112,8 +112,8 @@ private:
     LayoutUnit selectionBottom() const;
     LayoutUnit selectionHeight() const;
 
-    TextRun constructTextRun(const RenderStyle&, const FontCascade&, String* hyphenatedStringBuffer = nullptr) const;
-    TextRun constructTextRun(const RenderStyle&, const FontCascade&, String, unsigned maximumLength, String* hyphenatedStringBuffer = nullptr) const;
+    TextRun constructTextRun(const RenderStyle&, String* hyphenatedStringBuffer = nullptr) const;
+    TextRun constructTextRun(const RenderStyle&, String, unsigned maximumLength, String* hyphenatedStringBuffer = nullptr) const;
 
 public:
     FloatRect calculateBoundaries() const override { return FloatRect(x(), y(), width(), height()); }

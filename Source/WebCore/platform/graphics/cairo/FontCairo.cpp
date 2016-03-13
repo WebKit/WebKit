@@ -220,7 +220,6 @@ public:
         , m_fontData(glyphBuffer.fontAt(m_index))
         , m_translation(AffineTransform().translate(textOrigin.x(), textOrigin.y()))
     {
-        moveToNextValidGlyph();
     }
 private:
     bool containsMorePaths() override
@@ -231,7 +230,6 @@ private:
     std::pair<float, float> extents() override;
     GlyphUnderlineType underlineType() override;
     void advance() override;
-    void moveToNextValidGlyph();
 
     int m_index;
     const TextRun& m_textRun;
@@ -272,23 +270,13 @@ GlyphToPathTranslator::GlyphUnderlineType CairoGlyphToPathTranslator::underlineT
     return computeUnderlineType(m_textRun, m_glyphBuffer, m_index);
 }
 
-void CairoGlyphToPathTranslator::moveToNextValidGlyph()
-{
-    if (!m_fontData->isSVGFont())
-        return;
-    advance();
-}
-
 void CairoGlyphToPathTranslator::advance()
 {
-    do {
-        GlyphBufferAdvance advance = m_glyphBuffer.advanceAt(m_index);
-        m_translation = m_translation.translate(advance.width(), advance.height());
-        ++m_index;
-        if (m_index >= m_glyphBuffer.size())
-            break;
+    GlyphBufferAdvance advance = m_glyphBuffer.advanceAt(m_index);
+    m_translation = m_translation.translate(advance.width(), advance.height());
+    ++m_index;
+    if (m_index < m_glyphBuffer.size())
         m_fontData = m_glyphBuffer.fontAt(m_index);
-    } while (m_fontData->isSVGFont() && m_index < m_glyphBuffer.size());
 }
 
 DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
@@ -308,27 +296,14 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
         return DashArray();
 
     // FIXME: Handle SVG + non-SVG interleaved runs. https://bugs.webkit.org/show_bug.cgi?id=133778
-    const Font* fontData = glyphBuffer.fontAt(0);
-    std::unique_ptr<GlyphToPathTranslator> translator;
-    bool isSVG = false;
     FloatPoint origin = FloatPoint(textOrigin.x() + deltaX, textOrigin.y());
-    if (!fontData->isSVGFont())
-        translator = std::make_unique<CairoGlyphToPathTranslator>(run, glyphBuffer, origin);
-#if ENABLE(SVG_FONTS)
-    else {
-        TextRun::RenderingContext* renderingContext = run.renderingContext();
-        if (!renderingContext)
-            return DashArray();
-        translator = renderingContext->createGlyphToPathTranslator(*fontData, &run, glyphBuffer, 0, glyphBuffer.size(), origin);
-        isSVG = true;
-    }
-#endif
+    std::unique_ptr<GlyphToPathTranslator> translator = std::make_unique<CairoGlyphToPathTranslator>(run, glyphBuffer, origin);
     DashArray result;
     for (int index = 0; translator->containsMorePaths(); ++index, translator->advance()) {
         float centerOfLine = lineExtents.y() + (lineExtents.height() / 2);
         GlyphIterationState info = GlyphIterationState(FloatPoint(), FloatPoint(), centerOfLine, lineExtents.x() + lineExtents.width(), lineExtents.x());
         const Font* localFontData = glyphBuffer.fontAt(index);
-        if (!localFontData || (!isSVG && localFontData->isSVGFont()) || (isSVG && localFontData != fontData)) {
+        if (!localFontData) {
             // The advances will get all messed up if we do anything other than bail here.
             result.clear();
             break;

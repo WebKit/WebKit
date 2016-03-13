@@ -34,7 +34,7 @@ public:
 
     SVGTextMetrics();
     explicit SVGTextMetrics(MetricsType);
-    SVGTextMetrics(RenderSVGInlineText&, unsigned position, unsigned length, float width, const String& glyphName);
+    SVGTextMetrics(RenderSVGInlineText&, unsigned length, float width);
 
     static SVGTextMetrics measureCharacterRange(RenderSVGInlineText&, unsigned position, unsigned length);
     static TextRun constructTextRun(RenderSVGInlineText&, unsigned position = 0, unsigned length = std::numeric_limits<unsigned>::max());

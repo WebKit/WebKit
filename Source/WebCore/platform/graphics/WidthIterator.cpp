@@ -62,22 +62,6 @@ WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSe
     }
 }
 
-GlyphData WidthIterator::glyphDataForCharacter(UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache)
-{
-    ASSERT(m_font);
-
-#if ENABLE(SVG_FONTS)
-    if (TextRun::RenderingContext* renderingContext = m_run.renderingContext())
-        return renderingContext->glyphDataForCharacter(*m_font, *this, character, mirror, currentCharacter, advanceLength, normalizedSpacesStringCache);
-#else
-    UNUSED_PARAM(currentCharacter);
-    UNUSED_PARAM(advanceLength);
-    UNUSED_PARAM(normalizedSpacesStringCache);
-#endif
-
-    return m_font->glyphDataForCharacter(character, mirror);
-}
-
 struct OriginalAdvancesForCharacterTreatedAsSpace {
 public:
     OriginalAdvancesForCharacterTreatedAsSpace(bool isSpace, float advanceBefore, float advanceAt)
@@ -127,18 +111,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool l
     if (!ltr)
         glyphBuffer->reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
 
-#if ENABLE(SVG_FONTS)
-    // We need to handle transforms on SVG fonts internally, since they are rendered internally.
-    if (font->isSVGFont()) {
-        // SVG font ligatures are handled during glyph selection, only kerning remaining.
-        if (run().renderingContext() && m_enableKerning) {
-            // FIXME: We could pass the necessary context down to this level so we can lazily create rendering contexts at this point.
-            // However, a larger refactoring of SVG fonts might necessary to sidestep this problem completely.
-            run().renderingContext()->applySVGKerning(font, *this, glyphBuffer, lastGlyphCount);
-        }
-    } else
-#endif
-        font->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, m_enableKerning, m_requiresShaping);
+    font->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, m_enableKerning, m_requiresShaping);
 
     if (!ltr)
         glyphBuffer->reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
@@ -219,7 +192,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
     while (textIterator.consume(character, clusterLength)) {
         unsigned advanceLength = clusterLength;
         int currentCharacter = textIterator.currentCharacter();
-        const GlyphData& glyphData = glyphDataForCharacter(character, rtl, currentCharacter, advanceLength, normalizedSpacesStringCache);
+        const GlyphData& glyphData = m_font->glyphDataForCharacter(character, rtl);
         Glyph glyph = glyphData.glyph;
         if (!glyph) {
             textIterator.advance(advanceLength);

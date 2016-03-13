@@ -51,13 +51,13 @@ class TextLayout {
 public:
     static bool isNeeded(RenderText& text, const FontCascade& font)
     {
-        TextRun run = RenderBlock::constructTextRun(&text, font, &text, text.style());
+        TextRun run = RenderBlock::constructTextRun(&text, text.style());
         return font.codePath(run) == FontCascade::Complex;
     }
 
     TextLayout(RenderText& text, const FontCascade& font, float xPos)
         : m_font(font)
-        , m_run(constructTextRun(text, font, xPos))
+        , m_run(constructTextRun(text, xPos))
         , m_controller(std::make_unique<ComplexTextController>(m_font, m_run, true))
     {
     }
@@ -74,9 +74,9 @@ public:
     }
 
 private:
-    static TextRun constructTextRun(RenderText& text, const FontCascade& font, float xPos)
+    static TextRun constructTextRun(RenderText& text, float xPos)
     {
-        TextRun run = RenderBlock::constructTextRun(&text, font, &text, text.style());
+        TextRun run = RenderBlock::constructTextRun(&text, text.style());
         run.setCharactersLength(text.textLength());
         ASSERT(run.charactersLength() >= run.length());
         run.setXPos(xPos);

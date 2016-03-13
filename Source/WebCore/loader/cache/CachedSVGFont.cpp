@@ -32,16 +32,12 @@
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "SVGDocument.h"
-#include "SVGFontData.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "TypedElementDescendantIterator.h"
-
-#if ENABLE(SVG_OTF_CONVERTER)
 #include "SVGToOTFFontConversion.h"
-#endif
 
 namespace WebCore {
 
@@ -53,15 +49,8 @@ CachedSVGFont::CachedSVGFont(const ResourceRequest& resourceRequest, SessionID s
 
 RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings)
 {
-#if ENABLE(SVG_OTF_CONVERTER)
     if (firstFontFace(remoteURI))
         return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings);
-#else
-    UNUSED_PARAM(fontFaceFeatures);
-    UNUSED_PARAM(fontFaceVariantSettings);
-    if (SVGFontFaceElement* firstFontFace = this->firstFontFace(remoteURI))
-        return Font::create(std::make_unique<SVGFontData>(firstFontFace), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
-#endif
     return nullptr;
 }
 
@@ -80,7 +69,6 @@ bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)
         m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
         if (decoder->sawError())
             m_externalSVGDocument = nullptr;
-#if ENABLE(SVG_OTF_CONVERTER)
         if (m_externalSVGDocument)
             maybeInitializeExternalSVGFontElement(remoteURI);
         if (!m_externalSVGFontElement)
@@ -91,16 +79,9 @@ bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)
             m_externalSVGDocument = nullptr;
             return false;
         }
-#else
-        UNUSED_PARAM(remoteURI);
-#endif
     }
 
-#if !ENABLE(SVG_OTF_CONVERTER)
-    return m_externalSVGDocument;
-#else
     return m_externalSVGDocument && CachedFont::ensureCustomFontData(m_convertedFont.get());
-#endif
 }
 
 SVGFontElement* CachedSVGFont::getSVGFontById(const String& fontName) const

@@ -40,15 +40,6 @@
 #include "WOFFFileFormat.h"
 #include <wtf/Vector.h>
 
-#if ENABLE(SVG_FONTS)
-#include "NodeList.h"
-#include "SVGDocument.h"
-#include "SVGElement.h"
-#include "SVGFontElement.h"
-#include "SVGGElement.h"
-#include "SVGNames.h"
-#endif
-
 namespace WebCore {
 
 CachedFont::CachedFont(const ResourceRequest& resourceRequest, SessionID sessionID, Type type)

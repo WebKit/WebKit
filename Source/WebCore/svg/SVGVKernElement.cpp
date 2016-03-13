@@ -40,26 +40,6 @@ Ref<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new SVGVKernElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest SVGVKernElement::insertedInto(ContainerNode& rootParent)
-{
-    if (rootParent.inDocument()) {
-        ContainerNode* fontNode = parentNode();
-        if (is<SVGFontElement>(fontNode))
-            downcast<SVGFontElement>(*fontNode).invalidateGlyphCache();
-    }
-
-    return SVGElement::insertedInto(rootParent);
-}
-
-void SVGVKernElement::removedFrom(ContainerNode& rootParent)
-{
-    ContainerNode* fontNode = parentNode();
-    if (is<SVGFontElement>(fontNode))
-        downcast<SVGFontElement>(*fontNode).invalidateGlyphCache();
-
-    SVGElement::removedFrom(rootParent);
-}
-
 bool SVGVKernElement::buildVerticalKerningPair(SVGKerningPair& kerningPair) const
 {
     String u1 = fastGetAttribute(SVGNames::u1Attr);

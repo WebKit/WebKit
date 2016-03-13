@@ -2234,7 +2234,6 @@ set(WebCore_SOURCES
     platform/graphics/PlatformTimeRanges.cpp
     platform/graphics/Region.cpp
     platform/graphics/RoundedRect.cpp
-    platform/graphics/SVGGlyph.cpp
     platform/graphics/ShadowBlur.cpp
     platform/graphics/StringTruncator.cpp
     platform/graphics/SurrogatePairAwareTextIterator.cpp
@@ -2619,7 +2618,6 @@ set(WebCore_SOURCES
     rendering/svg/SVGTextMetrics.cpp
     rendering/svg/SVGTextMetricsBuilder.cpp
     rendering/svg/SVGTextQuery.cpp
-    rendering/svg/SVGTextRunRenderingContext.cpp
 
     replay/UserInputBridge.cpp
 
@@ -2713,7 +2711,6 @@ set(WebCore_SOURCES
     svg/SVGFilterElement.cpp
     svg/SVGFilterPrimitiveStandardAttributes.cpp
     svg/SVGFitToViewBox.cpp
-    svg/SVGFontData.cpp
     svg/SVGFontElement.cpp
     svg/SVGFontFaceElement.cpp
     svg/SVGFontFaceFormatElement.cpp

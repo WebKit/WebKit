@@ -24,37 +24,20 @@
 
 #if ENABLE(SVG_FONTS)
 #include "SVGElement.h"
-#include "SVGGlyph.h"
 
 namespace WebCore {
-
-class SVGFontData;
 
 class SVGGlyphElement final : public SVGElement {
 public:
     static Ref<SVGGlyphElement> create(const QualifiedName&, Document&);
 
-    SVGGlyph buildGlyphIdentifier() const;
-
     // Helper function used by SVGFont
-    static void inheritUnspecifiedAttributes(SVGGlyph&, const SVGFontData*);
     static String querySVGFontLanguage(const SVGElement*);
-
-    // Helper function shared between SVGGlyphElement & SVGMissingGlyphElement
-    static SVGGlyph buildGenericGlyphIdentifier(const SVGElement*);
 
 private:
     SVGGlyphElement(const QualifiedName&, Document&);
 
-    // FIXME: svgAttributeChanged missing.
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    void removedFrom(ContainerNode&) override;
-
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
-
-    void invalidateGlyphCache();
 };
 
 } // namespace WebCore

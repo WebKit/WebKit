@@ -36,9 +36,6 @@ public:
 private:
     SVGHKernElement(const QualifiedName&, Document&);
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    void removedFrom(ContainerNode&) override;
-
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
 };
 

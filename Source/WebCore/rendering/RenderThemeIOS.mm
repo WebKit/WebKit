@@ -568,20 +568,18 @@ static void adjustSelectListButtonStyle(RenderStyle& style, Element& element)
     
 class RenderThemeMeasureTextClient : public MeasureTextClient {
 public:
-    RenderThemeMeasureTextClient(const FontCascade& font, RenderObject& renderObject, const RenderStyle& style)
+    RenderThemeMeasureTextClient(const FontCascade& font, const RenderStyle& style)
         : m_font(font)
-        , m_renderObject(renderObject)
         , m_style(style)
     {
     }
     float measureText(const String& string) const override
     {
-        TextRun run = RenderBlock::constructTextRun(&m_renderObject, m_font, string, m_style, AllowTrailingExpansion | ForbidLeadingExpansion, DefaultTextRunFlags);
+        TextRun run = RenderBlock::constructTextRun(string, m_style, AllowTrailingExpansion | ForbidLeadingExpansion, DefaultTextRunFlags);
         return m_font.width(run);
     }
 private:
     const FontCascade& m_font;
-    RenderObject& m_renderObject;
     const RenderStyle& m_style;
 };
 
@@ -602,11 +600,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, HTMLInputElement& 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
     FontCascade font = style.fontCascade();
     
-    RenderObject* renderer = inputElement.renderer();
-    if (font.primaryFont().isSVGFont() && !renderer)
-        return;
-    
-    float maximumWidth = localizedDateCache().maximumWidthForDateType(dateType, font, RenderThemeMeasureTextClient(font, *renderer, style));
+    float maximumWidth = localizedDateCache().maximumWidthForDateType(dateType, font, RenderThemeMeasureTextClient(font, style));
 
     ASSERT(maximumWidth >= 0);
 

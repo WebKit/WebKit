@@ -1,5 +1,264 @@
 2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Delete dead SVG Font code
+        https://bugs.webkit.org/show_bug.cgi?id=154718
+
+        Reviewed by Antti Koivisto.
+
+        All the ports have adopted the SVG -> OTF Font Converter, so there will never
+        be an instantiation of a font backed by a DOM subtree. We can remove all the
+        infrastructure used to support that.
+
+        No new tests because there is no behavior change.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.order:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource): Deleted.
+        (WebCore::CSSFontFaceSource::font): Deleted.
+        * css/CSSFontFaceSource.h:
+        * loader/cache/CachedFont.cpp:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::createFont): Deleted.
+        (WebCore::CachedSVGFont::ensureCustomFontData): Deleted.
+        * loader/cache/CachedSVGFont.h:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::fillGlyphPage):
+        (WebCore::Font::description): Deleted.
+        (WebCore::Font::createScaledFont): Deleted.
+        (WebCore::Font::applyTransforms): Deleted.
+        * platform/graphics/Font.h:
+        (WebCore::Font::widthForGlyph):
+        (WebCore::Font::SVGData::~SVGData): Deleted.
+        (WebCore::Font::create): Deleted.
+        (WebCore::Font::svgData): Deleted.
+        (WebCore::Font::isSVGFont): Deleted.
+        * platform/graphics/win/FontWin.cpp:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::drawText):
+        (WebCore::FontCascade::drawEmphasisMarks):
+        (WebCore::FontCascade::glyphDataForCharacter):
+        (WebCore::FontCascade::adjustSelectionRectForText):
+        (WebCore::FontCascade::offsetForPosition):
+        (WebCore::FontCascade::drawEmphasisMarksForSimpleText):
+        (WebCore::FontCascade::drawGlyphBuffer):
+        (WebCore::isDrawnWithSVGFont): Deleted.
+        (WebCore::FontCascade::width): Deleted.
+        (WebCore::FontCascade::codePath): Deleted.
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/SVGGlyph.cpp: Removed.
+        (WebCore::processArabicFormDetection): Deleted.
+        (WebCore::charactersWithArabicForm): Deleted.
+        (WebCore::isCompatibleArabicForm): Deleted.
+        (WebCore::isCompatibleGlyph): Deleted.
+        * platform/graphics/SVGGlyph.h: Removed.
+        (WebCore::SVGGlyph::SVGGlyph): Deleted.
+        (WebCore::SVGGlyph::inheritedValue): Deleted.
+        (WebCore::SVGGlyph::operator==): Deleted.
+        * platform/graphics/TextRun.cpp:
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::RenderingContext::~RenderingContext): Deleted.
+        (WebCore::TextRun::renderingContext): Deleted.
+        (WebCore::TextRun::setRenderingContext): Deleted.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms):
+        (WebCore::WidthIterator::advanceInternal):
+        (WebCore::WidthIterator::glyphDataForCharacter): Deleted.
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::lastGlyphName): Deleted.
+        (WebCore::WidthIterator::setLastGlyphName): Deleted.
+        (WebCore::WidthIterator::arabicForms): Deleted.
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::CairoGlyphToPathTranslator::advance):
+        (WebCore::FontCascade::dashesForIntersectionsWithRect):
+        (WebCore::CairoGlyphToPathTranslator::moveToNextValidGlyph): Deleted.
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::MacGlyphToPathTranslator::advance):
+        (WebCore::FontCascade::dashesForIntersectionsWithRect):
+        (WebCore::FontCascade::primaryFontIsSystemFont):
+        (WebCore::FontCascade::drawEmphasisMarksForComplexText):
+        (WebCore::MacGlyphToPathTranslator::moveToNextValidGlyph): Deleted.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRuns): Deleted.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::TextLayout::isNeeded):
+        (WebCore::TextLayout::TextLayout):
+        (WebCore::TextLayout::constructTextRun):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::selectionRect):
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::localSelectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintDocumentMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        (WebCore::InlineTextBox::constructTextRun):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::stripTrailingSpace):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::checkLinesForTextOverflow):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::computeIntrinsicLogicalWidths):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setImageSizeForAltText):
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::updateOptionsWidth):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::trimmedPrefWidths):
+        (WebCore::hyphenWidth):
+        (WebCore::maxWordFragmentWidth):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::width):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAverageCharWidth):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeMeasureTextClient::RenderThemeMeasureTextClient):
+        (WebCore::adjustInputElementButtonStyle):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForFontAndText): Deleted.
+        * rendering/line/BreakingContext.h:
+        (WebCore::WordTrailingSpace::WordTrailingSpace):
+        (WebCore::WordTrailingSpace::width):
+        (WebCore::measureHyphenWidth):
+        (WebCore::textWidth):
+        (WebCore::tryHyphenating):
+        (WebCore::BreakingContext::handleText):
+        * rendering/svg/RenderSVGAllInOne.cpp:
+        * rendering/svg/RenderSVGText.cpp:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::prepareGraphicsContextForTextPainting):
+        (WebCore::SVGInlineTextBox::restoreGraphicsContextAfterTextPainting):
+        (WebCore::SVGInlineTextBox::paintTextWithShadows):
+        (WebCore::SVGInlineTextBox::constructTextRun): Deleted.
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath):
+        * rendering/svg/SVGTextLayoutEngineSpacing.cpp:
+        (WebCore::SVGTextLayoutEngineSpacing::calculateSVGKerning): Deleted.
+        * rendering/svg/SVGTextLayoutEngineSpacing.h:
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::SVGTextMetrics):
+        (WebCore::SVGTextMetrics::constructTextRun): Deleted.
+        * rendering/svg/SVGTextMetrics.h:
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::advanceSimpleText):
+        * rendering/svg/SVGTextRunRenderingContext.cpp: Removed.
+        (WebCore::svgFontAndFontFaceElementForFontData): Deleted.
+        (WebCore::SVGTextRunRenderingContext::floatWidthUsingSVGFont): Deleted.
+        (WebCore::SVGTextRunRenderingContext::applySVGKerning): Deleted.
+        (WebCore::SVGGlyphToPathTranslator::SVGGlyphToPathTranslator): Deleted.
+        (WebCore::SVGGlyphToPathTranslator::transform): Deleted.
+        (WebCore::SVGGlyphToPathTranslator::path): Deleted.
+        (WebCore::SVGGlyphToPathTranslator::extents): Deleted.
+        (WebCore::SVGGlyphToPathTranslator::moveToNextValidGlyph): Deleted.
+        (WebCore::SVGGlyphToPathTranslator::advance): Deleted.
+        (WebCore::SVGTextRunRenderingContext::createGlyphToPathTranslator): Deleted.
+        (WebCore::SVGTextRunRenderingContext::drawSVGGlyphs): Deleted.
+        (WebCore::missingGlyphForFont): Deleted.
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter): Deleted.
+        * rendering/svg/SVGTextRunRenderingContext.h: Removed.
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGFontData.cpp: Removed.
+        (WebCore::SVGFontData::SVGFontData): Deleted.
+        (WebCore::SVGFontData::initializeFont): Deleted.
+        (WebCore::SVGFontData::widthForSVGGlyph): Deleted.
+        (WebCore::SVGFontData::applySVGGlyphSelection): Deleted.
+        (WebCore::SVGFontData::fillSVGGlyphPage): Deleted.
+        (WebCore::SVGFontData::fillBMPGlyphs): Deleted.
+        (WebCore::SVGFontData::fillNonBMPGlyphs): Deleted.
+        (WebCore::computeNormalizedSpaces): Deleted.
+        (WebCore::createStringWithMirroredCharacters): Deleted.
+        * svg/SVGFontData.h: Removed.
+        (WebCore::SVGFontData::~SVGFontData): Deleted.
+        (WebCore::SVGFontData::svgFontFaceElement): Deleted.
+        (WebCore::SVGFontData::horizontalOriginX): Deleted.
+        (WebCore::SVGFontData::horizontalOriginY): Deleted.
+        (WebCore::SVGFontData::horizontalAdvanceX): Deleted.
+        (WebCore::SVGFontData::verticalOriginX): Deleted.
+        (WebCore::SVGFontData::verticalOriginY): Deleted.
+        (WebCore::SVGFontData::verticalAdvanceY): Deleted.
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::SVGFontElement): Deleted.
+        (WebCore::SVGFontElement::invalidateGlyphCache): Deleted.
+        (WebCore::SVGFontElement::firstMissingGlyphElement): Deleted.
+        (WebCore::SVGFontElement::registerLigaturesInGlyphCache): Deleted.
+        (WebCore::SVGFontElement::ensureGlyphCache): Deleted.
+        (WebCore::SVGKerningMap::clear): Deleted.
+        (WebCore::SVGKerningMap::insert): Deleted.
+        (WebCore::stringMatchesUnicodeRange): Deleted.
+        (WebCore::stringMatchesGlyphName): Deleted.
+        (WebCore::stringMatchesUnicodeName): Deleted.
+        (WebCore::matches): Deleted.
+        (WebCore::kerningForPairOfStringsAndGlyphs): Deleted.
+        (WebCore::SVGFontElement::horizontalKerningForPairOfStringsAndGlyphs): Deleted.
+        (WebCore::SVGFontElement::verticalKerningForPairOfStringsAndGlyphs): Deleted.
+        (WebCore::SVGFontElement::collectGlyphsForString): Deleted.
+        (WebCore::SVGFontElement::collectGlyphsForGlyphName): Deleted.
+        (WebCore::SVGFontElement::svgGlyphForGlyph): Deleted.
+        (WebCore::SVGFontElement::missingGlyph): Deleted.
+        * svg/SVGFontElement.h:
+        (WebCore::SVGKerning::SVGKerning): Deleted.
+        (WebCore::SVGKerningMap::isEmpty): Deleted.
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::invalidateGlyphCache): Deleted.
+        (WebCore::SVGGlyphElement::parseAttribute): Deleted.
+        (WebCore::SVGGlyphElement::insertedInto): Deleted.
+        (WebCore::SVGGlyphElement::removedFrom): Deleted.
+        (WebCore::parseArabicForm): Deleted.
+        (WebCore::parseOrientation): Deleted.
+        (WebCore::SVGGlyphElement::inheritUnspecifiedAttributes): Deleted.
+        (WebCore::parseSVGGlyphAttribute): Deleted.
+        (WebCore::SVGGlyphElement::buildGenericGlyphIdentifier): Deleted.
+        (WebCore::SVGGlyphElement::buildGlyphIdentifier): Deleted.
+        * svg/SVGGlyphElement.h:
+        * svg/SVGGlyphMap.h: Removed.
+        (WebCore::GlyphMapNode::GlyphMapNode): Deleted.
+        (WebCore::GlyphMapNode::create): Deleted.
+        (WebCore::SVGGlyphMap::SVGGlyphMap): Deleted.
+        (WebCore::SVGGlyphMap::addGlyph): Deleted.
+        (WebCore::SVGGlyphMap::appendToGlyphTable): Deleted.
+        (WebCore::SVGGlyphMap::compareGlyphPriority): Deleted.
+        (WebCore::SVGGlyphMap::collectGlyphsForString): Deleted.
+        (WebCore::SVGGlyphMap::clear): Deleted.
+        (WebCore::SVGGlyphMap::svgGlyphForGlyph): Deleted.
+        (WebCore::SVGGlyphMap::glyphIdentifierForGlyphName): Deleted.
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::insertedInto): Deleted.
+        (WebCore::SVGHKernElement::removedFrom): Deleted.
+        * svg/SVGHKernElement.h:
+        * svg/SVGToOTFFontConversion.cpp:
+        * svg/SVGToOTFFontConversion.h:
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::insertedInto): Deleted.
+        (WebCore::SVGVKernElement::removedFrom): Deleted.
+        * svg/SVGVKernElement.h:
+
+2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [OS X] Scrollbars of overflow:scroll divs should appear on the left on RTL systems
         https://bugs.webkit.org/show_bug.cgi?id=155385
 
