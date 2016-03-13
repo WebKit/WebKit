@@ -104,10 +104,11 @@ inline JSObject* constructObjectFromPropertyDescriptor(ExecState* exec, const Pr
         description->putDirect(vm, vm.propertyNames->value, descriptor.value() ? descriptor.value() : jsUndefined(), 0);
         description->putDirect(vm, vm.propertyNames->writable, jsBoolean(descriptor.writable()), 0);
     } else {
-        ASSERT(descriptor.getter());
-        ASSERT(descriptor.setter());
-        description->putDirect(vm, vm.propertyNames->get, descriptor.getter(), 0);
-        description->putDirect(vm, vm.propertyNames->set, descriptor.setter(), 0);
+        ASSERT(descriptor.getter() || descriptor.setter());
+        if (descriptor.getter())
+            description->putDirect(vm, vm.propertyNames->get, descriptor.getter(), 0);
+        if (descriptor.setter())
+            description->putDirect(vm, vm.propertyNames->set, descriptor.setter(), 0);
     }
     
     description->putDirect(vm, vm.propertyNames->enumerable, jsBoolean(descriptor.enumerable()), 0);
