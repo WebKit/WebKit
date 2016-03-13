@@ -1,3 +1,10 @@
+2016-03-13  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r198079): Windows build broke because of "%PRId64" format specifier
+
+        * platform/network/ParsedContentRange.cpp: Add #include
+        <wtf/StdLibExtras.h> and remove local definition of "PRId64".
+
 2016-03-13  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix debug build error since r197690. Unreviewed.

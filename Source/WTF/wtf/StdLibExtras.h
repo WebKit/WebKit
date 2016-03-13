@@ -70,6 +70,11 @@
 #define STRINGIZE(exp) #exp
 #define STRINGIZE_VALUE_OF(exp) STRINGIZE(exp)
 
+// Make "PRId64" format specifier work for Visual C++ on Windows.
+#if OS(WINDOWS) && !defined(PRId64)
+#define PRId64 "lld"
+#endif
+
 /*
  * The reinterpret_cast<Type1*>([pointer to Type2]) expressions - where
  * sizeof(Type1) > sizeof(Type2) - cause the following warning on ARM with GCC:

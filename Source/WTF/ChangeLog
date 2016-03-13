@@ -1,3 +1,15 @@
+2016-03-13  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r198079): Windows build broke because of "%PRId64" format specifier
+
+        This fixes the following build failure in WebCore for Windows:
+            C:\Source\WebCore\page\DOMTimer.cpp(396): error C2146: syntax error: missing ')' before identifier 'PRId64' [C:\WebKitBuild\Debug\Source\WebCore\WebCore.vcxproj]
+            C:\Source\WebCore\page\DOMTimer.cpp(399): error C2146: syntax error: missing ')' before identifier 'PRId64' [C:\WebKitBuild\Debug\Source\WebCore\WebCore.vcxproj]
+
+        * wtf/StdLibExtras.h: Define "PRId64" for Windows here so it may
+        be shared.  This should fix DOMTimer.cpp after r198079 since it
+        already includes StdLibExtras.h.
+
 2016-03-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         WTF should have a similar function as equalLettersIgnoringASCIICase to match beginning of strings
