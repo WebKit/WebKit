@@ -443,8 +443,8 @@ class ObjCGenerator(Generator):
                 return 'fromProtocolString<%s>(%s)' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
             return sub_expression
         if category is ObjCTypeCategory.Object:
-            objc_type = self.objc_type_for_member(declaration, member)
-            return '(%s)%s' % (objc_type, sub_expression)
+            objc_class = self.objc_class_for_type(member.type)
+            return '[[%s alloc] initWithInspectorObject:[%s toInspectorObject].get()]' % (objc_class, sub_expression)
         if category is ObjCTypeCategory.Array:
             protocol_type = ObjCGenerator.protocol_type_for_type(member.type.element_type)
             objc_class = self.objc_class_for_type(member.type.element_type)

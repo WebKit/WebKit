@@ -919,6 +919,7 @@ using namespace Inspector;
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseError : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
+- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;
 /* required */ @property (nonatomic, assign) int code;
@@ -1160,11 +1161,17 @@ using namespace Inspector;
 
     return self;
 }
+- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+{
+    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+        return nil;
+
+    return self;
+}
 
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 {
-    self = [super init];
-    if (!self)
+    if (!(self = [super init]))
         return nil;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(message, @"message");

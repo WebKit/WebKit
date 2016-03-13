@@ -1,3 +1,46 @@
+2016-03-12  Brian Burg  <bburg@apple.com>
+
+        When generating Objective-C protocol types, getters for objects need to synthesize a new object instance
+        https://bugs.webkit.org/show_bug.cgi?id=155389
+        <rdar://problem/25125821>
+
+        Reviewed by Timothy Hatcher.
+
+        Currently, in object property getters for Objective-C protocol types, we use
+        a C-style cast of the member's RWIProtocolJSONObject * to the type of the property.
+        However, at runtime the class of `self` is going to be RWIProtocolJSONObject *,
+        not MemberType *, so any subsequent calls to MemberType properties on the return value
+        will fail as the selectors will not be recognized.
+
+        Instead of doing a C-style pointer cast, we need to create a new MemberType object
+        that's backed by the InspectorObject retrieved from the parent object by key.
+        This requires a new initWithJSONObject initializer for each object protocol type.
+
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator._generate_type_interface): Add new declaration.
+
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator.generate_type_implementation):
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_json_object): Added.
+        Forward through to the super class initializer who assigns the underlying InspectorObject.
+
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_required_members):
+        Drive-by cleanup to use the more compact [super init] form.
+
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.protocol_to_objc_expression_for_member):
+        For property getters of objects, use initWithJSONObject: rather than a C-style cast.
+
+        Rebaseline relevant test results.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-03-12  Konstantin Tokarev  <annulen@yandex.ru>
 
         Removed variable names from default constructor declarations.
