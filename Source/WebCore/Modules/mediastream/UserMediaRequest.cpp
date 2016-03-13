@@ -108,21 +108,16 @@ UserMediaRequest::~UserMediaRequest()
 
 SecurityOrigin* UserMediaRequest::userMediaDocumentOrigin() const
 {
-    if (m_scriptExecutionContext)
-        return m_scriptExecutionContext->securityOrigin();
+    if (!m_scriptExecutionContext)
+        return nullptr;
 
-    return nullptr;
+    return m_scriptExecutionContext->securityOrigin();
 }
 
 SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
 {
     if (!m_scriptExecutionContext)
         return nullptr;
-
-    if (Frame* frame = downcast<Document>(*scriptExecutionContext()).frame()) {
-        if (frame->isMainFrame())
-            return nullptr;
-    }
 
     return m_scriptExecutionContext->topOrigin();
 }
