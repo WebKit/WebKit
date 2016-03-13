@@ -38,6 +38,8 @@
     background-size: 50%;
     background-position: top left, bottom right;
     background-repeat: no-repeat;
+    border-radius: 2px;
+    overflow: hidden;
     cursor: default;
 }
 
@@ -71,7 +73,7 @@
     bottom: 0;
     left: 0;
     border: 1px solid hsla(0, 0%, 25%, 0.4);
-    border-radius: 4px 0px 0px 4px;
+    border-radius: 2px;
     pointer-events: none;
 }
 
