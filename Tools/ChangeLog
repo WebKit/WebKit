@@ -1,3 +1,32 @@
+2016-03-13  David Kilzer  <ddkilzer@apple.com>
+
+        TestWebKitAPI: fix linker warnings
+        <http://webkit.org/b/155394>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        - Add RefLogger.cpp source file.
+        - Add other missing cross-platform source files.
+        - Add FIXMEs about RunLoop.cpp and about missing
+          platform-specific source files.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Add RefLogger.cpp source file.
+
+        * TestWebKitAPI/Counters.cpp:
+        (DeleterCounter<ConstructorDestructorCounter>::deleterCount):
+        Move specific declaration here to fix linker warning.
+        * TestWebKitAPI/Counters.h:
+        (DeleterCounter<T>::deleterCount): Remove declaration of global
+        template variable.
+
+        * TestWebKitAPI/Tests/WTF/RefLogger.cpp: Added.
+        (TestWebKitAPI::log): Added.  Move inline definition in
+        RefLogger.h to here to fix linker warning.
+
+        * TestWebKitAPI/Tests/WTF/RefLogger.h:
+        (TestWebKitAPI::log): Replace inline function with declaration.
+
 2016-03-12  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r178615): Fix incorrect case in included header for WeakPtr.cpp

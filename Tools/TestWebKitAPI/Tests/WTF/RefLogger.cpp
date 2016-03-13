@@ -23,30 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RefLogger_h
+#include "config.h"
+
+#include "RefLogger.h"
 
 namespace TestWebKitAPI {
 
-std::ostringstream& log();
-
-inline std::string takeLogStr()
+std::ostringstream& log()
 {
-    std::string string = log().str();
-    log().str("");
-    return string;
+    static std::ostringstream log;
+    return log;
 }
 
-struct RefLogger {
-    RefLogger(const char* name) : name(*name) { }
-    void ref() { log() << "ref(" << &name << ") "; }
-    void deref() { log() << "deref(" << &name << ") "; }
-    const char& name;
-};
-
-struct DerivedRefLogger : RefLogger {
-    DerivedRefLogger(const char* name) : RefLogger(name) { log().str(""); }
-};
-
 }
-
-#endif

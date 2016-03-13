@@ -41,9 +41,10 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Counters.cpp
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/AtomicString.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/BloomFilter.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CString.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/Condition.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CheckedArithmeticOperations.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Condition.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/DateMath.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Deque.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Functional.cpp
@@ -62,6 +63,8 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ParkingLot.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RedBlackTree.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Ref.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/RefCounter.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/RefLogger.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RefPtr.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/SHA1.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/SaturatedArithmeticOperations.cpp
@@ -73,8 +76,12 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/TemporaryChange.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Vector.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/WeakPtr.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WorkQueue.cpp
 )
+
+# FIXME: Tests/WTF/RunLoop.cpp is missing because it doesn't work for Windows.
+# FIXME: Platform-specific sources in Tests/WTF are not included in TestWTF_SOURCES.
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
