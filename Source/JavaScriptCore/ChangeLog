@@ -1,3 +1,15 @@
+2016-03-12  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed variable names from default constructor declarations.
+        https://bugs.webkit.org/show_bug.cgi?id=155397
+
+        Reviewed by Mark Lam.
+
+        They carry no information and generate unused variable warning with GCC
+        4.8 in a lot of source files.
+
+        * parser/VariableEnvironment.h:
+
 2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete dead SVG Font code

@@ -81,8 +81,8 @@ public:
         : m_map(WTFMove(other.m_map))
         , m_isEverythingCaptured(other.m_isEverythingCaptured)
     { }
-    VariableEnvironment(const VariableEnvironment& other) = default;
-    VariableEnvironment& operator=(const VariableEnvironment& other) = default;
+    VariableEnvironment(const VariableEnvironment&) = default;
+    VariableEnvironment& operator=(const VariableEnvironment&) = default;
 
     ALWAYS_INLINE Map::iterator begin() { return m_map.begin(); }
     ALWAYS_INLINE Map::iterator end() { return m_map.end(); }
