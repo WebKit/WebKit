@@ -393,10 +393,10 @@ void DOMTimer::updateTimerIntervalIfNecessary()
 
     if (repeatInterval()) {
         ASSERT(repeatIntervalMS() == previousInterval);
-        LOG(DOMTimers, "%p - Updating DOMTimer's repeat interval from %lld ms to %lld ms due to throttling.", this, previousInterval.count(), m_currentTimerInterval.count());
+        LOG(DOMTimers, "%p - Updating DOMTimer's repeat interval from %" PRId64 " ms to %" PRId64 " ms due to throttling.", this, previousInterval.count(), m_currentTimerInterval.count());
         augmentRepeatInterval(m_currentTimerInterval - previousInterval);
     } else {
-        LOG(DOMTimers, "%p - Updating DOMTimer's fire interval from %lld ms to %lld ms due to throttling.", this, previousInterval.count(), m_currentTimerInterval.count());
+        LOG(DOMTimers, "%p - Updating DOMTimer's fire interval from %" PRId64 " ms to %" PRId64 " ms due to throttling.", this, previousInterval.count(), m_currentTimerInterval.count());
         augmentFireInterval(m_currentTimerInterval - previousInterval);
     }
 }

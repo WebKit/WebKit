@@ -1,3 +1,16 @@
+2016-03-13  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Fix debug build error since r197690. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=155408
+
+        Unreviewed. Change %lld to %PRId instead to correct the error below.
+        error: format ‘%lld’ expects argument of type ‘long long int’,
+        but argument 5 has type ‘std::chrono::duration<long int, std::ratio<1l, 1000l> >::rep
+        {aka long int}’ [-Werror=format=]
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::updateTimerIntervalIfNecessary):
+
 2016-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Remove typedef from NSScrollerImp to ScrollbarPainter
