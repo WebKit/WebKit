@@ -1,3 +1,12 @@
+2016-03-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking js/funcion-apply.html as flaky on mac debug
+        https://bugs.webkit.org/show_bug.cgi?id=155411
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-03-10  Antonio Gomes  <tonikitoo@webkit.org>
 
         Selecting with shift+drag results in unexpected drag-n-drop
