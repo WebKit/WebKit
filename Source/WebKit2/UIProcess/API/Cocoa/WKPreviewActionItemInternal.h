@@ -29,7 +29,7 @@
 
 #import "WKPreviewActionItem.h"
 
-@interface WKPreviewAction : UIPreviewAction <NSCopying, WKPreviewActionItem>
+@interface WKPreviewAction : UIPreviewAction <WKPreviewActionItem>
 
 + (instancetype)actionWithIdentifier:(NSString *)identifier title:(NSString *)title style:(UIPreviewActionStyle)style handler:(void (^)(UIPreviewAction *action, UIViewController *previewViewController))handler;
 

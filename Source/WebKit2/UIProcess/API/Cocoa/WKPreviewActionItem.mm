@@ -38,6 +38,13 @@
     return action;
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    WKPreviewAction *action = [super copyWithZone:zone];
+    action->_identifier = self.identifier;
+    return action;
+}
+
 @end
 
 #endif // WK_API_ENABLED && TARGET_OS_IPHONE
