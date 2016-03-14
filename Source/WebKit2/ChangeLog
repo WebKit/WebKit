@@ -1,3 +1,16 @@
+2016-03-14  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r191691): Can't Share Selected Text
+        https://bugs.webkit.org/show_bug.cgi?id=155459
+        rdar://problem/24893625
+
+        Reviewed by Tim Horton.
+
+        Add the selected text as well. Somehow this got lost in the refactoring.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::createShareMenuItem):
+
 2016-03-14  Tim Horton  <timothy_horton@apple.com>
 
         Revert r194125 and r194186: We're going to fix this a different way.
