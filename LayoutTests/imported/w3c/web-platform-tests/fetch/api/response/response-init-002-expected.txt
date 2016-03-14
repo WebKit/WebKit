@@ -1,6 +1,6 @@
 
 PASS Initialize Response with headers values 
-FAIL Initialize Response's body with application/octet-binary promise_test: Unhandled rejection with value: undefined
+PASS Initialize Response's body with application/octet-binary 
 FAIL Initialize Response's body with multipart/form-data promise_test: Unhandled rejection with value: undefined
 FAIL Initialize Response's body with application/x-www-form-urlencoded;charset=UTF-8 assert_true: Content-Type header should be "application/x-www-form-urlencoded;charset=UTF-8"  expected true got false
 PASS Initialize Response's body with text/plain;charset=UTF-8 

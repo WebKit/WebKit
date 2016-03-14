@@ -33,10 +33,10 @@
 
 #include "ActiveDOMObject.h"
 #include "FetchBody.h"
+#include "FetchLoader.h"
+#include "FetchLoaderClient.h"
 
 namespace WebCore {
-
-enum class FetchLoadingType { Text, ArrayBuffer, Blob };
 
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject {
 public:
@@ -50,29 +50,41 @@ public:
     void json(DeferredWrapper&& promise) { m_body.json(*this, WTFMove(promise)); }
     void text(DeferredWrapper&& promise) { m_body.text(*this, WTFMove(promise)); }
 
-    void loadBlob(Blob&, FetchLoadingType);
+    void loadBlob(Blob&, FetchLoader::Type);
+
+    bool isActive() const { return !!m_blobLoader; }
+
+private:
+    // Blob loading routines
+    void loadedBlobAsText(String&&);
+    void loadedBlobAsArrayBuffer(RefPtr<ArrayBuffer>&& buffer) { m_body.loadedAsArrayBuffer(WTFMove(buffer)); }
+    void blobLoadingSucceeded() { finishBlobLoading(); }
+    void blobLoadingFailed();
+    void finishBlobLoading();
+
+    // ActiveDOMObject API
+    void stop() override;
+
+    struct BlobLoader final : FetchLoaderClient {
+        BlobLoader(FetchBodyOwner&);
+
+        // FetchLoaderClient API
+        void didFinishLoadingAsText(String&& text) final { owner.loadedBlobAsText(WTFMove(text)); }
+        void didFinishLoadingAsArrayBuffer(RefPtr<ArrayBuffer>&& buffer) final { owner.loadedBlobAsArrayBuffer(WTFMove(buffer)); }
+        void didReceiveResponse(const ResourceResponse&) final;
+        void didFail() final { owner.blobLoadingFailed(); };
+        void didSucceed() final { owner.blobLoadingSucceeded(); }
+
+        FetchBodyOwner& owner;
+        std::unique_ptr<FetchLoader> loader;
+    };
 
 protected:
     FetchBody m_body;
+
+private:
+    Optional<BlobLoader> m_blobLoader;
 };
-
-inline FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, FetchBody&& body)
-    : ActiveDOMObject(&context)
-    , m_body(WTFMove(body))
-{
-    suspendIfNeeded();
-}
-
-inline void FetchBodyOwner::loadBlob(Blob& blob, FetchLoadingType type)
-{
-    if (type == FetchLoadingType::Blob) {
-        // FIXME: Clone blob.
-        m_body.loadedAsBlob(blob);
-        return;
-    }
-    // FIXME: Implement blob loading.
-    m_body.loadingFailed();
-}
 
 } // namespace WebCore
 

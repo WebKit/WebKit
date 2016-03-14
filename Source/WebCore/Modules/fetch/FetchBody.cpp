@@ -135,8 +135,11 @@ void FetchBody::json(FetchBodyOwner& owner, DeferredWrapper&& promise)
     if (processIfEmptyOrDisturbed(Consumer::Type::JSON, promise))
         return;
 
+    if (!owner.scriptExecutionContext())
+        return;
+
     if (m_type == Type::Text) {
-        resolveAsJSON(owner.scriptExecutionContext(), m_text, WTFMove(promise));
+        resolveAsJSON(*owner.scriptExecutionContext(), m_text, WTFMove(promise));
         return;
     }
     consume(owner, Consumer::Type::JSON, WTFMove(promise));
@@ -182,19 +185,18 @@ void FetchBody::consumeText(Consumer::Type type, DeferredWrapper&& promise)
     promise.resolve<RefPtr<Blob>>(Blob::create(extractFromText(), contentType));
 }
 
-FetchLoadingType FetchBody::loadingType(Consumer::Type type)
+FetchLoader::Type FetchBody::loadingType(Consumer::Type type)
 {
     switch (type) {
     case Consumer::Type::JSON:
     case Consumer::Type::Text:
-        return FetchLoadingType::Text;
+        return FetchLoader::Type::Text;
     case Consumer::Type::Blob:
-        return FetchLoadingType::Blob;
     case Consumer::Type::ArrayBuffer:
-        return FetchLoadingType::ArrayBuffer;
+        return FetchLoader::Type::ArrayBuffer;
     default:
         ASSERT_NOT_REACHED();
-        return FetchLoadingType::ArrayBuffer;
+        return FetchLoader::Type::ArrayBuffer;
     };
 }
 
@@ -206,9 +208,9 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Consumer::Type type, Deferred
     owner.loadBlob(*m_blob, loadingType(type));
 }
 
-void FetchBody::resolveAsJSON(ScriptExecutionContext* context, const String& data, DeferredWrapper&& promise)
+void FetchBody::resolveAsJSON(ScriptExecutionContext& context, const String& data, DeferredWrapper&& promise)
 {
-    DOMRequestState state(context);
+    DOMRequestState state(&context);
     JSC::JSValue value = JSC::JSONParse(state.exec(), data);
     if (!value)
         promise.reject<ExceptionCode>(SYNTAX_ERR);
@@ -233,10 +235,30 @@ void FetchBody::loadingFailed()
     m_consumer = Nullopt;
 }
 
-void FetchBody::loadedAsBlob(Blob& blob)
+void FetchBody::loadedAsArrayBuffer(RefPtr<ArrayBuffer>&& buffer)
 {
     ASSERT(m_consumer);
-    m_consumer->promise.resolve(&blob);
+    ASSERT(m_consumer->type == Consumer::Type::Blob || m_consumer->type == Consumer::Type::ArrayBuffer);
+    if (m_consumer->type == Consumer::Type::ArrayBuffer)
+        m_consumer->promise.resolve(buffer);
+    else {
+        ASSERT(m_blob);
+        Vector<char> data;
+        data.reserveCapacity(buffer->byteLength());
+        data.append(static_cast<const char*>(buffer->data()), buffer->byteLength());
+        m_consumer->promise.resolve<RefPtr<Blob>>(Blob::create(WTFMove(data), m_blob->type()));
+    }
+    m_consumer = Nullopt;
+}
+
+void FetchBody::loadedAsText(ScriptExecutionContext& context, String&& text)
+{
+    ASSERT(m_consumer);
+    ASSERT(m_consumer->type == Consumer::Type::Text || m_consumer->type == Consumer::Type::JSON);
+    if (m_consumer->type == Consumer::Type::Text)
+        m_consumer->promise.resolve(text);
+    else
+        resolveAsJSON(context, text, WTFMove(m_consumer->promise));
     m_consumer = Nullopt;
 }
 

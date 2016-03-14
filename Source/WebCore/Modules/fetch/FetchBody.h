@@ -33,6 +33,7 @@
 
 #include "Blob.h"
 #include "DOMFormData.h"
+#include "FetchLoader.h"
 #include "JSDOMPromise.h"
 
 namespace JSC {
@@ -43,7 +44,6 @@ class JSValue;
 namespace WebCore {
 
 class FetchBodyOwner;
-enum class FetchLoadingType;
 
 class FetchBody {
 public:
@@ -64,7 +64,8 @@ public:
     FetchBody() = default;
 
     void loadingFailed();
-    void loadedAsBlob(Blob&);
+    void loadedAsArrayBuffer(RefPtr<ArrayBuffer>&&);
+    void loadedAsText(ScriptExecutionContext&, String&&);
 
 private:
     enum class Type { None, Text, Blob, FormData };
@@ -85,8 +86,8 @@ private:
     bool processIfEmptyOrDisturbed(Consumer::Type, DeferredWrapper&);
     void consumeText(Consumer::Type, DeferredWrapper&&);
     void consumeBlob(FetchBodyOwner&, Consumer::Type, DeferredWrapper&&);
-    void resolveAsJSON(ScriptExecutionContext*, const String&, DeferredWrapper&&);
-    static FetchLoadingType loadingType(Consumer::Type);
+    void resolveAsJSON(ScriptExecutionContext&, const String&, DeferredWrapper&&);
+    static FetchLoader::Type loadingType(Consumer::Type);
 
     Type m_type = Type::None;
     String m_mimeType;

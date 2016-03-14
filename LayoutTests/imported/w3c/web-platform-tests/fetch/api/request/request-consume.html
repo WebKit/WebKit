@@ -79,7 +79,7 @@
 
     var formData = new FormData();
     formData.append("name", "value")
-    var textData = "This is response's body";
+    var textData = JSON.stringify("This is response's body");
     var blob = new Blob([textData], { "type" : "text/plain" });
 
     checkRequestBody(textData, "text", checkBodyText);

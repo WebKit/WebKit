@@ -1,3 +1,49 @@
+2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Implement data resolution for blob stored in Body
+        https://bugs.webkit.org/show_bug.cgi?id=155359
+
+        Reviewed by Darin Adler.
+
+        Introducing FetchLoader as a wrapper around ThreadableLoader to load resources.
+        FetchLoader can retrieve data as text or array buffer. It only supports blob currently.
+
+        Introducing FetchLoaderClient interface and FetchBodyOwner::BlobLoader as specifc blob loader client.
+
+        Covered by existing rebased tests.
+
+        * CMakeLists.txt:
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::loadingType):
+        (WebCore::FetchBody::loadedAsArrayBuffer):
+        (WebCore::FetchBody::loadedAsText):
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBodyOwner.cpp: Added.
+        (WebCore::FetchBodyOwner::FetchBodyOwner):
+        (WebCore::FetchBodyOwner::loadBlob):
+        (WebCore::FetchBodyOwner::finishBlobLoading):
+        (WebCore::FetchBodyOwner::blobLoadingFailed):
+        (WebCore::FetchBodyOwner::BlobLoader::didReceiveResponse):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::loadedBlobAsText):
+        (WebCore::FetchBodyOwner::loadedBlobAsArrayBuffer):
+        (WebCore::FetchBodyOwner::blobLoadingSucceeded):
+        * Modules/fetch/FetchLoader.cpp: Added.
+        (WebCore::FetchLoader::start):
+        (WebCore::FetchLoader::FetchLoader):
+        (WebCore::FetchLoader::stop):
+        (WebCore::FetchLoader::didReceiveResponse):
+        (WebCore::FetchLoader::didReceiveData):
+        (WebCore::FetchLoader::didFinishLoading):
+        (WebCore::FetchLoader::didFail):
+        * Modules/fetch/FetchLoader.h: Added.
+        * Modules/fetch/FetchLoaderClient.h: Added.
+        (WebCore::FetchLoaderClient::~FetchLoaderClient):
+        (WebCore::FetchLoaderClient::didReceiveResponse):
+        (WebCore::FetchLoaderClient::didFinishLoadingAsText):
+        (WebCore::FetchLoaderClient::didFinishLoadingAsArrayBuffer):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-03-14  Frederic Wang  <fwang@igalia.com>
 
         Make MathML colspan/rowspan consistent with HTML table cells.

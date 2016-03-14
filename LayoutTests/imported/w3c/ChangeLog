@@ -1,5 +1,19 @@
 2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Fetch API] Implement data resolution for blob stored in Body
+        https://bugs.webkit.org/show_bug.cgi?id=155359
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/fetch/api/request/request-consume-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume.html:
+        * web-platform-tests/fetch/api/request/request-init-002-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume.html:
+        * web-platform-tests/fetch/api/response/response-init-002-expected.txt:
+
+2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Web platform test server should not try to launch servers on already bound sockets
         https://bugs.webkit.org/show_bug.cgi?id=141157
 

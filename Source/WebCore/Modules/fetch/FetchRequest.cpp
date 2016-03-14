@@ -453,7 +453,8 @@ const char* FetchRequest::activeDOMObjectName() const
 
 bool FetchRequest::canSuspendForDocumentSuspension() const
 {
-    return true;
+    // FIXME: We can probably do the same strategy as XHR.
+    return !isActive();
 }
 
 } // namespace WebCore

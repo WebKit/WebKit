@@ -5,9 +5,9 @@ PASS Consume request's body as arrayBuffer
 PASS Consume request's body as json 
 FAIL Consume request's body as formData promise_test: Unhandled rejection with value: undefined
 PASS Consume blob response's body as blob 
-FAIL Consume blob response's body as text promise_test: Unhandled rejection with value: undefined
-FAIL Consume blob response's body as json promise_test: Unhandled rejection with value: undefined
-FAIL Consume blob response's body as arrayBuffer promise_test: Unhandled rejection with value: undefined
+PASS Consume blob response's body as text 
+PASS Consume blob response's body as json 
+PASS Consume blob response's body as arrayBuffer 
 PASS Consume JSON from text: '"null"' 
 PASS Consume JSON from text: '"1"' 
 PASS Consume JSON from text: '"true"' 
