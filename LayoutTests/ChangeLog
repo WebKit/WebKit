@@ -1,3 +1,16 @@
+2016-03-14  Zalan Bujtas  <zalan@apple.com>
+
+        Outline: auto has sharp corners with single line contenteditable.
+        https://bugs.webkit.org/show_bug.cgi?id=155418
+
+        Reviewed by Tim Horton.
+
+        Multiple rectangles assumed multiline content and it broke bottomLeft and bottomRight corner check.
+        This patch adds fast path for polygons with 4 corners.
+
+        * fast/inline/hidpi-outline-auto-with-one-focusring-rect-expected.html: Added.
+        * fast/inline/hidpi-outline-auto-with-one-focusring-rect.html: Added.
+
 2016-03-14  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [AX] SVG element with child desc not exposed
