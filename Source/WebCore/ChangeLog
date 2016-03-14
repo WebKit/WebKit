@@ -1,3 +1,25 @@
+2016-03-14  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][MediaFoundation] Implement float versions of MediaPlayer methods.
+        https://bugs.webkit.org/show_bug.cgi?id=155357
+
+        Reviewed by Brent Fulgham.
+
+        It is better to implement the float versions of some of the MediaPlayer methods,
+        since the default implementation of the double versions is to call the float version.
+        Also added override keyword to overridden methods.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::seeking):
+        (WebCore::MediaPlayerPrivateMediaFoundation::seek):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setRate):
+        (WebCore::MediaPlayerPrivateMediaFoundation::duration):
+        (WebCore::MediaPlayerPrivateMediaFoundation::currentTime):
+        (WebCore::MediaPlayerPrivateMediaFoundation::seekDouble): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::setRateDouble): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::durationDouble): Deleted.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2016-03-14  Tim Horton  <timothy_horton@apple.com>
 
         Revert r194125 and r194186: We're going to fix this a different way.

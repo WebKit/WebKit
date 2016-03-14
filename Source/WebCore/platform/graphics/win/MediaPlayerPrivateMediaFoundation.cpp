@@ -230,7 +230,7 @@ bool MediaPlayerPrivateMediaFoundation::seeking() const
     return false;
 }
 
-void MediaPlayerPrivateMediaFoundation::seekDouble(double time)
+void MediaPlayerPrivateMediaFoundation::seek(float time)
 {
     PROPVARIANT propVariant;
     PropVariantInit(&propVariant);
@@ -244,7 +244,7 @@ void MediaPlayerPrivateMediaFoundation::seekDouble(double time)
     m_player->timeChanged();
 }
 
-void MediaPlayerPrivateMediaFoundation::setRateDouble(double rate)
+void MediaPlayerPrivateMediaFoundation::setRate(float rate)
 {
     COMPtr<IMFRateControl> rateControl;
 
@@ -258,7 +258,7 @@ void MediaPlayerPrivateMediaFoundation::setRateDouble(double rate)
     rateControl->SetRate(reduceSamplesInStream, rate);
 }
 
-double MediaPlayerPrivateMediaFoundation::durationDouble() const
+float MediaPlayerPrivateMediaFoundation::duration() const
 {
     if (!m_mediaSource)
         return 0;
@@ -272,7 +272,7 @@ double MediaPlayerPrivateMediaFoundation::durationDouble() const
         duration = 0;
     descriptor->Release();
     
-    return static_cast<double>(duration) / tenMegahertz;
+    return static_cast<float>(duration) / tenMegahertz;
 }
 
 float MediaPlayerPrivateMediaFoundation::currentTime() const
