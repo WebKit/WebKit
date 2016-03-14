@@ -1,3 +1,38 @@
+2016-03-14  Tim Horton  <timothy_horton@apple.com>
+
+        Revert r194125 and r194186: We're going to fix this a different way.
+
+        * Shared/NativeWebGestureEvent.h:
+        * Shared/mac/NativeWebGestureEventMac.mm:
+        (WebKit::pointForEvent):
+        (WebKit::NativeWebGestureEvent::NativeWebGestureEvent):
+        (WebKit::distanceForTouches): Deleted.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView selectFindMatch:completionHandler:]):
+        (-[WKWebView _web_superInputContext]):
+        (-[WKWebView touchesBeganWithEvent:]): Deleted.
+        (-[WKWebView touchesMovedWithEvent:]): Deleted.
+        (-[WKWebView touchesEndedWithEvent:]): Deleted.
+        (-[WKWebView touchesCancelledWithEvent:]): Deleted.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        (-[WKView touchesBeganWithEvent:]): Deleted.
+        (-[WKView touchesMovedWithEvent:]): Deleted.
+        (-[WKView touchesEndedWithEvent:]): Deleted.
+        (-[WKView touchesCancelledWithEvent:]): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::magnifyWithEvent):
+        (WebKit::WebViewImpl::smartMagnifyWithEvent):
+        (WebKit::WebViewImpl::rotateWithEvent):
+        (WebKit::WebViewImpl::touchesOrderedByAge): Deleted.
+        (WebKit::WebViewImpl::touchesBeganWithEvent): Deleted.
+        (WebKit::WebViewImpl::touchesMovedWithEvent): Deleted.
+        (WebKit::WebViewImpl::touchesEndedWithEvent): Deleted.
+        (WebKit::WebViewImpl::touchesCancelledWithEvent): Deleted.
+
 2016-03-14  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

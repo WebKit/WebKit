@@ -842,26 +842,6 @@ Some other editing-related methods still unimplemented:
     return _data->_impl->namesOfPromisedFilesDroppedAtDestination(dropDestination);
 }
 
-- (void)touchesBeganWithEvent:(NSEvent *)event
-{
-    _data->_impl->touchesBeganWithEvent(event);
-}
-
-- (void)touchesMovedWithEvent:(NSEvent *)event
-{
-    _data->_impl->touchesMovedWithEvent(event);
-}
-
-- (void)touchesEndedWithEvent:(NSEvent *)event
-{
-    _data->_impl->touchesEndedWithEvent(event);
-}
-
-- (void)touchesCancelledWithEvent:(NSEvent *)event
-{
-    _data->_impl->touchesCancelledWithEvent(event);
-}
-
 - (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView
 {
     self = [super initWithFrame:frame];

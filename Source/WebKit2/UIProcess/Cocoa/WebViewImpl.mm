@@ -486,7 +486,6 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     registerDraggedTypes();
 
     m_view.wantsLayer = YES;
-    m_view.acceptsTouchEvents = YES;
 
     // Explicitly set the layer contents placement so AppKit will make sure that our layer has masksToBounds set to YES.
     m_view.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
@@ -3259,7 +3258,7 @@ void WebViewImpl::magnifyWithEvent(NSEvent *event)
 {
     if (!m_allowsMagnification) {
 #if ENABLE(MAC_GESTURE_EVENTS)
-        NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view, touchesOrderedByAge());
+        NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view);
         m_page->handleGestureEvent(webEvent);
 #endif
         [m_view _web_superMagnifyWithEvent:event];
@@ -3276,65 +3275,11 @@ void WebViewImpl::magnifyWithEvent(NSEvent *event)
         return;
     }
 
-    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view, touchesOrderedByAge());
+    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view);
     m_page->handleGestureEvent(webEvent);
 #else
     gestureController.handleMagnificationGestureEvent(event, [m_view convertPoint:event.locationInWindow fromView:nil]);
 #endif
-}
-
-Vector<NSTouch *> WebViewImpl::touchesOrderedByAge()
-{
-    Vector<NSTouch *> touches;
-
-    for (auto& touchIdentity : m_activeTouchIdentities) {
-        for (NSTouch *touch in m_lastTouches.get()) {
-            if (![touch.identity isEqual:touchIdentity.get()])
-                continue;
-            touches.append(touch);
-            break;
-        }
-    }
-
-    return touches;
-}
-
-void WebViewImpl::touchesBeganWithEvent(NSEvent *event)
-{
-    m_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:m_view].allObjects;
-    for (NSTouch *touch in [event touchesMatchingPhase:NSTouchPhaseBegan inView:m_view])
-        m_activeTouchIdentities.append(touch.identity);
-}
-
-void WebViewImpl::touchesMovedWithEvent(NSEvent *event)
-{
-    m_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:m_view].allObjects;
-}
-
-void WebViewImpl::touchesEndedWithEvent(NSEvent *event)
-{
-    m_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:m_view].allObjects;
-    for (NSTouch *touch in [event touchesMatchingPhase:NSTouchPhaseEnded inView:m_view]) {
-        for (size_t i = 0; i < m_activeTouchIdentities.size(); i++) {
-            if ([m_activeTouchIdentities[i] isEqual:touch.identity]) {
-                m_activeTouchIdentities.remove(i);
-                break;
-            }
-        }
-    }
-}
-
-void WebViewImpl::touchesCancelledWithEvent(NSEvent *event)
-{
-    m_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:m_view].allObjects;
-    for (NSTouch *touch in [event touchesMatchingPhase:NSTouchPhaseCancelled inView:m_view]) {
-        for (size_t i = 0; i < m_activeTouchIdentities.size(); i++) {
-            if ([m_activeTouchIdentities[i] isEqual:touch.identity]) {
-                m_activeTouchIdentities.remove(i);
-                break;
-            }
-        }
-    }
 }
 
 void WebViewImpl::smartMagnifyWithEvent(NSEvent *event)
@@ -3365,7 +3310,7 @@ void WebViewImpl::setLastMouseDownEvent(NSEvent *event)
 #if ENABLE(MAC_GESTURE_EVENTS)
 void WebViewImpl::rotateWithEvent(NSEvent *event)
 {
-    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view, touchesOrderedByAge());
+    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view);
     m_page->handleGestureEvent(webEvent);
 }
 #endif

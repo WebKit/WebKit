@@ -2881,26 +2881,6 @@ WEBCORE_COMMAND(yankAndSelect)
     [[self _ensureTextFinderClient] selectFindMatch:findMatch completionHandler:completionHandler];
 }
 
-- (void)touchesBeganWithEvent:(NSEvent *)event
-{
-    _impl->touchesBeganWithEvent(event);
-}
-
-- (void)touchesMovedWithEvent:(NSEvent *)event
-{
-    _impl->touchesMovedWithEvent(event);
-}
-
-- (void)touchesEndedWithEvent:(NSEvent *)event
-{
-    _impl->touchesEndedWithEvent(event);
-}
-
-- (void)touchesCancelledWithEvent:(NSEvent *)event
-{
-    _impl->touchesCancelledWithEvent(event);
-}
-
 - (NSTextInputContext *)_web_superInputContext
 {
     return [super inputContext];

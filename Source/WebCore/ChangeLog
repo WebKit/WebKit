@@ -1,3 +1,11 @@
+2016-03-14  Tim Horton  <timothy_horton@apple.com>
+
+        Revert r194125 and r194186: We're going to fix this a different way.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        * page/EventHandler.h:
+
 2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] FetchLoader should check for empty bodies

@@ -32,13 +32,12 @@
 #include "WebGestureEvent.h"
 
 OBJC_CLASS NSEvent;
-OBJC_CLASS NSTouch;
 
 namespace WebKit {
 
 class NativeWebGestureEvent final : public WebGestureEvent {
 public:
-    explicit NativeWebGestureEvent(NSEvent *, NSView *, Vector<NSTouch *> touches);
+    explicit NativeWebGestureEvent(NSEvent *, NSView *);
 
     NSEvent *nativeEvent() const { return m_nativeEvent.get(); }
 
