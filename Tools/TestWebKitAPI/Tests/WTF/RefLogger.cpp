@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-
 #include "RefLogger.h"
 
 namespace TestWebKitAPI {

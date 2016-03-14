@@ -1,3 +1,12 @@
+2016-03-14  David Kilzer  <ddkilzer@apple.com>
+
+        Remove blank lines after #include "config.h"
+
+        Follow-up fix from review comments on Bug 155394.
+
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        * TestWebKitAPI/Tests/WTF/RefLogger.cpp:
+
 2016-03-14  Frederic Wang  <fred.wang@free.fr>
 
         Unreviewed: Add my professional email address.

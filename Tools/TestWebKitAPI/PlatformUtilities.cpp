@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-
 #include "PlatformUtilities.h"
 
 #include <wtf/StdLibExtras.h>
