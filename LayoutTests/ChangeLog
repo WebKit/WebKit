@@ -1,5 +1,15 @@
 2016-03-14  Saam barati  <sbarati@apple.com>
 
+        [ES6] Disallow var assignments in for-in loops
+        https://bugs.webkit.org/show_bug.cgi?id=155451
+
+        Reviewed by Mark Lam.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
+2016-03-14  Saam barati  <sbarati@apple.com>
+
         assignments in for-in/for-of header not allowed
         https://bugs.webkit.org/show_bug.cgi?id=155384
 
