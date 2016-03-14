@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 32: WebGL: INVALID_OPERATION: drawArrays: attempt to access outside the bounds of the simulated vertexAttrib0 array
+CONSOLE MESSAGE: line 30: WebGL: INVALID_OPERATION: drawArrays: attempt to access outside the bounds of the simulated vertexAttrib0 array
 

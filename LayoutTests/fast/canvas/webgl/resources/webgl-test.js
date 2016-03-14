@@ -1,8 +1,5 @@
 //----------------------------------------------------------------------
 // Differences with respect to Khronos version of webgl-test.js
-if (window.testRunner)
-    testRunner.overridePreference("WebKitWebGLEnabled", "1");
-
 function assertMsg(assertion, msg) {
     if (assertion) {
         testPassed(msg);
@@ -12,8 +9,6 @@ function assertMsg(assertion, msg) {
 }
 
 function initNonKhronosFramework(waitUntilDone) {
-  if (window.testRunner)
-    testRunner.overridePreference("WebKitWebGLEnabled", "1");
   if (waitUntilDone)
     window.jsTestIsAsync = true;
 }

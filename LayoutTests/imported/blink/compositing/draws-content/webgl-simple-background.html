@@ -13,9 +13,6 @@
       }
     </style>
     <script>
-        if (window.testRunner)
-            testRunner.overridePreference("WebKitWebGLEnabled", "1");
-
         function drawCanvas(canvasID) {
             var canvas = document.getElementById(canvasID);
             var gl = canvas.getContext("webgl");

@@ -94,10 +94,8 @@
                 gl.drawArrays(gl.TRIANGLES, 0, 3); 
             }
             
-            if (window.testRunner) {
+            if (window.testRunner)
                 testRunner.waitUntilDone();
-                testRunner.overridePreference("WebKitWebGLEnabled", "1");
-            }
             
             initialize();
 

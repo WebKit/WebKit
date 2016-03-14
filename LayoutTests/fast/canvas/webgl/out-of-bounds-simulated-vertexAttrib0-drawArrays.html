@@ -1,9 +1,7 @@
 <script>
 
-if (window.testRunner) {
+if (window.testRunner)
     window.testRunner.dumpAsText();
-    testRunner.overridePreference("WebKitWebGLEnabled", "1");
-}
 
 function createShader(str, type) {
     var shader = gl.createShader(type);

@@ -1,3 +1,54 @@
+2016-03-13  Dean Jackson  <dino@apple.com>
+
+        DRT should enable WebGL by default on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=155419
+        <rdar://problem/25136981>
+
+        Reviewed by Sam Weinig.
+
+        Update all the tests that no longer have to explicitly
+        turn WebGL on.
+
+        * compositing/backface-visibility/backface-visibility-webgl.html:
+        * compositing/visibility/visibility-simple-webgl-layer.html:
+        * compositing/webgl/webgl-background-color.html:
+        * compositing/webgl/webgl-no-alpha.html:
+        * compositing/webgl/webgl-nonpremultiplied-blend.html:
+        * compositing/webgl/webgl-reflection.html:
+        * compositing/webgl/webgl-repaint.html:
+        * fast/canvas/webgl/antialiasing-enabled.html:
+        * fast/canvas/webgl/canvas-resize-crash.html:
+        * fast/canvas/webgl/css-webkit-canvas-repaint.html:
+        * fast/canvas/webgl/css-webkit-canvas.html:
+        * fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays-expected.txt:
+        * fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html:
+        * fast/canvas/webgl/premultiplyalpha-test.html:
+        * fast/canvas/webgl/resources/webgl-test.js:
+        (initNonKhronosFramework): Deleted.
+        * fast/canvas/webgl/texImage2DImageDataTest.html:
+        * fast/canvas/webgl/toDataURL-unpremultipliedAlpha.html:
+        * fast/canvas/webgl/unprefixed-context.html:
+        * fast/canvas/webgl/webgl-composite-modes-repaint.html:
+        * fast/canvas/webgl/webgl-composite-modes.html:
+        * fast/canvas/webgl/webgl-drawarrays-crash.html:
+        * fast/canvas/webgl/webgl-layer-update.html:
+        * fast/canvas/webgl/webgl-reload-crash.html:
+        * http/tests/canvas/webgl/origin-clean-conformance.html:
+        * http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html:
+        * http/tests/security/webgl-remote-read-remote-image-allowed.html:
+        * http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html:
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/unit.js:
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/resources/js-test-pre.js:
+        * http/tests/webgl/1.0.2/resources/webkit-webgl-test-harness.js:
+        * imported/blink/compositing/draws-content/webgl-simple-background.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/more/unit.js:
+        * webgl/1.0.2/resources/webgl_test_files/resources/js-test-pre.js:
+        * webgl/1.0.2/resources/webkit-webgl-test-harness.js:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/more/unit.js:
+        * webgl/1.0.3/resources/webgl_test_files/resources/js-test-pre.js:
+        * webgl/1.0.3/resources/webkit-webgl-test-harness.js:
+        * webgl/resources/webkit-webgl-test-harness.js:
+
 2016-03-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r190840): crash inside details element's slotNameFunction

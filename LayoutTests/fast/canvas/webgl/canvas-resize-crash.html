@@ -27,16 +27,7 @@ testPassed("Canvas did not crash on resize.");
 </head>
 
 <body onload="start()">
-<!-- Enable WebGL in the testing framework (without this we will fail to
-     create a GL context) -->
-
-<script>
-  if (window.testRunner) {
-    testRunner.overridePreference("WebKitWebGLEnabled", "1");
-  }
-</script>
-
-<canvas id="example"></canvas>
+    <canvas id="example"></canvas>
 </body>
 </html>
 

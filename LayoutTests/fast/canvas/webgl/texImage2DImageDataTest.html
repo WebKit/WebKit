@@ -51,10 +51,8 @@
         
         function init()
         {
-            if (window.testRunner) {
-                testRunner.overridePreference("WebKitWebGLEnabled", "1");
+            if (window.testRunner)
                 testRunner.dumpAsText();
-            }
             // Set up a canvas to get image data from
             var canvas2d = document.getElementById("texcanvas");
             var context2d = canvas2d.getContext("2d");

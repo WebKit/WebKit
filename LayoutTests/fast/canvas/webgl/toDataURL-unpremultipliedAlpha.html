@@ -12,9 +12,6 @@
 <script>
 var wtu = WebGLTestUtils;
 
-if (window.testRunner)
-    testRunner.overridePreference("WebKitWebGLEnabled", "1");
-
 description("Test toDataURL on a non-premultipledAlpha WebGL context.");
 var canvas = document.createElement("canvas");
 var gl = wtu.create3DContext(canvas, { premultipliedAlpha: false, preserveDrawingBuffer: true });

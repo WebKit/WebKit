@@ -93,9 +93,6 @@
                 gl.clear(gl.COLOR_BUFFER_BIT);
                 gl.drawArrays(gl.TRIANGLES, 0, 3); 
             }
-            
-            if (window.testRunner)
-                testRunner.overridePreference("WebKitWebGLEnabled", "1");
 
             initialize();
             draw(0, 0.5, 0);
