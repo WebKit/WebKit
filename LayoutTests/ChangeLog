@@ -1,3 +1,11 @@
+2016-03-14  Frederic Wang  <fred.wang@free.fr>
+
+        Skip accessibility/internal-link-anchors2.html as the linked ui element API is not supported for links.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2016-03-14  Frederic Wang  <fwang@igalia.com>
 
         Make MathML colspan/rowspan consistent with HTML table cells.
