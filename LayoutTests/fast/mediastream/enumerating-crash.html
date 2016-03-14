@@ -1,0 +1,33 @@
+<html>
+<head>
+</head>
+<body>
+<p>Test to ensure we don't crash when enumerating media devices. The test passes if it does not crash.</p>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</body>
+<script>
+function shouldNotCrash() {
+    try {
+        document.addEventListener("webglcontextlost", function () {
+            var x = window.navigator.mediaDevices;
+            x.enumerateDevices();
+            x.getUserMediaFromJS(123456789.);
+        }, true);
+
+        var dispatch_fn = function() {
+            var evt = document.createEvent("Event");
+            evt.initEvent("webglcontextlost", false, false);
+            document.dispatchEvent(evt);
+        }
+        window.setInterval(dispatch_fn, 202);
+    } catch(e) {
+        document.write("Errlog shouldNotCrash: " + e.name + ": " + e.message + "<br>");
+    }
+}
+shouldNotCrash();
+</script>
+</html>
+

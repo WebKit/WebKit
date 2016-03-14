@@ -85,13 +85,14 @@ void MediaDevicesRequest::start()
 
 void MediaDevicesRequest::didCompletePermissionCheck(const String& salt, bool canAccess)
 {
+    RefPtr<UserMediaPermissionCheck> permissionCheckProtector = m_permissionCheck;
     m_permissionCheck->setClient(nullptr);
     m_permissionCheck = nullptr;
 
     m_idHashSalt = salt;
     m_havePersistentPermission = canAccess;
 
-    callOnMainThread([this] {
+    callOnMainThread([this, permissionCheckProtector] {
         RealtimeMediaSourceCenter::singleton().getMediaStreamTrackSources(this);
     });
 }
