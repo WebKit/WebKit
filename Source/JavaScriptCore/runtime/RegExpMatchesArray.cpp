@@ -52,26 +52,33 @@ static JSArray* tryCreateUninitializedRegExpMatchesArray(VM& vm, Structure* stru
 
 JSArray* createRegExpMatchesArray(
     ExecState* exec, JSGlobalObject* globalObject, JSString* input, RegExp* regExp,
-    MatchResult result)
+    unsigned startOffset, MatchResult& result)
 {
     SamplingRegion samplingRegion("createRegExpMatchesArray");
     
-    ASSERT(result);
     VM& vm = globalObject->vm();
+    
+    Vector<int, 32> subpatternResults;
+    int position = regExp->match(vm, input->value(exec), startOffset, subpatternResults);
+    if (position == -1) {
+        result = MatchResult::failed();
+        return nullptr;
+    }
 
+    result.start = position;
+    result.end = subpatternResults[1];
+    
     JSArray* array;
+
+    // FIXME: This should handle array allocation errors gracefully.
+    // https://bugs.webkit.org/show_bug.cgi?id=155144
+    
     if (UNLIKELY(globalObject->isHavingABadTime())) {
         array = JSArray::tryCreateUninitialized(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
         
         array->initializeIndex(vm, 0, jsSubstring(vm, exec, input, result.start, result.end - result.start));
         
         if (unsigned numSubpatterns = regExp->numSubpatterns()) {
-            Vector<int, 32> subpatternResults;
-            int position = regExp->match(vm, input->value(exec), result.start, subpatternResults);
-            ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == result.start);
-            ASSERT(result.start == static_cast<size_t>(subpatternResults[0]));
-            ASSERT(result.end == static_cast<size_t>(subpatternResults[1]));
-            
             for (unsigned i = 1; i <= numSubpatterns; ++i) {
                 int start = subpatternResults[2 * i];
                 if (start >= 0)
@@ -87,12 +94,6 @@ JSArray* createRegExpMatchesArray(
         array->initializeIndex(vm, 0, jsSubstring(vm, exec, input, result.start, result.end - result.start), ArrayWithContiguous);
         
         if (unsigned numSubpatterns = regExp->numSubpatterns()) {
-            Vector<int, 32> subpatternResults;
-            int position = regExp->match(vm, input->value(exec), result.start, subpatternResults);
-            ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == result.start);
-            ASSERT(result.start == static_cast<size_t>(subpatternResults[0]));
-            ASSERT(result.end == static_cast<size_t>(subpatternResults[1]));
-            
             for (unsigned i = 1; i <= numSubpatterns; ++i) {
                 int start = subpatternResults[2 * i];
                 if (start >= 0)
@@ -106,6 +107,40 @@ JSArray* createRegExpMatchesArray(
     array->putDirect(vm, indexPropertyOffset, jsNumber(result.start));
     array->putDirect(vm, inputPropertyOffset, input);
 
+    return array;
+}
+
+JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* input, RegExp* regExp)
+{
+    VM& vm = globalObject->vm();
+    JSArray* array;
+
+    // FIXME: This should handle array allocation errors gracefully.
+    // https://bugs.webkit.org/show_bug.cgi?id=155144
+    
+    if (UNLIKELY(globalObject->isHavingABadTime())) {
+        array = JSArray::tryCreateUninitialized(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
+        
+        array->initializeIndex(vm, 0, jsEmptyString(&vm));
+        
+        if (unsigned numSubpatterns = regExp->numSubpatterns()) {
+            for (unsigned i = 1; i <= numSubpatterns; ++i)
+                array->initializeIndex(vm, i, jsUndefined());
+        }
+    } else {
+        array = tryCreateUninitializedRegExpMatchesArray(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
+        RELEASE_ASSERT(array);
+        
+        array->initializeIndex(vm, 0, jsEmptyString(&vm), ArrayWithContiguous);
+        
+        if (unsigned numSubpatterns = regExp->numSubpatterns()) {
+            for (unsigned i = 1; i <= numSubpatterns; ++i)
+                array->initializeIndex(vm, i, jsUndefined(), ArrayWithContiguous);
+        }
+    }
+
+    array->putDirect(vm, indexPropertyOffset, jsNumber(-1));
+    array->putDirect(vm, inputPropertyOffset, input);
     return array;
 }
 

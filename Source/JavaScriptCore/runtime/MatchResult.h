@@ -29,6 +29,12 @@
 typedef uint64_t EncodedMatchResult;
 
 struct MatchResult {
+    MatchResult()
+        : start(WTF::notFound)
+        , end(0)
+    {
+    }
+    
     ALWAYS_INLINE MatchResult(size_t start, size_t end)
         : start(start)
         , end(end)
@@ -51,10 +57,10 @@ struct MatchResult {
 
     ALWAYS_INLINE static MatchResult failed()
     {
-        return MatchResult(WTF::notFound, 0);
+        return MatchResult();
     }
 
-    ALWAYS_INLINE operator bool()
+    ALWAYS_INLINE explicit operator bool() const
     {
         return start != WTF::notFound;
     }

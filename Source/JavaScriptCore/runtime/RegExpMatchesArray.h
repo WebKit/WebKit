@@ -26,7 +26,13 @@
 
 namespace JSC {
 
-JSArray* createRegExpMatchesArray(ExecState*, JSGlobalObject*, JSString*, RegExp*, MatchResult);
+JSArray* createRegExpMatchesArray(ExecState*, JSGlobalObject*, JSString*, RegExp*, unsigned startOffset, MatchResult&);
+inline JSArray* createRegExpMatchesArray(ExecState* exec, JSGlobalObject* globalObject, JSString* string, RegExp* regExp, unsigned startOffset)
+{
+    MatchResult ignoredResult;
+    return createRegExpMatchesArray(exec, globalObject, string, regExp, startOffset, ignoredResult);
+}
+JSArray* createEmptyRegExpMatchesArray(JSGlobalObject*, JSString*, RegExp*);
 Structure* createRegExpMatchesArrayStructure(VM&, JSGlobalObject*);
 Structure* createRegExpMatchesArraySlowPutStructure(VM&, JSGlobalObject*);
 
