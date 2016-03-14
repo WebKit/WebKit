@@ -112,3 +112,50 @@ test(function() {
     }
     assert(threw);
 });
+
+test(function() {
+    let arr = ["foo", 25, "bar"];
+    let handler = {
+        get: function(theTarget, propName) {
+            assert(propName === "toJSON");
+            return function() {
+                return arr;
+            }
+        }
+    };
+    let proxy = new Proxy({}, handler);
+    assert(JSON.stringify(proxy) === JSON.stringify(arr));
+});
+
+test(function() {
+    let arr = ["foo", 25, "bar"];
+    let handler = {
+        get: function(theTarget, propName) {
+            assert(propName === "toJSON");
+            return function() {
+                return arr;
+            }
+        }
+    };
+    let proxy = new Proxy({}, handler);
+    let o1 = {foo: arr};
+    let o2 = {foo: proxy};
+    assert(JSON.stringify(o1) === JSON.stringify(o2));
+});
+
+test(function() {
+    let arr = ["foo", 25, "bar"];
+    let proxy = new Proxy(function() { return arr; }, {});
+    assert(JSON.stringify({toJSON: proxy}) === JSON.stringify(arr));
+});
+
+test(function() {
+    let arr = ["foo", 25, "bar"];
+    let proxy = new Proxy({}, {});
+    let o = {foo: 20};
+    Object.defineProperty(o, "toJSON", {
+        enumerable: false,
+        value: proxy
+    });
+    assert(JSON.stringify(o) === JSON.stringify({foo: 20}));
+});

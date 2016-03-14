@@ -1,5 +1,31 @@
 2016-03-14  Saam barati  <sbarati@apple.com>
 
+        [ES6] Make JSON.stringify ES6 compatible
+        https://bugs.webkit.org/show_bug.cgi?id=155448
+
+        Reviewed by Sam Weinig and Mark Lam.
+
+        We weren't following the spec with respect to the "toJSON" property
+        of the thing being stringified. We were perform hasProperty(.)
+        on "toJSON" instead of get(.). This patch changes it our
+        implementation to perform get(value, "toJSON").
+
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isFunction):
+        (JSC::JSValue::isCallable):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::toJSONImpl):
+        (JSC::Stringifier::appendStringifiedValue):
+        * tests/es6.yaml:
+        * tests/stress/proxy-json.js:
+        (test):
+        (test.let.handler.get assert):
+        (test.let.handler):
+
+2016-03-14  Saam barati  <sbarati@apple.com>
+
         [ES6] Disallow var assignments in for-in loops
         https://bugs.webkit.org/show_bug.cgi?id=155451
 

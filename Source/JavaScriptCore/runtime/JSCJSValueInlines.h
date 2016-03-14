@@ -710,6 +710,11 @@ inline bool JSValue::isFunction() const
 
 inline bool JSValue::isFunction(CallType& callType, CallData& callData) const
 {
+    return isCallable(callType, callData);
+}
+
+inline bool JSValue::isCallable(CallType& callType, CallData& callData) const
+{
     if (!isCell())
         return false;
     JSCell* cell = asCell();
