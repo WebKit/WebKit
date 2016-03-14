@@ -1172,6 +1172,12 @@
     IMPL->withScriptArgumentsAndCallStack();
 }
 
+- (void)withDocumentArgument
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->withDocumentArgument();
+}
+
 - (void)methodWithOptionalArg:(int)opt
 {
     WebCore::JSMainThreadNullState state;

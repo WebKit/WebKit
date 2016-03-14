@@ -52,11 +52,11 @@
 namespace WebCore {
 
 class Dictionary;
+class Document;
 class NotificationCenter;
 class NotificationPermissionCallback;
 class ResourceError;
 class ResourceResponse;
-class ScriptExecutionContext;
 class ThreadableLoader;
 
 typedef int ExceptionCode;
@@ -122,9 +122,9 @@ public:
     WEBCORE_EXPORT void finalize();
 
 #if ENABLE(NOTIFICATIONS)
-    static const String permission(ScriptExecutionContext&);
+    static const String permission(Document&);
     WEBCORE_EXPORT static const String permissionString(NotificationClient::Permission);
-    static void requestPermission(ScriptExecutionContext&, PassRefPtr<NotificationPermissionCallback> = nullptr);
+    static void requestPermission(Document&, PassRefPtr<NotificationPermissionCallback> = nullptr);
 #endif
 
 private:

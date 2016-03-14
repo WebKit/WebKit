@@ -91,9 +91,9 @@ void History::back()
     go(-1);
 }
 
-void History::back(ScriptExecutionContext* context)
+void History::back(Document& document)
 {
-    go(context, -1);
+    go(document, -1);
 }
 
 void History::forward()
@@ -101,9 +101,9 @@ void History::forward()
     go(1);
 }
 
-void History::forward(ScriptExecutionContext* context)
+void History::forward(Document& document)
 {
-    go(context, 1);
+    go(document, 1);
 }
 
 void History::go(int distance)
@@ -114,17 +114,14 @@ void History::go(int distance)
     m_frame->navigationScheduler().scheduleHistoryNavigation(distance);
 }
 
-void History::go(ScriptExecutionContext* context, int distance)
+void History::go(Document& document, int distance)
 {
     if (!m_frame)
         return;
 
     ASSERT(isMainThread());
-    Document* activeDocument = downcast<Document>(context);
-    if (!activeDocument)
-        return;
 
-    if (!activeDocument->canNavigate(m_frame))
+    if (!document.canNavigate(m_frame))
         return;
 
     m_frame->navigationScheduler().scheduleHistoryNavigation(distance);

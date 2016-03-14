@@ -3289,10 +3289,19 @@ sub GenerateCallWith
     my @callWithArgs;
     push(@callWithArgs, "*state") if $codeGenerator->ExtendedAttributeContains($callWith, "ScriptState");
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
-        push(@$outputArray, "    auto* scriptContext = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();\n");
-        push(@$outputArray, "    if (!scriptContext)\n");
+        push(@$outputArray, "    auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();\n");
+        push(@$outputArray, "    if (!context)\n");
         push(@$outputArray, "        return" . ($returnValue ? " " . $returnValue : "") . ";\n");
-        push(@callWithArgs, "*scriptContext");
+        push(@callWithArgs, "*context");
+    }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "Document")) {
+        $implIncludes{"Document.h"} = 1;
+        push(@$outputArray, "    auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();\n");
+        push(@$outputArray, "    if (!context)\n");
+        push(@$outputArray, "        return" . ($returnValue ? " " . $returnValue : "") . ";\n");
+        push(@$outputArray, "    ASSERT(context->isDocument());\n");
+        push(@$outputArray, "    auto& document = downcast<Document>(*context);\n");
+        push(@callWithArgs, "document");
     }
     if ($function and $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments")) {
         push(@$outputArray, "    RefPtr<Inspector::ScriptArguments> scriptArguments(Inspector::createScriptArguments(state, " . @{$function->parameters} . "));\n");
@@ -4925,6 +4934,7 @@ END
                 push(@$outputArray, "    ScriptExecutionContext* context = castedThis->scriptExecutionContext();\n");
                 push(@$outputArray, "    if (!context)\n");
                 push(@$outputArray, "        return throwConstructorDocumentUnavailableError(*state, \"${interfaceName}\");\n");
+                push(@$outputArray, "    ASSERT(context->isDocument());\n");
                 push(@$outputArray, "    auto& document = downcast<Document>(*context);\n");
             }
             if ($generatingNamedConstructor) {

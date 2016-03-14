@@ -24,7 +24,7 @@ CPPPureInterface
 CachedAttribute
 CallbackNeedsOperatorEqual
 Callback=FunctionOnly
-CallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow
+CallWith=Document|ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow
 CheckSecurity
 CheckSecurityForNode
 Clamp

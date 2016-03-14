@@ -296,7 +296,7 @@ void InspectorStubFrontend::closeWindow()
     m_frontendController.setInspectorFrontendClient(nullptr);
     inspectedPage()->inspectorController().disconnectFrontend(this);
 
-    m_frontendWindow->close(m_frontendWindow->scriptExecutionContext());
+    m_frontendWindow->close();
     m_frontendWindow = nullptr;
 }
 

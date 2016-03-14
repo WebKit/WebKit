@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
+class Document;
 class Frame;
-class ScriptExecutionContext;
 struct ExceptionCodeWithMessage;
 typedef int ExceptionCode;
 
@@ -49,15 +49,11 @@ public:
     PassRefPtr<SerializedScriptValue> state();
     void back();
     void forward();
-    void go(int distance);
+    void go(int);
 
-    void back(ScriptExecutionContext& context) { back(&context); }
-    void forward(ScriptExecutionContext& context) { forward(&context); }
-    void go(ScriptExecutionContext& context, int distance) { go(&context, distance); }
-
-    void back(ScriptExecutionContext*);
-    void forward(ScriptExecutionContext*);
-    void go(ScriptExecutionContext*, int distance);
+    void back(Document&);
+    void forward(Document&);
+    void go(Document&, int);
 
     bool stateChanged() const;
     bool isSameAsCurrentState(SerializedScriptValue*) const;

@@ -437,6 +437,15 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_with_script_execution_context_and_script_state_with_spaces(WebKitDOMTestObj* self);
 
 /**
+ * webkit_dom_test_obj_with_document_argument:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_with_document_argument(WebKitDOMTestObj* self);
+
+/**
  * webkit_dom_test_obj_method_with_optional_arg:
  * @self: A #WebKitDOMTestObj
  * @opt: A #glong

@@ -221,10 +221,9 @@ void Notification::taskTimerFired()
 
 
 #if ENABLE(NOTIFICATIONS)
-const String Notification::permission(ScriptExecutionContext& context)
+const String Notification::permission(Document& document)
 {
-    ASSERT(downcast<Document>(context).page());
-    return permissionString(NotificationController::from(downcast<Document>(context).page())->client()->checkPermission(&context));
+    return permissionString(NotificationController::from(document.page())->client()->checkPermission(&document));
 }
 
 const String Notification::permissionString(NotificationClient::Permission permission)
@@ -242,10 +241,9 @@ const String Notification::permissionString(NotificationClient::Permission permi
     return String();
 }
 
-void Notification::requestPermission(ScriptExecutionContext& context, PassRefPtr<NotificationPermissionCallback> callback)
+void Notification::requestPermission(Document& document, PassRefPtr<NotificationPermissionCallback> callback)
 {
-    ASSERT(downcast<Document>(context).page());
-    NotificationController::from(downcast<Document>(context).page())->client()->requestPermission(&context, callback);
+    NotificationController::from(document.page())->client()->requestPermission(&document, callback);
 }
 #endif
 

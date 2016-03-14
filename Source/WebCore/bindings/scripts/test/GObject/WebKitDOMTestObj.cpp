@@ -1465,6 +1465,14 @@ WebKitDOMTestObj* webkit_dom_test_obj_with_script_execution_context_and_script_s
     return WebKit::kit(gobjectResult.get());
 }
 
+void webkit_dom_test_obj_with_document_argument(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->withDocumentArgument();
+}
+
 void webkit_dom_test_obj_method_with_optional_arg(WebKitDOMTestObj* self, glong opt)
 {
     WebCore::JSMainThreadNullState state;

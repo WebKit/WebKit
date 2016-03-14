@@ -1,3 +1,61 @@
+2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Introduce CallWith=Document in binding generator
+        https://bugs.webkit.org/show_bug.cgi?id=155358
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests and binding test.
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::permission): Taking a Document& instead of ScriptExecutionContext&.
+        (WebCore::Notification::requestPermission): Ditto.
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/Notification.idl: Using CallWith=Document.
+        * bindings/scripts/CodeGeneratorJS.pm: Adding support for CallWith=Document and changed name from scriptContext to context.
+        (GenerateCallWith):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/IDLAttributes.txt: Adding support for CallWith=Document.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_with_document_argument):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjWithScriptExecutionContextAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContext):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptState):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces):
+        (WebCore::jsTestObjPrototypeFunctionWithDocumentArgument):
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj withDocumentArgument]):
+        * bindings/scripts/test/TestObj.idl: Adding binding test.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::focus): Taking a Document& instead of ScriptExecutionContext&.
+        (WebCore::DOMWindow::close): Ditto.
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/History.cpp:
+        (WebCore::History::back): Ditto.
+        (WebCore::History::forward): Ditto.
+        (WebCore::History::go): Ditto.
+        * page/History.h:
+        * page/History.idl:
+        * testing/Internals.cpp:
+        (WebCore::InspectorStubFrontend::closeWindow): Calling DOMWindow::close() directly.
+
 2016-03-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX) guards
