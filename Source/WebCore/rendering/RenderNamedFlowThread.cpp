@@ -298,7 +298,7 @@ LayoutRect RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment(c
     // Take the scrolled offset of this object's parents into consideration.
     IntSize scrolledContentOffset;
     RenderBlock* containingBlock = box.containingBlock();
-    while (containingBlock) {
+    while (containingBlock && !is<RenderView>(*containingBlock)) {
         if (containingBlock->isRenderNamedFlowThread()) {
             // We've reached the flow thread, take the scrolled offset of the region into consideration.
             ASSERT(containingBlock == this);

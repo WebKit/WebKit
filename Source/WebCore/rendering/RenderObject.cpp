@@ -525,7 +525,7 @@ static bool hasFixedPosInNamedFlowContainingBlock(const RenderObject* renderer)
     ASSERT(renderer->flowThreadState() != RenderObject::NotInsideFlowThread);
 
     RenderObject* curr = const_cast<RenderObject*>(renderer);
-    while (curr) {
+    while (curr && !is<RenderView>(*curr)) {
         if (curr->fixedPositionedWithNamedFlowContainingBlock())
             return true;
         curr = curr->containingBlock();

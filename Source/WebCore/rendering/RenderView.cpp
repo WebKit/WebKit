@@ -764,7 +764,7 @@ LayoutRect RenderView::subtreeSelectionBounds(const SelectionSubtreeRoot& root, 
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
             selectedObjects.set(os, std::make_unique<RenderSelectionInfo>(*os, clipToVisibleContent));
             RenderBlock* cb = os->containingBlock();
-            while (cb && !cb->isRenderView()) {
+            while (cb && !is<RenderView>(*cb)) {
                 std::unique_ptr<RenderSelectionInfo>& blockInfo = selectedObjects.add(cb, nullptr).iterator->value;
                 if (blockInfo)
                     break;
@@ -817,7 +817,7 @@ void RenderView::repaintSubtreeSelection(const SelectionSubtreeRoot& root) const
         RenderSelectionInfo(*o, true).repaint();
 
         // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
-        for (RenderBlock* block = o->containingBlock(); block && !block->isRenderView(); block = block->containingBlock()) {
+        for (RenderBlock* block = o->containingBlock(); block && !is<RenderView>(*block); block = block->containingBlock()) {
             if (!processedBlocks.add(block).isNewEntry)
                 break;
             RenderSelectionInfo(*block, true).repaint();
@@ -953,7 +953,7 @@ void RenderView::clearSubtreeSelection(const SelectionSubtreeRoot& root, Selecti
             oldSelectionData.selectedObjects.set(os, std::make_unique<RenderSelectionInfo>(*os, true));
             if (blockRepaintMode == RepaintNewXOROld) {
                 RenderBlock* cb = os->containingBlock();
-                while (cb && !cb->isRenderView()) {
+                while (cb && !is<RenderView>(*cb)) {
                     std::unique_ptr<RenderBlockSelectionInfo>& blockInfo = oldSelectionData.selectedBlocks.add(cb, nullptr).iterator->value;
                     if (blockInfo)
                         break;
@@ -1018,7 +1018,7 @@ void RenderView::applySubtreeSelection(const SelectionSubtreeRoot& root, Selecti
             newSelectedObjects.set(currentRenderer, WTFMove(selectionInfo));
 
             RenderBlock* containingBlock = currentRenderer->containingBlock();
-            while (containingBlock && !containingBlock->isRenderView()) {
+            while (containingBlock && !is<RenderView>(*containingBlock)) {
                 std::unique_ptr<RenderBlockSelectionInfo>& blockInfo = newSelectedBlocks.add(containingBlock, nullptr).iterator->value;
                 if (blockInfo)
                     break;
