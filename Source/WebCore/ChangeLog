@@ -1,3 +1,16 @@
+2016-03-14  Tomas Popela  <tpopela@redhat.com>
+
+        Enable GSS-Negotiate support in libsoup
+        https://bugs.webkit.org/show_bug.cgi?id=155354
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable the SOUP_TYPE_AUTH_NEGOTIATE feature if libsoup was compiled
+        with the GSS-Negotiate support.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+
 2016-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add slotchange event
