@@ -1,3 +1,50 @@
+2016-03-14  Saam barati  <sbarati@apple.com>
+
+        assignments in for-in/for-of header not allowed
+        https://bugs.webkit.org/show_bug.cgi?id=155384
+
+        Reviewed by Darin Adler.
+
+        This patch prevents assignments to the loop variable
+        in for in/of loops in all but one situation. The following
+        syntax is still allowed even though the spec prevents it:
+        ```
+        for (var i = X in blah) ;
+        ```
+        If the loop contains let/const, destructuring, or is a for-of
+        loop, we always throw a syntax error if there is an assignment.
+        We can do this with full backwards compatibility.
+        We only allow the above type of for-in loops because Oliver told
+        me that when he tried to make such programs illegal he ran
+        into real websites breaking.
+
+        This patch also removed the !::CreatesAST compile-time branch when checking
+        assignments to new.target. This was a dangerous thing for me
+        to introduce into our parser. There are times where ::CreatesAST
+        is true but we also want to check for syntax errors. For example,
+        when parsing the top-level AST of a program. Though this check
+        was technically correct, it's dangerous to have. It was correct
+        because we would always be reparsing the new.target assignment
+        because new.target is only allowed inside a function. That made it
+        so that (!::CreatesAST <=> we care about new.target assignment syntax errors).
+        But, (!::CreatesAST <=> we care about syntax error X) is not true in general.
+        I think it's safer to remove such code.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createNewTargetExpr):
+        (JSC::ASTBuilder::isNewTarget):
+        (JSC::ASTBuilder::createResolve):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isBoolean):
+        (JSC::ExpressionNode::isSpreadExpression):
+        (JSC::ExpressionNode::isSuperNode):
+        (JSC::ExpressionNode::isNewTarget):
+        (JSC::ExpressionNode::isBytecodeIntrinsicNode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+
 2016-03-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX) guards

@@ -344,6 +344,21 @@ valid("for (var a = (b in c) in d) break");
 invalid("for (var a = (b in c in d) break");
 invalid("for (var (a) in b) { }");
 valid  ("for (var a = 7, b = c < d >= d ; f()[6]++ ; --i()[1]++ ) {}");
+invalid("for (var {a} = 20 in b) { }");
+invalid("for (var {a} = 20 of b) { }");
+invalid("for (var {a} = 20 in b) { }");
+valid("for (var i = 20 in b) { }");
+invalid("for (var i = 20 of b) { }");
+invalid("for (var {i} = 20 of b) { }");
+invalid("for (var [i] = 20 of b) { }");
+invalid("for (let [i] = 20 of b) { }");
+invalid("for (const [i] = 20 of b) { }");
+invalid("for (const i = 20 of b) { }");
+invalid("for (let i = 20 of b) { }");
+invalid("for (let i = 20 in b) { }");
+invalid("for (const i = 20 in b) { }");
+invalid("for (const {i} = 20 in b) { }");
+invalid("for (let {i} = 20 in b) { }");
 
 debug  ("try statement");
 

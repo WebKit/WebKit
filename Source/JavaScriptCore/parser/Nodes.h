@@ -174,6 +174,7 @@ namespace JSC {
         virtual bool isBoolean() const { return false; }
         virtual bool isSpreadExpression() const { return false; }
         virtual bool isSuperNode() const { return false; }
+        virtual bool isNewTarget() const { return false; }
         virtual bool isBytecodeIntrinsicNode() const { return false; }
 
         virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label*, Label*, FallThroughMode);
@@ -560,6 +561,7 @@ namespace JSC {
         NewTargetNode(const JSTokenLocation&);
 
     private:
+        bool isNewTarget() const final { return true; }
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
