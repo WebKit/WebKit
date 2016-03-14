@@ -1,5 +1,26 @@
 2016-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Fix rendering of slider input elements
+        https://bugs.webkit.org/show_bug.cgi?id=155296
+
+        Reviewed by Michael Catanzaro.
+
+        Use the new gadgets for newer GTK+ and improve a bit the rendering
+        for previous versions to better match GTK+.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::createStyleContext): Add ScaleContents and
+        ScaleHighlight parts that are only used with GTK+ 3.19.
+        (WebCore::RenderThemeGtk::paintSliderTrack): Use a smaller trough,
+        centered in the given rectangle to better match GTK+. Also render
+        the hightlight gadget with GTK+ 3.19.
+        (WebCore::RenderThemeGtk::paintSliderThumb): Also create the style
+        context for contents gadget.
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize): Take into
+        account the slider border when calculating the slider thumb size.
+
+2016-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Scrollbars are broken once again with current GTK+ master
         https://bugs.webkit.org/show_bug.cgi?id=155292
 

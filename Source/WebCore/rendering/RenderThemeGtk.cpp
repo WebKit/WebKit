@@ -152,8 +152,10 @@ enum RenderThemePart {
     ComboBoxButton,
     ComboBoxArrow,
     Scale,
+    ScaleContents,
     ScaleTrough,
     ScaleSlider,
+    ScaleHighlight,
     ProgressBar,
     ProgressBarTrough,
     ProgressBarProgress,
@@ -281,6 +283,15 @@ static GRefPtr<GtkStyleContext> createStyleContext(RenderThemePart themePart, Gt
         gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SCALE);
 #endif
         break;
+    case ScaleContents:
+#if GTK_CHECK_VERSION(3, 19, 11)
+        gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
+        gtk_widget_path_iter_set_object_name(path.get(), -1, "contents");
+        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SCALE);
+#else
+        ASSERT_NOT_REACHED();
+#endif
+        break;
     case ScaleTrough:
         gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
 #if GTK_CHECK_VERSION(3, 19, 2)
@@ -297,6 +308,15 @@ static GRefPtr<GtkStyleContext> createStyleContext(RenderThemePart themePart, Gt
 #else
         gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SCALE);
         gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SLIDER);
+#endif
+        break;
+    case ScaleHighlight:
+#if GTK_CHECK_VERSION(3, 19, 11)
+        gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
+        gtk_widget_path_iter_set_object_name(path.get(), -1, "highlight");
+        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SCALE);
+#else
+        ASSERT_NOT_REACHED();
 #endif
         break;
     case ProgressBar:
@@ -1074,23 +1094,62 @@ void RenderThemeGtk::adjustSliderThumbStyle(StyleResolver& styleResolver, Render
 bool RenderThemeGtk::paintSliderTrack(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     ControlPart part = renderObject.style().appearance();
-    ASSERT_UNUSED(part, part == SliderHorizontalPart || part == SliderVerticalPart);
+    ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart);
 
     GRefPtr<GtkStyleContext> parentContext = createStyleContext(Scale);
     gtk_style_context_add_class(parentContext.get(), part == SliderHorizontalPart ? GTK_STYLE_CLASS_HORIZONTAL : GTK_STYLE_CLASS_VERTICAL);
+#if GTK_CHECK_VERSION(3, 19, 11)
+    GRefPtr<GtkStyleContext> contentsContext = createStyleContext(ScaleContents, parentContext.get());
+    GRefPtr<GtkStyleContext> context = createStyleContext(ScaleTrough, contentsContext.get());
+#else
     GRefPtr<GtkStyleContext> context = createStyleContext(ScaleTrough, parentContext.get());
+#endif
     gtk_style_context_set_direction(context.get(), gtkTextDirection(renderObject.style().direction()));
 
     if (!isEnabled(renderObject))
         gtk_style_context_set_state(context.get(), GTK_STATE_FLAG_INSENSITIVE);
 
-    gtk_render_background(context.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-    gtk_render_frame(context.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+    IntRect sliderRect = rect;
+    // GTK+ uses the slider thumb size and margins to calculate the trough size, but in WebKit we render the thumb and
+    // the slider track separately and the track rectangle we receive here can't be used to apply the GTK+ CSS sizes
+    // and margins. So we use a maximum fixed size for the trough to match at least Adwaita, but that should look
+    // good in other themes as well.
+    static const int sliderSize = 4;
+
+    if (part == SliderHorizontalPart) {
+        sliderRect.setHeight(std::min(rect.height(), sliderSize));
+        sliderRect.move(0, (rect.height() - sliderRect.height()) / 2);
+    } else {
+        sliderRect.setWidth(std::min(rect.width(), sliderSize));
+        sliderRect.move((rect.width() - sliderRect.width()) / 2, 0);
+    }
+
+    gtk_render_background(context.get(), paintInfo.context().platformContext()->cr(), sliderRect.x(), sliderRect.y(), sliderRect.width(), sliderRect.height());
+    gtk_render_frame(context.get(), paintInfo.context().platformContext()->cr(), sliderRect.x(), sliderRect.y(), sliderRect.width(), sliderRect.height());
+
+#if GTK_CHECK_VERSION(3, 19, 11)
+    GRefPtr<GtkStyleContext> highlightContext = createStyleContext(ScaleHighlight, context.get());
+    LayoutPoint thumbLocation;
+    if (is<HTMLInputElement>(renderObject.node())) {
+        auto& input = downcast<HTMLInputElement>(*renderObject.node());
+        if (auto* element = input.sliderThumbElement())
+            thumbLocation = element->renderBox()->location();
+    }
+
+    IntRect highlightRect = sliderRect;
+    if (part == SliderHorizontalPart)
+        highlightRect.setWidth(thumbLocation.x());
+    else
+        highlightRect.setHeight(thumbLocation.y());
+
+    gtk_render_background(highlightContext.get(), paintInfo.context().platformContext()->cr(), highlightRect.x(), highlightRect.y(), highlightRect.width(), highlightRect.height());
+    gtk_render_frame(highlightContext.get(), paintInfo.context().platformContext()->cr(), highlightRect.x(), highlightRect.y(), highlightRect.width(), highlightRect.height());
+#endif
 
     if (isFocused(renderObject)) {
         gint focusWidth, focusPad;
         gtk_style_context_get_style(context.get(), "focus-line-width", &focusWidth, "focus-padding", &focusPad, nullptr);
-        IntRect focusRect(rect);
+        IntRect focusRect(sliderRect);
         focusRect.inflate(focusWidth + focusPad);
         gtk_render_focus(context.get(), paintInfo.context().platformContext()->cr(), focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
     }
@@ -1106,7 +1165,12 @@ bool RenderThemeGtk::paintSliderThumb(const RenderObject& renderObject, const Pa
     // FIXME: The entire slider is too wide, stretching the thumb into an oval rather than a circle.
     GRefPtr<GtkStyleContext> parentContext = createStyleContext(Scale);
     gtk_style_context_add_class(parentContext.get(), part == SliderThumbHorizontalPart ? GTK_STYLE_CLASS_HORIZONTAL : GTK_STYLE_CLASS_VERTICAL);
+#if GTK_CHECK_VERSION(3, 19, 11)
+    GRefPtr<GtkStyleContext> contentsContext = createStyleContext(ScaleContents, parentContext.get());
+    GRefPtr<GtkStyleContext> troughContext = createStyleContext(ScaleTrough, contentsContext.get());
+#else
     GRefPtr<GtkStyleContext> troughContext = createStyleContext(ScaleTrough, parentContext.get());
+#endif
     GRefPtr<GtkStyleContext> context = createStyleContext(ScaleSlider, troughContext.get());
     gtk_style_context_set_direction(context.get(), gtkTextDirection(renderObject.style().direction()));
 
@@ -1133,7 +1197,18 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderStyle& style, Element*) const
 
     GRefPtr<GtkStyleContext> context = createStyleContext(Scale);
     gint sliderWidth, sliderLength;
+#if GTK_CHECK_VERSION(3, 19, 11)
+    GRefPtr<GtkStyleContext> contentsContext = createStyleContext(ScaleContents, context.get());
+    GRefPtr<GtkStyleContext> troughContext = createStyleContext(ScaleTrough, contentsContext.get());
+    GRefPtr<GtkStyleContext> sliderContext = createStyleContext(ScaleSlider, troughContext.get());
+    gtk_style_context_get(sliderContext.get(), gtk_style_context_get_state(sliderContext.get()), "min-width", &sliderWidth, "min-height", &sliderLength, nullptr);
+    GtkBorder border;
+    gtk_style_context_get_border(sliderContext.get(), gtk_style_context_get_state(sliderContext.get()), &border);
+    sliderWidth += border.left + border.right;
+    sliderLength += border.top + border.bottom;
+#else
     gtk_style_context_get_style(context.get(), "slider-width", &sliderWidth, "slider-length", &sliderLength, nullptr);
+#endif
     if (part == SliderThumbHorizontalPart) {
         style.setWidth(Length(sliderLength, Fixed));
         style.setHeight(Length(sliderWidth, Fixed));
