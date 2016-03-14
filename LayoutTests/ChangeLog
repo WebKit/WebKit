@@ -1,5 +1,17 @@
 2016-03-14  Zalan Bujtas  <zalan@apple.com>
 
+        Negative outline offset could break curved outline-style: auto
+        https://bugs.webkit.org/show_bug.cgi?id=155416
+
+        Reviewed by Tim Horton.
+
+        When radius becomes negative the rounded rect could end up being un-renderable -> no rounded corners at all.
+
+        * fast/inline/hidpi-outline-auto-negative-offset-with-border-radius-expected.html: Added.
+        * fast/inline/hidpi-outline-auto-negative-offset-with-border-radius.html: Added.
+
+2016-03-14  Zalan Bujtas  <zalan@apple.com>
+
         [Outline: auto] Fractional radius value could result in non-renderable rounded border.
         https://bugs.webkit.org/show_bug.cgi?id=155420
 

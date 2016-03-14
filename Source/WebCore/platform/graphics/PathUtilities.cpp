@@ -444,12 +444,15 @@ static FloatRoundedRect::Radii adjustedtRadiiForHuggingCurve(const FloatSize& to
     // This adjusts the radius so that it follows the border curve even when offset is present.
     auto adjustedRadius = [outlineOffset](const FloatSize& radius)
     {
-        FloatSize adjustedRadius = radius;
+        FloatSize expandSize;
         if (radius.width() > outlineOffset)
-            adjustedRadius.expand(std::min(outlineOffset, radius.width() - outlineOffset), 0);
+            expandSize.setWidth(std::min(outlineOffset, radius.width() - outlineOffset));
         if (radius.height() > outlineOffset)
-            adjustedRadius.expand(0, std::min(outlineOffset, radius.height() - outlineOffset));
-        return adjustedRadius;
+            expandSize.setHeight(std::min(outlineOffset, radius.height() - outlineOffset));
+        FloatSize adjustedRadius = radius;
+        adjustedRadius.expand(expandSize.width(), expandSize.height());
+        // Do not go to negative radius.
+        return adjustedRadius.expandedTo(FloatSize(0, 0));
     };
 
     radii.setTopLeft(adjustedRadius(topLeftRadius));
