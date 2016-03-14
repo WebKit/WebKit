@@ -69,6 +69,8 @@ webkit.org/b/155196 media/video-with-data-url-allowed-by-csp-media-src-star.html
 
 webkit.org/b/153143 [ Yosemite ] media/track/track-in-band-style.html [ Pass Crash ]
 
+webkit.org/b/155067 storage/indexeddb/transaction-abort-private.html [ Pass Crash ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
