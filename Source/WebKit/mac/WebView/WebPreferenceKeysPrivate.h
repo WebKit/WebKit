@@ -204,3 +204,5 @@
 #define WebKitMediaDataLoadsAutomaticallyPreferenceKey @"WebKitMediaDataLoadsAutomatically"
 #define WebKitMockCaptureDevicesEnabledPreferenceKey @"WebKitMockCaptureDevicesEnabled"
 
+#define WebKitAttachmentElementEnabledPreferenceKey @"WebKitAttachmentElementEnabled"
+

@@ -1,3 +1,26 @@
+2016-03-13  Dean Jackson  <dino@apple.com>
+
+        <attachment> should be a runtime-enabled feature
+        https://bugs.webkit.org/show_bug.cgi?id=155413
+        <rdar://problem/25120753>
+
+        Reviewed by Sam Weinig and Anders Carlsson.
+
+        Add an internal setting on WKWebViewConfiguration
+        to enable the <attachment> element support.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _attachmentElementEnabled]):
+        (-[WKWebViewConfiguration _setAttachmentElementEnabled:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-03-12  Sam Weinig  <sam@webkit.org>
 
         WebKit can easily crash below NetworkSession::dataTaskForIdentifier() with NSURLSession enabled

@@ -2515,6 +2515,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 
     settings.setMediaDataLoadsAutomatically([preferences mediaDataLoadsAutomatically]);
+    settings.setAttachmentElementEnabled([preferences attachmentElementEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)

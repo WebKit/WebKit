@@ -1,3 +1,35 @@
+2016-03-13  Dean Jackson  <dino@apple.com>
+
+        <attachment> should be a runtime-enabled feature
+        https://bugs.webkit.org/show_bug.cgi?id=155413
+        <rdar://problem/25120753>
+
+        Reviewed by Sam Weinig and Anders Carlsson.
+
+        Now that <attachment> is disabled by default, use an
+        internal setting to turn them back on test by test.
+
+        * fast/attachment/attachment-default-icon-expected.html:
+        * fast/attachment/attachment-default-icon.html:
+        * fast/attachment/attachment-disabled-dom.html:
+        * fast/attachment/attachment-disabled-rendering.html:
+        * fast/attachment/attachment-dom.html:
+        * fast/attachment/attachment-folder-icon-expected.html:
+        * fast/attachment/attachment-folder-icon.html:
+        * fast/attachment/attachment-icon-from-file-extension-expected.html:
+        * fast/attachment/attachment-icon-from-file-extension.html:
+        * fast/attachment/attachment-label-highlight.html:
+        * fast/attachment/attachment-progress.html:
+        * fast/attachment/attachment-rendering.html:
+        * fast/attachment/attachment-select-on-click-inside-user-select-all.html:
+        * fast/attachment/attachment-select-on-click.html:
+        * fast/attachment/attachment-subtitle.html:
+        * fast/attachment/attachment-title.html:
+        * fast/attachment/attachment-type-attribute-expected.html:
+        * fast/attachment/attachment-type-attribute.html:
+        * editing/pasteboard/copy-paste-attachment.html:
+        * editing/pasteboard/drag-and-drop-attachment-contenteditable.html:
+
 2016-03-13  Antti Koivisto  <antti@apple.com>
 
         ComposedTreeIterator fails to traverse slots if root is shadow host

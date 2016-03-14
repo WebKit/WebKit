@@ -45,6 +45,7 @@
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PlatformCookieJar.h>
 #import <WebCore/ResourceHandle.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextEncodingRegistry.h>
 #import <runtime/InitializeThreading.h>
@@ -393,9 +394,11 @@ public:
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
+    bool attachmentElementEnabled = MacApplication::isAppleMail();
 #else
     bool allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     bool requiresPlaysInlineAttribute = !allowsInlineMediaPlayback;
+    bool attachmentElementEnabled = IOSApplication::isMobileMail();
 #endif
     InitWebCoreSystemInterface();
 
@@ -519,6 +522,7 @@ public:
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
         [NSNumber numberWithBool:YES],  WebKitAVFoundationNSURLSessionEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitSuppressesIncrementalRenderingKey,
+        [NSNumber numberWithBool:attachmentElementEnabled], WebKitAttachmentElementEnabledPreferenceKey,
 #if !PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitRequiresUserGestureForVideoPlaybackPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitRequiresUserGestureForAudioPlaybackPreferenceKey,
@@ -2655,6 +2659,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMediaDataLoadsAutomatically:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitMediaDataLoadsAutomaticallyPreferenceKey];
+}
+
+- (BOOL)attachmentElementEnabled
+{
+    return [self _boolValueForKey:WebKitAttachmentElementEnabledPreferenceKey];
+}
+
+- (void)setAttachmentElementEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAttachmentElementEnabledPreferenceKey];
 }
 
 - (BOOL)mockCaptureDevicesEnabled

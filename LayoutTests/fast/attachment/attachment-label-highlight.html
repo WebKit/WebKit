@@ -2,6 +2,9 @@
 <html>
 <body>
 <script>
+if (window.internals)
+    window.internals.settings.setAttachmentElementEnabled(true)
+
 var attachmentShortLabel = document.createElement("attachment");
 var attachmentLongOnTopLabel = document.createElement("attachment");
 var attachmentLongOnBottomLabel = document.createElement("attachment");

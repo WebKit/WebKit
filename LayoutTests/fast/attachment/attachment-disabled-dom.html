@@ -7,9 +7,6 @@
 <body>
 <script>
 
-if (window.internals)
-    window.internals.settings.setAttachmentElementEnabled(false);
-
 description("This tests that attachments have an instance type of HTMLUnknownElement if attachments are disabled.");
 
 var attachment = document.createElement("attachment");
