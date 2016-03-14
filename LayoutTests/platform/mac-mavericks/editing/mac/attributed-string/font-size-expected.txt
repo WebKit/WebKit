@@ -31,7 +31,7 @@ Alignment 4
     TighteningFactor: 0.05
     HeaderLevel: 0
 [small element]
-    NSFont: Times-Roman 13.00 pt.
+    NSFont: Times-Roman 13.33 pt.
 NSParagraphStyle:
 Alignment 4
     LineSpacing: 0
@@ -325,7 +325,7 @@ Alignment 4
     TighteningFactor: 0.05
     HeaderLevel: 0
 [5pt]
-    NSFont: Times-Roman 7.00 pt.
+    NSFont: Times-Roman 6.67 pt.
 NSParagraphStyle:
 Alignment 4
     LineSpacing: 0
