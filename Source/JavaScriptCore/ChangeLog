@@ -1,3 +1,13 @@
+2016-03-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        Andy VanWagoner no longer has time to own Intl
+
+        * features.json:
+        Andy is busy with other things.
+
+        Andy, thanks for your amazing work on Intl and your dedication
+        to making things right.
+
 2016-03-14  Julien Brianceau  <jbriance@cisco.com>
 
         [mips] Fix unaligned access in LLINT.

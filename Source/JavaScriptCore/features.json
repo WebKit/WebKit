@@ -24,12 +24,7 @@
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=90906",
         "description": "The Internationalization API provides language sensitive operations for  string, number, and date.",
-        "keywords": ["Intl", "Collator", "ECMA-402"],
-        "contact": {
-            "name": "Andy VanWagoner",
-            "email": "thetalecrafter@gmail.com",
-            "twitter": "@thetalecrafter"
-        }
+        "keywords": ["Intl", "Collator", "ECMA-402"]
     },
     {
         "name": "WebAssembly",
