@@ -1,3 +1,13 @@
+2016-03-14  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [AX] SVG element with child desc not exposed
+        https://bugs.webkit.org/show_bug.cgi?id=155374
+
+        Reviewed by Darin Adler.
+
+        * platform/gtk/accessibility/w3c-svg-roles-expected.txt: Updated.
+        * platform/mac/accessibility/w3c-svg-roles-expected.txt: Updated.
+
 2016-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip asserting test http/tests/security/aboutBlank/security-context-write.html

@@ -32,25 +32,25 @@
 
 namespace WebCore {
 
-class AccessibilitySVGElement final : public AccessibilityRenderObject {
+class AccessibilitySVGElement : public AccessibilityRenderObject {
 
 public:
     static Ref<AccessibilitySVGElement> create(RenderObject*);
     virtual ~AccessibilitySVGElement();
 
-    String accessibilityDescription() const override;
-    String helpText() const override;
+    String accessibilityDescription() const final;
+    String helpText() const final;
 
 protected:
     explicit AccessibilitySVGElement(RenderObject*);
-    bool isAccessibilitySVGElement() const override { return true; }
-    bool computeAccessibilityIsIgnored() const override;
-    AccessibilityRole determineAriaRoleAttribute() const;
 
 private:
-    void accessibilityText(Vector<AccessibilityText>&) override;
-    AccessibilityRole determineAccessibilityRole() override;
-    bool inheritsPresentationalRole() const override;
+    void accessibilityText(Vector<AccessibilityText>&) final;
+    AccessibilityRole determineAccessibilityRole() final;
+    virtual AccessibilityRole determineAriaRoleAttribute() const;
+    bool inheritsPresentationalRole() const final;
+    bool isAccessibilitySVGElement() const final { return true; }
+    bool computeAccessibilityIsIgnored() const final;
 
     AccessibilityObject* targetForUseElement() const;
 };

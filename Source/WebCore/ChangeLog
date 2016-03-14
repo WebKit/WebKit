@@ -1,3 +1,22 @@
+2016-03-14  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [AX] SVG element with child desc not exposed
+        https://bugs.webkit.org/show_bug.cgi?id=155374
+
+        Reviewed by Darin Adler.
+
+        Covered by the accessibility/w3c-svg-roles.html test, which was updated.
+
+        AccessibilitySVGRoot is now a subclass of AccessibilitySVGElement, which
+        exposes SVG elements with a child desc element as per the specification.
+        Also made existing protected methods private.
+
+        * accessibility/AccessibilitySVGElement.h:
+        * accessibility/AccessibilitySVGRoot.cpp:
+        (WebCore::AccessibilitySVGRoot::AccessibilitySVGRoot):
+        (WebCore::AccessibilitySVGRoot::parentObject):
+        * accessibility/AccessibilitySVGRoot.h:
+
 2016-03-14  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

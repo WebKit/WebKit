@@ -29,11 +29,11 @@
 #ifndef AccessibilitySVGRoot_h
 #define AccessibilitySVGRoot_h
 
-#include "AccessibilityRenderObject.h"
+#include "AccessibilitySVGElement.h"
 
 namespace WebCore {
 
-class AccessibilitySVGRoot final : public AccessibilityRenderObject {
+class AccessibilitySVGRoot final : public AccessibilitySVGElement {
 public:
     static Ref<AccessibilitySVGRoot> create(RenderObject*);
     virtual ~AccessibilitySVGRoot();

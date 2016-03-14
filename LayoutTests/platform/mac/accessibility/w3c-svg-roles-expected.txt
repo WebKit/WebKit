@@ -83,7 +83,7 @@ test26:
 	AXRole: AXImage
 test27:
 	Expected role: group
-	Element not exposed
+	AXRole: AXGroup
 test28:
 	Expected role: img
 	AXRole: AXImage
