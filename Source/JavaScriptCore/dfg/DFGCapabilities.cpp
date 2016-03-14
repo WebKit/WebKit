@@ -193,7 +193,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_construct_varargs:
     case op_create_direct_arguments:
     case op_create_scoped_arguments:
-    case op_create_out_of_band_arguments:
+    case op_create_cloned_arguments:
     case op_get_from_arguments:
     case op_put_to_arguments:
     case op_jneq_ptr:

@@ -36,28 +36,40 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ClonedArguments);
 
 const ClassInfo ClonedArguments::s_info = { "Arguments", &Base::s_info, 0, CREATE_METHOD_TABLE(ClonedArguments) };
 
-ClonedArguments::ClonedArguments(VM& vm, Structure* structure)
-    : Base(vm, structure, nullptr)
+ClonedArguments::ClonedArguments(VM& vm, Structure* structure, Butterfly* butterfly)
+    : Base(vm, structure, butterfly)
 {
 }
 
 ClonedArguments* ClonedArguments::createEmpty(
-    VM& vm, Structure* structure, JSFunction* callee)
+    VM& vm, Structure* structure, JSFunction* callee, unsigned length)
 {
+    unsigned vectorLength = std::max(BASE_VECTOR_LEN, length);
+    if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
+        return 0;
+
+    void* temp;
+    if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)), &temp))
+        return 0;
+    Butterfly* butterfly = Butterfly::fromBase(temp, 0, structure->outOfLineCapacity());
+    butterfly->setVectorLength(vectorLength);
+    butterfly->setPublicLength(length);
+
     ClonedArguments* result =
         new (NotNull, allocateCell<ClonedArguments>(vm.heap))
-        ClonedArguments(vm, structure);
+        ClonedArguments(vm, structure, butterfly);
     result->finishCreation(vm);
+
     result->m_callee.set(vm, result, callee);
+    result->putDirect(vm, clonedArgumentsLengthPropertyOffset, jsNumber(length));
     return result;
 }
 
-ClonedArguments* ClonedArguments::createEmpty(ExecState* exec, JSFunction* callee)
+ClonedArguments* ClonedArguments::createEmpty(ExecState* exec, JSFunction* callee, unsigned length)
 {
     // NB. Some clients might expect that the global object of of this object is the global object
     // of the callee. We don't do this for now, but maybe we should.
-    return createEmpty(
-        exec->vm(), exec->lexicalGlobalObject()->outOfBandArgumentsStructure(), callee);
+    return createEmpty(exec->vm(), exec->lexicalGlobalObject()->clonedArgumentsStructure(), callee, length);
 }
 
 ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, ExecState* targetFrame, InlineCallFrame* inlineCallFrame, ArgumentsMode mode)
@@ -71,7 +83,7 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
     else
         callee = jsCast<JSFunction*>(targetFrame->callee());
 
-    ClonedArguments* result = createEmpty(myFrame, callee);
+    ClonedArguments* result;
     
     unsigned length = 0; // Initialize because VC needs it.
     switch (mode) {
@@ -82,25 +94,26 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
             else
                 length = inlineCallFrame->arguments.size();
             length--;
-            
+            result = createEmpty(myFrame, callee, length);
+
             for (unsigned i = length; i--;)
-                result->putDirectIndex(myFrame, i, inlineCallFrame->arguments[i + 1].recover(targetFrame));
+                result->initializeIndex(vm, i, inlineCallFrame->arguments[i + 1].recover(targetFrame));
         } else {
             length = targetFrame->argumentCount();
-            
+            result = createEmpty(myFrame, callee, length);
+
             for (unsigned i = length; i--;)
-                result->putDirectIndex(myFrame, i, targetFrame->uncheckedArgument(i));
+                result->initializeIndex(vm, i, targetFrame->uncheckedArgument(i));
         }
         break;
     }
         
     case ArgumentsMode::FakeValues: {
-        length = 0;
+        result = createEmpty(myFrame, callee, 0);
         break;
     } }
-    
-    result->putDirect(vm, vm.propertyNames->length, jsNumber(length), DontEnum);
-    
+
+    ASSERT(myFrame->lexicalGlobalObject()->clonedArgumentsStructure() == result->structure());
     return result;
 }
 
@@ -114,18 +127,24 @@ ClonedArguments* ClonedArguments::createByCopyingFrom(
     JSFunction* callee)
 {
     VM& vm = exec->vm();
-    ClonedArguments* result = createEmpty(vm, structure, callee);
+    ClonedArguments* result = createEmpty(vm, structure, callee, length);
     
     for (unsigned i = length; i--;)
-        result->putDirectIndex(exec, i, argumentStart[i].jsValue());
-    
-    result->putDirect(vm, vm.propertyNames->length, jsNumber(length), DontEnum);
+        result->initializeIndex(vm, i, argumentStart[i].jsValue());
+
+    ASSERT(exec->lexicalGlobalObject()->clonedArgumentsStructure() == result->structure());
     return result;
 }
 
 Structure* ClonedArguments::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    // We use contiguous storage because optimizations in the FTL assume that cloned arguments creation always produces the same initial structure.
+
+    Structure* structure = Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info(), NonArrayWithContiguous);
+    PropertyOffset offset;
+    structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->length, DontEnum, offset);
+    ASSERT(offset == clonedArgumentsLengthPropertyOffset);
+    return structure;
 }
 
 bool ClonedArguments::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName ident, PropertySlot& slot)

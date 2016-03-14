@@ -52,7 +52,7 @@ void computeUsesForBytecodeOffset(
     case op_catch:
     case op_profile_control_flow:
     case op_create_direct_arguments:
-    case op_create_out_of_band_arguments:
+    case op_create_cloned_arguments:
     case op_get_rest_length:
     case op_watchdog:
         return;
@@ -410,7 +410,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_get_scope:
     case op_create_direct_arguments:
     case op_create_scoped_arguments:
-    case op_create_out_of_band_arguments:
+    case op_create_cloned_arguments:
     case op_del_by_id:
     case op_del_by_val:
     case op_unsigned:

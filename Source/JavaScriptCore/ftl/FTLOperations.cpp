@@ -328,7 +328,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         case PhantomClonedArguments: {
             unsigned length = argumentCount - 1;
             ClonedArguments* result = ClonedArguments::createEmpty(
-                vm, codeBlock->globalObject()->outOfBandArgumentsStructure(), callee);
+                vm, codeBlock->globalObject()->clonedArgumentsStructure(), callee, length);
             
             for (unsigned i = materialization->properties().size(); i--;) {
                 const ExitPropertyValue& property = materialization->properties()[i];
@@ -338,10 +338,9 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 unsigned index = property.location().info();
                 if (index >= length)
                     continue;
-                result->putDirectIndex(exec, index, JSValue::decode(values[i]));
+                result->initializeIndex(vm, index, JSValue::decode(values[i]));
             }
             
-            result->putDirect(vm, vm.propertyNames->length, jsNumber(length));
             return result;
         }
         default:

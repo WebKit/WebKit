@@ -3500,7 +3500,7 @@ private:
         LValue result = vmCall(
             m_out.int64, m_out.operation(operationCreateClonedArguments), m_callFrame,
             weakPointer(
-                m_graph.globalObjectFor(m_node->origin.semantic)->outOfBandArgumentsStructure()),
+                m_graph.globalObjectFor(m_node->origin.semantic)->clonedArgumentsStructure()),
             getArgumentsStart(), getArgumentsLength().value, getCurrentCallee());
         
         setJSValue(result);

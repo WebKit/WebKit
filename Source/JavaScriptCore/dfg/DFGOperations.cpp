@@ -961,15 +961,14 @@ JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState* exec, 
     
     unsigned length = argumentCount - 1;
     ClonedArguments* result = ClonedArguments::createEmpty(
-        vm, codeBlock->globalObject()->outOfBandArgumentsStructure(), callee);
+        vm, codeBlock->globalObject()->clonedArgumentsStructure(), callee, length);
     
     Register* arguments =
         exec->registers() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0) +
         CallFrame::argumentOffset(0);
     for (unsigned i = length; i--;)
-        result->putDirectIndex(exec, i, arguments[i].jsValue());
-    
-    result->putDirect(vm, vm.propertyNames->length, jsNumber(length));
+        result->initializeIndex(vm, i, arguments[i].jsValue());
+
     
     return result;
 }

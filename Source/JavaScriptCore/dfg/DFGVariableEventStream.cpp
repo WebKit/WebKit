@@ -107,7 +107,7 @@ bool VariableEventStream::tryToSetConstantRecovery(ValueRecovery& recovery, Mini
     }
     
     if (node->op() == PhantomClonedArguments) {
-        recovery = ValueRecovery::outOfBandArgumentsThatWereNotCreated(node->id());
+        recovery = ValueRecovery::clonedArgumentsThatWereNotCreated(node->id());
         return true;
     }
     

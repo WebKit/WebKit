@@ -212,7 +212,7 @@ SLOW_PATH_DECL(slow_path_create_scoped_arguments)
     RETURN(ScopedArguments::createByCopying(exec, table, scope));
 }
 
-SLOW_PATH_DECL(slow_path_create_out_of_band_arguments)
+SLOW_PATH_DECL(slow_path_create_cloned_arguments)
 {
     BEGIN();
     RETURN(ClonedArguments::createWithMachineFrame(exec, exec, ArgumentsMode::Cloned));

@@ -44,11 +44,11 @@ public:
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
     
 private:
-    ClonedArguments(VM&, Structure*);
+    ClonedArguments(VM&, Structure*, Butterfly*);
 
 public:
-    static ClonedArguments* createEmpty(VM&, Structure*, JSFunction* callee);
-    static ClonedArguments* createEmpty(ExecState*, JSFunction* callee);
+    static ClonedArguments* createEmpty(VM&, Structure*, JSFunction* callee, unsigned length);
+    static ClonedArguments* createEmpty(ExecState*, JSFunction* callee, unsigned length);
     static ClonedArguments* createWithInlineFrame(ExecState* myFrame, ExecState* targetFrame, InlineCallFrame*, ArgumentsMode);
     static ClonedArguments* createWithMachineFrame(ExecState* myFrame, ExecState* targetFrame, ArgumentsMode);
     static ClonedArguments* createByCopyingFrom(ExecState*, Structure*, Register* argumentsStart, unsigned length, JSFunction* callee);
@@ -72,6 +72,8 @@ private:
     
     WriteBarrier<JSFunction> m_callee; // Set to nullptr when we materialize all of our special properties.
 };
+
+static const PropertyOffset clonedArgumentsLengthPropertyOffset = 100;
 
 } // namespace JSC
 

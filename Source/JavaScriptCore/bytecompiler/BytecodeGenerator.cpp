@@ -447,8 +447,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     }
     
     if (needsArguments && (codeBlock->isStrictMode() || !isSimpleParameterList)) {
-        // Allocate an out-of-bands arguments object.
-        emitOpcode(op_create_out_of_band_arguments);
+        // Allocate a cloned arguments object.
+        emitOpcode(op_create_cloned_arguments);
         instructions().append(m_argumentsRegister->index());
     }
     

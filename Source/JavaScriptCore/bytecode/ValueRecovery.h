@@ -197,7 +197,7 @@ public:
         return result;
     }
     
-    static ValueRecovery outOfBandArgumentsThatWereNotCreated(DFG::MinifiedID id)
+    static ValueRecovery clonedArgumentsThatWereNotCreated(DFG::MinifiedID id)
     {
         ValueRecovery result;
         result.m_technique = ClonedArgumentsThatWereNotCreated;

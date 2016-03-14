@@ -799,9 +799,9 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
             break;
         }
-        case op_create_out_of_band_arguments: {
+        case op_create_cloned_arguments: {
             int r0 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "create_out_of_band_arguments");
+            printLocationAndOp(out, exec, location, it, "create_cloned_arguments");
             out.printf("%s", registerName(r0).data());
             break;
         }

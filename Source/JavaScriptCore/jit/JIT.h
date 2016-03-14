@@ -490,7 +490,7 @@ namespace JSC {
         void emit_op_to_this(Instruction*);
         void emit_op_create_direct_arguments(Instruction*);
         void emit_op_create_scoped_arguments(Instruction*);
-        void emit_op_create_out_of_band_arguments(Instruction*);
+        void emit_op_create_cloned_arguments(Instruction*);
         void emit_op_copy_rest(Instruction*);
         void emit_op_get_rest_length(Instruction*);
         void emit_op_check_tdz(Instruction*);

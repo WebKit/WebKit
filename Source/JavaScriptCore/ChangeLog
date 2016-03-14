@@ -1,3 +1,80 @@
+2016-03-14  Keith Miller  <keith_miller@apple.com>
+
+        We should be able to eliminate cloned arguments objects that use the length property
+        https://bugs.webkit.org/show_bug.cgi?id=155391
+
+        Reviewed by Geoffrey Garen.
+
+        Previously if a programmer tried to use arguments.length in a strict function we would not eliminate the
+        arguments object. We were unable to eliminate the arguments object because the user would get a cloned arguments
+        object, which does not special case the length property. Thus, in order to get arguments elimination for cloned
+        we need to add a special case. There are two things that need to happen for the elimination to succeed.
+
+        First, we need to eliminate the CheckStructure blocking the GetByOffset for the length property. In order to
+        eliminate the check structure we need to prove to the Abstract Interpreter that this structure check is
+        unnesssary. This didn't occur before for two reasons: 1) CreateClonedArguments did not set the structure it
+        produced. 2) Even if CreateClonedArguments provided the global object's cloned arguments structure we would
+        transition the new argements object when we added the length property during construction. To fix the second
+        problem we now pre-assign a slot on clonedArgumentsStructure for the length property. Additionally, in order to
+        prevent future transitions of the structure we need to choose an indexing type for the structure. Since, not
+        eliminating the arguments object is so expensive we choose to have all cloned arguments start with continuous
+        indexing type, this avoids transitioning when otherwise we would not have to. In the future we should be smarter
+        about choosing the indexing type but since its relatively rare to have a arguments object escape we don't worry
+        about this for now.
+
+        Additionally, this patch renames all former references of outOfBandArguments to clonedArguments and adds
+        extra instrumentation to DFGArgumentsEliminationPhase.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::clonedArgumentsThatWereNotCreated):
+        (JSC::ValueRecovery::outOfBandArgumentsThatWereNotCreated): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateClonedArguments):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::tryToSetConstantRecovery):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateClonedArguments):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_cloned_arguments):
+        (JSC::JIT::emit_op_create_out_of_band_arguments): Deleted.
+        * llint/LowLevelInterpreter.asm:
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::ClonedArguments):
+        (JSC::ClonedArguments::createEmpty):
+        (JSC::ClonedArguments::createWithInlineFrame):
+        (JSC::ClonedArguments::createByCopyingFrom):
+        (JSC::ClonedArguments::createStructure):
+        * runtime/ClonedArguments.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::clonedArgumentsStructure):
+        (JSC::JSGlobalObject::outOfBandArgumentsStructure): Deleted.
+
 2016-03-14  Saam barati  <sbarati@apple.com>
 
         [ES6] Make JSON.stringify ES6 compatible

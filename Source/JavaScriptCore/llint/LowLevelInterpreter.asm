@@ -1212,9 +1212,9 @@ _llint_op_create_scoped_arguments:
     dispatch(3)
 
 
-_llint_op_create_out_of_band_arguments:
+_llint_op_create_cloned_arguments:
     traceExecution()
-    callSlowPath(_slow_path_create_out_of_band_arguments)
+    callSlowPath(_slow_path_create_cloned_arguments)
     dispatch(2)
 
 

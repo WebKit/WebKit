@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "BytecodeLivenessAnalysisInlines.h"
+#include "ClonedArguments.h"
 #include "DFGArgumentsUtilities.h"
 #include "DFGBasicBlockInlines.h"
 #include "DFGBlockMapInlines.h"
@@ -118,28 +119,30 @@ private:
     // Look for escaping sites, and remove from the candidates set if we see an escape.
     void eliminateCandidatesThatEscape()
     {
-        auto escape = [&] (Edge edge) {
+        auto escape = [&] (Edge edge, Node* source) {
             if (!edge)
                 return;
-            m_candidates.remove(edge.node());
+            bool removed = m_candidates.remove(edge.node());
+            if (removed && verbose)
+                dataLog("eliminating candidate: ", edge.node(), " because it escapes from: ", source, "\n");
         };
         
-        auto escapeBasedOnArrayMode = [&] (ArrayMode mode, Edge edge) {
+        auto escapeBasedOnArrayMode = [&] (ArrayMode mode, Edge edge, Node* source) {
             switch (mode.type()) {
             case Array::DirectArguments:
                 if (edge->op() != CreateDirectArguments)
-                    escape(edge);
+                    escape(edge, source);
                 break;
             
             case Array::Int32:
             case Array::Double:
             case Array::Contiguous:
                 if (edge->op() != CreateClonedArguments)
-                    escape(edge);
+                    escape(edge, source);
                 break;
             
             default:
-                escape(edge);
+                escape(edge, source);
                 break;
             }
         };
@@ -152,14 +155,14 @@ private:
                     break;
                     
                 case GetByVal:
-                    escapeBasedOnArrayMode(node->arrayMode(), node->child1());
-                    escape(node->child2());
-                    escape(node->child3());
+                    escapeBasedOnArrayMode(node->arrayMode(), node->child1(), node);
+                    escape(node->child2(), node);
+                    escape(node->child3(), node);
                     break;
-                    
+
                 case GetArrayLength:
-                    escapeBasedOnArrayMode(node->arrayMode(), node->child1());
-                    escape(node->child2());
+                    escapeBasedOnArrayMode(node->arrayMode(), node->child1(), node);
+                    escape(node->child2(), node);
                     break;
                     
                 case LoadVarargs:
@@ -169,8 +172,8 @@ private:
                 case ConstructVarargs:
                 case TailCallVarargs:
                 case TailCallVarargsInlinedCaller:
-                    escape(node->child1());
-                    escape(node->child3());
+                    escape(node->child1(), node);
+                    escape(node->child3(), node);
                     break;
 
                 case Check:
@@ -183,7 +186,7 @@ private:
                             if (alreadyChecked(edge.useKind(), SpecObject))
                                 return;
                             
-                            escape(edge);
+                            escape(edge, node);
                         });
                     break;
                     
@@ -201,18 +204,19 @@ private:
                     break;
                     
                 case CheckArray:
-                    escapeBasedOnArrayMode(node->arrayMode(), node->child1());
+                    escapeBasedOnArrayMode(node->arrayMode(), node->child1(), node);
                     break;
-                    
-                // FIXME: For cloned arguments, we'd like to allow GetByOffset on length to not be
-                // an escape.
-                // https://bugs.webkit.org/show_bug.cgi?id=143074
+
                     
                 // FIXME: We should be able to handle GetById/GetByOffset on callee.
                 // https://bugs.webkit.org/show_bug.cgi?id=143075
-                    
+
+                case GetByOffset:
+                    if (node->child2()->op() == CreateClonedArguments && node->storageAccessData().offset == clonedArgumentsLengthPropertyOffset)
+                        break;
+                    FALLTHROUGH;
                 default:
-                    m_graph.doToChildren(node, escape);
+                    m_graph.doToChildren(node, [&] (Edge edge) { return escape(edge, node); });
                     break;
                 }
             }
@@ -319,6 +323,8 @@ private:
                     // for this arguments allocation, and we'd have to examine every node in the block,
                     // then we can just eliminate the candidate.
                     if (nodeIndex == block->size() && candidate->owner != block) {
+                        if (verbose)
+                            dataLog("eliminating candidate: ", candidate, " because it is clobbered by: ", block->at(nodeIndex), "\n");
                         m_candidates.remove(candidate);
                         return;
                     }
@@ -344,6 +350,8 @@ private:
                             NoOpClobberize());
                         
                         if (found) {
+                            if (verbose)
+                                dataLog("eliminating candidate: ", candidate, " because it is clobbered by ", block->at(nodeIndex), "\n");
                             m_candidates.remove(candidate);
                             return;
                         }
@@ -410,6 +418,22 @@ private:
                         node->origin.semantic.stackOffset();
                     StackAccessData* data = m_graph.m_stackAccessData.add(reg, FlushedJSValue);
                     node->convertToGetStack(data);
+                    break;
+                }
+
+                case GetByOffset: {
+                    Node* candidate = node->child2().node();
+                    if (!m_candidates.contains(candidate))
+                        break;
+
+                    if (node->child2()->op() != PhantomClonedArguments)
+                        break;
+
+                    ASSERT(node->storageAccessData().offset == clonedArgumentsLengthPropertyOffset);
+
+                    // Meh, this is kind of hackish - we use an Identity so that we can reuse the
+                    // getArrayLength() helper.
+                    node->convertToIdentityOn(getArrayLength(candidate));
                     break;
                 }
                     

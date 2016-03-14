@@ -7,7 +7,7 @@
             { "name" : "op_get_scope", "length" : 2 },
             { "name" : "op_create_direct_arguments", "length" : 2 },
             { "name" : "op_create_scoped_arguments", "length" : 3 },
-            { "name" : "op_create_out_of_band_arguments", "length" : 2 },
+            { "name" : "op_create_cloned_arguments", "length" : 2 },
             { "name" : "op_create_this", "length" : 5 },
             { "name" : "op_to_this", "length" : 4 },
             { "name" : "op_check_tdz", "length" : 2 },

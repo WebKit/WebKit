@@ -136,7 +136,11 @@ public:
                 case CreateScopedArguments:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->scopedArgumentsStructure());
                     break;
-                    
+
+                case CreateClonedArguments:
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->clonedArgumentsStructure());
+                    break;
+
                 case NewRegexp:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->regExpStructure());
                     break;
