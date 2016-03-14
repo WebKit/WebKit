@@ -1,5 +1,17 @@
 2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Fetch API] FetchLoader should check for empty bodies
+        https://bugs.webkit.org/show_bug.cgi?id=155440
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/fetch/api/request/request-consume-empty-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume-empty.html:
+        * web-platform-tests/fetch/api/response/response-consume-empty-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty.html:
+
+2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Fetch API] Implement data resolution for blob stored in Body
         https://bugs.webkit.org/show_bug.cgi?id=155359
 

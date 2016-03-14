@@ -100,9 +100,9 @@ void FetchLoader::didReceiveData(const char* value, int size)
 void FetchLoader::didFinishLoading(unsigned long, double)
 {
     if (m_type == Type::ArrayBuffer)
-        m_client.didFinishLoadingAsArrayBuffer(m_data->createArrayBuffer());
+        m_client.didFinishLoadingAsArrayBuffer(m_data ? m_data->createArrayBuffer() : ArrayBuffer::create(nullptr, 0));
     else
-        m_client.didFinishLoadingAsText(TextResourceDecoder::create(ASCIILiteral("text/plain"), "UTF-8")->decodeAndFlush(m_data->data(), m_data->size()));
+        m_client.didFinishLoadingAsText(m_data ? TextResourceDecoder::create(ASCIILiteral("text/plain"), "UTF-8")->decodeAndFlush(m_data->data(), m_data->size()): String());
     m_data = nullptr;
 
     m_client.didSucceed();

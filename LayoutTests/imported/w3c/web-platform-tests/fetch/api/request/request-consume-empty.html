@@ -61,7 +61,7 @@
      });
     }
 
-    function checkRequestBody(bodyType, checkFunction) {
+    function checkRequestWithNoBody(bodyType, checkFunction) {
       promise_test(function(test) {
         var request = new Request("", {"method": "POST"});
         assert_false(request.bodyUsed);
@@ -70,12 +70,34 @@
     }
 
     var formData = new FormData();
-    checkRequestBody("text", checkBodyText);
-    checkRequestBody("blob", checkBodyBlob);
-    checkRequestBody("arrayBuffer", checkBodyArrayBuffer);
-    checkRequestBody("json", checkBodyJSON);
-    checkRequestBody("formData", checkBodyFormData);
+    checkRequestWithNoBody("text", checkBodyText);
+    checkRequestWithNoBody("blob", checkBodyBlob);
+    checkRequestWithNoBody("arrayBuffer", checkBodyArrayBuffer);
+    checkRequestWithNoBody("json", checkBodyJSON);
+    checkRequestWithNoBody("formData", checkBodyFormData);
 
+    function checkRequestWithEmptyBody(bodyType, body, asText) {
+      promise_test(function(test) {
+        var request = new Request("", {"method": "POST", "body" : body});
+        assert_false(request.bodyUsed, "bodyUsed is false at init");
+        if (asText) {
+          return request.text().then(function(bodyAsString) {
+            assert_equals(bodyAsString.length, 0, "Resolved value should be empty");
+            assert_true(request.bodyUsed, "bodyUsed is true after being consumed");
+          });
+        }
+        return request.arrayBuffer().then(function(bodyAsArrayBuffer) {
+          assert_equals(bodyAsArrayBuffer.byteLength, 0, "Resolved value should be empty");
+          assert_true(request.bodyUsed, "bodyUsed is true after being consumed");
+        });
+      }, "Consume empty " + bodyType + " request body as " + (asText ? "text" : "arrayBuffer"));
+    }
+
+    // FIXME: Add BufferSource, FormData and URLSearchParams.
+    checkRequestWithEmptyBody("blob", new Blob([], { "type" : "text/plain" }), false);
+    checkRequestWithEmptyBody("text", "", false);
+    checkRequestWithEmptyBody("blob", new Blob([], { "type" : "text/plain" }), true);
+    checkRequestWithEmptyBody("text", "", true);
     </script>
   </body>
 </html>

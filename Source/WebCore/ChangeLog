@@ -1,3 +1,15 @@
+2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] FetchLoader should check for empty bodies
+        https://bugs.webkit.org/show_bug.cgi?id=155440
+
+        Reviewed by Darin Adler.
+
+        Covered by added tests.
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::didFinishLoading): returning empty array buffer/empty string if no data received during loading.
+
 2016-03-14  Chris Dumez  <cdumez@apple.com>
 
         Regression(r197981): Huge regression on Mac PLT

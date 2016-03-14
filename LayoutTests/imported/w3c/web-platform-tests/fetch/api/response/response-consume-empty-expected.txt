@@ -4,4 +4,8 @@ PASS Consume response's body as blob
 PASS Consume response's body as arrayBuffer 
 PASS Consume response's body as json 
 FAIL Consume response's body as formData promise_test: Unhandled rejection with value: undefined
+PASS Consume empty blob response body as arrayBuffer 
+PASS Consume empty text response body as arrayBuffer 
+PASS Consume empty blob response body as text 
+PASS Consume empty text response body as text 
 

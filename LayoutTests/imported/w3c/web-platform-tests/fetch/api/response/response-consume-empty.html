@@ -61,7 +61,7 @@
      });
     }
 
-    function checkResponseBody(bodyType, checkFunction) {
+    function checkResponseWithNoBody(bodyType, checkFunction) {
       promise_test(function(test) {
         var response = new Response();
         assert_false(response.bodyUsed);
@@ -70,12 +70,34 @@
     }
 
     var formData = new FormData();
-    checkResponseBody("text", checkBodyText);
-    checkResponseBody("blob", checkBodyBlob);
-    checkResponseBody("arrayBuffer", checkBodyArrayBuffer);
-    checkResponseBody("json", checkBodyJSON);
-    checkResponseBody("formData", checkBodyFormData);
+    checkResponseWithNoBody("text", checkBodyText);
+    checkResponseWithNoBody("blob", checkBodyBlob);
+    checkResponseWithNoBody("arrayBuffer", checkBodyArrayBuffer);
+    checkResponseWithNoBody("json", checkBodyJSON);
+    checkResponseWithNoBody("formData", checkBodyFormData);
 
+    function checkResponseWithEmptyBody(bodyType, body, asText) {
+      promise_test(function(test) {
+        var response = new Response("", {"method": "POST", "body" : body});
+        assert_false(response.bodyUsed, "bodyUsed is false at init");
+        if (asText) {
+          return response.text().then(function(bodyAsString) {
+            assert_equals(bodyAsString.length, 0, "Resolved value should be empty");
+            assert_true(response.bodyUsed, "bodyUsed is true after being consumed");
+          });
+        }
+        return response.arrayBuffer().then(function(bodyAsArrayBuffer) {
+          assert_equals(bodyAsArrayBuffer.byteLength, 0, "Resolved value should be empty");
+          assert_true(response.bodyUsed, "bodyUsed is true after being consumed");
+        });
+      }, "Consume empty " + bodyType + " response body as " + (asText ? "text" : "arrayBuffer"));
+    }
+
+    // FIXME: Add BufferSource, FormData and URLSearchParams.
+    checkResponseWithEmptyBody("blob", new Blob([], { "type" : "text/plain" }), false);
+    checkResponseWithEmptyBody("text", "", false);
+    checkResponseWithEmptyBody("blob", new Blob([], { "type" : "text/plain" }), true);
+    checkResponseWithEmptyBody("text", "", true);
     </script>
   </body>
 </html>
