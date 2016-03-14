@@ -1,3 +1,27 @@
+2016-03-10  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Selecting with shift+drag results in unexpected drag-n-drop
+        https://bugs.webkit.org/show_bug.cgi?id=155314
+
+        Reviewed by Darin Adler.
+
+        Test: editing/selection/shift-drag-selection-no-drag-n-drop.html
+
+        Whenever user tries to extend an existing text selection by dragging the mouse
+        (left button hold) with shift key pressed, WebKit enters drag-n-drop mode.
+        This behavior does not match common editing behavior out there, including other
+        browsers' (Firefox, Opera/Presto and IE).
+
+        Patch changes WebKit so that whenever one extends a selection with mouse
+        and shift key pressed off of a #text node, it does not enter drag-n-drop mode.
+
+        Additionally, patch also adds some further tests to ensure that when
+        selection is extended off of either a link or an image, drag-n-drop does
+        get triggered, no matter if shift key is pressed.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+
 2016-03-14  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r197114): Crash in WebCore::MediaDevicesRequest::didCompletePermissionCheck

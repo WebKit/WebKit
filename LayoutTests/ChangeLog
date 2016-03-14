@@ -1,3 +1,30 @@
+2016-03-10  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Selecting with shift+drag results in unexpected drag-n-drop
+        https://bugs.webkit.org/show_bug.cgi?id=155314
+
+        Reviewed by Darin Adler.
+
+        Tests that ensure that WebKit:
+
+        1) does not enter drag-n-drop mode and extending selection by dragging with mouse with shift key is pressed,
+           off of a #text node.
+        2) does enter drag-n-drop mode and extending selection by dragging with mouse with shift key is pressed,
+           off of a link.
+        3) does enter drag-n-drop mode and extending selection by dragging with mouse with shift key is pressed,
+           off of an image.
+
+        Note that (1) is a behavior changed by this patch, whereas (2) and (3) represent existing
+        behavior that is kept.
+        Tests are also skip for iOS similarly to other drag-n-drop related tests.
+
+        * fast/events/shift-drag-selection-no-drag-n-drop-expected.txt: Added.
+        * fast/events/shift-drag-selection-no-drag-n-drop.html: Added.
+        * fast/events/shift-drag-selection-on-link-triggers-drag-n-drop-expected.txt: Added.
+        * fast/events/shift-drag-selection-on-link-triggers-drag-n-drop.html: Added.
+        * fast/events/shift-drag-selection-on-image-triggers-drag-n-drop-expected.txt: Added.
+        * fast/events/shift-drag-selection-on-image-triggers-drag-n-drop.html: Added.
+
 2016-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking storage/indexeddb/transaction-abort-private.html as flaky on mac-wk1
