@@ -45,6 +45,7 @@ Class pdfDocumentClass();
 Class pdfLayerControllerClass();
 Class pdfAnnotationTextWidgetClass();
 Class pdfAnnotationChoiceWidgetClass();
+Class pdfSelectionClass();
 #endif
 
 }

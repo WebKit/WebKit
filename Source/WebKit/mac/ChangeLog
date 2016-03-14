@@ -1,3 +1,15 @@
+2016-03-14  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        Ignore nullability warnings, create an empty PDF selection.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView centerSelectionInVisibleArea:]):
+        (-[WebPDFView searchFor:direction:caseSensitive:wrap:startInSelection:]):
+        (+[WebPDFView _PDFSelectionClass]):
+        (-[WebPDFView _nextMatchFor:direction:caseSensitive:wrap:fromSelection:startInSelection:]):
+
 2016-03-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX) guards

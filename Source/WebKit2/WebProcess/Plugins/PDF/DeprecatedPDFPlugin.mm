@@ -1784,8 +1784,10 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, BOOL searchFor
     if (startInSelection && [foundSelection isEqual:initialSelection])
         foundSelection = [document findString:target fromSelection:initialSelection withOptions:options];
 
-    if (!foundSelection && wrapSearch)
-        foundSelection = [document findString:target fromSelection:nil withOptions:options];
+    if (!foundSelection && wrapSearch) {
+        auto emptySelection = adoptNS([[pdfSelectionClass() alloc] initWithDocument:document]);
+        foundSelection = [document findString:target fromSelection:emptySelection.get() withOptions:options];
+    }
 
     return foundSelection;
 }

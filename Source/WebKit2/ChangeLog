@@ -1,3 +1,15 @@
+2016-03-14  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        Create an empty PDF selection.
+
+        * Shared/mac/PDFKitImports.h:
+        * Shared/mac/PDFKitImports.mm:
+        (WebKit::pdfSelectionClass):
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::nextMatchForString):
+
 2016-03-14  Beth Dakin  <bdakin@apple.com>
 
         Unable to commit previews in Mobile Safari

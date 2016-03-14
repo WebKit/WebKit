@@ -78,6 +78,14 @@ Class pdfAnnotationChoiceWidgetClass()
     ASSERT(pdfAnnotationChoiceWidgetClass);
     return pdfAnnotationChoiceWidgetClass;
 }
+
+Class pdfSelectionClass()
+{
+    static Class pdfSelectionClass = classFromPDFKit(@"PDFSelection");
+    ASSERT(pdfSelectionClass);
+    return pdfSelectionClass;
+}
+
 #endif
 
 }

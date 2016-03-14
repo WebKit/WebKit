@@ -230,7 +230,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)centerSelectionInVisibleArea:(id)sender
 {
+    // FIXME: Get rid of this once <rdar://problem/25149294> has been fixed.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     [PDFSubview scrollSelectionToVisible:nil];
+#pragma clang diagnostic pop
 }
 
 - (void)scrollPageDown:(id)sender
@@ -662,7 +666,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         return NO;
 
     [PDFSubview setCurrentSelection:selection];
+
+    // FIXME: Get rid of this once <rdar://problem/25149294> has been fixed.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     [PDFSubview scrollSelectionToVisible:nil];
+#pragma clang diagnostic pop
     return YES;
 }
 
@@ -1095,6 +1104,17 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     return PDFViewClass;
 }
 
++ (Class)_PDFSelectionClass
+{
+    static Class PDFSelectionClass = nil;
+    if (PDFSelectionClass == nil) {
+        PDFSelectionClass = [[WebPDFView PDFKitBundle] classNamed:@"PDFSelection"];
+        if (!PDFSelectionClass)
+            LOG_ERROR("Couldn't find PDFSelectionClass class in PDFKit.framework");
+    }
+    return PDFSelectionClass;
+}
+
 - (void)_applyPDFDefaults
 {
     // Set up default viewing params
@@ -1293,9 +1313,11 @@ static void removeUselessMenuItemSeparators(NSMutableArray *menuItems)
     // If we first searched in the selection, and we found the selection, search again from just past the selection
     if (startInSelection && _PDFSelectionsAreEqual(foundSelection, initialSelection))
         foundSelection = [document findString:string fromSelection:initialSelection withOptions:options];
-    
-    if (!foundSelection && wrapFlag)
-        foundSelection = [document findString:string fromSelection:nil withOptions:options];
+
+    if (!foundSelection && wrapFlag) {
+        auto emptySelection = adoptNS([[[[self class] _PDFViewClass] alloc] initWithDocument:document]);
+        foundSelection = [document findString:string fromSelection:emptySelection.get() withOptions:options];
+    }
     
     return foundSelection;
 }
