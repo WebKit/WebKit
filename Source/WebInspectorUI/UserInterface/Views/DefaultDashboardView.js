@@ -104,6 +104,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
         Object.defineProperty(item, "text", {
             set: function(newText)
             {
+                newText = newText.toString();
                 if (newText === item.outlet.textContent)
                     return;
                 item.outlet.textContent = newText;

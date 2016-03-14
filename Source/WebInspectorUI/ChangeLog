@@ -1,3 +1,15 @@
+2016-03-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Reduce unnecessary dashboard repaints
+        https://bugs.webkit.org/show_bug.cgi?id=155425
+        <rdar://problem/25138247>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WebInspector.DefaultDashboardView.prototype._appendElementForNamedItem.):
+        newText is a number for console message counters.
+
 2016-03-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Large repaints when typing any character in console
