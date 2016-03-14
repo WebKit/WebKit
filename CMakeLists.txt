@@ -8,6 +8,8 @@ endif ()
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Source/cmake")
 
+set(ENABLE_WEBCORE ON)
+
 if (NOT DEFINED ENABLE_WEBKIT)
     set(ENABLE_WEBKIT ON)
 endif ()

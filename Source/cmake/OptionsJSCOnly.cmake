@@ -25,6 +25,7 @@ endif ()
 
 set(EVENTLOOP_TYPE ${DEFAULT_EVENTLOOP_TYPE} CACHE STRING "Implementation of event loop to be used in JavaScriptCore (one of ${ALL_EVENTLOOP_TYPES})")
 
+set(ENABLE_WEBCORE OFF)
 set(ENABLE_WEBKIT OFF)
 set(ENABLE_WEBKIT2 OFF)
 set(ENABLE_API_TESTS OFF)

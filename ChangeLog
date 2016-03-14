@@ -1,3 +1,17 @@
+2016-03-14  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Restored ENABLE_WEBCORE option and used it in JSCOnly port.
+        https://bugs.webkit.org/show_bug.cgi?id=155428
+
+        Reviewed by Michael Catanzaro.
+
+        This is a partial revert of r182624.
+
+        * CMakeLists.txt:
+        * Source/CMakeLists.txt:
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/WebKitFS.cmake:
+
 2016-03-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX) guards
