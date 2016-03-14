@@ -1,3 +1,14 @@
+2016-03-14  Oliver Hunt  <oliver@apple.com>
+
+        Temporarily disable the separated heap.
+        https://bugs.webkit.org/show_bug.cgi?id=155472
+
+        Reviewed by Geoffrey Garen.
+
+        Temporarily disable this.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-03-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Reduce generated JSON HeapSnapshot size
