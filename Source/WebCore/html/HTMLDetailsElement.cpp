@@ -103,6 +103,9 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     if (!m_summarySlot->assignedNodes())
         return &summary == m_defaultSummary;
 
+    if (summary.parentNode() != this)
+        return false;
+
     auto* slot = shadowRoot()->findAssignedSlot(summary);
     if (!slot)
         return false;

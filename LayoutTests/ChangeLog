@@ -1,3 +1,15 @@
+2016-03-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r190840): crash inside details element's slotNameFunction
+        https://bugs.webkit.org/show_bug.cgi?id=155388
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test.
+
+        * fast/html/details-summary-tabindex-crash-expected.txt: Added.
+        * fast/html/details-summary-tabindex-crash.html: Added.
+
 2016-03-13  Dean Jackson  <dino@apple.com>
 
         <attachment> should be a runtime-enabled feature

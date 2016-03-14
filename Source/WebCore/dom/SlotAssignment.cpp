@@ -64,9 +64,6 @@ HTMLSlotElement* SlotAssignment::findAssignedSlot(const Node& node, ShadowRoot& 
     if (!is<Text>(node) && !is<Element>(node))
         return nullptr;
 
-    if (!m_slotAssignmentsIsValid)
-        assignSlots(shadowRoot);
-
     auto slotName = m_slotNameFunction(node);
     if (!slotName)
         return nullptr;
