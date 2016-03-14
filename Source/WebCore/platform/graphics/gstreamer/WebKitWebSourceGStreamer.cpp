@@ -582,7 +582,7 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     if (priv->loader) {
         PlatformMediaResourceLoader::LoadOptions loadOptions = 0;
-        if (request.url().protocolIs("blob"))
+        if (request.url().protocolIsBlob())
             loadOptions |= PlatformMediaResourceLoader::LoadOption::BufferData;
         priv->resource = priv->loader->requestResource(request, loadOptions);
         loadFailed = !priv->resource;
@@ -708,7 +708,7 @@ static gboolean webKitWebSrcQueryWithParent(GstPad* pad, GstObject* parent, GstQ
 
 static bool urlHasSupportedProtocol(const URL& url)
 {
-    return url.isValid() && (url.protocolIsInHTTPFamily() || url.protocolIs("blob"));
+    return url.isValid() && (url.protocolIsInHTTPFamily() || url.protocolIsBlob());
 }
 
 // uri handler interface

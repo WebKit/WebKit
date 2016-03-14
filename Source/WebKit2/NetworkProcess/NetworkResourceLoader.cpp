@@ -91,7 +91,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
         }
     }
 
-    if (originalRequest().url().protocolIs("blob")) {
+    if (originalRequest().url().protocolIsBlob()) {
         ASSERT(!m_parameters.resourceSandboxExtension);
         m_fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(connection, originalRequest().url()));
     }
