@@ -1,5 +1,24 @@
 2016-03-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: REGRESSION(r197974): HeapAllocationsTimelineView broken, doesn't handle Timeline Sidebar Navigation removal
+        https://bugs.webkit.org/show_bug.cgi?id=155458
+        <rdar://problem/25150803>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView):
+        (WebInspector.HeapAllocationsTimelineView.prototype.showHeapSnapshotTimelineRecord):
+        (WebInspector.HeapAllocationsTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.HeapAllocationsTimelineView.prototype.layout):
+        (WebInspector.HeapAllocationsTimelineView.prototype._compareHeapSnapshotsClicked):
+        (WebInspector.HeapAllocationsTimelineView.prototype._dataGridNodeSelected):
+        (WebInspector.HeapAllocationsTimelineView.prototype.get navigationSidebarTreeOutlineLabel): Deleted.
+        Update the TimelineView now that there is no sidebar.
+        Remove any TreeOutline logic and replace with DataGrid logic.
+
+2016-03-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: REGRESSION(r198026): Can't click on Snapshot in Timeline Overview
         https://bugs.webkit.org/show_bug.cgi?id=155457
         <rdar://problem/25150706>
