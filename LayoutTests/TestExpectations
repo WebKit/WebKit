@@ -891,9 +891,6 @@ loader/stateobjects/replacestate-size.html [ Slow ]
 imported/blink/fast/multicol/outlines-at-column-boundaries.html [ ImageOnlyFailure ]
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]
 
-# Temporarily turn off test while working on fixing it.
-webkit.org/b/106350 editing/pasteboard/paste-noplugin-xhtml.xhtml [ Pass Failure ]
-
 ########################################
 ### START OF IndexedDB failures
 

@@ -3,9 +3,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <script>
 if (window.testRunner) {
-   testRunner.dumpAsText();
-   testRunner.setBlockAllPlugins(true);
-   internals.settings.setUnsafePluginPastingEnabled(false);
+    testRunner.dumpAsText();
+    if (testRunner.setBlockAllPlugins)
+        testRunner.setBlockAllPlugins(true);
+    internals.settings.setUnsafePluginPastingEnabled(false);
 }
 </script>
 <script src="../../resources/dump-as-markup.js"></script>
