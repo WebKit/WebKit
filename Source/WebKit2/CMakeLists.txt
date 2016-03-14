@@ -822,7 +822,7 @@ endif ()
 POPULATE_LIBRARY_VERSION(WEBKIT2)
 set_target_properties(WebKit2 PROPERTIES VERSION ${WEBKIT2_VERSION} SOVERSION ${WEBKIT2_VERSION_MAJOR})
 
-if (APPLE)
+if (PORT STREQUAL "Mac")
     WEBKIT_FRAMEWORK(WebKit2)
 else ()
     install(TARGETS WebKit2 WebProcess NetworkProcess
