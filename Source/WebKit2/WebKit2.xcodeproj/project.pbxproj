@@ -2782,6 +2782,7 @@
 		37A5E01218BBF937000A081E /* _WKActivatedElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKActivatedElementInfo.h; sourceTree = "<group>"; };
 		37A64E5418F38E3C00EB30F1 /* _WKInputDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInputDelegate.h; sourceTree = "<group>"; };
 		37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFormInputSession.h; sourceTree = "<group>"; };
+		37B418EB1C9624F20031E63B /* WebContent-OSX.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "WebContent-OSX.entitlements"; sourceTree = "<group>"; };
 		37B5045119EEF31300CE2CF8 /* WKErrorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKErrorPrivate.h; sourceTree = "<group>"; };
 		37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CompletionHandlerCallChecker.mm; sourceTree = "<group>"; };
 		37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionHandlerCallChecker.h; sourceTree = "<group>"; };
@@ -4229,6 +4230,7 @@
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
 				7C0BB9A818DCDE890006C086 /* WebContent-iOS.entitlements */,
+				37B418EB1C9624F20031E63B /* WebContent-OSX.entitlements */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */,
 				A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */,

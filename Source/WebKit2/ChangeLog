@@ -1,3 +1,25 @@
+2016-03-13  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] Injected bundle in relocatable WebContent service can’t use XPC services from other relocatable frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=155414
+        <rdar://problem/24428418>
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/DebugRelease.xcconfig:
+          Set WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT to NO, because
+          engineering builds are ad-hoc signed and therefore can’t have a private entitlement.
+
+        * Configurations/WebContent-OSX.entitlements: Added. Includes the XPC domain extension
+          entitlement.
+
+        * Configurations/WebContentService.xcconfig:
+          Set WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT to YES if not already set
+          and the framework is relocatable. Set CODE_SIGN_ENTITLEMENTS to the new entitlements file
+          if the domain extension entitlement is needed.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added reference to new file.
+
 2016-03-13  Dean Jackson  <dino@apple.com>
 
         <attachment> should be a runtime-enabled feature
