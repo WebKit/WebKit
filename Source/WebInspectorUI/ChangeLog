@@ -1,3 +1,15 @@
+2016-03-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION(r198026): Can't click on Snapshot in Timeline Overview
+        https://bugs.webkit.org/show_bug.cgi?id=155457
+        <rdar://problem/25150706>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._handleClick):
+        The conditional was accidentally inverted in r198026.
+
 2016-03-14  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: cssmin.py does not handle calc(var(--toolbar-height) + var(--tab-bar-height))

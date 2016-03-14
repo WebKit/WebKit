@@ -718,7 +718,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         if (!this._enabled)
             return;
 
-        if (!this._mouseMoved)
+        if (this._mouseMoved)
             return;
 
         this.element.style.pointerEvents = "none";
