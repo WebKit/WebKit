@@ -1,3 +1,17 @@
+2016-03-13  Darin Adler  <darin@apple.com>
+
+        Add copy/paste plug-in check for XHTML document
+        https://bugs.webkit.org/show_bug.cgi?id=106350
+
+        Reviewed by David Kilzer.
+
+        This bug was filed because of the assumption that there was a bug, but it
+        turns out that even in XHTML documents, we use HTML tree builder, so there is
+        no bug. Thus this just adds the test that demonstrates this.
+
+        * editing/pasteboard/paste-noplugin-xhtml-expected.txt: Added.
+        * editing/pasteboard/paste-noplugin-xhtml.xhtml: Added.
+
 2016-03-13  Sam Weinig  <sam@webkit.org>
 
         Implement unprivileged execCommand("copy") and execCommand("cut")
