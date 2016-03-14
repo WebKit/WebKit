@@ -1,3 +1,15 @@
+2016-03-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX) guards
+        https://bugs.webkit.org/show_bug.cgi?id=155417
+
+        Reviewed by Yusuke Suzuki.
+
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2016-03-13  Konstantin Tokarev  <annulen@yandex.ru>
 
         Added new port JSCOnly.

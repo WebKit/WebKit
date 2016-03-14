@@ -193,9 +193,6 @@ my @features = (
     { option => "modules", desc => "Toggle ES6 modules support",
       define => "ENABLE_ES6_MODULES", default => 0, value => \$modulesSupport },
 
-    { option => "template-literal-syntax", desc => "Toggle ES6 template literal syntax support",
-      define => "ENABLE_ES6_TEMPLATE_LITERAL_SYNTAX", default => 1, value => \$templateLiteralSyntax },
-
     { option => "csp-next", desc => "Toggle Content Security Policy 1.1 support",
       define => "ENABLE_CSP_NEXT", default => isGtk(), value => \$cspNextSupport },
 
