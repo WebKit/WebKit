@@ -95,13 +95,24 @@ void ContentSecurityPolicySourceList::parse(const String& value)
     parse(characters, characters + value.length());
 }
 
+bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) const
+{
+    // Although not allowed by the Content Security Policy Level 3 spec., we allow a data URL to match
+    // "img-src *" and either a data URL or blob URL to match "media-src *" for web compatibility.
+    // FIXME: We should not hardcode the directive names. We should make use of the constants in ContentSecurityPolicyDirectiveList.cpp.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=155133>.
+    bool isAllowed = url.protocolIsInHTTPFamily();
+    if (equalLettersIgnoringASCIICase(m_directiveName, "img-src"))
+        isAllowed |= url.protocolIsData();
+    else if (equalLettersIgnoringASCIICase(m_directiveName, "media-src"))
+        isAllowed |= url.protocolIsData() || url.protocolIsBlob();
+    return isAllowed;
+}
+
 bool ContentSecurityPolicySourceList::matches(const URL& url)
 {
-    if (m_allowStar) {
-        // FIXME: Should only match for URLs whose scheme is not blob, data or filesystem.
-        // See <https://bugs.webkit.org/show_bug.cgi?id=154122> for more details.
+    if (m_allowStar && isProtocolAllowedByStar(url))
         return true;
-    }
 
     if (m_allowSelf && m_policy.urlMatchesSelf(url))
         return true;

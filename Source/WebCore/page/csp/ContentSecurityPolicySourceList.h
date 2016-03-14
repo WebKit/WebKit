@@ -55,6 +55,8 @@ private:
     bool parsePort(const UChar* begin, const UChar* end, int& port, bool& portHasWildcard);
     bool parsePath(const UChar* begin, const UChar* end, String& path);
 
+    bool isProtocolAllowedByStar(const URL&) const;
+
     const ContentSecurityPolicy& m_policy;
     Vector<ContentSecurityPolicySource> m_list;
     String m_directiveName;

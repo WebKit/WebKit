@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 1: Refused to execute JavaScript URL because it violates the following Content Security Policy directive: "default-src *". Note that 'script-src' was not explicitly set, so 'default-src' is used as a fallback.
+
+CONSOLE MESSAGE: Refused to load plugin data from 'javascript:alert('FAIL');' because it violates the following Content Security Policy directive: "default-src *". Note that 'object-src' was not explicitly set, so 'default-src' is used as a fallback.
+
+CONSOLE MESSAGE: Refused to load plugin data from 'javascript:alert('FAIL');' because it violates the following Content Security Policy directive: "default-src *". Note that 'object-src' was not explicitly set, so 'default-src' is used as a fallback.
+
+
