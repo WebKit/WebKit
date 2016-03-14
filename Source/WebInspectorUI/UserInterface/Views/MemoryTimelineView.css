@@ -34,7 +34,7 @@
 }
 
 .timeline-view.memory > .content > .overview {
-    padding: 10px;
+    padding-bottom: 10px;
     margin-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
 }
@@ -87,13 +87,13 @@
 }
 
 .timeline-view.memory .legend {
-    width: 100px;
     padding-left: 20px;
     text-align: left;
 }
 
 .timeline-view.memory .legend > .row {
     position: relative;
+    width: 100px;
     height: 27px;
 }
 
