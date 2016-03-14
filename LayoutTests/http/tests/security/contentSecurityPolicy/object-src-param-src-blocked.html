@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="resources/object-src-param.js"></script>
-<meta http-equiv="Content-Security-Policy" content="object-src http://localhost:8080">
+<script src="/js-test-resources/plugin.js"></script>
+<meta http-equiv="Content-Security-Policy" content="object-src http://localhost:8000">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
 </head>
 <body>
 This test passes if there is a console message saying the plugin was blocked.
-<script>
-    appendObjectElement('src');
-</script>
+<object type="application/x-webkit-test-netscape">
+    <param name="src" value="http://127.0.0.1:8000/plugins/resources/mock-plugin.pl?src">
+</object>
+<script>runAfterPluginLoad(null, NotifyDone);</script>
 </body>
 </html>
