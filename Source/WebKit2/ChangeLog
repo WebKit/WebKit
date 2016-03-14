@@ -1,3 +1,17 @@
+2016-03-14  Brent Fulgham  <bfulgham@apple.com>
+
+        PingHandle delete's itself but pointer is still used by handleDataURL
+        https://bugs.webkit.org/show_bug.cgi?id=154752
+        <rdar://problem/24872347>
+
+        Reviewed by Alex Christensen.
+
+        When a PingLoad is destroyed, we should tell its client so that the client can clear the pointer it
+        holds to the element to avoid accidentally attempting to use deallocated memory.
+
+        * NetworkProcess/PingLoad.h:
+        (WebKit::PingLoad::~PingLoad): Notify the client we are being destroyed.
+
 2016-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the GTK+ build after r198124.

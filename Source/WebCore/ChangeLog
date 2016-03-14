@@ -1,3 +1,23 @@
+2016-03-14  Chris Vienneau  <chris.vno@outlook.com>
+
+        PingHandle delete's itself but pointer is still used by handleDataURL
+        https://bugs.webkit.org/show_bug.cgi?id=154752
+        <rdar://problem/24872347>
+
+        Reviewed by Alex Christensen.
+
+        When a PingHandle is destroyed, we should tell its client so that the client can clear the pointer it
+        holds to the element to avoid accidentally attempting to use deallocated memory.
+
+        The ResourceHandle's client member may be null after "didReceiveResponse" is called. We should confirm
+        the client is still valid after these calls.
+
+        * platform/network/DataURL.cpp:
+        (WebCore::handleDataURL): Check the client pointer before using it.
+        * platform/network/PingHandle.h:
+        (WebCore::PingHandle::~PingHandle): Notify the client we are being destroyed.
+        * platform/platform/network/ResourceHandle.h:
+
 2016-03-14  Zalan Bujtas  <zalan@apple.com>
 
         Negative outline offset could break curved outline-style: auto

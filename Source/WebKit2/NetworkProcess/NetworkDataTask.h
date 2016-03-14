@@ -104,6 +104,7 @@ public:
     void didReceiveData(RefPtr<WebCore::SharedBuffer>&&);
     void didBecomeDownload();
     
+    NetworkDataTaskClient* client() const { return m_client; }
     void clearClient() { m_client = nullptr; }
     
     DownloadID pendingDownloadID() { return m_pendingDownloadID; }

@@ -74,8 +74,11 @@ private:
     
     virtual ~PingLoad()
     {
-        if (m_task)
+        if (m_task) {
+            ASSERT(m_task->client() == this);
+            m_task->clearClient();
             m_task->cancel();
+        }
     }
     
     RefPtr<NetworkDataTask> m_task;
