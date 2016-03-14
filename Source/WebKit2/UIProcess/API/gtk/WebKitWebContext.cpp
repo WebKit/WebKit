@@ -550,8 +550,9 @@ void webkit_web_context_clear_cache(WebKitWebContext* context)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=146041
-    // context->priv->processPool->supplement<WebResourceCacheManagerProxy>()->clearCacheForAllOrigins(AllResourceCaches);
+    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get()).websiteDataStore();
+    websiteDataStore.removeData(static_cast<WebsiteDataTypes>(WebsiteDataTypes::WebsiteDataTypeMemoryCache | WebsiteDataTypes::WebsiteDataTypeDiskCache),
+        std::chrono::system_clock::time_point::min(), [] { });
 }
 
 typedef HashMap<DownloadProxy*, GRefPtr<WebKitDownload> > DownloadsMap;
