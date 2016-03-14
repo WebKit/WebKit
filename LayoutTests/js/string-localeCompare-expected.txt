@@ -1,63 +1,14 @@
-This test checks the behavior of String.prototype.localeCompare as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).
+This test checks String.localeCompare().
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS String.prototype.localeCompare.length is 1
-PASS Object.getOwnPropertyDescriptor(String.prototype, 'localeCompare').enumerable is false
-PASS Object.getOwnPropertyDescriptor(String.prototype, 'localeCompare').configurable is true
-PASS Object.getOwnPropertyDescriptor(String.prototype, 'localeCompare').writable is true
-PASS String.prototype.localeCompare.call() threw exception TypeError: String.prototype.localeCompare requires that |this| not be undefined.
-PASS String.prototype.localeCompare.call(undefined) threw exception TypeError: String.prototype.localeCompare requires that |this| not be undefined.
-PASS String.prototype.localeCompare.call(null) threw exception TypeError: String.prototype.localeCompare requires that |this| not be null.
-PASS String.prototype.localeCompare.call({}, '') did not throw exception.
-PASS String.prototype.localeCompare.call([], '') did not throw exception.
-PASS String.prototype.localeCompare.call(NaN, '') did not throw exception.
-PASS String.prototype.localeCompare.call(5, '') did not throw exception.
-PASS String.prototype.localeCompare.call('', '') did not throw exception.
-PASS String.prototype.localeCompare.call(() => {}, '') did not throw exception.
-PASS ''.localeCompare.call({ toString() { throw 'thisFail' } }, '') threw exception thisFail.
-PASS ''.localeCompare({ toString() { throw 'thatFail' } }) threw exception thatFail.
-PASS ''.localeCompare() did not throw exception.
-PASS ''.localeCompare(null) did not throw exception.
 PASS "a".localeCompare("aa") < 0 is true
 PASS "a".localeCompare("b") < 0 is true
 PASS "a".localeCompare("a") === 0 is true
 PASS "ạ̈".localeCompare("ạ̈") === 0 is true
 PASS "aa".localeCompare("a") > 0 is true
 PASS "b".localeCompare("a") > 0 is true
-PASS 'a'.localeCompare('b', '$') threw exception RangeError: invalid language tag: $.
-PASS 'a'.localeCompare('b', 'en', {usage: 'Sort'}) threw exception RangeError: usage must be either "sort" or "search".
-PASS 'ä'.localeCompare('z', 'en') is -1
-PASS 'ä'.localeCompare('z', 'sv') is 1
-PASS 'a'.localeCompare('b', 'en', { sensitivity:'base' }) is -1
-PASS 'a'.localeCompare('ä', 'en', { sensitivity:'base' }) is 0
-PASS 'a'.localeCompare('A', 'en', { sensitivity:'base' }) is 0
-PASS 'a'.localeCompare('ⓐ', 'en', { sensitivity:'base' }) is 0
-PASS 'a'.localeCompare('b', 'en', { sensitivity:'accent' }) is -1
-PASS 'a'.localeCompare('ä', 'en', { sensitivity:'accent' }) is -1
-PASS 'a'.localeCompare('A', 'en', { sensitivity:'accent' }) is 0
-PASS 'a'.localeCompare('ⓐ', 'en', { sensitivity:'accent' }) is 0
-PASS 'a'.localeCompare('b', 'en', { sensitivity:'case' }) is -1
-PASS 'a'.localeCompare('ä', 'en', { sensitivity:'case' }) is 0
-PASS 'a'.localeCompare('A', 'en', { sensitivity:'case' }) is -1
-PASS 'a'.localeCompare('ⓐ', 'en', { sensitivity:'case' }) is 0
-PASS 'a'.localeCompare('b', 'en', { sensitivity:'variant' }) is -1
-PASS 'a'.localeCompare('ä', 'en', { sensitivity:'variant' }) is -1
-PASS 'a'.localeCompare('A', 'en', { sensitivity:'variant' }) is -1
-PASS 'a'.localeCompare('ⓐ', 'en', { sensitivity:'variant' }) is -1
-PASS '1'.localeCompare('2', 'en', { numeric:false }) is -1
-PASS '2'.localeCompare('10', 'en', { numeric:false }) is 1
-PASS '01'.localeCompare('1', 'en', { numeric:false }) is -1
-PASS '๑'.localeCompare('๒', 'en', { numeric:false }) is -1
-PASS '๒'.localeCompare('๑๐', 'en', { numeric:false }) is 1
-PASS '๐๑'.localeCompare('๑', 'en', { numeric:false }) is -1
-PASS '1'.localeCompare('2', 'en', { numeric:true }) is -1
-PASS '2'.localeCompare('10', 'en', { numeric:true }) is -1
-PASS '01'.localeCompare('1', 'en', { numeric:true }) is 0
-PASS '๑'.localeCompare('๒', 'en', { numeric:true }) is -1
-PASS '๒'.localeCompare('๑๐', 'en', { numeric:true }) is -1
-PASS '๐๑'.localeCompare('๑', 'en', { numeric:true }) is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

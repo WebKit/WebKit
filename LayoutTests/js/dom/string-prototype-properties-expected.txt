@@ -20,7 +20,7 @@ PASS String.prototype.substr.call(undefined, 1, 3) threw exception TypeError: Ty
 PASS String.prototype.substring.call(undefined, 1, 3) threw exception TypeError: Type error.
 PASS String.prototype.toLowerCase.call(undefined) threw exception TypeError: Type error.
 PASS String.prototype.toUpperCase.call(undefined) threw exception TypeError: Type error.
-PASS String.prototype.localeCompare.call(undefined, '1224') threw exception TypeError: String.prototype.localeCompare requires that |this| not be undefined.
+PASS String.prototype.localeCompare.call(undefined, '1224') threw exception TypeError: Type error.
 PASS String.prototype.toLocaleLowerCase.call(undefined) threw exception TypeError: Type error.
 PASS String.prototype.toLocaleUpperCase.call(undefined) threw exception TypeError: Type error.
 PASS String.prototype.trim.call(undefined) threw exception TypeError: Type error.

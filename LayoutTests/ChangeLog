@@ -1,3 +1,16 @@
+2016-03-14  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r194394): >2x slow-down on CDjs
+        https://bugs.webkit.org/show_bug.cgi?id=155471
+
+        Unreviewed (rollout).
+
+        * js/dom/script-tests/string-prototype-properties.js:
+        * js/dom/string-prototype-properties-expected.txt:
+        * js/script-tests/string-localeCompare.js:
+        * js/string-localeCompare-expected.txt:
+        * js/string-localeCompare.html:
+
 2016-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking js/funcion-apply.html as flaky on mac debug

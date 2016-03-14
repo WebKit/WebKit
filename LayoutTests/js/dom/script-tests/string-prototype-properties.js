@@ -20,7 +20,7 @@ shouldThrow("String.prototype.substr.call(undefined, 1, 3)");
 shouldThrow("String.prototype.substring.call(undefined, 1, 3)");
 shouldThrow("String.prototype.toLowerCase.call(undefined)");
 shouldThrow("String.prototype.toUpperCase.call(undefined)");
-shouldThrow("String.prototype.localeCompare.call(undefined, '1224')", "'TypeError: String.prototype.localeCompare requires that |this| not be undefined'");
+shouldThrow("String.prototype.localeCompare.call(undefined, '1224')");
 shouldThrow("String.prototype.toLocaleLowerCase.call(undefined)");
 shouldThrow("String.prototype.toLocaleUpperCase.call(undefined)");
 shouldThrow("String.prototype.trim.call(undefined)");

@@ -1,3 +1,23 @@
+2016-03-14  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r194394): >2x slow-down on CDjs
+        https://bugs.webkit.org/show_bug.cgi?id=155471
+
+        Unreviewed (rollout).
+
+        This revision changes localeCompare() so that it's *much* slower than before. It's
+        understandable that sometimes things will get a tiny bit slower when implementing new
+        language features, but more than 2x regression on a major benchmark is not OK.
+
+        This rolls out that change. We can reland it once we think about how to do it in a
+        performant way.
+
+        * builtins/StringPrototype.js:
+        (search):
+        (localeCompare): Deleted.
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2016-03-14  Mark Lam  <mark.lam@apple.com>
 
         Need to distinguish between Symbol() and Symbol("").
