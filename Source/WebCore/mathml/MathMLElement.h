@@ -39,8 +39,8 @@ class MathMLElement : public StyledElement {
 public:
     static Ref<MathMLElement> create(const QualifiedName& tagName, Document&);
 
-    int colSpan() const;
-    int rowSpan() const;
+    unsigned colSpan() const;
+    unsigned rowSpan() const;
 
     bool isMathMLToken() const
     {

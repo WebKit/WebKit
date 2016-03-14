@@ -1,3 +1,15 @@
+2016-03-14  Frederic Wang  <fwang@igalia.com>
+
+        Make MathML colspan/rowspan consistent with HTML table cells.
+        https://bugs.webkit.org/show_bug.cgi?id=150253
+
+        Reviewed by Martin Robinson.
+
+        We import crashing test from bug 150253.
+
+        * mathml/rowspan-crash-expected.txt: Added.
+        * mathml/rowspan-crash.xhtml: Added.
+
 2016-03-14  Darin Adler  <darin@apple.com>
 
         Continue work on https://bugs.webkit.org/show_bug.cgi?id=106350

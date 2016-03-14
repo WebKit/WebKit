@@ -1,3 +1,21 @@
+2016-03-14  Frederic Wang  <fwang@igalia.com>
+
+        Make MathML colspan/rowspan consistent with HTML table cells.
+        https://bugs.webkit.org/show_bug.cgi?id=150253
+
+        Reviewed by Martin Robinson.
+
+        Test: mathml/rowspan-crash.xhtml
+
+        We make MathMLElement::colSpan and MathMLElement::rowSpan consistent with the corresponding functions in HTMLTableCellElement.cpp.
+        These functions now return unsigned integers, use the same parsing functions and set a maximum for rowspan.
+        This latter change fixes crash/timeout with large values of rowspan.
+
+        * mathml/MathMLElement.cpp: Include HTMLParserIdioms to use limitToOnlyHTMLNonNegative.
+        (WebCore::MathMLElement::colSpan): Use unsigned integer and limitToOnlyHTMLNonNegative.
+        (WebCore::MathMLElement::rowSpan): ditto. We also use the same maximum limit as HTMLTableCellElement.
+        * mathml/MathMLElement.h: Make colSpan and rowSpan return unsigned integers.
+
 2016-03-14  Tomas Popela  <tpopela@redhat.com>
 
         Enable GSS-Negotiate support in libsoup

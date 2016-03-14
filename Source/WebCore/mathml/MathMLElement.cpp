@@ -35,6 +35,7 @@
 #include "HTMLElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "MathMLNames.h"
 #include "MathMLSelectElement.h"
 #include "RenderTableCell.h"
@@ -193,20 +194,21 @@ bool MathMLElement::isFlowContent(const Node& node) const
         || htmlElement.hasTagName(HTMLNames::ulTag);
 }
 
-int MathMLElement::colSpan() const
+unsigned MathMLElement::colSpan() const
 {
     if (!hasTagName(mtdTag))
-        return 1;
+        return 1u;
     const AtomicString& colSpanValue = fastGetAttribute(columnspanAttr);
-    return std::max(1, colSpanValue.toInt());
+    return std::max(1u, limitToOnlyHTMLNonNegative(colSpanValue, 1u));
 }
 
-int MathMLElement::rowSpan() const
+unsigned MathMLElement::rowSpan() const
 {
     if (!hasTagName(mtdTag))
-        return 1;
+        return 1u;
     const AtomicString& rowSpanValue = fastGetAttribute(rowspanAttr);
-    return std::max(1, rowSpanValue.toInt());
+    static const unsigned maxRowspan = 8190; // This constant comes from HTMLTableCellElement.
+    return std::max(1u, std::min(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), maxRowspan));
 }
 
 void MathMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
