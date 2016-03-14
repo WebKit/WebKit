@@ -1,3 +1,19 @@
+2016-03-14  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: cssmin.py does not handle calc(var(--toolbar-height) + var(--tab-bar-height))
+
+        https://bugs.webkit.org/show_bug.cgi?id=155464
+        rdar://problem/25152196
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/cssmin.py:
+        (cssminify): Check for var when stripping spaces around + and -.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype._viewModeDidChange):
+        Drive-by fix to add a missing semi-colon found by the copy-user-interface-resources-dryrun.rb script.
+
 2016-03-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Reduce generated JSON HeapSnapshot size

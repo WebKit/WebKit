@@ -738,7 +738,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
         for (let [type, overviewGraph] of this._overviewGraphsByTypeMap) {
             let treeElement = this._treeElementsByTypeMap.get(type);
-            console.assert(treeElement, "Missing tree element for timeline type", type)
+            console.assert(treeElement, "Missing tree element for timeline type", type);
 
             treeElement.hidden = !this._canShowTimelineType(type);
             if (treeElement.hidden)
