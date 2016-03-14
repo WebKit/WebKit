@@ -1,5 +1,14 @@
 2016-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix the GTK+ build after r198124.
+
+        WebsiteDataTypes is now an OptionSet.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_clear_cache):
+
+2016-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Reimplement webkit_web_context_clear_cache functionality.
         https://bugs.webkit.org/show_bug.cgi?id=146041
 
