@@ -1,3 +1,26 @@
+2016-03-14  Beth Dakin  <bdakin@apple.com>
+
+        Unable to commit previews in Mobile Safari
+        https://bugs.webkit.org/show_bug.cgi?id=155450
+        -and corresponding-
+        rdar://problem/25135529
+
+        Reviewed by Tim Horton.
+
+        _uiDelegateProvidedPreviewingViewController was being consulted before 
+        invoking the old SPI, which was always wrong. It should have been consulted 
+        before calling the new API! But also, it doesn’t seem to be necessary at all 
+        since [WKContentView _previewItemController:commitPreview:] is only invoked 
+        when a custom view controller has been provided.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _registerPreview]):
+        (-[WKContentView _unregisterPreview]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        (-[WKContentView _previewItemController:commitPreview:]):
+
 2016-03-14  Brent Fulgham  <bfulgham@apple.com>
 
         PingHandle delete's itself but pointer is still used by handleDataURL

@@ -3779,7 +3779,6 @@ static bool isAssistableInputType(InputType type)
     _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
     if ([_previewItemController respondsToSelector:@selector(presentationSecondaryGestureRecognizer)])
         _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
-    _uiDelegateProvidedPreviewingViewController = NO;
 }
 
 - (void)_unregisterPreview
@@ -3788,7 +3787,6 @@ static bool isAssistableInputType(InputType type)
     _previewGestureRecognizer = nil;
     _previewSecondaryGestureRecognizer = nil;
     _previewItemController = nil;
-    _uiDelegateProvidedPreviewingViewController = NO;
 }
 
 - (BOOL)_interactionShouldBeginFromPreviewItemController:(UIPreviewItemController *)controller forPosition:(CGPoint)position
@@ -3954,10 +3952,8 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
                 [previewActions addObject:previewAction];
             }
             auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:targetURL]);
-            if (UIViewController *controller = [uiDelegate webView:_webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:previewActions.get()]) {
-                _uiDelegateProvidedPreviewingViewController = YES;
+            if (UIViewController *controller = [uiDelegate webView:_webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:previewActions.get()])
                 return controller;
-            }
         }
 
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
@@ -4002,7 +3998,7 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
         return;
     }
 
-    if (_uiDelegateProvidedPreviewingViewController && [uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)]) {
+    if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)]) {
         [uiDelegate _webView:_webView commitPreviewedViewController:viewController];
         return;
     }
