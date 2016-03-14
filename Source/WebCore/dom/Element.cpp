@@ -83,6 +83,7 @@
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "SimulatedClick.h"
+#include "SlotAssignment.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
@@ -1254,7 +1255,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
         else if (name == HTMLNames::slotAttr) {
             if (auto* parent = parentElement()) {
                 if (auto* shadowRoot = parent->shadowRoot())
-                    shadowRoot->invalidateSlotAssignments();
+                    shadowRoot->hostChildElementDidChangeSlotAttribute(oldValue, newValue);
             }
         }
 #endif
@@ -1496,6 +1497,11 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 #endif
 
+    if (parentNode() == &insertionPoint) {
+        if (auto* shadowRoot = parentNode()->shadowRoot())
+            shadowRoot->hostChildElementDidChange(*this);
+    }
+
     if (!insertionPoint.isInTreeScope())
         return InsertionDone;
 
@@ -1573,6 +1579,11 @@ void Element::removedFrom(ContainerNode& insertionPoint)
             if (oldScope->shouldCacheLabelsByForAttribute())
                 updateLabel(*oldScope, fastGetAttribute(forAttr), nullAtom);
         }
+    }
+
+    if (!parentNode()) {
+        if (auto* shadowRoot = insertionPoint.shadowRoot())
+            shadowRoot->hostChildElementDidChange(*this);
     }
 
     ContainerNode::removedFrom(insertionPoint);
@@ -1832,13 +1843,15 @@ void Element::childrenChanged(const ChildChange& change)
         switch (change.type) {
         case ElementInserted:
         case ElementRemoved:
+            // For elements, we notify shadowRoot in Element::insertedInto and Element::removedFrom.
+            break;
         case AllChildrenRemoved:
-            shadowRoot->invalidateSlotAssignments();
+            shadowRoot->didRemoveAllChildrenOfShadowHost();
             break;
         case TextInserted:
         case TextRemoved:
         case TextChanged:
-            shadowRoot->invalidateDefaultSlotAssignments();
+            shadowRoot->didChangeDefaultSlot();
             break;
         case NonContentsChildChanged:
             break;

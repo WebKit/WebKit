@@ -29,6 +29,8 @@
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
 #include "ElementChildIterator.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "HTMLNames.h"
 #include "ShadowRoot.h"
 
@@ -95,6 +97,27 @@ const Vector<Node*>* HTMLSlotElement::assignedNodes() const
         return nullptr;
 
     return shadowRoot->assignedNodesForSlot(*this);
+}
+
+void HTMLSlotElement::enqueueSlotChangeEvent()
+{
+    if (m_hasEnqueuedSlotChangeEvent)
+        return;
+
+    bool bubbles = false;
+    bool cancelable = false;
+    auto event = Event::create(eventNames().slotchangeEvent, bubbles, cancelable);
+    event->setTarget(this);
+    document().enqueueSlotchangeEvent(WTFMove(event));
+
+    m_hasEnqueuedSlotChangeEvent = true;
+}
+
+bool HTMLSlotElement::dispatchEvent(Event& event)
+{
+    if (event.type() == eventNames().slotchangeEvent)
+        m_hasEnqueuedSlotChangeEvent = false;
+    return HTMLElement::dispatchEvent(event);
 }
 
 }

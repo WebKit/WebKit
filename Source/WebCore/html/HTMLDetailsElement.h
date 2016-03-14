@@ -47,6 +47,7 @@ private:
     bool m_isOpen { false };
     HTMLSlotElement* m_summarySlot { nullptr };
     HTMLSummaryElement* m_defaultSummary { nullptr };
+    RefPtr<HTMLSlotElement> m_defaultSlot;
 };
 
 } // namespace WebCore

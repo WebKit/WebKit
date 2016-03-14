@@ -1,3 +1,97 @@
+2016-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add slotchange event
+        https://bugs.webkit.org/show_bug.cgi?id=155424
+        <rdar://problem/24997534>
+
+        Reviewed by Antti Koivisto.
+
+        Added `slotchange` event as discussed on https://github.com/w3c/webcomponents/issues/288.
+
+        While the exact semantics of it could still evolve over time, this patch implements as
+        an asynchronous event that fires on a slot element whenever its distributed nodes change
+        (flattened assigned nodes):
+        http://w3c.github.io/webcomponents/spec/shadow/#dfn-distributed-nodes
+
+        Since inserting or removing an element from a shadow host could needs to enqueue this event
+        on the right slot element, this patch moves the invalidation point of element removals and
+        insertions from Element::childrenChanged to Element::insertedInto and Element::removedFrom.
+        Text nodes are still invalidated at Element::childrenChanged for performance reasons
+        since it could only appear within a default slot element.
+
+        Because this more fine-grained invalidation needs to be overridden by HTMLDetailsElement,
+        we now subclass SlotAssignment in HTMLDetailsElement instead of passing in a std::function.
+
+        Test: fast/shadow-dom/slotchange-event.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::enqueueSlotchangeEvent): Added.
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged): Call hostChildElementDidChangeSlotAttr.
+        (WebCore::Element::insertedInto): Call hostChildElementDidChange.
+        (WebCore::Element::removedFrom): Ditto.
+        (WebCore::Element::childrenChanged): Don't invalidate the slots on ElementInserted and
+        ElementRemoved since they're now done in Element::insertedInto and Element::removedFrom.
+        * dom/Event.cpp:
+        (WebCore::Event::scoped): slotchange event is scoped.
+        * dom/EventNames.h: Added eventNames().slotchange.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::invalidateSlotAssignments): Deleted.
+        (WebCore::ShadowRoot::invalidateDefaultSlotAssignments): Deleted.
+        * dom/ShadowRoot.h:
+        (ShadowRoot): Added more fine-grained invalidators, mirroring changes to SlotAssignment.
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::SlotAssignment): Removed a variant that takes SlotNameFunction
+        since HTMLDetailsElement now subclasses SlotAssignment.
+        (WebCore::SlotAssignment::~SlotAssignment): Added now that the class is virtual.
+        (WebCore::recursivelyFireSlotChangeEvent): Added.
+        (WebCore::SlotAssignment::didChangeSlot): Added. Invalidates the style tree only if there
+        is a corresponding slot element, and fires slotchange event. When the slot element we found
+        in this shadow tree is assigned to a slot element inside an inner shadow tree, recursively
+        fire slotchange event on each such inner slots.
+        (WebCore::SlotAssignment::hostChildElementDidChange): Added. Update the matching slot when
+        an element is inserted or removed under a shadow host.
+        (WebCore::SlotAssignment::assignedNodesForSlot): Removed the superfluous early exit to an
+        release assert since addSlotElementByName should always create a SlotInfo for each element.
+        (WebCore::SlotAssignment::slotNameForHostChild): Added. This is the equivalent of old
+        m_slotNameFunction which DetailsSlotAssignment overrides.
+        (WebCore::SlotAssignment::invalidateDefaultSlot): Deleted.
+        (WebCore::SlotAssignment::findFirstSlotElement): Added an assertion. slotInfo.element must
+        be nullptr if elementCount is 0, and elementCount must be 0 if slotInfo.element is nullptr
+        after calling resolveAllSlotElements, which traverses the entire shadow tree to find all
+        slot elements.
+        (WebCore::SlotAssignment::assignSlots):
+        * dom/SlotAssignment.h: Implemented inline functions of ShadowRoot here to avoid including
+        SlotAssignment.h in ShadowRoot.h. Not inlining them results in extra function calls for all
+        builtin elements with shadow root without slot elements, which impacts performance.
+        (WebCore::ShadowRoot::didRemoveAllChildrenOfShadowHost): Added.
+        (WebCore::ShadowRoot::didChangeDefaultSlot): Added.
+        (WebCore::ShadowRoot::hostChildElementDidChange): Added.
+        (WebCore::ShadowRoot::hostChildElementDidChangeSlotAttribute): Added.
+        (WebCore::ShadowRoot::innerSlotDidChange):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::DetailsSlotAssignment): Added. Subclasses SlotAssignment to override
+        hostChildElementDidChange and slotNameForHostChild.
+        (WebCore::DetailsSlotAssignment::hostChildElementDidChange): Added. We don't check if this
+        is the first summary element since we don't know the answer when this function is called
+        inside Element::removedFrom.
+        (WebCore::DetailsSlotAssignment::slotNameForHostChild): Renamed from slotNameFunction. Also
+        removed the code to return nullAtom when details element is not open as that messes up new
+        fine-grained invalidation. Insert/remove the slot element in parseAttribute instead.
+        (WebCore::HTMLDetailsElement::didAddUserAgentShadowRoot): Don't insert the slot element for
+        the summary since the details element is not open now.
+        (WebCore::HTMLDetailsElement::parseAttribute): Remove and insert the slot element for the
+        summary here instead of changing the behavior of slotNameForHostChild.
+        * html/HTMLDetailsElement.h:
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::enqueueSlotChangeEvent): Added. Enqueues a new slotchange event
+        if we haven't done so for this element yet.
+        (WebCore::HTMLSlotElement::dispatchEvent): Added. Clear m_hasEnqueuedSlotChangeEvent when
+        dispatching a slotchange event so that a subsequent call to enqueueSlotChangeEvent would
+        enqueue a new event. Note scripts call EventTarget::dispatchEventForBindings instead.
+        * html/HTMLSlotElement.h:
+
 2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Introduce CallWith=Document in binding generator

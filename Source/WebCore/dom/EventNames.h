@@ -195,6 +195,7 @@ namespace WebCore {
     macro(selectstart) \
     macro(show) \
     macro(signalingstatechange) \
+    macro(slotchange) \
     macro(soundend) \
     macro(soundstart) \
     macro(sourceclose) \

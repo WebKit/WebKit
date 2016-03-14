@@ -103,7 +103,8 @@ bool Event::scoped() const
         || m_type == eventNames().resizeEvent
         || m_type == eventNames().scrollEvent
         || m_type == eventNames().selectEvent
-        || m_type == eventNames().selectstartEvent;
+        || m_type == eventNames().selectstartEvent
+        || m_type == eventNames().slotchangeEvent;
 }
 
 EventInterface Event::eventInterface() const
