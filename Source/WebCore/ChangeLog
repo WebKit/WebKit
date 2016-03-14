@@ -1,5 +1,22 @@
 2016-03-14  Zalan Bujtas  <zalan@apple.com>
 
+        [Outline: auto] Fractional radius value could result in non-renderable rounded border.
+        https://bugs.webkit.org/show_bug.cgi?id=155420
+
+        Reviewed by Tim Horton.
+
+        RoundedRect::pixelSnappedRoundedRectForPainting ensures that the rounded rect is always renderable.
+
+        Test: fast/inline/hidpi-outline-auto-with-fractional-radius.html
+
+        * platform/graphics/PathUtilities.cpp:
+        (WebCore::PathUtilities::pathWithShrinkWrappedRectsForOutline):
+        * platform/graphics/PathUtilities.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintFocusRing):
+
+2016-03-14  Zalan Bujtas  <zalan@apple.com>
+
         Outline: auto has sharp corners with single line contenteditable.
         https://bugs.webkit.org/show_bug.cgi?id=155418
 

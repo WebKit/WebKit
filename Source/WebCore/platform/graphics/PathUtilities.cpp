@@ -484,7 +484,7 @@ static Optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& poly)
 }
 
 Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>& rects, const BorderData& borderData, float outlineOffset, TextDirection direction,
-    WritingMode writingMode)
+    WritingMode writingMode, float deviceScaleFactor)
 {
     ASSERT(borderData.hasBorderRadius());
     FloatSize topLeftRadius = FloatSize(borderData.topLeft().width().value(), borderData.topLeft().height().value());
@@ -492,13 +492,14 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
     FloatSize bottomRightRadius = FloatSize(borderData.bottomRight().width().value(), borderData.bottomRight().height().value());
     FloatSize bottomLeftRadius = FloatSize(borderData.bottomLeft().width().value(), borderData.bottomLeft().height().value());
 
-    auto roundedRect = [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius, outlineOffset] (const FloatRect& rect)
+    auto roundedRect = [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius, outlineOffset, deviceScaleFactor] (const FloatRect& rect)
     {
         auto radii = adjustedtRadiiForHuggingCurve(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, outlineOffset);
         radii.scale(calcBorderRadiiConstraintScaleFor(rect, radii));
-
+        RoundedRect roundedRect(LayoutRect(rect),
+            RoundedRect::Radii(LayoutSize(radii.topLeft()), LayoutSize(radii.topRight()), LayoutSize(radii.bottomLeft()), LayoutSize(radii.bottomRight())));
         Path path;
-        path.addRoundedRect(FloatRoundedRect(rect, radii));
+        path.addRoundedRect(roundedRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
         return path;
     };
 
