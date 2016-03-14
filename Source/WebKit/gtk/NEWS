@@ -1,4 +1,20 @@
 =================
+WebKitGTK+ 2.4.10
+=================
+
+  - Fix rendering of form controls and scrollbars with GTK+ >= 3.19
+  - Fix crashes on PPC64.
+  - Fix the build on powerpc 32 bits.
+  - Add ARM64 build support.
+  - Translation updates: German, Spanish, French, Italian, Korean, Brazilian Portuguese, Russian,
+    Chinese.
+  - Security fixes: CVE-2015-1120, CVE-2015-1076, CVE-2015-1071, CVE-2015-1081, CVE-2015-1122,
+    CVE-2015-1155, CVE-2014-1748, CVE-2015-3752, CVE-2015-5809, CVE-2015-5928, CVE-2015-3749,
+    CVE-2015-3659, CVE-2015-3748, CVE-2015-3743, CVE-2015-3731, CVE-2015-3745, CVE-2015-5822,
+    CVE-2015-3658, CVE-2015-3741, CVE-2015-3727, CVE-2015-5801, CVE-2015-5788, CVE-2015-3747,
+    CVE-2015-5794, CVE-2015-1127, CVE-2015-1153, CVE-2015-1083.
+
+=================
 WebKitGTK+  2.4.9
 =================
 

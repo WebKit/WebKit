@@ -1,3 +1,9 @@
+2016-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.4.10 release.
+
+        * Source/autotools/Versions.m4: Bump version numbers.
+
 2014-03-25  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [EFL] Add ARM64 build support
