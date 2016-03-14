@@ -141,8 +141,6 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
     display: flex;
     flex-direction: column;
     flex: 1;
-
-    transform: translateZ(0); /* Promote #content into a layer to reduce repaint areas. http://webkit.org/b/155387 */
 }
 
 #tab-browser {
