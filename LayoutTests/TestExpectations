@@ -932,7 +932,7 @@ storage/indexeddb/delete-closed-database-object.html [ Skip ]
 storage/indexeddb/request-leak-private.html [ Failure ]
 storage/indexeddb/request-leak.html [ Failure ]
 
-webkit.org/b/154619 storage/indexeddb/odd-strings.html [ Pass Timeout ]
+webkit.org/b/154619 storage/indexeddb/odd-strings.html [ Skip ]
 
 # No workers support in Modern IDB yet
 http/tests/security/cross-origin-worker-indexeddb-allowed.html
