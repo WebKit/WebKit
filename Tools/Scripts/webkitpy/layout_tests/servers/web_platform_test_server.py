@@ -39,14 +39,20 @@ def doc_root(port_obj):
     return doc_root
 
 
-def base_url(port_obj):
+def wpt_config_json(port_obj):
     config_wk_filepath = port_obj._filesystem.join(port_obj.layout_tests_dir(), "imported", "w3c", "resources", "config.json")
     if not port_obj.host.filesystem.isfile(config_wk_filepath):
+        return
+    json_data = port_obj._filesystem.read_text_file(config_wk_filepath)
+    return json.loads(json_data)
+
+
+def base_url(port_obj):
+    config = wpt_config_json(port_obj)
+    if not config:
         # This should only be hit by webkitpy unit tests
         _log.debug("No WPT config file found")
         return "http://localhost:8800/"
-    json_data = port_obj._filesystem.read_text_file(config_wk_filepath)
-    config = json.loads(json_data)
     ports = config["ports"]
     return "http://" + config["host"] + ":" + str(ports["http"][0]) + "/"
 
@@ -77,6 +83,17 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         current_dir_path = self._filesystem.abspath(self._filesystem.split(__file__)[0])
         self._start_cmd = ["python", self._filesystem.join(current_dir_path, "web_platform_test_launcher.py"), self._servers_file]
         self._doc_root_path = self._filesystem.join(self._layout_root, self._doc_root)
+
+        self._mappings = []
+        config = wpt_config_json(port_obj)
+        if config:
+            ports = config["ports"]
+            for key in ports:
+                for value in ports[key]:
+                    port = {"port": value}
+                    if key == "https":
+                        port["sslcert"] = True
+                    self._mappings.append(port)
 
     def _install_modules(self):
         modules_file_path = self._filesystem.join(self._doc_root_path, "..", "resources", "web-platform-tests-modules.json")

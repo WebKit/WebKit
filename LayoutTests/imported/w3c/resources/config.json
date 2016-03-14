@@ -1,6 +1,6 @@
 {"host": "localhost",
  "ports":{"http":[8800, 8801],
-          "https":[8443],
+          "https":[9443],
           "ws":[49001]},
  "check_subdomains": false,
  "log_level":"debug",

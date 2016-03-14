@@ -1,3 +1,16 @@
+2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Web platform test server should not try to launch servers on already bound sockets
+        https://bugs.webkit.org/show_bug.cgi?id=141157
+
+        Reviewed by Darin Adler.
+
+        * resources/config.json: Changed wpt https port from 8443 to 9443.
+        * web-platform-tests/fetch/api/basic/mode-no-cors-expected.txt: Updated according https port change.
+        * web-platform-tests/fetch/api/basic/mode-no-cors-worker-expected.txt: Ditto.
+        * web-platform-tests/fetch/api/basic/mode-same-origin-expected.txt: Ditto.
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker-expected.txt: Ditto.
+
 2016-03-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Use DeferredWrapper directly in FetchBody promise handling
