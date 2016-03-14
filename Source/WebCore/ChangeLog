@@ -1,3 +1,10 @@
+2016-03-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::loadedBlobAsText):
+
 2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement data resolution for blob stored in Body

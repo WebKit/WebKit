@@ -69,7 +69,7 @@ void FetchBodyOwner::loadBlob(Blob& blob, FetchLoader::Type type)
 
 void FetchBodyOwner::loadedBlobAsText(String&& text)
 {
-    ASSERT(*scriptExecutionContext());
+    ASSERT(scriptExecutionContext());
 
     m_body.loadedAsText(*scriptExecutionContext(), WTFMove(text));
 }
