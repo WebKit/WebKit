@@ -1,5 +1,33 @@
 2016-03-07  Filip Pizlo  <fpizlo@apple.com>
 
+        Reduce the number of instructions needed to record the last regexp result
+        https://bugs.webkit.org/show_bug.cgi?id=155161
+
+        Reviewed by Sam Weinig.
+
+        This tightens up RegExpCachedResult::record(). My profiling shows that we spend just
+        over 1% of the time in Octane/regexp in this function. This function had two obvious
+        redundancies:
+
+        1) It executed the write barrier on owner twice. It only needs to execute it once. Since
+           the same RegExpConstructor is likely to be used many times, it makes sense to do the
+           barrier without looking at the 'to' objects at all. In steady state, this means that
+           the RegExpConstructor will simply be OldGrey so this one barrier will always skip the
+           slow path.
+
+        2) It cleared some fields that didn't need to be cleared, since we can just use
+           m_reified to indicate that the fields are not meaningful anymore.
+
+        This is meant to be a microscopic regexp speed-up.
+
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::visitChildren):
+        (JSC::RegExpCachedResult::lastResult):
+        * runtime/RegExpCachedResult.h:
+        (JSC::RegExpCachedResult::record):
+
+2016-03-07  Filip Pizlo  <fpizlo@apple.com>
+
         createRegExpMatchesArray should allocate substrings more quickly
         https://bugs.webkit.org/show_bug.cgi?id=155160
 
