@@ -989,7 +989,8 @@
       },
       "Frédéric Wang" : {
          "emails" : [
-            "fred.wang@free.fr"
+            "fred.wang@free.fr",
+            "fwang@igalia.com"
          ],
          "nicks" : [
             "fredw"
