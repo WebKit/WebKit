@@ -57,36 +57,46 @@ enum class EdgeType : uint8_t {
 };
 
 struct HeapSnapshotEdge {
-    HeapSnapshotEdge(JSCell* from, JSCell* to)
-        : from(from)
-        , to(to)
-        , type(EdgeType::Internal)
-    { }
+    HeapSnapshotEdge(JSCell* fromCell, JSCell* toCell)
+        : type(EdgeType::Internal)
+    {
+        from.cell = fromCell;
+        to.cell = toCell;
+    }
 
-    HeapSnapshotEdge(JSCell* from, JSCell* to, EdgeType type, UniquedStringImpl* name)
-        : from(from)
-        , to(to)
-        , type(type)
+    HeapSnapshotEdge(JSCell* fromCell, JSCell* toCell, EdgeType type, UniquedStringImpl* name)
+        : type(type)
     {
         ASSERT(type == EdgeType::Property || type == EdgeType::Variable);
+        from.cell = fromCell;
+        to.cell = toCell;
         u.name = name;
     }
 
-    HeapSnapshotEdge(JSCell* from, JSCell* to, uint32_t index)
-        : from(from)
-        , to(to)
-        , type(EdgeType::Index)
+    HeapSnapshotEdge(JSCell* fromCell, JSCell* toCell, uint32_t index)
+        : type(EdgeType::Index)
     {
+        from.cell = fromCell;
+        to.cell = toCell;
         u.index = index;
     }
 
-    JSCell* from;
-    JSCell* to;
-    EdgeType type;
+    union {
+        JSCell *cell;
+        unsigned identifier;
+    } from;
+
+    union {
+        JSCell *cell;
+        unsigned identifier;
+    } to;
+
     union {
         UniquedStringImpl* name;
         uint32_t index;
     } u;
+
+    EdgeType type;
 };
 
 class JS_EXPORT_PRIVATE HeapSnapshotBuilder {

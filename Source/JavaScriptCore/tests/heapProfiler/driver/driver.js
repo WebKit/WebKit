@@ -18,7 +18,7 @@ const nodeInternalOffset = 3;
 const nodeFirstEdgeOffset = 4;
 const nodeNoEdgeValue = 0xffffffff; // UINT_MAX
 
-// [<0:from-id>, <1:to-id>, <2:typeTableIndex>, <3:data>]
+// [<0:fromId>, <1:toId>, <2:typeTableIndex>, <3:edgeDataIndexOrEdgeNameIndex>]
 const edgeFieldCount = 4;
 const edgeFromIdOffset = 0;
 const edgeToIdOffset = 1;
@@ -60,7 +60,11 @@ CheapHeapSnapshotEdge = class CheapHeapSnapshotEdge
         this.fromId = edges[edgeIndex + edgeFromIdOffset];
         this.toId = edges[edgeIndex + edgeToIdOffset];
         this.type = snapshot.edgeTypeFromTableIndex(edges[edgeIndex + edgeTypeOffset]);
-        this.data = edges[edgeIndex + edgeDataOffset];
+
+        if (this.type === "Property" || this.type === "Variable")
+            this.data = snapshot.edgeNameFromTableIndex(edges[edgeIndex + edgeDataOffset]);
+        else
+            this.data = edges[edgeIndex + edgeDataOffset];
     }
 
     get from() { return this.snapshot.nodeWithIdentifier(this.fromId); }
@@ -71,41 +75,44 @@ CheapHeapSnapshot = class CheapHeapSnapshot
 {
     constructor(json)
     {
-        let {nodes, nodeClassNames, edges, edgeTypes} = json;
+        let {nodes, nodeClassNames, edges, edgeTypes, edgeNames} = json;
 
         this._nodes = new Uint32Array(nodes.length * nodeFieldCount);
         this._edges = new Uint32Array(edges.length * edgeFieldCount);
         this._nodeIdentifierToIndex = new Map; // <id> => index in _nodes
 
         this._edgeTypesTable = edgeTypes;
+        this._edgeNamesTable = edgeNames;
         this._nodeClassNamesTable = nodeClassNames;
 
         let n = 0;
-        nodes.forEach((nodePayload) => {
-            let [id, size, classNameTableIndex, internal] = nodePayload;
-            this._nodeIdentifierToIndex.set(id, n);
-            this._nodes[n++] = id;
-            this._nodes[n++] = size;
-            this._nodes[n++] = classNameTableIndex;
-            this._nodes[n++] = internal;
+        for (let i = 0; i < nodes.length;) {
+            this._nodeIdentifierToIndex.set(nodes[i], n);
+            this._nodes[n++] = nodes[i++]; // id
+            this._nodes[n++] = nodes[i++]; // size
+            this._nodes[n++] = nodes[i++]; // classNameTableIndex
+            this._nodes[n++] = nodes[i++]; // internal
             this._nodes[n++] = nodeNoEdgeValue;
-        });
+        }
 
         let e = 0;
         let lastNodeIdentifier = -1;
-        edges.sort((a, b) => a[0] - b[0]).forEach((edgePayload) => {
-            let [fromIdentifier, toIdentifier, edgeTypeTableIndex, data] = edgePayload;
+        for (let i = 0; i < edges.length;) {
+            let fromIdentifier = edges[i++]; // fromIdentifier
+            let toIdentifier = edges[i++]; // toIdentifier
+            assert(lastNodeIdentifier <= fromIdentifier, "Edge list should be ordered by from node identifier");
             if (fromIdentifier !== lastNodeIdentifier) {
                 let nodeIndex = this._nodeIdentifierToIndex.get(fromIdentifier);
                 assert(this._nodes[nodeIndex + nodeIdOffset] === fromIdentifier, "Node lookup failed");
                 this._nodes[nodeIndex + nodeFirstEdgeOffset] = e;
                 lastNodeIdentifier = fromIdentifier;
             }
+
             this._edges[e++] = fromIdentifier;
             this._edges[e++] = toIdentifier;
-            this._edges[e++] = edgeTypeTableIndex;
-            this._edges[e++] = data;
-        });
+            this._edges[e++] = edges[i++]; // edgeTypeTableIndex
+            this._edges[e++] = edges[i++]; // data
+        }
     }
 
     get nodes() { return this._nodes; }
@@ -135,6 +142,11 @@ CheapHeapSnapshot = class CheapHeapSnapshot
     edgeTypeFromTableIndex(tableIndex)
     {
         return this._edgeTypesTable[tableIndex];
+    }
+
+    edgeNameFromTableIndex(tableIndex)
+    {
+        return this._edgeNamesTable[tableIndex];
     }
 }
 
@@ -189,27 +201,39 @@ HeapSnapshot = class HeapSnapshot
 {
     constructor(json)
     {        
-        let {version, nodes, nodeClassNames, edges, edgeTypes} = json;
+        let {version, nodes, nodeClassNames, edges, edgeTypes, edgeNames} = json;
 
         this.nodeMap = new Map;
 
-        this.nodes = nodes.map((nodePayload) => {
-            let [id, size, classNameIndex, internal] = nodePayload;
+        this.nodes = [];
+        for (let i = 0; i < nodes.length;) {
+            let id = nodes[i++];
+            let size = nodes[i++];
+            let classNameIndex = nodes[i++];
+            let internal = nodes[i++];
+
             let node = new HeapSnapshotNode(id, nodeClassNames[classNameIndex], size, internal);
             this.nodeMap.set(id, node);
-            return node;
-        });
+            this.nodes.push(node);
+        }
 
-        edges.map((edgePayload) => {
-            let [fromIdentifier, toIdentifier, edgeTypeIndex, data] = edgePayload;
+        for (let i = 0; i < edges.length;) {
+            let fromIdentifier = edges[i++];
+            let toIdentifier = edges[i++];
+            let edgeTypeIndex = edges[i++];
+            let data = edges[i++];
+
             let from = this.nodeMap.get(fromIdentifier);
             let to = this.nodeMap.get(toIdentifier);
             assert(from, "Missing node for `from` part of edge");
             assert(to, "Missing node for `to` part of edge");
+            let type = edgeTypes[edgeTypeIndex];
+            if (type === "Property" || type === "Variable")
+                data = edgeNames[data];
             let edge = new HeapSnapshotEdge(from, to, edgeTypes[edgeTypeIndex], data);
             from.outgoingEdges.push(edge);
             to.incomingEdges.push(edge);
-        });
+        }
 
         this.rootNode = this.nodeMap.get(0);
         assert(this.rootNode, "Missing <root> node with identifier 0");

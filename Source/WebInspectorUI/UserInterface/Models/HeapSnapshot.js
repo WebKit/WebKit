@@ -77,36 +77,39 @@ WebInspector.HeapSnapshot = class HeapSnapshot extends WebInspector.Object
 
     static fromPayload(payload)
     {
-        let {version, nodes, nodeClassNames, edges, edgeTypes} = payload;
+        let {version, nodes, nodeClassNames, edges, edgeTypes, edgeNames} = payload;
         console.assert(version === 1, "Only know how to handle JavaScriptCore Heap Snapshot Format Version 1");
         console.assert(edgeTypes.every((type) => type in WebInspector.HeapSnapshotEdge.EdgeType), "Unexpected edge type", edgeTypes);
 
         let nodeMap = new Map;
 
         // Turn nodes into real nodes.
-        for (let i = 0, length = nodes.length; i < length; ++i) {
-            let nodePayload = nodes[i];
-            let id = nodePayload[0];
-            let size = nodePayload[1];
-            let classNameIndex = nodePayload[2];
-            let internal = nodePayload[3];
+        let processedNodes = [];
+        for (let i = 0, length = nodes.length; i < length;) {
+            let id = nodes[i++];
+            let size = nodes[i++];
+            let classNameIndex = nodes[i++];
+            let internal = nodes[i++];
 
             let node = new WebInspector.HeapSnapshotNode(id, nodeClassNames[classNameIndex], size, !!internal);
             nodeMap.set(id, node);
-            nodes[i] = node;
+            processedNodes.push(node);
         }
 
         // Turn edges into real edges and set them on the nodes.
-        for (let i = 0, length = edges.length; i < length; ++i) {
-            let edgePayload = edges[i];
-            let fromIdentifier = edgePayload[0];
-            let toIdentifier = edgePayload[1];
-            let edgeTypeIndex = edgePayload[2];
-            let data = edgePayload[3];
+        for (let i = 0, length = edges.length; i < length;) {
+            let fromIdentifier = edges[i++];
+            let toIdentifier = edges[i++];
+            let edgeTypeIndex = edges[i++];
+            let data = edges[i++];
 
             let from = nodeMap.get(fromIdentifier);
             let to = nodeMap.get(toIdentifier);
-            let edge = new WebInspector.HeapSnapshotEdge(from, to, edgeTypes[edgeTypeIndex], data);
+            let type = edgeTypes[edgeTypeIndex];
+            if (type === WebInspector.HeapSnapshotEdge.EdgeType.Property || type === WebInspector.HeapSnapshotEdge.EdgeType.Variable)
+                data = edgeNames[data];
+
+            let edge = new WebInspector.HeapSnapshotEdge(from, to, type, data);
             from.outgoingEdges.push(edge);
             to.incomingEdges.push(edge);
         }
@@ -122,7 +125,7 @@ WebInspector.HeapSnapshot = class HeapSnapshot extends WebInspector.Object
         for (let i = 0, length = rootNodeEdges.length; i < length; ++i)
             rootNodeEdges[i].to.gcRoot = true;
 
-        return new WebInspector.HeapSnapshot(rootNode, nodes, nodeMap);
+        return new WebInspector.HeapSnapshot(rootNode, processedNodes, nodeMap);
     }
 
     // Public

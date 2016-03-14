@@ -1,3 +1,36 @@
+2016-03-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Reduce generated JSON HeapSnapshot size
+        https://bugs.webkit.org/show_bug.cgi?id=155460
+
+        Reviewed by Geoffrey Garen.
+
+        Adjust the HeapSnapshot JSON to better reduce its size.
+        Changes include:
+
+          - avoid inner array groups and instead just have a large array for
+            nodes/edges. This removes lots of small array allocations.
+          - eliminate duplicate edges
+          - avoid duplicating edge names by including them in their own table;
+          - now both the nodes and edges lists hold only integers
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        Add some more documentation for the slightly modified format.
+        While generating, clear data structures as early as possible.
+
+        * heap/HeapSnapshotBuilder.h:
+        (JSC::HeapSnapshotEdge::HeapSnapshotEdge):
+        During JSON building, the edge's cell pointers are converted to the
+        identifier they point to. This avoids having to re-lookup the identifier.
+
+        * tests/heapProfiler/driver/driver.js:
+        (CheapHeapSnapshotEdge):
+        (CheapHeapSnapshot):
+        (CheapHeapSnapshot.prototype.edgeNameFromTableIndex):
+        (HeapSnapshot):
+        Update test driver for slightly different snapshot format.
+
 2016-03-14  Keith Miller  <keith_miller@apple.com>
 
         We should be able to eliminate cloned arguments objects that use the length property
