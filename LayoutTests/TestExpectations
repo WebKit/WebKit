@@ -797,7 +797,6 @@ fast/table/hittest-tablecell-right-edge.html [ Pass Failure ]
 css3/flexbox/multiline-reverse-wrap-baseline.html [ ImageOnlyFailure ]
 ietestcenter/css3/flexbox/flexbox-layout-001.htm [ ImageOnlyFailure ]
 
-#
 webkit.org/b/150598 fast/repaint/table-hover-on-link.html [ Pass Failure ]
 
 webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Failure ]
@@ -891,6 +890,9 @@ loader/stateobjects/replacestate-size.html [ Slow ]
 # outline: auto -focusring.
 imported/blink/fast/multicol/outlines-at-column-boundaries.html [ ImageOnlyFailure ]
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]
+
+# Temporarily turn off test while working on fixing it.
+webkit.org/b/106350 editing/pasteboard/paste-noplugin-xhtml.xhtml [ Pass Failure ]
 
 ########################################
 ### START OF IndexedDB failures

@@ -1,3 +1,10 @@
+2016-03-14  Darin Adler  <darin@apple.com>
+
+        Continue work on https://bugs.webkit.org/show_bug.cgi?id=106350
+
+        * TestExpectations: Disable test fow now since it seems to be failing in WebKit 1 and
+        depends on hooks not present in WebKit 1 test runner.
+
 2016-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add slotchange event
