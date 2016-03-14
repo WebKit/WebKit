@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This test checks that JavaScript programs can execute copy and paste commands, but only during a user gesture.");
+
+// Override the test runner default befavior of allowing all keyboard access, and act more like
+// a browser.
+if (window.testRunner)
+    window.testRunner.setJavaScriptCanAccessClipboard(false);
+
+function clearSelectionContainer()
+{
+    var container = document.getElementById('container');
+    if (container)
+        container.remove();
+}
+
+function resetSelectionContainer()
+{
+    clearSelectionContainer();
+
+    var container = document.createElement("div");
+    container.id = "container";
+
+    var nonEditableParagraph = document.createElement("p");
+    nonEditableParagraph.id = "nonEditableParagraph";
+    nonEditableParagraph.appendChild(document.createTextNode("x"));
+    container.appendChild(nonEditableParagraph);
+
+    var editableParagraph = document.createElement("p");
+    editableParagraph.id = "editableParagraph";
+    editableParagraph.appendChild(document.createTextNode("x"));
+    editableParagraph.setAttribute("contentEditable", "true");
+    container.appendChild(editableParagraph);
+
+    var editablePlainTextParagraph = document.createElement("p");
+    editablePlainTextParagraph.id = "editablePlainTextParagraph";
+    editablePlainTextParagraph.appendChild(document.createTextNode("x"));
+    editablePlainTextParagraph.setAttribute("contentEditable", "plaintext-only");
+    container.appendChild(editablePlainTextParagraph);
+
+    document.body.appendChild(container);
+}
+
+function makeSelection(elementId, selectionStart, selectionEnd)
+{
+    resetSelectionContainer();
+
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+
+    var element = document.getElementById(elementId);
+
+    var range = document.createRange();
+    range.setStart(element.firstChild, selectionStart);
+    range.setEnd(element.firstChild, selectionEnd);
+    selection.addRange(range);
+}
+
+var eventSeen = {
+    "copy": false,
+    "cut": false,
+    "beforecopy": false,
+    "beforecut": false
+}
+
+function resetSeenFlags()
+{
+    eventSeen.copy = false;
+    eventSeen.cut = false;
+    eventSeen.beforecopy = false;
+    eventSeen.beforecut = false;
+}
+
+document.body.oncopy = function(event)
+{
+    eventSeen["copy"] = true;
+}
+
+document.body.oncut = function()
+{
+    eventSeen["cut"] = true;
+}
+
+document.body.onbeforecopy = function()
+{
+    eventSeen["beforecopy"] = true;
+}
+
+document.body.onbeforecut = function()
+{
+    eventSeen["beforecut"] = true;
+}
+
+function test(command, enabledExpected, supportedExpected, executedExpected)
+{
+    resetSeenFlags();
+    shouldBe("document.queryCommandEnabled('" + command +"')", "" + enabledExpected);
+    shouldBeFalse("eventSeen['" + command +"']");
+
+    resetSeenFlags();
+    shouldBe("document.queryCommandSupported('" + command +"')", "" + supportedExpected);
+    shouldBeFalse("eventSeen['" + command +"']");
+
+    resetSeenFlags();
+    shouldBe("document.execCommand('" + command +"')", "" + executedExpected);
+    shouldBe("eventSeen['" + command +"']", "" + executedExpected);
+}
+
+function header(msg)
+{
+    debug("");
+    debug(msg);
+}
+
+var buttonForCopy = document.createElement("button");
+buttonForCopy.id = "copyButton";
+buttonForCopy.textContent = "Copy";
+buttonForCopy.onclick = function()
+{
+    header("Testing copying an editableParagraph range in a user gesture.")
+    makeSelection("editableParagraph", 0, 1);
+    test("copy", true, true, true);
+
+    header("Testing copying an editableParagraph caret in a user gesture.")
+    makeSelection("editableParagraph", 0, 0);
+    test("copy", false, true, true);
+
+    header("Testing copying an non-editable range in a user gesture.")
+    makeSelection("nonEditableParagraph", 0, 1);
+    test("copy", true, true, true);
+
+    header("Testing copying an non-editable caret in a user gesture.")
+    makeSelection("nonEditableParagraph", 0, 0);
+    test("copy", false, true, true);
+
+    header("Testing copying an editable plaint-text range in a user gesture.")
+    makeSelection("editablePlainTextParagraph", 0, 1);
+    test("copy", true, true, true);
+
+    header("Testing copying an editable plaint-text caret in a user gesture.")
+    makeSelection("editablePlainTextParagraph", 0, 0);
+    test("copy", false, true, true);
+
+    header("Testing copying when there is no selection in a user gesture.")
+    window.getSelection().removeAllRanges();
+    test("copy", false, true, true);
+
+    clearSelectionContainer();
+}
+document.body.appendChild(buttonForCopy);
+
+var buttonForCut = document.createElement("button");
+buttonForCut.id = "cutButton";
+buttonForCut.textContent = "Cut";
+buttonForCut.onclick = function()
+{
+    header("Testing cutting an editableParagraph range in a user gesture.")
+    makeSelection("editableParagraph", 0, 1);
+    test("cut", true, true, true);
+
+    header("Testing cutting an editableParagraph caret in a user gesture.")
+    makeSelection("editableParagraph", 0, 0);
+    test("cut", false, true, true);
+
+    header("Testing cutting an non-editable range in a user gesture.")
+    makeSelection("nonEditableParagraph", 0, 1);
+    test("cut", false, true, true);
+
+    header("Testing cutting an non-editable caret in a user gesture.")
+    makeSelection("nonEditableParagraph", 0, 0);
+    test("cut", false, true, true);
+
+    header("Testing cutting an editable plaint-text range in a user gesture.")
+    makeSelection("editablePlainTextParagraph", 0, 1);
+    test("cut", true, true, true);
+
+    header("Testing cutting an editable plaint-text caret in a user gesture.")
+    makeSelection("editablePlainTextParagraph", 0, 0);
+    test("cut", false, true, true);
+
+    header("Testing cutting when there is no selection in a user gesture.")
+    window.getSelection().removeAllRanges();
+    test("cut", false, true, true);
+
+    clearSelectionContainer();
+}
+document.body.appendChild(buttonForCut);
+
+// First test copy/cut without user gestures.
+header("Testing copying an editableParagraph range without a user gesture.")
+makeSelection("editableParagraph", 0, 1);
+test("copy", false, false, false);
+
+header("Testing copying an editableParagraph caret without a user gesture.")
+makeSelection("editableParagraph", 0, 0);
+test("copy", false, false, false);
+
+header("Testing copying an non-editable range without a user gesture.")
+makeSelection("nonEditableParagraph", 0, 1);
+test("copy", false, false, false);
+
+header("Testing copying an non-editable caret without a user gesture.")
+makeSelection("nonEditableParagraph", 0, 0);
+test("copy", false, false, false);
+
+header("Testing copying an editable plaint-text range without a user gesture.")
+makeSelection("editablePlainTextParagraph", 0, 1);
+test("copy", false, false, false);
+
+header("Testing copying an editable plaint-text caret without a user gesture.")
+makeSelection("editablePlainTextParagraph", 0, 0);
+test("copy", false, false, false);
+
+header("Testing copying when there is no selection without a user gesture.")
+window.getSelection().removeAllRanges();
+test("copy", false, false, false);
+
+clearSelectionContainer();
+
+header("Testing cutting an editableParagraph range without a user gesture.")
+makeSelection("editableParagraph", 0, 1);
+test("cut", false, false, false);
+
+header("Testing cutting an editableParagraph caret without a user gesture.")
+makeSelection("editableParagraph", 0, 0);
+test("cut", false, false, false);
+
+header("Testing cutting an non-editable range without a user gesture.")
+makeSelection("nonEditableParagraph", 0, 1);
+test("cut", false, false, false);
+
+header("Testing cutting an non-editable caret without a user gesture.")
+makeSelection("nonEditableParagraph", 0, 0);
+test("cut", false, false, false);
+
+header("Testing cutting an editable plaint-text range without a user gesture.")
+makeSelection("editablePlainTextParagraph", 0, 1);
+test("cut", false, false, false);
+
+header("Testing cutting an editable plaint-text caret without a user gesture.")
+makeSelection("editablePlainTextParagraph", 0, 0);
+test("cut", false, false, false);
+
+header("Testing cutting when there is no selection without a user gesture.")
+window.getSelection().removeAllRanges();
+test("cut", false, false, false);
+
+clearSelectionContainer();
+
+// Then test copy/cut with user gestures.
+if (window.testRunner) {
+    function clickButton(button)
+    {
+        eventSender.mouseMoveTo(button.offsetLeft + button.offsetWidth / 2, button.offsetTop + button.offsetHeight / 2);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    clickButton(buttonForCopy);
+    clickButton(buttonForCut);
+
+    buttonForCopy.remove();
+    buttonForCut.remove();
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

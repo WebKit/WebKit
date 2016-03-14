@@ -27,13 +27,14 @@
 #ifndef Settings_h
 #define Settings_h
 
+#include "ClipboardAccessPolicy.h"
 #include "EditingBehaviorTypes.h"
 #include "IntSize.h"
-#include "URL.h"
 #include "SecurityOrigin.h"
 #include "SettingsMacros.h"
 #include "TextFlags.h"
 #include "Timer.h"
+#include "URL.h"
 #include <chrono>
 #include <runtime/RuntimeFlags.h>
 #include <unicode/uscript.h>

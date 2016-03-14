@@ -53,6 +53,7 @@ javaScriptCanOpenWindowsAutomatically initial=false
 javaScriptCanAccessClipboard initial=false
 shouldPrintBackgrounds initial=false
 usesDashboardBackwardCompatibilityMode initial=false, conditional=DASHBOARD_SUPPORT
+clipboardAccessPolicy type=ClipboardAccessPolicy, initial=ClipboardAccessPolicy::RequiresUserGesture
 
 textAreasAreResizable initial=false, setNeedsStyleRecalcInAllFrames=1
 authorAndUserStylesEnabled initial=true, setNeedsStyleRecalcInAllFrames=1

@@ -57,6 +57,7 @@
 #include "StyleProperties.h"
 #include "TypingCommand.h"
 #include "UnlinkCommand.h"
+#include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
 #include "htmlediting.h"
 #include "markup.h"
@@ -1157,12 +1158,31 @@ static bool supportedFromMenuOrKeyBinding(Frame*)
     return false;
 }
 
+static bool defaultValueForSupportedCopyCut(Frame& frame)
+{
+    auto& settings = frame.settings();
+    if (settings.javaScriptCanAccessClipboard())
+        return true;
+    
+    switch (settings.clipboardAccessPolicy()) {
+    case ClipboardAccessPolicy::Allow:
+        return true;
+    case ClipboardAccessPolicy::Deny:
+        return false;
+    case ClipboardAccessPolicy::RequiresUserGesture:
+        return UserGestureIndicator::processingUserGesture();
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 static bool supportedCopyCut(Frame* frame)
 {
     if (!frame)
         return false;
 
-    bool defaultValue = frame->settings().javaScriptCanAccessClipboard();
+    bool defaultValue = defaultValueForSupportedCopyCut(*frame);
 
     EditorClient* client = frame->editor().client();
     return client ? client->canCopyCut(frame, defaultValue) : defaultValue;

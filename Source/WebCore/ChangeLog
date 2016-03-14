@@ -1,3 +1,31 @@
+2016-03-13  Sam Weinig  <sam@webkit.org>
+
+        Implement unprivileged execCommand("copy") and execCommand("cut")
+        <rdar://problem/24354406>
+        https://bugs.webkit.org/show_bug.cgi?id=146336
+
+        Reviewed by Dean Jackson.
+
+        Test: editing/execCommand/clipboard-access-with-user-gesture.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * editing/ClipboardAccessPolicy.h:
+        Added.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::defaultValueForSupportedCopyCut):
+        (WebCore::supportedCopyCut):
+        Match other browsers and allow the copy and cut commands
+        to be executed when there is a user gesture.
+
+        * page/Settings.h:
+        Add include of ClipboardAccessPolicy.h.
+
+        * page/Settings.in:
+        Add new setting for ClipboardAccessPolicy
+
 2016-03-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r190840): crash inside details element's slotNameFunction
