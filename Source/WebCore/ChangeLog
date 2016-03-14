@@ -1,3 +1,17 @@
+2016-03-14  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r197981): Huge regression on Mac PLT
+        https://bugs.webkit.org/show_bug.cgi?id=155443
+        <rdar://problem/25113391>
+
+        Reviewed by Gavin Barraclough.
+
+        We have experience a huge regression on Mac PLT after r197981, so
+        disable the feature until the performance issue is resolved.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayer::supportsSmoothedLayerText):
+
 2016-03-14  Chris Vienneau  <chris.vno@outlook.com>
 
         PingHandle delete's itself but pointer is still used by handleDataURL
