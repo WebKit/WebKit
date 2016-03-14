@@ -1,3 +1,13 @@
+2016-03-14  Mark Lam  <mark.lam@apple.com>
+
+        Need to distinguish between Symbol() and Symbol("").
+        https://bugs.webkit.org/show_bug.cgi?id=155438
+
+        Reviewed by Saam Barati.
+
+        * runtime/PrivateName.h:
+        (JSC::PrivateName::PrivateName):
+
 2016-03-14  Oliver Hunt  <oliver@apple.com>
 
         Temporarily disable the separated heap.

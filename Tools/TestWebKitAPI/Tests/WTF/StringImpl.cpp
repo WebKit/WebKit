@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -513,10 +513,11 @@ TEST(WTF, StringImplEndsWithIgnoringASCIICaseWithEmpty)
     ASSERT_FALSE(empty->endsWithIgnoringASCIICase(*reference.get()));
 }
 
-TEST(WTF, StringImplCreateSymbolEmpty)
+TEST(WTF, StringImplCreateNullSymbol)
 {
-    RefPtr<StringImpl> reference = StringImpl::createSymbolEmpty();
+    RefPtr<StringImpl> reference = StringImpl::createNullSymbol();
     ASSERT_TRUE(reference->isSymbol());
+    ASSERT_TRUE(reference->isNullSymbol());
     ASSERT_FALSE(reference->isAtomic());
     ASSERT_EQ(0u, reference->length());
     ASSERT_TRUE(equal(reference.get(), ""));
@@ -527,11 +528,23 @@ TEST(WTF, StringImplCreateSymbol)
     RefPtr<StringImpl> original = stringFromUTF8("original");
     RefPtr<StringImpl> reference = StringImpl::createSymbol(original);
     ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isNullSymbol());
     ASSERT_FALSE(reference->isAtomic());
     ASSERT_FALSE(original->isSymbol());
     ASSERT_FALSE(original->isAtomic());
     ASSERT_EQ(original->length(), reference->length());
     ASSERT_TRUE(equal(reference.get(), "original"));
+
+    RefPtr<StringImpl> empty = stringFromUTF8("");
+    RefPtr<StringImpl> emptyReference = StringImpl::createSymbol(empty);
+    ASSERT_TRUE(emptyReference->isSymbol());
+    ASSERT_FALSE(emptyReference->isNullSymbol());
+    ASSERT_FALSE(emptyReference->isAtomic());
+    ASSERT_FALSE(empty->isSymbol());
+    ASSERT_FALSE(empty->isNullSymbol());
+    ASSERT_TRUE(empty->isAtomic());
+    ASSERT_EQ(empty->length(), emptyReference->length());
+    ASSERT_TRUE(equal(emptyReference.get(), ""));
 }
 
 TEST(WTF, StringImplSymbolToAtomicString)
@@ -548,9 +561,9 @@ TEST(WTF, StringImplSymbolToAtomicString)
     ASSERT_FALSE(reference->isAtomic());
 }
 
-TEST(WTF, StringImplSymbolEmptyToAtomicString)
+TEST(WTF, StringImplNullSymbolToAtomicString)
 {
-    RefPtr<StringImpl> reference = StringImpl::createSymbolEmpty();
+    RefPtr<StringImpl> reference = StringImpl::createNullSymbol();
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isAtomic());
 

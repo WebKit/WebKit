@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ namespace JSC {
 class PrivateName {
 public:
     PrivateName()
-        : m_uid(StringImpl::createSymbolEmpty())
+        : m_uid(StringImpl::createNullSymbol())
     {
     }
 

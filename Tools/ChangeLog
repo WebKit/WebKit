@@ -1,3 +1,14 @@
+2016-03-14  Mark Lam  <mark.lam@apple.com>
+
+        Need to distinguish between Symbol() and Symbol("").
+        https://bugs.webkit.org/show_bug.cgi?id=155438
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::TEST):
+        - Test that the a symbol with an empty string is not equivalent to a null symbol. 
+
 2016-03-14  David Kilzer  <ddkilzer@apple.com>
 
         Remove blank lines after #include "config.h"

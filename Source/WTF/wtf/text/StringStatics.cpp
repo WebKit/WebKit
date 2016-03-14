@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,12 @@
 #endif
 
 namespace WTF {
+
+StringImpl* StringImpl::null()
+{
+    static NeverDestroyed<StringImpl> nullString(ConstructEmptyString);
+    return &nullString.get();
+}
 
 StringImpl* StringImpl::empty()
 {

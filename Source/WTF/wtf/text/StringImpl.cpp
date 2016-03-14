@@ -306,9 +306,9 @@ Ref<SymbolImpl> StringImpl::createSymbol(PassRefPtr<StringImpl> rep)
     return adoptRef(static_cast<SymbolImpl&>(*new (NotNull, stringImpl) StringImpl(CreateSymbol, rep->m_data16, rep->length(), ownerRep)));
 }
 
-Ref<SymbolImpl> StringImpl::createSymbolEmpty()
+Ref<SymbolImpl> StringImpl::createNullSymbol()
 {
-    return createSymbol(empty());
+    return createSymbol(null());
 }
 
 bool StringImpl::containsOnlyWhitespace()

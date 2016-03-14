@@ -1,3 +1,32 @@
+2016-03-14  Mark Lam  <mark.lam@apple.com>
+
+        Need to distinguish between Symbol() and Symbol("").
+        https://bugs.webkit.org/show_bug.cgi?id=155438
+
+        Reviewed by Saam Barati.
+
+        While toString of both Symbol() and Symbol("") yields "Symbol()", Function.name
+        should yield "" and "[]" respectively.  Hence, we need to tell between the two.
+        This functionality will be needed later in https://bugs.webkit.org/show_bug.cgi?id=155437.
+
+        We achieve this by creating another singleton instance like the empty StringImpl
+        as the null StringImpl.  isNullSymbol() tests if the Stringimpl instance is a
+        symbol, and its substring is the null() singleton.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createSymbol):
+        (WTF::StringImpl::createNullSymbol):
+        (WTF::StringImpl::containsOnlyWhitespace):
+        (WTF::StringImpl::createSymbolEmpty): Deleted.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::tryCreateUninitialized):
+        (WTF::StringImpl::stringKind):
+        (WTF::StringImpl::isSymbol):
+        (WTF::StringImpl::isAtomic):
+        (WTF::StringImpl::isNullSymbol):
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::null):
+
 2016-03-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX) guards

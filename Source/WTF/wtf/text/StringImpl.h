@@ -408,7 +408,7 @@ public:
         return constructInternal<T>(resultImpl, length);
     }
 
-    WTF_EXPORT_STRING_API static Ref<SymbolImpl> createSymbolEmpty();
+    WTF_EXPORT_STRING_API static Ref<SymbolImpl> createNullSymbol();
     WTF_EXPORT_STRING_API static Ref<SymbolImpl> createSymbol(PassRefPtr<StringImpl> rep);
 
     // Reallocate the StringImpl. The originalString must be only owned by the PassRefPtr,
@@ -484,6 +484,7 @@ public:
     StringKind stringKind() const { return static_cast<StringKind>(m_hashAndFlags & s_hashMaskStringKind); }
     bool isSymbol() const { return m_hashAndFlags & s_hashFlagStringKindIsSymbol; }
     bool isAtomic() const { return m_hashAndFlags & s_hashFlagStringKindIsAtomic; }
+    bool isNullSymbol() const { return isSymbol() && (substringBuffer() == null()); }
 
     void setIsAtomic(bool isAtomic)
     {
@@ -863,6 +864,7 @@ private:
     template <typename CharType> static Ref<StringImpl> createInternal(const CharType*, unsigned);
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
     WTF_EXPORT_PRIVATE static unsigned nextHashForSymbol();
+    WTF_EXPORT_PRIVATE static StringImpl* null();
 
     // The bottom bit in the ref count indicates a static (immortal) string.
     static const unsigned s_refCountFlagIsStaticString = 0x1;
