@@ -1,5 +1,19 @@
 2016-03-14  Anders Carlsson  <andersca@apple.com>
 
+        Remove usage of -[UIGestureRecognizer requireOtherGestureToFail:]
+        https://bugs.webkit.org/show_bug.cgi?id=155461
+        rdar://problem/25143282
+
+        Reviewed by Beth Dakin.
+
+        Use -[UIGestureRecognizer requireGestureRecognizerToFail:] instead, which has been API ever since UIGestureRecognizer was added.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _createAndConfigureDoubleTapGestureRecognizer]):
+
+2016-03-14  Anders Carlsson  <andersca@apple.com>
+
         REGRESSION (r191691): Can't Share Selected Text
         https://bugs.webkit.org/show_bug.cgi?id=155459
         rdar://problem/24893625
