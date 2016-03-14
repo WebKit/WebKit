@@ -1,3 +1,17 @@
+2016-03-14  Julien Brianceau  <jbriance@cisco.com>
+
+        [mips] Fix unaligned access in LLINT.
+        https://bugs.webkit.org/show_bug.cgi?id=153228
+
+        Address loads used with btbxx opcodes were wrongly converted to lw
+        instruction instead of lbu, leading to unaligned access on mips
+        platforms. This is not a bug as it's silently fixed up by kernel,
+        but it's more efficient to avoid unaligned accesses for mips.
+
+        Reviewed by Geoffrey Garen.
+
+        * offlineasm/mips.rb:
+
 2016-03-14  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r194394): >2x slow-down on CDjs
