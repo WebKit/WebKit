@@ -85,6 +85,8 @@ typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions)
 };
 
 CTFontDescriptorRef CTFontDescriptorCreateWithAttributesAndOptions(CFDictionaryRef attributes, CTFontDescriptorOptions);
+
+extern const CFStringRef kCTFontDescriptorTextStyleAttribute;
 #endif
 #endif
 

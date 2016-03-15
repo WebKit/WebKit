@@ -81,11 +81,8 @@ SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIApplication)
 SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CLASS(UIKit, UIDocumentInteractionController)
-SOFT_LINK_CLASS(UIKit, UIFont)
 SOFT_LINK_CLASS(UIKit, UIImage)
 SOFT_LINK_CONSTANT(UIKit, UIContentSizeCategoryDidChangeNotification, CFStringRef)
-SOFT_LINK_CONSTANT(UIKit, UIFontTextStyleFootnote, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIFontTextStyleCaption1, NSString *)
 #define UIContentSizeCategoryDidChangeNotification getUIContentSizeCategoryDidChangeNotification()
 
 @interface WebCoreRenderThemeBundle : NSObject
@@ -1351,14 +1348,26 @@ const CGFloat attachmentItemMargin = 8;
 const CGFloat attachmentTitleMaximumWidth = 140;
 const CFIndex attachmentTitleMaximumLineCount = 2;
 
-// FIXME: Should be emphasized.
-static UIFont *attachmentActionFont() { return [getUIFontClass() preferredFontForTextStyle:getUIFontTextStyleFootnote()]; }
+static RetainPtr<CTFontRef> attachmentActionFont()
+{
+    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortFootnote, RenderThemeIOS::contentSizeCategory(), 0));
+    RetainPtr<CTFontDescriptorRef> emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(),
+        (CFDictionaryRef)@{
+            (id)kCTFontDescriptorTextStyleAttribute: (id)kCTFontDescriptorTextStyleEmphasized
+    }));
+    return adoptCF(CTFontCreateWithFontDescriptor(emphasizedFontDescriptor.get(), 0, nullptr));
+}
 static UIColor *attachmentActionColor() { return [getUIColorClass() systemBlueColor]; }
 
-static UIFont *attachmentTitleFont() { return [getUIFontClass() preferredFontForTextStyle:getUIFontTextStyleCaption1()]; }
+static RetainPtr<CTFontRef> attachmentTitleFont()
+{
+    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortCaption1, RenderThemeIOS::contentSizeCategory(), 0));
+    return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
+}
+
 static UIColor *attachmentTitleColor() { return [getUIColorClass() systemGrayColor]; }
 
-static UIFont *attachmentSubtitleFont() { return [getUIFontClass() preferredFontForTextStyle:getUIFontTextStyleCaption1()]; }
+static RetainPtr<CTFontRef> attachmentSubtitleFont() { return attachmentTitleFont(); }
 static UIColor *attachmentSubtitleColor() { return [getUIColorClass() systemGrayColor]; }
 
 struct AttachmentInfo {
@@ -1385,7 +1394,7 @@ struct AttachmentInfo {
 
 private:
     void buildTitleLines(const RenderAttachment&);
-    void buildSingleLine(const String&, UIFont *, UIColor *);
+    void buildSingleLine(const String&, CTFontRef, UIColor *);
 
     void addLine(CTLineRef);
 };
@@ -1407,14 +1416,14 @@ void AttachmentInfo::addLine(CTLineRef line)
 
 void AttachmentInfo::buildTitleLines(const RenderAttachment& attachment)
 {
-    RetainPtr<UIFont> font = attachmentTitleFont();
+    RetainPtr<CTFontRef> font = attachmentTitleFont();
 
     String title = attachment.attachmentElement().attachmentTitle();
     if (title.isEmpty())
         return;
 
     NSDictionary *textAttributes = @{
-        (id)kCTFontAttributeName: font.get(),
+        (id)kCTFontAttributeName: (id)font.get(),
         (id)kCTForegroundColorAttributeName: attachmentTitleColor()
     };
     RetainPtr<NSAttributedString> attributedTitle = adoptNS([[NSAttributedString alloc] initWithString:title attributes:textAttributes]);
@@ -1458,13 +1467,13 @@ void AttachmentInfo::buildTitleLines(const RenderAttachment& attachment)
     addLine(truncatedLine.get());
 }
 
-void AttachmentInfo::buildSingleLine(const String& text, UIFont *font, UIColor *color)
+void AttachmentInfo::buildSingleLine(const String& text, CTFontRef font, UIColor *color)
 {
     if (text.isEmpty())
         return;
 
     NSDictionary *textAttributes = @{
-        (id)kCTFontAttributeName: font,
+        (id)kCTFontAttributeName: (id)font,
         (id)kCTForegroundColorAttributeName: color
     };
     RetainPtr<NSAttributedString> attributedText = adoptNS([[NSAttributedString alloc] initWithString:text attributes:textAttributes]);
@@ -1551,10 +1560,10 @@ AttachmentInfo::AttachmentInfo(const RenderAttachment& attachment)
             yOffset += iconRect.height() + attachmentItemMargin;
         }
     } else
-        buildSingleLine(action, attachmentActionFont(), attachmentActionColor());
+        buildSingleLine(action, attachmentActionFont().get(), attachmentActionColor());
 
     buildTitleLines(attachment);
-    buildSingleLine(subtitle, attachmentSubtitleFont(), attachmentSubtitleColor());
+    buildSingleLine(subtitle, attachmentSubtitleFont().get(), attachmentSubtitleColor());
 
     if (!lines.isEmpty()) {
         for (auto& line : lines) {

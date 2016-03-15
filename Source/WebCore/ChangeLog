@@ -1,3 +1,23 @@
+2016-03-15  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> on iOS should use short and emphasized fonts
+        https://bugs.webkit.org/show_bug.cgi?id=155485
+        <rdar://problem/24805991>
+
+        Reviewed by Simon Fraser.
+
+        No new tests; there are existing tests that will be enabled shortly.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::attachmentActionFont):
+        (WebCore::attachmentTitleFont):
+        (WebCore::attachmentSubtitleFont):
+        (WebCore::AttachmentInfo::buildTitleLines):
+        (WebCore::AttachmentInfo::buildSingleLine):
+        (WebCore::AttachmentInfo::AttachmentInfo):
+        No need for UIFonts, we can use CoreText, and that allows us to ask for the
+        correct Short and Emphasized variants that we need.
+
 2016-03-15  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (196383): Class change invalidation does not handle :not correctly
