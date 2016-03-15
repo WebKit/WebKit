@@ -1,3 +1,24 @@
+2016-03-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: ASSERTION FAILED: !m_lastActiveBlock on js/function-apply.html
+        https://bugs.webkit.org/show_bug.cgi?id=155411
+        <rdar://problem/25134537>
+
+        Reviewed by Mark Lam.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectImpl):
+        (JSC::Heap::didFinishCollection):
+        During collection allocators are stop/reset. The HeapProfiler tasks
+        were using HeapIterationScope (to satisfy MarkedSpace forEachCell API
+        contracts) which was doing its own stop/resume of allocators. Doing a
+        stop/resume in between the normal stop/reset of collection is unexpected.
+
+        Move this to didFinishCollection, alongside other heap iterations
+        like zombies and immortal objects. Putting this after those tasks
+        also means the heap snapshots will respect the zombies/immortal options
+        when deciding if the cell is alive or not.
+
 2016-03-15  Saam Barati  <sbarati@apple.com>
 
         We should have different JSTypes for JSGlobalLexicalEnvironment and JSLexicalEnvironment and JSModuleEnvironment

@@ -1,3 +1,14 @@
+2016-03-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: ASSERTION FAILED: !m_lastActiveBlock on js/function-apply.html
+        https://bugs.webkit.org/show_bug.cgi?id=155411
+        <rdar://problem/25134537>
+
+        Reviewed by Mark Lam.
+
+        * platform/mac/TestExpectations:
+        Unmark test as flakey.
+
 2016-03-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fixing expectation for css3/masking/mask-svg-script-none-to-png.html on ios-simulator

@@ -1342,5 +1342,3 @@ webkit.org/b/155140 js/promises-tests/promises-tests-2-3-3.html [ Pass Failure ]
 [ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow-padding.html [ ImageOnlyFailure ]
 [ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow-simple.html [ ImageOnlyFailure ]
 [ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow.html [ ImageOnlyFailure ]
-
-webkit.org/b/155411 [ Debug ] js/function-apply.html [ Pass Crash ]

@@ -1176,11 +1176,6 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
     deleteUnmarkedCompiledCode();
     deleteSourceProviderCaches();
 
-    if (HeapProfiler* heapProfiler = m_vm->heapProfiler()) {
-        gatherExtraHeapSnapshotData(*heapProfiler);
-        removeDeadHeapSnapshotNodes(*heapProfiler);
-    }
-
     notifyIncrementalSweeper();
     writeBarrierCurrentlyExecutingCodeBlocks();
 
@@ -1461,6 +1456,11 @@ void Heap::didFinishCollection(double gcStartTime)
 
     if (Options::logGC() == GCLogging::Verbose)
         GCLogging::dumpObjectGraph(this);
+
+    if (HeapProfiler* heapProfiler = m_vm->heapProfiler()) {
+        gatherExtraHeapSnapshotData(*heapProfiler);
+        removeDeadHeapSnapshotNodes(*heapProfiler);
+    }
 
     RELEASE_ASSERT(m_operationInProgress == EdenCollection || m_operationInProgress == FullCollection);
     m_operationInProgress = NoOperation;
