@@ -1,3 +1,27 @@
+2016-03-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extract the code to format commit logs into its own PHP file
+        https://bugs.webkit.org/show_bug.cgi?id=155514
+
+        Rubber-stamped by Chris Dumez.
+
+        Extracted CommitLogFetcher out of /api/commits so that it could be used in analysis-tasks.php
+        in the future to support associating cause/fix for each analysis task.
+
+        * public/api/commits.php:
+        * public/include/commit-log-fetcher.php: Added.
+        (CommitLogFetcher)
+        (CommitLogFetcher::__construct): Added.
+        (CommitLogFetcher::repository_id_from_name): Added.
+        (CommitLogFetcher::fetch_between): Added.
+        (CommitLogFetcher::fetch_oldest): Added.
+        (CommitLogFetcher::fetch_latest): Added.
+        (CommitLogFetcher::fetch_last_reported): Added.
+        (CommitLogFetcher::fetch_revision): Added.
+        (CommitLogFetcher::commit_for_revision): Added.
+        (CommitLogFetcher::format_single_commit): Added.
+        (CommitLogFetcher::format_commit): Added.
+
 2016-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r196870.
