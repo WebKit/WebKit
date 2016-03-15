@@ -1,3 +1,12 @@
+2016-03-15  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        EFL build has been broken since r198180
+        https://bugs.webkit.org/show_bug.cgi?id=155488
+
+        Unreviewed build fix.
+
+        * WebProcess/UserContent/WebUserContentController.h: Use ENABLE(USER_MESSAGE_HANDLERS) guard. 
+
 2016-03-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(r197939): ASSERTION FAILED: url.containsOnlyASCII() in URL.cpp

@@ -46,7 +46,10 @@ namespace WebKit {
 
 class InjectedBundleScriptWorld;
 class WebCompiledContentExtensionData;
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
 class WebUserMessageHandlerDescriptorProxy;
+#endif
 
 class WebUserContentController final : public WebCore::UserContentProvider, private IPC::MessageReceiver {
 public:
@@ -107,7 +110,6 @@ private:
 
 
     uint64_t m_identifier;
-    HashMap<uint64_t, RefPtr<WebUserMessageHandlerDescriptorProxy>> m_userMessageHandlerDescriptors;
 
     typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<uint64_t, WebCore::UserScript>>> WorldToUserScriptMap;
     WorldToUserScriptMap m_userScripts;
@@ -116,6 +118,7 @@ private:
     WorldToUserStyleSheetMap m_userStyleSheets;
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
+    HashMap<uint64_t, RefPtr<WebUserMessageHandlerDescriptorProxy>> m_userMessageHandlerDescriptors;
     WebCore::UserMessageHandlerDescriptorMap m_userMessageHandlerDescriptorsMap;
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
