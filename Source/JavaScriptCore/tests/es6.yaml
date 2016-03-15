@@ -757,7 +757,7 @@
 - path: es6/destructuring_computed_properties.js
   cmd: runES6 :normal
 - path: es6/destructuring_defaults_in_parameters_separate_scope.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/destructuring_iterator_closing.js
   cmd: runES6 :fail
 - path: es6/destructuring_nested_rest.js

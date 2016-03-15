@@ -1818,19 +1818,15 @@ namespace JSC {
         FunctionParameters();
         ALWAYS_INLINE unsigned size() const { return m_patterns.size(); }
         ALWAYS_INLINE std::pair<DestructuringPatternNode*, ExpressionNode*> at(unsigned index) { return m_patterns[index]; }
-        bool hasDefaultParameterValues() const { return m_hasDefaultParameterValues; }
         ALWAYS_INLINE void append(DestructuringPatternNode* pattern, ExpressionNode* defaultValue) 
         { 
             ASSERT(pattern); 
             m_patterns.append(std::make_pair(pattern, defaultValue));
-            if (defaultValue)
-                m_hasDefaultParameterValues = true;
         }
 
     private:
 
         Vector<std::pair<DestructuringPatternNode*, ExpressionNode*>, 3> m_patterns;
-        bool m_hasDefaultParameterValues { false };
     };
 
     class FunctionMetadataNode final : public Node, public ParserArenaDeletable {

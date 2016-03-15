@@ -225,16 +225,20 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
     int symbolTableConstantIndex = addConstantValue(functionSymbolTable)->index();
 
-    Vector<Identifier> boundParameterProperties;
     FunctionParameters& parameters = *functionNode->parameters(); 
-    if (!parameters.hasDefaultParameterValues()) { 
-        // If we do have default parameters, they will be allocated in a separate scope.
-        for (size_t i = 0; i < parameters.size(); i++) {
-            auto pattern = parameters.at(i).first;
-            if (pattern->isBindingNode())
-                continue;
-            pattern->collectBoundIdentifiers(boundParameterProperties);
-        }
+    // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-functiondeclarationinstantiation
+    // This implements IsSimpleParameterList in the Ecma 2015 spec.
+    // If IsSimpleParameterList is false, we will create a strict-mode like arguments object.
+    // IsSimpleParameterList is false if the argument list contains any default parameter values,
+    // a rest parameter, or any destructuring patterns.
+    bool isSimpleParameterList = true;
+    // If we do have default parameters, destructuring parameters, or a rest parameter, our parameters will be allocated in a different scope.
+    for (size_t i = 0; i < parameters.size(); i++) {
+        std::pair<DestructuringPatternNode*, ExpressionNode*> parameter = parameters.at(i);
+        bool hasDefaultParameterValue = !!parameter.second;
+        auto pattern = parameter.first;
+        bool isSimpleParameter = !hasDefaultParameterValue && pattern->isBindingNode();
+        isSimpleParameterList &= isSimpleParameter;
     }
 
     SourceParseMode parseMode = codeBlock->parseMode();
@@ -293,6 +297,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     m_calleeRegister.setIndex(JSStack::Callee);
 
     initializeParameters(parameters);
+    ASSERT(!(isSimpleParameterList && m_restParameter));
 
     // Before emitting a scope creation, emit a generator prologue that contains jump based on a generator's state.
     if (parseMode == SourceParseMode::GeneratorBodyMode) {
@@ -321,7 +326,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         // We can allocate the "var" environment if we don't have default parameter expressions. If we have
         // default parameter expressions, we have to hold off on allocating the "var" environment because
         // the parent scope of the "var" environment is the parameter environment.
-        if (!parameters.hasDefaultParameterValues())
+        if (isSimpleParameterList)
             initializeVarLexicalEnvironment(symbolTableConstantIndex);
     }
 
@@ -357,13 +362,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         m_argumentsRegister->ref();
     }
     
-    // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-functiondeclarationinstantiation
-    // This implements IsSimpleParameterList in the Ecma 2015 spec.
-    // If IsSimpleParameterList is false, we will create a strict-mode like arguments object.
-    // IsSimpleParameterList is false if the argument list contains any default parameter values,
-    // a rest parameter, or any destructuring patterns.
-    // FIXME: Take into account destructuring to make isSimpleParameterList false. https://bugs.webkit.org/show_bug.cgi?id=151450
-    bool isSimpleParameterList = !parameters.hasDefaultParameterValues() && !m_restParameter;
     if (needsArguments && !codeBlock->isStrictMode() && isSimpleParameterList) {
         // If we captured any formal parameter by name, then we use ScopedArguments. Otherwise we
         // use DirectArguments. With ScopedArguments, we lift all of our arguments into the
@@ -414,7 +412,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             emitOpcode(op_create_direct_arguments);
             instructions().append(m_argumentsRegister->index());
         }
-    } else if (!parameters.hasDefaultParameterValues()) {
+    } else if (isSimpleParameterList) {
         // Create the formal parameters the normal way. Any of them could be captured, or not. If
         // captured, lift them into the scope. We can not do this if we have default parameter expressions
         // because when default parameter expressions exist, they belong in their own lexical environment
@@ -452,11 +450,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         instructions().append(m_argumentsRegister->index());
     }
     
-    // Now declare all variables.
-    for (const Identifier& ident : boundParameterProperties) {
-        ASSERT(!parameters.hasDefaultParameterValues());
-        createVariable(ident, varKind(ident.impl()), functionSymbolTable);
-    }
     for (FunctionMetadataNode* function : functionNode->functionStack()) {
         const Identifier& ident = function->ident();
         createVariable(ident, varKind(ident.impl()), functionSymbolTable);
@@ -567,7 +560,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // All "addVar()"s needs to happen before "initializeDefaultParameterValuesAndSetupFunctionScopeStack()" is called
     // because a function's default parameter ExpressionNodes will use temporary registers.
     pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize);
-    initializeDefaultParameterValuesAndSetupFunctionScopeStack(parameters, functionNode, functionSymbolTable, symbolTableConstantIndex, captures);
+    initializeDefaultParameterValuesAndSetupFunctionScopeStack(parameters, isSimpleParameterList, functionNode, functionSymbolTable, symbolTableConstantIndex, captures);
     
     // Loading |this| inside an arrow function must be done after initializeDefaultParameterValuesAndSetupFunctionScopeStack()
     // because that function sets up the SymbolTable stack and emitLoadThisFromArrowFunctionLexicalEnvironment()
@@ -793,11 +786,11 @@ BytecodeGenerator::~BytecodeGenerator()
 }
 
 void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack(
-    FunctionParameters& parameters, FunctionNode* functionNode, SymbolTable* functionSymbolTable, 
+    FunctionParameters& parameters, bool isSimpleParameterList, FunctionNode* functionNode, SymbolTable* functionSymbolTable, 
     int symbolTableConstantIndex, const std::function<bool (UniquedStringImpl*)>& captures)
 {
     Vector<std::pair<Identifier, RefPtr<RegisterID>>> valuesToMoveIntoVars;
-    if (parameters.hasDefaultParameterValues()) {
+    if (!isSimpleParameterList) {
         // Refer to the ES6 spec section 9.2.12: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-functiondeclarationinstantiation
         // This implements step 21.
         VariableEnvironment environment;
@@ -866,23 +859,10 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
 
     // This completes step 28 of section 9.2.12.
     for (unsigned i = 0; i < valuesToMoveIntoVars.size(); i++) {
-        ASSERT(parameters.hasDefaultParameterValues());
+        ASSERT(!isSimpleParameterList);
         Variable var = variable(valuesToMoveIntoVars[i].first);
         RegisterID* scope = emitResolveScope(nullptr, var);
         emitPutToScope(scope, var, valuesToMoveIntoVars[i].second.get(), DoNotThrowIfNotFound, NotInitialization);
-    }
-
-    if (!parameters.hasDefaultParameterValues()) {
-        ASSERT(!valuesToMoveIntoVars.size());
-        // Initialize destructuring parameters the old way as if we don't have any default parameter values.
-        // If we have default parameter values, we handle this case above.
-        for (unsigned i = 0; i < parameters.size(); i++) {
-            DestructuringPatternNode* pattern = parameters.at(i).first;
-            if (!pattern->isBindingNode() && !pattern->isRestParameter()) {
-                RefPtr<RegisterID> parameterValue = &registerFor(virtualRegisterForArgument(1 + i));
-                pattern->bindValue(*this, parameterValue.get());
-            }
-        }
     }
 }
 

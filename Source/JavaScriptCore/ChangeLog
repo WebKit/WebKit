@@ -1,3 +1,37 @@
+2016-03-15  Saam barati  <sbarati@apple.com>
+
+        Destructuring parameters are evaluated in the wrong scope
+        https://bugs.webkit.org/show_bug.cgi?id=155454
+
+        Reviewed by Geoffrey Garen.
+
+        This patch makes our engine compatible with how parameter
+        lists are evaluated in ES6. A parameter list that contains
+        a rest parameter, any destructuring patterns, or default parameter values, 
+        is classified as being non-simple. Non-simple parameter lists
+        must get their own scope to live in, and the variables in the
+        scope are under TDZ. This means that functions evaluated in the
+        parameter list don't have access to variables inside the function
+        body. Also, non-simple parameter lists get the strict-mode arguments object.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::~BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        * bytecompiler/BytecodeGenerator.h:
+        * parser/Nodes.h:
+        (JSC::FunctionParameters::size):
+        (JSC::FunctionParameters::at):
+        (JSC::FunctionParameters::append):
+        (JSC::FunctionParameters::hasDefaultParameterValues): Deleted.
+        * tests/es6.yaml:
+        * tests/stress/parameter-scoping.js: Added.
+        (assert):
+        (test):
+        (test.foo):
+        (test.):
+
 2016-03-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Don't reference the properties of @Reflect directly
