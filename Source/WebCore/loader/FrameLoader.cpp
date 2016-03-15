@@ -3348,7 +3348,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
         case FrameLoadType::Back:
         case FrameLoadType::Forward:
         case FrameLoadType::IndexedBackForward: {
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA)
             bool allowStaleData = true;
 #else
             bool allowStaleData = !item.wasRestoredFromSession();

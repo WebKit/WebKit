@@ -1,3 +1,19 @@
+2016-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Restore pre-r197244 behavior on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=155507
+        <rdar://problem/25174132>
+
+        Reviewed by Gavin Barraclough.
+
+        <http://trac.webkit.org/changeset/197244> changed the session restore
+        behavior to disallow stale content on all platforms except iOS.
+        We would also like to maintain the behavior on Mac for performance
+        reasons and consistency between iOS and Mac.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+
 2016-03-15  Tim Horton  <timothy_horton@apple.com>
 
         <attachment> on iOS isn't quite vertically centered
