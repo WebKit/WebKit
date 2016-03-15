@@ -74,12 +74,12 @@ private:
     void writeToPasteboard(const String& pasteboardType, const String&) override;
     int getPasteboardItemsCount() override;
     String readStringFromPasteboard(int index, const String& pasteboardType) override;
-    PassRefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType) override;
+    RefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType) override;
     WebCore::URL readURLFromPasteboard(int index, const String& pasteboardType) override;
     long changeCount() override;
 #endif
     void getTypes(Vector<String>& types, const String& pasteboardName) override;
-    PassRefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) override;
+    RefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) override;
     void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) override;
     String stringForType(const String& pasteboardType, const String& pasteboardName) override;
     long changeCount(const String& pasteboardName) override;

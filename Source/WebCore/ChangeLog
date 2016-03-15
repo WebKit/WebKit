@@ -1,3 +1,196 @@
+2016-03-14  Joonghun Park  <jh718.park@samsung.com>
+
+        Purge PassRefPtr from ArrayBuffer, ArchiveResource, Pasteboard, LegacyWebArchive and DataObjectGtk
+        https://bugs.webkit.org/show_bug.cgi?id=150497
+
+        Reviewed by Darin Adler.
+
+        No new tests, no new behaviours.
+
+        * Modules/indexeddb/IDBGetResult.h:
+        (WebCore::IDBGetResult::IDBGetResult):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getIndexRecord):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::didReceiveRawData):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        * dom/MessageEvent.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectedRange):
+        * editing/Editor.h:
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::toNormalizedRange):
+        * editing/VisiblePosition.cpp:
+        (WebCore::makeRange):
+        * editing/VisiblePosition.h:
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::toNormalizedRange):
+        * editing/VisibleSelection.h:
+        * editing/VisibleUnits.cpp:
+        (WebCore::enclosingTextUnitOfGranularity):
+        (WebCore::wordRangeFromPosition):
+        (WebCore::rangeExpandedByCharactersInDirectionAtWordBoundary):
+        (WebCore::rangeExpandedAroundPositionByCharacters):
+        * editing/VisibleUnits.h:
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_addAttachmentForElement):
+        (fileWrapperForURL):
+        * editing/efl/EditorEfl.cpp:
+        (WebCore::Editor::webContentFromPasteboard):
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::createFragmentFromPasteboardData):
+        (WebCore::Editor::webContentFromPasteboard):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::dataInRTFDFormat):
+        (WebCore::dataInRTFFormat):
+        (WebCore::Editor::selectionInWebArchiveFormat):
+        (WebCore::Editor::WebContentReader::addFragment):
+        (WebCore::Editor::WebContentReader::readWebArchive):
+        (WebCore::Editor::WebContentReader::readRTFD):
+        (WebCore::Editor::WebContentReader::readRTF):
+        (WebCore::Editor::WebContentReader::readImage):
+        (WebCore::Editor::WebContentReader::readURL):
+        (WebCore::Editor::webContentFromPasteboard):
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::createFragmentAndAddResources):
+        (WebCore::Editor::createFragmentForImageResourceAndAddResource):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::selectionInWebArchiveFormat):
+        (WebCore::Editor::adjustedSelectionRange):
+        (WebCore::dataInRTFDFormat):
+        (WebCore::dataInRTFFormat):
+        (WebCore::Editor::dataSelectionForPasteboard):
+        (WebCore::Editor::WebContentReader::readWebArchive):
+        (WebCore::Editor::WebContentReader::readRTFD):
+        (WebCore::Editor::WebContentReader::readRTF):
+        (WebCore::Editor::WebContentReader::readImage):
+        (WebCore::Editor::WebContentReader::readURL):
+        (WebCore::Editor::webContentFromPasteboard):
+        (WebCore::Editor::createFragmentForImageResourceAndAddResource):
+        (WebCore::Editor::createFragmentAndAddResources):
+        * editing/win/EditorWin.cpp:
+        (WebCore::createFragmentFromPlatformData):
+        (WebCore::Editor::webContentFromPasteboard):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::archive):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::mainResourceData):
+        (WebCore::DocumentLoader::maybeCreateArchive):
+        (WebCore::DocumentLoader::addArchiveResource):
+        (WebCore::DocumentLoader::mainResource):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadArchive):
+        * loader/SubstituteData.h:
+        (WebCore::SubstituteData::SubstituteData):
+        (WebCore::SubstituteData::isValid):
+        * loader/SubstituteResource.h:
+        (WebCore::SubstituteResource::data):
+        (WebCore::SubstituteResource::SubstituteResource):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didReceiveData):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didReceiveManifestData):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadMainResource):
+        (WebCore::ApplicationCacheHost::maybeLoadSynchronously):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackSynchronously):
+        * loader/appcache/ApplicationCacheResource.cpp:
+        (WebCore::ApplicationCacheResource::ApplicationCacheResource):
+        (WebCore::ApplicationCacheResource::deliver):
+        (WebCore::ApplicationCacheResource::estimatedSizeInStorage):
+        * loader/appcache/ApplicationCacheResource.h:
+        (WebCore::ApplicationCacheResource::create):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::writeDataToUniqueFileInDirectory):
+        * loader/appcache/ApplicationCacheStorage.h:
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::archiveFactoryCreate):
+        (WebCore::ArchiveFactory::create):
+        * loader/archive/ArchiveFactory.h:
+        * loader/archive/ArchiveResource.cpp:
+        (WebCore::ArchiveResource::ArchiveResource):
+        (WebCore::ArchiveResource::create):
+        * loader/archive/ArchiveResource.h:
+        * loader/archive/ArchiveResourceCollection.cpp:
+        (WebCore::ArchiveResourceCollection::addResource):
+        * loader/archive/ArchiveResourceCollection.h:
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createPropertyListRepresentation):
+        (WebCore::LegacyWebArchive::createResource):
+        (WebCore::LegacyWebArchive::create):
+        (WebCore::LegacyWebArchive::createFromSelection):
+        * loader/archive/cf/LegacyWebArchive.h:
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::create):
+        * loader/archive/mhtml/MHTMLArchive.h:
+        * loader/archive/mhtml/MHTMLParser.cpp:
+        (WebCore::MHTMLParser::parseArchive):
+        (WebCore::MHTMLParser::parseArchiveWithHeader):
+        (WebCore::MHTMLParser::parseNextPart):
+        * loader/archive/mhtml/MHTMLParser.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didAddClient):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::loadDefaultIconRecord):
+        * loader/icon/IconRecord.cpp:
+        (WebCore::IconRecord::setImageData):
+        * loader/icon/IconRecord.h:
+        * platform/Pasteboard.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::createArrayBuffer):
+        (WebCore::utf8Buffer):
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::create):
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::wrapCFData):
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::replacementData):
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::ParentalControlsContentFilter::replacementData):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::setData):
+        * platform/graphics/Image.h:
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::forClipboard):
+        * platform/gtk/DataObjectGtk.h:
+        (WebCore::DataObjectGtk::create):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::dataObject):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::bufferForType):
+        (WebCore::PlatformPasteboard::readBuffer):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writeFileWrapperAsRTFDAttachment):
+        (WebCore::Pasteboard::read):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::bufferForType):
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::wrapNSData):
+        (WebCore::SharedBuffer::createFromReadingFile):
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::retrieveKeyValuePairs):
+        (WebCore::MIMEHeader::parseHeader):
+        * platform/network/MIMEHeader.h:
+        * platform/soup/SharedBufferSoup.cpp:
+        (WebCore::SharedBuffer::wrapSoupBuffer):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::fragmentFromFilenames):
+        (WebCore::fragmentFromCFHTML):
+        (WebCore::fragmentFromHTML):
+        * platform/win/ClipboardUtilitiesWin.h:
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::documentFragment):
+
 2016-03-14  Oliver Hunt  <oliver@apple.com>
 
         Temporarily disable the separated heap.

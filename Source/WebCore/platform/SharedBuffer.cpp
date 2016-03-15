@@ -141,7 +141,7 @@ const char* SharedBuffer::data() const
     return this->buffer().data();
 }
 
-PassRefPtr<ArrayBuffer> SharedBuffer::createArrayBuffer() const
+RefPtr<ArrayBuffer> SharedBuffer::createArrayBuffer() const
 {
     RefPtr<ArrayBuffer> arrayBuffer = ArrayBuffer::createUninitialized(static_cast<unsigned>(size()), sizeof(char));
 
@@ -155,10 +155,10 @@ PassRefPtr<ArrayBuffer> SharedBuffer::createArrayBuffer() const
     if (position != arrayBuffer->byteLength()) {
         ASSERT_NOT_REACHED();
         // Don't return the incomplete ArrayBuffer.
-        return 0;
+        return nullptr;
     }
 
-    return arrayBuffer.release();
+    return arrayBuffer;
 }
 
 void SharedBuffer::append(SharedBuffer* data)
@@ -420,7 +420,7 @@ inline bool SharedBuffer::maybeAppendPlatformData(SharedBuffer*)
 
 #endif
 
-PassRefPtr<SharedBuffer> utf8Buffer(const String& string)
+RefPtr<SharedBuffer> utf8Buffer(const String& string)
 {
     // Allocate a buffer big enough to hold all the characters.
     const int length = string.length();

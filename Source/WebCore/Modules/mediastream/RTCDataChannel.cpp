@@ -281,8 +281,7 @@ void RTCDataChannel::didReceiveRawData(const char* data, size_t dataLength)
     }
 
     if (m_binaryType == BinaryTypeArrayBuffer) {
-        RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(data, dataLength);
-        scheduleDispatchEvent(MessageEvent::create(buffer.release()));
+        scheduleDispatchEvent(MessageEvent::create(ArrayBuffer::create(data, dataLength)));
         return;
     }
     ASSERT_NOT_REACHED();

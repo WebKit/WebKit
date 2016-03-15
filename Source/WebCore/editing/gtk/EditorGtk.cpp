@@ -43,26 +43,23 @@
 
 namespace WebCore {
 
-static PassRefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pasteboard, Frame& frame, Range& range, bool allowPlainText, bool& chosePlainText)
+static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pasteboard, Frame& frame, Range& range, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
 
     if (!pasteboard.hasData())
         return nullptr;
 
-    RefPtr<DataObjectGtk> dataObject = pasteboard.dataObject();
-    if (dataObject->hasMarkup() && frame.document()) {
-        if (RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(*frame.document(), dataObject->markup(), emptyString(), DisallowScriptingAndPluginContent))
-            return fragment.release();
-    }
+    DataObjectGtk* dataObject = pasteboard.dataObject();
+    if (dataObject->hasMarkup() && frame.document())
+        return createFragmentFromMarkup(*frame.document(), dataObject->markup(), emptyString(), DisallowScriptingAndPluginContent);
 
     if (!allowPlainText)
         return nullptr;
 
     if (dataObject->hasText()) {
         chosePlainText = true;
-        if (RefPtr<DocumentFragment> fragment = createFragmentFromText(range, dataObject->text()))
-            return fragment.release();
+        return createFragmentFromText(range, dataObject->text());
     }
 
     return nullptr;
@@ -129,7 +126,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     pasteboard.write(pasteboardContent);
 }
 
-PassRefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, Range& context, bool allowPlainText, bool& chosePlainText)
+RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, Range& context, bool allowPlainText, bool& chosePlainText)
 {
     return createFragmentFromPasteboardData(pasteboard, m_frame, context, allowPlainText, chosePlainText);
 }

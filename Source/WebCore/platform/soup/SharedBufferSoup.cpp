@@ -33,9 +33,9 @@ SharedBuffer::SharedBuffer(SoupBuffer* soupBuffer)
     ASSERT(soupBuffer);
 }
 
-PassRefPtr<SharedBuffer> SharedBuffer::wrapSoupBuffer(SoupBuffer* soupBuffer)
+Ref<SharedBuffer> SharedBuffer::wrapSoupBuffer(SoupBuffer* soupBuffer)
 {
-    return adoptRef(new SharedBuffer(soupBuffer));
+    return adoptRef(*new SharedBuffer(soupBuffer));
 }
 
 void SharedBuffer::clearPlatformData()

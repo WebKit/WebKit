@@ -30,7 +30,6 @@
 #include "DocumentFragment.h"
 #include "NotImplemented.h"
 #include "Pasteboard.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -49,7 +48,7 @@ void Editor::pasteWithPasteboard(Pasteboard*, bool, MailBlockquoteHandling)
     notImplemented();
 }
 
-PassRefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard&, Range&, bool /*allowPlainText*/, bool& /*chosePlainText*/)
+RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard&, Range&, bool /*allowPlainText*/, bool& /*chosePlainText*/)
 {
     return nullptr;
 }

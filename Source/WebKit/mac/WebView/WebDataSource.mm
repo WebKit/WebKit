@@ -513,7 +513,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (!toPrivate(_private)->loader->isCommitted())
         return nil;
         
-    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(core([self webFrame]))] autorelease];
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core([self webFrame]))] autorelease];
 }
 
 - (WebResource *)mainResource
@@ -544,7 +544,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)addSubresource:(WebResource *)subresource
 {    
-    toPrivate(_private)->loader->addArchiveResource([subresource _coreResource]);
+    toPrivate(_private)->loader->addArchiveResource(*[subresource _coreResource]);
 }
 
 @end

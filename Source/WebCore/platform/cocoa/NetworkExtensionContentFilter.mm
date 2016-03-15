@@ -193,7 +193,7 @@ void NetworkExtensionContentFilter::finishedAddingData()
 Ref<SharedBuffer> NetworkExtensionContentFilter::replacementData() const
 {
     ASSERT(didBlockData());
-    return adoptRef(*SharedBuffer::wrapNSData(m_replacementData.get()).leakRef());
+    return SharedBuffer::wrapNSData(m_replacementData.get());
 }
 
 ContentFilterUnblockHandler NetworkExtensionContentFilter::unblockHandler() const

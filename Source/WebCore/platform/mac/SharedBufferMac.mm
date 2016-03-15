@@ -30,7 +30,6 @@
 #include <runtime/InitializeThreading.h>
 #include <string.h>
 #include <wtf/MainThread.h>
-#include <wtf/PassRefPtr.h>
 
 using namespace WebCore;
 
@@ -84,9 +83,9 @@ using namespace WebCore;
 
 namespace WebCore {
 
-PassRefPtr<SharedBuffer> SharedBuffer::wrapNSData(NSData *nsData)
+Ref<SharedBuffer> SharedBuffer::wrapNSData(NSData *nsData)
 {
-    return adoptRef(new SharedBuffer((CFDataRef)nsData));
+    return adoptRef(*new SharedBuffer((CFDataRef)nsData));
 }
 
 RetainPtr<NSData> SharedBuffer::createNSData()
@@ -121,7 +120,7 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
     NSData *resourceData = [NSData dataWithContentsOfFile:filePath];
     if (resourceData) 
         return SharedBuffer::wrapNSData(resourceData);
-    return 0;
+    return nullptr;
 }
 
 }

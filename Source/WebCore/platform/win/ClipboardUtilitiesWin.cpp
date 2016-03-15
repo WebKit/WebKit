@@ -598,16 +598,16 @@ String getCFHTML(const DragDataMap* dataMap)
     return extractMarkupFromCFHTML(cfhtml);
 }
 
-PassRefPtr<DocumentFragment> fragmentFromFilenames(Document*, const IDataObject*)
+RefPtr<DocumentFragment> fragmentFromFilenames(Document*, const IDataObject*)
 {
     // FIXME: We should be able to create fragments from files
-    return 0;
+    return nullptr;
 }
 
-PassRefPtr<DocumentFragment> fragmentFromFilenames(Document*, const DragDataMap*)
+RefPtr<DocumentFragment> fragmentFromFilenames(Document*, const DragDataMap*)
 {
     // FIXME: We should be able to create fragments from files
-    return 0;
+    return nullptr;
 }
 
 bool containsFilenames(const IDataObject*)
@@ -623,7 +623,7 @@ bool containsFilenames(const DragDataMap*)
 }
 
 // Convert a String containing CF_HTML formatted text to a DocumentFragment
-PassRefPtr<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfhtml)
+Ref<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfhtml)
 {
     // obtain baseURL if present
     String srcURLStr("sourceURL:");
@@ -641,41 +641,37 @@ PassRefPtr<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfh
     return createFragmentFromMarkup(*doc, markup, srcURL, DisallowScriptingAndPluginContent);
 }
 
-PassRefPtr<DocumentFragment> fragmentFromHTML(Document* doc, IDataObject* data) 
+RefPtr<DocumentFragment> fragmentFromHTML(Document* doc, IDataObject* data)
 {
     if (!doc || !data)
-        return 0;
+        return nullptr;
 
     String cfhtml = getFullCFHTML(data);
-    if (!cfhtml.isEmpty()) {
-        if (RefPtr<DocumentFragment> fragment = fragmentFromCFHTML(doc, cfhtml))
-            return fragment.release();
-    }
+    if (!cfhtml.isEmpty())
+        return fragmentFromCFHTML(doc, cfhtml);
 
     String html = getTextHTML(data);
     String srcURL;
     if (!html.isEmpty())
         return createFragmentFromMarkup(*doc, html, srcURL, DisallowScriptingAndPluginContent);
 
-    return 0;
+    return nullptr;
 }
 
-PassRefPtr<DocumentFragment> fragmentFromHTML(Document* document, const DragDataMap* data) 
+RefPtr<DocumentFragment> fragmentFromHTML(Document* document, const DragDataMap* data)
 {
     if (!document || !data || data->isEmpty())
-        return 0;
+        return nullptr;
 
     String stringData;
-    if (getDataMapItem(data, htmlFormat(), stringData)) {
-        if (RefPtr<DocumentFragment> fragment = fragmentFromCFHTML(document, stringData))
-            return fragment.release();
-    }
+    if (getDataMapItem(data, htmlFormat(), stringData))
+        return fragmentFromCFHTML(document, stringData);
 
     String srcURL;
     if (getDataMapItem(data, texthtmlFormat(), stringData))
         return createFragmentFromMarkup(*document, stringData, srcURL, DisallowScriptingAndPluginContent);
 
-    return 0;
+    return nullptr;
 }
 
 bool containsHTML(IDataObject* data)

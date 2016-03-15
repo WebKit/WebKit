@@ -152,9 +152,9 @@ DataObjectGtk* DataObjectGtk::forClipboard(GtkClipboard* clipboard)
     static HashMap<GtkClipboard*, RefPtr<DataObjectGtk> > objectMap;
 
     if (!objectMap.contains(clipboard)) {
-        RefPtr<DataObjectGtk> dataObject = DataObjectGtk::create();
-        objectMap.set(clipboard, dataObject);
-        return dataObject.get();
+        Ref<DataObjectGtk> dataObject = DataObjectGtk::create();
+        objectMap.set(clipboard, dataObject.copyRef());
+        return dataObject.ptr();
     }
 
     HashMap<GtkClipboard*, RefPtr<DataObjectGtk> >::iterator it = objectMap.find(clipboard);

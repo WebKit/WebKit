@@ -86,7 +86,7 @@ void PlatformPasteboard::getTypes(Vector<String>&)
 {
 }
 
-PassRefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String&)
+RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String&)
 {
     return nullptr;
 }
@@ -196,7 +196,7 @@ int PlatformPasteboard::count()
     return [m_pasteboard numberOfItems];
 }
 
-PassRefPtr<SharedBuffer> PlatformPasteboard::readBuffer(int index, const String& type)
+RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(int index, const String& type)
 {
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
 

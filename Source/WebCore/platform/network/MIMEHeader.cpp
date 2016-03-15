@@ -43,13 +43,13 @@ namespace WebCore {
 
 typedef HashMap<String, String> KeyValueMap;
 
-static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader* buffer)
+static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffer)
 {
     KeyValueMap keyValuePairs;
     String line;
     String key;
     StringBuilder value;
-    while (!(line = buffer->nextChunkAsUTF8StringWithLatin1Fallback()).isNull()) {
+    while (!(line = buffer.nextChunkAsUTF8StringWithLatin1Fallback()).isNull()) {
         if (line.isEmpty())
             break; // Empty line means end of key/value section.
         if (line[0] == '\t') {
@@ -79,9 +79,9 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader* buffe
     return keyValuePairs;
 }
 
-PassRefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader* buffer)
+RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
 {
-    RefPtr<MIMEHeader> mimeHeader = adoptRef(new MIMEHeader);
+    auto mimeHeader = adoptRef(*new MIMEHeader);
     KeyValueMap keyValuePairs = retrieveKeyValuePairs(buffer);
     KeyValueMap::iterator mimeParametersIterator = keyValuePairs.find("content-type");
     if (mimeParametersIterator != keyValuePairs.end()) {
@@ -94,7 +94,7 @@ PassRefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader* buffer)
             mimeHeader->m_endOfPartBoundary = parsedContentType.parameterValueForName("boundary");
             if (mimeHeader->m_endOfPartBoundary.isNull()) {
                 LOG_ERROR("No boundary found in multipart MIME header.");
-                return 0;
+                return nullptr;
             }
             mimeHeader->m_endOfPartBoundary = "--" + mimeHeader->m_endOfPartBoundary;
             mimeHeader->m_endOfDocumentBoundary = mimeHeader->m_endOfPartBoundary + "--";
@@ -109,7 +109,7 @@ PassRefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader* buffer)
     if (mimeParametersIterator != keyValuePairs.end())
         mimeHeader->m_contentLocation = mimeParametersIterator->value;
 
-    return mimeHeader.release();
+    return WTFMove(mimeHeader);
 }
 
 MIMEHeader::Encoding MIMEHeader::parseContentTransferEncoding(const String& text)

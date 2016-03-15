@@ -1,3 +1,13 @@
+2016-03-14  Joonghun Park  <jh718.park@samsung.com>
+
+        Purge PassRefPtr from ArrayBuffer, ArchiveResource, Pasteboard, LegacyWebArchive and DataObjectGtk
+        https://bugs.webkit.org/show_bug.cgi?id=150497
+
+        Reviewed by Darin Adler.
+
+        * WebArchive.cpp:
+        (WebArchive::initWithNode):
+
 2016-03-12  Sam Weinig  <sam@webkit.org>
 
         WebKit can easily crash below NetworkSession::dataTaskForIdentifier() with NSURLSession enabled

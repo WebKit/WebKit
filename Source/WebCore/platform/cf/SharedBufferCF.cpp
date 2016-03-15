@@ -54,9 +54,9 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData()
 }
 #endif
 
-PassRefPtr<SharedBuffer> SharedBuffer::wrapCFData(CFDataRef data)
+Ref<SharedBuffer> SharedBuffer::wrapCFData(CFDataRef data)
 {
-    return adoptRef(new SharedBuffer(data));
+    return adoptRef(*new SharedBuffer(data));
 }
 
 bool SharedBuffer::hasPlatformData() const

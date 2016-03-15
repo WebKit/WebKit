@@ -828,7 +828,7 @@ void PDFPlugin::addArchiveResource()
     ResourceResponse synthesizedResponse(response.get());
 
     RefPtr<ArchiveResource> resource = ArchiveResource::create(SharedBuffer::wrapCFData(m_data.get()), m_sourceURL, "application/pdf", String(), String(), synthesizedResponse);
-    pluginView()->frame()->document()->loader()->addArchiveResource(resource.release());
+    pluginView()->frame()->document()->loader()->addArchiveResource(resource.releaseNonNull());
 }
 
 static void jsPDFDocInitialize(JSContextRef ctx, JSObjectRef object)

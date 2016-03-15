@@ -2729,17 +2729,17 @@ void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
-static PassRefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& resourceURL)
+static RefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& resourceURL)
 {
     DocumentLoader* loader = frame->loader().documentLoader();
     if (!loader)
-        return 0;
+        return nullptr;
 
     RefPtr<ArchiveResource> subresource = loader->subresource(resourceURL);
     if (!subresource)
-        return 0;
+        return nullptr;
 
-    return subresource->data();
+    return &subresource->data();
 }
 
 void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceURLString, uint64_t callbackID)

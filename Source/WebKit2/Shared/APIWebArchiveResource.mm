@@ -69,7 +69,7 @@ static void releaseCFData(unsigned char*, const void* data)
 
 Ref<API::Data> WebArchiveResource::data()
 {
-    RetainPtr<CFDataRef> cfData = m_archiveResource->data()->createCFData();
+    RetainPtr<CFDataRef> cfData = m_archiveResource->data().createCFData();
 
     // Balanced by CFRelease in releaseCFData.
     CFRetain(cfData.get());

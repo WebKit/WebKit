@@ -250,7 +250,7 @@ static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const Strin
     if (!RTFDData)
         return;
 
-    newChangeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData(RTFDData).get(), NSRTFDPboardType, pasteboardName);
+    newChangeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData(RTFDData).ptr(), NSRTFDPboardType, pasteboardName);
 }
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)
@@ -340,7 +340,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
 
     if (types.contains(WebArchivePboardType)) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(WebArchivePboardType, m_pasteboardName)) {
-            if (reader.readWebArchive(buffer.release()))
+            if (reader.readWebArchive(buffer.get()))
                 return;
         }
     }
@@ -360,35 +360,35 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
 
     if (types.contains(String(NSRTFDPboardType))) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(NSRTFDPboardType, m_pasteboardName)) {
-            if (reader.readRTFD(buffer.release()))
+            if (reader.readRTFD(*buffer))
                 return;
         }
     }
 
     if (types.contains(String(NSRTFPboardType))) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(NSRTFPboardType, m_pasteboardName)) {
-            if (reader.readRTF(buffer.release()))
+            if (reader.readRTF(*buffer))
                 return;
         }
     }
 
     if (types.contains(String(NSTIFFPboardType))) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(NSTIFFPboardType, m_pasteboardName)) {
-            if (reader.readImage(buffer.release(), ASCIILiteral("image/tiff")))
+            if (reader.readImage(buffer.releaseNonNull(), ASCIILiteral("image/tiff")))
                 return;
         }
     }
 
     if (types.contains(String(NSPDFPboardType))) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(NSPDFPboardType, m_pasteboardName)) {
-            if (reader.readImage(buffer.release(), ASCIILiteral("application/pdf")))
+            if (reader.readImage(buffer.releaseNonNull(), ASCIILiteral("application/pdf")))
                 return;
         }
     }
 
     if (types.contains(String(kUTTypePNG))) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(kUTTypePNG, m_pasteboardName)) {
-            if (reader.readImage(buffer.release(), ASCIILiteral("image/png")))
+            if (reader.readImage(buffer.releaseNonNull(), ASCIILiteral("image/png")))
                 return;
         }
     }

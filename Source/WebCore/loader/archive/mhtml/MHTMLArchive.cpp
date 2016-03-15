@@ -101,18 +101,18 @@ MHTMLArchive::~MHTMLArchive()
     clearAllSubframeArchives();
 }
 
-PassRefPtr<MHTMLArchive> MHTMLArchive::create()
+Ref<MHTMLArchive> MHTMLArchive::create()
 {
-    return adoptRef(new MHTMLArchive);
+    return adoptRef(*new MHTMLArchive);
 }
 
-PassRefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, SharedBuffer* data)
+RefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, SharedBuffer& data)
 {
     // For security reasons we only load MHTML pages from local URLs.
     if (!SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol()))
         return nullptr;
 
-    MHTMLParser parser(data);
+    MHTMLParser parser(&data);
     RefPtr<MHTMLArchive> mainArchive = parser.parseArchive();
     if (!mainArchive)
         return nullptr; // Invalid MHTML file.
@@ -127,7 +127,7 @@ PassRefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, SharedBuffer* data
         for (size_t j = 0; j < parser.subResourceCount(); ++j)
             archive->addSubresource(parser.subResourceAt(j));
     }
-    return mainArchive.release();
+    return mainArchive;
 }
 
 PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)

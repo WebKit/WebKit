@@ -100,7 +100,7 @@ namespace WebCore {
 
         WEBCORE_EXPORT FrameLoader* frameLoader() const;
         WEBCORE_EXPORT SubresourceLoader* mainResourceLoader() const;
-        WEBCORE_EXPORT PassRefPtr<SharedBuffer> mainResourceData() const;
+        WEBCORE_EXPORT RefPtr<SharedBuffer> mainResourceData() const;
         
         DocumentWriter& writer() const { return m_writer; }
 
@@ -156,7 +156,7 @@ namespace WebCore {
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
         void setArchive(PassRefPtr<Archive>);
         WEBCORE_EXPORT void addAllArchiveResources(Archive*);
-        WEBCORE_EXPORT void addArchiveResource(PassRefPtr<ArchiveResource>);
+        WEBCORE_EXPORT void addArchiveResource(Ref<ArchiveResource>&&);
         PassRefPtr<Archive> popArchiveForSubframe(const String& frameName, const URL&);
         WEBCORE_EXPORT SharedBuffer* parsedArchiveData() const;
 
@@ -167,7 +167,7 @@ namespace WebCore {
         // Return the ArchiveResource for the URL only when loading an Archive
         WEBCORE_EXPORT ArchiveResource* archiveResourceForURL(const URL&) const;
 
-        WEBCORE_EXPORT PassRefPtr<ArchiveResource> mainResource() const;
+        WEBCORE_EXPORT RefPtr<ArchiveResource> mainResource() const;
 
         // Return an ArchiveResource for the URL, either creating from live data or
         // pulling from the ArchiveResourceCollection

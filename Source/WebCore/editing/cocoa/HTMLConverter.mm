@@ -1411,7 +1411,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         if (usePlaceholder && resource && mimeType == "text/html")
             notFound = YES;
         if (resource && !notFound) {
-            fileWrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data()->createNSData().get()] autorelease];
+            fileWrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()] autorelease];
             [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, mimeType)];
         }
     }
@@ -2439,7 +2439,7 @@ static NSFileWrapper *fileWrapperForURL(DocumentLoader *dataSource, NSURL *URL)
 
     RefPtr<ArchiveResource> resource = dataSource->subresource(URL);
     if (resource) {
-        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data()->createNSData().get()] autorelease];
+        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()] autorelease];
         NSString *filename = resource->response().suggestedFilename();
         if (!filename || ![filename length])
             filename = suggestedFilenameWithMIMEType(resource->url(), resource->mimeType());

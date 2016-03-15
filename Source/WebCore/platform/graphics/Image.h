@@ -113,7 +113,7 @@ public:
     virtual FloatSize originalSize() const { return size(); }
 #endif
 
-    WEBCORE_EXPORT bool setData(PassRefPtr<SharedBuffer> data, bool allDataReceived);
+    WEBCORE_EXPORT bool setData(RefPtr<SharedBuffer>&& data, bool allDataReceived);
     virtual bool dataChanged(bool /*allDataReceived*/) { return false; }
     
     virtual String filenameExtension() const { return String(); } // null string if unknown

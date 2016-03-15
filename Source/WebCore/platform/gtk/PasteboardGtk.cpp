@@ -74,8 +74,8 @@ PasteboardImage::~PasteboardImage()
 {
 }
 
-Pasteboard::Pasteboard(PassRefPtr<DataObjectGtk> dataObject)
-    : m_dataObject(dataObject)
+Pasteboard::Pasteboard(RefPtr<DataObjectGtk>&& dataObject)
+    : m_dataObject(WTFMove(dataObject))
     , m_gtkClipboard(nullptr)
 {
     ASSERT(m_dataObject);
@@ -93,9 +93,9 @@ Pasteboard::~Pasteboard()
 {
 }
 
-PassRefPtr<DataObjectGtk> Pasteboard::dataObject() const
+DataObjectGtk* Pasteboard::dataObject() const
 {
-    return m_dataObject;
+    return m_dataObject.get();
 }
 
 static ClipboardDataType dataObjectTypeFromHTMLClipboardType(const String& rawType)

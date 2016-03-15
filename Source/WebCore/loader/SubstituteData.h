@@ -45,15 +45,15 @@ namespace WebCore {
         {
         }
 
-        SubstituteData(PassRefPtr<SharedBuffer> content, const URL& failingURL, const ResourceResponse& response, SessionHistoryVisibility shouldRevealToSessionHistory)
-            : m_content(content)
+        SubstituteData(RefPtr<SharedBuffer>&& content, const URL& failingURL, const ResourceResponse& response, SessionHistoryVisibility shouldRevealToSessionHistory)
+            : m_content(WTFMove(content))
             , m_failingURL(failingURL)
             , m_response(response)
             , m_shouldRevealToSessionHistory(shouldRevealToSessionHistory)
         {
         }
 
-        bool isValid() const { return m_content != 0; }
+        bool isValid() const { return m_content != nullptr; }
         bool shouldRevealToSessionHistory() const { return m_shouldRevealToSessionHistory == SessionHistoryVisibility::Visible; }
 
         const SharedBuffer* content() const { return m_content.get(); }

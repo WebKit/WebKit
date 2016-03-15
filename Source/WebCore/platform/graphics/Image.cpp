@@ -66,9 +66,9 @@ bool Image::supportsType(const String& type)
     return MIMETypeRegistry::isSupportedImageResourceMIMEType(type); 
 } 
 
-bool Image::setData(PassRefPtr<SharedBuffer> data, bool allDataReceived)
+bool Image::setData(RefPtr<SharedBuffer>&& data, bool allDataReceived)
 {
-    m_encodedImageData = data;
+    m_encodedImageData = WTFMove(data);
     if (!m_encodedImageData.get())
         return true;
 

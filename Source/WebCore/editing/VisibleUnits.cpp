@@ -1789,11 +1789,11 @@ VisiblePosition positionOfNextBoundaryOfGranularity(const VisiblePosition& vp, T
     }
 }
 
-PassRefPtr<Range> enclosingTextUnitOfGranularity(const VisiblePosition& vp, TextGranularity granularity, SelectionDirection direction)
+RefPtr<Range> enclosingTextUnitOfGranularity(const VisiblePosition& vp, TextGranularity granularity, SelectionDirection direction)
 {
     // This is particularly inefficient.  We could easily obtain the answer with the boundaries computed below.
     if (!withinTextUnitOfGranularity(vp, granularity, direction))
-        return 0;
+        return nullptr;
 
     VisiblePosition prevBoundary;
     VisiblePosition nextBoundary;
@@ -1845,18 +1845,16 @@ PassRefPtr<Range> enclosingTextUnitOfGranularity(const VisiblePosition& vp, Text
 
         default:
             ASSERT_NOT_REACHED();
-            return 0;
+            return nullptr;
     }
 
     if (prevBoundary.isNull() || nextBoundary.isNull())
-        return 0;
+        return nullptr;
 
     if (vp < prevBoundary || vp > nextBoundary)
-        return 0;
+        return nullptr;
 
-    RefPtr<Range> range = Range::create(prevBoundary.deepEquivalent().deprecatedNode()->document(), prevBoundary, nextBoundary);
-
-    return range;
+    return Range::create(prevBoundary.deepEquivalent().deprecatedNode()->document(), prevBoundary, nextBoundary);
 }
 
 int distanceBetweenPositions(const VisiblePosition& vp, const VisiblePosition& other)
@@ -1911,7 +1909,7 @@ void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter
     twoBefore = characters[2];
 }
 
-PassRefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
+RefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
 {
     // The selection could be in a non visible element and we don't have a VisiblePosition.
     if (position.isNull())
@@ -1983,7 +1981,7 @@ VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position)
     return result;
 }
 
-PassRefPtr<Range> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePosition& position, int numberOfCharactersToExpand, SelectionDirection direction)
+RefPtr<Range> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePosition& position, int numberOfCharactersToExpand, SelectionDirection direction)
 {
     Position start = position.deepEquivalent();
     Position end = position.deepEquivalent();
@@ -2002,7 +2000,7 @@ PassRefPtr<Range> rangeExpandedByCharactersInDirectionAtWordBoundary(const Visib
     return makeRange(start, end);
 }    
 
-PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition& position, int numberOfCharactersToExpand)
+RefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition& position, int numberOfCharactersToExpand)
 {
     Position start = position.deepEquivalent();
     Position end = position.deepEquivalent();

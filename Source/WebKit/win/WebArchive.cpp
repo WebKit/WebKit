@@ -113,7 +113,7 @@ HRESULT WebArchive::initWithNode(_In_opt_ IDOMNode* node)
     if (!domNode)
         return E_NOINTERFACE;
 
-    m_archive = LegacyWebArchive::create(domNode->node());
+    m_archive = LegacyWebArchive::create(*domNode->node());
     
     return S_OK;
 }

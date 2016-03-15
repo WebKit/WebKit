@@ -47,13 +47,13 @@ public:
     virtual void writeToPasteboard(const String& pasteboardType, const String&) = 0;
     virtual int getPasteboardItemsCount() = 0;
     virtual String readStringFromPasteboard(int index, const String& pasteboardType) = 0;
-    virtual PassRefPtr<SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType) = 0;
+    virtual RefPtr<SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType) = 0;
     virtual URL readURLFromPasteboard(int index, const String& pasteboardType) = 0;
     virtual long changeCount() = 0;
 #endif // PLATFORM(IOS)
 #if PLATFORM(COCOA)
     virtual void getTypes(Vector<String>& types, const String& pasteboardName) = 0;
-    virtual PassRefPtr<SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) = 0;
+    virtual RefPtr<SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) = 0;
     virtual void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual String stringForType(const String& pasteboardType, const String& pasteboardName) = 0;
     virtual long changeCount(const String& pasteboardName) = 0;

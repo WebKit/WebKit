@@ -83,12 +83,12 @@ using namespace JSC;
 
 - (WebArchive *)webArchive
 {
-    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(core(self))] autorelease];
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self))] autorelease];
 }
 
 - (WebArchive *)webArchiveByFilteringSubframes:(WebArchiveSubframeFilter)webArchiveSubframeFilter
 {
-    WebArchive *webArchive = [[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(core(self), [webArchiveSubframeFilter](Frame& subframe) -> bool {
+    WebArchive *webArchive = [[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), [webArchiveSubframeFilter](Frame& subframe) -> bool {
         return webArchiveSubframeFilter(kit(&subframe));
     })];
 

@@ -818,7 +818,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     else if (shouldStoreResourceAsFlatFile(resource)) {
         // First, check to see if creating the flat file would violate the maximum total quota. We don't need
         // to check the per-origin quota here, as it was already checked in storeNewestCache().
-        if (m_database.totalSize() + flatFileAreaSize() + resource->data()->size() > m_maximumSize) {
+        if (m_database.totalSize() + flatFileAreaSize() + resource->data().size() > m_maximumSize) {
             m_isMaximumSizeReached = true;
             return false;
         }
@@ -841,8 +841,8 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
         resource->setPath(fullPath);
         dataStatement.bindText(2, path);
     } else {
-        if (resource->data()->size())
-            dataStatement.bindBlob(1, resource->data()->data(), resource->data()->size());
+        if (resource->data().size())
+            dataStatement.bindBlob(1, resource->data().data(), resource->data().size());
     }
     
     if (!dataStatement.executeCommand()) {
@@ -905,7 +905,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     // release the resource's data and free up a potentially large amount
     // of memory:
     if (!fullPath.isEmpty())
-        resource->data()->clear();
+        resource->data().clear();
 
     resource->setStorageID(resourceId);
     return true;
@@ -1302,7 +1302,7 @@ bool ApplicationCacheStorage::shouldStoreResourceAsFlatFile(ApplicationCacheReso
         || resource->response().mimeType().startsWith("video/", false);
 }
     
-bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer* data, const String& directory, String& path, const String& fileExtension)
+bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer& data, const String& directory, String& path, const String& fileExtension)
 {
     String fullPath;
     
@@ -1321,10 +1321,10 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer* dat
     if (!handle)
         return false;
     
-    int64_t writtenBytes = writeToFile(handle, data->data(), data->size());
+    int64_t writtenBytes = writeToFile(handle, data.data(), data.size());
     closeFile(handle);
     
-    if (writtenBytes != static_cast<int64_t>(data->size())) {
+    if (writtenBytes != static_cast<int64_t>(data.size())) {
         deleteFile(fullPath);
         return false;
     }

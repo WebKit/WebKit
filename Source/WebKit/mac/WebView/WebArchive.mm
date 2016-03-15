@@ -209,7 +209,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 #endif
 
     _private = [[WebArchivePrivate alloc] init];
-    RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(SharedBuffer::wrapNSData(data).get());
+    RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(SharedBuffer::wrapNSData(data));
     if (!coreArchive) {
         [self release];
         return nil;

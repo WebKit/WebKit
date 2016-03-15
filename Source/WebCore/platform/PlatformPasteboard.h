@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT static String uniqueName();
     
     WEBCORE_EXPORT void getTypes(Vector<String>& types);
-    WEBCORE_EXPORT PassRefPtr<SharedBuffer> bufferForType(const String& pasteboardType);
+    WEBCORE_EXPORT RefPtr<SharedBuffer> bufferForType(const String& pasteboardType);
     WEBCORE_EXPORT void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType);
     WEBCORE_EXPORT String stringForType(const String& pasteboardType);
     WEBCORE_EXPORT long changeCount() const;
@@ -76,7 +76,7 @@ public:
     WEBCORE_EXPORT void write(const PasteboardWebContent&);
     WEBCORE_EXPORT void write(const PasteboardImage&);
     WEBCORE_EXPORT void write(const String& pasteboardType, const String&);
-    WEBCORE_EXPORT PassRefPtr<SharedBuffer> readBuffer(int index, const String& pasteboardType);
+    WEBCORE_EXPORT RefPtr<SharedBuffer> readBuffer(int index, const String& pasteboardType);
     WEBCORE_EXPORT String readString(int index, const String& pasteboardType);
     WEBCORE_EXPORT URL readURL(int index, const String& pasteboardType);
     WEBCORE_EXPORT int count();

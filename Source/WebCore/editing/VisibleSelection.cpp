@@ -132,10 +132,10 @@ PassRefPtr<Range> VisibleSelection::firstRange() const
     return Range::create(start.anchorNode()->document(), start, end);
 }
 
-PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
+RefPtr<Range> VisibleSelection::toNormalizedRange() const
 {
     if (isNone())
-        return 0;
+        return nullptr;
 
     // Make sure we have an updated layout since this function is called
     // in the course of running edit commands which modify the DOM.
@@ -145,7 +145,7 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
 
     // Check again, because updating layout can clear the selection.
     if (isNone())
-        return 0;
+        return nullptr;
 
     Position s, e;
     if (isCaret()) {
@@ -181,7 +181,7 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
     }
 
     if (!s.containerNode() || !e.containerNode())
-        return 0;
+        return nullptr;
 
     // VisibleSelections are supposed to always be valid.  This constructor will ASSERT
     // if a valid range could not be created, which is fine for this callsite.

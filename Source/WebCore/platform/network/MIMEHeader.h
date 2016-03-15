@@ -51,7 +51,7 @@ public:
         Unknown
     };
 
-    static PassRefPtr<MIMEHeader> parseHeader(SharedBufferChunkReader* crLFLineReader);
+    static RefPtr<MIMEHeader> parseHeader(SharedBufferChunkReader& crLFLineReader);
 
     bool isMultipart() const { return m_contentType.startsWith("multipart/"); }
 

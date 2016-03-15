@@ -173,7 +173,7 @@ DocumentLoader::~DocumentLoader()
     clearMainResource();
 }
 
-PassRefPtr<SharedBuffer> DocumentLoader::mainResourceData() const
+RefPtr<SharedBuffer> DocumentLoader::mainResourceData() const
 {
     if (m_substituteData.isValid())
         return m_substituteData.content()->copy();
@@ -1067,11 +1067,11 @@ bool DocumentLoader::maybeCreateArchive()
     
     addAllArchiveResources(m_archive.get());
     ArchiveResource* mainResource = m_archive->mainResource();
-    m_parsedArchiveData = mainResource->data();
+    m_parsedArchiveData = &mainResource->data();
     m_writer.setMIMEType(mainResource->mimeType());
     
     ASSERT(m_frame->document());
-    commitData(mainResource->data()->data(), mainResource->data()->size());
+    commitData(mainResource->data().data(), mainResource->data().size());
     return true;
 #endif // !ENABLE(WEB_ARCHIVE) && !ENABLE(MHTML)
 }
@@ -1098,16 +1098,12 @@ void DocumentLoader::addAllArchiveResources(Archive* archive)
 
 // FIXME: Adding a resource directly to a DocumentLoader/ArchiveResourceCollection seems like bad design, but is API some apps rely on.
 // Can we change the design in a manner that will let us deprecate that API without reducing functionality of those apps?
-void DocumentLoader::addArchiveResource(PassRefPtr<ArchiveResource> resource)
+void DocumentLoader::addArchiveResource(Ref<ArchiveResource>&& resource)
 {
     if (!m_archiveResourceCollection)
         m_archiveResourceCollection = std::make_unique<ArchiveResourceCollection>();
         
-    ASSERT(resource);
-    if (!resource)
-        return;
-        
-    m_archiveResourceCollection->addResource(resource);
+    m_archiveResourceCollection->addResource(WTFMove(resource));
 }
 
 PassRefPtr<Archive> DocumentLoader::popArchiveForSubframe(const String& frameName, const URL& url)
@@ -1138,14 +1134,14 @@ ArchiveResource* DocumentLoader::archiveResourceForURL(const URL& url) const
     return resource;
 }
 
-PassRefPtr<ArchiveResource> DocumentLoader::mainResource() const
+RefPtr<ArchiveResource> DocumentLoader::mainResource() const
 {
     RefPtr<SharedBuffer> data = mainResourceData();
     if (!data)
         data = SharedBuffer::create();
         
     auto& response = this->response();
-    return ArchiveResource::create(data, response.url(), response.mimeType(), response.textEncodingName(), frame()->tree().uniqueName());
+    return ArchiveResource::create(WTFMove(data), response.url(), response.mimeType(), response.textEncodingName(), frame()->tree().uniqueName());
 }
 
 PassRefPtr<ArchiveResource> DocumentLoader::subresource(const URL& url) const

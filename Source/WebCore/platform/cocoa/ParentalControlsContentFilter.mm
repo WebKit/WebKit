@@ -93,7 +93,7 @@ void ParentalControlsContentFilter::finishedAddingData()
 Ref<SharedBuffer> ParentalControlsContentFilter::replacementData() const
 {
     ASSERT(didBlockData());
-    return adoptRef(*SharedBuffer::wrapNSData(m_replacementData.get()).leakRef());
+    return SharedBuffer::wrapNSData(m_replacementData.get());
 }
 
 ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() const

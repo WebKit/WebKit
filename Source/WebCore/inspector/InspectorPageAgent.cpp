@@ -1045,7 +1045,7 @@ void InspectorPageAgent::archive(ErrorString& errorString, String* data)
 {
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
     Frame& frame = mainFrame();
-    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(&frame);
+    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(frame);
     if (!archive) {
         errorString = ASCIILiteral("Could not create web archive for main frame");
         return;

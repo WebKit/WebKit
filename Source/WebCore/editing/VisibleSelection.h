@@ -95,7 +95,7 @@ public:
     // FIXME: Most callers probably don't want this function, but are using it
     // for historical reasons.  toNormalizedRange contracts the range around
     // text, and moves the caret upstream before returning the range.
-    WEBCORE_EXPORT PassRefPtr<Range> toNormalizedRange() const;
+    WEBCORE_EXPORT RefPtr<Range> toNormalizedRange() const;
     
     WEBCORE_EXPORT Element* rootEditableElement() const;
     WEBCORE_EXPORT bool isContentEditable() const;

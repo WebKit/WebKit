@@ -40,14 +40,14 @@ class Range;
 
 class LegacyWebArchive : public Archive {
 public:
-    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create();
-    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(SharedBuffer*);
-    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(const URL&, SharedBuffer*);
-    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(PassRefPtr<ArchiveResource> mainResource, Vector<RefPtr<ArchiveResource>> subresources, Vector<RefPtr<LegacyWebArchive>> subframeArchives);
-    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(Node*, std::function<bool(Frame&)> frameFilter = nullptr);
-    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(Frame*);
-    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> createFromSelection(Frame*);
-    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(Range*);
+    WEBCORE_EXPORT static Ref<LegacyWebArchive> create();
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(SharedBuffer&);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const URL&, SharedBuffer&);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(RefPtr<ArchiveResource>&& mainResource, Vector<RefPtr<ArchiveResource>>&& subresources, Vector<RefPtr<LegacyWebArchive>>&& subframeArchives);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, std::function<bool(Frame&)> frameFilter = nullptr);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Frame&);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> createFromSelection(Frame*);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Range*);
 
     Type type() const override;
 
@@ -58,8 +58,8 @@ private:
 
     enum MainResourceStatus { Subresource, MainResource };
 
-    static PassRefPtr<LegacyWebArchive> create(const String& markupString, Frame*, const Vector<Node*>& nodes, std::function<bool (Frame&)> frameFilter);
-    static PassRefPtr<ArchiveResource> createResource(CFDictionaryRef);
+    static RefPtr<LegacyWebArchive> create(const String& markupString, Frame&, const Vector<Node*>& nodes, std::function<bool (Frame&)> frameFilter);
+    static RefPtr<ArchiveResource> createResource(CFDictionaryRef);
     static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
     static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);
     static RetainPtr<CFDataRef> createPropertyListRepresentation(const ResourceResponse&);

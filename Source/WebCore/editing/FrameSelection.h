@@ -185,7 +185,7 @@ public:
     bool isCaretOrRange() const { return m_selection.isCaretOrRange(); }
     bool isAll(EditingBoundaryCrossingRule rule = CannotCrossEditingBoundary) const { return m_selection.isAll(rule); }
     
-    PassRefPtr<Range> toNormalizedRange() const { return m_selection.toNormalizedRange(); }
+    RefPtr<Range> toNormalizedRange() const { return m_selection.toNormalizedRange(); }
 
     void debugRenderer(RenderObject*, bool selected) const;
 

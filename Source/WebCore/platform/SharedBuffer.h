@@ -55,7 +55,7 @@ public:
     static PassRefPtr<SharedBuffer> create() { return adoptRef(new SharedBuffer); }
     static PassRefPtr<SharedBuffer> create(unsigned size) { return adoptRef(new SharedBuffer(size)); }
     static PassRefPtr<SharedBuffer> create(const char* c, unsigned i) { return adoptRef(new SharedBuffer(c, i)); }
-    static PassRefPtr<SharedBuffer> create(const unsigned char* c, unsigned i) { return adoptRef(new SharedBuffer(c, i)); }
+    static Ref<SharedBuffer> create(const unsigned char* data, unsigned size) { return adoptRef(*new SharedBuffer(data, size)); }
 
     WEBCORE_EXPORT static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
 
@@ -65,16 +65,16 @@ public:
     
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSData> createNSData();
-    WEBCORE_EXPORT static PassRefPtr<SharedBuffer> wrapNSData(NSData *data);
+    WEBCORE_EXPORT static Ref<SharedBuffer> wrapNSData(NSData *);
 #endif
 #if USE(CF)
     WEBCORE_EXPORT RetainPtr<CFDataRef> createCFData();
     WEBCORE_EXPORT CFDataRef existingCFData();
-    WEBCORE_EXPORT static PassRefPtr<SharedBuffer> wrapCFData(CFDataRef);
+    WEBCORE_EXPORT static Ref<SharedBuffer> wrapCFData(CFDataRef);
 #endif
 
 #if USE(SOUP)
-    static PassRefPtr<SharedBuffer> wrapSoupBuffer(SoupBuffer*);
+    static Ref<SharedBuffer> wrapSoupBuffer(SoupBuffer*);
 #endif
 
     // Calling this function will force internal segmented buffers
@@ -83,7 +83,7 @@ public:
     WEBCORE_EXPORT const char* data() const;
     // Creates an ArrayBuffer and copies this SharedBuffer's contents to that
     // ArrayBuffer without merging segmented buffers into a flat buffer.
-    PassRefPtr<ArrayBuffer> createArrayBuffer() const;
+    RefPtr<ArrayBuffer> createArrayBuffer() const;
 
     WEBCORE_EXPORT unsigned size() const;
 
@@ -181,7 +181,7 @@ private:
     MappedFileData m_fileData;
 };
 
-PassRefPtr<SharedBuffer> utf8Buffer(const String&);
+RefPtr<SharedBuffer> utf8Buffer(const String&);
 
 } // namespace WebCore
 

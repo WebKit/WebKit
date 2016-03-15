@@ -94,7 +94,7 @@ void ApplicationCacheHost::maybeLoadMainResource(ResourceRequest& request, Subst
                 responseToUse.setURL(url);
             }
 
-            substituteData = SubstituteData(resource->data(),
+            substituteData = SubstituteData(&resource->data(),
                                             URL(),
                                             responseToUse,
                                             SubstituteData::SessionHistoryVisibility::Visible);
@@ -237,7 +237,7 @@ bool ApplicationCacheHost::maybeLoadSynchronously(ResourceRequest& request, Reso
             // FIXME: Clients proably do not need a copy of the SharedBuffer.
             // Remove the call to copy() once we ensure SharedBuffer will not be modified.
             if (resource->path().isEmpty())
-                data = resource->data()->copy();
+                data = resource->data().copy();
             else
                 data = SharedBuffer::createWithContentsOfFile(resource->path());
         }
@@ -263,7 +263,7 @@ void ApplicationCacheHost::maybeLoadFallbackSynchronously(const ResourceRequest&
             response = resource->response();
             // FIXME: Clients proably do not need a copy of the SharedBuffer.
             // Remove the call to copy() once we ensure SharedBuffer will not be modified.
-            data = resource->data()->copy();
+            data = resource->data().copy();
         }
     }
 }

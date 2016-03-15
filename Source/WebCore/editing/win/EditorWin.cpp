@@ -48,7 +48,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
 }
 
 template <typename PlatformDragData>
-static PassRefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragData& platformDragData, Frame& frame)
+static RefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragData& platformDragData, Frame& frame)
 {
     if (containsFilenames(&platformDragData)) {
         if (PassRefPtr<DocumentFragment> fragment = fragmentFromFilenames(frame.document(), &platformDragData))
@@ -56,13 +56,13 @@ static PassRefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragD
     }
 
     if (containsHTML(&platformDragData)) {
-        if (PassRefPtr<DocumentFragment> fragment = fragmentFromHTML(frame.document(), &platformDragData))
+        if (RefPtr<DocumentFragment> fragment = fragmentFromHTML(frame.document(), &platformDragData))
             return fragment;
     }
     return nullptr;
 }
 
-PassRefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, Range&, bool /*allowPlainText*/, bool& /*chosePlainText*/)
+RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, Range&, bool /*allowPlainText*/, bool& /*chosePlainText*/)
 {
     if (COMPtr<IDataObject> platformDragData = pasteboard.dataObject())
         return createFragmentFromPlatformData(*platformDragData, m_frame);

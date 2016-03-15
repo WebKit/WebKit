@@ -57,13 +57,12 @@ MHTMLParser::MHTMLParser(SharedBuffer* data)
 {
 }
 
-PassRefPtr<MHTMLArchive> MHTMLParser::parseArchive()
+RefPtr<MHTMLArchive> MHTMLParser::parseArchive()
 {
-    RefPtr<MIMEHeader> header = MIMEHeader::parseHeader(&m_lineReader);
-    return parseArchiveWithHeader(header.get());
+    return parseArchiveWithHeader(MIMEHeader::parseHeader(m_lineReader).get());
 }
 
-PassRefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
+RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
 {
     if (!header) {
         LOG_ERROR("Failed to parse MHTML part: no header.");
@@ -86,7 +85,7 @@ PassRefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
 
     bool endOfArchive = false;
     while (!endOfArchive) {
-        RefPtr<MIMEHeader> resourceHeader = MIMEHeader::parseHeader(&m_lineReader);
+        RefPtr<MIMEHeader> resourceHeader = MIMEHeader::parseHeader(m_lineReader);
         if (!resourceHeader) {
             LOG_ERROR("Failed to parse MHTML, invalid MIME header.");
             return nullptr;
@@ -138,7 +137,7 @@ void MHTMLParser::addResourceToArchive(ArchiveResource* resource, MHTMLArchive* 
     m_frames.append(subframe);
 }
 
-PassRefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader, const String& endOfPartBoundary, const String& endOfDocumentBoundary, bool& endOfArchiveReached)
+RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader, const String& endOfPartBoundary, const String& endOfDocumentBoundary, bool& endOfArchiveReached)
 {
     ASSERT(endOfPartBoundary.isEmpty() == endOfDocumentBoundary.isEmpty());
 
@@ -218,7 +217,7 @@ PassRefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHea
     // The specs mentions 5 ways to resolve a URL: http://tools.ietf.org/html/rfc2557#section-5
     // IE and Firefox (UNMht) seem to generate only absolute URLs.
     URL location = URL(URL(), mimeHeader.contentLocation());
-    return ArchiveResource::create(contentBuffer, location, mimeHeader.contentType(), mimeHeader.charset(), String());
+    return ArchiveResource::create(WTFMove(contentBuffer), location, mimeHeader.contentType(), mimeHeader.charset(), String());
 }
 
 size_t MHTMLParser::frameCount() const

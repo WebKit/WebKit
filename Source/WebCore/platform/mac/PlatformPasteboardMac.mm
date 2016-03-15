@@ -45,11 +45,11 @@ void PlatformPasteboard::getTypes(Vector<String>& types)
         types.append([pasteboardTypes objectAtIndex:i]);
 }
 
-PassRefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardType)
+RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardType)
 {
     NSData *data = [m_pasteboard.get() dataForType:pasteboardType];
     if (!data)
-        return 0;
+        return nullptr;
     return SharedBuffer::wrapNSData([[data copy] autorelease]);
 }
 

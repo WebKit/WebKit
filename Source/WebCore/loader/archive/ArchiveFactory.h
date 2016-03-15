@@ -32,7 +32,6 @@
 #include "Archive.h"
 
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -41,7 +40,7 @@ class SharedBuffer;
 class ArchiveFactory {
 public:
     static bool isArchiveMimeType(const String&);
-    static PassRefPtr<Archive> create(const URL&, SharedBuffer* data, const String& mimeType);
+    static RefPtr<Archive> create(const URL&, SharedBuffer* data, const String& mimeType);
     static void registerKnownArchiveMIMETypes();
 };
 

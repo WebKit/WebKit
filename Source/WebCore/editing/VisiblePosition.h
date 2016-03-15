@@ -153,7 +153,7 @@ inline bool operator>=(const VisiblePosition& a, const VisiblePosition& b)
     return a.deepEquivalent() >= b.deepEquivalent();
 }    
 
-WEBCORE_EXPORT PassRefPtr<Range> makeRange(const VisiblePosition&, const VisiblePosition&);
+WEBCORE_EXPORT RefPtr<Range> makeRange(const VisiblePosition&, const VisiblePosition&);
 bool setStart(Range*, const VisiblePosition&);
 bool setEnd(Range*, const VisiblePosition&);
 VisiblePosition startVisiblePosition(const Range*, EAffinity);

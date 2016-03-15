@@ -102,10 +102,10 @@ MessageEvent::MessageEvent(PassRefPtr<Blob> data, const String& origin)
 {
 }
 
-MessageEvent::MessageEvent(PassRefPtr<ArrayBuffer> data, const String& origin)
+MessageEvent::MessageEvent(RefPtr<ArrayBuffer>&& data, const String& origin)
     : Event(eventNames().messageEvent, false, false)
     , m_dataType(DataTypeArrayBuffer)
-    , m_dataAsArrayBuffer(data)
+    , m_dataAsArrayBuffer(WTFMove(data))
     , m_origin(origin)
 {
 }

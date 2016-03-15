@@ -62,14 +62,14 @@ Image* IconRecord::image(const IntSize&)
     return m_image.get();
 }
 
-void IconRecord::setImageData(PassRefPtr<SharedBuffer> data)
+void IconRecord::setImageData(RefPtr<SharedBuffer>&& data)
 {
     // It's okay to delete the raw image here. Any existing clients using this icon will be
     // managing an image that was created with a copy of this raw image data.
     m_image = BitmapImage::create();
 
     // Copy the provided data into the buffer of the new Image object.
-    if (!m_image->setData(data, true)) {
+    if (!m_image->setData(WTFMove(data), true)) {
         LOG(IconDatabase, "Manual image data for iconURL '%s' FAILED - it was probably invalid image data", m_iconURL.ascii().data());
         m_image = nullptr;
     }

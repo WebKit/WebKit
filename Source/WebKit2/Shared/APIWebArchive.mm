@@ -87,8 +87,7 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> 
 
 WebArchive::WebArchive(API::Data* data)
 {
-    RefPtr<SharedBuffer> buffer = SharedBuffer::create(data->bytes(), data->size());
-    m_legacyWebArchive = LegacyWebArchive::create(buffer.get());
+    m_legacyWebArchive = LegacyWebArchive::create(SharedBuffer::create(data->bytes(), data->size()).get());
 }
 
 WebArchive::WebArchive(PassRefPtr<LegacyWebArchive> legacyWebArchive)

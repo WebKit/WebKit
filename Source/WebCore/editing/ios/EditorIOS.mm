@@ -262,7 +262,7 @@ void Editor::removeUnchangeableStyles()
     applyStyleToSelection(defaultStyle.get(), EditActionChangeAttributes);
 }
 
-static PassRefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *string)
+static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *string)
 {
     NSUInteger length = string.length;
     if (!length)
@@ -275,7 +275,7 @@ static PassRefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *string)
     return nullptr;
 }
 
-static PassRefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *string)
+static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *string)
 {
     NSUInteger length = string.length;
     if (!length)
@@ -295,10 +295,12 @@ String Editor::stringSelectionForPasteboardWithImageAltText()
     return text;
 }
 
-PassRefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
+RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
 {
     RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(&m_frame);
-    return archive ? SharedBuffer::wrapCFData(archive->rawDataRepresentation().get()) : nullptr;
+    if (!archive)
+        return nullptr;
+    return SharedBuffer::wrapCFData(archive->rawDataRepresentation().get());
 }
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
@@ -361,7 +363,7 @@ public:
     {
     }
 
-    void addFragment(PassRefPtr<DocumentFragment>);
+    void addFragment(RefPtr<DocumentFragment>&&);
 
     Frame& frame;
     Range& context;
@@ -371,17 +373,17 @@ public:
     bool madeFragmentFromPlainText;
 
 private:
-    bool readWebArchive(PassRefPtr<SharedBuffer>) override;
+    bool readWebArchive(SharedBuffer*) override;
     bool readFilenames(const Vector<String>&) override;
     bool readHTML(const String&) override;
-    bool readRTFD(PassRefPtr<SharedBuffer>) override;
-    bool readRTF(PassRefPtr<SharedBuffer>) override;
-    bool readImage(PassRefPtr<SharedBuffer>, const String& type) override;
+    bool readRTFD(SharedBuffer&) override;
+    bool readRTF(SharedBuffer&) override;
+    bool readImage(Ref<SharedBuffer>&&, const String& type) override;
     bool readURL(const URL&, const String& title) override;
     bool readPlainText(const String&) override;
 };
 
-void Editor::WebContentReader::addFragment(PassRefPtr<DocumentFragment> newFragment)
+void Editor::WebContentReader::addFragment(RefPtr<DocumentFragment>&& newFragment)
 {
     if (fragment) {
         if (newFragment && newFragment->firstChild()) {
@@ -389,15 +391,18 @@ void Editor::WebContentReader::addFragment(PassRefPtr<DocumentFragment> newFragm
             fragment->appendChild(*newFragment->firstChild(), ec);
         }
     } else
-        fragment = newFragment;
+        fragment = WTFMove(newFragment);
 }
 
-bool Editor::WebContentReader::readWebArchive(PassRefPtr<SharedBuffer> buffer)
+bool Editor::WebContentReader::readWebArchive(SharedBuffer* buffer)
 {
     if (!frame.document())
         return false;
 
-    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(URL(), buffer.get());
+    if (!buffer)
+        return false;
+
+    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(URL(), *buffer);
     if (!archive)
         return false;
 
@@ -412,7 +417,7 @@ bool Editor::WebContentReader::readWebArchive(PassRefPtr<SharedBuffer> buffer)
         if (DocumentLoader* loader = frame.loader().documentLoader())
             loader->addAllArchiveResources(archive.get());
 
-        String markupString = String::fromUTF8(mainResource->data()->data(), mainResource->data()->size());
+        String markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
         addFragment(createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
         return true;
     }
@@ -434,26 +439,26 @@ bool Editor::WebContentReader::readHTML(const String& string)
     return true;
 }
 
-bool Editor::WebContentReader::readRTFD(PassRefPtr<SharedBuffer> buffer)
+bool Editor::WebContentReader::readRTFD(SharedBuffer& buffer)
 {
-    addFragment(frame.editor().createFragmentAndAddResources(adoptNS([[NSAttributedString alloc] initWithRTFD:buffer->createNSData().get() documentAttributes:nullptr]).get()));
+    addFragment(frame.editor().createFragmentAndAddResources(adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]).get()));
     return fragment;
 }
 
-bool Editor::WebContentReader::readRTF(PassRefPtr<SharedBuffer> buffer)
+bool Editor::WebContentReader::readRTF(SharedBuffer& buffer)
 {
-    addFragment(frame.editor().createFragmentAndAddResources(adoptNS([[NSAttributedString alloc] initWithRTF:buffer->createNSData().get() documentAttributes:nullptr]).get()));
+    addFragment(frame.editor().createFragmentAndAddResources(adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]).get()));
     return fragment;
 }
 
-bool Editor::WebContentReader::readImage(PassRefPtr<SharedBuffer> buffer, const String& type)
+bool Editor::WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
 {
     RetainPtr<CFStringRef> stringType = type.createCFString();
     RetainPtr<NSString> filenameExtension = adoptNS((NSString *)UTTypeCopyPreferredTagWithClass(stringType.get(), kUTTagClassFilenameExtension));
     NSString *relativeURLPart = [@"image" stringByAppendingString:filenameExtension.get()];
     RetainPtr<NSString> mimeType = adoptNS((NSString *)UTTypeCopyPreferredTagWithClass(stringType.get(), kUTTagClassMIMEType));
 
-    addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(buffer, URL::fakeURLWithRelativePart(relativeURLPart), mimeType.get(), emptyString(), emptyString())));
+    addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(WTFMove(buffer), URL::fakeURLWithRelativePart(relativeURLPart), mimeType.get(), emptyString(), emptyString())));
     return fragment;
 }
 
@@ -483,13 +488,13 @@ bool Editor::WebContentReader::readURL(const URL& url, const String&)
             return fragment;
         }
     } else {
-        Ref<Element> anchor = frame.document()->createElement(HTMLNames::aTag, false);
+        auto anchor = frame.document()->createElement(HTMLNames::aTag, false);
         anchor->setAttribute(HTMLNames::hrefAttr, url.string());
         anchor->appendChild(frame.document()->createTextNode([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]));
 
-        RefPtr<DocumentFragment> newFragment = frame.document()->createDocumentFragment();
+        auto newFragment = frame.document()->createDocumentFragment();
         newFragment->appendChild(WTFMove(anchor));
-        addFragment(newFragment);
+        addFragment(WTFMove(newFragment));
         return true;
     }
     return false;
@@ -510,12 +515,12 @@ bool Editor::WebContentReader::readPlainText(const String& text)
 
 // FIXME: Should give this function a name that makes it clear it adds resources to the document loader as a side effect.
 // Or refactor so it does not do that.
-PassRefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, Range& context, bool allowPlainText, bool& chosePlainText)
+RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, Range& context, bool allowPlainText, bool& chosePlainText)
 {
     WebContentReader reader(m_frame, context, allowPlainText);
     pasteboard.read(reader);
     chosePlainText = reader.madeFragmentFromPlainText;
-    return reader.fragment.release();
+    return WTFMove(reader.fragment);
 }
 
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, MailBlockquoteHandling mailBlockquoteHandling)
@@ -528,7 +533,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
         if (!fragment)
             continue;
 
-        reader.addFragment(fragment);
+        reader.addFragment(WTFMove(fragment));
     }
 
     RefPtr<DocumentFragment> fragment = reader.fragment;
@@ -541,7 +546,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, mailBlockquoteHandling);
 }
 
-PassRefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedString *string)
+RefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedString *string)
 {
     if (!m_frame.page() || !m_frame.document() || !m_frame.document()->isHTMLDocument())
         return nullptr;
@@ -557,33 +562,36 @@ PassRefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedS
     RefPtr<DocumentFragment> fragment = client()->documentFragmentFromAttributedString(string, resources);
 
     if (DocumentLoader* loader = m_frame.loader().documentLoader()) {
-        for (auto& resource : resources)
-            loader->addArchiveResource(resource);
+        for (auto& resource : resources) {
+            if (resource)
+                loader->addArchiveResource(resource.releaseNonNull());
+        }
     }
 
     if (!wasDeferringCallbacks)
         m_frame.page()->setDefersLoading(false);
     
-    return fragment.release();
+    return fragment;
 }
 
-PassRefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResource(PassRefPtr<ArchiveResource> resource)
+RefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResource(RefPtr<ArchiveResource>&& resource)
 {
     if (!resource)
         return nullptr;
 
     Ref<Element> imageElement = m_frame.document()->createElement(HTMLNames::imgTag, false);
-    // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
-    if (DocumentLoader* loader = m_frame.loader().documentLoader())
-        loader->addArchiveResource(resource.get());
 
     NSURL *URL = resource->url();
     imageElement->setAttribute(HTMLNames::srcAttr, [URL isFileURL] ? [URL absoluteString] : resource->url());
 
-    RefPtr<DocumentFragment> fragment = m_frame.document()->createDocumentFragment();
+    // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
+    if (DocumentLoader* loader = m_frame.loader().documentLoader())
+        loader->addArchiveResource(resource.releaseNonNull());
+
+    auto fragment = m_frame.document()->createDocumentFragment();
     fragment->appendChild(WTFMove(imageElement));
 
-    return fragment.release();
+    return WTFMove(fragment);
 }
 
 void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributedString, MailBlockquoteHandling mailBlockquoteHandling)

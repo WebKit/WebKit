@@ -62,11 +62,11 @@ bool containsFilenames(const DragDataMap*);
 bool containsHTML(IDataObject*);
 bool containsHTML(const DragDataMap*);
 
-PassRefPtr<DocumentFragment> fragmentFromFilenames(Document*, const IDataObject*);
-PassRefPtr<DocumentFragment> fragmentFromFilenames(Document*, const DragDataMap*);
-PassRefPtr<DocumentFragment> fragmentFromHTML(Document*, IDataObject*);
-PassRefPtr<DocumentFragment> fragmentFromHTML(Document*, const DragDataMap*);
-PassRefPtr<DocumentFragment> fragmentFromCFHTML(Document*, const String& cfhtml);
+RefPtr<DocumentFragment> fragmentFromFilenames(Document*, const IDataObject*);
+RefPtr<DocumentFragment> fragmentFromFilenames(Document*, const DragDataMap*);
+RefPtr<DocumentFragment> fragmentFromHTML(Document*, IDataObject*);
+RefPtr<DocumentFragment> fragmentFromHTML(Document*, const DragDataMap*);
+Ref<DocumentFragment> fragmentFromCFHTML(Document*, const String& cfhtml);
 
 String getURL(IDataObject*, DragData::FilenameConversionPolicy, String* title = 0);
 String getURL(const DragDataMap*, DragData::FilenameConversionPolicy, String* title = 0);

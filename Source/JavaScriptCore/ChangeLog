@@ -1,3 +1,18 @@
+2016-03-14  Joonghun Park  <jh718.park@samsung.com>
+
+        Purge PassRefPtr from ArrayBuffer, ArchiveResource, Pasteboard, LegacyWebArchive and DataObjectGtk
+        https://bugs.webkit.org/show_bug.cgi?id=150497
+
+        Reviewed by Darin Adler.
+
+        * runtime/ArrayBuffer.h:
+        (JSC::ArrayBuffer::create):
+        (JSC::ArrayBuffer::createAdopted):
+        (JSC::ArrayBuffer::createFromBytes):
+        (JSC::ArrayBuffer::createUninitialized):
+        (JSC::ArrayBuffer::slice):
+        (JSC::ArrayBuffer::sliceImpl):
+
 2016-03-14  Benjamin Poulain  <bpoulain@apple.com>
 
         Andy VanWagoner no longer has time to own Intl

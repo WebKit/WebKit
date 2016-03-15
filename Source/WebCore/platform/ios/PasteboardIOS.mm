@@ -196,7 +196,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
 
             if ([type isEqualToString:WebArchivePboardType]) {
                 if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, WebArchivePboardType)) {
-                    if (reader.readWebArchive(buffer.release()))
+                    if (reader.readWebArchive(buffer.get()))
                         break;
                 }
             }
@@ -209,21 +209,21 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
 
              if ([type isEqualToString:(NSString *)kUTTypeRTFD]) {
                 if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, kUTTypeRTFD)) {
-                    if (reader.readRTFD(buffer.release()))
+                    if (reader.readRTFD(*buffer))
                         break;
                 }
             }
 
             if ([type isEqualToString:(NSString *)kUTTypeRTF]) {
                 if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, kUTTypeRTF)) {
-                    if (reader.readRTF(buffer.release()))
+                    if (reader.readRTF(*buffer))
                         break;
                 }
             }
 
             if ([supportedImageTypes() containsObject:type]) {
                 if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, type)) {
-                    if (reader.readImage(buffer.release(), type))
+                    if (reader.readImage(buffer.releaseNonNull(), type))
                         break;
                 }
         }

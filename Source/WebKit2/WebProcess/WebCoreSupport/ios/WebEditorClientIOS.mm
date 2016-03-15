@@ -68,7 +68,7 @@ NSURL *WebEditorClient::canonicalizeURLString(NSString *)
 DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttributedString *, Vector<RefPtr<ArchiveResource> >&)
 {
     notImplemented();
-    return 0;
+    return nullptr;
 }
 
 void WebEditorClient::setInsertionPasteboard(const String&)

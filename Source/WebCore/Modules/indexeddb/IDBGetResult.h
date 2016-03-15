@@ -43,7 +43,7 @@ public:
     {
     }
 
-    IDBGetResult(PassRefPtr<SharedBuffer> buffer)
+    IDBGetResult(SharedBuffer* buffer)
     {
         if (buffer)
             dataFromBuffer(*buffer);

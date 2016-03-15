@@ -518,7 +518,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
     if (m_newestCache && response.httpStatusCode() == 304) { // Not modified.
         ApplicationCacheResource* newestCachedResource = m_newestCache->resourceForURL(url);
         if (newestCachedResource) {
-            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, newestCachedResource->data(), newestCachedResource->path()));
+            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, &newestCachedResource->data(), newestCachedResource->path()));
             m_pendingEntries.remove(m_currentHandle->firstRequest().url());
             m_currentHandle->cancel();
             m_currentHandle = nullptr;
@@ -548,7 +548,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
             ASSERT(m_newestCache);
             ApplicationCacheResource* newestCachedResource = m_newestCache->resourceForURL(handle->firstRequest().url());
             ASSERT(newestCachedResource);
-            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, newestCachedResource->data(), newestCachedResource->path()));
+            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, &newestCachedResource->data(), newestCachedResource->path()));
             m_pendingEntries.remove(m_currentHandle->firstRequest().url());
             m_currentHandle->cancel();
             m_currentHandle = nullptr;
@@ -575,7 +575,7 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
     ASSERT(handle == m_currentHandle);
     
     ASSERT(m_currentResource);
-    m_currentResource->data()->append(data, length);
+    m_currentResource->data().append(data, length);
 }
 
 void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double finishTime)
@@ -644,7 +644,7 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
         ASSERT(m_newestCache);
         ApplicationCacheResource* newestCachedResource = m_newestCache->resourceForURL(url);
         ASSERT(newestCachedResource);
-        m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, newestCachedResource->data(), newestCachedResource->path()));
+        m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, &newestCachedResource->data(), newestCachedResource->path()));
         // Load the next resource, if any.
         startLoadingEntry();
     }
@@ -685,7 +685,7 @@ void ApplicationCacheGroup::didReceiveManifestResponse(const ResourceResponse& r
 void ApplicationCacheGroup::didReceiveManifestData(const char* data, int length)
 {
     if (m_manifestResource)
-        m_manifestResource->data()->append(data, length);
+        m_manifestResource->data().append(data, length);
 }
 
 void ApplicationCacheGroup::didFinishLoadingManifest()
@@ -707,7 +707,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
         ASSERT(newestManifest);
     
         if (!m_manifestResource || // The resource will be null if HTTP response was 304 Not Modified.
-            (newestManifest->data()->size() == m_manifestResource->data()->size() && !memcmp(newestManifest->data()->data(), m_manifestResource->data()->data(), newestManifest->data()->size()))) {
+            (newestManifest->data().size() == m_manifestResource->data().size() && !memcmp(newestManifest->data().data(), m_manifestResource->data().data(), newestManifest->data().size()))) {
 
             m_completionType = NoUpdate;
             m_manifestResource = nullptr;
@@ -718,7 +718,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     }
     
     Manifest manifest;
-    if (!parseManifest(m_manifestURL, m_manifestResource->data()->data(), m_manifestResource->data()->size(), manifest)) {
+    if (!parseManifest(m_manifestURL, m_manifestResource->data().data(), m_manifestResource->data().size(), manifest)) {
         // At the time of this writing, lack of "CACHE MANIFEST" signature is the only reason for parseManifest to fail.
         m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, ASCIILiteral("Application Cache manifest could not be parsed. Does it start with CACHE MANIFEST?"));
         cacheUpdateFailed();

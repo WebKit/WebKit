@@ -558,7 +558,7 @@ void Editor::replaceSelectionWithText(const String& text, bool selectReplacement
     replaceSelectionWithFragment(createFragmentFromText(*range, text), selectReplacement, smartReplace, true, editingAction);
 }
 
-PassRefPtr<Range> Editor::selectedRange()
+RefPtr<Range> Editor::selectedRange()
 {
     return m_frame.selection().toNormalizedRange();
 }

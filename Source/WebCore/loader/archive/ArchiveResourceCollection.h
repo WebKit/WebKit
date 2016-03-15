@@ -44,7 +44,7 @@ class ArchiveResourceCollection {
 public:
     ArchiveResourceCollection();
 
-    void addResource(PassRefPtr<ArchiveResource>);
+    void addResource(Ref<ArchiveResource>&&);
     void addAllResources(Archive*);
     
     WEBCORE_EXPORT ArchiveResource* archiveResourceForURL(const URL&);

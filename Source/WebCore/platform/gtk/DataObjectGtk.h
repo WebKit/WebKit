@@ -29,9 +29,9 @@ namespace WebCore {
 
 class DataObjectGtk : public RefCounted<DataObjectGtk> {
 public:
-    static PassRefPtr<DataObjectGtk> create()
+    static Ref<DataObjectGtk> create()
     {
-        return adoptRef(new DataObjectGtk());
+        return adoptRef(*new DataObjectGtk);
     }
 
     const URL& url() const { return m_url; }

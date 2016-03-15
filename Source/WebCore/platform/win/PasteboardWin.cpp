@@ -792,7 +792,7 @@ void Pasteboard::read(PasteboardPlainText& text)
     }
 }
 
-PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
+RefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
     
@@ -805,9 +805,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, Range& c
             GlobalUnlock(cbData);
             ::CloseClipboard();
 
-            RefPtr<DocumentFragment> fragment = fragmentFromCFHTML(frame.document(), cfhtml);
-            if (fragment)
-                return fragment.release();
+            return fragmentFromCFHTML(frame.document(), cfhtml);
         } else 
             ::CloseClipboard();
     }
@@ -821,9 +819,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, Range& c
                 String str(buffer);
                 GlobalUnlock(cbData);
                 ::CloseClipboard();
-                RefPtr<DocumentFragment> fragment = createFragmentFromText(context, str);
-                if (fragment)
-                    return fragment.release();
+                return createFragmentFromText(context, str);
             } else 
                 ::CloseClipboard();
         }
@@ -838,15 +834,13 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, Range& c
                 String str(buffer);
                 GlobalUnlock(cbData);
                 ::CloseClipboard();
-                RefPtr<DocumentFragment> fragment = createFragmentFromText(context, str);
-                if (fragment)
-                    return fragment.release();
+                return createFragmentFromText(context, str);
             } else
                 ::CloseClipboard();
         }
     }
     
-    return 0;
+    return nullptr;
 }
 
 void Pasteboard::setExternalDataObject(IDataObject *dataObject)

@@ -1,3 +1,29 @@
+2016-03-14  Joonghun Park  <jh718.park@samsung.com>
+
+        Purge PassRefPtr from ArrayBuffer, ArchiveResource, Pasteboard, LegacyWebArchive and DataObjectGtk
+        https://bugs.webkit.org/show_bug.cgi?id=150497
+
+        Reviewed by Darin Adler.
+
+        * Shared/APIWebArchive.mm:
+        (API::WebArchive::WebArchive):
+        * Shared/APIWebArchiveResource.mm:
+        (API::WebArchiveResource::data):
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::addArchiveResource):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::bufferForType):
+        (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        (WebKit::WebEditorClient::documentFragmentFromAttributedString):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::webArchiveData):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::resourceDataForFrame):
+
 2016-03-14  Oliver Hunt  <oliver@apple.com>
 
         Temporarily disable the separated heap.

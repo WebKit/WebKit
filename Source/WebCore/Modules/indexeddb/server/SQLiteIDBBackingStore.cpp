@@ -1447,7 +1447,7 @@ IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& tran
         if (type == IndexedDB::IndexRecordType::Key)
             getResult = { cursor->currentPrimaryKey() };
         else {
-            getResult = { SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size()) };
+            getResult = { SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size()).ptr() };
             getResult.setKeyData(cursor->currentPrimaryKey());
         }
     }

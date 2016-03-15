@@ -48,7 +48,7 @@ class MHTMLParser {
 public:
     explicit MHTMLParser(SharedBuffer*);
 
-    PassRefPtr<MHTMLArchive> parseArchive();
+    RefPtr<MHTMLArchive> parseArchive();
 
     size_t frameCount() const;
     MHTMLArchive* frameAt(size_t) const;
@@ -57,8 +57,8 @@ public:
     ArchiveResource* subResourceAt(size_t) const;
 
 private:
-    PassRefPtr<MHTMLArchive> parseArchiveWithHeader(MIMEHeader*);
-    PassRefPtr<ArchiveResource> parseNextPart(const MIMEHeader&, const String& endOfPartBoundary, const String& endOfDocumentBoundary, bool& endOfArchiveReached);
+    RefPtr<MHTMLArchive> parseArchiveWithHeader(MIMEHeader*);
+    RefPtr<ArchiveResource> parseNextPart(const MIMEHeader&, const String& endOfPartBoundary, const String& endOfDocumentBoundary, bool& endOfArchiveReached);
 
     void addResourceToArchive(ArchiveResource*, MHTMLArchive*);
 

@@ -45,8 +45,8 @@ class MHTMLArchive : public Archive {
 public:
     virtual Type type() const { return MHTML; }
 
-    static PassRefPtr<MHTMLArchive> create();
-    static PassRefPtr<MHTMLArchive> create(const URL&, SharedBuffer*);
+    static Ref<MHTMLArchive> create();
+    static RefPtr<MHTMLArchive> create(const URL&, SharedBuffer&);
 
     static PassRefPtr<SharedBuffer> generateMHTMLData(Page*);
 

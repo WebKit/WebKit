@@ -119,7 +119,7 @@ void CachedImage::didAddClient(CachedResourceClient* client)
 {
     if (m_data && !m_image && !errorOccurred()) {
         createImage();
-        m_image->setData(m_data, true);
+        m_image->setData(m_data.copyRef(), true);
     }
     
     ASSERT(client->resourceClientType() == CachedImageClient::expectedType());

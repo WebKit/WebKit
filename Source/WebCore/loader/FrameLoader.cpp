@@ -892,8 +892,8 @@ void FrameLoader::loadArchive(PassRefPtr<Archive> archive)
     if (!mainResource)
         return;
 
-    ResourceResponse response(URL(), mainResource->mimeType(), mainResource->data()->size(), mainResource->textEncoding());
-    SubstituteData substituteData(mainResource->data(), URL(), response, SubstituteData::SessionHistoryVisibility::Hidden);
+    ResourceResponse response(URL(), mainResource->mimeType(), mainResource->data().size(), mainResource->textEncoding());
+    SubstituteData substituteData(&mainResource->data(), URL(), response, SubstituteData::SessionHistoryVisibility::Hidden);
     
     ResourceRequest request(mainResource->url());
 #if PLATFORM(MAC)

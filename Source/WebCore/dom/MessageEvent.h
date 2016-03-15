@@ -71,9 +71,9 @@ public:
     {
         return adoptRef(*new MessageEvent(data, origin));
     }
-    static Ref<MessageEvent> create(PassRefPtr<ArrayBuffer> data, const String& origin = String())
+    static Ref<MessageEvent> create(RefPtr<ArrayBuffer>&& data, const String& origin = String())
     {
-        return adoptRef(*new MessageEvent(data, origin));
+        return adoptRef(*new MessageEvent(WTFMove(data), origin));
     }
     static Ref<MessageEvent> createForBindings()
     {
@@ -127,7 +127,7 @@ private:
 
     explicit MessageEvent(const String& data, const String& origin);
     explicit MessageEvent(PassRefPtr<Blob> data, const String& origin);
-    explicit MessageEvent(PassRefPtr<ArrayBuffer> data, const String& origin);
+    explicit MessageEvent(RefPtr<ArrayBuffer>&& data, const String& origin);
 
     DataType m_dataType;
     Deprecated::ScriptValue m_dataAsScriptValue;

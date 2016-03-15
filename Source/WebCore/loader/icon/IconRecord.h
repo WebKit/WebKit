@@ -83,7 +83,7 @@ public:
     time_t getTimestamp() { return m_stamp; }
     void setTimestamp(time_t stamp) { m_stamp = stamp; }
         
-    void setImageData(PassRefPtr<SharedBuffer> data);
+    void setImageData(RefPtr<SharedBuffer>&&);
     Image* image(const IntSize&);    
     
     String iconURL() { return m_iconURL; }

@@ -155,7 +155,7 @@ void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteb
     PlatformPasteboard(pasteboardName).getTypes(types);
 }
 
-PassRefPtr<SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName)
+RefPtr<SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName)
 {
     return PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
 }
@@ -241,7 +241,7 @@ int WebPlatformStrategies::getPasteboardItemsCount()
     return PlatformPasteboard().count();
 }
 
-PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(int index, const String& type)
+RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(int index, const String& type)
 {
     return PlatformPasteboard().readBuffer(index, type);
 }
