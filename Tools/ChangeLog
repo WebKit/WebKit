@@ -1,3 +1,21 @@
+2016-03-14  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add twisted-15.5.0 module to webkitpy.thirdparty.autoinstalled.
+        https://bugs.webkit.org/show_bug.cgi?id=154667
+
+        Reviewed by Ryosuke Niwa and Simon Fraser.
+
+        Add twisted-15.5.0 to webkitpy.thirdparty.autoinstalled.
+        Minor fix for twsited_http_server used by run-benchmark that we should only stop http server while recieving 'GET /shutdown'.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        (ServerControl.render_POST): Deleted.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_twisted_15_5_0):
+        * Scripts/webkitpy/thirdparty/__init___unittest.py:
+        (ThirdpartyTest.test_imports):
+
 2016-03-14  Mark Lam  <mark.lam@apple.com>
 
         Need to distinguish between Symbol() and Symbol("").

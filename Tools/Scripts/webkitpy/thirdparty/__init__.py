@@ -91,6 +91,8 @@ class AutoinstallImportHook(object):
             self._install_buildbot()
         elif '.keyring' in fullname:
             self._install_keyring()
+        elif '.twisted_15_5_0' in fullname:
+            self._install_twisted_15_5_0()
         elif '.twisted' in fullname:
             self._install_twisted()
 
@@ -154,6 +156,11 @@ class AutoinstallImportHook(object):
         twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted")
         installer = AutoInstaller(prepend_to_search_path=True, target_dir=twisted_dir)
         installer.install(url="https://pypi.python.org/packages/source/T/Twisted/Twisted-12.1.0.tar.bz2#md5=f396f1d6f5321e869c2f89b2196a9eb5", url_subpath="Twisted-12.1.0/twisted")
+
+    def _install_twisted_15_5_0(self):
+        twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted_15_5_0")
+        installer = AutoInstaller(prepend_to_search_path=True, target_dir=twisted_dir)
+        installer.install(url="https://pypi.python.org/packages/source/T/Twisted/Twisted-15.5.0.tar.bz2#md5=0831d7c90d0020062de0f7287530a285", url_subpath="Twisted-15.5.0/twisted")
 
     def _install(self, url, url_subpath=None, target_name=None):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
