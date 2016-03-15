@@ -1968,7 +1968,7 @@ void Document::updateStyleIfNeeded()
     ASSERT(isMainThread());
     ASSERT(!view() || !view()->isPainting());
 
-    if (!view() || view()->isInLayout())
+    if (!view() || view()->isInRenderTreeLayout())
         return;
 
     if (m_optimizedStyleSheetUpdateTimer.isActive())
@@ -1985,7 +1985,7 @@ void Document::updateLayout()
     ASSERT(isMainThread());
 
     FrameView* frameView = view();
-    if (frameView && frameView->isInLayout()) {
+    if (frameView && frameView->isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
         return;
@@ -2069,7 +2069,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     
     // Check for re-entrancy and assert (same code that is in updateLayout()).
     FrameView* frameView = view();
-    if (frameView && frameView->isInLayout()) {
+    if (frameView && frameView->isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
         return true;

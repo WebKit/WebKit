@@ -1692,7 +1692,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 
 #if ENABLE(CSS_SHAPES)
     ShapeValue* shapeOutsideValue = style().shapeOutside();
-    if (!view().frameView().isInLayout() && isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image) {
+    if (!view().frameView().isInRenderTreeLayout() && isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image) {
         ShapeOutsideInfo::ensureInfo(*this).markShapeAsDirty();
         markShapeOutsideDependentsForLayout();
     }

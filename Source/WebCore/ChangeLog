@@ -1,3 +1,41 @@
+2016-03-15  Zalan Bujtas  <zalan@apple.com>
+
+        Delay HTMLFormControlElement::focus() call until after layout is finished.
+        https://bugs.webkit.org/show_bug.cgi?id=155503
+        <rdar://problem/24046635>
+
+        Reviewed by Simon Fraser.
+
+        Calling focus on a form element can trigger arbitrary JS code which could interfere with
+        the ongoing layout. 
+        This patch delays HTMLFormControlElement::focus() call until after layout is finished.
+        If we are currently not in the middle of a layout, HTMLFormControlElement::focus() is delayed until
+        after style resolution is done. 
+
+        Covered by LayoutTests/fast/dom/adopt-node-crash-2.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::updateBackingStore):
+        * dom/Document.cpp:
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::renderWidgetLoadingPlugin):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::didAttachRenderers):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::queuePostLayoutCallback):
+        (WebCore::FrameView::flushPostLayoutTasksQueue):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+        * page/FrameView.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::imageChanged):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+
 2016-03-15  Oliver Hunt  <oliver@apple.com>
 
         Remove compile time define for SEPARATED_HEAP

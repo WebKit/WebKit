@@ -1208,7 +1208,7 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
 void FrameView::layout(bool allowSubtree)
 {
     LOG(Layout, "FrameView %p (%dx%d) layout, main frameview %d, allowSubtree=%d", this, size().width(), size().height(), frame().isMainFrame(), allowSubtree);
-    if (isInLayout()) {
+    if (isInRenderTreeLayout()) {
         LOG(Layout, "  in layout, bailing");
         return;
     }
@@ -1396,11 +1396,11 @@ void FrameView::layout(bool allowSubtree)
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(&root->view());
 
         ASSERT(m_layoutPhase == InPreLayout);
-        m_layoutPhase = InLayout;
+        m_layoutPhase = InRenderTreeLayout;
 
         forceLayoutParentViewIfNeeded();
 
-        ASSERT(m_layoutPhase == InLayout);
+        ASSERT(m_layoutPhase == InRenderTreeLayout);
 
         root->layout();
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -1419,7 +1419,7 @@ void FrameView::layout(bool allowSubtree)
             root->layout();
 #endif
 
-        ASSERT(m_layoutPhase == InLayout);
+        ASSERT(m_layoutPhase == InRenderTreeLayout);
         m_layoutRoot = nullptr;
         // Close block here to end the scope of changeSchedulingEnabled and SubtreeLayoutStateMaintainer.
     }
@@ -3083,6 +3083,25 @@ void FrameView::flushAnyPendingPostLayoutTasks()
         updateEmbeddedObjectsTimerFired();
 }
 
+void FrameView::queuePostLayoutCallback(std::function<void()> callback)
+{
+    m_postLayoutCallbackQueue.append(callback);
+}
+
+void FrameView::flushPostLayoutTasksQueue()
+{
+    if (m_nestedLayoutCount > 1)
+        return;
+
+    if (!m_postLayoutCallbackQueue.size())
+        return;
+
+    const auto queue = m_postLayoutCallbackQueue;
+    m_postLayoutCallbackQueue.clear();
+    for (size_t i = 0; i < queue.size(); ++i)
+        queue[i]();
+}
+
 void FrameView::performPostLayoutTasks()
 {
     LOG(Layout, "FrameView %p performPostLayoutTasks", this);
@@ -3092,6 +3111,8 @@ void FrameView::performPostLayoutTasks()
     m_postLayoutTasksTimer.stop();
 
     frame().selection().updateAppearanceAfterLayout();
+
+    flushPostLayoutTasksQueue();
 
     if (m_nestedLayoutCount <= 1 && frame().document()->documentElement())
         fireLayoutRelatedMilestonesIfNeeded();
@@ -3158,7 +3179,7 @@ IntSize FrameView::sizeForResizeEvent() const
 
 void FrameView::sendResizeEventIfNeeded()
 {
-    if (isInLayout() || needsLayout())
+    if (isInRenderTreeLayout() || needsLayout())
         return;
 
     RenderView* renderView = this->renderView();
