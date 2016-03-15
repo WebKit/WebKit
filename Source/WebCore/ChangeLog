@@ -1,3 +1,22 @@
+2016-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Occasional crash under GraphicsContext::platformContext when dragging Google maps
+        https://bugs.webkit.org/show_bug.cgi?id=155521
+        rdar://problem/24357307
+
+        Reviewed by Tim Horton.
+
+        It's possible for createDragImageForSelection() to return a null image, if the bounds
+        of the selection are an empty rect. That would cause a crash under convertImageToBitmap()
+        because a zero-sized ShareableBitmap will return a null GraphicsContext.
+        
+        To avoid this, early return from DragController::startDrag() if the dragImage is null.
+        
+        I wasn't able to come up with a test for this.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
 2016-03-15  Tim Horton  <timothy_horton@apple.com>
 
         iOS <attachment> element should allow customization of action text color

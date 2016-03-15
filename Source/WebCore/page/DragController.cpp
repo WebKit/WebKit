@@ -838,6 +838,10 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             dragLoc = dragLocForSelectionDrag(src);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
+
+        if (!dragImage)
+            return false;
+
         doSystemDrag(dragImage, dragLoc, dragOrigin, dataTransfer, src, false);
     } else if (!src.document()->securityOrigin()->canDisplay(linkURL)) {
         src.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to drag local resource: " + linkURL.stringCenterEllipsizedToLength());
