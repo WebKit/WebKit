@@ -1,3 +1,20 @@
+2016-03-14  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> on iOS should paint its progress indicator instead of a green square
+        https://bugs.webkit.org/show_bug.cgi?id=155482
+        <rdar://problem/24805991>
+
+        Reviewed by Simon Fraser.
+
+        No new tests; there are existing tests that will be enabled shortly.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::getAttachmentProgress):
+        Clamp progress to 0-1.
+
+        (WebCore::paintAttachmentProgress):
+        Paint a pie.
+
 2016-03-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r197981.

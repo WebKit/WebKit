@@ -1340,6 +1340,9 @@ const CGSize attachmentSize = { 160, 119 };
 const CGFloat attachmentBorderRadius = 16;
 static Color attachmentBorderColor() { return Color(204, 204, 204); }
 
+static Color attachmentProgressColor() { return Color(222, 222, 222); }
+const CGFloat attachmentProgressBorderThickness = 3;
+
 const CGFloat attachmentProgressSize = 36;
 const CGFloat attachmentIconSize = 48;
 
@@ -1475,7 +1478,7 @@ static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& pro
     if (progressString.isEmpty())
         return NO;
     bool validProgress;
-    progress = progressString.toFloat(&validProgress);
+    progress = std::max<float>(std::min<float>(progressString.toFloat(&validProgress), 1), 0);
     return validProgress;
 }
 
@@ -1586,7 +1589,6 @@ static void paintAttachmentIcon(GraphicsContext& context, AttachmentInfo& info)
     context.drawImage(*iconImage, info.iconRect);
 }
 
-
 static void paintAttachmentText(GraphicsContext& context, AttachmentInfo& info)
 {
     for (const auto& line : info.lines) {
@@ -1604,8 +1606,19 @@ static void paintAttachmentProgress(GraphicsContext& context, AttachmentInfo& in
 {
     GraphicsContextStateSaver saver(context);
 
-    // FIXME: Implement progress indicator.
-    context.fillRect(info.progressRect, Color(0, 255, 0));
+    context.setStrokeThickness(attachmentProgressBorderThickness);
+    context.setStrokeColor(attachmentProgressColor());
+    context.setFillColor(attachmentProgressColor());
+    context.strokeEllipse(info.progressRect);
+
+    FloatPoint center = info.progressRect.center();
+
+    Path progressPath;
+    progressPath.moveTo(center);
+    progressPath.addLineTo(FloatPoint(center.x(), info.progressRect.y()));
+    progressPath.addArc(center, info.progressRect.width() / 2, -M_PI_2, info.progress * 2 * M_PI - M_PI_2, 0);
+    progressPath.closeSubpath();
+    context.fillPath(progressPath);
 }
 
 static void paintAttachmentBorder(GraphicsContext& context, AttachmentInfo& info)
