@@ -1,3 +1,10 @@
+2016-03-14  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build after r198195.
+
+        * platform/network/NetworkingContext.h:
+        curl networking now uses NetworkingContext::storageSession.  That's everybody!
+
 2016-03-14  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Compile fix.
