@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -195,7 +195,6 @@ private:
                     break;
                     
                 case GetButterfly:
-                case GetButterflyReadOnly:
                     // This barely works. The danger is that the GetButterfly is used by something that
                     // does something escaping to a candidate. Fortunately, the only butterfly-using ops
                     // that we exempt here also use the candidate directly. If there ever was a

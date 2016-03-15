@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -185,7 +185,7 @@ ALWAYS_INLINE bool MapDataImpl<Entry, JSIterator>::IteratorData::next(WTF::KeyVa
 {
     if (!ensureSlot())
         return false;
-    Entry* entry = &m_mapData->m_entries.get(m_mapData->m_owner)[m_index];
+    Entry* entry = &m_mapData->m_entries.get()[m_index];
     pair = WTF::KeyValuePair<JSValue, JSValue>(entry->key().get(), entry->value().get());
     m_index += 1;
     return true;
@@ -207,7 +207,7 @@ ALWAYS_INLINE int32_t MapDataImpl<Entry, JSIterator>::IteratorData::refreshCurso
     if (isFinished())
         return m_index;
 
-    Entry* entries = m_mapData->m_entries.get(m_mapData->m_owner);
+    Entry* entries = m_mapData->m_entries.get();
     size_t end = m_mapData->m_size;
     while (static_cast<size_t>(m_index) < end && !entries[m_index].key())
         m_index++;

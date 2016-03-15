@@ -148,17 +148,6 @@ AssemblyHelpers::Jump AssemblyHelpers::branchIfNotFastTypedArray(GPRReg baseGPR)
         TrustedImm32(FastTypedArray));
 }
 
-AssemblyHelpers::Jump AssemblyHelpers::loadTypedArrayVector(GPRReg baseGPR, GPRReg resultGPR)
-{
-    RELEASE_ASSERT(baseGPR != resultGPR);
-    
-    loadPtr(Address(baseGPR, JSArrayBufferView::offsetOfVector()), resultGPR);
-    Jump ok = branchIfToSpace(resultGPR);
-    Jump result = branchIfFastTypedArray(baseGPR);
-    ok.link(this);
-    return result;
-}
-
 void AssemblyHelpers::purifyNaN(FPRReg fpr)
 {
     MacroAssembler::Jump notNaN = branchDouble(DoubleEqual, fpr, fpr);

@@ -247,7 +247,6 @@ private:
                 case AllocatePropertyStorage:
                 case ReallocatePropertyStorage:
                 case GetButterfly:
-                case GetButterflyReadOnly:
                 case GetByVal:
                 case PutByValDirect:
                 case PutByVal:
@@ -326,7 +325,6 @@ private:
                 case PutStructure:
                 case ReallocatePropertyStorage:
                 case GetButterfly:
-                case GetButterflyReadOnly:
                 case GetByVal:
                 case PutByValDirect:
                 case PutByVal:

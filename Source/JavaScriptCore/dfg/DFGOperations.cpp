@@ -1298,22 +1298,6 @@ int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState* exec, s
     return exec->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(string->value(exec).impl(), std::numeric_limits<int32_t>::min());
 }
 
-char* JIT_OPERATION operationGetButterfly(ExecState* exec, JSCell* cell)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    return bitwise_cast<char*>(jsCast<JSObject*>(cell)->butterfly());
-}
-
-char* JIT_OPERATION operationGetArrayBufferVector(ExecState* exec, JSCell* cell)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    return bitwise_cast<char*>(jsCast<JSArrayBufferView*>(cell)->vector());
-}
-
 void JIT_OPERATION operationNotifyWrite(ExecState* exec, WatchpointSet* set)
 {
     VM& vm = exec->vm();

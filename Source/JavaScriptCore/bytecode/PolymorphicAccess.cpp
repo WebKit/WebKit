@@ -576,7 +576,6 @@ void AccessCase::generate(AccessGenerationState& state)
                 jit.loadPtr(
                     CCallHelpers::Address(baseForAccessGPR, JSObject::butterflyOffset()),
                     loadedValueGPR);
-                jit.removeSpaceBits(loadedValueGPR);
                 storageGPR = loadedValueGPR;
             }
 
@@ -856,7 +855,6 @@ void AccessCase::generate(AccessGenerationState& state)
                     offsetInInlineStorage(m_offset) * sizeof(JSValue)));
         } else {
             jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
-            state.failAndIgnore.append(jit.branchIfNotToSpace(scratchGPR));
             jit.storeValue(
                 valueRegs,
                 CCallHelpers::Address(
@@ -925,7 +923,6 @@ void AccessCase::generate(AccessGenerationState& state)
                 ASSERT(newSize > oldSize);
             
                 jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR3);
-                slowPath.append(jit.branchIfNotToSpace(scratchGPR3));
                 jit.loadPtr(&copiedAllocator->m_currentRemaining, scratchGPR);
                 slowPath.append(
                     jit.branchSubPtr(
@@ -969,10 +966,8 @@ void AccessCase::generate(AccessGenerationState& state)
                     JSObject::offsetOfInlineStorage() +
                     offsetInInlineStorage(m_offset) * sizeof(JSValue)));
         } else {
-            if (!scratchGPRHasStorage) {
+            if (!scratchGPRHasStorage)
                 jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
-                state.failAndIgnore.append(jit.branchIfNotToSpace(scratchGPR));
-            }
             jit.storeValue(
                 valueRegs,
                 CCallHelpers::Address(scratchGPR, offsetInButterfly(m_offset) * sizeof(JSValue)));
@@ -1067,7 +1062,6 @@ void AccessCase::generate(AccessGenerationState& state)
 
     case ArrayLength: {
         jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
-        jit.removeSpaceBits(scratchGPR);
         jit.load32(CCallHelpers::Address(scratchGPR, ArrayStorage::lengthOffset()), scratchGPR);
         state.failAndIgnore.append(
             jit.branch32(CCallHelpers::LessThan, scratchGPR, CCallHelpers::TrustedImm32(0)));

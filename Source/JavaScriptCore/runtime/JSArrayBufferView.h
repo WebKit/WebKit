@@ -164,14 +164,7 @@ public:
     bool isNeutered() { return hasArrayBuffer() && !vector(); }
     void neuter();
     
-    void* vector()
-    {
-        return m_vector.getPredicated(
-            this,
-            [this] () -> bool {
-                return mode() == FastTypedArray;
-            });
-    }
+    void* vector() { return m_vector.get(); }
     
     unsigned byteOffset();
     unsigned length() const { return m_length; }

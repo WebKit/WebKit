@@ -422,7 +422,7 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     switch (thisObject->m_mode) {
     case FastTypedArray: {
         if (thisObject->m_vector)
-            visitor.copyLater(thisObject, TypedArrayVectorCopyToken, thisObject->m_vector.getWithoutBarrier(), thisObject->byteSize());
+            visitor.copyLater(thisObject, TypedArrayVectorCopyToken, thisObject->m_vector.get(), thisObject->byteSize());
         break;
     }
         
@@ -449,7 +449,7 @@ void JSGenericTypedArrayView<Adaptor>::copyBackingStore(
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
     
     if (token == TypedArrayVectorCopyToken
-        && visitor.checkIfShouldCopy(thisObject->m_vector.getWithoutBarrier())) {
+        && visitor.checkIfShouldCopy(thisObject->m_vector.get())) {
         ASSERT(thisObject->m_vector);
         void* oldVector = thisObject->vector();
         void* newVector = visitor.allocateNewSpace(thisObject->byteSize());

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2009, 2013-2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2013-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -111,8 +111,6 @@ public:
     void writeBarrier(const JSCell*);
     void writeBarrier(const JSCell*, JSValue);
     void writeBarrier(const JSCell*, JSCell*);
-
-    JS_EXPORT_PRIVATE static void* copyBarrier(const JSCell* owner, void*& copiedSpacePointer);
 
     WriteBarrierBuffer& writeBarrierBuffer() { return m_writeBarrierBuffer; }
     void flushWriteBarrierBuffer(JSCell*);

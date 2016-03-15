@@ -213,7 +213,7 @@ void JSArrayBufferView::finalize(JSCell* cell)
     JSArrayBufferView* thisObject = static_cast<JSArrayBufferView*>(cell);
     ASSERT(thisObject->m_mode == OversizeTypedArray || thisObject->m_mode == WastefulTypedArray);
     if (thisObject->m_mode == OversizeTypedArray)
-        fastFree(thisObject->m_vector.getWithoutBarrier());
+        fastFree(thisObject->m_vector.get());
 }
 
 } // namespace JSC

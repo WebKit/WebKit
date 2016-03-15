@@ -197,7 +197,6 @@ namespace JSC { namespace DFG {
     macro(AllocatePropertyStorage, NodeMustGenerate | NodeResultStorage) \
     macro(ReallocatePropertyStorage, NodeMustGenerate | NodeResultStorage) \
     macro(GetButterfly, NodeResultStorage) \
-    macro(GetButterflyReadOnly, NodeResultStorage) /* A node used to replace GetButterfly at the bitter end of compilation. */\
     macro(CheckArray, NodeMustGenerate) \
     macro(Arrayify, NodeMustGenerate) \
     macro(ArrayifyToStructure, NodeMustGenerate) \

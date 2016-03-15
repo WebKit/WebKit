@@ -165,7 +165,6 @@ JIT::JumpList JIT::emitDoubleLoad(Instruction*, PatchableJump& badType)
     
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(DoubleShape));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    slowCases.append(branchIfNotToSpace(regT2));
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
     loadDouble(BaseIndex(regT2, regT1, TimesEight), fpRegT0);
     slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
@@ -179,7 +178,6 @@ JIT::JumpList JIT::emitContiguousLoad(Instruction*, PatchableJump& badType, Inde
     
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(expectedShape));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    slowCases.append(branchIfNotToSpace(regT2));
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
     load64(BaseIndex(regT2, regT1, TimesEight), regT0);
     slowCases.append(branchTest64(Zero, regT0));
@@ -195,7 +193,6 @@ JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
     badType = patchableBranch32(Above, regT3, TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape));
 
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    slowCases.append(branchIfNotToSpace(regT2));
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
 
     load64(BaseIndex(regT2, regT1, TimesEight, ArrayStorage::vectorOffset()), regT0);
@@ -254,7 +251,6 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     notString.link(this);
     nonCell.link(this);
     
-    linkSlowCase(iter); // read barrier
     linkSlowCase(iter); // vector length check
     linkSlowCase(iter); // empty value
     
@@ -327,7 +323,6 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(indexingShape));
     
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    slowCases.append(branchIfNotToSpace(regT2));
     Jump outOfBounds = branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength()));
 
     Label storeResult = label();
@@ -383,7 +378,6 @@ JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, Pat
     
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(ArrayStorageShape));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    slowCases.append(branchIfNotToSpace(regT2));
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
 
     Jump empty = branchTest64(Zero, BaseIndex(regT2, regT1, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
@@ -454,7 +448,6 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     linkSlowCase(iter); // property int32 check
     linkSlowCase(iter); // base not array check
     
-    linkSlowCase(iter); // read barrier
     linkSlowCase(iter); // out of bounds
     
     JITArrayMode mode = chooseArrayMode(profile);
@@ -786,7 +779,6 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
                 isOutOfLine.link(this);
             }
             loadPtr(Address(base, JSObject::butterflyOffset()), scratch);
-            addSlowCase(branchIfNotToSpace(scratch));
             neg32(offset);
             signExtend32ToPtr(offset, offset);
             load64(BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), result);
@@ -866,10 +858,8 @@ void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<Slo
     if (resolveType == GlobalVar || resolveType == ClosureVar)
         return;
 
-    if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+    if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks)
         linkSlowCase(iter); // bad structure
-        linkSlowCase(iter); // read barrier
-    }
 
     if (resolveType == GlobalLexicalVarWithVarInjectionChecks) // Var injections check.
         linkSlowCase(iter);
@@ -878,7 +868,6 @@ void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<Slo
         // GlobalProperty/GlobalPropertyWithVarInjectionChecks
         linkSlowCase(iter); // emitLoadWithStructureCheck
         linkSlowCase(iter); // emitLoadWithStructureCheck
-        linkSlowCase(iter); // read barrier
         // GlobalLexicalVar
         linkSlowCase(iter); // TDZ check.
         // GlobalLexicalVarWithVarInjectionChecks.
@@ -932,7 +921,6 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
             emitGetVirtualRegister(value, regT2);
             
             loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
-            addSlowCase(branchIfNotToSpace(regT0));
             loadPtr(operandSlot, regT1);
             negPtr(regT1);
             storePtr(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
@@ -1026,17 +1014,14 @@ void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowC
          || resolveType == LocalClosureVar)
         && currentInstruction[5].u.watchpointSet->state() != IsInvalidated)
         linkCount++;
-    if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+    if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks)
         linkCount++; // bad structure
-        linkCount++; // read barrier
-    }
     if (getPutInfo.initializationMode() != Initialization && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) // TDZ check.
         linkCount++;
     if (resolveType == UnresolvedProperty || resolveType == UnresolvedPropertyWithVarInjectionChecks) {
         // GlobalProperty/GlobalPropertyWithVarInjectionsCheck
         linkCount++; // emitLoadWithStructureCheck
         linkCount++; // emitLoadWithStructureCheck
-        linkCount++; // read barrier
 
         // GlobalLexicalVar
         bool needsTDZCheck = getPutInfo.initializationMode() != Initialization;
@@ -1454,7 +1439,7 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badTyp
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(typeForTypedArrayType(type)));
     slowCases.append(branch32(AboveOrEqual, property, Address(base, JSArrayBufferView::offsetOfLength())));
-    slowCases.append(loadTypedArrayVector(base, scratch));
+    loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
     
     switch (elementSize(type)) {
     case 1:
@@ -1525,7 +1510,7 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badT
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(typeForTypedArrayType(type)));
     slowCases.append(branch32(AboveOrEqual, property, Address(base, JSArrayBufferView::offsetOfLength())));
-    slowCases.append(loadTypedArrayVector(base, scratch));
+    loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
     
     switch (elementSize(type)) {
     case 4:
@@ -1592,7 +1577,7 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, Pa
     
     // We would be loading this into base as in get_by_val, except that the slow
     // path expects the base to be unclobbered.
-    slowCases.append(loadTypedArrayVector(base, lateScratch));
+    loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), lateScratch);
     
     if (isClamped(type)) {
         ASSERT(elementSize(type) == 1);
@@ -1677,7 +1662,7 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, 
     
     // We would be loading this into base as in get_by_val, except that the slow
     // path expects the base to be unclobbered.
-    slowCases.append(loadTypedArrayVector(base, lateScratch));
+    loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), lateScratch);
     
     switch (elementSize(type)) {
     case 4:

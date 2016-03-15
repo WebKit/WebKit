@@ -1196,7 +1196,6 @@ void JIT::emit_op_get_direct_pname(Instruction* currentInstruction)
     // Otherwise it's out of line
     outOfLineAccess.link(this);
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
-    addSlowCase(branchIfNotToSpace(regT0));
     sub32(Address(regT1, JSPropertyNameEnumerator::cachedInlineCapacityOffset()), regT2);
     neg32(regT2);
     int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
@@ -1212,7 +1211,6 @@ void JIT::emitSlow_op_get_direct_pname(Instruction* currentInstruction, Vector<S
 {
     int base = currentInstruction[2].u.operand;
     linkSlowCaseIfNotJSCell(iter, base);
-    linkSlowCase(iter);
     linkSlowCase(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_direct_pname);

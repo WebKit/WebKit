@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,7 +104,7 @@ void DirectArguments::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
     if (thisObject->m_overrides) {
         visitor.copyLater(
             thisObject, DirectArgumentsOverridesCopyToken,
-            thisObject->m_overrides.getWithoutBarrier(), thisObject->overridesSize());
+            thisObject->m_overrides.get(), thisObject->overridesSize());
     }
 }
 
@@ -115,7 +115,7 @@ void DirectArguments::copyBackingStore(JSCell* thisCell, CopyVisitor& visitor, C
     
     RELEASE_ASSERT(token == DirectArgumentsOverridesCopyToken);
     
-    void* oldOverrides = thisObject->m_overrides.getWithoutBarrier();
+    void* oldOverrides = thisObject->m_overrides.get();
     if (visitor.checkIfShouldCopy(oldOverrides)) {
         bool* newOverrides = static_cast<bool*>(visitor.allocateNewSpace(thisObject->overridesSize()));
         memcpy(newOverrides, oldOverrides, thisObject->m_length);
@@ -154,7 +154,7 @@ void DirectArguments::overrideThingsIfNecessary(VM& vm)
 void DirectArguments::overrideArgument(VM& vm, unsigned index)
 {
     overrideThingsIfNecessary(vm);
-    m_overrides.get(this)[index] = true;
+    m_overrides.get()[index] = true;
 }
 
 void DirectArguments::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)

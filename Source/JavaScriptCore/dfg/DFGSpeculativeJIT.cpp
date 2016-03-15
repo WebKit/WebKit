@@ -5226,10 +5226,7 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
     default:
         ASSERT(isTypedView(node->arrayMode().typedArrayType()));
 
-        JITCompiler::Jump fail = m_jit.loadTypedArrayVector(baseReg, storageReg);
-
-        addSlowPathGenerator(
-            slowPathCall(fail, this, operationGetArrayBufferVector, storageReg, baseReg));
+        m_jit.loadPtr(JITCompiler::Address(baseReg, JSArrayBufferView::offsetOfVector()), storageReg);
         break;
     }
     
@@ -5252,13 +5249,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
         TrustedImm32(WastefulTypedArray));
 
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), dataGPR);
-    m_jit.removeSpaceBits(dataGPR);
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), vectorGPR);
-    JITCompiler::JumpList vectorReady;
-    vectorReady.append(m_jit.branchIfToSpace(vectorGPR));
-    vectorReady.append(m_jit.branchIfNotFastTypedArray(baseGPR));
-    m_jit.removeSpaceBits(vectorGPR);
-    vectorReady.link(&m_jit);
     m_jit.loadPtr(MacroAssembler::Address(dataGPR, Butterfly::offsetOfArrayBuffer()), dataGPR);
     m_jit.loadPtr(MacroAssembler::Address(dataGPR, ArrayBuffer::offsetOfData()), dataGPR);
     m_jit.subPtr(dataGPR, vectorGPR);
@@ -6322,23 +6313,6 @@ void SpeculativeJIT::compileGetButterfly(Node* node)
     
     m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::butterflyOffset()), resultGPR);
 
-    switch (node->op()) {
-    case GetButterfly:
-        addSlowPathGenerator(
-            slowPathCall(
-                m_jit.branchIfNotToSpace(resultGPR),
-                this, operationGetButterfly, resultGPR, baseGPR));
-        break;
-
-    case GetButterflyReadOnly:
-        m_jit.removeSpaceBits(resultGPR);
-        break;
-
-    default:
-        DFG_CRASH(m_jit.graph(), node, "Bad node type");
-        break;
-    }
-    
     storageResult(resultGPR, node);
 }
 

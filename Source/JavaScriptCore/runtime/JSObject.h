@@ -162,14 +162,14 @@ public:
     {
         if (!hasIndexedProperties(indexingType()))
             return 0;
-        return m_butterfly.get(this)->publicLength();
+        return m_butterfly.get()->publicLength();
     }
         
     unsigned getVectorLength()
     {
         if (!hasIndexedProperties(indexingType()))
             return 0;
-        return m_butterfly.get(this)->vectorLength();
+        return m_butterfly.get()->vectorLength();
     }
     
     static bool putInline(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
@@ -214,7 +214,7 @@ public:
     
     bool canGetIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.get(this);
+        Butterfly* butterfly = m_butterfly.get();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -240,7 +240,7 @@ public:
         
     JSValue getIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.get(this);
+        Butterfly* butterfly = m_butterfly.get();
         switch (indexingType()) {
         case ALL_INT32_INDEXING_TYPES:
             return jsNumber(butterfly->contiguous()[i].get().asInt32());
@@ -258,7 +258,7 @@ public:
         
     JSValue tryGetIndexQuickly(unsigned i) const
     {
-        Butterfly* butterfly = m_butterfly.get(this);
+        Butterfly* butterfly = m_butterfly.get();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -312,7 +312,7 @@ public:
         
     bool canSetIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.get(this);
+        Butterfly* butterfly = m_butterfly.get();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -343,7 +343,7 @@ public:
         case ALL_DOUBLE_INDEXING_TYPES:
         case ALL_CONTIGUOUS_INDEXING_TYPES:
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return i < m_butterfly.get(this)->vectorLength();
+            return i < m_butterfly.get()->vectorLength();
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return false;
@@ -352,7 +352,7 @@ public:
         
     void setIndexQuickly(VM& vm, unsigned i, JSValue v)
     {
-        Butterfly* butterfly = m_butterfly.get(this);
+        Butterfly* butterfly = m_butterfly.get();
         switch (indexingType()) {
         case ALL_INT32_INDEXING_TYPES: {
             ASSERT(i < butterfly->vectorLength());
@@ -409,7 +409,7 @@ public:
 
     void initializeIndex(VM& vm, unsigned i, JSValue v, IndexingType indexingType)
     {
-        Butterfly* butterfly = m_butterfly.get(this);
+        Butterfly* butterfly = m_butterfly.get();
         switch (indexingType) {
         case ALL_UNDECIDED_INDEXING_TYPES: {
             setIndexQuicklyToUndecided(vm, i, v);
@@ -467,7 +467,7 @@ public:
         case ALL_CONTIGUOUS_INDEXING_TYPES:
             return false;
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return !!m_butterfly.get(this)->arrayStorage()->m_sparseMap;
+            return !!m_butterfly.get()->arrayStorage()->m_sparseMap;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return false;
@@ -484,7 +484,7 @@ public:
         case ALL_CONTIGUOUS_INDEXING_TYPES:
             return false;
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return m_butterfly.get(this)->arrayStorage()->inSparseMode();
+            return m_butterfly.get()->arrayStorage()->inSparseMode();
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return false;
@@ -593,11 +593,11 @@ public:
         return inlineStorageUnsafe();
     }
         
-    const Butterfly* butterfly() const { return m_butterfly.get(this); }
-    Butterfly* butterfly() { return m_butterfly.get(this); }
+    const Butterfly* butterfly() const { return m_butterfly.get(); }
+    Butterfly* butterfly() { return m_butterfly.get(); }
         
-    ConstPropertyStorage outOfLineStorage() const { return m_butterfly.get(this)->propertyStorage(); }
-    PropertyStorage outOfLineStorage() { return m_butterfly.get(this)->propertyStorage(); }
+    ConstPropertyStorage outOfLineStorage() const { return m_butterfly.get()->propertyStorage(); }
+    PropertyStorage outOfLineStorage() { return m_butterfly.get()->propertyStorage(); }
 
     const WriteBarrierBase<Unknown>* locationForOffset(PropertyOffset offset) const
     {
@@ -713,7 +713,7 @@ public:
     ContiguousJSValues ensureInt32(VM& vm)
     {
         if (LIKELY(hasInt32(indexingType())))
-            return m_butterfly.get(this)->contiguousInt32();
+            return m_butterfly.get()->contiguousInt32();
             
         return ensureInt32Slow(vm);
     }
@@ -725,7 +725,7 @@ public:
     ContiguousDoubles ensureDouble(VM& vm)
     {
         if (LIKELY(hasDouble(indexingType())))
-            return m_butterfly.get(this)->contiguousDouble();
+            return m_butterfly.get()->contiguousDouble();
             
         return ensureDoubleSlow(vm);
     }
@@ -735,7 +735,7 @@ public:
     ContiguousJSValues ensureContiguous(VM& vm)
     {
         if (LIKELY(hasContiguous(indexingType())))
-            return m_butterfly.get(this)->contiguous();
+            return m_butterfly.get()->contiguous();
             
         return ensureContiguousSlow(vm);
     }
@@ -747,7 +747,7 @@ public:
     ArrayStorage* ensureArrayStorage(VM& vm)
     {
         if (LIKELY(hasAnyArrayStorage(indexingType())))
-            return m_butterfly.get(this)->arrayStorage();
+            return m_butterfly.get()->arrayStorage();
 
         return ensureArrayStorageSlow(vm);
     }
@@ -795,7 +795,7 @@ protected:
     ArrayStorage* arrayStorage()
     {
         ASSERT(hasAnyArrayStorage(indexingType()));
-        return m_butterfly.get(this)->arrayStorage();
+        return m_butterfly.get()->arrayStorage();
     }
         
     // Call this if you want to predicate some actions on whether or not the
@@ -804,7 +804,7 @@ protected:
     {
         switch (indexingType()) {
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return m_butterfly.get(this)->arrayStorage();
+            return m_butterfly.get()->arrayStorage();
                 
         default:
             return 0;
@@ -869,11 +869,11 @@ protected:
         ASSERT(length < MAX_ARRAY_INDEX);
         ASSERT(hasContiguous(indexingType()) || hasInt32(indexingType()) || hasDouble(indexingType()) || hasUndecided(indexingType()));
 
-        if (m_butterfly.get(this)->vectorLength() < length)
+        if (m_butterfly.get()->vectorLength() < length)
             ensureLengthSlow(vm, length);
             
-        if (m_butterfly.get(this)->publicLength() < length)
-            m_butterfly.get(this)->setPublicLength(length);
+        if (m_butterfly.get()->publicLength() < length)
+            m_butterfly.get()->setPublicLength(length);
     }
         
     // Call this if you want to shrink the butterfly backing store, and you're
@@ -1489,7 +1489,7 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     DeferGC deferGC(vm.heap);
     ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
     ASSERT(!value.isCustomGetterSetter());
-    Butterfly* newButterfly = m_butterfly.get(this);
+    Butterfly* newButterfly = m_butterfly.get();
     if (structure()->putWillGrowOutOfLineStorage())
         newButterfly = growOutOfLineStorage(vm, structure()->outOfLineCapacity(), structure()->suggestedNewOutOfLineStorageCapacity());
     Structure* structure = this->structure();

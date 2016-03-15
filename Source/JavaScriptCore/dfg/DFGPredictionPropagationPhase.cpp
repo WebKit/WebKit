@@ -483,7 +483,6 @@ private:
         }
             
         case GetButterfly:
-        case GetButterflyReadOnly:
         case GetIndexedPropertyStorage:
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage: {
