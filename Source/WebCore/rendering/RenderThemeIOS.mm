@@ -1572,6 +1572,8 @@ AttachmentInfo::AttachmentInfo(const RenderAttachment& attachment)
         }
     }
 
+    yOffset -= attachmentItemMargin;
+
     contentYOrigin = (attachmentRect.height() / 2) - (yOffset / 2);
 }
 

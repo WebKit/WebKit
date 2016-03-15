@@ -1,3 +1,18 @@
+2016-03-15  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> on iOS isn't quite vertically centered
+        https://bugs.webkit.org/show_bug.cgi?id=155502
+        <rdar://problem/24805991>
+
+        Reviewed by Beth Dakin.
+
+        No new tests; there are existing tests that will be enabled shortly.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::AttachmentInfo::AttachmentInfo):
+        We were overcounting the total height of the attachment content by one margin, because each item
+        would add in its margin, including the last one. Remove one margin.
+
 2016-03-15  Chris Fleizach  <cfleizach@apple.com>
 
         AX: certain elements not included in accessibility tree
