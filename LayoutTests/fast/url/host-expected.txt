@@ -8,7 +8,7 @@ FAIL canonicalize('http://Goo%20 goo%7C|.com/') should be http://goo%20%20goo%7C
 FAIL canonicalize('http://GOO 　goo.com/') should be http://goo%20%20goo.com/. Was http://GOO 　goo.com/.
 PASS canonicalize('http://GOO​⁠﻿goo.com/') is 'http://googoo.com/'
 PASS canonicalize('http://www.foo。bar.com/') is 'http://www.foo.bar.com/'
-FAIL canonicalize('http://﷐zyx.com/') should be http://%EF%BF%BDzyx.com/. Was about:blank.
+FAIL canonicalize('http://﷐zyx.com/') should be http://%EF%BF%BDzyx.com/. Was http:/.
 FAIL canonicalize('http://%ef%b7%90zyx.com/') should be http://%EF%BF%BDzyx.com/. Was http://%ef%b7%90zyx.com/.
 PASS canonicalize('http://Ｇｏ.com/') is 'http://go.com/'
 FAIL canonicalize('http://％４１.com/') should be http://a.com/. Was http://%41.com/.

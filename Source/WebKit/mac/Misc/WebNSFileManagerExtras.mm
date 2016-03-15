@@ -75,7 +75,7 @@ static void *setMetaData(void* context)
     ASSERT(URLString);
     ASSERT(path);
 
-    NSURL *URL = [NSURL _webkit_URLWithUserTypedString:URLString];
+    NSURL *URL = [NSURL _web_URLWithUserTypedString:URLString];
     if (URL)
         URLString = [[URL _web_URLByRemovingUserInfo] _web_userVisibleString];
  

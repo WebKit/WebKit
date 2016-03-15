@@ -337,7 +337,7 @@ static const unsigned char percentEncodeClassTable[256] = {
 };
 
 static int copyPathRemovingDots(char* dst, const char* src, int srcStart, int srcEnd);
-static bool encodeRelativeString(const String& rel, const TextEncoding&, CharBuffer& ouput);
+static void encodeRelativeString(const String& rel, const TextEncoding&, CharBuffer& ouput);
 static String substituteBackslashes(const String&);
 
 static inline bool isSchemeFirstChar(char c) { return characterClassTable[static_cast<unsigned char>(c)] & SchemeFirstChar; }
@@ -490,12 +490,7 @@ void URL::init(const URL& base, const String& relative, const TextEncoding& enco
         strBuffer[len] = 0;
         str = strBuffer.data();
     } else {
-        if (!encodeRelativeString(rel, encoding, strBuffer)) {
-            m_string = blankURL();
-            invalidate();
-            return;
-        }
-
+        encodeRelativeString(rel, encoding, strBuffer);
         str = strBuffer.data();
         len = strlen(str);
     }
@@ -1686,8 +1681,7 @@ static bool protocolIs(StringView stringURL, const char* protocol)
 
 // Appends the punycoded hostname identified by the given string and length to
 // the output buffer. The result will not be null terminated.
-// Return value of false means error in encoding.
-static bool appendEncodedHostname(UCharBuffer& buffer, StringView string)
+static void appendEncodedHostname(UCharBuffer& buffer, StringView string)
 {
     // Needs to be big enough to hold an IDN-encoded name.
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
@@ -1695,7 +1689,7 @@ static bool appendEncodedHostname(UCharBuffer& buffer, StringView string)
 
     if (string.length() > hostnameBufferLength || containsOnlyASCII(string)) {
         append(buffer, string);
-        return true;
+        return;
     }
 
     UChar hostnameBuffer[hostnameBufferLength];
@@ -1711,11 +1705,8 @@ static bool appendEncodedHostname(UCharBuffer& buffer, StringView string)
 #pragma GCC diagnostic pop
 #endif
 
-    if (error == U_ZERO_ERROR) {
+    if (error == U_ZERO_ERROR)
         buffer.append(hostnameBuffer, numCharactersConverted);
-        return true;
-    }
-    return false;
 }
 
 static void findHostnamesInMailToURL(StringView string, Vector<std::pair<int, int>>& nameRanges)
@@ -1828,8 +1819,7 @@ static bool findHostnameInHierarchicalURL(StringView string, int& startOffset, i
 
 // Converts all hostnames found in the given input to punycode, preserving the
 // rest of the URL unchanged. The output will NOT be null-terminated.
-// Return value of false means error in encoding.
-static bool encodeHostnames(StringView string, UCharBuffer& buffer)
+static void encodeHostnames(StringView string, UCharBuffer& buffer)
 {
     buffer.clear();
 
@@ -1841,8 +1831,7 @@ static bool encodeHostnames(StringView string, UCharBuffer& buffer)
         for (int i = 0; i < n; ++i) {
             const std::pair<int, int>& r = hostnameRanges[i];
             append(buffer, string.substring(p, r.first - p));
-            if (!appendEncodedHostname(buffer, string.substring(r.first, r.second - r.first)))
-                return false;
+            appendEncodedHostname(buffer, string.substring(r.first, r.second - r.first));
             p = r.second;
         }
         // This will copy either everything after the last hostname, or the
@@ -1852,24 +1841,19 @@ static bool encodeHostnames(StringView string, UCharBuffer& buffer)
         int hostStart, hostEnd;
         if (findHostnameInHierarchicalURL(string, hostStart, hostEnd)) {
             append(buffer, string.substring(0, hostStart)); // Before hostname.
-            if (!appendEncodedHostname(buffer, string.substring(hostStart, hostEnd - hostStart)))
-                return false;
+            appendEncodedHostname(buffer, string.substring(hostStart, hostEnd - hostStart));
             append(buffer, string.substring(hostEnd)); // After hostname.
         } else {
             // No hostname to encode, return the input.
             append(buffer, string);
         }
     }
-
-    return true;
 }
 
-// Return value of false means error in encoding.
-static bool encodeRelativeString(const String& rel, const TextEncoding& encoding, CharBuffer& output)
+static void encodeRelativeString(const String& rel, const TextEncoding& encoding, CharBuffer& output)
 {
     UCharBuffer s;
-    if (!encodeHostnames(rel, s))
-        return false;
+    encodeHostnames(rel, s);
 
     TextEncoding pathEncoding(UTF8Encoding()); // Path is always encoded as UTF-8; other parts may depend on the scheme.
 
@@ -1894,8 +1878,6 @@ static bool encodeRelativeString(const String& rel, const TextEncoding& encoding
         memcpy(output.data() + pathDecoded.length(), otherDecoded.data(), otherDecoded.length());
     }
     output.append('\0'); // null-terminate the output.
-
-    return true;
 }
 
 static String substituteBackslashes(const String& string)

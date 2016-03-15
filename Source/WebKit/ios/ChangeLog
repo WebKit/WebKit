@@ -1,3 +1,15 @@
+2016-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r198203.
+
+        Favorites view is no longer loading on iOS
+
+        Reverted changeset:
+
+        "URL Parsing should signal failure for illegal IDN"
+        https://bugs.webkit.org/show_bug.cgi?id=154945
+        http://trac.webkit.org/changeset/198203
+
 2016-03-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         URL Parsing should signal failure for illegal IDN

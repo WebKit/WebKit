@@ -33,15 +33,8 @@
 
 @interface NSURL (WebNSURLExtras)
 
-// Deprecated as it ignores URL parsing error.
-// Please use the _webkit_ counterparts.
 + (NSURL *)_web_URLWithUserTypedString:(NSString *)string;
 + (NSURL *)_web_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL;
-
-// New SPI.
-// Return value of nil means error in URL parsing.
-+ (NSURL *)_webkit_URLWithUserTypedString:(NSString *)string;
-+ (NSURL *)_webkit_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL;
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string;
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string relativeToURL:(NSURL *)baseURL;
@@ -82,17 +75,8 @@
 
 - (BOOL)_web_isUserVisibleURL;
 
-// Deprecated as it ignores URL parsing error.
-// Please use the _webkit_ counterparts.
-// turns funny-looking ASCII form into Unicode, returns self if no decoding needed, convenient cover
-- (NSString *)_web_decodeHostName;
-// turns Unicode into funny-looking ASCII form, returns self if no decoding needed, convenient cover
-- (NSString *)_web_encodeHostName;
-
-// New SPI.
-// Return value of nil means error in URL parsing.
-- (NSString *)_webkit_decodeHostName;
-- (NSString *)_webkit_encodeHostName;
+- (NSString *)_web_decodeHostName; // turns funny-looking ASCII form into Unicode, returns self if no decoding needed, convenient cover
+- (NSString *)_web_encodeHostName; // turns Unicode into funny-looking ASCII form, returns self if no decoding needed, convenient cover
 
 - (BOOL)_webkit_isJavaScriptURL;
 - (BOOL)_webkit_isFileURL;
