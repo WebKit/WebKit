@@ -1,3 +1,22 @@
+2016-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Add developer Animometer test that bounces P3-tagged images
+        https://bugs.webkit.org/show_bug.cgi?id=155511
+
+        Reviewed by Tim Horton.
+        
+        Add a test for rendering performance of tagged images. The 5 images are tagged
+        with the Display P3 colorspace.
+
+        * Animometer/resources/debug-runner/tests.js:
+        * Animometer/tests/bouncing-particles/bouncing-tagged-images.html: Added.
+        * Animometer/tests/bouncing-particles/resources/bouncing-tagged-images.js: Added.
+        * Animometer/tests/bouncing-particles/resources/image1.jpg: Added.
+        * Animometer/tests/bouncing-particles/resources/image2.jpg: Added.
+        * Animometer/tests/bouncing-particles/resources/image3.jpg: Added.
+        * Animometer/tests/bouncing-particles/resources/image4.jpg: Added.
+        * Animometer/tests/bouncing-particles/resources/image5.jpg: Added.
+
 2016-03-09  Jon Lee  <jonlee@apple.com>
 
         Enhance existing Animometer tests

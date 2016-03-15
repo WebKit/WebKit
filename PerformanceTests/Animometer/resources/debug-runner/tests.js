@@ -160,6 +160,10 @@ Suites.push(new Suite("HTML suite",
         {
             url: "bouncing-particles/bouncing-css-images.html?particleWidth=80&particleHeight=80&imageSrc=../resources/yin-yang.svg",
             name: "CSS bouncing SVG images"
+        },
+        {
+            url: "bouncing-particles/bouncing-tagged-images.html?particleWidth=100&particleHeight=100",
+            name: "CSS bouncing tagged images"
         }
     ]
 ));
