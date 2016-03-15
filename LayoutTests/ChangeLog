@@ -1,3 +1,13 @@
+2016-03-14  Jer Noble  <jer.noble@apple.com>
+
+        Video elements with autoplay do not begin playing when scrolling into view if InvisibleAutoplayNotPermitted is set.
+        https://bugs.webkit.org/show_bug.cgi?id=155468
+
+        Reviewed by Eric Carlson.
+
+        * media/video-restricted-invisible-autoplay-allowed-when-visible-expected.txt: Added.
+        * media/video-restricted-invisible-autoplay-allowed-when-visible.html: Added.
+
 2016-03-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         URL Parsing should signal failure for illegal IDN

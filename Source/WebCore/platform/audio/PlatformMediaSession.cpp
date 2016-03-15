@@ -129,7 +129,7 @@ void PlatformMediaSession::endInterruption(EndInterruptionFlags flags)
     State stateToRestore = m_stateToRestore;
     m_stateToRestore = Idle;
     m_interruptionType = NoInterruption;
-    setState(Paused);
+    setState(stateToRestore);
 
     if (stateToRestore == Autoplaying)
         client().resumeAutoplaying();

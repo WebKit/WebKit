@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            function start()
+            {
+                video = document.createElement('video');
+                run('internals.setMediaElementRestrictions(video, "InvisibleAutoplayNotPermitted")');
+                video.autoplay = true;
+                consoleWrite('** setting video.src');
+                video.src = findMediaFile('video', 'content/test');
+
+                waitForEvent('play', play)
+                setTimeout(putInDOM, 250);
+            }
+
+            function putInDOM()
+            {
+                run('document.body.appendChild(video)');
+                failTestIn(250);
+            }
+
+            function play()
+            {
+                if (!video.parentNode)
+                    failTest('play event fired before element was put in DOM');
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that "invisible autoplay not allowed restriction" plays media when scrolled into view.</p>
+    </body>
+</html>
