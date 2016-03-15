@@ -72,9 +72,6 @@ public:
     bool isOpaque() const override;
     void setOpaque(bool) override;
 
-    void setContentsFormat(ContentsFormatFlags) override;
-    ContentsFormatFlags contentsFormat() const override { return m_contentsFormatFlags; }
-
     FloatRect bounds() const override;
     void setBounds(const FloatRect&) override;
 
@@ -182,7 +179,6 @@ private:
     std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance;
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
-    ContentsFormatFlags m_contentsFormatFlags { 0 };
 };
 
 } // namespace WebCore

@@ -347,11 +347,6 @@ void WKContextSetShouldUseFontSmoothing(WKContextRef contextRef, bool useFontSmo
     toImpl(contextRef)->setShouldUseFontSmoothing(useFontSmoothing);
 }
 
-void WKContextEnableSmoothedLayerText(WKContextRef contextRef, bool smoothedLayerText)
-{
-    toImpl(contextRef)->enableSmoothedLayerText(smoothedLayerText);
-}
-
 void WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef pluginsDirectory)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)

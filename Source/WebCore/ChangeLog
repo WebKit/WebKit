@@ -1,5 +1,18 @@
 2016-03-14  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r197981.
+
+        Caused a massive PLT regression on Mac.
+
+        Reverted changeset:
+
+        "Font antialiasing (smoothing) changes when elements are
+        rendered into compositing layers"
+        https://bugs.webkit.org/show_bug.cgi?id=23364
+        http://trac.webkit.org/changeset/197981
+
+2016-03-14  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r198145.
 
         This attempt to disable the feature did not fix the PLT

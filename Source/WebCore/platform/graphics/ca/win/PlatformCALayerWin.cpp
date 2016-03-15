@@ -377,16 +377,6 @@ void PlatformCALayerWin::setOpaque(bool value)
     setNeedsCommit();
 }
 
-void PlatformCALayerWin::setContentsFormat(ContentsFormatFlags formatFlags)
-{
-    m_contentsFormat = formatFlags;
-}
-
-PlatformCALayer::ContentsFormatFlags PlatformCALayerWin::contentsFormat() const
-{
-    return m_contentsFormat;
-}
-
 FloatRect PlatformCALayerWin::bounds() const
 {
     return CACFLayerGetBounds(m_layer.get());

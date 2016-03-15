@@ -175,7 +175,6 @@ void TileGrid::updateTileLayerProperties()
 {
     bool acceleratesDrawing = m_controller.acceleratesDrawing();
     bool opaque = m_controller.tilesAreOpaque();
-    PlatformCALayer::ContentsFormatFlags formatFlags = m_controller.tileContentsFormatFlags();
     Color tileDebugBorderColor = m_controller.tileDebugBorderColor();
     float tileDebugBorderWidth = m_controller.tileDebugBorderWidth();
 
@@ -183,7 +182,6 @@ void TileGrid::updateTileLayerProperties()
         const TileInfo& tileInfo = it->value;
         tileInfo.layer->setAcceleratesDrawing(acceleratesDrawing);
         tileInfo.layer->setOpaque(opaque);
-        tileInfo.layer->setContentsFormat(formatFlags);
         tileInfo.layer->setBorderColor(tileDebugBorderColor);
         tileInfo.layer->setBorderWidth(tileDebugBorderWidth);
     }

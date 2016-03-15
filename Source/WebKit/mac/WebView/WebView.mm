@@ -140,7 +140,6 @@
 #import <WebCore/GCController.h>
 #import <WebCore/GeolocationController.h>
 #import <WebCore/GeolocationError.h>
-#import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/HistoryController.h>
@@ -3236,16 +3235,6 @@ static inline IMP getMethod(id o, SEL s)
 + (BOOL)_shouldUseFontSmoothing
 {
     return FontCascade::shouldUseSmoothing();
-}
-
-+ (void)_setSmoothedLayerTextEnabled:(BOOL)f
-{
-    GraphicsLayer::setSmoothedLayerTextEnabled(f);
-}
-
-+ (BOOL)_smoothedLayerTextEnabled
-{
-    return GraphicsLayer::smoothedLayerTextEnabled();
 }
 
 #if !PLATFORM(IOS)

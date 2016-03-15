@@ -717,7 +717,6 @@ bool TestController::resetStateToConsistentValues()
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), resetMessageBody.get());
 
     WKContextSetShouldUseFontSmoothing(TestController::singleton().context(), false);
-    WKContextEnableSmoothedLayerText(TestController::singleton().context(), false);
 
     WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
 
