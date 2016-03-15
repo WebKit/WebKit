@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -48,6 +48,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         this._nodeValue = payload.nodeValue;
         this._pseudoType = payload.pseudoType;
         this._computedRole = payload.role;
+        this._contentSecurityPolicyHash = payload.contentSecurityPolicyHash;
 
         if (this._nodeType === Node.DOCUMENT_NODE)
             this.ownerDocument = this;
@@ -226,6 +227,11 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
     computedRole()
     {
         return this._computedRole;
+    }
+
+    contentSecurityPolicyHash()
+    {
+        return this._contentSecurityPolicyHash;
     }
 
     hasAttributes()

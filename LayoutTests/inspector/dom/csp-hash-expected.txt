@@ -1,0 +1,36 @@
+Test for Content Security Policy hash support on DOM.DOMNode.
+
+
+PASS: Got DOMNode for #stylesheet-without-whitespace
+PASS: DOMNode has hash sha256-NW7+Fm6YV404pkklaopT0jgCBCmfOAn0K+NtIfyPN4A=
+
+PASS: Got DOMNode for #stylesheet-with-whitespace
+PASS: DOMNode has hash sha256-b5lOENncCyOGrTlLzIlify6a9ddSaiGTBFF/jcYcj0k=
+
+PASS: Got DOMNode for #stylesheet-with-ignored-charset
+PASS: DOMNode has hash sha256-Nyij5I3ne5qy0HQHZD8sKjbedAqMQDJ2riYqGniSYTc=
+
+PASS: Got DOMNode for #script-without-whitespace
+PASS: DOMNode has hash sha256-tVRjKJA9OYKEzYP5h7H2XbuSVgOjLD74/zqHyl+/xOM=
+
+PASS: Got DOMNode for #script-with-whitespace
+PASS: DOMNode has hash sha256-hSQRzSxNGYtVe272nNs1poXibikReR/Y+NfX6TsCqzo=
+
+PASS: Got DOMNode for #script-with-unicode-code-point-00C5
+PASS: DOMNode has hash sha256-YcKgriaBGkU6FsWZXgDLv4Wo5UZ5Qe5hNp6Psb3RJOE=
+
+PASS: Got DOMNode for #script-with-unicode-code-point-212B
+PASS: DOMNode has hash sha256-YcKgriaBGkU6FsWZXgDLv4Wo5UZ5Qe5hNp6Psb3RJOE=
+
+PASS: Got DOMNode for #external-stylesheet
+PASS: DOMNode has hash undefined
+
+PASS: Got DOMNode for #external-script
+PASS: DOMNode has hash undefined
+
+PASS: Got DOMNode for #external-stylesheet
+PASS: DOMNode has hash undefined
+
+PASS: Got DOMNode for #paragraph
+PASS: DOMNode has hash undefined
+

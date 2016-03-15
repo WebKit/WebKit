@@ -1,3 +1,24 @@
+2016-03-14  Daniel Bates  <dabates@apple.com>
+
+        Web Inspector: Display Content Security Policy hash in details sidebar for script and style elements
+        https://bugs.webkit.org/show_bug.cgi?id=155466
+        <rdar://problem/25152480>
+
+        Reviewed by Joseph Pecoraro and Timothy Hatcher.
+
+        For convenience, display the SHA-256 Content Security Policy (CSP) hash in the node details
+        sidebar for the selected HTML script element or HTML style element. A CSP script hash is
+        only applicable to inline JavaScript scripts. Therefore, we will display a hash for HTML
+        script elements only if they do not have a src attribute.
+
+        Tests: inspector/dom/csp-big5-hash.html
+               inspector/dom/csp-hash.html
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::computeContentSecurityPolicySHA256Hash): Added.
+        (WebCore::InspectorDOMAgent::buildObjectForNode): For an applicable HTML script- or style-
+        element, pass the computed SHA-256 CSP hash to the Inspector front end.
+
 2016-03-14  Joonghun Park  <jh718.park@samsung.com>
 
         Purge PassRefPtr from ArrayBuffer, ArchiveResource, Pasteboard, LegacyWebArchive and DataObjectGtk

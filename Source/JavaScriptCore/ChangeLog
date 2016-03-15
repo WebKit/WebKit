@@ -1,3 +1,16 @@
+2016-03-14  Daniel Bates  <dabates@apple.com>
+
+        Web Inspector: Display Content Security Policy hash in details sidebar for script and style elements
+        https://bugs.webkit.org/show_bug.cgi?id=155466
+        <rdar://problem/25152480>
+
+        Reviewed by Joseph Pecoraro and Timothy Hatcher.
+
+        Add property contentSecurityPolicyHash to store the CSP hash for an HTML style element or an
+        applicable HTML script element.
+
+        * inspector/protocol/DOM.json:
+
 2016-03-14  Joonghun Park  <jh718.park@samsung.com>
 
         Purge PassRefPtr from ArrayBuffer, ArchiveResource, Pasteboard, LegacyWebArchive and DataObjectGtk

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF8">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let testCases = [
+        {selector: "#stylesheet-without-whitespace", hash: "sha256-NW7+Fm6YV404pkklaopT0jgCBCmfOAn0K+NtIfyPN4A="},
+        {selector: "#stylesheet-with-whitespace", hash: "sha256-b5lOENncCyOGrTlLzIlify6a9ddSaiGTBFF/jcYcj0k="},
+        {selector: "#stylesheet-with-ignored-charset", hash: "sha256-Nyij5I3ne5qy0HQHZD8sKjbedAqMQDJ2riYqGniSYTc="},
+        {selector: "#script-without-whitespace", hash: "sha256-tVRjKJA9OYKEzYP5h7H2XbuSVgOjLD74/zqHyl+/xOM="},
+        {selector: "#script-with-whitespace", hash: "sha256-hSQRzSxNGYtVe272nNs1poXibikReR/Y+NfX6TsCqzo="},
+        {selector: "#script-with-unicode-code-point-00C5", hash: "sha256-YcKgriaBGkU6FsWZXgDLv4Wo5UZ5Qe5hNp6Psb3RJOE="},
+        {selector: "#script-with-unicode-code-point-212B", hash: "sha256-YcKgriaBGkU6FsWZXgDLv4Wo5UZ5Qe5hNp6Psb3RJOE="}, // Same hash as for script #script-with-unicode-code-point-00C5.
+        {selector: "#external-stylesheet", hash: undefined},
+        {selector: "#external-script", hash: undefined},
+        {selector: "#external-stylesheet", hash: undefined},
+        {selector: "#paragraph", hash: undefined},
+    ];
+
+    WebInspector.domTreeManager.requestDocument(function(documentNode) {
+        for (let {selector, hash} of testCases) {
+            WebInspector.domTreeManager.querySelector(documentNode.id, selector, function(nodeId) {
+                let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.log("");
+                InspectorTest.expectThat(domNode, `Got DOMNode for ${selector}`);
+                InspectorTest.expectThat(domNode.contentSecurityPolicyHash() === hash, `DOMNode has hash ${hash}`);
+            });
+        }
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test for Content Security Policy hash support on DOM.DOMNode.</p>
+
+    <!-- Elements that can have a Content Security Policy hash -->
+    <style id="stylesheet-without-whitespace">#test1 { background-color: blue; }</style>
+    <style id="stylesheet-with-whitespace">
+    #test2 {
+        background-color: yellow;
+    }
+    </style>
+    <style id="stylesheet-with-ignored-charset">
+    @charset "Big5"; /* This should be ignored. */
+    #test3 {
+        background-color: magenta;
+    }
+    </style>
+
+    <script id="script-without-whitespace">var thisIsAnInlineScript = true;</script>
+    <script id="script-with-whitespace">
+        var thisIsAnotherInlineScript = true;
+    </script>
+    <script id="script-with-unicode-code-point-00C5">
+        // Å
+    </script>
+     <!-- Hash of this script should be equivalent to hash of script script-with-unicode-code-point-00C5. -->
+    <script id="script-with-unicode-code-point-212B">
+        // Å
+    </script>
+
+    <!-- Elements that cannot have a Content Security Policy hash -->
+    <!-- FIXME: We should make this more comprehensive. -->
+    <link id="external-stylesheet" rel="stylesheet" href="">
+    <script id="external-script" src=""></script>
+    <p id="paragraph"></p>
+</body>
+</html>

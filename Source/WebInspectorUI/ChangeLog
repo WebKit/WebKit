@@ -1,3 +1,22 @@
+2016-03-14  Daniel Bates  <dabates@apple.com>
+
+        Web Inspector: Display Content Security Policy hash in details sidebar for script and style elements
+        https://bugs.webkit.org/show_bug.cgi?id=155466
+        <rdar://problem/25152480>
+
+        Reviewed by Joseph Pecoraro and Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js: Add English localized string for the CSP hash UI label.
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode): Initialize the instance variable this._contentSecurityPolicyHash
+        with the value passed from the Inspector back end.
+        (WebInspector.DOMNode.prototype.contentSecurityPolicyHash): Returns the CSP hash for this node.
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel): Append a row to the end of section Identity to display
+        the CSP hash (if applicable).
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype.refresh): Query the underlying WebInspector.DOMNode
+        for the CSP hash of the selected node.
+
 2016-03-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION(r197974): HeapAllocationsTimelineView broken, doesn't handle Timeline Sidebar Navigation removal

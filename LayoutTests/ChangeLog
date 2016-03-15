@@ -1,3 +1,19 @@
+2016-03-14  Daniel Bates  <dabates@apple.com>
+
+        Web Inspector: Display Content Security Policy hash in details sidebar for script and style elements
+        https://bugs.webkit.org/show_bug.cgi?id=155466
+        <rdar://problem/25152480>
+
+        Reviewed by Joseph Pecoraro and Timothy Hatcher.
+
+        Add tests to ensure that the WebInspector.DOMNode object associated with an HTML style element
+        or applicable HTML script element has a valid CSP hash.
+
+        * inspector/dom/csp-big5-hash-expected.txt: Added.
+        * inspector/dom/csp-big5-hash.html: Added.
+        * inspector/dom/csp-hash-expected.txt: Added.
+        * inspector/dom/csp-hash.html: Added.
+
 2016-03-14  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r194394): >2x slow-down on CDjs

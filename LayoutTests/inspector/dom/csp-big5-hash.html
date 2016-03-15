@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Big5">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let testCases = [
+       {selector: "#stylesheet-1", hash: "sha256-duNBvCmzrFc3RVVqS8ufweBf2QOq1THuEh3UZWP7ZpU="},
+       {selector: "#script-1", hash: "sha256-0eDk4my9q3qcCQTZ02clVW0RxDNPW9n9lXTCdyGY4Js="},
+    ];
+    WebInspector.domTreeManager.requestDocument(function(documentNode) {
+        for (let {selector, hash} of testCases) {
+            WebInspector.domTreeManager.querySelector(documentNode.id, selector, function(nodeId) {
+                let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.log("");
+                InspectorTest.expectThat(domNode, `Got DOMNode for ${selector}`);
+                InspectorTest.expectThat(domNode.contentSecurityPolicyHash() === hash, `DOMNode has hash ${hash}`);
+            });
+        }
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test for Content Security Policy hash support on DOM.DOMNode in a document with character set Big5.</p>
+    <style id="stylesheet-1">#test1 { background-color: blue; } /* 水 */</style>
+    <script id="script-1">var thisIsAnInlineScript = true; // 水</script>
+</body>
+</html>
