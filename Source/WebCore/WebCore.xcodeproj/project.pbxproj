@@ -6039,7 +6039,7 @@
 		CD3A496217A9D01B00274E42 /* SourceBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495917A9D01B00274E42 /* SourceBuffer.h */; };
 		CD3A496417A9D01B00274E42 /* SourceBufferList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3A495B17A9D01B00274E42 /* SourceBufferList.cpp */; };
 		CD3A496517A9D01B00274E42 /* SourceBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495C17A9D01B00274E42 /* SourceBufferList.h */; };
-		CD3E251C18046B0600E27F56 /* GridCoordinate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E251B18046B0600E27F56 /* GridCoordinate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3E251C18046B0600E27F56 /* GridArea.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E251B18046B0600E27F56 /* GridArea.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD3E252318046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3E252118046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp */; };
 		CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E252218046BCD00E27F56 /* CSSGridTemplateAreasValue.h */; };
 		CD4AC52A1496AE9A0087C4EF /* Composite.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD4AC5281496AE2F0087C4EF /* Composite.wav */; };
@@ -14011,7 +14011,7 @@
 		CD3A495B17A9D01B00274E42 /* SourceBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceBufferList.cpp; sourceTree = "<group>"; };
 		CD3A495C17A9D01B00274E42 /* SourceBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBufferList.h; sourceTree = "<group>"; };
 		CD3A495D17A9D01B00274E42 /* SourceBufferList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourceBufferList.idl; sourceTree = "<group>"; };
-		CD3E251B18046B0600E27F56 /* GridCoordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridCoordinate.h; sourceTree = "<group>"; };
+		CD3E251B18046B0600E27F56 /* GridArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridArea.h; sourceTree = "<group>"; };
 		CD3E252118046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGridTemplateAreasValue.cpp; sourceTree = "<group>"; };
 		CD3E252218046BCD00E27F56 /* CSSGridTemplateAreasValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGridTemplateAreasValue.h; sourceTree = "<group>"; };
 		CD4097FF1A8C855F004C65E9 /* CFNSURLConnectionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNSURLConnectionSPI.h; sourceTree = "<group>"; };
@@ -22560,7 +22560,7 @@
 				BC22746E0E83664500E7F975 /* DataRef.h */,
 				BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */,
 				BC5EB69D0E81DAEB00B25965 /* FillLayer.h */,
-				CD3E251B18046B0600E27F56 /* GridCoordinate.h */,
+				CD3E251B18046B0600E27F56 /* GridArea.h */,
 				CDEF4FD617E85C8F00AEE24B /* GridLength.h */,
 				A12705C21656BD6500C2E27C /* GridPosition.h */,
 				CDF7483C18FEBCEC0006ECC0 /* GridPositionsResolver.cpp */,
@@ -26146,7 +26146,7 @@
 				CEC337AF1A46086D009B8523 /* GraphicsServicesSPI.h in Headers */,
 				B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */,
 				77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */,
-				CD3E251C18046B0600E27F56 /* GridCoordinate.h in Headers */,
+				CD3E251C18046B0600E27F56 /* GridArea.h in Headers */,
 				CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */,
 				A12705C31656BD6500C2E27C /* GridPosition.h in Headers */,
 				CDF7483F18FEBCEC0006ECC0 /* GridPositionsResolver.h in Headers */,

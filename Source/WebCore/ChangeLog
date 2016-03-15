@@ -1,3 +1,66 @@
+2016-03-15  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Rename GridCoordinate to GridArea
+        https://bugs.webkit.org/show_bug.cgi?id=155489
+
+        Reviewed by Sergio Villar Senin.
+
+        As the comment in GridCoordinate states,
+        it actually represents a grid area as it stores
+        the initial and final positions in both axis (columns and rows).
+
+        Someone can think about a grid coordinate just like a single cell.
+        However this class was representing an area of several cells.
+
+        On top of that the "grid area" concept is defined in the spec:
+        https://drafts.csswg.org/css-grid/#grid-area-concept
+
+        No new tests, no change of behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSGridTemplateAreasValue.cpp:
+        (WebCore::stringForPosition):
+        * css/CSSGridTemplateAreasValue.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateAreasRow):
+        * css/CSSParser.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::nextEmptyGridArea):
+        (WebCore::RenderGrid::insertItemIntoGrid):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::clearGrid):
+        (WebCore::RenderGrid::cachedGridArea):
+        (WebCore::RenderGrid::cachedGridSpan):
+        * rendering/RenderGrid.h:
+        * rendering/style/GridArea.h: Renamed from Source/WebCore/rendering/style/GridCoordinate.h.
+        (WebCore::GridSpan::untranslatedDefiniteGridSpan):
+        (WebCore::GridSpan::translatedDefiniteGridSpan):
+        (WebCore::GridSpan::indefiniteGridSpan):
+        (WebCore::GridSpan::operator==):
+        (WebCore::GridSpan::integerSpan):
+        (WebCore::GridSpan::untranslatedResolvedInitialPosition):
+        (WebCore::GridSpan::untranslatedResolvedFinalPosition):
+        (WebCore::GridSpan::resolvedInitialPosition):
+        (WebCore::GridSpan::resolvedFinalPosition):
+        (WebCore::GridSpan::GridSpanIterator::GridSpanIterator):
+        (WebCore::GridSpan::GridSpanIterator::operator unsigned&):
+        (WebCore::GridSpan::GridSpanIterator::operator*):
+        (WebCore::GridSpan::begin):
+        (WebCore::GridSpan::end):
+        (WebCore::GridSpan::isTranslatedDefinite):
+        (WebCore::GridSpan::isIndefinite):
+        (WebCore::GridSpan::translate):
+        (WebCore::GridSpan::GridSpan):
+        (WebCore::GridArea::GridArea):
+        (WebCore::GridArea::operator==):
+        (WebCore::GridArea::operator!=):
+        * rendering/style/GridPositionsResolver.cpp:
+        * rendering/style/StyleGridData.h:
+
 2016-03-15  Joonghun Park  <jh718.park@samsung.com>
 
         [GTK] Remove duplicate HashMap traversal and unneeded reference count churn in DataObjectGtk::forClipboard

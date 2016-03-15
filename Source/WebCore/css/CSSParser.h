@@ -43,7 +43,7 @@
 #include <wtf/text/TextPosition.h>
 
 #if ENABLE(CSS_GRID_LAYOUT)
-#include "GridCoordinate.h"
+#include "GridArea.h"
 #endif
 
 namespace WebCore {

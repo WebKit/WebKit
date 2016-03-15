@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Igalia S.L.
+ * Copyright (C) 2013, 2014, 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GridCoordinate_h
-#define GridCoordinate_h
+#ifndef GridArea_h
+#define GridArea_h
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
@@ -174,27 +174,27 @@ private:
 };
 
 // This represents a grid area that spans in both rows' and columns' direction.
-class GridCoordinate {
+class GridArea {
 public:
     // HashMap requires a default constuctor.
-    GridCoordinate()
+    GridArea()
         : columns(GridSpan::indefiniteGridSpan())
         , rows(GridSpan::indefiniteGridSpan())
     {
     }
 
-    GridCoordinate(const GridSpan& r, const GridSpan& c)
+    GridArea(const GridSpan& r, const GridSpan& c)
         : columns(c)
         , rows(r)
     {
     }
 
-    bool operator==(const GridCoordinate& o) const
+    bool operator==(const GridArea& o) const
     {
         return columns == o.columns && rows == o.rows;
     }
 
-    bool operator!=(const GridCoordinate& o) const
+    bool operator!=(const GridArea& o) const
     {
         return !(*this == o);
     }
@@ -203,10 +203,10 @@ public:
     GridSpan rows;
 };
 
-typedef HashMap<String, GridCoordinate> NamedGridAreaMap;
+typedef HashMap<String, GridArea> NamedGridAreaMap;
 
 } // namespace WebCore
 
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
 
-#endif // GridCoordinate_h
+#endif // GridArea_h

@@ -35,7 +35,7 @@
 #if ENABLE(CSS_GRID_LAYOUT)
 
 #include "CSSValue.h"
-#include "GridCoordinate.h"
+#include "GridArea.h"
 
 namespace WebCore {
 

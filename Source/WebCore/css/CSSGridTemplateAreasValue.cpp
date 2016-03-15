@@ -34,7 +34,7 @@
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
-#include "GridCoordinate.h"
+#include "GridArea.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -54,14 +54,14 @@ static String stringForPosition(const NamedGridAreaMap& gridAreaMap, size_t row,
     Vector<String> candidates;
 
     for (const auto& it : gridAreaMap) {
-        const GridCoordinate& coordinate = it.value;
-        if (row >= coordinate.rows.resolvedInitialPosition() && row < coordinate.rows.resolvedFinalPosition())
+        const GridArea& area = it.value;
+        if (row >= area.rows.resolvedInitialPosition() && row < area.rows.resolvedFinalPosition())
             candidates.append(it.key);
     }
 
     for (const auto& it : gridAreaMap) {
-        const GridCoordinate& coordinate = it.value;
-        if (column >= coordinate.columns.resolvedInitialPosition() && column < coordinate.columns.resolvedFinalPosition() && candidates.contains(it.key))
+        const GridArea& area = it.value;
+        if (column >= area.columns.resolvedInitialPosition() && column < area.columns.resolvedFinalPosition() && candidates.contains(it.key))
             return it.key;
     }
 

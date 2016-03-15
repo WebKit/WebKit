@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class GridCoordinate;
+class GridArea;
 class GridSpan;
 class GridTrack;
 class GridItemWithSpan;
@@ -77,10 +77,10 @@ private:
     void resolveContentBasedTrackSizingFunctions(GridTrackSizingDirection, GridSizingData&);
 
     void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
-    void insertItemIntoGrid(RenderBox&, const GridCoordinate&);
+    void insertItemIntoGrid(RenderBox&, const GridArea&);
     void placeItemsOnGrid();
     void populateExplicitGridAndOrderIterator();
-    std::unique_ptr<GridCoordinate> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
+    std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     void placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     typedef std::pair<unsigned, unsigned> AutoPlacementCursor;
@@ -140,7 +140,7 @@ private:
     LayoutUnit rowAxisOffsetForChild(const RenderBox&) const;
     ContentAlignmentData computeContentPositionAndDistributionOffset(GridTrackSizingDirection, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const;
     LayoutPoint findChildLogicalPosition(const RenderBox&) const;
-    GridCoordinate cachedGridCoordinate(const RenderBox&) const;
+    GridArea cachedGridArea(const RenderBox&) const;
     GridSpan cachedGridSpan(const RenderBox&, GridTrackSizingDirection) const;
 
 
@@ -185,7 +185,7 @@ private:
     Vector<Vector<Vector<RenderBox*, 1>>> m_grid;
     Vector<LayoutUnit> m_columnPositions;
     Vector<LayoutUnit> m_rowPositions;
-    HashMap<const RenderBox*, GridCoordinate> m_gridItemCoordinate;
+    HashMap<const RenderBox*, GridArea> m_gridItemArea;
     OrderIterator m_orderIterator;
 
     Optional<LayoutUnit> m_minContentHeight;
