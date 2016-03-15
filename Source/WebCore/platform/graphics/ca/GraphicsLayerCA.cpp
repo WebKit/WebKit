@@ -314,9 +314,7 @@ static bool isSmoothedLayerTextEnabled = true;
 bool GraphicsLayer::supportsSmoothedLayerText()
 {
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    // FIXME: This is currently a major regression on PLT (rdar://problem/25113391).
-    // return isSmoothedLayerTextEnabled;
-    return false;
+    return isSmoothedLayerTextEnabled;
 #endif
     return false;
 }
