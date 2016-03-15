@@ -76,7 +76,9 @@ enum JSType : uint8_t {
     DataViewType,
 
     GlobalObjectType,
-    ClosureObjectType,
+    LexicalEnvironmentType,
+    GlobalLexicalEnvironmentType,
+    ModuleEnvironmentType,
     RegExpObjectType,
     ProxyObjectType,
 

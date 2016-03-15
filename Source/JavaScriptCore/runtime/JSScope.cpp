@@ -48,7 +48,8 @@ void JSScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 // Returns true if we found enough information to terminate optimization.
 static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, size_t depth, bool& needsVarInjectionChecks, ResolveOp& op, InitializationMode initializationMode)
 {
-    if (JSLexicalEnvironment* lexicalEnvironment = jsDynamicCast<JSLexicalEnvironment*>(scope)) {
+    if (scope->isJSLexicalEnvironment()) {
+        JSLexicalEnvironment* lexicalEnvironment = jsCast<JSLexicalEnvironment*>(scope);
         if (ident == exec->propertyNames().arguments) {
             // We know the property will be at this lexical environment scope, but we don't know how to cache it.
             op = ResolveOp(Dynamic, 0, 0, 0, 0, 0);
@@ -67,7 +68,8 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
             return true;
         }
 
-        if (JSModuleEnvironment* moduleEnvironment = jsDynamicCast<JSModuleEnvironment*>(scope)) {
+        if (scope->type() == ModuleEnvironmentType) {
+            JSModuleEnvironment* moduleEnvironment = jsCast<JSModuleEnvironment*>(scope);
             JSModuleRecord* moduleRecord = moduleEnvironment->moduleRecord();
             JSModuleRecord::Resolution resolution = moduleRecord->resolveImport(exec, ident);
             if (resolution.type == JSModuleRecord::Resolution::Type::Resolved) {
@@ -85,7 +87,8 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         return false;
     }
 
-    if (JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)) {
+    if (scope->isGlobalLexicalEnvironment()) {
+        JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
         SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
         if (!entry.isNull()) {
             if (getOrPut == Put && entry.isReadOnly() && initializationMode != Initialization) {
@@ -112,7 +115,8 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         return false;
     }
 
-    if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(scope)) {
+    if (scope->isGlobalObject()) {
+        JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(scope);
         SymbolTableEntry entry = globalObject->symbolTable()->get(ident.impl());
         if (!entry.isNull()) {
             if (getOrPut == Put && entry.isReadOnly()) {
@@ -190,7 +194,7 @@ static inline bool isUnscopable(ExecState* exec, JSScope* scope, JSObject* objec
     return blocked.toBoolean(exec);
 }
 
-JSValue JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& ident)
+JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& ident)
 {
     ScopeChainIterator end = scope->end();
     ScopeChainIterator it = scope->begin();
@@ -246,51 +250,44 @@ void JSScope::collectVariablesUnderTDZ(JSScope* scope, VariableEnvironment& resu
     }
 }
 
-template <typename EnvironmentType, SymbolTable::ScopeType scopeType>
-inline static bool isScopeType(JSScope* scope)
-{
-    EnvironmentType* environment = jsDynamicCast<EnvironmentType*>(scope);
-    if (!environment)
-        return false;
-
-    return environment->symbolTable()->scopeType() == scopeType;
-}
-
 bool JSScope::isVarScope()
 {
-    return isScopeType<JSLexicalEnvironment, SymbolTable::ScopeType::VarScope>(this);
+    if (type() != LexicalEnvironmentType)
+        return false;
+    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::VarScope;
 }
 
 bool JSScope::isLexicalScope()
 {
-    return isScopeType<JSLexicalEnvironment, SymbolTable::ScopeType::LexicalScope>(this);
+    if (!isJSLexicalEnvironment())
+        return false;
+    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::LexicalScope;
 }
 
 bool JSScope::isModuleScope()
 {
-    return isScopeType<JSModuleEnvironment, SymbolTable::ScopeType::LexicalScope>(this);
+    return type() == ModuleEnvironmentType;
 }
 
 bool JSScope::isCatchScope()
 {
-    return isScopeType<JSLexicalEnvironment, SymbolTable::ScopeType::CatchScope>(this);
+    if (type() != LexicalEnvironmentType)
+        return false;
+    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::CatchScope;
 }
 
 bool JSScope::isFunctionNameScopeObject()
 {
-    return isScopeType<JSLexicalEnvironment, SymbolTable::ScopeType::FunctionNameScope>(this);
-}
-
-bool JSScope::isGlobalLexicalEnvironment()
-{
-    return isScopeType<JSGlobalLexicalEnvironment, SymbolTable::ScopeType::GlobalLexicalScope>(this);
+    if (type() != LexicalEnvironmentType)
+        return false;
+    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::FunctionNameScope;
 }
 
 bool JSScope::isNestedLexicalScope()
 {
-    if (JSLexicalEnvironment* environment = jsDynamicCast<JSLexicalEnvironment*>(this))
-        return environment->symbolTable()->isNestedLexicalScope();
-    return false;
+    if (!isJSLexicalEnvironment())
+        return false;
+    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->isNestedLexicalScope();
 }
 
 JSScope* JSScope::constantScopeForCodeBlock(ResolveType type, CodeBlock* codeBlock)

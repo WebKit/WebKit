@@ -1422,7 +1422,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
     }
 
     JSValue result = JSValue();
-    if (jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)) {
+    if (scope->isGlobalLexicalEnvironment()) {
         // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
         result = slot.getValue(exec, ident);
         if (result == jsTDZValue())
@@ -1459,7 +1459,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
 
     bool hasProperty = scope->hasProperty(exec, ident);
     if (hasProperty
-        && jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)
+        && scope->isGlobalLexicalEnvironment()
         && getPutInfo.initializationMode() != Initialization) {
         // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
         PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);

@@ -55,7 +55,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject)
     {
-        return Structure::create(vm, globalObject, jsNull(), TypeInfo(ObjectType, StructureFlags), info());
+        return Structure::create(vm, globalObject, jsNull(), TypeInfo(ModuleEnvironmentType, StructureFlags), info());
     }
 
     static size_t offsetOfModuleRecord(SymbolTable* symbolTable)

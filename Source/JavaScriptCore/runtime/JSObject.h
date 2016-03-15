@@ -641,6 +641,8 @@ public:
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
     bool isGlobalObject() const;
+    bool isJSLexicalEnvironment() const;
+    bool isGlobalLexicalEnvironment() const;
     bool isErrorInstance() const;
     bool isWithScope() const;
 
@@ -1074,6 +1076,16 @@ inline size_t JSObject::offsetOfInlineStorage()
 inline bool JSObject::isGlobalObject() const
 {
     return type() == GlobalObjectType;
+}
+
+inline bool JSObject::isJSLexicalEnvironment() const
+{
+    return type() == LexicalEnvironmentType || type() == ModuleEnvironmentType;
+}
+
+inline bool JSObject::isGlobalLexicalEnvironment() const
+{
+    return type() == GlobalLexicalEnvironmentType;
 }
 
 inline bool JSObject::isErrorInstance() const

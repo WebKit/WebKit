@@ -1891,7 +1891,7 @@ EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, Instruction*
     }
 
     JSValue result = JSValue();
-    if (jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)) {
+    if (scope->isGlobalLexicalEnvironment()) {
         // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
         result = slot.getValue(exec, ident);
         if (result == jsTDZValue()) {
@@ -1932,7 +1932,7 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
 
     bool hasProperty = scope->hasProperty(exec, ident);
     if (hasProperty
-        && jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)
+        && scope->isGlobalLexicalEnvironment()
         && getPutInfo.initializationMode() != Initialization) {
         // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
         PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);

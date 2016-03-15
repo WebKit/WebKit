@@ -1,3 +1,55 @@
+2016-03-15  Saam Barati  <sbarati@apple.com>
+
+        We should have different JSTypes for JSGlobalLexicalEnvironment and JSLexicalEnvironment and JSModuleEnvironment
+        https://bugs.webkit.org/show_bug.cgi?id=152406
+
+        Reviewed by Mark Lam.
+
+        This makes testing for a JSGlobalLexicalEnvironment faster
+        because we can just check the Cell's type instead of using
+        jsDynamicCast. I also changed code that does jsDynamicCast<JSGlobalObject*>
+        instead of isGlobalObject().
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/JSGlobalLexicalEnvironment.h:
+        (JSC::JSGlobalLexicalEnvironment::createStructure):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::createStructure):
+        (JSC::JSLexicalEnvironment::JSLexicalEnvironment):
+        * runtime/JSModuleEnvironment.h:
+        (JSC::JSModuleEnvironment::createStructure):
+        (JSC::JSModuleEnvironment::offsetOfModuleRecord):
+        * runtime/JSObject.h:
+        (JSC::JSObject::isGlobalObject):
+        (JSC::JSObject::isJSLexicalEnvironment):
+        (JSC::JSObject::isGlobalLexicalEnvironment):
+        (JSC::JSObject::isErrorInstance):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        (JSC::isUnscopable):
+        (JSC::JSScope::resolve):
+        (JSC::JSScope::collectVariablesUnderTDZ):
+        (JSC::JSScope::isVarScope):
+        (JSC::JSScope::isLexicalScope):
+        (JSC::JSScope::isModuleScope):
+        (JSC::JSScope::isCatchScope):
+        (JSC::JSScope::isFunctionNameScopeObject):
+        (JSC::JSScope::isNestedLexicalScope):
+        (JSC::JSScope::constantScopeForCodeBlock):
+        (JSC::isScopeType): Deleted.
+        (JSC::JSScope::isGlobalLexicalEnvironment): Deleted.
+        * runtime/JSScope.h:
+        * runtime/JSType.h:
+
 2016-03-15  Filip Pizlo  <fpizlo@apple.com>
 
         Remove the Baker barrier from JSC

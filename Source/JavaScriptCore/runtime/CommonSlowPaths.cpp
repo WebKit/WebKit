@@ -769,7 +769,7 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
     BEGIN();
     const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
     JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
-    JSValue resolvedScope = JSScope::resolve(exec, scope, ident);
+    JSObject* resolvedScope = JSScope::resolve(exec, scope, ident);
 
     ResolveType resolveType = static_cast<ResolveType>(pc[4].u.operand);
 
@@ -777,13 +777,8 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
     ASSERT(resolveType != ModuleVar);
 
     if (resolveType == UnresolvedProperty || resolveType == UnresolvedPropertyWithVarInjectionChecks) {
-        if (JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsDynamicCast<JSGlobalLexicalEnvironment*>(resolvedScope)) {
-            if (resolveType == UnresolvedProperty)
-                pc[4].u.operand = GlobalLexicalVar;
-            else
-                pc[4].u.operand = GlobalLexicalVarWithVarInjectionChecks;
-            pc[6].u.pointer = globalLexicalEnvironment;
-        } else if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(resolvedScope)) {
+        if (resolvedScope->isGlobalObject()) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
             if (globalObject->hasProperty(exec, ident)) {
                 if (resolveType == UnresolvedProperty)
                     pc[4].u.operand = GlobalProperty;
@@ -792,6 +787,13 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
 
                 pc[6].u.pointer = globalObject;
             }
+        } else if (resolvedScope->isGlobalLexicalEnvironment()) {
+            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
+            if (resolveType == UnresolvedProperty)
+                pc[4].u.operand = GlobalLexicalVar;
+            else
+                pc[4].u.operand = GlobalLexicalVarWithVarInjectionChecks;
+            pc[6].u.pointer = globalLexicalEnvironment;
         }
     }
 

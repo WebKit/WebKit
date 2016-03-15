@@ -55,7 +55,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject)
     {
-        return Structure::create(vm, globalObject, jsNull(), TypeInfo(ClosureObjectType, StructureFlags), info());
+        return Structure::create(vm, globalObject, jsNull(), TypeInfo(GlobalLexicalEnvironmentType, StructureFlags), info());
     }
 
 protected:

@@ -45,7 +45,7 @@ public:
 
     static JSObject* objectAtScope(JSScope*);
 
-    static JSValue resolve(ExecState*, JSScope*, const Identifier&);
+    static JSObject* resolve(ExecState*, JSScope*, const Identifier&);
     static ResolveOp abstractResolve(ExecState*, size_t depthOffset, JSScope*, const Identifier&, GetOrPut, ResolveType, InitializationMode);
 
     static bool hasConstantScope(ResolveType);
@@ -58,7 +58,6 @@ public:
     bool isVarScope();
     bool isLexicalScope();
     bool isModuleScope();
-    bool isGlobalLexicalEnvironment();
     bool isCatchScope();
     bool isFunctionNameScopeObject();
 
