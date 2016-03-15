@@ -205,11 +205,9 @@ private:
         jitWriteFunction = reinterpret_cast<JITWriteFunction>(writeThunk.code().executableAddress());
     }
 
-#if CPU(ARM64)
+#if CPU(ARM64) && ENABLE(SEPARATED_HEAP_JIT_WRITE_FUNCTION)
     MacroAssemblerCodeRef jitWriteThunkGenerator(void* writableAddr, void* stubBase, size_t stubSize)
     {
-        ASSERT_UNUSED(startOfFixedWritableMemoryPool, !startOfFixedWritableMemoryPool);
-
         using namespace ARM64Registers;
         using TrustedImm32 = MacroAssembler::TrustedImm32;
 

@@ -1,3 +1,9 @@
+2016-03-15  Oliver Hunt  <oliver@apple.com>
+
+        Build fix.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+
 2016-03-15  Mark Lam  <mark.lam@apple.com>
 
         Gardening: build fix after r198235.
