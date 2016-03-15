@@ -1,5 +1,14 @@
 2016-03-15  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Remove flaky expectation for webgl/1.0.2/conformance/rendering/gl-scissor-test.html for mac
+        https://bugs.webkit.org/show_bug.cgi?id=126586
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-03-15  Ryan Haddad  <ryanhaddad@apple.com>
+
         Fixing a typo in the ios-simulator TestExpectations file
 
         Unreviewed test gardening.

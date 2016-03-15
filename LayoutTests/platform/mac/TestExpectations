@@ -751,8 +751,6 @@ webkit.org/b/123029 [ Debug ] editing/mac/attributed-string [ Pass Crash ]
 
 webkit.org/b/124933 svg/animations/getCurrentTime-pause-unpause.html [ Pass Failure ]
 
-webkit.org/b/126586 webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
-
 webkit.org/b/52016 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Pass Failure Timeout ]
 
 # Subpixel failures START
