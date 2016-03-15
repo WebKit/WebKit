@@ -1,3 +1,15 @@
+2016-03-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling out r197955.
+
+        I decided to go in another direction
+
+        Reverted changeset:
+
+        "bmalloc: Rename SmallPage to SmallRun"
+        https://bugs.webkit.org/show_bug.cgi?id=155320
+        http://trac.webkit.org/changeset/197955
+
 2016-03-10  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Rename SmallPage to SmallRun

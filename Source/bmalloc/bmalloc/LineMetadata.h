@@ -33,8 +33,6 @@ struct LineMetadata {
     unsigned short objectCount;
 };
 
-typedef std::array<LineMetadata, smallLineCount> RunMetadata;
-
 } // namespace bmalloc
 
 #endif // LineMetadata_h
