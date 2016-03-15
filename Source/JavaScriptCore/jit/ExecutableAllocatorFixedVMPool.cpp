@@ -48,7 +48,6 @@
 #include <stdio.h>
 #endif
 
-#if ENABLE(SEPARATED_WX_HEAP)
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 
@@ -79,8 +78,6 @@ extern "C" {
 
 #endif
 
-#endif
-
 using namespace WTF;
 
 namespace JSC {
@@ -88,8 +85,10 @@ namespace JSC {
 JS_EXPORTDATA uintptr_t startOfFixedExecutableMemoryPool;
 JS_EXPORTDATA uintptr_t endOfFixedExecutableMemoryPool;
 
-#if ENABLE(SEPARATED_WX_HEAP)
-JS_EXPORTDATA uintptr_t jitWriteFunctionAddress;
+JS_EXPORTDATA JITWriteFunction jitWriteFunction;
+
+#if !ENABLE(SEPARATED_HEAP_JIT_WRITE_FUNCTION)
+static uintptr_t startOfFixedWritableMemoryPool;
 #endif
 
 class FixedVMPoolExecutableAllocator : public MetaAllocator {
@@ -109,7 +108,6 @@ public:
             ASSERT(m_reservation.size() == reservationSize);
             void* reservationBase = m_reservation.base();
 
-#if ENABLE(SEPARATED_WX_HEAP)
             if (Options::useSeparatedWXHeap()) {
                 // First page of our JIT allocation is reserved.
                 ASSERT(reservationSize >= pageSize() * 2);
@@ -117,7 +115,6 @@ public:
                 reservationSize -= pageSize();
                 initializeSeparatedWXHeaps(m_reservation.base(), pageSize(), reservationBase, reservationSize);
             }
-#endif
 
             addFreshFreeSpace(reservationBase, reservationSize);
 
@@ -163,7 +160,7 @@ protected:
     }
 
 private:
-#if ENABLE(SEPARATED_WX_HEAP)
+#if OS(DARWIN)
     void initializeSeparatedWXHeaps(void* stubBase, size_t stubSize, void* jitBase, size_t jitSize)
     {
         mach_vm_address_t writableAddr = 0;
@@ -184,40 +181,39 @@ private:
             return;
 
         // Assemble a thunk that will serve as the means for writing into the JIT region.
-        MacroAssemblerCodeRef writeThunk = jitWriteThunkGenerator(writableAddr, stubBase, stubSize);
+        MacroAssemblerCodeRef writeThunk = jitWriteThunkGenerator(reinterpret_cast<void*>(writableAddr), stubBase, stubSize);
 
         int result = 0;
 
-        if (!remapSucceeded) {
 #if defined(VM_PROT_EXECUTE_ONLY)
-            // Prevent reading the write thunk code.
-            result = mprotect(stubBase, stubSize, VM_PROT_EXECUTE_ONLY);
-            RELEASE_ASSERT(!result);
+        // Prevent reading the write thunk code.
+        result = mprotect(stubBase, stubSize, VM_PROT_EXECUTE_ONLY);
+        RELEASE_ASSERT(!result);
 #endif
 
-            // Prevent writing into the executable JIT mapping.
-            result = mprotect(jitBase, jitSize, VM_PROT_READ | VM_PROT_EXECUTE);
-            RELEASE_ASSERT(!result);
+        // Prevent writing into the executable JIT mapping.
+        result = mprotect(jitBase, jitSize, VM_PROT_READ | VM_PROT_EXECUTE);
+        RELEASE_ASSERT(!result);
 
-            // Prevent execution in the writable JIT mapping.
-            result = mprotect((void*)writableAddr, jitSize, VM_PROT_READ | VM_PROT_WRITE);
-            RELEASE_ASSERT(!result);
+        // Prevent execution in the writable JIT mapping.
+        result = mprotect((void*)writableAddr, jitSize, VM_PROT_READ | VM_PROT_WRITE);
+        RELEASE_ASSERT(!result);
 
-            // Zero out writableAddr to avoid leaking the address of the writable mapping.
-            memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
-        }
-        jitWriteFunctionAddress = (uintptr_t)writeThunk.code().executableAddress();
+        // Zero out writableAddr to avoid leaking the address of the writable mapping.
+        memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
+
+        jitWriteFunction = reinterpret_cast<JITWriteFunction>(writeThunk.code().executableAddress());
     }
 
 #if CPU(ARM64)
-    MacroAssemblerCodeRef jitWriteThunkGenerator(mach_vm_address_t writableAddr, void* stubBase, size_t stubSize)
+    MacroAssemblerCodeRef jitWriteThunkGenerator(void* writableAddr, void* stubBase, size_t stubSize)
     {
         using namespace ARM64Registers;
         using TrustedImm32 = MacroAssembler::TrustedImm32;
 
         MacroAssembler jit;
 
-        jit.move(MacroAssembler::TrustedImmPtr((const void*)writableAddr), x7);
+        jit.move(MacroAssembler::TrustedImmPtr(writableAddr), x7);
         jit.addPtr(x7, x0);
 
         jit.move(x0, x3);
@@ -274,8 +270,25 @@ private:
         LinkBuffer linkBuffer(jit, stubBase, stubSize);
         return FINALIZE_CODE(linkBuffer, ("Bulletproof JIT write thunk"));
     }
-#endif // CPU(ARM64)
-#endif // ENABLE(SEPARATED_WX_HEAP)
+#else // !CPU(ARM64)
+    static void genericWriteToJITRegion(off_t offset, const void* data, size_t dataSize)
+    {
+        memcpy((void*)(startOfFixedWritableMemoryPool + offset), data, dataSize);
+    }
+
+    MacroAssemblerCodeRef jitWriteThunkGenerator(void* address, void*, size_t)
+    {
+        startOfFixedWritableMemoryPool = reinterpret_cast<uintptr_t>(address);
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(MacroAssemblerCodePtr((void*)&genericWriteToJITRegion));
+    }
+#endif
+
+#else // !OS(DARWIN)
+    void initializeSeparatedWXHeaps(void*, size_t, void*, size_t)
+    {
+        ASSERT_UNUSED(startOfFixedWritableMemoryPool, !startOfFixedWritableMemoryPool);
+    }
+#endif
 
 private:
     PageReservation m_reservation;

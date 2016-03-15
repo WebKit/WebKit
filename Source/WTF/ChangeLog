@@ -1,3 +1,15 @@
+2016-03-15  Oliver Hunt  <oliver@apple.com>
+
+        Remove compile time define for SEPARATED_HEAP
+        https://bugs.webkit.org/show_bug.cgi?id=155508
+
+        Reviewed by Mark Lam.
+
+        Remove the feature define.
+
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+
 2016-03-14  Mark Lam  <mark.lam@apple.com>
 
         Need to distinguish between Symbol() and Symbol("").

@@ -92,28 +92,29 @@ static const double executablePoolReservationFraction = 0.25;
 extern JS_EXPORTDATA uintptr_t startOfFixedExecutableMemoryPool;
 extern JS_EXPORTDATA uintptr_t endOfFixedExecutableMemoryPool;
 
-#if ENABLE(SEPARATED_WX_HEAP)
-extern JS_EXPORTDATA uintptr_t jitWriteFunctionAddress;
-#endif
-#endif // ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
+typedef void (*JITWriteFunction)(off_t, const void*, size_t);
+extern JS_EXPORTDATA JITWriteFunction jitWriteFunction;
 
 static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
-#if ENABLE(SEPARATED_WX_HEAP)
     // Use execute-only write thunk for writes inside the JIT region. This is a variant of
     // memcpy that takes an offset into the JIT region as its destination (first) parameter.
-    if (jitWriteFunctionAddress && (uintptr_t)dst >= startOfFixedExecutableMemoryPool && (uintptr_t)dst <= endOfFixedExecutableMemoryPool) {
-        using JITWriteFunction = void (*)(off_t, const void*, size_t);
-        JITWriteFunction func = (JITWriteFunction)jitWriteFunctionAddress;
+    if (jitWriteFunction && (uintptr_t)dst >= startOfFixedExecutableMemoryPool && (uintptr_t)dst <= endOfFixedExecutableMemoryPool) {
         off_t offset = (off_t)((uintptr_t)dst - startOfFixedExecutableMemoryPool);
-        func(offset, src, n);
+        jitWriteFunction(offset, src, n);
         return dst;
     }
-#endif
 
     // Use regular memcpy for writes outside the JIT region.
     return memcpy(dst, src, n);
 }
+
+#else // ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
+static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
+{
+    return memcpy(dst, src, n);
+}
+#endif
 
 class ExecutableAllocator {
     enum ProtectionSetting { Writable, Executable };

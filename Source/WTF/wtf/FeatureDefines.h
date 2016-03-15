@@ -795,10 +795,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_XSLT 1
 #endif
 
-#if !defined(ENABLE_SEPARATED_WX_HEAP)
-#define ENABLE_SEPARATED_WX_HEAP 0
-#endif
-
 /* Asserts, invariants for macro definitions */
 
 #if ENABLE(VIDEO_TRACK) && !ENABLE(VIDEO)

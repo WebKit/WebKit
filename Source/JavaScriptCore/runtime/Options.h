@@ -118,7 +118,7 @@ typedef const char* optionString;
     \
     v(bool, crashIfCantAllocateJITMemory, false, nullptr) \
     v(unsigned, jitMemoryReservationSize, 0, "Set this number to change the executable allocation size in ExecutableAllocatorFixedVMPool. (In bytes.)") \
-    v(bool, useSeparatedWXHeap, true, nullptr) \
+    v(bool, useSeparatedWXHeap, false, nullptr) \
     \
     v(bool, forceCodeBlockLiveness, false, nullptr) \
     v(bool, forceICFailure, false, nullptr) \

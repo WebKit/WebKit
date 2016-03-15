@@ -1,3 +1,14 @@
+2016-03-15  Oliver Hunt  <oliver@apple.com>
+
+        Remove compile time define for SEPARATED_HEAP
+        https://bugs.webkit.org/show_bug.cgi?id=155508
+
+        Reviewed by Mark Lam.
+
+        Remove the feature define.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-03-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r198203.
