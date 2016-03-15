@@ -1,3 +1,18 @@
+2016-03-14  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r197114): Crash in WebCore::MediaDevicesRequest::didCompletePermissionCheck
+        https://bugs.webkit.org/show_bug.cgi?id=155453
+
+        Reviewed by Eric Carlson.
+        <rdar://problem/24879447>
+
+        Reviewed by Dan Bates.
+
+        Further refinement to test case: Remove use of 'setTimeout', and ensure the code gets
+        called by using 'testRunner.waitUntilDone()'/'testRunner.notifyDone()'.
+
+        * fast/mediastream/enumerating-crash.html:
+
 2016-03-14  Daniel Bates  <dabates@apple.com>
 
         Web Inspector: Display Content Security Policy hash in details sidebar for script and style elements
