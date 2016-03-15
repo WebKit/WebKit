@@ -318,7 +318,9 @@
     macro(isFinite) \
     macro(isNaN) \
     macro(getPrototypeOf) \
+    macro(getOwnPropertyDescriptor) \
     macro(getOwnPropertyNames) \
+    macro(ownKeys) \
     macro(RangeError) \
     macro(TypeError) \
     macro(typedArrayLength) \

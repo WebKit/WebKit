@@ -1,3 +1,32 @@
+2016-03-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Don't reference the properties of @Reflect directly
+        https://bugs.webkit.org/show_bug.cgi?id=155436
+
+        Reviewed by Geoffrey Garen.
+
+        Reflect.ownKeys and Reflect.getOwnPropertyDescriptor can be altered with the user-crafted values.
+        Instead of referencing them directly, let's reference them through private names.
+
+        * builtins/ObjectConstructor.js:
+        (assign):
+        * runtime/CommonIdentifiers.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation): Deleted.
+        * runtime/ReflectObject.cpp:
+        (JSC::ReflectObject::finishCreation):
+        * tests/stress/object-assign-correctness.js:
+        (runTests.):
+        (runTests.get let):
+        (Reflect.ownKeys):
+        (Reflect.getOwnPropertyDescriptor):
+        (test.let.handler.switch.case.string_appeared_here.return.get enumerable): Deleted.
+        (test.let.handler.getOwnPropertyDescriptor): Deleted.
+        (test.let.handler.ownKeys): Deleted.
+        (test.let.handler.get getProps): Deleted.
+        (test.let.handler): Deleted.
+        (test): Deleted.
+
 2016-03-14  Daniel Bates  <dabates@apple.com>
 
         Web Inspector: Display Content Security Policy hash in details sidebar for script and style elements

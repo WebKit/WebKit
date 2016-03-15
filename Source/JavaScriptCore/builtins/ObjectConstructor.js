@@ -35,10 +35,10 @@ function assign(target/*[*/, /*...*/sources/*] */)
         let nextSource = arguments[s];
         if (nextSource != null) {
             let from = @Object(nextSource);
-            let keys = @Reflect.ownKeys(from);
+            let keys = @Reflect.@ownKeys(from);
             for (let i = 0, keysLength = keys.length; i < keysLength; ++i) {
                 let nextKey = keys[i];
-                let descriptor = @Reflect.getOwnPropertyDescriptor(from, nextKey);
+                let descriptor = @Reflect.@getOwnPropertyDescriptor(from, nextKey);
                 if (descriptor !== @undefined && descriptor.enumerable)
                     objTarget[nextKey] = from[nextKey];
             }
