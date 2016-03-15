@@ -1,3 +1,12 @@
+2016-03-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking animations/3d/transform-origin-vs-functions.html as flaky on ios-simulator-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=155501
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-03-15  Chris Fleizach  <cfleizach@apple.com>
 
         AX: certain elements not included in accessibility tree
