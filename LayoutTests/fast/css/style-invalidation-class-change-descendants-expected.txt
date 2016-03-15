@@ -3,6 +3,7 @@ Test that we invalidate the element subtree minimally on class attribute change
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+Adding class style5
 PASS hasExpectedStyle is true
 PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
 PASS testStyleChangeType("target", "NoStyleChange") is true
@@ -47,6 +48,16 @@ PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root",
 PASS testStyleChangeType("target", "NoStyleChange") is true
 PASS testStyleChangeType("inert", "NoStyleChange") is true
 Removing class style1
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Removing class style5
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Adding class style5
 PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
 PASS testStyleChangeType("target", "InlineStyleChange") is true
 PASS testStyleChangeType("inert", "NoStyleChange") is true

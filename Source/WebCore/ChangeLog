@@ -1,3 +1,36 @@
+2016-03-15  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (196383): Class change invalidation does not handle :not correctly
+        https://bugs.webkit.org/show_bug.cgi?id=155493
+        <rdar://problem/24846762>
+
+        Reviewed by Andreas Kling.
+
+        We fail to invalidate bar style in
+
+            :not(.foo) bar { }
+
+        when class foo is added or removed.
+
+        There is a logic error in the invalidation code. It assumes that class addition can only make new selectors match
+        and removal make them not match. This is not true when :not is present.
+
+        * style/AttributeChangeInvalidation.h:
+        (WebCore::Style::AttributeChangeInvalidation::AttributeChangeInvalidation):
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::ClassChangeInvalidation::invalidateStyle):
+
+            Invalidate style and collect full set of rules that may affect descendant style.
+
+        (WebCore::Style::ClassChangeInvalidation::invalidateDescendantStyle):
+
+            Invalidate with this set both before and after committing the changes.
+
+        (WebCore::Style::ClassChangeInvalidation::computeClassChange): Deleted.
+        * style/ClassChangeInvalidation.h:
+        (WebCore::Style::ClassChangeInvalidation::ClassChangeInvalidation):
+        (WebCore::Style::ClassChangeInvalidation::~ClassChangeInvalidation):
+
 2016-03-14  Jer Noble  <jer.noble@apple.com>
 
         Video elements with autoplay do not begin playing when scrolling into view if InvisibleAutoplayNotPermitted is set.

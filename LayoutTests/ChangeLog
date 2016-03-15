@@ -1,3 +1,21 @@
+2016-03-15  Antti Koivisto  <antti@apple.com>
+
+        Class change invalidation does not handle :not correctly
+        https://bugs.webkit.org/show_bug.cgi?id=155493
+        <rdar://problem/24846762>
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/style-invalidation-attribute-change-descendants-expected.txt:
+        * fast/css/style-invalidation-attribute-change-descendants.html:
+
+            Also add :not case for attribute changes (which handles this correctly already).
+
+        * fast/css/style-invalidation-class-change-descendants-expected.txt:
+        * fast/css/style-invalidation-class-change-descendants.html:
+
+            Add :not case.
+
 2016-03-14  Jer Noble  <jer.noble@apple.com>
 
         Video elements with autoplay do not begin playing when scrolling into view if InvisibleAutoplayNotPermitted is set.

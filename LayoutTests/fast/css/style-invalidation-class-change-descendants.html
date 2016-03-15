@@ -22,6 +22,10 @@ root.style4 > target inert {
     color: rgb(4, 4, 4);
 }
 
+root:not(.style5) target {
+    color: rgb(5, 5, 5);
+}
+
 </style>
 </head>
 <body>
@@ -105,6 +109,8 @@ function checkStyle(n) {
     shouldBeTrue("hasExpectedStyle");
 }
 
+addClass('style5');
+
 checkStyle(0);
 testStyleInvalidation("NoStyleChange");
 checkStyle(0);
@@ -140,6 +146,14 @@ removeClass('NotThere');
 testStyleInvalidation("NoStyleChange");
 
 removeClass('style1');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(0);
+
+removeClass('style5');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(5);
+
+addClass('style5');
 testStyleInvalidation("InlineStyleChange");
 checkStyle(0);
 
