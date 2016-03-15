@@ -1,3 +1,11 @@
+2016-03-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Fixing expectation for css3/masking/mask-svg-script-none-to-png.html on ios-simulator
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-03-15  Tim Horton  <timothy_horton@apple.com>
 
         Unskip and rebaseline <attachment> tests on iOS

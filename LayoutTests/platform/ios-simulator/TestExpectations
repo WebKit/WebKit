@@ -3003,6 +3003,6 @@ fast/scrolling/rtl-scrollbars-overflow-simple.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-overflow.html [ ImageOnlyFailure ]
 
 webkit.org/b/155372 [ Debug ] css3/masking/mask-luminance-svg.html [ Pass Crash ]
-webkit.org/b/155372 [ Debug ] css3/masking/mask-svg-script-none-to-png.html [ Pass Crash]
+webkit.org/b/155372 [ Debug ] css3/masking/mask-svg-script-none-to-png.html [ Pass Crash ]
 
 webkit.org/b/155339 [ Debug ] imported/blink/fast/multicol/dynamic/multicol-with-abspos-svg-with-foreignobject-with-multicol-crash.html [ Pass Crash ]
