@@ -1,3 +1,23 @@
+2016-03-15  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r194660): Navigating to HTTPS sites may fail with error
+        https://bugs.webkit.org/show_bug.cgi?id=155455
+        <rdar://problem/24308793>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes an issue where navigating to an HTTPS site may fail because the Security Framework uses
+        a cache directory that it does not have permission to use.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::codeSigningIdentifierForProcess): Queries the Security Framework for the code signed
+        bundle identifier/code signing identifier.
+        (WebKit::ChildProcess::initializeSandbox): Use the client identifier as part of the user directory
+        suffix. Verify that the client identifier matches the code signed bundled identifier/code
+        signing identifier for the code signed app/tool. Fix minor code style issue; use a C++-style cast
+        instead of a C-style cast when casting an OSStatus to a long.
+        (WebKit::findSecCodeForProcess): Deleted; incorporated logic into WebKit::codeSigningIdentifierForProcess().
+
 2016-03-15  Antti Koivisto  <antti@apple.com>
 
         Add Antti to WebKit2 Owners file
