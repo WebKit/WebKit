@@ -1,3 +1,12 @@
+2016-03-15  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: build fix after r198235.
+
+        Not Reviewed.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator):
+
 2016-03-15  Oliver Hunt  <oliver@apple.com>
 
         Remove compile time define for SEPARATED_HEAP

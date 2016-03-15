@@ -208,6 +208,8 @@ private:
 #if CPU(ARM64)
     MacroAssemblerCodeRef jitWriteThunkGenerator(void* writableAddr, void* stubBase, size_t stubSize)
     {
+        ASSERT_UNUSED(startOfFixedWritableMemoryPool, !startOfFixedWritableMemoryPool);
+
         using namespace ARM64Registers;
         using TrustedImm32 = MacroAssembler::TrustedImm32;
 
