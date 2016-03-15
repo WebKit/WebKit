@@ -28,15 +28,11 @@
 #include "MIMETypeRegistry.h"
 
 #include "NSURLFileTypeMappingsSPI.h"
-#include <wtf/Assertions.h>
-#include <wtf/MainThread.h>
 
-namespace WebCore 
-{
+namespace WebCore {
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
 {
-    ASSERT(isMainThread());
     return [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:(NSString *)extension];
 }
 
@@ -68,6 +64,8 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String& MIMEType)
     // plugin, there won't exist an application plugin supporting these MIME types.
     if (isPDFOrPostScriptMIMEType(MIMEType))
         return true;
+#else
+    UNUSED_PARAM(MIMEType);
 #endif
 
     return false;

@@ -56,7 +56,7 @@ SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeTIFF, CFStringRef)
 SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeGIF, CFStringRef)
 SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassMIMEType, CFStringRef)
 SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassFilenameExtension, CFStringRef)
-SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeRTFD, CFStringRef)
+SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeFlatRTFD, CFStringRef)
 SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeRTF, CFStringRef)
 
 #define kUTTypeText getkUTTypeText()
@@ -67,7 +67,7 @@ SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeRTF, CFStringRef)
 #define kUTTypeGIF  getkUTTypeGIF()
 #define kUTTagClassMIMEType getkUTTagClassMIMEType()
 #define kUTTagClassFilenameExtension getkUTTagClassFilenameExtension()
-#define kUTTypeRTFD getkUTTypeRTFD()
+#define kUTTypeFlatRTFD getkUTTypeFlatRTFD()
 #define kUTTypeRTF getkUTTypeRTF()
 
 namespace WebCore {
@@ -162,7 +162,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     }
 
     if (content.dataInRTFDFormat)
-        [representations setValue:content.dataInRTFDFormat->createNSData().get() forKey:(NSString *)kUTTypeRTFD];
+        [representations setValue:content.dataInRTFDFormat->createNSData().get() forKey:(NSString *)kUTTypeFlatRTFD];
     if (content.dataInRTFFormat)
         [representations setValue:content.dataInRTFFormat->createNSData().get() forKey:(NSString *)kUTTypeRTF];
     [representations setValue:content.dataInStringFormat forKey:(NSString *)kUTTypeText];

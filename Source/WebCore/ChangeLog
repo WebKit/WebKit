@@ -1,3 +1,35 @@
+2016-03-14  Enrica Casucci  <enrica@apple.com>
+
+        iOS: RTFD format is not available in the pasteboard after copy/cut.
+        https://bugs.webkit.org/show_bug.cgi?id=155477
+        rdar://problem/23500600
+
+        Reviewed by Tim Horton.
+
+        WebKit is using UTTypeRTFD instead of UTTypeFlatRTFD that is the
+        proper RTFD format for pastedboard. I also discovered that, when
+        we create the NSTextAttachment in the NSAttributedString we produce
+        from the DOM range, we are not generating a file name with the
+        appropriate extension for the MIME type. The iOS specific implementation
+        of the MIMETypeRegistry functions were empty.
+        There is no need to have a differentiation between OS X and iOS, so
+        we now have only one file called MIMETypeRegistryCocoa.mm.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/MIMETypeRegistryCocoa.mm: Added.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        * platform/ios/MIMETypeRegistryIOS.mm: Removed.
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::supportedPasteboardTypes):
+        (WebCore::Pasteboard::hasData):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+        * platform/mac/MIMETypeRegistryMac.mm: Removed.
+
 2016-03-14  Daniel Bates  <dabates@apple.com>
 
         Web Inspector: Display Content Security Policy hash in details sidebar for script and style elements

@@ -5629,7 +5629,6 @@
 		BC772C470C4EB2C60083285F /* XMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772C450C4EB2C60083285F /* XMLHttpRequest.h */; };
 		BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */; };
 		BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */; };
 		BC772E131331620C001EC9CE /* CSSLineBoxContainValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772E121331620C001EC9CE /* CSSLineBoxContainValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772E16133162C2001EC9CE /* CSSLineBoxContainValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772E15133162C2001EC9CE /* CSSLineBoxContainValue.cpp */; };
 		BC779E141BB215BB00CAA8BF /* CSSCustomPropertyValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC779E131BB215BB00CAA8BF /* CSSCustomPropertyValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5943,6 +5942,7 @@
 		C5227DF11C3C6DF100F5ED54 /* DataDetection.h in Headers */ = {isa = PBXBuildFile; fileRef = C5227DEF1C3C6DD700F5ED54 /* DataDetection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5227DF21C3C6DF900F5ED54 /* DataDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5227DF01C3C6DD700F5ED54 /* DataDetection.mm */; };
 		C5278B0C17F212EA003A2998 /* PlatformPasteboardIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5278B0B17F212EA003A2998 /* PlatformPasteboardIOS.mm */; };
+		C53D39341C978A45007F3AE9 /* MIMETypeRegistryCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = C53D39331C97892D007F3AE9 /* MIMETypeRegistryCocoa.mm */; };
 		C544274B11A57E7A0063A749 /* DOMStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = C544274911A57E7A0063A749 /* DOMStringList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C55610F111A704EB00B82D27 /* DOMStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55610F011A704EB00B82D27 /* DOMStringList.cpp */; };
 		C5592F781A92AA28001F8862 /* CharacterProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = C5592F771A92AA28001F8862 /* CharacterProperties.h */; };
@@ -6620,7 +6620,6 @@
 		E44FA1871BCA91560091B6EF /* ComposedTreeIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44FA1861BCA91560091B6EF /* ComposedTreeIterator.cpp */; };
 		E45322AB140CE267005A0F92 /* SelectorQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E45322A9140CE267005A0F92 /* SelectorQuery.cpp */; };
 		E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E45322AA140CE267005A0F92 /* SelectorQuery.h */; };
-		E453901D0EAFCACA003695C8 /* MIMETypeRegistryIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390180EAFCACA003695C8 /* MIMETypeRegistryIOS.mm */; };
 		E453901E0EAFCACA003695C8 /* PasteboardIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390190EAFCACA003695C8 /* PasteboardIOS.mm */; };
 		E45390430EAFD637003695C8 /* PlatformScreenIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390320EAFD637003695C8 /* PlatformScreenIOS.mm */; };
 		E45390450EAFD637003695C8 /* ScrollViewIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390340EAFD637003695C8 /* ScrollViewIOS.mm */; };
@@ -13546,7 +13545,6 @@
 		BC772C450C4EB2C60083285F /* XMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequest.h; sourceTree = "<group>"; };
 		BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MIMETypeRegistry.cpp; sourceTree = "<group>"; };
 		BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MIMETypeRegistry.h; sourceTree = "<group>"; };
-		BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MIMETypeRegistryMac.mm; sourceTree = "<group>"; };
 		BC772E121331620C001EC9CE /* CSSLineBoxContainValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSLineBoxContainValue.h; sourceTree = "<group>"; };
 		BC772E15133162C2001EC9CE /* CSSLineBoxContainValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSLineBoxContainValue.cpp; sourceTree = "<group>"; };
 		BC779E131BB215BB00CAA8BF /* CSSCustomPropertyValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSCustomPropertyValue.h; sourceTree = "<group>"; };
@@ -13898,6 +13896,7 @@
 		C5227DEF1C3C6DD700F5ED54 /* DataDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetection.h; sourceTree = "<group>"; };
 		C5227DF01C3C6DD700F5ED54 /* DataDetection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetection.mm; sourceTree = "<group>"; };
 		C5278B0B17F212EA003A2998 /* PlatformPasteboardIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformPasteboardIOS.mm; sourceTree = "<group>"; };
+		C53D39331C97892D007F3AE9 /* MIMETypeRegistryCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIMETypeRegistryCocoa.mm; sourceTree = "<group>"; };
 		C544274911A57E7A0063A749 /* DOMStringList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStringList.h; sourceTree = "<group>"; };
 		C544274A11A57E7A0063A749 /* DOMStringList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMStringList.idl; sourceTree = "<group>"; };
 		C55610F011A704EB00B82D27 /* DOMStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMStringList.cpp; sourceTree = "<group>"; };
@@ -14662,7 +14661,6 @@
 		E44FA1861BCA91560091B6EF /* ComposedTreeIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComposedTreeIterator.cpp; sourceTree = "<group>"; };
 		E45322A9140CE267005A0F92 /* SelectorQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorQuery.cpp; sourceTree = "<group>"; };
 		E45322AA140CE267005A0F92 /* SelectorQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorQuery.h; sourceTree = "<group>"; };
-		E45390180EAFCACA003695C8 /* MIMETypeRegistryIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIMETypeRegistryIOS.mm; sourceTree = "<group>"; };
 		E45390190EAFCACA003695C8 /* PasteboardIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardIOS.mm; sourceTree = "<group>"; };
 		E45390320EAFD637003695C8 /* PlatformScreenIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScreenIOS.mm; sourceTree = "<group>"; };
 		E45390340EAFD637003695C8 /* ScrollViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewIOS.mm; sourceTree = "<group>"; };
@@ -17865,7 +17863,6 @@
 				06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */,
 				06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */,
 				1402645D0AFDC19B005919E2 /* LoggingMac.mm */,
-				BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */,
 				93500F3113FDE3BE0099EC24 /* NSScrollerImpDetails.h */,
 				52F52E1014A0134F00ACC397 /* NSScrollerImpDetails.mm */,
 				4B2709810AF2E5E00065127F /* PasteboardMac.mm */,
@@ -19977,7 +19974,6 @@
 				E4B65A5D132FADB60070E7BE /* LegacyTileLayer.mm */,
 				E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */,
 				E4E39AFC1330EFC5003AB274 /* LegacyTileLayerPool.mm */,
-				E45390180EAFCACA003695C8 /* MIMETypeRegistryIOS.mm */,
 				E45390190EAFCACA003695C8 /* PasteboardIOS.mm */,
 				26601EBD14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h */,
 				26601EBE14B3B9AD0012C0FE /* PlatformEventFactoryIOS.mm */,
@@ -20035,6 +20031,7 @@
 				1A0409F21A43675C009E47F3 /* MachSendRight.cpp */,
 				1A0409DB1A4360B5009E47F3 /* MachSendRight.h */,
 				ADB6B29718FB90240081963E /* MemoryPressureHandlerCocoa.mm */,
+				C53D39331C97892D007F3AE9 /* MIMETypeRegistryCocoa.mm */,
 				A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */,
 				A19D93481AA11B1E00B46C24 /* NetworkExtensionContentFilter.mm */,
 				A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */,
@@ -29966,6 +29963,7 @@
 				A81369D7097374F600D74463 /* HTMLTextAreaElement.cpp in Sources */,
 				9BC6C21C13CCC97B008E0337 /* HTMLTextFormControlElement.cpp in Sources */,
 				830519951BB0F11000F3772E /* HTMLTimeElement.cpp in Sources */,
+				C53D39341C978A45007F3AE9 /* MIMETypeRegistryCocoa.mm in Sources */,
 				A871DC290A15205700B12A68 /* HTMLTitleElement.cpp in Sources */,
 				977B3877122883E900B81FF8 /* HTMLTokenizer.cpp in Sources */,
 				0707568B142262D600414161 /* HTMLTrackElement.cpp in Sources */,
@@ -31002,8 +31000,6 @@
 				CB8CF0181A9358D4000D510B /* Microtasks.cpp in Sources */,
 				37DDCD9413844FD50008B793 /* MIMEHeader.cpp in Sources */,
 				BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */,
-				E453901D0EAFCACA003695C8 /* MIMETypeRegistryIOS.mm in Sources */,
-				BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */,
 				52F10865162B6DA4009AC81E /* MixedContentChecker.cpp in Sources */,
 				CDF2B0101820540600F2B424 /* MockBox.cpp in Sources */,
 				CDF2B0121820540600F2B424 /* MockMediaPlayerMediaSource.cpp in Sources */,
