@@ -1,3 +1,15 @@
+2016-03-15  Joonghun Park  <jh718.park@samsung.com>
+
+        [GTK] Remove duplicate HashMap traversal and unneeded reference count churn in DataObjectGtk::forClipboard
+        https://bugs.webkit.org/show_bug.cgi?id=155470
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests, no new behaviours.
+
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::forClipboard):
+
 2016-03-15  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Rename GridResolvedPosition to GridPositionsResolver
