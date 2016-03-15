@@ -1,3 +1,17 @@
+2016-03-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r198148.
+        https://bugs.webkit.org/show_bug.cgi?id=155518
+
+        "Lets do this patch at a later time" (Requested by saamyjoon
+        on #webkit).
+
+        Reverted changeset:
+
+        "[ES6] Disallow var assignments in for-in loops"
+        https://bugs.webkit.org/show_bug.cgi?id=155451
+        http://trac.webkit.org/changeset/198148
+
 2016-03-15  Alexey Proskuryakov  <ap@apple.com>
 
         Test result gardening for
