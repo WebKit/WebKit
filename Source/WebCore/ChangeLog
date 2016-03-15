@@ -1,3 +1,52 @@
+2016-03-15  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Rename GridResolvedPosition to GridPositionsResolver
+        https://bugs.webkit.org/show_bug.cgi?id=155486
+
+        Reviewed by Sergio Villar Senin.
+
+        GridResolvedPosition is not storing a position (track or line) anymore.
+        Currently it's just a class wrapping the methods to resolve
+        grid positions from style.
+        Renamed the class to avoid confusions.
+
+        No new tests, no change of behavior.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        * rendering/RenderGrid.h:
+        * rendering/style/GridCoordinate.h:
+        * rendering/style/GridPositionsResolver.cpp: Renamed from Source/WebCore/rendering/style/GridResolvedPosition.cpp.
+        (WebCore::isColumnSide):
+        (WebCore::isStartSide):
+        (WebCore::initialPositionSide):
+        (WebCore::finalPositionSide):
+        (WebCore::gridLinesForSide):
+        (WebCore::implicitNamedGridLineForSide):
+        (WebCore::GridPositionsResolver::isNonExistentNamedLineOrArea):
+        (WebCore::adjustGridPositionsFromStyle):
+        (WebCore::GridPositionsResolver::explicitGridColumnCount):
+        (WebCore::GridPositionsResolver::explicitGridRowCount):
+        (WebCore::explicitGridSizeForSide):
+        (WebCore::lookAheadForNamedGridLine):
+        (WebCore::lookBackForNamedGridLine):
+        (WebCore::resolveNamedGridLinePositionFromStyle):
+        (WebCore::definiteGridSpanWithNamedLineSpanAgainstOpposite):
+        (WebCore::resolveNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionAgainstOppositePosition):
+        (WebCore::GridPositionsResolver::spanSizeForAutoPlacedItem):
+        (WebCore::resolveGridPositionFromStyle):
+        (WebCore::GridPositionsResolver::resolveGridPositionsFromStyle):
+        * rendering/style/GridPositionsResolver.h: Renamed from Source/WebCore/rendering/style/GridResolvedPosition.h.
+        * rendering/style/StyleAllInOne.cpp:
+
 2016-03-15  Miguel Gomez  <magomez@igalia.com>
 
         Leak: Accelerated ImageBufferCairo doesn't destroy the used textures

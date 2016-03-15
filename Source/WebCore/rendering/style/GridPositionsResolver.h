@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2014-2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GridResolvedPosition_h
-#define GridResolvedPosition_h
+#ifndef GridPositionsResolver_h
+#define GridPositionsResolver_h
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
@@ -47,8 +47,7 @@ enum GridTrackSizingDirection {
 };
 
 // Class with all the code related to grid items positions resolution.
-// TODO(rego): Rename class to GridPositionsResolver.
-class GridResolvedPosition {
+class GridPositionsResolver {
 public:
     static unsigned spanSizeForAutoPlacedItem(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
     static GridSpan resolveGridPositionsFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
@@ -61,4 +60,4 @@ public:
 
 #endif // ENABLE(CSS_GRID_LAYOUT)
 
-#endif // GridResolvedPosition_h
+#endif // GridPositionsResolver_h

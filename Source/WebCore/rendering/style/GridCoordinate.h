@@ -34,7 +34,7 @@
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
-#include "GridResolvedPosition.h"
+#include "GridPositionsResolver.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 

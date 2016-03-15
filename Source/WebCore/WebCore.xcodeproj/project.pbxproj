@@ -6190,8 +6190,8 @@
 		CDF2B0191820540700F2B424 /* MockTracks.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00F1820540600F2B424 /* MockTracks.h */; };
 		CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD27F6E4145767870078207D /* MediaController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CDF7483E18FEBCEC0006ECC0 /* GridResolvedPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF7483C18FEBCEC0006ECC0 /* GridResolvedPosition.cpp */; };
-		CDF7483F18FEBCEC0006ECC0 /* GridResolvedPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF7483D18FEBCEC0006ECC0 /* GridResolvedPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDF7483E18FEBCEC0006ECC0 /* GridPositionsResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF7483C18FEBCEC0006ECC0 /* GridPositionsResolver.cpp */; };
+		CDF7483F18FEBCEC0006ECC0 /* GridPositionsResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF7483D18FEBCEC0006ECC0 /* GridPositionsResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDFC360518CA61C20026E56F /* RemoteCommandListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDFC360318CA61C20026E56F /* RemoteCommandListener.cpp */; };
 		CDFC360618CA61C20026E56F /* RemoteCommandListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CDFC360418CA61C20026E56F /* RemoteCommandListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDFC360718CA696C0026E56F /* RemoteCommandListenerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDFC360218CA61630026E56F /* RemoteCommandListenerIOS.mm */; };
@@ -14209,8 +14209,8 @@
 		CDF419991AB0DA14004E64E1 /* missingImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "missingImage@3x.png"; sourceTree = "<group>"; };
 		CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControllerInterface.h; sourceTree = "<group>"; };
 		CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMediaElementCustom.cpp; sourceTree = "<group>"; };
-		CDF7483C18FEBCEC0006ECC0 /* GridResolvedPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridResolvedPosition.cpp; sourceTree = "<group>"; };
-		CDF7483D18FEBCEC0006ECC0 /* GridResolvedPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridResolvedPosition.h; sourceTree = "<group>"; };
+		CDF7483C18FEBCEC0006ECC0 /* GridPositionsResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridPositionsResolver.cpp; sourceTree = "<group>"; };
+		CDF7483D18FEBCEC0006ECC0 /* GridPositionsResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridPositionsResolver.h; sourceTree = "<group>"; };
 		CDFC360118CA61630026E56F /* RemoteCommandListenerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCommandListenerIOS.h; sourceTree = "<group>"; };
 		CDFC360218CA61630026E56F /* RemoteCommandListenerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteCommandListenerIOS.mm; sourceTree = "<group>"; };
 		CDFC360318CA61C20026E56F /* RemoteCommandListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCommandListener.cpp; sourceTree = "<group>"; };
@@ -22563,8 +22563,8 @@
 				CD3E251B18046B0600E27F56 /* GridCoordinate.h */,
 				CDEF4FD617E85C8F00AEE24B /* GridLength.h */,
 				A12705C21656BD6500C2E27C /* GridPosition.h */,
-				CDF7483C18FEBCEC0006ECC0 /* GridResolvedPosition.cpp */,
-				CDF7483D18FEBCEC0006ECC0 /* GridResolvedPosition.h */,
+				CDF7483C18FEBCEC0006ECC0 /* GridPositionsResolver.cpp */,
+				CDF7483D18FEBCEC0006ECC0 /* GridPositionsResolver.h */,
 				A12A104E166444DC008FA311 /* GridTrackSize.h */,
 				BC5EBA0E0E823E4700B25965 /* KeyframeList.cpp */,
 				BC5EBA0F0E823E4700B25965 /* KeyframeList.h */,
@@ -26149,7 +26149,7 @@
 				CD3E251C18046B0600E27F56 /* GridCoordinate.h in Headers */,
 				CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */,
 				A12705C31656BD6500C2E27C /* GridPosition.h in Headers */,
-				CDF7483F18FEBCEC0006ECC0 /* GridResolvedPosition.h in Headers */,
+				CDF7483F18FEBCEC0006ECC0 /* GridPositionsResolver.h in Headers */,
 				A12A1050166444FD008FA311 /* GridTrackSize.h in Headers */,
 				26EA89A71B4F2B75008C5FD2 /* HashableActionList.h in Headers */,
 				8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */,
@@ -29841,7 +29841,7 @@
 				499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */,
 				0FA24D79162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp in Sources */,
 				B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */,
-				CDF7483E18FEBCEC0006ECC0 /* GridResolvedPosition.cpp in Sources */,
+				CDF7483E18FEBCEC0006ECC0 /* GridPositionsResolver.cpp in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
 				51A9D9F3195B9503001B2B5C /* HIDGamepad.cpp in Sources */,
 				5179CE36195CAC7E0019C198 /* HIDGamepadProvider.cpp in Sources */,

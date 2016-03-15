@@ -29,7 +29,7 @@
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
-#include "GridResolvedPosition.h"
+#include "GridPositionsResolver.h"
 #include "OrderIterator.h"
 #include "RenderBlock.h"
 
