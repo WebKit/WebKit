@@ -229,6 +229,17 @@ sub runTest($$)
         @testOutput = grep { !/^LEAK:/ } @testOutput unless $showLeaks;
         map { s/\*\*PASS\*\*/possiblyColored("bold green", "PASS")/eg } @testOutput;
         map { s/\*\*FAIL\*\*/possiblyColored("bold red", "FAIL")/eg } @testOutput;
+
+        if ($result) {
+            push @testsFailed, $test;
+            if (!$timedOut && index("@testOutput", $test) == -1) {
+                print STDOUT possiblyColored("bold red", "UNEXPECTEDLY EXITED"), " $test\n";
+            }
+        } elsif ($timedOut) {
+            push @testsTimedOut, $test;
+            print STDOUT possiblyColored("bold yellow", "TIMEOUT"), " $test\n";
+        }
+
         print STDOUT @testOutput;
 
         close($childIn);
@@ -236,13 +247,6 @@ sub runTest($$)
         close($childErr) unless ($verbose || $showLeaks);
         close(DEVNULL) unless ($verbose || $showLeaks);
 
-        if ($result) {
-            push @testsFailed, $test;
-        }
-        if ($timedOut) {
-            push @testsTimedOut, $test;
-            print possiblyColored("bold yellow", "TIMEOUT"), " $test\n";
-        }
         if ($timedOut || $result) {
             return $timedOut || $result;
         }

@@ -1,3 +1,14 @@
+2016-03-15  Alexey Proskuryakov  <ap@apple.com>
+
+        run-api-tests doesn't print test name when the test crashes
+        https://bugs.webkit.org/show_bug.cgi?id=155476
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/run-api-tests: Print "UNEXPECTEDLY EXITED" with a test name when output
+        doesn't contain the test name yet. Changed test name output to always be before raw
+        stdout for clarity.
+
 2016-03-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r198203.
