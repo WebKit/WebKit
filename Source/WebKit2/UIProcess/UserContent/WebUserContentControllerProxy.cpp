@@ -33,6 +33,7 @@
 #include "DataReference.h"
 #include "WebProcessProxy.h"
 #include "WebScriptMessageHandler.h"
+#include "WebUserContentControllerDataTypes.h"
 #include "WebUserContentControllerMessages.h"
 #include "WebUserContentControllerProxyMessages.h"
 #include <WebCore/SerializedScriptValue.h>
@@ -80,14 +81,14 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
         userContentWorlds.append(std::make_pair(world.key->identifier(), world.key->name()));
     webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserContentWorlds(userContentWorlds), m_identifier);
 
-    Vector<std::pair<uint64_t, WebCore::UserScript>> userScripts;
+    Vector<WebUserScriptData> userScripts;
     for (const auto& userScript : m_userScripts->elementsOfType<API::UserScript>())
-        userScripts.append(std::make_pair(userScript->userContentWorld().identifier(), userScript->userScript()));
+        userScripts.append({ userScript->identifier(), userScript->userContentWorld().identifier(), userScript->userScript() });
     webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserScripts(userScripts), m_identifier);
 
-    Vector<std::pair<uint64_t, WebCore::UserStyleSheet>> userStyleSheets;
+    Vector<WebUserStyleSheetData> userStyleSheets;
     for (const auto& userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
-        userStyleSheets.append(std::make_pair(userStyleSheet->userContentWorld().identifier(), userStyleSheet->userStyleSheet()));
+        userStyleSheets.append({ userStyleSheet->identifier(), userStyleSheet->userContentWorld().identifier(), userStyleSheet->userStyleSheet() });
     webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserStyleSheets(userStyleSheets), m_identifier);
 
     Vector<WebScriptMessageHandlerHandle> messageHandlerHandles;
@@ -168,7 +169,7 @@ void WebUserContentControllerProxy::addUserScript(API::UserScript& userScript)
     m_userScripts->elements().append(&userScript);
 
     for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::AddUserScripts({ std::make_pair(world->identifier(), userScript.userScript()) }), m_identifier);
+        process->connection()->send(Messages::WebUserContentController::AddUserScripts({ { userScript.identifier(), world->identifier(), userScript.userScript() } }), m_identifier);
 }
 
 void WebUserContentControllerProxy::removeUserScript(API::UserScript& userScript)
@@ -176,7 +177,7 @@ void WebUserContentControllerProxy::removeUserScript(API::UserScript& userScript
     Ref<API::UserContentWorld> world = userScript.userContentWorld();
 
     for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::RemoveUserScript(world->identifier(), userScript.userScript().url().string()), m_identifier);
+        process->connection()->send(Messages::WebUserContentController::RemoveUserScript(world->identifier(), userScript.identifier()), m_identifier);
 
     m_userScripts->elements().removeAll(&userScript);
 
@@ -223,7 +224,7 @@ void WebUserContentControllerProxy::addUserStyleSheet(API::UserStyleSheet& userS
     m_userStyleSheets->elements().append(&userStyleSheet);
 
     for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::AddUserStyleSheets({ std::make_pair(world->identifier(), userStyleSheet.userStyleSheet()) }), m_identifier);
+        process->connection()->send(Messages::WebUserContentController::AddUserStyleSheets({ { userStyleSheet.identifier(), world->identifier(), userStyleSheet.userStyleSheet() } }), m_identifier);
 }
 
 void WebUserContentControllerProxy::removeUserStyleSheet(API::UserStyleSheet& userStyleSheet)
@@ -231,7 +232,7 @@ void WebUserContentControllerProxy::removeUserStyleSheet(API::UserStyleSheet& us
     Ref<API::UserContentWorld> world = userStyleSheet.userContentWorld();
 
     for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::RemoveUserStyleSheet(world->identifier(), userStyleSheet.userStyleSheet().url().string()), m_identifier);
+        process->connection()->send(Messages::WebUserContentController::RemoveUserStyleSheet(world->identifier(), userStyleSheet.identifier()), m_identifier);
 
     m_userStyleSheets->elements().removeAll(&userStyleSheet);
 

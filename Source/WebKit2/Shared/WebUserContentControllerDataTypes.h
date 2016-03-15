@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIUserStyleSheet.h"
+#ifndef WebUserContentControllerDataTypes_h
+#define WebUserContentControllerDataTypes_h
 
-#include <wtf/text/StringBuilder.h>
+#include <WebCore/UserScript.h>
+#include <WebCore/UserStyleSheet.h>
 
-namespace API {
-
-static uint64_t generateIdentifier()
-{
-    static uint64_t identifier;
-
-    return ++identifier;
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
 }
 
-WebCore::URL UserStyleSheet::generateUniqueURL()
-{
-    static uint64_t identifier;
+namespace WebKit {
 
-    StringBuilder urlStringBuilder;
-    urlStringBuilder.appendLiteral("user-style-sheet:");
-    urlStringBuilder.appendNumber(++identifier);
-    return { { }, urlStringBuilder.toString() };
-}
+struct WebUserScriptData {
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, WebUserScriptData&);
 
-UserStyleSheet::UserStyleSheet(WebCore::UserStyleSheet userStyleSheet, API::UserContentWorld& world)
-    : m_identifier(generateIdentifier())
-    , m_userStyleSheet(userStyleSheet)
-    , m_world(world)
-{
-}
+    uint64_t identifier;
+    uint64_t worldIdentifier;
+    WebCore::UserScript userScript;
+};
 
-} // namespace API
+struct WebUserStyleSheetData {
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, WebUserStyleSheetData&);
+
+    uint64_t identifier;
+    uint64_t worldIdentifier;
+    WebCore::UserStyleSheet userStyleSheet;
+};
+
+} // namespace WebKit
+
+#endif // WebUserContentControllerDataTypes_h

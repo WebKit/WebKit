@@ -87,7 +87,7 @@
 #include "StyleResolver.h"
 #include "SubframeLoader.h"
 #include "TextResourceDecoder.h"
-#include "UserContentController.h"
+#include "UserContentProvider.h"
 #include "UserInputBridge.h"
 #include "ViewStateChangeObserver.h"
 #include "VisitedLinkState.h"
@@ -231,7 +231,7 @@ Page::Page(PageConfiguration& pageConfiguration)
     , m_applicationCacheStorage(pageConfiguration.applicationCacheStorage ? *WTFMove(pageConfiguration.applicationCacheStorage) : ApplicationCacheStorage::singleton())
     , m_databaseProvider(*WTFMove(pageConfiguration.databaseProvider))
     , m_storageNamespaceProvider(*WTFMove(pageConfiguration.storageNamespaceProvider))
-    , m_userContentController(WTFMove(pageConfiguration.userContentController))
+    , m_userContentProvider(*WTFMove(pageConfiguration.userContentProvider))
     , m_visitedLinkStore(*WTFMove(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
     , m_isClosing(false)
@@ -240,9 +240,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 
     m_storageNamespaceProvider->addPage(*this);
 
-    if (m_userContentController)
-        m_userContentController->addPage(*this);
-
+    m_userContentProvider->addPage(*this);
     m_visitedLinkStore->addPage(*this);
 
     if (!allPages) {
@@ -298,9 +296,7 @@ Page::~Page()
 #endif
 
     m_storageNamespaceProvider->removePage(*this);
-
-    if (m_userContentController)
-        m_userContentController->removePage(*this);
+    m_userContentProvider->removePage(*this);
     m_visitedLinkStore->removePage(*this);
 }
 
@@ -1819,15 +1815,16 @@ bool Page::arePromptsAllowed()
     return !m_forbidPromptsDepth;
 }
 
-void Page::setUserContentController(UserContentController* userContentController)
+UserContentProvider& Page::userContentProvider()
 {
-    if (m_userContentController)
-        m_userContentController->removePage(*this);
+    return m_userContentProvider;
+}
 
-    m_userContentController = userContentController;
-
-    if (m_userContentController)
-        m_userContentController->addPage(*this);
+void Page::setUserContentProvider(Ref<UserContentProvider>&& userContentProvider)
+{
+    m_userContentProvider->removePage(*this);
+    m_userContentProvider = WTFMove(userContentProvider);
+    m_userContentProvider->addPage(*this);
 
     invalidateInjectedStyleSheetCacheInAllFrames();
 }

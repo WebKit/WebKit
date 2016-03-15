@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,34 +24,46 @@
  */
 
 #include "config.h"
-#include "APIUserStyleSheet.h"
+#include "WebUserContentControllerDataTypes.h"
 
-#include <wtf/text/StringBuilder.h>
+#include "WebCoreArgumentCoders.h"
 
-namespace API {
+namespace WebKit {
 
-static uint64_t generateIdentifier()
+void WebUserScriptData::encode(IPC::ArgumentEncoder& encoder) const
 {
-    static uint64_t identifier;
-
-    return ++identifier;
+    encoder << identifier;
+    encoder << worldIdentifier;
+    encoder << userScript;
 }
 
-WebCore::URL UserStyleSheet::generateUniqueURL()
+bool WebUserScriptData::decode(IPC::ArgumentDecoder& decoder, WebUserScriptData& data)
 {
-    static uint64_t identifier;
-
-    StringBuilder urlStringBuilder;
-    urlStringBuilder.appendLiteral("user-style-sheet:");
-    urlStringBuilder.appendNumber(++identifier);
-    return { { }, urlStringBuilder.toString() };
+    if (!decoder.decode(data.identifier))
+        return false;
+    if (!decoder.decode(data.worldIdentifier))
+        return false;
+    if (!decoder.decode(data.userScript))
+        return false;
+    return true;
 }
 
-UserStyleSheet::UserStyleSheet(WebCore::UserStyleSheet userStyleSheet, API::UserContentWorld& world)
-    : m_identifier(generateIdentifier())
-    , m_userStyleSheet(userStyleSheet)
-    , m_world(world)
+void WebUserStyleSheetData::encode(IPC::ArgumentEncoder& encoder) const
 {
+    encoder << identifier;
+    encoder << worldIdentifier;
+    encoder << userStyleSheet;
 }
 
-} // namespace API
+bool WebUserStyleSheetData::decode(IPC::ArgumentDecoder& decoder, WebUserStyleSheetData& data)
+{
+    if (!decoder.decode(data.identifier))
+        return false;
+    if (!decoder.decode(data.worldIdentifier))
+        return false;
+    if (!decoder.decode(data.userStyleSheet))
+        return false;
+    return true;
+}
+
+} // namespace WebKit

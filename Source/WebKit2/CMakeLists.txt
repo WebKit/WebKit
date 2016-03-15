@@ -278,6 +278,7 @@ set(WebKit2_SOURCES
     Shared/WebRenderLayer.cpp
     Shared/WebRenderObject.cpp
     Shared/WebTouchEvent.cpp
+    Shared/WebUserContentControllerDataTypes.cpp
     Shared/WebWheelEvent.cpp
 
     Shared/API/APIArray.cpp
@@ -404,6 +405,8 @@ set(WebKit2_SOURCES
     UIProcess/API/APIUserContentExtension.cpp
     UIProcess/API/APIUserContentExtensionStore.cpp
     UIProcess/API/APIUserContentWorld.cpp
+    UIProcess/API/APIUserScript.cpp
+    UIProcess/API/APIUserStyleSheet.cpp
     UIProcess/API/APIWebsiteDataStore.cpp
     UIProcess/API/APIWindowFeatures.cpp
 

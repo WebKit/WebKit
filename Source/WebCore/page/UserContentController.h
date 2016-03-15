@@ -26,57 +26,18 @@
 #ifndef UserContentController_h
 #define UserContentController_h
 
-#include "UserScriptTypes.h"
-#include "UserStyleSheetTypes.h"
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
-#if ENABLE(USER_MESSAGE_HANDLERS)
-#include "UserMessageHandlerDescriptorTypes.h"
-#endif
-
-#if ENABLE(CONTENT_EXTENSIONS)
-#include "ContentExtensionActions.h"
-#endif
+#include "UserContentProvider.h"
 
 namespace WebCore {
 
-class DOMWrapperWorld;
-class DocumentLoader;
-class Page;
-class ResourceRequest;
-class StyleSheetContents;
-class URL;
-class UserScript;
-class UserStyleSheet;
-class UserMessageHandlerDescriptor;
-
-enum class ResourceType : uint16_t;
-
-struct ResourceLoadInfo;
-
-namespace ContentExtensions {
-class CompiledContentExtension;
-class ContentExtensionsBackend;
-struct Action;
-}
-
-class UserContentController : public RefCounted<UserContentController> {
+class UserContentController final : public UserContentProvider {
 public:
     WEBCORE_EXPORT static Ref<UserContentController> create();
     WEBCORE_EXPORT ~UserContentController();
 
-    void addPage(Page&);
-    void removePage(Page&);
-
-    const UserScriptMap* userScripts() const { return m_userScripts.get(); }
-
     WEBCORE_EXPORT void addUserScript(DOMWrapperWorld&, std::unique_ptr<UserScript>);
     WEBCORE_EXPORT void removeUserScript(DOMWrapperWorld&, const URL&);
     WEBCORE_EXPORT void removeUserScripts(DOMWrapperWorld&);
-
-    const UserStyleSheetMap* userStyleSheets() const { return m_userStyleSheets.get(); }
 
     WEBCORE_EXPORT void addUserStyleSheet(DOMWrapperWorld&, std::unique_ptr<UserStyleSheet>, UserStyleInjectionTime);
     WEBCORE_EXPORT void removeUserStyleSheet(DOMWrapperWorld&, const URL&);
@@ -85,8 +46,6 @@ public:
     WEBCORE_EXPORT void removeAllUserContent();
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    const UserMessageHandlerDescriptorMap* userMessageHandlerDescriptors() const { return m_userMessageHandlerDescriptors.get(); }
-
     WEBCORE_EXPORT void addUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
     WEBCORE_EXPORT void removeUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
 #endif
@@ -95,25 +54,28 @@ public:
     WEBCORE_EXPORT void addUserContentExtension(const String& name, RefPtr<ContentExtensions::CompiledContentExtension>);
     WEBCORE_EXPORT void removeUserContentExtension(const String& name);
     WEBCORE_EXPORT void removeAllUserContentExtensions();
-
-    ContentExtensions::BlockedStatus processContentExtensionRulesForLoad(ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
-    Vector<ContentExtensions::Action> actionsForResourceLoad(const ResourceLoadInfo&, DocumentLoader& initiatingDocumentLoader);
 #endif
 
 private:
     UserContentController();
 
-    void invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
-
-    HashSet<Page*> m_pages;
-
-    std::unique_ptr<UserScriptMap> m_userScripts;
-    std::unique_ptr<UserStyleSheetMap> m_userStyleSheets;
+    // UserContentProvider
+    void forEachUserScript(const std::function<void(DOMWrapperWorld&, const UserScript&)>&) const override;
+    void forEachUserStyleSheet(const std::function<void(const UserStyleSheet&)>&) const override;
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    std::unique_ptr<UserMessageHandlerDescriptorMap> m_userMessageHandlerDescriptors;
+    const UserMessageHandlerDescriptorMap& userMessageHandlerDescriptors() const override { return m_userMessageHandlerDescriptors; }
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
-    std::unique_ptr<ContentExtensions::ContentExtensionsBackend> m_contentExtensionBackend;
+    ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() override { return m_contentExtensionBackend; }
+#endif
+
+    UserScriptMap m_userScripts;
+    UserStyleSheetMap m_userStyleSheets;
+#if ENABLE(USER_MESSAGE_HANDLERS)
+    UserMessageHandlerDescriptorMap m_userMessageHandlerDescriptors;
+#endif
+#if ENABLE(CONTENT_EXTENSIONS)
+    ContentExtensions::ContentExtensionsBackend m_contentExtensionBackend;
 #endif
 };
 

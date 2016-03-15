@@ -59,10 +59,8 @@ namespace WebCore {
 static ContentExtensions::BlockedStatus processContentExtensionRulesForLoad(const Frame& frame, ResourceRequest& request, ResourceType resourceType)
 {
     if (DocumentLoader* documentLoader = frame.loader().documentLoader()) {
-        if (Page* page = frame.page()) {
-            if (UserContentController* controller = page->userContentController())
-                return controller->processContentExtensionRulesForLoad(request, resourceType, *documentLoader);
-        }
+        if (Page* page = frame.page())
+            return page->userContentProvider().processContentExtensionRulesForLoad(request, resourceType, *documentLoader);
     }
     return ContentExtensions::BlockedStatus::NotBlocked;
 }

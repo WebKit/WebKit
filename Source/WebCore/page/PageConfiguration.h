@@ -48,7 +48,7 @@ class InspectorClient;
 class PlugInClient;
 class ProgressTrackerClient;
 class StorageNamespaceProvider;
-class UserContentController;
+class UserContentProvider;
 class ValidationMessageClient;
 class VisitedLinkStore;
 
@@ -84,7 +84,7 @@ public:
     RefPtr<ApplicationCacheStorage> applicationCacheStorage;
     RefPtr<DatabaseProvider> databaseProvider;
     RefPtr<StorageNamespaceProvider> storageNamespaceProvider;
-    RefPtr<UserContentController> userContentController;
+    RefPtr<UserContentProvider> userContentProvider;
     RefPtr<VisitedLinkStore> visitedLinkStore;
 };
 

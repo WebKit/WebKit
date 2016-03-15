@@ -41,11 +41,9 @@ public:
         return adoptRef(*new UserStyleSheet(WTFMove(userStyleSheet), world));
     }
 
-    UserStyleSheet(WebCore::UserStyleSheet userStyleSheet, API::UserContentWorld& world)
-        : m_userStyleSheet(userStyleSheet)
-        , m_world(world)
-    {
-    }
+    UserStyleSheet(WebCore::UserStyleSheet, API::UserContentWorld&);
+
+    uint64_t identifier() const { return m_identifier; }
 
     const WebCore::UserStyleSheet& userStyleSheet() const { return m_userStyleSheet; }
 
@@ -53,6 +51,7 @@ public:
     const UserContentWorld& userContentWorld() const { return m_world; }
 
 private:
+    uint64_t m_identifier;
     WebCore::UserStyleSheet m_userStyleSheet;
     Ref<UserContentWorld> m_world;
 };

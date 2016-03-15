@@ -1,3 +1,121 @@
+2016-03-14  Sam Weinig  <sam@webkit.org>
+
+        Add a baseURL parameter to _WKUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=155219
+
+        Reviewed by Tim Horton.
+
+        - Moves to a model for user content where instead of each page having a WebCore::UserContentController
+          object, we have an abstract WebCore::UserContentProvider interface that can be implemented at the WebKit
+          level. For now, legacy WebKit continues to use the old UserContentController, which implements 
+          WebCore::UserContentProvider, and WebKit2 implements its own implementation so it can store additional
+          state.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::updateInjectedStyleSheetCache):
+        Switch to using forEachUserStyleSheet on the UserContentProvider.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        Remove null check now that we always have a UserContentProvider.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients):
+        * loader/EmptyClients.h:
+        Add new EmptyClients.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        Remove null check now that we always have a UserContentProvider.
+
+        * loader/PingLoader.cpp:
+        (WebCore::processContentExtensionRulesForLoad):
+        Remove null check now that we always have a UserContentProvider.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        Remove null check now that we always have a UserContentProvider.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        Remove null check now that we always have a UserContentProvider.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::shouldHaveWebKitNamespaceForWorld):
+        Remove null checks now that we always have a UserContentProvider, and userMessageHandlerDescriptors
+        returns a reference.
+
+        (WebCore::DOMWindow::open):
+        Remove null check now that we always have a UserContentProvider.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScripts):
+        Simplify by lifting document check out of the main loop and using forEachUserScript.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::userContentProvider):
+        (WebCore::Page::setUserContentProvider):
+        (WebCore::Page::setUserContentController): Deleted.
+        * page/Page.h:
+        (WebCore::Page::userContentController): Deleted.
+        * page/PageConfiguration.h:
+        Store the UserContentProvider in a Ref, and require PageConfigurations to provide one. This
+        removes a bunch of null checks and simplifies the code.
+
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::~UserContentController):
+        (WebCore::UserContentController::forEachUserScript):
+        (WebCore::UserContentController::forEachUserStyleSheet):
+        (WebCore::UserContentController::addUserScript):
+        (WebCore::UserContentController::removeUserScript):
+        (WebCore::UserContentController::removeUserScripts):
+        (WebCore::UserContentController::addUserStyleSheet):
+        (WebCore::UserContentController::removeUserStyleSheet):
+        (WebCore::UserContentController::removeUserStyleSheets):
+        (WebCore::UserContentController::addUserMessageHandlerDescriptor):
+        (WebCore::UserContentController::removeUserMessageHandlerDescriptor):
+        (WebCore::UserContentController::addUserContentExtension):
+        (WebCore::UserContentController::removeUserContentExtension):
+        (WebCore::UserContentController::removeAllUserContentExtensions):
+        (WebCore::UserContentController::removeAllUserContent):
+        (WebCore::UserContentController::addPage): Deleted.
+        (WebCore::UserContentController::removePage): Deleted.
+        (WebCore::contentExtensionsEnabled): Deleted.
+        (WebCore::UserContentController::processContentExtensionRulesForLoad): Deleted.
+        (WebCore::UserContentController::actionsForResourceLoad): Deleted.
+        * page/UserContentController.h:
+        (WebCore::UserContentController::userScripts): Deleted.
+        (WebCore::UserContentController::userStyleSheets): Deleted.
+        (WebCore::UserContentController::userMessageHandlerDescriptors): Deleted.
+        Add inheritance from UserContentProvider and simplify things by removing unique_ptrs
+        that were holding the member variables. There is usually only one UserContentController
+        so having these in unique_ptrs doesn't make much sense.
+        
+        * page/UserContentProvider.cpp: Added.
+        (WebCore::UserContentProvider::UserContentProvider):
+        (WebCore::UserContentProvider::~UserContentProvider):
+        (WebCore::UserContentProvider::addPage):
+        (WebCore::UserContentProvider::removePage):
+        (WebCore::UserContentProvider::invalidateInjectedStyleSheetCacheInAllFramesInAllPages):
+        (WebCore::contentExtensionsEnabled):
+        (WebCore::UserContentProvider::processContentExtensionRulesForLoad):
+        (WebCore::UserContentProvider::actionsForResourceLoad):
+        * page/UserContentProvider.h: Added.
+        Add abstract class for providing user content and add some helpers on it.
+
+        * page/UserMessageHandlerDescriptor.h:
+        (WebCore::UserMessageHandlerDescriptor::create):
+        (WebCore::UserMessageHandlerDescriptor::client):
+        (WebCore::UserMessageHandlerDescriptor::invalidateClient):
+        * page/UserMessageHandlersNamespace.cpp:
+        (WebCore::UserMessageHandlersNamespace::handler):
+        Simplify now that userContentProvider() and userMessageHandlerDescriptors() are references.
+
 2016-03-14  Enrica Casucci  <enrica@apple.com>
 
         iOS: RTFD format is not available in the pasteboard after copy/cut.

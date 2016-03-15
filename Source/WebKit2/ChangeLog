@@ -1,3 +1,116 @@
+2016-03-14  Sam Weinig  <sam@webkit.org>
+
+        Add a baseURL parameter to _WKUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=155219
+
+        Reviewed by Tim Horton.
+
+        - Moves to a model for user content where instead of using a WebCore::UserContentController
+          object, we implement the new WebCore::UserContentProvider interface (on the existing 
+          WebUserContentController object).
+        - Uses this to maintain maps of UserStylesSheets and UserScripts along with their identifiers,
+          freeing up the URL, which had been acting as the identifier, to be used as the baseURL which
+          was what it was intended for.
+        - Adds a baseURL property to _WKUserStyleSheet.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        Add support for sending WebUserContentControllerDataTypes.
+
+        * Shared/WebUserContentControllerDataTypes.cpp: Added.
+        (WebKit::WebUserScriptData::encode):
+        (WebKit::WebUserScriptData::decode):
+        (WebKit::WebUserStyleSheetData::encode):
+        (WebKit::WebUserStyleSheetData::decode):
+        * Shared/WebUserContentControllerDataTypes.h: Added.
+        Add helper types for sending user content over IPC.
+
+        * UIProcess/API/APIUserScript.cpp:
+        (API::UserScript::generateUniqueURL):
+        (API::UserScript::UserScript):
+        * UIProcess/API/APIUserScript.h:
+        * UIProcess/API/APIUserStyleSheet.cpp:
+        (API::UserStyleSheet::generateUniqueURL):
+        (API::UserStyleSheet::UserStyleSheet):
+        * UIProcess/API/APIUserStyleSheet.h:
+        Add identifiers for tracking across processes.
+
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:userContentWorld:]):
+        (-[_WKUserStyleSheet baseURL]):
+        Add new initializer which takes a baseURL as well as an accessor for the baseURL.
+
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addUserScript):
+        (WebKit::WebUserContentControllerProxy::removeUserScript):
+        (WebKit::WebUserContentControllerProxy::addUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeUserStyleSheet):
+        Pass identifiers as well as user content.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addUserScript):
+        (WebKit::InjectedBundle::addUserStyleSheet):
+        Move user content in via move semantics rather than using a unique_ptr.
+
+        (WebKit::InjectedBundle::removeUserScript):
+        (WebKit::InjectedBundle::removeUserStyleSheet):
+        (WebKit::InjectedBundle::removeUserScripts):
+        (WebKit::InjectedBundle::removeUserStyleSheets):
+        (WebKit::InjectedBundle::removeAllUserContent):
+        Update for new function signatures.
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::WebUserContentController):
+        (WebKit::WebUserContentController::~WebUserContentController):
+        (WebKit::WebUserContentController::addUserContentWorlds):
+        (WebKit::WebUserContentController::removeUserContentWorlds):
+        (WebKit::WebUserContentController::addUserScripts):
+        (WebKit::WebUserContentController::removeUserScript):
+        (WebKit::WebUserContentController::removeAllUserScripts):
+        (WebKit::WebUserContentController::addUserStyleSheets):
+        (WebKit::WebUserContentController::removeUserStyleSheet):
+        (WebKit::WebUserContentController::removeAllUserStyleSheets):
+        (WebKit::WebUserContentController::addUserScriptMessageHandlers):
+        (WebKit::WebUserContentController::removeUserScriptMessageHandler):
+        (WebKit::WebUserContentController::addUserContentExtensions):
+        (WebKit::WebUserContentController::removeUserContentExtension):
+        (WebKit::WebUserContentController::removeAllUserContentExtensions):
+        (WebKit::WebUserContentController::addUserScriptInternal):
+        (WebKit::WebUserContentController::addUserScript):
+        (WebKit::WebUserContentController::removeUserScriptWithURL):
+        (WebKit::WebUserContentController::removeUserScriptInternal):
+        (WebKit::WebUserContentController::removeUserScripts):
+        (WebKit::WebUserContentController::addUserStyleSheetInternal):
+        (WebKit::WebUserContentController::addUserStyleSheet):
+        (WebKit::WebUserContentController::removeUserStyleSheetWithURL):
+        (WebKit::WebUserContentController::removeUserStyleSheetInternal):
+        (WebKit::WebUserContentController::removeUserStyleSheets):
+        (WebKit::WebUserContentController::removeAllUserContent):
+        (WebKit::WebUserContentController::forEachUserScript):
+        (WebKit::WebUserContentController::forEachUserStyleSheet):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+        Convert to inheriting from UserContentProvider, rather than containing a UserContentController.
+        This means adding the storage for the user content, which has been simplified to avoid using
+        unique_ptrs.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addUserScript):
+        (WebKit::WebPage::addUserStyleSheet):
+        (WebKit::WebPage::removeAllUserContent):
+        Update to call the WebUserContentController, rather than going to the UserContentController, which
+        no longer exists.
+
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::userContentController):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        Return the WebUserContentController rather than old UserContentController.
+
 2016-03-14  Joonghun Park  <jh718.park@samsung.com>
 
         Purge PassRefPtr from ArrayBuffer, ArchiveResource, Pasteboard, LegacyWebArchive and DataObjectGtk

@@ -28,6 +28,7 @@
 
 #import "APIArray.h"
 #import "WKNSArray.h"
+#import "WKNSURLExtras.h"
 #import "WebKit2Initialize.h"
 #import "_WKUserContentWorldInternal.h"
 
@@ -61,9 +62,27 @@
     return self;
 }
 
+- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(WK_ARRAY(NSString *) *)legacyWhitelist legacyBlacklist:(WK_ARRAY(NSString *) *)legacyBlacklist baseURL:(NSURL *)baseURL userContentWorld:(_WKUserContentWorld *)userContentWorld
+{
+    if (!(self = [super init]))
+        return nil;
+
+    // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
+    WebKit::InitializeWebKit2();
+
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), { { }, WTF::String([baseURL _web_originalDataAsWTFString]) }, API::toStringVector(legacyWhitelist), API::toStringVector(legacyBlacklist), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames, WebCore::UserStyleUserLevel }, *userContentWorld->_userContentWorld);
+
+    return self;
+}
+
 - (NSString *)source
 {
     return _userStyleSheet->userStyleSheet().source();
+}
+
+- (NSURL *)baseURL
+{
+    return _userStyleSheet->userStyleSheet().url();
 }
 
 - (BOOL)isForMainFrameOnly
