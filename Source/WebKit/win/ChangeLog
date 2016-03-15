@@ -1,3 +1,17 @@
+2016-03-14  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=155463
+
+        Reviewed by Alex Christensen.
+
+        Get the NetworkStorageSession object from the document in the same way as other platforms do.
+
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        (WebFrameNetworkingContext::storageSession):
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::storageSession):
+
 2016-03-14  Joonghun Park  <jh718.park@samsung.com>
 
         Purge PassRefPtr from ArrayBuffer, ArchiveResource, Pasteboard, LegacyWebArchive and DataObjectGtk

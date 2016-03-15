@@ -1,3 +1,15 @@
+2016-03-14  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=155463
+
+        Reviewed by Alex Christensen.
+
+        Get the NetworkStorageSession object from the document in the same way as other platforms do.
+
+        * loader/CookieJar.cpp:
+        (WebCore::storageSession):
+
 2016-03-14  Tim Horton  <timothy_horton@apple.com>
 
         <attachment> on iOS should paint its progress indicator instead of a green square

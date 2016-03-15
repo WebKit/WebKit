@@ -48,16 +48,12 @@ static NetworkingContext* networkingContext(const Document* document)
     return frame->loader().networkingContext();
 }
 
-#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
 inline NetworkStorageSession& storageSession(const Document* document)
 {
     NetworkingContext* context = networkingContext(document);
     return context ? context->storageSession() : NetworkStorageSession::defaultStorageSession();
 }
 #define LOCAL_SESSION(document) NetworkStorageSession& session = storageSession(document);
-#else
-#define LOCAL_SESSION(document) NetworkStorageSession session(networkingContext(document));
-#endif
 
 String cookies(const Document* document, const URL& url)
 {

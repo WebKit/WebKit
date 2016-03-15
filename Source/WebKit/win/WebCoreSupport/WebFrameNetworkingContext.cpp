@@ -103,7 +103,6 @@ ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& req
     return frame()->loader().client().blockedError(request);
 }
 
-#if USE(CFNETWORK)
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     ASSERT(isMainThread());
@@ -113,4 +112,3 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 
     return NetworkStorageSession::defaultStorageSession();
 }
-#endif
