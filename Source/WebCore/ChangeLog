@@ -1,3 +1,24 @@
+2016-03-15  Tim Horton  <timothy_horton@apple.com>
+
+        iOS <attachment> element should allow customization of action text color
+        https://bugs.webkit.org/show_bug.cgi?id=155513
+        <rdar://problem/24805991>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/attachment/attachment-action.html
+
+        * css/html.css:
+        (attachment):
+        On iOS (the only place it is used), <attachment> color should default to system blue.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::attachmentActionColor):
+        (WebCore::AttachmentInfo::AttachmentInfo):
+        Make use of the <attachment>'s CSS color for the action text.
+        This is a little weird because there are multiple bits of text in an
+        <attachment>, but only the action text ever changes color.
+
 2016-03-15  Zalan Bujtas  <zalan@apple.com>
 
         Delay HTMLFormControlElement::focus() call until after layout is finished.

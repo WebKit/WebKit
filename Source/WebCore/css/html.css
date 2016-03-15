@@ -1236,6 +1236,9 @@ applet, embed, object, img {
 #if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
 attachment {
     -webkit-appearance: attachment;
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+    color: -apple-system-blue;
+#endif
 }
 #endif
 

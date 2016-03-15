@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x284
   RenderBlock {HTML} at (0,0) size 800x284
     RenderBody {BODY} at (8,8) size 784x268
-      RenderAttachment {ATTACHMENT} at (0,15) size 160x119
+      RenderAttachment {ATTACHMENT} at (0,15) size 160x119 [color=#007AFF]
       RenderText {#text} at (160,0) size 4x19
         text run at (160,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (164,15) size 160x119
+      RenderAttachment {ATTACHMENT} at (164,15) size 160x119 [color=#007AFF]
       RenderText {#text} at (324,0) size 4x19
         text run at (324,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (328,15) size 160x119
+      RenderAttachment {ATTACHMENT} at (328,15) size 160x119 [color=#007AFF]
       RenderText {#text} at (488,0) size 4x19
         text run at (488,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (492,15) size 160x119
+      RenderAttachment {ATTACHMENT} at (492,15) size 160x119 [color=#007AFF]
       RenderText {#text} at (652,0) size 4x19
         text run at (652,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (0,149) size 160x119
+      RenderAttachment {ATTACHMENT} at (0,149) size 160x119 [color=#007AFF]
       RenderText {#text} at (160,134) size 4x19
         text run at (160,134) width 4: " "
-      RenderAttachment {ATTACHMENT} at (164,149) size 160x119
+      RenderAttachment {ATTACHMENT} at (164,149) size 160x119 [color=#007AFF]
       RenderText {#text} at (324,134) size 4x19
         text run at (324,134) width 4: " "
-      RenderAttachment {ATTACHMENT} at (328,149) size 160x119
+      RenderAttachment {ATTACHMENT} at (328,149) size 160x119 [color=#007AFF]
       RenderText {#text} at (488,134) size 4x19
         text run at (488,134) width 4: " "
-      RenderAttachment {ATTACHMENT} at (492,149) size 160x119
+      RenderAttachment {ATTACHMENT} at (492,149) size 160x119 [color=#007AFF]
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

@@ -1357,7 +1357,11 @@ static RetainPtr<CTFontRef> attachmentActionFont()
     }));
     return adoptCF(CTFontCreateWithFontDescriptor(emphasizedFontDescriptor.get(), 0, nullptr));
 }
-static UIColor *attachmentActionColor() { return [getUIColorClass() systemBlueColor]; }
+
+static UIColor *attachmentActionColor(const RenderAttachment& attachment)
+{
+    return [getUIColorClass() colorWithCGColor:cachedCGColor(attachment.style().visitedDependentColor(CSSPropertyColor))];
+}
 
 static RetainPtr<CTFontRef> attachmentTitleFont()
 {
@@ -1560,7 +1564,7 @@ AttachmentInfo::AttachmentInfo(const RenderAttachment& attachment)
             yOffset += iconRect.height() + attachmentItemMargin;
         }
     } else
-        buildSingleLine(action, attachmentActionFont().get(), attachmentActionColor());
+        buildSingleLine(action, attachmentActionFont().get(), attachmentActionColor(attachment));
 
     buildTitleLines(attachment);
     buildSingleLine(subtitle, attachmentSubtitleFont().get(), attachmentSubtitleColor());

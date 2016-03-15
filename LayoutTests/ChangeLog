@@ -1,3 +1,22 @@
+2016-03-15  Tim Horton  <timothy_horton@apple.com>
+
+        iOS <attachment> element should allow customization of action text color
+        https://bugs.webkit.org/show_bug.cgi?id=155513
+        <rdar://problem/24805991>
+
+        Reviewed by Simon Fraser.
+
+        * fast/attachment/attachment-action-expected.html: Added.
+        * fast/attachment/attachment-action.html: Added.
+        * platform/ios-simulator/fast/attachment/attachment-label-highlight-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-progress-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-rendering-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-select-on-click-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-select-on-click-inside-user-select-all-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-subtitle-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-title-expected.txt:
+        Rebaseline some tests and add one that action text matches the requested color.
+
 2016-03-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r198148.

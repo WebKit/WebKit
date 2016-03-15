@@ -6,6 +6,6 @@ layer at (0,0) size 800x150
       RenderBlock {DIV} at (0,0) size 784x134
         RenderText {#text} at (0,0) size 73x19
           text run at (0,0) width 73: "text before "
-        RenderAttachment {ATTACHMENT} at (72,15) size 161x119
+        RenderAttachment {ATTACHMENT} at (72,15) size 161x119 [color=#007AFF]
         RenderText {#text} at (232,0) size 63x19
           text run at (232,0) width 63: " text after"
