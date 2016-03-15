@@ -1,5 +1,11 @@
 2016-03-14  Sam Weinig  <sam@webkit.org>
 
+        Remove errant space.
+
+        * page/UserContentController.cpp:
+
+2016-03-14  Sam Weinig  <sam@webkit.org>
+
         Fix the windows build.
 
         * page/UserContentController.cpp:
