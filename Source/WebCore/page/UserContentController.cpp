@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,8 @@
 #include "DOMWrapperWorld.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
+#include <runtime/JSCellInlines.h>
+#include <runtime/StructureInlines.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include "UserMessageHandlerDescriptor.h"
