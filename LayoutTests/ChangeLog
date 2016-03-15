@@ -1,5 +1,13 @@
 2016-03-15  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Fixing a typo in the ios-simulator TestExpectations file
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-03-15  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking animations/3d/transform-origin-vs-functions.html as flaky on ios-simulator-wk2
         https://bugs.webkit.org/show_bug.cgi?id=155501
 
