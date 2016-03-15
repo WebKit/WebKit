@@ -295,7 +295,8 @@ webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflectio
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure ]
 imported/w3c/web-platform-tests/dom/nodes/MutationObserver-childList.html [ Timeout ]
 imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass Failure Crash ]
+webkit.org/b/155516 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Skip ]
+webkit.org/b/155516 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Failure ]
 
 # W3C XMLHttpRequest tests
 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-aborted.html [ Slow ]
