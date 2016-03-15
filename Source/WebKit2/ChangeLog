@@ -1,3 +1,16 @@
+2016-03-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r198230.
+
+        This change caused LayoutTests to fail on Mac
+
+        Reverted changeset:
+
+        "REGRESSION (r194660): Navigating to HTTPS sites may fail with
+        error"
+        https://bugs.webkit.org/show_bug.cgi?id=155455
+        http://trac.webkit.org/changeset/198230
+
 2016-03-15  Oliver Hunt  <oliver@apple.com>
 
         Remove compile time define for SEPARATED_HEAP
