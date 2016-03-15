@@ -46,12 +46,7 @@ static const CFStringRef kUTTypePNG = CFSTR("public.png");
 
 namespace WTR {
 
-enum FlipGraphicsContextOrNot {
-    DontFlipGraphicsContext,
-    FlipGraphicsContext
-};
-
-static CGContextRef createCGContextFromImage(WKImageRef wkImage, FlipGraphicsContextOrNot flip = DontFlipGraphicsContext)
+static CGContextRef createCGContextFromImage(WKImageRef wkImage)
 {
     RetainPtr<CGImageRef> image = adoptCF(WKImageCreateCGImage(wkImage));
 
@@ -62,16 +57,9 @@ static CGContextRef createCGContextFromImage(WKImageRef wkImage, FlipGraphicsCon
     // Creating this bitmap in the device color space should prevent any color conversion when the image of the web view is drawn into it.
     RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
     CGContextRef context = CGBitmapContextCreate(0, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
-    
-    if (flip == FlipGraphicsContext) {
-        CGContextSaveGState(context);
-        CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM(context, 0, -static_cast<CGFloat>(pixelsHigh));
-    }
+
     
     CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.get());
-    if (flip == FlipGraphicsContext)
-        CGContextRestoreGState(context);
 
     return context;
 }
@@ -156,7 +144,7 @@ static void paintRepaintRectOverlay(CGContextRef context, WKImageRef image, WKAr
 
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayRef repaintRects, SnapshotResultType snapshotType)
 {
-    RetainPtr<CGContextRef> context = adoptCF(createCGContextFromImage(image, snapshotType == SnapshotResultType::WebView ? DontFlipGraphicsContext : FlipGraphicsContext));
+    RetainPtr<CGContextRef> context = adoptCF(createCGContextFromImage(image));
 
     // A non-null repaintRects array means we're doing a repaint test.
     if (repaintRects)

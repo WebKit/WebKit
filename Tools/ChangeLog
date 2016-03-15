@@ -1,3 +1,35 @@
+2016-03-15  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS Simulator] Test result snapshots are upside down
+        https://bugs.webkit.org/show_bug.cgi?id=154761
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::createCGContextFromImage):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+        In r97104, Simon added code to take WindowServer snapshots, which came
+        in flipped, and added code to flip them back. At this point, WindowServer
+        snapshots got flipped, and software snapshots did not.
+
+        In r140067, Simon noticed that WindowServer ref test images were upside-down
+        on Mac (not sure why this changed), so turned off the flipping code (but
+        didn't delete it!). Now, WindowServer snapshots and software snapshots both
+        are not flipped.
+
+        In r190304, Carlos added an enum for the source of the snapshot ("WebView"
+        for window server snapshots, and "WebContent" for software snapshots),
+        and - critically - changed the flipping logic to flip software snapshots!
+
+        We didn't notice this on Mac because at this point we've made it so that
+        we *always* have WindowServer snapshots, but on iOS we still don't have
+        WindowServer snapshots, so now they're flipped.
+
+        And that's how we got here.
+
+        To restore the behavior from r140067, and correctly unflip snapshots on
+        iOS, just delete this code.
+
 2016-03-15  Alexey Proskuryakov  <ap@apple.com>
 
         run-api-tests doesn't print test name when the test crashes
