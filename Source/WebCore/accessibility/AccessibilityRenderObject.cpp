@@ -388,7 +388,8 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
         nextSibling = endOfContinuations(*m_renderer)->nextSibling();
 
     // Case 5: node has no next sibling, and its parent is an inline with a continuation.
-    else if (isInlineWithContinuation(*m_renderer->parent())) {
+    // Case 5.1: After case 4, (the element was inline w/ continuation but had no sibling), then check it's parent.
+    if (!nextSibling && isInlineWithContinuation(*m_renderer->parent())) {
         auto& continuation = *downcast<RenderInline>(*m_renderer->parent()).continuation();
         
         // Case 5a: continuation is a block - in this case the block itself is the next sibling.

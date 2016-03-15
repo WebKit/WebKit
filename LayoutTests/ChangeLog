@@ -1,3 +1,13 @@
+2016-03-15  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: certain elements not included in accessibility tree
+        https://bugs.webkit.org/show_bug.cgi?id=155480
+
+        Reviewed by Beth Dakin.
+
+        * accessibility/double-nested-inline-element-missing-from-tree-expected.txt: Added.
+        * accessibility/double-nested-inline-element-missing-from-tree.html: Added.
+
 2016-03-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r198203.

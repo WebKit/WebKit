@@ -1,3 +1,18 @@
+2016-03-15  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: certain elements not included in accessibility tree
+        https://bugs.webkit.org/show_bug.cgi?id=155480
+
+        Reviewed by Beth Dakin.
+
+        This test case exposed a hole in the nextSibling logic where you can get into a state where we skip content.
+        The fix is to check if an inline element continuation has no sibling, to fall back on to the parent case to see if that has a sibling.
+
+        Test: accessibility/double-nested-inline-element-missing-from-tree.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::nextSibling):
+
 2016-03-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r198203.
