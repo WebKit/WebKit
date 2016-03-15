@@ -1,3 +1,16 @@
+2016-03-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        URL Parsing should signal failure for illegal IDN
+        https://bugs.webkit.org/show_bug.cgi?id=154945
+        <rdar://problem/8014795>
+
+        Reviewed by Brent Fulgham.
+
+        * Misc/WebNSStringExtrasIOS.m:
+        (-[NSString _web_possibleURLsForForUserTypedString:]):
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder _updateTitleForURL:]):
+
 2016-03-05  Chris Dumez  <cdumez@apple.com>
 
         Consolidate RuntimeApplicationChecks and RuntimeApplicationChecksIOS

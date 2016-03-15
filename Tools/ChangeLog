@@ -1,3 +1,16 @@
+2016-03-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        URL Parsing should signal failure for illegal IDN
+        https://bugs.webkit.org/show_bug.cgi?id=154945
+        <rdar://problem/8014795>
+
+        Reviewed by Brent Fulgham.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController fetch:]):
+        * TestWebKitAPI/Tests/Cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+
 2016-03-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r197981.

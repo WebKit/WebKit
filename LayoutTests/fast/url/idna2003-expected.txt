@@ -17,21 +17,21 @@ PASS canonicalize('http://www.lookout‧net/') is 'http://www.xn--lookoutnet-406
 PASS canonicalize('http://www.looĸout.net/') is 'http://www.xn--looout-5bb.net/'
 FAIL canonicalize('http://www.lookout.net⩴80/') should be http://www.lookout.net::%3D80/. Was http://www.lookout.net⩴80/.
 FAIL canonicalize('http://www .lookout.net/') should be http://www%20.lookout.net/. Was http://www .lookout.net/.
-FAIL canonicalize('http:// lookout.net/') should be http://%E1%9A%80lookout.net/. Was http:/.
+FAIL canonicalize('http:// lookout.net/') should be http://%E1%9A%80lookout.net/. Was about:blank.
 FAIL canonicalize('http://lookout.net/') should be http://%1Flookout.net/. Was http://lookout.net/.
-FAIL canonicalize('http://look۝out.net/') should be http://look%DB%9Dout.net/. Was http:/.
-FAIL canonicalize('http://look᠎out.net/') should be http://look%E1%A0%8Eout.net/. Was http:/.
+FAIL canonicalize('http://look۝out.net/') should be http://look%DB%9Dout.net/. Was about:blank.
+FAIL canonicalize('http://look᠎out.net/') should be http://look%E1%A0%8Eout.net/. Was about:blank.
 FAIL canonicalize('http://look⁠out.net/') should be http://look%E2%81%A0out.net/. Was http://lookout.net/.
 FAIL canonicalize('http://look﻿out.net/') should be http://look%EF%BB%BFout.net/. Was http://lookout.net/.
-FAIL canonicalize('http://look🿾out.net/') should be http://look%F0%9F%BF%BEout.net/. Was http:/.
-FAIL canonicalize('http://look￺out.net/') should be http://look%EF%BF%BAout.net/. Was http:/.
-FAIL canonicalize('http://look⿰out.net/') should be http://look%E2%BF%B0out.net/. Was http:/.
+FAIL canonicalize('http://look🿾out.net/') should be http://look%F0%9F%BF%BEout.net/. Was about:blank.
+FAIL canonicalize('http://look￺out.net/') should be http://look%EF%BF%BAout.net/. Was about:blank.
+FAIL canonicalize('http://look⿰out.net/') should be http://look%E2%BF%B0out.net/. Was about:blank.
 FAIL canonicalize('http://looḱout.net/') should be http://look%CD%81out.net/. Was http://xn--looout-kp7b.net/.
-FAIL canonicalize('http://look‮out.net/') should be http://look%E2%80%AEout.net/. Was http:/.
-FAIL canonicalize('http://look⁫out.net/') should be http://look%E2%81%ABout.net/. Was http:/.
-FAIL canonicalize('http://look󠀁out.net/') should be http://look%F3%A0%80%81out.net/. Was http:/.
-FAIL canonicalize('http://look󠀠out.net/') should be http://look%F3%A0%80%A0out.net/. Was http:/.
-FAIL canonicalize('http://look־out.net/') should be http://look%D6%BEout.net/. Was http:/.
+FAIL canonicalize('http://look‮out.net/') should be http://look%E2%80%AEout.net/. Was about:blank.
+FAIL canonicalize('http://look⁫out.net/') should be http://look%E2%81%ABout.net/. Was about:blank.
+FAIL canonicalize('http://look󠀁out.net/') should be http://look%F3%A0%80%81out.net/. Was about:blank.
+FAIL canonicalize('http://look󠀠out.net/') should be http://look%F3%A0%80%A0out.net/. Was about:blank.
+FAIL canonicalize('http://look־out.net/') should be http://look%D6%BEout.net/. Was about:blank.
 PASS successfullyParsed is true
 
 TEST COMPLETE

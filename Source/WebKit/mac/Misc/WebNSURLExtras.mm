@@ -57,10 +57,20 @@ using namespace WTF;
 
 + (NSURL *)_web_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL
 {
-    return URLWithUserTypedString(string, URL);
+    return URLWithUserTypedStringDeprecated(string, URL);
 }
 
 + (NSURL *)_web_URLWithUserTypedString:(NSString *)string
+{
+    return URLWithUserTypedStringDeprecated(string, nil);
+}
+
++ (NSURL *)_webkit_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL
+{
+    return URLWithUserTypedString(string, URL);
+}
+
++ (NSURL *)_webkit_URLWithUserTypedString:(NSString *)string
 {
     return URLWithUserTypedString(string, nil);
 }
@@ -255,10 +265,22 @@ using namespace WTF;
 
 - (NSString *)_web_decodeHostName
 {
-    return decodeHostName(self);
+    NSString *name = decodeHostName(self);
+    return !name ? self : name;
 }
 
 - (NSString *)_web_encodeHostName
+{
+    NSString *name = encodeHostName(self);
+    return !name ? self : name;
+}
+
+- (NSString *)_webkit_decodeHostName
+{
+    return decodeHostName(self);
+}
+
+- (NSString *)_webkit_encodeHostName
 {
     return encodeHostName(self);
 }

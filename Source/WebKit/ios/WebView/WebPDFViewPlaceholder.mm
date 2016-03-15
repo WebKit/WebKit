@@ -317,7 +317,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 {
     NSString *titleFromURL = [URL lastPathComponent];
     if (![titleFromURL length] || [titleFromURL isEqualToString:@"/"])
-        titleFromURL = [[URL _web_hostString] _web_decodeHostName];
+        titleFromURL = [[URL _web_hostString] _webkit_decodeHostName];
 
     [self setTitle:titleFromURL];
     [[self _frame] _dispatchDidReceiveTitle:titleFromURL];

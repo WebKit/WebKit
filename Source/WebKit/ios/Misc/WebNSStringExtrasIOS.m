@@ -96,7 +96,7 @@
             
             if (URLHasScheme) {
                 // - use it unchanged
-                NSURL *URL = [NSURL _web_URLWithUserTypedString:workString];
+                NSURL *URL = [NSURL _webkit_URLWithUserTypedString:workString];
                 if (URL != nil) {
                     [result addObject:URL];
                 }
@@ -107,7 +107,7 @@
                 if ([[workString lowercaseString] hasPrefix:@"www."]) {
                     // - just prepend "http://"
                     [workString insertString:@"http://" atIndex:0];
-                    URL = [NSURL _web_URLWithUserTypedString:workString];
+                    URL = [NSURL _webkit_URLWithUserTypedString:workString];
                     if (URL != nil) {
                         [result addObject:URL];
                     }
@@ -116,7 +116,7 @@
                 } else if ([[workString lowercaseString] hasPrefix:@"ftp."]) {
                     // - just prepend "ftp://"
                     [workString insertString:@"ftp://" atIndex:0];
-                    URL = [NSURL _web_URLWithUserTypedString:workString];
+                    URL = [NSURL _webkit_URLWithUserTypedString:workString];
                     if (URL != nil) {
                         [result addObject:URL];
                     }
@@ -125,7 +125,7 @@
                 } else if (firstAtRange.location != NSNotFound && firstAtRange.location < firstSlashRange.location) {
                     // - justprepend "http://"
                     [workString insertString:@"http://" atIndex:0];
-                    URL = [NSURL _web_URLWithUserTypedString:workString];
+                    URL = [NSURL _webkit_URLWithUserTypedString:workString];
                     if (URL != nil) {
                         [result addObject:URL];
                     }
@@ -134,14 +134,14 @@
                 } else if (firstDotRange.location != NSNotFound && firstDotRange.location < firstSlashRange.location) {
                     // - try prepending "http://"
                     [workString insertString:@"http://" atIndex:0];
-                    URL = [NSURL _web_URLWithUserTypedString:workString];
+                    URL = [NSURL _webkit_URLWithUserTypedString:workString];
                     if (URL != nil) {
                         [result addObject:URL];
                     }
                     
                     // - try prepending "http://www."
                     [workString insertString:@"www." atIndex:strlen("http://")];
-                    URL = [NSURL _web_URLWithUserTypedString:workString];
+                    URL = [NSURL _webkit_URLWithUserTypedString:workString];
                     if (URL != nil) {
                         [result addObject:URL];
                     }
@@ -151,7 +151,7 @@
                            [[workString lowercaseString] hasPrefix:@"localhost/"]) {
                     // - just prepend "http://"
                     [workString insertString:@"http://" atIndex:0];
-                    URL = [NSURL _web_URLWithUserTypedString:workString];
+                    URL = [NSURL _webkit_URLWithUserTypedString:workString];
                     if (URL != nil) {
                         [result addObject:URL];
                     }
@@ -160,7 +160,7 @@
                 } else {
                     // - try prepending "http://"
                     [workString insertString:@"http://" atIndex:0];
-                    URL = [NSURL _web_URLWithUserTypedString:workString];
+                    URL = [NSURL _webkit_URLWithUserTypedString:workString];
                     if (URL != nil) {
                         [result addObject:URL];
                     }
@@ -178,7 +178,7 @@
                         [workString insertString:@".com" atIndex:endOfHostnameOrPort];
                     }
                     [workString insertString:@"www." atIndex:strlen("http://")];
-                    URL = [NSURL _web_URLWithUserTypedString:workString];
+                    URL = [NSURL _webkit_URLWithUserTypedString:workString];
                     if (URL != nil) {
                         [result addObject:URL];
                     }
