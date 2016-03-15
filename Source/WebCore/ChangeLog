@@ -1,3 +1,25 @@
+2016-03-15  Miguel Gomez  <magomez@igalia.com>
+
+        Leak: Accelerated ImageBufferCairo doesn't destroy the used textures
+        https://bugs.webkit.org/show_bug.cgi?id=155431
+
+        Reviewed by Žan Doberšek.
+
+        When using the Cairo backend, add a destructor to ImageBufferData and use it to destroy the
+        textures created if the buffer is being accelerated.
+
+        No new tests, already covered by existing ones.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        Store the renderingMode flag.
+        (WebCore::ImageBufferData::~ImageBufferData):
+        Destroy gl resources if renderingMode is accelerated.
+        (WebCore::ImageBuffer::ImageBuffer):
+        Pass renderingMode to the data class and use it fro checks instead of the function parameter.
+        * platform/graphics/cairo/ImageBufferDataCairo.h:
+        Add destructor and a renderingMode flag.
+
 2016-03-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         URL Parsing should signal failure for illegal IDN
