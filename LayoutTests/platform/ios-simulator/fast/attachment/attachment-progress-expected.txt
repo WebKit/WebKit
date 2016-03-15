@@ -1,29 +1,29 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x36
-  RenderBlock {HTML} at (0,0) size 800x36
-    RenderBody {BODY} at (8,8) size 784x20
-      RenderAttachment {ATTACHMENT} at (0,16) size 0x0
-      RenderText {#text} at (0,0) size 4x19
-        text run at (0,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (4,16) size 0x0
-      RenderText {#text} at (4,0) size 4x19
-        text run at (4,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (8,16) size 0x0
-      RenderText {#text} at (8,0) size 4x19
-        text run at (8,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (12,16) size 0x0
-      RenderText {#text} at (12,0) size 4x19
-        text run at (12,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (16,16) size 0x0
-      RenderText {#text} at (16,0) size 4x19
-        text run at (16,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (20,16) size 0x0
-      RenderText {#text} at (20,0) size 4x19
-        text run at (20,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (24,16) size 0x0
-      RenderText {#text} at (24,0) size 4x19
-        text run at (24,0) width 4: " "
-      RenderAttachment {ATTACHMENT} at (28,16) size 0x0
+layer at (0,0) size 800x284
+  RenderBlock {HTML} at (0,0) size 800x284
+    RenderBody {BODY} at (8,8) size 784x268
+      RenderAttachment {ATTACHMENT} at (0,15) size 160x119
+      RenderText {#text} at (160,0) size 4x19
+        text run at (160,0) width 4: " "
+      RenderAttachment {ATTACHMENT} at (164,15) size 160x119
+      RenderText {#text} at (324,0) size 4x19
+        text run at (324,0) width 4: " "
+      RenderAttachment {ATTACHMENT} at (328,15) size 160x119
+      RenderText {#text} at (488,0) size 4x19
+        text run at (488,0) width 4: " "
+      RenderAttachment {ATTACHMENT} at (492,15) size 160x119
+      RenderText {#text} at (652,0) size 4x19
+        text run at (652,0) width 4: " "
+      RenderAttachment {ATTACHMENT} at (0,149) size 160x119
+      RenderText {#text} at (160,134) size 4x19
+        text run at (160,134) width 4: " "
+      RenderAttachment {ATTACHMENT} at (164,149) size 160x119
+      RenderText {#text} at (324,134) size 4x19
+        text run at (324,134) width 4: " "
+      RenderAttachment {ATTACHMENT} at (328,149) size 160x119
+      RenderText {#text} at (488,134) size 4x19
+        text run at (488,134) width 4: " "
+      RenderAttachment {ATTACHMENT} at (492,149) size 160x119
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

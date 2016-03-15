@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 326x19
           text run at (0,0) width 326: "This tests that attachments have a custom renderer."
-      RenderBlock (anonymous) at (0,36) size 784x0
-        RenderAttachment {ATTACHMENT} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,36) size 784x119
+        RenderAttachment {ATTACHMENT} at (0,0) size 160x119
         RenderText {#text} at (0,0) size 0x0

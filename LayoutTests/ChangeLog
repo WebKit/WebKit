@@ -1,3 +1,24 @@
+2016-03-15  Tim Horton  <timothy_horton@apple.com>
+
+        Unskip and rebaseline <attachment> tests on iOS
+        <rdar://problem/24805991>
+
+        * fast/attachment/attachment-default-icon.html:
+        * fast/attachment/attachment-folder-icon.html:
+        * fast/attachment/attachment-type-attribute.html:
+        Make these tests have identical titles between ref and actual, because
+        on iOS the layout differs if you have a title or not (unlike on Mac).
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/fast/attachment/attachment-label-highlight-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-progress-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-rendering-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-select-on-click-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-select-on-click-inside-user-select-all-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-subtitle-expected.txt:
+        * platform/ios-simulator/fast/attachment/attachment-title-expected.txt:
+        Unskip and rebaseline all but one of the attachment tests on iOS.
+
 2016-03-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove flaky expectation for webgl/1.0.2/conformance/rendering/gl-scissor-test.html for mac

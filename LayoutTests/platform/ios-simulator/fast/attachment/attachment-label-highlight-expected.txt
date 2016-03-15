@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x36
-  RenderBlock {HTML} at (0,0) size 800x36
-    RenderBody {BODY} at (8,8) size 784x20
-      RenderAttachment {ATTACHMENT} at (0,16) size 0x0
-      RenderAttachment {ATTACHMENT} at (0,16) size 0x0
-      RenderAttachment {ATTACHMENT} at (0,16) size 0x0
-      RenderAttachment {ATTACHMENT} at (0,16) size 0x0
-      RenderAttachment {ATTACHMENT} at (0,16) size 0x0
-      RenderAttachment {ATTACHMENT} at (0,16) size 0x0
+layer at (0,0) size 800x284
+  RenderBlock {HTML} at (0,0) size 800x284
+    RenderBody {BODY} at (8,8) size 784x268
+      RenderAttachment {ATTACHMENT} at (0,15) size 160x119
+      RenderAttachment {ATTACHMENT} at (160,15) size 160x119
+      RenderAttachment {ATTACHMENT} at (320,15) size 160x119
+      RenderAttachment {ATTACHMENT} at (480,15) size 160x119
+      RenderAttachment {ATTACHMENT} at (0,149) size 160x119
+      RenderAttachment {ATTACHMENT} at (160,149) size 160x119
       RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 2 {ATTACHMENT} of body
 selection end:   position 1 of child 7 {ATTACHMENT} of body

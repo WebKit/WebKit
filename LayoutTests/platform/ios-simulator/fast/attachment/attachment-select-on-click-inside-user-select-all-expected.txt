@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x36
-  RenderBlock {HTML} at (0,0) size 800x36
-    RenderBody {BODY} at (8,8) size 784x20
-      RenderBlock {DIV} at (0,0) size 784x20
+layer at (0,0) size 800x150
+  RenderBlock {HTML} at (0,0) size 800x150
+    RenderBody {BODY} at (8,8) size 784x134
+      RenderBlock {DIV} at (0,0) size 784x134
         RenderText {#text} at (0,0) size 73x19
           text run at (0,0) width 73: "text before "
-        RenderAttachment {ATTACHMENT} at (72,16) size 0x0
-        RenderText {#text} at (72,0) size 63x19
-          text run at (72,0) width 63: " text after"
+        RenderAttachment {ATTACHMENT} at (72,15) size 161x119
+        RenderText {#text} at (232,0) size 63x19
+          text run at (232,0) width 63: " text after"
