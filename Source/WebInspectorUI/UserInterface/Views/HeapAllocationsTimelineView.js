@@ -101,6 +101,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         this._heapSnapshotDiff = null;
         this._cancelSelectComparisonHeapSnapshots();
 
+        this._contentViewContainer.hidden();
         this.removeSubview(this._contentViewContainer);
         this.addSubview(this._dataGrid);
 
@@ -113,6 +114,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         if (this._showingSnapshotList) {
             this.removeSubview(this._dataGrid);
             this.addSubview(this._contentViewContainer);
+            this._contentViewContainer.shown();
         }
 
         this._showingSnapshotList = false;
@@ -139,6 +141,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         if (this._showingSnapshotList) {
             this.removeSubview(this._dataGrid);
             this.addSubview(this._contentViewContainer);
+            this._contentViewContainer.shown();
         }
 
         this._showingSnapshotList = false;
@@ -189,10 +192,28 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         this.showHeapSnapshotTimelineRecord(timelineRecord);
     }
 
+    shown()
+    {
+        super.shown();
+
+        if (!this._showingSnapshotList)
+            this._contentViewContainer.shown();
+    }
+
+    hidden()
+    {
+        super.hidden();
+
+        if (!this._showingSnapshotList)
+            this._contentViewContainer.hidden();
+    }
+
     closed()
     {
         console.assert(this.representedObject instanceof WebInspector.Timeline);
         this.representedObject.removeEventListener(null, null, this);
+
+        this._contentViewContainer.closeAllContentViews();
     }
 
     layout()

@@ -37,6 +37,9 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
         this._sortComparator = sortComparator;
         this._includeInternalObjects = includeInternalObjects;
 
+        this._popover = null;
+        this._popoverNode = null;
+
         this._populateTopLevel();
         this.sort();
     }
@@ -80,6 +83,24 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
         this.sort();
     }
 
+    get popover()
+    {
+        if (!this._popover)
+            this._popover = new WebInspector.Popover(this);
+
+        return this._popover;
+    }
+
+    get popoverNode()
+    {
+        return this._popoverNode;
+    }
+
+    set popoverNode(x)
+    {
+        this._popoverNode = x;
+    }
+
     get children()
     {
         return this._children;
@@ -115,6 +136,19 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
             children[i]._recalculateSiblings(i);
             children[i].sort();
         }
+    }
+
+    hidden()
+    {
+        if (this._popover && this._popover.visible)
+            this._popover.dismiss();
+    }
+
+    // Popover delegate
+
+    willDismissPopover(popover)
+    {
+        this._popoverNode = null;
     }
 
     // Private

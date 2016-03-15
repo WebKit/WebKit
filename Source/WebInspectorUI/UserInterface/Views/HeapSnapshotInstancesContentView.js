@@ -87,6 +87,15 @@ WebInspector.HeapSnapshotInstancesContentView = class HeapSnapshotInstancesConte
         this._sortDataGrid();
     }
 
+    // Protected
+
+    hidden()
+    {
+        super.hidden();
+
+        this._heapSnapshotDataGridTree.hidden();
+    }
+
     // Private
 
     _sortDataGrid()

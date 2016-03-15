@@ -37,8 +37,12 @@
     display: inline-block;
 }
 
-.heap-snapshot > .data-grid tr:not(.selected) td .object-id {
+.heap-snapshot .object-id {
     color: gray;
+}
+
+.heap-snapshot .object-id:hover {
+    text-decoration: underline;
 }
 
 .heap-snapshot > .data-grid tr:not(.selected) td .preview-error {
@@ -75,7 +79,7 @@
     width: 16px;
     height: 16px;
     margin-top: 1px;
-    margin-right: 3px;
+    margin-right: 4px;
     content: url(../Images/TypeUndefined.svg);
 }
 
@@ -120,4 +124,47 @@
     text-indent: 0; /* Do not inherit the DataGrid's indent. */
     display: inline-block;
     height: 16px;
+}
+
+.heap-snapshot-instance-popover-content {
+    white-space: pre;
+    padding: 5px 10px;
+}
+
+.heap-snapshot-instance-popover-content table {
+    border-collapse: collapse;
+}
+
+.heap-snapshot-instance-popover-content tr {
+    margin: 0;
+    padding: 1px 0;
+}
+
+.heap-snapshot-instance-popover-content td {
+    margin: 0;
+    padding: 0;
+}
+
+.heap-snapshot-instance-popover-content td.edge-name {
+    text-align: right;
+    max-width: 110px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    border-right: 1px solid var(--border-color);
+    padding-right: 5px;
+}
+
+.heap-snapshot-instance-popover-content td.object-data {
+    padding-left: 5px;
+}
+
+.heap-snapshot-instance-popover-content .node {
+    height: 17px;
+    line-height: 17px;
+}
+
+.heap-snapshot-instance-popover-content .node * {
+    display: inline-block;
+    vertical-align: top;
 }

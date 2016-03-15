@@ -40,6 +40,51 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
         this._percent = (this._node.size / this._tree._heapSnapshot.totalSize) * 100;
     }
 
+    // Static
+
+    static logHeapSnapshotNode(node)
+    {
+        let heapObjectIdentifier = node.id;
+
+        let synthetic = true;
+        let text = WebInspector.UIString("Heap Snapshot Object (@%d)").format(heapObjectIdentifier);
+
+        let gcRootPath = node.shortestGCRootPath;
+        if (gcRootPath) {
+            gcRootPath = gcRootPath.slice().reverse();
+            let windowIndex = gcRootPath.findIndex((x) => {
+                return x instanceof WebInspector.HeapSnapshotNode && x.className === "Window";
+            });
+
+            let heapSnapshotRootPath = WebInspector.HeapSnapshotRootPath.emptyPath();
+            for (let i = windowIndex === -1 ? 0 : windowIndex; i < gcRootPath.length; ++i) {
+                let component = gcRootPath[i];
+                if (component instanceof WebInspector.HeapSnapshotNode) {
+                    if (component.className === "Window")
+                        heapSnapshotRootPath = heapSnapshotRootPath.appendGlobalScopeName(component, "window");
+                } else if (component instanceof WebInspector.HeapSnapshotEdge)
+                    heapSnapshotRootPath = heapSnapshotRootPath.appendEdge(component);
+            }
+
+            if (!heapSnapshotRootPath.isFullPathImpossible()) {
+                synthetic = false;
+                text = heapSnapshotRootPath.fullPath;
+            }
+        }
+
+        if (node.className === "string") {
+            HeapAgent.getPreview(heapObjectIdentifier, function(error, string, functionDetails, objectPreviewPayload) {
+                let remoteObject = error ? WebInspector.RemoteObject.fromPrimitiveValue(undefined) : WebInspector.RemoteObject.fromPrimitiveValue(string);
+                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, synthetic);                
+            });
+        } else {
+            HeapAgent.getRemoteObject(heapObjectIdentifier, WebInspector.RuntimeManager.ConsoleObjectGroup, function(error, remoteObjectPayload) {
+                let remoteObject = error ? WebInspector.RemoteObject.fromPrimitiveValue(undefined) : WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
+                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, synthetic);
+            });
+        }
+    }
+
     // Protected
 
     get data() { return this._node; }
@@ -77,7 +122,12 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
 
             let idElement = containerElement.appendChild(document.createElement("span"));
             idElement.classList.add("object-id");
-            idElement.textContent = "@" + id + " ";
+            idElement.textContent = "@" + id;
+            idElement.addEventListener("click", WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.bind(null, this._node));
+            idElement.addEventListener("mouseover", this._mouseoverHandler.bind(this));
+
+            let spacerElement = containerElement.appendChild(document.createElement("span"));
+            spacerElement.textContent = " ";
 
             HeapAgent.getPreview(id, (error, string, functionDetails, objectPreviewPayload) => {
                 if (error) {
@@ -137,17 +187,116 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
     _contextMenuHandler(event)
     {
         let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-
         contextMenu.appendSeparator();
+        contextMenu.appendItem(WebInspector.UIString("Log Value"), WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.bind(null, this._node));
+    }
 
-        contextMenu.appendItem(WebInspector.UIString("Log Value"), () => {
-            let heapObjectIdentifier = this._node.id;
-            HeapAgent.getRemoteObject(heapObjectIdentifier, WebInspector.RuntimeManager.ConsoleObjectGroup, function(error, remoteObjectPayload) {
-                const synthetic = true;
-                let remoteObject = error ? WebInspector.RemoteObject.fromPrimitive(undefined) : WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
-                let text = WebInspector.UIString("Heap Snapshot Object (@%d)").format(heapObjectIdentifier);
-                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, synthetic);
+    _mouseoverHandler(event)
+    {
+        let targetFrame = WebInspector.Rect.rectFromClientRect(event.target.getBoundingClientRect());
+        if (!targetFrame.size.width && !targetFrame.size.height)
+            return;
+
+        if (this._tree.popoverNode === this._node)
+            return;
+
+        this._tree.popoverNode = this._node;
+
+        let popoverContentElement = document.createElement("div");
+        popoverContentElement.classList.add("heap-snapshot", "heap-snapshot-instance-popover-content");
+
+        function appendPath(path) {
+            let tableElement = popoverContentElement.appendChild(document.createElement("table"));
+            tableElement.classList.add("table");
+
+            path = path.slice().reverse();
+            let windowIndex = path.findIndex((x) => {
+                return x instanceof WebInspector.HeapSnapshotNode && x.className === "Window";
             });
-        });
+
+            let edge = null;
+            for (let i = windowIndex === -1 ? 0 : windowIndex; i < path.length; ++i) {
+                let component = path[i];
+                if (component instanceof WebInspector.HeapSnapshotEdge) {
+                    edge = component;
+                    continue;
+                }
+                appendPathRow(tableElement, edge, component);
+                edge = null;
+            }
+        }
+
+        function appendPathRow(tableElement, edge, node) {
+            let tableRow = tableElement.appendChild(document.createElement("tr"));
+
+            // Edge name.
+            let pathDataElement = tableRow.appendChild(document.createElement("td"));
+            pathDataElement.classList.add("edge-name");
+
+            if (node.className === "Window")
+                pathDataElement.textContent = "window";
+            else if (edge) {
+                let edgeString = stringifyEdge(edge);
+                pathDataElement.textContent = typeof edgeString === "string" ? edgeString : emDash;
+            } else
+                pathDataElement.textContent = emDash;
+
+            if (pathDataElement.textContent.length > 10)
+                pathDataElement.title = pathDataElement.textContent;
+
+            // Object.
+            let objectDataElement = tableRow.appendChild(document.createElement("td"));
+            objectDataElement.classList.add("object-data");
+
+            let containerElement = objectDataElement.appendChild(document.createElement("div"));
+            containerElement.classList.add("node");
+
+            let iconElement = containerElement.appendChild(document.createElement("img"));
+            iconElement.classList.add("icon", WebInspector.HeapSnapshotClusterContentView.iconStyleClassNameForClassName(node.className, node.internal));
+
+            let classNameElement = containerElement.appendChild(document.createElement("span"));
+            classNameElement.textContent = sanitizeClassName(node.className);
+
+            let idElement = containerElement.appendChild(document.createElement("span"));
+            idElement.classList.add("object-id");
+            idElement.textContent = " @" + node.id;
+            idElement.addEventListener("click", WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.bind(null, node));
+        }
+
+        function sanitizeClassName(className) {
+            if (className.endsWith("LexicalEnvironment"))
+                return WebInspector.UIString("Scope");
+            return className;
+        }
+
+        function stringifyEdge(edge) {
+            switch(edge.type) {
+            case WebInspector.HeapSnapshotEdge.EdgeType.Property:
+            case WebInspector.HeapSnapshotEdge.EdgeType.Variable:
+                if (/^(?![0-9])\w+$/.test(edge.data))
+                    return edge.data;
+                return "[" + doubleQuotedString(edge.data) + "]";
+            case WebInspector.HeapSnapshotEdge.EdgeType.Index:
+                return "[" + edge.data + "]";
+            case WebInspector.HeapSnapshotEdge.EdgeType.Internal:
+            default:
+                return null;
+            }
+        }
+
+        if (this._node.gcRoot) {
+            let textElement = popoverContentElement.appendChild(document.createElement("div"));
+            textElement.textContent = WebInspector.UIString("This object is a root");
+        } else {
+            let path = this._node.shortestGCRootPath;
+            if (path)
+                appendPath(path);
+            else {
+                let emptyElement = popoverContentElement.appendChild(document.createElement("div"));
+                emptyElement.textContent = WebInspector.UIString("This object is referenced by internal objects");
+            }
+        }
+
+        this._tree.popover.presentNewContentWithFrame(popoverContentElement, targetFrame.pad(2), [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
     }
 };

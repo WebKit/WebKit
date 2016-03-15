@@ -35,4 +35,62 @@ WebInspector.HeapSnapshotNode = class HeapSnapshotNode
         this.outgoingEdges = [];
         this.incomingEdges = [];
     }
+
+    // Public
+
+    get shortestGCRootPath()
+    {
+        // Returns an array from this node to a gcRoot node.
+        // E.g. [Node, Edge, Node, Edge, Node].
+        // Internal nodes are avoided, so if the path is empty this
+        // node is either a gcRoot or only reachable via Internal nodes.
+
+        if (this._shortestGCRootPath !== undefined)
+            return this._shortestGCRootPath;
+
+        let paths = this._gcRootPaths();
+        paths.sort((a, b) => a.length - b.length);
+        this._shortestGCRootPath = paths[0] || null;
+
+        return this._shortestGCRootPath;
+    }
+
+    // Private
+
+    _gcRootPaths()
+    {
+        if (this.gcRoot)
+            return [];
+
+        let paths = [];
+        let currentPath = [];
+        let visitedSet = new Set;
+
+        function visitNode(node) {
+            if (node.gcRoot) {
+                let fullPath = currentPath.slice();
+                fullPath.push(node);
+                paths.push(fullPath);
+                return;
+            }
+
+            if (visitedSet.has(node))
+                return;
+            visitedSet.add(node);
+
+            currentPath.push(node);
+            for (let parentEdge of node.incomingEdges) {
+                if (parentEdge.from.internal)
+                    continue;
+                currentPath.push(parentEdge);
+                visitNode(parentEdge.from);
+                currentPath.pop();
+            }
+            currentPath.pop();
+        }
+
+        visitNode(this);
+
+        return paths;
+    }
 };
