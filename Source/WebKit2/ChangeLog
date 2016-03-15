@@ -1,3 +1,23 @@
+2016-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r197939): ASSERTION FAILED: url.containsOnlyASCII() in URL.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=155449
+        <rdar://problem/25134826>
+
+        Reviewed by Carlos Garcia Campos.
+
+        Bump WK2 Network Disk Cache version after r197939 as the new cache format
+        is not compatible with the old one and leads to assertions being hit when
+        browsing in Debug builds.
+
+        SubresourceInfo used to only contain a boolean and would therefore be
+        serialized as "0" / "1". However, after r197939, a URL field was added
+        and when trying to decode old cache entries with the new format, we
+        would try to construct a URL from the String "0" or "1". This would
+        assert because these are not valid URLs.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2016-03-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r197981.
