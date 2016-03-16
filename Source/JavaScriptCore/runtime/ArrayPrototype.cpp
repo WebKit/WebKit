@@ -737,8 +737,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
     if (!thisObject)
         return JSValue::encode(JSValue());
 
+    VM& vm = exec->vm();
     unsigned length = getLength(exec, thisObject);
-    if (exec->hadException())
+    if (vm.exception())
         return JSValue::encode(jsUndefined());
 
     switch (thisObject->indexingType()) {
@@ -776,31 +777,40 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
     }
 
     unsigned middle = length / 2;
-    for (unsigned k = 0; k < middle; k++) {
-        unsigned lk1 = length - k - 1;
-        JSValue obj2 = getProperty(exec, thisObject, lk1);
-        if (exec->hadException())
+    for (unsigned lower = 0; lower < middle; lower++) {
+        unsigned upper = length - lower - 1;
+        bool lowerExists = thisObject->hasProperty(exec, lower);
+        if (vm.exception())
             return JSValue::encode(jsUndefined());
-        JSValue obj = getProperty(exec, thisObject, k);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
+        JSValue lowerValue;
+        if (lowerExists)
+            lowerValue = thisObject->get(exec, lower);
 
-        if (obj2) {
-            thisObject->putByIndexInline(exec, k, obj2, true);
-            if (exec->hadException())
-                return JSValue::encode(jsUndefined());
-        } else if (!thisObject->methodTable(exec->vm())->deletePropertyByIndex(thisObject, exec, k)) {
-            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
+        bool upperExists = thisObject->hasProperty(exec, upper);
+        if (vm.exception())
             return JSValue::encode(jsUndefined());
+        JSValue upperValue;
+        if (upperExists)
+            upperValue = thisObject->get(exec, upper);
+
+        if (upperExists) {
+            thisObject->putByIndexInline(exec, lower, upperValue, true);
+            if (vm.exception())
+                return JSValue::encode(JSValue());
+        } else if (!thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, lower)) {
+            if (!vm.exception())
+                throwTypeError(exec, ASCIILiteral("Unable to delete property."));
+            return JSValue::encode(JSValue());
         }
 
-        if (obj) {
-            thisObject->putByIndexInline(exec, lk1, obj, true);
-            if (exec->hadException())
-                return JSValue::encode(jsUndefined());
-        } else if (!thisObject->methodTable(exec->vm())->deletePropertyByIndex(thisObject, exec, lk1)) {
-            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
-            return JSValue::encode(jsUndefined());
+        if (lowerExists) {
+            thisObject->putByIndexInline(exec, upper, lowerValue, true);
+            if (vm.exception())
+                return JSValue::encode(JSValue());
+        } else if (!thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, upper)) {
+            if (!vm.exception())
+                throwTypeError(exec, ASCIILiteral("Unable to delete property."));
+            return JSValue::encode(JSValue());
         }
     }
     return JSValue::encode(thisObject);

@@ -1,3 +1,25 @@
+2016-03-16  Saam Barati  <sbarati@apple.com>
+
+        [ES6] Make Array.prototype.reverse spec compatible.
+        https://bugs.webkit.org/show_bug.cgi?id=155528
+
+        Reviewed by Michael Saboff.
+
+        This patch make Array.prototype.reverse spec compatible.
+        Before, we weren't performing a HasProperty of each index
+        before performing a Get on that index.  We now do that on
+        the slow path.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncReverse):
+        * tests/stress/array-reverse-proxy.js: Added.
+        (assert):
+        (test):
+        (shallowCopy):
+        (shallowEqual):
+        (let.handler.get getSet):
+        (test.let.handler.get getSet):
+
 2016-03-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r198235, r198240, r198241, and
