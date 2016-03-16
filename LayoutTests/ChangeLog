@@ -1,3 +1,16 @@
+2016-03-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        URL Parsing should signal failure for illegal IDN
+        https://bugs.webkit.org/show_bug.cgi?id=154945
+        <rdar://problem/8014795>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/url/host-expected.txt:
+        * fast/url/idna2003-expected.txt:
+        * fast/url/invalid-idn-expected.txt: Added.
+        * fast/url/invalid-idn.html: Added.
+
 2016-03-16  Mark Lam  <mark.lam@apple.com>
 
         Add support for setting Function.name from computed properties.

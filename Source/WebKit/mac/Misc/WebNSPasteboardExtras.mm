@@ -131,7 +131,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     if ([types containsObject:NSStringPboardType]) {
         NSString *URLString = [self stringForType:NSStringPboardType];
         if ([URLString _webkit_looksLikeAbsoluteURL]) {
-            NSURL *URL = [[NSURL _web_URLWithUserTypedString:URLString] _webkit_canonicalize];
+            NSURL *URL = [[NSURL _webkit_URLWithUserTypedString:URLString] _webkit_canonicalize];
             if (URL) {
                 return URL;
             }

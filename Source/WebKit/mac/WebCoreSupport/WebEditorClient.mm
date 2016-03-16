@@ -419,7 +419,7 @@ NSURL *WebEditorClient::canonicalizeURLString(NSString *URLString)
 {
     NSURL *URL = nil;
     if ([URLString _webkit_looksLikeAbsoluteURL])
-        URL = [[NSURL _web_URLWithUserTypedString:URLString] _webkit_canonicalize];
+        URL = [[NSURL _webkit_URLWithUserTypedString:URLString] _webkit_canonicalize];
     return URL;
 }
 

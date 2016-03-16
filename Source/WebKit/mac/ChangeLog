@@ -1,3 +1,39 @@
+2016-03-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        URL Parsing should signal failure for illegal IDN
+        https://bugs.webkit.org/show_bug.cgi?id=154945
+        <rdar://problem/8014795>
+
+        Reviewed by Brent Fulgham.
+
+        In this patch, we add new SPIs _webkit_URLWithUserTypedString, _webkit_decodeHostName and
+        _webkit_encodeHostName which will return nil while dealing with illegal IDN.
+
+        Old SPIs _web_URLWithUserTypedString, _web_decodeHostName and _web_encodeHostName are marked
+        deprecated as they ignore URL parsing failure.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * Misc/WebKitErrors.m:
+        (+[NSError _webKitErrorWithCode:failingURL:]):
+        * Misc/WebNSFileManagerExtras.mm:
+        (-[NSFileManager _webkit_setMetadataURL:referrer:atPath:]):
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_bestURL]):
+        * Misc/WebNSURLExtras.h:
+        * Misc/WebNSURLExtras.mm:
+        (+[NSURL _web_URLWithUserTypedString:]):
+        (+[NSURL _webkit_URLWithUserTypedString:relativeToURL:]):
+        (+[NSURL _webkit_URLWithUserTypedString:]):
+        (-[NSString _web_decodeHostName]):
+        (-[NSString _web_encodeHostName]):
+        (-[NSString _webkit_decodeHostName]):
+        (-[NSString _webkit_encodeHostName]):
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForChallenge:]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::canonicalizeURLString):
+
 2016-03-15  Jer Noble  <jer.noble@apple.com>
 
         [ios-sim debug] API test WebKit1.AudioSessionCategoryIOS timing out
