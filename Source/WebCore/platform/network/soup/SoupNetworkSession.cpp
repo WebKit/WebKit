@@ -110,6 +110,14 @@ SoupNetworkSession::SoupNetworkSession(SoupCookieJar* cookieJar)
         SOUP_SESSION_USE_THREAD_CONTEXT, TRUE,
         nullptr);
 
+#if SOUP_CHECK_VERSION(2, 53, 92)
+    if (soup_auth_negotiate_supported()) {
+        g_object_set(m_soupSession.get(),
+            SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_AUTH_NEGOTIATE,
+            nullptr);
+    }
+#endif
+
     setupLogger();
 
     g_signal_connect(m_soupSession.get(), "authenticate", G_CALLBACK(authenticateCallback), nullptr);
