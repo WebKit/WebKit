@@ -1,5 +1,21 @@
 2016-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed, rolling out r196951 and r197031.
+
+        Revert also WinCairo follow ups after r196803
+
+        Reverted changesets:
+
+        "[WinCairo] Compile fix."
+        https://bugs.webkit.org/show_bug.cgi?id=154545
+        http://trac.webkit.org/changeset/196951
+
+        "[WinCairo] Mark layer as non composited."
+        https://bugs.webkit.org/show_bug.cgi?id=154640
+        http://trac.webkit.org/changeset/197031
+
+2016-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed, rolling out r197693.
 
         197031
