@@ -1,5 +1,17 @@
 2016-03-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r188574. rdar://problem/25070230
+
+    2015-08-17  Alex Christensen  <achristensen@webkit.org>
+
+            WinCairo build fix after r188566
+
+            * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+            (WebCore::FontPlatformData::FontPlatformData):
+            Remove reference to removed m_isCompositeFontReference.
+
+2016-03-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188566. rdar://problem/25070230
 
     2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
