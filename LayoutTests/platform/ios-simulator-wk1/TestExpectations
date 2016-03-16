@@ -1342,3 +1342,5 @@ imported/blink/fast/masking/mask-serializing.html [ Crash Pass ]
 imported/blink/fast/multicol/newmulticol/multicol-becomes-regular-block.html [ Crash Pass ]
 imported/blink/editing/undo/crash-redo-with-iframes.html [ Failure Pass ]
 imported/blink/fast/css-grid-layout/stale-grid-layout-2.html [ Failure Pass ]
+
+webkit.org/b/155495 compositing/visible-rect/animated-from-none.html [ Failure ]
