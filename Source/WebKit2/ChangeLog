@@ -1,3 +1,17 @@
+2016-03-16  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r192184): CleanMyDrive 2's tutorial window is blank
+        https://bugs.webkit.org/show_bug.cgi?id=155550
+        <rdar://problem/24250689>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setDrawsTransparentBackground:]):
+        The app is using this SPI via key-value coding, so just keeping the implementation
+        is sufficient to make AppKit stop throwing an undefined key exception.
+        Log once that this is deprecated (... it's also SPI) and then forward to setDrawsBackground.
+
 2016-03-16  Daniel Bates  <dabates@apple.com>
 
         <video> and <audio> elements do not obey Content Security Policy on redirect

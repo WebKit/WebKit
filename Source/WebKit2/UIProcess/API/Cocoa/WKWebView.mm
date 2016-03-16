@@ -4183,6 +4183,17 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _impl->setDrawsBackground(drawsBackground);
 }
 
+- (void)_setDrawsTransparentBackground:(BOOL)drawsTransparentBackground
+{
+    static BOOL hasLoggedDeprecationWarning;
+    if (!hasLoggedDeprecationWarning) {
+        // See bug 155550 for details.
+        NSLog(@"-[WKWebView _setDrawsTransparentBackground:] is deprecated and should not be used.");
+        hasLoggedDeprecationWarning = YES;
+    }
+    [self _setDrawsBackground:!drawsTransparentBackground];
+}
+
 #if WK_API_ENABLED
 - (NSView *)_inspectorAttachmentView
 {
