@@ -63,6 +63,11 @@ bool StringObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, 
 
 bool StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    StringObject* thisObject = jsCast<StringObject*>(cell);
+
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+
     if (propertyName == exec->propertyNames().length) {
         if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);

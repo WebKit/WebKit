@@ -116,6 +116,10 @@ bool JSDataView::put(
     PutPropertySlot& slot)
 {
     JSDataView* thisObject = jsCast<JSDataView*>(cell);
+
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+
     if (propertyName == exec->propertyNames().byteLength
         || propertyName == exec->propertyNames().byteOffset)
         return reject(exec, slot.isStrictMode(), "Attempting to write to read-only typed array property.");

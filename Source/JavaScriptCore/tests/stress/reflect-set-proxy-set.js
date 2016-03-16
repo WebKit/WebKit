@@ -1,6 +1,16 @@
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error('bad value: ' + actual);
+}
+
+function unreachable()
+{
+    throw new Error('unreachable');
+}
+
 function assert(b) {
     if (!b)
-        throw new Error("Bad assertion");
+        throw new Error("bad assertion");
 }
 
 {
@@ -17,7 +27,8 @@ function assert(b) {
     for (let i = 0; i < 1000; i++) {
         let threw = false;
         try {
-            proxy.x = 40;
+            Reflect.set(proxy, 'x', 40);
+            unreachable();
         } catch(e) {
             assert(e.toString() === "TypeError: 'set' property of a Proxy's handler should be callable.");
             threw = true;
@@ -43,7 +54,8 @@ function assert(b) {
     for (let i = 0; i < 1000; i++) {
         let threw = false;
         try {
-            proxy.x = 40;
+            Reflect.set(proxy, 'x', 40);
+            unreachable();
         } catch(e) {
             assert(e === error);
             threw = true;
@@ -70,7 +82,8 @@ function assert(b) {
     for (let i = 0; i < 1000; i++) {
         let threw = false;
         try {
-            proxy.x = 40;
+            Reflect.set(proxy, 'x', 40);
+            unreachable();
         } catch(e) {
             assert(e === error);
             threw = true;
@@ -100,7 +113,7 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 1000; i++) {
-        proxy.x = 40;
+        shouldBe(Reflect.set(proxy, 'x', 40), false);
         assert(called);
         assert(proxy.x === 500);
         assert(target.x === 500);
@@ -128,7 +141,8 @@ function assert(b) {
     for (let i = 0; i < 1000; i++) {
         let threw = false;
         try {
-            proxy.x = 40;
+            Reflect.set(proxy, 'x', 40);
+            unreachable();
         } catch(e) {
             threw = true;
             assert(e.toString() === "TypeError: Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'.");
@@ -158,7 +172,7 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 1000; i++) {
-        proxy.x = 40;
+        shouldBe(Reflect.set(proxy, 'x', 40), false);
         assert(proxy.x === 25);
         assert(called);
         called = false;
@@ -188,7 +202,8 @@ function assert(b) {
     for (let i = 0; i < 1000; i++) {
         let threw = false;
         try {
-            proxy.x = 40;
+            Reflect.set(proxy, 'x', 40);
+            unreachable();
         } catch(e) {
             threw = true;
             assert(e.toString() === "TypeError: Proxy handler's 'set' method on a non-configurable accessor property without a setter should return false.");
@@ -217,7 +232,7 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 1000; i++) {
-        proxy.x = i;
+        shouldBe(Reflect.set(proxy, 'x', i), true);
         assert(called);
         assert(proxy.x === i);
         assert(target.x === i);
@@ -242,13 +257,13 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 1000; i++) {
-        proxy.x = i;
+        shouldBe(Reflect.set(proxy, 'x', i), false);
         assert(called);
         assert(proxy.x === i);
         assert(target.x === i);
         called = false;
 
-        proxy["y"] = i;
+        shouldBe(Reflect.set(proxy, 'y', i), false);
         assert(called);
         assert(proxy.y === i);
         assert(target.y === i);
@@ -273,13 +288,13 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 1000; i++) {
-        proxy.x = i;
+        shouldBe(Reflect.set(proxy, 'x', i), false);
         assert(called);
         assert(proxy.x === i);
         assert(target.x === i);
         called = false;
 
-        proxy["y"] = i;
+        shouldBe(Reflect.set(proxy, 'y', i), false);
         assert(called);
         assert(proxy.y === i);
         assert(target.y === i);
@@ -295,7 +310,7 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 1000; i++) {
-        proxy[i] = i;
+        shouldBe(Reflect.set(proxy, i, i), true);
         assert(proxy[i] === i);
         assert(target[i] === i);
     }
@@ -316,7 +331,7 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 1000; i++) {
-        proxy[i] = i;
+        shouldBe(Reflect.set(proxy, i, i), false);
         assert(proxy[i] === i);
         assert(target[i] === i);
         assert(called);
@@ -339,7 +354,7 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 1000; i++) {
-        proxy[i] = i;
+        shouldBe(Reflect.set(proxy, i, i), false);
         assert(proxy[i] === i);
         assert(target[i] === i);
         assert(called);
@@ -372,7 +387,7 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 1000; i++) {
-        proxy.x = i;
+        shouldBe(Reflect.set(proxy, 'x', i), true);
         assert(called);
         assert(proxy.x === i);
         assert(target.x === i);
@@ -404,11 +419,11 @@ function assert(b) {
         }
     });
     for (let i = 0; i < 1000; i++) {
-        obj.own = i;
+        shouldBe(Reflect.set(obj, 'own', i), true);
         assert(!called);
         assert(obj.own === i);
 
-        obj.notOwn = i;
+        shouldBe(Reflect.set(obj, 'notOwn', i), true);
         assert(target.notOwn === i);
         assert(proxy.notOwn === i);
         assert(obj.notOwn === i);
@@ -430,11 +445,11 @@ function assert(b) {
         }
     });
     for (let i = 0; i < 1000; i++) {
-        obj.own = i;
+        shouldBe(Reflect.set(obj, 'own', i), true);
         assert(obj.own === i);
         assert(proxy.own === undefined);
 
-        obj.notOwn = i;
+        shouldBe(Reflect.set(obj, 'notOwn', i), true);
         // The receiver is always |obj|.
         // obj.[[Set]](P, V, obj) -> Proxy.[[Set]](P, V, obj) -> target.[[Set]](P, V, obj)
         assert(target.notOwn === undefined);
@@ -465,12 +480,12 @@ function assert(b) {
         }
     });
     for (let i = 0; i < 1000; i++) {
-        obj[0] = i;
+        shouldBe(Reflect.set(obj, 0, i), true);
         assert(!called);
         assert(obj[0] === i);
         assert(proxy[0] === undefined);
 
-        obj[1] = i;
+        shouldBe(Reflect.set(obj, 1, i), true);
         assert(target[1] === i);
         assert(proxy[1] === i);
         assert(obj[1] === i);
@@ -492,11 +507,11 @@ function assert(b) {
         }
     });
     for (let i = 0; i < 1000; i++) {
-        obj[0] = i;
+        shouldBe(Reflect.set(obj, 0, i), true);
         assert(obj[0] === i);
         assert(proxy[0] === undefined);
 
-        obj[1] = i;
+        shouldBe(Reflect.set(obj, 1, i), true);
         // The receiver is always |obj|.
         // obj.[[Set]](P, V, obj) -> Proxy.[[Set]](P, V, obj) -> target.[[Set]](P, V, obj)
         assert(target[1] === undefined);
@@ -527,12 +542,12 @@ function assert(b) {
         }
     });
     for (let i = 0; i < 1000; i++) {
-        obj[0] = i;
+        shouldBe(Reflect.set(obj, 0, i), true);
         assert(!called);
         assert(obj[0] === i);
         assert(proxy[0] === undefined);
 
-        obj[1] = i;
+        shouldBe(Reflect.set(obj, 1, i), true);
         assert(target[1] === i);
         assert(proxy[1] === i);
         assert(obj[1] === i);
@@ -563,12 +578,12 @@ function assert(b) {
         }
     });
     for (let i = 0; i < 1000; i++) {
-        obj[0] = i;
+        shouldBe(Reflect.set(obj, 0, i), true);
         assert(!called);
         assert(obj[0] === i);
         assert(proxy[0] === 25);
 
-        obj[1] = i;
+        shouldBe(Reflect.set(obj, 1, i), true);
         assert(target[1] === i);
         assert(proxy[1] === i);
         assert(obj[1] === i);
@@ -599,12 +614,12 @@ function assert(b) {
         }
     });
     for (let i = 0; i < 1000; i++) {
-        obj.own = i;
+        shouldBe(Reflect.set(obj, 'own', i), true);
         assert(!called);
         assert(obj.own === i);
         assert(proxy.own === undefined);
 
-        obj.notOwn = i;
+        shouldBe(Reflect.set(obj, 'notOwn', i), false);
         assert(target.notOwn === i);
         assert(proxy.notOwn === i);
         assert(obj.notOwn === i);
@@ -635,12 +650,12 @@ function assert(b) {
         }
     });
     for (let i = 0; i < 1000; i++) {
-        obj[0] = i;
+        shouldBe(Reflect.set(obj, 0, i), true);
         assert(!called);
         assert(obj[0] === i);
         assert(proxy[0] === 25);
 
-        obj[1] = i;
+        shouldBe(Reflect.set(obj, 1, i), false);
         assert(target[1] === i);
         assert(proxy[1] === i);
         assert(obj[1] === i);

@@ -169,6 +169,10 @@ bool JSArrayBufferView::put(
     PutPropertySlot& slot)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
+
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+
     if (propertyName == exec->propertyNames().buffer)
         return reject(exec, slot.isStrictMode(), "Attempting to write to read-only typed array property.");
     

@@ -24,7 +24,6 @@
 #include "JSCJSValue.h"
 #include "PropertyName.h"
 #include "PropertyOffset.h"
-#include "Register.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {
@@ -52,6 +51,11 @@ enum Attribute {
     BuiltinOrFunctionOrAccessorOrConstant = Builtin | Function | Accessor | ConstantInteger, // helper only used by static hashtables
 };
 
+enum CacheabilityType : uint8_t {
+    CachingDisallowed,
+    CachingAllowed
+};
+
 inline unsigned attributesForStructure(unsigned attributes)
 {
     // The attributes that are used just for the static hashtable are at bit 8 and higher.
@@ -64,11 +68,6 @@ class PropertySlot {
         TypeValue,
         TypeGetter,
         TypeCustom
-    };
-
-    enum CacheabilityType : uint8_t {
-        CachingDisallowed,
-        CachingAllowed
     };
 
 public:

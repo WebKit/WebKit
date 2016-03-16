@@ -30,6 +30,7 @@
 #include "JSGlobalObject.h"
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
+#include "Reject.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {
@@ -293,16 +294,11 @@ inline bool putEntry(ExecState* exec, const HashTableValue* entry, JSObject* bas
                 thisObject->putDirect(exec->vm(), propertyName, value);
             return true;
         }
-        if (slot.isStrictMode())
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-        return false;
+        return reject(exec, slot.isStrictMode(), StrictModeReadonlyPropertyWriteError);
     }
 
-    if (entry->attributes() & Accessor) {
-        if (slot.isStrictMode())
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-        return false;
-    }
+    if (entry->attributes() & Accessor)
+        return reject(exec, slot.isStrictMode(), StrictModeReadonlyPropertyWriteError);
 
     if (!(entry->attributes() & ReadOnly)) {
         bool isAccessor = entry->attributes() & CustomAccessor;
@@ -315,9 +311,7 @@ inline bool putEntry(ExecState* exec, const HashTableValue* entry, JSObject* bas
         return result;
     }
 
-    if (slot.isStrictMode())
-        throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-    return false;
+    return reject(exec, slot.isStrictMode(), StrictModeReadonlyPropertyWriteError);
 }
 
 /**

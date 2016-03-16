@@ -933,7 +933,7 @@
 - path: es6/Proxy_has_handler_instances_of_proxies.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_defineProperty_calls_[[Set]].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_defineProperty_calls_SetIntegrityLevel.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.copyWithin.js
@@ -1021,7 +1021,7 @@
 - path: es6/Proxy_internal_get_calls_ToPropertyDescriptor.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_getOwnPropertyDescriptor_calls_[[Set]].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_getOwnPropertyDescriptor_calls_Function.prototype.bind.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_getOwnPropertyDescriptor_calls_Object.assign.js

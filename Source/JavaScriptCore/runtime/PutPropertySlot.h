@@ -27,7 +27,7 @@
 #define PutPropertySlot_h
 
 #include "JSCJSValue.h"
-#include "PropertyOffset.h"
+#include "PropertySlot.h"
 
 #include <wtf/Assertions.h>
 
@@ -50,6 +50,7 @@ public:
         , m_isStrictMode(isStrictMode)
         , m_isInitialization(isInitialization)
         , m_context(context)
+        , m_cacheability(CachingAllowed)
         , m_putFunction(nullptr)
     {
     }
@@ -112,10 +113,10 @@ public:
     JSValue thisValue() const { return m_thisValue; }
 
     bool isStrictMode() const { return m_isStrictMode; }
-    bool isCacheablePut() const { return m_type == NewProperty || m_type == ExistingProperty; }
-    bool isCacheableSetter() const { return m_type == SetterProperty; }
-    bool isCacheableCustom() const { return m_type == CustomValue || m_type == CustomAccessor; }
-    bool isCustomAccessor() const { return m_type == CustomAccessor; }
+    bool isCacheablePut() const { return isCacheable() && (m_type == NewProperty || m_type == ExistingProperty); }
+    bool isCacheableSetter() const { return isCacheable() && m_type == SetterProperty; }
+    bool isCacheableCustom() const { return isCacheable() && (m_type == CustomValue || m_type == CustomAccessor); }
+    bool isCustomAccessor() const { return isCacheable() && m_type == CustomAccessor; }
     bool isInitialization() const { return m_isInitialization; }
 
     PropertyOffset cachedOffset() const
@@ -123,7 +124,14 @@ public:
         return m_offset;
     }
 
+    void disableCaching()
+    {
+        m_cacheability = CachingDisallowed;
+    }
+
 private:
+    bool isCacheable() const { return m_cacheability == CachingAllowed; }
+
     Type m_type;
     JSObject* m_base;
     JSValue m_thisValue;
@@ -131,6 +139,7 @@ private:
     bool m_isStrictMode;
     bool m_isInitialization;
     uint8_t m_context;
+    CacheabilityType m_cacheability;
     PutValueFunc m_putFunction;
 };
 

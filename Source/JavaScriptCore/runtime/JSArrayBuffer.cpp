@@ -84,6 +84,9 @@ bool JSArrayBuffer::put(
     PutPropertySlot& slot)
 {
     JSArrayBuffer* thisObject = jsCast<JSArrayBuffer*>(cell);
+
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
     
     if (propertyName == exec->propertyNames().byteLength)
         return reject(exec, slot.isStrictMode(), "Attempting to write to a read-only array buffer property.");

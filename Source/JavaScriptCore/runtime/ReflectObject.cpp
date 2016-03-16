@@ -256,8 +256,8 @@ EncodedJSValue JSC_HOST_CALL reflectObjectSet(ExecState* exec)
         receiver = exec->argument(3);
 
     // Do not raise any readonly errors that happen in strict mode.
-    bool isStrictMode = false;
-    PutPropertySlot slot(receiver, isStrictMode);
+    bool shouldThrowIfCantSet = false;
+    PutPropertySlot slot(receiver, shouldThrowIfCantSet);
     return JSValue::encode(jsBoolean(targetObject->methodTable(exec->vm())->put(targetObject, exec, propertyName, exec->argument(2), slot)));
 }
 

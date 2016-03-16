@@ -1,3 +1,15 @@
+2016-03-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Reflect.set with receiver
+        https://bugs.webkit.org/show_bug.cgi?id=155294
+
+        Reviewed by Saam Barati.
+
+        Currently, putDelegate (JSLocation is special case) and CustomIndexedSetter work as special setters.
+
+        * js/dom/reflect-set-onto-dom-expected.txt:
+        * js/dom/script-tests/reflect-set-onto-dom.js:
+
 2016-03-15  Zalan Bujtas  <zalan@apple.com>
 
         Remove overflow: -webkit-marquee

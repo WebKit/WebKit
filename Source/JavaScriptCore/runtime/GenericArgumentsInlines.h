@@ -110,6 +110,11 @@ bool GenericArguments<Type>::put(JSCell* cell, ExecState* exec, PropertyName ide
         PutPropertySlot dummy = slot; // This put is not cacheable, so we shadow the slot that was given to us.
         return Base::put(thisObject, exec, ident, value, dummy);
     }
+
+    // https://tc39.github.io/ecma262/#sec-arguments-exotic-objects-set-p-v-receiver
+    // Fall back to the OrdinarySet when the receiver is altered from the thisObject.
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        return ordinarySetSlow(exec, thisObject, ident, value, slot.thisValue(), slot.isStrictMode());
     
     Optional<uint32_t> index = parseIndex(ident);
     if (index && thisObject->canAccessIndexQuickly(index.value())) {

@@ -104,13 +104,6 @@ void RegExpObject::getGenericPropertyNames(JSObject* object, ExecState* exec, Pr
     Base::getGenericPropertyNames(object, exec, propertyNames, mode);
 }
 
-static bool reject(ExecState* exec, bool throwException, const char* message)
-{
-    if (throwException)
-        throwTypeError(exec, ASCIILiteral(message));
-    return false;
-}
-
 bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     if (propertyName == exec->propertyNames().lastIndex) {
@@ -150,6 +143,11 @@ static bool regExpObjectSetLastIndexNonStrict(ExecState* exec, EncodedJSValue th
 
 bool RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    RegExpObject* thisObject = jsCast<RegExpObject*>(cell);
+
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+
     if (propertyName == exec->propertyNames().lastIndex) {
         bool result = asRegExpObject(cell)->setLastIndex(exec, value, slot.isStrictMode());
         slot.setCustomValue(asRegExpObject(cell), slot.isStrictMode()

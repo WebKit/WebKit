@@ -1009,6 +1009,21 @@ ALWAYS_INLINE bool JSValue::requireObjectCoercible(ExecState* exec) const
     return false;
 }
 
+ALWAYS_INLINE bool isThisValueAltered(const PutPropertySlot& slot, JSObject* baseObject)
+{
+    JSValue thisValue = slot.thisValue();
+    if (LIKELY(thisValue == baseObject))
+        return false;
+
+    if (!thisValue.isObject())
+        return true;
+    JSObject* thisObject = asObject(thisValue);
+    // Only PureForwardingProxyType can be seen as the same to the original target object.
+    if (thisObject->type() == PureForwardingProxyType && jsCast<JSProxy*>(thisObject)->target() == baseObject)
+        return false;
+    return true;
+}
+
 } // namespace JSC
 
 #endif // JSValueInlines_h

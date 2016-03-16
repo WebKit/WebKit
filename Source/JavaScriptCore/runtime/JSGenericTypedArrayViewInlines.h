@@ -309,6 +309,9 @@ bool JSGenericTypedArrayView<Adaptor>::put(
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
     
+    // https://tc39.github.io/ecma262/#sec-integer-indexed-exotic-objects-set-p-v-receiver
+    // Ignore the receiver even if the receiver is altered to non base value.
+    // 9.4.5.5-2-b-i Return ? IntegerIndexedElementSet(O, numericIndex, V).
     if (Optional<uint32_t> index = parseIndex(propertyName))
         return putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
     

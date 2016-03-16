@@ -421,6 +421,7 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
 bool ProxyObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     VM& vm = exec->vm();
+    slot.disableCaching();
     if (propertyName == vm.propertyNames->underscoreProto)
         return Base::put(cell, exec, propertyName, value, slot);
 

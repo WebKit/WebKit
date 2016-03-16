@@ -417,6 +417,113 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, 
     return false;
 }
 
+// https://tc39.github.io/ecma262/#sec-ordinaryset
+bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyName, JSValue value, JSValue receiver, bool shouldThrow)
+{
+    // If we find the receiver is not the same to the object, we fall to this slow path.
+    // Currently, there are 3 candidates.
+    // 1. Reflect.set can alter the receiver with an arbitrary value.
+    // 2. Window Proxy.
+    // 3. ES6 Proxy.
+
+    VM& vm = exec->vm();
+    JSObject* current = object;
+    PropertyDescriptor ownDescriptor;
+    while (true) {
+        if (current->type() == ProxyObjectType && propertyName != vm.propertyNames->underscoreProto) {
+            ProxyObject* proxy = jsCast<ProxyObject*>(current);
+            PutPropertySlot slot(receiver, shouldThrow);
+            return proxy->ProxyObject::put(proxy, exec, propertyName, value, slot);
+        }
+
+        // 9.1.9.1-2 Let ownDesc be ? O.[[GetOwnProperty]](P).
+        bool ownDescriptorFound = current->getOwnPropertyDescriptor(exec, propertyName, ownDescriptor);
+        if (UNLIKELY(vm.exception()))
+            return false;
+
+        if (!ownDescriptorFound) {
+            // 9.1.9.1-3-a Let parent be ? O.[[GetPrototypeOf]]().
+            JSValue prototype = current->getPrototype(vm, exec);
+            if (UNLIKELY(vm.exception()))
+                return false;
+
+            // 9.1.9.1-3-b If parent is not null, then
+            if (!prototype.isNull()) {
+                // 9.1.9.1-3-b-i Return ? parent.[[Set]](P, V, Receiver).
+                current = asObject(prototype);
+                continue;
+            }
+            // 9.1.9.1-3-c-i Let ownDesc be the PropertyDescriptor{[[Value]]: undefined, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}.
+            ownDescriptor = PropertyDescriptor(jsUndefined(), None);
+        }
+        break;
+    }
+
+    // 9.1.9.1-4 If IsDataDescriptor(ownDesc) is true, then
+    if (ownDescriptor.isDataDescriptor()) {
+        // 9.1.9.1-4-a If ownDesc.[[Writable]] is false, return false.
+        if (!ownDescriptor.writable())
+            return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+
+        // 9.1.9.1-4-b If Type(Receiver) is not Object, return false.
+        if (!receiver.isObject())
+            return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+
+        // In OrdinarySet, the receiver may not be the same to the object.
+        // So, we perform [[GetOwnProperty]] onto the receiver while we already perform [[GetOwnProperty]] onto the object.
+
+        // 9.1.9.1-4-c Let existingDescriptor be ? Receiver.[[GetOwnProperty]](P).
+        JSObject* receiverObject = asObject(receiver);
+        PropertyDescriptor existingDescriptor;
+        bool existingDescriptorFound = receiverObject->getOwnPropertyDescriptor(exec, propertyName, existingDescriptor);
+        if (UNLIKELY(vm.exception()))
+            return false;
+
+        // 9.1.9.1-4-d If existingDescriptor is not undefined, then
+        if (existingDescriptorFound) {
+            // 9.1.9.1-4-d-i If IsAccessorDescriptor(existingDescriptor) is true, return false.
+            if (existingDescriptor.isAccessorDescriptor())
+                return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+
+            // 9.1.9.1-4-d-ii If existingDescriptor.[[Writable]] is false, return false.
+            if (!existingDescriptor.writable())
+                return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+
+            // 9.1.9.1-4-d-iii Let valueDesc be the PropertyDescriptor{[[Value]]: V}.
+            PropertyDescriptor valueDescriptor;
+            valueDescriptor.setValue(value);
+
+            // 9.1.9.1-4-d-iv Return ? Receiver.[[DefineOwnProperty]](P, valueDesc).
+            return receiverObject->methodTable(vm)->defineOwnProperty(receiverObject, exec, propertyName, valueDescriptor, shouldThrow);
+        }
+
+        // 9.1.9.1-4-e Else Receiver does not currently have a property P,
+        // 9.1.9.1-4-e-i Return ? CreateDataProperty(Receiver, P, V).
+        return receiverObject->methodTable(vm)->defineOwnProperty(receiverObject, exec, propertyName, PropertyDescriptor(value, None), shouldThrow);
+    }
+
+    // 9.1.9.1-5 Assert: IsAccessorDescriptor(ownDesc) is true.
+    ASSERT(ownDescriptor.isAccessorDescriptor());
+
+    // 9.1.9.1-6 Let setter be ownDesc.[[Set]].
+    // 9.1.9.1-7 If setter is undefined, return false.
+    JSValue setter = ownDescriptor.setter();
+    if (!setter.isObject())
+        return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+
+    // 9.1.9.1-8 Perform ? Call(setter, Receiver, << V >>).
+    JSObject* setterObject = asObject(setter);
+    MarkedArgumentBuffer args;
+    args.append(value);
+
+    CallData callData;
+    CallType callType = setterObject->methodTable(exec->vm())->getCallData(setterObject, callData);
+    call(exec, setterObject, callType, callData, receiver, args);
+
+    // 9.1.9.1-9 Return true.
+    return true;
+}
+
 // ECMA 8.6.2.2
 bool JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
@@ -425,6 +532,8 @@ bool JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
 
 bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    ASSERT(!isThisValueAltered(slot, this));
+
     VM& vm = exec->vm();
 
     JSObject* obj = this;
@@ -434,14 +543,12 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
         if (isValidOffset(offset)) {
             if (attributes & ReadOnly) {
                 ASSERT(structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName) || obj == this);
-                if (slot.isStrictMode())
-                    exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError)));
-                return false;
+                return reject(exec, slot.isStrictMode(), StrictModeReadonlyPropertyWriteError);
             }
 
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter()) {
-                bool result = callSetter(exec, this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
+                bool result = callSetter(exec, slot.thisValue(), gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
                 if (!structure()->isDictionary())
                     slot.setCacheableSetter(obj, offset);
                 return result;
@@ -478,13 +585,10 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
             break;
         obj = asObject(prototype);
     }
-    
+
     ASSERT(!structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName) || obj == this);
-    if (!putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot)) {
-        if (slot.isStrictMode())
-            throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
-        return false;
-    }
+    if (!putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
+        return reject(exec, slot.isStrictMode(), StrictModeReadonlyPropertyWriteError);
     return true;
 }
 

@@ -8,21 +8,36 @@ PASS Reflect.set(document.body, "scrollTop", "#Hello") is true
 PASS Reflect.get(document.body, "scrollTop") is not "#Hello"
 PASS Reflect.set(document.body, "scrollTop", 0) is true
 PASS Reflect.get(document.body, "scrollTop") is 0
+PASS Reflect.set(document.body, "scrollTop", "Cocoa", receiver) threw exception TypeError: The Element.scrollTop setter can only be used on instances of Element.
+PASS Reflect.get(document.body, "scrollTop") is 0
+PASS Reflect.get(receiver, "scrollTop") is undefined
 CustomAccessor with ReadOnly
 PASS Reflect.set(document, "compatMode", false) is false
 PASS Reflect.get(document, "compatMode") is "BackCompat"
+PASS Reflect.set(document, "compatMode", false, receiver) is false
+PASS Reflect.get(document, "compatMode") is "BackCompat"
+PASS Reflect.get(receiver, "compatMode") is undefined
 CustomAccessor without setter for DOM objects
 PASS Reflect.set(window.history, "length", "http://www.example.com") is false
 PASS Reflect.get(window.history, "length") is not "http://www.example.com"
+PASS Reflect.set(window.history, "length", "http://www.example.com", receiver) is false
+PASS Reflect.get(window.history, "length") is not "http://www.example.com"
+PASS Reflect.get(receiver, "length") is undefined
 CustomValue setters.
 PASS Reflect.set(window, "Event", "http://www.example.com") is true
 PASS Reflect.get(window, "Event") is "http://www.example.com"
+PASS Reflect.set(window, "MessageEvent", "http://www.example.com", receiver) is true
+PASS Reflect.get(window, "MessageEvent") is not "http://www.example.com"
+PASS Reflect.get(receiver, "MessageEvent") is "http://www.example.com"
 CustomValue setters with writable=false.
 PASS Reflect.defineProperty(window, "MouseEvent", {
     writable: false
 }) is true
 PASS Reflect.set(window, "MouseEvent", "http://www.example.com") is false
 PASS Reflect.get(window, "MouseEvent") is originalMouseEvent
+PASS Reflect.set(window, "MouseEvent", "http://www.example.com", receiver) is false
+PASS Reflect.get(window, "MouseEvent") is originalMouseEvent
+PASS Reflect.get(receiver, "MouseEvent") is undefined
 putDelegate CustomAccessor setters for DOM objects.
 PASS Reflect.set(document.location, "hash", "#Hello") is true
 PASS Reflect.get(document.location, "hash") is "#Hello"
@@ -32,23 +47,45 @@ PASS Reflect.set(document.location, 0, "#Hello") is true
 PASS Reflect.get(document.location, 0) is "#Hello"
 PASS Reflect.set(document.location, 0, "#OUT") is true
 PASS Reflect.get(document.location, 0) is "#OUT"
+PASS Reflect.set(document.location, "hash", "#Hello", receiver) threw exception TypeError: The Location.hash setter can only be used on instances of Location.
+PASS Reflect.get(document.location, "hash") is "#OUT"
+PASS Reflect.get(receiver, "hash") is undefined
+PASS Reflect.set(document.location, 0, "#Hello", receiver) is true
+PASS Reflect.get(document.location, 0) is "#OUT"
+PASS Reflect.get(receiver, 0) is "#Hello"
 putDelegate CustomAccessor without setter for DOM objects
 PASS Reflect.set(document.location, "origin", "http://www.example.com") is false
+PASS Reflect.get(document.location, "origin") is not "http://www.example.com"
+PASS Reflect.set(document.location, "origin", "http://www.example.com", receiver) is false
+PASS Reflect.get(document.location, "origin") is not "http://www.example.com"
+PASS Reflect.get(receiver, "origin") is undefined
 NPAPI object with Reflect.set
 PASS Reflect.set(npobject, "Cocoa", "Sweet") is true
 PASS Reflect.get(npobject, "Cocoa") is "Sweet"
+PASS Reflect.set(npobject, "Cocoa", "OK", receiver) is true
+PASS Reflect.get(npobject, "Cocoa") is "Sweet"
+PASS Reflect.get(receiver, "Cocoa") is "OK"
 PASS Reflect.defineProperty(npobject, "Cocoa", {
     writable: false
 }) is true
 PASS Reflect.set(npobject, "Cocoa", "Hello") is false
 PASS Reflect.get(npobject, "Cocoa") is "Sweet"
+PASS Reflect.set(npobject, "Cocoa", "OK", receiver) is false
+PASS Reflect.get(npobject, "Cocoa") is "Sweet"
+PASS Reflect.get(receiver, "Cocoa") is undefined
 PASS Reflect.set(npobject, 0, "Sweet") is true
 PASS Reflect.get(npobject, 0) is "Sweet"
+PASS Reflect.set(npobject, 0, "OK", receiver) is true
+PASS Reflect.get(npobject, 0) is "Sweet"
+PASS Reflect.get(receiver, 0) is "OK"
 PASS Reflect.defineProperty(npobject, 0, {
     writable: false
 }) is true
 PASS Reflect.set(npobject, 0, "Hello") is false
 PASS Reflect.get(npobject, 0) is "Sweet"
+PASS Reflect.set(npobject, 0, "OK", receiver) is false
+PASS Reflect.get(npobject, 0) is "Sweet"
+PASS Reflect.get(receiver, 0) is undefined
 DOMStringMap
 PASS Reflect.get(document.body.dataset, "cocoa") is "cappuccino"
 PASS Reflect.set(document.body.dataset, "cocoa", "sweet") is true
@@ -56,6 +93,13 @@ PASS Reflect.get(document.body.dataset, "cocoa") is "sweet"
 PASS Reflect.set(document.body.dataset, "cocoa-cappuccino", "sweet") threw exception Error: SyntaxError: DOM Exception 12.
 PASS Reflect.set(document.body.dataset, 0, "sweet") is true
 PASS Reflect.get(document.body.dataset, 0) is "sweet"
+DOMStringMap ignores the receiver. These putDelegate only work with ::put (not ::defineOwnProperty). So they behave as the special setter, we should not fallback to the OrdinarySet.
+PASS Reflect.set(document.body.dataset, "cocoa", "ok", receiver) is true
+PASS Reflect.get(document.body.dataset, "cocoa") is "ok"
+PASS Reflect.get(receiver, "cocoa") is undefined
+PASS Reflect.set(document.body.dataset, 0, "ok", receiver) is true
+PASS Reflect.get(document.body.dataset, 0) is "ok"
+PASS Reflect.get(receiver, 0) is undefined
 CustomIndexedSetter
 PASS Reflect.get(select, 0).value is "cocoa"
 PASS Reflect.get(select, "length") is 3
@@ -67,6 +111,10 @@ PASS Reflect.get(select, "length") is 42
 PASS Reflect.set(select, 44, option2) is true
 PASS Reflect.get(select, 44).value is "kilimanjaro"
 PASS Reflect.set(select, 20, "Kilimanjaro") threw exception Error: TypeMismatchError: DOM Exception 17.
+CustomIndexedSetter ignores the receiver. These methods only work with ::put (not ::defineOwnProperty). So they behave as the special setter, we should not fallback to the OrdinarySet.
+PASS Reflect.set(select, 0, option3, receiver) is true
+PASS Reflect.get(receiver, 0) is undefined
+PASS Reflect.get(select, 0) is option3
 PASS successfullyParsed is true
 
 TEST COMPLETE

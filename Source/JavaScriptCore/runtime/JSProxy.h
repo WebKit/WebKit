@@ -42,8 +42,9 @@ public:
         return proxy;
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, JSType proxyType = ImpureProxyType)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, JSType proxyType)
     {
+        ASSERT(proxyType == ImpureProxyType || proxyType == PureForwardingProxyType);
         return Structure::create(vm, globalObject, prototype, TypeInfo(proxyType, StructureFlags), info());
     }
 
