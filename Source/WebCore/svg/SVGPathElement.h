@@ -97,6 +97,8 @@ public:
 
     bool isAnimValObserved() const { return m_isAnimValObserved; }
 
+    void animatedPropertyWillBeDeleted();
+
 private:
     SVGPathElement(const QualifiedName&, Document&);
 

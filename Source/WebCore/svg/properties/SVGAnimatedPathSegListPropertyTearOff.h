@@ -38,7 +38,7 @@ public:
 
         auto property = SVGPathSegListPropertyTearOff::create(this, BaseValRole, PathSegUnalteredRole, m_values, m_wrappers);
         m_baseVal = property.ptr();
-        return WTFMove(property);
+        return WTF::move(property);
     }
 
     virtual RefPtr<ListProperty> animVal() override
@@ -48,7 +48,7 @@ public:
 
         auto property = SVGPathSegListPropertyTearOff::create(this, AnimValRole, PathSegUnalteredRole, m_values, m_wrappers);
         m_animVal = property.ptr();
-        return WTFMove(property);
+        return WTF::move(property);
     }
 
     int findItem(const RefPtr<SVGPathSeg>& segment)
@@ -112,6 +112,13 @@ private:
         : SVGAnimatedListPropertyTearOff<SVGPathSegList>(contextElement, attributeName, animatedPropertyType, values)
         , m_animatedPathByteStream(nullptr)
     {
+        ASSERT(contextElement);
+        ASSERT(is<SVGPathElement>(contextElement));
+    }
+
+    virtual ~SVGAnimatedPathSegListPropertyTearOff()
+    {
+        downcast<SVGPathElement>(contextElement())->animatedPropertyWillBeDeleted();
     }
 
     SVGPathByteStream* m_animatedPathByteStream;
