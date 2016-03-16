@@ -1,3 +1,16 @@
+2016-03-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix assertion failure on drive.google.com after r196052
+        https://bugs.webkit.org/show_bug.cgi?id=155562
+
+        Reviewed by Jer Noble.
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToContainer):
+        Change float equality check to areEssentiallyEqual.
+        This assertion was failing because rendererMappedResult was (944.335693, 232.047409)
+        but result was (944.335693, 232.047394).  They differ by (0, 0.000015).
+
 2016-03-16  Nan Wang  <n_wang@apple.com>
 
         AX: Expose aria-current status to children
