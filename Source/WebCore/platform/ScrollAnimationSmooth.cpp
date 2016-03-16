@@ -257,7 +257,7 @@ static inline void getAnimationParametersForGranularity(ScrollGranularity granul
         maximumCoastTime = 1;
         break;
     case ScrollByPixel:
-        animationTime = 1 * tickTime;
+        animationTime = 11 * tickTime;
         repeatMinimumSustainTime = 2 * tickTime;
         attackTime = 3 * tickTime;
         releaseTime = 3 * tickTime;
@@ -380,8 +380,10 @@ bool ScrollAnimationSmooth::animateScroll(PerAxisData& data, double currentTime)
 
     if (deltaTime > data.animationTime) {
         double desiredPosition = data.desiredPosition;
+        int visibleLength = data.visibleLength;
         data = PerAxisData();
         data.currentPosition = desiredPosition;
+        data.visibleLength = visibleLength;
         return false;
     }
     if (deltaTime < data.attackTime)
