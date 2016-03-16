@@ -32,7 +32,6 @@
 #include "JSCInlines.h"
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"
-#include "RegExpObjectInlines.h"
 #include "RegExpPrototype.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -160,15 +159,77 @@ void RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
     Base::put(cell, exec, propertyName, value, slot);
 }
 
+ALWAYS_INLINE unsigned getLastIndexAsUnsigned(
+    ExecState* exec, RegExpObject* regExpObject, const String& input)
+{
+    JSValue jsLastIndex = regExpObject->getLastIndex();
+    unsigned lastIndex;
+    if (LIKELY(jsLastIndex.isUInt32())) {
+        lastIndex = jsLastIndex.asUInt32();
+        if (lastIndex > input.length()) {
+            regExpObject->setLastIndex(exec, 0);
+            return UINT_MAX;
+        }
+    } else {
+        double doubleLastIndex = jsLastIndex.toInteger(exec);
+        if (doubleLastIndex < 0 || doubleLastIndex > input.length()) {
+            regExpObject->setLastIndex(exec, 0);
+            return UINT_MAX;
+        }
+        lastIndex = static_cast<unsigned>(doubleLastIndex);
+    }
+    return lastIndex;
+}
+
 JSValue RegExpObject::exec(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
-    return execInline(exec, globalObject, string);
+    RegExp* regExp = this->regExp();
+    RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
+    String input = string->value(exec); // FIXME: Handle errors. https://bugs.webkit.org/show_bug.cgi?id=155145
+    VM& vm = globalObject->vm();
+
+    if (!regExp->global()) {
+        MatchResult result;
+        JSArray* array = createRegExpMatchesArray(exec, globalObject, string, regExp, 0, result);
+        if (!array)
+            return jsNull();
+        regExpConstructor->recordMatch(vm, regExp, string, result);
+        return array;
+    }
+
+    unsigned lastIndex = getLastIndexAsUnsigned(exec, this, input);
+    if (lastIndex == UINT_MAX)
+        return jsNull();
+    
+    MatchResult result;
+    JSArray* array =
+        createRegExpMatchesArray(exec, globalObject, string, regExp, lastIndex, result);
+    if (!array) {
+        setLastIndex(exec, 0);
+        return jsNull();
+    }
+    setLastIndex(exec, result.end);
+    regExpConstructor->recordMatch(vm, regExp, string, result);
+    return array;
 }
 
 // Shared implementation used by test and exec.
 MatchResult RegExpObject::match(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
-    return matchInline(exec, globalObject, string);
+    RegExp* regExp = this->regExp();
+    RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
+    String input = string->value(exec); // FIXME: Handle errors. https://bugs.webkit.org/show_bug.cgi?id=155145
+    VM& vm = globalObject->vm();
+    if (!regExp->global())
+        return regExpConstructor->performMatch(vm, regExp, string, input, 0);
+
+    unsigned lastIndex = getLastIndexAsUnsigned(exec, this, input);
+    if (lastIndex == UINT_MAX)
+        return MatchResult::failed();
+    
+    MatchResult result = regExpConstructor->performMatch(vm, regExp, string, input, lastIndex);
+    setLastIndex(exec, result.end);
+    return result;
 }
 
 } // namespace JSC
