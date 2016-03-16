@@ -1,3 +1,14 @@
+2016-03-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove stale ArrayPrototype declarations
+        https://bugs.webkit.org/show_bug.cgi?id=155520
+
+        Reviewed by Mark Lam.
+
+        * runtime/ArrayPrototype.cpp:
+        The implementations went away when the methods were moved to builtins
+        but the declarations were left behind.
+
 2016-03-15  Oliver Hunt  <oliver@apple.com>
 
         Rename performJITMemcpy to something more inline with our normal webkit function names

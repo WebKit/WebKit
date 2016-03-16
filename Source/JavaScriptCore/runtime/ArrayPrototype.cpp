@@ -60,8 +60,6 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState*);
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState*);
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncKeys(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncEntries(ExecState*);
