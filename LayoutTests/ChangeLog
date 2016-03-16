@@ -1,3 +1,15 @@
+2016-03-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skipping failing printing tests
+        https://bugs.webkit.org/show_bug.cgi?id=155543
+
+        Unreviewed test gardening.
+
+        Three printing tests that rely on software snapshotting are failing after r198242 exposed
+        an underlying issue. Skipping these tests to get the bots back to green during investigation.
+
+        * TestExpectations:
+
 2016-03-16  Antti Koivisto  <antti@apple.com>
 
         Don't invalidate style unnecessarily when setting inline style cssText
