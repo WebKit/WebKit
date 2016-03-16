@@ -1,3 +1,17 @@
+2016-03-15  Jer Noble  <jer.noble@apple.com>
+
+        [ios-sim debug] API test WebKit1.AudioSessionCategoryIOS timing out
+        https://bugs.webkit.org/show_bug.cgi?id=155275
+
+        Reviewed by Alexey Proskuryakov.
+
+        The videoPlaybackRequiresUserGesture and audioPlaybackRequiresUserGesture should both defalut to
+        NO, so that legacy clients of -[UIWebView setMediaPlaybackRequiresUserAction:] continue to work
+        as expected.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2016-03-15  Oliver Hunt  <oliver@apple.com>
 
         Remove compile time define for SEPARATED_HEAP
