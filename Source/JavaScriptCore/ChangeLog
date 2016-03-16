@@ -1,3 +1,31 @@
+2016-03-15  Filip Pizlo  <fpizlo@apple.com>
+
+        ASSERTION FAILED: !edge->isPhantomAllocation() in regress/script-tests/sink-huge-activation.js.ftl-eager in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=153805
+
+        Reviewed by Mark Lam.
+
+        The object allocation sinking phase uses InferredValue::isStillValid() in the opposite
+        way from most clients: it will do an *extra* optimization if it returns false. The
+        phase will first compute sink candidates and then it will compute materialization
+        points. If something is a sink candidate then it is not a materialization point. A
+        NewFunction node may appear as not being a sink candidate during the first pass, so it's
+        not added to the set of things that will turn into PhantomNewFunction. But on the second
+        pass where we add materializations, we check isStillValid() again. Now this may become
+        false, so that second pass thinks that NewFunction is a sink candidate (even though it's
+        not in the sink candidates set) and so is not a materialization point.
+
+        This manifests as the NewFunction referring to a PhantomCreateActivation or whatever.
+
+        The solution is to have the phase cache results of calls to isStillValid(). It's OK if
+        we just remember the result of the first call and assume that it's not a sink candidate.
+        That's the worst that can happen.
+
+        No new tests since this is a super hard race and sink-huge-activation seemed to already
+        be catching it.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2016-03-16  Saam Barati  <sbarati@apple.com>
 
         [ES6] Make Array.prototype.reverse spec compatible.

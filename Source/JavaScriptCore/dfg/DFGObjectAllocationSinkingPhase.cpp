@@ -838,7 +838,7 @@ private:
         case NewFunction:
         case NewArrowFunction:
         case NewGeneratorFunction: {
-            if (node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid()) {
+            if (isStillValid(node->castOperand<FunctionExecutable*>()->singletonFunction())) {
                 m_heap.escape(node->child1().node());
                 break;
             }
@@ -855,7 +855,7 @@ private:
         }
 
         case CreateActivation: {
-            if (node->castOperand<SymbolTable*>()->singletonScope()->isStillValid()) {
+            if (isStillValid(node->castOperand<SymbolTable*>()->singletonScope())) {
                 m_heap.escape(node->child1().node());
                 break;
             }
@@ -2173,6 +2173,15 @@ private:
         }
     }
 
+    // This is a great way of asking value->isStillValid() without having to worry about getting
+    // different answers. It turns out that this analysis works OK regardless of what this
+    // returns but breaks badly if this changes its mind for any particular InferredValue. This
+    // method protects us from that.
+    bool isStillValid(InferredValue* value)
+    {
+        return m_validInferredValues.add(value, value->isStillValid()).iterator->value;
+    }
+
     SSACalculator m_pointerSSA;
     SSACalculator m_allocationSSA;
     HashSet<Node*> m_sinkCandidates;
@@ -2182,6 +2191,8 @@ private:
     HashMap<Node*, Node*> m_escapeeToMaterialization;
     InsertionSet m_insertionSet;
     CombinedLiveness m_combinedLiveness;
+
+    HashMap<InferredValue*, bool> m_validInferredValues;
 
     HashMap<Node*, Node*> m_materializationToEscapee;
     HashMap<Node*, Vector<Node*>> m_materializationSiteToMaterializations;
