@@ -96,7 +96,6 @@ void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, c
     // or it fails to creating and we have a now-useless connection with a dangling ref. 
     // Either way, we need to release the connection to balance out ref counts
     handle->releaseConnectionForDownload();
-    CFRelease(connection);
 }
 
 void WebDownload::init(const URL& url, IWebDownloadDelegate* delegate)
