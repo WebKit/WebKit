@@ -105,10 +105,12 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink = macroAssembler.jumpsToLink();
     m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
     uint8_t* inData = reinterpret_cast<uint8_t*>(m_assemblerStorage.buffer());
-
+#if ENABLE(SEPARATED_WX_HEAP)
     AssemblerData outBuffer(m_size);
     uint8_t* outData = reinterpret_cast<uint8_t*>(outBuffer.buffer());
-
+#else
+    uint8_t* outData = reinterpret_cast<uint8_t*>(m_code);
+#endif
     int readPtr = 0;
     int writePtr = 0;
     unsigned jumpCount = jumpsToLink.size();
@@ -163,7 +165,9 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     jumpsToLink.clear();
     shrink(writePtr + m_initialSize - readPtr);
 
-    writeToExecutableRegion(m_code, outBuffer.buffer(), m_size);
+#if ENABLE(SEPARATED_WX_HEAP)
+    performJITMemcpy(m_code, outBuffer.buffer(), m_size);
+#endif
 
 #if DUMP_LINK_STATISTICS
     dumpLinkStatistics(m_code, m_initialSize, m_size);
