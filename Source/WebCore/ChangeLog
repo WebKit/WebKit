@@ -1,3 +1,30 @@
+2016-03-16  Antti Koivisto  <antti@apple.com>
+
+        Don't invalidate style unnecessarily when setting inline style cssText
+        https://bugs.webkit.org/show_bug.cgi?id=155541
+        rdar://problem/23318893
+
+        Reviewed by Simon Fraser.
+
+        We currently invalidate style when cssText is set whether the style declaration changed or not.
+
+        Based on a patch by Simon.
+
+        Test: fast/css/style-invalidation-inline-csstext.html
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::cssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+
+            Invalidate only if the parsed style changed.
+
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::parseDeclaration):
+
+            Compare the original and new style after parsing, return result.
+
+        * css/StyleProperties.h:
+
 2016-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r195661): [GTK] very slow scrolling

@@ -1,3 +1,14 @@
+2016-03-16  Antti Koivisto  <antti@apple.com>
+
+        Don't invalidate style unnecessarily when setting inline style cssText
+        https://bugs.webkit.org/show_bug.cgi?id=155541
+        rdar://problem/23318893
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/style-invalidation-inline-csstext-expected.txt: Added.
+        * fast/css/style-invalidation-inline-csstext.html: Added.
+
 2016-03-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/css/getPropertyValue-webkit-marquee.html after r198255

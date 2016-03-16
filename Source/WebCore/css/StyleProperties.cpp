@@ -843,8 +843,9 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSPropertyID
     return setProperty(CSSProperty(propertyID, CSSValuePool::singleton().createIdentifierValue(identifier), important));
 }
 
-void MutableStyleProperties::parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet)
+bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet)
 {
+    auto oldProperties = WTFMove(m_propertyVector);
     m_propertyVector.clear();
 
     CSSParserContext context(cssParserMode());
@@ -854,6 +855,9 @@ void MutableStyleProperties::parseDeclaration(const String& styleDeclaration, St
     }
     CSSParser parser(context);
     parser.parseDeclaration(this, styleDeclaration, 0, contextStyleSheet);
+
+    // We could do better. Just changing property order does not require style invalidation.
+    return oldProperties != m_propertyVector;
 }
 
 bool MutableStyleProperties::addParsedProperties(const CSSParser::ParsedPropertyVector& properties)
