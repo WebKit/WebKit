@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/dump-as-text.js"></script>
+<script src="resources/wait-until-done.js"></script>
+<meta http-equiv="Content-Security-Policy" content="style-src http://127.0.0.1:8000/resources/redirect.php">
+<link rel="stylesheet" href="http://127.0.0.1:8000/resources/redirect.php?code=307&url=http%3A%2F%2Flocalhost%3A8000/security/contentSecurityPolicy/resources/blue.css" onload="alertAndDone('FAIL')" onerror="alertAndDone('PASS')">
+</head>
+</html>

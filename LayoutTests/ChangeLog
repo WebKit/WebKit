@@ -1,3 +1,80 @@
+2016-03-16  Daniel Bates  <dabates@apple.com>
+
+        <video> and <audio> elements do not obey Content Security Policy on redirect
+        https://bugs.webkit.org/show_bug.cgi?id=155509
+        <rdar://problem/10234844>
+
+        Reviewed by Alex Christensen.
+
+        Add tests to ensure that the Content Security Policy is enforced on redirects when
+        loading a subresource, including a video or audio file.
+
+        * http/tests/resources/redirect.php: Fix PHP "undefined index" warnings when either query
+        parameter code or refresh (or both) are not specified.
+        * http/tests/security/contentSecurityPolicy/audio-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/audio-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/font-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/font-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/font-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/font-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/image-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/image-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/ABCFont.svg: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/userAgentShadowDOM/resources/ABCFont.svg.
+        * http/tests/security/contentSecurityPolicy/resources/alert-fail.xsl: Added.
+        * http/tests/security/contentSecurityPolicy/resources/alert-pass.xsl: Added.
+        * http/tests/security/contentSecurityPolicy/resources/green-square.svg: Added.
+        * http/tests/security/contentSecurityPolicy/resources/red-square.svg: Added.
+        * http/tests/security/contentSecurityPolicy/resources/xsl-redirect-allowed.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/xsl-redirect-blocked.php: Added.
+        * http/tests/security/contentSecurityPolicy/script-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/script-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/stylesheet-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/stylesheet-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/stylesheet-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/stylesheet-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/svg-font-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/svg-font-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/svg-font-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/svg-font-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/svg-image-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/svg-image-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/svg-image-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/svg-image-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/track-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/track-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/track-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/track-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-svg-font.html:
+        * http/tests/security/contentSecurityPolicy/video-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/video-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/video-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/video-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-blocked.html: Added.
+        * platform/efl/TestExpectations: For now skip tests http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-{audio, video}.html
+        until we fix <https://bugs.webkit.org/show_bug.cgi?id=155505>. We will also need to fix
+        <https://bugs.webkit.org/show_bug.cgi?id=153866> before we can unskip test http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html
+        As far as I can tell the functionality exercised by these tests is not being using by the EFL port.
+        * platform/gtk/TestExpectations: For now skip tests http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-{audio, video}.html
+        until we fix <https://bugs.webkit.org/show_bug.cgi?id=155505>. As far as I can tell the functionality
+        exercised by these tests is not being using by the GTK port.
+        * platform/ios-simulator/http/tests/security/contentSecurityPolicy/audio-redirect-blocked-expected.txt: Added expected failure result as
+        AV Foundation is responsible for loading media on iOS. That is, WebCore is not responsible for loading media.
+        * platform/ios-simulator/http/tests/security/contentSecurityPolicy/video-redirect-blocked-expected.txt: Ditto.
+        * platform/mac/TestExpectations: For now skip tests http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-{audio, video}.html
+        until we fix <https://bugs.webkit.org/show_bug.cgi?id=155505>. The functionality exercised by these
+        tests is not used on OS X. Additionally, mark as Failure on Yosemite and ElCapitan the added tests
+        http/tests/security/contentSecurityPolicy/{video, audio}-redirect-blocked.html as we do not support
+        Content Security Policy for media redirects in these versions of OS X.
+
 2016-03-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         URL Parsing should signal failure for illegal IDN

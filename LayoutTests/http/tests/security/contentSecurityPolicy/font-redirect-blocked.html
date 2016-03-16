@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/dump-as-text.js"></script>
+<script src="resources/wait-until-done.js"></script>
+<meta http-equiv="Content-Security-Policy" content="font-src http://127.0.0.1:8000/resources/redirect.php">
+<style>
+@font-face {
+    font-family: "Ahem";
+    src: url("http://127.0.0.1:8000/resources/redirect.php?code=307&url=http%3A%2F%2Flocalhost%3A8000/resources/Ahem.woff") format("woff");
+}
+</style>
+</head>
+<body>
+<p>Tests that a cross-origin CSS font loaded via a redirect is blocked by the Content Security Policy. This test PASSED if there is a console warning message.</p>
+<p style="font-family: 'Ahem'">.</p> <!-- Intentional period character to force font to load -->
+<script>
+// Use a zero timer to wait until the font loaded.
+if (window.testRunner)
+    window.setTimeout("window.testRunner.notifyDone();", 0);
+</script>
+</body>
+</html>

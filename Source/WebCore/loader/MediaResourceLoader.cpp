@@ -55,13 +55,14 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(const Resourc
     RequestOriginPolicy corsPolicy = !m_crossOriginMode.isNull() ? PotentiallyCrossOriginEnabled : UseDefaultOriginRestrictionsForType;
     StoredCredentials allowCredentials = m_crossOriginMode.isNull() || equalLettersIgnoringASCIICase(m_crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
 
-    // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
+    // FIXME: Skip Content Security Policy check if the element that inititated this request
+    // is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505>.
     CachedResourceRequest cacheRequest(request, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, allowCredentials, DoNotAskClientForCrossOriginCredentials, ClientDidNotRequestCredentials, DoSecurityCheck, corsPolicy, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching));
 
     if (!m_crossOriginMode.isNull())
         updateRequestForAccessControl(cacheRequest.mutableResourceRequest(), m_document.securityOrigin(), allowCredentials);
 
-    CachedResourceHandle<CachedRawResource> resource = m_document.cachedResourceLoader().requestRawResource(cacheRequest);
+    CachedResourceHandle<CachedRawResource> resource = m_document.cachedResourceLoader().requestMedia(cacheRequest);
     if (!resource)
         return nullptr;
 

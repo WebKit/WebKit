@@ -67,15 +67,16 @@ void WebCoreAVFResourceLoader::startLoading()
 
     NSURLRequest *nsRequest = [m_avRequest.get() request];
 
-    // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
+    // FIXME: Skip Content Security Policy check if the element that inititated this request
+    // is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505>.
     CachedResourceRequest request(nsRequest, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, ClientDidNotRequestCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::DisallowCaching));
 
     request.mutableResourceRequest().setPriority(ResourceLoadPriority::Low);
-    CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader();
-    m_resource = loader ? loader->requestRawResource(request) : 0;
-    if (m_resource)
+    if (CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader()) {
+        m_resource = loader->requestMedia(request);
         m_resource->addClient(this);
-    else {
+    } else {
+        m_resource = nullptr;
         LOG_ERROR("Failed to start load for media at url %s", [[[nsRequest URL] absoluteString] UTF8String]);
         [m_avRequest.get() finishLoadingWithError:0];
     }

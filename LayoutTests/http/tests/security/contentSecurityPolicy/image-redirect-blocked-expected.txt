@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Refused to load the image 'http://localhost:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src http://127.0.0.1:8000/resources/redirect.php".
+
+Tests that a cross-origin image loaded via a redirect is blocked by the Content Security Policy. This test PASSED if there is a console warning message.
+
+

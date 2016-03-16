@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Refused to load the stylesheet 'http://localhost:8000/security/contentSecurityPolicy/resources/blue.css' because it violates the following Content Security Policy directive: "style-src http://127.0.0.1:8000/resources/redirect.php".
+
+ALERT: PASS
+

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Refused to load the font 'http://localhost:8000/security/contentSecurityPolicy/resources/ABCFont.svg' because it violates the following Content Security Policy directive: "font-src http://127.0.0.1:8000/resources/redirect.php".
+
+Tests that a SVG font-face element is blocked from loading a cross-origin external SVG font via a redirect by the Content Security Policy. This test PASSED if there is a console warning message.
+
+

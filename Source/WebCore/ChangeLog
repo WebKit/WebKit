@@ -1,3 +1,86 @@
+2016-03-16  Daniel Bates  <dabates@apple.com>
+
+        <video> and <audio> elements do not obey Content Security Policy on redirect
+        https://bugs.webkit.org/show_bug.cgi?id=155509
+        <rdar://problem/10234844>
+
+        Reviewed by Alex Christensen.
+
+        Fixes an issue where the Content Security Policy of the page was not enforced
+        on redirects when loading a media subresource via an HTML video or HTML audio
+        element.
+
+        Tests: http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/font-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/font-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/image-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/image-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/script-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/script-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/stylesheet-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/stylesheet-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/svg-font-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/svg-font-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/svg-image-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/svg-image-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/track-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/track-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/video-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/video-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/xsl-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/xsl-redirect-blocked.html
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent): Treat media resources as raw resources just as we do currently.
+        (WebCore::InspectorPageAgent::cachedResourceType): Ditto.
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::requestResource): Modified to use CachedResourceLoader::requestMedia() instead
+        of CachedResourceLoader::requestRawResource() so that we can differentiate between a media resource and a raw
+        resource in CachedResourceLoader. Added FIXME comment to skip checking the Content Security Policy for loads
+        initiated by an element in a user agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505> for
+        more details.
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType): Treat media resources as raw resources just as we do currently. Also, add cases for
+        CachedResource::LinkPrefetch and CachedResource::LinkSubresource (when ENABLE(LINK_PREFETCH) is enabled) and
+        remove the default statement to force a compile-time error when a new CachedResource enumerator is added and
+        the switch block in this function is not updated.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded): Ditto.
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource): Substitute CachedResource::isMainOrMediaOrRawResource() for
+        CachedResource::isMainOrRawResource() as the latter was renamed to the former.
+        * loader/cache/CachedRawResource.h:
+        (isType): Ditto.
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType): Use priority ResourceLoadPriority::Medium for media resources just as
+        we do currently.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isMainOrMediaOrRawResource): Formerly named isMainOrRawResource. Returns true if the type
+        of this resource is a main resource, media resource, or raw resource.
+        (WebCore::CachedResource::isMainOrRawResource): Deleted.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource): Treat media resources as raw resources just as we do currently.
+        (WebCore::CachedResourceLoader::requestMedia): Added.
+        (WebCore::contentTypeFromResourceType): Consider media resources as MixedContentChecker::ContentType::Active
+        just as we do currently.
+        (WebCore::CachedResourceLoader::checkInsecureContent): Apply the mixed content policy to media resources
+        just as we do currently.
+        (WebCore::CachedResourceLoader::canRequest): Apply the Same Origin Policy to media resources just as we
+        do currently. Query the Content Security Policy of the page to determine if the media resource can be
+        requested.
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy): Substitute CachedResource::isMainOrMediaOrRawResource()
+        for CachedResource::isMainOrRawResource() as the latter was renamed to the former.
+        * loader/cache/CachedResourceLoader.h:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading): Modified to use CachedResourceLoader::requestMedia() instead
+        of CachedResourceLoader::requestRawResource() so that we can differentiate between a media resource and a raw
+        resource in CachedResourceLoader. Added FIXME comment to skip checking the Content Security Policy for loads
+        initiated by an element in a user agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505> for
+        more details. Additionally, simplified code that determined whether to request the media resource or error out
+        by coalescing two conditional expressions into one conditional on whether we have a loader and substituted
+        nullptr for 0.
+
 2016-03-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r198235, r198240, r198241, and

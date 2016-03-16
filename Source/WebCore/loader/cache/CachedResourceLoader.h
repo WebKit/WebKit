@@ -76,6 +76,7 @@ public:
     CachedResourceHandle<CachedCSSStyleSheet> requestUserCSSStyleSheet(CachedResourceRequest&);
     CachedResourceHandle<CachedScript> requestScript(CachedResourceRequest&);
     CachedResourceHandle<CachedFont> requestFont(CachedResourceRequest&, bool isSVG);
+    CachedResourceHandle<CachedRawResource> requestMedia(CachedResourceRequest&);
     CachedResourceHandle<CachedRawResource> requestRawResource(CachedResourceRequest&);
     CachedResourceHandle<CachedRawResource> requestMainResource(CachedResourceRequest&);
     CachedResourceHandle<CachedSVGDocument> requestSVGDocument(CachedResourceRequest&);

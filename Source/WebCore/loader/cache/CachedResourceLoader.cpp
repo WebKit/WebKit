@@ -100,6 +100,7 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
 #endif
     case CachedResource::FontResource:
         return new CachedFont(request, sessionID);
+    case CachedResource::MediaResource:
     case CachedResource::RawResource:
     case CachedResource::MainResource:
         return new CachedRawResource(request, type, sessionID);
@@ -269,6 +270,11 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestLinkResource(C
 }
 #endif
 
+CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMedia(CachedResourceRequest& request)
+{
+    return downcast<CachedRawResource>(requestResource(CachedResource::MediaResource, request).get());
+}
+
 CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestRawResource(CachedResourceRequest& request)
 {
     return downcast<CachedRawResource>(requestResource(CachedResource::RawResource, request).get());
@@ -295,6 +301,7 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
         return MixedContentChecker::ContentType::Active;
 #endif
 
+    case CachedResource::MediaResource:
     case CachedResource::RawResource:
     case CachedResource::SVGDocumentResource:
         return MixedContentChecker::ContentType::Active;
@@ -337,6 +344,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
 #endif
+    case CachedResource::MediaResource:
     case CachedResource::RawResource:
     case CachedResource::ImageResource:
 #if ENABLE(SVG_FONTS)
@@ -384,6 +392,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
 #if ENABLE(SVG_FONTS)
     case CachedResource::SVGFontResource:
 #endif
+    case CachedResource::MediaResource:
     case CachedResource::FontResource:
     case CachedResource::RawResource:
 #if ENABLE(LINK_PREFETCH)
@@ -446,12 +455,13 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     case CachedResource::LinkSubresource:
 #endif
         break;
+    case CachedResource::MediaResource:
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
+#endif
         if (!m_document->contentSecurityPolicy()->allowMediaFromSource(url, skipContentSecurityPolicyCheck))
             return false;
         break;
-#endif
     }
 
     // SVG Images have unique security rules that prevent all subresource requests except for data urls.
@@ -742,7 +752,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 
     // FIXME: We should use the same cache policy for all resource types. The raw resource policy is overly strict
     //        while the normal subresource policy is too loose.
-    if (existingResource->isMainOrRawResource()) {
+    if (existingResource->isMainOrMediaOrRawResource()) {
         bool strictPolicyDisabled = frame()->loader().isStrictRawResourceValidationPolicyDisabledForTesting();
         bool canReuseRawResource = strictPolicyDisabled || downcast<CachedRawResource>(*existingResource).canReuse(request);
         if (!canReuseRawResource)

@@ -106,6 +106,7 @@ static std::chrono::milliseconds maximumBufferingTime(CachedResource* resource)
         return std::chrono::milliseconds::max();
     case CachedResource::ImageResource:
         return 500_ms;
+    case CachedResource::MediaResource:
     case CachedResource::MainResource:
     case CachedResource::RawResource:
     case CachedResource::SVGDocumentResource:

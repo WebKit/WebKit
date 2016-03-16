@@ -1,3 +1,16 @@
+2016-03-16  Daniel Bates  <dabates@apple.com>
+
+        <video> and <audio> elements do not obey Content Security Policy on redirect
+        https://bugs.webkit.org/show_bug.cgi?id=155509
+        <rdar://problem/10234844>
+
+        Reviewed by Alex Christensen.
+
+        Use 0ms as the maximum buffering time for media resource just as we do currently.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+
 2016-03-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r198235, r198240, r198241, and

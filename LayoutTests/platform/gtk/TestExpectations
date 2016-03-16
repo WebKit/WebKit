@@ -691,6 +691,8 @@ webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-has-audio.html [ Timeo
 webkit.org/b/154390 http/tests/media/hls/hls-accessiblity-describes-video.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/media/hls/video-cookie.html [ Failure ]
 
+webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
+webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures

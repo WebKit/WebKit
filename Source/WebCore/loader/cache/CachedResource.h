@@ -69,6 +69,7 @@ public:
 #if ENABLE(SVG_FONTS)
         SVGFontResource,
 #endif
+        MediaResource,
         RawResource,
         SVGDocumentResource
 #if ENABLE(XSLT)
@@ -159,8 +160,8 @@ public:
     bool areAllClientsXMLHttpRequests() const;
 
     bool isImage() const { return type() == ImageResource; }
-    // FIXME: CachedRawResource could be either a main resource or a raw XHR resource.
-    bool isMainOrRawResource() const { return type() == MainResource || type() == RawResource; }
+    // FIXME: CachedRawResource could be a main resource, an audio/video resource, or a raw XHR/icon resource.
+    bool isMainOrMediaOrRawResource() const { return type() == MainResource || type() == MediaResource || type() == RawResource; }
     bool ignoreForRequestCount() const
     {
         return type() == MainResource

@@ -42,7 +42,7 @@ CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest, Type type
     , m_identifier(0)
     , m_allowEncodedDataReplacement(true)
 {
-    ASSERT(isMainOrRawResource());
+    ASSERT(isMainOrMediaOrRawResource());
 }
 
 const char* CachedRawResource::calculateIncrementalDataChunk(SharedBuffer* data, unsigned& incrementalDataLength)

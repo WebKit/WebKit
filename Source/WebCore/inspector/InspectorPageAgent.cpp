@@ -163,6 +163,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
         case CachedResource::Script:
             *result = downcast<CachedScript>(*cachedResource).script().toString();
             return true;
+        case CachedResource::MediaResource:
         case CachedResource::RawResource: {
             auto* buffer = cachedResource->resourceBuffer();
             if (!buffer)
@@ -314,6 +315,7 @@ InspectorPageAgent::ResourceType InspectorPageAgent::cachedResourceType(const Ca
         return InspectorPageAgent::StylesheetResource;
     case CachedResource::Script:
         return InspectorPageAgent::ScriptResource;
+    case CachedResource::MediaResource:
     case CachedResource::RawResource:
         return InspectorPageAgent::XHRResource;
     case CachedResource::MainResource:

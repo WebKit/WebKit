@@ -55,6 +55,7 @@ ResourceType toResourceType(CachedResource::Type type)
 #endif
         return ResourceType::Font;
 
+    case CachedResource::MediaResource:
     case CachedResource::RawResource:
         return ResourceType::Raw;
 
@@ -62,8 +63,11 @@ ResourceType toResourceType(CachedResource::Type type)
     case CachedResource::TextTrackResource:
         return ResourceType::Media;
 #endif
-    default:
+#if ENABLE(LINK_PREFETCH)
+    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkSubresource:
         ASSERT_NOT_REACHED();
+#endif
     };
 }
 
