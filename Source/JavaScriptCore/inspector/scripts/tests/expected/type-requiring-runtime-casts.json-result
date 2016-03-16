@@ -1473,7 +1473,7 @@ using namespace Inspector;
 
 - (TestProtocolTestRecursiveObject1 *)tree
 {
-    return [[TestProtocolTestRecursiveObject1 alloc] initWithInspectorObject:[[super objectForKey:@"tree"] toInspectorObject].get()];
+    return [[[TestProtocolTestRecursiveObject1 alloc] initWithInspectorObject:[[super objectForKey:@"tree"] toInspectorObject].get()] autorelease];
 }
 
 @end
@@ -1504,7 +1504,7 @@ using namespace Inspector;
 
 - (TestProtocolTestRecursiveObject2 *)obj
 {
-    return [[TestProtocolTestRecursiveObject2 alloc] initWithInspectorObject:[[super objectForKey:@"obj"] toInspectorObject].get()];
+    return [[[TestProtocolTestRecursiveObject2 alloc] initWithInspectorObject:[[super objectForKey:@"obj"] toInspectorObject].get()] autorelease];
 }
 
 @end
@@ -1535,7 +1535,7 @@ using namespace Inspector;
 
 - (TestProtocolTestRecursiveObject1 *)obj
 {
-    return [[TestProtocolTestRecursiveObject1 alloc] initWithInspectorObject:[[super objectForKey:@"obj"] toInspectorObject].get()];
+    return [[[TestProtocolTestRecursiveObject1 alloc] initWithInspectorObject:[[super objectForKey:@"obj"] toInspectorObject].get()] autorelease];
 }
 
 @end

@@ -1,3 +1,18 @@
+2016-03-15  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r198077): generated Objective-C protocol object getters leak their wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=155523
+        <rdar://problem/25181764>
+
+        Reviewed by Joseph Pecoraro.
+
+        Since the code may not be compiled with ARC, autorelease the returned wrapper.
+
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.protocol_to_objc_expression_for_member):
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-03-15  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Help clang generate better code on arrayProtoFuncToString()
