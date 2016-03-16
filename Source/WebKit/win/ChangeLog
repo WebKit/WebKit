@@ -1,3 +1,16 @@
+2016-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, rolling out r197693.
+
+        197031
+
+        Reverted changeset:
+
+        "[WinCairo][AcceleratedCompositing] Rendering issues on
+        www.bbc.com."
+        https://bugs.webkit.org/show_bug.cgi?id=154912
+        http://trac.webkit.org/changeset/197693
+
 2016-03-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Correct double-release of CFURLConnectionRef

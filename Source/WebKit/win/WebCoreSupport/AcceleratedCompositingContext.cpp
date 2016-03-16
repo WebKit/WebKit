@@ -361,9 +361,7 @@ bool AcceleratedCompositingContext::flushPendingLayerChanges()
     if (!frameView->flushCompositingStateIncludingSubframes())
         return false;
 
-    // On WinCairo, we always have a scroll layer, and should not include the scroll position in the visible rectangle,
-    // since the scroll position is already reflected in the position of the scroll layer.
-    FloatRect visibleRect(FloatPoint(0, 0), getWebViewSize(m_webView));
+    FloatRect visibleRect(frameView->scrollPosition(), getWebViewSize(m_webView));
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).updateBackingStoreIncludingSubLayers(visibleRect);
     return true;
 }
