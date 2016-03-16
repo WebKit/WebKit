@@ -665,9 +665,7 @@ private:
         case PutStack:
         case KillStack:
         case StoreBarrier:
-        case GetStack:
-        case GetRegExpObjectLastIndex:
-        case SetRegExpObjectLastIndex: {
+        case GetStack: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             DFG_CRASH(m_graph, node, "Unexpected node during prediction propagation");

@@ -2978,16 +2978,6 @@ void SpeculativeJIT::compile(Node* node)
         cellResult(resultPayload.gpr(), node);
         break;
     }
-
-    case GetRegExpObjectLastIndex: {
-        compileGetRegExpObjectLastIndex(node);
-        break;
-    }
-        
-    case SetRegExpObjectLastIndex: {
-        compileSetRegExpObjectLastIndex(node);
-        break;
-    }
         
     case ArrayPush: {
         ASSERT(node->arrayMode().isJSArray());
