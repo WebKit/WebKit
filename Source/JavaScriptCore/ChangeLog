@@ -1,5 +1,32 @@
 2016-03-15  Oliver Hunt  <oliver@apple.com>
 
+        Rename performJITMemcpy to something more inline with our normal webkit function names
+        https://bugs.webkit.org/show_bug.cgi?id=155525
+
+        Reviewed by Saam Barati.
+
+        Simple bulk search/replace with a better name.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::fillNops):
+        (JSC::ARM64Assembler::replaceWithJump):
+        (JSC::ARM64Assembler::replaceWithLoad):
+        (JSC::ARM64Assembler::replaceWithAddressComputation):
+        (JSC::ARM64Assembler::setPointer):
+        (JSC::ARM64Assembler::repatchInt32):
+        (JSC::ARM64Assembler::repatchCompact):
+        (JSC::ARM64Assembler::linkJumpOrCall):
+        (JSC::ARM64Assembler::linkCompareAndBranch):
+        (JSC::ARM64Assembler::linkConditionalBranch):
+        (JSC::ARM64Assembler::linkTestAndBranch):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * jit/ExecutableAllocator.h:
+        (JSC::writeToExecutableRegion):
+        (JSC::performJITMemcpy): Deleted.
+
+2016-03-15  Oliver Hunt  <oliver@apple.com>
+
         Build fix.
 
         * jit/ExecutableAllocatorFixedVMPool.cpp:

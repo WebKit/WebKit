@@ -163,7 +163,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     jumpsToLink.clear();
     shrink(writePtr + m_initialSize - readPtr);
 
-    performJITMemcpy(m_code, outBuffer.buffer(), m_size);
+    writeToExecutableRegion(m_code, outBuffer.buffer(), m_size);
 
 #if DUMP_LINK_STATISTICS
     dumpLinkStatistics(m_code, m_initialSize, m_size);

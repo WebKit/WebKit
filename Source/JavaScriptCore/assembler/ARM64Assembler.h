@@ -1490,7 +1490,7 @@ public:
         size_t n = size / sizeof(int32_t);
         for (int32_t* ptr = static_cast<int32_t*>(base); n--;) {
             int insn = nopPseudo();
-            performJITMemcpy(ptr++, &insn, sizeof(int));
+            writeToExecutableRegion(ptr++, &insn, sizeof(int));
         }
     }
     
@@ -2501,7 +2501,7 @@ public:
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(where)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
         int insn = unconditionalBranchImmediate(false, static_cast<int>(offset));
-        performJITMemcpy(where, &insn, sizeof(int));
+        writeToExecutableRegion(where, &insn, sizeof(int));
         cacheFlush(where, sizeof(int));
     }
     
@@ -2526,7 +2526,7 @@ public:
             ASSERT(!shift);
             ASSERT(!(imm12 & ~0xff8));
             int insn = loadStoreRegisterUnsignedImmediate(MemOpSize_64, false, MemOp_LOAD, encodePositiveImmediate<64>(imm12), rn, rd);
-            performJITMemcpy(where, &insn, sizeof(int));
+            writeToExecutableRegion(where, &insn, sizeof(int));
             cacheFlush(where, sizeof(int));
         }
 #if !ASSERT_DISABLED
@@ -2560,7 +2560,7 @@ public:
             ASSERT(opc == MemOp_LOAD);
             ASSERT(!(imm12 & ~0x1ff));
             int insn = addSubtractImmediate(Datasize_64, AddOp_ADD, DontSetFlags, 0, imm12 * sizeof(void*), rn, rt);
-            performJITMemcpy(where, &insn, sizeof(int));
+            writeToExecutableRegion(where, &insn, sizeof(int));
             cacheFlush(where, sizeof(int));
         }
 #if !ASSERT_DISABLED
@@ -2594,7 +2594,7 @@ public:
         buffer[0] = moveWideImediate(Datasize_64, MoveWideOp_Z, 0, getHalfword(value, 0), rd);
         buffer[1] = moveWideImediate(Datasize_64, MoveWideOp_K, 1, getHalfword(value, 1), rd);
         buffer[2] = moveWideImediate(Datasize_64, MoveWideOp_K, 2, getHalfword(value, 2), rd);
-        performJITMemcpy(address, buffer, sizeof(int) * 3);
+        writeToExecutableRegion(address, buffer, sizeof(int) * 3);
 
         if (flush)
             cacheFlush(address, sizeof(int) * 3);
@@ -2621,7 +2621,7 @@ public:
             buffer[0] = moveWideImediate(Datasize_32, MoveWideOp_N, 0, ~getHalfword(value, 0), rd);
             buffer[1] = moveWideImediate(Datasize_32, MoveWideOp_K, 1, getHalfword(value, 1), rd);
         }
-        performJITMemcpy(where, &buffer, sizeof(int) * 2);
+        writeToExecutableRegion(where, &buffer, sizeof(int) * 2);
 
         cacheFlush(where, sizeof(int) * 2);
     }
@@ -2686,7 +2686,7 @@ public:
         else
             imm12 = encodePositiveImmediate<64>(value);
         int insn = loadStoreRegisterUnsignedImmediate(size, V, opc, imm12, rn, rt);
-        performJITMemcpy(where, &insn, sizeof(int));
+        writeToExecutableRegion(where, &insn, sizeof(int));
 
         cacheFlush(where, sizeof(int));
     }
@@ -2884,7 +2884,7 @@ private:
         ASSERT(static_cast<int>(offset) == offset);
 
         int insn = unconditionalBranchImmediate(isCall, static_cast<int>(offset));
-        performJITMemcpy(from, &insn, sizeof(int));
+        writeToExecutableRegion(from, &insn, sizeof(int));
     }
 
     template<bool isDirect>
@@ -2900,14 +2900,14 @@ private:
 
         if (useDirect || isDirect) {
             int insn = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, condition == ConditionNE, static_cast<int>(offset), rt);
-            performJITMemcpy(from, &insn, sizeof(int));
+            writeToExecutableRegion(from, &insn, sizeof(int));
             if (!isDirect) {
                 insn = nopPseudo();
-                performJITMemcpy(from + 1, &insn, sizeof(int));
+                writeToExecutableRegion(from + 1, &insn, sizeof(int));
             }
         } else {
             int insn = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, invert(condition) == ConditionNE, 2, rt);
-            performJITMemcpy(from, &insn, sizeof(int));
+            writeToExecutableRegion(from, &insn, sizeof(int));
             linkJumpOrCall<false>(from + 1, to);
         }
     }
@@ -2925,14 +2925,14 @@ private:
 
         if (useDirect || isDirect) {
             int insn = conditionalBranchImmediate(static_cast<int>(offset), condition);
-            performJITMemcpy(from, &insn, sizeof(int));
+            writeToExecutableRegion(from, &insn, sizeof(int));
             if (!isDirect) {
                 insn = nopPseudo();
-                performJITMemcpy(from + 1, &insn, sizeof(int));
+                writeToExecutableRegion(from + 1, &insn, sizeof(int));
             }
         } else {
             int insn = conditionalBranchImmediate(2, invert(condition));
-            performJITMemcpy(from, &insn, sizeof(int));
+            writeToExecutableRegion(from, &insn, sizeof(int));
             linkJumpOrCall<false>(from + 1, to);
         }
     }
@@ -2951,14 +2951,14 @@ private:
 
         if (useDirect || isDirect) {
             int insn = testAndBranchImmediate(condition == ConditionNE, static_cast<int>(bitNumber), static_cast<int>(offset), rt);
-            performJITMemcpy(from, &insn, sizeof(int));
+            writeToExecutableRegion(from, &insn, sizeof(int));
             if (!isDirect) {
                 insn = nopPseudo();
-                performJITMemcpy(from + 1, &insn, sizeof(int));
+                writeToExecutableRegion(from + 1, &insn, sizeof(int));
             }
         } else {
             int insn = testAndBranchImmediate(invert(condition) == ConditionNE, static_cast<int>(bitNumber), 2, rt);
-            performJITMemcpy(from, &insn, sizeof(int));
+            writeToExecutableRegion(from, &insn, sizeof(int));
             linkJumpOrCall<false>(from + 1, to);
         }
     }

@@ -95,7 +95,7 @@ extern JS_EXPORTDATA uintptr_t endOfFixedExecutableMemoryPool;
 typedef void (*JITWriteFunction)(off_t, const void*, size_t);
 extern JS_EXPORTDATA JITWriteFunction jitWriteFunction;
 
-static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
+static inline void* writeToExecutableRegion(void *dst, const void *src, size_t n)
 {
     // Use execute-only write thunk for writes inside the JIT region. This is a variant of
     // memcpy that takes an offset into the JIT region as its destination (first) parameter.
@@ -110,7 +110,7 @@ static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 }
 
 #else // ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
-static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
+static inline void* writeToExecutableRegion(void *dst, const void *src, size_t n)
 {
     return memcpy(dst, src, n);
 }
