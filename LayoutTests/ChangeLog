@@ -1,5 +1,14 @@
 2016-03-16  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skipping mathml/very-large-stretchy-operators.html on ios-simulator debug
+        https://bugs.webkit.org/show_bug.cgi?id=155565
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-03-16  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking compositing/visible-rect/animated-from-none.html as flaky on ios-sim-wk2, failing on ios-sim-wk1
         https://bugs.webkit.org/show_bug.cgi?id=155495
 

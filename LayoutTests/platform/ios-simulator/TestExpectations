@@ -3009,3 +3009,5 @@ webkit.org/b/155339 [ Debug ] imported/blink/fast/multicol/dynamic/multicol-with
 webkit.org/b/155339 [ Debug ] imported/blink/fast/multicol/dynamic/relayout-abspos-in-relpos-spanner.html [ Pass Crash ]
 
 webkit.org/b/94458 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html [ Pass Crash ]
+
+webkit.org/b/155565 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
