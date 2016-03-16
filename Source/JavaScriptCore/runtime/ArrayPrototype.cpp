@@ -322,18 +322,23 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 
     // 1. Let array be the result of calling ToObject on the this value.
     JSObject* thisObject = thisValue.toObject(exec);
-    if (exec->hadException())
+    VM& vm = exec->vm();
+    if (UNLIKELY(vm.exception()))
         return JSValue::encode(jsUndefined());
     
     // 2. Let func be the result of calling the [[Get]] internal method of array with argument "join".
     JSValue function = JSValue(thisObject).get(exec, exec->propertyNames().join);
 
     // 3. If IsCallable(func) is false, then let func be the standard built-in method Object.prototype.toString (15.2.4.2).
+    bool customJoinCase = false;
     if (!function.isCell())
-        return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]"));
+        customJoinCase = true;
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallType::None)
+        customJoinCase = true;
+
+    if (UNLIKELY(customJoinCase))
         return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]"));
 
     // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
@@ -350,18 +355,18 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         return JSValue::encode(earlyReturnValue);
 
     JSStringJoiner joiner(*exec, ',', length);
-    if (exec->hadException())
+    if (UNLIKELY(vm.exception()))
         return JSValue::encode(jsUndefined());
 
     for (unsigned i = 0; i < length; ++i) {
         JSValue element = thisArray->tryGetIndexQuickly(i);
         if (!element) {
             element = thisArray->get(exec, i);
-            if (exec->hadException())
+            if (UNLIKELY(vm.exception()))
                 return JSValue::encode(jsUndefined());
         }
         joiner.append(*exec, element);
-        if (exec->hadException())
+        if (UNLIKELY(vm.exception()))
             return JSValue::encode(jsUndefined());
     }
 

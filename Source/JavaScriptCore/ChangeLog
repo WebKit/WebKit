@@ -1,3 +1,42 @@
+2016-03-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Help clang generate better code on arrayProtoFuncToString()
+        https://bugs.webkit.org/show_bug.cgi?id=155512
+
+        Reviewed by Mark Lam.
+
+        3d-raytrace hits Array.toString() hard with small arrays.
+        Half of the time is going into overhead around the StringJoiner.
+        This patch makes the function shorter and the layout better.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        Add "UNLIKELY" on rare cases. Clang pushes that code to the tail.
+
+        Factor the code of jsMakeNontrivialString() so that the operation
+        is not duplicated in the function.
+
+        * runtime/JSStringBuilder.h:
+        (JSC::jsMakeNontrivialString):
+        jsNontrivialString() supports r-value reference.
+        Move the result string into jsNontrivialString(), this removes
+        the deref+destructor from the function.
+
+        * runtime/JSStringJoiner.cpp:
+        (JSC::JSStringJoiner::~JSStringJoiner):
+        The destructor is pretty large. No point in inlining it.
+
+        (JSC::joinStrings):
+        * runtime/JSStringJoiner.h:
+        (JSC::JSStringJoiner::JSStringJoiner):
+        (JSC::JSStringJoiner::append):
+        The calls were duplicated. That's unnecessary.
+
+        * runtime/NumericStrings.h:
+        (JSC::NumericStrings::add):
+        Return a reference in all cases.
+        This removes a deref+destructor.
+
 2016-03-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove stale ArrayPrototype declarations

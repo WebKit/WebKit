@@ -130,7 +130,7 @@ inline JSValue jsMakeNontrivialString(ExecState* exec, const StringType& string,
     String result = WTF::tryMakeString(string, strings...);
     if (!result)
         return throwOutOfMemoryError(exec);
-    return jsNontrivialString(exec, result);
+    return jsNontrivialString(exec, WTFMove(result));
 }
 
 }

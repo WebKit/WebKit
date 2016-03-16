@@ -35,6 +35,7 @@ class JSStringJoiner {
 public:
     JSStringJoiner(ExecState&, LChar separator, unsigned stringCount);
     JSStringJoiner(ExecState&, StringView separator, unsigned stringCount);
+    ~JSStringJoiner();
 
     void append(ExecState&, JSValue);
     void appendEmptyString();
@@ -58,7 +59,7 @@ inline JSStringJoiner::JSStringJoiner(ExecState& state, StringView separator, un
     : m_separator(separator)
     , m_isAll8Bit(m_separator.is8Bit())
 {
-    if (!m_strings.tryReserveCapacity(stringCount))
+    if (UNLIKELY(!m_strings.tryReserveCapacity(stringCount)))
         throwOutOfMemoryError(&state);
 }
 
@@ -66,7 +67,7 @@ inline JSStringJoiner::JSStringJoiner(ExecState& state, LChar separator, unsigne
     : m_singleCharacterSeparator(separator)
     , m_separator { &m_singleCharacterSeparator, 1 }
 {
-    if (!m_strings.tryReserveCapacity(stringCount))
+    if (UNLIKELY(!m_strings.tryReserveCapacity(stringCount)))
         throwOutOfMemoryError(&state);
 }
 
@@ -106,11 +107,12 @@ ALWAYS_INLINE void JSStringJoiner::append(ExecState& state, JSValue value)
     // 5) It uses optimized code paths for all the cases known to be 8-bit and for the empty string.
 
     if (value.isCell()) {
-        if (value.asCell()->isString()) {
-            append(asString(value)->viewWithUnderlyingString(state));
-            return;
-        }
-        append(value.toString(&state)->viewWithUnderlyingString(state));
+        JSString* jsString;
+        if (value.asCell()->isString())
+            jsString = asString(value);
+        else
+            jsString = value.toString(&state);
+        append(jsString->viewWithUnderlyingString(state));
         return;
     }
 

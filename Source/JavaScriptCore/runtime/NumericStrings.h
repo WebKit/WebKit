@@ -34,7 +34,7 @@ namespace JSC {
 
 class NumericStrings {
 public:
-    ALWAYS_INLINE String add(double d)
+    ALWAYS_INLINE const String& add(double d)
     {
         CacheEntry<double>& entry = lookup(d);
         if (d == entry.key && !entry.value.isNull())
@@ -44,7 +44,7 @@ public:
         return entry.value;
     }
 
-    ALWAYS_INLINE String add(int i)
+    ALWAYS_INLINE const String& add(int i)
     {
         if (static_cast<unsigned>(i) < cacheSize)
             return lookupSmallString(static_cast<unsigned>(i));
@@ -56,7 +56,7 @@ public:
         return entry.value;
     }
 
-    ALWAYS_INLINE String add(unsigned i)
+    ALWAYS_INLINE const String& add(unsigned i)
     {
         if (i < cacheSize)
             return lookupSmallString(static_cast<unsigned>(i));
