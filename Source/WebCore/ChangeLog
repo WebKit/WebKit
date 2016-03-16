@@ -1,3 +1,50 @@
+2016-03-15  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Expose pointers to SVG elements referenced by aria-labelledby
+        https://bugs.webkit.org/show_bug.cgi?id=155481
+
+        Reviewed by Chris Fleizach.
+
+        Expose elements referenced by aria-labelledby via ATK_RELATION_LABELLED_BY.
+        Stop calling the supportsARIA* methods before getting the elements referred
+        to by the associated ARIA property in the accessible wrapper for ATK and
+        the inspector: Getting the elements will be just as fast when there are no
+        such elements, and faster when there are.
+
+        Modified the w3c-svg-name-calculation.html test to include AXTitleUIElement
+        in its output.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsARIAAttributes):
+        (WebCore::AccessibilityObject::ariaElementsFromAttribute): Added.
+        (WebCore::AccessibilityObject::ariaControlsElements): Added.
+        (WebCore::AccessibilityObject::ariaDescribedByElements): Added.
+        (WebCore::AccessibilityObject::ariaFlowToElements): Added.
+        (WebCore::AccessibilityObject::ariaLabelledByElements): Added.
+        (WebCore::AccessibilityObject::ariaOwnsElements): Added.
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::ariaOwnsElements): No longer virtual.
+        (WebCore::AccessibilityObject::supportsARIAFlowTo): Deleted.
+        (WebCore::AccessibilityObject::ariaFlowToElements): No longer virtual.
+        (WebCore::AccessibilityObject::supportsARIADescribedBy): Deleted.
+        (WebCore::AccessibilityObject::ariaDescribedByElements): No longer virtual.
+        (WebCore::AccessibilityObject::supportsARIAControls): Deleted.
+        (WebCore::AccessibilityObject::ariaControlsElements): No longer virtual.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaElementsFromAttribute): Moved to AccessibilityObject.
+        (WebCore::AccessibilityRenderObject::supportsARIAFlowTo): Deleted.
+        (WebCore::AccessibilityRenderObject::ariaFlowToElements): Moved to AccessibilityObject.
+        (WebCore::AccessibilityRenderObject::supportsARIADescribedBy): Deleted.
+        (WebCore::AccessibilityRenderObject::ariaDescribedByElements): Moved to AccessibilityObject.
+        (WebCore::AccessibilityRenderObject::supportsARIAControls): Deleted.
+        (WebCore::AccessibilityRenderObject::ariaControlsElements): Moved to AccessibilityObject.
+        (WebCore::AccessibilityRenderObject::ariaOwnsElements): Moved to AccessibilityObject.
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkRelationSetFromCoreObject):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+
 2016-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         Occasional crash under GraphicsContext::platformContext when dragging Google maps

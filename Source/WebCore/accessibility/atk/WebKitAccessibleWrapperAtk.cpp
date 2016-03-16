@@ -44,6 +44,8 @@
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "HostWindow.h"
+#include "RenderAncestorIterator.h"
+#include "RenderFieldset.h"
 #include "RenderObject.h"
 #include "SVGElement.h"
 #include "Settings.h"
@@ -228,63 +230,53 @@ static void removeAtkRelationByType(AtkRelationSet* relationSet, AtkRelationType
 
 static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, AtkRelationSet* relationSet)
 {
-    if (coreObject->isFieldset()) {
-        AccessibilityObject* label = coreObject->titleUIElement();
-        if (label) {
-            removeAtkRelationByType(relationSet, ATK_RELATION_LABELLED_BY);
-            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
-        }
-        return;
-    }
+    // FIXME: We're not implementing all the relation types, most notably the inverse/reciprocal
+    // types. Filed as bug 155494.
 
-    if (coreObject->roleValue() == LegendRole) {
-        for (AccessibilityObject* parent = coreObject->parentObjectUnignored(); parent; parent = parent->parentObjectUnignored()) {
-            if (parent->isFieldset()) {
-                atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, parent->wrapper());
-                break;
-            }
-        }
-        return;
-    }
-
+    // Elements with aria-labelledby should have the labelled-by relation as per the ARIA AAM spec.
+    // Controls with a label element and fieldsets with a legend element should also use this relation
+    // as per the HTML AAM spec. The reciprocal label-for relation should also be used.
+    removeAtkRelationByType(relationSet, ATK_RELATION_LABELLED_BY);
     if (coreObject->isControl()) {
-        AccessibilityObject* label = coreObject->correspondingLabelForControlElement();
-        if (label) {
-            removeAtkRelationByType(relationSet, ATK_RELATION_LABELLED_BY);
+        if (AccessibilityObject* label = coreObject->correspondingLabelForControlElement())
             atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
+    } else if (coreObject->isFieldset()) {
+        if (AccessibilityObject* label = coreObject->titleUIElement())
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
+    } else if (coreObject->roleValue() == LegendRole) {
+        if (RenderFieldset* renderFieldset = ancestorsOfType<RenderFieldset>(*coreObject->renderer()).first()) {
+            AccessibilityObject* fieldset = coreObject->axObjectCache()->getOrCreate(renderFieldset);
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, fieldset->wrapper());
         }
+    } else if (AccessibilityObject* control = coreObject->correspondingControlForLabelElement()) {
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, control->wrapper());
     } else {
-        AccessibilityObject* control = coreObject->correspondingControlForLabelElement();
-        if (control)
-            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, control->wrapper());
+        AccessibilityObject::AccessibilityChildrenVector ariaLabelledByElements;
+        coreObject->ariaLabelledByElements(ariaLabelledByElements);
+        for (const auto& accessibilityObject : ariaLabelledByElements)
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, accessibilityObject->wrapper());
     }
 
-    // Check whether object supports aria-flowto
-    if (coreObject->supportsARIAFlowTo()) {
-        removeAtkRelationByType(relationSet, ATK_RELATION_FLOWS_TO);
-        AccessibilityObject::AccessibilityChildrenVector ariaFlowToElements;
-        coreObject->ariaFlowToElements(ariaFlowToElements);
-        for (const auto& accessibilityObject : ariaFlowToElements)
-            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_FLOWS_TO, accessibilityObject->wrapper());
-    }
+    // Elements with aria-flowto should have the flows-to relation as per the ARIA AAM spec.
+    removeAtkRelationByType(relationSet, ATK_RELATION_FLOWS_TO);
+    AccessibilityObject::AccessibilityChildrenVector ariaFlowToElements;
+    coreObject->ariaFlowToElements(ariaFlowToElements);
+    for (const auto& accessibilityObject : ariaFlowToElements)
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_FLOWS_TO, accessibilityObject->wrapper());
 
-    // Check whether object supports aria-describedby. It provides an additional information for the user.
-    if (coreObject->supportsARIADescribedBy()) {
-        removeAtkRelationByType(relationSet, ATK_RELATION_DESCRIBED_BY);
-        AccessibilityObject::AccessibilityChildrenVector ariaDescribedByElements;
-        coreObject->ariaDescribedByElements(ariaDescribedByElements);
-        for (const auto& accessibilityObject : ariaDescribedByElements)
-            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DESCRIBED_BY, accessibilityObject->wrapper());
-    }
+    // Elements with aria-describedby should have the described-by relation as per the ARIA AAM spec.
+    removeAtkRelationByType(relationSet, ATK_RELATION_DESCRIBED_BY);
+    AccessibilityObject::AccessibilityChildrenVector ariaDescribedByElements;
+    coreObject->ariaDescribedByElements(ariaDescribedByElements);
+    for (const auto& accessibilityObject : ariaDescribedByElements)
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DESCRIBED_BY, accessibilityObject->wrapper());
 
-    // Check whether object supports aria-controls. It provides information about elements that are controlled by the current object.
-    if (coreObject->supportsARIAControls()) {
-        removeAtkRelationByType(relationSet, ATK_RELATION_CONTROLLER_FOR);
-        AccessibilityObject::AccessibilityChildrenVector ariaControls;
-        coreObject->ariaControlsElements(ariaControls);
-        for (const auto& accessibilityObject : ariaControls)
-            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_CONTROLLER_FOR, accessibilityObject->wrapper());
-    }
+    // Elements with aria-controls should have the controller-for relation as per the ARIA AAM spec.
+    removeAtkRelationByType(relationSet, ATK_RELATION_CONTROLLER_FOR);
+    AccessibilityObject::AccessibilityChildrenVector ariaControls;
+    coreObject->ariaControlsElements(ariaControls);
+    for (const auto& accessibilityObject : ariaControls)
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_CONTROLLER_FOR, accessibilityObject->wrapper());
 }
 
 static gpointer webkitAccessibleParentClass = nullptr;

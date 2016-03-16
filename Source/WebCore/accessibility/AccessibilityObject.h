@@ -614,14 +614,14 @@ public:
     virtual double estimatedLoadingProgress() const { return 0; }
     static bool isARIAControl(AccessibilityRole);
     static bool isARIAInput(AccessibilityRole);
+
     virtual bool supportsARIAOwns() const { return false; }
-    virtual void ariaOwnsElements(AccessibilityChildrenVector&) const { }
-    virtual bool supportsARIAFlowTo() const { return false; }
-    virtual void ariaFlowToElements(AccessibilityChildrenVector&) const { }
-    virtual bool supportsARIADescribedBy() const { return false; }
-    virtual void ariaDescribedByElements(AccessibilityChildrenVector&) const { }
-    virtual bool supportsARIAControls() const { return false; }
-    virtual void ariaControlsElements(AccessibilityChildrenVector&) const { }
+    void ariaControlsElements(AccessibilityChildrenVector&) const;
+    void ariaDescribedByElements(AccessibilityChildrenVector&) const;
+    void ariaFlowToElements(AccessibilityChildrenVector&) const;
+    void ariaLabelledByElements(AccessibilityChildrenVector&) const;
+    void ariaOwnsElements(AccessibilityChildrenVector&) const;
+
     virtual bool ariaHasPopup() const { return false; }
     bool ariaPressedIsPresent() const;
     bool ariaIsMultiline() const;
@@ -1059,6 +1059,8 @@ protected:
     virtual AccessibilityRole buttonRoleType() const;
     bool isOnscreen() const;
     bool dispatchTouchEvent();
+
+    void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
 
 #if (PLATFORM(GTK) || PLATFORM(EFL)) && HAVE(ACCESSIBILITY)
     bool allowsTextRanges() const;

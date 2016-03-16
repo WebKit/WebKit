@@ -316,6 +316,7 @@
        result = axElement.title + "\n\t" + axElement.description;
        if (accessibilityController.platformName == "mac")
            result += "\n\t" + axElement.helpText;
+       result += "\n\tAXTitleUIElement: " + (axElement.titleUIElement() ? "non-null" : "null");
        return result;
     }
 

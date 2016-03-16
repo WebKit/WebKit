@@ -2241,13 +2241,13 @@ bool AccessibilityObject::supportsARIAAttributes() const
     return supportsARIALiveRegion()
         || supportsARIADragging()
         || supportsARIADropping()
-        || supportsARIAFlowTo()
         || supportsARIAOwns()
         || hasAttribute(aria_atomicAttr)
         || hasAttribute(aria_busyAttr)
         || hasAttribute(aria_controlsAttr)
         || hasAttribute(aria_describedbyAttr)
         || hasAttribute(aria_disabledAttr)
+        || hasAttribute(aria_flowtoAttr)
         || hasAttribute(aria_haspopupAttr)
         || hasAttribute(aria_invalidAttr)
         || hasAttribute(aria_labelAttr)
@@ -2974,6 +2974,44 @@ bool AccessibilityObject::isContainedByPasswordField() const
 
     Element* element = node->shadowHost();
     return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(*element).isPasswordField();
+}
+
+void AccessibilityObject::ariaElementsFromAttribute(AccessibilityChildrenVector& children, const QualifiedName& attributeName) const
+{
+    Vector<Element*> elements;
+    elementsFromAttribute(elements, attributeName);
+    AXObjectCache* cache = axObjectCache();
+    for (const auto& element : elements) {
+        if (AccessibilityObject* axObject = cache->getOrCreate(element))
+            children.append(axObject);
+    }
+}
+
+void AccessibilityObject::ariaControlsElements(AccessibilityChildrenVector& ariaControls) const
+{
+    ariaElementsFromAttribute(ariaControls, aria_controlsAttr);
+}
+
+void AccessibilityObject::ariaDescribedByElements(AccessibilityChildrenVector& ariaDescribedBy) const
+{
+    ariaElementsFromAttribute(ariaDescribedBy, aria_describedbyAttr);
+}
+
+void AccessibilityObject::ariaFlowToElements(AccessibilityChildrenVector& flowTo) const
+{
+    ariaElementsFromAttribute(flowTo, aria_flowtoAttr);
+}
+
+void AccessibilityObject::ariaLabelledByElements(AccessibilityChildrenVector& ariaLabelledBy) const
+{
+    ariaElementsFromAttribute(ariaLabelledBy, aria_labelledbyAttr);
+    if (!ariaLabelledBy.size())
+        ariaElementsFromAttribute(ariaLabelledBy, aria_labeledbyAttr);
+}
+
+void AccessibilityObject::ariaOwnsElements(AccessibilityChildrenVector& axObjects) const
+{
+    ariaElementsFromAttribute(axObjects, aria_ownsAttr);
 }
 
 } // namespace WebCore
