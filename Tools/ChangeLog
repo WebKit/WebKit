@@ -1,3 +1,20 @@
+2016-03-16  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: should warn about blank lines after #include "config.h" in TestWebKitAPI
+        <http://webkit.org/b/155445>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checker.py:
+        (_PATH_RULES_SPECIFIER): Do not ignore "build/include*" checks
+        on TestWebKitAPI since this project uses a config.h header as of
+        r95188.  Also remove references to WebKitAPITest, which ceased
+        to exist in r95944.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (GlobalVariablesTest.test_path_rules_specifier): Add tests.
+        Remove reference to WebKitAPITest project.
+
 2016-03-16  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Printing test snapshots are upside-down after r198242
