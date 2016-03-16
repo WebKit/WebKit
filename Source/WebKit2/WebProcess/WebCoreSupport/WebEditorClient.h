@@ -139,16 +139,16 @@ private:
     String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord) override;
     void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override;
 #if USE(UNIFIED_TEXT_CHECKING)
-    Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, WebCore::TextCheckingTypeMask checkingTypes) override;
+    Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, WebCore::TextCheckingTypeMask checkingTypes, const WebCore::VisibleSelection& currentSelection) override;
 #endif
     void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail&) override;
     void updateSpellingUIWithMisspelledWord(const String&) override;
     void showSpellingUI(bool show) override;
     bool spellingUIIsShowing() override;
-    void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) override;
+    void getGuessesForWord(const String& word, const String& context, const WebCore::VisibleSelection& currentSelection, Vector<String>& guesses) override;
     void willSetInputMethodState() override;
     void setInputMethodState(bool enabled) override;
-    void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) override;
+    void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>, const WebCore::VisibleSelection& currentSelection) override;
 
 #if PLATFORM(GTK)
     bool shouldShowUnicodeMenu() override;

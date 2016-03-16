@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+class VisibleSelection;
+
 class TextCheckerClient {
 public:
     virtual ~TextCheckerClient() {}
@@ -49,14 +51,14 @@ public:
     virtual void checkGrammarOfString(StringView, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) = 0;
 
 #if USE(UNIFIED_TEXT_CHECKING)
-    virtual Vector<TextCheckingResult> checkTextOfParagraph(StringView, TextCheckingTypeMask checkingTypes) = 0;
+    virtual Vector<TextCheckingResult> checkTextOfParagraph(StringView, TextCheckingTypeMask checkingTypes, const VisibleSelection& currentSelection) = 0;
 #endif
 
     // For spellcheckers that support multiple languages, it's often important to be able to identify the language in order to
     // provide more accurate correction suggestions. Caller can pass in more text in "context" to aid such spellcheckers on language
     // identification. Noramlly it's the text surrounding the "word" for which we are getting correction suggestions.
-    virtual void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) = 0;
-    virtual void requestCheckingOfString(PassRefPtr<TextCheckingRequest>) = 0;
+    virtual void getGuessesForWord(const String& word, const String& context, const VisibleSelection& currentSelection, Vector<String>& guesses) = 0;
+    virtual void requestCheckingOfString(PassRefPtr<TextCheckingRequest>, const VisibleSelection& currentSelection) = 0;
 };
 
 }

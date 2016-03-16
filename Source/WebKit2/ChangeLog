@@ -1,3 +1,47 @@
+2016-03-16  Beth Dakin  <bdakin@apple.com>
+
+        Provide NSSpellChecker spellChecking methods with the current insertion point
+        https://bugs.webkit.org/show_bug.cgi?id=155532
+        -and corresponding-
+        rdar://problem/24066952
+
+        Reviewed by Simon Fraser.
+
+        Pass the insertionPoint to the UIProcess
+        * UIProcess/TextChecker.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::checkTextOfParagraph):
+        (WebKit::WebPageProxy::getGuessesForWord):
+        (WebKit::WebPageProxy::requestCheckingOfString):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::requestCheckingOfString):
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::requestCheckingOfString):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::requestCheckingOfString):
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::ignoreWord):
+        (WebKit::TextChecker::requestCheckingOfString):
+
+        Extract the insertion point from the VisibleSelection that WebCore has 
+        passed. 
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::insertionPointFromCurrentSelection):
+        (WebKit::WebEditorClient::checkTextOfParagraph):
+        (WebKit::WebEditorClient::getGuessesForWord):
+        (WebKit::WebEditorClient::requestCheckingOfString):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2016-03-16  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r192184): CleanMyDrive 2's tutorial window is blank

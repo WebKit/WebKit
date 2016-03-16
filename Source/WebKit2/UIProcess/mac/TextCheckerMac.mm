@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "TextCheckerState.h"
+#import <WebCore/NSSpellCheckerSPI.h>
 #import <WebCore/NotImplemented.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringView.h>
@@ -290,15 +291,19 @@ void TextChecker::closeSpellDocumentWithTag(int64_t tag)
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, uint64_t checkingTypes)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, int32_t insertionPoint, uint64_t checkingTypes)
 {
     Vector<TextCheckingResult> results;
 
     RetainPtr<NSString> textString = text.createNSStringWithoutCopying();
+    NSDictionary *options = nil;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPoint] };
+#endif
     NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString.get()
                                                                           range:NSMakeRange(0, text.length())
                                                                           types:checkingTypes | NSTextCheckingTypeOrthography
-                                                                        options:nil
+                                                                        options:options
                                                          inSpellDocumentWithTag:spellDocumentTag 
                                                                     orthography:NULL
                                                                       wordCount:NULL];
@@ -425,13 +430,17 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String& badGr
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict.get()];
 }
 
-void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses)
+void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, int32_t insertionPoint, Vector<String>& guesses)
 {
     NSString* language = nil;
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    NSDictionary *options = nil;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPoint] };
+#endif
     if (context.length()) {
-        [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:0 inSpellDocumentWithTag:spellDocumentTag orthography:&orthography wordCount:0];
+        [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:options inSpellDocumentWithTag:spellDocumentTag orthography:&orthography wordCount:0];
         language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context orthography:orthography];
     }
     NSArray* stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellDocumentTag];
@@ -450,7 +459,7 @@ void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
     [[NSSpellChecker sharedSpellChecker] ignoreWord:word inSpellDocumentWithTag:spellDocumentTag];
 }
 
-void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion>)
+void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion>, int32_t)
 {
     notImplemented();
 }

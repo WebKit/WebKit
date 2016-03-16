@@ -425,11 +425,11 @@ public:
     void checkGrammarOfString(StringView, Vector<GrammarDetail>&, int*, int*) override { }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-    Vector<TextCheckingResult> checkTextOfParagraph(StringView, TextCheckingTypeMask) override { return Vector<TextCheckingResult>(); }
+    Vector<TextCheckingResult> checkTextOfParagraph(StringView, TextCheckingTypeMask, const VisibleSelection&) override { return Vector<TextCheckingResult>(); }
 #endif
 
-    void getGuessesForWord(const String&, const String&, Vector<String>&) override { }
-    void requestCheckingOfString(PassRefPtr<TextCheckingRequest>) override;
+    void getGuessesForWord(const String&, const String&, const VisibleSelection&, Vector<String>&) override { }
+    void requestCheckingOfString(PassRefPtr<TextCheckingRequest>, const VisibleSelection&) override;
 };
 
 class EmptyEditorClient : public EditorClient {

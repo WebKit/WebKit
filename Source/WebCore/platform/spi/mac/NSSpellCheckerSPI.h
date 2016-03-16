@@ -29,6 +29,8 @@
 
 // FIXME: This header should include system headers when possible.
 
+extern NSString *NSTextCheckingInsertionPointKey;
+
 @interface NSSpellChecker ()
 - (NSInteger)requestCandidatesForSelectedRange:(NSRange)selectedRange inString:(NSString *)stringToCheck types:(NSTextCheckingTypes)checkingTypes options:(NSDictionary<NSString *, id> *)options inSpellDocumentWithTag:(NSInteger)tag completionHandler:(void (^)(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates))completionHandler;
 - (BOOL)deletesAutospaceBeforeString:(NSString *)string language:(NSString *)language;

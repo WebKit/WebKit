@@ -48,8 +48,10 @@
 #include <WebCore/Page.h>
 #include <WebCore/SpellChecker.h>
 #include <WebCore/StyleProperties.h>
+#include <WebCore/TextIterator.h>
 #include <WebCore/UndoStep.h>
 #include <WebCore/UserTypingGestureIndicator.h>
+#include <WebCore/VisibleUnits.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 
@@ -474,12 +476,19 @@ void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::Gram
     *badGrammarLength = resultLength;
 }
 
+static int32_t insertionPointFromCurrentSelection(const VisibleSelection& currentSelection)
+{
+    VisiblePosition selectionStart = currentSelection.visibleStart();
+    VisiblePosition paragraphStart = startOfParagraph(selectionStart);
+    return TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
+}
+
 #if USE(UNIFIED_TEXT_CHECKING)
-Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stringView, WebCore::TextCheckingTypeMask checkingTypes)
+Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stringView, WebCore::TextCheckingTypeMask checkingTypes, const VisibleSelection& currentSelection)
 {
     Vector<TextCheckingResult> results;
 
-    m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(stringView.toStringWithoutCopying(), checkingTypes), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
+    m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(stringView.toStringWithoutCopying(), checkingTypes, insertionPointFromCurrentSelection(currentSelection)), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
 
     return results;
 }
@@ -507,19 +516,19 @@ bool WebEditorClient::spellingUIIsShowing()
     return isShowing;
 }
 
-void WebEditorClient::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)
+void WebEditorClient::getGuessesForWord(const String& word, const String& context, const VisibleSelection& currentSelection, Vector<String>& guesses)
 {
-    m_page->sendSync(Messages::WebPageProxy::GetGuessesForWord(word, context), Messages::WebPageProxy::GetGuessesForWord::Reply(guesses));
+    m_page->sendSync(Messages::WebPageProxy::GetGuessesForWord(word, context, insertionPointFromCurrentSelection(currentSelection)), Messages::WebPageProxy::GetGuessesForWord::Reply(guesses));
 }
 
-void WebEditorClient::requestCheckingOfString(WTF::PassRefPtr<TextCheckingRequest> prpRequest)
+void WebEditorClient::requestCheckingOfString(WTF::PassRefPtr<TextCheckingRequest> prpRequest, const WebCore::VisibleSelection& currentSelection)
 {
     RefPtr<TextCheckingRequest> request = prpRequest;
 
     uint64_t requestID = generateTextCheckingRequestID();
     m_page->addTextCheckingRequest(requestID, request);
 
-    m_page->send(Messages::WebPageProxy::RequestCheckingOfString(requestID, request->data()));
+    m_page->send(Messages::WebPageProxy::RequestCheckingOfString(requestID, request->data(), insertionPointFromCurrentSelection(currentSelection)));
 }
 
 void WebEditorClient::willSetInputMethodState()

@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "Settings.h"
 #include "TextBreakIterator.h"
 #include "TextCheckerClient.h"
@@ -346,7 +347,10 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
                 
                 Vector<TextCheckingResult> results;
                 TextCheckingTypeMask checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
-                checkTextOfParagraph(*m_client->textChecker(), paragraphString, checkingTypes, results);
+                VisibleSelection currentSelection;
+                if (Frame* frame = paragraphRange->ownerDocument().frame())
+                    currentSelection = frame->selection().selection();
+                checkTextOfParagraph(*m_client->textChecker(), paragraphString, checkingTypes, results, currentSelection);
 
                 for (auto& result : results) {
                     if (result.type == TextCheckingTypeSpelling && result.location >= currentStartOffset && result.location + result.length <= currentEndOffset) {
@@ -578,13 +582,16 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
 
     Vector<TextCheckingResult> results;
     TextCheckingTypeMask checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
-    checkTextOfParagraph(*m_client->textChecker(), paragraph.text(), checkingTypes, results);
+    VisibleSelection currentSelection;
+    if (Frame* frame = m_range->ownerDocument().frame())
+        currentSelection = frame->selection().selection();
+    checkTextOfParagraph(*m_client->textChecker(), paragraph.text(), checkingTypes, results, currentSelection);
 
     for (auto& result : results) {
         if (result.type == TextCheckingTypeSpelling && paragraph.checkingRangeMatches(result.location, result.length)) {
             String misspelledWord = paragraph.checkingSubstring();
             ASSERT(misspelledWord.length());
-            m_client->textChecker()->getGuessesForWord(misspelledWord, String(), guesses);
+            m_client->textChecker()->getGuessesForWord(misspelledWord, String(), currentSelection, guesses);
             m_client->updateSpellingUIWithMisspelledWord(misspelledWord);
             misspelled = true;
             return guesses;
@@ -638,11 +645,13 @@ bool TextCheckingHelper::unifiedTextCheckerEnabled() const
     return m_range && WebCore::unifiedTextCheckerEnabled(m_range->ownerDocument().frame());
 }
 
-void checkTextOfParagraph(TextCheckerClient& client, StringView text, TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
+void checkTextOfParagraph(TextCheckerClient& client, StringView text, TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results, const VisibleSelection& currentSelection)
 {
 #if USE(UNIFIED_TEXT_CHECKING)
-    results = client.checkTextOfParagraph(text, checkingTypes);
+    results = client.checkTextOfParagraph(text, checkingTypes, currentSelection);
 #else
+    UNUSED_PARAM(currentSelection);
+
     Vector<TextCheckingResult> mispellings;
     if (checkingTypes & TextCheckingTypeSpelling)
         findMisspellings(client, text, mispellings);

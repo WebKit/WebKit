@@ -181,7 +181,7 @@ void SpellChecker::invokeRequest(PassRefPtr<SpellCheckRequest> request)
     if (!client())
         return;
     m_processingRequest = request;
-    client()->requestCheckingOfString(m_processingRequest);
+    client()->requestCheckingOfString(m_processingRequest, m_frame.selection().selection());
 }
 
 void SpellChecker::enqueueRequest(PassRefPtr<SpellCheckRequest> request)

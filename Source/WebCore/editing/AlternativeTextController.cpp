@@ -353,7 +353,7 @@ void AlternativeTextController::timerFired()
             break;
         String paragraphText = plainText(TextCheckingParagraph(m_alternativeTextInfo.rangeWithAlternative).paragraphRange().get());
         Vector<String> suggestions;
-        textChecker()->getGuessesForWord(m_alternativeTextInfo.originalText, paragraphText, suggestions);
+        textChecker()->getGuessesForWord(m_alternativeTextInfo.originalText, paragraphText, m_frame.selection().selection(), suggestions);
         if (suggestions.isEmpty()) {
             m_alternativeTextInfo.rangeWithAlternative = nullptr;
             break;

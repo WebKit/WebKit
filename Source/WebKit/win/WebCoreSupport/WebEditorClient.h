@@ -110,11 +110,11 @@ public:
     void updateSpellingUIWithMisspelledWord(const WTF::String&) override;
     void showSpellingUI(bool show) override;
     bool spellingUIIsShowing() override;
-    void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) override;
+    void getGuessesForWord(const WTF::String& word, const WTF::String& context, const WebCore::VisibleSelection& currentSelection, WTF::Vector<WTF::String>& guesses) override;
 
     void willSetInputMethodState() override;
     void setInputMethodState(bool) override;
-    void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) override { }
+    void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>, const WebCore::VisibleSelection&) override { }
 
     WebCore::TextCheckerClient* textChecker() override { return this; }
 

@@ -158,16 +158,16 @@ private:
     void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) override;
     String getAutoCorrectSuggestionForMisspelledWord(const String&) override;
     void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override;
-    Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, WebCore::TextCheckingTypeMask checkingTypes) override;
+    Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, WebCore::TextCheckingTypeMask checkingTypes, const WebCore::VisibleSelection& currentSelection) override;
     void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail&) override;
     void updateSpellingUIWithMisspelledWord(const String&) override;
     void showSpellingUI(bool show) override;
     bool spellingUIIsShowing() override;
-    void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) override;
+    void getGuessesForWord(const String& word, const String& context, const WebCore::VisibleSelection& currentSelection, Vector<String>& guesses) override;
 
     void willSetInputMethodState() override;
     void setInputMethodState(bool enabled) override;
-    void requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest>) override;
+    void requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest>, const WebCore::VisibleSelection& currentSelection) override;
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     void requestCandidatesForSelection(const WebCore::VisibleSelection&);
@@ -280,7 +280,7 @@ inline bool WebEditorClient::spellingUIIsShowing()
     return false;
 }
 
-inline void WebEditorClient::getGuessesForWord(const String&, const String&, Vector<String>&)
+inline void WebEditorClient::getGuessesForWord(const String&, const String&, const WebCore::VisibleSelection&, Vector<String>&)
 {
 }
 
