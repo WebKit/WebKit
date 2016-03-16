@@ -748,9 +748,6 @@ private:
         case SkipScope:
             compileSkipScope();
             break;
-        case GetGlobalObject:
-            compileGetGlobalObject();
-            break;
         case GetClosureVar:
             compileGetClosureVar();
             break;
@@ -4478,12 +4475,6 @@ private:
     {
         setJSValue(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSScope_next));
     }
-
-    void compileGetGlobalObject()
-    {
-        LValue structure = loadStructure(lowCell(m_node->child1()));
-        setJSValue(m_out.loadPtr(structure, m_heaps.Structure_globalObject));
-    }
     
     void compileGetClosureVar()
     {
@@ -6449,66 +6440,52 @@ private:
 
     void compileRegExpExec()
     {
-        LValue globalObject = lowCell(m_node->child1());
-        
-        if (m_node->child2().useKind() == RegExpObjectUse) {
-            LValue base = lowRegExpObject(m_node->child2());
+        if (m_node->child1().useKind() == RegExpObjectUse) {
+            LValue base = lowRegExpObject(m_node->child1());
             
-            if (m_node->child3().useKind() == StringUse) {
-                LValue argument = lowString(m_node->child3());
+            if (m_node->child2().useKind() == StringUse) {
+                LValue argument = lowString(m_node->child2());
                 LValue result = vmCall(
-                    Int64, m_out.operation(operationRegExpExecString), m_callFrame, globalObject,
-                    base, argument);
+                    Int64, m_out.operation(operationRegExpExecString), m_callFrame, base, argument);
                 setJSValue(result);
                 return;
             }
             
-            LValue argument = lowJSValue(m_node->child3());
-            LValue result = vmCall(
-                Int64, m_out.operation(operationRegExpExec), m_callFrame, globalObject, base,
-                argument);
-            setJSValue(result);
+            LValue argument = lowJSValue(m_node->child2());
+            setJSValue(
+                vmCall(Int64, m_out.operation(operationRegExpExec), m_callFrame, base, argument));
             return;
         }
         
-        LValue base = lowJSValue(m_node->child2());
-        LValue argument = lowJSValue(m_node->child3());
-        LValue result = vmCall(
-            Int64, m_out.operation(operationRegExpExecGeneric), m_callFrame, globalObject, base,
-            argument);
-        setJSValue(result);
+        LValue base = lowJSValue(m_node->child1());
+        LValue argument = lowJSValue(m_node->child2());
+        setJSValue(
+            vmCall(Int64, m_out.operation(operationRegExpExecGeneric), m_callFrame, base, argument));
     }
 
     void compileRegExpTest()
     {
-        LValue globalObject = lowCell(m_node->child1());
-        
-        if (m_node->child2().useKind() == RegExpObjectUse) {
-            LValue base = lowRegExpObject(m_node->child2());
+        if (m_node->child1().useKind() == RegExpObjectUse) {
+            LValue base = lowRegExpObject(m_node->child1());
             
-            if (m_node->child3().useKind() == StringUse) {
-                LValue argument = lowString(m_node->child3());
+            if (m_node->child2().useKind() == StringUse) {
+                LValue argument = lowString(m_node->child2());
                 LValue result = vmCall(
-                    Int32, m_out.operation(operationRegExpTestString), m_callFrame, globalObject,
-                    base, argument);
+                    Int32, m_out.operation(operationRegExpTestString), m_callFrame, base, argument);
                 setBoolean(result);
                 return;
             }
 
-            LValue argument = lowJSValue(m_node->child3());
-            LValue result = vmCall(
-                Int32, m_out.operation(operationRegExpTest), m_callFrame, globalObject, base,
-                argument);
-            setBoolean(result);
+            LValue argument = lowJSValue(m_node->child2());
+            setBoolean(
+                vmCall(Int32, m_out.operation(operationRegExpTest), m_callFrame, base, argument));
             return;
         }
 
-        LValue base = lowJSValue(m_node->child2());
-        LValue argument = lowJSValue(m_node->child3());
-        LValue result = vmCall(
-            Int32, m_out.operation(operationRegExpTestGeneric), m_callFrame, globalObject, base,
-            argument);
-        setBoolean(result);
+        LValue base = lowJSValue(m_node->child1());
+        LValue argument = lowJSValue(m_node->child2());
+        setBoolean(
+            vmCall(Int32, m_out.operation(operationRegExpTestGeneric), m_callFrame, base, argument));
     }
 
     void compileNewRegexp()

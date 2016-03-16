@@ -550,8 +550,7 @@ private:
             break;
         }
             
-        case SkipScope:
-        case GetGlobalObject: {
+        case SkipScope: {
             changed |= setPrediction(SpecObjectOther);
             break;
         }
