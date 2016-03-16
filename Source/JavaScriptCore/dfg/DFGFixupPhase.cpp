@@ -881,11 +881,13 @@ private:
             
         case RegExpExec:
         case RegExpTest: {
-            if (node->child1()->shouldSpeculateRegExpObject()) {
-                fixEdge<RegExpObjectUse>(node->child1());
-
-                if (node->child2()->shouldSpeculateString())
-                    fixEdge<StringUse>(node->child2());
+            // FIXME: These should probably speculate something stronger than cell.
+            // https://bugs.webkit.org/show_bug.cgi?id=154900
+            if (node->child1()->shouldSpeculateCell()
+                && node->child2()->shouldSpeculateCell()) {
+                fixEdge<CellUse>(node->child1());
+                fixEdge<CellUse>(node->child2());
+                break;
             }
             break;
         }
