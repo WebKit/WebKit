@@ -1,3 +1,21 @@
+2016-03-15  Enrica Casucci  <enrica@apple.com>
+
+        Follow up to r195769.
+        https://bugs.webkit.org/show_bug.cgi?id=155519
+        rdar://problem/25146483
+
+        Reviewed by Tim Horton.
+
+        There are two code paths that lead to calling handleSyntheticClick()
+        where we need to check if the default action can be performed on the
+        data detector link.
+        Only one was covered in r195769 and this patch addresses the missing one.
+        I've also discovered that the point reported in DidNotHandleTapAsClick was
+        incorrectly always (0, 0) and I've fixed it.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleTap):
+
 2016-03-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r198230.

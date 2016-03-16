@@ -595,10 +595,14 @@ void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransaction
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
     Frame* frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
+    IntPoint adjustedIntPoint = roundedIntPoint(adjustedPoint);
 
     if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
-        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(m_potentialTapLocation)));
-    else
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
+    else if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(&downcast<Element>(*nodeRespondingToClick))) {
+        requestPositionInformation(adjustedIntPoint);
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
+    } else
         handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
 }
 
