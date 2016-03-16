@@ -35,7 +35,7 @@ void TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded(TextureMapp
     if (!m_image)
         return;
 
-    updateContents(textureMapper, m_image.get(), m_image->rect(), enclosingIntRect(m_image->rect()), BitmapTexture::UpdateCannotModifyOriginalImageData);
+    updateContents(textureMapper, m_image.get(), m_image->size(), enclosingIntRect(m_image->rect()), BitmapTexture::UpdateCannotModifyOriginalImageData);
 
     if (m_image->imageObserver())
         m_image->imageObserver()->didDraw(m_image.get());
@@ -44,23 +44,15 @@ void TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded(TextureMapp
 
 TransformationMatrix TextureMapperTiledBackingStore::adjustedTransformForRect(const FloatRect& targetRect)
 {
-    FloatRect scaledContentsRect(FloatPoint::zero(), m_contentsSize);
-    scaledContentsRect.scale(m_contentsScale);
-    return TransformationMatrix::rectToRect(scaledContentsRect, targetRect);
+    return TransformationMatrix::rectToRect(rect(), targetRect);
 }
 
 void TextureMapperTiledBackingStore::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
-    FloatRect scaledTargetRect(targetRect);
-    if (m_image)
-        scaledTargetRect.scale(m_contentsScale);
-
     updateContentsFromImageIfNeeded(textureMapper);
-    TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(scaledTargetRect);
-    FloatRect scaledContentsRect(FloatPoint::zero(), m_contentsSize);
-    scaledContentsRect.scale(m_contentsScale);
+    TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
     for (auto& tile : m_tiles)
-        tile.paint(textureMapper, adjustedTransform, opacity, calculateExposedTileEdges(scaledContentsRect, tile.rect()));
+        tile.paint(textureMapper, adjustedTransform, opacity, calculateExposedTileEdges(rect(), tile.rect()));
 }
 
 void TextureMapperTiledBackingStore::drawBorder(TextureMapper& textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
@@ -86,37 +78,17 @@ void TextureMapperTiledBackingStore::updateContentsScale(float scale)
     m_contentsScale = scale;
 }
 
-void TextureMapperTiledBackingStore::updateContentsSize(const FloatSize& size)
+void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSize& size, const IntSize& tileSize, bool hasAlpha)
 {
-    if (m_contentsSize == size)
+    if (size == m_size && !m_isScaleDirty)
         return;
 
-    m_isSizeDirty = true;
-    m_contentsSize = size;
-}
-
-void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatRect& visibleRect, const IntSize& tileSize, bool hasAlpha)
-{
-    if (visibleRect == m_visibleRect && !m_isScaleDirty && !m_isSizeDirty)
-        return;
-
-    m_visibleRect = visibleRect;
+    m_size = size;
     m_isScaleDirty = false;
-    m_isSizeDirty = false;
 
-    FloatRect scaledContentsRect(FloatRect(FloatPoint::zero(), m_contentsSize));
-    FloatRect scaledVisibleRect(m_visibleRect);
-
-    static const float coverRectMultiplier = 1.2;
-    FloatPoint delta(scaledVisibleRect.center());
-    delta.scale(1 - coverRectMultiplier, 1 - coverRectMultiplier);
-
-    scaledVisibleRect.scale(coverRectMultiplier);
-    scaledVisibleRect.moveBy(delta);
-    if (!m_image) {
-        scaledContentsRect.scale(m_contentsScale);
-        scaledVisibleRect.scale(m_contentsScale);
-    }
+    FloatSize scaledSize(m_size);
+    if (!m_image)
+        scaledSize.scale(m_contentsScale);
 
     Vector<FloatRect> tileRectsToAdd;
     Vector<int> tileIndicesToRemove;
@@ -124,12 +96,11 @@ void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatRec
 
     // This method recycles tiles. We check which tiles we need to add, which to remove, and use as many
     // removable tiles as replacement for new tiles when possible.
-    for (float y = 0; y < scaledContentsRect.height(); y += tileSize.height()) {
-        for (float x = 0; x < scaledContentsRect.width(); x += tileSize.width()) {
+    for (float y = 0; y < scaledSize.height(); y += tileSize.height()) {
+        for (float x = 0; x < scaledSize.width(); x += tileSize.width()) {
             FloatRect tileRect(x, y, tileSize.width(), tileSize.height());
-            tileRect.intersect(scaledContentsRect);
-            if (tileRect.intersects(scaledVisibleRect))
-                tileRectsToAdd.append(tileRect);
+            tileRect.intersect(rect());
+            tileRectsToAdd.append(tileRect);
         }
     }
 
@@ -179,16 +150,16 @@ void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatRec
     }
 }
 
-void TextureMapperTiledBackingStore::updateContents(TextureMapper& textureMapper, Image* image, const FloatRect& visibleRect, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
+void TextureMapperTiledBackingStore::updateContents(TextureMapper& textureMapper, Image* image, const FloatSize& totalSize, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
 {
-    createOrDestroyTilesIfNeeded(visibleRect, textureMapper.maxTextureSize(), !image->currentFrameKnownToBeOpaque());
+    createOrDestroyTilesIfNeeded(totalSize, textureMapper.maxTextureSize(), !image->currentFrameKnownToBeOpaque());
     for (auto& tile : m_tiles)
         tile.updateContents(textureMapper, image, dirtyRect, updateContentsFlag);
 }
 
-void TextureMapperTiledBackingStore::updateContents(TextureMapper& textureMapper, GraphicsLayer* sourceLayer, const FloatRect& visibleRect, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
+void TextureMapperTiledBackingStore::updateContents(TextureMapper& textureMapper, GraphicsLayer* sourceLayer, const FloatSize& totalSize, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
 {
-    createOrDestroyTilesIfNeeded(visibleRect, textureMapper.maxTextureSize(), true);
+    createOrDestroyTilesIfNeeded(totalSize, textureMapper.maxTextureSize(), true);
     for (auto& tile : m_tiles)
         tile.updateContents(textureMapper, sourceLayer, dirtyRect, updateContentsFlag, m_contentsScale);
 }
