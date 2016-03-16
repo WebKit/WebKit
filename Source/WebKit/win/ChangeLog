@@ -1,3 +1,15 @@
+2016-03-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Correct double-release of CFURLConnectionRef
+        https://bugs.webkit.org/show_bug.cgi?id=155515
+        <rdar://problem/25159143>
+
+        Reviewed by Tim Horton.
+
+        Tested by http/tests/download suite.
+
+        * WebDownloadCFNet.cpp: Remove extra CFRelease.
+
 2016-03-14  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Compile fix.
