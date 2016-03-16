@@ -31,8 +31,8 @@ namespace WebCore {
 
 class SVGPolyElement : public SVGGraphicsElement, public SVGExternalResourcesRequired {
 public:
-    SVGListPropertyTearOff<SVGPointList>* points();
-    SVGListPropertyTearOff<SVGPointList>* animatedPoints();
+    RefPtr<SVGListPropertyTearOff<SVGPointList>> points();
+    RefPtr<SVGListPropertyTearOff<SVGPointList>> animatedPoints();
 
     SVGPointList& pointList() const { return m_points.value; }
 
