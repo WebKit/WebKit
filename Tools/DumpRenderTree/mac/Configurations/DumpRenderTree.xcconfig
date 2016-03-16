@@ -28,4 +28,4 @@ OTHER_LDFLAGS_macosx = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -lWebCoreTestSupport
 LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
 PRODUCT_NAME = DumpRenderTree;
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = DumpRenderTreeMain.mm *.ttf *.TTF *.sfont;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = DumpRenderTreeMain.mm *.ttf *.TTF;

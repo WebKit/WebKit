@@ -846,28 +846,4 @@ bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t l
     return true;
 }
 
-#if USE(APPKIT)
-const Font* Font::compositeFontReferenceFont(NSFont *key) const
-{
-    if (!key || CFEqual(adoptCF(CTFontCopyPostScriptName(CTFontRef(key))).get(), CFSTR("LastResort")))
-        return nullptr;
-
-    if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
-
-    auto addResult = m_derivedFontData->compositeFontReferences.add(key, nullptr);
-    if (addResult.isNewEntry) {
-        NSFont *substituteFont = [key printerFont];
-
-        CTFontSymbolicTraits traits = CTFontGetSymbolicTraits((CTFontRef)substituteFont);
-        bool syntheticBold = platformData().syntheticBold() && !(traits & kCTFontBoldTrait);
-        bool syntheticOblique = platformData().syntheticOblique() && !(traits & kCTFontItalicTrait);
-
-        FontPlatformData substitutePlatform(reinterpret_cast<CTFontRef>(substituteFont), platformData().size(), syntheticBold, syntheticOblique, platformData().orientation(), platformData().widthVariant());
-        addResult.iterator->value = Font::create(substitutePlatform, isCustomFont());
-    }
-    return addResult.iterator->value.get();
-}
-#endif
-
 } // namespace WebCore

@@ -65,7 +65,6 @@ FontPlatformData::FontPlatformData(const FontPlatformData& source)
 {
     m_isHashTableDeletedValue = source.m_isHashTableDeletedValue;
     m_isColorBitmapFont = source.m_isColorBitmapFont;
-    m_isCompositeFontReference = source.m_isCompositeFontReference;
     platformDataInit(source);
 }
 
@@ -82,7 +81,6 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& othe
     m_size = other.m_size;
     m_widthVariant = other.m_widthVariant;
     m_isColorBitmapFont = other.m_isColorBitmapFont;
-    m_isCompositeFontReference = other.m_isCompositeFontReference;
 
     return platformDataAssign(other);
 }

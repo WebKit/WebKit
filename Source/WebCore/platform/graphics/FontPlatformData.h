@@ -132,7 +132,6 @@ public:
     bool syntheticBold() const { return m_syntheticBold; }
     bool syntheticOblique() const { return m_syntheticOblique; }
     bool isColorBitmapFont() const { return m_isColorBitmapFont; }
-    bool isCompositeFontReference() const { return m_isCompositeFontReference; }
     FontOrientation orientation() const { return m_orientation; }
     FontWidthVariant widthVariant() const { return m_widthVariant; }
     bool isForTextCombine() const { return widthVariant() != RegularWidth; } // Keep in sync with callers of FontDescription::setWidthVariant().
@@ -173,7 +172,6 @@ public:
             && m_syntheticBold == other.m_syntheticBold
             && m_syntheticOblique == other.m_syntheticOblique
             && m_isColorBitmapFont == other.m_isColorBitmapFont
-            && m_isCompositeFontReference == other.m_isCompositeFontReference
             && m_orientation == other.m_orientation
             && m_widthVariant == other.m_widthVariant;
     }
@@ -234,7 +232,6 @@ private:
 #endif
 
     bool m_isColorBitmapFont { false };
-    bool m_isCompositeFontReference { false };
     bool m_isHashTableDeletedValue { false };
 #if PLATFORM(IOS)
     bool m_isEmoji { false };

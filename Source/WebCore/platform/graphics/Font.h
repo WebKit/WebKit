@@ -194,7 +194,6 @@ public:
 #endif
 
 #if USE(APPKIT)
-    const Font* compositeFontReferenceFont(NSFont *key) const;
     NSFont* getNSFont() const { return m_platformData.nsFont(); }
 #endif
 
@@ -296,9 +295,6 @@ private:
         RefPtr<Font> verticalRightOrientation;
         RefPtr<Font> uprightOrientation;
         RefPtr<Font> nonSyntheticItalic;
-#if USE(APPKIT)
-        HashMap<NSFont*, RefPtr<Font>> compositeFontReferences;
-#endif
     };
 
     mutable std::unique_ptr<DerivedFontData> m_derivedFontData;

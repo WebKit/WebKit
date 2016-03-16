@@ -45,7 +45,7 @@ static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const 
     // This needs to be kept in sync with GlyphPage::fill(). Currently, the CoreText paths are not able to handle
     // every situtation. Returning true from this function in a new situation will require you to explicitly add
     // handling for that situation in the CoreText paths of GlyphPage::fill().
-    if (fontData->platformData().isCompositeFontReference() || fontData->isSystemFont())
+    if (fontData->isSystemFont())
         return true;
     if (fontData->platformData().isForTextCombine() || fontData->hasVerticalGlyphs()) {
         // Ideographs don't have a vertical variant or width variants.
@@ -90,7 +90,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                 haveGlyphs = true;
             }
         }
-    } else if (!fontData->platformData().isCompositeFontReference()) {
+    } else {
         // Because we know the implementation of shouldUseCoreText(), if the font isn't for text combine and it isn't a system font,
         // we know it must have vertical glyphs.
         if (fontData->platformData().isForTextCombine() || fontData->isSystemFont())
@@ -107,87 +107,6 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
             else {
                 setGlyphDataForIndex(offset + i, glyphs[i * glyphStep], fontData);
                 haveGlyphs = true;
-            }
-        }
-    } else {
-        // FIXME: webkit.org/b/147859 This code is fundamentally broken. A string is not the same as an ordered sequence of codepoints. In particular, strings
-        // combine adjacent codepoints into grapheme clusters. We should delete this entire else {} block.
-
-        // We ask CoreText for possible vertical variant glyphs
-        RetainPtr<CFStringRef> string = adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, buffer, bufferLength, kCFAllocatorNull));
-        RetainPtr<CFAttributedStringRef> attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(false, fontData->hasVerticalGlyphs() ? Vertical : Horizontal)));
-        RetainPtr<CTLineRef> line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
-
-        CFArrayRef runArray = CTLineGetGlyphRuns(line.get());
-        CFIndex runCount = CFArrayGetCount(runArray);
-
-        // Initialize glyph entries
-        for (unsigned index = 0; index < length; ++index)
-            setGlyphDataForIndex(offset + index, 0, 0);
-
-        Vector<CGGlyph, 512> glyphVector;
-        Vector<CFIndex, 512> indexVector;
-        bool done = false;
-
-        RetainPtr<CFTypeRef> fontEqualityObject = fontData->platformData().objectForEqualityCheck();
-
-        for (CFIndex r = 0; r < runCount && !done ; ++r) {
-            // CTLine could map characters over multiple fonts using its own font fallback list.
-            // We need to pick runs that use the exact font we need, i.e., fontData->platformData().ctFont().
-            CTRunRef ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray, r));
-            ASSERT(CFGetTypeID(ctRun) == CTRunGetTypeID());
-
-            CFDictionaryRef attributes = CTRunGetAttributes(ctRun);
-            CTFontRef runFont = static_cast<CTFontRef>(CFDictionaryGetValue(attributes, kCTFontAttributeName));
-            bool gotBaseFont = CFEqual(fontEqualityObject.get(), FontPlatformData::objectForEqualityCheck(runFont).get());
-            if (gotBaseFont || fontData->platformData().isCompositeFontReference()) {
-                // This run uses the font we want. Extract glyphs.
-                CFIndex glyphCount = CTRunGetGlyphCount(ctRun);
-                const CGGlyph* glyphs = CTRunGetGlyphsPtr(ctRun);
-                if (!glyphs) {
-                    glyphVector.resize(glyphCount);
-                    CTRunGetGlyphs(ctRun, CFRangeMake(0, 0), glyphVector.data());
-                    glyphs = glyphVector.data();
-                }
-                const CFIndex* stringIndices = CTRunGetStringIndicesPtr(ctRun);
-                if (!stringIndices) {
-                    indexVector.resize(glyphCount);
-                    CTRunGetStringIndices(ctRun, CFRangeMake(0, 0), indexVector.data());
-                    stringIndices = indexVector.data();
-                }
-
-                // When buffer consists of surrogate pairs, CTRunGetStringIndicesPtr and CTRunGetStringIndices
-                // place the glyphs at indices corresponding to the first character of each pair.
-                ASSERT(!(bufferLength % length) && (bufferLength / length == 1 || bufferLength / length == 2));
-                unsigned glyphStep = bufferLength / length;
-                if (gotBaseFont) {
-                    for (CFIndex i = 0; i < glyphCount; ++i) {
-                        if (stringIndices[i] >= static_cast<CFIndex>(bufferLength)) {
-                            done = true;
-                            break;
-                        }
-                        if (glyphs[i]) {
-                            setGlyphDataForIndex(offset + (stringIndices[i] / glyphStep), glyphs[i], fontData);
-                            haveGlyphs = true;
-                        }
-                    }
-#if USE(APPKIT)
-                } else {
-                    const Font* runSimple = fontData->compositeFontReferenceFont((NSFont *)runFont);
-                    if (runSimple) {
-                        for (CFIndex i = 0; i < glyphCount; ++i) {
-                            if (stringIndices[i] >= static_cast<CFIndex>(bufferLength)) {
-                                done = true;
-                                break;
-                            }
-                            if (glyphs[i]) {
-                                setGlyphDataForIndex(offset + (stringIndices[i] / glyphStep), glyphs[i], runSimple);
-                                haveGlyphs = true;
-                            }
-                        }
-                    }
-#endif
-                }
             }
         }
     }
