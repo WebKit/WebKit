@@ -1595,7 +1595,7 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)values
 {
-    return [[[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()] autorelease];
+    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()];
 }
 
 - (void)setPayload:(RWIProtocolJSONObject *)payload
@@ -1605,7 +1605,7 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)payload
 {
-    return [[[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()] autorelease];
+    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()];
 }
 
 - (void)setError:(TestProtocolDatabaseError *)error
@@ -1615,7 +1615,7 @@ using namespace Inspector;
 
 - (TestProtocolDatabaseError *)error
 {
-    return [[[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()] autorelease];
+    return [[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()];
 }
 
 - (void)setErrorList:(NSArray/*<TestProtocolDatabaseError>*/ *)errorList
@@ -1730,7 +1730,7 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)values
 {
-    return [[[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()] autorelease];
+    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()];
 }
 
 - (void)setPayload:(RWIProtocolJSONObject *)payload
@@ -1740,7 +1740,7 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)payload
 {
-    return [[[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()] autorelease];
+    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()];
 }
 
 - (void)setError:(TestProtocolDatabaseError *)error
@@ -1750,7 +1750,7 @@ using namespace Inspector;
 
 - (TestProtocolDatabaseError *)error
 {
-    return [[[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()] autorelease];
+    return [[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()];
 }
 
 - (void)setErrorList:(NSArray/*<TestProtocolDatabaseError>*/ *)errorList
@@ -1983,7 +1983,7 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)values
 {
-    return [[[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()] autorelease];
+    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()];
 }
 
 - (void)setPayload:(RWIProtocolJSONObject *)payload
@@ -1993,7 +1993,7 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)payload
 {
-    return [[[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()] autorelease];
+    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()];
 }
 
 - (void)setError:(TestProtocolDatabaseError *)error
@@ -2003,7 +2003,7 @@ using namespace Inspector;
 
 - (TestProtocolDatabaseError *)error
 {
-    return [[[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()] autorelease];
+    return [[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()];
 }
 
 @end

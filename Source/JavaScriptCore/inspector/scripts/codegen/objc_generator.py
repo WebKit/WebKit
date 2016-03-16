@@ -444,7 +444,7 @@ class ObjCGenerator(Generator):
             return sub_expression
         if category is ObjCTypeCategory.Object:
             objc_class = self.objc_class_for_type(member.type)
-            return '[[[%s alloc] initWithInspectorObject:[%s toInspectorObject].get()] autorelease]' % (objc_class, sub_expression)
+            return '[[%s alloc] initWithInspectorObject:[%s toInspectorObject].get()]' % (objc_class, sub_expression)
         if category is ObjCTypeCategory.Array:
             protocol_type = ObjCGenerator.protocol_type_for_type(member.type.element_type)
             objc_class = self.objc_class_for_type(member.type.element_type)
