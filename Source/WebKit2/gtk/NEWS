@@ -1,4 +1,20 @@
 ==================
+WebKitGTK+ 2.11.92
+==================
+
+What's new in WebKitGTK+ 2.11.92?
+
+  - Revert the patch to limit the number of tiles according to the visible area introduced in 2.11.90,
+    because it caused rendering issues in several popular websites.
+  - Fix scrollbars rendering again with GTK+ >= 3.19.11.
+  - Fix rendering of slider input elements.
+  - Fix rendering artifacts when using a web view background color.
+  - Make webkit_web_context_clear_cache() work again.
+  - Fix smooth scrolling behavior that was changed by mistake.
+  - Don't force ENABLE_INTROSPECTION=OFF on Mac.
+  - Install WebProcess and NetworkProcess on OSX when not building the Mac port.
+
+==================
 WebKitGTK+ 2.11.91
 ==================
 
