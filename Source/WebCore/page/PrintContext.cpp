@@ -341,10 +341,6 @@ void PrintContext::spoolAllPagesWithBoundaries(Frame& frame, GraphicsContext& gr
     graphicsContext.fillRect(FloatRect(0, 0, pageWidth, totalHeight));
 
     graphicsContext.save();
-#if PLATFORM(COCOA)
-    graphicsContext.translate(0, totalHeight);
-    graphicsContext.scale(FloatSize(1, -1));
-#endif
 
     int currentHeight = 0;
     for (size_t pageIndex = 0; pageIndex < pageRects.size(); pageIndex++) {

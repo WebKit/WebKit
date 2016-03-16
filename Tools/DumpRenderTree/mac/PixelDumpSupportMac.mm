@@ -205,7 +205,12 @@ PassRefPtr<BitmapContext> createPagedBitmapContext()
     size_t rowBytes = 0;
     void* buffer = 0;
 
-    RefPtr<BitmapContext> bitmapContext = createBitmapContext(pageWidthInPixels, numberOfPages * (pageHeightInPixels + 1) - 1, rowBytes, buffer);
-    [mainFrame printToCGContext:bitmapContext->cgContext() pageWidth:pageWidthInPixels pageHeight:pageHeightInPixels];
+    int totalHeight = numberOfPages * (pageHeightInPixels + 1) - 1;
+
+    RefPtr<BitmapContext> bitmapContext = createBitmapContext(pageWidthInPixels, totalHeight, rowBytes, buffer);
+    CGContextRef context = bitmapContext->cgContext();
+    CGContextTranslateCTM(context, 0, totalHeight);
+    CGContextScaleCTM(context, 1, -1);
+    [mainFrame printToCGContext:context pageWidth:pageWidthInPixels pageHeight:pageHeightInPixels];
     return bitmapContext.release();
 }
