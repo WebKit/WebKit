@@ -1,3 +1,33 @@
+2016-03-15  Zalan Bujtas  <zalan@apple.com>
+
+        Remove overflow: -webkit-marquee
+        https://bugs.webkit.org/show_bug.cgi?id=155517
+        <rdar://problem/25028481>
+
+        Reviewed by Simon Fraser.
+
+        This patch is based on Blink patch from jchaffraix@chromium.org (https://src.chromium.org/viewvc/blink?revision=151756&view=revision)
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EOverflow): Deleted.
+        * css/CSSValueKeywords.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * css/html.css:
+        (marquee): Deleted.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderMarquee.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2016-03-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Expose pointers to SVG elements referenced by aria-labelledby

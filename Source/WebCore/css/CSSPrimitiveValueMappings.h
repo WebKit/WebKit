@@ -2180,9 +2180,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EOverflow e)
     case OAUTO:
         m_value.valueID = CSSValueAuto;
         break;
-    case OMARQUEE:
-        m_value.valueID = CSSValueWebkitMarquee;
-        break;
     case OOVERLAY:
         m_value.valueID = CSSValueOverlay;
         break;
@@ -2208,8 +2205,6 @@ template<> inline CSSPrimitiveValue::operator EOverflow() const
         return OSCROLL;
     case CSSValueAuto:
         return OAUTO;
-    case CSSValueWebkitMarquee:
-        return OMARQUEE;
     case CSSValueOverlay:
         return OOVERLAY;
     case CSSValueWebkitPagedX:
