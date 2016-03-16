@@ -102,12 +102,10 @@ namespace JSC {
     struct SlowCaseEntry {
         MacroAssembler::Jump from;
         unsigned to;
-        unsigned hint;
         
-        SlowCaseEntry(MacroAssembler::Jump f, unsigned t, unsigned h = 0)
+        SlowCaseEntry(MacroAssembler::Jump f, unsigned t)
             : from(f)
             , to(t)
-            , hint(h)
         {
         }
     };

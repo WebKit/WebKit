@@ -1,3 +1,13 @@
+2016-03-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove hint from SlowCaseEntry
+        https://bugs.webkit.org/show_bug.cgi?id=155530
+
+        Reviewed by Alex Christensen.
+
+        * jit/JIT.h:
+        (JSC::SlowCaseEntry::SlowCaseEntry):
+
 2016-03-15  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r198077): generated Objective-C protocol object getters leak their wrappers
