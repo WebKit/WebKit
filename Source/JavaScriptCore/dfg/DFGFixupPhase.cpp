@@ -1439,6 +1439,14 @@ private:
             break;
         }
 
+        case SetFunctionName: {
+            // The first child is guaranteed to be a cell because op_set_function_name is only used
+            // on a newly instantiated function object (the first child).
+            fixEdge<KnownCellUse>(node->child1());
+            fixEdge<UntypedUse>(node->child2());
+            break;
+        }
+
         case CopyRest: {
             fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownInt32Use>(node->child2());

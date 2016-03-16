@@ -283,6 +283,11 @@ private:
                 break;
             }
                 
+            case SetFunctionName: {
+                considerBarrier(m_node->child1(), m_node->child2());
+                break;
+            }
+
             default:
                 break;
             }

@@ -94,6 +94,7 @@
             { "name" : "op_new_generator_func", "length" : 4 },
             { "name" : "op_new_generator_func_exp", "length" : 4 },
             { "name" : "op_new_arrow_func_exp", "length" : 4 },
+            { "name" : "op_set_function_name", "length" : 3 },
             { "name" : "op_call", "length" : 9 },
             { "name" : "op_tail_call", "length" : 9 },
             { "name" : "op_call_eval", "length" : 9 },

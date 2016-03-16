@@ -4,7 +4,7 @@ shouldNotThrow("o = { ['f'+'oo']() { return 10; } };");
 shouldBe("o.foo()", "10");
 shouldBe("typeof o.foo", "'function'");
 shouldBe("o.foo.length", "0");
-shouldBe("o.foo.name", "''");
+shouldBe("o.foo.name", "'foo'");
 shouldBe("o.foo.toString()", "'function () { return 10; }'");
 shouldBe("Object.getOwnPropertyDescriptor(o, 'foo').value", "o.foo");
 shouldBeTrue("Object.getOwnPropertyDescriptor(o, 'foo').enumerable");
@@ -15,7 +15,7 @@ shouldNotThrow("methodName = 'add'; o = { [methodName](x, y) { return x + y; } }
 shouldBe("o.add(42, -10)", "32");
 shouldBe("typeof o.add", "'function'");
 shouldBe("o.add.length", "2");
-shouldBe("o.add.name", "''");
+shouldBe("o.add.name", "'add'");
 shouldBe("o.add.toString()", "'function (x, y) { return x + y; }'");
 
 shouldNotThrow("o = { [ (function() { return 'method'; })() ](x, y) { return x + y; } };");

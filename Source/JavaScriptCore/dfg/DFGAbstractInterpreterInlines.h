@@ -2653,6 +2653,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case SetFunctionName: {
+        clobberWorld(node->origin.semantic, clobberLimit);
+        break;
+    }
+
     case StoreBarrier: {
         filter(node->child1(), SpecCell);
         break;

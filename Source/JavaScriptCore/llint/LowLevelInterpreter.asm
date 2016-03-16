@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -1470,6 +1470,11 @@ _llint_op_new_arrow_func_exp:
     traceExecution()
     callSlowPath(_llint_slow_path_new_arrow_func_exp)
     dispatch(4)
+
+_llint_op_set_function_name:
+    traceExecution()
+    callSlowPath(_llint_slow_path_set_function_name)
+    dispatch(3)
 
 _llint_op_call:
     traceExecution()

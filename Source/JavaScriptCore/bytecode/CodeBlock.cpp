@@ -1371,6 +1371,13 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
             break;
         }
+        case op_set_function_name: {
+            int funcReg = (++it)->u.operand;
+            int nameReg = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "set_function_name");
+            out.printf("%s, %s", registerName(funcReg).data(), registerName(nameReg).data());
+            break;
+        }
         case op_call: {
             printCallOp(out, exec, location, it, "call", DumpCaches, hasPrintedProfiling, callLinkInfos);
             break;

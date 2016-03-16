@@ -296,6 +296,13 @@ void JIT::emit_op_to_primitive(Instruction* currentInstruction)
 
 }
 
+void JIT::emit_op_set_function_name(Instruction* currentInstruction)
+{
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT1);
+    callOperation(operationSetFunctionName, regT0, regT1);
+}
+
 void JIT::emit_op_strcat(Instruction* currentInstruction)
 {
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_strcat);

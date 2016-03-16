@@ -926,6 +926,9 @@ private:
         case NewRegexp:
             compileNewRegexp();
             break;
+        case SetFunctionName:
+            compileSetFunctionName();
+            break;
         case StringReplace:
             compileStringReplace();
             break;
@@ -6548,6 +6551,12 @@ private:
         setJSValue(result);
     }
 
+    void compileSetFunctionName()
+    {
+        vmCall(m_out.voidType, m_out.operation(operationSetFunctionName), m_callFrame,
+            lowCell(m_node->child1()), lowJSValue(m_node->child2()));
+    }
+    
     void compileStringReplace()
     {
         if (m_node->child1().useKind() == StringUse

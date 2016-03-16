@@ -150,6 +150,8 @@ public:
     JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
     bool isClassConstructorFunction() const;
 
+    void setFunctionName(ExecState*, JSValue name);
+
 protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
     JSFunction(VM&, FunctionExecutable*, JSScope*, Structure*);
@@ -191,6 +193,7 @@ private:
     bool hasReifiedName() const;
     void reifyLength(ExecState*);
     void reifyName(ExecState*);
+    void reifyName(ExecState*, String name);
     void reifyLazyPropertyIfNeeded(ExecState*, PropertyName propertyName);
 
     friend class LLIntOffsetsExtractor;

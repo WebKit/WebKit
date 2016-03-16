@@ -4636,6 +4636,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             }
         }
 
+        case op_set_function_name: {
+            Node* func = get(VirtualRegister(currentInstruction[1].u.operand));
+            Node* name = get(VirtualRegister(currentInstruction[2].u.operand));
+            addToGraph(SetFunctionName, func, name);
+            NEXT_OPCODE(op_set_function_name);
+        }
+
         case op_typeof: {
             set(VirtualRegister(currentInstruction[1].u.operand),
                 addToGraph(TypeOf, get(VirtualRegister(currentInstruction[2].u.operand))));

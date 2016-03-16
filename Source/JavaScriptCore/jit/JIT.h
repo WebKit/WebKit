@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -570,6 +570,7 @@ namespace JSC {
         void emit_op_put_setter_by_val(Instruction*);
         void emit_op_ret(Instruction*);
         void emit_op_rshift(Instruction*);
+        void emit_op_set_function_name(Instruction*);
         void emit_op_strcat(Instruction*);
         void emit_op_stricteq(Instruction*);
         void emit_op_sub(Instruction*);
@@ -791,8 +792,10 @@ namespace JSC {
         MacroAssembler::Call callOperation(F_JITOperation_EFJZZ, RegisterID, RegisterID, int32_t, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_ESsiJJI, StructureStubInfo*, RegisterID, RegisterID, UniquedStringImpl*);
         MacroAssembler::Call callOperation(V_JITOperation_ECIZJJ, RegisterID, UniquedStringImpl*, int32_t, RegisterID, RegisterID);
+        MacroAssembler::Call callOperation(V_JITOperation_ECJ, RegisterID, RegisterID);
 #else
         MacroAssembler::Call callOperation(V_JITOperation_ESsiJJI, StructureStubInfo*, RegisterID, RegisterID, RegisterID, RegisterID, UniquedStringImpl*);
+        MacroAssembler::Call callOperation(V_JITOperation_ECJ, RegisterID, RegisterID, RegisterID);
 #endif
         MacroAssembler::Call callOperation(V_JITOperation_EJJJ, RegisterID, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJJJAp, RegisterID, RegisterID, RegisterID, ArrayProfile*);

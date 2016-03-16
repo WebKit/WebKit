@@ -5,6 +5,13 @@ let section;
 let failures = "";
 let failureCount = 0;
 
+let nonSymbolValues = [ "foo", "", undefined, null, true, false, 0, 10, 1234.567 ];
+let symbolValues = [
+    { v: Symbol("foo"), name: "[foo]" },
+    { v: Symbol(""), name: "[]" },
+    { v: Symbol(), name: "" },
+];
+
 function isWhiteSpace(string) {
     let cc = string.charCodeAt(0);
     switch (cc) {
@@ -518,58 +525,145 @@ section = "class expressions in dynamically created Functions";
     test(bar3(), "foo3", "class { constructor(x) { return x; } stuff3() { return 15; } }");
 })();
 
-// FIXME: Uncomment these when we've added support for Function.name of computed properties.
-// section = "Object computed string property";
-// {
-//     let str1 = "foo";
-//     let str2 = "";
-//     let o = {    
-//         [str1]: function() {},
-//         [str2]: function() {}
-//     };
-//     test(o[str1], "foo", "function() {}");
-//     test(o[str2], "", "function() {}");
-// }
-// 
-// let sym1 = Symbol("foo");
-// let sym2 = Symbol();
+section = "Object computed non-symbol anonymous function property";
+(function() {
+    let values = nonSymbolValues;
+    function runTest(value) {
+        let o = {    
+            [value]: function() {},
+        }
+        test(o[value], toString(value), "function() {}");
 
-// section = "Object computed symbol property";
-// {
-//     let o = {    
-//         [sym1]: function() {},
-//         [sym2]: function() {}
-//     };
-//     test(o[sym1], "[foo]", "function() {}");
-//     test(o[sym2], "", "function() {}");
-// }
+        let bound = o[value].bind({});
+        test(bound, "bound " + toString(value), "function " + toString(value) + "() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i]);
+})();
 
-// section = "Object computed symbol property with shorthand function";
-// {
-//     let o = {
-//         [sym1]() {},
-//         [sym2]() {}
-//     };
-//     test(o[sym1], "[foo]", "function() {}");
-//     test(o[sym2], "", "function() {}");
-// }
+section = "Object computed non-symbol named function property";
+(function() {
+    let values = nonSymbolValues;
+    function runTest(value) {
+        let o = {    
+            [value]: function bar() {},
+        }
+        test(o[value], "bar", "function bar() {}");
 
-// section = "Object computed symbol property with get/set function";
-// {
-//     let o = {
-//         get [sym1]() {},
-//         set [sym1](x) {},
-//         get [sym2]() {},
-//         set [sym2](x) {}
-//     };
-//     let desc = Object.getOwnPropertyDescriptor(o, sym1);
-//     test(desc.get, "get [foo]", "function() {}");
-//     test(desc.set, "set [foo]", "function(x) {}");
-// 
-//     desc = Object.getOwnPropertyDescriptor(o, sym2);
-//     test(desc.get, "get ", "function() {}");
-//     test(desc.set, "set ", "function(x) {}");
-// }
+        let bound = o[value].bind({});
+        test(bound, "bound bar", "function bar() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i]);
+})();
+
+section = "Object computed non-symbol property with shorthand function";
+(function () {
+    let values = nonSymbolValues;
+    function runTest(value) {
+        let o = {    
+            [value]() {},
+        }
+        test(o[value], toString(value), "function() {}");
+
+        let bound = o[value].bind({});
+        test(bound, "bound " + toString(value), "function " + toString(value) + "() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i]);
+})();
+
+section = "Object computed non-symbol property with get/set function";
+(function () {
+    let values = nonSymbolValues;
+    function runTest(value) {
+        let o = {    
+            get [value]() {},
+            set [value](x) {},
+        }
+
+        let desc = Object.getOwnPropertyDescriptor(o, value);
+        test(desc.get, "get " + value, "function() {}");
+        test(desc.set, "set " + value, "function(x) {}");
+
+        let bound = desc.get.bind({});
+        test(bound, "bound get " + toString(value), "function get " + toString(value) + "() { [native code] }");
+        bound = desc.set.bind({});
+        test(bound, "bound set " + toString(value), "function set " + toString(value) + "() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i]);
+})();
+
+section = "Object computed symbol anonymous function property";
+(function() {
+    let values = symbolValues;
+    function runTest(value, expectedName) {
+        let o = {    
+            [value]: function() {},
+        }
+        test(o[value], expectedName, "function() {}");
+
+        let bound = o[value].bind({});
+        test(bound, "bound " + expectedName, "function " + expectedName + "() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i].v, values[i].name);
+})();
+
+section = "Object computed symbol named function property";
+(function() {
+    let values = symbolValues;
+    function runTest(value) {
+        let o = {    
+            [value]: function bar() {},
+        }
+        test(o[value], "bar", "function bar() {}");
+
+        let bound = o[value].bind({});
+        test(bound, "bound bar", "function bar() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i].v);
+})();
+
+section = "Object computed symbol property with shorthand function";
+(function() {
+    let values = symbolValues;
+    function runTest(value, expectedName) {
+        let o = {    
+            [value]() {},
+        }
+        test(o[value], expectedName, "function() {}");
+
+        let bound = o[value].bind({});
+        test(bound, "bound " + expectedName, "function " + expectedName + "() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i].v, values[i].name);
+})();
+
+section = "Object computed symbol property with get/set function";
+(function () {
+    let values = symbolValues;
+    function runTest(value, expectedName) {
+        let o = {    
+            get [value]() {},
+            set [value](x) {},
+        }
+
+        let desc = Object.getOwnPropertyDescriptor(o, value);
+        test(desc.get, "get " + expectedName, "function() {}");
+        test(desc.set, "set " + expectedName, "function(x) {}");
+
+        let bound = desc.get.bind({});
+        test(bound, "bound get " + expectedName, "function get " + expectedName + "() { [native code] }");
+        bound = desc.set.bind({});
+        test(bound, "bound set " + expectedName, "function set " + expectedName + "() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i].v, values[i].name);
+})();
 
 // Test functions in destructuring assignments.
 section = "destructuring assignment";
@@ -649,8 +743,8 @@ section = "get/set function";
 
     let o3 = { get [100]() {}, set [100](x){} };
     let desc3 = Object.getOwnPropertyDescriptor(o3, 100);
-    test(desc3.get, "get ", "function() {}");
-    test(desc3.set, "set ", "function(x) {}");
+    test(desc3.get, "get 100", "function() {}");
+    test(desc3.set, "set 100", "function(x) {}");
 
     section = "bound get/set function";
     {
@@ -673,9 +767,9 @@ section = "get/set function";
         test(bound2, "bound set ", "function set () { [native code] }");
 
         bound1 = desc3.get.bind(o);
-        test(bound1, "bound get ", "function get () { [native code] }");
+        test(bound1, "bound get 100", "function get 100() { [native code] }");
         bound2 = desc3.set.bind(o);
-        test(bound2, "bound set ", "function set () { [native code] }");
+        test(bound2, "bound set 100", "function set 100() { [native code] }");
     }
 }
 
@@ -731,6 +825,210 @@ section = "bound functions with non-string names";
     bound = foo.bind({});
     test(bound, "bound ", "function () { [native code] }");    
 }
+
+section = "Object computed non-symbol anonymous class property";
+(function() {
+    let values = nonSymbolValues;
+    function runTest(value) {
+        let o = {    
+            [value]: class {},
+        }
+        test(o[value], toString(value), "class {}");
+
+        let bound = o[value].bind({});
+        test(bound, "bound " + toString(value), "function " + toString(value) + "() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i]);
+})();
+
+section = "Object computed non-symbol named class property";
+(function() {
+    let values = nonSymbolValues;
+    function runTest(value) {
+        let o = {    
+            [value]: class bar {},
+        }
+        test(o[value], "bar", "class bar {}");
+
+        let bound = o[value].bind({});
+        test(bound, "bound bar", "function bar() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i]);
+})();
+
+section = "Object computed symbol anonymous class property";
+(function() {
+    let values = symbolValues;
+    function runTest(value, expectedName) {
+        let o = {    
+            [value]: class {},
+        }
+        test(o[value], expectedName, "class {}");
+
+        let bound = o[value].bind({});
+        test(bound, "bound " + expectedName, "function " + expectedName + "() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i].v, values[i].name);
+})();
+
+section = "Object computed symbol named class property";
+(function() {
+    let values = symbolValues;
+    function runTest(value) {
+        let o = {    
+            [value]: class bar {},
+        }
+        test(o[value], "bar", "class bar {}");
+
+        let bound = o[value].bind({});
+        test(bound, "bound bar", "function bar() { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i].v);
+})();
+
+section = "Object computed non-symbol anonymous class (with name method) property";
+(function() {
+    let values = nonSymbolValues;
+    function runTest(value) {
+        let o = {    
+            [value]: class { static name(){} },
+        }
+        shouldBe("typeof ", "o[" + toString(value) + "].name", typeof o[value].name, "function");
+        shouldBe("toString of ", "o[" + toString(value) + "].name", o[value].toString(), "class { static name(){} }");
+
+        let bound = o[value].bind({});
+        test(bound, "bound ", "function () { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i]);
+})();
+
+section = "Object computed non-symbol named class (with name method) property";
+(function() {
+    let values = nonSymbolValues;
+    function runTest(value) {
+        let o = {    
+            [value]: class bar { static name(){} },
+        }
+        shouldBe("typeof ", "o[" + toString(value) + "].name", typeof o[value].name, "function");
+        shouldBe("toString of ", "o[" + toString(value) + "].name", o[value].toString(), "class bar { static name(){} }");
+
+        let bound = o[value].bind({});
+        test(bound, "bound ", "function () { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i]);
+})();
+
+section = "Object computed symbol anonymous class (with name method) property";
+(function() {
+    let values = symbolValues;
+    function runTest(value, expectedName) {
+        let o = {    
+            [value]: class { static name(){} },
+        }
+        shouldBe("typeof ", "o[" + toString(value) + "].name", typeof o[value].name, "function");
+        shouldBe("toString of ", "o[" + toString(value) + "].name", o[value].toString(), "class { static name(){} }");
+
+        let bound = o[value].bind({});
+        test(bound, "bound ", "function () { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i].v, values[i].name);
+})();
+
+section = "Object computed symbol named class (with name method) property";
+(function() {
+    let values = symbolValues;
+    function runTest(value) {
+        let o = {    
+            [value]: class bar { static name(){} },
+        }
+        shouldBe("typeof ", "o[" + toString(value) + "].name", typeof o[value].name, "function");
+        shouldBe("toString of ", "o[" + toString(value) + "].name", o[value].toString(), "class bar { static name(){} }");
+
+        let bound = o[value].bind({});
+        test(bound, "bound ", "function () { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i].v);
+})();
+
+section = "Object computed non-symbol anonymous class (with computed name method) property";
+(function() {
+    let values = nonSymbolValues;
+    let nameStr = "name";
+    function runTest(value) {
+        let o = {    
+            [value]: class { static [nameStr](){} },
+        }
+        shouldBe("typeof ", "o[" + toString(value) + "].name", typeof o[value].name, "function");
+        shouldBe("toString of ", "o[" + toString(value) + "].name", o[value].toString(), "class { static [nameStr](){} }");
+
+        let bound = o[value].bind({});
+        test(bound, "bound ", "function () { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i]);
+})();
+
+section = "Object computed non-symbol named class (with computed name method) property";
+(function() {
+    let values = nonSymbolValues;
+    let nameStr = "name";
+    function runTest(value) {
+        let o = {    
+            [value]: class bar { static [nameStr](){} },
+        }
+        shouldBe("typeof ", "o[" + toString(value) + "].name", typeof o[value].name, "function");
+        shouldBe("toString of ", "o[" + toString(value) + "].name", o[value].toString(), "class bar { static [nameStr](){} }");
+
+        let bound = o[value].bind({});
+        test(bound, "bound ", "function () { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i]);
+})();
+
+section = "Object computed symbol anonymous class (with computed name method) property";
+(function() {
+    let values = symbolValues;
+    let nameStr = "name";
+    function runTest(value, expectedName) {
+        let o = {    
+            [value]: class { static [nameStr](){} },
+        }
+        shouldBe("typeof ", "o[" + toString(value) + "].name", typeof o[value].name, "function");
+        shouldBe("toString of ", "o[" + toString(value) + "].name", o[value].toString(), "class { static [nameStr](){} }");
+
+        let bound = o[value].bind({});
+        test(bound, "bound ", "function () { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i].v, values[i].name);
+})();
+
+section = "Object computed symbol named class (with computed name method) property";
+(function() {
+    let values = symbolValues;
+    let nameStr = "name";
+    function runTest(value) {
+        let o = {    
+            [value]: class bar { static [nameStr](){} },
+        }
+        shouldBe("typeof ", "o[" + toString(value) + "].name", typeof o[value].name, "function");
+        shouldBe("toString of ", "o[" + toString(value) + "].name", o[value].toString(), "class bar { static [nameStr](){} }");
+
+        let bound = o[value].bind({});
+        test(bound, "bound ", "function () { [native code] }");
+    }
+    for (var i = 0; i < values.length; i++)
+        runTest(values[i].v);
+})();
 
 if (failureCount)
     throw Error("Found " + failureCount + " failures:\n" + failures);

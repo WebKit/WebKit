@@ -1548,6 +1548,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCall(operation);
     }
+    JITCompiler::Call callOperation(V_JITOperation_ECJ operation, GPRReg arg1, JSValueRegs arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR());
+        return appendCall(operation);
+    }
     JITCompiler::Call callOperation(V_JITOperation_ECJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
@@ -1925,6 +1930,11 @@ public:
     JITCompiler::Call callOperation(V_JITOperation_ESsiJJI operation, StructureStubInfo* stubInfo, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Payload, UniquedStringImpl* uid)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(stubInfo), arg1Payload, arg1Tag, arg2Payload, TrustedImm32(JSValue::CellTag), TrustedImmPtr(uid));
+        return appendCall(operation);
+    }
+    JITCompiler::Call callOperation(V_JITOperation_ECJ operation, GPRReg arg1, JSValueRegs arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR());
         return appendCall(operation);
     }
     JITCompiler::Call callOperation(V_JITOperation_ECJJ operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)
@@ -2379,6 +2389,7 @@ public:
     void compilePutByValForFloatTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
     template <typename ClassType> void compileNewFunctionCommon(GPRReg, Structure*, GPRReg, GPRReg, GPRReg, MacroAssembler::JumpList&, size_t, FunctionExecutable*, ptrdiff_t, ptrdiff_t, ptrdiff_t);
     void compileNewFunction(Node*);
+    void compileSetFunctionName(Node*);
     void compileForwardVarargs(Node*);
     void compileCreateActivation(Node*);
     void compileCreateDirectArguments(Node*);

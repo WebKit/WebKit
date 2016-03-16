@@ -752,6 +752,7 @@ private:
         case ThrowReferenceError:
         case ForceOSRExit:
         case SetArgument:
+        case SetFunctionName:
         case CheckStructure:
         case CheckCell:
         case CheckNotEmpty:

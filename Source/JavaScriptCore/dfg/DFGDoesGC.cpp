@@ -263,6 +263,7 @@ bool doesGC(Graph& graph, Node* node)
     case ToIndexString:
     case MaterializeNewObject:
     case MaterializeCreateActivation:
+    case SetFunctionName:
     case StrCat:
     case StringReplace:
         return true;

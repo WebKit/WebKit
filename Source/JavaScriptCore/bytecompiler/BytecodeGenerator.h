@@ -522,6 +522,8 @@ namespace JSC {
         RegisterID* emitNewArrowFunctionExpression(RegisterID*, ArrowFuncExprNode*);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp*);
 
+        void emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, RegisterID* value, RegisterID* name);
+
         RegisterID* emitMoveLinkTimeConstant(RegisterID* dst, LinkTimeConstant);
         RegisterID* emitMoveEmptyValue(RegisterID* dst);
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);

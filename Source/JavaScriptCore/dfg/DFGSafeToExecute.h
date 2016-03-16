@@ -262,6 +262,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case LogicalNot:
     case ToPrimitive:
     case ToString:
+    case SetFunctionName:
     case StrCat:
     case CallStringConstructor:
     case NewStringObject:

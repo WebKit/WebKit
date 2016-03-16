@@ -1,3 +1,156 @@
+2016-03-16  Mark Lam  <mark.lam@apple.com>
+
+        Add support for setting Function.name from computed properties.
+        https://bugs.webkit.org/show_bug.cgi?id=155437
+
+        Reviewed by Filip Pizlo.
+
+        In JS code, we can have initialization of computed properties with function and
+        class objects e.g.
+
+            var o = {
+                [x]: function() {},
+                [y]: class {}
+            }
+
+        The ES6 spec states that the function and class in the example above (being
+        anonymous) should take on the value of x and y respectively as their names:
+
+            o[x].name; // should be the "stringified" value of x.
+            o[y].name; // should be the "stringified" value of y.
+
+        To achieve this, we will now inject an op_set_function_name bytecode at property
+        initialization sites if:
+
+        1. the property assigned value is a function or class, and
+        2. the function and class is anonymous, and
+        3. if property assigned value is a class, it doesn't have a static method
+           that is statically named "name".
+
+        The op_set_function_name will result in JSFunction::setFunctionName() being
+        called on the target function / class before it is assigned to the property.
+        JSFunction::setFunctionName() will take care of:
+
+        1. computing the name to use from the value of the computed property name
+           e.g. x and y in the example above.
+
+           If the computed property name is not a symbol, then the function / class name
+           should be the toString() value of that computed property name.
+
+           If the computed property name is a symbol, then ...
+           a. if the Symbol has a defined description (e.g. Symbol("foo")), then the
+              function / class name should be "[<symbol description>]" e.g. "[foo]".
+           b. if the Symbol has an undefined description (e.g. Symbol()), then the
+              function / class name should be "".
+
+           Note: Symbol("") is not the same as Symbol().  The former has a defined
+           descriptor "", and hence, yields a function / class name of "[]".  The latter
+           yields a function / class name of "".
+
+        2. reifying the lazy name property with this function / class name.
+
+        op_set_function_name is named after the SetFunctionName internal function
+        in the ES6 spec that performs the above operation.
+
+        It is behaviorally correct to use op_set_function_name at every property
+        initialization site with computed property names.  However, we choose to not
+        emit the op_set_function_name bytecode when we already know that it will do
+        nothing i.e. when the target function / class is proven to already have a name or
+        name property.  This is done as an optimization to avoid unnecessary calls to
+        JSFunction::setFunctionName().
+
+        Note: we could further check if the class has a static method with a computed
+        name that is a constant string "name" and elide op_set_function_name there too.
+        However, we don't bother because this should be rare.  JSFunction::setFunctionName()
+        will still do the right thing.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitSetFunctionNameIfNeeded):
+        (JSC::BytecodeGenerator::emitCall):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        (JSC::DFG::SpeculativeJIT::compileSetFunctionName):
+        (JSC::DFG::SpeculativeJIT::compileForwardVarargs):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetFunctionName):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringReplace):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_set_function_name):
+        (JSC::JIT::emit_op_strcat):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_to_primitive):
+        (JSC::JIT::emit_op_set_function_name):
+        (JSC::JIT::emit_op_strcat):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::handleHostCall):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/Nodes.cpp:
+        (JSC::FunctionNode::finishParsing):
+        (JSC::PropertyListNode::hasStaticallyNamedProperty):
+        (JSC::VariableEnvironmentNode::VariableEnvironmentNode):
+        * parser/Nodes.h:
+        * runtime/JSFunction.cpp:
+        (JSC::getCalculatedDisplayName):
+        (JSC::JSFunction::setFunctionName):
+        (JSC::JSFunction::reifyLength):
+        (JSC::JSFunction::reifyName):
+        * runtime/JSFunction.h:
+        * tests/es6.yaml:
+        * tests/stress/computed-function-names.js: Added.
+        (toKeyString):
+        (toFuncName):
+        (shouldBe):
+        (return.propKey):
+
 2016-03-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Reflect.set with receiver

@@ -2820,6 +2820,28 @@ RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionMetadata
     return dst;
 }
 
+void BytecodeGenerator::emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, RegisterID* value, RegisterID* name)
+{
+    if (valueNode->isFuncExprNode()) {
+        FunctionMetadataNode* metadata = static_cast<FuncExprNode*>(valueNode)->metadata();
+        if (!metadata->ecmaName().isNull())
+            return;
+    } else if (valueNode->isClassExprNode()) {
+        ClassExprNode* classExprNode = static_cast<ClassExprNode*>(valueNode);
+        if (!classExprNode->ecmaName().isNull())
+            return;
+        if (classExprNode->hasStaticProperty(m_vm->propertyNames->name))
+            return;
+    } else
+        return;
+
+    // FIXME: We should use an op_call to an internal function here instead.
+    // https://bugs.webkit.org/show_bug.cgi?id=155547
+    emitOpcode(op_set_function_name);
+    instructions().append(value->index());
+    instructions().append(name->index());
+}
+
 RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
 {
     return emitCall(op_call, dst, func, expectedFunction, callArguments, divot, divotStart, divotEnd);

@@ -571,6 +571,34 @@ String getCalculatedDisplayName(CallFrame* callFrame, JSObject* object)
     return emptyString();
 }
 
+void JSFunction::setFunctionName(ExecState* exec, JSValue value)
+{
+    // The "name" property may have been already been defined as part of a property list in an
+    // object literal (and therefore reified).
+    if (hasReifiedName())
+        return;
+
+    ASSERT(!isHostFunction());
+    ASSERT(jsExecutable()->ecmaName().isNull());
+    String name;
+    if (value.isSymbol()) {
+        SymbolImpl* uid = asSymbol(value)->privateName().uid();
+        if (uid->isNullSymbol())
+            name = emptyString();
+        else
+            name = makeString("[", String(asSymbol(value)->privateName().uid()), ']');
+    } else {
+        VM& vm = exec->vm();
+        JSString* jsStr = value.toString(exec);
+        if (vm.exception())
+            return;
+        name = jsStr->value(exec);
+        if (vm.exception())
+            return;
+    }
+    reifyName(exec, name);
+}
+
 void JSFunction::reifyLength(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -588,6 +616,12 @@ void JSFunction::reifyLength(ExecState* exec)
 
 void JSFunction::reifyName(ExecState* exec)
 {
+    String name = jsExecutable()->ecmaName().string();
+    reifyName(exec, name);
+}
+
+void JSFunction::reifyName(ExecState* exec, String name)
+{
     VM& vm = exec->vm();
     FunctionRareData* rareData = this->rareData(vm);
 
@@ -595,8 +629,6 @@ void JSFunction::reifyName(ExecState* exec)
     ASSERT(!isHostFunction());
     unsigned initialAttributes = DontEnum | ReadOnly;
     const Identifier& propID = exec->propertyNames().name;
-
-    String name = jsExecutable()->ecmaName().string();
 
     if (jsExecutable()->isGetter())
         name = makeString("get ", name);

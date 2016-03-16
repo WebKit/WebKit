@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,6 +102,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_func_exp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_generator_func);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_generator_func_exp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_arrow_func_exp);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_set_function_name);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_construct);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_size_frame_for_varargs);

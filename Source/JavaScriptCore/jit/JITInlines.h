@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012-2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -558,6 +558,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ECIZJJ oper
     return appendCallWithExceptionCheck(operation);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ECJ operation, RegisterID arg1, RegisterID arg2)
+{
+    setupArgumentsWithExecState(arg1, arg2);
+    return appendCallWithExceptionCheck(operation);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ECJZC operation, RegisterID regOp1, RegisterID regOp2, int32_t op3, RegisterID regOp4)
 {
     setupArgumentsWithExecState(regOp1, regOp2, TrustedImm32(op3), regOp4);
@@ -689,6 +695,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJJ operati
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ECIZCC operation, RegisterID regOp1, UniquedStringImpl* identOp2, int32_t op3, RegisterID regOp4, RegisterID regOp5)
 {
     setupArgumentsWithExecState(regOp1, TrustedImmPtr(identOp2), TrustedImm32(op3), regOp4, regOp5);
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ECJ operation, RegisterID arg1, RegisterID arg2Tag, RegisterID arg2Payload)
+{
+    setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag);
     return appendCallWithExceptionCheck(operation);
 }
 

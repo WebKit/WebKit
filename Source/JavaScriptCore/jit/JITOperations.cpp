@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1015,6 +1015,13 @@ EncodedJSValue JIT_OPERATION operationNewGeneratorFunction(ExecState* exec, JSSc
 EncodedJSValue JIT_OPERATION operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
 {
     return operationNewFunctionCommon<JSGeneratorFunction>(exec, scope, functionExecutable, true);
+}
+
+void JIT_OPERATION operationSetFunctionName(ExecState* exec, JSCell* funcCell, EncodedJSValue encodedName)
+{
+    JSFunction* func = jsCast<JSFunction*>(funcCell);
+    JSValue name = JSValue::decode(encodedName);
+    func->setFunctionName(exec, name);
 }
 
 JSCell* JIT_OPERATION operationNewObject(ExecState* exec, Structure* structure)

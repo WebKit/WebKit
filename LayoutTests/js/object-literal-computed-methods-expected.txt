@@ -7,7 +7,7 @@ PASS o = { ['f'+'oo']() { return 10; } }; did not throw exception.
 PASS o.foo() is 10
 PASS typeof o.foo is 'function'
 PASS o.foo.length is 0
-PASS o.foo.name is ''
+PASS o.foo.name is 'foo'
 PASS o.foo.toString() is 'function () { return 10; }'
 PASS Object.getOwnPropertyDescriptor(o, 'foo').value is o.foo
 PASS Object.getOwnPropertyDescriptor(o, 'foo').enumerable is true
@@ -17,7 +17,7 @@ PASS methodName = 'add'; o = { [methodName](x, y) { return x + y; } }; did not t
 PASS o.add(42, -10) is 32
 PASS typeof o.add is 'function'
 PASS o.add.length is 2
-PASS o.add.name is ''
+PASS o.add.name is 'add'
 PASS o.add.toString() is 'function (x, y) { return x + y; }'
 PASS o = { [ (function() { return 'method'; })() ](x, y) { return x + y; } }; did not throw exception.
 PASS o.method(142, -10) is 132

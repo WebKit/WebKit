@@ -648,6 +648,8 @@ namespace JSC {
         PropertyListNode(const JSTokenLocation&, PropertyNode*);
         PropertyListNode(const JSTokenLocation&, PropertyNode*, PropertyListNode*);
 
+        bool hasStaticallyNamedProperty(const Identifier& propName);
+
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
         void emitPutConstantProperty(BytecodeGenerator&, RegisterID*, PropertyNode&);
@@ -1983,6 +1985,8 @@ namespace JSC {
         const Identifier& name() { return m_name; }
         const Identifier& ecmaName() { return m_ecmaName ? *m_ecmaName : m_name; }
         void setEcmaName(const Identifier& name) { m_ecmaName = m_name.isNull() ? &name : &m_name; }
+
+        bool hasStaticProperty(const Identifier& propName) { return m_staticMethods ? m_staticMethods->hasStaticallyNamedProperty(propName) : false; }
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;

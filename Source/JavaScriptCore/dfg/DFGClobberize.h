@@ -444,6 +444,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ToPrimitive:
     case In:
     case ValueAdd:
+    case SetFunctionName:
         read(World);
         write(Heap);
         return;

@@ -308,6 +308,7 @@ namespace JSC { namespace DFG {
     macro(In, NodeResultBoolean | NodeMustGenerate) \
     macro(ProfileType, NodeMustGenerate) \
     macro(ProfileControlFlow, NodeMustGenerate) \
+    macro(SetFunctionName, NodeMustGenerate) \
     \
     macro(CreateActivation, NodeResultJS) \
     \

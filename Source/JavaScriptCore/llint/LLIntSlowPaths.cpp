@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1081,6 +1081,15 @@ LLINT_SLOW_PATH_DECL(slow_path_new_arrow_func_exp)
     FunctionExecutable* executable = codeBlock->functionExpr(pc[3].u.operand);
     
     LLINT_RETURN(JSFunction::create(vm, executable, scope));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_set_function_name)
+{
+    LLINT_BEGIN();
+    JSFunction* func = jsCast<JSFunction*>(LLINT_OP(1).Register::unboxedCell());
+    JSValue name = LLINT_OP_C(2).Register::jsValue();
+    func->setFunctionName(exec, name);
+    LLINT_END();
 }
 
 static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc, JSValue callee, CodeSpecializationKind kind)

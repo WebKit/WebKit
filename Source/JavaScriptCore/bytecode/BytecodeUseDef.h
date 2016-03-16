@@ -85,6 +85,7 @@ void computeUsesForBytecodeOffset(
     case op_jngreater:
     case op_jngreatereq:
     case op_jless:
+    case op_set_function_name:
     case op_copy_rest: {
         ASSERT(opcodeLengths[opcodeID] > 2);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
@@ -322,6 +323,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_profile_type:
     case op_profile_control_flow:
     case op_put_to_arguments:
+    case op_set_function_name:
     case op_watchdog:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);

@@ -225,6 +225,7 @@ typedef void JIT_OPERATION (*V_JITOperation_ECIZCC)(ExecState*, JSCell*, Uniqued
 typedef void JIT_OPERATION (*V_JITOperation_ECIZJJ)(ExecState*, JSCell*, UniquedStringImpl*, int32_t, EncodedJSValue, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_ECJZC)(ExecState*, JSCell*, EncodedJSValue, int32_t, JSCell*);
 typedef void JIT_OPERATION (*V_JITOperation_ECCIcf)(ExecState*, JSCell*, JSCell*, InlineCallFrame*);
+typedef void JIT_OPERATION (*V_JITOperation_ECJ)(ExecState*, JSCell*, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_ECJJ)(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_ECPSPS)(ExecState*, JSCell*, void*, size_t, void*, size_t);
 typedef void JIT_OPERATION (*V_JITOperation_ECZ)(ExecState*, JSCell*, int32_t);
@@ -333,6 +334,7 @@ EncodedJSValue JIT_OPERATION operationNewFunction(ExecState*, JSScope*, JSCell*)
 EncodedJSValue JIT_OPERATION operationNewFunctionWithInvalidatedReallocationWatchpoint(ExecState*, JSScope*, JSCell*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewGeneratorFunction(ExecState*, JSScope*, JSCell*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint(ExecState*, JSScope*, JSCell*) WTF_INTERNAL;
+void JIT_OPERATION operationSetFunctionName(ExecState*, JSCell*, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewObject(ExecState*, Structure*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
 UnusedPtr JIT_OPERATION operationHandleWatchdogTimer(ExecState*) WTF_INTERNAL;

@@ -511,6 +511,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 // Computed accessors.
                 if (node->m_type & PropertyNode::Computed) {
                     RefPtr<RegisterID> propertyName = generator.emitNode(node->m_expression);
+                    generator.emitSetFunctionNameIfNeeded(node->m_assign, value.get(), propertyName.get());
                     if (node->m_type & PropertyNode::Getter)
                         generator.emitPutGetterByVal(dst, propertyName.get(), attribute, value.get());
                     else
@@ -601,6 +602,7 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
         return;
     }
     RefPtr<RegisterID> propertyName = generator.emitNode(node.m_expression);
+    generator.emitSetFunctionNameIfNeeded(node.m_assign, value.get(), propertyName.get());
     generator.emitDirectPutByVal(newObj, propertyName.get(), value.get());
 }
 
