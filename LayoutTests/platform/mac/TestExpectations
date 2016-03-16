@@ -1349,3 +1349,5 @@ webkit.org/b/155140 js/promises-tests/promises-tests-2-3-3.html [ Pass Failure ]
 
 webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
 webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
+
+webkit.org/b/154688 inspector/controller/runtime-controller.html [ Pass Timeout ]
