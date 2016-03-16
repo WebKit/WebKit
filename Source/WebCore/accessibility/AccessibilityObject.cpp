@@ -2245,6 +2245,7 @@ bool AccessibilityObject::supportsARIAAttributes() const
         || hasAttribute(aria_atomicAttr)
         || hasAttribute(aria_busyAttr)
         || hasAttribute(aria_controlsAttr)
+        || hasAttribute(aria_currentAttr)
         || hasAttribute(aria_describedbyAttr)
         || hasAttribute(aria_disabledAttr)
         || hasAttribute(aria_flowtoAttr)

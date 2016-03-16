@@ -1,3 +1,17 @@
+2016-03-16  Nan Wang  <n_wang@apple.com>
+
+        AX: Expose aria-current status to children
+        https://bugs.webkit.org/show_bug.cgi?id=155469
+
+        Reviewed by Chris Fleizach.
+
+        Added aria-current to the global ARIA attributes list.
+
+        Test: accessibility/aria-current-global-attribute.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsARIAAttributes):
+
 2016-03-16  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Printing test snapshots are upside-down after r198242
