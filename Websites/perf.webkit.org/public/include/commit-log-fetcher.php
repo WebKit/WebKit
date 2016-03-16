@@ -4,7 +4,25 @@ class CommitLogFetcher {
 
     function __construct($db) {
         $this->db = $db;
-        $this->commits = array();
+    }
+
+    function fetch_for_tasks($task_id_list, $task_by_id)
+    {
+        $commit_rows = $this->db->query_and_fetch_all('SELECT task_commits.*, commits.*, committers.*
+            FROM task_commits, commits LEFT OUTER JOIN committers ON commit_committer = committer_id
+            WHERE taskcommit_commit = commit_id AND taskcommit_task = ANY ($1)', array('{' . implode(', ', $task_id_list) . '}'));
+        if (!is_array($commit_rows))
+            return NULL;
+
+        $commits = array();
+        foreach ($commit_rows as &$commit_row) {
+            $associated_task = &$task_by_id[$commit_row['taskcommit_task']];
+            $commit = $this->format_commit($commit_row, $commit_row);
+            $commit['repository'] = $commit_row['commit_repository'];
+            array_push($commits, $commit);
+            array_push($associated_task[Database::is_true($commit_row['taskcommit_is_fix']) ? 'fixes' : 'causes'], $commit_row['commit_id']);
+        }
+        return $commits;
     }
 
     function repository_id_from_name($name)

@@ -19,6 +19,7 @@ function getJSON(path, data)
                 var parsed = JSON.parse(xhr.responseText);
                 resolve(parsed);
             } catch (error) {
+                console.error(xhr.responseText);
                 reject(xhr.status + ', ' + error);
             }
         };

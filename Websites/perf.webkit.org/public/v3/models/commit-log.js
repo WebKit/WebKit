@@ -5,6 +5,17 @@ class CommitLog extends DataModelObject {
         super(id);
         this._repository = rawData.repository;
         this._rawData = rawData;
+        this._remoteId = rawData.id;
+        if (this._remoteId)
+            this.ensureNamedStaticMap('remoteId')[this._remoteId] = this;
+    }
+
+    // FIXME: All this non-sense should go away once measurement-set start returning real commit id.
+    remoteId() { return this._remoteId; }
+    static findByRemoteId(id)
+    {
+        var remoteIdMap = super.namedStaticMap('remoteId');
+        return remoteIdMap ? remoteIdMap[id] : null;
     }
 
     static ensureSingleton(repository, rawData)

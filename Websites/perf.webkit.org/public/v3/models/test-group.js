@@ -99,9 +99,9 @@ class TestGroup extends LabeledObject {
         this._allRootSets = null;
     }
 
-    hasCompleted()
+    hasFinished()
     {
-        return this._buildRequests.every(function (request) { return request.hasCompleted(); });
+        return this._buildRequests.every(function (request) { return request.hasFinished(); });
     }
 
     hasStarted()
@@ -126,7 +126,7 @@ class TestGroup extends LabeledObject {
 
         var result = {changeType: null, status: 'failed', label: 'Failed', fullLabel: 'Failed', isStatisticallySignificant: false};
 
-        var hasCompleted = this.hasCompleted();
+        var hasCompleted = this.hasFinished();
         if (!hasCompleted) {
             if (this.hasStarted()) {
                 result.status = 'running';

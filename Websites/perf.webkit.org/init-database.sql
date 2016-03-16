@@ -16,6 +16,7 @@ DROP TABLE tests CASCADE;
 DROP TABLE reports CASCADE;
 DROP TABLE tracker_repositories CASCADE;
 DROP TABLE bug_trackers CASCADE;
+DROP TABLE task_commits CASCADE;
 DROP TABLE analysis_tasks CASCADE;
 DROP TABLE analysis_strategies CASCADE;
 DROP TYPE analysis_task_result_type CASCADE;
@@ -201,6 +202,12 @@ CREATE TABLE analysis_tasks (
     CONSTRAINT analysis_task_should_be_unique_for_range UNIQUE(task_start_run, task_end_run),
     CONSTRAINT analysis_task_should_not_be_associated_with_single_run
         CHECK ((task_start_run IS NULL AND task_end_run IS NULL) OR (task_start_run IS NOT NULL AND task_end_run IS NOT NULL)));
+
+CREATE TABLE task_commits (
+    taskcommit_task integer NOT NULL REFERENCES analysis_tasks ON DELETE CASCADE,
+    taskcommit_commit integer NOT NULL REFERENCES commits ON DELETE CASCADE,
+    taskcommit_is_fix boolean NOT NULL
+    CONSTRAINT task_commit_must_be_unique UNIQUE(taskcommit_task, taskcommit_commit));
 
 CREATE TABLE bugs (
     bug_id serial PRIMARY KEY,

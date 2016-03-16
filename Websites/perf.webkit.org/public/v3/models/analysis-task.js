@@ -20,6 +20,8 @@ class AnalysisTask extends LabeledObject {
         this._changeType = object.result; // Can't change due to v2 compatibility.
         this._needed = object.needed;
         this._bugs = object.bugs || [];
+        this._causes = object.causes || [];
+        this._fixes = object.fixes || [];
         this._buildRequestCount = object.buildRequestCount;
         this._finishedBuildRequestCount = object.finishedBuildRequestCount;
     }
@@ -46,6 +48,8 @@ class AnalysisTask extends LabeledObject {
         this._changeType = object.result; // Can't change due to v2 compatibility.
         this._needed = object.needed;
         this._bugs = object.bugs || [];
+        this._causes = object.causes || [];
+        this._fixes = object.fixes || [];
         this._buildRequestCount = object.buildRequestCount;
         this._finishedBuildRequestCount = object.finishedBuildRequestCount;
     }
@@ -62,6 +66,8 @@ class AnalysisTask extends LabeledObject {
     author() { return this._author || ''; }
     createdAt() { return this._createdAt; }
     bugs() { return this._bugs; }
+    causes() { return this._causes; }
+    fixes() { return this._fixes; }
     platform() { return this._platform; }
     metric() { return this._metric; }
     category() { return this._category; }
@@ -104,6 +110,35 @@ class AnalysisTask extends LabeledObject {
             bugTracker: bug.bugTracker().id(),
             number: bug.bugNumber(),
             shouldDelete: true,
+        }).then(function (data) {
+            return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
+                .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
+        });
+    }
+
+    associateCommit(kind, repository, revision)
+    {
+        console.assert(kind == 'cause' || kind == 'fix');
+        console.assert(repository instanceof Repository);
+        var id = this.id();
+        return PrivilegedAPI.sendRequest('associate-commit', {
+            task: id,
+            repository: repository.id(),
+            revision: revision,
+            kind: kind,
+        }).then(function (data) {
+            return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
+                .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
+        });
+    }
+
+    dissociateCommit(commit)
+    {
+        console.assert(commit instanceof CommitLog);
+        var id = this.id();
+        return PrivilegedAPI.sendRequest('associate-commit', {
+            task: id,
+            commit: commit.remoteId(),
         }).then(function (data) {
             return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
                 .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
@@ -193,6 +228,17 @@ class AnalysisTask extends LabeledObject {
             taskToBug[rawData.task].push(bug);
         }
 
+        for (var rawData of data.commits) {
+            rawData.repository = Repository.findById(rawData.repository);
+            if (!rawData.repository)
+                continue;
+            CommitLog.ensureSingleton(rawData.repository, rawData);
+        }
+
+        function resolveCommits(commits) {
+            return commits.map(function (id) { return CommitLog.findByRemoteId(id); }).filter(function (commit) { return !!commit; });
+        }
+
         var results = [];
         for (var rawData of data.analysisTasks) {
             rawData.platform = Platform.findById(rawData.platform);
@@ -201,6 +247,8 @@ class AnalysisTask extends LabeledObject {
                 continue;
 
             rawData.bugs = taskToBug[rawData.id];
+            rawData.causes = resolveCommits(rawData.causes);
+            rawData.fixes = resolveCommits(rawData.fixes);
             results.push(AnalysisTask.ensureSingleton(rawData.id, rawData));
         }
 

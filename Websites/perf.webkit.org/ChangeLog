@@ -1,3 +1,97 @@
+2016-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Analysis task page should allow specifying commits that caused or fixed a regression or a progression
+        https://bugs.webkit.org/show_bug.cgi?id=155529
+
+        Reviewed by Chris Dumez.
+
+        Added the capability to associate revisions that caused or fixed a progression or a regression for which
+        an analysis task was created. Added task_commits that stores this relationship and added the backend
+        support to retrieve this table in /api/analysis-tasks and an privileged API to update this table at
+        /privileged-api/associate-commit.
+
+        Also extracted a new component, MutableListView, out of AnalysisTaskPage to render and manipulate a list
+        of mutable items, and used it to render the list of associated bugs and commits. The view takes a list of
+        kinds (e.g. repositories or bug trackers), and accepts a pair of a kind and arbitrary text as a new item
+        value.
+
+        * init-database.sql: Added task_commits table.
+
+        * public/api/analysis-tasks.php:
+        (main):
+        (fetch_associated_data_for_tasks): Renamed from fetch_and_push_bugs_to_tasks now that it also fetches
+        the list of commits associated with each analysis task by calling CommitLogFetcher::fetch_for_tasks.
+        Also fixe the bug that we were not taking 
+        (format_task): No longer sets 'category' since the computation of category now depends on the list of
+        commits associated with this analysis task which aren't available until fetch_associated_data_for_tasks.
+        (determine_category): Added. Categorize any analysis tasks with "fixes" commits as "closed" and "causes"
+        commits as "identified".
+
+        * public/include/commit-log-fetcher.php:
+        (CommitLogFetcher::__construct): Remove the unused instance variable.
+        (CommitLogFetcher::fetch_for_tasks): Added. Fetches all commits associated with a list of analysis tasks.
+        Assumes the caller (fetch_associated_data_for_tasks) had setup "fixes" and "causes" fields on each task.
+
+        * public/privileged-api/associate-commit.php: Added. Updates task_commits table to associate or disassociate
+        a commit with an analysis task. When the specified analysis task and the specified commit are already
+        associated, we simply update the table instead of adding a duplicating entry or error. For dissociation,
+        the front-end specifies the commit ID.
+        (main): Added.
+
+        * public/v3/index.html:
+        * public/v3/components/mutable-list-view.js: Added. Used by the list associated bugs and commits.
+        (MutableListView): Added.
+        (MutableListView.prototype.setList): Added.
+        (MutableListView.prototype.setKindList): Added.
+        (MutableListView.prototype.setAddCallback): Added. This callback is invoked when the user tries to add
+        a new item to the list.
+        (MutableListView.prototype.render): Added.
+        (MutableListView.prototype._submitted): Added.
+        (MutableListView.cssTemplate):
+        (MutableListView.htmlTemplate):
+        (MutableListItem): Added. RemovalLink could be a hyperlink or a callback and gets involved when the user
+        tries to delete this item.
+        (MutableListItem.prototype.content):
+
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask): Added the support of the list of commits that fixed and caused changes.
+        (AnalysisTask.prototype.updateSingleton): Ditto.
+        (AnalysisTask.prototype.causes): Added.
+        (AnalysisTask.prototype.fixes): Added.
+        (AnalysisTask.prototype.associateCommit): Added. Use the API added at /privileged-api/associate-commit
+        to associate a new commit with this analysis task. Each commit has either caused or fixed the change.
+        (AnalysisTask.prototype.dissociateCommit): Added. Use the same API to disassociate each commit.
+        (AnalysisTask._constructAnalysisTasksFromRawData): Find all commits associated with each analysis task.
+        Because commit log objects use a fake ID fdue to /api/measurement-set not providing commit IDs, we must
+        use CommitLog.findByRemoteId to find each commit instead of usual CommitLog.findById.
+        (AnalysisTask._constructAnalysisTasksFromRawData.resolveCommits): Added.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.hasFinished): Renamed from hasCompleted since it was confusing for this._status
+        being "completed" wasn't a necessary condition for this function to return true.
+
+        * public/v3/models/commit-log.js:
+        (CommitLog): Added the static map for actual commit ID instead of a fake ID created in ensureSingleton.
+        (CommitLog.prototype.remoteId): Added. Returns the real commit ID.
+        (CommitLog.findByRemoteId): Added. Finds an CommitLog object using the real ID.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.hasFinished): Renamed from hasCompleted to match the rename in BuildRequest.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage): Added lists for the commits that fixed and caused the change using MutableListView.
+        Also adopted MutableListView for the list of associated bugs.
+        (AnalysisTaskPage.prototype.render): Added the code to populate the newly added lists.
+        (AnalysisTaskPage.prototype._makeCommitListItem): Added.
+        (AnalysisTaskPage.prototype._associateBug): Now this is a callback from MutableListView.
+        (AnalysisTaskPage.prototype._associateCommit): Added.
+        (AnalysisTaskPage.prototype._dissociateCommit): Added.
+        (AnalysisTaskPage.htmlTemplate):
+        (AnalysisTaskPage.cssTemplate):
+
+        * public/v3/remote.js:
+        (getJSON): Spit out the entire responseText when JSON failed to parse to make debugging easier.
+
 2016-03-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extract the code to format commit logs into its own PHP file
