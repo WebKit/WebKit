@@ -118,6 +118,35 @@
         }
     },
     {
+        "name": "Content Security Policy Level 2",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://w3c.github.io/webappsec-csp/2/",
+        "keywords": ["csp", "cross-site scripting", "xss", "injection", "header"],
+        "category": "webapps",
+        "description": "A mechanism that web applications can use to mitigate content injection vulnerabilities, such as cross-site scripting (XSS). Developers can declare a CSP policy to prohibit their web application from loading content or executing scripts that have not been whitelisted among other capabilities.",
+        "contact": {
+            "name": "Daniel Bates",
+            "email": "dbates@webkit.org"
+        }
+    },
+    {
+        "name": "Content Security Policy Level 3",
+        "status": {
+            "status": "Partial Support",
+            "enabled-by-default": true
+        },
+        "url": "https://w3c.github.io/webappsec-csp/",
+        "keywords": ["csp", "cross-site scripting", "xss", "injection", "header"],
+        "category": "webapps",
+        "contact": {
+            "name": "Daniel Bates",
+            "email": "dbates@webkit.org"
+        }
+    },
+    {
         "name": "DOM",
         "url": "https://dom.spec.whatwg.org",
         "keywords": ["dom", "dom4"],
