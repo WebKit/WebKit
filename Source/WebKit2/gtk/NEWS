@@ -1,4 +1,15 @@
 =================
+WebKitGTK+ 2.10.9
+=================
+
+What's new in WebKitGTK+ 2.10.9?
+
+  - Revert the patch to limit the number of tiles according to the visible area introduced in 2.10.8,
+    because it caused rendering issues in several popular websites.
+  - Fix the build with musl libc library.
+  - Fix the build with clang-3.8.
+
+=================
 WebKitGTK+ 2.10.8
 =================
 

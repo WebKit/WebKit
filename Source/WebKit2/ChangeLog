@@ -1,3 +1,9 @@
+2016-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.10.9 release.
+
+        * gtk/NEWS: Add release notes for 2.10.9
+
 2016-02-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Allow applications to disable Accelerated Compositing mode.
