@@ -1,3 +1,21 @@
+2016-03-17  Mark Lam  <mark.lam@apple.com>
+
+        Make FunctionMode an enum class.
+        https://bugs.webkit.org/show_bug.cgi?id=155587
+
+        Reviewed by Saam Barati.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * parser/NodeConstructors.h:
+        (JSC::BaseFuncExprNode::BaseFuncExprNode):
+        (JSC::FuncExprNode::FuncExprNode):
+        (JSC::FuncDeclNode::FuncDeclNode):
+        (JSC::ArrowFuncExprNode::ArrowFuncExprNode):
+        (JSC::MethodDefinitionNode::MethodDefinitionNode):
+        * parser/ParserModes.h:
+        (JSC::functionNameIsInScope):
+
 2016-03-17  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Getters and Setters should be prefixed appropriately

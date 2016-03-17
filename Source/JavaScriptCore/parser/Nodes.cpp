@@ -166,7 +166,7 @@ FunctionMetadataNode::FunctionMetadataNode(
     ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
 }
 
-void FunctionMetadataNode::finishParsing(const SourceCode& source, const Identifier& ident, enum FunctionMode functionMode)
+void FunctionMetadataNode::finishParsing(const SourceCode& source, const Identifier& ident, FunctionMode functionMode)
 {
     m_source = source;
     m_ident = ident;
@@ -189,7 +189,7 @@ FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& star
 {
 }
 
-void FunctionNode::finishParsing(const Identifier& ident, enum FunctionMode functionMode)
+void FunctionNode::finishParsing(const Identifier& ident, FunctionMode functionMode)
 {
     ASSERT(!source().isNull());
     m_ident = ident;

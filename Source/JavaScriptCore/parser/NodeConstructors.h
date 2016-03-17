@@ -898,7 +898,7 @@ namespace JSC {
     }
 
     inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
-        : BaseFuncExprNode(location, ident, metadata, source, FunctionExpression)
+        : BaseFuncExprNode(location, ident, metadata, source, FunctionMode::FunctionExpression)
     {
     }
 
@@ -911,16 +911,16 @@ namespace JSC {
         : StatementNode(location)
         , m_metadata(metadata)
     {
-        m_metadata->finishParsing(source, ident, FunctionDeclaration);
+        m_metadata->finishParsing(source, ident, FunctionMode::FunctionDeclaration);
     }
 
     inline ArrowFuncExprNode::ArrowFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
-        : BaseFuncExprNode(location, ident, metadata, source, FunctionExpression)
+        : BaseFuncExprNode(location, ident, metadata, source, FunctionMode::FunctionExpression)
     {
     }
 
     inline MethodDefinitionNode::MethodDefinitionNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
-        : FuncExprNode(location, ident, metadata, source, MethodDefinition)
+        : FuncExprNode(location, ident, metadata, source, FunctionMode::MethodDefinition)
     {
     }
     

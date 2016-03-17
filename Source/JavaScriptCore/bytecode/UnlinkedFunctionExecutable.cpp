@@ -97,7 +97,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_isBuiltinFunction(kind == UnlinkedBuiltinFunction)
     , m_constructAbility(static_cast<unsigned>(constructAbility))
     , m_constructorKind(static_cast<unsigned>(node->constructorKind()))
-    , m_functionMode(node->functionMode())
+    , m_functionMode(static_cast<unsigned>(node->functionMode()))
     , m_superBinding(static_cast<unsigned>(node->superBinding()))
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
     , m_sourceParseMode(static_cast<unsigned>(node->parseMode()))
@@ -110,7 +110,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     // Make sure these bitfields are adequately wide.
     ASSERT(m_constructAbility == static_cast<unsigned>(constructAbility));
     ASSERT(m_constructorKind == static_cast<unsigned>(node->constructorKind()));
-    ASSERT(m_functionMode == node->functionMode());
+    ASSERT(m_functionMode == static_cast<unsigned>(node->functionMode()));
     ASSERT(m_superBinding == static_cast<unsigned>(node->superBinding()));
     ASSERT(m_derivedContextType == static_cast<unsigned>(derivedContextType));
     ASSERT(m_sourceParseMode == static_cast<unsigned>(node->parseMode()));

@@ -42,7 +42,7 @@ enum class ThisTDZMode { AlwaysCheck, CheckIfNeeded };
 enum ProfilerMode { ProfilerOff, ProfilerOn };
 enum DebuggerMode { DebuggerOff, DebuggerOn };
 
-enum FunctionMode { FunctionExpression, FunctionDeclaration, MethodDefinition };
+enum class FunctionMode { FunctionExpression, FunctionDeclaration, MethodDefinition };
 
 enum class SourceParseMode : uint8_t {
     NormalFunctionMode,
@@ -125,7 +125,7 @@ inline bool functionNameIsInScope(const Identifier& name, FunctionMode functionM
     if (name.isNull())
         return false;
 
-    if (functionMode != FunctionExpression)
+    if (functionMode != FunctionMode::FunctionExpression)
         return false;
 
     return true;
