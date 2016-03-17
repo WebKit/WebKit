@@ -1,3 +1,10 @@
+2016-03-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed follow-up fix to test after r198353.
+
+        * inspector/unit-tests/heap-snapshot.html:
+        Account for <root> in a few places.
+
 2016-03-17  Sam Weinig  <sam@webkit.org>
 
         Implement document.queryCommandSupported("copy")

@@ -43,7 +43,7 @@ function test()
             this.nodes = nodes;
             this.nodeMap = nodeMap;
             this.totalSize = nodes.reduce((sum, node) => sum += node.size, 0);
-            this.totalObjectCount = nodes.length;
+            this.totalObjectCount = nodes.length - 1; // <root>.
         }
 
         static fromPayload(payload)
@@ -103,7 +103,8 @@ function test()
         instancesWithClassName(className)
         {
             let results = [];
-            for (let i = 0; i < this.nodes.length; ++i) {
+            // Skip <root>.
+            for (let i = 1; i < this.nodes.length; ++i) {
                 let node = this.nodes[i];
                 if (node.className === className)
                     results.push(node);
@@ -200,7 +201,9 @@ function test()
         test: (resolve, reject) => {
             let testSmall = 0, testMedium = 0, testLarge = 0;
             const smallSize = 32, mediumSize = 128;
-            for (let {size} of testSnapshot.nodes) {
+            // Skip <root>.
+            for (let i = 1; i < testSnapshot.nodes.length; ++i) {
+                let {size} = testSnapshot.nodes[i];
                 if (size < smallSize)
                     testSmall++;
                 else if (size < mediumSize)
