@@ -1,3 +1,10 @@
+2016-03-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, line ending fixes.
+
+        * gtest/codegear/gtest_all.cc:
+        * gtest/codegear/gtest_link.cc:
+
 2016-03-10  Frederic Wang  <fwang@igalia.com>
 
         [GTK] Add support for WOFF2

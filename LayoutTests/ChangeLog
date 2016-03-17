@@ -1,3 +1,17 @@
+2016-03-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, line ending fixes.
+
+        * css2.1/20110323/support/at-import-001.css:
+        * css2.1/20110323/support/at-import-002.css:
+        * css2.1/20110323/support/at-import-004.css:
+        * css2.1/20110323/support/at-import-005.css:
+        * css2.1/20110323/support/at-import-006.css:
+        * css2.1/20110323/support/at-import-007.css:
+        * css2.1/20110323/support/eof-green.css:
+        * storage/indexeddb/set_version_blocked.html:
+        * storage/indexeddb/transaction-read-only.html:
+
 2016-03-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] response-consume.html is crashing on Mac WK1 Debug builds
