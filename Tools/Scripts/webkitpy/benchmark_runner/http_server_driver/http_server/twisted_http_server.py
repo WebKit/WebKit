@@ -9,7 +9,7 @@ try:
     import twisted
 except ImportError:
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../..')))
-    from webkitpy.thirdparty.autoinstalled.twisted_15_5_0 import twisted
+    from webkitpy.thirdparty.autoinstalled.twisted import twisted
 
 from twisted.web import static, server
 from twisted.web.resource import Resource
@@ -29,6 +29,7 @@ class ServerControl(Resource):
         _log.info("Serving request %s" % request)
         sys.stdout.write(request.content.getvalue())
         sys.stdout.flush()
+        reactor.stop()
         return 'OK'
 
 
