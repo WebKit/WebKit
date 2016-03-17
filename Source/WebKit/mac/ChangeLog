@@ -1,3 +1,10 @@
+2016-03-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake][Mac] Unreviewed speculative buildfix after r198088. Just for fun.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2016-03-17  Andy Estes  <aestes@apple.com>
 
         [Mac] Enable Content-Disposition: attachment sandbox
