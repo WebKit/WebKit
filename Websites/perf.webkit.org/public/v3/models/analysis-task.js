@@ -100,7 +100,7 @@ class AnalysisTask extends LabeledObject {
         });
     }
 
-    disassociateBug(bug)
+    dissociateBug(bug)
     {
         console.assert(bug instanceof Bug);
         console.assert(this.bugs().includes(bug));

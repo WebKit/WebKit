@@ -206,7 +206,7 @@ CREATE TABLE analysis_tasks (
 CREATE TABLE task_commits (
     taskcommit_task integer NOT NULL REFERENCES analysis_tasks ON DELETE CASCADE,
     taskcommit_commit integer NOT NULL REFERENCES commits ON DELETE CASCADE,
-    taskcommit_is_fix boolean NOT NULL
+    taskcommit_is_fix boolean NOT NULL,
     CONSTRAINT task_commit_must_be_unique UNIQUE(taskcommit_task, taskcommit_commit));
 
 CREATE TABLE bugs (

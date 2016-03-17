@@ -116,7 +116,7 @@ function determine_category($task) {
     $category = 'unconfirmed';
 
     $result = $task['result'];
-    if ($result == 'unchanged' || $result == 'inconclusive' || $task['fixes'])
+    if ($result == 'unchanged' || $result == 'inconclusive' || $task['fixes'] || ($result == 'progression' && $task['causes']))
         $category = 'closed';
     else if ($task['causes'])
         $category = 'identified';

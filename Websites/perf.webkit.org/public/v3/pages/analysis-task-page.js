@@ -238,7 +238,7 @@ class AnalysisTaskPage extends PageWithHeading {
             var self = this;
             this._bugList.setList(this._task.bugs().map(function (bug) {
                 return new MutableListItem(bug.bugTracker(), bug.label(), bug.title(), bug.url(),
-                    'Disassociate this bug', self._disassociateBug.bind(self, bug));
+                    'Disassociate this bug', self._dissociateBug.bind(self, bug));
             }));
 
             this._causeList.setList(this._task.causes().map(this._makeCommitListItem.bind(this)));
@@ -478,12 +478,12 @@ class AnalysisTaskPage extends PageWithHeading {
         });
     }
 
-    _disassociateBug(bug)
+    _dissociateBug(bug)
     {
         var render = this.render.bind(this);
-        return this._task.disassociateBug(bug).then(render, function (error) {
+        return this._task.dissociateBug(bug).then(render, function (error) {
             render();
-            alert('Failed to disassociate the bug: ' + error);
+            alert('Failed to dissociate the bug: ' + error);
         });
     }
 
@@ -501,7 +501,7 @@ class AnalysisTaskPage extends PageWithHeading {
         var render = this.render.bind(this);
         return this._task.dissociateCommit(commit).then(render, function (error) {
             render();
-            alert('Failed to disassociate the commit: ' + error);
+            alert('Failed to dissociate the commit: ' + error);
         });
     }
 
