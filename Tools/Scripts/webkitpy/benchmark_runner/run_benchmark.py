@@ -28,6 +28,7 @@ def parse_args():
     mutual_group = parser.add_mutually_exclusive_group(required=True)
     mutual_group.add_argument('--read-results-json', dest='json_file', help='Specify file you want to format')
     mutual_group.add_argument('--plan', dest='plan', help='Benchmark plan to run. e.g. speedometer, jetstream')
+    mutual_group.add_argument('--allplans', action='store_true', help='Run all available benchmark plans sequentially')
 
     args = parser.parse_args()
 
@@ -45,6 +46,26 @@ def start(args):
     if args.json_file:
         BenchmarkRunner.show_results(json.load(open(args.json_file, 'r')), args.scale_unit)
         return
+    if args.allplans:
+        failed = []
+        plandir = os.path.join(os.path.dirname(__file__), 'data/plans')
+        planlist = [os.path.splitext(f)[0] for f in os.listdir(plandir) if f.endswith('.plan')]
+        if not planlist:
+            raise Exception('Cant find any .plan file in directory %s' % plandir)
+        for plan in sorted(planlist):
+            _log.info('Starting benchmark plan: %s' % plan)
+            try:
+                runner = BenchmarkRunner(plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser, args.scale_unit, args.device_id)
+                runner.execute()
+                _log.info('Finished benchmark plan: %s' % plan)
+            except KeyboardInterrupt:
+                raise
+            except:
+                failed.append(plan)
+                _log.error('Error running benchmark plan: %s' % plan)
+        if failed:
+            _log.error('The following benchmark plans have failed: %s' % failed)
+        return len(failed)
     runner = BenchmarkRunner(args.plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser, args.scale_unit, args.device_id)
     runner.execute()
 
@@ -58,4 +79,4 @@ def format_logger(logger):
 
 
 def main():
-    start(parse_args())
+    return start(parse_args())

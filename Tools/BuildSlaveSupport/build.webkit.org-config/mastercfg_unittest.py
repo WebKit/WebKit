@@ -414,7 +414,7 @@ expected_build_steps = {
     'GTK Linux 64-bit Debug (Build)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'archive-built-product', 'upload', 'trigger'],
     'GTK Linux 64-bit Debug (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'download-built-product', 'extract-built-product', 'jscore-test', 'layout-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'archive-test-results', 'upload', 'MasterShellCommand', 'API tests', 'WebKit GObject DOM bindings API break tests'],
     'GTK Linux 64-bit Release (Build)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'archive-built-product', 'upload', 'trigger'],
-    'GTK Linux 64-bit Release (Perf)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'download-built-product', 'extract-built-product', 'perf-test'],
+    'GTK Linux 64-bit Release (Perf)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'download-built-product', 'extract-built-product', 'perf-test', 'benchmark-test'],
     'GTK Linux 64-bit Release (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'download-built-product', 'extract-built-product', 'jscore-test', 'layout-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'archive-test-results', 'upload', 'MasterShellCommand', 'API tests', 'WebKit GObject DOM bindings API break tests'],
     'GTK Linux ARM Release' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'jscore-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'API tests', 'WebKit GObject DOM bindings API break tests'],
 
@@ -526,6 +526,22 @@ class RunAndUploadPerfTestsTest(unittest.TestCase):
 
     def test_buildbot_timeout(self):
         self.assertResults(-1, "timeout")
+
+
+class RunBenchmarkTest(unittest.TestCase):
+    def assertResults(self, rc, expected_text):
+        cmd = StubRemoteCommand(rc, expected_text)
+        step = RunBenchmarkTests()
+        step.commandComplete(cmd)
+        actual_results = step.evaluateCommand(cmd)
+        actual_text = str(step.getText2(cmd, actual_results)[0])
+        self.assertEqual(expected_text, actual_text)
+
+    def test_success(self):
+        self.assertResults(0, "benchmark-test")
+
+    def test_tests_failed(self):
+        self.assertResults(7, "7 benchmark tests failed")
 
 
 # FIXME: We should run this file as part of test-webkitpy.
