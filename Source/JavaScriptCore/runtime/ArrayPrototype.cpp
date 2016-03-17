@@ -149,9 +149,15 @@ static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* object, unsi
 {
     if (JSValue result = object->tryGetIndexQuickly(index))
         return result;
-    PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
+    // We want to perform get and has in the same operation.
+    // We can only do so when this behavior is not observable. The
+    // only time it is observable is when we encounter a ProxyObject
+    // somewhere in the prototype chain.
+    PropertySlot slot(object, PropertySlot::InternalMethodType::HasProperty);
     if (!object->getPropertySlot(exec, index, slot))
         return JSValue();
+    if (UNLIKELY(slot.isTaintedByProxy()))
+        return object->get(exec, index);
     return slot.getValue(exec, index);
 }
 

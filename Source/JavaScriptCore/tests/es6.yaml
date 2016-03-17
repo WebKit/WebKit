@@ -943,11 +943,11 @@
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.reverse.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.shift.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.splice.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.unshift.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_Array.from.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_Array.prototype.concat.js
@@ -1049,11 +1049,11 @@
 - path: es6/Proxy_internal_set_calls_Array.prototype.reverse.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.prototype.shift.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.prototype.splice.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.prototype.unshift.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Object.assign.js
   cmd: runES6 :normal
 - path: es6/Proxy_isExtensible_handler.js

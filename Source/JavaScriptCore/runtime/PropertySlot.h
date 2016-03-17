@@ -86,6 +86,7 @@ public:
         , m_cacheability(CachingAllowed)
         , m_propertyType(TypeUnset)
         , m_internalMethodType(internalMethodType)
+        , m_isTaintedByProxy(false)
     {
     }
 
@@ -102,6 +103,8 @@ public:
     bool isCacheableValue() const { return isCacheable() && isValue(); }
     bool isCacheableGetter() const { return isCacheable() && isAccessor(); }
     bool isCacheableCustom() const { return isCacheable() && isCustom(); }
+    void setIsTaintedByProxy() { m_isTaintedByProxy = true; }
+    bool isTaintedByProxy() const { return m_isTaintedByProxy; }
 
     InternalMethodType internalMethodType() const { return m_internalMethodType; }
 
@@ -278,6 +281,7 @@ private:
     CacheabilityType m_cacheability;
     PropertyType m_propertyType;
     InternalMethodType m_internalMethodType;
+    bool m_isTaintedByProxy;
 };
 
 ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, PropertyName propertyName) const
