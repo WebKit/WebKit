@@ -57,7 +57,14 @@ namespace WebCore {
 
 bool DataDetection::isDataDetectorLink(Element* element)
 {
-    return element->getAttribute(dataDetectorsURLScheme) == "true";
+    // FIXME: We should be able to ask this from DataDetectorsCore when rdar://problem/25206062 is fixed.
+    if (!is<HTMLAnchorElement>(*element))
+        return false;
+
+    if (element->getAttribute(dataDetectorsURLScheme) == "true")
+        return true;
+    URL url = downcast<HTMLAnchorElement>(*element).href();
+    return url.protocolIs("mailto") || url.protocolIs("tel");
 }
 
 bool DataDetection::requiresExtendedContext(Element* element)
@@ -76,7 +83,7 @@ bool DataDetection::shouldCancelDefaultAction(Element* element)
     UNUSED_PARAM(element);
     return false;
 #else
-    // FIXME: We should also compute the DDResultRef and check the result category.
+    // FIXME: We should be able to retrieve this information from DataDetectorsCore when rdar://problem/25169133 is fixed.
     if (!is<HTMLAnchorElement>(*element))
         return false;
     if (element->getAttribute(dataDetectorsURLScheme) != "true")

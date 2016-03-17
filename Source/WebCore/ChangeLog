@@ -1,3 +1,17 @@
+2016-03-16  Enrica Casucci  <enrica@apple.com>
+
+        Recognize mailto and tel url as data detector links.
+        https://bugs.webkit.org/show_bug.cgi?id=155569
+        rdar://problem/24836185
+
+        Reviewed by Sam Weinig.
+
+        When we check if the element is a data detector link,
+        we should return true also for URLs with mailto: and tel: scheme.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::isDataDetectorLink):
+
 2016-03-16  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Directly composited image layers need pixelsnapping.
