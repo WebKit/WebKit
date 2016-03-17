@@ -32,6 +32,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXColumnHeaderUIElements: <array of size 0>
@@ -66,6 +69,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXColumnHeaderUIElements: <array of size 0>
@@ -100,6 +106,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {2, 1}
 AXColumnHeaderUIElements: <array of size 0>
@@ -134,6 +143,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {3, 2}
 AXColumnHeaderUIElements: <array of size 0>
@@ -168,6 +180,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {3, 2}
 AXColumnHeaderUIElements: <array of size 0>
@@ -206,6 +221,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXColumnHeaderUIElements: <array of size 0>
@@ -240,6 +258,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -274,6 +295,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -308,6 +332,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {1, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -346,6 +373,9 @@ AXTopLevelUIElement: <AXColumn>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXColumn>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXIndex: 0
 AXHeader: <AXColumn>
 AXRows: <array of size 2>
@@ -377,6 +407,9 @@ AXTopLevelUIElement: <AXColumn>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXColumn>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXIndex: 1
 AXHeader: <AXColumn>
 AXRows: <array of size 3>
@@ -408,6 +441,9 @@ AXTopLevelUIElement: <AXColumn>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXColumn>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXIndex: 2
 AXHeader: <AXColumn>
 AXRows: <array of size 3>
@@ -439,6 +475,9 @@ AXTopLevelUIElement: <AXColumn>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXColumn>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXIndex: 3
 AXHeader: <AXColumn>
 AXRows: <array of size 4>
@@ -470,6 +509,9 @@ AXTopLevelUIElement: <AXColumn>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXColumn>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXIndex: 4
 AXHeader: <AXColumn>
 AXRows: <array of size 4>
@@ -505,6 +547,9 @@ AXTopLevelUIElement: <AXRow>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXRow>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXIndex: 0
 AXElementBusy: 0
 
@@ -533,6 +578,9 @@ AXTopLevelUIElement: <AXRow>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXRow>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXIndex: 1
 AXElementBusy: 0
 
@@ -561,6 +609,9 @@ AXTopLevelUIElement: <AXRow>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXRow>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXIndex: 2
 AXElementBusy: 0
 
@@ -589,6 +640,9 @@ AXTopLevelUIElement: <AXRow>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXRow>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXIndex: 3
 AXElementBusy: 0
 
@@ -621,6 +675,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXColumnHeaderUIElements: <array of size 0>
@@ -655,6 +712,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {2, 1}
 AXColumnHeaderUIElements: <array of size 0>
@@ -689,6 +749,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {3, 2}
 AXColumnHeaderUIElements: <array of size 0>
@@ -723,6 +786,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -757,6 +823,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {4, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -791,6 +860,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -825,6 +897,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {1, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -859,6 +934,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {2, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -893,6 +971,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -927,6 +1008,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {4, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -961,6 +1045,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {1, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -995,6 +1082,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {2, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -1029,6 +1119,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -1063,6 +1156,9 @@ AXTopLevelUIElement: <AXCell>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {4, 1}
 AXColumnHeaderUIElements: <array of size 1>
@@ -1101,6 +1197,9 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------

@@ -1,3 +1,30 @@
+2016-03-17  Doug Russell  <d_russell@apple.com>
+
+        AX: attributes to retrieve focusable and editable ancestors
+        https://bugs.webkit.org/show_bug.cgi?id=155554
+
+        Reviewed by Chris Fleizach.
+
+        Add attributes to help give context to focus changes:
+        AXFocusableAncestor - nearest accessibility ancestor that returns true for
+        canSetFocusAttribute().
+        AXEditableAncestor - nearest accessibility ancestor that returns true for
+        isTextControl().
+        AXHighestEditableAncestor - highest element in accessibility that returns true
+        for isTextControl().
+
+        Test: accessibility/mac/ancestor-attributes.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::focusableAncestor):
+        (WebCore::AccessibilityObject::editableAncestor):
+        (WebCore::AccessibilityObject::highestEditableAncestor):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2016-03-17  Sam Weinig  <sam@webkit.org>
 
         Implement document.queryCommandSupported("copy")

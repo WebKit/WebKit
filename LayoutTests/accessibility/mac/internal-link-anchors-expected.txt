@@ -24,6 +24,9 @@ AXTopLevelUIElement: <AXStaticText>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXStaticText>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------

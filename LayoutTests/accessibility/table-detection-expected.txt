@@ -25,6 +25,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 2>
 AXVisibleRows: <array of size 2>
 AXColumns: <array of size 2>
@@ -69,6 +72,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -112,6 +118,9 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXTitleUIElement: (null)
 AXElementBusy: 0
 
@@ -144,6 +153,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -187,6 +199,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -230,6 +245,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 2>
 AXVisibleRows: <array of size 2>
 AXColumns: <array of size 2>
@@ -274,6 +292,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -317,6 +338,9 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXTitleUIElement: (null)
 AXElementBusy: 0
 
@@ -349,6 +373,9 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXTitleUIElement: (null)
 AXElementBusy: 0
 
@@ -381,6 +408,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -424,6 +454,9 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXTitleUIElement: (null)
 AXElementBusy: 0
 
@@ -456,6 +489,9 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: nmb
 AXDOMClassList: <array of size 1>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXTitleUIElement: (null)
 AXElementBusy: 0
 
@@ -494,6 +530,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -537,6 +576,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 2>
 AXVisibleRows: <array of size 2>
 AXColumns: <array of size 2>
@@ -581,6 +623,9 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXTitleUIElement: (null)
 AXElementBusy: 0
 
@@ -614,6 +659,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 3>
 AXVisibleRows: <array of size 3>
 AXColumns: <array of size 2>
@@ -659,6 +707,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 3>
 AXVisibleRows: <array of size 3>
 AXColumns: <array of size 2>
@@ -704,6 +755,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 2>
 AXVisibleRows: <array of size 2>
 AXColumns: <array of size 2>
@@ -748,6 +802,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 24>
 AXVisibleRows: <array of size 13>
 AXColumns: <array of size 1>
@@ -814,6 +871,9 @@ AXTopLevelUIElement: <AXTable>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXRows: <array of size 2>
 AXVisibleRows: <array of size 2>
 AXColumns: <array of size 2>

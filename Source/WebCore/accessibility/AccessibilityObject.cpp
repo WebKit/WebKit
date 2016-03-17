@@ -2964,6 +2964,48 @@ void AccessibilityObject::setPreventKeyboardDOMEventDispatch(bool on)
 }
 #endif
 
+AccessibilityObject* AccessibilityObject::focusableAncestor()
+{
+    AccessibilityObject* potentialFocusableAncestor = this;
+    while (potentialFocusableAncestor) {
+        if (potentialFocusableAncestor->canSetFocusAttribute())
+            return potentialFocusableAncestor;
+        potentialFocusableAncestor = potentialFocusableAncestor->parentObject();
+    }
+
+    return nullptr;
+}
+
+AccessibilityObject* AccessibilityObject::editableAncestor()
+{
+    AccessibilityObject* potentialEditableAncestor = this;
+    while (potentialEditableAncestor) {
+        if (potentialEditableAncestor->isTextControl())
+            return potentialEditableAncestor;
+        potentialEditableAncestor = potentialEditableAncestor->parentObject();
+    }
+
+    return nullptr;
+}
+
+AccessibilityObject* AccessibilityObject::highestEditableAncestor()
+{
+    AccessibilityObject* editableAncestor = this->editableAncestor();
+    AccessibilityObject* previousEditableAncestor = nullptr;
+    while (editableAncestor) {
+        if (editableAncestor == previousEditableAncestor) {
+            if (AccessibilityObject* parent = editableAncestor->parentObject()) {
+                editableAncestor = parent->editableAncestor();
+                continue;
+            }
+            break;
+        }
+        previousEditableAncestor = editableAncestor;
+        editableAncestor = editableAncestor->editableAncestor();
+    }
+    return previousEditableAncestor;
+}
+
 bool AccessibilityObject::isStyleFormatGroup() const
 {
     Node* node = this->node();

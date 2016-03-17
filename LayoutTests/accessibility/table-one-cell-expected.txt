@@ -1,11 +1,13 @@
- 
+Pick Your Location!
+Get specific content for your area. 
+http://web.apple.com
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
-AXChildren: <array of size 0>
+AXChildren: <array of size 3>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {784, 150}
+AXSize: NSSize: {135, 90}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -23,10 +25,8 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXTitleUIElement: (null)
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXElementBusy: 0
-
-------------
-
-
 

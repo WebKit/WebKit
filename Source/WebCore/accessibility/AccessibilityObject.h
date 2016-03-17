@@ -1037,6 +1037,10 @@ public:
     bool caretBrowsingEnabled() const;
     void setCaretBrowsingEnabled(bool);
 #endif
+
+    AccessibilityObject* focusableAncestor();
+    AccessibilityObject* editableAncestor();
+    AccessibilityObject* highestEditableAncestor();
     
 protected:
     AXID m_id;

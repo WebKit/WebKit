@@ -32,6 +32,9 @@ AXTopLevelUIElement:
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: 
+AXFocusableAncestor: 
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
@@ -59,6 +62,9 @@ AXTopLevelUIElement:
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: 
+AXFocusableAncestor: 
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
@@ -86,6 +92,9 @@ AXTopLevelUIElement:
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: 
+AXFocusableAncestor: 
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
@@ -113,6 +122,9 @@ AXTopLevelUIElement:
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: 
+AXFocusableAncestor: 
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
@@ -140,6 +152,9 @@ AXTopLevelUIElement:
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: 
+AXFocusableAncestor: 
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------

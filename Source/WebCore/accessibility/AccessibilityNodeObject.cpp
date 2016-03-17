@@ -247,7 +247,7 @@ LayoutRect AccessibilityNodeObject::elementRect() const
 {
     return boundingBoxRect();
 }
-    
+
 LayoutRect AccessibilityNodeObject::boundingBoxRect() const
 {
     // AccessibilityNodeObjects have no mechanism yet to return a size or position.

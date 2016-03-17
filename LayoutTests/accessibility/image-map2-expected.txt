@@ -24,6 +24,9 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: result
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
@@ -51,6 +54,9 @@ AXTopLevelUIElement: <AXLink>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXLink>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
 AXElementBusy: 0
@@ -81,6 +87,9 @@ AXTopLevelUIElement: <AXLink>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXLink>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
 AXElementBusy: 0

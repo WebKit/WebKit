@@ -536,6 +536,18 @@ using namespace HTMLNames;
 #define NSAccessibilityCaretBrowsingEnabledAttribute @"AXCaretBrowsingEnabled"
 #endif
 
+#ifndef NSAccessibilitFocusableAncestorAttribute
+#define NSAccessibilityFocusableAncestorAttribute @"AXFocusableAncestor"
+#endif
+
+#ifndef NSAccessibilityEditableAncestorAttribute
+#define NSAccessibilityEditableAncestorAttribute @"AXEditableAncestor"
+#endif
+
+#ifndef NSAccessibilityHighestEditableAncestorAttribute
+#define NSAccessibilityHighestEditableAncestorAttribute @"AXHighestEditableAncestor"
+#endif
+
 @implementation WebAccessibilityObjectWrapper
 
 - (void)unregisterUniqueIdForUIElement
@@ -1516,31 +1528,34 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
-                      NSAccessibilitySubroleAttribute,
-                      NSAccessibilityRoleDescriptionAttribute,
-                      NSAccessibilityChildrenAttribute,
-                      NSAccessibilityHelpAttribute,
-                      NSAccessibilityParentAttribute,
-                      NSAccessibilityPositionAttribute,
-                      NSAccessibilitySizeAttribute,
-                      NSAccessibilityTitleAttribute,
-                      NSAccessibilityDescriptionAttribute,
-                      NSAccessibilityValueAttribute,
-                      NSAccessibilityFocusedAttribute,
-                      NSAccessibilityEnabledAttribute,
-                      NSAccessibilityWindowAttribute,
-                      @"AXSelectedTextMarkerRange",
-                      @"AXStartTextMarker",
-                      @"AXEndTextMarker",
-                      @"AXVisited",
-                      NSAccessibilityLinkedUIElementsAttribute,
-                      NSAccessibilitySelectedAttribute,
-                      NSAccessibilityBlockQuoteLevelAttribute,
-                      NSAccessibilityTopLevelUIElementAttribute,
-                      NSAccessibilityLanguageAttribute,
-                      NSAccessibilityDOMIdentifierAttribute,
-                      NSAccessibilityDOMClassListAttribute,
-                      nil];
+            NSAccessibilitySubroleAttribute,
+            NSAccessibilityRoleDescriptionAttribute,
+            NSAccessibilityChildrenAttribute,
+            NSAccessibilityHelpAttribute,
+            NSAccessibilityParentAttribute,
+            NSAccessibilityPositionAttribute,
+            NSAccessibilitySizeAttribute,
+            NSAccessibilityTitleAttribute,
+            NSAccessibilityDescriptionAttribute,
+            NSAccessibilityValueAttribute,
+            NSAccessibilityFocusedAttribute,
+            NSAccessibilityEnabledAttribute,
+            NSAccessibilityWindowAttribute,
+            @"AXSelectedTextMarkerRange",
+            @"AXStartTextMarker",
+            @"AXEndTextMarker",
+            @"AXVisited",
+            NSAccessibilityLinkedUIElementsAttribute,
+            NSAccessibilitySelectedAttribute,
+            NSAccessibilityBlockQuoteLevelAttribute,
+            NSAccessibilityTopLevelUIElementAttribute,
+            NSAccessibilityLanguageAttribute,
+            NSAccessibilityDOMIdentifierAttribute,
+            NSAccessibilityDOMClassListAttribute,
+            NSAccessibilityFocusableAncestorAttribute,
+            NSAccessibilityEditableAncestorAttribute,
+            NSAccessibilityHighestEditableAncestorAttribute,
+            nil];
     }
     if (commonMenuAttrs == nil) {
         commonMenuAttrs = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -1563,6 +1578,10 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
         tempArray = [[NSMutableArray alloc] initWithArray:attributes];
         // WebAreas should not expose AXSubrole.
         [tempArray removeObject:NSAccessibilitySubroleAttribute];
+        // WebAreas should not expose ancestor attributes
+        [tempArray removeObject:NSAccessibilityFocusableAncestorAttribute];
+        [tempArray removeObject:NSAccessibilityEditableAncestorAttribute];
+        [tempArray removeObject:NSAccessibilityHighestEditableAncestorAttribute];
         [tempArray addObject:@"AXLinkUIElements"];
         [tempArray addObject:@"AXLoaded"];
         [tempArray addObject:@"AXLayoutCount"];
@@ -3319,7 +3338,22 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         m_object->ariaControlsElements(ariaControls);
         return convertToNSArray(ariaControls);
     }
-    
+
+    if ([attributeName isEqualToString:NSAccessibilityFocusableAncestorAttribute]) {
+        AccessibilityObject* object = m_object->focusableAncestor();
+        return object ? object->wrapper() : nil;
+    }
+
+    if ([attributeName isEqualToString:NSAccessibilityEditableAncestorAttribute]) {
+        AccessibilityObject* object = m_object->editableAncestor();
+        return object ? object->wrapper() : nil;
+    }
+
+    if ([attributeName isEqualToString:NSAccessibilityHighestEditableAncestorAttribute]) {
+        AccessibilityObject* object = m_object->highestEditableAncestor();
+        return object ? object->wrapper() : nil;
+    }
+
     return nil;
 }
 

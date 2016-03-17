@@ -27,6 +27,9 @@ AXTopLevelUIElement: <AXLink: 'Delicious cake'>
 AXLanguage: 
 AXDOMIdentifier: test
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXLink: 'Delicious cake'>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXURL: http://www.wowhead.com/?item=33924
 AXAccessKey: (null)
 AXElementBusy: 0
@@ -57,6 +60,9 @@ AXTopLevelUIElement: <AXImage>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXImage>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
 AXURL: LayoutTests/accessibility/resources/cake.png
 AXAccessKey: (null)
 AXElementBusy: 0
