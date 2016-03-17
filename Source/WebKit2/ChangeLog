@@ -1,3 +1,17 @@
+2016-03-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove use of dyld_register_image_state_change_handler() in PluginProcessMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=155596
+
+        Reviewed by Dan Bernstein.
+
+        Use _dyld_register_func_for_add_image instead which is API. Use dladdr to find the image path given its header.
+
+        * Platform/spi/Cocoa/DyldSPI.h: Removed.
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-03-17  Chris Dumez  <cdumez@apple.com>
 
         Set the WebContent process's main thread QoS to USER-INTERACTIVE
