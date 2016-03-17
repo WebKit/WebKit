@@ -31,12 +31,12 @@ class SVGAnimatedStaticPropertyTearOff : public SVGAnimatedProperty {
 public:
     typedef PropertyType ContentType;
 
-    virtual PropertyType& baseVal()
+    virtual const PropertyType& baseVal()
     {
         return m_property;
     }
 
-    virtual PropertyType& animVal()
+    virtual const PropertyType& animVal()
     {
         if (m_animatedProperty)
             return *m_animatedProperty;

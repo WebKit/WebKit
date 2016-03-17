@@ -29,9 +29,9 @@ namespace WebCore {
 template<typename EnumType>
 class SVGAnimatedEnumerationPropertyTearOff final : public SVGAnimatedStaticPropertyTearOff<unsigned> {
 public:
-    unsigned& baseVal() override
+    const unsigned& baseVal() override
     {
-        unsigned& baseVal = SVGAnimatedStaticPropertyTearOff::baseVal();
+        const unsigned& baseVal = SVGAnimatedStaticPropertyTearOff::baseVal();
 
         if (baseVal > SVGIDLEnumLimits<EnumType>::highestExposedEnumValue())
             return m_outOfRangeEnumValue;
@@ -39,9 +39,9 @@ public:
         return baseVal;
     }
 
-    unsigned& animVal() override
+    const unsigned& animVal() override
     {
-        unsigned& animVal = SVGAnimatedStaticPropertyTearOff::animVal();
+        const unsigned& animVal = SVGAnimatedStaticPropertyTearOff::animVal();
 
         if (animVal > SVGIDLEnumLimits<EnumType>::highestExposedEnumValue())
             return m_outOfRangeEnumValue;

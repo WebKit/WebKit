@@ -1,3 +1,19 @@
+2016-03-16  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        SVG tear offs should return a const reference if possible
+        https://bugs.webkit.org/show_bug.cgi?id=153214
+
+        Reviewed by Alex Christensen.
+
+        A smaller change than expected because the returned reference is being copied into a value in additional locations that baseVal and animVal are used.
+
+        No new tests as there is no change in behaviour.
+
+        * svg/properties/SVGAnimatedEnumerationPropertyTearOff.h:
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h:
+        (WebCore::SVGAnimatedStaticPropertyTearOff::baseVal):
+        (WebCore::SVGAnimatedStaticPropertyTearOff::animVal):
+
 2016-03-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, partial roll out of r197254.
