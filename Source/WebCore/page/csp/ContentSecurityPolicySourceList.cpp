@@ -104,17 +104,10 @@ bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) co
     // FIXME: We should not hardcode the directive names. We should make use of the constants in ContentSecurityPolicyDirectiveList.cpp.
     // See <https://bugs.webkit.org/show_bug.cgi?id=155133>.
     bool isAllowed = url.protocolIsInHTTPFamily();
-    if (equalLettersIgnoringASCIICase(m_directiveName, "img-src")) {
+    if (equalLettersIgnoringASCIICase(m_directiveName, "img-src"))
         isAllowed |= url.protocolIsData();
-#if PLATFORM(GTK)
-        isAllowed |= url.protocolIs("resource");
-#endif
-    } else if (equalLettersIgnoringASCIICase(m_directiveName, "media-src")) {
+    else if (equalLettersIgnoringASCIICase(m_directiveName, "media-src"))
         isAllowed |= url.protocolIsData() || url.protocolIsBlob();
-#if PLATFORM(GTK)
-        isAllowed |= url.protocolIs("resource");
-#endif
-    }
     return isAllowed;
 }
 
