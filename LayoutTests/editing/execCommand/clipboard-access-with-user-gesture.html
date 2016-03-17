@@ -196,61 +196,61 @@ document.body.appendChild(buttonForCut);
 // First test copy/cut without user gestures.
 header("Testing copying an editableParagraph range without a user gesture.")
 makeSelection("editableParagraph", 0, 1);
-test("copy", false, false, false);
+test("copy", false, true, false);
 
 header("Testing copying an editableParagraph caret without a user gesture.")
 makeSelection("editableParagraph", 0, 0);
-test("copy", false, false, false);
+test("copy", false, true, false);
 
 header("Testing copying an non-editable range without a user gesture.")
 makeSelection("nonEditableParagraph", 0, 1);
-test("copy", false, false, false);
+test("copy", false, true, false);
 
 header("Testing copying an non-editable caret without a user gesture.")
 makeSelection("nonEditableParagraph", 0, 0);
-test("copy", false, false, false);
+test("copy", false, true, false);
 
 header("Testing copying an editable plaint-text range without a user gesture.")
 makeSelection("editablePlainTextParagraph", 0, 1);
-test("copy", false, false, false);
+test("copy", false, true, false);
 
 header("Testing copying an editable plaint-text caret without a user gesture.")
 makeSelection("editablePlainTextParagraph", 0, 0);
-test("copy", false, false, false);
+test("copy", false, true, false);
 
 header("Testing copying when there is no selection without a user gesture.")
 window.getSelection().removeAllRanges();
-test("copy", false, false, false);
+test("copy", false, true, false);
 
 clearSelectionContainer();
 
 header("Testing cutting an editableParagraph range without a user gesture.")
 makeSelection("editableParagraph", 0, 1);
-test("cut", false, false, false);
+test("cut", false, true, false);
 
 header("Testing cutting an editableParagraph caret without a user gesture.")
 makeSelection("editableParagraph", 0, 0);
-test("cut", false, false, false);
+test("cut", false, true, false);
 
 header("Testing cutting an non-editable range without a user gesture.")
 makeSelection("nonEditableParagraph", 0, 1);
-test("cut", false, false, false);
+test("cut", false, true, false);
 
 header("Testing cutting an non-editable caret without a user gesture.")
 makeSelection("nonEditableParagraph", 0, 0);
-test("cut", false, false, false);
+test("cut", false, true, false);
 
 header("Testing cutting an editable plaint-text range without a user gesture.")
 makeSelection("editablePlainTextParagraph", 0, 1);
-test("cut", false, false, false);
+test("cut", false, true, false);
 
 header("Testing cutting an editable plaint-text caret without a user gesture.")
 makeSelection("editablePlainTextParagraph", 0, 0);
-test("cut", false, false, false);
+test("cut", false, true, false);
 
 header("Testing cutting when there is no selection without a user gesture.")
 window.getSelection().removeAllRanges();
-test("cut", false, false, false);
+test("cut", false, true, false);
 
 clearSelectionContainer();
 

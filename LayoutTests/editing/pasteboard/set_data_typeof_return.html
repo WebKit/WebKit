@@ -13,7 +13,8 @@ function setDataTest(e) {
 <script>
 description("Simple test to validate the return type of setData(). To run the test manually, simply select any text and initiate a copy operation.");
 
-document.execCommand('copy');
+if (window.testRunner)
+    window.testRunner.execCommand('copy');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

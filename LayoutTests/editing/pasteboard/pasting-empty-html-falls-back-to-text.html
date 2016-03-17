@@ -15,13 +15,13 @@ function runTest()
   testRunner.dumpAsText();
 
   document.body.addEventListener('copy', handleCopy);
-  document.execCommand('copy');
+  testRunner.execCommand('copy');
   var selection = window.getSelection();
   var range = document.createRange();
   range.selectNode(document.getElementById('description'));
   selection.addRange(range);
   selection.collapseToEnd();
-  document.execCommand('paste');
+  testRunner.execCommand('paste');
 }
 </script>
 <body onload="runTest()" contenteditable="true">

@@ -26,11 +26,11 @@
                     log("FAIL: text/plain data on the clipboard is \"" + data + "\"");
             }, true);
 
-            document.execCommand("Copy");
+            window.testRunner.execCommand("Copy");
 
             var target = document.getElementById("paste-target");
             target.focus();
-            document.execCommand("Paste");
+            window.testRunner.execCommand("Paste");
             var data = target.firstChild.data;
             if (data === "\u00e9")
                 log("PASS: pasted text is precomposed");

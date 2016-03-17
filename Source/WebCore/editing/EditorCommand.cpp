@@ -75,16 +75,13 @@ public:
     TriState (*state)(Frame&, Event*);
     String (*value)(Frame&, Event*);
     bool isTextInsertion;
-    bool allowExecutionWhenDisabled;
+    bool (*allowExecutionWhenDisabled)(EditorCommandSource);
 };
 
 typedef HashMap<String, const EditorInternalCommand*, ASCIICaseInsensitiveHash> CommandMap;
 
 static const bool notTextInsertion = false;
 static const bool isTextInsertion = true;
-
-static const bool allowExecutionWhenDisabled = true;
-static const bool doNotAllowExecutionWhenDisabled = false;
 
 // Related to Editor::selectionForCommand.
 // Certain operations continue to use the target control's selection even if the event handler
@@ -1166,11 +1163,10 @@ static bool defaultValueForSupportedCopyCut(Frame& frame)
     
     switch (settings.clipboardAccessPolicy()) {
     case ClipboardAccessPolicy::Allow:
+    case ClipboardAccessPolicy::RequiresUserGesture:
         return true;
     case ClipboardAccessPolicy::Deny:
         return false;
-    case ClipboardAccessPolicy::RequiresUserGesture:
-        return UserGestureIndicator::processingUserGesture();
     }
 
     ASSERT_NOT_REACHED();
@@ -1239,14 +1235,49 @@ static bool enableCaretInEditableText(Frame& frame, Event* event, EditorCommandS
     return selection.isCaret() && selection.isContentEditable();
 }
 
-static bool enabledCopy(Frame& frame, Event*, EditorCommandSource)
+static bool allowCopyCutFromDOM(Frame& frame)
 {
-    return frame.editor().canDHTMLCopy() || frame.editor().canCopy();
+    auto& settings = frame.settings();
+    if (settings.javaScriptCanAccessClipboard())
+        return true;
+    
+    switch (settings.clipboardAccessPolicy()) {
+    case ClipboardAccessPolicy::Allow:
+        return true;
+    case ClipboardAccessPolicy::Deny:
+        return false;
+    case ClipboardAccessPolicy::RequiresUserGesture:
+        return UserGestureIndicator::processingUserGesture();
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
-static bool enabledCut(Frame& frame, Event*, EditorCommandSource)
+static bool enabledCopy(Frame& frame, Event*, EditorCommandSource source)
 {
-    return frame.editor().canDHTMLCut() || frame.editor().canCut();
+    switch (source) {
+    case CommandFromMenuOrKeyBinding:    
+        return frame.editor().canDHTMLCopy() || frame.editor().canCopy();
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        return allowCopyCutFromDOM(frame) && (frame.editor().canDHTMLCopy() || frame.editor().canCopy());
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+static bool enabledCut(Frame& frame, Event*, EditorCommandSource source)
+{
+    switch (source) {
+    case CommandFromMenuOrKeyBinding:    
+        return frame.editor().canDHTMLCut() || frame.editor().canCut();
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        return allowCopyCutFromDOM(frame) && (frame.editor().canDHTMLCut() || frame.editor().canCut());
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 static bool enabledClearText(Frame& frame, Event*, EditorCommandSource)
@@ -1462,6 +1493,32 @@ static String valueFormatBlock(Frame& frame, Event*)
     return formatBlockElement->localName();
 }
 
+// allowExecutionWhenDisabled functions
+
+static bool allowExecutionWhenDisabled(EditorCommandSource)
+{
+    return true;
+}
+
+static bool doNotAllowExecutionWhenDisabled(EditorCommandSource)
+{
+    return false;
+}
+
+static bool allowExecutionWhenDisabledCopyCut(EditorCommandSource source)
+{
+    switch (source) {
+    case CommandFromMenuOrKeyBinding:
+        return true;
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 // Map of functions
 
 struct CommandEntry {
@@ -1479,9 +1536,9 @@ static const CommandMap& createCommandMap()
         { "BackColor", { executeBackColor, supported, enabledInRichlyEditableText, stateNone, valueBackColor, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Bold", { executeToggleBold, supported, enabledInRichlyEditableText, stateBold, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ClearText", { executeClearText, supported, enabledClearText, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
-        { "Copy", { executeCopy, supportedCopyCut, enabledCopy, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
+        { "Copy", { executeCopy, supportedCopyCut, enabledCopy, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledCopyCut } },
         { "CreateLink", { executeCreateLink, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "Cut", { executeCut, supportedCopyCut, enabledCut, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
+        { "Cut", { executeCut, supportedCopyCut, enabledCut, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledCopyCut } },
         { "DefaultParagraphSeparator", { executeDefaultParagraphSeparator, supported, enabled, stateNone, valueDefaultParagraphSeparator, notTextInsertion, doNotAllowExecutionWhenDisabled} },
         { "Delete", { executeDelete, supported, enabledDelete, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "DeleteBackward", { executeDeleteBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
@@ -1716,7 +1773,7 @@ bool Editor::Command::execute(const String& parameter, Event* triggeringEvent) c
 {
     if (!isEnabled(triggeringEvent)) {
         // Let certain commands be executed when performed explicitly even if they are disabled.
-        if (!isSupported() || !m_frame || !m_command->allowExecutionWhenDisabled)
+        if (!allowExecutionWhenDisabled())
             return false;
     }
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
@@ -1769,6 +1826,13 @@ String Editor::Command::value(Event* triggeringEvent) const
 bool Editor::Command::isTextInsertion() const
 {
     return m_command && m_command->isTextInsertion;
+}
+
+bool Editor::Command::allowExecutionWhenDisabled() const
+{
+    if (!isSupported() || !m_frame)
+        return false;
+    return m_command->allowExecutionWhenDisabled(m_source);
 }
 
 } // namespace WebCore

@@ -1,3 +1,21 @@
+2016-03-17  Sam Weinig  <sam@webkit.org>
+
+        Implement document.queryCommandSupported("copy")
+        https://bugs.webkit.org/show_bug.cgi?id=155548
+        <rdar://problem/25195295>
+
+        Reviewed by Enrica Casucci.
+
+        * editing/execCommand/clipboard-access-with-user-gesture-expected.txt:
+        * editing/execCommand/clipboard-access-with-user-gesture.html:
+        document.queryCommandSupported('copy') should be returning true.
+
+        * editing/pasteboard/can-read-in-copy-and-cut-events.html:
+        * editing/pasteboard/copy-cut-paste-events-fired-when-disabled.html:
+        * editing/pasteboard/pasting-empty-html-falls-back-to-text.html:
+        * editing/pasteboard/set_data_typeof_return.html:
+        Use testRunner.execCommand() to test the behavior of a user.
+
 2016-03-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: HeapSnapshots are slow and use too much memory

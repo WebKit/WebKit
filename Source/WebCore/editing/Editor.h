@@ -215,6 +215,7 @@ public:
         String value(Event* triggeringEvent = nullptr) const;
 
         WEBCORE_EXPORT bool isTextInsertion() const;
+        WEBCORE_EXPORT bool allowExecutionWhenDisabled() const;
 
     private:
         const EditorInternalCommand* m_command { nullptr };

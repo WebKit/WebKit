@@ -1,3 +1,32 @@
+2016-03-17  Sam Weinig  <sam@webkit.org>
+
+        Implement document.queryCommandSupported("copy")
+        https://bugs.webkit.org/show_bug.cgi?id=155548
+        <rdar://problem/25195295>
+
+        Reviewed by Enrica Casucci.
+
+        - document.queryCommandSupported("copy") and document.queryCommandSupported("cut") need
+          to return true if the ClipboardAccessPolicy is either Allow or RequiresUserGesture.
+          But, document.queryCommandEnabled("copy") and document.queryCommandEnabled("cut")
+          should still return false when there is no user gesture. I also had to maintain a weird
+          quirk that copy and cut should be allowed to execute, and thus fire the oncopy and oncut
+          events, even when disabled, if coming from a "MenuOrKeyBinding" source. To do this, I
+          upgraded the allowExecutionWhenDisabled bit to a function taking a source, and return true
+          only when the correct source is specified.
+
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::defaultValueForSupportedCopyCut):
+        (WebCore::allowCopyCutFromDOM):
+        (WebCore::enabledCopy):
+        (WebCore::enabledCut):
+        (WebCore::allowExecutionWhenDisabled):
+        (WebCore::doNotAllowExecutionWhenDisabled):
+        (WebCore::allowExecutionWhenDisabledCopyCut):
+        (WebCore::Editor::Command::execute):
+        (WebCore::Editor::Command::allowExecutionWhenDisabled):
+
 2016-03-17  Antti Koivisto  <antti@apple.com>
 
         DataURLDecoder::DecodingResultDispatcher may get deleted outside main thread

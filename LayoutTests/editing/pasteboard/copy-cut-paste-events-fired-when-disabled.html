@@ -9,10 +9,11 @@ function log(msg) {
     console.appendChild(li);
     li.appendChild(text);
 }
-if (window.testRunner)
+if (window.testRunner) {
     window.testRunner.dumpAsText();
-document.execCommand("Copy");
-document.execCommand("Cut");
-document.execCommand("Paste");
+    window.testRunner.execCommand("Copy");
+    window.testRunner.execCommand("Cut");
+    window.testRunner.execCommand("Paste");
+}
 </script>
 </body>

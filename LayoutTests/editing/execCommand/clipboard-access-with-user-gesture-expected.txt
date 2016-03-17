@@ -7,7 +7,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Testing copying an editableParagraph range without a user gesture.
 PASS document.queryCommandEnabled('copy') is false
 PASS eventSeen['copy'] is false
-PASS document.queryCommandSupported('copy') is false
+PASS document.queryCommandSupported('copy') is true
 PASS eventSeen['copy'] is false
 PASS document.execCommand('copy') is false
 PASS eventSeen['copy'] is false
@@ -15,7 +15,7 @@ PASS eventSeen['copy'] is false
 Testing copying an editableParagraph caret without a user gesture.
 PASS document.queryCommandEnabled('copy') is false
 PASS eventSeen['copy'] is false
-PASS document.queryCommandSupported('copy') is false
+PASS document.queryCommandSupported('copy') is true
 PASS eventSeen['copy'] is false
 PASS document.execCommand('copy') is false
 PASS eventSeen['copy'] is false
@@ -23,7 +23,7 @@ PASS eventSeen['copy'] is false
 Testing copying an non-editable range without a user gesture.
 PASS document.queryCommandEnabled('copy') is false
 PASS eventSeen['copy'] is false
-PASS document.queryCommandSupported('copy') is false
+PASS document.queryCommandSupported('copy') is true
 PASS eventSeen['copy'] is false
 PASS document.execCommand('copy') is false
 PASS eventSeen['copy'] is false
@@ -31,7 +31,7 @@ PASS eventSeen['copy'] is false
 Testing copying an non-editable caret without a user gesture.
 PASS document.queryCommandEnabled('copy') is false
 PASS eventSeen['copy'] is false
-PASS document.queryCommandSupported('copy') is false
+PASS document.queryCommandSupported('copy') is true
 PASS eventSeen['copy'] is false
 PASS document.execCommand('copy') is false
 PASS eventSeen['copy'] is false
@@ -39,7 +39,7 @@ PASS eventSeen['copy'] is false
 Testing copying an editable plaint-text range without a user gesture.
 PASS document.queryCommandEnabled('copy') is false
 PASS eventSeen['copy'] is false
-PASS document.queryCommandSupported('copy') is false
+PASS document.queryCommandSupported('copy') is true
 PASS eventSeen['copy'] is false
 PASS document.execCommand('copy') is false
 PASS eventSeen['copy'] is false
@@ -47,7 +47,7 @@ PASS eventSeen['copy'] is false
 Testing copying an editable plaint-text caret without a user gesture.
 PASS document.queryCommandEnabled('copy') is false
 PASS eventSeen['copy'] is false
-PASS document.queryCommandSupported('copy') is false
+PASS document.queryCommandSupported('copy') is true
 PASS eventSeen['copy'] is false
 PASS document.execCommand('copy') is false
 PASS eventSeen['copy'] is false
@@ -55,7 +55,7 @@ PASS eventSeen['copy'] is false
 Testing copying when there is no selection without a user gesture.
 PASS document.queryCommandEnabled('copy') is false
 PASS eventSeen['copy'] is false
-PASS document.queryCommandSupported('copy') is false
+PASS document.queryCommandSupported('copy') is true
 PASS eventSeen['copy'] is false
 PASS document.execCommand('copy') is false
 PASS eventSeen['copy'] is false
@@ -63,7 +63,7 @@ PASS eventSeen['copy'] is false
 Testing cutting an editableParagraph range without a user gesture.
 PASS document.queryCommandEnabled('cut') is false
 PASS eventSeen['cut'] is false
-PASS document.queryCommandSupported('cut') is false
+PASS document.queryCommandSupported('cut') is true
 PASS eventSeen['cut'] is false
 PASS document.execCommand('cut') is false
 PASS eventSeen['cut'] is false
@@ -71,7 +71,7 @@ PASS eventSeen['cut'] is false
 Testing cutting an editableParagraph caret without a user gesture.
 PASS document.queryCommandEnabled('cut') is false
 PASS eventSeen['cut'] is false
-PASS document.queryCommandSupported('cut') is false
+PASS document.queryCommandSupported('cut') is true
 PASS eventSeen['cut'] is false
 PASS document.execCommand('cut') is false
 PASS eventSeen['cut'] is false
@@ -79,7 +79,7 @@ PASS eventSeen['cut'] is false
 Testing cutting an non-editable range without a user gesture.
 PASS document.queryCommandEnabled('cut') is false
 PASS eventSeen['cut'] is false
-PASS document.queryCommandSupported('cut') is false
+PASS document.queryCommandSupported('cut') is true
 PASS eventSeen['cut'] is false
 PASS document.execCommand('cut') is false
 PASS eventSeen['cut'] is false
@@ -87,7 +87,7 @@ PASS eventSeen['cut'] is false
 Testing cutting an non-editable caret without a user gesture.
 PASS document.queryCommandEnabled('cut') is false
 PASS eventSeen['cut'] is false
-PASS document.queryCommandSupported('cut') is false
+PASS document.queryCommandSupported('cut') is true
 PASS eventSeen['cut'] is false
 PASS document.execCommand('cut') is false
 PASS eventSeen['cut'] is false
@@ -95,7 +95,7 @@ PASS eventSeen['cut'] is false
 Testing cutting an editable plaint-text range without a user gesture.
 PASS document.queryCommandEnabled('cut') is false
 PASS eventSeen['cut'] is false
-PASS document.queryCommandSupported('cut') is false
+PASS document.queryCommandSupported('cut') is true
 PASS eventSeen['cut'] is false
 PASS document.execCommand('cut') is false
 PASS eventSeen['cut'] is false
@@ -103,7 +103,7 @@ PASS eventSeen['cut'] is false
 Testing cutting an editable plaint-text caret without a user gesture.
 PASS document.queryCommandEnabled('cut') is false
 PASS eventSeen['cut'] is false
-PASS document.queryCommandSupported('cut') is false
+PASS document.queryCommandSupported('cut') is true
 PASS eventSeen['cut'] is false
 PASS document.execCommand('cut') is false
 PASS eventSeen['cut'] is false
@@ -111,7 +111,7 @@ PASS eventSeen['cut'] is false
 Testing cutting when there is no selection without a user gesture.
 PASS document.queryCommandEnabled('cut') is false
 PASS eventSeen['cut'] is false
-PASS document.queryCommandSupported('cut') is false
+PASS document.queryCommandSupported('cut') is true
 PASS eventSeen['cut'] is false
 PASS document.execCommand('cut') is false
 PASS eventSeen['cut'] is false

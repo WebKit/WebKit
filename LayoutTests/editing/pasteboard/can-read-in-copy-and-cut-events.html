@@ -30,8 +30,8 @@ function runTest() {
     if (!window.testRunner)
         return;
     testRunner.dumpAsText();
-    document.execCommand('copy');
-    document.execCommand('cut');
+    testRunner.execCommand('copy');
+    testRunner.execCommand('cut');
 }
 </script>
 </head>
