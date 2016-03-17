@@ -760,6 +760,9 @@
 /* HTTP result code string */
 "conflict" = "conflict";
 
+/* Label for the auto fill contacts button inside a text field. */
+"contact info auto fill" = "contact info auto fill";
+
 /* An ARIA accessibility group that contains content. */
 "content information" = "content information";
 
@@ -933,6 +936,9 @@
 
 /* HTTP result code string */
 "partial content" = "partial content";
+
+/* Label for the auto fill credentials button inside a text field. */
+"password auto fill" = "password auto fill";
 
 /* Validation message for input form controls requiring a constrained value according to pattern */
 "pattern mismatch" = "pattern mismatch";

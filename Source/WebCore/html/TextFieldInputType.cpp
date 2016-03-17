@@ -42,6 +42,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "LocalizedStrings.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
@@ -399,6 +400,20 @@ static String limitLength(const String& string, int maxLength)
     return string.left(newLength);
 }
 
+static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFillButtonType)
+{
+    switch (autoFillButtonType) {
+    case AutoFillButtonType::Contacts:
+        return AXAutoFillContactsLabel();
+    case AutoFillButtonType::Credentials:
+        return AXAutoFillCredentialsLabel();
+    default:
+    case AutoFillButtonType::None:
+        ASSERT_NOT_REACHED();
+        return AtomicString();
+    }
+}
+    
 static AtomicString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButtonType autoFillButtonType)
 {
     AtomicString pseudoClassName;
@@ -648,6 +663,8 @@ void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonT
 
     m_autoFillButton = AutoFillButtonElement::create(element().document(), *this);
     m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
+    m_autoFillButton->setAttribute(roleAttr, "button");
+    m_autoFillButton->setAttribute(aria_labelAttr, autoFillButtonTypeToAccessibilityLabel(autoFillButtonType));
     m_container->appendChild(*m_autoFillButton, IGNORE_EXCEPTION);
 }
 
@@ -662,9 +679,10 @@ void TextFieldInputType::updateAutoFillButton()
 
         const AtomicString& attribute = m_autoFillButton->fastGetAttribute(pseudoAttr);
         bool shouldUpdateAutoFillButtonType = isAutoFillButtonTypeChanged(attribute, element().autoFillButtonType());
-        if (shouldUpdateAutoFillButtonType)
+        if (shouldUpdateAutoFillButtonType) {
             m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(element().autoFillButtonType()));
-
+            m_autoFillButton->setAttribute(aria_labelAttr, autoFillButtonTypeToAccessibilityLabel(element().autoFillButtonType()));
+        }
         m_autoFillButton->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock, true);
         return;
     }

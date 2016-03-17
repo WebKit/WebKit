@@ -1,0 +1,16 @@
+
+This tests that the auto-filled buttons show up.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial auto-fill available: false
+Contact button role: AXRole: AXButton
+Contact button label: AXDescription: contact info auto fill
+Credentials button role: AXRole: AXButton
+Credentials button label: AXDescription: password auto fill
+Post auto-fill available: true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

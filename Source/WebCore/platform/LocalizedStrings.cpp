@@ -654,6 +654,16 @@ String AXListItemActionVerb()
 }
 #endif // !PLATFORM(IOS)
 
+String AXAutoFillCredentialsLabel()
+{
+    return WEB_UI_STRING("password auto fill", "Label for the auto fill credentials button inside a text field.");
+}
+
+String AXAutoFillContactsLabel()
+{
+    return WEB_UI_STRING("contact info auto fill", "Label for the auto fill contacts button inside a text field.");
+}
+    
 #if PLATFORM(COCOA)
 String AXARIAContentGroupText(const String& ariaType)
 {

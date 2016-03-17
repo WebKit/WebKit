@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="text" value="hello" id="textfield">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the auto-filled buttons show up.");
+
+    if (window.accessibilityController) {
+        var textField = document.getElementById("textfield");
+        var axTextField = accessibilityController.accessibleElementById("textfield");
+        debug("Initial auto-fill available: " + axTextField.boolAttributeValue("AXValueAutofillAvailable"));
+
+        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "AutoFillButtonTypeContacts");
+        var contactsButton = axTextField.childAtIndex(1);
+        debug("Contact button role: " + contactsButton.role);
+        debug("Contact button label: " + contactsButton.description);
+
+        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "AutoFillButtonTypeCredentials");
+        var credentialsButton = axTextField.childAtIndex(1);
+        debug("Credentials button role: " + credentialsButton.role);
+        debug("Credentials button label: " + credentialsButton.description);
+
+        debug("Post auto-fill available: " + axTextField.boolAttributeValue("AXValueAutofillAvailable"));
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

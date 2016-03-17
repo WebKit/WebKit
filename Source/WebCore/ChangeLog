@@ -1,3 +1,39 @@
+2016-03-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement AutoFill Available attribute for a text field
+        https://bugs.webkit.org/show_bug.cgi?id=155567
+
+        Reviewed by Darin Adler.
+
+        Expose the auto fill buttons to the AX hierarchy.
+        Add an attribute for the textfield to inform when the auto fill button is available.
+
+        Test: accessibility/auto-fill-types.html
+
+        * English.lproj/Localizable.strings:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::element):
+        (WebCore::AccessibilityObject::isValueAutofillAvailable):
+        (WebCore::AccessibilityObject::isValueAutofilled):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::passwordFieldValue):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addTextFieldChildren):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/TextFieldInputType.cpp:
+        (WebCore::limitLength):
+        (WebCore::autoFillButtonTypeToAccessibilityLabel):
+        (WebCore::autoFillButtonTypeToAutoFillButtonPseudoClassName):
+        (WebCore::TextFieldInputType::createAutoFillButton):
+        (WebCore::TextFieldInputType::updateAutoFillButton):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXListItemActionVerb):
+        (WebCore::AXAutoFillCredentialsLabel):
+        (WebCore::AXAutoFillContactsLabel):
+        (WebCore::AXARIAContentGroupText):
+        * platform/LocalizedStrings.h:
+
 2016-03-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Unreviewed speculative buildfix after r198179. Just for fun.

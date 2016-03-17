@@ -891,6 +891,7 @@ public:
 
     virtual String passwordFieldValue() const { return String(); }
     bool isValueAutofilled() const;
+    bool isValueAutofillAvailable() const;
     
     // Used by an ARIA tree to get all its rows.
     void ariaTreeRows(AccessibilityChildrenVector&);

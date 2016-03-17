@@ -1,3 +1,13 @@
+2016-03-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement AutoFill Available attribute for a text field
+        https://bugs.webkit.org/show_bug.cgi?id=155567
+
+        Reviewed by Darin Adler.
+
+        * accessibility/auto-fill-types-expected.txt: Added.
+        * accessibility/auto-fill-types.html: Added.
+
 2016-03-17  Mark Lam  <mark.lam@apple.com>
 
         Method names should not appear in the lexical scope of the method's body.

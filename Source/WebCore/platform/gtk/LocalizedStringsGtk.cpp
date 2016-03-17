@@ -456,6 +456,16 @@ String AXSearchFieldCancelButtonText()
     return String::fromUTF8(_("cancel"));
 }
 
+String AXAutoFillCredentialsLabel()
+{
+    return String::fromUTF8(_("password auto fill"));
+}
+
+String AXAutoFillContactsLabel()
+{
+    return String::fromUTF8(_("contact info auto fill"));
+}
+    
 String AXButtonActionVerb()
 {
     return String::fromUTF8(_("press"));

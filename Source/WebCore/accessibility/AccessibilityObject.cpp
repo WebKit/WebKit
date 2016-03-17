@@ -2197,13 +2197,25 @@ Element* AccessibilityObject::element() const
     return nullptr;
 }
     
+bool AccessibilityObject::isValueAutofillAvailable() const
+{
+    if (!isNativeTextControl())
+        return false;
+    
+    Node* node = this->node();
+    if (!is<HTMLInputElement>(node))
+        return false;
+    
+    return downcast<HTMLInputElement>(*node).autoFillButtonType() != AutoFillButtonType::None;
+}
+    
 bool AccessibilityObject::isValueAutofilled() const
 {
     if (!isNativeTextControl())
         return false;
     
     Node* node = this->node();
-    if (!node || !is<HTMLInputElement>(*node))
+    if (!is<HTMLInputElement>(node))
         return false;
     
     return downcast<HTMLInputElement>(*node).isAutoFilled();

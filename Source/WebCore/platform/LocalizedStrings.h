@@ -183,6 +183,9 @@ namespace WebCore {
     String AXARIAContentGroupText(const String& ariaType);
     String AXHorizontalRuleDescriptionText();
 #endif
+    
+    String AXAutoFillCredentialsLabel();
+    String AXAutoFillContactsLabel();
 
     String missingPluginText();
     String crashedPluginText();
