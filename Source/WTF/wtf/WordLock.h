@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,14 +42,7 @@ namespace WTF {
 // Lock instead. WordLock sits lower in the stack and is used to implement Lock, so Lock is the main
 // client of WordLock.
 
-class WordLock {
-    WTF_MAKE_NONCOPYABLE(WordLock);
-public:
-    WordLock()
-    {
-        m_word.store(0, std::memory_order_relaxed);
-    }
-
+struct WordLockBase {
     void lock()
     {
         if (LIKELY(m_word.compareExchangeWeak(0, isLockedBit, std::memory_order_acquire))) {
@@ -80,7 +73,7 @@ public:
         return isHeld();
     }
 
-private:
+protected:
     friend struct TestWebKitAPI::LockInspector;
     
     static const uintptr_t isLockedBit = 1;
@@ -99,12 +92,23 @@ private:
     Atomic<uintptr_t> m_word;
 };
 
-typedef Locker<WordLock> WordLockHolder;
+class WordLock : public WordLockBase {
+    WTF_MAKE_NONCOPYABLE(WordLock);
+public:
+    WordLock()
+    {
+        m_word.store(0, std::memory_order_relaxed);
+    }
+};
+
+typedef WordLockBase StaticWordLock;
+typedef Locker<WordLockBase> WordLockHolder;
 
 } // namespace WTF
 
 using WTF::WordLock;
 using WTF::WordLockHolder;
+using WTF::StaticWordLock;
 
 #endif // WTF_WordLock_h
 

@@ -1,3 +1,45 @@
+2016-03-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Silence leaks in ParkingLot
+        https://bugs.webkit.org/show_bug.cgi?id=155510
+
+        Reviewed by Alexey Proskuryakov.
+
+        ParkingLot has a concurrent hashtable that it reallocates on demand. It will not reallocate
+        it in steady state. The hashtable is sized to accommodate the high watermark of the number
+        of active threads - so long as the program doesn't just keep starting an unbounded number
+        of threads that are all active, the hashtable will stop resizing. Each resize operation is
+        designed to stay out of the way of the data-access-parallel normal path, in which two
+        threads operating on different lock addresses don't have to synchronize. To do this, it
+        simply drops the old hashtable without deleting it, so that threads that were still using
+        it don't crash. They will realize that they have the wrong hashtable before doing anything
+        bad, but we don't have a way of proving when all of those threads are no longer going to
+        read from the old hashtables. So, we just leak them.
+
+        This is a bounded leak, since the hashtable resizes exponentially. Thus the total memory
+        utilization of all hashtables, including the leaked ones, converges to a linear function of
+        the current hashtable's size (it's 2 * size of current hashtable).
+
+        But this leak is a problem for leaks tools, which will always report this leak. This is not
+        useful. It's better to silence the leak. That's what this patch does by ensuring that all
+        hashtables, including leaked ones, end up in a global vector. This is perf-neutral.
+
+        This requires making a StaticWordLock variant of WordLock. That's probably the biggest part
+        of this change.
+
+        * wtf/ParkingLot.cpp:
+        * wtf/WordLock.cpp:
+        (WTF::WordLockBase::lockSlow):
+        (WTF::WordLockBase::unlockSlow):
+        (WTF::WordLock::lockSlow): Deleted.
+        (WTF::WordLock::unlockSlow): Deleted.
+        * wtf/WordLock.h:
+        (WTF::WordLockBase::lock):
+        (WTF::WordLockBase::isLocked):
+        (WTF::WordLock::WordLock):
+        (WTF::WordLock::lock): Deleted.
+        (WTF::WordLock::isLocked): Deleted.
+
 2016-03-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r198235, r198240, r198241, and
