@@ -168,7 +168,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         this._inputElement.select();
 
         // This ensures we don't get a "blur" event triggered for the text field
-        // which would end up dimissing the dialog, which is not the intent.
+        // that would cause the dialog to be dismissed.
         event.preventDefault();
     }
 
@@ -194,11 +194,8 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         if (!filterText)
             return;
 
-        let escapedFilterText = filterText.escapeForRegExp();
-        let r0 = new RegExp("^" + escapedFilterText, "i");
-        let r1 = simpleGlobStringToRegExp(filterText, "i");
-        let r2 = new RegExp("^" + escapedFilterText.toUpperCase().split("").join(".*?"));
-        let filters = [r0, r1, r2];
+        // FIXME: <https://webkit.org/b/155324> Web Inspector: Improve filtering in OpenResourceDialog
+        let filters = [simpleGlobStringToRegExp(filterText)];
 
         for (let resource of this._resources) {
             for (let i = 0; i < filters.length; ++i) {

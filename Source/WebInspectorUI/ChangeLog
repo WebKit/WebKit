@@ -1,3 +1,24 @@
+2016-03-16  Matt Baker  <mattbaker@apple.com>
+
+        Uncaught Exception: SyntaxError: Invalid regular expression: \ at end of pattern
+        https://bugs.webkit.org/show_bug.cgi?id=155556
+        <rdar://problem/25200058>
+
+        Reviewed by Timothy Hatcher.
+
+        Use simpleGlobStringToRegExp, which returns a valid regular expression
+        for strings with trailing backslashes, and also provides globbing.
+        String.escapeForRegExp returns a JS string ending in "\\", which isn't
+        a valid regular expression.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WebInspector.OpenResourceDialog):
+        (WebInspector.OpenResourceDialog.prototype._handleMousedownEvent):
+        Fixed typo.
+
+        (WebInspector.OpenResourceDialog.prototype._updateFilter):
+        Switch to simpleGlobStringToRegExp.
+
 2016-03-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show path from root to instances in the Heap Snapshot content view
