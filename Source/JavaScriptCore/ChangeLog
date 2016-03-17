@@ -1,3 +1,71 @@
+2016-03-16  Mark Lam  <mark.lam@apple.com>
+
+        Method names should not appear in the lexical scope of the method's body.
+        https://bugs.webkit.org/show_bug.cgi?id=155568
+
+        Reviewed by Saam Barati.
+
+        Consider this scenario:
+
+            var f = "foo";
+            var result = ({
+                f() {
+                    return f; // f should be the string "foo", not this method f.
+                }
+            }).f();
+            result === "foo"; // Should be true.
+
+        The reason this is not current working is because the parser does not yet
+        distinguish between FunctionExpressions and MethodDefinitions.  The ES6 spec
+        explicitly distinguishes between the 2, and we should do the same.
+        
+        This patch changes all methods (and getters and setters which are also methods)
+        to have a FunctionMode of MethodDefinition (instead of FunctionExpression).
+        functionNameIsInScope() is responsible for determining whether a function's name
+        should be in its scope or not.  It already returns false for any function
+        whose FunctionMode is not FunctionExpression.  Giving methods the MethodDefinition
+        FunctionMode gets us the correct behavior ES6 expects.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewArrowFunctionExpression):
+        (JSC::BytecodeGenerator::emitNewMethodDefinition):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrowFuncExprNode::emitBytecode):
+        (JSC::MethodDefinitionNode::emitBytecode):
+        (JSC::YieldExprNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createMethodDefinition):
+        (JSC::ASTBuilder::createFunctionMetadata):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createArguments):
+        * parser/NodeConstructors.h:
+        (JSC::FunctionParameters::FunctionParameters):
+        (JSC::BaseFuncExprNode::BaseFuncExprNode):
+        (JSC::FuncExprNode::FuncExprNode):
+        (JSC::FuncDeclNode::FuncDeclNode):
+        (JSC::ArrowFuncExprNode::ArrowFuncExprNode):
+        (JSC::MethodDefinitionNode::MethodDefinitionNode):
+        (JSC::YieldExprNode::YieldExprNode):
+        * parser/Nodes.h:
+        (JSC::BaseFuncExprNode::metadata):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        * parser/ParserModes.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionExpr):
+        (JSC::SyntaxChecker::createFunctionMetadata):
+        (JSC::SyntaxChecker::createArrowFunctionExpr):
+        (JSC::SyntaxChecker::createMethodDefinition):
+        (JSC::SyntaxChecker::setFunctionNameStart):
+        (JSC::SyntaxChecker::createArguments):
+        * tests/es6.yaml:
+
 2016-03-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r197380): Build fails with new GCC and Clang

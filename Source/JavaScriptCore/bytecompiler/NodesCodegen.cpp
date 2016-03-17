@@ -3175,6 +3175,13 @@ RegisterID* ArrowFuncExprNode::emitBytecode(BytecodeGenerator& generator, Regist
     return generator.emitNewArrowFunctionExpression(generator.finalDestination(dst), this);
 }
 
+// ------------------------------ MethodDefinitionNode ---------------------------------
+
+RegisterID* MethodDefinitionNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    return generator.emitNewMethodDefinition(generator.finalDestination(dst), this);
+}
+
 // ------------------------------ YieldExprNode --------------------------------
 
 RegisterID* YieldExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

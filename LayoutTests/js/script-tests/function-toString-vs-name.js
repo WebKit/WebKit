@@ -50,12 +50,9 @@ function minimizeSpaces(s) {
 }
 
 function shouldBe(desc, funcName, actual, expected) {
-    if (typeof(actual) !== typeof(expected)) {
+    if (typeof(actual) !== typeof(expected) || actual !== expected) {
         failures += ("   " + section + ": " + desc + "'" + funcName + "': typeof expected: " + typeof(expected) + ", typeof actual: " + typeof(actual) + "\n");
         failures += ("       expected: '" + expected + "', actual: '" + actual + "'\n");
-        failureCount++;
-    } else if (typeof(actual) !== typeof(expected) || actual !== expected) {
-        failures += ("   " + section + ": " + desc + "'" + funcName + "': expected: '" + expected + "', actual: '" + actual + "'\n");
         failureCount++;
     }
 }

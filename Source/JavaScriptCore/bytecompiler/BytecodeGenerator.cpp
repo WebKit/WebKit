@@ -2791,7 +2791,17 @@ RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* dst, FuncEx
 
 RegisterID* BytecodeGenerator::emitNewArrowFunctionExpression(RegisterID* dst, ArrowFuncExprNode* func)
 {
-    ASSERT(func->metadata()->parseMode() == SourceParseMode::ArrowFunctionMode);    
+    ASSERT(func->metadata()->parseMode() == SourceParseMode::ArrowFunctionMode);
+    emitNewFunctionExpressionCommon(dst, func->metadata());
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitNewMethodDefinition(RegisterID* dst, MethodDefinitionNode* func)
+{
+    ASSERT(func->metadata()->parseMode() == SourceParseMode::GeneratorWrapperFunctionMode
+        || func->metadata()->parseMode() == SourceParseMode::GetterMode
+        || func->metadata()->parseMode() == SourceParseMode::SetterMode
+        || func->metadata()->parseMode() == SourceParseMode::MethodMode);
     emitNewFunctionExpressionCommon(dst, func->metadata());
     return dst;
 }

@@ -2327,7 +2327,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
             failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, parseMode, false, isConstructor ? constructorKind : ConstructorKind::None, SuperBinding::Needed, methodStart, methodInfo, FunctionDefinitionType::Method)), "Cannot parse this method");
             methodInfo.name = isConstructor ? className : ident;
 
-            TreeExpression method = context.createFunctionExpr(methodLocation, methodInfo);
+            TreeExpression method = context.createMethodDefinition(methodLocation, methodInfo);
             if (isConstructor) {
                 semanticFailIfTrue(constructor, "Cannot declare multiple constructors in a single class");
                 constructor = method;
@@ -3314,7 +3314,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePropertyMeth
     SourceParseMode parseMode = isGenerator ? SourceParseMode::GeneratorWrapperFunctionMode : SourceParseMode::MethodMode;
     failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, parseMode, false, ConstructorKind::None, SuperBinding::NotNeeded, methodStart, methodInfo, FunctionDefinitionType::Method)), "Cannot parse this method");
     methodInfo.name = methodName;
-    return context.createFunctionExpr(methodLocation, methodInfo);
+    return context.createMethodDefinition(methodLocation, methodInfo);
 }
 
 template <typename LexerType>

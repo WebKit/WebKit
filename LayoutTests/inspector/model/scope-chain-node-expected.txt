@@ -65,8 +65,6 @@ SCOPE CHAIN:
 -- Running test case: WebInspector.ScopeChainNode.FunctionNameInClassMethod
 SCOPE CHAIN:
     Closure
-    FunctionName
-      - staticMethod: function staticMethod() {
     Block
       - MyClass: class MyClass
     Closure
@@ -109,8 +107,6 @@ SCOPE CHAIN:
 PASS: Pause #17 - Contains a Block scope.
 SCOPE CHAIN:
     Closure
-    FunctionName
-      - method: function method() {
     Block
       - MyClass: class MyClass
     Closure
@@ -122,8 +118,6 @@ SCOPE CHAIN:
 PASS: Pause #18 - Contains a Block scope.
 SCOPE CHAIN:
     Closure
-    FunctionName
-      - staticMethod: function staticMethod() {
     Block
       - MyClassWithStaticMethod: class MyClassWithStaticMethod
     Closure

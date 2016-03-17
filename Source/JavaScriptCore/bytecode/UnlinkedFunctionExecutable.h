@@ -156,7 +156,7 @@ private:
     unsigned m_isBuiltinFunction : 1;
     unsigned m_constructAbility: 1;
     unsigned m_constructorKind : 2;
-    unsigned m_functionMode : 1; // FunctionMode
+    unsigned m_functionMode : 2; // FunctionMode
     unsigned m_superBinding : 1;
     unsigned m_derivedContextType: 2;
     unsigned m_sourceParseMode : 4; // SourceParseMode

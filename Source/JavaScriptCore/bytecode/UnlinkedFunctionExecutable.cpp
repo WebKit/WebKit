@@ -107,7 +107,14 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_sourceOverride(WTFMove(sourceOverride))
     , m_classSource(node->classSource())
 {
+    // Make sure these bitfields are adequately wide.
+    ASSERT(m_constructAbility == static_cast<unsigned>(constructAbility));
     ASSERT(m_constructorKind == static_cast<unsigned>(node->constructorKind()));
+    ASSERT(m_functionMode == node->functionMode());
+    ASSERT(m_superBinding == static_cast<unsigned>(node->superBinding()));
+    ASSERT(m_derivedContextType == static_cast<unsigned>(derivedContextType));
+    ASSERT(m_sourceParseMode == static_cast<unsigned>(node->parseMode()));
+
     m_parentScopeTDZVariables.swap(parentScopeTDZVariables);
 }
 

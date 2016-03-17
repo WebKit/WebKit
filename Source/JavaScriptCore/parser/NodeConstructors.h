@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2009, 2013, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2009, 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -890,18 +890,23 @@ namespace JSC {
     }
 
     
-    inline BaseFuncExprNode::BaseFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
+    inline BaseFuncExprNode::BaseFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source, FunctionMode functionMode)
         : ExpressionNode(location)
         , m_metadata(metadata)
     {
-        m_metadata->finishParsing(source, ident, FunctionExpression);
+        m_metadata->finishParsing(source, ident, functionMode);
     }
 
     inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
-        : BaseFuncExprNode(location, ident, metadata, source)
+        : BaseFuncExprNode(location, ident, metadata, source, FunctionExpression)
     {
     }
 
+    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source, FunctionMode functionMode)
+        : BaseFuncExprNode(location, ident, metadata, source, functionMode)
+    {
+    }
+    
     inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
         : StatementNode(location)
         , m_metadata(metadata)
@@ -910,10 +915,15 @@ namespace JSC {
     }
 
     inline ArrowFuncExprNode::ArrowFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
-        : BaseFuncExprNode(location, ident, metadata, source)
+        : BaseFuncExprNode(location, ident, metadata, source, FunctionExpression)
     {
     }
 
+    inline MethodDefinitionNode::MethodDefinitionNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
+        : FuncExprNode(location, ident, metadata, source, MethodDefinition)
+    {
+    }
+    
     inline YieldExprNode::YieldExprNode(const JSTokenLocation& location, ExpressionNode* argument, bool delegate)
         : ExpressionNode(location)
         , m_argument(argument)
