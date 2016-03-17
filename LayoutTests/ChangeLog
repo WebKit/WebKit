@@ -1,3 +1,22 @@
+2016-03-17  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Update RTCIceCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=155535
+
+        Reviewed by Eric Carlson.
+
+        RTCIceCandidate.html is updated to test the new construction behavior and the nullable
+        attributes. The remaining updated tests simply construct an RTCIceCandidate to be used for
+        test purposes.
+
+        * fast/mediastream/RTCIceCandidate-expected.txt:
+        * fast/mediastream/RTCIceCandidate.html:
+        * fast/mediastream/RTCPeerConnection-closed-state.html:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-expected.txt:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-params-expected.txt:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-params.html:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations.html:
+
 2016-03-17  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         Invoking super()/super inside of the eval should not lead to SyntaxError

@@ -29,7 +29,6 @@ PASS result = pc.setRemoteDescription(desc) did not throw exception.
 PASS result is an instance of Promise
 PASS result = pc.setRemoteDescription(desc, emptyFunc, emptyFunc) did not throw exception.
 PASS result is undefined.
-PASS candidate = new RTCIceCandidate({}); did not throw exception.
 PASS result = pc.addIceCandidate(candidate) did not throw exception.
 PASS result is an instance of Promise
 PASS result = pc.addIceCandidate(candidate, emptyFunc, emptyFunc) did not throw exception.

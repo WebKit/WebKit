@@ -81,7 +81,7 @@
             }
 
             // Test addIceCandidate()
-            shouldNotThrow("candidate = new RTCIceCandidate({});");
+            candidate = new RTCIceCandidate({ "candidate": "foo", "sdpMid": "bar" });
 
             shouldNotThrow("pc.addIceCandidate(candidate)");
             shouldNotThrow("pc.addIceCandidate(candidate, emptyFunc, emptyFunc)");

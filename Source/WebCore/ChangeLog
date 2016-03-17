@@ -1,3 +1,30 @@
+2016-03-17  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Update RTCIceCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=155535
+
+        Reviewed by Eric Carlson.
+
+        Update the RTCIceCandidate constructor procedure to match the WebRTC 1.0 specification [1].
+        In short: The "candidate" init dictionary member is required. At least one of the dictionary
+        members "sdpMid" and "sdpMLine" needs to be present; the corresponding attribute of the
+        other, is initialized to null.
+
+        [1] https://w3c.github.io/webrtc-pc/archives/20160215/webrtc.html
+
+        Tests: Updated fast/mediastream/RTCIceCandidate.htm
+
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        (WebCore::RTCIceCandidate::create):
+        (WebCore::RTCIceCandidate::RTCIceCandidate):
+        * Modules/mediastream/RTCIceCandidate.h:
+        (WebCore::RTCIceCandidate::sdpMLineIndex):
+        (WebCore::RTCIceCandidate::setSdpMLineIndex):
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * bindings/js/JSRTCIceCandidateCustom.cpp:
+        (WebCore::JSRTCIceCandidate::sdpMid):
+        (WebCore::JSRTCIceCandidate::sdpMLineIndex):
+
 2016-03-16  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         SVG tear offs should return a const reference if possible

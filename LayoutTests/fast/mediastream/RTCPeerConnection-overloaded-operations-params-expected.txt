@@ -79,7 +79,6 @@ PASS pc.setRemoteDescription('foo', emptyFunc, emptyFunc) threw exception TypeEr
 PASS pc.setRemoteDescription(1) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription.
 PASS pc.setRemoteDescription(1, emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription.
 
-PASS candidate = new RTCIceCandidate({}); did not throw exception.
 PASS pc.addIceCandidate(candidate) did not throw exception.
 PASS pc.addIceCandidate(candidate, emptyFunc, emptyFunc) did not throw exception.
 

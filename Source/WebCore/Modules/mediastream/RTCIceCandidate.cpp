@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,42 +44,41 @@ namespace WebCore {
 RefPtr<RTCIceCandidate> RTCIceCandidate::create(const Dictionary& dictionary, ExceptionCode& ec)
 {
     String candidate;
-    bool ok = dictionary.get("candidate", candidate);
-    if (ok && candidate.isEmpty()) {
-        ec = TYPE_MISMATCH_ERR;
+    if (!dictionary.get("candidate", candidate)) {
+        ec = TypeError;
         return nullptr;
     }
 
     String sdpMid;
-    ok = dictionary.get("sdpMid", sdpMid);
-    if (ok && sdpMid.isEmpty()) {
-        ec = TYPE_MISMATCH_ERR;
-        return nullptr;
-    }
+    dictionary.get("sdpMid", sdpMid);
 
-    String tempLineIndex;
-    unsigned short sdpMLineIndex = 0;
-    // First we check if the property exists in the Dictionary.
-    ok = dictionary.get("sdpMLineIndex", tempLineIndex);
-    // Then we try to convert it to a number and check if it was successful.
-    if (ok) {
+    Optional<unsigned short> sdpMLineIndex;
+    String sdpMLineIndexString;
+
+    if (dictionary.get("sdpMLineIndex", sdpMLineIndexString)) {
         bool intConversionOk;
-        sdpMLineIndex = tempLineIndex.toUIntStrict(&intConversionOk);
-        if (!intConversionOk) {
-            ec = TYPE_MISMATCH_ERR;
+        unsigned result = sdpMLineIndexString.toUIntStrict(&intConversionOk);
+        if (!intConversionOk || result > USHRT_MAX) {
+            ec = TypeError;
             return nullptr;
         }
+        sdpMLineIndex = result;
+    }
+
+    if (sdpMid.isNull() && !sdpMLineIndex) {
+        ec = TypeError;
+        return nullptr;
     }
 
     return adoptRef(new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex));
 }
 
-Ref<RTCIceCandidate> RTCIceCandidate::create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex)
+Ref<RTCIceCandidate> RTCIceCandidate::create(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex)
 {
     return adoptRef(*new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex));
 }
 
-RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex)
+RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex)
     : m_candidate(candidate)
     , m_sdpMid(sdpMid)
     , m_sdpMLineIndex(sdpMLineIndex)

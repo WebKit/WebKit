@@ -22,7 +22,7 @@
             shouldBeEqualToString('pc.signalingState', 'stable');
 
             var desc = new RTCSessionDescription({ "type": "offer" });
-            var candidate = new RTCIceCandidate({ "sdpMLineIndex": 0 });
+            var candidate = new RTCIceCandidate({ "candidate": "foo", "sdpMLineIndex": 0 });
 
             navigator.mediaDevices.getUserMedia({ "video": true }).then(function (s) {
                 stream = s;
