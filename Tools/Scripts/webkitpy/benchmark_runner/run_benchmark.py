@@ -62,7 +62,7 @@ def start(args):
                 raise
             except:
                 failed.append(plan)
-                _log.error('Error running benchmark plan: %s' % plan)
+                _log.exception('Error running benchmark plan: %s' % plan)
         if failed:
             _log.error('The following benchmark plans have failed: %s' % failed)
         return len(failed)
