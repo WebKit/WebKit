@@ -1,3 +1,14 @@
+2016-03-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Large repaints when typing any character in console
+        https://bugs.webkit.org/show_bug.cgi?id=155387
+        <rdar://problem/25125720>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Main.css:
+        (#content):
+
 2016-03-16  Matt Baker  <mattbaker@apple.com>
 
         Uncaught Exception: SyntaxError: Invalid regular expression: \ at end of pattern

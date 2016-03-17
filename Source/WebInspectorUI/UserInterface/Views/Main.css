@@ -141,6 +141,8 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
     display: flex;
     flex-direction: column;
     flex: 1;
+
+    z-index: 1; /* This reduces paint areas when typing in the console. http://webkit.org/b/145324 */
 }
 
 #tab-browser {
