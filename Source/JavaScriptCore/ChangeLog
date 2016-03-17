@@ -1,3 +1,38 @@
+2016-03-17  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Getters and Setters should be prefixed appropriately
+        https://bugs.webkit.org/show_bug.cgi?id=155593
+
+        Reviewed by Mark Lam.
+
+        Changed the putDirectNativeIntrinsicGetter() to prepend "get " to the funtion name.
+
+        Updated places that had their own macro or hand constructed a getter function to use
+        the JSC_NATIVE_GETTER macro which will properly append "get ".
+
+        Prepended "get " and "set " to the __proto__ accessor created on the Object prototype.
+
+        When we create the Symbol.species getter, added an explicit function name of "get [Symbol.species]".
+
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        (Inspector::jsInjectedScriptHostPrototypeAttributeEvaluate):
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation):
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionEvaluate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectNativeIntrinsicGetter):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        (JSC::MapPrototype::getOwnPropertySlot):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        (JSC::SetPrototype::getOwnPropertySlot):
+        * tests/stress/accessors-get-set-prefix.js: Added.
+        (tryGetOwnPropertyDescriptorGetName):
+
 2016-03-16  Mark Lam  <mark.lam@apple.com>
 
         Method names should not appear in the lexical scope of the method's body.

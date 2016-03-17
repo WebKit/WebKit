@@ -79,10 +79,7 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, values, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Set"), DontEnum | ReadOnly);
 
-    GetterSetter* accessor = GetterSetter::create(vm, globalObject);
-    JSFunction* function = JSFunction::create(vm, globalObject, 0, vm.propertyNames->size.string(), setProtoFuncSize);
-    accessor->setGetter(vm, globalObject, function);
-    putDirectNonIndexAccessor(vm, vm.propertyNames->size, accessor, DontEnum | Accessor);
+    JSC_NATIVE_GETTER(vm.propertyNames->size, setProtoFuncSize, DontEnum | Accessor);
 }
 
 bool SetPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

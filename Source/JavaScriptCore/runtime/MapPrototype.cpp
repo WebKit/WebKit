@@ -85,10 +85,7 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, entries, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Map"), DontEnum | ReadOnly);
 
-    GetterSetter* accessor = GetterSetter::create(vm, globalObject);
-    JSFunction* function = JSFunction::create(vm, globalObject, 0, vm.propertyNames->size.string(), mapProtoFuncSize);
-    accessor->setGetter(vm, globalObject, function);
-    putDirectNonIndexAccessor(vm, vm.propertyNames->size, accessor, DontEnum | Accessor);
+    JSC_NATIVE_GETTER(vm.propertyNames->size, mapProtoFuncSize, DontEnum | Accessor);
 }
 
 bool MapPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

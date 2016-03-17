@@ -2576,7 +2576,7 @@ bool JSObject::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSV
 bool JSObject::putDirectNativeIntrinsicGetter(VM& vm, JSGlobalObject* globalObject, Identifier name, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
 {
     GetterSetter* accessor = GetterSetter::create(vm, globalObject);
-    JSFunction* function = JSFunction::create(vm, globalObject, 0, name.string(), nativeFunction, intrinsic);
+    JSFunction* function = JSFunction::create(vm, globalObject, 0, makeString("get ", name.string()), nativeFunction, intrinsic);
     accessor->setGetter(vm, globalObject, function);
     return putDirectNonIndexAccessor(vm, name, accessor, attributes);
 }

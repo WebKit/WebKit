@@ -53,15 +53,6 @@ static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeType(ExecState
 
 const ClassInfo JSJavaScriptCallFramePrototype::s_info = { "JavaScriptCallFrame", &Base::s_info, 0, CREATE_METHOD_TABLE(JSJavaScriptCallFramePrototype) };
 
-#define JSC_NATIVE_NON_INDEX_ACCESSOR(jsName, cppName, attributes) \
-    { \
-        Identifier identifier = Identifier::fromString(&vm, jsName); \
-        GetterSetter* accessor = GetterSetter::create(vm, globalObject); \
-        JSFunction* function = JSFunction::create(vm, globalObject, 0, identifier.string(), cppName); \
-        accessor->setGetter(vm, globalObject, function); \
-        putDirectNonIndexAccessor(vm, identifier, accessor, (attributes)); \
-    }
-
 void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
@@ -71,14 +62,14 @@ void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* glob
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluate", jsJavaScriptCallFramePrototypeFunctionEvaluate, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("scopeType", jsJavaScriptCallFramePrototypeFunctionScopeType, DontEnum, 1);
 
-    JSC_NATIVE_NON_INDEX_ACCESSOR("caller", jsJavaScriptCallFrameAttributeCaller, DontEnum | Accessor);
-    JSC_NATIVE_NON_INDEX_ACCESSOR("sourceID", jsJavaScriptCallFrameAttributeSourceID, DontEnum | Accessor);
-    JSC_NATIVE_NON_INDEX_ACCESSOR("line", jsJavaScriptCallFrameAttributeLine, DontEnum | Accessor);
-    JSC_NATIVE_NON_INDEX_ACCESSOR("column", jsJavaScriptCallFrameAttributeColumn, DontEnum | Accessor);
-    JSC_NATIVE_NON_INDEX_ACCESSOR("functionName", jsJavaScriptCallFrameAttributeFunctionName, DontEnum | Accessor);
-    JSC_NATIVE_NON_INDEX_ACCESSOR("scopeChain", jsJavaScriptCallFrameAttributeScopeChain, DontEnum | Accessor);
-    JSC_NATIVE_NON_INDEX_ACCESSOR("thisObject", jsJavaScriptCallFrameAttributeThisObject, DontEnum | Accessor);
-    JSC_NATIVE_NON_INDEX_ACCESSOR("type", jsJavaScriptCallFrameAttributeType, DontEnum | Accessor);
+    JSC_NATIVE_GETTER("caller", jsJavaScriptCallFrameAttributeCaller, DontEnum | Accessor);
+    JSC_NATIVE_GETTER("sourceID", jsJavaScriptCallFrameAttributeSourceID, DontEnum | Accessor);
+    JSC_NATIVE_GETTER("line", jsJavaScriptCallFrameAttributeLine, DontEnum | Accessor);
+    JSC_NATIVE_GETTER("column", jsJavaScriptCallFrameAttributeColumn, DontEnum | Accessor);
+    JSC_NATIVE_GETTER("functionName", jsJavaScriptCallFrameAttributeFunctionName, DontEnum | Accessor);
+    JSC_NATIVE_GETTER("scopeChain", jsJavaScriptCallFrameAttributeScopeChain, DontEnum | Accessor);
+    JSC_NATIVE_GETTER("thisObject", jsJavaScriptCallFrameAttributeThisObject, DontEnum | Accessor);
+    JSC_NATIVE_GETTER("type", jsJavaScriptCallFrameAttributeType, DontEnum | Accessor);
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionEvaluate(ExecState* exec)

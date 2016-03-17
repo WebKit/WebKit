@@ -301,8 +301,8 @@ void JSGlobalObject::init(VM& vm)
     m_nullSetterFunction.set(vm, this, NullSetterFunction::create(vm, NullSetterFunction::createStructure(vm, this, m_functionPrototype.get())));
     m_objectPrototype.set(vm, this, ObjectPrototype::create(vm, this, ObjectPrototype::createStructure(vm, this, jsNull())));
     GetterSetter* protoAccessor = GetterSetter::create(vm, this);
-    protoAccessor->setGetter(vm, this, JSFunction::create(vm, this, 0, String(), globalFuncProtoGetter));
-    protoAccessor->setSetter(vm, this, JSFunction::create(vm, this, 0, String(), globalFuncProtoSetter));
+    protoAccessor->setGetter(vm, this, JSFunction::create(vm, this, 0, makeString("get ", vm.propertyNames->underscoreProto.string()), globalFuncProtoGetter));
+    protoAccessor->setSetter(vm, this, JSFunction::create(vm, this, 0, makeString("set ", vm.propertyNames->underscoreProto.string()), globalFuncProtoSetter));
     m_objectPrototype->putDirectNonIndexAccessor(vm, vm.propertyNames->underscoreProto, protoAccessor, Accessor | DontEnum);
     m_functionPrototype->structure()->setPrototypeWithoutTransition(vm, m_objectPrototype.get());
 
@@ -408,7 +408,7 @@ m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, th
     // Constructors
 
     GetterSetter* speciesGetterSetter = GetterSetter::create(vm, this);
-    speciesGetterSetter->setGetter(vm, this, JSFunction::createBuiltinFunction(vm, globalObjectSpeciesGetterCodeGenerator(vm), this));
+    speciesGetterSetter->setGetter(vm, this, JSFunction::createBuiltinFunction(vm, globalObjectSpeciesGetterCodeGenerator(vm), this, "get [Symbol.species]"));
 
     ObjectConstructor* objectConstructor = ObjectConstructor::create(vm, this, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
     m_objectConstructor.set(vm, this, objectConstructor);

@@ -70,11 +70,7 @@ void JSInjectedScriptHostPrototype::finishCreation(VM& vm, JSGlobalObject* globa
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("weakSetEntries", jsInjectedScriptHostPrototypeFunctionWeakSetEntries, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("iteratorEntries", jsInjectedScriptHostPrototypeFunctionIteratorEntries, DontEnum, 1);
 
-    Identifier evaluateIdentifier = Identifier::fromString(&vm, "evaluate");
-    GetterSetter* accessor = GetterSetter::create(vm, globalObject);
-    JSFunction* function = JSFunction::create(vm, globalObject, 0, evaluateIdentifier.string(), jsInjectedScriptHostPrototypeAttributeEvaluate);
-    accessor->setGetter(vm, globalObject, function);
-    putDirectNonIndexAccessor(vm, evaluateIdentifier, accessor, DontEnum | Accessor);
+    JSC_NATIVE_GETTER("evaluate", jsInjectedScriptHostPrototypeAttributeEvaluate, DontEnum | Accessor);
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeEvaluate(ExecState* exec)
