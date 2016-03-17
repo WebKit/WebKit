@@ -127,6 +127,7 @@ public:
     String suggestedFilename();
     void willPerformHTTPRedirection(const WebCore::ResourceResponse&, WebCore::ResourceRequest&&, RedirectCompletionHandler);
     void transferSandboxExtensionToDownload(Download&);
+    bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&);
     
 private:
     NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ContentSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);

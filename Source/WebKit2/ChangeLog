@@ -1,3 +1,27 @@
+2016-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        Support manually accepting invalid SSL certificates with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=155442
+        <rdar://problem/24847398>
+
+        Reviewed by Darin Adler.
+
+        When we click continue after getting a warning about an invalid SSL certificate, we call
+        NSURLRequest setAllowsSpecificHTTPSCertificate in NetworkProcess::allowSpecificHTTPSCertificateForHost,
+        which stores information in CFNetwork about the specific invalid SSL certificate we want to accept.
+        If we see such a certificate during a server trust evaluation, we want to tell CFNetwork to accept it.
+        This fixes a loop when going to https://badssl.com, clicking on expired, and clicking continue.
+
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::transferSandboxExtensionToDownload):
+        (WebKit::certificatesMatch):
+        (WebKit::NetworkDataTask::allowsSpecificHTTPSCertificateForHost):
+        (WebKit::NetworkDataTask::suggestedFilename):
+
 2016-03-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Unreviewed buildfix after r198070. Just for fun.

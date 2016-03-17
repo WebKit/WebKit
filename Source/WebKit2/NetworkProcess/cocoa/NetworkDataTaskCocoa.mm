@@ -327,6 +327,42 @@ void NetworkDataTask::transferSandboxExtensionToDownload(Download& download)
     download.setSandboxExtension(WTFMove(m_sandboxExtension));
 }
 
+static bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
+{
+    if (!trust1 || !trust2)
+        return false;
+
+    CFIndex count1 = SecTrustGetCertificateCount(trust1);
+    CFIndex count2 = SecTrustGetCertificateCount(trust2);
+    if (count1 != count2)
+        return false;
+
+    for (CFIndex i = 0; i < count1; i++) {
+        if (!CFEqual(SecTrustGetCertificateAtIndex(trust1, i), SecTrustGetCertificateAtIndex(trust2, i)))
+            return false;
+    }
+
+    return true;
+}
+
+bool NetworkDataTask::allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge& challenge)
+{
+    const String& host = challenge.protectionSpace().host();
+    NSArray *certificates = [NSURLRequest allowsSpecificHTTPSCertificateForHost:host];
+    if (!certificates)
+        return false;
+    
+    bool requireServerCertificates = challenge.protectionSpace().authenticationScheme() == WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+    RetainPtr<SecPolicyRef> policy = adoptCF(SecPolicyCreateSSL(requireServerCertificates, host.createCFString().get()));
+    
+    SecTrustRef trustRef = nullptr;
+    if (SecTrustCreateWithCertificates((CFArrayRef)certificates, policy.get(), &trustRef) != noErr)
+        return false;
+    RetainPtr<SecTrustRef> trust = adoptCF(trustRef);
+
+    return certificatesMatch(trust.get(), challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust);
+}
+
 String NetworkDataTask::suggestedFilename()
 {
     return m_task.get().response.suggestedFilename;

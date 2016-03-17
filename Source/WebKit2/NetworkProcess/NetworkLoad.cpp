@@ -206,7 +206,10 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
     // Handle server trust evaluation at platform-level if requested, for performance reasons.
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
         && !NetworkProcess::singleton().canHandleHTTPSServerTrustEvaluation()) {
-        completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, Credential());
+        if (m_task && m_task->allowsSpecificHTTPSCertificateForHost(challenge))
+            completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(challenge));
+        else
+            completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
         return;
     }
 
@@ -344,7 +347,10 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
     ASSERT(m_challengeCompletionHandler);
     auto completionHandler = WTFMove(m_challengeCompletionHandler);
     if (!result) {
-        completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, Credential());
+        if (m_task && m_task->allowsSpecificHTTPSCertificateForHost(m_challenge))
+            completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(m_challenge));
+        else
+            completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
         return;
     }
     
@@ -354,7 +360,7 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
     }
     
     if (m_parameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials) {
-        completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential());
+        completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
         return;
     }
     
