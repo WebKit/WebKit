@@ -1,3 +1,16 @@
+2016-03-17  Andy Estes  <aestes@apple.com>
+
+        [Mac] Enable Content-Disposition: attachment sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=155578
+        <rdar://problem/21886326>
+
+        Reviewed by Dan Bernstein.
+
+        Covered by the existing set of attachment sandbox tests, which have always been run on Mac.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2016-03-16  Beth Dakin  <bdakin@apple.com>
 
         Provide NSSpellChecker spellChecking methods with the current insertion point
