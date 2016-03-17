@@ -164,6 +164,10 @@ Suites.push(new Suite("HTML suite",
         {
             url: "bouncing-particles/bouncing-tagged-images.html?particleWidth=100&particleHeight=100",
             name: "CSS bouncing tagged images"
+        },
+        {
+            url: "dom/leaves.html",
+            name: "Leaves 2.0"
         }
     ]
 ));

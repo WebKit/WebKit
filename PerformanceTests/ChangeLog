@@ -1,3 +1,22 @@
+2016-03-16  Jon Lee  <jonlee@apple.com>
+
+        Add a new benchmark test
+        https://bugs.webkit.org/show_bug.cgi?id=155570
+
+        Reviewed by Simon Fraser.
+
+        New Leaves test includes various image sizes and opacity.
+
+        * Animometer/resources/debug-runner/tests.js: Add it to the HTML test suite.
+        * Animometer/tests/dom/leaves.html: Added.
+        * Animometer/tests/dom/resources/leaves.js: Added. Override the
+        (Particle.call.reset): Uses a range of sizes, and opacity.
+        (Particle.call.animate): Opacity goes up then down. When it hits 0, reset the particle.
+        (Particle.call.move): Set transform and opacity.
+        * Animometer/tests/master/resources/leaves.js: Get rid of the closure so that it
+        can be used in this test. Update the relative path so that it works in both the master
+        and dom test suite.
+
 2016-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         Add developer Animometer test that bounces P3-tagged images

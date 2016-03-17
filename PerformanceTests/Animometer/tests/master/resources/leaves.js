@@ -1,5 +1,3 @@
-(function() {
-
 Leaf = Utilities.createSubclass(Particle,
     function(stage)
     {
@@ -20,7 +18,7 @@ Leaf = Utilities.createSubclass(Particle,
     {
         Particle.prototype.reset.call(this);
         this._life = Stage.randomInt(20, 100);
-        this._position = new Point(Stage.random(-this.size.width, this.maxPosition.x), Stage.random(-this.size.height, this.maxPosition.y));
+        this._position = new Point(Stage.random(0, this.maxPosition.x), Stage.random(-this.size.height, this.maxPosition.y));
         this._velocity = new Point(Stage.random(-6, -2), .1 * this.size.y + Stage.random(-1, 1));
     },
 
@@ -72,7 +70,7 @@ Utilities.extendObject(ParticlesStage.prototype, {
         var lastPromise;
         var images = this.images;
         this.imageSrcs.forEach(function(imageSrc) {
-            var promise = this._loadImage("resources/" + imageSrc + "100.png");
+            var promise = this._loadImage("../master/resources/" + imageSrc + "100.png");
             if (!lastPromise)
                 lastPromise = promise;
             else {
@@ -135,5 +133,3 @@ LeavesBenchmark = Utilities.createSubclass(Benchmark,
 });
 
 window.benchmarkClass = LeavesBenchmark;
-
-})();
