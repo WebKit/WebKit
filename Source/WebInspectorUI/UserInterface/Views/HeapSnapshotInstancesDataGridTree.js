@@ -54,6 +54,8 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
 
         let comparator;
         switch (columnIdentifier) {
+        case "retainedSize":
+            return numberCompare.bind(this, "retainedSize");
         case "size":
             return numberCompare.bind(this, "size");
         case "count":
@@ -158,13 +160,11 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
         this.removeChildren();
 
         // Populate the first level with the different classes.
-        let totalSize = this._heapSnapshot.totalSize;
-        for (let [className, {size, count, internalCount}] of this._heapSnapshot.categories) {
+        for (let [className, {size, retainedSize, count, internalCount}] of this._heapSnapshot.categories) {
             let allInternal = count === internalCount;
             if (!this._includeInternalObjects && allInternal)
                 continue;
-            let percent = (size / totalSize) * 100;
-            this.appendChild(new WebInspector.HeapSnapshotClassDataGridNode({className, size, count, percent, allInternal}, this));
+            this.appendChild(new WebInspector.HeapSnapshotClassDataGridNode({className, size, retainedSize, count, allInternal}, this));
         }
     }
 };

@@ -497,6 +497,9 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (column["group"])
             headerCellElement.classList.add("column-group-" + column["group"]);
 
+        if (column["tooltip"])
+            headerCellElement.title = column["tooltip"];
+
         if (column["collapsesGroup"]) {
             console.assert(column["group"] !== column["collapsesGroup"]);
 

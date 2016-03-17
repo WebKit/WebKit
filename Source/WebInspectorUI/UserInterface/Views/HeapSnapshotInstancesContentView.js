@@ -36,15 +36,22 @@ WebInspector.HeapSnapshotInstancesContentView = class HeapSnapshotInstancesConte
         let {showInternalObjects} = extraArguments;
 
         let columns = {
-            size: {
-                title: WebInspector.UIString("Total Size"),
+            retainedSize: {
+                title: WebInspector.UIString("Retained Size"),
+                tooltip: WebInspector.UIString("Size of the current object plus the size of all objects it keeps alive."),
                 width: "140px",
+                aligned: "right",
+                sortable: true, 
+            },
+            size: {
+                title: WebInspector.UIString("Self Size"),
+                width: "90px",
                 aligned: "right",
                 sortable: true,
             },
             count: {
                 title: WebInspector.UIString("Count"),
-                width: "80px",
+                width: "75px",
                 aligned: "right",
                 sortable: true,
             },
@@ -56,7 +63,7 @@ WebInspector.HeapSnapshotInstancesContentView = class HeapSnapshotInstancesConte
         };
 
         this._dataGrid = new WebInspector.DataGrid(columns);
-        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("heap-snapshot-content-view-sort", "size");
+        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("heap-snapshot-content-view-sort", "retainedSize");
         this._dataGrid.sortOrderSetting = new WebInspector.Setting("heap-snapshot-content-view-sort-order", WebInspector.DataGrid.SortOrder.Descending);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 

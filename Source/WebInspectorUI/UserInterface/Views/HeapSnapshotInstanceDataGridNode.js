@@ -36,8 +36,6 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
 
         // FIXME: Make instance grid nodes copyable.
         this.copyable = false;
-
-        this._percent = (this._node.size / this._tree._heapSnapshot.totalSize) * 100;
     }
 
     // Static
@@ -99,18 +97,21 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
 
     createCellContent(columnIdentifier)
     {
-        if (columnIdentifier === "size") {
-            let size = this._node.size;
-            let percent = this._percent;
+        if (columnIdentifier === "retainedSize") {
+            let size = this._node.retainedSize;
             let fragment = document.createDocumentFragment();
-            let timeElement = fragment.appendChild(document.createElement("span"));
-            timeElement.classList.add("size");
-            timeElement.textContent = Number.bytesToString(size);
+            let sizeElement = fragment.appendChild(document.createElement("span"));
+            sizeElement.classList.add("size");
+            sizeElement.textContent = Number.bytesToString(size);
+            let percent = (size / this._tree._heapSnapshot.totalSize) * 100;
             let percentElement = fragment.appendChild(document.createElement("span"));
             percentElement.classList.add("percentage");
             percentElement.textContent = Number.percentageString(percent);
             return fragment;
         }
+
+        if (columnIdentifier === "size")
+            return Number.bytesToString(this._node.size);
 
         if (columnIdentifier === "className") {
             let {className, id, internal} = this._node;

@@ -1,5 +1,42 @@
 2016-03-17  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Prefer retained size to the shallow size in Heap Snapshot data grids
+        https://bugs.webkit.org/show_bug.cgi?id=155597
+        <rdar://problem/25225087>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New datagrid column and tooltip strings.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.insertColumn):
+        Allow a column definition to provide a tooltip for the header cell.
+
+        * UserInterface/Views/HeapSnapshotClassDataGridNode.js:
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype.createCellContent):
+        Include retained size column data.
+
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._populate):
+        Fix non-batched populate to sort instances on first population.
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.createCellContent):
+        Include retained size column data.
+
+        * UserInterface/Views/HeapSnapshotInstancesContentView.js:
+        (WebInspector.HeapSnapshotInstancesContentView):
+        Include a retained size column. Update initial sort and column widths.
+
+        * UserInterface/Views/HeapSnapshotInstancesDataGridTree.js:
+        (WebInspector.HeapSnapshotInstancesDataGridTree.buildSortComparator):
+        Include a numeric sort comparator for the new retained size column.
+
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype._populateTopLevel):
+        Include retained size, and lazily calculate percentage later.
+
+2016-03-17  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: HeapSnapshots are slow and use too much memory
         https://bugs.webkit.org/show_bug.cgi?id=155571
 
