@@ -1,3 +1,28 @@
+2016-03-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] response-consume.html is crashing on Mac WK1 Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=155490
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        Ensured to lock state before calling JSC:JSONParse.
+        Adding fulfillPromiseWithJSON routine to handle it.
+        Applied it to FetchBody.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::json):
+        (WebCore::FetchBody::loadedAsText):
+        (WebCore::FetchBody::resolveAsJSON): Deleted.
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::loadedBlobAsText):
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::parseAsJSON):
+        (WebCore::fulfillPromiseWithJSON):
+        * bindings/js/JSDOMPromise.h:
+
 2016-03-17  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Update RTCIceCandidate

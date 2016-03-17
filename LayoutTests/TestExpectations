@@ -324,9 +324,6 @@ imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob-worker.html [ Failur
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 
-# Fetch API tests
-[ Debug ] imported/w3c/web-platform-tests/fetch/api/response/response-consume.html [ Pass Crash ]
-
 # @supports W3C Failures
 webkit.org/b/137566 css3/conditional/w3c/at-supports-010.html [ ImageOnlyFailure ]
 webkit.org/b/137568 css3/conditional/w3c/at-supports-014.html [ ImageOnlyFailure ]

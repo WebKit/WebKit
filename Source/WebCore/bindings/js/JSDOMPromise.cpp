@@ -28,6 +28,7 @@
 
 #include "ExceptionCode.h"
 #include <runtime/Exception.h>
+#include <runtime/JSONObject.h>
 
 using namespace JSC;
 
@@ -75,6 +76,21 @@ void rejectPromiseWithExceptionIfAny(JSC::ExecState& state, JSDOMGlobalObject& g
     state.clearException();
 
     DeferredWrapper(&state, &globalObject, &promiseDeferred).reject(error);
+}
+
+static inline JSC::JSValue parseAsJSON(JSC::ExecState* state, const String& data)
+{
+    JSC::JSLockHolder lock(state);
+    return JSC::JSONParse(state, data);
+}
+
+void fulfillPromiseWithJSON(DeferredWrapper& promise, const String& data)
+{
+    JSC::JSValue value = parseAsJSON(promise.globalObject().globalExec(), data);
+    if (!value)
+        promise.reject<ExceptionCode>(SYNTAX_ERR);
+    else
+        promise.resolve(value);
 }
 
 }
