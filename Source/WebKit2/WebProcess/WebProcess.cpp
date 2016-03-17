@@ -268,7 +268,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     platformInitializeWebProcess(WTFMove(parameters));
 
-    WTF::setCurrentThreadIsUserInitiated();
+    // Match the QoS of the UIProcess and the scrolling thread but use a slightly lower priority.
+    WTF::setCurrentThreadIsUserInteractive(-1);
 
     m_suppressMemoryPressureHandler = parameters.shouldSuppressMemoryPressureHandler;
     if (!m_suppressMemoryPressureHandler)

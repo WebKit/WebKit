@@ -26,7 +26,9 @@
 #include "config.h"
 #include "Threading.h"
 
-#include <string.h>
+#include <algorithm>
+#include <cmath>
+#include <cstring>
 
 namespace WTF {
 
@@ -82,17 +84,25 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*
     });
 }
 
-void setCurrentThreadIsUserInteractive()
+void setCurrentThreadIsUserInteractive(int relativePriority)
 {
 #if HAVE(QOS_CLASSES)
-    pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, 0);
+    ASSERT(relativePriority <= 0);
+    ASSERT(relativePriority >= QOS_MIN_RELATIVE_PRIORITY);
+    pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, relativePriority);
+#else
+    UNUSED_PARAM(relativePriority);
 #endif
 }
 
-void setCurrentThreadIsUserInitiated()
+void setCurrentThreadIsUserInitiated(int relativePriority)
 {
 #if HAVE(QOS_CLASSES)
-    pthread_set_qos_class_self_np(QOS_CLASS_USER_INITIATED, 0);
+    ASSERT(relativePriority <= 0);
+    ASSERT(relativePriority >= QOS_MIN_RELATIVE_PRIORITY);
+    pthread_set_qos_class_self_np(QOS_CLASS_USER_INITIATED, relativePriority);
+#else
+    UNUSED_PARAM(relativePriority);
 #endif
 }
 

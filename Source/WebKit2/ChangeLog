@@ -1,3 +1,19 @@
+2016-03-17  Chris Dumez  <cdumez@apple.com>
+
+        Set the WebContent process's main thread QoS to USER-INTERACTIVE
+        https://bugs.webkit.org/show_bug.cgi?id=155595
+        <rdar://problem/22534965>
+
+        Reviewed by Antti Koivisto.
+
+        Increase the WebContent process main thread's QoS to USER-INTERACTIVE
+        instead of USER-INITIATED as it is drawing UI. However, use a relative
+        priority of -1 so that its priority is lower than the one of the
+        scrolling thread.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2016-03-17  Alex Christensen  <achristensen@webkit.org>
 
         Support manually accepting invalid SSL certificates with NetworkSession

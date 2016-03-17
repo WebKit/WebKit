@@ -1,3 +1,21 @@
+2016-03-17  Chris Dumez  <cdumez@apple.com>
+
+        Set the WebContent process's main thread QoS to USER-INTERACTIVE
+        https://bugs.webkit.org/show_bug.cgi?id=155595
+        <rdar://problem/22534965>
+
+        Reviewed by Antti Koivisto.
+
+        Add a relativePriority parameter to setCurrentThreadIsUser*() so that
+        we can do more fine-grained prioritization of threads that have the
+        same QoS.
+
+        * wtf/Threading.cpp:
+        (WTF::setCurrentThreadIsUserInteractive):
+        (WTF::setCurrentThreadIsUserInitiated):
+        (WTF::createThread): Deleted.
+        * wtf/Threading.h:
+
 2016-03-17  Filip Pizlo  <fpizlo@apple.com>
 
         Silence leaks in ParkingLot

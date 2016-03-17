@@ -58,8 +58,9 @@ WTF_EXPORT_PRIVATE void initializeThreading();
 WTF_EXPORT_PRIVATE ThreadIdentifier createThread(const char* threadName, std::function<void()>);
 
 // Mark the current thread as requiring UI responsiveness.
-WTF_EXPORT_PRIVATE void setCurrentThreadIsUserInteractive();
-WTF_EXPORT_PRIVATE void setCurrentThreadIsUserInitiated();
+// relativePriority is a value in the range [-15, 0] where a lower value indicates a lower priority.
+WTF_EXPORT_PRIVATE void setCurrentThreadIsUserInteractive(int relativePriority = 0);
+WTF_EXPORT_PRIVATE void setCurrentThreadIsUserInitiated(int relativePriority = 0);
 
 WTF_EXPORT_PRIVATE ThreadIdentifier currentThread();
 WTF_EXPORT_PRIVATE void changeThreadPriority(ThreadIdentifier, int);
