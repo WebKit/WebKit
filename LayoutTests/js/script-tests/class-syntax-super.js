@@ -39,14 +39,14 @@ function shouldBe(a, b) {
 function shouldBeTrue(s) {
     if (eval(s) === true)
         testPassed(s);
-    else 
+    else
         testFailed(s);
 }
 
 function shouldBeFalse(s) {
     if (eval(s) === false)
         testPassed(s);
-    else 
+    else
         testFailed(s);
 }
 
@@ -76,8 +76,19 @@ class SecondDerived extends Derived {
     chainMethod() { return super.chainMethod().concat(['secondDerived']); }
 }
 
+class DerivedWithEval extends Base {
+    constructor(throwTDZ) {
+      if (throwTDZ)
+        this.id = '';
+
+      eval("super()");
+    }
+}
+
 shouldBeTrue('(new Base) instanceof Base');
 shouldBeTrue('(new Derived) instanceof Derived');
+shouldBeTrue('(new DerivedWithEval) instanceof DerivedWithEval');
+shouldThrow('(new DerivedWithEval(true))', '"ReferenceError: Cannot access uninitialized variable."');
 shouldBe('(new Derived).callBaseMethod()', 'baseMethodValue');
 shouldBe('x = (new Derived).callBaseMethod; x()', 'baseMethodValue');
 shouldBe('(new Derived).callBaseMethodInGetter', 'baseMethodValue');
@@ -115,5 +126,13 @@ shouldThrow('new (class extends Object { constructor() { function x() { super() 
 shouldThrow('new (class extends Object { constructor() { function x() { super.method } } })', '"SyntaxError: super can only be used in a method of a derived class."');
 shouldThrow('function x() { super.method(); }', '"SyntaxError: super can only be used in a method of a derived class."');
 shouldThrow('function x() { super(); }', '"SyntaxError: Cannot call super() outside of a class constructor."');
+shouldThrow('eval("super.method()")', '"SyntaxError: super is only valid inside functions."');
+shouldThrow('eval("super()")', '"SyntaxError: super is only valid inside functions."');
+
+shouldThrow('(function () { eval("super.method()");})()', '"SyntaxError: super is only valid inside functions."');
+shouldThrow('(function () { eval("super()");})()', '"SyntaxError: super is only valid inside functions."');
+
+shouldThrow('new (class { constructor() { (function () { eval("super()");})(); } })', '"SyntaxError: super is only valid inside functions."');
+shouldThrow('(new (class { method() { (function () { eval("super.method()");})(); }})).method()', '"SyntaxError: super is only valid inside functions."');
 
 var successfullyParsed = true;

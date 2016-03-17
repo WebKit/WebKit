@@ -1,3 +1,13 @@
+2016-03-17  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Invoking super()/super inside of the eval should not lead to SyntaxError
+        https://bugs.webkit.org/show_bug.cgi?id=153864
+
+        Reviewed by Saam Barati.
+
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-syntax-super.js:
+
 2016-03-16  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Directly composited image layers need pixelsnapping.

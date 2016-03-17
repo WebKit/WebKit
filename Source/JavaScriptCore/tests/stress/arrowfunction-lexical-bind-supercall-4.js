@@ -31,7 +31,9 @@ var C = class C extends A {
     constructor () {
         var arrow = () => eval('(() => super())()');
         arrow();
-        return {};
+        return {
+          value : 'constructor-value'
+        };
     }
 };
 
@@ -51,24 +53,24 @@ var E = class E extends A {
     }
 };
 
-// FIXME: Arrow function does not support using of eval with super/super()
-// https://bugs.webkit.org/show_bug.cgi?id=153977
-/*
+
 for (var i=0; i < 1000; i++) {
     new B(true);
     var c = new C();
-    testCase(typeof c.id, 'undefined', 'Error during set value in eval #1');
+    testCase(c.value, 'constructor-value', 'Error during set value in eval #1.0');
+    testCase(typeof c.id, 'undefined', 'Error during set value in eval #1.1');
     var d = new D();
-    testCase(d.id, 'new-value', 'Error during set value in eval #2');
+    testCase(d.idValue, testValue, 'Error during set value in eval #2.0');
+    testCase(d.id, 'new-value', 'Error during set value in eval #2.1');
     var e = new E();
-    testCase(e.id, 'new-value', 'Error during set value in eval #3');
+    testCase(e.idValue, testValue, 'Error during set value in eval #3.0');
+    testCase(e.id, 'new-value', 'Error during set value in eval #3.0');
 }
-*/
 
-var testException = function (value, index) {
+var testException = function (Klass, value, index) {
     var exception;
     try {
-        new B(value);
+        new Klass(value);
     } catch (e) {
         exception = e;
         if (!(e instanceof ReferenceError))
@@ -80,7 +82,7 @@ var testException = function (value, index) {
 }
 
 for (var i=0; i < 1000; i++) {
-    testException(false, i);
+    testException(B, false, i);
 }
 
 class F extends A {
@@ -139,3 +141,22 @@ class H extends A_this_Prop {
 
 let h = new H();
 testCase(h.someValue, testValue, 'Error: not correct binding superProperty&this in constructor');
+
+class I extends A {
+  constructor (beforeSuper) {
+      if (beforeSuper) {
+          eval('(() => super())()');
+          testCase(this.idValue, testValue, "Error: super() should create this and put value into idValue property");
+      } else {
+          this.idValue = 'testValue';
+          eval('(() => super())()');
+      }
+  }
+};
+
+let ic = new I(true);
+testCase(ic.idValue, testValue, 'Error: not correct binding superProperty&this in constructor');
+
+for (var i=0; i < 1000; i++) {
+    testException(I, false, i);
+}

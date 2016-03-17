@@ -1,3 +1,41 @@
+2016-03-17  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Invoking super()/super inside of the eval should not lead to SyntaxError
+        https://bugs.webkit.org/show_bug.cgi?id=153864
+
+        Reviewed by Saam Barati.
+
+        Added support of the invoking super/super() inside of the eval within class.
+        Also support cases when eval is invoked in constructor, class method directly 
+        or via arrow function. Access to the new.target in eval is not part of this patch
+        and will be implemented in https://bugs.webkit.org/show_bug.cgi?id=155545
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::isThisUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isNewTargetUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isSuperUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isSuperCallUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::emitPutThisToArrowFunctionContextScope):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::isEvalContext):
+        (JSC::Scope::setIsEvalContext):
+        (JSC::parse):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        * tests/stress/arrowfunction-lexical-bind-supercall-4.js:
+        * tests/stress/arrowfunction-lexical-bind-superproperty.js:
+        * tests/stress/class-syntax-super-in-eval.js: Added.
+        * tests/stress/generator-with-super.js:
+
 2016-03-15  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILED: !edge->isPhantomAllocation() in regress/script-tests/sink-huge-activation.js.ftl-eager in debug mode

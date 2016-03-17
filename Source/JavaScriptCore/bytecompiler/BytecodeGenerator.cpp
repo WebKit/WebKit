@@ -621,13 +621,19 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
         variables.append(Identifier::fromUid(m_vm, entry.key.get()));
     }
     codeBlock->adoptVariables(variables);
+    
+    if (evalNode->usesSuperCall() || evalNode->usesNewTarget())
+        m_newTargetRegister = addVar();
 
     pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize);
-
-    if (codeBlock->isArrowFunctionContext() && evalNode->usesThis())
+    
+    if (codeBlock->isArrowFunctionContext() && (evalNode->usesThis() || evalNode->usesSuperProperty()))
         emitLoadThisFromArrowFunctionLexicalEnvironment();
 
-    if (needsToUpdateArrowFunctionContext() && !codeBlock->isArrowFunctionContext()) {
+    if (evalNode->usesSuperCall() || evalNode->usesNewTarget())
+        emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
+
+    if (needsToUpdateArrowFunctionContext() && !codeBlock->isArrowFunctionContext() && !isDerivedConstructorContext()) {
         initializeArrowFunctionContextScopeIfNeeded();
         emitPutThisToArrowFunctionContextScope();
     }
@@ -4102,7 +4108,7 @@ void BytecodeGenerator::popIndexedForInScope(RegisterID* localRegister)
 
 RegisterID* BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment(const Identifier& identifier)
 {
-    ASSERT(m_codeBlock->isArrowFunction() || m_codeBlock->isArrowFunctionContext() || constructorKind() == ConstructorKind::Derived);
+    ASSERT(m_codeBlock->isArrowFunction() || m_codeBlock->isArrowFunctionContext() || constructorKind() == ConstructorKind::Derived || m_codeType == EvalCode);
 
     return emitResolveScope(nullptr, variable(identifier, ThisResolutionType::Scoped));
 }
@@ -4126,7 +4132,7 @@ RegisterID* BytecodeGenerator::emitLoadDerivedConstructorFromArrowFunctionLexica
     return emitGetFromScope(newTemporary(), emitLoadArrowFunctionLexicalEnvironment(propertyNames().derivedConstructorPrivateName), protoScopeVar, ThrowIfNotFound);
 }
     
-bool BytecodeGenerator::isThisUsedInInnerArrowFunction() 
+bool BytecodeGenerator::isThisUsedInInnerArrowFunction()
 {
     return m_scopeNode->doAnyInnerArrowFunctionsUseThis() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperCall() || m_scopeNode->doAnyInnerArrowFunctionsUseEval() || m_codeBlock->usesEval();
 }
@@ -4138,17 +4144,17 @@ bool BytecodeGenerator::isArgumentsUsedInInnerArrowFunction()
 
 bool BytecodeGenerator::isNewTargetUsedInInnerArrowFunction()
 {
-    return m_scopeNode->doAnyInnerArrowFunctionsUseNewTarget() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperCall();
+    return m_scopeNode->doAnyInnerArrowFunctionsUseNewTarget() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperCall() || m_scopeNode->doAnyInnerArrowFunctionsUseEval() || m_codeBlock->usesEval();
 }
 
 bool BytecodeGenerator::isSuperUsedInInnerArrowFunction()
 {
-    return m_scopeNode->doAnyInnerArrowFunctionsUseSuperCall() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty();
+    return m_scopeNode->doAnyInnerArrowFunctionsUseSuperCall() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseEval() || m_codeBlock->usesEval();
 }
 
 bool BytecodeGenerator::isSuperCallUsedInInnerArrowFunction()
 {
-    return m_scopeNode->doAnyInnerArrowFunctionsUseSuperCall();
+    return m_scopeNode->doAnyInnerArrowFunctionsUseSuperCall() || m_scopeNode->doAnyInnerArrowFunctionsUseEval() || m_codeBlock->usesEval();
 }
     
 void BytecodeGenerator::emitPutNewTargetToArrowFunctionContextScope()
@@ -4175,7 +4181,7 @@ void BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope()
 
 void BytecodeGenerator::emitPutThisToArrowFunctionContextScope()
 {
-    if (isThisUsedInInnerArrowFunction()) {
+    if (isThisUsedInInnerArrowFunction() || (m_scopeNode->usesSuperCall() && m_codeType == EvalCode)) {
         ASSERT(isDerivedConstructorContext() || m_arrowFunctionContextLexicalEnvironmentRegister != nullptr);
 
         Variable thisVar = variable(propertyNames().thisIdentifier, ThisResolutionType::Scoped);

@@ -228,3 +228,61 @@ for (var i = 0; i < 10000; i++) {
     }
     testCase(error, true, 'Error: using "super" property before super() should lead to error');
 }
+
+class K extends A {
+    newMethodArrowEval() {
+        var arrow = () => eval('super.getValue()');
+        var r = arrow();
+        return r;
+    }
+    newMethodArrowDoubleEval() {
+      var arrow = () => eval("eval('super.getValue()')");
+      var r = arrow();
+      return r;
+    }
+    newMethodArrowEvalEvalArrow() {
+      var arrow = () => eval("eval('(() => super.getValue())()')");
+      var r = arrow();
+      return r;
+    }
+    newMethodArrowEvalEvalArrowEval() {
+      var arrow  = () => eval("eval('(() => eval(\"super.getValue()\"))()')");
+      var r = arrow();
+      return r;
+    }
+    newMethodEval() {
+        var r = eval("super.getValue()");
+        return r;
+    }
+    newMethodEvalEval() {
+        var r = eval("eval('super.getValue()')");
+        return r;
+    }
+    newMethodEvalArrow() {
+        var r = eval("(() => super.getValue())()");
+        return r;
+    }
+    newMethodEvalEvalArrow() {
+        var r = eval("eval('(() => super.getValue())()')");
+        return r;
+    }
+    newMethodEvalEvalArrowEval() {
+        var r = eval("eval('(() => eval(\"(super.getValue())\"))()')");
+        return r;
+    }
+}
+
+var k = new K();
+
+for (var i = 0; i < 1000; i++) {
+    testCase(k.newMethodArrowEval() , testValue, 'Error: Error in lexical bind with eval and arrow function #1');
+    testCase(k.newMethodArrowDoubleEval() , testValue, 'Error: Error in lexical bind with eval and arrow function #2');
+    testCase(k.newMethodArrowEvalEvalArrow() , testValue, 'Error: Error in lexical bind with eval and arrow function #3');
+    testCase(k.newMethodArrowEvalEvalArrowEval() , testValue, 'Error: Error in lexical bind with eval and arrow function #4');
+
+    testCase(k.newMethodEval() , testValue, 'Error: Error in lexical bind with eval and arrow function #5');
+    testCase(k.newMethodEvalEval() , testValue, 'Error: Error in lexical bind with eval and arrow function #6');
+    testCase(k.newMethodEvalArrow() , testValue, 'Error: Error in lexical bind with eval and arrow function #7');
+    testCase(k.newMethodEvalEvalArrow() , testValue, 'Error: Error in lexical bind with eval and arrow function 8');
+    testCase(k.newMethodEvalEvalArrowEval() , testValue, 'Error: Error in lexical bind with eval and arrow function #9');
+}

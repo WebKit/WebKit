@@ -192,10 +192,7 @@ void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B
 }
 
 template <typename LexerType>
-Parser<LexerType>::Parser(
-    VM* vm, const SourceCode& source, JSParserBuiltinMode builtinMode, 
-    JSParserStrictMode strictMode, SourceParseMode parseMode, SuperBinding superBinding,
-    ConstructorKind defaultConstructorKind, ThisTDZMode thisTDZMode)
+Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, SourceParseMode parseMode, SuperBinding superBinding, ConstructorKind defaultConstructorKind, ThisTDZMode thisTDZMode, DerivedContextType derivedContextType, bool isEvalContext)
     : m_vm(vm)
     , m_source(&source)
     , m_hasStackOverflow(false)
@@ -219,6 +216,15 @@ Parser<LexerType>::Parser(
 
     ScopeRef scope = pushScope();
     scope->setSourceParseMode(parseMode);
+    scope->setIsEvalContext(isEvalContext);
+    
+    if (derivedContextType == DerivedContextType::DerivedConstructorContext) {
+        scope->setConstructorKind(ConstructorKind::Derived);
+        scope->setExpectedSuperBinding(SuperBinding::Needed);
+    }
+    
+    if (derivedContextType == DerivedContextType::DerivedMethodContext)
+        scope->setExpectedSuperBinding(SuperBinding::Needed);
 
     if (strictMode == JSParserStrictMode::Strict)
         scope->setStrictMode();
@@ -2067,16 +2073,18 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     // inside of the constructor or method
     if (!m_lexer->isReparsingFunction()) {
         if (functionScope->hasDirectSuper()) {
-            ConstructorKind functionConstructorKind = functionBodyType == StandardFunctionBodyBlock
+            ScopeRef scopeRef = closestParentOrdinaryFunctionNonLexicalScope();
+            ConstructorKind functionConstructorKind = functionBodyType == StandardFunctionBodyBlock && !scopeRef->isEvalContext()
                 ? constructorKind
-                : closestParentOrdinaryFunctionNonLexicalScope()->constructorKind();
+                : scopeRef->constructorKind();
             semanticFailIfTrue(functionConstructorKind == ConstructorKind::None, "Cannot call super() outside of a class constructor");
             semanticFailIfTrue(functionConstructorKind != ConstructorKind::Derived, "Cannot call super() in a base class constructor");
         }
         if (functionScope->needsSuperBinding()) {
-            SuperBinding functionSuperBinding = functionBodyType == StandardFunctionBodyBlock
+            ScopeRef scopeRef = closestParentOrdinaryFunctionNonLexicalScope();
+            SuperBinding functionSuperBinding = functionBodyType == StandardFunctionBodyBlock && !scopeRef->isEvalContext()
                 ? expectedSuperBinding
-                : closestParentOrdinaryFunctionNonLexicalScope()->expectedSuperBinding();
+                : scopeRef->expectedSuperBinding();
             semanticFailIfTrue(functionSuperBinding == SuperBinding::NotNeeded, "super can only be used in a method of a derived class");
         }
     }
@@ -3837,7 +3845,9 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     }
 
     if (baseIsSuper) {
-        semanticFailIfFalse(currentScope()->isFunction(), "super is only valid inside functions");
+        ScopeRef scopeRef = closestParentOrdinaryFunctionNonLexicalScope();
+        // FIXME: Change error message for more suitable. https://bugs.webkit.org/show_bug.cgi?id=155491 
+        semanticFailIfFalse(currentScope()->isFunction() || (scopeRef->isEvalContext() && scopeRef->expectedSuperBinding() == SuperBinding::Needed), "super is only valid inside functions");
         base = context.createSuperExpr(location);
         next();
         currentFunctionScope()->setNeedsSuperBinding();

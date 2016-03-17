@@ -100,11 +100,10 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
         executable->recordParse(unlinkedCodeBlock->codeFeatures(), unlinkedCodeBlock->hasCapturedVariables(), firstLine, firstLine + lineCount, startColumn, endColumn);
         return unlinkedCodeBlock;
     }
-
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
+    DerivedContextType derivedContextType = executable->derivedContextType();
     std::unique_ptr<RootNode> rootNode = parse<RootNode>(
-        &vm, source, Identifier(), builtinMode, strictMode,
-        CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, thisTDZMode);
+        &vm, source, Identifier(), builtinMode, strictMode, CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, thisTDZMode, derivedContextType);
     if (!rootNode)
         return nullptr;
 

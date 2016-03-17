@@ -40,9 +40,7 @@ function shouldBe(actual, expected) {
     }
 
     let a = new A();
-    shouldThrow(() => {
-        a.gen().next();
-    }, `SyntaxError: super is only valid inside functions.`);
+    shouldBe(a.gen().next().value, 42);
 }());
 
 (function () {
