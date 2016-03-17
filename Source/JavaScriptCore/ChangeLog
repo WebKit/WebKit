@@ -1,3 +1,16 @@
+2016-03-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r197380): Build fails with new GCC and Clang
+        https://bugs.webkit.org/show_bug.cgi?id=155044
+
+        Reviewed by Michael Catanzaro.
+
+        In C++, std math functions ceil and floor are overloaded for double and float.
+        Without explicit cast or function pointer assignment, compilers cannot
+        determine which function address is used in the given context.
+
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+
 2016-03-17  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         Invoking super()/super inside of the eval should not lead to SyntaxError

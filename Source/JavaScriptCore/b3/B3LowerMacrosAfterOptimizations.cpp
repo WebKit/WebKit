@@ -92,9 +92,10 @@ private:
                     break;
 
                 Value* functionAddress = nullptr;
-                if (m_value->type() == Double)
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceil);
-                else if (m_value->type() == Float)
+                if (m_value->type() == Double) {
+                    double (*ceilDouble)(double) = ceil;
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceilDouble);
+                } else if (m_value->type() == Float)
                     functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceilf);
                 else
                     RELEASE_ASSERT_NOT_REACHED();
@@ -113,9 +114,10 @@ private:
                     break;
 
                 Value* functionAddress = nullptr;
-                if (m_value->type() == Double)
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, floor);
-                else if (m_value->type() == Float)
+                if (m_value->type() == Double) {
+                    double (*floorDouble)(double) = floor;
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, floorDouble);
+                } else if (m_value->type() == Float)
                     functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, floorf);
                 else
                     RELEASE_ASSERT_NOT_REACHED();
