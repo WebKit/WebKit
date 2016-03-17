@@ -107,7 +107,6 @@ void LayerTreeHostGtk::initialize()
 
     // The non-composited contents are a child of the root layer.
     m_nonCompositedContentLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-    downcast<GraphicsLayerTextureMapper>(*m_nonCompositedContentLayer).setAsNonCompositingLayer();
     m_nonCompositedContentLayer->setDrawsContent(true);
     m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
     m_nonCompositedContentLayer->setSize(m_webPage->size());
@@ -292,8 +291,7 @@ bool LayerTreeHostGtk::flushPendingLayerChanges()
     if (m_viewOverlayRootLayer)
         m_viewOverlayRootLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()), viewportIsStable);
 
-    FloatRect visibleRect(m_webPage->mainFrame()->view()->scrollPosition(), m_webPage->size());
-    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).updateBackingStoreIncludingSubLayers(visibleRect);
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).updateBackingStoreIncludingSubLayers();
     return true;
 }
 
