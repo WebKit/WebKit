@@ -25,4 +25,5 @@ def browser_driver_loader(browser_driver_class):
 load_subclasses(
     dirname=os.path.dirname(os.path.abspath(__file__)),
     base_class_name='BrowserDriver',
+    base_class_file='browser_driver.py',
     loader=browser_driver_loader)
