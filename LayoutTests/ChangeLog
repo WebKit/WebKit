@@ -1,3 +1,14 @@
+2016-03-17  Brady Eidson  <beidson@apple.com>
+
+        Don't try to restore deleted MemoryIndexes if their owning object store is not restored.
+        https://bugs.webkit.org/show_bug.cgi?id=155068
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/deleteindex-4-private-expected.txt: Added.
+        * storage/indexeddb/modern/deleteindex-4-private.html: Added.
+        * storage/indexeddb/modern/resources/deleteindex-4.js: Added.
+
 2016-03-17  Doug Russell  <d_russell@apple.com>
 
         AX: attributes to retrieve focusable and editable ancestors
