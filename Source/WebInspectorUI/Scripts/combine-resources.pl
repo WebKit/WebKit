@@ -103,7 +103,7 @@ sub concatenateFiles($$$)
     }
 }
 
-my $inputDirectoryPattern = "(?!External\/)[^\"]*";
+my $inputDirectoryPattern = "(?!External\/)(?!Workers\/)[^\"]*";
 $inputDirectoryPattern = $inputDirectory . "\/[^\"]*" if $inputDirectory;
 
 concatenateFiles($outputStylesheetName, "<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">", "<link rel=\"stylesheet\" href=\"$outputStylesheetName\">") if defined $outputStylesheetName;

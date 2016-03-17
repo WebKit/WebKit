@@ -1,0 +1,42 @@
+Testing HeapSnapshot Worker and Proxy objects.
+
+
+== Running test suite: HeapSnapshot
+-- Running test case: HeapSnapshotProxy data
+PASS: Should not have an error creating a snapshot.
+PASS: Snapshots totalSize should match.
+PASS: Snapshots totalObjectCount should match.
+
+-- Running test case: HeapSnapshotProxy.prototype.instancesWithClassName
+PASS: Should be at least 1 Window.
+PASS: Window object count is expected.
+PASS: Every className should be 'Window'.
+PASS: Should be at least 1 Function.
+PASS: Function object count is expected.
+PASS: Every className should be 'Function'.
+PASS: Should be at least 1 string.
+PASS: string count is expected.
+PASS: Every className should be 'string'.
+
+-- Running test case: HeapSnapshotProxy.prototype.nodeWithIdentifier and HeapSnapshotNodeProxy data
+PASS: Node className should be 'Window'.
+PASS: Node identifier should match.
+PASS: Node size should match.
+PASS: Node internal state should match.
+PASS: Node gcRoot state should match.
+PASS: Node retainedSize should at least be the size.
+
+-- Running test case: HeapSnapshotProxy.prototype.allocationBucketCounts
+PASS: Result should have 3 buckets, for small/medium/large.
+PASS: Small count should match.
+PASS: Medium count should match.
+PASS: Large count should match.
+
+-- Running test case: HeapSnapshotNodeProxy.prototype.retainedNodes
+PASS: Number of retained nodes should match.
+PASS: Node values should match.
+
+-- Running test case: HeapSnapshotNodeProxy.prototype.retainers
+PASS: Number of retainer nodes should match.
+PASS: Node values should match.
+

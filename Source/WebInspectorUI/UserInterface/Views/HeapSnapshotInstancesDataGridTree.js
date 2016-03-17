@@ -29,7 +29,7 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
     {
         super();
 
-        console.assert(heapSnapshot instanceof WebInspector.HeapSnapshot);
+        console.assert(heapSnapshot instanceof WebInspector.HeapSnapshotProxy || heapSnapshot instanceof WebInspector.HeapSnapshotDiffProxy);
 
         this._heapSnapshot = heapSnapshot;
 

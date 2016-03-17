@@ -125,6 +125,7 @@ my $scriptsRoot = File::Spec->catdir($ENV{'SRCROOT'}, 'Scripts');
 my $uiRoot = File::Spec->catdir($ENV{'SRCROOT'}, 'UserInterface');
 my $targetResourcePath = File::Spec->catdir($ENV{'TARGET_BUILD_DIR'}, $ENV{'UNLOCALIZED_RESOURCES_FOLDER_PATH'});
 my $protocolDir = File::Spec->catdir($targetResourcePath, 'Protocol');
+my $workersDir = File::Spec->catdir($targetResourcePath, 'Workers');
 my $codeMirrorPath = File::Spec->catdir($uiRoot, 'External', 'CodeMirror');
 my $esprimaPath = File::Spec->catdir($uiRoot, 'External', 'Esprima');
 my $eslintPath = File::Spec->catdir($uiRoot, 'External', 'ESLint');
@@ -238,8 +239,9 @@ if ($shouldCombineMain) {
     # Remove ESLint until needed: <https://webkit.org/b/136515> Web Inspector: JavaScript source text editor should have a linter
     unlink $targetESLintJS;
 
-    # Copy the Legacy directory.
+    # Copy the Protocol/Legacy and Workers directories.
     ditto(File::Spec->catfile($uiRoot, 'Protocol', 'Legacy'), File::Spec->catfile($protocolDir, 'Legacy'));
+    ditto(File::Spec->catfile($uiRoot, 'Workers'), $workersDir);
 } else {
     # Keep the files separate for engineering builds.
     ditto($uiRoot, $targetResourcePath);

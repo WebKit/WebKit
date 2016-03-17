@@ -147,7 +147,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         this._showingSnapshotList = false;
         this._heapSnapshotDiff = heapSnapshotDiff;
 
-        this._contentViewContainer.showContentViewForRepresentedObject(heapSnapshotDiff.snapshotForDiff());
+        this._contentViewContainer.showContentViewForRepresentedObject(heapSnapshotDiff);
     }
 
     // Protected
@@ -293,9 +293,11 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
     _takeHeapSnapshotClicked()
     {
         HeapAgent.snapshot(function(error, timestamp, snapshotStringData) {
-            let payload = JSON.parse(snapshotStringData);
-            let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-            WebInspector.timelineManager.heapSnapshotAdded(timestamp, snapshot);
+            let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+            workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                WebInspector.timelineManager.heapSnapshotAdded(timestamp, snapshot);
+            });
         });
     }
 
@@ -363,8 +365,13 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         }
 
         // Selected Comparison.
-        let diff = new WebInspector.HeapSnapshotDiff(this._baselineHeapSnapshotTimelineRecord.heapSnapshot, heapAllocationsTimelineRecord.heapSnapshot);
-        this.showHeapSnapshotDiff(diff);
+        let snapshot1 = this._baselineHeapSnapshotTimelineRecord.heapSnapshot;
+        let snapshot2 = heapAllocationsTimelineRecord.heapSnapshot;
+        let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+        workerProxy.createSnapshotDiff(snapshot1.proxyObjectId, snapshot2.proxyObjectId, ({objectId, snapshotDiff: serializedSnapshotDiff}) => {
+            let diff = WebInspector.HeapSnapshotDiffProxy.deserialize(objectId, serializedSnapshotDiff);
+            this.showHeapSnapshotDiff(diff);
+        });
 
         this._baselineDataGridNode.clearBaseline();
         this._selectingComparisonHeapSnapshots = false;

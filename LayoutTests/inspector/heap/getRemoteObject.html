@@ -33,16 +33,20 @@ function test()
         test: (resolve, reject) => {
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                let payload = JSON.parse(snapshotStringData);
-                let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-                let heapSnapshotNode = snapshot.instancesWithClassName("Window")[0];
-                InspectorTest.expectThat(heapSnapshotNode, "Should should include at least one 'Window' instance.");
+                let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                    snapshot.instancesWithClassName("Window", (windows) => {
+                        let heapSnapshotNode = windows[0];
+                        InspectorTest.expectThat(heapSnapshotNode, "Should should include at least one 'Window' instance.");
 
-                HeapAgent.getRemoteObject(heapSnapshotNode.id, "test", (error, remoteObjectPayload) => {
-                    InspectorTest.expectThat(!error, "Should not have an error getting remote object.");
-                    let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
-                    InspectorTest.log(remoteObject.description);
-                    resolve();
+                        HeapAgent.getRemoteObject(heapSnapshotNode.id, "test", (error, remoteObjectPayload) => {
+                            InspectorTest.expectThat(!error, "Should not have an error getting remote object.");
+                            let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
+                            InspectorTest.log(remoteObject.description);
+                            resolve();
+                        });
+                    });
                 });
             });
         }
@@ -71,19 +75,22 @@ function test()
                 InspectorTest.evaluateInPage("triggerCreateMapObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
                     InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                    let payload = JSON.parse(snapshotStringData);
-                    let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-                    let maps = snapshot.instancesWithClassName("Map");
-                    InspectorTest.expectThat(maps.length, "Should should include at least one 'Map' instance.");
+                    let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                    workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                        let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                        snapshot.instancesWithClassName("Map", (maps) => {
+                            InspectorTest.expectThat(maps.length, "Should should include at least one 'Map' instance.");
 
-                    InspectorTest.evaluateInPage("triggerDeleteMapObject()");
-                    HeapAgent.gc();
+                            InspectorTest.evaluateInPage("triggerDeleteMapObject()");
+                            HeapAgent.gc();
 
-                    let heapSnapshotNode = maps.reduce((result, x) => result.id < x.id ? x : result, maps[0]);
-                    HeapAgent.getRemoteObject(heapSnapshotNode.id, "test", (error, remoteObjectPayload) => {
-                        InspectorTest.expectThat(error, "Should get an error when object has been collected.");
-                        InspectorTest.pass(error);
-                        resolve();
+                            let heapSnapshotNode = maps.reduce((result, x) => result.id < x.id ? x : result, maps[0]);
+                            HeapAgent.getRemoteObject(heapSnapshotNode.id, "test", (error, remoteObjectPayload) => {
+                                InspectorTest.expectThat(error, "Should get an error when object has been collected.");
+                                InspectorTest.pass(error);
+                                resolve();
+                            });
+                        });
                     });
                 });
             });

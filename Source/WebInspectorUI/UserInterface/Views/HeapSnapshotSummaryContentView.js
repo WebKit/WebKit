@@ -27,7 +27,7 @@ WebInspector.HeapSnapshotSummaryContentView = class HeapSnapshotSummaryContentVi
 {
     constructor(heapSnapshot, extraArguments)
     {
-        console.assert(heapSnapshot instanceof WebInspector.HeapSnapshot);
+        console.assert(heapSnapshot instanceof WebInspector.HeapSnapshotProxy || heapSnapshot instanceof WebInspector.HeapSnapshotDiffProxy);
 
         super(heapSnapshot);
 
@@ -187,42 +187,30 @@ WebInspector.HeapSnapshotSummaryContentView = class HeapSnapshotSummaryContentVi
             appendEmptyMessage.call(this, this._classCountBreakdownLegendElement, WebInspector.UIString("No objects"));
 
         // Allocation size groups.
-        let small = 0;
-        let medium = 0;
-        let large = 0;
-        let veryLarge = 0;
-
         const smallAllocationSize = 48;
         const mediumAllocationSize = 128;
         const largeAllocationSize = 512;
 
-        this._heapSnapshot.instances.forEach(({size}) => {
-            if (size < smallAllocationSize)
-                small++;
-            else if (size < mediumAllocationSize)
-                medium++;
-            else if (size < largeAllocationSize)
-                large++;
-            else
-                veryLarge++;
+        this._heapSnapshot.allocationBucketCounts([smallAllocationSize, mediumAllocationSize, largeAllocationSize], (results) => {
+            let [small, medium, large, veryLarge] = results;
+
+            if (small + medium + large + veryLarge) {
+                appendLegendRow.call(this, this._allocationSizeBreakdownLegendElement, "small", WebInspector.UIString("Small %s").format(Number.bytesToString(smallAllocationSize)), small);
+                appendLegendRow.call(this, this._allocationSizeBreakdownLegendElement, "medium", WebInspector.UIString("Medium %s").format(Number.bytesToString(mediumAllocationSize)), medium);
+                appendLegendRow.call(this, this._allocationSizeBreakdownLegendElement, "large", WebInspector.UIString("Large %s").format(Number.bytesToString(largeAllocationSize)), large);
+                appendLegendRow.call(this, this._allocationSizeBreakdownLegendElement, "very-large", WebInspector.UIString("Very Large"), veryLarge);
+
+                this._allocationSizeBreakdownCircleChart.segments = ["small", "medium", "large", "very-large"];
+                this._allocationSizeBreakdownCircleChart.values = [small, medium, large, veryLarge];
+                this._allocationSizeBreakdownCircleChart.updateLayout();
+
+                let averageAllocationSizeElement = this._allocationSizeBreakdownCircleChart.centerElement.appendChild(document.createElement("div"));
+                averageAllocationSizeElement.classList.add("average-allocation-size");
+                averageAllocationSizeElement.textContent = Number.bytesToString(this._heapSnapshot.totalSize / this._heapSnapshot.totalObjectCount);
+                averageAllocationSizeElement.title = WebInspector.UIString("Average allocation size");
+            } else
+                appendEmptyMessage.call(this, this._allocationSizeBreakdownLegendElement, WebInspector.UIString("No objects"));
         });
-
-        if (small + medium + large + veryLarge) {
-            appendLegendRow.call(this, this._allocationSizeBreakdownLegendElement, "small", WebInspector.UIString("Small %s").format(Number.bytesToString(smallAllocationSize)), small);
-            appendLegendRow.call(this, this._allocationSizeBreakdownLegendElement, "medium", WebInspector.UIString("Medium %s").format(Number.bytesToString(mediumAllocationSize)), medium);
-            appendLegendRow.call(this, this._allocationSizeBreakdownLegendElement, "large", WebInspector.UIString("Large %s").format(Number.bytesToString(largeAllocationSize)), large);
-            appendLegendRow.call(this, this._allocationSizeBreakdownLegendElement, "very-large", WebInspector.UIString("Very Large"), veryLarge);
-
-            this._allocationSizeBreakdownCircleChart.segments = ["small", "medium", "large", "very-large"];
-            this._allocationSizeBreakdownCircleChart.values = [small, medium, large, veryLarge];
-            this._allocationSizeBreakdownCircleChart.updateLayout();
-
-            let averageAllocationSizeElement = this._allocationSizeBreakdownCircleChart.centerElement.appendChild(document.createElement("div"));
-            averageAllocationSizeElement.classList.add("average-allocation-size");
-            averageAllocationSizeElement.textContent = Number.bytesToString(this._heapSnapshot.totalSize / this._heapSnapshot.totalObjectCount);
-            averageAllocationSizeElement.title = WebInspector.UIString("Average allocation size");
-        } else
-            appendEmptyMessage.call(this, this._allocationSizeBreakdownLegendElement, WebInspector.UIString("No objects"));
     }
 
     // Protected

@@ -95,25 +95,25 @@ WebInspector.HeapSnapshotClassDataGridNode = class HeapSnapshotClassDataGridNode
     {
         this.removeEventListener("populate", this._populate, this);
 
-        let instances = this._tree.heapSnapshot.instancesWithClassName(this._data.className);
+        this._tree.heapSnapshot.instancesWithClassName(this._data.className, (instances) => {
+            // Batch.
+            if (instances.length > WebInspector.HeapSnapshotClassDataGridNode.ChildrenBatchLimit) {
+                // FIXME: This should respect the this._tree.includeInternalObjects setting.
+                this._instances = instances;
+                this._batched = true;
+                this._updateBatchedSort();
+                this._fetchBatch(WebInspector.HeapSnapshotClassDataGridNode.ChildrenBatchLimit);
+                return;
+            }
 
-        // Batch.
-        if (instances.length > WebInspector.HeapSnapshotClassDataGridNode.ChildrenBatchLimit) {
-            // FIXME: This should respect the this._tree.includeInternalObjects setting.
-            this._instances = instances;
-            this._batched = true;
-            this._updateBatchedSort();
-            this._fetchBatch(WebInspector.HeapSnapshotClassDataGridNode.ChildrenBatchLimit);
-            return;
-        }
+            for (let instance of instances) {
+                if (instance.internal && !this._tree.includeInternalObjects)
+                    continue;
+                this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this._tree));
+            }
 
-        for (let instance of instances) {
-            if (instance.internal && !this._tree.includeInternalObjects)
-                continue;
-            this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this._tree));
-        }
-
-        this.sort();
+            this.sort();
+        });
     }
 
     _fetchBatch(batchSize)

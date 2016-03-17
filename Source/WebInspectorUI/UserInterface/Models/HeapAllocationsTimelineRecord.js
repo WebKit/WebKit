@@ -30,7 +30,7 @@ WebInspector.HeapAllocationsTimelineRecord = class HeapAllocationsTimelineRecord
         super(WebInspector.TimelineRecord.Type.HeapAllocations, timestamp, timestamp);
 
         console.assert(typeof timestamp === "number");
-        console.assert(heapSnapshot instanceof WebInspector.HeapSnapshot);
+        console.assert(heapSnapshot instanceof WebInspector.HeapSnapshotProxy);
 
         this._timestamp = timestamp;
         this._heapSnapshot = heapSnapshot;

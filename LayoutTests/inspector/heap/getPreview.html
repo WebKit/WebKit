@@ -52,15 +52,17 @@ function test()
                 InspectorTest.evaluateInPage("triggerCreateStringObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
                     InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                    let payload = JSON.parse(snapshotStringData);
-                    let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-
-                    let strings = snapshot.instancesWithClassName("string");
-                    let heapSnapshotNode = strings.reduce((result, x) => result.id < x.id ? x : result, strings[0]);
-                    HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
-                        InspectorTest.expectThat(!error, "Should not have an error getting preview.");
-                        InspectorTest.log("STRING: " + string);
-                        resolve();
+                    let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                    workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                        let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                        snapshot.instancesWithClassName("string", (strings) => {
+                            let heapSnapshotNode = strings.reduce((result, x) => result.id < x.id ? x : result, strings[0]);
+                            HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
+                                InspectorTest.expectThat(!error, "Should not have an error getting preview.");
+                                InspectorTest.log("STRING: " + string);
+                                resolve();
+                            });
+                        });
                     });
                 });
             });
@@ -75,15 +77,17 @@ function test()
                 InspectorTest.evaluateInPage("triggerCreateFunctionObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
                     InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                    let payload = JSON.parse(snapshotStringData);
-                    let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-
-                    let functions = snapshot.instancesWithClassName("Function");
-                    let heapSnapshotNode = functions.reduce((result, x) => result.id < x.id ? x : result, functions[0]);
-                    HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
-                        InspectorTest.expectThat(!error, "Should not have an error getting preview.");
-                        InspectorTest.log("FUNCTION DETAILS: " + JSON.stringify(functionDetails, jsonFilter, 4));
-                        resolve();
+                    let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                    workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                        let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                        snapshot.instancesWithClassName("Function", (functions) => {
+                            let heapSnapshotNode = functions.reduce((result, x) => result.id < x.id ? x : result, functions[0]);
+                            HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
+                                InspectorTest.expectThat(!error, "Should not have an error getting preview.");
+                                InspectorTest.log("FUNCTION DETAILS: " + JSON.stringify(functionDetails, jsonFilter, 4));
+                                resolve();
+                            });
+                        });
                     });
                 });
             });
@@ -98,15 +102,17 @@ function test()
                 InspectorTest.evaluateInPage("triggerCreateMapObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
                     InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                    let payload = JSON.parse(snapshotStringData);
-                    let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-
-                    let maps = snapshot.instancesWithClassName("Map");
-                    let heapSnapshotNode = maps.reduce((result, x) => result.id < x.id ? x : result, maps[0]);
-                    HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
-                        InspectorTest.expectThat(!error, "Should not have an error getting preview.");
-                        InspectorTest.log("OBJECT PREVIEW: " + JSON.stringify(objectPreviewPayload, jsonFilter, 4));
-                        resolve();
+                    let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                    workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                        let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                        snapshot.instancesWithClassName("Map", (maps) => {
+                            let heapSnapshotNode = maps.reduce((result, x) => result.id < x.id ? x : result, maps[0]);
+                            HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
+                                InspectorTest.expectThat(!error, "Should not have an error getting preview.");
+                                InspectorTest.log("OBJECT PREVIEW: " + JSON.stringify(objectPreviewPayload, jsonFilter, 4));
+                                resolve();
+                            });
+                        });
                     });
                 });
             });
@@ -136,18 +142,21 @@ function test()
                 InspectorTest.evaluateInPage("triggerCreateMapObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
                     InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                    let payload = JSON.parse(snapshotStringData);
-                    let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
+                    let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                    workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                        let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
 
-                    InspectorTest.evaluateInPage("triggerDeleteMapObject()");
-                    HeapAgent.gc();
+                        InspectorTest.evaluateInPage("triggerDeleteMapObject()");
+                        HeapAgent.gc();
 
-                    let maps = snapshot.instancesWithClassName("Map");
-                    let heapSnapshotNode = maps.reduce((result, x) => result.id < x.id ? x : result, maps[0]);
-                    HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
-                        InspectorTest.expectThat(error, "Should get an error when object has been collected.");
-                        InspectorTest.pass(error);
-                        resolve();
+                        snapshot.instancesWithClassName("Map", (maps) => {
+                            let heapSnapshotNode = maps.reduce((result, x) => result.id < x.id ? x : result, maps[0]);
+                            HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
+                                InspectorTest.expectThat(error, "Should get an error when object has been collected.");
+                                InspectorTest.pass(error);
+                                resolve();
+                            });
+                        });
                     });
                 });
             });

@@ -25,18 +25,33 @@
 
 // Directed edge between two HeapSnapshotNodes 'from' and 'to'.
 
-WebInspector.HeapSnapshotEdge = class HeapSnapshotEdge
+WebInspector.HeapSnapshotEdgeProxy = class HeapSnapshotEdgeProxy
 {
-    constructor(from, to, type, data)
+    constructor(objectId, fromIdentifier, toIdentifier, type, data)
     {
-        this.from = from;
-        this.to = to;
+        this._proxyObjectId = objectId;
+
+        console.assert(type in WebInspector.HeapSnapshotEdgeProxy.EdgeType);
+
+        this.fromIdentifier = fromIdentifier;
+        this.toIdentifier = toIdentifier;
         this.type = type;
         this.data = data;
+
+        this.from = null;
+        this.to = null;
+    }
+
+    // Static
+
+    static deserialize(objectId, serializedEdge)
+    {
+        let {from, to, type, data} = serializedEdge;
+        return new WebInspector.HeapSnapshotEdgeProxy(objectId, from, to, type, data);
     }
 };
 
-WebInspector.HeapSnapshotEdge.EdgeType = {
+WebInspector.HeapSnapshotEdgeProxy.EdgeType = {
     Internal: "Internal",       // No data.
     Property: "Property",       // data is string property name.
     Index: "Index",             // data is numeric index.

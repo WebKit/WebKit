@@ -29,7 +29,7 @@ WebInspector.HeapSnapshotRootPath = class HeapSnapshotRootPath extends WebInspec
     {
         super();
 
-        console.assert(!node || node instanceof WebInspector.HeapSnapshotNode);
+        console.assert(!node || node instanceof WebInspector.HeapSnapshotNodeProxy);
         console.assert(!pathComponent || typeof pathComponent === "string");
         console.assert(!parent || parent instanceof WebInspector.HeapSnapshotRootPath);
 
@@ -136,16 +136,16 @@ WebInspector.HeapSnapshotRootPath = class HeapSnapshotRootPath extends WebInspec
 
     appendEdge(edge)
     {
-        console.assert(edge instanceof WebInspector.HeapSnapshotEdge);
+        console.assert(edge instanceof WebInspector.HeapSnapshotEdgeProxy);
 
         switch (edge.type) {
-        case WebInspector.HeapSnapshotEdge.EdgeType.Internal:
+        case WebInspector.HeapSnapshotEdgeProxy.EdgeType.Internal:
             return this.appendInternal(edge.to);
-        case WebInspector.HeapSnapshotEdge.EdgeType.Index:
+        case WebInspector.HeapSnapshotEdgeProxy.EdgeType.Index:
             return this.appendArrayIndex(edge.to, edge.data);
-        case WebInspector.HeapSnapshotEdge.EdgeType.Property:
+        case WebInspector.HeapSnapshotEdgeProxy.EdgeType.Property:
             return this.appendPropertyName(edge.to, edge.data);
-        case WebInspector.HeapSnapshotEdge.EdgeType.Variable:
+        case WebInspector.HeapSnapshotEdgeProxy.EdgeType.Variable:
             return this.appendVariableName(edge.to, edge.data);
         }
 

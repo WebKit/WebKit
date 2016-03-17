@@ -1,0 +1,262 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    // Simple HeapSnapshot representation.
+
+    WebInspector.TestHeapSnapshotNode = class TestHeapSnapshotNode
+    {
+        constructor(identifier, className, size, internal)
+        {
+            this.id = identifier;
+            this.className = className;
+            this.size = size; 
+            this.internal = internal;
+            this.gcRoot = false;
+            this.outgoingEdges = [];
+            this.incomingEdges = [];
+        }
+    }
+
+    WebInspector.TestHeapSnapshotEdge = class TestHeapSnapshotEdge
+    {
+        constructor(from, to, type, data)
+        {
+            this.from = from;
+            this.to = to;
+            this.type = type;
+            this.data = data;
+        }
+    };
+
+    WebInspector.TestHeapSnapshot = class TestHeapSnapshot
+    {
+        constructor(rootNode, nodes, nodeMap)
+        {
+            console.assert(rootNode instanceof WebInspector.TestHeapSnapshotNode);
+            console.assert(nodes.every((n) => n instanceof WebInspector.TestHeapSnapshotNode));
+
+            this.rootNode = rootNode;
+            this.nodes = nodes;
+            this.nodeMap = nodeMap;
+            this.totalSize = nodes.reduce((sum, node) => sum += node.size, 0);
+            this.totalObjectCount = nodes.length;
+        }
+
+        static fromPayload(payload)
+        {
+            let {version, nodes, nodeClassNames, edges, edgeTypes, edgeNames} = payload;
+            console.assert(version === 1, "Only know how to handle JavaScriptCore Heap Snapshot Format Version 1");
+
+            let nodeMap = new Map;
+
+            // Turn nodes into real nodes.
+            let processedNodes = [];
+            for (let i = 0, length = nodes.length; i < length;) {
+                let id = nodes[i++];
+                let size = nodes[i++];
+                let classNameIndex = nodes[i++];
+                let internal = nodes[i++];
+
+                let node = new WebInspector.TestHeapSnapshotNode(id, nodeClassNames[classNameIndex], size, !!internal);
+                nodeMap.set(id, node);
+                processedNodes.push(node);
+            }
+
+            // Turn edges into real edges and set them on the nodes.
+            for (let i = 0, length = edges.length; i < length;) {
+                let fromIdentifier = edges[i++];
+                let toIdentifier = edges[i++];
+                let edgeTypeIndex = edges[i++];
+                let data = edges[i++];
+
+                let from = nodeMap.get(fromIdentifier);
+                let to = nodeMap.get(toIdentifier);
+                let type = edgeTypes[edgeTypeIndex];
+                if (type === "Property" || type === "Variable")
+                    data = edgeNames[data];
+
+                let edge = new WebInspector.TestHeapSnapshotEdge(from, to, type, data);
+                from.outgoingEdges.push(edge);
+                to.incomingEdges.push(edge);
+            }
+
+            // Root node.
+            let rootNode = nodeMap.get(0);
+            console.assert(rootNode, "Node with identifier 0 is the synthetic <root> node.");
+            console.assert(rootNode.outgoingEdges.length > 0, "This had better have children!");
+            console.assert(rootNode.incomingEdges.length === 0, "This had better not have back references!");
+
+            // Mark GC roots.
+            let rootNodeEdges = rootNode.outgoingEdges;
+            for (let i = 0, length = rootNodeEdges.length; i < length; ++i)
+                rootNodeEdges[i].to.gcRoot = true;
+
+            return new WebInspector.TestHeapSnapshot(rootNode, processedNodes, nodeMap);
+        }
+
+        // Public
+
+        instancesWithClassName(className)
+        {
+            let results = [];
+            for (let i = 0; i < this.nodes.length; ++i) {
+                let node = this.nodes[i];
+                if (node.className === className)
+                    results.push(node);
+            }
+            return results;
+        }
+    };
+
+    // ------
+
+    let suite = InspectorTest.createAsyncSuite("HeapSnapshot");
+
+    let snapshot = null;
+    let snapshotNodeForWindowObject = null;
+    let testSnapshot = null;
+    let testSnapshotNodeForWindowObject = null;
+
+    function compareNodes(node1, node2) {
+        return node1.id === node2.id
+            && node1.size === node2.size
+            && node1.className === node2.className
+            && node1.internal === node2.internal
+            && node1.gcRoot === node2.gcRoot;
+    }
+
+    suite.addTestCase({
+        name: "HeapSnapshotProxy data",
+        test: (resolve, reject) => {
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+                InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+                testSnapshot = WebInspector.TestHeapSnapshot.fromPayload(JSON.parse(snapshotStringData));
+                let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                    InspectorTest.assert(testSnapshot, "Created TestHeapSnapshot");
+                    InspectorTest.assert(snapshot, "Created HeapSnapshotProxy");
+                    InspectorTest.expectThat(snapshot.totalSize === testSnapshot.totalSize, "Snapshots totalSize should match.");
+                    InspectorTest.expectThat(snapshot.totalObjectCount === testSnapshot.totalObjectCount, "Snapshots totalObjectCount should match.");
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshotProxy.prototype.instancesWithClassName",
+        test: (resolve, reject) => {
+            let windowObjects = testSnapshot.instancesWithClassName("Window")
+            let windowObjectCount = windowObjects.length;
+            let functionObjectCount = testSnapshot.instancesWithClassName("Function").length;
+            let stringCount = testSnapshot.instancesWithClassName("string").length;
+
+            snapshot.instancesWithClassName("Window", (windows) => {
+                testSnapshotNodeForWindowObject = windowObjects[0]; // Used by later tests.
+                snapshotNodeForWindowObject = windows[0]; // Used by later tests.
+
+                InspectorTest.expectThat(windows.length > 0, "Should be at least 1 Window.");
+                InspectorTest.expectThat(windows.length === windowObjectCount, "Window object count is expected.");
+                InspectorTest.expectThat(windows.every((node) => node.className === "Window"), "Every className should be 'Window'.");
+            });
+
+            snapshot.instancesWithClassName("Function", (functions) => {
+                InspectorTest.expectThat(functions.length > 0, "Should be at least 1 Function.");
+                InspectorTest.expectThat(functions.length === functionObjectCount, "Function object count is expected.");
+                InspectorTest.expectThat(functions.every((node) => node.className === "Function"), "Every className should be 'Function'.");
+            });
+
+            snapshot.instancesWithClassName("string", (strings) => {
+                InspectorTest.expectThat(strings.length > 0, "Should be at least 1 string.");
+                InspectorTest.expectThat(strings.length === stringCount, "string count is expected.");
+                InspectorTest.expectThat(strings.every((node) => node.className === "string"), "Every className should be 'string'.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshotProxy.prototype.nodeWithIdentifier and HeapSnapshotNodeProxy data",
+        test: (resolve, reject) => {
+            snapshot.nodeWithIdentifier(testSnapshotNodeForWindowObject.id, (heapSnapshotNode) => {
+                InspectorTest.expectThat(heapSnapshotNode.className === "Window", "Node className should be 'Window'.");
+                InspectorTest.expectThat(heapSnapshotNode.id === testSnapshotNodeForWindowObject.id, "Node identifier should match.")
+                InspectorTest.expectThat(heapSnapshotNode.size === testSnapshotNodeForWindowObject.size, "Node size should match.");
+                InspectorTest.expectThat(heapSnapshotNode.internal === testSnapshotNodeForWindowObject.internal, "Node internal state should match.");
+                InspectorTest.expectThat(heapSnapshotNode.gcRoot === testSnapshotNodeForWindowObject.gcRoot, "Node gcRoot state should match.");
+                InspectorTest.expectThat(heapSnapshotNode.retainedSize >= heapSnapshotNode.size, "Node retainedSize should at least be the size.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshotProxy.prototype.allocationBucketCounts",
+        test: (resolve, reject) => {
+            let testSmall = 0, testMedium = 0, testLarge = 0;
+            const smallSize = 32, mediumSize = 128;
+            for (let {size} of testSnapshot.nodes) {
+                if (size < smallSize)
+                    testSmall++;
+                else if (size < mediumSize)
+                    testMedium++;
+                else
+                    testLarge++;
+            }
+
+            snapshot.allocationBucketCounts([smallSize, mediumSize], (results) => {
+                let [small, medium, large] = results;
+                InspectorTest.expectThat(results.length === 3, "Result should have 3 buckets, for small/medium/large.");
+                InspectorTest.expectThat(small === testSmall, "Small count should match.");
+                InspectorTest.expectThat(medium === testMedium, "Medium count should match.");
+                InspectorTest.expectThat(large === testLarge, "Large count should match.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshotNodeProxy.prototype.retainedNodes",
+        test: (resolve, reject) => {
+            let expectedNodes = testSnapshotNodeForWindowObject.outgoingEdges.map((edge) => edge.to);
+            expectedNodes.sort((a, b) => a.id - b.id);
+
+            snapshotNodeForWindowObject.retainedNodes((nodes) => {
+                nodes.sort((a, b) => a.id - b.id);
+                InspectorTest.assert(nodes.length > 0, "Test only makes since if there are retained nodes");
+                InspectorTest.expectThat(nodes.length === expectedNodes.length, "Number of retained nodes should match.");
+                InspectorTest.expectThat(nodes.every((node, i) => compareNodes(node, expectedNodes[i])), "Node values should match.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshotNodeProxy.prototype.retainers",
+        test: (resolve, reject) => {
+            let expectedNodes = testSnapshotNodeForWindowObject.incomingEdges.map((edge) => edge.from);
+            expectedNodes.sort((a, b) => a.id - b.id);
+
+            snapshotNodeForWindowObject.retainers((nodes) => {
+                nodes.sort((a, b) => a.id - b.id);
+                InspectorTest.assert(nodes.length > 0, "Test only makes since if there are retainer nodes");
+                InspectorTest.expectThat(nodes.length === expectedNodes.length, "Number of retainer nodes should match.");
+                InspectorTest.expectThat(nodes.every((node, i) => compareNodes(node, expectedNodes[i])), "Node values should match.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing HeapSnapshot Worker and Proxy objects.</p>
+</body>
+</html>

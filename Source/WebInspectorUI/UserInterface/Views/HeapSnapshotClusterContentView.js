@@ -29,7 +29,7 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
     {
         super(heapSnapshot);
 
-        console.assert(heapSnapshot instanceof WebInspector.HeapSnapshot);
+        console.assert(heapSnapshot instanceof WebInspector.HeapSnapshotProxy || heapSnapshot instanceof WebInspector.HeapSnapshotDiffProxy);
 
         this._heapSnapshot = heapSnapshot;
 

@@ -1,3 +1,200 @@
+2016-03-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: HeapSnapshots are slow and use too much memory
+        https://bugs.webkit.org/show_bug.cgi?id=155571
+
+        Reviewed by Timothy Hatcher.
+
+        This is the first inclusion of Workers into Web Inspector. In this case
+        the Main side merely needs to make requests of the Worker and get back
+        objects that it can interact with more.
+        
+        New file heirarchies:
+
+            UserInterface/Proxies
+                - new Proxy classes in the Main page.
+                - treat like Model classes, but not quite model.
+
+            UserInterface/Workers/HeapSnapshotWorker
+                - new Worker classes for Workers. No WebInspector namespace.
+                - no minification of these resources, they are simply copied.
+
+        Remote procedure call interface between the Main/Worker page happens
+        through the WorkerProxy and Worker classes. There are simple ways
+        to perform factory style methods and call methods on objects, and
+        get the result in a callback. Similiar to frontend <-> backend agent
+        communication:
+
+            HeapSnapshotWorkerProxy: (Main world)
+                - creates the worker
+                - performAction("actionName", arguments, callback)
+                - callMethod(objectId, "methodName", arguments, callback)
+                - handle message => dispatch event or invoke callback
+
+            HeapSnapshotWorker: (Worker world)
+                - sendEvent("eventName", eventData)
+                - handle message => dispatch action or method on object
+        
+        Proxy object methods are boilerplate calls to performAction/callMethod
+        with deserialization of responses. The rest of the frontend can just
+        treat Proxy objects as Model objects with some data and async methods.
+
+        Because the Node/Edge data is so small, objects are cheaply created
+        when needed and not cached. This means that there may be duplicate
+        HeapSnapshotNode's for the same node. For example if different Views
+        both request instancesWithClassName("Foo"). This is fine, as none
+        of our Views really care about object uniqueness, they are only
+        interested in the data or querying for more data.
+
+        * Scripts/combine-resources.pl:
+        * Scripts/copy-user-interface-resources.pl:
+        Copy the Workers directory to the resources directory.
+        Its code is only meant to be loaded by Workers, so it
+        shouldn't be included in the Main page.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/Models/HeapSnapshot.js: Removed.
+        * UserInterface/Models/HeapSnapshotDiff.js: Removed.
+        * UserInterface/Models/HeapSnapshotEdge.js: Removed.
+        * UserInterface/Models/HeapSnapshotNode.js: Removed.
+        Replace the old simple Model classes with Proxy classes that interact
+        with the Worker.
+
+        * UserInterface/Models/HeapAllocationsInstrument.js:
+        (WebInspector.HeapAllocationsInstrument.prototype._takeHeapSnapshot):
+        (WebInspector.HeapAllocationsInstrument):
+        * UserInterface/Models/HeapAllocationsTimelineRecord.js:
+        (WebInspector.HeapAllocationsTimelineRecord):
+        * UserInterface/Models/HeapSnapshotRootPath.js:
+        (WebInspector.HeapSnapshotRootPath):
+        (WebInspector.HeapSnapshotRootPath.prototype.appendEdge):
+        * UserInterface/Protocol/HeapObserver.js:
+        (WebInspector.HeapObserver.prototype.trackingStart):
+        (WebInspector.HeapObserver.prototype.trackingComplete):
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView.prototype.showHeapSnapshotDiff):
+        (WebInspector.HeapAllocationsTimelineView.prototype._takeHeapSnapshotClicked):
+        (WebInspector.HeapAllocationsTimelineView.prototype._dataGridNodeSelected):
+        (WebInspector.HeapAllocationsTimelineView):
+        * UserInterface/Views/HeapSnapshotClassDataGridNode.js:
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._populate):
+        * UserInterface/Views/HeapSnapshotClusterContentView.js:
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.node.shortestGCRootPath.):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler.appendPath):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler.stringifyEdge):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler):
+        * UserInterface/Views/HeapSnapshotInstancesContentView.js:
+        (WebInspector.HeapSnapshotInstancesContentView):
+        * UserInterface/Views/HeapSnapshotInstancesDataGridTree.js:
+        (WebInspector.HeapSnapshotInstancesDataGridTree):
+        * UserInterface/Views/HeapSnapshotSummaryContentView.js:
+        (WebInspector.HeapSnapshotSummaryContentView):
+        Update existing code to expect the new Proxy objects or create
+        the new HeapSnapshot using workers.
+
+        * UserInterface/Proxies/HeapSnapshotDiffProxy.js: Added.
+        (WebInspector.HeapSnapshotDiffProxy):
+        (WebInspector.HeapSnapshotDiffProxy.deserialize):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.get snapshot1):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.get snapshot2):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.get totalSize):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.get totalObjectCount):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.get categories):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.allocationBucketCounts):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.instancesWithClassName):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.nodeWithIdentifier):
+        A HeapSnapshotDiffProxy looks like a HeapSnapshotProxy and responds to
+        the same methods, but has the extra snapshot1/2 pointers.
+
+        * UserInterface/Proxies/HeapSnapshotEdgeProxy.js:
+        (WebInspector.HeapSnapshotEdgeProxy):
+        (WebInspector.HeapSnapshotEdgeProxy.deserialize):
+        Edge data. No methods are proxied at this point.
+
+        * UserInterface/Proxies/HeapSnapshotNodeProxy.js: Added.
+        (WebInspector.HeapSnapshotNodeProxy):
+        (WebInspector.HeapSnapshotNodeProxy.deserialize):
+        (WebInspector.HeapSnapshotNodeProxy.prototype.shortestGCRootPath):
+        (WebInspector.HeapSnapshotNodeProxy.prototype.dominatedNodes):
+        (WebInspector.HeapSnapshotNodeProxy.prototype.retainedNodes):
+        (WebInspector.HeapSnapshotNodeProxy.prototype.retainers):
+        Node data and methods to query for node relationships.
+
+        * UserInterface/Proxies/HeapSnapshotProxy.js: Added.
+        (WebInspector.HeapSnapshotProxy):
+        (WebInspector.HeapSnapshotProxy.deserialize):
+        (WebInspector.HeapSnapshotProxy.prototype.get proxyObjectId):
+        (WebInspector.HeapSnapshotProxy.prototype.get identifier):
+        (WebInspector.HeapSnapshotProxy.prototype.get totalSize):
+        (WebInspector.HeapSnapshotProxy.prototype.get totalObjectCount):
+        (WebInspector.HeapSnapshotProxy.prototype.get categories):
+        (WebInspector.HeapSnapshotProxy.prototype.allocationBucketCounts):
+        (WebInspector.HeapSnapshotProxy.prototype.instancesWithClassName):
+        (WebInspector.HeapSnapshotProxy.prototype.nodeWithIdentifier):
+        Snapshot data and methods to query for nodes.
+
+        * UserInterface/Proxies/HeapSnapshotWorkerProxy.js: Added.
+        (WebInspector.HeapSnapshotWorkerProxy):
+        (WebInspector.HeapSnapshotWorkerProxy.singleton):
+        (WebInspector.HeapSnapshotWorkerProxy.prototype.createSnapshot):
+        (WebInspector.HeapSnapshotWorkerProxy.prototype.createSnapshotDiff):
+        (WebInspector.HeapSnapshotWorkerProxy.prototype.performAction):
+        (WebInspector.HeapSnapshotWorkerProxy.prototype.callMethod):
+        (WebInspector.HeapSnapshotWorkerProxy.prototype._postMessage):
+        (WebInspector.HeapSnapshotWorkerProxy.prototype._handleMessage):
+        Singleton factory for the worker and proxied communication with the worker.
+        Provide means for invoking "factory actions" and "object methods".
+
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshotWorker.js: Added.
+        (HeapSnapshotWorker):
+        (HeapSnapshotWorker.prototype.createSnapshot):
+        (HeapSnapshotWorker.prototype.createSnapshotDiff):
+        (HeapSnapshotWorker.prototype.sendEvent):
+        (HeapSnapshotWorker.prototype._handleMessage):
+        Main worker code. Handle dispatching actions and methods.
+
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshot.js: Added.
+        (HeapSnapshot):
+        (HeapSnapshot.buildCategories):
+        (HeapSnapshot.allocationBucketCounts):
+        (HeapSnapshot.instancesWithClassName):
+        (HeapSnapshot.prototype.allocationBucketCounts):
+        (HeapSnapshot.prototype.instancesWithClassName):
+        (HeapSnapshot.prototype.nodeWithIdentifier):
+        (HeapSnapshot.prototype.shortestGCRootPath):
+        (HeapSnapshot.prototype.dominatedNodes):
+        (HeapSnapshot.prototype.retainedNodes):
+        (HeapSnapshot.prototype.retainers):
+        (HeapSnapshot.prototype.serialize):
+        (HeapSnapshot.prototype.serializeNode):
+        (HeapSnapshot.prototype.serializeEdge):
+        (HeapSnapshot.prototype._buildOutgoingEdges):
+        (HeapSnapshot.prototype._buildIncomingEdges):
+        (HeapSnapshot.prototype._buildPostOrderIndexes):
+        (HeapSnapshot.prototype._buildDominatorIndexes):
+        (HeapSnapshot.prototype._buildRetainedSizes):
+        (HeapSnapshot.prototype._gcRootPathes.visitNode):
+        (HeapSnapshot.prototype._gcRootPathes):
+        (HeapSnapshotDiff):
+        (HeapSnapshotDiff.prototype.allocationBucketCounts):
+        (HeapSnapshotDiff.prototype.instancesWithClassName):
+        (HeapSnapshotDiff.prototype.nodeWithIdentifier):
+        (HeapSnapshotDiff.prototype.shortestGCRootPath):
+        (HeapSnapshotDiff.prototype.dominatedNodes):
+        (HeapSnapshotDiff.prototype.retainedNodes):
+        (HeapSnapshotDiff.prototype.retainers):
+        (HeapSnapshotDiff.prototype.serialize):
+        New HeapSnapshot data processing implementation. Instead of creating
+        a new object per Node or per Edge create data arrays containing data
+        per-Node. Operate on these lists of data instead of creating many objects.
+
 2016-03-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Large repaints when typing any character in console

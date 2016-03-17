@@ -27,7 +27,7 @@ WebInspector.HeapSnapshotInstancesContentView = class HeapSnapshotInstancesConte
 {
     constructor(representedObject, extraArguments)
     {
-        console.assert(representedObject instanceof WebInspector.HeapSnapshot);
+        console.assert(representedObject instanceof WebInspector.HeapSnapshotProxy || representedObject instanceof WebInspector.HeapSnapshotDiffProxy);
 
         super(representedObject);
 

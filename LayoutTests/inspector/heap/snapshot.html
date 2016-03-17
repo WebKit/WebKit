@@ -13,13 +13,17 @@ function test()
         test: (resolve, reject) => {
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                let payload = JSON.parse(snapshotStringData);
-                let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-                InspectorTest.expectThat(snapshot.totalSize > 1024, "Snapshot size should be greater than 1kb.");
-                InspectorTest.expectThat(snapshot.totalObjectCount > 100, "Snapshot object count should be greater than 100.");
-                InspectorTest.expectThat(snapshot.categories.get("Window"), "Snapshot should include a class category for 'Window'.");
-                InspectorTest.expectThat(snapshot.instancesWithClassName("Window").length > 0, "Snapshot should include at least one 'Window' instance.");
-                resolve();
+                let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                    InspectorTest.expectThat(snapshot.totalSize > 1024, "Snapshot size should be greater than 1kb.");
+                    InspectorTest.expectThat(snapshot.totalObjectCount > 100, "Snapshot object count should be greater than 100.");
+                    InspectorTest.expectThat(snapshot.categories.get("Window"), "Snapshot should include a class category for 'Window'.");
+                    snapshot.instancesWithClassName("Window", (windows) => {
+                        InspectorTest.expectThat(windows.length > 0, "Snapshot should include at least one 'Window' instance.");
+                        resolve();
+                    });
+                });
             });
         }
     });

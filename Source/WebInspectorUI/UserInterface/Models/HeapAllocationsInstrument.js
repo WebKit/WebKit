@@ -74,9 +74,11 @@ WebInspector.HeapAllocationsInstrument = class HeapAllocationsInstrument extends
     _takeHeapSnapshot()
     {
         HeapAgent.snapshot(function(error, timestamp, snapshotStringData) {
-            let payload = JSON.parse(snapshotStringData);
-            let snapshot = WebInspector.HeapSnapshot.fromPayload(payload);
-            WebInspector.timelineManager.heapSnapshotAdded(timestamp, snapshot);
+            let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+            workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                WebInspector.timelineManager.heapSnapshotAdded(timestamp, snapshot);
+            });
         });
     }
 };
