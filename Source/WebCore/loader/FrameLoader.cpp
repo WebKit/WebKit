@@ -1773,10 +1773,6 @@ void FrameLoader::commitProvisionalLoad()
 
         // Same thing with RegExp bytecode and JIT code.
         GCController::singleton().deleteAllRegExpCode();
-
-        // Throw out decoded data for CachedImages when we are switching pages. The majority of it
-        // will not be used by the next page.
-        MemoryCache::singleton().destroyDecodedDataForAllImages();
 #endif
     }
 

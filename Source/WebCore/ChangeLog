@@ -1,3 +1,13 @@
+2016-03-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, partial roll out of r197254.
+        <rdar://problem/25078552>
+
+        It caused a ~1.1% PLT regression on iOS.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad): Deleted.
+
 2016-03-16  Enrica Casucci  <enrica@apple.com>
 
         Recognize mailto and tel url as data detector links.
