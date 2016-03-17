@@ -1,3 +1,16 @@
+2016-03-16  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Directly composited image layers need pixelsnapping.
+        https://bugs.webkit.org/show_bug.cgi?id=155558
+
+        Reviewed by Simon Fraser.
+
+        In order to match non-composited image size/position, we need to pixelsnap both the contents and the clipping
+        layer bounds for directly composited images.
+
+        * fast/images/hidpi-directly-composited-image-on-subpixel-position-expected.html: Added.
+        * fast/images/hidpi-directly-composited-image-on-subpixel-position.html: Added.
+
 2016-03-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping mathml/very-large-stretchy-operators.html on ios-simulator debug

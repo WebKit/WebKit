@@ -1,3 +1,20 @@
+2016-03-16  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Directly composited image layers need pixelsnapping.
+        https://bugs.webkit.org/show_bug.cgi?id=155558
+
+        Reviewed by Simon Fraser.
+
+        In order to match non-composited image size/position, we need to pixelsnap both the contents and the clipping
+        layer bounds for directly composited images.
+
+        Test: fast/images/hidpi-directly-composited-image-on-subpixel-position.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::resetContentsRect):
+        (WebCore::RenderLayerBacking::updateChildClippingStrategy):
+        (WebCore::RenderLayerBacking::updateImageContents):
+
 2016-03-16  Beth Dakin  <bdakin@apple.com>
 
         Provide NSSpellChecker spellChecking methods with the current insertion point
