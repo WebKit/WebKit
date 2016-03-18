@@ -288,7 +288,11 @@ CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMainResourc
 static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResource::Type type)
 {
     switch (type) {
+    // https://w3c.github.io/webappsec-mixed-content/#category-optionally-blockable
+    // Editor's Draft, 11 February 2016
+    // 3.1. Optionally-blockable Content
     case CachedResource::ImageResource:
+    case CachedResource::MediaResource:
             return MixedContentChecker::ContentType::ActiveCanWarn;
 
     case CachedResource::CSSStyleSheet:
@@ -301,7 +305,6 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
         return MixedContentChecker::ContentType::Active;
 #endif
 
-    case CachedResource::MediaResource:
     case CachedResource::RawResource:
     case CachedResource::SVGDocumentResource:
         return MixedContentChecker::ContentType::Active;
