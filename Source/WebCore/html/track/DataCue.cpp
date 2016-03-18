@@ -62,6 +62,8 @@ DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const 
     , m_type(type)
     , m_value(value)
 {
+    if (m_value)
+        JSC::gcProtect(m_value);
 }
 #endif
 
@@ -95,6 +97,8 @@ void DataCue::setData(ArrayBuffer* data, ExceptionCode& ec)
 
 #if ENABLE(DATACUE_VALUE)
     m_platformValue = nullptr;
+    if (m_value)
+        JSC::gcUnprotect(m_value);
     m_value = JSC::JSValue();
 #endif
 

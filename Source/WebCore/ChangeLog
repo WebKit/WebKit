@@ -1,3 +1,14 @@
+2016-03-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Improve some metadata tests
+        https://bugs.webkit.org/show_bug.cgi?id=155616
+
+        Reviewed by Saam Barati.
+
+        * html/track/DataCue.cpp:
+        (WebCore::DataCue::DataCue):
+        (WebCore::DataCue::setData):
+
 2016-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [RTL Scrollbars] Position: absolute divs are covered by vertical scrollbar
