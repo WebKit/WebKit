@@ -1895,7 +1895,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
     
     // Only expose AXARIACurrent attribute when the element is set to be current item.
     if (m_object->ariaCurrentState() != ARIACurrentFalse)
-        [objectAttributes arrayByAddingObjectsFromArray:@[ NSAccessibilityARIACurrentAttribute ]];
+        objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:@[ NSAccessibilityARIACurrentAttribute ]];
     
     return objectAttributes;
 }
