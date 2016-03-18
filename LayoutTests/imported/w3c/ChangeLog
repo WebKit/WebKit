@@ -1,3 +1,1275 @@
+2016-03-18  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Move IndexedDB regular test to web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=155581
+
+        Reviewed by Darin Adler.
+
+        Moving regular IndexedDB tests from LayoutTests/imported/w3c/indexeddb to LayoutTests/imported/w3c/web-platform-tests/IndexedDB.
+        Moving private browsing IndexedDB tests from LayoutTests/imported/w3c/indexeddb to LayoutTests/imported/w3c/IndexedDB-private-browsing.
+        Removed private prefix from private browsing IndexedDB tests since they are stored in their own folder.
+
+        Modified support.js to remove unnecessary calls to testRunner API.
+        Modified also IndexedDB-private-browsing/support.js to always activate testRunner private browsing mode.
+
+        * IndexedDB-private-browsing/abort-in-initial-upgradeneeded-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/abort-in-initial-upgradeneeded-expected.txt.
+        * IndexedDB-private-browsing/abort-in-initial-upgradeneeded.html: Copied from LayoutTests/imported/w3c/indexeddb/abort-in-initial-upgradeneeded.html.
+        * IndexedDB-private-browsing/close-in-upgradeneeded-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/close-in-upgradeneeded-expected.txt.
+        * IndexedDB-private-browsing/close-in-upgradeneeded.html: Copied from LayoutTests/imported/w3c/indexeddb/close-in-upgradeneeded.html.
+        * IndexedDB-private-browsing/cursor-overloads-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/cursor-overloads-expected.txt.
+        * IndexedDB-private-browsing/cursor-overloads.html: Copied from LayoutTests/imported/w3c/indexeddb/cursor-overloads.htm.
+        * IndexedDB-private-browsing/idb_webworkers-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idb_webworkers-expected.txt.
+        * IndexedDB-private-browsing/idb_webworkers.html: Copied from LayoutTests/imported/w3c/indexeddb/idb_webworkers.htm.
+        * IndexedDB-private-browsing/idbcursor-advance-continue-async-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-continue-async-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-advance-continue-async.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-continue-async.htm.
+        * IndexedDB-private-browsing/idbcursor-advance-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-advance-invalid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-invalid-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-advance-invalid.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-invalid.htm.
+        * IndexedDB-private-browsing/idbcursor-advance.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-advance.htm.
+        * IndexedDB-private-browsing/idbcursor-continue-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-continue-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-continue.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-continue.htm.
+        * IndexedDB-private-browsing/idbcursor-direction-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-direction-index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-index-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-direction-index-keyrange-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-index-keyrange-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-direction-index-keyrange.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-index-keyrange.htm.
+        * IndexedDB-private-browsing/idbcursor-direction-index.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-index.htm.
+        * IndexedDB-private-browsing/idbcursor-direction-objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-objectstore-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-direction-objectstore-keyrange-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-objectstore-keyrange-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-direction-objectstore-keyrange.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-objectstore-keyrange.htm.
+        * IndexedDB-private-browsing/idbcursor-direction-objectstore.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-objectstore.htm.
+        * IndexedDB-private-browsing/idbcursor-direction.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-direction.htm.
+        * IndexedDB-private-browsing/idbcursor-key-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-key-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-key.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-key.htm.
+        * IndexedDB-private-browsing/idbcursor-primarykey-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-primarykey-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-primarykey.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-primarykey.htm.
+        * IndexedDB-private-browsing/idbcursor-reused-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-reused-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-reused.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-reused.htm.
+        * IndexedDB-private-browsing/idbcursor-source-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-source-expected.txt.
+        * IndexedDB-private-browsing/idbcursor-source.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-source.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_index.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_index2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index2-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_index2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index2.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_index3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index3-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_index3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index3.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_index5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index5-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_index5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index5.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_index6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index6-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_index6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index6.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_index7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index7-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_index7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index7.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_index8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index8-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_index8.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index8.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_index9-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index9-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_index9.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index9.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore2-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore2.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore3-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore3.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore4-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore4.htm.
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore5-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore5.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_index.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_index2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index2-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_index2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index2.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_index3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index3-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_index3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index3.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_index4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index4-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_index4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index4.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_index5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index5-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_index5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index5.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_index6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index6-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_index6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index6.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_index7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index7-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_index7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index7.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_index8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index8-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_index8.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index8.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_invalid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_invalid-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_invalid.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_invalid.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore2-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore2.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore3-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore3.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore4-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore4.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore5-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore5.htm.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore6-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore6.htm.
+        * IndexedDB-private-browsing/idbcursor_delete_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_delete_index.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index.htm.
+        * IndexedDB-private-browsing/idbcursor_delete_index2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index2-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_delete_index2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index2.htm.
+        * IndexedDB-private-browsing/idbcursor_delete_index3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index3-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_delete_index3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index3.htm.
+        * IndexedDB-private-browsing/idbcursor_delete_index4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index4-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_delete_index4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index4.htm.
+        * IndexedDB-private-browsing/idbcursor_delete_index5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index5-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_delete_index5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index5.htm.
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore.htm.
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore2-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore2.htm.
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore3-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore3-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore3.htm.
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore4-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore4.htm.
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore5-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore5.htm.
+        * IndexedDB-private-browsing/idbcursor_iterating-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_iterating.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating.htm.
+        * IndexedDB-private-browsing/idbcursor_iterating_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_index-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_iterating_index.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_index.htm.
+        * IndexedDB-private-browsing/idbcursor_iterating_index2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_index2-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_iterating_index2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_index2.htm.
+        * IndexedDB-private-browsing/idbcursor_iterating_objectstore-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_objectstore-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_iterating_objectstore.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_objectstore.htm.
+        * IndexedDB-private-browsing/idbcursor_iterating_objectstore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_objectstore2-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_iterating_objectstore2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_objectstore2.htm.
+        * IndexedDB-private-browsing/idbcursor_update_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_index.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index.htm.
+        * IndexedDB-private-browsing/idbcursor_update_index2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index2-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_index2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index2.htm.
+        * IndexedDB-private-browsing/idbcursor_update_index3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index3-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_index3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index3.htm.
+        * IndexedDB-private-browsing/idbcursor_update_index4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index4-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_index4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index4.htm.
+        * IndexedDB-private-browsing/idbcursor_update_index5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index5-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_index5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index5.htm.
+        * IndexedDB-private-browsing/idbcursor_update_index6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index6-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_index6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index6.htm.
+        * IndexedDB-private-browsing/idbcursor_update_index7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index7-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_index7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index7.htm.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore.htm.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore2-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore2.htm.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore3-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore3.htm.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore4-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore4.htm.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore5-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore5.htm.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore6-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore6.htm.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore7-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore7.htm.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore8-expected.txt.
+        * IndexedDB-private-browsing/idbcursor_update_objectstore8.html: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore8.htm.
+        * IndexedDB-private-browsing/idbdatabase_close-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_close-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_close.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_close.htm.
+        * IndexedDB-private-browsing/idbdatabase_close2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_close2-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_close2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_close2.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore-createIndex-emptyname-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore-createIndex-emptyname-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore-createIndex-emptyname.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore-createIndex-emptyname.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore10-1000ends-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore10-1000ends-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore10-1000ends.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore10-1000ends.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore10-emptyname-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore10-emptyname-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore10-emptyname.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore10-emptyname.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore11-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore11-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore11.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore11.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore2-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore2.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore3-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore3.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore4-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore4.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore5-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore5.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore6-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore6.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore7-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore7.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore8-parameters-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore8-parameters-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore8-parameters.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore8-parameters.htm.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore9-invalidparameters-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore9-invalidparameters-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore9-invalidparameters.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore9-invalidparameters.htm.
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore.htm.
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore2-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore2.htm.
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore3-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore3.htm.
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore4-not_reused-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore4-not_reused-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore4-not_reused.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore4-not_reused.htm.
+        * IndexedDB-private-browsing/idbdatabase_transaction-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_transaction.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction.htm.
+        * IndexedDB-private-browsing/idbdatabase_transaction2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction2-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_transaction2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction2.htm.
+        * IndexedDB-private-browsing/idbdatabase_transaction3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction3-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_transaction3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction3.htm.
+        * IndexedDB-private-browsing/idbdatabase_transaction4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction4-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_transaction4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction4.htm.
+        * IndexedDB-private-browsing/idbdatabase_transaction5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction5-expected.txt.
+        * IndexedDB-private-browsing/idbdatabase_transaction5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction5.htm.
+        * IndexedDB-private-browsing/idbfactory_cmp-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_cmp-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_cmp.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_cmp.htm.
+        * IndexedDB-private-browsing/idbfactory_cmp2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_cmp2-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_cmp2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_cmp2.htm.
+        * IndexedDB-private-browsing/idbfactory_deleteDatabase-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_deleteDatabase.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase.htm.
+        * IndexedDB-private-browsing/idbfactory_deleteDatabase2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase2-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_deleteDatabase2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase2.htm.
+        * IndexedDB-private-browsing/idbfactory_deleteDatabase3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase3-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_deleteDatabase3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase3.htm.
+        * IndexedDB-private-browsing/idbfactory_deleteDatabase4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase4-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_deleteDatabase4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase4.htm.
+        * IndexedDB-private-browsing/idbfactory_open-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open.htm.
+        * IndexedDB-private-browsing/idbfactory_open10-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open10-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open10.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open10.htm.
+        * IndexedDB-private-browsing/idbfactory_open11-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open11-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open11.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open11.htm.
+        * IndexedDB-private-browsing/idbfactory_open12-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open12-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open12.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open12.htm.
+        * IndexedDB-private-browsing/idbfactory_open2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open2-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open2.htm.
+        * IndexedDB-private-browsing/idbfactory_open3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open3-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open3.htm.
+        * IndexedDB-private-browsing/idbfactory_open4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open4-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open4.htm.
+        * IndexedDB-private-browsing/idbfactory_open5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open5-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open5.htm.
+        * IndexedDB-private-browsing/idbfactory_open6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open6-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open6.htm.
+        * IndexedDB-private-browsing/idbfactory_open7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open7-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open7.htm.
+        * IndexedDB-private-browsing/idbfactory_open8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open8-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open8.html: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_open8.htm.
+        * IndexedDB-private-browsing/idbfactory_open9-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open9-expected.txt.
+        * IndexedDB-private-browsing/idbfactory_open9.html: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open9-private.html.
+        * IndexedDB-private-browsing/idbindex-multientry-arraykeypath-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-arraykeypath-expected.txt.
+        * IndexedDB-private-browsing/idbindex-multientry-arraykeypath.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-arraykeypath.htm.
+        * IndexedDB-private-browsing/idbindex-multientry-big-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-big-expected.txt.
+        * IndexedDB-private-browsing/idbindex-multientry-big.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-big.htm.
+        * IndexedDB-private-browsing/idbindex-multientry-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-expected.txt.
+        * IndexedDB-private-browsing/idbindex-multientry.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex-multientry.htm.
+        * IndexedDB-private-browsing/idbindex_count-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count-expected.txt.
+        * IndexedDB-private-browsing/idbindex_count.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_count.htm.
+        * IndexedDB-private-browsing/idbindex_count2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count2-expected.txt.
+        * IndexedDB-private-browsing/idbindex_count2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_count2.htm.
+        * IndexedDB-private-browsing/idbindex_count3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count3-expected.txt.
+        * IndexedDB-private-browsing/idbindex_count3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_count3.htm.
+        * IndexedDB-private-browsing/idbindex_count4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count4-expected.txt.
+        * IndexedDB-private-browsing/idbindex_count4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_count4.htm.
+        * IndexedDB-private-browsing/idbindex_get-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get-expected.txt.
+        * IndexedDB-private-browsing/idbindex_get.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_get.htm.
+        * IndexedDB-private-browsing/idbindex_get2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get2-expected.txt.
+        * IndexedDB-private-browsing/idbindex_get2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_get2.htm.
+        * IndexedDB-private-browsing/idbindex_get3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get3-expected.txt.
+        * IndexedDB-private-browsing/idbindex_get3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_get3.htm.
+        * IndexedDB-private-browsing/idbindex_get4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get4-expected.txt.
+        * IndexedDB-private-browsing/idbindex_get4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_get4.htm.
+        * IndexedDB-private-browsing/idbindex_get5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get5-expected.txt.
+        * IndexedDB-private-browsing/idbindex_get5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_get5.htm.
+        * IndexedDB-private-browsing/idbindex_get6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get6-expected.txt.
+        * IndexedDB-private-browsing/idbindex_get6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_get6.htm.
+        * IndexedDB-private-browsing/idbindex_get7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get7-private-expected.txt.
+        * IndexedDB-private-browsing/idbindex_get7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_get7.htm.
+        * IndexedDB-private-browsing/idbindex_getKey-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey-expected.txt.
+        * IndexedDB-private-browsing/idbindex_getKey.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_getKey.htm.
+        * IndexedDB-private-browsing/idbindex_getKey2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey2-expected.txt.
+        * IndexedDB-private-browsing/idbindex_getKey2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_getKey2.htm.
+        * IndexedDB-private-browsing/idbindex_getKey3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey3-expected.txt.
+        * IndexedDB-private-browsing/idbindex_getKey3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_getKey3.htm.
+        * IndexedDB-private-browsing/idbindex_getKey4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey4-expected.txt.
+        * IndexedDB-private-browsing/idbindex_getKey4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_getKey4.htm.
+        * IndexedDB-private-browsing/idbindex_getKey5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey5-expected.txt.
+        * IndexedDB-private-browsing/idbindex_getKey5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_getKey5.htm.
+        * IndexedDB-private-browsing/idbindex_getKey6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey6-expected.txt.
+        * IndexedDB-private-browsing/idbindex_getKey6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_getKey6.htm.
+        * IndexedDB-private-browsing/idbindex_getKey7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey7-private-expected.txt.
+        * IndexedDB-private-browsing/idbindex_getKey7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_getKey7.htm.
+        * IndexedDB-private-browsing/idbindex_indexNames-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_indexNames-expected.txt.
+        * IndexedDB-private-browsing/idbindex_indexNames.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_indexNames.htm.
+        * IndexedDB-private-browsing/idbindex_openCursor-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openCursor-expected.txt.
+        * IndexedDB-private-browsing/idbindex_openCursor.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_openCursor.htm.
+        * IndexedDB-private-browsing/idbindex_openCursor2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openCursor2-private-expected.txt.
+        * IndexedDB-private-browsing/idbindex_openCursor2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_openCursor2.htm.
+        * IndexedDB-private-browsing/idbindex_openKeyCursor-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor-expected.txt.
+        * IndexedDB-private-browsing/idbindex_openKeyCursor.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor.htm.
+        * IndexedDB-private-browsing/idbindex_openKeyCursor2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor2-expected.txt.
+        * IndexedDB-private-browsing/idbindex_openKeyCursor2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor2.htm.
+        * IndexedDB-private-browsing/idbindex_openKeyCursor3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor3-private-expected.txt.
+        * IndexedDB-private-browsing/idbindex_openKeyCursor3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor3.htm.
+        * IndexedDB-private-browsing/idbkeyrange-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbkeyrange-expected.txt.
+        * IndexedDB-private-browsing/idbkeyrange.html: Copied from LayoutTests/imported/w3c/indexeddb/idbkeyrange.htm.
+        * IndexedDB-private-browsing/idbkeyrange_incorrect-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbkeyrange_incorrect-expected.txt.
+        * IndexedDB-private-browsing/idbkeyrange_incorrect.html: Copied from LayoutTests/imported/w3c/indexeddb/idbkeyrange_incorrect.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add10-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add10-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add10.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add10.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add11-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add11-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add11.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add11.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add12-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add12-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add12.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add12.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add13-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add13-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add13.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add13.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add14-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add14-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add14.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add14.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add15-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add15-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add15.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add15.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add16-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add16-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add16.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add16.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add2-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add2.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add3-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add3.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add4-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add4.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add5-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add5.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add6-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add6.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add7-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add7.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add8-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add8.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add8.htm.
+        * IndexedDB-private-browsing/idbobjectstore_add9-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add9-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_add9.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add9.htm.
+        * IndexedDB-private-browsing/idbobjectstore_clear-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_clear.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear.htm.
+        * IndexedDB-private-browsing/idbobjectstore_clear2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear2-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_clear2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear2.htm.
+        * IndexedDB-private-browsing/idbobjectstore_clear3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear3-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_clear3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear3.htm.
+        * IndexedDB-private-browsing/idbobjectstore_clear4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear4-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_clear4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear4.htm.
+        * IndexedDB-private-browsing/idbobjectstore_count-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_count.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count.htm.
+        * IndexedDB-private-browsing/idbobjectstore_count2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count2-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_count2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count2.htm.
+        * IndexedDB-private-browsing/idbobjectstore_count3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count3-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_count3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count3.htm.
+        * IndexedDB-private-browsing/idbobjectstore_count4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count4-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_count4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count4.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex10-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex10-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex10.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex10.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex11-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex11-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex11.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex11.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex12-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex12-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex12.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex12.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex13-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex13-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex13.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex13.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex2-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex2.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex3-usable-right-away-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex3-usable-right-away-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex3-usable-right-away.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex3-usable-right-away.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex4-deleteIndex-event_order-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex4-deleteIndex-event_order-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex4-deleteIndex-event_order.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex4-deleteIndex-event_order.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex5-emptykeypath-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex5-emptykeypath-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex5-emptykeypath.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex5-emptykeypath.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex6-event_order-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex6-event_order-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex6-event_order.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex6-event_order.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex7-event_order-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex7-event_order-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex7-event_order.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex7-event_order.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex8-valid_keys-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex8-valid_keys-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex8-valid_keys.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex8-valid_keys.htm.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex9-emptyname-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex9-emptyname-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_createIndex9-emptyname.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex9-emptyname.htm.
+        * IndexedDB-private-browsing/idbobjectstore_delete-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_delete.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete.htm.
+        * IndexedDB-private-browsing/idbobjectstore_delete2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete2-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_delete2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete2.htm.
+        * IndexedDB-private-browsing/idbobjectstore_delete3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete3-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_delete3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete3.htm.
+        * IndexedDB-private-browsing/idbobjectstore_delete4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete4-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_delete4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete4.htm.
+        * IndexedDB-private-browsing/idbobjectstore_delete5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete5-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_delete5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete5.htm.
+        * IndexedDB-private-browsing/idbobjectstore_delete6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete6-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_delete6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete6.htm.
+        * IndexedDB-private-browsing/idbobjectstore_delete7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete7-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_delete7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete7.htm.
+        * IndexedDB-private-browsing/idbobjectstore_deleteIndex-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_deleteIndex-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_deleteIndex.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_deleteIndex.htm.
+        * IndexedDB-private-browsing/idbobjectstore_deleted-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_deleted-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_deleted.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_deleted.htm.
+        * IndexedDB-private-browsing/idbobjectstore_get-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_get.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get.htm.
+        * IndexedDB-private-browsing/idbobjectstore_get2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get2-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_get2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get2.htm.
+        * IndexedDB-private-browsing/idbobjectstore_get3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get3-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_get3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get3.htm.
+        * IndexedDB-private-browsing/idbobjectstore_get4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get4-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_get4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get4.htm.
+        * IndexedDB-private-browsing/idbobjectstore_get5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get5-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_get5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get5.htm.
+        * IndexedDB-private-browsing/idbobjectstore_get6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get6-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_get6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get6.htm.
+        * IndexedDB-private-browsing/idbobjectstore_get7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get7-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_get7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get7.htm.
+        * IndexedDB-private-browsing/idbobjectstore_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_index-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_index.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_index.htm.
+        * IndexedDB-private-browsing/idbobjectstore_openCursor-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_openCursor-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_openCursor.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_openCursor.htm.
+        * IndexedDB-private-browsing/idbobjectstore_openCursor_invalid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_openCursor_invalid-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_openCursor_invalid.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_openCursor_invalid.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put10-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put10-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put10.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put10.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put11-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put11-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put11.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put11.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put12-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put12-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put12.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put12.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put13-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put13-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put13.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put13.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put14-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put14-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put14.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put14.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put15-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put15-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put15.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put15.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put16-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put16-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put16.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put16.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put2-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put2.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put2.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put3-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put3.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put3.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put4-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put4.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put4.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put5-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put5.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put5.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put6-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put6.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put6.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put7-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put7.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put7.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put8-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put8.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put8.htm.
+        * IndexedDB-private-browsing/idbobjectstore_put9-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put9-expected.txt.
+        * IndexedDB-private-browsing/idbobjectstore_put9.html: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put9.htm.
+        * IndexedDB-private-browsing/idbtransaction-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbtransaction-expected.txt.
+        * IndexedDB-private-browsing/idbtransaction-oncomplete-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbtransaction-oncomplete-expected.txt.
+        * IndexedDB-private-browsing/idbtransaction-oncomplete.html: Copied from LayoutTests/imported/w3c/indexeddb/idbtransaction-oncomplete.htm.
+        * IndexedDB-private-browsing/idbtransaction.html: Copied from LayoutTests/imported/w3c/indexeddb/idbtransaction.htm.
+        * IndexedDB-private-browsing/idbtransaction_abort-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbtransaction_abort-expected.txt.
+        * IndexedDB-private-browsing/idbtransaction_abort.html: Copied from LayoutTests/imported/w3c/indexeddb/idbtransaction_abort.htm.
+        * IndexedDB-private-browsing/idbversionchangeevent-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbversionchangeevent-expected.txt.
+        * IndexedDB-private-browsing/idbversionchangeevent.html: Copied from LayoutTests/imported/w3c/indexeddb/idbversionchangeevent.htm.
+        * IndexedDB-private-browsing/idbworker.js: Copied from LayoutTests/imported/w3c/indexeddb/idbworker.js.
+        (false.MessageHandler.open_rq.onupgradeneeded):
+        (false.MessageHandler.db.e.target.result.db.onerror):
+        (false.MessageHandler.db.transaction.objectStore.onsuccess):
+        (false.MessageHandler.open_rq.onsuccess):
+        (false.MessageHandler.open_rq.onerror):
+        (false.MessageHandler.open_rq.onblocked):
+        (false.MessageHandler):
+        * IndexedDB-private-browsing/index_sort_order-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/index_sort_order-expected.txt.
+        * IndexedDB-private-browsing/index_sort_order.html: Copied from LayoutTests/imported/w3c/indexeddb/index_sort_order.htm.
+        * IndexedDB-private-browsing/key_invalid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/key_invalid-expected.txt.
+        * IndexedDB-private-browsing/key_invalid.html: Copied from LayoutTests/imported/w3c/indexeddb/key_invalid.htm.
+        * IndexedDB-private-browsing/key_valid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/key_valid-expected.txt.
+        * IndexedDB-private-browsing/key_valid.html: Copied from LayoutTests/imported/w3c/indexeddb/key_valid.html.
+        * IndexedDB-private-browsing/keygenerator-constrainterror-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keygenerator-constrainterror-expected.txt.
+        * IndexedDB-private-browsing/keygenerator-constrainterror.html: Copied from LayoutTests/imported/w3c/indexeddb/keygenerator-constrainterror.htm.
+        * IndexedDB-private-browsing/keygenerator-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keygenerator-expected.txt.
+        * IndexedDB-private-browsing/keygenerator-overflow-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keygenerator-overflow-expected.txt.
+        * IndexedDB-private-browsing/keygenerator-overflow.html: Copied from LayoutTests/imported/w3c/indexeddb/keygenerator-overflow.htm.
+        * IndexedDB-private-browsing/keygenerator.html: Copied from LayoutTests/imported/w3c/indexeddb/keygenerator.htm.
+        * IndexedDB-private-browsing/keyorder-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keyorder-expected.txt.
+        * IndexedDB-private-browsing/keyorder.html: Copied from LayoutTests/imported/w3c/indexeddb/keyorder.htm.
+        * IndexedDB-private-browsing/keypath-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keypath-expected.txt.
+        * IndexedDB-private-browsing/keypath.html: Copied from LayoutTests/imported/w3c/indexeddb/keypath.htm.
+        * IndexedDB-private-browsing/keypath_invalid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keypath_invalid-expected.txt.
+        * IndexedDB-private-browsing/keypath_invalid.html: Copied from LayoutTests/imported/w3c/indexeddb/keypath_invalid.htm.
+        * IndexedDB-private-browsing/keypath_maxsize-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keypath_maxsize-expected.txt.
+        * IndexedDB-private-browsing/keypath_maxsize.html: Copied from LayoutTests/imported/w3c/indexeddb/keypath_maxsize.htm.
+        * IndexedDB-private-browsing/list_ordering-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/list_ordering-expected.txt.
+        * IndexedDB-private-browsing/list_ordering.html: Copied from LayoutTests/imported/w3c/indexeddb/list_ordering.htm.
+        * IndexedDB-private-browsing/objectstore_keyorder-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/objectstore_keyorder-expected.txt.
+        * IndexedDB-private-browsing/objectstore_keyorder.html: Copied from LayoutTests/imported/w3c/indexeddb/objectstore_keyorder.htm.
+        * IndexedDB-private-browsing/request_bubble-and-capture-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/request_bubble-and-capture-expected.txt.
+        * IndexedDB-private-browsing/request_bubble-and-capture.html: Copied from LayoutTests/imported/w3c/indexeddb/request_bubble-and-capture.htm.
+        * IndexedDB-private-browsing/string-list-ordering-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/string-list-ordering-expected.txt.
+        * IndexedDB-private-browsing/string-list-ordering.html: Copied from LayoutTests/imported/w3c/indexeddb/string-list-ordering.htm.
+        * IndexedDB-private-browsing/support.js: Copied from LayoutTests/imported/w3c/indexeddb/support.js.
+        (window.indexedDB.else):
+        (add_completion_callback):
+        (fail):
+        (auto_fail):
+        (createdb_for_multiple_tests):
+        (assert_key_equals):
+        * IndexedDB-private-browsing/transaction-create_in_versionchange-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-create_in_versionchange-expected.txt.
+        * IndexedDB-private-browsing/transaction-create_in_versionchange.html: Copied from LayoutTests/imported/w3c/indexeddb/transaction-create_in_versionchange.htm.
+        * IndexedDB-private-browsing/transaction-lifetime-blocked-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-lifetime-blocked-expected.txt.
+        * IndexedDB-private-browsing/transaction-lifetime-blocked.html: Copied from LayoutTests/imported/w3c/indexeddb/transaction-lifetime-blocked.htm.
+        * IndexedDB-private-browsing/transaction-lifetime-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-lifetime-expected.txt.
+        * IndexedDB-private-browsing/transaction-lifetime.html: Copied from LayoutTests/imported/w3c/indexeddb/transaction-lifetime.htm.
+        * IndexedDB-private-browsing/transaction-requestqueue-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-requestqueue-expected.txt.
+        * IndexedDB-private-browsing/transaction-requestqueue.html: Copied from LayoutTests/imported/w3c/indexeddb/transaction-requestqueue.htm.
+        * IndexedDB-private-browsing/transaction_bubble-and-capture-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/transaction_bubble-and-capture-expected.txt.
+        * IndexedDB-private-browsing/transaction_bubble-and-capture.html: Copied from LayoutTests/imported/w3c/indexeddb/transaction_bubble-and-capture.htm.
+        * IndexedDB-private-browsing/value-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/value-expected.txt.
+        * IndexedDB-private-browsing/value.html: Copied from LayoutTests/imported/w3c/indexeddb/value.htm.
+        * IndexedDB-private-browsing/value_recursive-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/value_recursive-expected.txt.
+        * IndexedDB-private-browsing/value_recursive.html: Copied from LayoutTests/imported/w3c/indexeddb/value_recursive.htm.
+        * IndexedDB-private-browsing/writer-starvation-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/writer-starvation-expected.txt.
+        * IndexedDB-private-browsing/writer-starvation.html: Copied from LayoutTests/imported/w3c/indexeddb/writer-starvation.htm.
+        * indexeddb/abort-in-initial-upgradeneeded-private.html: Removed.
+        * indexeddb/close-in-upgradeneeded-private.html: Removed.
+        * indexeddb/cursor-overloads-private.html: Removed.
+        * indexeddb/idb_webworkers-private.html: Removed.
+        * indexeddb/idbcursor-advance-continue-async-private.html: Removed.
+        * indexeddb/idbcursor-advance-invalid-private.html: Removed.
+        * indexeddb/idbcursor-advance-private.html: Removed.
+        * indexeddb/idbcursor-continue-private.html: Removed.
+        * indexeddb/idbcursor-direction-index-keyrange-private.html: Removed.
+        * indexeddb/idbcursor-direction-index-private.html: Removed.
+        * indexeddb/idbcursor-direction-objectstore-keyrange-private.html: Removed.
+        * indexeddb/idbcursor-direction-objectstore-private.html: Removed.
+        * indexeddb/idbcursor-direction-private.html: Removed.
+        * indexeddb/idbcursor-key-private.html: Removed.
+        * indexeddb/idbcursor-primarykey-private.html: Removed.
+        * indexeddb/idbcursor-reused-private.html: Removed.
+        * indexeddb/idbcursor-source-private.html: Removed.
+        * indexeddb/idbcursor_advance_index-private.html: Removed.
+        * indexeddb/idbcursor_advance_index2-private.html: Removed.
+        * indexeddb/idbcursor_advance_index3-private.html: Removed.
+        * indexeddb/idbcursor_advance_index5-private.html: Removed.
+        * indexeddb/idbcursor_advance_index6-private.html: Removed.
+        * indexeddb/idbcursor_advance_index7-private.html: Removed.
+        * indexeddb/idbcursor_advance_index8-private.html: Removed.
+        * indexeddb/idbcursor_advance_index9-private.html: Removed.
+        * indexeddb/idbcursor_advance_objectstore-private.html: Removed.
+        * indexeddb/idbcursor_advance_objectstore2-private.html: Removed.
+        * indexeddb/idbcursor_advance_objectstore3-private.html: Removed.
+        * indexeddb/idbcursor_advance_objectstore4-private.html: Removed.
+        * indexeddb/idbcursor_advance_objectstore5-private.html: Removed.
+        * indexeddb/idbcursor_continue_index-private.html: Removed.
+        * indexeddb/idbcursor_continue_index2-private.html: Removed.
+        * indexeddb/idbcursor_continue_index3-private.html: Removed.
+        * indexeddb/idbcursor_continue_index4-private.html: Removed.
+        * indexeddb/idbcursor_continue_index5-private.html: Removed.
+        * indexeddb/idbcursor_continue_index6-private.html: Removed.
+        * indexeddb/idbcursor_continue_index7-private.html: Removed.
+        * indexeddb/idbcursor_continue_index8-private.html: Removed.
+        * indexeddb/idbcursor_continue_invalid-private.html: Removed.
+        * indexeddb/idbcursor_continue_objectstore-private.html: Removed.
+        * indexeddb/idbcursor_continue_objectstore2-private.html: Removed.
+        * indexeddb/idbcursor_continue_objectstore3-private.html: Removed.
+        * indexeddb/idbcursor_continue_objectstore4-private.html: Removed.
+        * indexeddb/idbcursor_continue_objectstore5-private.html: Removed.
+        * indexeddb/idbcursor_continue_objectstore6-private.html: Removed.
+        * indexeddb/idbcursor_delete_index-private.html: Removed.
+        * indexeddb/idbcursor_delete_index2-private.html: Removed.
+        * indexeddb/idbcursor_delete_index3-private-expected.txt: Removed.
+        * indexeddb/idbcursor_delete_index3-private.html: Removed.
+        * indexeddb/idbcursor_delete_index4-private.html: Removed.
+        * indexeddb/idbcursor_delete_index5-private.html: Removed.
+        * indexeddb/idbcursor_delete_objectstore-private.html: Removed.
+        * indexeddb/idbcursor_delete_objectstore2-private.html: Removed.
+        * indexeddb/idbcursor_delete_objectstore3-private.html: Removed.
+        * indexeddb/idbcursor_delete_objectstore4-private.html: Removed.
+        * indexeddb/idbcursor_delete_objectstore5-private.html: Removed.
+        * indexeddb/idbcursor_iterating-private-expected.txt: Removed.
+        * indexeddb/idbcursor_iterating-private.html: Removed.
+        * indexeddb/idbcursor_iterating_index-private.html: Removed.
+        * indexeddb/idbcursor_iterating_index2-private.html: Removed.
+        * indexeddb/idbcursor_iterating_objectstore-private.html: Removed.
+        * indexeddb/idbcursor_iterating_objectstore2-private.html: Removed.
+        * indexeddb/idbcursor_update_index-private.html: Removed.
+        * indexeddb/idbcursor_update_index2-private.html: Removed.
+        * indexeddb/idbcursor_update_index3-private.html: Removed.
+        * indexeddb/idbcursor_update_index4-private.html: Removed.
+        * indexeddb/idbcursor_update_index5-private.html: Removed.
+        * indexeddb/idbcursor_update_index6-private.html: Removed.
+        * indexeddb/idbcursor_update_index7-private.html: Removed.
+        * indexeddb/idbcursor_update_objectstore-private.html: Removed.
+        * indexeddb/idbcursor_update_objectstore2-private.html: Removed.
+        * indexeddb/idbcursor_update_objectstore3-private.html: Removed.
+        * indexeddb/idbcursor_update_objectstore4-private.html: Removed.
+        * indexeddb/idbcursor_update_objectstore5-private.html: Removed.
+        * indexeddb/idbcursor_update_objectstore6-private.html: Removed.
+        * indexeddb/idbcursor_update_objectstore7-private.html: Removed.
+        * indexeddb/idbcursor_update_objectstore8-private.html: Removed.
+        * indexeddb/idbdatabase_close-private.html: Removed.
+        * indexeddb/idbdatabase_close2-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore-createIndex-emptyname-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore10-1000ends-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore10-emptyname-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore11-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore2-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore3-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore4-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore5-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore6-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore7-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore8-parameters-private.html: Removed.
+        * indexeddb/idbdatabase_createObjectStore9-invalidparameters-private.html: Removed.
+        * indexeddb/idbdatabase_deleteObjectStore-private.html: Removed.
+        * indexeddb/idbdatabase_deleteObjectStore2-private.html: Removed.
+        * indexeddb/idbdatabase_deleteObjectStore3-private.html: Removed.
+        * indexeddb/idbdatabase_deleteObjectStore4-not_reused-private.html: Removed.
+        * indexeddb/idbdatabase_transaction-private.html: Removed.
+        * indexeddb/idbdatabase_transaction2-private.html: Removed.
+        * indexeddb/idbdatabase_transaction3-private.html: Removed.
+        * indexeddb/idbdatabase_transaction4-private.html: Removed.
+        * indexeddb/idbdatabase_transaction5-private.html: Removed.
+        * indexeddb/idbfactory_cmp-private.html: Removed.
+        * indexeddb/idbfactory_cmp2-private.html: Removed.
+        * indexeddb/idbfactory_deleteDatabase-private.html: Removed.
+        * indexeddb/idbfactory_deleteDatabase2-private.html: Removed.
+        * indexeddb/idbfactory_deleteDatabase3-private.html: Removed.
+        * indexeddb/idbfactory_deleteDatabase4-private.html: Removed.
+        * indexeddb/idbfactory_open-private.html: Removed.
+        * indexeddb/idbfactory_open10-private.html: Removed.
+        * indexeddb/idbfactory_open11-private.html: Removed.
+        * indexeddb/idbfactory_open12-private.html: Removed.
+        * indexeddb/idbfactory_open2-private.html: Removed.
+        * indexeddb/idbfactory_open3-private.html: Removed.
+        * indexeddb/idbfactory_open4-private.html: Removed.
+        * indexeddb/idbfactory_open5-private.html: Removed.
+        * indexeddb/idbfactory_open6-private.html: Removed.
+        * indexeddb/idbfactory_open7-private.html: Removed.
+        * indexeddb/idbfactory_open8-private.html: Removed.
+        * indexeddb/idbindex-multientry-arraykeypath-private.html: Removed.
+        * indexeddb/idbindex-multientry-big-private.html: Removed.
+        * indexeddb/idbindex-multientry-private.html: Removed.
+        * indexeddb/idbindex_count-private.html: Removed.
+        * indexeddb/idbindex_count2-private.html: Removed.
+        * indexeddb/idbindex_count3-private.html: Removed.
+        * indexeddb/idbindex_count4-private.html: Removed.
+        * indexeddb/idbindex_get-private.html: Removed.
+        * indexeddb/idbindex_get2-private.html: Removed.
+        * indexeddb/idbindex_get3-private.html: Removed.
+        * indexeddb/idbindex_get4-private.html: Removed.
+        * indexeddb/idbindex_get5-private.html: Removed.
+        * indexeddb/idbindex_get6-private.html: Removed.
+        * indexeddb/idbindex_get7-private.html: Removed.
+        * indexeddb/idbindex_getKey-private.html: Removed.
+        * indexeddb/idbindex_getKey2-private.html: Removed.
+        * indexeddb/idbindex_getKey3-private.html: Removed.
+        * indexeddb/idbindex_getKey4-private.html: Removed.
+        * indexeddb/idbindex_getKey5-private.html: Removed.
+        * indexeddb/idbindex_getKey6-private.html: Removed.
+        * indexeddb/idbindex_getKey7-private.html: Removed.
+        * indexeddb/idbindex_indexNames-private.html: Removed.
+        * indexeddb/idbindex_openCursor-private.html: Removed.
+        * indexeddb/idbindex_openCursor2-private.html: Removed.
+        * indexeddb/idbindex_openKeyCursor-private.html: Removed.
+        * indexeddb/idbindex_openKeyCursor2-private.html: Removed.
+        * indexeddb/idbindex_openKeyCursor3-private.html: Removed.
+        * indexeddb/idbkeyrange-private.html: Removed.
+        * indexeddb/idbkeyrange_incorrect-private.html: Removed.
+        * indexeddb/idbobjectstore_add-private.html: Removed.
+        * indexeddb/idbobjectstore_add10-private.html: Removed.
+        * indexeddb/idbobjectstore_add11-private.html: Removed.
+        * indexeddb/idbobjectstore_add12-private.html: Removed.
+        * indexeddb/idbobjectstore_add13-private.html: Removed.
+        * indexeddb/idbobjectstore_add14-private.html: Removed.
+        * indexeddb/idbobjectstore_add15-private.html: Removed.
+        * indexeddb/idbobjectstore_add16-private.html: Removed.
+        * indexeddb/idbobjectstore_add2-private.html: Removed.
+        * indexeddb/idbobjectstore_add3-private.html: Removed.
+        * indexeddb/idbobjectstore_add4-private.html: Removed.
+        * indexeddb/idbobjectstore_add5-private.html: Removed.
+        * indexeddb/idbobjectstore_add6-private.html: Removed.
+        * indexeddb/idbobjectstore_add7-private.html: Removed.
+        * indexeddb/idbobjectstore_add8-private.html: Removed.
+        * indexeddb/idbobjectstore_add9-private.html: Removed.
+        * indexeddb/idbobjectstore_clear-private.html: Removed.
+        * indexeddb/idbobjectstore_clear2-private.html: Removed.
+        * indexeddb/idbobjectstore_clear3-private.html: Removed.
+        * indexeddb/idbobjectstore_clear4-private.html: Removed.
+        * indexeddb/idbobjectstore_count-private.html: Removed.
+        * indexeddb/idbobjectstore_count2-private.html: Removed.
+        * indexeddb/idbobjectstore_count3-private.html: Removed.
+        * indexeddb/idbobjectstore_count4-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex10-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex11-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex12-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex13-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex2-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex3-usable-right-away-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex4-deleteIndex-event_order-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex5-emptykeypath-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex6-event_order-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex7-event_order-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex8-valid_keys-private.html: Removed.
+        * indexeddb/idbobjectstore_createIndex9-emptyname-private.html: Removed.
+        * indexeddb/idbobjectstore_delete-private.html: Removed.
+        * indexeddb/idbobjectstore_delete2-private.html: Removed.
+        * indexeddb/idbobjectstore_delete3-private.html: Removed.
+        * indexeddb/idbobjectstore_delete4-private.html: Removed.
+        * indexeddb/idbobjectstore_delete5-private.html: Removed.
+        * indexeddb/idbobjectstore_delete6-private.html: Removed.
+        * indexeddb/idbobjectstore_delete7-private.html: Removed.
+        * indexeddb/idbobjectstore_deleteIndex-private.html: Removed.
+        * indexeddb/idbobjectstore_deleted-private.html: Removed.
+        * indexeddb/idbobjectstore_get-private.html: Removed.
+        * indexeddb/idbobjectstore_get2-private.html: Removed.
+        * indexeddb/idbobjectstore_get3-private.html: Removed.
+        * indexeddb/idbobjectstore_get4-private.html: Removed.
+        * indexeddb/idbobjectstore_get5-private.html: Removed.
+        * indexeddb/idbobjectstore_get6-private.html: Removed.
+        * indexeddb/idbobjectstore_get7-private.html: Removed.
+        * indexeddb/idbobjectstore_index-private.html: Removed.
+        * indexeddb/idbobjectstore_openCursor-private.html: Removed.
+        * indexeddb/idbobjectstore_openCursor_invalid-private.html: Removed.
+        * indexeddb/idbobjectstore_put-private.html: Removed.
+        * indexeddb/idbobjectstore_put10-private.html: Removed.
+        * indexeddb/idbobjectstore_put11-private.html: Removed.
+        * indexeddb/idbobjectstore_put12-private.html: Removed.
+        * indexeddb/idbobjectstore_put13-private.html: Removed.
+        * indexeddb/idbobjectstore_put14-private.html: Removed.
+        * indexeddb/idbobjectstore_put15-private.html: Removed.
+        * indexeddb/idbobjectstore_put16-private.html: Removed.
+        * indexeddb/idbobjectstore_put2-private.html: Removed.
+        * indexeddb/idbobjectstore_put3-private.html: Removed.
+        * indexeddb/idbobjectstore_put4-private.html: Removed.
+        * indexeddb/idbobjectstore_put5-private.html: Removed.
+        * indexeddb/idbobjectstore_put6-private.html: Removed.
+        * indexeddb/idbobjectstore_put7-private.html: Removed.
+        * indexeddb/idbobjectstore_put8-private.html: Removed.
+        * indexeddb/idbobjectstore_put9-private.html: Removed.
+        * indexeddb/idbtransaction-oncomplete-private.html: Removed.
+        * indexeddb/idbtransaction-private.html: Removed.
+        * indexeddb/idbtransaction_abort-private.html: Removed.
+        * indexeddb/idbversionchangeevent-private.html: Removed.
+        * indexeddb/index_sort_order-private.html: Removed.
+        * indexeddb/key_invalid-private.html: Removed.
+        * indexeddb/key_valid-private.html: Removed.
+        * indexeddb/keygenerator-constrainterror-private.html: Removed.
+        * indexeddb/keygenerator-overflow-private.html: Removed.
+        * indexeddb/keygenerator-private.html: Removed.
+        * indexeddb/keyorder-private.html: Removed.
+        * indexeddb/keypath-private.html: Removed.
+        * indexeddb/keypath_invalid-private.html: Removed.
+        * indexeddb/keypath_maxsize-private.html: Removed.
+        * indexeddb/list_ordering-private.html: Removed.
+        * indexeddb/objectstore_keyorder-private.html: Removed.
+        * indexeddb/request_bubble-and-capture-private.html: Removed.
+        * indexeddb/string-list-ordering-private.html: Removed.
+        * indexeddb/transaction-create_in_versionchange-private.html: Removed.
+        * indexeddb/transaction-lifetime-blocked-private.html: Removed.
+        * indexeddb/transaction-lifetime-private.html: Removed.
+        * indexeddb/transaction-requestqueue-private.html: Removed.
+        * indexeddb/transaction_bubble-and-capture-private.html: Removed.
+        * indexeddb/value-private.html: Removed.
+        * indexeddb/value_recursive-private.html: Removed.
+        * indexeddb/writer-starvation-private.html: Removed.
+        * resources/ImportExpectations:
+        * web-platform-tests/IndexedDB/abort-in-initial-upgradeneeded-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/abort-in-initial-upgradeneeded-private-expected.txt.
+        * web-platform-tests/IndexedDB/abort-in-initial-upgradeneeded.html: Renamed from LayoutTests/imported/w3c/indexeddb/abort-in-initial-upgradeneeded.html.
+        * web-platform-tests/IndexedDB/close-in-upgradeneeded-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/close-in-upgradeneeded-private-expected.txt.
+        * web-platform-tests/IndexedDB/close-in-upgradeneeded.html: Renamed from LayoutTests/imported/w3c/indexeddb/close-in-upgradeneeded.html.
+        * web-platform-tests/IndexedDB/cursor-overloads-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/cursor-overloads-private-expected.txt.
+        * web-platform-tests/IndexedDB/cursor-overloads.htm: Renamed from LayoutTests/imported/w3c/indexeddb/cursor-overloads.htm.
+        * web-platform-tests/IndexedDB/idb_webworkers-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idb_webworkers-private-expected.txt.
+        * web-platform-tests/IndexedDB/idb_webworkers.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idb_webworkers.htm.
+        * web-platform-tests/IndexedDB/idbcursor-advance-continue-async-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-continue-async-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-continue-async.htm.
+        * web-platform-tests/IndexedDB/idbcursor-advance-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-advance-invalid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-invalid-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-advance-invalid.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-invalid.htm.
+        * web-platform-tests/IndexedDB/idbcursor-advance.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-advance.htm.
+        * web-platform-tests/IndexedDB/idbcursor-continue-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-continue-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-continue.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-continue.htm.
+        * web-platform-tests/IndexedDB/idbcursor-direction-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-direction-index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-index-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-direction-index-keyrange-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-index-keyrange-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-direction-index-keyrange.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-index-keyrange.htm.
+        * web-platform-tests/IndexedDB/idbcursor-direction-index.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-index.htm.
+        * web-platform-tests/IndexedDB/idbcursor-direction-objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-objectstore-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-direction-objectstore-keyrange-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-objectstore-keyrange-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-direction-objectstore-keyrange.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-objectstore-keyrange.htm.
+        * web-platform-tests/IndexedDB/idbcursor-direction-objectstore.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction-objectstore.htm.
+        * web-platform-tests/IndexedDB/idbcursor-direction.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-direction.htm.
+        * web-platform-tests/IndexedDB/idbcursor-key-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-key-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-key.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-key.htm.
+        * web-platform-tests/IndexedDB/idbcursor-primarykey-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-primarykey-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-primarykey.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-primarykey.htm.
+        * web-platform-tests/IndexedDB/idbcursor-reused-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-reused-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-reused.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-reused.htm.
+        * web-platform-tests/IndexedDB/idbcursor-source-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-source-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor-source.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor-source.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index2.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index3.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index5.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index6.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index7-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index7.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index8-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index8.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index8.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index9-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index9-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_index9.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index9.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore2.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore3.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore4.htm.
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore5.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index2.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index3.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index4.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index5.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index6.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index7-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index7.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index8-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_index8.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index8.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_invalid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_invalid-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_invalid.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_invalid.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore2.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore3.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore4.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore5.htm.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore6.htm.
+        * web-platform-tests/IndexedDB/idbcursor_delete_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_delete_index.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index.htm.
+        * web-platform-tests/IndexedDB/idbcursor_delete_index2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_delete_index2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index2.htm.
+        * web-platform-tests/IndexedDB/idbcursor_delete_index3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_delete_index3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index3.htm.
+        * web-platform-tests/IndexedDB/idbcursor_delete_index4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_delete_index4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index4.htm.
+        * web-platform-tests/IndexedDB/idbcursor_delete_index5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_delete_index5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index5.htm.
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore.htm.
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore2.htm.
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore3-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore3.htm.
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore4.htm.
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore5.htm.
+        * web-platform-tests/IndexedDB/idbcursor_iterating-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_objectstore-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_iterating.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating.htm.
+        * web-platform-tests/IndexedDB/idbcursor_iterating_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_index-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_iterating_index.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_index.htm.
+        * web-platform-tests/IndexedDB/idbcursor_iterating_index2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_index2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_iterating_index2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_index2.htm.
+        * web-platform-tests/IndexedDB/idbcursor_iterating_objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_objectstore-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_iterating_objectstore.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_objectstore.htm.
+        * web-platform-tests/IndexedDB/idbcursor_iterating_objectstore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_objectstore2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_iterating_objectstore2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_iterating_objectstore2.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_index.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_index2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_index2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index2.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_index3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_index3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index3.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_index4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_index4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index4.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_index5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_index5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index5.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_index6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_index6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index6.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_index7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index7-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_index7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_index7.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore2.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore3.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore4.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore5.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore6.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore7-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore7.htm.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore8-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore8.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbcursor_update_objectstore8.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_close-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_close-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_close.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_close.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_close2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_close2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_close2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_close2.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore-createIndex-emptyname-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore-createIndex-emptyname-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore-createIndex-emptyname.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore-createIndex-emptyname.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore10-1000ends-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore10-1000ends-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore10-1000ends.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore10-1000ends.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore10-emptyname-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore10-emptyname-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore10-emptyname.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore10-emptyname.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore11-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore11-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore11.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore11.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore2.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore3.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore4.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore5.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore6.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore7-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore7.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore8-parameters-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore8-parameters-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore8-parameters.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore8-parameters.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore9-invalidparameters-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore9-invalidparameters-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore9-invalidparameters.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_createObjectStore9-invalidparameters.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore2.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore3.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore4-not_reused-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore4-not_reused-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore4-not_reused.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore4-not_reused.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_transaction-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_transaction.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_transaction2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_transaction2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction2.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_transaction3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_transaction3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction3.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_transaction4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_transaction4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction4.htm.
+        * web-platform-tests/IndexedDB/idbdatabase_transaction5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbdatabase_transaction5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbdatabase_transaction5.htm.
+        * web-platform-tests/IndexedDB/idbfactory_cmp-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_cmp-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_cmp.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_cmp.htm.
+        * web-platform-tests/IndexedDB/idbfactory_cmp2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_cmp2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_cmp2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_cmp2.htm.
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase.htm.
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase2.htm.
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase3.htm.
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase4.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open10-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open10-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open10.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open10.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open11-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open11-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open11.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open11.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open12-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open12-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open12.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open12.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open2.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open3.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open4.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open5.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open6.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open7-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open7.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open8-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open8.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open8.htm.
+        * web-platform-tests/IndexedDB/idbfactory_open9-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open9-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbfactory_open9.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbfactory_open9.htm.
+        * web-platform-tests/IndexedDB/idbindex-multientry-arraykeypath-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-arraykeypath-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex-multientry-arraykeypath.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-arraykeypath.htm.
+        * web-platform-tests/IndexedDB/idbindex-multientry-big-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-big-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex-multientry-big.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-big.htm.
+        * web-platform-tests/IndexedDB/idbindex-multientry-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex-multientry.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex-multientry.htm.
+        * web-platform-tests/IndexedDB/idbindex_count-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_count.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count.htm.
+        * web-platform-tests/IndexedDB/idbindex_count2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_count2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count2.htm.
+        * web-platform-tests/IndexedDB/idbindex_count3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_count3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count3.htm.
+        * web-platform-tests/IndexedDB/idbindex_count4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_count4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_count4.htm.
+        * web-platform-tests/IndexedDB/idbindex_get-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_get.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get.htm.
+        * web-platform-tests/IndexedDB/idbindex_get2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_get2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get2.htm.
+        * web-platform-tests/IndexedDB/idbindex_get3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_get3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get3.htm.
+        * web-platform-tests/IndexedDB/idbindex_get4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_get4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get4.htm.
+        * web-platform-tests/IndexedDB/idbindex_get5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_get5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get5.htm.
+        * web-platform-tests/IndexedDB/idbindex_get6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_get6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get6.htm.
+        * web-platform-tests/IndexedDB/idbindex_get7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get7-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_get7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_get7.htm.
+        * web-platform-tests/IndexedDB/idbindex_getKey-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_getKey.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey.htm.
+        * web-platform-tests/IndexedDB/idbindex_getKey2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_getKey2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey2.htm.
+        * web-platform-tests/IndexedDB/idbindex_getKey3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_getKey3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey3.htm.
+        * web-platform-tests/IndexedDB/idbindex_getKey4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_getKey4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey4.htm.
+        * web-platform-tests/IndexedDB/idbindex_getKey5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_getKey5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey5.htm.
+        * web-platform-tests/IndexedDB/idbindex_getKey6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_getKey6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey6.htm.
+        * web-platform-tests/IndexedDB/idbindex_getKey7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey7-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_getKey7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_getKey7.htm.
+        * web-platform-tests/IndexedDB/idbindex_indexNames-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_indexNames-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_indexNames.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_indexNames.htm.
+        * web-platform-tests/IndexedDB/idbindex_openCursor-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openCursor-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_openCursor.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openCursor.htm.
+        * web-platform-tests/IndexedDB/idbindex_openCursor2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openCursor2-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_openCursor2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openCursor2.htm.
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor.htm.
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor2.htm.
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor3-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbindex_openKeyCursor3.htm.
+        * web-platform-tests/IndexedDB/idbkeyrange-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbkeyrange-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbkeyrange.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbkeyrange.htm.
+        * web-platform-tests/IndexedDB/idbkeyrange_incorrect-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbkeyrange_incorrect-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbkeyrange_incorrect.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbkeyrange_incorrect.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add10-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add10-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add10.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add10.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add11-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add11-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add11.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add11.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add12-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add12-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add12.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add12.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add13-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add13-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add13.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add13.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add14-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add14-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add14.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add14.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add15-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add15-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add15.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add15.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add16-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add16-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add16.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add16.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add2.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add3.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add4.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add5.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add6.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add7-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add7.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add8-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add8.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add8.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_add9-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add9-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_add9.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add9.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_clear-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_clear.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_clear2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_clear2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear2.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_clear3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_clear3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear3.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_clear4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_clear4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_clear4.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_count-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_count.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_count2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_count2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count2.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_count3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_count3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count3.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_count4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_count4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_count4.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex10-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex10-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex10.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex10.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex11-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex11-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex11.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex11.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex12-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex12-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex12.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex12.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex13-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex13-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex13.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex13.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex2.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex3-usable-right-away-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex3-usable-right-away-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex3-usable-right-away.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex3-usable-right-away.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex4-deleteIndex-event_order-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex4-deleteIndex-event_order-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex4-deleteIndex-event_order.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex4-deleteIndex-event_order.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex5-emptykeypath-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex5-emptykeypath-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex5-emptykeypath.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex5-emptykeypath.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex6-event_order-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex6-event_order-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex6-event_order.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex6-event_order.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex7-event_order-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex7-event_order.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex8-valid_keys-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex8-valid_keys-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex8-valid_keys.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex8-valid_keys.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex9-emptyname-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex9-emptyname-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex9-emptyname.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex9-emptyname.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete2.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete3.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete4.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete5.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete6.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete7-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_delete7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_delete7.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_deleteIndex-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_deleteIndex-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_deleteIndex.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_deleteIndex.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_deleted-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_deleted-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_deleted.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_deleted.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_get-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_get.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_get2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_get2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get2.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_get3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_get3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get3.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_get4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_get4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get4.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_get5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_get5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get5.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_get6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_get6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get6.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_get7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get7-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_get7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_get7.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_index-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_index-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_index.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_index.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_openCursor-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_openCursor-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_openCursor.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_openCursor.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_openCursor_invalid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_openCursor_invalid-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_openCursor_invalid.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_openCursor_invalid.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put10-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put10-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put10.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put10.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put11-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put11-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put11.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put11.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put12-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put12-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put12.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put12.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put13-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put13-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put13.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put13.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put14-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put14-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put14.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put14.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put15-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put15-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put15.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put15.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put16-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put16-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put16.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put16.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put2-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put2-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put2.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put2.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put3-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put3-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put3.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put3.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put4-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put4-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put4.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put4.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put5-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put5-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put5.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put5.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put6-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put6-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put6.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put6.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put7-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put7-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put7.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put7.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put8-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put8-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put8.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put8.htm.
+        * web-platform-tests/IndexedDB/idbobjectstore_put9-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put9-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbobjectstore_put9.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put9.htm.
+        * web-platform-tests/IndexedDB/idbtransaction-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbtransaction-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbtransaction-oncomplete-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbtransaction-oncomplete-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbtransaction-oncomplete.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbtransaction-oncomplete.htm.
+        * web-platform-tests/IndexedDB/idbtransaction.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbtransaction.htm.
+        * web-platform-tests/IndexedDB/idbtransaction_abort-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbtransaction_abort-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbtransaction_abort.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbtransaction_abort.htm.
+        * web-platform-tests/IndexedDB/idbversionchangeevent-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/idbversionchangeevent-private-expected.txt.
+        * web-platform-tests/IndexedDB/idbversionchangeevent.htm: Renamed from LayoutTests/imported/w3c/indexeddb/idbversionchangeevent.htm.
+        * web-platform-tests/IndexedDB/idbworker.js: Renamed from LayoutTests/imported/w3c/indexeddb/idbworker.js.
+        (false.MessageHandler.open_rq.onupgradeneeded):
+        (false.MessageHandler.db.e.target.result.db.onerror):
+        (false.MessageHandler.db.transaction.objectStore.onsuccess):
+        (false.MessageHandler.open_rq.onsuccess):
+        (false.MessageHandler.open_rq.onerror):
+        (false.MessageHandler.open_rq.onblocked):
+        (false.MessageHandler):
+        * web-platform-tests/IndexedDB/index_sort_order-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/index_sort_order-private-expected.txt.
+        * web-platform-tests/IndexedDB/index_sort_order.htm: Renamed from LayoutTests/imported/w3c/indexeddb/index_sort_order.htm.
+        * web-platform-tests/IndexedDB/interfaces-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/interfaces-expected.txt.
+        * web-platform-tests/IndexedDB/interfaces.html: Renamed from LayoutTests/imported/w3c/indexeddb/interfaces.html.
+        * web-platform-tests/IndexedDB/interfaces.idl: Renamed from LayoutTests/imported/w3c/indexeddb/interfaces.idl.
+        * web-platform-tests/IndexedDB/interfaces.worker.js: Renamed from LayoutTests/imported/w3c/indexeddb/interfaces.worker.js.
+        (request.onload):
+        * web-platform-tests/IndexedDB/key_invalid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/key_invalid-private-expected.txt.
+        * web-platform-tests/IndexedDB/key_invalid.htm: Renamed from LayoutTests/imported/w3c/indexeddb/key_invalid.htm.
+        * web-platform-tests/IndexedDB/key_valid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/key_valid-private-expected.txt.
+        * web-platform-tests/IndexedDB/key_valid.html: Renamed from LayoutTests/imported/w3c/indexeddb/key_valid.html.
+        * web-platform-tests/IndexedDB/keygenerator-constrainterror-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keygenerator-constrainterror-private-expected.txt.
+        * web-platform-tests/IndexedDB/keygenerator-constrainterror.htm: Renamed from LayoutTests/imported/w3c/indexeddb/keygenerator-constrainterror.htm.
+        * web-platform-tests/IndexedDB/keygenerator-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keygenerator-private-expected.txt.
+        * web-platform-tests/IndexedDB/keygenerator-overflow-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keygenerator-overflow-private-expected.txt.
+        * web-platform-tests/IndexedDB/keygenerator-overflow.htm: Renamed from LayoutTests/imported/w3c/indexeddb/keygenerator-overflow.htm.
+        * web-platform-tests/IndexedDB/keygenerator.htm: Renamed from LayoutTests/imported/w3c/indexeddb/keygenerator.htm.
+        * web-platform-tests/IndexedDB/keyorder-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keyorder-private-expected.txt.
+        * web-platform-tests/IndexedDB/keyorder.htm: Renamed from LayoutTests/imported/w3c/indexeddb/keyorder.htm.
+        * web-platform-tests/IndexedDB/keypath-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keypath-private-expected.txt.
+        * web-platform-tests/IndexedDB/keypath.htm: Renamed from LayoutTests/imported/w3c/indexeddb/keypath.htm.
+        * web-platform-tests/IndexedDB/keypath_invalid-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keypath_invalid-private-expected.txt.
+        * web-platform-tests/IndexedDB/keypath_invalid.htm: Renamed from LayoutTests/imported/w3c/indexeddb/keypath_invalid.htm.
+        * web-platform-tests/IndexedDB/keypath_maxsize-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/keypath_maxsize-private-expected.txt.
+        * web-platform-tests/IndexedDB/keypath_maxsize.htm: Renamed from LayoutTests/imported/w3c/indexeddb/keypath_maxsize.htm.
+        * web-platform-tests/IndexedDB/list_ordering-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/list_ordering-private-expected.txt.
+        * web-platform-tests/IndexedDB/list_ordering.htm: Renamed from LayoutTests/imported/w3c/indexeddb/list_ordering.htm.
+        * web-platform-tests/IndexedDB/objectstore_keyorder-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/objectstore_keyorder-private-expected.txt.
+        * web-platform-tests/IndexedDB/objectstore_keyorder.htm: Renamed from LayoutTests/imported/w3c/indexeddb/objectstore_keyorder.htm.
+        * web-platform-tests/IndexedDB/request_bubble-and-capture-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/request_bubble-and-capture-private-expected.txt.
+        * web-platform-tests/IndexedDB/request_bubble-and-capture.htm: Renamed from LayoutTests/imported/w3c/indexeddb/request_bubble-and-capture.htm.
+        * web-platform-tests/IndexedDB/string-list-ordering-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/string-list-ordering-private-expected.txt.
+        * web-platform-tests/IndexedDB/string-list-ordering.htm: Renamed from LayoutTests/imported/w3c/indexeddb/string-list-ordering.htm.
+        * web-platform-tests/IndexedDB/support.js: Renamed from LayoutTests/imported/w3c/indexeddb/support.js.
+        (window.indexedDB.else):
+        (add_completion_callback):
+        (fail):
+        (auto_fail):
+        (createdb_for_multiple_tests):
+        (assert_key_equals):
+        * web-platform-tests/IndexedDB/transaction-create_in_versionchange-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-create_in_versionchange-private-expected.txt.
+        * web-platform-tests/IndexedDB/transaction-create_in_versionchange.htm: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-create_in_versionchange.htm.
+        * web-platform-tests/IndexedDB/transaction-lifetime-blocked-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-lifetime-blocked-private-expected.txt.
+        * web-platform-tests/IndexedDB/transaction-lifetime-blocked.htm: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-lifetime-blocked.htm.
+        * web-platform-tests/IndexedDB/transaction-lifetime-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-lifetime-private-expected.txt.
+        * web-platform-tests/IndexedDB/transaction-lifetime.htm: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-lifetime.htm.
+        * web-platform-tests/IndexedDB/transaction-requestqueue-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-requestqueue-private-expected.txt.
+        * web-platform-tests/IndexedDB/transaction-requestqueue.htm: Renamed from LayoutTests/imported/w3c/indexeddb/transaction-requestqueue.htm.
+        * web-platform-tests/IndexedDB/transaction_bubble-and-capture-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/transaction_bubble-and-capture-private-expected.txt.
+        * web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm: Renamed from LayoutTests/imported/w3c/indexeddb/transaction_bubble-and-capture.htm.
+        * web-platform-tests/IndexedDB/value-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/value-private-expected.txt.
+        * web-platform-tests/IndexedDB/value.htm: Renamed from LayoutTests/imported/w3c/indexeddb/value.htm.
+        * web-platform-tests/IndexedDB/value_recursive-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/value_recursive-private-expected.txt.
+        * web-platform-tests/IndexedDB/value_recursive.htm: Renamed from LayoutTests/imported/w3c/indexeddb/value_recursive.htm.
+        * web-platform-tests/IndexedDB/writer-starvation-expected.txt: Renamed from LayoutTests/imported/w3c/indexeddb/writer-starvation-private-expected.txt.
+        * web-platform-tests/IndexedDB/writer-starvation.htm: Renamed from LayoutTests/imported/w3c/indexeddb/writer-starvation.htm.
+
 2016-03-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] FetchLoader should check for empty bodies

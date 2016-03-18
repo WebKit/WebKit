@@ -298,7 +298,7 @@ webkit.org/b/155050 storage/indexeddb/intversion-open-in-upgradeneeded.html [ Sk
 
 webkit.org/b/155138 [ Yosemite ] inspector/console/addInspectedNode.html [ Pass Timeout ]
 
-webkit.org/b/154606 [ Release Yosemite ] imported/w3c/indexeddb/idbcursor-advance-continue-async.htm [ Pass Timeout ]
+webkit.org/b/154606 [ Release Yosemite ] imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm [ Pass Timeout ]
 
 webkit.org/b/155151 [ Debug ElCapitan ] media/track/track-cues-pause-on-exit.html [ Pass Timeout ]
 

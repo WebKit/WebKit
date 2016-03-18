@@ -898,14 +898,14 @@ webkit.org/b/94458 http/tests/security/aboutBlank/security-context-write.html [ 
 ### START OF IndexedDB failures
 
 # Our IDL parser test harness is not what this test expects
-imported/w3c/indexeddb/interfaces.html [ Skip ]
+imported/w3c/web-platform-tests/IndexedDB/interfaces.html [ Skip ]
 
 # W3C IDB tests where the test is wrong (the spec, other browsers, and WebKit all agree)
 # Covered by https://github.com/w3c/web-platform-tests/issues/2456
-imported/w3c/indexeddb/idbindex_get7.htm [ Failure ]
-imported/w3c/indexeddb/idbindex_getKey7.htm [ Failure ]
-imported/w3c/indexeddb/idbindex_openCursor2.htm [ Failure ]
-imported/w3c/indexeddb/idbindex_openKeyCursor3.htm [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_get7.htm [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_getKey7.htm [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_openCursor2.htm [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_openKeyCursor3.htm [ Failure ]
 
 # Times out for unexplored reasons                                                             
 storage/indexeddb/database-quota.html [ Skip ]
@@ -968,8 +968,8 @@ storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
 storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 
 # Completes with passing results, but too slowly for our test timeouts.
-imported/w3c/indexeddb/idbindex-multientry-big.htm [ Failure ]
-imported/w3c/indexeddb/idbcursor_iterating.htm [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Failure ]
 
 # SQLite backend tests that timeout
 storage/indexeddb/modern/transaction-scheduler-1.html [ Skip ]

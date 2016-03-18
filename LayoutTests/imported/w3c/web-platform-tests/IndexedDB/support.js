@@ -1,12 +1,3 @@
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-
-    // If the test file URL ends in "-private.htm(l)", enable private browsing.
-    if (window.location.href.endsWith("-private.htm") || window.location.href.endsWith("-private.html"))
-        testRunner.setPrivateBrowsingEnabled(true);
-}
-
 var databaseName = "database";
 var databaseVersion = 1;
 
