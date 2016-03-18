@@ -1,3 +1,15 @@
+2016-03-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r198443.
+
+        This change caused API test failures on El Capitan
+
+        Reverted changeset:
+
+        "CRASH in WebCore::MediaResourceLoader::requestResource + 698"
+        https://bugs.webkit.org/show_bug.cgi?id=155651
+        http://trac.webkit.org/changeset/198443
+
 2016-03-18  Darin Adler  <darin@apple.com>
 
         ASSERTION FAILED: m_isValid == valid() in WebCore::HTMLFormControlElement::isValidFormControlElement
