@@ -1,5 +1,20 @@
 2016-03-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r192499.
+
+    2015-11-16  Pranjal Jumde  <pjumde@apple.com>
+
+            Checks for buffer-overflows when reading characters from textRun
+            https://bugs.webkit.org/attachment.cgi?bugid=151055
+            <rdar://problem/23251789>
+
+            Reviewed by Brent Fulgham.
+
+            * webgl/1.0.3/151055_asan-expected.txt
+            * webgl/1.0.3/151055_asan.html
+
+2016-03-18  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r192252.
 
     2015-11-10  Zalan Bujtas  <zalan@apple.com>
