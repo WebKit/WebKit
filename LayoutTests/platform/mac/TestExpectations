@@ -1334,15 +1334,6 @@ webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
 
 webkit.org/b/155140 js/promises-tests/promises-tests-2-3-3.html [ Pass Failure ]
 
-# RTL Scrollbars are only implemented on certain OSes.
-[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
-[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]
-[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow-contents.html [ ImageOnlyFailure ]
-[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ ImageOnlyFailure ]
-[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow-padding.html [ ImageOnlyFailure ]
-[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow-simple.html [ ImageOnlyFailure ]
-[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-overflow.html [ ImageOnlyFailure ]
-
 # Content Security Policy for media redirects is not supported on some OSes.
 [ Yosemite ElCapitan ] http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Failure ]
 [ Yosemite ElCapitan ] http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Failure ]
@@ -1351,3 +1342,4 @@ webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/use
 webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 
 webkit.org/b/154688 inspector/controller/runtime-controller.html [ Pass Timeout ]
+

@@ -1,3 +1,41 @@
+2016-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [RTL Scrollbars] Position: absolute divs are covered by vertical scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=155531
+
+        Reviewed by Darin Adler.
+
+        Add a bunch of tests. Also, this patch adds some tests that caught
+        https://bugs.webkit.org/show_bug.cgi?id=155533 (but they are disabled).
+
+        * fast/scrolling/rtl-scrollbars-elementFromPoint-expected.txt: Added.
+        * fast/scrolling/rtl-scrollbars-elementFromPoint-static-expected.txt: Added.
+        * fast/scrolling/rtl-scrollbars-elementFromPoint-static.html: Added.
+        * fast/scrolling/rtl-scrollbars-elementFromPoint.html: Added.
+        * fast/scrolling/rtl-scrollbars-iframe-expected.txt: Added.
+        * fast/scrolling/rtl-scrollbars-iframe-offset-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-iframe-offset.html: Added.
+        * fast/scrolling/rtl-scrollbars-iframe-position-absolute-expected.txt: Added.
+        * fast/scrolling/rtl-scrollbars-iframe-position-absolute.html: Added.
+        * fast/scrolling/rtl-scrollbars-iframe-scrolled-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-iframe-scrolled.html: Added.
+        * fast/scrolling/rtl-scrollbars-iframe.html: Added.
+        * fast/scrolling/rtl-scrollbars-overflow-elementFromPoint-expected.txt: Added.
+        * fast/scrolling/rtl-scrollbars-overflow-elementFromPoint.html: Added.
+        * fast/scrolling/rtl-scrollbars-overflow-position-absolute-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-overflow-position-absolute.html: Added.
+        * fast/scrolling/rtl-scrollbars-overflow-text-selection-scrolled-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-overflow-text-selection-scrolled.html: Added.
+        * fast/scrolling/rtl-scrollbars-position-absolute-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-position-absolute.html: Added.
+        * fast/scrolling/rtl-scrollbars-position-fixed-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-position-fixed.html: Added.
+        * fast/scrolling/rtl-scrollbars-text-selection-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-text-selection-scrolled-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-text-selection-scrolled.html: Added.
+        * fast/scrolling/rtl-scrollbars-text-selection.html: Added.
+        * TestExpectations:
+
 2016-03-17  Brady Eidson  <beidson@apple.com>
 
         Don't try to restore deleted MemoryIndexes if their owning object store is not restored.

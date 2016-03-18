@@ -312,6 +312,7 @@ public:
     virtual bool usesMockScrollAnimator() const { return false; }
     virtual void logMockScrollAnimatorMessage(const String&) const { };
 
+    bool verticalScrollbarIsOnLeft() const;
     static bool systemLanguageIsRTL();
 
 protected:

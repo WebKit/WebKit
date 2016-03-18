@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+</head>
+<body>
+This test makes sure that position: absolute elements do not overlap the vertical scrollbar on RTL machines. The test passes if you see a green square and a red square below.
+<div style="overflow: hidden; position: relative; width: 85px; height: 85px;">
+<div style="overflow: scroll; position: absolute; width: 100px; height: 100px; left: -15px; bottom: -15px;">
+<div id="a" style="width: 15px; height: 15px; position: absolute; left: 0px; top: 0px; background: green;"></div>
+<div id="b" style="width: 15px; height: 15px; position: absolute; left: 15px; top: 0px; background: red;"></div>
+<div style="width: 1px; height: 3000px; position: absolute; left: 0px; top: 0px;"></div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="overflow: scroll; position: absolute; width: 100px; height: 100px; left: 0px; top: 0px;">
+<div id="a" style="width: 15px; height: 15px; position: absolute; left: 0px; top: 0px; background: green;"></div>
+<div id="b" style="width: 15px; height: 15px; position: absolute; left: 15px; top: 0px; background: red;"></div>
+<div style="width: 1px; height: 3000px; position: absolute; left: 0px; top: 0px;"></div>
+</div>
+<script>
+description("This test makes sure that document.elementFromPoint() works correctly with RTL scrollbars.");
+shouldBeEqualToString("document.elementFromPoint(22, 7).id", "a");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

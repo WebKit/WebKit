@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+</head>
+<body style="margin: 0px;">
+<div style="font: 20px Ahem;"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>pppppppppppppp</div>
+<div style="position: absolute; top: 0px; left: 0px;">This test makes sure that hit testing works with rtl scrollbars. The test passes if the first character above (it looks like an underline) is selected.</div>
+<div style="position: absolute; top: 0px; left: 0px; width: 1px; height: 2000px;"></div>
+<script>
+window.scrollTo(0, 1000);
+if (window.eventSender) {
+    eventSender.mouseMoveTo(17, 10);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(28, 10);
+    eventSender.mouseUp();
+}
+</script>
+</body>
+</html>

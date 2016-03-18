@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+</head>
+<body>
+<iframe id="iframe" style="position: absolute; width: 100px; height: 100px; left: -15px; top: 0px; margin: 0px; border: solid black 0px; padding: 0px;"
+srcdoc="<!DOCTYPE html>
+<head>
+</head>
+<body style='margin: 0px;'>
+ABCD
+<div style='position: absolute; left: 0px; top: 25px;'>DEFG</div>
+<div style='width: 1px; height: 2000px; position: absolute; left: 0px; top: 0px;'></div>
+</body>
+</html>"></iframe>
+<div style="position: absolute; left: 8px; top: 100px;">This test makes sure that contents of iframes are not covered by an rtl scrollbar.</div>
+</body>
+</html>

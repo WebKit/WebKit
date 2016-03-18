@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+<script src='../../resources/js-test-pre.js'></script>
+</head>
+<body>
+<iframe id="iframe" style="position: absolute; width: 100px; height: 100px; left: 0px; top: 0px; margin: 0px; border: solid black 0px; padding: 0px;"
+srcdoc="<!DOCTYPE html>
+<head>
+</head>
+<body style='margin: 0px;'>
+<div id='a' style='width: 15px; height: 15px; background: green; position: absolute; left: 0px; top: 0px;'></div><div id='b' style='width: 15px; height: 15px; background: red; position: absolute; left: 15px; top: 0px;'></div>
+<div style='width: 1px; height: 2000px; position: absolute; left: 0px; top: 0px;'></div>
+</body>
+</html>"></iframe>
+<script>
+window.jsTestIsAsync = true;
+var iframe = document.getElementById("iframe");
+var iframeDocument;
+description('This test makes sure that document.elementFromPoint() works correctly with RTL scrollbars.');
+iframe.addEventListener("load", function() {
+	window.setTimeout(function() {
+		iframeDocument = iframe.contentDocument;
+		shouldBeEqualToString('iframeDocument.elementFromPoint(7, 7).id', 'a');
+		finishJSTest();
+	}, 0);
+});
+</script>
+<script src='../../resources/js-test-post.js'></script>
+</body>
+</html>

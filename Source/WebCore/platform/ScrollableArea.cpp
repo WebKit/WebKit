@@ -690,6 +690,11 @@ void ScrollableArea::computeScrollbarValueAndOverhang(float currentPosition, flo
 }
 
 #if !PLATFORM(COCOA)
+bool ScrollableArea::verticalScrollbarIsOnLeft() const
+{
+    return false;
+}
+
 bool ScrollableArea::systemLanguageIsRTL()
 {
     return false;

@@ -404,7 +404,9 @@ ScrollPosition ScrollView::adjustScrollPositionWithinRange(const ScrollPosition&
 
 ScrollPosition ScrollView::documentScrollPositionRelativeToViewOrigin() const
 {
-    return scrollPosition() - IntSize(0, headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
+    return scrollPosition() - IntSize(
+        verticalScrollbarIsOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
+        headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
 }
 
 ScrollPosition ScrollView::documentScrollPositionRelativeToScrollableAreaOrigin() const
@@ -709,7 +711,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         int clientWidth = visibleWidth();
         int pageStep = Scrollbar::pageStep(clientWidth);
         IntRect oldRect(m_horizontalScrollbar->frameRect());
-        IntRect hBarRect(ScrollableArea::systemLanguageIsRTL() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
+        IntRect hBarRect(verticalScrollbarIsOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
             height() - m_horizontalScrollbar->height(),
             width() - (m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0),
             m_horizontalScrollbar->height());
@@ -730,7 +732,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         int clientHeight = visibleHeight();
         int pageStep = Scrollbar::pageStep(clientHeight);
         IntRect oldRect(m_verticalScrollbar->frameRect());
-        IntRect vBarRect(ScrollableArea::systemLanguageIsRTL() ? 0 : width() - m_verticalScrollbar->width(),
+        IntRect vBarRect(verticalScrollbarIsOnLeft() ? 0 : width() - m_verticalScrollbar->width(),
             topContentInset(),
             m_verticalScrollbar->width(),
             height() - topContentInset() - (m_horizontalScrollbar ? m_horizontalScrollbar->occupiedHeight() : 0));
@@ -1124,14 +1126,14 @@ IntRect ScrollView::scrollCornerRect() const
     int heightTrackedByScrollbar = height() - topContentInset();
 
     if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
-        cornerRect.unite(IntRect(ScrollableArea::systemLanguageIsRTL() ? 0 : m_horizontalScrollbar->width(),
+        cornerRect.unite(IntRect(verticalScrollbarIsOnLeft() ? 0 : m_horizontalScrollbar->width(),
             height() - m_horizontalScrollbar->height(),
             width() - m_horizontalScrollbar->width(),
             m_horizontalScrollbar->height()));
     }
 
     if (m_verticalScrollbar && heightTrackedByScrollbar - m_verticalScrollbar->height() > 0) {
-        cornerRect.unite(IntRect(ScrollableArea::systemLanguageIsRTL() ? 0 : width() - m_verticalScrollbar->width(),
+        cornerRect.unite(IntRect(verticalScrollbarIsOnLeft() ? 0 : width() - m_verticalScrollbar->width(),
             m_verticalScrollbar->height() + topContentInset(),
             m_verticalScrollbar->width(),
             heightTrackedByScrollbar - m_verticalScrollbar->height()));

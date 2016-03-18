@@ -2705,12 +2705,3 @@ fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
 
 # This test relies on iOS-specific font fallback.
 fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
-
-# RTL Scrollbars are only implemented on OS X
-fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
-fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]
-fast/scrolling/rtl-scrollbars-overflow-contents.html [ ImageOnlyFailure ]
-fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ ImageOnlyFailure ]
-fast/scrolling/rtl-scrollbars-overflow-padding.html [ ImageOnlyFailure ]
-fast/scrolling/rtl-scrollbars-overflow-simple.html [ ImageOnlyFailure ]
-fast/scrolling/rtl-scrollbars-overflow.html [ ImageOnlyFailure ]

@@ -1,3 +1,31 @@
+2016-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [RTL Scrollbars] Position: absolute divs are covered by vertical scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=155531
+
+        Reviewed by Darin Adler.
+
+        This patch updates ScrollView::documentScrollPositionRelativeToViewOrigin(), which is
+        a helper function primarily used by WebCore::ScrollView::viewToContents() and
+        WebCore::ScrollView::contentsToView().
+
+        Tests: fast/scrolling/rtl-scrollbars-elementFromPoint-static.html
+               fast/scrolling/rtl-scrollbars-elementFromPoint.html
+               fast/scrolling/rtl-scrollbars-iframe-offset.html
+               fast/scrolling/rtl-scrollbars-iframe-position-absolute.html
+               fast/scrolling/rtl-scrollbars-iframe-scrolled.html
+               fast/scrolling/rtl-scrollbars-iframe.html
+               fast/scrolling/rtl-scrollbars-overflow-elementFromPoint.html
+               fast/scrolling/rtl-scrollbars-overflow-position-absolute.html
+               fast/scrolling/rtl-scrollbars-overflow-text-selection-scrolled.html
+               fast/scrolling/rtl-scrollbars-position-absolute.html
+               fast/scrolling/rtl-scrollbars-position-fixed.html
+               fast/scrolling/rtl-scrollbars-text-selection-scrolled.html
+               fast/scrolling/rtl-scrollbars-text-selection.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::documentScrollPositionRelativeToViewOrigin):
+
 2016-03-17  Filip Pizlo  <fpizlo@apple.com>
 
         Replace all of the various non-working and non-compiling sampling profiler hacks with a single super hack

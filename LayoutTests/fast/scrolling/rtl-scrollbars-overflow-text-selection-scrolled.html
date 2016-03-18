@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+</head>
+<body style="margin: 0px;">
+<div style="overflow: hidden; width: 100%; height: 485px; position: absolute; left: -15px;">
+<div id="element" style="overflow: scroll; width: 700px; height: 500px; position: relative;">
+<div id="text" style="font: 20px Ahem;"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>pppppppppppppp
+<div style="font-family: Times;">This test makes sure that hit-testing in a scrolled overflow:scroll area works as expected. The test succeeds if the first character is selected.</div>
+<div style="width: 1px; height: 2000px; position: absolute; left: 0px; top: 0px;"></div>
+</div>
+</div>
+<script>
+var element = document.getElementById("element");
+element.scrollTop = 1000;
+if (window.eventSender) {
+    eventSender.mouseMoveTo(1, 10);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(19, 10);
+    eventSender.mouseUp();
+}
+</script>
+</body>
+</html>

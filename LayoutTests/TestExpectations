@@ -988,3 +988,22 @@ webkit.org/b/155028 storage/indexeddb/modern/256-open-databases.html [ Skip ]
 
 ### END OF IndexedDB failures
 ########################################
+
+# RTL Scrollbars are only implemented on certain versions of OS X
+fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow-contents.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow-padding.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow-simple.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow-elementFromPoint.html [ Failure ]
+fast/scrolling/rtl-scrollbars-overflow-position-absolute.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-overflow-text-selection-scrolled.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-position-absolute.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-position-fixed.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-text-selection-scrolled.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-text-selection.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-iframe-offset.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-elementFromPoint-static.html [ Failure ]
+fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ ImageOnlyFailure ]
