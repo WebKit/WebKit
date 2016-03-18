@@ -1,3 +1,14 @@
+2016-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION (r197724): [GTK] Web Inspector: Images being blocked by CSP 2.0
+        https://bugs.webkit.org/show_bug.cgi?id=155432
+
+        Reviewed by Daniel Bates.
+
+        Allow Web Inspector to load resource: image resources.
+
+        * UserInterface/Main.html:
+
 2016-03-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Prefer retained size to the shallow size in Heap Snapshot data grids
