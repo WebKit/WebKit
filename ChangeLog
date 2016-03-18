@@ -1,3 +1,10 @@
+2016-03-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, missing SET_AND_EXPOSE_TO_BUILD for USE_UDIS86 in JSCOnly port
+        https://bugs.webkit.org/show_bug.cgi?id=155628
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2016-03-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSCOnly] Enable udis86
