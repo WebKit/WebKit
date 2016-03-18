@@ -1,3 +1,15 @@
+2016-03-17  Zalan Bujtas  <zalan@apple.com>
+
+        Don't initiate a style recall while drawing text 
+        https://bugs.webkit.org/show_bug.cgi?id=155618
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that we don't initiate a style recalc while in the middle of text drawing.
+
+        * fast/canvas/crash-while-resizing-canvas-expected.txt: Added.
+        * fast/canvas/crash-while-resizing-canvas.html: Added.
+
 2016-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [RTL Scrollbars] Position: absolute divs are covered by vertical scrollbar
