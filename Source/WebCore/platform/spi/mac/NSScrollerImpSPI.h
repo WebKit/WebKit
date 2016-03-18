@@ -37,6 +37,10 @@
 @property(getter=isTracking) BOOL tracking;
 @end
 
+@interface NSScrollerImpPair ()
++ (NSUserInterfaceLayoutDirection)scrollerLayoutDirection;
+@end
+
 #else
 
 enum {
