@@ -1,3 +1,13 @@
+2016-03-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        Get rid of infinitely recursive 'draw' implementation.
+
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::draw): Deleted.
+        * platform/graphics/Image.h:
+
 2016-03-18  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r198377.
