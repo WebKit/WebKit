@@ -1,5 +1,20 @@
 2016-03-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r192285.
+
+    2015-11-10  Pranjal Jumde  <pjumde@apple.com>
+
+            Fixed crash loading Mozilla layout test editor/libeditor/crashtests/431086-1.xhtml.
+            https://bugs.webkit.org/show_bug.cgi?id=150252
+            <rdar://problem/23149470>
+
+            Reviewed by Brent Fulgham.
+
+            * LayoutTests/editing/execCommand/150252.xhtml
+            * LayoutTests/editing/execCommand/150252-expected.txt
+
+2016-03-18  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r198377.
 
     2016-03-17  Brent Fulgham  <bfulgham@apple.com>
