@@ -1,3 +1,62 @@
+2016-03-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Rename GridSpan properties
+        https://bugs.webkit.org/show_bug.cgi?id=155636
+
+        Reviewed by Sergio Villar Senin.
+
+        GridSpan was using old names initialResolvedPosition and
+        finalResolvedPosition.
+        This patch rename them to startLine and endLine.
+
+        Some reasons for this refactoring:
+        - "position" is a vague term not defined in the spec.
+        - GridSpan is currently storing grid lines. A grid "line" is defined
+          in the spec: https://drafts.csswg.org/css-grid/#grid-line-concept
+        - The spec uses the concepts "start" and "end" lines too.
+
+        No new tests, no change of behavior.
+
+        * css/CSSGridTemplateAreasValue.cpp:
+        (WebCore::stringForPosition):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateAreasRow):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForNonSpanningItems):
+        (WebCore::RenderGrid::insertItemIntoGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        * rendering/style/GridArea.h:
+        (WebCore::GridSpan::untranslatedDefiniteGridSpan):
+        (WebCore::GridSpan::translatedDefiniteGridSpan):
+        (WebCore::GridSpan::operator==):
+        (WebCore::GridSpan::integerSpan):
+        (WebCore::GridSpan::untranslatedStartLine):
+        (WebCore::GridSpan::untranslatedEndLine):
+        (WebCore::GridSpan::startLine):
+        (WebCore::GridSpan::endLine):
+        (WebCore::GridSpan::begin):
+        (WebCore::GridSpan::end):
+        (WebCore::GridSpan::translate):
+        (WebCore::GridSpan::GridSpan):
+        (WebCore::GridSpan::untranslatedResolvedInitialPosition): Deleted.
+        (WebCore::GridSpan::untranslatedResolvedFinalPosition): Deleted.
+        (WebCore::GridSpan::resolvedInitialPosition): Deleted.
+        (WebCore::GridSpan::resolvedFinalPosition): Deleted.
+        * rendering/style/GridPositionsResolver.cpp:
+        (WebCore::definiteGridSpanWithNamedLineSpanAgainstOpposite):
+        (WebCore::resolveNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionAgainstOppositePosition):
+        (WebCore::GridPositionsResolver::resolveGridPositionsFromStyle):
+
 2016-03-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] One more unreviewed speculative buildfix after r197633. Just for fun.

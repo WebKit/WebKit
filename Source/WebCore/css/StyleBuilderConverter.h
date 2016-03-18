@@ -939,12 +939,12 @@ inline void StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(cons
         GridSpan areaSpan = direction == ForRows ? area.value.rows : area.value.columns;
         {
             auto& startVector = namedGridLines.add(area.key + "-start", Vector<unsigned>()).iterator->value;
-            startVector.append(areaSpan.resolvedInitialPosition());
+            startVector.append(areaSpan.startLine());
             std::sort(startVector.begin(), startVector.end());
         }
         {
             auto& endVector = namedGridLines.add(area.key + "-end", Vector<unsigned>()).iterator->value;
-            endVector.append(areaSpan.resolvedFinalPosition());
+            endVector.append(areaSpan.endLine());
             std::sort(endVector.begin(), endVector.end());
         }
     }
