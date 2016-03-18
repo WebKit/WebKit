@@ -1,3 +1,14 @@
+2016-03-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WEB: VoiceOver does not announce some WAI-ARIA document structures
+        https://bugs.webkit.org/show_bug.cgi?id=155603
+        <rdar://problem/25227385>
+
+        Reviewed by Darin Adler.
+
+        * accessibility/ios-simulator/landmark-type-expected.txt:
+        * accessibility/ios-simulator/landmark-type.html:
+
 2016-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         [XSS Auditor] Off by one in XSSAuditor::canonicalizedSnippetForJavaScript()

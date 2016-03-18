@@ -24,6 +24,22 @@ text
 text
 </div>
 
+<footer id="footer">
+footer
+</footer>
+
+<div role="article" id="article">
+article
+</div>
+
+<div role="document" id="documentcontainer">
+document
+</div>
+
+<div role="note" id="note">
+note
+</div>
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -48,6 +64,22 @@ text
         var region = accessibilityController.accessibleElementById("region");
         shouldBe("region.description", "'AXLabel: testregion, region'");
         shouldBeTrue("region.childAtIndex(0).traits != nonLandmarkText.traits");
+
+        var footer = accessibilityController.accessibleElementById("footer");
+        shouldBe("footer.description", "'AXLabel: footer'");
+        shouldBeTrue("footer.childAtIndex(0).traits != nonLandmarkText.traits");
+
+        var article = accessibilityController.accessibleElementById("article");
+        shouldBe("article.description", "'AXLabel: article'");
+        shouldBeTrue("article.childAtIndex(0).traits != nonLandmarkText.traits");
+
+        var note = accessibilityController.accessibleElementById("note");
+        shouldBe("note.description", "'AXLabel: note'");
+        shouldBeTrue("note.childAtIndex(0).traits != nonLandmarkText.traits");
+
+        var documentContainer = accessibilityController.accessibleElementById("documentcontainer");
+        shouldBe("documentContainer.description", "'AXLabel: document'");
+        shouldBeTrue("documentContainer.childAtIndex(0).traits != nonLandmarkText.traits");
 
         shouldBeTrue("region.childAtIndex(0).traits == main.childAtIndex(0).traits");
     }

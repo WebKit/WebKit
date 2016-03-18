@@ -1,3 +1,25 @@
+2016-03-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WEB: VoiceOver does not announce some WAI-ARIA document structures
+        https://bugs.webkit.org/show_bug.cgi?id=155603
+        <rdar://problem/25227385>
+
+        Reviewed by Darin Adler.
+
+        Expose more ARIA landmark type roles on iOS for accessibility.
+
+        Updated test: accessibility/ios-simulator/landmark-type.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityIsLandmarkRole:]):
+        (-[WebAccessibilityObjectWrapper accessibilityLabel]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::searchMenuClearRecentSearchesText):
+        (WebCore::AXWebAreaText):
+        (WebCore::AXListItemActionVerb):
+        (WebCore::AXAutoFillCredentialsLabel):
+        * platform/LocalizedStrings.h:
+
 2016-03-17  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Remove the need to pass reporting status to ContentSecurityPolicy functions

@@ -544,6 +544,7 @@ String searchMenuClearRecentSearchesText()
 {
     return WEB_UI_STRING("Clear Recent Searches", "menu item in Recent Searches menu that empties menu's contents");
 }
+#endif // !PLATFORM(IOS)
 
 String AXWebAreaText()
 {
@@ -652,7 +653,6 @@ String AXListItemActionVerb()
     notImplemented();
     return "select";
 }
-#endif // !PLATFORM(IOS)
 
 String AXAutoFillCredentialsLabel()
 {

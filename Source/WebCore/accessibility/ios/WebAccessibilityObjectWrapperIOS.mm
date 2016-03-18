@@ -498,7 +498,11 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (BOOL)_accessibilityIsLandmarkRole:(AccessibilityRole)role
 {
     switch (role) {
+    case DocumentRole:
+    case DocumentArticleRole:
+    case DocumentNoteRole:
     case DocumentRegionRole:
+    case FooterRole:
     case LandmarkApplicationRole:
     case LandmarkBannerRole:
     case LandmarkComplementaryRole:
@@ -958,7 +962,11 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     NSString *axTitle = [self baseAccessibilityTitle];
     NSString *axDescription = [self baseAccessibilityDescription];
     NSString *landmarkDescription = [self ariaLandmarkRoleDescription];
-    
+
+    // Footer is not considered a landmark, but we want the role description.
+    if (m_object->roleValue() == FooterRole)
+        landmarkDescription = AXFooterRoleDescriptionText();
+
     NSMutableString *result = [NSMutableString string];
     if (m_object->roleValue() == HorizontalRuleRole)
         appendStringToResult(result, AXHorizontalRuleDescriptionText());

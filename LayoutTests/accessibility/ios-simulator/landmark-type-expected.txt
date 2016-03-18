@@ -2,6 +2,10 @@ non landmark
 text
 text
 text
+footer
+article
+document
+note
 This tests that landmarks return their type as part of the AX label.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -13,6 +17,14 @@ PASS banner.description is 'AXLabel: banner'
 PASS banner.childAtIndex(0).traits != nonLandmarkText.traits is true
 PASS region.description is 'AXLabel: testregion, region'
 PASS region.childAtIndex(0).traits != nonLandmarkText.traits is true
+PASS footer.description is 'AXLabel: footer'
+PASS footer.childAtIndex(0).traits != nonLandmarkText.traits is true
+PASS article.description is 'AXLabel: article'
+PASS article.childAtIndex(0).traits != nonLandmarkText.traits is true
+PASS note.description is 'AXLabel: note'
+PASS note.childAtIndex(0).traits != nonLandmarkText.traits is true
+PASS documentContainer.description is 'AXLabel: document'
+PASS documentContainer.childAtIndex(0).traits != nonLandmarkText.traits is true
 PASS region.childAtIndex(0).traits == main.childAtIndex(0).traits is true
 PASS successfullyParsed is true
 
