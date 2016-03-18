@@ -1,3 +1,13 @@
+2016-03-18  Darin Adler  <darin@apple.com>
+
+        ASSERTION FAILED: m_isValid == valid() in WebCore::HTMLFormControlElement::isValidFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=139481
+
+        Reviewed by Daniel Bates.
+
+        * fast/forms/validity-assertion-inserting-into-datalist-expected.txt: Added.
+        * fast/forms/validity-assertion-inserting-into-datalist.html: Added.
+
 2016-03-18  Chris Dumez  <cdumez@apple.com>
 
         Speculative revalidation requests do not have their HTTP user-agent set

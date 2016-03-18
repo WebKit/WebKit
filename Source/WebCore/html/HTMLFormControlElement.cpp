@@ -275,13 +275,12 @@ static void removeInvalidElementToAncestorFromInsertionPoint(const HTMLFormContr
 
 Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(ContainerNode& insertionPoint)
 {
-    if (willValidate() && !isValidFormControlElement())
-        addInvalidElementToAncestorFromInsertionPoint(*this, &insertionPoint);
-
-    if (document().hasDisabledFieldsetElement())
-        setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     m_dataListAncestorState = Unknown;
     setNeedsWillValidateCheck();
+    if (willValidate() && !isValidFormControlElement())
+        addInvalidElementToAncestorFromInsertionPoint(*this, &insertionPoint);
+    if (document().hasDisabledFieldsetElement())
+        setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     HTMLElement::insertedInto(insertionPoint);
     FormAssociatedElement::insertedInto(insertionPoint);
     return InsertionShouldCallFinishedInsertingSubtree;
