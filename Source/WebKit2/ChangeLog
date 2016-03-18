@@ -1,3 +1,9 @@
+2016-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Try to fix GTK+ debug build after r198364.
+
+        * WebProcess/gtk/WebProcessMainGtk.cpp: Use WTF::sleep().
+
 2016-03-17  Alex Christensen  <achristensen@webkit.org>
 
         SpeculativeLoad needs to continue NetworkLoad when it receives a redirect response

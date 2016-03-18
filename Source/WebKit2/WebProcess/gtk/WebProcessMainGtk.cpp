@@ -33,6 +33,7 @@
 #include <gtk/gtk.h>
 #include <libintl.h>
 #include <libsoup/soup.h>
+#include <wtf/CurrentTime.h>
 
 #if PLATFORM(X11)
 #include <X11/Xlib.h>
@@ -48,7 +49,7 @@ public:
     {
 #ifndef NDEBUG
         if (g_getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
-            sleep(30);
+            WTF::sleep(30);
 #endif
 
 #if (USE(COORDINATED_GRAPHICS_THREADED) || USE(GSTREAMER_GL)) && PLATFORM(X11)
