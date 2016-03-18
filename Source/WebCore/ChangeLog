@@ -1,3 +1,13 @@
+2016-03-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Some media tests are flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=155614
+
+        Reviewed by Eric Carlson.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::~TextTrack):
+
 2016-03-17  Brady Eidson  <beidson@apple.com>
 
         Don't try to restore deleted MemoryIndexes if their owning object store is not restored.
