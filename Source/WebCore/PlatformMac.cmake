@@ -860,6 +860,7 @@ set(ObjC_Bindings_IDL_FILES
     html/HTMLTextAreaElement.idl
     html/HTMLTitleElement.idl
     html/HTMLUListElement.idl
+    html/HTMLVideoElement.idl
     html/ValidityState.idl
 
     page/AbstractView.idl
