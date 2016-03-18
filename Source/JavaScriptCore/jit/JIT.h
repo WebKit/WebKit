@@ -47,7 +47,6 @@
 #include "Opcode.h"
 #include "PCToCodeOriginMap.h"
 #include "ResultType.h"
-#include "SamplingTool.h"
 #include "UnusedPointer.h"
 
 namespace JSC {

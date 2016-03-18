@@ -38,7 +38,6 @@
 #include "Parser.h"
 #include "PropertyNameArray.h"
 #include "RegExpObject.h"
-#include "SamplingTool.h"
 #include <wtf/Assertions.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Threading.h>

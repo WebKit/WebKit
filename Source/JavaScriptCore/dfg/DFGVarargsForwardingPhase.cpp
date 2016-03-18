@@ -325,7 +325,6 @@ private:
 
 bool performVarargsForwarding(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Varargs Forwarding Phase");
     return runPhase<VarargsForwardingPhase>(graph);
 }
 

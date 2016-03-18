@@ -306,10 +306,7 @@ public:
         return heap.baseIndex(*this, base, index, indexAsConstant, offset);
     }
 
-    TypedPointer absolute(void* address)
-    {
-        return TypedPointer(m_heaps->absolute[address], constIntPtr(address));
-    }
+    TypedPointer absolute(void* address);
 
     LValue load8SignExt32(LValue base, const AbstractHeap& field) { return load8SignExt32(address(base, field)); }
     LValue load8ZeroExt32(LValue base, const AbstractHeap& field) { return load8ZeroExt32(address(base, field)); }
@@ -453,6 +450,9 @@ public:
         B3::UpsilonValue* upsilon = m_block->appendNew<B3::UpsilonValue>(m_proc, origin(), value);
         return ValueFromBlock(upsilon, m_block);
     }
+
+    void incrementSuperSamplerCount();
+    void decrementSuperSamplerCount();
 
 #if PLATFORM(COCOA)
 #pragma mark - States

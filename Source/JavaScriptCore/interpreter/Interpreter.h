@@ -59,7 +59,6 @@ namespace JSC {
     class ModuleProgramExecutable;
     class Register;
     class JSScope;
-    class SamplingTool;
     struct CallFrameClosure;
     struct HandlerInfo;
     struct Instruction;
@@ -221,8 +220,6 @@ namespace JSC {
 
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         
-        SamplingTool* sampler() { return m_sampler.get(); }
-
         NEVER_INLINE HandlerInfo* unwind(VM&, CallFrame*&, Exception*, UnwindStart);
         void notifyDebuggerOfExceptionToBeThrown(CallFrame*, Exception*);
         NEVER_INLINE void debug(CallFrame*, DebugHookID);
@@ -232,10 +229,6 @@ namespace JSC {
         static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState*);
         static EncodedJSValue JSC_HOST_CALL constructWithNativeErrorConstructor(ExecState*);
         static EncodedJSValue JSC_HOST_CALL callNativeErrorConstructor(ExecState*);
-
-        void dumpSampleData(ExecState* exec);
-        void startSampling();
-        void stopSampling();
 
         JS_EXPORT_PRIVATE void dumpCallFrame(CallFrame*);
 
@@ -253,10 +246,6 @@ namespace JSC {
         void dumpRegisters(CallFrame*);
         
         bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval) || opcode == getOpcode(op_tail_call); }
-
-        void enableSampler();
-        int m_sampleEntryDepth;
-        std::unique_ptr<SamplingTool> m_sampler;
 
         VM& m_vm;
         JSStack m_stack;

@@ -63,8 +63,6 @@ void Label::setLocation(unsigned location)
 
 ParserError BytecodeGenerator::generate()
 {
-    SamplingRegion samplingRegion("Bytecode Generation");
-
     m_codeBlock->setThisRegister(m_thisRegister.virtualRegister());
     
     // If we have declared a variable named "arguments" and we are using arguments then we should

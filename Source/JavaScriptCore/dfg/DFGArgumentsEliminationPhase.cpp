@@ -678,7 +678,6 @@ private:
 
 bool performArgumentsElimination(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Arguments Elimination Phase");
     return runPhase<ArgumentsEliminationPhase>(graph);
 }
 

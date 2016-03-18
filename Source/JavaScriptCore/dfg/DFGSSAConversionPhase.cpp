@@ -416,7 +416,6 @@ private:
 
 bool performSSAConversion(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG SSA Conversion Phase");
     return runPhase<SSAConversionPhase>(graph);
 }
 

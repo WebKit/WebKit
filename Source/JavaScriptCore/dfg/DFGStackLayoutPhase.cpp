@@ -261,7 +261,6 @@ private:
 
 bool performStackLayout(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Stack Layout Phase");
     return runPhase<StackLayoutPhase>(graph);
 }
 

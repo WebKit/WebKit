@@ -489,7 +489,6 @@ static bool runFromFiles(GlobalObject* globalObject, const Vector<String>& files
 
     delete[] lineBuffer;
 
-    vm.dumpSampleData(globalObject->globalExec());
 #if ENABLE(REGEXP_TRACING)
     vm.dumpRegExpTrace();
 #endif

@@ -5080,7 +5080,6 @@ bool ByteCodeParser::parse()
 
 bool parse(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Parsing");
     return ByteCodeParser(graph).parse();
 }
 

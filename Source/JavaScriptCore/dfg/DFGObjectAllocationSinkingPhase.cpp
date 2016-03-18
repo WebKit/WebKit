@@ -2211,7 +2211,6 @@ private:
 
 bool performObjectAllocationSinking(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Object Allocation Sinking Phase");
     return runPhase<ObjectAllocationSinkingPhase>(graph);
 }
 

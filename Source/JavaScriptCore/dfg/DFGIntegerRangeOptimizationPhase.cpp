@@ -1770,7 +1770,6 @@ private:
 
 bool performIntegerRangeOptimization(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Integer Range Optimization Phase");
     return runPhase<IntegerRangeOptimizationPhase>(graph);
 }
 

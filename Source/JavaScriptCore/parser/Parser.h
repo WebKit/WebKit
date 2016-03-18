@@ -1654,8 +1654,6 @@ std::unique_ptr<ParsedNode> parse(
     ConstructorKind defaultConstructorKind = ConstructorKind::None, ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded,
     DerivedContextType derivedContextType = DerivedContextType::None)
 {
-    SamplingRegion samplingRegion("Parsing");
-
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
         Parser<Lexer<LChar>> parser(vm, source, builtinMode, strictMode, parseMode, superBinding, defaultConstructorKind, thisTDZMode, derivedContextType, isEvalNode<ParsedNode>());

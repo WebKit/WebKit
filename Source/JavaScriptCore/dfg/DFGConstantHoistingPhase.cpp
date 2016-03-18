@@ -139,7 +139,6 @@ public:
     
 bool performConstantHoisting(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Constant Hoisting Phase");
     return runPhase<ConstantHoistingPhase>(graph);
 }
 

@@ -85,7 +85,6 @@ public:
 
 bool performUnification(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Unification Phase");
     return runPhase<UnificationPhase>(graph);
 }
 

@@ -38,7 +38,6 @@
 #include "JITCode.h"
 #include "JSCInlines.h"
 #include "Options.h"
-#include "SamplingTool.h"
 #include "TypeProfilerLog.h"
 #include <wtf/Atomics.h>
 
@@ -61,8 +60,6 @@ static CompilationResult compileImpl(
     unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues,
     PassRefPtr<DeferredCompilationCallback> callback)
 {
-    SamplingRegion samplingRegion("DFG Compilation (Driver)");
-    
     if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount())
         || !FunctionWhitelist::ensureGlobalWhitelist().contains(codeBlock))
         return CompilationFailed;

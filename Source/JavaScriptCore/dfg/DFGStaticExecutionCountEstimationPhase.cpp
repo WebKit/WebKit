@@ -98,7 +98,6 @@ private:
 
 bool performStaticExecutionCountEstimation(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Static Execution Count Estimation");
     return runPhase<StaticExecutionCountEstimationPhase>(graph);
 }
 

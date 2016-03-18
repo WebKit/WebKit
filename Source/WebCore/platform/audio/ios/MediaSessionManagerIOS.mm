@@ -41,6 +41,7 @@
 #import <MediaPlayer/MPVolumeView.h>
 #import <UIKit/UIApplication.h>
 #import <objc/runtime.h>
+#import <wtf/MainThread.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RetainPtr.h>
 

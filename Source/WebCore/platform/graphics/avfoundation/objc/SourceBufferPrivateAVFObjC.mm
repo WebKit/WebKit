@@ -51,6 +51,7 @@
 #import <wtf/text/AtomicString.h>
 #import <wtf/text/CString.h>
 #import <wtf/HashCountedSet.h>
+#import <wtf/MainThread.h>
 #import <wtf/WeakPtr.h>
 #import <map>
 

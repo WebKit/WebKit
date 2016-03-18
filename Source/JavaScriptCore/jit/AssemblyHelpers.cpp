@@ -148,6 +148,16 @@ AssemblyHelpers::Jump AssemblyHelpers::branchIfNotFastTypedArray(GPRReg baseGPR)
         TrustedImm32(FastTypedArray));
 }
 
+void AssemblyHelpers::incrementSuperSamplerCount()
+{
+    add32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<const void*>(&g_superSamplerCount)));
+}
+
+void AssemblyHelpers::decrementSuperSamplerCount()
+{
+    sub32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<const void*>(&g_superSamplerCount)));
+}
+    
 void AssemblyHelpers::purifyNaN(FPRReg fpr)
 {
     MacroAssembler::Jump notNaN = branchDouble(DoubleEqual, fpr, fpr);

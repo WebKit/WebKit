@@ -52,8 +52,6 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     VM& vm, JSGlobalObject* globalObject, JSString* input, const String& inputValue,
     RegExp* regExp, unsigned startOffset, MatchResult& result)
 {
-    SamplingRegion samplingRegion("createRegExpMatchesArray");
-    
     Vector<int, 32> subpatternResults;
     int position = regExp->matchInline(vm, inputValue, startOffset, subpatternResults);
     if (position == -1) {

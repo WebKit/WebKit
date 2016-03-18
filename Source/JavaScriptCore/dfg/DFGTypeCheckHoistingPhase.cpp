@@ -526,7 +526,6 @@ private:
 
 bool performTypeCheckHoisting(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Type Check Hoisting Phase");
     return runPhase<TypeCheckHoistingPhase>(graph);
 }
 

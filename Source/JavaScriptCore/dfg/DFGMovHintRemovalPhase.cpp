@@ -136,7 +136,6 @@ private:
     
 bool performMovHintRemoval(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG MovHint Removal Phase");
     return runPhase<MovHintRemovalPhase>(graph);
 }
 

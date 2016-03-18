@@ -131,7 +131,6 @@ private:
 
 bool performWatchpointCollection(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Watchpoint Collection Phase");
     return runPhase<WatchpointCollectionPhase>(graph);
 }
 

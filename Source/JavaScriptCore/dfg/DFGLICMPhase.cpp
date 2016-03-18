@@ -361,7 +361,6 @@ private:
 
 bool performLICM(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG LICM Phase");
     return runPhase<LICMPhase>(graph);
 }
 

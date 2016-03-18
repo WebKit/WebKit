@@ -102,7 +102,6 @@ public:
 
 bool performOSRAvailabilityAnalysis(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG OSR Availability Analysis Phase");
     return runPhase<OSRAvailabilityAnalysisPhase>(graph);
 }
 

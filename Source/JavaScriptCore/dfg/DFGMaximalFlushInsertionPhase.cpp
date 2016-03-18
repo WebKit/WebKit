@@ -150,7 +150,6 @@ public:
 
 bool performMaximalFlushInsertion(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Flush Everything Insertion Phase");
     return runPhase<MaximalFlushInsertionPhase>(graph);
 }
 

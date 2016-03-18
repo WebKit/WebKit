@@ -190,7 +190,6 @@ private:
 
 bool performTierUpCheckInjection(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Tier-up Check Injection");
     return runPhase<TierUpCheckInjectionPhase>(graph);
 }
 

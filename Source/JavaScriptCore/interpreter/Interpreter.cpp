@@ -61,7 +61,6 @@
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
 #include "Register.h"
-#include "SamplingTool.h"
 #include "ScopedArguments.h"
 #include "StackAlignment.h"
 #include "StackVisitor.h"
@@ -298,8 +297,7 @@ void setupVarargsFrameAndSetThis(CallFrame* callFrame, CallFrame* newCallFrame, 
 }
 
 Interpreter::Interpreter(VM& vm)
-    : m_sampleEntryDepth(0)
-    , m_vm(vm)
+    : m_vm(vm)
     , m_stack(vm)
     , m_errorHandlingModeReentry(0)
 #if !ASSERT_DISABLED
@@ -322,10 +320,6 @@ void Interpreter::initialize()
 
 #if !ASSERT_DISABLED
     m_initialized = true;
-#endif
-
-#if ENABLE(OPCODE_SAMPLING)
-    enableSampler();
 #endif
 }
 
@@ -814,25 +808,8 @@ static inline JSObject* checkedReturn(JSObject* returnValue)
     return returnValue;
 }
 
-class SamplingScope {
-public:
-    SamplingScope(Interpreter* interpreter)
-        : m_interpreter(interpreter)
-    {
-        interpreter->startSampling();
-    }
-    ~SamplingScope()
-    {
-        m_interpreter->stopSampling();
-    }
-private:
-    Interpreter* m_interpreter;
-};
-
 JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, JSObject* thisObj)
 {
-    SamplingScope samplingScope(this);
-
     JSScope* scope = thisObj->globalObject()->globalScope();
     VM& vm = *scope->vm();
 
@@ -971,11 +948,7 @@ failedJSONP:
         profiler->willExecute(callFrame, program->sourceURL(), program->firstLine(), program->startColumn());
 
     // Execute the code:
-    JSValue result;
-    {
-        SamplingTool::CallRecord callRecord(m_sampler.get());
-        result = program->generatedJITCode()->execute(&vm, &protoCallFrame);
-    }
+    JSValue result = program->generatedJITCode()->execute(&vm, &protoCallFrame);
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, program->sourceURL(), program->firstLine(), program->startColumn());
@@ -1033,8 +1006,6 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
     JSValue result;
     {
-        SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSCall);
-
         // Execute the code:
         if (isJSCall)
             result = callData.js.functionExecutable->generatedJITCodeForCall()->execute(&vm, &protoCallFrame);
@@ -1103,8 +1074,6 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
     JSValue result;
     {
-        SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSConstruct);
-
         // Execute the code.
         if (isJSConstruct)
             result = constructData.js.functionExecutable->generatedJITCodeForConstruct()->execute(&vm, &protoCallFrame);
@@ -1153,7 +1122,6 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
 JSValue Interpreter::execute(CallFrameClosure& closure) 
 {
     VM& vm = *closure.vm;
-    SamplingScope samplingScope(this);
     
     ASSERT(!vm.isCollectorBusy());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
@@ -1169,11 +1137,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
         return throwTerminatedExecutionException(closure.oldCallFrame);
 
     // Execute the code:
-    JSValue result;
-    {
-        SamplingTool::CallRecord callRecord(m_sampler.get());
-        result = closure.functionExecutable->generatedJITCodeForCall()->execute(&vm, closure.protoCallFrame);
-    }
+    JSValue result = closure.functionExecutable->generatedJITCodeForCall()->execute(&vm, closure.protoCallFrame);
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(closure.oldCallFrame, closure.function);
@@ -1184,7 +1148,6 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
 JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, JSScope* scope)
 {
     VM& vm = *scope->vm();
-    SamplingScope samplingScope(this);
     
     ASSERT(scope->vm() == &callFrame->vm());
     ASSERT(!vm.exception());
@@ -1280,11 +1243,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         profiler->willExecute(callFrame, eval->sourceURL(), eval->firstLine(), eval->startColumn());
 
     // Execute the code:
-    JSValue result;
-    {
-        SamplingTool::CallRecord callRecord(m_sampler.get());
-        result = eval->generatedJITCode()->execute(&vm, &protoCallFrame);
-    }
+    JSValue result = eval->generatedJITCode()->execute(&vm, &protoCallFrame);
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, eval->sourceURL(), eval->firstLine(), eval->startColumn());
@@ -1295,7 +1254,6 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* callFrame, JSModuleEnvironment* scope)
 {
     VM& vm = *scope->vm();
-    SamplingScope samplingScope(this);
 
     ASSERT(scope->vm() == &callFrame->vm());
     ASSERT(!vm.exception());
@@ -1328,11 +1286,7 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
         profiler->willExecute(callFrame, executable->sourceURL(), executable->firstLine(), executable->startColumn());
 
     // Execute the code:
-    JSValue result;
-    {
-        SamplingTool::CallRecord callRecord(m_sampler.get());
-        result = executable->generatedJITCode()->execute(&vm, &protoCallFrame);
-    }
+    JSValue result = executable->generatedJITCode()->execute(&vm, &protoCallFrame);
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, executable->sourceURL(), executable->firstLine(), executable->startColumn());
@@ -1371,41 +1325,5 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
     }
     ASSERT(!callFrame->hadException());
 }    
-
-void Interpreter::enableSampler()
-{
-#if ENABLE(OPCODE_SAMPLING)
-    if (!m_sampler) {
-        m_sampler = std::make_unique<SamplingTool>(this);
-        m_sampler->setup();
-    }
-#endif
-}
-void Interpreter::dumpSampleData(ExecState* exec)
-{
-#if ENABLE(OPCODE_SAMPLING)
-    if (m_sampler)
-        m_sampler->dump(exec);
-#else
-    UNUSED_PARAM(exec);
-#endif
-}
-void Interpreter::startSampling()
-{
-#if ENABLE(SAMPLING_THREAD)
-    if (!m_sampleEntryDepth)
-        SamplingThread::start();
-
-    m_sampleEntryDepth++;
-#endif
-}
-void Interpreter::stopSampling()
-{
-#if ENABLE(SAMPLING_THREAD)
-    m_sampleEntryDepth--;
-    if (!m_sampleEntryDepth)
-        SamplingThread::stop();
-#endif
-}
 
 } // namespace JSC

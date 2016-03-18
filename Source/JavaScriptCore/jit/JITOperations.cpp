@@ -57,6 +57,7 @@
 #include "PropertyName.h"
 #include "Repatch.h"
 #include "ScopedArguments.h"
+#include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
 #include "VMInlines.h"
@@ -1034,6 +1035,7 @@ JSCell* JIT_OPERATION operationNewObject(ExecState* exec, Structure* structure)
 
 EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr)
 {
+    SuperSamplerScope superSamplerScope(false);
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);

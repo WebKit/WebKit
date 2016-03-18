@@ -112,8 +112,6 @@ extern "C" {
 
 void compileOSRExit(ExecState* exec)
 {
-    SamplingRegion samplingRegion("DFG OSR Exit Compilation");
-
     if (exec->vm().callFrameForCatch)
         RELEASE_ASSERT(exec->vm().callFrameForCatch == exec);
     

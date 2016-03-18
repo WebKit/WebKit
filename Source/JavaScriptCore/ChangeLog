@@ -1,3 +1,274 @@
+2016-03-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Replace all of the various non-working and non-compiling sampling profiler hacks with a single super hack
+        https://bugs.webkit.org/show_bug.cgi?id=155561
+
+        Reviewed by Saam Barati.
+
+        A VM needs some internal profiling hacks in addition to the profiler(s) that the user sees, because
+        you can squeeze out more fidelity if you're willing to make some kind of deal with the devil. Prior
+        to this change JSC had a bunch of these:
+
+        - CodeBlock sampling profiler
+        - Bytecode sampling profiler
+        - Sampling flags
+        - Sampling regions
+        - Some other stuff
+
+        I tried using these recently. They didn't even build. Initially I fixed that, but then I found that
+        these profilers had some serious bugs that made them report bogus results - like underreporting the
+        time spent in regions of code by more than 2x.
+
+        Part of the problem here is that a profiler loses fidelity as it gains power. The more general it
+        tries to be, the more code gets executed on the hot path for the profiler, which increasingly
+        perturbs the results. I believe that's the reason for the underreporting - code ran sufficiently
+        slower, and in a sufficiently different way when profiling, that the results were just wrong.
+
+        This change attacks this problem directly by replacing all of the diverse profiling hacks with just
+        one, which I call the SuperSampler. It consists of exactly one counter. When enabled, the sampler
+        will periodically print (via dataLog()) the percentage of samples that saw a non-zero count. Because
+        it's so simple, it gives better accuracy. This comes about in two ways:
+
+        - It runs at a lower rate. That's fine since it's only checking one flag. You don't need a high rate
+          for just one flag.
+        
+        - The fact that there is only *one* flag means that the user must choose a hypothesis about what is
+          slow. This turns the problem of profiling into a hypothesis testing problem, which is an inherently
+          less flaky kind of experiment to run.
+        
+        The SuperSampler is enabled with a runtime flag rather than a compile-time flag, so it's much less
+        likely to break. That also means that you can enable it without rebuilding the universe. The old
+        samplers all had ENABLE flags in Platform.h, which was rather unfortunate for compile times.
+
+        SuperSampler supports both JIT and C++ users. C++ users should use SuperSamplerScope. The default
+        idiom is to create one and pass "true" to it. You can disable a scope by passing "false" instead.
+        This patch puts a bunch of scopes in places I care about. I think it's probably OK if people check in
+        these deactivated scopes. That makes it convenient to retest things we've tested previously.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/SamplingTool.cpp: Removed.
+        * bytecode/SamplingTool.h: Removed.
+        * bytecode/SuperSampler.cpp: Added.
+        (JSC::initializeSuperSampler):
+        (JSC::printSuperSamplerState):
+        * bytecode/SuperSampler.h: Added.
+        (JSC::SuperSamplerScope::SuperSamplerScope):
+        (JSC::SuperSamplerScope::~SuperSamplerScope):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * bytecompiler/NodesCodegen.cpp:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::forAllValues):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::clobberStructures):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        (JSC::DFG::performArgumentsElimination):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::performBackwardsPropagation):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::parse):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::performCFA):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::performCFGSimplification):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::freeUnnecessaryNodes):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlocks):
+        (JSC::DFG::CPSRethreadingPhase::propagatePhis):
+        (JSC::DFG::performCPSRethreading):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::performLocalCSE):
+        (JSC::DFG::performGlobalCSE):
+        * dfg/DFGCleanUpPhase.cpp:
+        (JSC::DFG::performCleanUp):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::performConstantFolding):
+        * dfg/DFGConstantHoistingPhase.cpp:
+        (JSC::DFG::performConstantHoisting):
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp:
+        (JSC::DFG::performCriticalEdgeBreaking):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::performDCE):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::performFixup):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dethread):
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::performIntegerCheckCombining):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        (JSC::DFG::performIntegerRangeOptimization):
+        * dfg/DFGInvalidationPointInjectionPhase.cpp:
+        (JSC::DFG::performInvalidationPointInjection):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::performLICM):
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::performLiveCatchVariablePreservationPhase):
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        (JSC::DFG::performLivenessAnalysis):
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::performLoopPreHeaderCreation):
+        * dfg/DFGMaximalFlushInsertionPhase.cpp:
+        (JSC::DFG::performMaximalFlushInsertion):
+        * dfg/DFGMovHintRemovalPhase.cpp:
+        (JSC::DFG::performMovHintRemoval):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::performOSRAvailabilityAnalysis):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::performOSREntrypointCreation):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::performObjectAllocationSinking):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPhantomInsertionPhase.cpp:
+        (JSC::DFG::performPhantomInsertion):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::performPredictionInjection):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::performPredictionPropagation):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        (JSC::DFG::performPutStackSinking):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::performSSAConversion):
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::performSSALowering):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::performStackLayout):
+        * dfg/DFGStaticExecutionCountEstimationPhase.cpp:
+        (JSC::DFG::performStaticExecutionCountEstimation):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        (JSC::DFG::performFastStoreBarrierInsertion):
+        (JSC::DFG::performGlobalStoreBarrierInsertion):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::performStrengthReduction):
+        * dfg/DFGStructureAbstractValue.cpp:
+        (JSC::DFG::StructureAbstractValue::assertIsRegistered):
+        (JSC::DFG::StructureAbstractValue::clobber):
+        (JSC::DFG::StructureAbstractValue::observeTransition):
+        (JSC::DFG::StructureAbstractValue::observeTransitions):
+        (JSC::DFG::StructureAbstractValue::add):
+        (JSC::DFG::StructureAbstractValue::merge):
+        (JSC::DFG::StructureAbstractValue::mergeSlow):
+        (JSC::DFG::StructureAbstractValue::mergeNotTop):
+        (JSC::DFG::StructureAbstractValue::filter):
+        (JSC::DFG::StructureAbstractValue::filterSlow):
+        (JSC::DFG::StructureAbstractValue::contains):
+        (JSC::DFG::StructureAbstractValue::isSubsetOf):
+        (JSC::DFG::StructureAbstractValue::isSupersetOf):
+        (JSC::DFG::StructureAbstractValue::overlaps):
+        (JSC::DFG::StructureAbstractValue::equalsSlow):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::performStructureRegistration):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::performTierUpCheckInjection):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::performTypeCheckHoisting):
+        * dfg/DFGUnificationPhase.cpp:
+        (JSC::DFG::performUnification):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        (JSC::DFG::performVarargsForwarding):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::performVirtualRegisterAllocation):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::performWatchpointCollection):
+        * dynbench.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpExec):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpTest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringReplace):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetRegExpObjectLastIndex):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::store):
+        (JSC::FTL::Output::absolute):
+        (JSC::FTL::Output::incrementSuperSamplerCount):
+        (JSC::FTL::Output::decrementSuperSamplerCount):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::baseIndex):
+        (JSC::FTL::Output::load8SignExt32):
+        (JSC::FTL::Output::load8ZeroExt32):
+        (JSC::FTL::Output::anchor):
+        (JSC::FTL::Output::absolute): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::collectAndSweep):
+        (JSC::Heap::collectImpl):
+        (JSC::Heap::zombifyDeadObjects):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::specializedSweep):
+        * interpreter/Interpreter.cpp:
+        (JSC::setupVarargsFrameAndSetThis):
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::initialize):
+        (JSC::checkedReturn):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::debug):
+        (JSC::SamplingScope::SamplingScope): Deleted.
+        (JSC::SamplingScope::~SamplingScope): Deleted.
+        (JSC::Interpreter::enableSampler): Deleted.
+        (JSC::Interpreter::dumpSampleData): Deleted.
+        (JSC::Interpreter::startSampling): Deleted.
+        (JSC::Interpreter::stopSampling): Deleted.
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::isCallBytecode):
+        (JSC::Interpreter::sampler): Deleted.
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::branchIfNotFastTypedArray):
+        (JSC::AssemblyHelpers::incrementSuperSamplerCount):
+        (JSC::AssemblyHelpers::decrementSuperSamplerCount):
+        (JSC::AssemblyHelpers::purifyNaN):
+        * jit/AssemblyHelpers.h:
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        * jit/JITArithmetic32_64.cpp:
+        * jit/JITCall.cpp:
+        * jit/JITCall32_64.cpp:
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        * jit/JITPropertyAccess32_64.cpp:
+        * jsc.cpp:
+        (runWithScripts):
+        (jscmain):
+        * parser/Nodes.cpp:
+        * parser/Parser.h:
+        (JSC::parse):
+        * runtime/Executable.h:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/Options.h:
+        * runtime/RegExpCachedResult.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/StringPrototype.cpp:
+        (JSC::removeUsingRegExpSearch):
+        (JSC::stringProtoFuncSubstring):
+        * runtime/VM.cpp:
+        (JSC::VM::resetDateCache):
+        (JSC::VM::whenIdle):
+        (JSC::VM::deleteAllCode):
+        (JSC::VM::addSourceProviderCache):
+        (JSC::VM::startSampling): Deleted.
+        (JSC::VM::stopSampling): Deleted.
+        (JSC::VM::dumpSampleData): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::regExpCache):
+        * testRegExp.cpp:
+        (runFromFiles):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::interpret):
+
 2016-03-17  Saam barati  <sbarati@apple.com>
 
         [ES6] Make GetProperty(.) inside ArrayPrototype.cpp spec compatible.

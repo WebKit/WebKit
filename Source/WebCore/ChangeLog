@@ -1,3 +1,15 @@
+2016-03-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Replace all of the various non-working and non-compiling sampling profiler hacks with a single super hack
+        https://bugs.webkit.org/show_bug.cgi?id=155561
+
+        Reviewed by Saam Barati.
+
+        No new tests because no new behavior.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+
 2016-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         Some media tests are flaky.

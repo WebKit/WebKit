@@ -150,7 +150,6 @@ private:
 
 bool performDCE(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG DCE Phase");
     return runPhase<DCEPhase>(graph);
 }
 

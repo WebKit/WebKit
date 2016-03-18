@@ -27,6 +27,7 @@
 #include "config.h"
 #include "YarrInterpreter.h"
 
+#include "SuperSampler.h"
 #include "Yarr.h"
 #include "YarrCanonicalize.h"
 #include <wtf/BumpPointerAllocator.h>
@@ -2034,6 +2035,7 @@ std::unique_ptr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAl
 
 unsigned interpret(BytecodePattern* bytecode, const String& input, unsigned start, unsigned* output)
 {
+    SuperSamplerScope superSamplerScope(false);
     if (input.is8Bit())
         return Interpreter<LChar>(bytecode, output, input.characters8(), input.length(), start).interpret();
     return Interpreter<UChar>(bytecode, output, input.characters16(), input.length(), start).interpret();
@@ -2041,11 +2043,13 @@ unsigned interpret(BytecodePattern* bytecode, const String& input, unsigned star
 
 unsigned interpret(BytecodePattern* bytecode, const LChar* input, unsigned length, unsigned start, unsigned* output)
 {
+    SuperSamplerScope superSamplerScope(false);
     return Interpreter<LChar>(bytecode, output, input, length, start).interpret();
 }
 
 unsigned interpret(BytecodePattern* bytecode, const UChar* input, unsigned length, unsigned start, unsigned* output)
 {
+    SuperSamplerScope superSamplerScope(false);
     return Interpreter<UChar>(bytecode, output, input, length, start).interpret();
 }
 

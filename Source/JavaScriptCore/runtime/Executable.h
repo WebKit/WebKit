@@ -36,7 +36,6 @@
 #include "InferredValue.h"
 #include "JITCode.h"
 #include "JSGlobalObject.h"
-#include "SamplingTool.h"
 #include "SourceCode.h"
 #include "TypeSet.h"
 #include "UnlinkedCodeBlock.h"

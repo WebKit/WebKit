@@ -161,7 +161,6 @@ private:
 
 bool performLivenessAnalysis(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Liveness Analysis Phase");
     return runPhase<LivenessAnalysisPhase>(graph);
 }
 

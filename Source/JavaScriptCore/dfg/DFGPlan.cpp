@@ -174,7 +174,6 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
     if (reportCompileTimes())
         codeBlockName = toCString(*codeBlock);
     
-    SamplingRegion samplingRegion("DFG Compilation (Plan)");
     CompilationScope compilationScope;
 
     if (logCompilationChanges(mode))

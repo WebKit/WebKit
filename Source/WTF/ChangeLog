@@ -1,3 +1,22 @@
+2016-03-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Replace all of the various non-working and non-compiling sampling profiler hacks with a single super hack
+        https://bugs.webkit.org/show_bug.cgi?id=155561
+
+        Reviewed by Saam Barati.
+
+        This patch replaces all of our various ad hoc profiling hacks with a single ad hoc profiling hack.
+        That needs to be able to sleep a thread, so I added a portable way to do it.
+
+        This also removes a bunch of ENABLE flags for all of the old non-working hacks.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::currentCPUTime):
+        (WTF::sleep):
+        * wtf/CurrentTime.h:
+        (WTF::sleepMS):
+        * wtf/Platform.h:
+
 2016-03-17  Chris Dumez  <cdumez@apple.com>
 
         Set the WebContent process's main thread QoS to USER-INTERACTIVE

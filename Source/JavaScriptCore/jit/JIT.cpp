@@ -43,7 +43,6 @@
 #include "PCToCodeOriginMap.h"
 #include "ProfilerDatabase.h"
 #include "ResultType.h"
-#include "SamplingTool.h"
 #include "SlowPathCall.h"
 #include "StackAlignment.h"
 #include "TypeProfilerLog.h"

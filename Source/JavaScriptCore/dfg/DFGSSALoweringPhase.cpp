@@ -122,7 +122,6 @@ private:
 
 bool performSSALowering(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG SSA Lowering Phase");
     return runPhase<SSALoweringPhase>(graph);
 }
 

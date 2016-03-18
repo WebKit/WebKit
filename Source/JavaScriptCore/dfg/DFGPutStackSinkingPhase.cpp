@@ -583,7 +583,6 @@ public:
     
 bool performPutStackSinking(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG PutStack Sinking Phase");
     return runPhase<PutStackSinkingPhase>(graph);
 }
 

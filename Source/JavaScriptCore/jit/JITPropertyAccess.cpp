@@ -39,7 +39,6 @@
 #include "JSFunction.h"
 #include "LinkBuffer.h"
 #include "ResultType.h"
-#include "SamplingTool.h"
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
 #include "SlowPathCall.h"

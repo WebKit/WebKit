@@ -213,12 +213,12 @@ set(JavaScriptCore_SOURCES
     bytecode/PutByIdStatus.cpp
     bytecode/PutByIdVariant.cpp
     bytecode/ReduceWhitespace.cpp
-    bytecode/SamplingTool.cpp
     bytecode/SpecialPointer.cpp
     bytecode/SpeculatedType.cpp
     bytecode/StructureSet.cpp
     bytecode/StructureStubClearingWatchpoint.cpp
     bytecode/StructureStubInfo.cpp
+    bytecode/SuperSampler.cpp
     bytecode/ToThisStatus.cpp
     bytecode/TrackedReferences.cpp
     bytecode/UnlinkedCodeBlock.cpp

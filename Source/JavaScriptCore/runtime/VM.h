@@ -553,9 +553,6 @@ public:
 
     JS_EXPORT_PRIVATE void resetDateCache();
 
-    JS_EXPORT_PRIVATE void startSampling();
-    JS_EXPORT_PRIVATE void stopSampling();
-    JS_EXPORT_PRIVATE void dumpSampleData(ExecState*);
     RegExpCache* regExpCache() { return m_regExpCache; }
 #if ENABLE(REGEXP_TRACING)
     void addRegExpToTrace(RegExp*);

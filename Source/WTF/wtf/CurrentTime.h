@@ -66,12 +66,21 @@ inline double monotonicallyIncreasingTimeMS()
 // than a millisecond.
 WTF_EXPORT_PRIVATE std::chrono::microseconds currentCPUTime();
 
+WTF_EXPORT_PRIVATE void sleep(double);
+
+inline void sleepMS(double value)
+{
+    sleep(value / 1000.0);
+}
+
 } // namespace WTF
 
+using WTF::currentCPUTime;
 using WTF::currentTime;
 using WTF::currentTimeMS;
 using WTF::monotonicallyIncreasingTime;
 using WTF::monotonicallyIncreasingTimeMS;
-using WTF::currentCPUTime;
+using WTF::sleep;
+using WTF::sleepMS;
 
 #endif // CurrentTime_h

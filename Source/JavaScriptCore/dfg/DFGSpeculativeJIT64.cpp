@@ -2988,6 +2988,11 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case RegExpExec: {
+        bool sample = false;
+
+        if (sample)
+            m_jit.incrementSuperSamplerCount();
+        
         SpeculateCellOperand globalObject(this, node->child1());
         GPRReg globalObjectGPR = globalObject.gpr();
         
@@ -3006,6 +3011,9 @@ void SpeculativeJIT::compile(Node* node)
                 m_jit.exceptionCheck();
                 
                 jsValueResult(result.gpr(), node);
+
+                if (sample)
+                    m_jit.decrementSuperSamplerCount();
                 break;
             }
             
@@ -3021,6 +3029,9 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.exceptionCheck();
         
             jsValueResult(result.gpr(), node);
+
+            if (sample)
+                m_jit.decrementSuperSamplerCount();
             break;
         }
         
@@ -3035,6 +3046,9 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.exceptionCheck();
         
         jsValueResult(result.gpr(), node);
+
+        if (sample)
+            m_jit.decrementSuperSamplerCount();
         break;
     }
 
@@ -3093,6 +3107,11 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case StringReplace: {
+        bool sample = false;
+
+        if (sample)
+            m_jit.incrementSuperSamplerCount();
+        
         if (node->child1().useKind() == StringUse
             && node->child2().useKind() == RegExpObjectUse
             && node->child3().useKind() == StringUse) {
@@ -3112,6 +3131,8 @@ void SpeculativeJIT::compile(Node* node)
                         regExpGPR);
                     m_jit.exceptionCheck();
                     cellResult(result.gpr(), node);
+                    if (sample)
+                        m_jit.decrementSuperSamplerCount();
                     break;
                 }
             }
@@ -3133,6 +3154,8 @@ void SpeculativeJIT::compile(Node* node)
                 replaceGPR);
             m_jit.exceptionCheck();
             cellResult(result.gpr(), node);
+            if (sample)
+                m_jit.decrementSuperSamplerCount();
             break;
         }
         
@@ -3150,6 +3173,8 @@ void SpeculativeJIT::compile(Node* node)
             replaceGPR);
         m_jit.exceptionCheck();
         cellResult(result.gpr(), node);
+        if (sample)
+            m_jit.decrementSuperSamplerCount();
         break;
     }
         

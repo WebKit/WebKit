@@ -34,6 +34,9 @@
 #include "config.h"
 #include "CurrentTime.h"
 
+#include "Condition.h"
+#include "Lock.h"
+
 #if OS(DARWIN)
 #include <mach/mach.h>
 #include <mach/mach_time.h>
@@ -325,6 +328,19 @@ std::chrono::microseconds currentCPUTime()
     static auto firstTime = std::chrono::steady_clock::now();
     return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - firstTime);
 #endif
+}
+
+void sleep(double value)
+{
+    // It's very challenging to find portable ways of sleeping for less than a second. On UNIX, you want to
+    // use usleep() but it's hard to #include it in a portable way (you'd think it's in unistd.h, but then
+    // you'd be wrong on some OSX SDKs). Also, usleep() won't save you on Windows. Hence, bottoming out in
+    // lock code, which already solves the sleeping problem, is probably for the best.
+    
+    Lock fakeLock;
+    Condition fakeCondition;
+    LockHolder fakeLocker(fakeLock);
+    fakeCondition.waitUntilMonotonicClockSeconds(fakeLock, monotonicallyIncreasingTime() + value);
 }
 
 } // namespace WTF

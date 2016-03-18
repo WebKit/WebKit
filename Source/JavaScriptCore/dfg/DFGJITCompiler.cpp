@@ -326,8 +326,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
 void JITCompiler::compile()
 {
-    SamplingRegion samplingRegion("DFG Backend");
-
     setStartOfCode();
     compileEntry();
     m_speculative = std::make_unique<SpeculativeJIT>(*this);
@@ -387,8 +385,6 @@ void JITCompiler::compile()
 
 void JITCompiler::compileFunction()
 {
-    SamplingRegion samplingRegion("DFG Backend");
-    
     setStartOfCode();
     compileEntry();
 

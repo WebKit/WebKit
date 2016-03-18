@@ -534,13 +534,11 @@ private:
 
 bool performFastStoreBarrierInsertion(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Fast Store Barrier Insertion Phase");
     return runPhase<StoreBarrierInsertionPhase<PhaseMode::Fast>>(graph);
 }
 
 bool performGlobalStoreBarrierInsertion(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Global Store Barrier Insertion Phase");
     return runPhase<StoreBarrierInsertionPhase<PhaseMode::Global>>(graph);
 }
 

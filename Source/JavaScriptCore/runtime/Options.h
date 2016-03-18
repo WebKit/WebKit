@@ -348,6 +348,8 @@ typedef const char* optionString;
     v(bool, dumpModuleRecord, false, nullptr) \
     v(bool, dumpModuleLoadingState, false, nullptr) \
     v(bool, exposeInternalModuleLoader, false, "expose the internal module loader object to the global space for debugging") \
+    \
+    v(bool, useSuperSampler, false, nullptr)
 
 enum OptionEquivalence {
     SameOption,

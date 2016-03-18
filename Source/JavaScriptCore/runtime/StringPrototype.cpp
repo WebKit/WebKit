@@ -43,6 +43,7 @@
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
+#include "SuperSampler.h"
 #include <algorithm>
 #include <unicode/uconfig.h>
 #include <unicode/unorm.h>
@@ -447,6 +448,8 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
 
 static ALWAYS_INLINE EncodedJSValue removeUsingRegExpSearch(ExecState* exec, JSString* string, const String& source, RegExp* regExp)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     size_t lastIndex = 0;
     unsigned startPosition = 0;
 
@@ -1468,7 +1471,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
 {
-    SamplingRegion samplingRegion("Doing substringing");
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);

@@ -426,7 +426,6 @@ private:
 
 bool performBackwardsPropagation(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Backwards Propagation Phase");
     return runPhase<BackwardsPropagationPhase>(graph);
 }
 

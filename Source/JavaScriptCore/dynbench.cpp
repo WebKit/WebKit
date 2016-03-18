@@ -33,6 +33,7 @@
 #include "JSLock.h"
 #include "JSObject.h"
 #include "VM.h"
+#include <wtf/MainThread.h>
 
 using namespace JSC;
 

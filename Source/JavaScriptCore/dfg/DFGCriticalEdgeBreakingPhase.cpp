@@ -87,7 +87,6 @@ private:
 
 bool performCriticalEdgeBreaking(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Critical Edge Breaking Phase");
     return runPhase<CriticalEdgeBreakingPhase>(graph);
 }
 

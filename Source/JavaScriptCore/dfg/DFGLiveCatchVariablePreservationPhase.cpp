@@ -165,7 +165,6 @@ public:
 
 bool performLiveCatchVariablePreservationPhase(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Live Catch Variables Preservation Phase");
     return runPhase<LiveCatchVariablePreservationPhase>(graph);
 }
 

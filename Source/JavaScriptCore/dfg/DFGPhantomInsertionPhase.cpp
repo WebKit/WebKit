@@ -181,7 +181,6 @@ private:
     
 bool performPhantomInsertion(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Phantom Insertion Phase");
     return runPhase<PhantomInsertionPhase>(graph);
 }
 

@@ -568,8 +568,6 @@ void Graph::dethread()
     if (logCompilationChanges())
         dataLog("Dethreading DFG graph.\n");
     
-    SamplingRegion samplingRegion("DFG Dethreading");
-    
     for (BlockIndex blockIndex = m_blocks.size(); blockIndex--;) {
         BasicBlock* block = m_blocks[blockIndex].get();
         if (!block)

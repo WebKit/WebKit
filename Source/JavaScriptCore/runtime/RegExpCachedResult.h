@@ -27,6 +27,7 @@
 #define RegExpCachedResult_h
 
 #include "RegExpObject.h"
+#include "SuperSampler.h"
 
 namespace JSC {
 

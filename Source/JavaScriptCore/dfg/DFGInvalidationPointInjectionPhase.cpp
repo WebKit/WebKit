@@ -101,7 +101,6 @@ private:
 
 bool performInvalidationPointInjection(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Invalidation Point Injection Phase");
     return runPhase<InvalidationPointInjectionPhase>(graph);
 }
 

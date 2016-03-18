@@ -38,7 +38,6 @@
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "ResultType.h"
-#include "SamplingTool.h"
 #include "SetupVarargsFrame.h"
 #include "StackAlignment.h"
 #include "ThunkGenerators.h"

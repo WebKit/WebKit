@@ -30,6 +30,7 @@
 
 #include "B3MathExtras.h"
 #include "B3StackmapGenerationParams.h"
+#include "SuperSampler.h"
 
 namespace JSC { namespace FTL {
 
@@ -294,6 +295,23 @@ void Output::store(LValue value, TypedPointer pointer, StoreType type)
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+TypedPointer Output::absolute(void* address)
+{
+    return TypedPointer(m_heaps->absolute[address], constIntPtr(address));
+}
+
+void Output::incrementSuperSamplerCount()
+{
+    TypedPointer counter = absolute(bitwise_cast<void*>(&g_superSamplerCount));
+    store32(add(load32(counter), int32One), counter);
+}
+
+void Output::decrementSuperSamplerCount()
+{
+    TypedPointer counter = absolute(bitwise_cast<void*>(&g_superSamplerCount));
+    store32(sub(load32(counter), int32One), counter);
 }
 
 } } // namespace JSC::FTL

@@ -45,7 +45,6 @@
 #include "PropertyNameArray.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
-#include "SamplingTool.h"
 #include "StackAlignment.h"
 #include "TemplateRegistryKey.h"
 #include <wtf/Assertions.h>

@@ -701,13 +701,11 @@ public:
 
 bool performLocalCSE(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG LocalCSE Phase");
     return runPhase<LocalCSEPhase>(graph);
 }
 
 bool performGlobalCSE(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG GlobalCSE Phase");
     return runPhase<GlobalCSEPhase>(graph);
 }
 

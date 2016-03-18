@@ -82,7 +82,6 @@ public:
     
 bool performCleanUp(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Clean Up Phase");
     return runPhase<CleanUpPhase>(graph);
 }
 

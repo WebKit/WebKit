@@ -52,6 +52,7 @@
 #include "WeakSetInlines.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
+#include <wtf/MainThread.h>
 #include <wtf/ParallelVectorIterator.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RAMSize.h>
@@ -515,8 +516,6 @@ void Heap::completeAllDFGPlans()
 
 void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
 {
-    SamplingRegion samplingRegion("Garbage Collection: Marking");
-
     GCPHASE(MarkRoots);
     ASSERT(isValidThreadState(m_vm));
 
@@ -1090,8 +1089,6 @@ void Heap::collectAndSweep(HeapOperation collectionType)
 
     collect(collectionType);
 
-    SamplingRegion samplingRegion("Garbage Collection: Sweeping");
-
     DeferGCForAWhile deferGC(*this);
     m_objectSpace.sweep();
     m_objectSpace.shrink();
@@ -1120,8 +1117,6 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
         dataLog("[GC: ", capacity() / 1024, " kb ");
         before = currentTimeMS();
     }
-    
-    SamplingRegion samplingRegion("Garbage Collection");
     
     if (vm()->typeProfiler()) {
         DeferGCForAWhile awhile(*this);
@@ -1602,10 +1597,7 @@ public:
 void Heap::zombifyDeadObjects()
 {
     // Sweep now because destructors will crash once we're zombified.
-    {
-        SamplingRegion samplingRegion("Garbage Collection: Sweeping");
-        m_objectSpace.zombifySweep();
-    }
+    m_objectSpace.zombifySweep();
     HeapIterationScope iterationScope(*this);
     m_objectSpace.forEachDeadCell<Zombify>(iterationScope);
 }

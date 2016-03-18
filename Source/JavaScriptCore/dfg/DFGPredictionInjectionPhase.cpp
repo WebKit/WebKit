@@ -86,7 +86,6 @@ public:
 
 bool performPredictionInjection(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Prediction Injection Phase");
     return runPhase<PredictionInjectionPhase>(graph);
 }
 

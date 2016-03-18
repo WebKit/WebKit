@@ -824,7 +824,6 @@ private:
 
 bool performConstantFolding(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Constant Folding Phase");
     return runPhase<ConstantFoldingPhase>(graph);
 }
 

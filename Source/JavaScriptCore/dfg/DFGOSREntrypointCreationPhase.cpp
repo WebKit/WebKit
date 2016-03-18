@@ -147,7 +147,6 @@ public:
 
 bool performOSREntrypointCreation(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG OSR Entrypoint Creation");
     return runPhase<OSREntrypointCreationPhase>(graph);
 }
 

@@ -191,7 +191,6 @@ private:
 
 bool performStructureRegistration(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Structure Registration Phase");
     return runPhase<StructureRegistrationPhase>(graph);
 }
 

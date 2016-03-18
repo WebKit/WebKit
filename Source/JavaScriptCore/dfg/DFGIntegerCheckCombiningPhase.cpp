@@ -391,7 +391,6 @@ private:
     
 bool performIntegerCheckCombining(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Integer Check Combining Phase");
     return runPhase<IntegerCheckCombiningPhase>(graph);
 }
 

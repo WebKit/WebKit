@@ -39,6 +39,7 @@
 #include "JSLock.h"
 #include "LLIntData.h"
 #include "StructureIDTable.h"
+#include "SuperSampler.h"
 #include "WriteBarrier.h"
 #include <mutex>
 #include <wtf/dtoa.h>
@@ -69,6 +70,7 @@ void initializeThreading()
 #ifndef NDEBUG
         DisallowGC::initialize();
 #endif
+        initializeSuperSampler();
         WTFThreadData& threadData = wtfThreadData();
         threadData.setSavedLastStackTop(threadData.stack().origin());
     });

@@ -36,7 +36,6 @@
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "ResultType.h"
-#include "SamplingTool.h"
 #include "SlowPathCall.h"
 
 

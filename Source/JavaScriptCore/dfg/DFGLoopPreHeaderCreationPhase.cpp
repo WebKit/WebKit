@@ -183,7 +183,6 @@ public:
 
 bool performLoopPreHeaderCreation(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Loop Pre-Header Creation Phase");
     return runPhase<LoopPreHeaderCreationPhase>(graph);
 }
 

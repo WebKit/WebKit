@@ -2716,7 +2716,6 @@ template<typename Functor>
 void AbstractInterpreter<AbstractStateType>::forAllValues(
     unsigned clobberLimit, Functor& functor)
 {
-    SamplingRegion samplingRegion("DFG AI For All Values");
     if (clobberLimit >= m_state.block()->size())
         clobberLimit = m_state.block()->size();
     else
@@ -2739,7 +2738,6 @@ void AbstractInterpreter<AbstractStateType>::forAllValues(
 template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::clobberStructures(unsigned clobberLimit)
 {
-    SamplingRegion samplingRegion("DFG AI Clobber Structures");
     forAllValues(clobberLimit, AbstractValue::clobberStructuresFor);
     setDidClobber();
 }

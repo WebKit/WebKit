@@ -380,7 +380,6 @@ private:
 
 bool performCFGSimplification(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG CFG Simplification Phase");
     return runPhase<CFGSimplificationPhase>(graph);
 }
 
