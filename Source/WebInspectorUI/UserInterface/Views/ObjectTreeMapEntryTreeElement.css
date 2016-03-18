@@ -32,9 +32,8 @@
     border-top: 1px solid hsla(0, 0%, 0%, 0.05);
 }
 
-.object-tree-map-entry {
+.tree-outline .item.object-tree-map-entry {
     padding-top: 2px;
-    padding-bottom: 2px;
     left: -2px;
 }
 
