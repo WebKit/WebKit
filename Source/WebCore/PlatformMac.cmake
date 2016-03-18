@@ -485,6 +485,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/SSLKeyGeneratorMac.cpp
     platform/mac/ScrollAnimatorMac.mm
     platform/mac/ScrollViewMac.mm
+    platform/mac/ScrollableAreaMac.mm
     platform/mac/ScrollbarThemeMac.mm
     platform/mac/SerializedPlatformRepresentationMac.mm
     platform/mac/SharedBufferMac.mm
