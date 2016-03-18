@@ -31,6 +31,7 @@
 #include "HTTPParsers.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
@@ -131,6 +132,24 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     }
 
     return preflightRequest;
+}
+
+bool isValidCrossOriginRedirectionURL(const URL& redirectURL)
+{
+    return SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol())
+        && redirectURL.user().isEmpty()
+        && redirectURL.pass().isEmpty();
+}
+
+void cleanRedirectedRequestForAccessControl(ResourceRequest& request)
+{
+    // Remove headers that may have been added by the network layer that cause access control to fail.
+    request.clearHTTPContentType();
+    request.clearHTTPReferrer();
+    request.clearHTTPOrigin();
+    request.clearHTTPUserAgent();
+    request.clearHTTPAccept();
+    request.clearHTTPAcceptEncoding();
 }
 
 bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentials includeCredentials, SecurityOrigin* securityOrigin, String& errorDescription)

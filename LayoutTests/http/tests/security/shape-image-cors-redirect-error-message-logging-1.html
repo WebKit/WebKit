@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Triggering message logging in case of failing CORS check</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+    /* Not OK Tests: image resource loading should fail */
+    /* Cross-origin request is not OK because the HTTP header "Access-Control-Allow-Origin:" header is not returned for the final resource when the redirection was initiated from the same origin as the page. */
+    #notok-shape-outside-same-origin-redirection-disallow-url {
+        float: left;
+        width: 200px;
+        height: 20px;
+        -webkit-shape-outside: url("/resources/redirect.php?url=http%3A%2F%2Flocalhost%3A8080%2Fsecurity%2Fresources%2Fimage-access-control.php%3Ffile%3D..%2F..%2Fresources%2Fsquare100.png%26allow%3Dfalse");
+    }
+</style>
+</head>
+<body>
+    <p>Verify the error message in console in case of CORS failing checks.</p>
+    <div id="notok-shape-outside-same-origin-redirection-disallow-url"></div>
+</body>
+</html>

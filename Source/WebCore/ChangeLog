@@ -1,3 +1,30 @@
+2016-03-18  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        crossorigin element resource loading should check HTTP redirection
+        https://bugs.webkit.org/show_bug.cgi?id=130578
+
+        Reviewed by Daniel Bates and Brent Fulgham.
+
+        Moved part of DocumentThreadableLoader redirection cross origin control code
+        into functions in CrossOriginAccessControl.cpp. Added cross origin control for
+        redirections in SubResourceLoader when policy is set to PotentiallyCrossOriginEnabled 
+        using CrossOriginAccessControl.cpp new functions. Added a new test that checks that 
+        cross-origin redirections are checked against CORS.
+
+        Test: http/tests/security/shape-image-cors-redirect.html
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isValidCrossOriginRedirectionURL): Returns true if the redirected URL is a valid URL for cross-origin requests.
+        (WebCore::cleanRedirectedRequestForAccessControl): Removes all headers added by the network backend that may cause the response CORS validation to fail.
+        * loader/CrossOriginAccessControl.h: Added above function prototypes.
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived): Used new CORS redirection methods of CrossOriginAccessControl.cpp.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::init): Initialize the SecurityOrigin to be used for loading the resource.
+        (WebCore::SubresourceLoader::willSendRequest): Added cross-origin redirection response check.
+        (WebCore::SubresourceLoader::checkCrossOriginAccessControl): Checks CORS and update request if needed. Returns true if control checks passed.
+        * loader/SubresourceLoader.h: Added checkCrossOriginAccessControl declaration and m_origin declaration.
+
 2016-03-18  Darin Adler  <darin@apple.com>
 
         Disable Caches in Safari's Develop menu does not disable caches.

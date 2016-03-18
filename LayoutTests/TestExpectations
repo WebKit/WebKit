@@ -805,6 +805,11 @@ webkit.org/b/154687 streams/pipe-to.html [ Slow ]
 
 webkit.org/b/52185 fast/css/vertical-align-baseline-rowspan-010.html [ ImageOnlyFailure ]
 
+webkit.org/b/155634 http/tests/security/shape-image-cors-redirect-error-message-logging-1.html [ Pass Failure ]
+webkit.org/b/155634 http/tests/security/shape-image-cors-redirect-error-message-logging-2.html [ Pass Failure ]
+webkit.org/b/155634 http/tests/security/shape-image-cors-redirect-error-message-logging-3.html [ Pass Failure ]
+webkit.org/b/155634 http/tests/security/shape-image-cors-redirect-error-message-logging-4.html [ Pass Failure ]
+
 # Content Security Policy failures
 webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
 http/tests/security/contentSecurityPolicy/1.1/child-src [ Pass ]

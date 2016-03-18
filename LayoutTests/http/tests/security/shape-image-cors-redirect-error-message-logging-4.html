@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Triggering message logging in case of failing CORS check</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+    /* Cross-origin request is not OK because redirection URL is not a http URL */
+    #notok-shape-outside-disallow-redirection-not-http-url {
+        float: left;
+        width: 200px;
+        height: 20px;
+        -webkit-shape-outside: url("http://localhost:8080/security/resources/redirect-allow-star.php?url=mailto%3A%2F%2Fuser%40example.com");
+    }
+</style>
+</head>
+<body>
+    <p>Verify the error message in console in case of CORS failing checks.</p>
+    <div id="notok-shape-outside-disallow-redirection-not-http-url"></div>
+</body>
+</html>
