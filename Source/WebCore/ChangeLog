@@ -1,5 +1,22 @@
 2016-03-17  Zalan Bujtas  <zalan@apple.com>
 
+        Images in feed on ebay.com jiggle when one is hovered
+        https://bugs.webkit.org/show_bug.cgi?id=155608
+        <rdar://problem/25160681>
+
+        The content offset in compositing layer = subpixel gap between the graphics layer and the layer bounds + layer bounds top left.
+
+        Reviewed by Simon Fraser.
+
+        Test: compositing/hidpi-viewport-clipping-on-composited-content.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::contentOffsetInCompostingLayer):
+        * rendering/RenderLayerBacking.h:
+
+2016-03-17  Zalan Bujtas  <zalan@apple.com>
+
         Don't initiate a style recall while drawing text 
         https://bugs.webkit.org/show_bug.cgi?id=155618
 

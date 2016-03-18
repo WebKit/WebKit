@@ -367,6 +367,7 @@ private:
 
     LayoutRect m_compositedBounds;
     LayoutSize m_devicePixelFractionFromRenderer;
+    LayoutSize m_compositedBoundsDeltaFromGraphicsLayer; // This is the (subpixel) distance between the edge of the graphics layer and the layer bounds.
 
     bool m_artificiallyInflatedBounds; // bounds had to be made non-zero to make transform-origin work
     bool m_isMainFrameRenderViewLayer;
