@@ -135,3 +135,6 @@ loader/navigation-policy [ Skip ]
 
 # This test is WebKit2-only
 http/tests/contentfiltering/load-substitute-data-from-appcache.html
+
+# ASAN test only fails on WK1:
+webgl/1.0.3/151055_asan.html [ Failure ]
