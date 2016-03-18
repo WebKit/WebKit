@@ -1,3 +1,37 @@
+2016-03-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Scrollbars are sometimes erroneously reported as overlay
+        https://bugs.webkit.org/show_bug.cgi?id=155630
+
+        Reviewed by Darin Adler.
+
+        When AppKit boots up, if the system preference is set to determine at runtime whether
+        scrollbars should be overlay or always-on, AppKit must do some processing to determine
+        this scrollbar state. We listen for the results by using NSScrollerImpPairDelegate's
+        scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle: method.
+
+        However, our NSScrollerImpPairDelegates are owned by the FrameView, and when loading
+        a page, there is a short amount of time when no FrameViews are alive. This means that
+        there is a point in time when we don't have any NSScrollerImpPairs alive. Unfortunately,
+        the processesing that AppKit does to determine the scrollbar state is done
+        asynchronously, and the results may be reported within this short window. In this case,
+        we don't receive the notification that the scrollbar should be non-overlay, and our
+        internal state (gUsesOverlayScrollbars in ScrollbarThemeMac) becomes stale.
+
+        The solution is to simply always check what the scrollbar state is upon creation of a
+        NSScrollerImpPair. That way, as soon as the second FrameView is created, the scrollbar
+        state will be correctly updated immediately.
+
+        An alternative, similar, approach would be for ScrollbarThemeMac to listen to the
+        NSPreferredScrollerStyleDidChangeNotification. This patch doesn't use this approach
+        in order to align with the current division of responsibilities between ScrollAnimator
+        and ScrollbarTheme.
+
+        Covered by existing (RTL Scrollbar) tests.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+
 2016-03-18  Jer Noble  <jer.noble@apple.com>
 
         CRASH in WebCore::MediaResourceLoader::requestResource + 698
