@@ -1,3 +1,20 @@
+2016-03-18  Dean Jackson  <dino@apple.com>
+
+        Add a basic WebGL test to Animometer
+        https://bugs.webkit.org/show_bug.cgi?id=155475
+        <rdar://problem/25156860>
+
+        Reviewed by Simon Fraser and Jon Lee.
+
+        Add a pretty simple WebGL test to Animometer
+        which tries to draw a number of animated triangles.
+        The result still needs a bit of tuning.
+
+        * Animometer/resources/debug-runner/tests.js: Add a new
+        Suite for "3D" tests.
+        * Animometer/tests/3d/resources/webgl.js: Added.
+        * Animometer/tests/3d/webgl.html: Added.
+
 2016-03-18  Jon Lee  <jonlee@apple.com>
 
         Add support for statically linking to a specific test

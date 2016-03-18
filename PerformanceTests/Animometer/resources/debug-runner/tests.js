@@ -311,6 +311,15 @@ Suites.push(new Suite("Basic canvas path suite",
     ]
 ));
 
+Suites.push(new Suite("3D Graphics",
+    [
+        {
+            url: "3d/webgl.html",
+            name: "WebGL"
+        },
+    ]
+));
+
 Suites.push(new Suite("Miscellaneous Tests",
     [
         {
