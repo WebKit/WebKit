@@ -8,6 +8,12 @@
 
         [Mac][cmake] One more attempt to try to fix the build after r197633.
 
+        * PlatformMac.cmake:
+
+2016-03-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac][cmake] One more attempt to try to fix the build after r197633.
+
         * PlatformMac.cmake: Revert r198398, which was incorrect.
 
 2016-03-18  Csaba Osztrogonác  <ossy@webkit.org>
