@@ -704,7 +704,8 @@ public:
 }
 
 - (void)_setUnsignedIntValue:(unsigned int)value forKey:(NSString *)key
-{    if ([self _unsignedIntValueForKey:key] == value)
+{
+    if ([self _unsignedIntValueForKey:key] == value)
         return;
     NSString *_key = KEY(key);
 #if PLATFORM(IOS)
@@ -2697,6 +2698,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCustomElementsEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCustomElementsEnabledPreferenceKey];
+}
+
+- (BOOL)isResourceCachingDisabled
+{
+    return [self _boolValueForKey:WebKitResourceCachingDisabledPreferenceKey];
+}
+
+- (void)setResourceCachingDisabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitResourceCachingDisabledPreferenceKey];
 }
 
 @end

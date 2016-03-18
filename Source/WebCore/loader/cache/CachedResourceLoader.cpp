@@ -923,13 +923,17 @@ void CachedResourceLoader::reloadImagesIfNotDeferred()
 
 CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type) const
 {
-    if (!frame())
+    Frame* frame = this->frame();
+    if (!frame)
         return CachePolicyVerify;
 
+    if (frame->settings().resourceCachingDisabled())
+        return CachePolicyReload;
+
     if (type != CachedResource::MainResource)
-        return frame()->loader().subresourceCachePolicy();
+        return frame->loader().subresourceCachePolicy();
     
-    switch (frame()->loader().loadType()) {
+    switch (frame->loader().loadType()) {
     case FrameLoadType::ReloadFromOrigin:
     case FrameLoadType::Reload:
         return CachePolicyReload;

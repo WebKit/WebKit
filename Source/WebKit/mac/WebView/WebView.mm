@@ -2516,6 +2516,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(ATTACHMENT_ELEMENT)
     settings.setAttachmentElementEnabled([preferences attachmentElementEnabled]);
 #endif
+
+    settings.setResourceCachingDisabled(preferences.resourceCachingDisabled);
 }
 
 static inline IMP getMethod(id o, SEL s)

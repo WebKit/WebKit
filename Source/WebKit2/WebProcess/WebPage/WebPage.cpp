@@ -3045,6 +3045,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings.setShouldDispatchJavaScriptWindowOnErrorEvents(true);
 
+    settings.setResourceCachingDisabled(store.getBoolValueForKey(WebPreferencesKey::resourceCachingDisabledKey()));
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPagePreferences.cpp>
 #endif
