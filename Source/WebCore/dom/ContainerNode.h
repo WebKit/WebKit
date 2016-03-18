@@ -153,6 +153,8 @@ public:
     Element* lastElementChild() const;
     unsigned childElementCount() const;
 
+    bool ensurePreInsertionValidity(Node& newChild, Node* refChild, ExceptionCode&);
+
 protected:
     explicit ContainerNode(Document&, ConstructionType = CreateContainer);
 

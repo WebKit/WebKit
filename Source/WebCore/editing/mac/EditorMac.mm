@@ -118,12 +118,11 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
         RenderStyle* style = styleForSelectionStart(&m_frame, nodeToRemove); // sets nodeToRemove
 
         const Font* result = nullptr;
-        if (style)
+        if (style) {
             result = &style->fontCascade().primaryFont();
-
-        if (nodeToRemove)
-            nodeToRemove->remove(ASSERT_NO_EXCEPTION);
-
+            if (nodeToRemove)
+                nodeToRemove->remove(ASSERT_NO_EXCEPTION);
+        }
         return result;
     }
 
