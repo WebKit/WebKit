@@ -2931,6 +2931,9 @@ void AccessibilityRenderObject::addTextFieldChildren()
         return;
     
     HTMLInputElement& input = downcast<HTMLInputElement>(*node);
+    if (HTMLElement* autoFillElement = input.autoFillButtonElement())
+        m_children.append(axObjectCache()->getOrCreate(autoFillElement));
+    
     HTMLElement* spinButtonElement = input.innerSpinButtonElement();
     if (!is<SpinButtonElement>(spinButtonElement))
         return;
