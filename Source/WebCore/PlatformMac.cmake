@@ -883,6 +883,7 @@ set(ObjC_BINDINGS_NO_MM
     EventListener
     EventTarget
     GlobalEventHandlers
+    HTMLMediaElement
     HTMLMediaElementMediaSession
     HTMLMediaElementMediaStream
     NavigatorBattery
