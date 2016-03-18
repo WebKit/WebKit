@@ -136,21 +136,6 @@ void JSArrayBufferView::finishCreation(VM& vm)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool JSArrayBufferView::getOwnPropertySlot(
-    JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(object);
-    
-    if (propertyName == exec->propertyNames().buffer) {
-        slot.setValue(
-            thisObject, DontDelete | ReadOnly, exec->vm().m_typedArrayController->toJS(
-                exec, thisObject->globalObject(), thisObject->buffer()));
-        return true;
-    }
-    
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
-}
-
 void JSArrayBufferView::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
@@ -172,46 +157,10 @@ bool JSArrayBufferView::put(
 
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
-
-    if (propertyName == exec->propertyNames().buffer)
-        return reject(exec, slot.isStrictMode(), "Attempting to write to read-only typed array property.");
     
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
-
-bool JSArrayBufferView::defineOwnProperty(
-    JSObject* object, ExecState* exec, PropertyName propertyName,
-    const PropertyDescriptor& descriptor, bool shouldThrow)
-{
-    JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(object);
-    if (propertyName == exec->propertyNames().buffer)
-        return reject(exec, shouldThrow, "Attempting to define read-only typed array property.");
     
-    return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
-}
-
-bool JSArrayBufferView::deleteProperty(
-    JSCell* cell, ExecState* exec, PropertyName propertyName)
-{
-    JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
-    if (propertyName == exec->propertyNames().buffer)
-        return false;
-    
-    return Base::deleteProperty(thisObject, exec, propertyName);
-}
-
-void JSArrayBufferView::getOwnNonIndexPropertyNames(
-    JSObject* object, ExecState* exec, PropertyNameArray& array, EnumerationMode mode)
-{
-    JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(object);
-    
-    if (mode.includeDontEnumProperties())
-        array.add(exec->propertyNames().buffer);
-
-    
-    Base::getOwnNonIndexPropertyNames(thisObject, exec, array, mode);
-}
-
 void JSArrayBufferView::finalize(JSCell* cell)
 {
     JSArrayBufferView* thisObject = static_cast<JSArrayBufferView*>(cell);

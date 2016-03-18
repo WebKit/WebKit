@@ -320,6 +320,15 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncLastIndexOf(ExecState
 }
 
 template<typename ViewClass>
+EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoGetterFuncBuffer(ExecState* exec)
+{
+    // 22.2.3.3
+    ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
+
+    return JSValue::encode(thisObject->jsBuffer(exec));
+}
+
+template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoGetterFuncLength(ExecState* exec)
 {
     // 22.2.3.17

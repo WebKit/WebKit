@@ -93,8 +93,6 @@ inline bool hasArrayBuffer(TypedArrayMode mode)
 class JSArrayBufferView : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetPropertyNames | OverridesGetOwnPropertySlot;
-    
     static const unsigned fastSizeLimit = 1000;
     
     static size_t sizeOf(uint32_t length, uint32_t elementSize)
@@ -146,20 +144,16 @@ protected:
     JS_EXPORT_PRIVATE JSArrayBufferView(VM&, ConstructionContext&);
     JS_EXPORT_PRIVATE void finishCreation(VM&);
     
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
 
     static void visitChildren(JSCell*, SlotVisitor&);
-    
-    static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     
 public:
     TypedArrayMode mode() const { return m_mode; }
     bool hasArrayBuffer() const { return JSC::hasArrayBuffer(mode()); }
     
     ArrayBuffer* buffer();
+    JSArrayBuffer* jsBuffer(ExecState* exec) { return exec->vm().m_typedArrayController->toJS(exec, globalObject(), buffer()); }
     PassRefPtr<ArrayBufferView> impl();
     bool isNeutered() { return hasArrayBuffer() && !vector(); }
     void neuter();
