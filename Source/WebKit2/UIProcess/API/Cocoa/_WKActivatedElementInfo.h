@@ -46,6 +46,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property (nonatomic, readonly) NSString *title;
 @property (nonatomic, readonly) _WKActivatedElementType type;
 @property (nonatomic, readonly) CGRect boundingRect;
+@property (nonatomic, readonly) NSString *ID WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly, copy) UIImage *image;
 #else

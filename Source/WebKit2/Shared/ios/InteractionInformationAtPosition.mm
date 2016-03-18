@@ -54,6 +54,7 @@ void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) con
     encoder << url;
     encoder << imageURL;
     encoder << title;
+    encoder << idAttribute;
     encoder << bounds;
     encoder << textBefore;
     encoder << textAfter;
@@ -119,6 +120,9 @@ bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, Int
     if (!decoder.decode(result.title))
         return false;
 
+    if (!decoder.decode(result.idAttribute))
+        return false;
+    
     if (!decoder.decode(result.bounds))
         return false;
 

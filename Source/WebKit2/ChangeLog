@@ -1,3 +1,32 @@
+2016-03-18  Enrica Casucci  <enrica@apple.com>
+
+        Add id attribute to _WKActivatedElementInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=155666
+        rdar://problem/25181956
+
+        Reviewed by Beth Dakin.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        (-[_WKActivatedElementInfo _initWithType:URL:location:title:ID:rect:image:]):
+        (-[_WKActivatedElementInfo ID]):
+        (-[_WKActivatedElementInfo _initWithType:URL:location:title:rect:image:]): Deleted.
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showAttachmentSheet]):
+        (-[WKContentView _showLinkSheet]):
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2016-03-18  Antti Koivisto  <antti@apple.com>
 
         Protect against excessive cache traversal

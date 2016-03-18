@@ -2193,6 +2193,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
         Element* element = is<Element>(*hitNode) ? downcast<Element>(hitNode) : nullptr;
         if (element) {
             info.isElement = true;
+            info.idAttribute = element->getIdAttribute();
             Element* linkElement = nullptr;
             if (element->renderer() && element->renderer()->isRenderImage()) {
                 elementIsLinkOrImage = true;

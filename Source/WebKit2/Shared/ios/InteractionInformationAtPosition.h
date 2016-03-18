@@ -54,6 +54,7 @@ struct InteractionInformationAtPosition {
     String url;
     String imageURL;
     String title;
+    String idAttribute;
     WebCore::IntRect bounds;
     RefPtr<ShareableBitmap> image;
     String textBefore;

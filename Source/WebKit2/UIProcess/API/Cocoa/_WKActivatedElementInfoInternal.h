@@ -33,7 +33,7 @@ namespace WebKit {
 
 @interface _WKActivatedElementInfo ()
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image;
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image;
 
 @property (nonatomic, readonly) CGPoint _interactionLocation;
 

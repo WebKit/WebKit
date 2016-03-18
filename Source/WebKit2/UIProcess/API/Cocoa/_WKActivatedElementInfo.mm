@@ -43,6 +43,7 @@
     RetainPtr<NSURL> _URL;
     RetainPtr<NSString> _title;
     CGPoint _interactionLocation;
+    RetainPtr<NSString> _ID;
     RefPtr<WebKit::ShareableBitmap> _image;
 #if PLATFORM(IOS)
     RetainPtr<UIImage> _uiImage;
@@ -52,7 +53,7 @@
 #endif
 }
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
 {
     if (!(self = [super init]))
         return nil;
@@ -63,6 +64,7 @@
     _boundingRect = rect;
     _type = type;
     _image = image;
+    _ID = ID;
 
     return self;
 }
@@ -75,6 +77,11 @@
 - (NSString *)title
 {
     return _title.get();
+}
+
+- (NSString *)ID
+{
+    return _ID.get();
 }
 
 - (CGPoint)_interactionLocation
