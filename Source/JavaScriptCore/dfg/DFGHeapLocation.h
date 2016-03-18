@@ -154,12 +154,6 @@ template<> struct HashTraits<JSC::DFG::HeapLocation> : SimpleClassHashTraits<JSC
 
 } // namespace WTF
 
-namespace JSC { namespace DFG {
-
-typedef HashMap<HeapLocation, LazyNode> ImpureMap;
-
-} } // namespace JSC::DFG
-
 #endif // ENABLE(DFG_JIT)
 
 #endif // DFGHeapLocation_h

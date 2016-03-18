@@ -101,6 +101,8 @@ namespace WTF {
 
         bool remove(const ValueType&);
         bool remove(iterator);
+        template<typename Functor>
+        void removeIf(const Functor&);
         void clear();
 
         ValueType take(const ValueType&);
@@ -248,6 +250,13 @@ namespace WTF {
     inline bool HashSet<T, U, V>::remove(const ValueType& value)
     {
         return remove(find(value));
+    }
+
+    template<typename T, typename U, typename V>
+    template<typename Functor>
+    inline void HashSet<T, U, V>::removeIf(const Functor& functor)
+    {
+        m_impl.removeIf(functor);
     }
 
     template<typename T, typename U, typename V>

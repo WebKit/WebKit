@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlockWithJITType.h"
+#include "DFGClobberize.h"
 #include "DFGClobbersExitState.h"
 #include "DFGMayExit.h"
 #include "JSCInlines.h"
@@ -297,6 +298,47 @@ public:
         case SSA:
             validateSSA();
             break;
+        }
+
+        // Validate clobbered states.
+        struct DefLambdaAdaptor {
+            std::function<void(PureValue)> pureValue;
+            std::function<void(HeapLocation, LazyNode)> locationAndNode;
+
+            void operator()(PureValue value) const
+            {
+                pureValue(value);
+            }
+
+            void operator()(HeapLocation location, LazyNode node) const
+            {
+                locationAndNode(location, node);
+            }
+        };
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                clobberize(m_graph, node,
+                    [&] (AbstractHeap) { },
+                    [&] (AbstractHeap heap)
+                    {
+                        // CSE assumes that HEAP TOP is never written.
+                        // If this assumption is weakened, you need to update clobbering
+                        // in CSE accordingly.
+                        if (heap.kind() == Stack)
+                            VALIDATE((node), !heap.payload().isTop());
+                    },
+                    DefLambdaAdaptor {
+                        [&] (PureValue) { },
+                        [&] (HeapLocation location, LazyNode)
+                        {
+                            VALIDATE((node), location.heap().kind() != SideState);
+
+                            // More specific kinds should be used instead.
+                            VALIDATE((node), location.heap().kind() != World);
+                            VALIDATE((node), location.heap().kind() != Heap);
+                        }
+                });
+            }
         }
     }
     

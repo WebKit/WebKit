@@ -110,9 +110,10 @@ public:
 
     unsigned hash() const
     {
-        if (asValue())
-            return WTF::PtrHash<FrozenValue*>::hash(asValue());
-        return WTF::PtrHash<Node*>::hash(m_node);
+        void* toHash = m_node;
+        if (FrozenValue* value = asValue())
+            toHash = value;
+        return WTF::PtrHash<void*>::hash(toHash);
     }
 
     bool operator==(const LazyNode& other) const

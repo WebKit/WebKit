@@ -85,6 +85,13 @@ template<typename T> struct UnsignedWithZeroKeyHashTraits : GenericHashTraits<T>
     static bool isDeletedValue(T value) { return value == std::numeric_limits<T>::max() - 1; }
 };
 
+template<typename T> struct SignedWithZeroKeyHashTraits : GenericHashTraits<T> {
+    static const bool emptyValueIsZero = false;
+    static T emptyValue() { return std::numeric_limits<T>::min(); }
+    static void constructDeletedValue(T& slot) { slot = std::numeric_limits<T>::max(); }
+    static bool isDeletedValue(T value) { return value == std::numeric_limits<T>::max(); }
+};
+
 // Can be used with strong enums, allows zero as key.
 template<typename T> struct StrongEnumHashTraits : GenericHashTraits<T> {
     using UnderlyingType = typename std::underlying_type<T>::type;

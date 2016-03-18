@@ -1,3 +1,66 @@
+2016-03-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Make CSE's ImpureData faster when dealing with large blocks
+        https://bugs.webkit.org/show_bug.cgi?id=155594
+
+        Reviewed by Filip Pizlo.
+
+        In some tests with large blocks, the time spent in DFG's LocalCSE
+        can be over 10% of the total compile time.
+        In those cases, LocalCSE is completely dominated by handling large
+        blocks.
+
+        This patch addresses the most obvious hot spots ImpureData's handling.
+
+        Initially, most of the time was going into HashTable::rehash().
+        The reason is the buckets are <HeapLocation, LazyNode> gigantic.
+        The hash table would easily get into several kilobytes and the CPU
+        was spending more time dealing with memory than anything.
+
+        To solve that, I moved the pairs lazily to the heap. The table itself
+        just contains the unique_ptr to those values. This makes the table
+        reasonably small and the alloc/dealloc are paid for by the fast rehash().
+
+        Once addImpure() was better, the next big bottleneck was clobber().
+        For each clobber(), we need to go over the entire map and test each value.
+        That loop was where most of the time was going.
+
+        Most calls to clobber() come from two kinds: SideState and Stack.
+
+        SideState is easy: it is never def'ed so we can always skip it.
+
+        Stack is disjoint from Heap too so we can also put it separately.
+
+        Splitting the map into 2 helped reduce the overhead. The maps are:
+        -Stack
+        -Heap
+
+        Having Stack alone was not enough for many blocks. In some cases,
+        you have a ton of SetLocal/GetLocal and having Stack separately
+        makes no difference.
+
+        To solve that, I split Stack in two: a map addressed by AbstractHeap
+        + unique HeapLocation and a fallback map for everything else.
+        Since most Stack are not TOP and are unique per AbstractHeap,
+        I get O(1) clobber in most cases.
+
+        I could achieve the same result with a custom hash structure.
+        I don't think it is worth the effort, in most cases, m_fallbackStackMap
+        has a size of zero or one.
+
+        This patch introduces a lot of coupling between CSE and AbstractHeap.
+        To reduce the risk of bugs, the old map is still maintained in debug
+        and each step checks that the results are the same as the new implementation.
+
+        A new validation step also verify the strong assumptions made by CSE:
+        -SideState and World are never def().
+        -We never write HEAP TOP, we only write specific heap location.
+
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGLazyNode.h:
+        (JSC::DFG::LazyNode::hash):
+
 2016-03-17  Saam barati  <sbarati@apple.com>
 
         Implement SmallPtrSet and integrate it into the Parser

@@ -1,3 +1,13 @@
+2016-03-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Make CSE's ImpureData faster when dealing with large blocks
+        https://bugs.webkit.org/show_bug.cgi?id=155594
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/HashSet.h:
+        (WTF::V>::removeIf):
+
 2016-03-17  Saam barati  <sbarati@apple.com>
 
         Implement SmallPtrSet and integrate it into the Parser
