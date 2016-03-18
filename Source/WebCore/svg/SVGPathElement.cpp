@@ -298,7 +298,7 @@ SVGPathByteStream* SVGPathElement::pathByteStream() const
     auto property = SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(this, dPropertyInfo());
     if (!property || !property->isAnimating())
         return m_pathByteStream.get();
-    static_cast<SVGAnimatedPathSegListPropertyTearOff*>(property.get())->animatedPathByteStream();
+    return static_cast<SVGAnimatedPathSegListPropertyTearOff*>(property.get())->animatedPathByteStream();
 }
 
 Ref<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(SVGElement* contextElement)
