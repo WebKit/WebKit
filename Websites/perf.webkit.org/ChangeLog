@@ -1,5 +1,48 @@
 2016-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add unit tests for config.json and statistics.js
+        https://bugs.webkit.org/show_bug.cgi?id=155626
+
+        Reviewed by Darin Adler.
+
+        Added mocha unit tests for statistics.js and validating config.json. For segmentations, I've extracted
+        real data from our internal perf dashboard.
+
+        Also fixed some bugs covered by these new tests.
+
+        * public/shared/statistics.js:
+        (Statistics.movingAverage): Fixed a bug that forwardWindowSize was never used.
+        (Statistics.exponentialMovingAverage): Fixed the bug that the moving average starts at 0. It should
+        start at the first value instead.
+        (.splitIntoSegmentsUntilGoodEnough): Fixed the bug that we may try to segment a time series into
+        more parts than there are data points. Clearly, that doesn't make any sense.
+        (.findOptimalSegmentation): Renamed local variables so that they're more descriptive, and rewrote
+        the debugging code was the old code was emitting some useless data. Also fixed the bug that the length
+        of "segmentation" was off by one (we need segmentCount + 1 elements in the array sine we always
+        include the start of the first segment = 0 and the end of the last segment = values.length).
+        (.SampleVarianceUpperTriangularMatrix):
+        (Statistics): Modernized the export code.
+        * tools/js: Added.
+        * tools/js/config.js: Added.
+        (Config): Added.
+        (Config.prototype.configFilePath): Added.
+        (Config.prototype.value): Added.
+        (Config.prototype.path): Added.
+        * tools/js/database.js: Added.
+        (Database): Added.
+        (Database.prototype.connect): Added.
+        (Database.prototype.disconnect): Added.
+        * unit-tests: Added.
+        * unit-tests/checkconfig.js: Added. Validates config.json. This is useful while setting up
+        a local instance of the perf dashboard.
+        * unit-tests/statistics-tests.js: Added.
+        (assert.almostEqual): Added. Asserts that two floating values are within a given significant digits.
+        (.stdev):
+        (.delta):
+        (.computeWelchsT):
+
+2016-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a typo which was supposed to be fixed in r198351.
 
         * public/v3/pages/analysis-task-page.js:

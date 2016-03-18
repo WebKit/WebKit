@@ -122,7 +122,7 @@ var Statistics = new (function () {
         for (var i = 0; i < values.length; i++) {
             var sum = 0;
             var count = 0;
-            for (var j = i - backwardWindowSize; j < i + backwardWindowSize; j++) {
+            for (var j = i - backwardWindowSize; j <= i + forwardWindowSize; j++) {
                 if (j >= 0 && j < values.length) {
                     sum += values[j];
                     count++;
@@ -145,8 +145,9 @@ var Statistics = new (function () {
 
     this.exponentialMovingAverage = function (values, smoothingFactor) {
         var averages = new Array(values.length);
-        var movingAverage = 0;
-        for (var i = 0; i < values.length; i++) {
+        var movingAverage = values[0];
+        averages[0] = movingAverage;
+        for (var i = 1; i < values.length; i++) {
             movingAverage = smoothingFactor * values[i] + (1 - smoothingFactor) * movingAverage;
             averages[i] = movingAverage;
         }
@@ -280,7 +281,7 @@ var Statistics = new (function () {
 
         var segmentation;
         var minTotalCost = Infinity;
-        var maxK = 50;
+        var maxK = Math.min(50, values.length);
 
         for (var k = 1; k < maxK; k++) {
             var start = Date.now();
@@ -302,10 +303,10 @@ var Statistics = new (function () {
     function findOptimalSegmentation(values, costMatrix, segmentCount) {
         // Dynamic programming. cost[i][k] = The cost to segmenting values up to i into k segments.
         var cost = new Array(values.length);
-        for (var i = 0; i < values.length; i++) {
-            cost[i] = new Float32Array(segmentCount + 1);
-        }
+        for (var segmentEnd = 0; segmentEnd < values.length; segmentEnd++)
+            cost[segmentEnd] = new Float32Array(segmentCount + 1);
 
+        // previousNode[i][k] = The start of the last segment in an optimal segmentation that ends at i with k segments.
         var previousNode = new Array(values.length);
         for (var i = 0; i < values.length; i++)
             previousNode[i] = new Array(segmentCount + 1);
@@ -313,45 +314,48 @@ var Statistics = new (function () {
         cost[0] = [0]; // The cost of segmenting single value is always 0.
         previousNode[0] = [-1];
         for (var segmentStart = 0; segmentStart < values.length; segmentStart++) {
-            var costBySegment = cost[segmentStart];
-            for (var count = 0; count < segmentCount; count++) {
-                if (previousNode[segmentStart][count] === undefined)
+            var costOfOptimalSegmentationThatEndAtCurrentStart = cost[segmentStart];
+            for (var k = 0; k < segmentCount; k++) {
+                var noSegmentationOfLenghtKEndsAtCurrentStart = previousNode[segmentStart][k] === undefined;
+                if (noSegmentationOfLenghtKEndsAtCurrentStart)
                     continue;
                 for (var segmentEnd = segmentStart + 1; segmentEnd < values.length; segmentEnd++) {
-                    var newCost = costBySegment[count] + costMatrix.costBetween(segmentStart, segmentEnd);
-                    if (previousNode[segmentEnd][count + 1] === undefined || newCost < cost[segmentEnd][count + 1]) {
-                        cost[segmentEnd][count + 1] = newCost;
-                        previousNode[segmentEnd][count + 1] = segmentStart;
+                    var costOfOptimalSegmentationOfLengthK = costOfOptimalSegmentationThatEndAtCurrentStart[k];
+                    var costOfCurrentSegment = costMatrix.costBetween(segmentStart, segmentEnd);
+                    var totalCost = costOfOptimalSegmentationOfLengthK + costOfCurrentSegment;
+                    if (previousNode[segmentEnd][k + 1] === undefined || totalCost < cost[segmentEnd][k + 1]) {
+                        cost[segmentEnd][k + 1] = totalCost;
+                        previousNode[segmentEnd][k + 1] = segmentStart;
                     }
                 }
             }
         }
 
         if (Statistics.debuggingSegmentation) {
-            console.log('findOptimalSegmentation with k=', segmentCount);
-            for (var i = 0; i < cost.length; i++) {
-                var t = cost[i];
-                var s = '';
-                for (var j = 0; j < t.length; j++) {
-                    var p = previousNode[i][j];
-                    s += '(k=' + j;
-                    if (p !== undefined)
-                        s += ' c=' + t[j] + ' p=' + p
-                    s += ')';
+            console.log('findOptimalSegmentation with', segmentCount, 'segments');
+            for (var end = 0; end < values.length; end++) {
+                for (var k = 0; k <= segmentCount; k++) {
+                    var start = previousNode[end][k];
+                    if (start === undefined)
+                        continue;
+                    console.log(`C(segment=[${start}, ${end + 1}], segmentCount=${k})=${cost[end][k]}`);
                 }
-                console.log(i, values[i], s);
             }
         }
 
-        var currentIndex = values.length - 1;
-        var segmentation = new Array(segmentCount);
-        segmentation[0] = values.length;
-        for (var i = 0; i < segmentCount; i++) {
-            currentIndex = previousNode[currentIndex][segmentCount - i];
-            segmentation[i + 1] = currentIndex;
+        var segmentEnd = values.length - 1;
+        var segmentation = new Array(segmentCount + 1);
+        segmentation[segmentCount] = values.length;
+        for (var k = segmentCount; k > 0; k--) {
+            segmentEnd = previousNode[segmentEnd][k];
+            segmentation[k - 1] = segmentEnd;
         }
+        var costOfOptimalSegmentation = cost[values.length - 1][segmentCount];
 
-        return {segmentation: segmentation.reverse(), cost: cost[values.length - 1][segmentCount]};
+        if (Statistics.debuggingSegmentation)
+            console.log('Optimal segmentation:', segmentation, 'with cost =', costOfOptimalSegmentation);
+
+        return {segmentation: segmentation, cost: costOfOptimalSegmentation};
     }
 
     function SampleVarianceUpperTriangularMatrix(values) {
@@ -385,7 +389,5 @@ var Statistics = new (function () {
 
 })();
 
-if (typeof module != 'undefined') {
-    for (var key in Statistics)
-        module.exports[key] = Statistics[key];
-}
+if (typeof module != 'undefined')
+    module.exports = Statistics;
