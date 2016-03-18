@@ -311,10 +311,8 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
     for (auto& entry : capturedVariables)
         varDeclarations.markVariableAsCaptured(entry);
 
-    IdentifierSet usedVariables;
-    scope->getUsedVariables(usedVariables);
     if (parseMode == SourceParseMode::GeneratorWrapperFunctionMode) {
-        if (usedVariables.contains(m_vm->propertyNames->arguments.impl()))
+        if (scope->usedVariablesContains(m_vm->propertyNames->arguments.impl()))
             context.propagateArgumentsUse();
     }
 

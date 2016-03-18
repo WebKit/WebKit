@@ -1,3 +1,35 @@
+2016-03-17  Saam barati  <sbarati@apple.com>
+
+        Implement SmallPtrSet and integrate it into the Parser
+        https://bugs.webkit.org/show_bug.cgi?id=155552
+
+        Reviewed by Filip Pizlo.
+
+        Using SmallPtrSet instead of HashSet really helps speed
+        up the parser. What saves us most is not needing to always
+        malloc/free memory in the HashSet.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::startSwitch):
+        (JSC::Scope::endSwitch):
+        (JSC::Scope::startLoop):
+        (JSC::Scope::hasDeclaredParameter):
+        (JSC::Scope::declareWrite):
+        (JSC::Scope::declareParameter):
+        (JSC::Scope::usedVariablesContains):
+        (JSC::Scope::useVariable):
+        (JSC::Scope::collectFreeVariables):
+        (JSC::Scope::getCapturedVars):
+        (JSC::Scope::isValidStrictMode):
+        (JSC::Scope::shadowsArguments):
+        (JSC::Scope::copyCapturedVariablesToVector):
+        (JSC::Scope::setIsModule):
+        (JSC::Parser::pushScope):
+        (JSC::Scope::getUsedVariables): Deleted.
+
 2016-03-17  Brian Burg  <bburg@apple.com>
 
         Web Inspector: protocol generator shouldn't generate enums for parameters with non-anonymous enum types

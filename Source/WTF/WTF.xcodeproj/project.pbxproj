@@ -106,6 +106,7 @@
 		70ECA60D1B02426800449739 /* AtomicStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA60A1B02426800449739 /* AtomicStringImpl.cpp */; };
 		70ECA60E1B02426800449739 /* SymbolImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA60B1B02426800449739 /* SymbolImpl.h */; };
 		70ECA60F1B02426800449739 /* UniquedStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA60C1B02426800449739 /* UniquedStringImpl.h */; };
+		79EC70611C99F9BC003A3AE2 /* SmallPtrSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */; };
 		7CBBA07419BB7FDC00BBF025 /* OSObjectPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */; };
 		7CDD7FF8186D291E007433CD /* IteratorAdaptors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */; };
 		7CDD7FFA186D2A54007433CD /* IteratorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDD7FF9186D2A54007433CD /* IteratorRange.h */; };
@@ -421,6 +422,7 @@
 		70ECA60A1B02426800449739 /* AtomicStringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicStringImpl.cpp; sourceTree = "<group>"; };
 		70ECA60B1B02426800449739 /* SymbolImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolImpl.h; sourceTree = "<group>"; };
 		70ECA60C1B02426800449739 /* UniquedStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniquedStringImpl.h; sourceTree = "<group>"; };
+		7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallPtrSet.h; sourceTree = "<group>"; };
 		7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSObjectPtr.h; sourceTree = "<group>"; };
 		7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorAdaptors.h; sourceTree = "<group>"; };
 		7CDD7FF9186D2A54007433CD /* IteratorRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorRange.h; sourceTree = "<group>"; };
@@ -914,6 +916,7 @@
 				A748744F17A0BDAE00FA04CB /* SixCharacterHash.cpp */,
 				A748745017A0BDAE00FA04CB /* SixCharacterHash.h */,
 				A8A4730C151A825B004123FF /* SizeLimits.cpp */,
+				7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */,
 				A8A4730D151A825B004123FF /* Spectrum.h */,
 				A8A4730E151A825B004123FF /* StackBounds.cpp */,
 				A8A4730F151A825B004123FF /* StackBounds.h */,
@@ -1150,6 +1153,7 @@
 				A8A47395151A825B004123FF /* CheckedBoolean.h in Headers */,
 				A8A4745F151A825B004123FF /* Collator.h in Headers */,
 				0FC4EDE61696149600F65041 /* CommaPrinter.h in Headers */,
+				79EC70611C99F9BC003A3AE2 /* SmallPtrSet.h in Headers */,
 				DE5A09FC1BA36992003D4424 /* CommonCryptoSPI.h in Headers */,
 				0F8F2B91172E00FC007DBDA5 /* CompilationThread.h in Headers */,
 				A8A47398151A825B004123FF /* Compiler.h in Headers */,

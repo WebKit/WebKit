@@ -1,3 +1,66 @@
+2016-03-17  Saam barati  <sbarati@apple.com>
+
+        Implement SmallPtrSet and integrate it into the Parser
+        https://bugs.webkit.org/show_bug.cgi?id=155552
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements the SmallPtrSet data struture.
+        Inspired by the implementation in llvm:
+        http://llvm.org/docs/doxygen/html/SmallPtrSet_8h_source.html
+
+        The data structure uses an inline array for storage up until
+        a fixed limit (8 entries in our implementation). If that storage
+        fills up, we fall back to a simple hash table implementation.
+        Crucially, this implementation doesn't support the remove
+        operation. This is on purpose. The hash table will only ever
+        grow.
+
+        Also, the implementation allows for it to be memcopied around.
+        I.e, we can put SmallPtrSet inside a Vector and allow that
+        Vector to use memcpy as its move operation (of course this
+        is only valid if the SmallPtrSet in the old memory doesn't have 
+        its destructor called unless it is set back to its initial state.)
+
+        For now, SmallPtrSet only supports pointer types that are trivially
+        destructible. It's probably not too difficult to extend this to
+        smart pointers, but it's not part of this original implementation.
+
+        I've also implemented a pure forwarding varargs constructAndAppend
+        method on Vector. This allows you to do:
+        Vector<T> v;
+        v.constructAndAppend(a1, a2, ...)
+        as long as T has a constructor that accepts arguments (a1, a2, ...).
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/SmallPtrSet.h: Added.
+        (WTF::SmallPtrSet::SmallPtrSet):
+        (WTF::SmallPtrSet::operator=):
+        (WTF::SmallPtrSet::~SmallPtrSet):
+        (WTF::SmallPtrSet::add):
+        (WTF::SmallPtrSet::contains):
+        (WTF::SmallPtrSet::iterator::operator++):
+        (WTF::SmallPtrSet::iterator::operator*):
+        (WTF::SmallPtrSet::iterator::operator==):
+        (WTF::SmallPtrSet::iterator::operator!=):
+        (WTF::SmallPtrSet::begin):
+        (WTF::SmallPtrSet::end):
+        (WTF::SmallPtrSet::size):
+        (WTF::SmallPtrSet::emptyValue):
+        (WTF::SmallPtrSet::isValidEntry):
+        (WTF::SmallPtrSet::isSmall):
+        (WTF::SmallPtrSet::initialize):
+        (WTF::SmallPtrSet::grow):
+        (WTF::SmallPtrSet::bucket):
+        * wtf/Vector.h:
+        (WTF::Vector::append):
+        (WTF::Vector::uncheckedAppend):
+        (WTF::minCapacity>::append):
+        (WTF::minCapacity>::constructAndAppend):
+        (WTF::minCapacity>::appendSlowCase):
+        (WTF::minCapacity>::constructAndAppendSlowCase):
+
 2016-03-16  Filip Pizlo  <fpizlo@apple.com>
 
         Replace all of the various non-working and non-compiling sampling profiler hacks with a single super hack

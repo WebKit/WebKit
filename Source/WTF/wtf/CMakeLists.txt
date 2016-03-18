@@ -94,6 +94,7 @@ set(WTF_HEADERS
     SaturatedArithmetic.h
     ScopedLambda.h
     SegmentedVector.h
+    SmallPtrSet.h
     StackBounds.h
     StackStats.h
     StaticConstructors.h
