@@ -1664,7 +1664,7 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
     "_listeners": null,
     "_type": "object",
     "_description": "DataView",
-    "_lossless": false,
+    "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
@@ -1678,12 +1678,6 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
         "_name": "byteLength",
         "_type": "number",
         "_value": "16"
-      },
-      {
-        "_listeners": null,
-        "_name": "buffer",
-        "_type": "object",
-        "_value": "ArrayBuffer"
       }
     ],
     "_entries": null

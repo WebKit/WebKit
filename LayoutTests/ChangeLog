@@ -1,3 +1,11 @@
+2016-03-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline inspector/model/remote-object.html for mac after r198435
+
+        Unreviewed test gardening.
+
+        * platform/mac/inspector/model/remote-object-expected.txt:
+
 2016-03-18  Nan Wang  <n_wang@apple.com>
 
         AX: AXARIACurrent exposed but not displayed in Accessibility Inspector
