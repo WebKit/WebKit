@@ -1,3 +1,21 @@
+2016-03-18  Antti Koivisto  <antti@apple.com>
+
+        Protect against excessive cache traversal
+        https://bugs.webkit.org/show_bug.cgi?id=155635
+        rdar://problem/24241008
+
+        Reviewed by Darin Adler.
+
+        We can't handle unlimited number of parallel cache traversal requests from the client.
+        We'll run out of dispatch queues and other system resources. CPU will spin.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::traverse):
+
+            Add limit of maximum 3 traversals. When exceeded return nothing and log an error.
+
+        * NetworkProcess/cache/NetworkCache.h:
+
 2016-03-18  Darin Adler  <darin@apple.com>
 
         Disable Caches in Safari's Develop menu does not disable caches.
