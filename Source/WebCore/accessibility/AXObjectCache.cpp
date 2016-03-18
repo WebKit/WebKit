@@ -1630,8 +1630,15 @@ static void setRangeStartOrEndWithCharacterOffset(RefPtr<Range> range, const Cha
     
     int offset = characterOffset.startIndex + characterOffset.offset;
     Node* node = characterOffset.node;
-    if (isReplacedNodeOrBR(node))
-        node = resetNodeAndOffsetForReplacedNode(node, offset, characterOffset.offset);
+    
+    bool replacedNodeOrBR = isReplacedNodeOrBR(node);
+    // For the non text node that has no children, we should create the range with its parent, otherwise the range would be collapsed.
+    // Example: <div contenteditable="true"></div>, we want the range to include the div element.
+    bool noChildren = !replacedNodeOrBR && !node->isTextNode() && !node->hasChildNodes();
+    int characterCount = noChildren ? (isStart ? 0 : 1) : characterOffset.offset;
+    
+    if (replacedNodeOrBR || noChildren)
+        node = resetNodeAndOffsetForReplacedNode(node, offset, characterCount);
     
     if (isStart)
         range->setStart(node, offset, ec);

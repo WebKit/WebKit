@@ -1,3 +1,19 @@
+2016-03-18  Nan Wang  <n_wang@apple.com>
+
+        AX: Typing broken on form input field while using VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=155613
+
+        Reviewed by Chris Fleizach.
+
+        The div element inside the INPUT element gives a collapsed TextMarkerRange which then creates
+        a collapsed Range. Fixed it by using the parent node to create the Range when the div node has
+        no children.
+
+        Test: accessibility/mac/text-marker-range-for-node-without-children.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::setRangeStartOrEndWithCharacterOffset):
+
 2016-03-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement AutoFill Available attribute for a text field
