@@ -1,3 +1,9 @@
+2016-03-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative cloop buildfix after r198364.
+
+        * bytecode/SuperSampler.cpp:
+
 2016-03-17  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make CSE's ImpureData faster when dealing with large blocks

@@ -29,6 +29,7 @@
 #include "MacroAssembler.h"
 #include "Options.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/DataLog.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -42,7 +43,7 @@ void initializeSuperSampler()
 {
     if (!Options::useSuperSampler())
         return;
-    
+
     createThread(
         "JSC Super Sampler",
         [] () {
@@ -67,7 +68,7 @@ void printSuperSamplerState()
 {
     if (!Options::useSuperSampler())
         return;
-    
+
     double percentage = 100.0 * in / (in + out);
     if (percentage != percentage)
         percentage = 0.0;
