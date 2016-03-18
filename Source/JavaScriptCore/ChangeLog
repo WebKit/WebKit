@@ -1,3 +1,25 @@
+2016-03-17  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: protocol generator shouldn't generate enums for parameters with non-anonymous enum types
+        https://bugs.webkit.org/show_bug.cgi?id=155610
+        <rdar://problem/25229878>
+
+        Reviewed by Joseph Pecoraro.
+
+        If a command parameter has an anonymous enum type, the backend dispatcher generator
+        makes a C++ enum for the parameter. However, if the parameter references a named enum
+        type specified in a domain's 'type' section, then there's no need to generate an enum.
+
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator._generate_handler_declaration_for_command):
+        Add a missing check for the is_anonymous flag. Type references to named enums are resolved
+        to the underlying aliased EnumType instead of an AliasedType, so we have to check the flag.
+
+        Rebaseline tests.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+
 2016-03-17  Filip Pizlo  <fpizlo@apple.com>
 
         Replace all of the various non-working and non-compiling sampling profiler hacks with a single super hack

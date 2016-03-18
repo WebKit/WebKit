@@ -149,12 +149,6 @@ class AlternateDatabaseBackendDispatcher;
 
 class DatabaseBackendDispatcherHandler {
 public:
-    // Named after parameter 'screenColor' while generating command/event executeAllOptionalParameters.
-    enum class ScreenColor {
-        Red = 0,
-        Green = 1,
-        Blue = 2,
-    }; // enum class ScreenColor
     // Named after parameter 'printColor' while generating command/event executeAllOptionalParameters.
     enum class PrintColor {
         Cyan = 3,

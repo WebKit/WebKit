@@ -134,7 +134,7 @@ class CppBackendDispatcherHeaderGenerator(Generator):
 
             parameters.append("%s %s" % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), parameter_name))
 
-            if isinstance(_parameter.type, EnumType) and _parameter.parameter_name not in used_enum_names:
+            if isinstance(_parameter.type, EnumType) and _parameter.type.is_anonymous and _parameter.parameter_name not in used_enum_names:
                 lines.append(self._generate_anonymous_enum_for_parameter(_parameter, command))
                 used_enum_names.add(_parameter.parameter_name)
 
@@ -144,7 +144,7 @@ class CppBackendDispatcherHeaderGenerator(Generator):
                 parameter_name = 'opt_' + parameter_name
             parameters.append("%s %s" % (CppGenerator.cpp_type_for_formal_out_parameter(_parameter), parameter_name))
 
-            if isinstance(_parameter.type, EnumType) and _parameter.parameter_name not in used_enum_names:
+            if isinstance(_parameter.type, EnumType) and _parameter.type.is_anonymous and _parameter.parameter_name not in used_enum_names:
                 lines.append(self._generate_anonymous_enum_for_parameter(_parameter, command))
                 used_enum_names.add(_parameter.parameter_name)
 

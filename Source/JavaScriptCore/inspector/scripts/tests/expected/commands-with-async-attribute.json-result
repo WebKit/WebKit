@@ -154,12 +154,6 @@ class AlternateDatabaseBackendDispatcher;
 
 class DatabaseBackendDispatcherHandler {
 public:
-    // Named after parameter 'screenColor' while generating command/event executeSQLSyncOptionalReturnValues.
-    enum class ScreenColor {
-        Red = 0,
-        Green = 1,
-        Blue = 2,
-    }; // enum class ScreenColor
     // Named after parameter 'printColor' while generating command/event executeSQLSyncOptionalReturnValues.
     enum class PrintColor {
         Cyan = 3,
