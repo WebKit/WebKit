@@ -28,8 +28,10 @@
 #include "Counters.h"
 #include "MoveOnly.h"
 #include "RefLogger.h"
+#include "Test.h"
 #include <string>
 #include <wtf/HashMap.h>
+#include <wtf/Ref.h>
 #include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
@@ -567,6 +569,51 @@ TEST(WTF_HashMap, Ensure_RefPtr)
 
         map.ensure(1, [&] { return RefPtr<RefLogger>(&a); });
         EXPECT_STREQ("", takeLogStr().c_str());
+    }
+}
+
+class ObjectWithRefLogger {
+public:
+    ObjectWithRefLogger(Ref<RefLogger>&& logger)
+        : m_logger(WTFMove(logger))
+    {
+    }
+
+    Ref<RefLogger> m_logger;
+};
+
+
+void testMovingUsingEnsure(Ref<RefLogger>&& logger)
+{
+    HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
+    
+    map.ensure(1, [&] { return std::make_unique<ObjectWithRefLogger>(WTFMove(logger)); });
+}
+
+void testMovingUsingAdd(Ref<RefLogger>&& logger)
+{
+    HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
+
+    auto& slot = map.add(1, nullptr).iterator->value;
+    slot = std::make_unique<ObjectWithRefLogger>(WTFMove(logger));
+}
+
+TEST(WTF_HashMap, Ensure_LambdasCapturingByReference)
+{
+    {
+        DerivedRefLogger a("a");
+        Ref<RefLogger> ref(a);
+        testMovingUsingEnsure(WTFMove(ref));
+
+        EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+    }
+
+    {
+        DerivedRefLogger a("a");
+        Ref<RefLogger> ref(a);
+        testMovingUsingAdd(WTFMove(ref));
+
+        EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
     }
 }
 
