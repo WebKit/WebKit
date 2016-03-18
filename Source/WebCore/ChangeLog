@@ -1,3 +1,20 @@
+2016-03-17  Antti Koivisto  <antti@apple.com>
+
+        Data URL DecodeTask may get deleted outside main thread
+        https://bugs.webkit.org/show_bug.cgi?id=155584
+        rdar://problem/24492104
+
+        Reviewed by Darin Adler.
+
+        This is unsafe as it owns strings and other types that are only safe to delete in the main thread.
+
+        There is a race between deref in dispatch() and deref in timerFired(). If the timer fires before dispatch()
+        exits the implicit deref will trigger deletion of DecodingResultDispatcher in the dispatching thread.
+
+        (WebCore::DataURLDecoder::DecodingResultDispatcher::timerFired):
+
+            Fix by clearing m_decodeTask when the timer fires.
+
 2016-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r195661): [GTK] very slow scrolling
