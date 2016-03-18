@@ -682,7 +682,7 @@ String XSSAuditor::decodedSnippetForJavaScript(const FilterTokenRequest& request
                 break;
 
             if (lastNonSpacePosition != notFound && startsOpeningScriptTagAt(string, foundPosition)) {
-                foundPosition = lastNonSpacePosition;
+                foundPosition = lastNonSpacePosition + 1;
                 break;
             }
 
