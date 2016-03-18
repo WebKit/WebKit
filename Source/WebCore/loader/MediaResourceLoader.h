@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "ContextDestructionObserver.h"
 #include "PlatformMediaResourceLoader.h"
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
@@ -40,7 +41,7 @@ class CachedRawResource;
 class Document;
 class MediaResource;
 
-class MediaResourceLoader final : public PlatformMediaResourceLoader {
+class MediaResourceLoader final : public PlatformMediaResourceLoader, public ContextDestructionObserver {
 public:
     WEBCORE_EXPORT MediaResourceLoader(Document&, const String& crossOriginMode);
     WEBCORE_EXPORT virtual ~MediaResourceLoader();
@@ -48,11 +49,13 @@ public:
     RefPtr<PlatformMediaResource> requestResource(const ResourceRequest&, LoadOptions) override;
     void removeResource(MediaResource&);
 
-    Document& document() { return m_document; }
+    Document* document() { return m_document; }
     const String& crossOriginMode() const { return m_crossOriginMode; }
 
 private:
-    Document& m_document;
+    void contextDestroyed() override;
+
+    Document* m_document;
     String m_crossOriginMode;
     HashSet<MediaResource*> m_resources;
 };

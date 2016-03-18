@@ -1,3 +1,22 @@
+2016-03-18  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in WebCore::MediaResourceLoader::requestResource + 698
+        https://bugs.webkit.org/show_bug.cgi?id=155651
+        <rdar://problem/25130582>
+
+        Reviewed by Eric Carlson.
+
+        No new tests, fixes existing tests running under GuardMalloc.
+
+        Protect against the Document passed into MediaResourceLoader being destroyed during the MediaResourceLoader's lifetime.
+
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::MediaResourceLoader):
+        (WebCore::MediaResourceLoader::contextDestroyed):
+        (WebCore::MediaResourceLoader::requestResource):
+        (WebCore::MediaResource::responseReceived):
+        * loader/MediaResourceLoader.h:
+
 2016-03-18  Mark Lam  <mark.lam@apple.com>
 
         JSDOMGlobalObject.h needs to #include StructureInlines.h.
