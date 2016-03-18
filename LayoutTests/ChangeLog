@@ -1,3 +1,26 @@
+2016-03-18  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r192252.
+
+    2015-11-10  Zalan Bujtas  <zalan@apple.com>
+
+            Force display: block on ::-webkit-media-controls.
+            https://bugs.webkit.org/show_bug.cgi?id=149178
+            <rdar://problem/23448397>
+
+            Reviewed by Simon Fraser.
+
+            This patch ensures that we always have a block level container for media controls
+            so that continuation never needs to split RenderMedia into multiple subtrees.
+
+            Current inline continuation logic assumes that only inline elements with RenderInline
+            type of renderers participate in continuation. This is mostly the case since other inline renderers
+            such as RenderReplaced, RenderImage, RenderEmbeddedObject etc can't have (accessible) children.
+            (Unlike video::-webkit-media-controls)
+
+            * media/webkit-media-controls-display-expected.txt: Added.
+            * media/webkit-media-controls-display.html: Added.
+
 2016-03-14  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r196268. rdar://problem/24748259

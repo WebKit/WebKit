@@ -37,7 +37,7 @@ audio {
     width: inherit;
     height: inherit;
     position: relative;
-    display: -webkit-flex;
+    display: -webkit-flex !important;
     -webkit-align-items: flex-start;
     -webkit-justify-content: flex-end;
     -webkit-flex-direction: column;
