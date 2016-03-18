@@ -1,0 +1,11 @@
+Validates HTTP headers of speculative validation requests.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS validationRequestHeader('If-None-Match') is "123456789"
+PASS validationRequestHeader('User-Agent') is initialUserAgent
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

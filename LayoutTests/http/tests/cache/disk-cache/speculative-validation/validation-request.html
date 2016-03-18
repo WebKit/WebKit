@@ -1,0 +1,41 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+description("Validates HTTP headers of speculative validation requests.");
+jsTestIsAsync = true;
+
+state = "warmup";
+
+function validationRequestHeader(headerName)
+{
+    return frames[0].allRequestHeaders[headerName];
+    
+}
+
+function frameLoaded()
+{
+    if (state == "warmup") {
+        initialUserAgent = validationRequestHeader('User-Agent');
+        // Navigate frame to 'about:blank' to flush to subresource loads metadata to disk.
+        state = "flushingMetadata";
+        document.getElementById("testFrame").src = "about:blank";
+        return;
+    }
+    if (state == "flushingMetadata") {
+        // Navigate frame to its original location again. This time it should speculatively
+        // validate subresources as we have subresource loads metadata in the disk cache.
+        state = "speculativeRevalidation";
+        document.getElementById("testFrame").src = "resources/validation-request-frame.php";
+        return;
+    }
+    if (state == "speculativeRevalidation") {
+        // Validate the HTTP headers of the speculative validation request.
+        shouldBeEqualToString("validationRequestHeader('If-None-Match')", "123456789");
+        shouldBe("validationRequestHeader('User-Agent')", "initialUserAgent");
+        finishJSTest();
+        return;
+    }
+}
+
+</script>
+<iframe id="testFrame" src="resources/validation-request-frame.php" onload="frameLoaded()"></iframe>
+<script src="/js-test-resources/js-test-post.js"></script>

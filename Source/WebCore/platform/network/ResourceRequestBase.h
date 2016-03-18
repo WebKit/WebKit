@@ -107,8 +107,8 @@ namespace WebCore {
         void setHTTPOrigin(const String&);
         WEBCORE_EXPORT void clearHTTPOrigin();
 
-        String httpUserAgent() const;
-        void setHTTPUserAgent(const String&);
+        WEBCORE_EXPORT String httpUserAgent() const;
+        WEBCORE_EXPORT void setHTTPUserAgent(const String&);
         void clearHTTPUserAgent();
 
         String httpAccept() const;

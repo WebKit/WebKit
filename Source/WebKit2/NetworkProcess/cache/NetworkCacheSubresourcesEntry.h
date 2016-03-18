@@ -43,12 +43,19 @@ struct SubresourceInfo {
     static bool decode(Decoder&, SubresourceInfo&);
 
     SubresourceInfo() = default;
-    SubresourceInfo(const WebCore::URL& firstPartyForCookies, bool isTransient = false)
-        : firstPartyForCookies(firstPartyForCookies)
+    SubresourceInfo(const WebCore::ResourceRequest& request, bool isTransient = false)
+        : firstPartyForCookies(request.firstPartyForCookies())
+        , httpUserAgent(request.httpUserAgent())
         , isTransient(isTransient)
     { }
 
+    SubresourceInfo(const SubresourceInfo&);
+    SubresourceInfo(SubresourceInfo&&) = default;
+    SubresourceInfo& operator=(const SubresourceInfo&);
+    SubresourceInfo& operator=(SubresourceInfo&&) = default;
+
     WebCore::URL firstPartyForCookies;
+    String httpUserAgent;
     bool isTransient { false };
 };
 

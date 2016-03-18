@@ -84,10 +84,11 @@ static inline Key makeSubresourcesKey(const Key& resourceKey)
     return Key(resourceKey.partition(), subresourcesType(), resourceKey.range(), resourceKey.identifier());
 }
 
-static inline ResourceRequest constructRevalidationRequest(const Entry& entry, const URL& firstPartyForCookies)
+static inline ResourceRequest constructRevalidationRequest(const Entry& entry, const SubresourceInfo& subResourceInfo)
 {
     ResourceRequest revalidationRequest(entry.key().identifier());
-    revalidationRequest.setFirstPartyForCookies(firstPartyForCookies);
+    revalidationRequest.setHTTPUserAgent(subResourceInfo.httpUserAgent);
+    revalidationRequest.setFirstPartyForCookies(subResourceInfo.firstPartyForCookies);
 #if ENABLE(CACHE_PARTITIONING)
     if (entry.key().hasPartition())
         revalidationRequest.setCachePartition(entry.key().partition());
@@ -380,7 +381,7 @@ void SpeculativeLoadManager::revalidateEntry(std::unique_ptr<Entry> entry, const
     if (!key.range().isEmpty())
         return;
 
-    ResourceRequest revalidationRequest = constructRevalidationRequest(*entry, subresourceInfo.firstPartyForCookies);
+    ResourceRequest revalidationRequest = constructRevalidationRequest(*entry, subresourceInfo);
 
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculatively revalidating '%s':", key.identifier().utf8().data());
     auto revalidator = std::make_unique<SpeculativeLoad>(frameID, revalidationRequest, WTFMove(entry), [this, key, frameID](std::unique_ptr<Entry> revalidatedEntry) {
@@ -405,8 +406,7 @@ void SpeculativeLoadManager::revalidateEntry(std::unique_ptr<Entry> entry, const
 void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo& subResourceInfo, const GlobalFrameID& frameID)
 {
     m_pendingPreloads.add(key, nullptr);
-    URLCapture firstPartyForCookies(subResourceInfo.firstPartyForCookies);
-    retrieveEntryFromStorage(key, [this, key, firstPartyForCookies, frameID](std::unique_ptr<Entry> entry) {
+    retrieveEntryFromStorage(key, [this, key, subResourceInfo, frameID](std::unique_ptr<Entry> entry) {
         m_pendingPreloads.remove(key);
 
         if (satisfyPendingRequests(key, entry.get())) {
@@ -419,7 +419,7 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
             return;
 
         if (entry->needsValidation())
-            revalidateEntry(WTFMove(entry), firstPartyForCookies.url(), frameID);
+            revalidateEntry(WTFMove(entry), subResourceInfo, frameID);
         else
             addPreloadedEntry(WTFMove(entry), frameID, WasRevalidated::No);
     });
