@@ -77,7 +77,7 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
     static BOOL initialized = NO;
 
     if (!initialized) {
-        NSFont *font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSMiniControlSize]];
+        NSFont *font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeMini]];
         NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
         NSArray *operations = editingOperations();
         
@@ -104,7 +104,7 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
             }
             NSButton *button = [[NSButton alloc] initWithFrame:NSMakeRect(x, y, maxWidth, 16)];
             [button setBezelStyle:NSRoundedBezelStyle];
-            [button.cell setControlSize:NSMiniControlSize];
+            [button.cell setControlSize:NSControlSizeMini];
             [button setFont:font];
             [button setTitle:operationName];
             [button setAction:NSSelectorFromString(operationName)];
@@ -202,11 +202,11 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
 - (void)_updateNewWindowKeyEquivalents
 {
     if (self.useWebKit2ByDefault) {
-        [_newWebKit1EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
-        [_newWebKit2EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask];
+        [_newWebKit1EditorItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand | NSEventModifierFlagOption];
+        [_newWebKit2EditorItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
     } else {
-        [_newWebKit1EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask];
-        [_newWebKit2EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+        [_newWebKit1EditorItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
+        [_newWebKit2EditorItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand | NSEventModifierFlagOption];
     }
 }
 

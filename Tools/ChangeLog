@@ -1,5 +1,16 @@
 2016-03-17  Tim Horton  <timothy_horton@apple.com>
 
+        Fix some deprecation warnings in WebEditingTester
+        https://bugs.webkit.org/show_bug.cgi?id=155601
+
+        Reviewed by Simon Fraser.
+
+        * WebEditingTester/AppDelegate.m:
+        (-[WebEditingAppDelegate showOperations:]):
+        (-[WebEditingAppDelegate _updateNewWindowKeyEquivalents]):
+
+2016-03-17  Tim Horton  <timothy_horton@apple.com>
+
         Find-in-page indicator in Mail viewer is the wrong scale and cut off
         https://bugs.webkit.org/show_bug.cgi?id=155605
         <rdar://problem/23948165>
