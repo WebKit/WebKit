@@ -1,3 +1,17 @@
+2016-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        SpeculativeLoad needs to continue NetworkLoad when it receives a redirect response
+        https://bugs.webkit.org/show_bug.cgi?id=155612
+
+        Reviewed by Andy Estes.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+        Call continueWillSendRequest.  Otherwise, we will hang a thread in the NetworkProcess
+        if we are using ResourceHandle or we will not call the willPerformHTTPRedirection 
+        completion handler if we are using NetworkSession.  This will cause us to stop loading
+        from the server after the maximum number of connections is reached.
+
 2016-03-17  Tim Horton  <timothy_horton@apple.com>
 
         Find-in-page indicator in Mail viewer is the wrong scale and cut off
