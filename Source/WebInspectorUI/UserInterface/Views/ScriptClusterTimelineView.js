@@ -194,7 +194,7 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         currentContentView.endTime = previousContentView.endTime;
         currentContentView.currentTime = previousContentView.currentTime;
 
-        currentContentView.timelineSidebarPanel.updateFilter();
+        // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
     }
 };
 

@@ -116,7 +116,7 @@ WebInspector.CircleChart = class CircleChart
 
     set values(values)
     {
-        console.assert(values.length === this._pathElements.length, "Should have the same number of values as segments");
+        console.assert(!values.length || values.length === this._pathElements.length, "Should have the same number of values as segments");
 
         this._values = values;
         this._total = 0;

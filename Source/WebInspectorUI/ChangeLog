@@ -1,3 +1,28 @@
+2016-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timeline reset issues after Navigation Sidebar removal
+        https://bugs.webkit.org/show_bug.cgi?id=155658
+        <rdar://problem/25245292>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CircleChart.js:
+        (WebInspector.CircleChart.prototype.set values):
+        If the segments have never been set the values list will be empty.
+        Allow clearing to set empty values again.
+
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView.prototype._scriptClusterViewCurrentContentViewDidChange):
+        (WebInspector.ScriptClusterTimelineView):
+        Timeline sidebar no longer exists. Replace with the common
+        FIXME added to the other TimelineViews.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.reset):
+        Timeline sidebar and content tree outline no longer exist.
+        Replace with the common comment indicating this method
+        is intended for subclasses.
+
 2016-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION (r197724): [GTK] Web Inspector: Images being blocked by CSP 2.0
