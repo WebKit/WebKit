@@ -1,5 +1,11 @@
 2016-03-18  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Mac][cmake] Unreviewed speculative buildfix after r197628. Just for fun.
+
+        * PlatformMac.cmake:
+
+2016-03-18  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Mac][cmake] One more attempt to try to fix the build after r197633.
 
         * PlatformMac.cmake:

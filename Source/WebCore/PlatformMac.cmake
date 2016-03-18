@@ -296,6 +296,7 @@ list(APPEND WebCore_SOURCES
     page/scrolling/mac/ScrollingTreeStickyNode.mm
 
     platform/LocalizedStrings.cpp
+    platform/RuntimeApplicationChecks.mm
     platform/ScrollableArea.cpp
     platform/VNodeTracker.cpp
 
