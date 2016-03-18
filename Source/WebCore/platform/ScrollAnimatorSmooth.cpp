@@ -48,7 +48,7 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
 
 ScrollAnimatorSmooth::ScrollAnimatorSmooth(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
-    , m_animation(std::make_unique<ScrollAnimationSmooth>(scrollableArea, [this](FloatPoint&& position) {
+    , m_animation(std::make_unique<ScrollAnimationSmooth>(scrollableArea, m_currentPosition, [this](FloatPoint&& position) {
         FloatSize delta = position - m_currentPosition;
         m_currentPosition = WTFMove(position);
         notifyPositionChanged(delta);

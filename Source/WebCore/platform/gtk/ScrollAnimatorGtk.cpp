@@ -66,12 +66,11 @@ void ScrollAnimatorGtk::ensureSmoothScrollingAnimation()
     if (m_animation)
         return;
 
-    m_animation = std::make_unique<ScrollAnimationSmooth>(m_scrollableArea, [this](FloatPoint&& position) {
+    m_animation = std::make_unique<ScrollAnimationSmooth>(m_scrollableArea, m_currentPosition, [this](FloatPoint&& position) {
         FloatSize delta = position - m_currentPosition;
         m_currentPosition = WTFMove(position);
         notifyPositionChanged(delta);
     });
-    m_animation->setCurrentPosition(m_currentPosition);
 }
 
 bool ScrollAnimatorGtk::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
