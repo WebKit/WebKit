@@ -238,7 +238,7 @@ class AnalysisTaskPage extends PageWithHeading {
             var self = this;
             this._bugList.setList(this._task.bugs().map(function (bug) {
                 return new MutableListItem(bug.bugTracker(), bug.label(), bug.title(), bug.url(),
-                    'Disassociate this bug', self._dissociateBug.bind(self, bug));
+                    'Dissociate this bug', self._dissociateBug.bind(self, bug));
             }));
 
             this._causeList.setList(this._task.causes().map(this._makeCommitListItem.bind(this)));

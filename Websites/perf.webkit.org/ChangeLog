@@ -1,5 +1,12 @@
 2016-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix a typo which was supposed to be fixed in r198351.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype.render):
+
+2016-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         An analysis task should be closed if a progression cause is identified
         https://bugs.webkit.org/show_bug.cgi?id=155549
 
