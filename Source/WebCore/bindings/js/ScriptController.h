@@ -79,7 +79,7 @@ public:
 
     WEBCORE_EXPORT static Ref<DOMWrapperWorld> createWorld();
 
-    JSDOMWindowShell* createWindowShell(DOMWrapperWorld&);
+    JSDOMWindowShell& createWindowShell(DOMWrapperWorld&);
     void destroyWindowShell(DOMWrapperWorld&);
 
     Vector<JSC::Strong<JSDOMWindowShell>> windowShells();

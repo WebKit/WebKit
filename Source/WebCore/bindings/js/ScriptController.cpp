@@ -123,7 +123,7 @@ void ScriptController::destroyWindowShell(DOMWrapperWorld& world)
     world.didDestroyWindowShell(this);
 }
 
-JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld& world)
+JSDOMWindowShell& ScriptController::createWindowShell(DOMWrapperWorld& world)
 {
     ASSERT(!m_windowShells.contains(&world));
 
@@ -134,7 +134,7 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld& world)
     Strong<JSDOMWindowShell> windowShell2(windowShell);
     m_windowShells.add(&world, windowShell);
     world.didCreateWindowShell(this);
-    return windowShell.get();
+    return *windowShell.get();
 }
 
 Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world, ExceptionDetails* exceptionDetails)
@@ -249,27 +249,22 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld& world)
 
     JSLockHolder lock(world.vm());
 
-    JSDOMWindowShell* windowShell = createWindowShell(world);
+    JSDOMWindowShell& windowShell = createWindowShell(world);
 
-    windowShell->window()->updateDocument();
+    windowShell.window()->updateDocument();
 
-    if (m_frame.document()) {
-        bool shouldBypassMainWorldContentSecurityPolicy = !world.isNormal();
-        if (shouldBypassMainWorldContentSecurityPolicy)
-            windowShell->window()->setEvalEnabled(true);
-        else
-            windowShell->window()->setEvalEnabled(m_frame.document()->contentSecurityPolicy()->allowEval(0, shouldBypassMainWorldContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus::SuppressReport), m_frame.document()->contentSecurityPolicy()->evalDisabledErrorMessage());
-    }
+    if (Document* document = m_frame.document())
+        document->contentSecurityPolicy()->didCreateWindowShell(windowShell);
 
     if (Page* page = m_frame.page()) {
-        attachDebugger(windowShell, page->debugger());
-        windowShell->window()->setProfileGroup(page->group().identifier());
-        windowShell->window()->setConsoleClient(&page->console());
+        attachDebugger(&windowShell, page->debugger());
+        windowShell.window()->setProfileGroup(page->group().identifier());
+        windowShell.window()->setConsoleClient(&page->console());
     }
 
     m_frame.loader().dispatchDidClearWindowObjectInWorld(world);
 
-    return windowShell;
+    return &windowShell;
 }
 
 TextPosition ScriptController::eventHandlerPosition() const

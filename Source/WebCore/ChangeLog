@@ -1,3 +1,88 @@
+2016-03-17  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Remove the need to pass reporting status to ContentSecurityPolicy functions
+        https://bugs.webkit.org/show_bug.cgi?id=155623
+
+        Reviewed by Andy Estes and Alex Christensen.
+
+        ScriptController::initScript() is the only function that passes ContentSecurityPolicy::ReportingStatus::SuppressReport
+        following the removal of the SecurityPolicy script interface in <http://trac.webkit.org/changeset/197142>. It
+        passes this reporting status to prevent sending a violation report when determining whether the CSP policy allows
+        use of the JavaScript eval()/operator eval so that it enable or disable this capability as appropriate. We
+        should teach ScriptController::initScript() to delegate the responsibility of enabling/disabling this capability
+        to the ContentSecurityPolicy. Then we can remove the need to expose ContentSecurityPolicy::ReportingStatus as
+        part of the ContentSecurityPolicy interface.
+
+        No functionality changed. So, no new tests.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createWindowShell): Return a reference to a JSDOMWindowShell object
+        instead of a pointer as the pointer is always non-null.
+        (WebCore::ScriptController::initScript): Updated as needed now that ScriptController::createWindowShell()
+        returns a reference. Moved logic to enable/disable JavaScript eval() and operator eval from here into
+        ContentSecurityPolicy::didCreateWindowShell() and make use of this member function.
+        * bindings/js/ScriptController.h:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didCreateWindowShell): Added. Moved logic from to enable/disable JavaScript
+        eval() and operator eval from ScriptController::initScript() to here.
+        (WebCore::ContentSecurityPolicy::didReceiveHeader): Substitute ContentSecurityPolicyDirectiveList::ReportingStatus::SuppressReport
+        for ContentSecurityPolicy::ReportingStatus::SuppressReport as the enum has moved from class ContentSecurityPolicy
+        to ContentSecurityPolicyDirectiveList. Fix minor code style nit; substitute nullptr for 0 in the first argument
+        to ContentSecurityPolicyDirectiveList::allowEval().
+        (WebCore::isAllowedByAllWithFrame): Substitute ContentSecurityPolicyDirectiveList::ReportingStatus::SuppressReport
+        for ContentSecurityPolicy::ReportingStatus::SuppressReport as the enum has moved from class ContentSecurityPolicy
+        to ContentSecurityPolicyDirectiveList.
+        (WebCore::isAllowedByAll): Substitute ContentSecurityPolicyDirectiveList::ReportingStatus::SuppressReport
+        for ContentSecurityPolicy::ReportingStatus::SuppressReport as the enum has moved from class ContentSecurityPolicy
+        to ContentSecurityPolicyDirectiveList. Also make this function static so that it has internal linkage.
+        (WebCore::isAllowedByAllWithState): Ditto.
+        (WebCore::isAllowedByAllWithContext): Ditto.
+        (WebCore::isAllowedByAllWithHashFromContent): Ditto.
+        (WebCore::isAllowedByAllWithURL): Ditto.
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs): Remove argument reportingStatus and always pass
+        ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport to the directive list member function. In a
+        subsequent patch we will remove the need to pass the reporting status to the directive list member function.
+        (WebCore::ContentSecurityPolicy::allowInlineEventHandlers): Ditto.
+        (WebCore::ContentSecurityPolicy::allowInlineScript): Ditto.
+        (WebCore::ContentSecurityPolicy::allowInlineStyle): Ditto.
+        (WebCore::ContentSecurityPolicy::allowEval): Ditto.
+        (WebCore::ContentSecurityPolicy::allowFrameAncestors): Ditto.
+        (WebCore::ContentSecurityPolicy::allowPluginType): Ditto.
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowChildFrameFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowChildContextFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowImageFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowStyleFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowFontFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowMediaFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowConnectToSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowFormAction): Ditto.
+        (WebCore::ContentSecurityPolicy::allowBaseURI): Ditto.
+        (WebCore::ContentSecurityPolicy::evalDisabledErrorMessage): Deleted.
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::allowJavaScriptURLs): Substitute ReportingStatus for
+        ContentSecurityPolicy::ReportingStatus as the enum has moved from class ContentSecurityPolicy to this class.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineEventHandlers): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineScript): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineStyle): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowEval): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowPluginType): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowScriptFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowObjectFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowChildContextFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowChildFrameFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowImageFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowStyleFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowFontFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowMediaFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowConnectToSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowFormAction): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowBaseURI): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowFrameAncestors): Ditto.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+
 2016-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         [XSS Auditor] Off by one in XSSAuditor::canonicalizedSnippetForJavaScript()

@@ -286,26 +286,26 @@ bool ContentSecurityPolicyDirectiveList::checkFrameAncestorsAndReportViolation(C
     return denyIfEnforcingPolicy();
 }
 
-bool ContentSecurityPolicyDirectiveList::allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus reportingStatus) const
 {
     static NeverDestroyed<String> consoleMessage(ASCIILiteral("Refused to execute JavaScript URL because it violates the following Content Security Policy directive: "));
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine, true);
     return m_reportOnly || checkInline(operativeDirective(m_scriptSrc.get()));
 }
 
-bool ContentSecurityPolicyDirectiveList::allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus reportingStatus) const
 {
     static NeverDestroyed<String> consoleMessage(ASCIILiteral("Refused to execute inline event handler because it violates the following Content Security Policy directive: "));
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine, true);
     return m_reportOnly || checkInline(operativeDirective(m_scriptSrc.get()));
 }
 
-bool ContentSecurityPolicyDirectiveList::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus reportingStatus) const
 {
     static NeverDestroyed<String> consoleMessage(ASCIILiteral("Refused to execute inline script because it violates the following Content Security Policy directive: "));
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine, true);
     return m_reportOnly || checkInline(operativeDirective(m_scriptSrc.get()));
 }
@@ -320,10 +320,10 @@ bool ContentSecurityPolicyDirectiveList::allowScriptWithNonce(const String& nonc
     return checkNonce(operativeDirective(m_scriptSrc.get()), nonce);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus reportingStatus) const
 {
     static NeverDestroyed<String> consoleMessage(ASCIILiteral("Refused to apply inline style because it violates the following Content Security Policy directive: "));
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkInlineAndReportViolation(operativeDirective(m_styleSrc.get()), consoleMessage, contextURL, contextLine, false);
     return m_reportOnly || checkInline(operativeDirective(m_styleSrc.get()));
 }
@@ -338,45 +338,45 @@ bool ContentSecurityPolicyDirectiveList::allowStyleWithNonce(const String& nonce
     return checkNonce(operativeDirective(m_styleSrc.get()), nonce);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowEval(JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowEval(JSC::ExecState* state, ReportingStatus reportingStatus) const
 {
     static NeverDestroyed<String> consoleMessage(ASCIILiteral("Refused to evaluate script because it violates the following Content Security Policy directive: "));
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkEvalAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, String(), WTF::OrdinalNumber::beforeFirst(), state);
     return m_reportOnly || checkEval(operativeDirective(m_scriptSrc.get()));
 }
 
-bool ContentSecurityPolicyDirectiveList::allowPluginType(const String& type, const String& typeAttribute, const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowPluginType(const String& type, const String& typeAttribute, const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkMediaTypeAndReportViolation(m_pluginTypes.get(), type, typeAttribute, "Refused to load '" + url.stringCenterEllipsizedToLength() + "' (MIME type '" + typeAttribute + "') because it violates the following Content Security Policy Directive: ");
     return m_reportOnly || checkMediaType(m_pluginTypes.get(), type, typeAttribute);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowScriptFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowScriptFromSource(const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(operativeDirective(m_scriptSrc.get()), url, scriptSrc);
     return m_reportOnly || checkSource(operativeDirective(m_scriptSrc.get()), url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowObjectFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowObjectFromSource(const URL& url, ReportingStatus reportingStatus) const
 {
     if (url.isBlankURL())
         return true;
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(operativeDirective(m_objectSrc.get()), url, objectSrc);
     return m_reportOnly || checkSource(operativeDirective(m_objectSrc.get()), url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowChildContextFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowChildContextFromSource(const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(operativeDirective(m_childSrc.get()), url, childSrc);
     return m_reportOnly || checkSource(operativeDirective(m_childSrc.get()), url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowChildFrameFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowChildFrameFromSource(const URL& url, ReportingStatus reportingStatus) const
 {
     if (url.isBlankURL())
         return true;
@@ -384,63 +384,63 @@ bool ContentSecurityPolicyDirectiveList::allowChildFrameFromSource(const URL& ur
     // We must enforce the frame-src directive (if specified) before enforcing the child-src directive for a nested browsing
     // context by <https://w3c.github.io/webappsec-csp/2/#directive-child-src-nested> (29 August 2015).
     ContentSecurityPolicySourceListDirective* directiveToEnforce = operativeDirective(m_frameSrc ? m_frameSrc.get() : m_childSrc.get());
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(directiveToEnforce, url, frameSrc);
     return m_reportOnly || checkSource(directiveToEnforce, url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowImageFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowImageFromSource(const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(operativeDirective(m_imgSrc.get()), url, imgSrc);
     return m_reportOnly || checkSource(operativeDirective(m_imgSrc.get()), url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowStyleFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowStyleFromSource(const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(operativeDirective(m_styleSrc.get()), url, styleSrc);
     return m_reportOnly || checkSource(operativeDirective(m_styleSrc.get()), url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowFontFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowFontFromSource(const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(operativeDirective(m_fontSrc.get()), url, fontSrc);
     return m_reportOnly || checkSource(operativeDirective(m_fontSrc.get()), url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowMediaFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowMediaFromSource(const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(operativeDirective(m_mediaSrc.get()), url, mediaSrc);
     return m_reportOnly || checkSource(operativeDirective(m_mediaSrc.get()), url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowConnectToSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowConnectToSource(const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(operativeDirective(m_connectSrc.get()), url, connectSrc);
     return m_reportOnly || checkSource(operativeDirective(m_connectSrc.get()), url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowFormAction(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowFormAction(const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(m_formAction.get(), url, formAction);
     return m_reportOnly || checkSource(m_formAction.get(), url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowBaseURI(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowBaseURI(const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkSourceAndReportViolation(m_baseURI.get(), url, baseURI);
     return m_reportOnly || checkSource(m_baseURI.get(), url);
 }
 
-bool ContentSecurityPolicyDirectiveList::allowFrameAncestors(const Frame& frame, const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicyDirectiveList::allowFrameAncestors(const Frame& frame, const URL& url, ReportingStatus reportingStatus) const
 {
-    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+    if (reportingStatus == ReportingStatus::SendReport)
         return checkFrameAncestorsAndReportViolation(m_frameAncestors.get(), frame, url, frameAncestors);
     return m_reportOnly || checkFrameAncestors(m_frameAncestors.get(), frame);
 }

@@ -41,6 +41,7 @@
 #include "Frame.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMWindowShell.h"
 #include "JSMainThreadExecState.h"
 #include "ParsingUtilities.h"
 #include "PingLoader.h"
@@ -88,6 +89,19 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
         didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited);
 }
 
+void ContentSecurityPolicy::didCreateWindowShell(JSDOMWindowShell& windowShell) const
+{
+    JSDOMWindow* window = windowShell.window();
+    ASSERT(window);
+    ASSERT(window->scriptExecutionContext());
+    ASSERT(window->scriptExecutionContext()->contentSecurityPolicy() == this);
+    if (!windowShell.world().isNormal()) {
+        window->setEvalEnabled(true);
+        return;
+    }
+    window->setEvalEnabled(m_lastPolicyEvalDisabledErrorMessage.isNull(), m_lastPolicyEvalDisabledErrorMessage);
+}
+
 ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() const
 {
     ContentSecurityPolicyResponseHeaders result;
@@ -119,7 +133,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
         // header1,header2 OR header1
         //        ^                  ^
         std::unique_ptr<ContentSecurityPolicyDirectiveList> policy = ContentSecurityPolicyDirectiveList::create(*this, String(begin, position - begin), type, policyFrom);
-        if (!policy->allowEval(0, ContentSecurityPolicy::ReportingStatus::SuppressReport))
+        if (!policy->allowEval(nullptr, ContentSecurityPolicyDirectiveList::ReportingStatus::SuppressReport))
             m_lastPolicyEvalDisabledErrorMessage = policy->evalDisabledErrorMessage();
 
         m_policies.append(policy.release());
@@ -160,8 +174,8 @@ bool ContentSecurityPolicy::protocolMatchesSelf(const URL& url) const
     return equalIgnoringASCIICase(url.protocol(), m_selfSourceProtocol);
 }
 
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const Frame&, const URL&, ContentSecurityPolicy::ReportingStatus) const>
-static bool isAllowedByAllWithFrame(const CSPDirectiveListVector& policies, const Frame& frame, const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus)
+template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const Frame&, const URL&, ContentSecurityPolicyDirectiveList::ReportingStatus) const>
+static bool isAllowedByAllWithFrame(const CSPDirectiveListVector& policies, const Frame& frame, const URL& url, ContentSecurityPolicyDirectiveList::ReportingStatus reportingStatus)
 {
     for (auto& policy : policies) {
         if (!(policy.get()->*allowed)(frame, url, reportingStatus))
@@ -170,8 +184,8 @@ static bool isAllowedByAllWithFrame(const CSPDirectiveListVector& policies, cons
     return true;
 }
 
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(ContentSecurityPolicy::ReportingStatus) const>
-bool isAllowedByAll(const CSPDirectiveListVector& policies, ContentSecurityPolicy::ReportingStatus reportingStatus)
+template<bool (ContentSecurityPolicyDirectiveList::*allowed)(ContentSecurityPolicyDirectiveList::ReportingStatus) const>
+static bool isAllowedByAll(const CSPDirectiveListVector& policies, ContentSecurityPolicyDirectiveList::ReportingStatus reportingStatus)
 {
     for (auto& policy : policies) {
         if (!(policy.get()->*allowed)(reportingStatus))
@@ -180,8 +194,8 @@ bool isAllowedByAll(const CSPDirectiveListVector& policies, ContentSecurityPolic
     return true;
 }
 
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus) const>
-bool isAllowedByAllWithState(const CSPDirectiveListVector& policies, JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus reportingStatus)
+template<bool (ContentSecurityPolicyDirectiveList::*allowed)(JSC::ExecState* state, ContentSecurityPolicyDirectiveList::ReportingStatus) const>
+static bool isAllowedByAllWithState(const CSPDirectiveListVector& policies, JSC::ExecState* state, ContentSecurityPolicyDirectiveList::ReportingStatus reportingStatus)
 {
     for (auto& policy : policies) {
         if (!(policy.get()->*allowed)(state, reportingStatus))
@@ -190,8 +204,8 @@ bool isAllowedByAllWithState(const CSPDirectiveListVector& policies, JSC::ExecSt
     return true;
 }
 
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const String&, const WTF::OrdinalNumber&, ContentSecurityPolicy::ReportingStatus) const>
-bool isAllowedByAllWithContext(const CSPDirectiveListVector& policies, const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus)
+template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const String&, const WTF::OrdinalNumber&, ContentSecurityPolicyDirectiveList::ReportingStatus) const>
+static bool isAllowedByAllWithContext(const CSPDirectiveListVector& policies, const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus reportingStatus)
 {
     for (auto& policy : policies) {
         if (!(policy.get()->*allowed)(contextURL, contextLine, reportingStatus))
@@ -225,7 +239,7 @@ static CryptoDigest::Algorithm toCryptoDigestAlgorithm(ContentSecurityPolicyHash
 }
 
 template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const ContentSecurityPolicyHash&) const>
-bool isAllowedByAllWithHashFromContent(const CSPDirectiveListVector& policies, const String& content, const TextEncoding& encoding, OptionSet<ContentSecurityPolicyHashAlgorithm> algorithms)
+static bool isAllowedByAllWithHashFromContent(const CSPDirectiveListVector& policies, const String& content, const TextEncoding& encoding, OptionSet<ContentSecurityPolicyHashAlgorithm> algorithms)
 {
     // FIXME: Compute the digest with respect to the raw bytes received from the page.
     // See <https://bugs.webkit.org/show_bug.cgi?id=155184>.
@@ -242,8 +256,8 @@ bool isAllowedByAllWithHashFromContent(const CSPDirectiveListVector& policies, c
     return false;
 }
 
-template<bool (ContentSecurityPolicyDirectiveList::*allowFromURL)(const URL&, ContentSecurityPolicy::ReportingStatus) const>
-bool isAllowedByAllWithURL(const CSPDirectiveListVector& policies, const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus)
+template<bool (ContentSecurityPolicyDirectiveList::*allowFromURL)(const URL&, ContentSecurityPolicyDirectiveList::ReportingStatus) const>
+static bool isAllowedByAllWithURL(const CSPDirectiveListVector& policies, const URL& url, ContentSecurityPolicyDirectiveList::ReportingStatus reportingStatus)
 {
     if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
         return true;
@@ -255,14 +269,14 @@ bool isAllowedByAllWithURL(const CSPDirectiveListVector& policies, const URL& ur
     return true;
 }
 
-bool ContentSecurityPolicy::allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowJavaScriptURLs>(m_policies, contextURL, contextLine, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowJavaScriptURLs>(m_policies, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineEventHandlers>(m_policies, contextURL, contextLine, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineEventHandlers>(m_policies, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 // FIXME: We should compute the document encoding once and cache it instead of computing it on each invocation.
@@ -300,17 +314,17 @@ bool ContentSecurityPolicy::allowStyleWithNonce(const String& nonce, bool overri
     return false;
 }
 
-bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, const String& scriptContent, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, const String& scriptContent, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)
         return true;
     if (!m_hashAlgorithmsForInlineScripts.isEmpty() && !scriptContent.isEmpty()
         && isAllowedByAllWithHashFromContent<&ContentSecurityPolicyDirectiveList::allowInlineScriptWithHash>(m_policies, scriptContent, documentEncoding(), m_hashAlgorithmsForInlineScripts))
         return true;
-    return isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineScript>(m_policies, contextURL, contextLine, reportingStatus);
+    return isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineScript>(m_policies, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, const String& styleContent, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, const String& styleContent, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)
         return true;
@@ -319,97 +333,88 @@ bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF
     if (!m_hashAlgorithmsForInlineStylesheets.isEmpty() && !styleContent.isEmpty()
         && isAllowedByAllWithHashFromContent<&ContentSecurityPolicyDirectiveList::allowInlineStyleWithHash>(m_policies, styleContent, documentEncoding(), m_hashAlgorithmsForInlineStylesheets))
         return true;
-    return isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineStyle>(m_policies, contextURL, contextLine, reportingStatus);
+    return isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineStyle>(m_policies, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowEval(JSC::ExecState* state, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowEval(JSC::ExecState* state, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithState<&ContentSecurityPolicyDirectiveList::allowEval>(m_policies, state, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithState<&ContentSecurityPolicyDirectiveList::allowEval>(m_policies, state, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowFrameAncestors(const Frame& frame, const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowFrameAncestors(const Frame& frame, const URL& url, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)
         return true;
     Frame& topFrame = frame.tree().top();
     if (&frame == &topFrame)
         return true;
-    return isAllowedByAllWithFrame<&ContentSecurityPolicyDirectiveList::allowFrameAncestors>(m_policies, frame, url, reportingStatus);
+    return isAllowedByAllWithFrame<&ContentSecurityPolicyDirectiveList::allowFrameAncestors>(m_policies, frame, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-String ContentSecurityPolicy::evalDisabledErrorMessage() const
-{
-    for (auto& policy : m_policies) {
-        if (!policy->allowEval(0, ContentSecurityPolicy::ReportingStatus::SuppressReport))
-            return policy->evalDisabledErrorMessage();
-    }
-    return String();
-}
-
-bool ContentSecurityPolicy::allowPluginType(const String& type, const String& typeAttribute, const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowPluginType(const String& type, const String& typeAttribute, const URL& url, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)
         return true;
     for (auto& policy : m_policies) {
-        if (!policy->allowPluginType(type, typeAttribute, url, reportingStatus))
+        if (!policy->allowPluginType(type, typeAttribute, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport))
             return false;
     }
     return true;
 }
 
-bool ContentSecurityPolicy::allowScriptFromSource(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowScriptFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowScriptFromSource>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowScriptFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowObjectFromSource(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowObjectFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowObjectFromSource>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowObjectFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowChildFrameFromSource(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowChildFrameFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowChildFrameFromSource>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowChildFrameFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowChildContextFromSource(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowChildContextFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowChildContextFromSource>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowChildContextFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowImageFromSource(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowImageFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowImageFromSource>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowImageFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowStyleFromSource(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowStyleFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowStyleFromSource>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowStyleFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowFontFromSource(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowFontFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowFontFromSource>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowFontFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowMediaFromSource(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowMediaFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowMediaFromSource>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowMediaFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowConnectToSource(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowConnectToSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowConnectToSource>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowConnectToSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowFormAction(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowFormAction(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowFormAction>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowFormAction>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
-bool ContentSecurityPolicy::allowBaseURI(const URL& url, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowBaseURI(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowBaseURI>(m_policies, url, reportingStatus);
+    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowBaseURI>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::isActive() const

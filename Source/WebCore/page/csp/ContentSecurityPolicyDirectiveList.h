@@ -48,30 +48,34 @@ public:
     const String& header() const { return m_header; }
     ContentSecurityPolicyHeaderType headerType() const { return m_headerType; }
 
-    bool allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
+    enum class ReportingStatus {
+        SendReport,
+        SuppressReport
+    };
+    bool allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus) const;
+    bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus) const;
+    bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus) const;
     bool allowInlineScriptWithHash(const ContentSecurityPolicyHash&) const;
     bool allowScriptWithNonce(const String& nonce) const;
-    bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus) const;
     bool allowInlineStyleWithHash(const ContentSecurityPolicyHash&) const;
     bool allowStyleWithNonce(const String& nonce) const;
-    bool allowEval(JSC::ExecState*, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowPluginType(const String& type, const String& typeAttribute, const URL&, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowEval(JSC::ExecState*, ReportingStatus) const;
+    bool allowPluginType(const String& type, const String& typeAttribute, const URL&, ReportingStatus) const;
 
-    bool allowScriptFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowObjectFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowChildFrameFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowChildContextFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowImageFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowStyleFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowFontFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowMediaFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowConnectToSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowFormAction(const URL&, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowBaseURI(const URL&, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowScriptFromSource(const URL&, ReportingStatus) const;
+    bool allowObjectFromSource(const URL&, ReportingStatus) const;
+    bool allowChildFrameFromSource(const URL&, ReportingStatus) const;
+    bool allowChildContextFromSource(const URL&, ReportingStatus) const;
+    bool allowImageFromSource(const URL&, ReportingStatus) const;
+    bool allowStyleFromSource(const URL&, ReportingStatus) const;
+    bool allowFontFromSource(const URL&, ReportingStatus) const;
+    bool allowMediaFromSource(const URL&, ReportingStatus) const;
+    bool allowConnectToSource(const URL&, ReportingStatus) const;
+    bool allowFormAction(const URL&, ReportingStatus) const;
+    bool allowBaseURI(const URL&, ReportingStatus) const;
 
-    bool allowFrameAncestors(const Frame&, const URL&, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowFrameAncestors(const Frame&, const URL&, ReportingStatus) const;
 
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
     ContentSecurityPolicy::ReflectedXSSDisposition reflectedXSSDisposition() const { return m_reflectedXSSDisposition; }
