@@ -59,7 +59,7 @@ static EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState*);
 
 namespace JSC {
 
-const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, &regExpPrototypeTable, CREATE_METHOD_TABLE(RegExpPrototype) };
+const ClassInfo RegExpPrototype::s_info = { "Object", &Base::s_info, &regExpPrototypeTable, CREATE_METHOD_TABLE(RegExpPrototype) };
 
 /* Source for RegExpPrototype.lut.h
 @begin regExpPrototypeTable
@@ -77,8 +77,8 @@ const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, &re
 @end
 */
 
-RegExpPrototype::RegExpPrototype(VM& vm, Structure* structure, RegExp* regExp)
-    : RegExpObject(vm, structure, regExp)
+RegExpPrototype::RegExpPrototype(VM& vm, Structure* structure)
+    : JSNonFinalObject(vm, structure)
 {
 }
 
@@ -87,11 +87,22 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_NATIVE_FUNCTION(vm.propertyNames->searchSymbol, regExpProtoFuncSearch, DontEnum, 1);
+
+    m_emptyRegExp.set(vm, this, RegExp::create(vm, "", NoFlags));
 }
 
 bool RegExpPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
     return getStaticFunctionSlot<Base>(exec, regExpPrototypeTable, jsCast<RegExpPrototype*>(object), propertyName, slot);
+}
+
+void RegExpPrototype::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    RegExpPrototype* thisObject = jsCast<RegExpPrototype*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    
+    visitor.append(&thisObject->m_emptyRegExp);
 }
 
 // ------------------------------ Functions ---------------------------

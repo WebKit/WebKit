@@ -24,11 +24,11 @@ id: "15.10.6",
 
 path: "TestCases/chapter15/15.10/15.10.6/15.10.6.js",
 
-description: "RegExp.prototype is itself a RegExp",
+description: "RegExp.prototype is not a RegExp",
 
 test: function testcase() {
   var s = Object.prototype.toString.call(RegExp.prototype);
-  if (s === '[object RegExp]') {
+  if (s === '[object Object]') {
     return true;
   }
  }

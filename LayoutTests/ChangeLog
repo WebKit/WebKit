@@ -1,3 +1,38 @@
+2016-03-18  Mark Lam  <mark.lam@apple.com>
+
+        ES6 spec requires that RegExpPrototype not be a RegExp object.
+        https://bugs.webkit.org/show_bug.cgi?id=155654
+
+        Reviewed by Filip Pizlo.
+
+        Rebase all the test results.
+
+        * fast/regex/script-tests/toString.js:
+        * fast/regex/toString-expected.txt:
+        * ietestcenter/Javascript/15.10.6-expected.txt:
+        * ietestcenter/Javascript/15.10.7.1-1-expected.txt:
+        * ietestcenter/Javascript/15.10.7.2-1-expected.txt:
+        * ietestcenter/Javascript/15.10.7.3-1-expected.txt:
+        * ietestcenter/Javascript/15.10.7.4-1-expected.txt:
+        * ietestcenter/Javascript/15.10.7.5-1-expected.txt:
+        * ietestcenter/Javascript/TestCases/15.10.6.js:
+        (ES5Harness.registerTest.test):
+        * ietestcenter/Javascript/TestCases/15.10.7.1-1.js:
+        (ES5Harness.registerTest.test):
+        * ietestcenter/Javascript/TestCases/15.10.7.2-1.js:
+        (ES5Harness.registerTest.test):
+        * ietestcenter/Javascript/TestCases/15.10.7.3-1.js:
+        (ES5Harness.registerTest.test):
+        * ietestcenter/Javascript/TestCases/15.10.7.4-1.js:
+        (ES5Harness.registerTest.test):
+        * ietestcenter/Javascript/TestCases/15.10.7.5-1.js:
+        (ES5Harness.registerTest.test):
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/kde/RegExp-expected.txt:
+        * js/kde/script-tests/RegExp.js:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.6/S15.10.6_A2-expected.txt:
+
 2016-03-18  Brent Fulgham  <bfulgham@apple.com>
 
         Local file restrictions should not block sessionStorage access

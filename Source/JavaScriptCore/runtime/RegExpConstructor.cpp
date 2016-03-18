@@ -86,14 +86,14 @@ const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_i
 
 RegExpConstructor::RegExpConstructor(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype)
     : InternalFunction(vm, structure)
-    , m_cachedResult(vm, this, regExpPrototype->regExp())
+    , m_cachedResult(vm, this, regExpPrototype->emptyRegExp())
     , m_multiline(false)
 {
 }
 
 void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype, GetterSetter* speciesSymbol)
 {
-    Base::finishCreation(vm, regExpPrototype->classInfo()->className);
+    Base::finishCreation(vm, ASCIILiteral("RegExp"));
     ASSERT(inherits(info()));
 
     // ECMA 15.10.5.1 RegExp.prototype

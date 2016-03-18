@@ -1,4 +1,4 @@
-15.10.6 (TestCases/chapter15/15.10/15.10.6/15.10.6.js) RegExp.prototype is itself a RegExp
+15.10.6 (TestCases/chapter15/15.10/15.10.6/15.10.6.js) RegExp.prototype is not a RegExp
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

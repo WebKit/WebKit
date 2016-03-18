@@ -143,11 +143,11 @@ shouldBe("/\\u0061/.source", "'\\\\u0061'");
 shouldBe("'abc'.match(/\\u0062/).toString()", "'b'");
 
 shouldBe("Object.prototype.toString.apply(RegExp.prototype)",
-	 "'[object RegExp]'");
+	 "'[object Object]'");
 
 // not sure what this should return. most importantly
 // it doesn't throw an exception
-shouldBe("typeof RegExp.prototype.toString()", "'string'");
+shouldThrow("RegExp.prototype.toString()", "'TypeError: Type error'");
 
 // Empty regular expressions have string representation /(?:)/
 shouldBe("new RegExp().toString()", "'/(?:)/'");

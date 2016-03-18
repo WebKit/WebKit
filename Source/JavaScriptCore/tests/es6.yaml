@@ -867,7 +867,7 @@
 - path: es6/Map_Map[Symbol.species].js
   cmd: runES6 :normal
 - path: es6/miscellaneous_built-in_prototypes_are_not_instances.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/miscellaneous_function_length_is_configurable.js
   cmd: runES6 :normal
 - path: es6/miscellaneous_no_assignments_allowed_in_for-in_head.js

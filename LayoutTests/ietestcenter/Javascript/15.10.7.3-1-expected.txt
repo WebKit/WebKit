@@ -1,4 +1,4 @@
-15.10.7.3-1 (TestCases/chapter15/15.10/15.10.7/15.10.7.3/15.10.7.3-1.js) RegExp.prototype.ignoreCase is of type Boolean
+15.10.7.3-1 (TestCases/chapter15/15.10/15.10.7/15.10.7.3/15.10.7.3-1.js) RegExp.prototype.ignoreCase should throw because RegExp.prototype is not a RegExp
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

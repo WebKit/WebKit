@@ -1,3 +1,48 @@
+2016-03-18  Mark Lam  <mark.lam@apple.com>
+
+        ES6 spec requires that RegExpPrototype not be a RegExp object.
+        https://bugs.webkit.org/show_bug.cgi?id=155654
+
+        Reviewed by Filip Pizlo.
+
+        The ES6 spec states that RegExp.prototype should not be an instance of RegExp:
+        https://tc39.github.io/ecma262/#sec-properties-of-the-regexp-prototype-object
+
+        "The RegExp prototype object is an ordinary object. It is not a RegExp instance
+        and does not have a [[RegExpMatcher]] internal slot or any of the other internal
+        slots of RegExp instance objects."
+
+        This patch changes RegExpPrototype to conform to the above specifications.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        (JSC::RegExpConstructor::finishCreation):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+        (JSC::RegExpPrototype::finishCreation):
+        (JSC::RegExpPrototype::getOwnPropertySlot):
+        (JSC::RegExpPrototype::visitChildren):
+        (JSC::regExpProtoFuncTest):
+        * runtime/RegExpPrototype.h:
+        (JSC::RegExpPrototype::create):
+        (JSC::RegExpPrototype::createStructure):
+        (JSC::RegExpPrototype::emptyRegExp):
+
+        * tests/es6.yaml:
+        - This patch makes the es6/miscellaneous_built-in_prototypes_are_not_instances.js
+          test now pass.  However, the kangax version of this test still fails because
+          it also checks Error objects (which will be fixed in a subsequent patch).
+
+        * tests/mozilla/ecma_2/shell.js:
+        (stringify):
+        (test):
+        (getFailedCases):
+        (err):
+        * tests/stress/static-getter-in-names.js:
+        (shouldBe):
+
 2016-03-18  Keith Miller  <keith_miller@apple.com>
 
         DataView should use an accessor for its length and buffer properties

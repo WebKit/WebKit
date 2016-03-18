@@ -1,6 +1,6 @@
 S15.10.6_A2
 
-FAIL SputnikError: #1: RegExp.prototype.toString = Object.prototype.toString; RegExp.prototype.toString() === "[object " + "Object" + "]". Actual: [object RegExp]
+PASS 
 
 TEST COMPLETE
 

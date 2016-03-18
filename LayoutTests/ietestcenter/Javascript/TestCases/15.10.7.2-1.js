@@ -24,10 +24,14 @@ id: "15.10.7.2-1",
 
 path: "TestCases/chapter15/15.10/15.10.7/15.10.7.2/15.10.7.2-1.js",
 
-description: "RegExp.prototype.global is of type Boolean",
+description: "RegExp.prototype.global should throw because RegExp.prototype is not a RegExp",
 
 test: function testcase() {
-  if((typeof(RegExp.prototype.global)) === 'boolean')
-    return true;
+    try {
+        RegExp.prototype.global;
+        return false;
+    } catch (e) {
+        return true;
+    }
  }
 });
