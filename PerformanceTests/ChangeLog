@@ -1,3 +1,38 @@
+2016-03-18  Jon Lee  <jonlee@apple.com>
+
+        Add support for statically linking to a specific test
+        https://bugs.webkit.org/show_bug.cgi?id=155631
+
+        Rubber-stamped by Darin Adler.
+
+        * Animometer/developer.html: Update to call restartBenchmark instead so that it works for
+        both the preset and the manually set test sessions.
+        * Animometer/resources/debug-runner/animometer.css:
+        (.tree .link): Style the "link" UI.
+        * Animometer/resources/debug-runner/animometer.js: Move updateDisplay from suitesManager
+        to optionsManager since this is a visual option and has nothing to do with the suites
+        settings. Update the construction of the test UI by including a "link" after each test.
+        Clicking on that link brings up a JS prompt with a URL and a query string with the current
+        parameters of the controller, and selected test. Pasting this URL into the location bar will
+        automatically start running the selected test.
+        (suitesManager.suitesFromQueryString): Iterate through the Suites and tests and find the one
+        that matches the provided parameters. Returns an object similar to the form in
+        suitesManager.updateLocalStorageFromUI.
+        (benchmarkController.initialize): After settings up the events and options, try parsing the
+        query string and running the benchmark immediately. Otherwise, fall back to the form.
+        (benchmarkController.startBenchmark): Store the options and suites into member variables for
+        reuse in restartBenchmark.
+        (benchmarkController.startBenchmarkImmediatelyIfEncoded): Convert the query string to an object.
+        If that's successful, find the suite and test referenced in the query string. Start the benchmark if
+        the search for the test succeeded.
+        * Animometer/resources/extensions.js:
+        (Utilities.stripNonASCIICharacters): Helper method to convert the name of the suite and test
+        into a query-string-friendly version.
+        (Utilities.convertObjectToQueryString): Helper method to convert an object to query string
+        format.
+        (Utilities.convertQueryStringToObject): Helper method to convert query string into an object
+        with properties and values.
+
 2016-03-16  Jon Lee  <jonlee@apple.com>
 
         Add a new benchmark test

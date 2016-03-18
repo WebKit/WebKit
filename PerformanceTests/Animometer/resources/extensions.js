@@ -118,6 +118,35 @@ Utilities =
         element.style[property] = element.style[this.browserPrefix().js + property[0].toUpperCase() + property.substr(1)] = value;
     },
 
+    stripNonASCIICharacters: function(inputString)
+    {
+        return inputString.replace(/[ .,]/g, '');
+    },
+
+    convertObjectToQueryString: function(object)
+    {
+        var queryString = [];
+        for (var property in object) {
+            if (object.hasOwnProperty(property))
+                queryString.push(encodeURIComponent(property) + "=" + encodeURIComponent(object[property]));
+        }
+        return "?" + queryString.join("&");
+    },
+
+    convertQueryStringToObject: function(queryString)
+    {
+        queryString = queryString.substring(1);
+        if (!queryString)
+            return null;
+
+        var object = {};
+        queryString.split("&").forEach(function(parameter) {
+            var components = parameter.split("=");
+            object[components[0]] = components[1];
+        });
+        return object;
+    },
+
     progressValue: function(value, min, max)
     {
         return (value - min) / (max - min);

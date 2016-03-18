@@ -104,6 +104,13 @@ label.tree-label {
     content: '\25BC';
 }
 
+.tree .link {
+    cursor: pointer;
+    color: #999;
+    font-style: italic;
+    margin-left: 2em;
+}
+
 @media screen and (max-device-width: 414px) {
     .tree {
         padding-left: 1em;
