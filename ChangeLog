@@ -1,3 +1,14 @@
+2016-03-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSCOnly] Enable udis86
+        https://bugs.webkit.org/show_bug.cgi?id=155628
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable udis86 for disassembler. The current flag name is incorrect.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2016-03-14  Konstantin Tokarev  <annulen@yandex.ru>
 
         Restored ENABLE_WEBCORE option and used it in JSCOnly port.
