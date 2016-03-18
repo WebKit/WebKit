@@ -837,6 +837,7 @@ set(ObjC_Bindings_IDL_FILES
     html/HTMLMapElement.idl
     html/HTMLMarqueeElement.idl
     html/HTMLMenuElement.idl
+    html/HTMLMediaElement.idl
     html/HTMLMetaElement.idl
     html/HTMLModElement.idl
     html/HTMLOListElement.idl

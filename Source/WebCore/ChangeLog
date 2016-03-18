@@ -1,3 +1,9 @@
+2016-03-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac][cmake] Last attempt to try to fix the build after r197633.
+
+        * PlatformMac.cmake:
+
 2016-03-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Rename GridSpan properties
