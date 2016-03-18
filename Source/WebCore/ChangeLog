@@ -1,3 +1,33 @@
+2016-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r195661): [GTK] very slow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=155334
+
+        Reviewed by Michael Catanzaro.
+
+        We need to also restore the PerAxisData visible length when it's
+        reset because of a non animated scroll. To prevent making the same
+        mistake in the future, the current position and visible lengths
+        members are now required to construct PerAxisData. This also
+        simplifies the code and ensures that when the ScrollAnimatorSmooth
+        is created, it's updated to the current position.
+
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::ScrollAnimationSmooth):
+        Initialize PerAxisData members.
+        (WebCore::ScrollAnimationSmooth::setCurrentPosition): Pass the
+        current position and visible length as parameters to the
+        PerAxisData constructor.
+        (WebCore::ScrollAnimationSmooth::animateScroll): Ditto.
+        * platform/ScrollAnimationSmooth.h: Add a PerAxisData constructor
+        that receives current position and visible length and disallow to
+        use the default constructor.
+        * platform/ScrollAnimatorSmooth.cpp:
+        (WebCore::ScrollAnimatorSmooth::ScrollAnimatorSmooth): Pass the
+        current position to the ScrollAnimationSmooth constructor.
+        * platform/gtk/ScrollAnimatorGtk.cpp:
+        (WebCore::ScrollAnimatorGtk::ensureSmoothScrollingAnimation): Ditto.
+
 2016-03-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WEB: VoiceOver does not announce some WAI-ARIA document structures

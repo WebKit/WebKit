@@ -40,9 +40,11 @@ static const double frameRate = 60;
 static const double tickTime = 1 / frameRate;
 static const double minimumTimerInterval = .001;
 
-ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollableArea& scrollableArea, std::function<void (FloatPoint&&)>&& notifyPositionChangedFunction)
+ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollableArea& scrollableArea, const FloatPoint& position, std::function<void (FloatPoint&&)>&& notifyPositionChangedFunction)
     : ScrollAnimation(scrollableArea)
     , m_notifyPositionChangedFunction(WTFMove(notifyPositionChangedFunction))
+    , m_horizontalData(position.x(), scrollableArea.visibleWidth())
+    , m_verticalData(position.y(), scrollableArea.visibleHeight())
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     , m_animationTimer(*this, &ScrollAnimationSmooth::animationTimerFired)
 #else
@@ -88,13 +90,8 @@ void ScrollAnimationSmooth::updateVisibleLengths()
 void ScrollAnimationSmooth::setCurrentPosition(const FloatPoint& position)
 {
     stop();
-    m_horizontalData = PerAxisData();
-    m_horizontalData.currentPosition = position.x();
-    m_horizontalData.desiredPosition = m_horizontalData.currentPosition;
-
-    m_verticalData = PerAxisData();
-    m_verticalData.currentPosition = position.y();
-    m_verticalData.desiredPosition = m_verticalData.currentPosition;
+    m_horizontalData = PerAxisData(position.x(), m_horizontalData.visibleLength);
+    m_verticalData = PerAxisData(position.y(), m_verticalData.visibleLength);
 }
 
 #if !USE(REQUEST_ANIMATION_FRAME_TIMER)
@@ -379,11 +376,7 @@ bool ScrollAnimationSmooth::animateScroll(PerAxisData& data, double currentTime)
     double newPosition = data.currentPosition;
 
     if (deltaTime > data.animationTime) {
-        double desiredPosition = data.desiredPosition;
-        int visibleLength = data.visibleLength;
-        data = PerAxisData();
-        data.currentPosition = desiredPosition;
-        data.visibleLength = visibleLength;
+        data = PerAxisData(data.desiredPosition, data.visibleLength);
         return false;
     }
     if (deltaTime < data.attackTime)
