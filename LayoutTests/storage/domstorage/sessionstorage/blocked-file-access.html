@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.setAllowUniversalAccessFromFileURLs(false);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<iframe src="resources/blocked-example.html"></iframe>
+<div id="results"></div>
+Test that we are permitted access to sessionStorage from a file URL if universal access is turned off.
+</body>
+</html>

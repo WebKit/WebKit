@@ -1,3 +1,21 @@
+2016-03-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Local file restrictions should not block sessionStorage access
+        https://bugs.webkit.org/show_bug.cgi?id=155609
+        <rdar://problem/25229461>
+
+        Reviewed by Andy Estes.
+
+        Use of 'sesssionStorage' is governed by SecurityOrigin with third party access
+        set to 'ShouldAllowFromThirdParty::AlwaysAllowFromThirdParty'. We should not
+        reject local files for this combination of arguments.
+
+        Test: storage/domstorage/sessionstorage/blocked-file-access.html
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccessStorage): For the case of sessionStorage,
+        allow local file access.
+
 2016-03-18  Jer Noble  <jer.noble@apple.com>
 
         CachedResource::MediaResource types shouldn't be blocked due to mixed-content.

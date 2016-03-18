@@ -375,7 +375,7 @@ bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin, ShouldAll
     if (m_storageBlockingPolicy == BlockAllStorage)
         return false;
 
-    if (isLocal() && !m_universalAccess)
+    if (isLocal() && !m_universalAccess && shouldAllowFromThirdParty != AlwaysAllowFromThirdParty)
         return false;
 
     // FIXME: This check should be replaced with an ASSERT once we can guarantee that topOrigin is not null.
