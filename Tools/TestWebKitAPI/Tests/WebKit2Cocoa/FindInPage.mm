@@ -37,6 +37,7 @@ typedef enum : NSUInteger {
 
 @protocol NSTextFinderAsynchronousDocumentFindMatch <NSObject>
 @property (retain, nonatomic, readonly) NSArray *textRects;
+- (void)generateTextImage:(void (^)(NSImage *generatedImage))completionHandler;
 @end
 
 @interface WKWebView (NSTextFinderSupport)
@@ -63,6 +64,7 @@ static bool findMatchesDone;
 TEST(WebKit2, FindInPage)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    [webView _setOverrideDeviceScaleFactor:2];
 
     RetainPtr<FindInPageNavigationDelegate> delegate = adoptNS([[FindInPageNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
@@ -119,6 +121,24 @@ TEST(WebKit2, FindInPage)
     }];
 
     TestWebKitAPI::Util::run(&findMatchesDone);
+    findMatchesDone = false;
+
+    // Ensure that the generated image has the correct DPI.
+    [webView findMatchesForString:@"Birthday" relativeToMatch:nil findOptions:noFindOptions maxResults:NSUIntegerMax resultCollector:^(NSArray *matches, BOOL didWrap) {
+        EXPECT_EQ((NSUInteger)360, matches.count);
+
+        id <NSTextFinderAsynchronousDocumentFindMatch> firstMatch = [matches objectAtIndex:0];
+        [firstMatch generateTextImage:^(NSImage *image) {
+            CGImageRef CGImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+            EXPECT_EQ(image.size.width, CGImageGetWidth(CGImage) / 2);
+            EXPECT_EQ(image.size.height, CGImageGetHeight(CGImage) / 2);
+
+            findMatchesDone = true;
+        }];
+    }];
+
+    TestWebKitAPI::Util::run(&findMatchesDone);
+    findMatchesDone = false;
 }
 
 #endif

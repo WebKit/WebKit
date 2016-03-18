@@ -1,3 +1,16 @@
+2016-03-17  Tim Horton  <timothy_horton@apple.com>
+
+        Find-in-page indicator in Mail viewer is the wrong scale and cut off
+        https://bugs.webkit.org/show_bug.cgi?id=155605
+        <rdar://problem/23948165>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient didGetImageForMatchResult:]):
+        Initialize the NSImage with the correct size, instead of inferring the
+        size from the bitmap, so that we don't lose information about device pixel ratio.
+
 2016-03-17  Anders Carlsson  <andersca@apple.com>
 
         Remove use of dyld_register_image_state_change_handler() in PluginProcessMac.mm
