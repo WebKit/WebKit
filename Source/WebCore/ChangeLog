@@ -1,3 +1,9 @@
+2016-03-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac][cmake] Unreviewed speculative buildfix. Just for fun.
+
+        * loader/EmptyClients.cpp:
+
 2016-03-17  Antti Koivisto  <antti@apple.com>
 
         Data URL DecodeTask may get deleted outside main thread

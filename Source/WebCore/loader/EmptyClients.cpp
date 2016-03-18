@@ -29,6 +29,7 @@
 #include "EmptyClients.h"
 
 #include "ColorChooser.h"
+#include "DOMWrapperWorld.h"
 #include "DatabaseProvider.h"
 #include "DocumentLoader.h"
 #include "FileChooser.h"
