@@ -3487,14 +3487,25 @@ void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>
     shapeMaskLayer = findOrMakeClone(cloneID, m_shapeMaskLayer.get(), m_shapeMaskLayerClones.get(), cloneLevel);
 }
 
+void GraphicsLayerCA::clearClones(std::unique_ptr<LayerMap>& layerMap)
+{
+    if (!layerMap)
+        return;
+
+    for (auto& layer : layerMap->values())
+        layer->setOwner(nullptr);
+    
+    layerMap = nullptr;
+}
+
 void GraphicsLayerCA::removeCloneLayers()
 {
-    m_layerClones = nullptr;
-    m_structuralLayerClones = nullptr;
-    m_contentsLayerClones = nullptr;
-    m_contentsClippingLayerClones = nullptr;
-    m_contentsShapeMaskLayerClones = nullptr;
-    m_shapeMaskLayerClones = nullptr;
+    clearClones(m_layerClones);
+    clearClones(m_structuralLayerClones);
+    clearClones(m_contentsLayerClones);
+    clearClones(m_contentsClippingLayerClones);
+    clearClones(m_contentsShapeMaskLayerClones);
+    clearClones(m_shapeMaskLayerClones);
 }
 
 FloatPoint GraphicsLayerCA::positionForCloneRootLayer() const

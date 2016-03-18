@@ -367,6 +367,8 @@ private:
     void ensureCloneLayers(CloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
         RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, CloneLevel);
 
+    static void clearClones(std::unique_ptr<LayerMap>&);
+
     bool hasCloneLayers() const { return !!m_layerClones; }
     void removeCloneLayers();
     FloatPoint positionForCloneRootLayer() const;
