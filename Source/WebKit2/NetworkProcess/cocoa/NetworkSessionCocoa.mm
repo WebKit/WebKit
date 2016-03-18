@@ -170,8 +170,18 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
     else if (error) {
         auto downloadID = _session->takeDownloadID(task.taskIdentifier);
         if (downloadID.downloadID()) {
-            if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID))
-                download->didFail(error, { });
+            if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID)) {
+                NSData *resumeData = nil;
+                if (id userInfo = error.userInfo) {
+                    if ([userInfo isKindOfClass:[NSDictionary class]])
+                        resumeData = userInfo[@"NSURLSessionDownloadTaskResumeData"];
+                }
+                
+                if (resumeData && [resumeData isKindOfClass:[NSData class]])
+                    download->didFail(error, { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length });
+                else
+                    download->didFail(error, { });
+            }
         }
     }
 }
