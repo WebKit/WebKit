@@ -1623,6 +1623,10 @@ void WebPageProxy::setEditable(bool editable)
 void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&)
 {
 }
+
+void WebPageProxy::layerTreeCommitComplete()
+{
+}
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
