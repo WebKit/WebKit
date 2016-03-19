@@ -9,49 +9,49 @@ layer at (0,0) size 800x104
       RenderBlock {DIV} at (0,34) size 784x46
         RenderTextControl {INPUT} at (2,2) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 131x13
-            RenderBlock {DIV} at (0,0) size 111x13
+            RenderBlock {DIV} at (0,0) size 104x13
         RenderText {#text} at (140,2) size 5x18
           text run at (140,2) width 5: " "
         RenderTextControl {INPUT} at (146,2) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 131x13
-            RenderBlock {DIV} at (0,0) size 111x13
+            RenderBlock {DIV} at (0,0) size 104x13
         RenderText {#text} at (284,2) size 5x18
           text run at (284,2) width 5: " "
         RenderTextControl {INPUT} at (290,2) size 138x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 131x13
-            RenderBlock {DIV} at (0,0) size 111x13
+            RenderBlock {DIV} at (0,0) size 104x13
         RenderText {#text} at (429,2) size 5x18
           text run at (429,2) width 5: " "
         RenderTextControl {INPUT} at (435,2) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 131x13
-            RenderBlock {DIV} at (0,0) size 111x13
+            RenderBlock {DIV} at (0,0) size 104x13
         RenderTextControl {INPUT} at (575,2) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 131x13
-            RenderBlock {DIV} at (0,0) size 111x13
+            RenderBlock {DIV} at (0,0) size 104x13
         RenderTextControl {INPUT} at (2,25) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 131x13
-            RenderBlock {DIV} at (0,0) size 111x13
-layer at (13,55) size 110x13
-  RenderBlock {DIV} at (0,0) size 111x13
-layer at (157,55) size 110x13
-  RenderBlock {DIV} at (0,0) size 111x13
-layer at (302,55) size 110x13
-  RenderBlock {DIV} at (0,0) size 111x13
-layer at (446,55) size 110x13
-  RenderBlock {DIV} at (0,0) size 111x13
-layer at (586,55) size 110x13
-  RenderBlock {DIV} at (0,0) size 111x13
-layer at (13,78) size 110x13
-  RenderBlock {DIV} at (0,0) size 111x13
-layer at (126,56) size 15x12
-  RenderBlock {DIV} at (113,0) size 16x13 [bgcolor=#000000]
-layer at (271,56) size 15x12
-  RenderBlock {DIV} at (113,0) size 16x13 [bgcolor=#000000]
-layer at (415,56) size 15x12
-  RenderBlock {DIV} at (113,0) size 16x13 [bgcolor=#000000]
-layer at (559,56) size 15x12
-  RenderBlock {DIV} at (113,0) size 16x13 [bgcolor=#000000]
-layer at (700,56) size 15x12
-  RenderBlock {DIV} at (113,0) size 16x13 [bgcolor=#000000]
-layer at (126,79) size 15x12
-  RenderBlock {DIV} at (113,0) size 16x13 [bgcolor=#000000]
+            RenderBlock {DIV} at (0,0) size 104x13
+layer at (13,55) size 103x13
+  RenderBlock {DIV} at (0,0) size 104x13
+layer at (157,55) size 103x13
+  RenderBlock {DIV} at (0,0) size 104x13
+layer at (302,55) size 103x13
+  RenderBlock {DIV} at (0,0) size 104x13
+layer at (446,55) size 103x13
+  RenderBlock {DIV} at (0,0) size 104x13
+layer at (586,55) size 103x13
+  RenderBlock {DIV} at (0,0) size 104x13
+layer at (13,78) size 103x13
+  RenderBlock {DIV} at (0,0) size 104x13
+layer at (119,56) size 22x12
+  RenderBlock {DIV} at (106,0) size 23x13 [bgcolor=#000000]
+layer at (264,56) size 22x12
+  RenderBlock {DIV} at (106,0) size 23x13 [bgcolor=#000000]
+layer at (408,56) size 22x12
+  RenderBlock {DIV} at (106,0) size 23x13 [bgcolor=#000000]
+layer at (552,56) size 22x12
+  RenderBlock {DIV} at (106,0) size 23x13 [bgcolor=#000000]
+layer at (693,56) size 22x12
+  RenderBlock {DIV} at (106,0) size 23x13 [bgcolor=#000000]
+layer at (119,79) size 22x12
+  RenderBlock {DIV} at (106,0) size 23x13 [bgcolor=#000000]
