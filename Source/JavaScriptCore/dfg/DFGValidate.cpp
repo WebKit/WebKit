@@ -38,6 +38,8 @@
 
 namespace JSC { namespace DFG {
 
+namespace {
+
 class Validate {
 public:
     Validate(Graph& graph, GraphDumpMode graphDumpMode, CString graphDumpBeforePhase)
@@ -734,6 +736,8 @@ private:
         m_graph.dump();
     }
 };
+
+} // End anonymous namespace.
 
 void validate(Graph& graph, GraphDumpMode graphDumpMode, CString graphDumpBeforePhase)
 {
