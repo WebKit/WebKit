@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -34,15 +34,15 @@ private:
 public:
     typedef ErrorPrototype Base;
 
-    static NativeErrorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, const String& name, NativeErrorConstructor* constructor)
+    static NativeErrorPrototype* create(VM& vm, Structure* structure, const String& name, NativeErrorConstructor* constructor)
     {
         NativeErrorPrototype* prototype = new (NotNull, allocateCell<NativeErrorPrototype>(vm.heap)) NativeErrorPrototype(vm, structure);
-        prototype->finishCreation(vm, globalObject, name, constructor);
+        prototype->finishCreation(vm, name, constructor);
         return prototype;
     }
 
 protected:
-    void finishCreation(VM&, JSGlobalObject*, const String& nameAndMessage, NativeErrorConstructor*);
+    void finishCreation(VM&, const String& nameAndMessage, NativeErrorConstructor*);
 };
 
 } // namespace JSC

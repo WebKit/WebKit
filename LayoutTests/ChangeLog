@@ -1,3 +1,20 @@
+2016-03-19  Mark Lam  <mark.lam@apple.com>
+
+        ES6 spec requires that ErrorPrototype not be an Error object.
+        https://bugs.webkit.org/show_bug.cgi?id=155680
+
+        Reviewed by Michael Saboff.
+
+        Updated the appropriate tests to expect the toString() value of Error.prototype
+        to now be "[object Object]" instead of "[object Error]".  Also rebased the test
+        results accordingly.
+
+        * fast/dom/DOMException/prototype-object-expected.txt:
+        * fast/dom/DOMException/prototype-object.html:
+        * js/dom/native-error-prototype-expected.txt:
+        * js/dom/script-tests/native-error-prototype.js:
+        * sputnik/Conformance/15_Native_Objects/15.11_Error/15.11.4/S15.11.4_A2.html:
+
 2016-03-18  Daniel Bates  <dabates@apple.com>
 
         Update AutoFill button in input fields

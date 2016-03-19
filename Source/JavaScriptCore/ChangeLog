@@ -1,3 +1,39 @@
+2016-03-19  Mark Lam  <mark.lam@apple.com>
+
+        ES6 spec requires that ErrorPrototype not be an Error object.
+        https://bugs.webkit.org/show_bug.cgi?id=155680
+
+        Reviewed by Michael Saboff.
+
+        The ES6 spec states that Error.prototype should not be an instance of Error:
+        https://tc39.github.io/ecma262/#sec-properties-of-the-error-prototype-object
+
+        "The Error prototype object is an ordinary object. It is not an Error instance
+        and does not have an [[ErrorData]] internal slot."
+
+        This patch changes ErrorPrototype to conform to the above specification.
+
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::finishCreation):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        (JSC::ErrorPrototype::finishCreation):
+        (JSC::ErrorPrototype::getOwnPropertySlot):
+        * runtime/ErrorPrototype.h:
+        (JSC::ErrorPrototype::create):
+
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::finishCreation):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        (JSC::NativeErrorPrototype::finishCreation):
+        * runtime/NativeErrorPrototype.h:
+        (JSC::NativeErrorPrototype::create):
+        - updated to no longer need a JSGlobalObject argument.
+
+        * tests/es6/miscellaneous_built-in_prototypes_are_not_instances.js:
+        - updated to match the kangax version of this test.
+
 2016-03-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Limit DFG's Validate symbols to its compilation unit

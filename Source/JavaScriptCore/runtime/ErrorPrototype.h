@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,21 +21,21 @@
 #ifndef ErrorPrototype_h
 #define ErrorPrototype_h
 
-#include "ErrorInstance.h"
+#include "JSObject.h"
 
 namespace JSC {
 
 class ObjectPrototype;
 
-class ErrorPrototype : public ErrorInstance {
+class ErrorPrototype : public JSNonFinalObject {
 public:
-    typedef ErrorInstance Base;
+    typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
-    static ErrorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    static ErrorPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
     {
         ErrorPrototype* prototype = new (NotNull, allocateCell<ErrorPrototype>(vm.heap)) ErrorPrototype(vm, structure);
-        prototype->finishCreation(vm, globalObject);
+        prototype->finishCreation(vm);
         return prototype;
     }
 
@@ -48,7 +48,7 @@ public:
 
 protected:
     ErrorPrototype(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*);
+    void finishCreation(VM&);
 
 private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);

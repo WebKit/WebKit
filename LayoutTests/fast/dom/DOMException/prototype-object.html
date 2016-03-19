@@ -15,7 +15,7 @@ try {
 shouldBeEqualToString("e.toString()", "Error: HierarchyRequestError: DOM Exception 3");
 shouldBeEqualToString("Object.prototype.toString.call(e)", "[object DOMException]");
 shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object DOMExceptionPrototype]");
-shouldBeEqualToString("Object.prototype.toString.call(e.__proto__.__proto__)", "[object Error]");
+shouldBeEqualToString("Object.prototype.toString.call(e.__proto__.__proto__)", "[object Object]");
 shouldBeEqualToString("e.constructor.toString()", "function DOMException() {\n    [native code]\n}");
 shouldBeTrue("e instanceof DOMException");
 shouldBeTrue("e instanceof Error");

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2008, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ static EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*);
 
 namespace JSC {
 
-const ClassInfo ErrorPrototype::s_info = { "Error", &ErrorInstance::s_info, &errorPrototypeTable, CREATE_METHOD_TABLE(ErrorPrototype) };
+const ClassInfo ErrorPrototype::s_info = { "Object", &Base::s_info, &errorPrototypeTable, CREATE_METHOD_TABLE(ErrorPrototype) };
 
 /* Source for ErrorPrototype.lut.h
 @begin errorPrototypeTable
@@ -50,15 +50,16 @@ const ClassInfo ErrorPrototype::s_info = { "Error", &ErrorInstance::s_info, &err
 */
 
 ErrorPrototype::ErrorPrototype(VM& vm, Structure* structure)
-    : ErrorInstance(vm, structure)
+    : JSNonFinalObject(vm, structure)
 {
 }
 
-void ErrorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void ErrorPrototype::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalObject->globalExec(), vm, "");
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("Error"))), DontEnum);
+    putDirect(vm, vm.propertyNames->message, jsEmptyString(&vm), DontEnum);
 }
 
 bool ErrorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)

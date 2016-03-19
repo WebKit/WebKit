@@ -43,7 +43,7 @@ void NativeErrorConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject
     Base::finishCreation(vm, name);
     ASSERT(inherits(info()));
     
-    NativeErrorPrototype* prototype = NativeErrorPrototype::create(vm, globalObject, prototypeStructure, name, this);
+    NativeErrorPrototype* prototype = NativeErrorPrototype::create(vm, prototypeStructure, name, this);
     
     putDirect(vm, vm.propertyNames->length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
     putDirect(vm, vm.propertyNames->prototype, prototype, DontDelete | ReadOnly | DontEnum);
