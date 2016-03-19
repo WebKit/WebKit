@@ -139,7 +139,7 @@ class AnalysisResultsViewer extends ResultsTable {
         for (var group of this._testGroups) {
             var sortedSets = group.requestedRootSets();
             for (var i = 0; i < sortedSets.length; i++)
-                rootSetsInTestGroups.push(new AnalysisResultsViewer.RootSetInTestGroup(group, sortedSets[i]));
+                rootSetsInTestGroups.push(new AnalysisResultsViewer.RootSetInTestGroup(group, sortedSets[i], sortedSets[i + 1]));
         }
 
         return rootSetsInTestGroups;
@@ -191,14 +191,20 @@ class AnalysisResultsViewer extends ResultsTable {
             }
 
             var groupTime = entry.rootSet().latestCommitTime();
+            var newRow = new ResultsTableRow(null, entry.rootSet());
+            rowToMatchingRootSets.set(newRow, [entry]);
+
             for (var i = 0; i < rowList.length; i++) {
                 if (rowList[i] instanceof AnalysisResultsViewer.ExpandableRow)
                     continue;
 
+                if (rowList[i].rootSet().equals(entry.succeedingRootSet())) {
+                    rowList.splice(i, 0, newRow);
+                    return;
+                }
+
                 var rowTime = rowList[i].rootSet().latestCommitTime();
                 if (rowTime > groupTime) {
-                    var newRow = new ResultsTableRow(null, entry.rootSet());
-                    rowToMatchingRootSets.set(newRow, [entry]);
                     rowList.splice(i, 0, newRow);
                     return;
                 }
@@ -213,9 +219,7 @@ class AnalysisResultsViewer extends ResultsTable {
                             var newCommit = entry.rootSet().commitForRepository(repository);
                             var rowCommit = rowList[j].rootSet().commitForRepository(repository);
                             if (!rowCommit || newCommit.time() < rowCommit.time()) {
-                                var row = new ResultsTableRow(null, entry.rootSet());
-                                rowToMatchingRootSets.set(row, [entry]);
-                                rowList.splice(j, 0, row);
+                                rowList.splice(j, 0, newRow);
                                 return;
                             }
                         }
@@ -352,16 +356,18 @@ AnalysisResultsViewer.ExpandableRow = class extends ResultsTableRow {
 }
 
 AnalysisResultsViewer.RootSetInTestGroup = class {
-    constructor(testGroup, rootSet)
+    constructor(testGroup, rootSet, succeedingRootSet)
     {
         console.assert(testGroup instanceof TestGroup);
         console.assert(rootSet instanceof RootSet);
         this._testGroup = testGroup;
         this._rootSet = rootSet;
+        this._succeedingRootSet = succeedingRootSet;
     }
 
     testGroup() { return this._testGroup; }
     rootSet() { return this._rootSet; }
+    succeedingRootSet() { return this._succeedingRootSet; }
 }
 
 AnalysisResultsViewer.TestGroupStackingBlock = class {

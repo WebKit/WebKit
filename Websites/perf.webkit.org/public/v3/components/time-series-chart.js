@@ -579,6 +579,7 @@ class TimeSeriesChart extends ComponentBase {
         var result = [];
 
         var previousDate = null;
+        var previousMonth = null;
         var previousHour = null;
         while (currentTime <= max) {
             var time = new Date(currentTime);
@@ -590,7 +591,7 @@ class TimeSeriesChart extends ComponentBase {
             iterator.next(currentTime);
 
             var label;
-            if (date == previousDate)
+            if (date == previousDate && month == previousMonth)
                 label = hourLabel;
             else {
                 label = `${month}/${date}`;
@@ -601,6 +602,7 @@ class TimeSeriesChart extends ComponentBase {
             result.push({time: time, label: label});
 
             previousDate = date;
+            previousMonth = month;
             previousHour = hour;
         }
         

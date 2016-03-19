@@ -1,5 +1,34 @@
 2016-03-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf Dashboard v3 confuses better and worse on A/B task page
+        https://bugs.webkit.org/show_bug.cgi?id=155675
+        <rdar://problem/25208723>
+
+        Reviewed by Joseph Pecoraro.
+
+        The analysis results viewer on v3 UI sometimes treats regressions as progressions and vice versa when
+        the first set (i.e. set A) of the revisions used in an A/B testing never appears in the original graph,
+        and its latest commit time matches that of the second set, which appears in the original graph.
+
+        Because the analysis results viewer compares results in the increasing row number, this results in
+        B to be compared to A instead of A to be compared to B. Fixed the bug by preventing the wrong ordering
+        to occur in _buildRowsForPointsAndTestGroups by always inserting a root set A before B when B appears
+        and A doesn't appear in the original graph.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.prototype._collectRootSetsInTestGroups): Remember the succeeding root set B
+        when creating an entry for root set A.
+        (AnalysisResultsViewer.prototype._buildRowsForPointsAndTestGroups): Fixed the bug. Also un-duplicated
+        the code to create a new row.
+        (AnalysisResultsViewer.RootSetInTestGroup): Now takes a succeeding root set. e.g. it's B for A and
+        undefined for B in A/B testing.
+        (AnalysisResultsViewer.RootSetInTestGroup.prototype.succeedingRootSet): Added.
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.computeTimeGrid): Fixed the bug that we would end up showing 0 AM instead of dates
+        when both dates and months change.
+
+2016-03-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add unit tests for measurement-set.js and measurement-adapter.js
         https://bugs.webkit.org/show_bug.cgi?id=155673
 
