@@ -315,17 +315,19 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
             childDataGridNodes.sort(this._sortComparator.bind(this));
 
             for (let dataGridNode of childDataGridNodes) {
-                let treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
-                console.assert(treeElement);
+                if (this._treeOutlineDataGridSynchronizer) {
+                    let treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
+                    console.assert(treeElement);
 
-                if (parentTreeElement)
-                    parentTreeElement.appendChild(treeElement);
+                    if (parentTreeElement)
+                        parentTreeElement.appendChild(treeElement);
+
+                    // Adding the tree element back to the tree outline subjects it to filters.
+                    // Make sure we keep the hidden state in-sync while the synchronizer is disabled.
+                    dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
+                }
 
                 parentDataGridNode.appendChild(dataGridNode);
-
-                // Adding the tree element back to the tree outline subjects it to filters.
-                // Make sure we keep the hidden state in-sync while the synchronizer is disabled.
-                dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
             }
         }
 

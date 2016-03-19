@@ -1,5 +1,16 @@
 2016-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Uncaught Exception: TypeError: undefined is not an object (evaluating 'this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode')
+        https://bugs.webkit.org/show_bug.cgi?id=155671
+        <rdar://problem/25249401>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._sort):
+
+2016-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix ObjectTree Map styling, key/value look cramped
         https://bugs.webkit.org/show_bug.cgi?id=155668
 
