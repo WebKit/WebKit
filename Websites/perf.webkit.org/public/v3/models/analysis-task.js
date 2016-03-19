@@ -207,7 +207,7 @@ class AnalysisTask extends LabeledObject {
     static fetchAll()
     {
         if (!this._fetchAllPromise)
-            this._fetchAllPromise = getJSONWithStatus('../api/analysis-tasks').then(this._constructAnalysisTasksFromRawData.bind(this));
+            this._fetchAllPromise = RemoteAPI.getJSONWithStatus('../api/analysis-tasks').then(this._constructAnalysisTasksFromRawData.bind(this));
         return this._fetchAllPromise;
     }
 

@@ -1,3 +1,4 @@
+'use strict';
 
 class RootSet extends DataModelObject {
 
@@ -75,6 +76,8 @@ class MeasurementRootSet extends RootSet {
         for (var values of revisionList) {
             var repositoryId = values[0];
             var repository = Repository.findById(repositoryId);
+            if (!repository)
+                continue;
 
             this._repositoryToCommitMap[repositoryId] = CommitLog.ensureSingleton(repository, {revision: values[1], time: values[2]});
             this._repositories.push(repository);
@@ -106,3 +109,8 @@ class CustomRootSet {
 
 }
 
+if (typeof module != 'undefined') {
+    module.exports.RootSet = RootSet;
+    module.exports.MeasurementRootSet = MeasurementRootSet;
+    module.exports.CustomRootSet = CustomRootSet;
+}

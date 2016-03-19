@@ -1,5 +1,7 @@
 
-function getJSON(path, data)
+var RemoteAPI = {};
+
+RemoteAPI.getJSON = function(path, data)
 {
     console.assert(!path.startsWith('http:') && !path.startsWith('https:') && !path.startsWith('file:'));
 
@@ -43,9 +45,9 @@ function getJSON(path, data)
     });
 }
 
-function getJSONWithStatus(path, data)
+RemoteAPI.getJSONWithStatus = function(path, data)
 {
-    return getJSON(path, data).then(function (content) {
+    return this.getJSON(path, data).then(function (content) {
         if (content['status'] != 'OK')
             return Promise.reject(content['status']);
         return content;
@@ -62,7 +64,7 @@ PrivilegedAPI = class {
             for (var key in data)
                 clonedData[key] = data[key];
             clonedData['token'] = token;
-            return getJSONWithStatus('../privileged-api/' + path, clonedData);
+            return RemoteAPI.getJSONWithStatus('../privileged-api/' + path, clonedData);
         });
     }
 
@@ -72,7 +74,7 @@ PrivilegedAPI = class {
         if (this._token && this._expiration > Date.now() + maxNetworkLatency)
             return Promise.resolve(this._token);
 
-        return getJSONWithStatus('../privileged-api/generate-csrf-token', {}).then(function (result) {
+        return RemoteAPI.getJSONWithStatus('../privileged-api/generate-csrf-token', {}).then(function (result) {
             PrivilegedAPI._token = result['token'];
             PrivilegedAPI._expiration = new Date(result['expiration']);
             return PrivilegedAPI._token;

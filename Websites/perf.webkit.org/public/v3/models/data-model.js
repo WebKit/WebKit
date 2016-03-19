@@ -1,3 +1,4 @@
+'use strict';
 
 class DataModelObject {
     constructor(id)
@@ -66,11 +67,11 @@ class DataModelObject {
             path += '?' + query.join('&');
 
         if (noCache)
-            return getJSONWithStatus(path);
+            return RemoteAPI.getJSONWithStatus(path);
 
         var cacheMap = this.ensureNamedStaticMap(DataModelObject.CacheMapSymbol);
         if (!cacheMap[path])
-            cacheMap[path] = getJSONWithStatus(path);
+            cacheMap[path] = RemoteAPI.getJSONWithStatus(path);
 
         return cacheMap[path];
     }
@@ -102,4 +103,9 @@ class LabeledObject extends DataModelObject {
 
     name() { return this._name; }
     label() { return this.name(); }
+}
+
+if (typeof module != 'undefined') {
+    module.exports.DataModelObject = DataModelObject;
+    module.exports.LabeledObject = LabeledObject;
 }

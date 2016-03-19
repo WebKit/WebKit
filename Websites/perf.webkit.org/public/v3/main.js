@@ -56,8 +56,8 @@ function main() {
 
 function fetchManifest()
 {
-    return getJSON('../data/manifest.json').then(didFetchManifest, function () {
-        return getJSON('../api/manifest/').then(didFetchManifest, function (error) {
+    return RemoteAPI.getJSON('../data/manifest.json').then(didFetchManifest, function () {
+        return RemoteAPI.getJSON('../api/manifest/').then(didFetchManifest, function (error) {
             alert('Failed to load the site manifest: ' + error);
         });
     });

@@ -1,3 +1,86 @@
+2016-03-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add unit tests for measurement-set.js and measurement-adapter.js
+        https://bugs.webkit.org/show_bug.cgi?id=155673
+
+        Reviewed by Darin Adler.
+
+        Added mocha unit tests for MeasurementSet and MeasurementAdapter classes along with the necessary
+        refactoring to run these tests in node.
+
+        getJSON and getJSONStatus are now under RemoteAPI so that unit tests can mock them.
+
+        Removed the dependency on v2 UI's TimeSeries and Measurement class by adding a new implementation
+        of TimeSeries in v3 and removing the dependency on Measurement in chart-pane-status-view.js with
+        new helper methods on Build and CommitLog.
+
+        Many js files now use 'use strict' (node doesn't support class syntax in non-strict mode) and
+        module.exports to export symbols in node's require function.
+
+        * public/v3/index.html:
+        * public/v3/main.js:
+        * public/v3/models/analysis-results.js:
+        (AnalysisResults.fetch):
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.fetchAll):
+        * public/v3/models/builder.js:
+        (Build):
+        (Build.prototype.builder): Added. Used by ChartPaneStatusView.
+        (Build.prototype.buildNumber): Ditto.
+        (Build.prototype.buildTime): Ditto.
+        * public/v3/models/commit-log.js:
+        (CommitLog.prototype.diff): Ditto.
+        (CommitLog.fetchBetweenRevisions):
+        * public/v3/models/data-model.js:
+        (DataModelObject.cachedFetch):
+        * public/v3/models/measurement-adaptor.js:
+        (MeasurementAdaptor.prototype.applyToAnalysisResults): Renamed from adoptToAnalysisResults.
+        (MeasurementAdaptor.prototype.applyTo): Renamed from adoptToSeries. Now shares a lot more
+        code with applyToAnalysisResults. The code to set 'series' and 'seriesIndex' has been moved
+        to TimeSeries.append. 'measurement' is no longer needed as this patch removes its only use
+        in ChartPaneStatusView.
+        * public/v3/models/measurement-cluster.js:
+        (MeasurementCluster.prototype.addToSeries): Use TimeSeries.append instead of directly mutating
+        series._series.
+        * public/v3/models/measurement-set.js:
+        (Array.prototype.includes): Added a polyfill for node.
+        (MeasurementSet.prototype._fetchSecondaryClusters): Removed a bogus assertion. When fetchBetween
+        is called with a mixture of clusters that have been fetched and not fetched, this assertion fails.
+        (MeasurementSet.prototype._fetch):
+        (TimeSeries.prototype.findById): Moved to time-series.js.
+        (TimeSeries.prototype.dataBetweenPoints): Ditto.
+        (TimeSeries.prototype.firstPoint): Ditto.
+        (TimeSeries.prototype.fetchedTimeSeries): Moved the code to extend the last point to TimeSeries'
+        extendToFuture.
+        * public/v3/models/repository.js:
+        * public/v3/models/root-set.js:
+        (MeasurementRootSet): Ignore repositories that had not been defined (e.g. it could be added after
+        manifest.json had been downloaded but before a given root set is created for an A/B testing).
+        * public/v3/models/time-series.js:
+        (TimeSeries): Added.
+        (TimeSeries.prototype.append): Added.
+        (TimeSeries.prototype.extendToFuture): Added.
+        (TimeSeries.prototype.firstPoint): Moved from measurement-set.js.
+        (TimeSeries.prototype.lastPoint): Added.
+        (TimeSeries.prototype.previousPoint): Added.
+        (TimeSeries.prototype.nextPoint): Added.
+        (TimeSeries.prototype.findPointByIndex): Added.
+        (TimeSeries.prototype.findById): Moved from measurement-set.js.
+        (TimeSeries.prototype.findPointAfterTime): Added.
+        (TimeSeries.prototype.dataBetweenPoints): Moved from measurement-set.js.
+        * public/v3/pages/chart-pane-status-view.js:
+        (ChartPaneStatusView.prototype.render): Use newly added helper functions on Build.
+        (ChartPaneStatusView.prototype._formatTime): Added.
+        (ChartPaneStatusView.prototype.setCurrentRepository):
+        (ChartPaneStatusView.prototype.computeChartStatusLabels): Rewrote the code using RootSet object on
+        currentPoint and previousPoint instead of Measurement class from v2 UI. Also sort the results using
+        sortByNamePreferringOnesWithURL.
+        * public/v3/remote.js:
+        (RemoteAPI.getJSON): Moved under RemoteAPI.
+        (RemoteAPI.getJSONWithStatus): Ditto.
+        (PrivilegedAPI):
+        (PrivilegedAPI.requestCSRFToken):
+
 2016-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add unit tests for config.json and statistics.js

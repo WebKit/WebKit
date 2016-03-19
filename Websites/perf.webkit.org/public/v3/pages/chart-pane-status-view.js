@@ -44,29 +44,31 @@ class ChartPaneStatusView extends ChartStatusView {
             };
 
             return element('tr', {class: selected ? 'selected' : '', onclick: action}, [
-                element('td', info.name),
+                element('td', info.repository.name()),
                 element('td', info.url ? link(info.label, info.label, info.url, true) : info.label),
                 element('td', {class: 'commit-viewer-opener'}, link('\u00BB', action)),
             ]);
         });
 
         if (this._buildInfo) {
-            var number = this._buildInfo.buildNumber();
-            var builder = Builder.findById(this._buildInfo.builderId());
-            var url = null;
-            if (builder)
-                url = builder.urlForBuild(number);
-            var buildTime = this._buildInfo.formattedBuildTime();
+            var build = this._buildInfo;
+            var number = build.buildNumber();
+            var buildTime = this._formatTime(build.buildTime());
+            var url = build.url();
 
             tableContent.unshift(element('tr', [
                 element('td', 'Build'),
-                element('td', {colspan: 2}, [
-                    url ? link(number, `Build ${number} on "${builder.name()}"`, url, true) : number,
-                    ` (${buildTime})`]),
+                element('td', {colspan: 2}, [url ? link(number, build.label(), url, true) : number, ` (${buildTime})`]),
             ]));
         }
 
         this.renderReplace(this.content().querySelector('.chart-pane-revisions'), tableContent);
+    }
+
+    _formatTime(date)
+    {
+        console.assert(date instanceof Date);
+        return date.toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
     }
 
     setCurrentRepository(repository)
@@ -130,12 +132,8 @@ class ChartPaneStatusView extends ChartStatusView {
         if (!currentPoint)
             return;
 
-        var currentMeasurement = currentPoint.measurement();
-        if (!currentMeasurement)
-            return;
-
-        if (!this._chart.currentSelection() && currentMeasurement)
-            this._buildInfo = currentMeasurement;
+        if (!this._chart.currentSelection())
+            this._buildInfo = currentPoint.build();
 
         if (currentPoint && previousPoint && this._chart.currentSelection()) {
             this._pointsRangeForAnalysis = {
@@ -145,39 +143,16 @@ class ChartPaneStatusView extends ChartStatusView {
         }
 
         // FIXME: Rewrite the interface to obtain the list of revision changes.
-        var previousMeasurement = previousPoint ? previousPoint.measurement() : null;
+        var currentRootSet = currentPoint.rootSet();
+        var previousRootSet = previousPoint ? previousPoint.rootSet() : null;
 
-        var revisions = currentMeasurement.formattedRevisions(previousMeasurement);
+        var repositoriesInCurrentRootSet = Repository.sortByNamePreferringOnesWithURL(currentRootSet.repositories());
         var revisionList = [];
-        for (var repositoryId in revisions) {
-            var repository = Repository.findById(repositoryId);
-            var revision = revisions[repositoryId];
-            var url = revision.previousRevision ? repository.urlForRevisionRange(revision.previousRevision, revision.currentRevision) : '';
-            if (!url)
-                url = repository.urlForRevision(revision.currentRevision);
-
-            revisionList.push({
-                from: revision.previousRevision,
-                to: revision.currentRevision,
-                repository: repository,
-                name: repository.name(),
-                label: revision.label,
-                url: url,
-            });
+        for (var repository of repositoriesInCurrentRootSet) {
+            var currentCommit = currentRootSet.commitForRepository(repository);
+            var previousCommit = previousRootSet ? previousRootSet.commitForRepository(repository) : null;
+            revisionList.push(currentCommit.diff(previousCommit));
         }
-
-        // Sort by repository names preferring ones with URL.
-        revisionList = revisionList.sort(function (a, b) {
-            if (!!a.url == !!b.url) {
-                if (a.name > b.name)
-                    return 1;
-                else if (a.name < b.name)
-                    return -1;
-                return 0;
-            } else if (b.url) // a > b
-                return 1;
-            return -1;
-        });
 
         this._revisionList = revisionList;
     }

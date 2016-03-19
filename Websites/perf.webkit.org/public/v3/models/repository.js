@@ -1,3 +1,4 @@
+'use strict';
 
 class Repository extends LabeledObject {
     constructor(id, object)
@@ -36,3 +37,6 @@ class Repository extends LabeledObject {
     }
 
 }
+
+if (typeof module != 'undefined')
+    module.exports.Repository = Repository;

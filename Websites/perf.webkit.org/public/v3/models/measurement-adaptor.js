@@ -1,3 +1,4 @@
+'use strict';
 
 class MeasurementAdaptor {
     constructor(formatMap)
@@ -27,32 +28,38 @@ class MeasurementAdaptor {
         return row[this._idIndex];
     }
 
-    adoptToAnalysisResults(row)
+    applyToAnalysisResults(row)
+    {
+        var adaptedRow = this.applyTo(row);
+        adaptedRow.metricId = row[this._metricIndex];
+        adaptedRow.configType = row[this._configTypeIndex];
+        return adaptedRow;
+    }
+
+    applyTo(row)
     {
         var id = row[this._idIndex];
         var mean = row[this._meanIndex];
         var sum = row[this._sumIndex];
         var squareSum = row[this._squareSumIndex];
-        var iterationCount = row[this._countIndex];
         var revisionList = row[this._revisionsIndex];
         var buildId = row[this._buildIndex];
-        var metricId = row[this._metricIndex];
-        var configType = row[this._configTypeIndex];
+        var builderId = row[this._builderIndex];
+        var buildNumber = row[this._buildNumberIndex];
+        var buildTime = row[this._buildTimeIndex];
         var self = this;
         return {
             id: id,
             buildId: buildId,
-            metricId: metricId,
-            configType: configType,
+            metricId: null,
+            configType: null,
             rootSet: function () { return MeasurementRootSet.ensureSingleton(id, revisionList); },
-            build: function () {
-                var builder = Builder.findById(row[self._builderIndex]);
-                return new Build(id, builder, row[self._buildNumberIndex]);
-            },
+            build: function () { return new Build(buildId, Builder.findById(builderId), buildNumber, buildTime); },
+            time: row[this._commitTimeIndex],
             value: mean,
             sum: sum,
-            squareSum,
-            iterationCount: iterationCount,
+            squareSum: squareSum,
+            iterationCount: row[this._countIndex],
             interval: MeasurementAdaptor.computeConfidenceInterval(row[this._countIndex], mean, sum, squareSum)
         };
     }
@@ -79,45 +86,12 @@ class MeasurementAdaptor {
         return { value: mean, interval: interval };
     }
 
-    adoptToSeries(row, series, seriesIndex)
-    {
-        var id = row[this._idIndex];
-        var mean = row[this._meanIndex];
-        var sum = row[this._sumIndex];
-        var squareSum = row[this._squareSumIndex];
-        var revisionList = row[this._revisionsIndex];
-        var self = this;
-        return {
-            id: id,
-            measurement: function () {
-                // Create a new Measurement class that doesn't require mimicking what runs.php generates.
-                var revisionsMap = {};
-                for (var revisionRow of revisionList)
-                    revisionsMap[revisionRow[0]] = revisionRow.slice(1);
-                return new Measurement({
-                    id: id,
-                    mean: mean,
-                    sum: sum,
-                    squareSum: squareSum,
-                    revisions: revisionsMap,
-                    build: row[self._buildIndex],
-                    buildTime: row[self._buildTimeIndex],
-                    buildNumber: row[self._buildNumberIndex],
-                    builder: row[self._builderIndex],
-                });
-            },
-            rootSet: function () { return MeasurementRootSet.ensureSingleton(id, revisionList); },
-            series: series,
-            seriesIndex: seriesIndex,
-            time: row[this._commitTimeIndex],
-            value: mean,
-            interval: MeasurementAdaptor.computeConfidenceInterval(row[this._countIndex], mean, sum, squareSum)
-        };
-    }
-
     static computeConfidenceInterval(iterationCount, mean, sum, squareSum)
     {
         var delta = Statistics.confidenceIntervalDelta(0.95, iterationCount, sum, squareSum);
         return isNaN(delta) ? null : [mean - delta, mean + delta];
     }
 }
+
+if (typeof module != 'undefined')
+    module.exports.MeasurementAdaptor = MeasurementAdaptor;

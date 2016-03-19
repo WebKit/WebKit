@@ -26,14 +26,14 @@ class AnalysisResults {
     static fetch(taskId)
     {
         taskId = parseInt(taskId);
-        return getJSONWithStatus(`../api/measurement-set?analysisTask=${taskId}`).then(function (response) {
+        return RemoteAPI.getJSONWithStatus(`../api/measurement-set?analysisTask=${taskId}`).then(function (response) {
 
             Instrumentation.startMeasuringTime('AnalysisResults', 'fetch');
 
             var adaptor = new MeasurementAdaptor(response['formatMap']);
             var results = new AnalysisResults;
             for (var rawMeasurement of response['measurements'])
-                results.add(adaptor.adoptToAnalysisResults(rawMeasurement));
+                results.add(adaptor.applyToAnalysisResults(rawMeasurement));
 
             Instrumentation.endMeasuringTime('AnalysisResults', 'fetch');
 
