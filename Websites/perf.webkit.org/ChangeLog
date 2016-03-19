@@ -3,6 +3,21 @@
         Add unit tests for measurement-set.js and measurement-adapter.js
         https://bugs.webkit.org/show_bug.cgi?id=155673
 
+        Reviewed by Daniel Bates.
+
+        Add tests which were supposed to be added in r198462.
+
+        * unit-tests/measurement-adaptor-tests.js: Added.
+        * unit-tests/measurement-set-tests.js: Added.
+        (assert.notReached): Added.
+        (global.RemoteAPI.getJSON): Added.
+        (global.RemoteAPI.getJSONWithStatus): Added. A mock.
+
+2016-03-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add unit tests for measurement-set.js and measurement-adapter.js
+        https://bugs.webkit.org/show_bug.cgi?id=155673
+
         Reviewed by Darin Adler.
 
         Added mocha unit tests for MeasurementSet and MeasurementAdapter classes along with the necessary
