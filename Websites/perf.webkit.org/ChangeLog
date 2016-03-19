@@ -1,5 +1,12 @@
 2016-03-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r198464.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.prototype._buildRowsForPointsAndTestGroups):
+
+2016-03-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r198234.
 
         * public/api/commits.php:

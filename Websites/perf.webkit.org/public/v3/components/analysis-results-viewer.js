@@ -198,7 +198,7 @@ class AnalysisResultsViewer extends ResultsTable {
                 if (rowList[i] instanceof AnalysisResultsViewer.ExpandableRow)
                     continue;
 
-                if (rowList[i].rootSet().equals(entry.succeedingRootSet())) {
+                if (entry.succeedingRootSet() && rowList[i].rootSet().equals(entry.succeedingRootSet())) {
                     rowList.splice(i, 0, newRow);
                     return;
                 }
