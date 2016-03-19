@@ -1,5 +1,25 @@
 2016-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Bullet misaligned when expanding console log message
+        https://bugs.webkit.org/show_bug.cgi?id=155669
+        <rdar://problem/25250721>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree):
+        (.object-tree .object-tree): Deleted.
+        Make object tree's inline-block again.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-top-level-message .object-tree):
+        (.console-top-level-message .object-tree .object-tree):
+        Since the Console is the only place that requires a non-inline-block
+        object-tree, and only at the top level, have the console override
+        the styles of object trees as it needs.
+
+2016-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Uncaught Exception: TypeError: undefined is not an object (evaluating 'this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode')
         https://bugs.webkit.org/show_bug.cgi?id=155671
         <rdar://problem/25249401>
