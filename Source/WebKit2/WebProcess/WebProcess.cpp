@@ -376,6 +376,10 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     }
 #endif
 
+#if USE(NETWORK_SESSION)
+    NetworkSession::setSourceApplicationAuditTokenData(sourceApplicationAuditData());
+#endif
+
 #if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
     for (auto hostIter = parameters.pluginLoadClientPolicies.begin(); hostIter != parameters.pluginLoadClientPolicies.end(); ++hostIter) {
         for (auto bundleIdentifierIter = hostIter->value.begin(); bundleIdentifierIter != hostIter->value.end(); ++bundleIdentifierIter) {

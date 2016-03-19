@@ -304,6 +304,19 @@ void WebProcess::platformTerminate()
 {
 }
 
+RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
+{
+#if PLATFORM(IOS)
+    audit_token_t auditToken;
+    ASSERT(parentProcessConnection());
+    if (!parentProcessConnection() || !parentProcessConnection()->getAuditToken(auditToken))
+        return nullptr;
+    return adoptCF(CFDataCreate(nullptr, (const UInt8*)&auditToken, sizeof(auditToken)));
+#else
+    return nullptr;
+#endif
+}
+
 void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
 #if ENABLE(WEB_PROCESS_SANDBOX)

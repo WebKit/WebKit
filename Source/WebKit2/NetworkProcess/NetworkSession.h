@@ -65,6 +65,9 @@ public:
     WebCore::NetworkStorageSession& networkStorageSession();
 
     static void setCustomProtocolManager(CustomProtocolManager*);
+#if PLATFORM(COCOA)
+    static void setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&&);
+#endif
 
 #if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
     void clearCredentials();

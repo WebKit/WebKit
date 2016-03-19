@@ -93,14 +93,7 @@ SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
 
 RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() const
 {
-#if PLATFORM(IOS)
-    audit_token_t auditToken;
-    if (!WebProcess::singleton().parentProcessConnection()->getAuditToken(auditToken))
-        return nullptr;
-    return adoptCF(CFDataCreate(0, (const UInt8*)&auditToken, sizeof(auditToken)));
-#else
-    return nullptr;
-#endif
+    return WebProcess::singleton().sourceApplicationAuditData();
 }
 
 String WebFrameNetworkingContext::sourceApplicationIdentifier() const

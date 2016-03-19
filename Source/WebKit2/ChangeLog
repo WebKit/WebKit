@@ -1,3 +1,48 @@
+2016-03-18  Alex Christensen  <achristensen@webkit.org>
+
+        Give NSURLSessionConfiguration information about parent process
+        https://bugs.webkit.org/show_bug.cgi?id=155661
+        rdar://problem/25225850
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::sessionID):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::partitionName):
+        (WebKit::NetworkProcess::sourceApplicationAuditData):
+        (WebKit::NetworkProcess::cfURLCacheOrigins):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::globalCustomProtocolManager):
+        (WebKit::globalSourceApplicationAuditTokenData):
+        (WebKit::NetworkSession::setCustomProtocolManager):
+        (WebKit::NetworkSession::setSourceApplicationAuditTokenData):
+        (WebKit::NetworkSession::defaultSession):
+        (WebKit::NetworkSession::NetworkSession):
+        Tell the NSURLSessionConfiguration what the source application bundle identifier
+        and audit token data are so we can correctly keep track of which application is using data.
+        This also gives CFNetwork enough information to determine if the application is allowed to
+        use cell data in Settings, so it seems like we do not need to explicitly set allowsCellularAccess.
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::sourceApplicationAuditData):
+        (WebKit::RemoteNetworkingContext::sourceApplicationIdentifier):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::sourceApplicationAuditData):
+        (WebKit::WebFrameNetworkingContext::sourceApplicationIdentifier):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformTerminate):
+        (WebKit::WebProcess::sourceApplicationAuditData):
+        (WebKit::WebProcess::initializeSandbox):
+        I moved the calls to getAuditToken from RemoteNetworkingContext.mm and WebFrameNetworkingContext.mm 
+        to NetworkProcessCocoa.mm and WebProcessCocoa.mm, respectively, to share with NetworkSession code, 
+        which does not use NetworkingContexts.
+
 2016-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix after r198455.

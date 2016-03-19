@@ -179,6 +179,19 @@ static RetainPtr<CFStringRef> partitionName(CFStringRef domain)
 #endif
 }
 
+RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
+{
+#if PLATFORM(IOS)
+    audit_token_t auditToken;
+    ASSERT(parentProcessConnection());
+    if (!parentProcessConnection() || !parentProcessConnection()->getAuditToken(auditToken))
+        return nullptr;
+    return adoptCF(CFDataCreate(nullptr, (const UInt8*)&auditToken, sizeof(auditToken)));
+#else
+    return nullptr;
+#endif
+}
+
 Vector<Ref<WebCore::SecurityOrigin>> NetworkProcess::cfURLCacheOrigins()
 {
     Vector<Ref<WebCore::SecurityOrigin>> result;

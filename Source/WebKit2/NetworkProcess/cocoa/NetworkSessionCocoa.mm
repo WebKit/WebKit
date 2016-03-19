@@ -276,9 +276,20 @@ static RefPtr<CustomProtocolManager>& globalCustomProtocolManager()
     return customProtocolManager.get();
 }
 
+static RetainPtr<CFDataRef>& globalSourceApplicationAuditTokenData()
+{
+    static NeverDestroyed<RetainPtr<CFDataRef>> sourceApplicationAuditTokenData;
+    return sourceApplicationAuditTokenData.get();
+}
+
 void NetworkSession::setCustomProtocolManager(CustomProtocolManager* customProtocolManager)
 {
     globalCustomProtocolManager() = customProtocolManager;
+}
+    
+void NetworkSession::setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&& data)
+{
+    globalSourceApplicationAuditTokenData() = data;
 }
 
 Ref<NetworkSession> NetworkSession::create(Type type, WebCore::SessionID sessionID, CustomProtocolManager* customProtocolManager, std::unique_ptr<WebCore::NetworkStorageSession> networkStorageSession)
@@ -301,6 +312,11 @@ NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID, CustomPr
 
     NSURLSessionConfiguration *configuration = configurationForType(type);
 
+    if (auto& data = globalSourceApplicationAuditTokenData())
+        configuration._sourceApplicationAuditTokenData = (NSData *)data.get();
+    
+    configuration._sourceApplicationBundleIdentifier = SessionTracker::getIdentifierBase();
+    
     if (customProtocolManager)
         customProtocolManager->registerProtocolClass(configuration);
     

@@ -36,6 +36,7 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
 #include "WebSQLiteDatabaseTracker.h"
@@ -99,6 +100,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
+    RetainPtr<CFDataRef> sourceApplicationAuditData() const;
     void clearHSTSCache(WebCore::NetworkStorageSession&, std::chrono::system_clock::time_point modifiedSince);
 #endif
 
