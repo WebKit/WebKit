@@ -32,7 +32,7 @@ function main($paths) {
     } else if ($filter == 'latest') {
         $commits = $fetcher->fetch_latest($repository_id);
     } else if ($filter == 'last-reported') {
-        $commits = $fetcher->fetch_latest_reported($repository_id);
+        $commits = $fetcher->fetch_last_reported($repository_id);
     } else if (ctype_alnum($filter)) {
         $commits = $fetcher->fetch_revision($repository_id, $filter);
     } else {

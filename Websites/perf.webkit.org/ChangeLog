@@ -1,5 +1,14 @@
 2016-03-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r198234.
+
+        * public/api/commits.php:
+        (main): Typo: fetch_latest_reported -> fetch_last_reported.
+        * public/include/commit-log-fetcher.php:
+        (CommitLogFetcher::format_single_commit): commits should be an array.
+
+2016-03-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf Dashboard v3 confuses better and worse on A/B task page
         https://bugs.webkit.org/show_bug.cgi?id=155675
         <rdar://problem/25208723>

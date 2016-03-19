@@ -112,7 +112,7 @@ class CommitLogFetcher {
 
     private function format_single_commit($commit_row) {
         $committer = $this->db->select_first_row('committers', 'committer', array('id' => $commit_row['commit_committer']));
-        return $this->format_commit($commit_row, $committer);
+        return array($this->format_commit($commit_row, $committer));
     }
 
     private function format_commit($commit_row, $committer_row) {
