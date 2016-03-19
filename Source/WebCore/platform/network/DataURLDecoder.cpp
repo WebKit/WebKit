@@ -75,8 +75,10 @@ private:
     {
         // Keep alive until the timer has fired.
         ref();
+
+        auto scheduledPairs = m_decodeTask->scheduleContext.scheduledPairs;
         m_timer.startOneShot(0);
-        m_timer.schedule(m_decodeTask->scheduleContext.scheduledPairs);
+        m_timer.schedule(scheduledPairs);
     }
 
     void timerFired()
