@@ -43,12 +43,12 @@ PASS new (class extends Object { constructor() { function x() { super() } } })::
 PASS new (class extends Object { constructor() { function x() { super.method } } }):::SyntaxError: super can only be used in a method of a derived class.
 PASS function x() { super.method(); }:::SyntaxError: super can only be used in a method of a derived class.
 PASS function x() { super(); }:::SyntaxError: Cannot call super() outside of a class constructor.
-PASS eval("super.method()"):::SyntaxError: super is only valid inside functions.
-PASS eval("super()"):::SyntaxError: super is only valid inside functions.
-PASS (function () { eval("super.method()");})():::SyntaxError: super is only valid inside functions.
-PASS (function () { eval("super()");})():::SyntaxError: super is only valid inside functions.
-PASS new (class { constructor() { (function () { eval("super()");})(); } }):::SyntaxError: super is only valid inside functions.
-PASS (new (class { method() { (function () { eval("super.method()");})(); }})).method():::SyntaxError: super is only valid inside functions.
+PASS eval("super.method()"):::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
+PASS eval("super()"):::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
+PASS (function () { eval("super.method()");})():::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
+PASS (function () { eval("super()");})():::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
+PASS new (class { constructor() { (function () { eval("super()");})(); } }):::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
+PASS (new (class { method() { (function () { eval("super.method()");})(); }})).method():::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
 PASS successfullyParsed
 
 TEST COMPLETE

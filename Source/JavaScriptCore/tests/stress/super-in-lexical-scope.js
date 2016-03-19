@@ -21,18 +21,18 @@ function testSyntaxError(script, message) {
         throw new Error("Bad error: " + String(error));
 }
 
-testSyntaxError(`super()`, `SyntaxError: super is only valid inside functions.`);
-testSyntaxError(`super.hello()`, `SyntaxError: super is only valid inside functions.`);
+testSyntaxError(`super()`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.`);
+testSyntaxError(`super.hello()`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.`);
 testSyntaxError(`
 {
     super();
 }
-`, `SyntaxError: super is only valid inside functions.`);
+`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.`);
 testSyntaxError(`
 {
     super.hello();
 }
-`, `SyntaxError: super is only valid inside functions.`);
+`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.`);
 testSyntaxError(`
 function test()
 {

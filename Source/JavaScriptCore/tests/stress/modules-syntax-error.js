@@ -307,12 +307,12 @@ new.target;
 
 checkModuleSyntaxError(String.raw`
 super();
-`, `SyntaxError: super is only valid inside functions.:2`);
+`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.:2`);
 
 checkModuleSyntaxError(String.raw`
 super.test();
-`, `SyntaxError: super is only valid inside functions.:2`);
+`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.:2`);
 
 checkModuleSyntaxError(String.raw`
 super.test = 20;
-`, `SyntaxError: super is only valid inside functions.:2`);
+`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.:2`);

@@ -23,7 +23,7 @@ function shouldBe(actual, expected) {
         return eval('super');
     }
 
-    shouldThrow(() => test(), `SyntaxError: super is only valid inside functions.`);
+    shouldThrow(() => test(), "SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.");
 }());
 
 (function () {

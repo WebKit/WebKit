@@ -126,13 +126,13 @@ shouldThrow('new (class extends Object { constructor() { function x() { super() 
 shouldThrow('new (class extends Object { constructor() { function x() { super.method } } })', '"SyntaxError: super can only be used in a method of a derived class."');
 shouldThrow('function x() { super.method(); }', '"SyntaxError: super can only be used in a method of a derived class."');
 shouldThrow('function x() { super(); }', '"SyntaxError: Cannot call super() outside of a class constructor."');
-shouldThrow('eval("super.method()")', '"SyntaxError: super is only valid inside functions."');
-shouldThrow('eval("super()")', '"SyntaxError: super is only valid inside functions."');
+shouldThrow('eval("super.method()")', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
+shouldThrow('eval("super()")', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
 
-shouldThrow('(function () { eval("super.method()");})()', '"SyntaxError: super is only valid inside functions."');
-shouldThrow('(function () { eval("super()");})()', '"SyntaxError: super is only valid inside functions."');
+shouldThrow('(function () { eval("super.method()");})()', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
+shouldThrow('(function () { eval("super()");})()', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
 
-shouldThrow('new (class { constructor() { (function () { eval("super()");})(); } })', '"SyntaxError: super is only valid inside functions."');
-shouldThrow('(new (class { method() { (function () { eval("super.method()");})(); }})).method()', '"SyntaxError: super is only valid inside functions."');
+shouldThrow('new (class { constructor() { (function () { eval("super()");})(); } })', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
+shouldThrow('(new (class { method() { (function () { eval("super.method()");})(); }})).method()', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
 
 var successfullyParsed = true;

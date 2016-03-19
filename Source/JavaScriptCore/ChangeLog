@@ -1,3 +1,24 @@
+2016-03-19  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Update syntax error text 'super is only valid inside functions' to more suitable
+        https://bugs.webkit.org/show_bug.cgi?id=155491
+
+        Reviewed by Saam Barati.
+
+        Current message 'super is only valid inside of funcitons' is not correct 
+        after patch for https://bugs.webkit.org/show_bug.cgi?id=153864 because 
+        it is allow to use 'super' in eval. Current patch replace old message by
+        'Super is only valid inside functions or 'eval' inside a function' and 
+        fix tests that rely on this message.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * tests/stress/generator-with-super.js:
+        (shouldThrow):
+        * tests/stress/modules-syntax-error.js:
+        * tests/stress/super-in-lexical-scope.js:
+        * tests/stress/tagged-templates-syntax.js:
+
 2016-03-19  Mark Lam  <mark.lam@apple.com>
 
         ES6 spec requires that ErrorPrototype not be an Error object.

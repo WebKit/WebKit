@@ -1,3 +1,14 @@
+2016-03-19  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Update syntax error text 'super is only valid inside functions' to more suitable
+        https://bugs.webkit.org/show_bug.cgi?id=155491
+
+        Reviewed by Saam Barati.
+
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-syntax-super.js:
+        * sputnik/Conformance/07_Lexical_Conventions/7.5_Tokens/7.5.3_Future_Reserved_Words/S7.5.3_A1.27-expected.txt:
+
 2016-03-19  Mark Lam  <mark.lam@apple.com>
 
         ES6 spec requires that ErrorPrototype not be an Error object.

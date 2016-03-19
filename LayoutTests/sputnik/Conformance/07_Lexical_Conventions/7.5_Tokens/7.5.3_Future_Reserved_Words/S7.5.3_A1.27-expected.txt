@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: super is only valid inside functions.
+CONSOLE MESSAGE: line 76: SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
 S7.5.3_A1.27
 
 PASS Expected parsing failure

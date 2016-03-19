@@ -66,5 +66,5 @@ testSyntax("(class extends Hello { constructor() { super()`${tag}` } })");
 testSyntax("(class extends Hello { constructor() { super()`${tag} ${tag}` } })");
 testSyntax("(class extends Hello { constructor() { super()`${tag}${tag}` } })");
 
-testSyntaxError("super`Hello${tag}`", "SyntaxError: super is only valid inside functions.");
+testSyntaxError("super`Hello${tag}`", "SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.");
 testSyntaxError("(class { say() { super`Hello${tag}` } })", "SyntaxError: Cannot use super as tag for tagged templates.");
