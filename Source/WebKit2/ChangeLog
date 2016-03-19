@@ -1,3 +1,26 @@
+2016-03-19  Chris Dumez  <cdumez@apple.com>
+
+        Add a setting to let the client toggle support for network cache speculative validation
+        https://bugs.webkit.org/show_bug.cgi?id=155622
+        <rdar://problem/25233209>
+
+        Reviewed by Darin Adler.
+
+        Add SPI to toggle support for network cache speculative validation.
+        Enable network cache speculative validation by default for now, until
+        I have a chance to update the clients to use the new SPI.
+
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDiskCacheSpeculativeValidationEnabled):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration diskCacheSpeculativeValidationEnabled]):
+        (-[_WKProcessPoolConfiguration setDiskCacheSpeculativeValidationEnabled:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2016-03-19  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=155664

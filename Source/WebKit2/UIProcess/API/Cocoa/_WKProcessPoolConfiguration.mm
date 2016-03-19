@@ -82,6 +82,16 @@
     _processPoolConfiguration->setDiskCacheSizeOverride(size);
 }
 
+- (BOOL)diskCacheSpeculativeValidationEnabled
+{
+    return _processPoolConfiguration->diskCacheSpeculativeValidationEnabled();
+}
+
+- (void)setDiskCacheSpeculativeValidationEnabled:(BOOL)enabled
+{
+    _processPoolConfiguration->setDiskCacheSpeculativeValidationEnabled(enabled);
+}
+
 - (NSArray *)cachePartitionedURLSchemes
 {
     auto schemes = _processPoolConfiguration->cachePartitionedURLSchemes();

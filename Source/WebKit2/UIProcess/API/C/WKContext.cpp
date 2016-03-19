@@ -392,6 +392,11 @@ void WKContextSetCanHandleHTTPSServerTrustEvaluation(WKContextRef contextRef, bo
     toImpl(contextRef)->setCanHandleHTTPSServerTrustEvaluation(value);
 }
 
+void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef contextRef, bool value)
+{
+    toImpl(contextRef)->configuration().setDiskCacheSpeculativeValidationEnabled(value);
+}
+
 WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->supplement<WebCookieManagerProxy>());

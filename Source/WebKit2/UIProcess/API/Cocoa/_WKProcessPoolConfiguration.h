@@ -36,6 +36,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property (nonatomic) NSInteger diskCacheSizeOverride WK_AVAILABLE(10_11, 9_0);
 @property (nonatomic, copy) NSArray *cachePartitionedURLSchemes;
 @property (nonatomic, copy) WK_ARRAY(NSString *) *alwaysRevalidatedURLSchemes WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic) BOOL diskCacheSpeculativeValidationEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @end
 
