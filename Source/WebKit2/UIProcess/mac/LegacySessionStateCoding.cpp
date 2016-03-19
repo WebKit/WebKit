@@ -59,6 +59,13 @@ static const CFStringRef sessionHistoryEntryShouldOpenExternalURLsPolicyKey = CF
 // Session history entry data.
 const uint32_t sessionHistoryEntryDataVersion = 2;
 
+// Maximum size for subframe session data.
+#if PLATFORM(IOS)
+static const uint32_t maximumSessionStateDataSize = 2 * 1024 * 1024;
+#else
+static const uint32_t maximumSessionStateDataSize = std::numeric_limits<uint32_t>::max();
+#endif
+
 template<typename T> void isValidEnum(T);
 
 class HistoryEntryDataEncoder {
@@ -421,22 +428,36 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
         return createDictionary({ { sessionHistoryVersionKey, sessionHistoryVersionNumber.get() } });
 
     auto entries = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, backForwardListState.items.size(), &kCFTypeArrayCallBacks));
+    size_t totalDataSize = 0;
 
     for (const auto& item : backForwardListState.items) {
         auto url = item.pageState.mainFrameState.urlString.createCFString();
         auto title = item.pageState.title.createCFString();
         auto originalURL = item.pageState.mainFrameState.originalURLString.createCFString();
-        auto data = encodeSessionHistoryEntryData(item.pageState.mainFrameState);
+        auto data = totalDataSize <= maximumSessionStateDataSize ? encodeSessionHistoryEntryData(item.pageState.mainFrameState) : nullptr;
         auto shouldOpenExternalURLsPolicyValue = static_cast<uint64_t>(item.pageState.shouldOpenExternalURLsPolicy);
         auto shouldOpenExternalURLsPolicy = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &shouldOpenExternalURLsPolicyValue));
 
-        auto entryDictionary = createDictionary({
-            { sessionHistoryEntryURLKey, url.get() },
-            { sessionHistoryEntryTitleKey, title.get() },
-            { sessionHistoryEntryOriginalURLKey, originalURL.get() },
-            { sessionHistoryEntryDataKey, data.get() },
-            { sessionHistoryEntryShouldOpenExternalURLsPolicyKey, shouldOpenExternalURLsPolicy.get() },
-        });
+        RetainPtr<CFDictionaryRef> entryDictionary;
+
+        if (data) {
+            totalDataSize += CFDataGetLength(data.get());
+
+            entryDictionary = createDictionary({
+                { sessionHistoryEntryURLKey, url.get() },
+                { sessionHistoryEntryTitleKey, title.get() },
+                { sessionHistoryEntryOriginalURLKey, originalURL.get() },
+                { sessionHistoryEntryDataKey, data.get() },
+                { sessionHistoryEntryShouldOpenExternalURLsPolicyKey, shouldOpenExternalURLsPolicy.get() },
+            });
+        } else {
+            entryDictionary = createDictionary({
+                { sessionHistoryEntryURLKey, url.get() },
+                { sessionHistoryEntryTitleKey, title.get() },
+                { sessionHistoryEntryOriginalURLKey, originalURL.get() },
+                { sessionHistoryEntryShouldOpenExternalURLsPolicyKey, shouldOpenExternalURLsPolicy.get() },
+            });
+        }
 
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
