@@ -88,6 +88,7 @@ class WebProcessPool;
 
 - (void)_didCommitLoadForMainFrame;
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
+- (void)_layerTreeCommitComplete;
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;
 

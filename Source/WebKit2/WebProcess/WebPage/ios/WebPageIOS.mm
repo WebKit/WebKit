@@ -290,6 +290,8 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
 
     m_userHasChangedPageScaleFactor = !historyItem.scaleIsInitial();
 
+    FrameView& frameView = *m_page->mainFrame().view();
+
     FloatSize currentMinimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.minimumLayoutSize();
     if (historyItem.minimumLayoutSizeInScrollViewCoordinates() == currentMinimumLayoutSizeInScrollViewCoordinates) {
         float boundedScale = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), historyItem.pageScaleFactor()));
@@ -297,10 +299,9 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
 
         m_drawingArea->setExposedContentRect(historyItem.exposedContentRect());
 
-        send(Messages::WebPageProxy::RestorePageState(historyItem.exposedContentRect(), boundedScale));
+        send(Messages::WebPageProxy::RestorePageState(historyItem.exposedContentRect(), frameView.scrollOrigin(), boundedScale));
     } else {
         IntSize oldContentSize = historyItem.contentSize();
-        FrameView& frameView = *m_page->mainFrame().view();
         IntSize newContentSize = frameView.contentsSize();
         double visibleHorizontalFraction = static_cast<float>(historyItem.unobscuredContentRect().width()) / oldContentSize.width();
 

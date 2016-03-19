@@ -526,6 +526,7 @@ public:
     void setDataDetectionResult(const DataDetectionResult&);
 #endif
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
+    void layerTreeCommitComplete();
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
@@ -1406,7 +1407,7 @@ private:
 
     void dynamicViewportUpdateChangedTarget(double newTargetScale, const WebCore::FloatPoint& newScrollPosition, uint64_t dynamicViewportSizeUpdateID);
     void couldNotRestorePageState();
-    void restorePageState(const WebCore::FloatRect&, double scale);
+    void restorePageState(const WebCore::FloatRect& exposedContentRect, const WebCore::IntPoint& scrollOrigin, double scale);
     void restorePageCenterAndScale(const WebCore::FloatPoint&, double scale);
 
     void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& geometries, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius);

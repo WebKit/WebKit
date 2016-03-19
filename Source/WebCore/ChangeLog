@@ -1,3 +1,24 @@
+2016-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Sideways-scrollable RTL document has wrong initial and reload offset in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=155660
+        rdar://problem/22212662
+
+        Reviewed by Tim Horton.
+        
+        There were two problems with the scroll position of RTL documents on initial and reload
+        in WKWebView.
+
+        First, in the delegatesScrolling() code path, ScrollView::updateScrollbars() needs to
+        tell someone that the scroll origin changed, to trigger a scroll to the page origin.
+
+        Secondly, WKWebView had scrollPosition/scrollOffset confusion in various places.
+
+        Test: fast/scrolling/rtl-initial-scroll-position.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
 2016-03-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r198443.

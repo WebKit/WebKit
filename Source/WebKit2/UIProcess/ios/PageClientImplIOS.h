@@ -118,9 +118,11 @@ private:
     void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius) override;
 
     void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
+    void layerTreeCommitComplete() override;
+
     void dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition, uint64_t transactionID) override;
     void couldNotRestorePageState() override;
-    void restorePageState(const WebCore::FloatRect&, double) override;
+    void restorePageState(const WebCore::FloatRect&, const WebCore::IntPoint&, double) override;
     void restorePageCenterAndScale(const WebCore::FloatPoint&, double) override;
 
     void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, API::Object* userData) override;

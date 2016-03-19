@@ -520,6 +520,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         [self _updateChangedSelection];
 }
 
+- (void)_layerTreeCommitComplete
+{
+    [_webView _layerTreeCommitComplete];
+}
+
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView
 {
     for (UIView* subview in [_rootContentView subviews])

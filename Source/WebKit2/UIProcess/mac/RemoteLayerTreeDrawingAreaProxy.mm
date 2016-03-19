@@ -229,6 +229,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
         asLayer(m_debugIndicatorLayerTreeHost->rootLayer()).name = @"Indicator host root";
     }
 
+    m_webPageProxy.layerTreeCommitComplete();
+
 #if PLATFORM(IOS)
     [m_displayLinkHandler schedule];
 #else

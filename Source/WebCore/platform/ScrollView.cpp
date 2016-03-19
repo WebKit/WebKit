@@ -582,8 +582,16 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollView::updateScrollbars " << desiredPosition);
 
-    if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget() || delegatesScrolling())
+    if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget())
         return;
+    
+    if (delegatesScrolling()) {
+        if (scrollOriginChanged()) {
+            ScrollableArea::scrollToOffsetWithoutAnimation(scrollOffsetFromPosition(desiredPosition));
+            resetScrollOriginChanged();
+        }
+        return;
+    }
 
     bool hasOverlayScrollbars = (!m_horizontalScrollbar || m_horizontalScrollbar->isOverlayScrollbar()) && (!m_verticalScrollbar || m_verticalScrollbar->isOverlayScrollbar());
 

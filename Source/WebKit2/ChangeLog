@@ -1,3 +1,56 @@
+2016-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Sideways-scrollable RTL document has wrong initial and reload offset in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=155660
+
+        Reviewed by Tim Horton.
+
+        There were two problems with the scroll position of RTL documents on initial and reload
+        in WKWebView.
+
+        First, in the delegatesScrolling() code path, ScrollView::updateScrollbars() needs to
+        tell someone that the scroll origin changed, to trigger a scroll to the page origin.
+
+        Secondly, WKWebView had scrollPosition/scrollOffset confusion in various places. In
+        the restorePageState() code path, WebCore passes an exposedRect; this patch makes
+        it explicit that it's an exposedContentRect, and passes scrollOrigin so that it can
+        be mapped into scrollOffset-relative coordinates that the UIScrollView wants.
+
+        When reloading an RTL page, there was an additional issue; restorePageState()
+        restored the exposedRect, but then we'd see the origin change as a programmatic scroll
+        to 0,0, clobbering the exposedRect. Fix by using a "_commitDidRestoreExposedRect" flag
+        on the WKWebView that is used to ignore the programmatic scroll in that case.
+
+        Ideally these changes would fix fast/scrolling/scroll-position-on-reload-rtl.html, but the
+        test still fails because of timing differences between OS X and iOS.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _layerTreeCommitComplete]):
+        (-[WKWebView _restorePageStateToExposedRect:scrollOrigin:scale:]):
+        (-[WKWebView _scrollToContentScrollPosition:scrollOrigin:]):
+        (-[WKWebView _restorePageStateToExposedRect:scale:]): Deleted.
+        (-[WKWebView _scrollToContentOffset:scrollOrigin:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestScroll):
+        (WebKit::PageClientImpl::layerTreeCommitComplete):
+        (WebKit::PageClientImpl::restorePageState):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _layerTreeCommitComplete]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::layerTreeCommitComplete):
+        (WebKit::WebPageProxy::restorePageState):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::restorePageState):
+
 2016-03-18  Brady Eidson  <beidson@apple.com>
 
         NSURLSession: Set download resume data when a download fails due to an error.

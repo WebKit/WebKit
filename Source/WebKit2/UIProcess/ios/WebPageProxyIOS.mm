@@ -372,6 +372,11 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
     }
 }
 
+void WebPageProxy::layerTreeCommitComplete()
+{
+    m_pageClient.layerTreeCommitComplete();
+}
+
 void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::TextGranularity granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithAssistedNode, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)> callbackFunction)
 {
     if (!isValid()) {
@@ -814,9 +819,9 @@ void WebPageProxy::couldNotRestorePageState()
     m_pageClient.couldNotRestorePageState();
 }
 
-void WebPageProxy::restorePageState(const WebCore::FloatRect& exposedRect, double scale)
+void WebPageProxy::restorePageState(const WebCore::FloatRect& exposedContentRect, const WebCore::IntPoint& scrollOrigin, double scale)
 {
-    m_pageClient.restorePageState(exposedRect, scale);
+    m_pageClient.restorePageState(exposedContentRect, scrollOrigin, scale);
 }
 
 void WebPageProxy::restorePageCenterAndScale(const WebCore::FloatPoint& center, double scale)

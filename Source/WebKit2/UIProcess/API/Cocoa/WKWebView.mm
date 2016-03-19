@@ -112,6 +112,7 @@
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/QuartzCoreSPI.h>
+#import <WebCore/ScrollableArea.h>
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
 #if __has_include(<AccessibilitySupport.h>)
@@ -240,6 +241,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     Optional<CGRect> _frozenUnobscuredContentRect;
 
     BOOL _needsToRestoreExposedRect;
+    BOOL _commitDidRestoreExposedRect;
     WebCore::FloatRect _exposedRectToRestore;
     BOOL _needsToRestoreUnobscuredCenter;
     WebCore::FloatPoint _unobscuredCenterToRestore;
@@ -1233,6 +1235,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
             exposedPosition.scale(_scaleToRestore, _scaleToRestore);
 
             changeContentOffsetBoundedInValidRange(_scrollView.get(), exposedPosition);
+            _commitDidRestoreExposedRect = YES;
             if (_gestureController)
                 _gestureController->didRestoreScrollPosition();
         }
@@ -1259,6 +1262,11 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     
     if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
         scrollPerfData->didCommitLayerTree([self visibleRectInViewCoordinates]);
+}
+
+- (void)_layerTreeCommitComplete
+{
+    _commitDidRestoreExposedRect = NO;
 }
 
 - (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition nextValidLayerTreeTransactionID:(uint64_t)nextValidLayerTreeTransactionID
@@ -1288,7 +1296,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         _gestureController->didRestoreScrollPosition();
 }
 
-- (void)_restorePageStateToExposedRect:(WebCore::FloatRect)exposedRect scale:(double)scale
+- (void)_restorePageStateToExposedRect:(WebCore::FloatRect)exposedRect scrollOrigin:(WebCore::IntPoint)scrollOrigin scale:(double)scale
 {
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
         return;
@@ -1299,6 +1307,9 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     _needsToRestoreUnobscuredCenter = NO;
     _needsToRestoreExposedRect = YES;
     _firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
+    
+    // Move the exposed rect into scrollView coordinates.
+    exposedRect.move(toFloatSize(scrollOrigin));
     _exposedRectToRestore = exposedRect;
     _scaleToRestore = scale;
 }
@@ -1408,14 +1419,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return contentOffset.constrainedBetween(WebCore::FloatPoint(), WebCore::FloatPoint(maximumContentOffset));
 }
 
-- (void)_scrollToContentOffset:(WebCore::FloatPoint)contentOffsetInPageCoordinates scrollOrigin:(WebCore::IntPoint)scrollOrigin
+- (void)_scrollToContentScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::IntPoint)scrollOrigin
 {
-    if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
+    if (_commitDidRestoreExposedRect || _dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
         return;
 
-    WebCore::FloatPoint contentOffsetRespectingOrigin = scrollOrigin + toFloatSize(contentOffsetInPageCoordinates);
+    WebCore::FloatPoint contentOffset = WebCore::ScrollableArea::scrollOffsetFromPosition(scrollPosition, toFloatSize(scrollOrigin));
 
-    WebCore::FloatPoint scaledOffset = contentOffsetRespectingOrigin;
+    WebCore::FloatPoint scaledOffset = contentOffset;
     CGFloat zoomScale = contentZoomScale(self);
     scaledOffset.scale(zoomScale, zoomScale);
 

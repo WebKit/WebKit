@@ -75,15 +75,16 @@ struct PrintInfo;
 
 - (void)_didCommitLoadForMainFrame;
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
+- (void)_layerTreeCommitComplete;
 
 - (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition nextValidLayerTreeTransactionID:(uint64_t)nextValidLayerTreeTransactionID;
 - (void)_couldNotRestorePageState;
-- (void)_restorePageStateToExposedRect:(WebCore::FloatRect)exposedRect scale:(double)scale;
-- (void)_restorePageStateToUnobscuredCenter:(WebCore::FloatPoint)center scale:(double)scale;
+- (void)_restorePageStateToExposedRect:(WebCore::FloatRect)exposedRect scrollOrigin:(WebCore::IntPoint)scrollOrigin scale:(double)scale;
+- (void)_restorePageStateToUnobscuredCenter:(WebCore::FloatPoint)center scale:(double)scale; // FIXME: needs scroll origin?
 
 - (PassRefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot;
 
-- (void)_scrollToContentOffset:(WebCore::FloatPoint)contentOffset scrollOrigin:(WebCore::IntPoint)scrollOrigin;
+- (void)_scrollToContentScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::IntPoint)scrollOrigin;
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance;
 - (void)_scrollByContentOffset:(WebCore::FloatPoint)offset;
 - (void)_zoomToFocusRect:(WebCore::FloatRect)focusedElementRect selectionRect:(WebCore::FloatRect)selectionRectInDocumentCoordinates fontSize:(float)fontSize minimumScale:(double)minimumScale maximumScale:(double)maximumScale allowScaling:(BOOL)allowScaling forceScroll:(BOOL)forceScroll;
