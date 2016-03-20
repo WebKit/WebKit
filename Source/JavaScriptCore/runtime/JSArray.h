@@ -239,7 +239,9 @@ inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, un
     unsigned vectorLength = std::max(BASE_VECTOR_LEN, initialLength);
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
         return 0;
-        
+
+    unsigned outOfLineStorage = structure->outOfLineCapacity();
+
     Butterfly* butterfly;
     if (LIKELY(!hasAnyArrayStorage(structure->indexingType()))) {
         ASSERT(
@@ -249,9 +251,9 @@ inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, un
             || hasContiguous(structure->indexingType()));
 
         void* temp;
-        if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)), &temp))
+        if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)), &temp))
             return 0;
-        butterfly = Butterfly::fromBase(temp, 0, 0);
+        butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(initialLength);
         if (hasDouble(structure->indexingType())) {
@@ -260,9 +262,9 @@ inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, un
         }
     } else {
         void* temp;
-        if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(vectorLength)), &temp))
+        if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, outOfLineStorage, true, ArrayStorage::sizeFor(vectorLength)), &temp))
             return 0;
-        butterfly = Butterfly::fromBase(temp, 0, 0);
+        butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
         *butterfly->indexingHeader() = indexingHeaderForArray(initialLength, vectorLength);
         ArrayStorage* storage = butterfly->arrayStorage();
         storage->m_indexBias = 0;

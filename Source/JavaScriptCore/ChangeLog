@@ -1,3 +1,16 @@
+2016-03-20  Michael Saboff  <msaboff@apple.com>
+
+        Crash in stress/regexp-matches-array-slow-put.js due to stomping on memory when having bad time
+        https://bugs.webkit.org/show_bug.cgi?id=155679
+
+        Reviewed by Saam Barati.
+
+        Allocate out of line storage based on what the structure says it needs
+        in JSArray::tryCreateUninitialized.
+
+        * runtime/JSArray.h:
+        (JSC::JSArray::tryCreateUninitialized):
+
 2016-03-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Crash on DFG::WorkList thread in JSC::Heap::isCollecting for destroyed Web Worker
