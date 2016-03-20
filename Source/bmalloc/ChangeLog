@@ -1,3 +1,11 @@
+2016-03-20  Dan Bernstein  <mitz@apple.com>
+
+        Update build settings
+
+        Rubber-stamped by Andy Estes.
+
+        * Configurations/DebugRelease.xcconfig:
+
 2016-03-14  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling out r197955.

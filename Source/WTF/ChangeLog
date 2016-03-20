@@ -1,3 +1,11 @@
+2016-03-20  Dan Bernstein  <mitz@apple.com>
+
+        Update build settings
+
+        Rubber-stamped by Andy Estes.
+
+        * Configurations/DebugRelease.xcconfig:
+
 2016-03-17  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make CSE's ImpureData faster when dealing with large blocks
