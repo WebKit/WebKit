@@ -2155,8 +2155,10 @@ FrameLoadType FrameLoader::loadType() const
     
 CachePolicy FrameLoader::subresourceCachePolicy() const
 {
-    if (m_frame.settings().resourceCachingDisabled())
-        return CachePolicyReload;
+    if (Page* page = m_frame.page()) {
+        if (page->isResourceCachingDisabled())
+            return CachePolicyReload;
+    }
 
     if (m_isComplete)
         return CachePolicyVerify;
@@ -2564,7 +2566,8 @@ void FrameLoader::addExtraFieldsToMainResourceRequest(ResourceRequest& request)
 
 void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadType loadType, bool mainResource)
 {
-    bool cachingDisabled = frame().settings().resourceCachingDisabled();
+    Page* page = frame().page();
+    bool cachingDisabled = page && page->isResourceCachingDisabled();
 
     if (cachingDisabled)
         request.setCachePolicy(ReloadIgnoringCacheData);

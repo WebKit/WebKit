@@ -1506,13 +1506,3 @@ bool WKPreferencesGetCustomElementsEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->shadowDOMEnabled();
 }
-
-void WKPreferencesSetResourceCachingDisabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setResourceCachingDisabled(flag);
-}
-
-bool WKPreferencesGetResourceCachingDisabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->resourceCachingDisabled();
-}

@@ -930,12 +930,14 @@ CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type) const
     if (!frame)
         return CachePolicyVerify;
 
-    if (frame->settings().resourceCachingDisabled())
-        return CachePolicyReload;
-
     if (type != CachedResource::MainResource)
         return frame->loader().subresourceCachePolicy();
-    
+
+    if (Page* page = frame->page()) {
+        if (page->isResourceCachingDisabled())
+            return CachePolicyReload;
+    }
+
     switch (frame->loader().loadType()) {
     case FrameLoadType::ReloadFromOrigin:
     case FrameLoadType::Reload:

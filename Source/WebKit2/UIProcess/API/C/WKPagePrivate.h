@@ -142,6 +142,9 @@ WK_EXPORT void WKPageLoadURLWithShouldOpenExternalURLsPolicy(WKPageRef page, WKU
 typedef void (*WKPagePostPresentationUpdateFunction)(WKErrorRef, void*);
 WK_EXPORT void WKPageCallAfterNextPresentationUpdate(WKPageRef page, void* context, WKPagePostPresentationUpdateFunction function);
 
+WK_EXPORT bool WKPageGetResourceCachingDisabled(WKPageRef page);
+WK_EXPORT void WKPageSetResourceCachingDisabled(WKPageRef page, bool disabled);
+
 #ifdef __cplusplus
 }
 #endif

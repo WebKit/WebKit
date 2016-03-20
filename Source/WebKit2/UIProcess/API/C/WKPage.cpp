@@ -2724,6 +2724,16 @@ void WKPageCallAfterNextPresentationUpdate(WKPageRef pageRef, void* context, WKP
     });
 }
 
+bool WKPageGetResourceCachingDisabled(WKPageRef page)
+{
+    return toImpl(page)->isResourceCachingDisabled();
+}
+
+void WKPageSetResourceCachingDisabled(WKPageRef page, bool disabled)
+{
+    toImpl(page)->setResourceCachingDisabled(disabled);
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 // -- DEPRECATED --

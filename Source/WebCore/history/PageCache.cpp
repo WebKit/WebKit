@@ -193,7 +193,7 @@ static bool canCachePage(Page& page)
     DiagnosticLoggingClient& diagnosticLoggingClient = mainFrame.diagnosticLoggingClient();
     bool isCacheable = canCacheFrame(mainFrame, diagnosticLoggingClient, indentLevel + 1);
     
-    if (!page.settings().usesPageCache() || page.settings().resourceCachingDisabled()) {
+    if (!page.settings().usesPageCache() || page.isResourceCachingDisabled()) {
         PCLOG("   -Page settings says b/f cache disabled");
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::isDisabledKey());
         isCacheable = false;
@@ -423,7 +423,7 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem& item, Page* page)
     m_items.remove(&item);
     std::unique_ptr<CachedPage> cachedPage = WTFMove(item.m_cachedPage);
 
-    if (cachedPage->hasExpired() || (page && page->settings().resourceCachingDisabled())) {
+    if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabled())) {
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
         logPageCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
         return nullptr;
@@ -441,7 +441,7 @@ CachedPage* PageCache::get(HistoryItem& item, Page* page)
         return nullptr;
     }
 
-    if (cachedPage->hasExpired() || (page && page->settings().resourceCachingDisabled())) {
+    if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabled())) {
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
         logPageCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
         remove(item);

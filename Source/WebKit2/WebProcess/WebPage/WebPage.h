@@ -1194,6 +1194,8 @@ private:
     void didEndRequestInstallMissingMediaPlugins(uint32_t result);
 #endif
 
+    void setResourceCachingDisabled(bool);
+
     uint64_t m_pageID;
 
     std::unique_ptr<WebCore::Page> m_page;

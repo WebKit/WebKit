@@ -227,7 +227,6 @@
     macro(MockCaptureDevicesEnabled, mockCaptureDevicesEnabled, Bool, bool, false) \
     macro(ShadowDOMEnabled, shadowDOMEnabled, Bool, bool, true) \
     macro(CustomElementsEnabled, customElementsEnabled, Bool, bool, false) \
-    macro(ResourceCachingDisabled, resourceCachingDisabled, Bool, bool, false) \
     FOR_EACH_ADDITIONAL_WEBKIT_BOOL_PREFERENCE(macro) \
     \
 

@@ -419,10 +419,6 @@ WK_EXPORT bool WKPreferencesGetShadowDOMEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetCustomElementsEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetCustomElementsEnabled(WKPreferencesRef);
 
-// Defaults to false
-WK_EXPORT void WKPreferencesSetResourceCachingDisabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetResourceCachingDisabled(WKPreferencesRef);
-
 #ifdef __cplusplus
 }
 #endif

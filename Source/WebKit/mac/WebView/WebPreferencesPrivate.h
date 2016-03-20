@@ -484,6 +484,5 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
 @property (nonatomic) BOOL mediaDataLoadsAutomatically;
 @property (nonatomic) BOOL attachmentElementEnabled;
-@property (nonatomic, getter=isResourceCachingDisabled) BOOL resourceCachingDisabled;
 
 @end

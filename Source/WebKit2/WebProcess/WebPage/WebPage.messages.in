@@ -427,4 +427,6 @@ messages -> WebPage LegacyReceiver {
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     DidEndRequestInstallMissingMediaPlugins(uint32_t result)
 #endif
+
+    SetResourceCachingDisabled(bool disabled)
 }

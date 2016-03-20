@@ -1,3 +1,28 @@
+2016-03-20  Darin Adler  <darin@apple.com>
+
+        Disable Caches in Safari's Develop menu does not disable caches.
+        https://bugs.webkit.org/show_bug.cgi?id=64483
+
+        Reviewed by Antti Koivisto.
+
+        Moved feature from Settings to Page.
+
+        * history/PageCache.cpp:
+        (WebCore::canCachePage): Use function on Page instead of Settings.
+        (WebCore::PageCache::take): Ditto.
+        (WebCore::PageCache::get): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::subresourceCachePolicy): Ditto.
+        (WebCore::FrameLoader::addExtraFieldsToRequest): Ditto.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::cachePolicy): Ditto.
+
+        * page/Page.h:
+        (WebCore::Page::isResourceCachingDisabled): Added.
+        (WebCore::Page::setResourceCachingDisabled): Added.
+
+        * page/Settings.in: Removed resourceCachingDisabled.
+
 2016-03-20  Dan Bernstein  <mitz@apple.com>
 
         Update build settings

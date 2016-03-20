@@ -2700,16 +2700,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitCustomElementsEnabledPreferenceKey];
 }
 
-- (BOOL)isResourceCachingDisabled
-{
-    return [self _boolValueForKey:WebKitResourceCachingDisabledPreferenceKey];
-}
-
-- (void)setResourceCachingDisabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitResourceCachingDisabledPreferenceKey];
-}
-
 @end
 
 @implementation WebPreferences (WebInternal)
