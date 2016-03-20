@@ -1,3 +1,19 @@
+2016-03-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Crash on DFG::WorkList thread in JSC::Heap::isCollecting for destroyed Web Worker
+        https://bugs.webkit.org/show_bug.cgi?id=155678
+        <rdar://problem/25251439>
+
+        Reviewed by Filip Pizlo.
+
+        This fixes a crash that we saw with GuardMalloc. If the Plan was
+        Cancelled it may not be safe to access the VM. If the Plan was
+        cancelled we are just going to bail anyways, so keep the ASSERT but
+        short-circuit if the plan was Cancelled.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::runThread):
+
 2016-03-20  Dan Bernstein  <mitz@apple.com>
 
         Update build settings
