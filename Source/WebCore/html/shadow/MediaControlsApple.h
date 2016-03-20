@@ -61,7 +61,7 @@ private:
 
 class MediaControlsApple final : public MediaControls {
 public:
-    static PassRefPtr<MediaControlsApple> createControls(Document&);
+    static RefPtr<MediaControlsApple> tryCreateControls(Document&);
 
     // MediaControls implementation.
     void setMediaController(MediaControllerInterface*) override;
@@ -95,7 +95,7 @@ private:
     MediaControlsApple(Document&);
 
     void defaultEventHandler(Event*) override;
-    PassRefPtr<MediaControlsAppleEventListener> eventListener();
+    MediaControlsAppleEventListener& eventListener();
 
     void showClosedCaptionTrackList();
     void hideClosedCaptionTrackList();

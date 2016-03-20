@@ -36,7 +36,7 @@ class ImageControlsButtonElementMac final : public HTMLDivElement {
 public:
     virtual ~ImageControlsButtonElementMac();
 
-    static PassRefPtr<ImageControlsButtonElementMac> maybeCreate(Document&);
+    static RefPtr<ImageControlsButtonElementMac> tryCreate(Document&);
 
 private:
     ImageControlsButtonElementMac(Document&);

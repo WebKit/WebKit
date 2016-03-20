@@ -89,12 +89,12 @@ ImageControlsButtonElementMac::~ImageControlsButtonElementMac()
 {
 }
 
-PassRefPtr<ImageControlsButtonElementMac> ImageControlsButtonElementMac::maybeCreate(Document& document)
+RefPtr<ImageControlsButtonElementMac> ImageControlsButtonElementMac::tryCreate(Document& document)
 {
     if (!document.page())
         return nullptr;
 
-    RefPtr<ImageControlsButtonElementMac> button = adoptRef(new ImageControlsButtonElementMac(document));
+    auto button = adoptRef(*new ImageControlsButtonElementMac(document));
     button->setAttribute(HTMLNames::classAttr, "x-webkit-image-controls-button");
 
     IntSize positionOffset = document.page()->theme().imageControlsButtonPositionOffset();
@@ -103,7 +103,7 @@ PassRefPtr<ImageControlsButtonElementMac> ImageControlsButtonElementMac::maybeCr
     // FIXME: Why is right: 0px off the right edge of the parent?
     button->setInlineStyleProperty(CSSPropertyRight, positionOffset.width(), CSSPrimitiveValue::CSS_PX);
 
-    return button.release();
+    return WTFMove(button);
 }
 
 void ImageControlsButtonElementMac::defaultEventHandler(Event* event)

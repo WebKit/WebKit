@@ -144,7 +144,7 @@ private:
 
 #if ENABLE(SERVICE_CONTROLS)
     void updateImageControls();
-    void createImageControls();
+    void tryCreateImageControls();
     void destroyImageControls();
     bool hasImageControls() const;
     bool childShouldCreateRenderer(const Node&) const override;

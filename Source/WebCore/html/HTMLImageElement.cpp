@@ -592,15 +592,15 @@ void HTMLImageElement::updateImageControls()
     if (!m_experimentalImageMenuEnabled && hasControls)
         destroyImageControls();
     else if (m_experimentalImageMenuEnabled && !hasControls)
-        createImageControls();
+        tryCreateImageControls();
 }
 
-void HTMLImageElement::createImageControls()
+void HTMLImageElement::tryCreateImageControls()
 {
     ASSERT(m_experimentalImageMenuEnabled);
     ASSERT(!hasImageControls());
 
-    RefPtr<ImageControlsRootElement> imageControls = ImageControlsRootElement::maybeCreate(document());
+    auto imageControls = ImageControlsRootElement::tryCreate(document());
     if (!imageControls)
         return;
 

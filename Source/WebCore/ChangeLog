@@ -1,3 +1,36 @@
+2016-03-19  Joonghun Park  <jh718.park@samsung.com>
+
+        Purge PassRefPtr from WebCore/html/shadow
+        https://bugs.webkit.org/show_bug.cgi?id=155681
+
+        Reviewed by Darin Adler.
+
+        No new tests, no new behaviours.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::updateImageControls):
+        (WebCore::HTMLImageElement::tryCreateImageControls):
+        (WebCore::HTMLImageElement::createImageControls): Deleted.
+        * html/HTMLImageElement.h:
+        * html/shadow/ImageControlsRootElement.h:
+        * html/shadow/MediaControls.h:
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControls::tryCreate):
+        (WebCore::MediaControlsApple::tryCreateControls):
+        (WebCore::MediaControlsApple::showClosedCaptionTrackList):
+        (WebCore::MediaControlsApple::hideClosedCaptionTrackList):
+        (WebCore::MediaControlsApple::eventListener):
+        (WebCore::MediaControls::create): Deleted.
+        (WebCore::MediaControlsApple::createControls): Deleted.
+        * html/shadow/MediaControlsApple.h:
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::ImageControlsButtonElementMac::tryCreate):
+        (WebCore::ImageControlsButtonElementMac::maybeCreate): Deleted.
+        * html/shadow/mac/ImageControlsButtonElementMac.h:
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::ImageControlsRootElement::tryCreate):
+        (WebCore::ImageControlsRootElement::maybeCreate): Deleted.
+
 2016-03-19  Antti Koivisto  <antti@apple.com>
 
         Data URL DecodeTask may get deleted outside main thread
