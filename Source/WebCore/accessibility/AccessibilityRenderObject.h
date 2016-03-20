@@ -235,6 +235,7 @@ private:
     bool isTabItemSelected() const;
     LayoutRect checkboxOrRadioRect() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
+    void addRadioButtonGroupChildren(AccessibilityObject*, AccessibilityChildrenVector&) const;
     AccessibilityObject* internalLinkElement() const;
     AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;

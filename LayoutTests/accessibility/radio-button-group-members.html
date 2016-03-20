@@ -35,6 +35,15 @@
     </form>
     <br><br>
 
+    <!-- Test radiogroup parentage -->
+    <div class="radiogroup" role="radiogroup" id="radiogroup">
+    <div>
+       <div role="radio" id="ariaradio1" aria-checked="true">Radio 1</div>
+       <div role="radio" id="ariaradio2" aria-checked="false">Radio 2</div>
+       <div role="radio" aria-checked="false">Radio 3</div>
+    </div>
+    </div>
+
     </div>
 
     <p id="description"></p>
@@ -69,6 +78,13 @@
             var test4 = accessibilityController.accessibleElementById("test4_Yes");
             shouldBeTrue("test4.linkedUIElementAtIndex(0).isEqual(test4)");
             shouldBeTrue("!test4.linkedUIElementAtIndex(1) || !test4.linkedUIElementAtIndex(1).isValid");
+            debug("\n");
+
+            debug("Radio buttons that just have aria roles should work.");
+            var ariaRadio1 = accessibilityController.accessibleElementById("ariaradio1");
+            var ariaRadio2 = accessibilityController.accessibleElementById("ariaradio2");
+            shouldBeTrue("ariaRadio1.linkedUIElementAtIndex(0).isEqual(ariaRadio1)");
+            shouldBeTrue("ariaRadio1.linkedUIElementAtIndex(1).isEqual(ariaRadio2)");
   
             document.getElementById("content").style.visibility = "hidden";
         }

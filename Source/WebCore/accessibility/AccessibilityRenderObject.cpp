@@ -949,28 +949,43 @@ ESpeak AccessibilityRenderObject::speakProperty() const
     return m_renderer->style().speak();
 }
     
+void AccessibilityRenderObject::addRadioButtonGroupChildren(AccessibilityObject* parent, AccessibilityChildrenVector& linkedUIElements) const
+{
+    for (const auto& child : parent->children()) {
+        if (child->roleValue() == RadioButtonRole)
+            linkedUIElements.append(child);
+        else
+            addRadioButtonGroupChildren(child.get(), linkedUIElements);
+    }
+}
+    
 void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const
 {
-    if (!m_renderer || roleValue() != RadioButtonRole)
+    if (roleValue() != RadioButtonRole)
         return;
     
-    Node* node = m_renderer->node();
-    if (!is<HTMLInputElement>(node))
-        return;
-    
-    HTMLInputElement& input = downcast<HTMLInputElement>(*node);
-    // if there's a form, then this is easy
-    if (input.form()) {
-        for (auto& associateElement : input.form()->namedElements(input.name())) {
-            if (AccessibilityObject* object = axObjectCache()->getOrCreate(&associateElement.get()))
-                linkedUIElements.append(object);        
-        } 
-    } else {
-        for (auto& associateElement : descendantsOfType<HTMLInputElement>(node->document())) {
-            if (associateElement.isRadioButton() && associateElement.name() == input.name()) {
-                if (AccessibilityObject* object = axObjectCache()->getOrCreate(&associateElement))
+    Node* node = this->node();
+    if (is<HTMLInputElement>(node)) {
+        HTMLInputElement& input = downcast<HTMLInputElement>(*node);
+        // if there's a form, then this is easy
+        if (input.form()) {
+            for (auto& associateElement : input.form()->namedElements(input.name())) {
+                if (AccessibilityObject* object = axObjectCache()->getOrCreate(&associateElement.get()))
                     linkedUIElements.append(object);
             }
+        } else {
+            for (auto& associateElement : descendantsOfType<HTMLInputElement>(node->document())) {
+                if (associateElement.isRadioButton() && associateElement.name() == input.name()) {
+                    if (AccessibilityObject* object = axObjectCache()->getOrCreate(&associateElement))
+                        linkedUIElements.append(object);
+                }
+            }
+        }
+    } else {
+        // If we didn't find any radio button siblings with the traditional naming, lets search for a radio group role and find its children.
+        for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
+            if (parent->roleValue() == RadioGroupRole)
+                addRadioButtonGroupChildren(parent, linkedUIElements);
         }
     }
 }

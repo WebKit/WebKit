@@ -39,6 +39,11 @@ PASS test3.linkedUIElementAtIndex(1).isEqual(accessibilityController.accessibleE
 Radio buttons not in a groups should not have siblings (the first linked element is itself)
 PASS test4.linkedUIElementAtIndex(0).isEqual(test4) is true
 PASS !test4.linkedUIElementAtIndex(1) || !test4.linkedUIElementAtIndex(1).isValid is true
+
+
+Radio buttons that just have aria roles should work.
+PASS ariaRadio1.linkedUIElementAtIndex(0).isEqual(ariaRadio1) is true
+PASS ariaRadio1.linkedUIElementAtIndex(1).isEqual(ariaRadio2) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

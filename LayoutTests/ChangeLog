@@ -1,3 +1,15 @@
+2016-03-20  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Radio button members are not identified together in all cases
+        https://bugs.webkit.org/show_bug.cgi?id=155604
+        <rdar://problem/21186992>
+
+        Reviewed by Darin Adler.
+
+        * accessibility/mac/radio-button-group-members-expected.txt: Added.
+        * accessibility/radio-button-group-members.html:
+        * platform/mac/accessibility/radio-button-group-members-expected.txt: Removed.
+
 2016-03-19  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Update syntax error text 'super is only valid inside functions' to more suitable

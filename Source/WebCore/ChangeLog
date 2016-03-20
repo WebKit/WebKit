@@ -1,3 +1,21 @@
+2016-03-20  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Radio button members are not identified together in all cases
+        https://bugs.webkit.org/show_bug.cgi?id=155604
+        <rdar://problem/21186992>
+
+        Reviewed by Darin Adler.
+
+        Allow aria radio buttons to be grouped together as linked ui elements even if they're not input types of radio button.
+
+        Modified test: accessibility/radio-button-group-members.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::speakProperty):
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupChildren):
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        * accessibility/AccessibilityRenderObject.h:
+
 2016-03-19  Joonghun Park  <jh718.park@samsung.com>
 
         Purge PassRefPtr from WebCore/html/shadow
