@@ -52,15 +52,15 @@ MessagePort::~MessagePort()
         m_scriptExecutionContext->destroyedMessagePort(*this);
 }
 
-void MessagePort::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)
+void MessagePort::postMessage(RefPtr<SerializedScriptValue>&& message, MessagePort* port, ExceptionCode& ec)
 {
     MessagePortArray ports;
     if (port)
         ports.append(port);
-    postMessage(message, &ports, ec);
+    postMessage(WTFMove(message), &ports, ec);
 }
 
-void MessagePort::postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray* ports, ExceptionCode& ec)
+void MessagePort::postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray* ports, ExceptionCode& ec)
 {
     if (!isEntangled())
         return;
@@ -79,7 +79,7 @@ void MessagePort::postMessage(PassRefPtr<SerializedScriptValue> message, const M
         if (ec)
             return;
     }
-    m_entangledChannel->postMessageToRemote(message, WTFMove(channels));
+    m_entangledChannel->postMessageToRemote(WTFMove(message), WTFMove(channels));
 }
 
 std::unique_ptr<MessagePortChannel> MessagePort::disentangle()

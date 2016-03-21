@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-EventContext::EventContext(PassRefPtr<Node> node, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target)
+EventContext::EventContext(Node* node, EventTarget* currentTarget, EventTarget* target)
     : m_node(node)
     , m_currentTarget(currentTarget)
     , m_target(target)
@@ -64,7 +64,7 @@ bool EventContext::isTouchEventContext() const
     return false;
 }
 
-MouseOrFocusEventContext::MouseOrFocusEventContext(PassRefPtr<Node> node, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target)
+MouseOrFocusEventContext::MouseOrFocusEventContext(Node* node, EventTarget* currentTarget, EventTarget* target)
     : EventContext(node, currentTarget, target)
 {
 }
@@ -91,7 +91,7 @@ bool MouseOrFocusEventContext::isMouseOrFocusEventContext() const
 }
 
 #if ENABLE(TOUCH_EVENTS)
-TouchEventContext::TouchEventContext(PassRefPtr<Node> node, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target)
+TouchEventContext::TouchEventContext(Node* node, EventTarget* currentTarget, EventTarget* target)
     : EventContext(node, currentTarget, target)
     , m_touches(TouchList::create())
     , m_targetTouches(TouchList::create())

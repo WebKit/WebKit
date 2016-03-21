@@ -55,8 +55,8 @@ namespace WebCore {
     class MessagePortChannel {
         WTF_MAKE_NONCOPYABLE(MessagePortChannel); WTF_MAKE_FAST_ALLOCATED;
     public:
-        explicit MessagePortChannel(PassRefPtr<PlatformMessagePortChannel>);
-        static void createChannel(PassRefPtr<MessagePort>, PassRefPtr<MessagePort>);
+        explicit MessagePortChannel(RefPtr<PlatformMessagePortChannel>&&);
+        static void createChannel(MessagePort*, MessagePort*);
 
         // Entangles the channel with a port (called when a port has been cloned, after the clone has been marshaled to its new owning thread and is ready to receive messages).
         // Returns false if the entanglement failed because the port was closed.
@@ -75,7 +75,7 @@ namespace WebCore {
         bool hasPendingActivity();
 
         // Sends a message and optional cloned port to the remote port.
-        void postMessageToRemote(PassRefPtr<SerializedScriptValue>, std::unique_ptr<MessagePortChannelArray>);
+        void postMessageToRemote(RefPtr<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>);
 
         // Extracts a message from the message queue for this port.
         bool tryGetMessageFromRemote(RefPtr<SerializedScriptValue>&, std::unique_ptr<MessagePortChannelArray>&);

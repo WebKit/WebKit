@@ -34,7 +34,6 @@
 #include "MessagePortChannel.h"
 
 #include <wtf/MessageQueue.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -49,9 +48,9 @@ namespace WebCore {
         class EventData {
             WTF_MAKE_NONCOPYABLE(EventData); WTF_MAKE_FAST_ALLOCATED;
         public:
-            EventData(PassRefPtr<SerializedScriptValue> message, std::unique_ptr<MessagePortChannelArray>);
+            EventData(RefPtr<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>);
 
-            PassRefPtr<SerializedScriptValue> message() { return m_message; }
+            RefPtr<SerializedScriptValue> message() { return m_message; }
             std::unique_ptr<MessagePortChannelArray> channels() { return WTFMove(m_channels); }
 
         private:
@@ -87,8 +86,8 @@ namespace WebCore {
 
         ~PlatformMessagePortChannel();
 
-        static Ref<PlatformMessagePortChannel> create(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing);
-        PlatformMessagePortChannel(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing);
+        static Ref<PlatformMessagePortChannel> create(MessagePortQueue* incoming, MessagePortQueue* outgoing);
+        PlatformMessagePortChannel(MessagePortQueue* incoming, MessagePortQueue* outgoing);
 
         RefPtr<PlatformMessagePortChannel> entangledChannel();
 

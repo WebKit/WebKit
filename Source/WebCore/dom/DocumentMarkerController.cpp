@@ -83,9 +83,9 @@ void DocumentMarkerController::addMarkerToNode(Node* node, unsigned startOffset,
     addMarker(node, DocumentMarker(type, startOffset, startOffset + length));
 }
 
-void DocumentMarkerController::addMarkerToNode(Node* node, unsigned startOffset, unsigned length, DocumentMarker::MarkerType type, PassRefPtr<DocumentMarkerDetails> details)
+void DocumentMarkerController::addMarkerToNode(Node* node, unsigned startOffset, unsigned length, DocumentMarker::MarkerType type, RefPtr<DocumentMarkerDetails>&& details)
 {
-    addMarker(node, DocumentMarker(type, startOffset, startOffset + length, details));
+    addMarker(node, DocumentMarker(type, startOffset, startOffset + length, WTFMove(details)));
 }
 
 

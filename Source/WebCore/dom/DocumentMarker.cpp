@@ -125,7 +125,7 @@ DocumentMarker::DocumentMarker(unsigned startOffset, unsigned endOffset, bool ac
     ASSERT(m_details);
 }
 
-DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned endOffset, PassRefPtr<DocumentMarkerDetails> details)
+DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned endOffset, RefPtr<DocumentMarkerDetails>&& details)
     : m_type(type)
     , m_startOffset(startOffset)
     , m_endOffset(endOffset)

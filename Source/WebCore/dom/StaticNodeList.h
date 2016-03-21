@@ -39,11 +39,11 @@ namespace WebCore {
 
 class WEBCORE_EXPORT StaticNodeList final : public NodeList {
 public:
-    static PassRefPtr<StaticNodeList> adopt(Vector<Ref<Node>>& nodes)
+    static Ref<StaticNodeList> adopt(Vector<Ref<Node>>& nodes)
     {
-        RefPtr<StaticNodeList> nodeList = adoptRef(new StaticNodeList);
+        Ref<StaticNodeList> nodeList = adoptRef(*new StaticNodeList);
         nodeList->m_nodes.swap(nodes);
-        return nodeList.release();
+        return nodeList;
     }
 
     static Ref<StaticNodeList> createEmpty()

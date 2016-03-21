@@ -32,7 +32,6 @@
 #include "MessagePortChannel.h"
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -51,9 +50,9 @@ namespace WebCore {
         static Ref<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(*new MessagePort(scriptExecutionContext)); }
         virtual ~MessagePort();
 
-        void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
+        void postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray*, ExceptionCode&);
         // Needed for Objective-C bindings (see bug 28774).
-        void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, ExceptionCode&);
+        void postMessage(RefPtr<SerializedScriptValue>&& message, MessagePort*, ExceptionCode&);
 
         void start();
         void close();

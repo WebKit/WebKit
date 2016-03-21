@@ -122,7 +122,7 @@ public:
     DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, const String& description, const Vector<String>& alternatives, RetainPtr<id> metadata);
 #endif
     DocumentMarker(unsigned startOffset, unsigned endOffset, bool activeMatch);
-    DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, PassRefPtr<DocumentMarkerDetails>);
+    DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, RefPtr<DocumentMarkerDetails>&&);
 
     MarkerType type() const { return m_type; }
     unsigned startOffset() const { return m_startOffset; }
