@@ -173,7 +173,7 @@ inline void DeferredWrapper::resolve<Vector<unsigned char>>(const Vector<unsigne
     ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
-    RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(result.data(), result.size());
+    auto buffer = ArrayBuffer::tryCreate(result.data(), result.size());
     resolve(*exec, toJS(exec, m_globalObject.get(), buffer.get()));
 }
 

@@ -157,7 +157,7 @@ void FileReaderLoader::didReceiveResponse(unsigned long, const ResourceResponse&
     }
 
     ASSERT(!m_rawData);
-    m_rawData = ArrayBuffer::create(static_cast<unsigned>(length), 1);
+    m_rawData = ArrayBuffer::tryCreate(static_cast<unsigned>(length), 1);
 
     if (!m_rawData) {
         failed(FileError::NOT_READABLE_ERR);
@@ -194,7 +194,7 @@ void FileReaderLoader::didReceiveData(const char* data, int dataLength)
                 return;
             }
             newLength = std::max(newLength, m_totalBytes + m_totalBytes / 4 + 1);
-            RefPtr<ArrayBuffer> newData = ArrayBuffer::create(newLength, 1);
+            auto newData = ArrayBuffer::tryCreate(newLength, 1);
             if (!newData) {
                 // Not enough memory.
                 failed(FileError::NOT_READABLE_ERR);
@@ -277,7 +277,7 @@ RefPtr<ArrayBuffer> FileReaderLoader::arrayBufferResult() const
         return m_rawData;
 
     // Otherwise, return a copy.
-    return ArrayBuffer::create(m_rawData.get());
+    return ArrayBuffer::create(*m_rawData);
 }
 
 String FileReaderLoader::stringResult()

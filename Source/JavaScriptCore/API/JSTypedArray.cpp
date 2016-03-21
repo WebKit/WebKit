@@ -161,7 +161,7 @@ JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType,
 
     unsigned elementByteSize = elementSize(toTypedArrayType(arrayType));
 
-    RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(length, elementByteSize);
+    auto buffer = ArrayBuffer::tryCreate(length, elementByteSize);
     JSObject* result = createTypedArray(exec, arrayType, WTFMove(buffer), 0, length);
     if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
         return nullptr;
@@ -292,7 +292,7 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    RefPtr<ArrayBuffer> buffer = ArrayBuffer::createFromBytes(bytes, byteLength, [=](void* p) {
+    auto buffer = ArrayBuffer::createFromBytes(bytes, byteLength, [=](void* p) {
         if (bytesDeallocator)
             bytesDeallocator(p, deallocatorContext);
     });

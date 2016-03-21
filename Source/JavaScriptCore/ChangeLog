@@ -1,3 +1,25 @@
+2016-03-21  Joonghun Park  <jh718.park@samsung.com>
+
+        [JSC] Add ArrayBuffer::tryCreate and change the callsites where it is needed
+        https://bugs.webkit.org/show_bug.cgi?id=155328
+
+        Reviewed by Darin Adler.
+
+        * API/JSTypedArray.cpp:
+        (JSObjectMakeTypedArray):
+        (JSObjectMakeArrayBufferWithBytesNoCopy):
+        * runtime/ArrayBuffer.h:
+        (JSC::ArrayBuffer::create):
+        (JSC::ArrayBuffer::tryCreate):
+        (JSC::ArrayBuffer::createUninitialized):
+        (JSC::ArrayBuffer::tryCreateUninitialized):
+        (JSC::ArrayBuffer::createInternal):
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::create):
+        (JSC::GenericTypedArrayView<Adaptor>::createUninitialized):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer):
+
 2016-03-20  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Determine TARGET_MAC_OS_X_VERSION_MAJOR from MACOSX_DEPLOYMENT_TARGET rather than from MAC_OS_X_VERSION_MAJOR

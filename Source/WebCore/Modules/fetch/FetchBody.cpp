@@ -97,7 +97,7 @@ bool FetchBody::processIfEmptyOrDisturbed(Consumer::Type type, DeferredWrapper& 
             promise.reject<ExceptionCode>(SYNTAX_ERR);
             return true;
         case Consumer::Type::ArrayBuffer:
-            promise.resolve(ArrayBuffer::create(nullptr, 0));
+            promise.resolve(ArrayBuffer::tryCreate(nullptr, 0));
             return true;
         default:
             ASSERT_NOT_REACHED();
@@ -174,7 +174,7 @@ void FetchBody::consumeText(Consumer::Type type, DeferredWrapper&& promise)
 
     if (type == Consumer::Type::ArrayBuffer) {
         Vector<char> data = extractFromText();
-        promise.resolve<RefPtr<ArrayBuffer>>(ArrayBuffer::create(data.data(), data.size()));
+        promise.resolve<RefPtr<ArrayBuffer>>(ArrayBuffer::tryCreate(data.data(), data.size()));
         return;
     }
     String contentType = Blob::normalizedContentType(extractMIMETypeFromMediaType(m_mimeType));

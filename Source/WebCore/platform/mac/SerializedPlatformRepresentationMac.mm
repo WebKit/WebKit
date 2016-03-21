@@ -144,7 +144,7 @@ static JSValue *jsValueWithValueInContext(id value, JSContext *context)
 
 static JSValue *jsValueWithDataInContext(NSData *data, JSContext *context)
 {
-    RefPtr<ArrayBuffer> dataArray = ArrayBuffer::create([data bytes], [data length]);
+    auto dataArray = ArrayBuffer::tryCreate([data bytes], [data length]);
 
     JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
     JSC::JSValue array = toJS(exec, JSC::jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), dataArray.get());
