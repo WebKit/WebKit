@@ -1,3 +1,16 @@
+2016-03-21  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][MediaFoundation] Crash when media player is destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=155716
+
+        Reviewed by Alex Christensen.
+
+        Increase the reference count on the video presenter object in the ActivateObject method
+        to avoid referencing a deleted object when the media player is destroyed.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::ActivateObject):
+
 2016-03-21  Eric Carlson  <eric.carlson@apple.com>
 
         Add a WebRTC specific compile flag
