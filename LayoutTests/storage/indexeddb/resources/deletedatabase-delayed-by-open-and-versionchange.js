@@ -12,7 +12,8 @@ function prepareDatabase(evt)
     preamble(evt);
     evalAndLog("versionChangeComplete = false");
     evalAndLog("h = event.target.result");
-
+    evalAndLog("blockedCalled = false");
+        
     h.onversionchange = function onVersionChange(evt) {
         preamble(evt);
         shouldBe("event.target.version", "1");
@@ -36,6 +37,9 @@ function prepareDatabase(evt)
         shouldBeTrue("versionChangeComplete");
         finishJSTest();
     };
+
+    // Make this upgrade transaction take longer so the deleteDatabase request will always have a chance to be blocked.
+    evalAndLog("h.createObjectStore('testObjectStore').put('bar', 'foo')");
 }
 
 function onOpenSuccess(evt)

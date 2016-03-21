@@ -11,7 +11,9 @@ indexedDB.open(dbname)
 prepareDatabase():
 versionChangeComplete = false
 h = event.target.result
+blockedCalled = false
 indexedDB.deleteDatabase(dbname)
+h.createObjectStore('testObjectStore').put('bar', 'foo')
 
 onVersionChange():
 PASS event.target.version is 1
