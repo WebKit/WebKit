@@ -1,3 +1,21 @@
+2016-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        V3 Perf Dashboard should automatically select initial range when creating a new task
+        https://bugs.webkit.org/show_bug.cgi?id=155677
+
+        Reviewed by Joseph Pecoraro.
+
+        Select the entire range of points for which the analysis task is created by default so that creating
+        a test group to confirm the regression / progression is easy.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage): Added a boolean flag which indicates the user had modified main chart's selection.
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype.render): Set the main chart's selection to the entire range of points in
+        the analysis task if the user had never modified selection.
+        (AnalysisTaskPage.prototype._chartSelectionDidChange): This callback is invoked only when the user had
+        modified the selection so set _selectionWasModifiedByUser true here unconditionally.
+
 2016-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Associated commits don't immediately show up on an analysis task page
