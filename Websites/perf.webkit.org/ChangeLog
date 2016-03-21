@@ -1,5 +1,25 @@
 2016-03-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Analysis task page is broken after r198479
+        https://bugs.webkit.org/show_bug.cgi?id=155735
+
+        Rubber-stamped by Chris Dumez.
+
+        * public/api/measurement-set.php:
+        (AnalysisResultsFetcher::fetch_commits): We need to emit the commit ID as done for regular data.
+        * public/include/build-requests-fetcher.php:
+        (BuildRequestsFetcher::fetch_roots_for_set_if_needed): Ditto. Don't use a fake ID after r198479.
+        * public/v3/models/commit-log.js:
+        (CommitLog): Assert that all commit log IDs are integers to catch regressions like this in future.
+        * public/v3/models/root-set.js:
+        (RootSet): Don't resolve Repository here as doing so would modify the shared "root" entry in the JSON
+        we fetched, and subsequent construction of RootSet would fail since this line would blow up trying to
+        find the repository with "[object]" as the ID.
+        * public/v3/models/test-group.js:
+        (TestGroup._createModelsFromFetchedTestGroups): Resolve Repository here.
+
+2016-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         v3 UI sometimes don't update the list of revisions on the commit log viewer
         https://bugs.webkit.org/show_bug.cgi?id=155729
 

@@ -92,14 +92,12 @@ class BuildRequestsFetcher {
 
         $root_ids = array();
         foreach ($root_rows as $row) {
-            $repository = $row['repository_id'];
+            $repository_id = $row['commit_repository'];
             $revision = $row['commit_revision'];
             $commit_time = $row['commit_time'];
-            $root_id = $root_set_id . '-' . $repository;
-            array_push($root_ids, $root_id);
-            $repository_id = $resolve_ids ? $row['repository_name'] : $row['repository_id'];
+            array_push($root_ids, $row['commit_id']);
             array_push($this->roots, array(
-                'id' => $root_id,
+                'id' => $row['commit_id'],
                 'repository' => $repository_id,
                 'revision' => $revision,
                 'time' => Database::to_js_time($commit_time)));

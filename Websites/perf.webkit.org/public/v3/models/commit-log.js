@@ -3,6 +3,7 @@
 class CommitLog extends DataModelObject {
     constructor(id, rawData)
     {
+        console.assert(parseInt(id) == id);
         super(id);
         this._repository = rawData.repository;
         console.assert(this._repository instanceof Repository);

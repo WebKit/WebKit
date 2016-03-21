@@ -252,14 +252,14 @@ class AnalysisResultsFetcher {
 
     function fetch_commits()
     {
-        $query = $this->db->query('SELECT commit_build, commit_repository, commit_revision, commit_time
+        $query = $this->db->query('SELECT commit_id, commit_build, commit_repository, commit_revision, commit_time
             FROM commits, build_commits, build_requests, analysis_test_groups
             WHERE commit_id = build_commit AND commit_build = request_build
                 AND request_group = testgroup_id AND testgroup_task = $1', array($this->task_id));
         while ($row = $this->db->fetch_next_row($query)) {
             $commit_time = Database::to_js_time($row['commit_time']);
             array_push(array_ensure_item_has_array($this->build_to_commits, $row['commit_build']),
-                array($row['commit_repository'], $row['commit_revision'], $commit_time));
+                array($row['commit_id'], $row['commit_repository'], $row['commit_revision'], $commit_time));
         }
     }
 

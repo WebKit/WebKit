@@ -13,9 +13,7 @@ class RootSet extends DataModelObject {
             return;
 
         for (var row of object.roots) {
-            var repositoryId = row.repository;
-            row.repository = Repository.findById(repositoryId);
-
+            var repositoryId = row.repository.id();
             console.assert(!this._repositoryToCommitMap[repositoryId]);
             this._repositoryToCommitMap[repositoryId] = CommitLog.ensureSingleton(row.id, row);
             this._repositories.push(row.repository);
