@@ -1,3 +1,4 @@
+'use strict';
 
 class AnalysisTask extends LabeledObject {
     constructor(id, object)
@@ -22,8 +23,8 @@ class AnalysisTask extends LabeledObject {
         this._bugs = object.bugs || [];
         this._causes = object.causes || [];
         this._fixes = object.fixes || [];
-        this._buildRequestCount = object.buildRequestCount;
-        this._finishedBuildRequestCount = object.finishedBuildRequestCount;
+        this._buildRequestCount = +object.buildRequestCount;
+        this._finishedBuildRequestCount = +object.finishedBuildRequestCount;
     }
 
     static findByPlatformAndMetric(platformId, metricId)
@@ -50,8 +51,8 @@ class AnalysisTask extends LabeledObject {
         this._bugs = object.bugs || [];
         this._causes = object.causes || [];
         this._fixes = object.fixes || [];
-        this._buildRequestCount = object.buildRequestCount;
-        this._finishedBuildRequestCount = object.finishedBuildRequestCount;
+        this._buildRequestCount = +object.buildRequestCount;
+        this._finishedBuildRequestCount = +object.finishedBuildRequestCount;
     }
 
     hasResults() { return this._finishedBuildRequestCount; }
@@ -138,7 +139,7 @@ class AnalysisTask extends LabeledObject {
         var id = this.id();
         return PrivilegedAPI.sendRequest('associate-commit', {
             task: id,
-            commit: commit.remoteId(),
+            commit: commit.id(),
         }).then(function (data) {
             return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
                 .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
@@ -232,11 +233,11 @@ class AnalysisTask extends LabeledObject {
             rawData.repository = Repository.findById(rawData.repository);
             if (!rawData.repository)
                 continue;
-            CommitLog.ensureSingleton(rawData.repository, rawData);
+            CommitLog.ensureSingleton(rawData.id, rawData);
         }
 
         function resolveCommits(commits) {
-            return commits.map(function (id) { return CommitLog.findByRemoteId(id); }).filter(function (commit) { return !!commit; });
+            return commits.map(function (id) { return CommitLog.findById(id); }).filter(function (commit) { return !!commit; });
         }
 
         var results = [];
@@ -266,3 +267,6 @@ class AnalysisTask extends LabeledObject {
         });
     }
 }
+
+if (typeof module != 'undefined')
+    module.exports.AnalysisTask = AnalysisTask;

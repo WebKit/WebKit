@@ -165,7 +165,7 @@ class MeasurementSetFetcher {
     function execute_query($config_id) {
         return $this->db->query('
             SELECT test_runs.*, builds.*,
-            array_agg((commit_repository, commit_revision, commit_time)) AS revisions,
+            array_agg((commit_id, commit_repository, commit_revision, commit_time)) AS revisions,
             max(commit_time) AS revision_time, max(commit_order) AS revision_order
                 FROM builds
                     LEFT OUTER JOIN build_commits ON commit_build = build_id
@@ -180,7 +180,7 @@ class MeasurementSetFetcher {
             'commitTime', 'build', 'buildTime', 'buildNumber', 'builder');
     }
 
-    private static function format_run($run, &$commit_time) {
+    private static function format_run(&$run, &$commit_time) {
         $commit_time = Database::to_js_time($run['revision_time']);
         $build_time = Database::to_js_time($run['build_time']);
         if (!$commit_time)
@@ -200,16 +200,19 @@ class MeasurementSetFetcher {
             intval($run['build_builder']));
     }
 
-    private static function parse_revisions_array($postgres_array) {
-        // e.g. {"(WebKit,131456,\"2012-10-16 14:53:00\")","(Chromium,162004,)"}
+    private static function parse_revisions_array(&$postgres_array) {
+        // e.g. {"(<commit-id>,<repository-id>,<revision>,\"2012-10-16 14:53:00\")","(<commit-id>,<repository-id>,<revision>,)"}
         $outer_array = json_decode('[' . trim($postgres_array, '{}') . ']');
         $revisions = array();
         foreach ($outer_array as $item) {
             $name_and_revision = explode(',', trim($item, '()'));
             if (!$name_and_revision[0])
                 continue;
-            $time = Database::to_js_time(trim($name_and_revision[2], '"'));
-            array_push($revisions, array(intval(trim($name_and_revision[0], '"')), trim($name_and_revision[1], '"'), $time));
+            $commit_id = intval(trim($name_and_revision[0], '"'));
+            $repository_id = intval(trim($name_and_revision[1], '"'));
+            $revision = trim($name_and_revision[2], '"');
+            $time = Database::to_js_time(trim($name_and_revision[3], '"'));
+            array_push($revisions, array($commit_id, $repository_id, $revision, $time));
         }
         return $revisions;
     }

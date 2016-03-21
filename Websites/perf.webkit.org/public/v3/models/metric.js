@@ -1,3 +1,4 @@
+'use strict';
 
 class Metric extends LabeledObject {
     constructor(id, object)
@@ -86,3 +87,6 @@ class Metric extends LabeledObject {
         }
     };
 }
+
+if (typeof module != 'undefined')
+    module.exports.Metric = Metric;

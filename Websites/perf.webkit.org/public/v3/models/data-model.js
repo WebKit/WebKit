@@ -20,6 +20,8 @@ class DataModelObject {
 
     updateSingleton(object) { }
 
+    static clearStaticMap() { this[DataModelObject.StaticMapSymbol] = null; }
+
     static namedStaticMap(name)
     {
         var staticMap = this[DataModelObject.StaticMapSymbol];
@@ -32,7 +34,7 @@ class DataModelObject {
             this[DataModelObject.StaticMapSymbol] = {};
         var staticMap = this[DataModelObject.StaticMapSymbol];
         if (!staticMap[name])
-            staticMap[name] = [];
+            staticMap[name] = {};
         return staticMap[name];
     }
 

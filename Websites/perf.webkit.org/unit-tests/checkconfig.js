@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var assert = require('assert');
 var fs = require('fs');
@@ -26,8 +26,8 @@ describe('config.json', function () {
 
     it('should define `dataDirectory`', function () {
         assert.ok(Config.value('dataDirectory'));
-        assert.ok(fs.existsSync(Config.path('dataDirectory')));
-        assert.ok(fs.statSync(Config.path('dataDirectory')).isDirectory());
+        assert.ok(fs.existsSync(Config.path('dataDirectory')), 'dataDirectory should exist');
+        assert.ok(fs.statSync(Config.path('dataDirectory')).isDirectory(), 'dataDirectory should be a dictionary');
     });
 
     it('should define `jsonCacheMaxAge`', function () {

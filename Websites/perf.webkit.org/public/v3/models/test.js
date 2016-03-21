@@ -1,3 +1,4 @@
+'use strict';
 
 class Test extends LabeledObject {
     constructor(id, object, isTopLevel)
@@ -42,3 +43,6 @@ class Test extends LabeledObject {
     addChildTest(test) { this._childTests.push(test); }
     addMetric(metric) { this._metrics.push(metric); }
 }
+
+if (typeof module != 'undefined')
+    module.exports.Test = Test;

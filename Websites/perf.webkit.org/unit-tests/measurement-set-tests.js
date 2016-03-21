@@ -2,6 +2,8 @@
 
 var assert = require('assert');
 
+require('./resources/mock-remote-api.js');
+
 global.DataModelObject = require('../public/v3/models/data-model.js').DataModelObject;
 global.LabeledObject = require('../public/v3/models/data-model.js').LabeledObject;
 global.CommitLog = require('../public/v3/models/commit-log.js').CommitLog;
@@ -15,36 +17,11 @@ global.Repository = require('../public/v3/models/repository.js').Repository;
 global.RootSet = require('../public/v3/models/root-set.js').RootSet;
 global.Statistics = require('../public/shared/statistics.js');
 
-if (!assert.notReached)
-    assert.notReached = function () { assert(false, 'This code path should not be reached'); }
-
-var requests = [];
-
-global.RemoteAPI = {
-    getJSON: function ()
-    {
-        assert.notReached();
-    },
-    getJSONWithStatus: function (url)
-    {
-        var request = {
-            url: url,
-            promise: null,
-            resolve: null,
-            reject: null,
-        };
-
-        request.promise = new Promise(function (resolve, reject) {
-            request.resolve = resolve;
-            request.reject = reject;
-        });
-
-        requests.push(request);
-        return request.promise;
-    },
-};
-
 describe('MeasurementSet', function () {
+    beforeEach(function () {
+        MeasurementSet._set = null;
+    });
+
     describe('findSet', function () {
         it('should create a new MeasurementSet for a new pair of platform and matric', function () {
             assert.notEqual(MeasurementSet.findSet(1, 1, 3000), MeasurementSet.findSet(1, 2, 3000));
@@ -57,11 +34,6 @@ describe('MeasurementSet', function () {
     });
 
     describe('fetchBetween', function () {
-        beforeEach(function () {
-            requests = [];
-            MeasurementSet._set = null;
-        });
-
         it('should always request the cached primary cluster first', function () {
             var set = MeasurementSet.findSet(1, 1, 3000);
             set.fetchBetween(1000, 2000, function () { assert.notReached(); });

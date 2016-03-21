@@ -1,3 +1,5 @@
+'use strict';
+
 class Instrumentation {
 
     static startMeasuringTime(domain, label)
@@ -53,3 +55,6 @@ class Instrumentation {
     }
 
 }
+
+if (typeof module != 'undefined')
+    module.exports.Instrumentation = Instrumentation;

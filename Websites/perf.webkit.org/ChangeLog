@@ -1,3 +1,70 @@
+2016-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Associated commits don't immediately show up on an analysis task page
+        https://bugs.webkit.org/show_bug.cgi?id=155692
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by resolveCommits in AnalysisTask._constructAnalysisTasksFromRawData not being
+        able to find the matching commit log if the commit log had been created by the charts which don't
+        set the remote identifiers on each CommitLog objects.
+
+        Fixed the bug by modifying /api/measurement-set to include the commit ID, and making CommitLog
+        use the real database ID as its ID instead of a fake ID we create from repository and revision.
+
+        Also added a bunch of Mocha unit tests for AnalysisTask.fetchAll.
+
+        * public/api/measurement-set.php:
+        (MeasurementSetFetcher::execute_query): Fetch commit_id.
+        (MeasurementSetFetcher::format_run): Use pass-by-reference to avoid making a copy of the row.
+        (MeasurementSetFetcher::parse_revisions_array): Include commit_id as the first item in the result.
+        * public/v3/instrumentation.js:
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask): Fixed a bug that _buildRequestCount and _finishedBuildRequestCount could be kept
+        as strings and hasPendingRequests() could return a wrong result because it would perform string
+        inequality instead of numerical inequality.
+        (AnalysisTask.prototype.updateSingleton): Ditto.
+        (AnalysisTask.prototype.dissociateCommit):
+        (AnalysisTask._constructAnalysisTasksFromRawData):
+        (AnalysisTask._constructAnalysisTasksFromRawData.resolveCommits): Use findById now that CommitLog
+        objects all use the same id as the database id.
+        * public/v3/models/commit-log.js:
+        (CommitLog):
+        (CommitLog.prototype.remoteId): Deleted since we no longer create a fake id for commit logs for
+        measurement sets.
+        (CommitLog.findByRemoteId): Deleted.
+        (CommitLog.ensureSingleton): Deleted.
+        (CommitLog.fetchBetweenRevisions):
+
+        * public/v3/models/data-model.js:
+        (DataModelObject.clearStaticMap): Added to aid unit testing.
+        (DataModelObject.ensureNamedStaticMap): Fixed a typo. Each map is a dictionary, not an array.
+        * public/v3/models/metric.js:
+        * public/v3/models/platform.js:
+        * public/v3/models/root-set.js:
+        (RootSet): Updated per the interface change in CommitLog.ensureSingleton.
+        (MeasurementRootSet): Updated per /api/measurement-set change. Use the first value as the id.
+        * public/v3/models/test.js:
+        * unit-tests/analysis-task-tests.js: Added.
+        (sampleAnalysisTask):
+        (measurementCluster):
+        * unit-tests/checkconfig.js: Added some assertion message to help aid diagnosing the failure.
+        * unit-tests/measurement-adaptor-tests.js: Updated the sample data per the API change in
+        /api/measurement-set and also added assertions for commit log ids.
+        * unit-tests/measurement-set-tests.js:
+        (beforeEach):
+        * unit-tests/resources: Added.
+        * unit-tests/resources/mock-remote-api.js: Added. Extracted from measurement-set-tests.js to be
+        used in analysis-task-tests.js.
+        (assert.notReached.assert.notReached):
+        (global.RemoteAPI.getJSON):
+        (global.RemoteAPI.getJSONWithStatus):
+        (beforeEach):
+        * unit-tests/resources/v3-models.js: Added. Extracted from measurement-set-tests.js to be used in
+        analysis-task-tests.js and added more imports as needed.
+        (importFromV3):
+        (beforeEach):
+
 2016-03-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r198464.

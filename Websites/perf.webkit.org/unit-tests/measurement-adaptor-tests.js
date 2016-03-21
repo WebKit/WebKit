@@ -2,24 +2,15 @@
 
 var assert = require('assert');
 
-global.DataModelObject = require('../public/v3/models/data-model.js').DataModelObject;
-global.LabeledObject = require('../public/v3/models/data-model.js').LabeledObject;
-global.CommitLog = require('../public/v3/models/commit-log.js').CommitLog;
-global.Build = require('../public/v3/models/builder.js').Build;
-global.Builder = require('../public/v3/models/builder.js').Builder;
-global.MeasurementRootSet = require('../public/v3/models/root-set.js').MeasurementRootSet;
-global.MeasurementAdaptor = require('../public/v3/models/measurement-adaptor.js').MeasurementAdaptor;
-global.Repository = require('../public/v3/models/repository.js').Repository;
-global.RootSet = require('../public/v3/models/root-set.js').RootSet;
-global.Statistics = require('../public/shared/statistics.js');
+require('./resources/v3-models');
 
 var sampleCluster = {
     'clusterStart': 946684800000,
     'clusterSize': 5184000000,
     'configurations': {
         'current': [
-            [28954983, 217.94607142857, 20, 4358.9214285714, 950303.02365434, false, [[9, '10.11 15D21', 0], [11, '192483', 1447707055576], [999, 'some unknown revision', 0]], 1447707055576, 184629, 1447762266153, '178', 176],
-            [28952257, 220.11455357143, 20, 4402.2910714286, 969099.67509885, false, [[9, '10.11 15D21', 0], [11, '192486', 1447713500460]], 1447713500460, 184614, 1447760255683, '177', 176]
+            [28954983, 217.94607142857, 20, 4358.9214285714, 950303.02365434, false, [[111, 9, '10.11 15D21', 0], [222, 11, '192483', 1447707055576], [333, 999, 'some unknown revision', 0]], 1447707055576, 184629, 1447762266153, '178', 176],
+            [28952257, 220.11455357143, 20, 4402.2910714286, 969099.67509885, false, [[111, 9, '10.11 15D21', 0], [444, 11, '192486', 1447713500460]], 1447713500460, 184614, 1447760255683, '177', 176]
         ]
     },
     'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions',
@@ -32,10 +23,6 @@ var sampleCluster = {
     'status': 'OK'
 };
 var sampleData = sampleCluster.configurations.current[0];
-
-var osx = new Repository(9, {name: 'OS X'});
-var webkit = new Repository(11, {name: 'WebKit', url: 'http://trac.webkit.org/changeset/$1'});
-var builder = new Builder(176, {name: 'WebKit Perf Builder', buildUrl: 'http://build.webkit.org/builders/$builderName/$buildNumber'});
 
 describe('MeasurementAdaptor', function () {
     describe('applyTo', function () {
@@ -87,6 +74,7 @@ describe('MeasurementAdaptor', function () {
             assert.ok(commit instanceof CommitLog);
             assert.equal(commit.repository(), osx);
             assert.ok(commit.time() instanceof Date);
+            assert.equal(commit.id(), 111);
             assert.equal(commit.revision(), '10.11 15D21');
             assert.equal(commit.label(), '10.11 15D21');
             assert.equal(commit.title(), 'OS X at 10.11 15D21');
@@ -104,6 +92,7 @@ describe('MeasurementAdaptor', function () {
             assert.ok(commit instanceof CommitLog);
             assert.equal(commit.repository(), webkit);
             assert.ok(commit.time() instanceof Date);
+            assert.equal(commit.id(), 222);
             assert.equal(+commit.time(), 1447707055576);
             assert.equal(commit.revision(), '192483');
             assert.equal(commit.label(), 'r192483');

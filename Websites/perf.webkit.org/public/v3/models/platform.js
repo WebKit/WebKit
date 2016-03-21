@@ -1,3 +1,4 @@
+'use strict';
 
 class Platform extends LabeledObject {
     constructor(id, object)
@@ -34,3 +35,6 @@ class Platform extends LabeledObject {
         return this._lastModifiedByMetric[metric.id()];
     }
 }
+
+if (typeof module != 'undefined')
+    module.exports.Platform = Platform;
