@@ -503,7 +503,12 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
     Vector<unsigned> flexibleSizedTracksIndex;
     sizingData.contentSizedTracksIndex.shrink(0);
 
-    const LayoutUnit maxSize = initialFreeSpace.valueOr(0);
+    LayoutUnit maxSize = initialFreeSpace.valueOr(0);
+    // Grid gutters were removed from freeSpace by the caller (if freeSpace is definite),
+    // but we must use them to compute relative (i.e. percentages) sizes.
+    if (initialFreeSpace)
+        maxSize += guttersSize(direction, direction == ForColumns ? gridColumnCount() : gridRowCount());
+
     // 1. Initialize per Grid track variables.
     for (unsigned i = 0; i < tracks.size(); ++i) {
         GridTrack& track = tracks[i];

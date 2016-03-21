@@ -20,6 +20,17 @@ body { margin: 0px; }
 .gridAutoAuto { -webkit-grid-template: auto auto / auto auto; }
 .gridMultipleFixed { -webkit-grid-template: [first] 37px [foo] 57px [bar] 77px [last] / [first] 15px [foo] 25px [bar] 35px [last]; }
 .gridFixed100 { -webkit-grid-template: repeat(2, 100px) / repeat(2, 100px); }
+.gridWithPercent { -webkit-grid-template: 10% 10px / 10px 20% repeat(1, 30px); }
+.gridWithDoublePercent { -webkit-grid-template: 35% 65% / 60% 40%; }
+
+.fixedSizeGrid {
+    width: 220px;
+    height: 300px;
+}
+.gridFixedAutoTracks {
+    -webkit-grid-auto-rows: 20px;
+    -webkit-grid-auto-columns: 40px;
+}
 
 .thirdRowThirdColumn { -webkit-grid-area: 3 / 3; }
 .firstRowThirdColumn { -webkit-grid-area: 1 / 3; }
@@ -100,6 +111,14 @@ div.grid > div { font: 10px/1 Ahem; }
     </div>
 </div>
 
+<div style="position: relative">
+    <div class="grid gridWithPercent fixedSizeGrid gridRowColumnGaps gridFixedAutoTracks" data-expected-width="220" data-expected-height="300">
+        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="30"></div>
+        <div class="secondRowSecondColumn" data-offset-x="33" data-offset-y="42" data-expected-width="44" data-expected-height="10"></div>
+        <div class="thirdRowThirdColumn" data-offset-x="100" data-offset-y="64" data-expected-width="30" data-expected-height="20"></div>
+    </div>
+</div>
+
 <!-- Check that gutters contribute to the size of spanning items. -->
 <div style="position: relative">
     <div class="grid gridGap gridAutoAuto constrainedContainer">
@@ -114,6 +133,14 @@ div.grid > div { font: 10px/1 Ahem; }
         <div style="-webkit-grid-row: 2; -webkit-grid-column: 1 / -1;" data-offset-x="0" data-offset-y="49" data-expected-width="121" data-expected-height="57">XXXX X XXXX</div>
         <div style="-webkit-grid-row: first / last; -webkit-grid-column-start: 2" data-offset-x="38" data-offset-y="0" data-expected-width="25" data-expected-height="195">X XX X XX X</div>
         <div style="-webkit-grid-row: 1 / 3; -webkit-grid-column: first / bar" data-offset-x="0" data-offset-y="0" data-expected-width="63" data-expected-height="106">XXX XX<br>XX<br>XXXXX</div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridWithDoublePercent fixedSizeGrid gridRowColumnGaps gridFixedAutoTracks" data-expected-width="220" data-expected-height="300">
+        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="132" data-expected-height="105"></div>
+        <div class="secondRowSecondColumn" data-offset-x="155" data-offset-y="117" data-expected-width="88" data-expected-height="195"></div>
+        <div class="secondRowBothColumn" data-offset-x="0" data-offset-y="117" data-expected-width="243" data-expected-height="195"></div>
     </div>
 </div>
 

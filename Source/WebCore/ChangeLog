@@ -1,3 +1,20 @@
+2016-02-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix percentage tracks' size computation in grids with gutters
+        https://bugs.webkit.org/show_bug.cgi?id=153825
+
+        Reviewed by Darin Adler.
+
+        The track sizing algorithm is passed an available size
+        (freeSpace in the code) where to size the tracks. The total size of the grid
+        gutters was pre-removed from that available size because we cannot use it to size
+        the tracks. However that available size is also used to compute the size of
+        percentage tracks. As we're removing the size of the gutters, the base size for
+        percentage computations is smaller than it should be.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+
 2016-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] scrollbar thumb clipped in 2.11.92

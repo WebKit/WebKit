@@ -5,11 +5,11 @@
 <script src="../../resources/check-layout.js"></script>
 <script src="../../resources/js-test.js"></script>
 <style>
-.gridMaxFlexContent { -webkit-grid-template: 50px / minmax(30px, 2fr); }
+.gridPercentAndFlexContent { -webkit-grid-template: 50px / 50% minmax(30px, 2fr); }
 .gridTwoDoubleMaxFlexContent { -webkit-grid-template: 50px / minmax(10px, 0.5fr) minmax(10px, 2fr); }
 .gridIgnoreSecondGridItem { -webkit-grid-template: 50px / minmax(300px, 3fr) minmax(150px, 1fr); }
 
-.gridRowsMaxFlexContent { -webkit-grid-template: minmax(30px, 2fr) / 50px; }
+.gridRowsPercentAndFlexContent { -webkit-grid-template: minmax(30px, 2fr) 50% / 50px; }
 .gridRowsTwoMaxFlexContent { -webkit-grid-template: minmax(10px, 1fr) minmax(10px, 2fr) / 50px; }
 .gridRowsTwoDoubleMaxFlexContent { -webkit-grid-template: minmax(10px, 0.5fr) minmax(10px, 2fr) / 50px; }
 
@@ -43,6 +43,13 @@ div.grid > div { font: 10px/1 Ahem; }
     </div>
 </div>
 
+<div style="width: 120px; height: 10px;">
+    <div class="grid gridPercentAndFlexContent gridRowColumnGaps" data-expected-width="120" data-expected-height="50">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="60" data-expected-height="50"></div>
+        <div class="firstRowSecondColumn" data-expected-width="41" data-expected-height="50"></div>
+    </div>
+</div>
+
 <!-- Check that gutters do not interfere with flex content resolution for rows -->
 
 <div style="width: 10px; height: 60px">
@@ -56,6 +63,13 @@ div.grid > div { font: 10px/1 Ahem; }
     <div class="grid gridRowsTwoDoubleMaxFlexContent gridRowColumnGaps" data-expected-width="10" data-expected-height="63">
         <div class="firstRowFirstColumn" data-expected-width="50" data-expected-height="10"></div>
         <div class="secondRowFirstColumn" data-expected-width="50" data-expected-height="20"></div>
+    </div>
+</div>
+
+<div style="width: 10px;">
+    <div class="grid gridRowsPercentAndFlexContent gridRowColumnGaps" style="height: 150px" data-expected-width="10" data-expected-height="150">
+        <div class="firstRowFirstColumn" data-expected-width="50" data-expected-height="42"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="75"></div>
     </div>
 </div>
 
