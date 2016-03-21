@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 23: 'Blob' is not a valid value for binaryType; binaryType remains unchanged.
-CONSOLE MESSAGE: line 26: 'ArrayBuffer' is not a valid value for binaryType; binaryType remains unchanged.
-CONSOLE MESSAGE: line 29: '' is not a valid value for binaryType; binaryType remains unchanged.
+CONSOLE MESSAGE: line 600: 'Blob' is not a valid value for binaryType; binaryType remains unchanged.
+CONSOLE MESSAGE: line 600: 'ArrayBuffer' is not a valid value for binaryType; binaryType remains unchanged.
+CONSOLE MESSAGE: line 600: '' is not a valid value for binaryType; binaryType remains unchanged.
 Test WebSocket.binaryType attribute.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -8,9 +8,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS ws.binaryType is "blob"
 PASS ws.binaryType is "arraybuffer"
 PASS ws.binaryType is "blob"
-Set invalid values to binaryType. They should be ignored. No exception should be thrown.
+PASS ws.binaryType = 'Blob' threw exception Error: SyntaxError: DOM Exception 12.
 PASS ws.binaryType is "blob"
+PASS ws.binaryType = 'ArrayBuffer' threw exception Error: SyntaxError: DOM Exception 12.
 PASS ws.binaryType is "blob"
+PASS ws.binaryType = '' threw exception Error: SyntaxError: DOM Exception 12.
 PASS ws.binaryType is "blob"
 PASS successfullyParsed is true
 

@@ -1,3 +1,18 @@
+2016-03-20  Jinwoo Jeong  <jw00.jeong@samsung.com>
+
+        The setter of binaryType attribute in WebSocket should raise the exception.
+        https://bugs.webkit.org/show_bug.cgi?id=135874
+
+        Reviewed by Antonio Gomes.
+
+        According to W3C WebSocket Specification, <https://www.w3.org/TR/2012/CR-websockets-20120920/>
+        when an invalid value is set on binaryType of WebSocket, a SyntaxError should be raised.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::setBinaryType): Add a parameter to set an exception.
+        * Modules/websockets/WebSocket.h: Ditto.
+        * Modules/websockets/WebSocket.idl: Update that setter of binaryType could raise an exception.
+
 2016-03-20  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Determine TARGET_MAC_OS_X_VERSION_MAJOR from MACOSX_DEPLOYMENT_TARGET rather than from MAC_OS_X_VERSION_MAJOR

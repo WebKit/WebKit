@@ -60,7 +60,7 @@
     readonly attribute DOMString? protocol;
     readonly attribute DOMString? extensions;
 
-    attribute DOMString binaryType;
+    [SetterRaisesException] attribute DOMString binaryType;
 
     [RaisesException] void send(ArrayBuffer data);
     [RaisesException] void send(ArrayBufferView data);
