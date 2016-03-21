@@ -1234,6 +1234,8 @@ webkit.org/b/148636 inspector/model/remote-object-get-properties.html [ Pass Tim
 webkit.org/b/148636 inspector/model/remote-object.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/page/main-frame-resource.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/model/remote-object-weak-collection.html [ Pass Failure ]
+webkit.org/b/155607 inspector/unit-tests/heap-snapshot.html [ Pass Timeout ]
+webkit.org/b/155607 inspector/inspector/heap/snapshot.html [ Pass Timeout ]
 
 webkit.org/b/152029 inspector/debugger/command-line-api-exception.html [ Pass Timeout ]
 
