@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2012, 2014-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -390,6 +390,7 @@ public:
 
     // IWebViewPrivate3
     HRESULT STDMETHODCALLTYPE layerTreeAsString(_Deref_opt_out_ BSTR*);
+    HRESULT STDMETHODCALLTYPE findString(_In_ BSTR, WebFindOptions, _Deref_opt_out_ BOOL*);
 
     // WebView
     bool shouldUseEmbeddedView(const WTF::String& mimeType) const;

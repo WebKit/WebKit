@@ -1255,8 +1255,7 @@ editing/inserting/smart-quote-with-all-configurations.html [ Skip ]
 ###### Text Iterator
 # Plain text controller currently in Mac DumpRenderTree only.
 editing/text-iterator [ Skip ]
-# TODO Missing testRunner.findString()
-webkit.org/b/50234 editing/text-iterator/findString.html [ Skip ]
+editing/text-iterator/findString.html [ Pass ]
 
 ###### TODO Spellchecker is not implemented. Skip these test.
 webkit.org/b/66620 editing/spelling/spelling-insert-html.html [ Skip ]

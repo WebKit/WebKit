@@ -1,3 +1,16 @@
+2016-03-21  Hyungwook Lee  <hyungwook.lee@navercorp.com> 
+
+        [Win] Connect layoutTestController.findString() to support testing 
+        https://bugs.webkit.org/show_bug.cgi?id=50234
+
+        Reviewed by Alex Christensen.
+
+        Implement WebView::findString to support testing efforts.
+
+        * Interfaces/IWebViewPrivate.idl: Add API declaration.
+        * WebView.cpp:
+        * WebView.h:
+
 2016-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, rolling out r196951 and r197031.

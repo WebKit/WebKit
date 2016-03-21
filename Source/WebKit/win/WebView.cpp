@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2015 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2006-2016 Apple, Inc.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -7564,3 +7564,13 @@ HRESULT WebView::layerTreeAsString(_Deref_opt_out_ BSTR* treeBstr)
 
     return S_OK;
 }
+
+HRESULT WebView::findString(_In_ BSTR string, WebFindOptions options, _Deref_opt_out_ BOOL* found)
+{
+    if (!found)
+        return E_POINTER;
+
+    *found = m_page->findString(toString(string), options);
+    return S_OK;
+}
+

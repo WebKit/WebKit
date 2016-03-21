@@ -1,3 +1,15 @@
+2016-03-21  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [Win] Connect layoutTestController.findString() to support testing
+        https://bugs.webkit.org/show_bug.cgi?id=50234
+
+        Reviewed by Alex Christensen.
+
+        Implement TestRunner::findString().
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::findString):
+
 2016-03-20  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Determine TARGET_MAC_OS_X_VERSION_MAJOR from MACOSX_DEPLOYMENT_TARGET rather than from MAC_OS_X_VERSION_MAJOR

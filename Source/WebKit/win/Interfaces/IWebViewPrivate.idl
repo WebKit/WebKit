@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -321,8 +321,18 @@ interface IWebViewPrivate2 : IWebViewPrivate
         [in] WebUserContentInjectedFrames injectedFrames);
 }
 
+typedef enum {
+    WebFindOptionsCaseInsensitive = 1 << 0,
+    WebFindOptionsAtWordStarts = 1 << 1,
+    WebFindOptionsTreatMedialCapitalAsWordStart = 1 << 2,
+    WebFindOptionsBackwards = 1 << 3,
+    WebFindOptionsWrapAround = 1 << 4,
+    WebFindOptionsStartInSelection = 1 << 5
+} WebFindOptions;
+
 [ uuid(08C88359-76AA-48F2-BA27-820540E781E9) ]
 interface IWebViewPrivate3 : IWebViewPrivate2
 {
     HRESULT layerTreeAsString([out] BSTR*);
+    HRESULT findString([in] BSTR, [in] WebFindOptions, [out] BOOL* found); 
 }

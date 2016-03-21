@@ -928,11 +928,52 @@ void TestRunner::execCommand(JSStringRef name, JSStringRef value)
     viewPrivate->executeCoreCommandByName(nameBSTR, valueBSTR);
 }
 
-bool TestRunner::findString(JSContextRef /* context */, JSStringRef /* target */, JSObjectRef /* optionsArray */)
+bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
 {
-    // FIXME: Implement
-    printf("ERROR: TestRunner::findString(...) not implemented\n");
-    return false;
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return false;
+
+    COMPtr<IWebViewPrivate3> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return false;
+
+    unsigned char options = 0;
+
+    JSRetainPtr<JSStringRef> lengthPropertyName(Adopt, JSStringCreateWithUTF8CString("length"));
+    JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), nullptr);
+    if (!JSValueIsNumber(context, lengthValue))
+        return false;
+
+    _bstr_t targetBSTR(JSStringCopyBSTR(target), false);
+
+    size_t length = static_cast<size_t>(JSValueToNumber(context, lengthValue, nullptr));
+    for (size_t i = 0; i < length; ++i) {
+        JSValueRef value = JSObjectGetPropertyAtIndex(context, optionsArray, i, nullptr);
+        if (!JSValueIsString(context, value))
+            continue;
+
+        JSRetainPtr<JSStringRef> optionName(Adopt, JSValueToStringCopy(context, value, nullptr));
+
+        if (JSStringIsEqualToUTF8CString(optionName.get(), "CaseInsensitive"))
+            options |= WebFindOptionsCaseInsensitive;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "AtWordStarts"))
+            options |= WebFindOptionsAtWordStarts;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "TreatMedialCapitalAsWordStart"))
+            options |= WebFindOptionsTreatMedialCapitalAsWordStart;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "Backwards"))
+            options |= WebFindOptionsBackwards;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "WrapAround"))
+            options |= WebFindOptionsWrapAround;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "StartInSelection"))
+            options |= WebFindOptionsStartInSelection;
+    }
+
+    BOOL found = FALSE;
+    if (FAILED(viewPrivate->findString(targetBSTR, static_cast<WebFindOptions>(options), &found)))
+        return false;
+
+    return found;
 }
 
 void TestRunner::setCacheModel(int cacheModel)

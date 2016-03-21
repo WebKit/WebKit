@@ -1,3 +1,13 @@
+2016-03-21  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [Win] Connect layoutTestController.findString() to support testing
+        https://bugs.webkit.org/show_bug.cgi?id=50234
+
+        Reviewed by Alex Christensen.
+
+        * platform/win/TestExpectations: Unskip test.
+        * platform/win/editing/text-iterator/findString-expected.txt: Added.
+
 2016-03-21  Zalan Bujtas  <zalan@apple.com>
 
         Web Inspector search icon does not fit when zoomed in.
