@@ -1278,6 +1278,7 @@ webkit.org/b/150823 imported/w3c/web-platform-tests/XMLHttpRequest/getresponsehe
 
 webkit.org/b/152436 [ Debug ] imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.https.html [ Pass Crash ]
 webkit.org/b/153781 [ Debug ] imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection-1.html [ Pass Crash ]
+webkit.org/b/153781 [ Debug ] imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection-2.html [ Pass Crash ]
 
 # WOFF2 is only supported on certain Operating Systems.
 webkit.org/b/150830 [ Yosemite ElCapitan ] fast/text/woff2.html [ ImageOnlyFailure ]
