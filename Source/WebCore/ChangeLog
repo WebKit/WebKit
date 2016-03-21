@@ -1,3 +1,18 @@
+2016-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        Web Inspector search icon does not fit when zoomed in.
+        https://bugs.webkit.org/show_bug.cgi?id=155708
+
+        Reviewed by Simon Fraser.
+
+        Adjusts the paint rect for the magnifier icon so that it fits even when zoomed in.
+
+        Covered by existing tests.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::resultsButtonSizes):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+
 2016-03-21  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][MediaFoundation] Crash when media player is destroyed.

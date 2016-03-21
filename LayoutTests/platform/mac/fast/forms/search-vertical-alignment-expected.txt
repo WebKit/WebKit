@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x45
         RenderTextControl {INPUT} at (2,0) size 173x45 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 167x39
-            RenderBlock {DIV} at (0,14) size 17x11
+            RenderBlock {DIV} at (0,10) size 17x19
             RenderBlock {DIV} at (17,13) size 131x13
             RenderBlock {DIV} at (147,10) size 20x19
         RenderText {#text} at (176,13) size 5x18
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,113) size 784x18
         RenderTextControl {INPUT} at (2,2) size 173x16 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,0) size 167x16
-            RenderBlock {DIV} at (0,2) size 17x12
+            RenderBlock {DIV} at (0,0) size 17x19
             RenderBlock {DIV} at (17,1) size 131x14
             RenderBlock {DIV} at (147,0) size 20x19
         RenderText {#text} at (176,0) size 5x18
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,147) size 784x18
         RenderTextControl {INPUT} at (2,5) size 173x12 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,0) size 167x12
-            RenderBlock {DIV} at (0,0) size 17x12
+            RenderBlock {DIV} at (0,0) size 17x19
             RenderBlock {DIV} at (17,3) size 131x6
             RenderBlock {DIV} at (147,0) size 20x19
         RenderText {#text} at (176,0) size 5x18

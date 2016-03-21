@@ -1750,9 +1750,10 @@ void RenderThemeMac::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderSt
     style.setBoxShadow(nullptr);
 }
 
+const int resultsArrowWidth = 5;
 const IntSize* RenderThemeMac::resultsButtonSizes() const
 {
-    static const IntSize sizes[3] = { IntSize(19, 13), IntSize(17, 11), IntSize(17, 9) };
+    static const IntSize sizes[3] = { IntSize(19, 22), IntSize(17, 19), IntSize(17, 15) };
     return sizes;
 }
 
@@ -1806,7 +1807,6 @@ bool RenderThemeMac::paintSearchFieldResultsDecorationPart(const RenderBox& box,
     return false;
 }
 
-const int resultsArrowWidth = 5;
 void RenderThemeMac::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
@@ -1817,6 +1817,20 @@ void RenderThemeMac::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderS
 
 bool RenderThemeMac::paintSearchFieldResultsButton(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& r)
 {
+    auto adjustedResultButtonRect = [this, &box] (const FloatRect& localBounds) -> FloatRect
+    {
+        IntSize buttonSize = sizeForSystemFont(box.style(), resultsButtonSizes());
+        buttonSize.expand(resultsArrowWidth, 0);
+        FloatSize diff = localBounds.size() - FloatSize(buttonSize);
+        if (!diff.isZero())
+            return localBounds;
+        // Vertically centered and left aligned.
+        FloatRect adjustedLocalBounds = localBounds;
+        adjustedLocalBounds.move(0, floorToDevicePixel(diff.height() / 2, box.document().deviceScaleFactor()));
+        adjustedLocalBounds.setSize(buttonSize);
+        return adjustedLocalBounds;
+    };
+
     Element* input = box.element()->shadowHost();
     if (!input)
         input = box.element();
@@ -1835,7 +1849,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderBox& box, const P
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     float zoomLevel = box.style().effectiveZoom();
 
-    FloatRect localBounds = [search searchButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))];
+    FloatRect localBounds = adjustedResultButtonRect([search searchButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))]);
     FloatPoint paintingPos = convertToPaintingPosition(inputBox, box, localBounds.location(), r.location());
     
     FloatRect unzoomedRect(paintingPos, localBounds.size());

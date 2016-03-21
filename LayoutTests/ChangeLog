@@ -1,3 +1,31 @@
+2016-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        Web Inspector search icon does not fit when zoomed in.
+        https://bugs.webkit.org/show_bug.cgi?id=155708
+
+        Reviewed by Simon Fraser.
+
+        Adjusts the paint rect for the magnifier icon so that it fits even when zoomed in.
+
+        * fast/forms/search/search-padding-cancel-results-buttons-expected.txt:
+        * platform/mac/fast/css/focus-ring-exists-for-search-field-expected.txt:
+        * platform/mac/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.txt:
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/mac/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+        * platform/mac/fast/forms/search-styled-expected.txt:
+        * platform/mac/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/mac/fast/forms/search/search-size-with-decorations-expected.txt:
+        * platform/mac/fast/forms/searchfield-heights-expected.txt:
+        * platform/mac/fast/repaint/search-field-cancel-expected.txt:
+        * platform/mac/fast/replaced/width100percent-searchfield-expected.txt:
+
 2016-03-21  Eric Carlson  <eric.carlson@apple.com>
 
         Add a WebRTC specific compile flag

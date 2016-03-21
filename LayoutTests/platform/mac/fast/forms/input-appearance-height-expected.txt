@@ -92,7 +92,7 @@ layer at (0,0) size 800x600
           text run at (0,237) width 45: "search "
         RenderTextControl {INPUT} at (46,237) size 165x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,0) size 158x19
-            RenderBlock {DIV} at (0,4) size 8x11
+            RenderBlock {DIV} at (0,0) size 8x19
             RenderBlock {DIV} at (8,3) size 131x13
             RenderBlock {DIV} at (138,0) size 20x19
         RenderText {#text} at (0,0) size 0x0
