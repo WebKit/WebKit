@@ -1,3 +1,17 @@
+2016-03-18  Enrica Casucci  <enrica@apple.com>
+
+        Enable preview of images as attachments.
+        https://bugs.webkit.org/show_bug.cgi?id=155674
+        rdar://problem/25242656
+
+        Reviewed by Darin Adler.
+
+        If the client cannot handle image preview, but can handle attachments,
+        let them handle images as attachments.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+
 2016-03-20  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Determine TARGET_MAC_OS_X_VERSION_MAJOR from MACOSX_DEPLOYMENT_TARGET rather than from MAC_OS_X_VERSION_MAJOR

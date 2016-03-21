@@ -3827,7 +3827,7 @@ static bool isAssistableInputType(InputType type)
     BOOL canShowLinkPreview = _positionInformation.isLink || canShowImagePreview;
     BOOL useImageURLForLink = NO;
     BOOL supportsAttachmentPreview = [uiDelegate respondsToSelector:@selector(_attachmentListForWebView:)] && [uiDelegate respondsToSelector:@selector(_webView:indexIntoAttachmentListForElement:)];
-    BOOL canShowAttachmentPreview = _positionInformation.isAttachment && supportsAttachmentPreview;
+    BOOL canShowAttachmentPreview = (_positionInformation.isAttachment || _positionInformation.isImage) && supportsAttachmentPreview;
 
     if (canShowImagePreview && _positionInformation.isAnimatedImage) {
         canShowImagePreview = NO;
@@ -3886,8 +3886,11 @@ static bool isAssistableInputType(InputType type)
         enum { WKUIPreviewItemTypeAttachment = 5 };
         *type = static_cast<UIPreviewItemType>(WKUIPreviewItemTypeAttachment);
         const auto& element = [[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:[NSURL _web_URLWithWTFString:_positionInformation.url] location:_positionInformation.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil];
-        dataForPreview[@"UIPreviewDataAttachmentList"] = [uiDelegate _attachmentListForWebView:_webView];
-        dataForPreview[@"UIPreviewDataAttachmentIndex"] = [NSNumber numberWithUnsignedInteger:[uiDelegate _webView:_webView indexIntoAttachmentListForElement:element]];
+        NSUInteger index = [uiDelegate _webView:_webView indexIntoAttachmentListForElement:element];
+        if (index != NSNotFound) {
+            dataForPreview[@"UIPreviewDataAttachmentList"] = [uiDelegate _attachmentListForWebView:_webView];
+            dataForPreview[@"UIPreviewDataAttachmentIndex"] = [NSNumber numberWithUnsignedInteger:index];
+        }
     }
     
     return dataForPreview;
