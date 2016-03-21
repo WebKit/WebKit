@@ -1,3 +1,16 @@
+2016-03-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r197552.
+
+        May have caused a ~2% PLT regression on iOS
+
+        Reverted changeset:
+
+        "Drop DocumentSharedObjectPool immediately when going into
+        PageCache."
+        https://bugs.webkit.org/show_bug.cgi?id=154986
+        http://trac.webkit.org/changeset/197552
+
 2016-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         Very flashy scrolling on http://quellish.tumblr.com page
