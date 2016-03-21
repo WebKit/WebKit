@@ -1,3 +1,15 @@
+2016-03-21  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fixed compilation with GCC 4.8.
+        https://bugs.webkit.org/show_bug.cgi?id=155698
+
+        Reviewed by Alexey Proskuryakov.
+
+        GCC 4.8 does not allow aggregate initialization for type with deleted
+        constructor, see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52707.
+
+        * dfg/DFGCSEPhase.cpp: Added ctor for ImpureDataSlot.
+
 2016-03-21  Joonghun Park  <jh718.park@samsung.com>
 
         [JSC] Add ArrayBuffer::tryCreate and change the callsites where it is needed
