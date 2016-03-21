@@ -510,6 +510,8 @@ public:
 
     WEBCORE_EXPORT void availableContentSizeChanged(AvailableSizeChangeReason) override;
 
+    void adjustTiledBackingScrollability();
+
     void addPaintPendingMilestones(LayoutMilestones);
     void firePaintRelatedMilestonesIfNeeded();
     void fireLayoutRelatedMilestonesIfNeeded();
@@ -635,6 +637,11 @@ private:
     GraphicsLayer* layerForScrollCorner() const override;
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* layerForOverhangAreas() const override;
+#endif
+    void contentsResized() override;
+
+#if PLATFORM(IOS)
+    void unobscuredContentSizeChanged() override;
 #endif
 
     bool usesCompositedScrolling() const override;

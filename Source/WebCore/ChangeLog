@@ -1,3 +1,35 @@
+2016-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Use larger tiles when possible to reduce per-tile painting overhead
+        https://bugs.webkit.org/show_bug.cgi?id=155734
+        rdar://problem/24968144
+
+        Reviewed by Tim Horton.
+
+        The existing tile size logic is wired to adjustScrollbars, which doesn't fire
+        when scrolling is delegated. For iOS WK2, key off of a new unobscuredContentSizeChanged()
+        function that runs when the UI process tells told WebCore that the unobscured size
+        has changed. In addition, contentsResized() is used to update scrollability when
+        page changes size.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::contentsResized):
+        (WebCore::FrameView::addedOrRemovedScrollbar):
+        (WebCore::FrameView::adjustTiledBackingScrollability): Handle both delegated and non-delegated
+        scrolling; the former looks at the visible size (based on the unobscuredVisibleContentRect),
+        the latter at the presence of scrollbars.
+        (WebCore::FrameView::unobscuredContentSizeChanged):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::unobscuredContentSizeChanged):
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::adjustTileCoverageRect): Use kDefaultTileSize rather than the
+        tile size, to retain the old amount of overdraw.
+        (WebCore::TileController::tileSize): There was a bug in the not-scrollable case; we need
+        to scale.
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::setUnobscuredContentSize):
+
 2016-03-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r197552.

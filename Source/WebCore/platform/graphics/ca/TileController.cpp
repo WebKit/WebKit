@@ -363,8 +363,8 @@ void TileController::adjustTileCoverageRect(FloatRect& coverageRect, const Float
         return;
     }
 
-    double horizontalMargin = tileSize().width() / contentsScale;
-    double verticalMargin = tileSize().height() / contentsScale;
+    double horizontalMargin = kDefaultTileSize / contentsScale;
+    double verticalMargin = kDefaultTileSize / contentsScale;
 
     double currentTime = monotonicallyIncreasingTime();
     double timeDelta = currentTime - m_velocity.lastUpdateTime;
@@ -494,10 +494,13 @@ IntSize TileController::tileSize() const
 
     IntSize tileSize(kDefaultTileSize, kDefaultTileSize);
 
-    if (m_scrollability == NotScrollable)
-        tileSize = boundsWithoutMargin().size().constrainedBetween(IntSize(kDefaultTileSize, kDefaultTileSize), IntSize(kGiantTileSize, kGiantTileSize));
-    else if (m_scrollability == VerticallyScrollable)
-        tileSize.setWidth(std::min(std::max(boundsWithoutMargin().width(), kDefaultTileSize), kGiantTileSize));
+    if (m_scrollability == NotScrollable) {
+        IntSize scaledSize = expandedIntSize(boundsWithoutMargin().size() * tileGrid().scale());
+        tileSize = scaledSize.constrainedBetween(IntSize(kDefaultTileSize, kDefaultTileSize), IntSize(kGiantTileSize, kGiantTileSize));
+    } else if (m_scrollability == VerticallyScrollable)
+        tileSize.setWidth(std::min(std::max<int>(ceilf(boundsWithoutMargin().width() * tileGrid().scale()), kDefaultTileSize), kGiantTileSize));
+
+    LOG_WITH_STREAM(Scrolling, stream << "TileController::tileSize newSize=" << tileSize);
 
     m_tileSizeLocked = true;
     return tileSize;

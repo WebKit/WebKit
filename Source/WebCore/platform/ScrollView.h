@@ -419,6 +419,10 @@ protected:
 
     virtual void scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset&, const ScrollOffset&) { }
 
+#if PLATFORM(IOS)
+    virtual void unobscuredContentSizeChanged() { }
+#endif
+
 private:
     IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
     WEBCORE_EXPORT IntRect unobscuredContentRectInternal(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;

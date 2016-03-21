@@ -2136,6 +2136,13 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition)
     ScrollView::setScrollPosition(scrollPosition);
 }
 
+void FrameView::contentsResized()
+{
+    // For non-delegated scrolling, adjustTiledBackingScrollability() is called via addedOrRemovedScrollbar() which occurs less often.
+    if (delegatesScrolling())
+        adjustTiledBackingScrollability();
+}
+
 void FrameView::delegatesScrollingDidChange()
 {
     // When we switch to delgatesScrolling mode, we should destroy the scrolling/clipping layers in RenderLayerCompositor.
@@ -2466,17 +2473,45 @@ void FrameView::addedOrRemovedScrollbar()
             renderView->compositor().frameViewDidAddOrRemoveScrollbars();
     }
 
-    if (auto* tiledBacking = this->tiledBacking()) {
-        TiledBacking::Scrollability scrollability = TiledBacking::NotScrollable;
-        if (horizontalScrollbar())
-            scrollability = TiledBacking::HorizontallyScrollable;
-
-        if (verticalScrollbar())
-            scrollability |= TiledBacking::VerticallyScrollable;
-
-        tiledBacking->setScrollability(scrollability);
-    }
+    adjustTiledBackingScrollability();
 }
+
+void FrameView::adjustTiledBackingScrollability()
+{
+    auto* tiledBacking = this->tiledBacking();
+    if (!tiledBacking)
+        return;
+    
+    bool horizontallyScrollable;
+    bool verticallyScrollable;
+
+    if (delegatesScrolling()) {
+        IntSize documentSize = contentsSize();
+        IntSize visibleSize = this->visibleSize();
+        
+        horizontallyScrollable = documentSize.width() > visibleSize.width();
+        verticallyScrollable = documentSize.height() > visibleSize.height();
+    } else {
+        horizontallyScrollable = horizontalScrollbar();
+        verticallyScrollable = verticalScrollbar();
+    }
+
+    TiledBacking::Scrollability scrollability = TiledBacking::NotScrollable;
+    if (horizontallyScrollable)
+        scrollability = TiledBacking::HorizontallyScrollable;
+
+    if (verticallyScrollable)
+        scrollability |= TiledBacking::VerticallyScrollable;
+
+    tiledBacking->setScrollability(scrollability);
+}
+
+#if PLATFORM(IOS)
+void FrameView::unobscuredContentSizeChanged()
+{
+    adjustTiledBackingScrollability();
+}
+#endif
 
 static LayerFlushThrottleState::Flags determineLayerFlushThrottleState(Page& page)
 {

@@ -1,3 +1,17 @@
+2016-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Use larger tiles when possible to reduce per-tile painting overhead
+        https://bugs.webkit.org/show_bug.cgi?id=155734
+        rdar://problem/24968144
+
+        Reviewed by Tim Horton.
+
+        New results with larger page tiles in WK2.
+
+        * platform/ios-simulator-wk2/compositing/tiling/rotated-tiled-clamped-expected.txt: Added.
+        * platform/ios-simulator-wk2/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt: Added.
+        * platform/ios-simulator-wk2/compositing/tiling/transform-origin-tiled-expected.txt: Added.
+
 2016-03-21  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [Win] Connect layoutTestController.findString() to support testing

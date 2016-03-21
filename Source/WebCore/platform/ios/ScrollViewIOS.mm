@@ -116,7 +116,11 @@ IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars) 
 void ScrollView::setUnobscuredContentSize(const FloatSize& size)
 {
     ASSERT(!platformWidget());
+    if (size == m_unobscuredContentSize)
+        return;
+
     m_unobscuredContentSize = size;
+    unobscuredContentSizeChanged();
 }
 
 FloatRect ScrollView::exposedContentRect() const
