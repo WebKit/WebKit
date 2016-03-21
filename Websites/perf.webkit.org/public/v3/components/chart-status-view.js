@@ -53,9 +53,9 @@ class ChartStatusView extends ComponentBase {
                 var data = this._chart.sampledDataBetween('current', selection[0], selection[1]);
                 if (!data)
                     return false;
-                this._usedSelection = selection;
 
                 if (data && data.length > 1) {
+                    this._usedSelection = selection;
                     currentPoint = data[data.length - 1];
                     previousPoint = data[0];
                 }

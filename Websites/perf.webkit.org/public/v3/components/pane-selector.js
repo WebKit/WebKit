@@ -23,7 +23,6 @@ class PaneSelector extends ComponentBase {
     focus()
     {
         var select = this.content().querySelector('select');
-        console.log(select);
         if (select) {
             if (select.selectedIndex < 0)
                 select.selectedIndex = 0;

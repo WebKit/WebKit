@@ -65,6 +65,21 @@ class ChartPane extends ChartPaneBase {
 
     router() { return this._chartsPage.router(); }
 
+    _requestOpeningCommitViewer(repository, from, to)
+    {
+        super._requestOpeningCommitViewer(repository, from, to);
+        this._chartsPage.setOpenRepository(repository);
+    }
+
+    setOpenRepository(repository)
+    {
+        if (repository != this._commitLogViewer.currentRepository()) {
+            var range = this._mainChartStatus.setCurrentRepository(repository);
+            this._commitLogViewer.view(repository, range.from, range.to).then(this.render.bind(this));
+            this.render();
+        }
+    }
+
     _indicatorDidChange(indicatorID, isLocked)
     {
         this._mainChartIndicatorWasLocked = isLocked;

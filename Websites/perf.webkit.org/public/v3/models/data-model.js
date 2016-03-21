@@ -47,16 +47,18 @@ class DataModelObject {
         return idMap ? idMap[id] : null;
     }
 
-    static all()
+    static listForStaticMap(name)
     {
         var list = [];
-        var idMap = this.namedStaticMap('id');
+        var idMap = this.namedStaticMap(name);
         if (idMap) {
             for (var id in idMap)
                 list.push(idMap[id]);
         }
         return list;
     }
+
+    static all() { return this.listForStaticMap('id'); }
 
     static cachedFetch(path, params, noCache)
     {

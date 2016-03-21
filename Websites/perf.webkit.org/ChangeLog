@@ -1,5 +1,81 @@
 2016-03-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        v3 UI sometimes don't update the list of revisions on the commit log viewer
+        https://bugs.webkit.org/show_bug.cgi?id=155729
+
+        Rubber-stamped by Chris Dumez.
+
+        Fixed multiple bugs that were affecting the list of blame range and commit logs for the range weren't
+        updated in some cases on v3 UI. Also, the commit log viewer state is now a part of the URL state so
+        opening and closing the commit log viewer will persist across page loads.
+
+        Also fixed a regression from r198479 that Test object can't be created for a top level test.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype.configure):
+        (ChartPaneBase.prototype._mainSelectionDidChange): Fixed the bug that the list of blame range nor the
+        commit log viewer don't get updated when the selected range changes.
+        (ChartPaneBase.prototype._indicatorDidChange):
+        (ChartPaneBase.prototype._didFetchData):
+        (ChartPaneBase.prototype._updateStatus): Extracted from _indicatorDidChange and _didFetchData.
+        (ChartPaneBase.prototype._requestOpeningCommitViewer): Renamed from _openCommitViewer.
+
+        * public/v3/components/chart-status-view.js:
+        (ChartStatusView.prototype.updateStatusIfNeeded): Fixed the bug that the blame range doesn't get set
+        on the initial page load when the selection range is set but the chart data hadn't been fetched yet.
+
+        * public/v3/components/commit-log-viewer.js:
+        (CommitLogViewer.prototype.view): Fixed the bug that we don't clear out the old list of commits while
+        loading the next set of commits to show as it looked as if the list was never updated.
+        (CommitLogViewer.prototype.render): Fixed the bug that the view always show the last repository name
+        even if there were nothing being fetched or commits to show.
+
+        * public/v3/components/pane-selector.js:
+        (PaneSelector.prototype.focus): Removed superfluous call to console.log.
+
+        * public/v3/models/data-model.js:
+        (DataModelObject.listForStaticMap): Generalized the code for all to fix the bug in Test.
+        (DataModelObject.all):
+
+        * public/v3/models/test.js:
+        (Test): Fixed the bug that this code was relying on the static map to be an array.
+        (Test.topLevelTests): Use newly added listForStaticMap to convert the dictionary to an array.
+
+        * public/v3/pages/chart-pane-status-view.js:
+        (ChartPaneStatusView): Always initialize _usedRevisionRange as a triple to simplify code elsewhere.
+        (ChartPaneStatusView.prototype.render): Invoke _revisionCallback when user clicks on a repository
+        expansion mark (>>). Also fixed click handler from the row since this made selecting revision range
+        on the view cumbersome. Now user has to explicitly click on the expansion mark (>>).
+        (ChartPaneStatusView.prototype._setRevisionRange): Now takes shouldNotify, from, and to as arguments
+        as this function must not invoke_revisionCallback inside _updateRevisionListForNewCurrentRepository.
+        (ChartPaneStatusView.prototype.moveRepositoryWithNotification): Use newly added setCurrentRepository
+        instead of manually invoking setCurrentRepository and updateRevisionListWithNotification.
+        (ChartPaneStatusView.prototype.setCurrentRepository): Fixed the bug that we weren't updating the
+        blame list here.
+        (ChartPaneStatusView.prototype.updateRevisionList): Renamed from updateRevisionListWithNotification
+        since we no longer call _revisionCallback. In general, callbacks are only meant to communicate user
+        initiated actions, and not program induced updates like this API so this was a bad pattern anyway.
+        ChartPane now explicitly updates the commit log viewer instead of relying on this function calling
+        _requestOpeningCommitViewer implicitly.
+        (ChartPaneStatusView.prototype._updateRevisionListForNewCurrentRepository): Extracted from
+        updateRevisionListWithNotification so that setCurrentRepository can also call this function.
+
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype._requestOpeningCommitViewer): Overrides ChartPaneBase's method. Open the same
+        repository in other panes via ChartsPage.setOpenRepository.
+        (ChartPane.prototype.setOpenRepository): This method is called when the user selected a repository in
+        another pane. Open the same repository in this pane if it wasn't already open.
+
+        * public/v3/pages/charts-page.js:
+        (ChartsPage): Added this._currentRepositoryId.
+        (ChartsPage.prototype.serializeState): Serialize _currentRepositoryId.
+        (ChartsPage.prototype.updateFromSerializedState): Set the commit log viewer's 
+        (ChartsPage.prototype.setOpenRepository): Added.
+
+        * tests/api-measurement-set.js: Fixed a test after r198479.
+
+2016-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         V3 Perf Dashboard should automatically select initial range when creating a new task
         https://bugs.webkit.org/show_bug.cgi?id=155677
 

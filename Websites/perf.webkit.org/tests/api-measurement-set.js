@@ -304,7 +304,7 @@ describe("/api/measurement-set", function () {
                            sum: 65,
                            squareSum: 855,
                            markedOutlier: false,
-                           revisions: [[repositoryId, '144000', revisionTime]],
+                           revisions: [[1, repositoryId, '144000', revisionTime]],
                            commitTime: revisionTime,
                            buildTime: revisionBuildTime,
                            buildNumber: '124' });

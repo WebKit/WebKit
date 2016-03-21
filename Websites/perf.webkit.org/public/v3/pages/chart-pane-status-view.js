@@ -16,7 +16,7 @@ class ChartPaneStatusView extends ChartStatusView {
         this._renderedRevisionList = null;
         this._renderedRepository = null;
 
-        this._usedRevisionRange = null;
+        this._usedRevisionRange = [null, null, null];
     }
 
     pointsRangeForAnalysis() { return this._pointsRangeForAnalysis; }
@@ -38,12 +38,12 @@ class ChartPaneStatusView extends ChartStatusView {
             var selected = info.repository == self._currentRepository;
             var action = function () {
                 if (self._currentRepository == info.repository)
-                    self._setRevisionRange(null, null, null);
+                    self._setRevisionRange(true, null, null, null);
                 else
-                    self._setRevisionRange(info.repository, info.from, info.to);
+                    self._setRevisionRange(true, info.repository, info.from, info.to);
             };
 
-            return element('tr', {class: selected ? 'selected' : '', onclick: action}, [
+            return element('tr', {class: selected ? 'selected' : ''}, [
                 element('td', info.repository.name()),
                 element('td', info.url ? link(info.label, info.label, info.url, true) : info.label),
                 element('td', {class: 'commit-viewer-opener'}, link('\u00BB', action)),
@@ -74,16 +74,17 @@ class ChartPaneStatusView extends ChartStatusView {
     setCurrentRepository(repository)
     {
         this._currentRepository = repository;
-        this._forceRender = true;
+        return this._updateRevisionListForNewCurrentRepository();
     }
 
-    _setRevisionRange(repository, from, to)
+    _setRevisionRange(shouldNotify, repository, from, to)
     {
-        if (this._usedRevisionRange && this._usedRevisionRange[0] == repository
+        if (this._usedRevisionRange[0] == repository
             && this._usedRevisionRange[1] == from && this._usedRevisionRange[2] == to)
             return;
         this._usedRevisionRange = [repository, from, to];
-        this._revisionCallback(repository, from, to);
+        if (shouldNotify)
+            this._revisionCallback(repository, from, to);
     }
 
     moveRepositoryWithNotification(forward)
@@ -99,26 +100,32 @@ class ChartPaneStatusView extends ChartStatusView {
         if (newIndex == index)
             return false;
 
-        var info = this._revisionList[newIndex];
-        this.setCurrentRepository(info.repository);
-        this.updateRevisionListWithNotification();
+        var item = this._revisionList[newIndex];
+        this.setCurrentRepository(item ? item.repository : null);
+
+        return true;
     }
 
-    updateRevisionListWithNotification()
+    updateRevisionList()
     {
         if (!this._currentRepository)
-            return;
+            return {repository: null, from: null, to: null};
+        return this._updateRevisionListForNewCurrentRepository();
+    }
 
+    _updateRevisionListForNewCurrentRepository()
+    {
         this.updateStatusIfNeeded();
 
         this._forceRender = true;
         for (var info of this._revisionList) {
             if (info.repository == this._currentRepository) {
-                this._setRevisionRange(info.repository, info.from, info.to);
-                return;
+                this._setRevisionRange(false, info.repository, info.from, info.to);
+                return {repository: info.repository, from: info.from, to: info.to};
             }
         }
-        this._setRevisionRange(this._currentRepository, null, null);
+        this._setRevisionRange(false, null, null, null);
+        return {repository: this._currentRepository, from: null, to: null};
     }
 
     computeChartStatusLabels(currentPoint, previousPoint)

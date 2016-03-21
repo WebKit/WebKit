@@ -54,7 +54,7 @@ class ChartPaneBase extends ComponentBase {
         this._mainChart = new InteractiveTimeSeriesChart(result.sourceList, mainOptions);
         this.renderReplace(this.content().querySelector('.chart-pane-main'), this._mainChart);
 
-        this._mainChartStatus = new ChartPaneStatusView(result.metric, this._mainChart, this._openCommitViewer.bind(this));
+        this._mainChartStatus = new ChartPaneStatusView(result.metric, this._mainChart, this._requestOpeningCommitViewer.bind(this));
         this.renderReplace(this.content().querySelector('.chart-pane-details'), this._mainChartStatus);
 
         this.content().querySelector('.chart-pane').addEventListener('keyup', this._keyup.bind(this));
@@ -97,7 +97,7 @@ class ChartPaneBase extends ComponentBase {
 
     _mainSelectionDidChange(selection, didEndDrag)
     {
-        this.render();
+        this._updateStatus();
     }
 
     _mainSelectionDidZoom(selection)
@@ -109,13 +109,18 @@ class ChartPaneBase extends ComponentBase {
 
     _indicatorDidChange(indicatorID, isLocked)
     {
-        this._mainChartStatus.updateRevisionListWithNotification();
-        this.render();
+        this._updateStatus();
     }
 
     _didFetchData()
     {
-        this._mainChartStatus.updateRevisionListWithNotification();
+        this._updateStatus();
+    }
+
+    _updateStatus()
+    {
+        var range = this._mainChartStatus.updateRevisionList();
+        this._commitLogViewer.view(range.repository, range.from, range.to).then(this.render.bind(this));
         this.render();
     }
 
@@ -128,7 +133,7 @@ class ChartPaneBase extends ComponentBase {
 
     router() { return null; }
 
-    _openCommitViewer(repository, from, to)
+    _requestOpeningCommitViewer(repository, from, to)
     {
         this._mainChartStatus.setCurrentRepository(repository);
         this._commitLogViewer.view(repository, from, to).then(this.render.bind(this));
