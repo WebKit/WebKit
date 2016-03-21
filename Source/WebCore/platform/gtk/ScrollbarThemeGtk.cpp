@@ -357,15 +357,10 @@ void ScrollbarThemeGtk::paintThumb(GraphicsContext& context, Scrollbar& scrollba
     if (m_usesOverlayScrollbars && scrollbar.hoveredPart() == NoPart) {
         // When using overlay scrollbars we always claim the size of the scrollbar when hovered, so when
         // drawing the indicator we need to adjust the rectangle to its actual size in indicator mode.
-#if GTK_CHECK_VERSION(3, 19, 11)
-        int thumbFat = thumbFatness(styleContext.get(), orientation);
-#else
-        int thumbFat = thumbFatness(parentStyleContext.get(), orientation);
-#endif
         if (orientation == VerticalScrollbar)
-            thumbRect.move(scrollbar.width() - thumbFat, 0);
+            thumbRect.move(scrollbar.width() - scrollbarThickness(parentStyleContext.get(), orientation), 0);
         else
-            thumbRect.move(0, scrollbar.height() - thumbFat);
+            thumbRect.move(0, scrollbar.height() - scrollbarThickness(parentStyleContext.get(), orientation));
     }
     adjustRectAccordingToMargin(styleContext.get(), thumbRect);
     gtk_render_slider(styleContext.get(), context.platformContext()->cr(), thumbRect.x(), thumbRect.y(), thumbRect.width(), thumbRect.height(),
