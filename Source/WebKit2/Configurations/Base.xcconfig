@@ -73,7 +73,11 @@ OTHER_MIGFLAGS = -F$(BUILT_PRODUCTS_DIR);
 PREBINDING = NO;
 WARNING_CFLAGS = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat-security -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough;
 
-TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
+TARGET_MAC_OS_X_VERSION_MAJOR = $(TARGET_MAC_OS_X_VERSION_MAJOR$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier));
+TARGET_MAC_OS_X_VERSION_MAJOR_10 = 101000;
+TARGET_MAC_OS_X_VERSION_MAJOR_11 = 101100;
+TARGET_MAC_OS_X_VERSION_MAJOR_12 = 101200;
+TARGET_MAC_OS_X_VERSION_MAJOR_13 = 101300;
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
