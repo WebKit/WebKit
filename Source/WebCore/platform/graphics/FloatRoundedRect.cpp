@@ -197,6 +197,12 @@ void FloatRoundedRect::adjustRadii()
     m_radii.scale(widthRatio < heightRatio ? widthRatio : heightRatio);
 }
 
+// This is conservative; it does not test intrusion into the corner rects.
+bool FloatRoundedRect::intersectionIsRectangular(const FloatRect& rect) const
+{
+    return !(rect.intersects(topLeftCorner()) || rect.intersects(topRightCorner()) || rect.intersects(bottomLeftCorner()) || rect.intersects(bottomRightCorner()));
+}
+
 TextStream& operator<<(TextStream& ts, const FloatRoundedRect& roundedRect)
 {
     ts << roundedRect.rect().x() << " " << roundedRect.rect().y() << " " << roundedRect.rect().width() << " " << roundedRect.rect().height() << "\n";

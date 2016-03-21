@@ -1,3 +1,24 @@
+2016-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Very flashy scrolling on http://quellish.tumblr.com page
+        https://bugs.webkit.org/show_bug.cgi?id=155728
+        rdar://problem/22299375
+
+        Reviewed by Zalan Bujtas.
+
+        http://quellish.tumblr.com/post/126712999812/how-on-earth-the-facebook-ios-application-is-so
+        has many elements that are nested inside elements with non-equal corner radius clipping.
+        This requires building bezier paths for the rounded-rect clip which is expensive.
+
+        For many rows of the table, we can avoid the rounded-rect clipping because the intersection
+        of the paintDirtyRect and the clip is actually rectangular.
+
+        * platform/graphics/FloatRoundedRect.cpp:
+        (WebCore::FloatRoundedRect::intersectionIsRectangular):
+        * platform/graphics/FloatRoundedRect.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect):
+
 2016-03-21  Zalan Bujtas  <zalan@apple.com>
 
         Web Inspector search icon does not fit when zoomed in.
