@@ -1,3 +1,18 @@
+2016-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] scrollbar thumb clipped in 2.11.92
+        https://bugs.webkit.org/show_bug.cgi?id=155586
+
+        Reviewed by Michael Catanzaro.
+
+        In the current version of Adwaita, the scrollbar itself also has a
+        one pixel border that we are not taking into account.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::paintThumb): Use the scrollbar size
+        in indicator mode, instead of only the thumb size, to correctly
+        position the thumb in indicator mode.
+
 2016-03-20  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Reduce uses of PassRefPtr in WebCore/dom - 6
