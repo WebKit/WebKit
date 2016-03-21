@@ -25,7 +25,7 @@
 
 [
     NoInterfaceObject,
-    Conditional=MEDIA_STREAM,
+    Conditional=WEB_RTC,
     ConstructorTemplate=Event
 ] interface RTCDTMFToneChangeEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString tone;

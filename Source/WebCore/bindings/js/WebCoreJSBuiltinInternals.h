@@ -29,7 +29,7 @@
 
 #include <runtime/VM.h>
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
 #include "RTCPeerConnectionInternalsBuiltins.h"
 #endif
 
@@ -48,7 +48,7 @@ class JSBuiltinInternalFunctions {
 public:
     explicit JSBuiltinInternalFunctions(JSC::VM&);
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
     RTCPeerConnectionInternalsBuiltinFunctions rtcPeerConnectionInternals() { return m_rtcPeerConnectionInternalsFunctions; }
 #endif
 #if ENABLE(STREAMS_API)
@@ -62,7 +62,7 @@ public:
 
 private:
     JSC::VM& vm;
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
     RTCPeerConnectionInternalsBuiltinFunctions m_rtcPeerConnectionInternalsFunctions;
 #endif
 #if ENABLE(STREAMS_API)

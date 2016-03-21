@@ -25,7 +25,7 @@
 #ifndef RTCDataChannel_h
 #define RTCDataChannel_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "EventTarget.h"
 #include "RTCDataChannelHandlerClient.h"
@@ -115,6 +115,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCDataChannel_h

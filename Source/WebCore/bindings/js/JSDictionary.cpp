@@ -55,6 +55,9 @@
 #if ENABLE(MEDIA_STREAM)
 #include "JSMediaStream.h"
 #include "JSMediaStreamTrack.h"
+#endif
+
+#if ENABLE(WEB_RTC)
 #include "JSRTCRtpReceiver.h"
 #endif
 
@@ -249,7 +252,9 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Medi
 {
     result = JSMediaStreamTrack::toWrapped(value);
 }
+#endif
 
+#if ENABLE(WEB_RTC)
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<RTCRtpReceiver>& result)
 {
     result = JSRTCRtpReceiver::toWrapped(value);

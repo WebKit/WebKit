@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=MEDIA_STREAM,
+    Conditional=WEB_RTC,
     NoInterfaceObject,
 ] interface RTCIceServer {
     readonly attribute DOMString[] urls;

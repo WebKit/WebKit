@@ -31,7 +31,7 @@
 #ifndef RTCSessionDescription_h
 #define RTCSessionDescription_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
 
 #include "ExceptionCode.h"
 #include "ScriptWrappable.h"
@@ -65,6 +65,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEBRTC)
 
 #endif // RTCSessionDescription_h

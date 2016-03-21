@@ -31,7 +31,7 @@
 #ifndef RTCIceCandidate_h
 #define RTCIceCandidate_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "ExceptionBase.h"
 #include "ScriptWrappable.h"
@@ -70,6 +70,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCIceCandidate_h

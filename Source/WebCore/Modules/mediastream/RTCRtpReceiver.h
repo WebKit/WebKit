@@ -31,7 +31,7 @@
 #ifndef RTCRtpReceiver_h
 #define RTCRtpReceiver_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
 
 #include "RTCRtpSenderReceiverBase.h"
 
@@ -50,6 +50,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEBRTC)
 
 #endif // RTCRtpReceiver_h

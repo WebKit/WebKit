@@ -25,7 +25,7 @@
 #include "config.h"
 #include "RTCDataChannelEvent.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "EventNames.h"
 #include "RTCDataChannel.h"
@@ -59,5 +59,5 @@ EventInterface RTCDataChannelEvent::eventInterface() const
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 

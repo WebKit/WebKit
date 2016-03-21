@@ -29,7 +29,7 @@
  */
 
 [
-    Conditional=MEDIA_STREAM
+    Conditional=WEB_RTC
 ] interface RTCRtpReceiver {
     readonly attribute MediaStreamTrack track;
 };

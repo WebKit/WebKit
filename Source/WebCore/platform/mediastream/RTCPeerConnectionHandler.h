@@ -32,7 +32,7 @@
 #ifndef RTCPeerConnectionHandler_h
 #define RTCPeerConnectionHandler_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "MediaStreamPrivate.h"
 #include <wtf/PassRefPtr.h>
@@ -101,6 +101,6 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCPeerConnectionHandler_h

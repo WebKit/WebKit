@@ -30,7 +30,7 @@
  */
 
 [
-    Conditional=MEDIA_STREAM,
+    Conditional=WEB_RTC,
     CustomConstructor(optional Dictionary dictionary),
     ConstructorRaisesException
 ] interface RTCSessionDescription {

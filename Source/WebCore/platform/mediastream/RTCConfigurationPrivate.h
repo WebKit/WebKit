@@ -26,7 +26,7 @@
 #ifndef RTCConfigurationPrivate_h
 #define RTCConfigurationPrivate_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "RTCIceServerPrivate.h"
 #include <wtf/PassRefPtr.h>
@@ -75,6 +75,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCConfigurationPrivate_h

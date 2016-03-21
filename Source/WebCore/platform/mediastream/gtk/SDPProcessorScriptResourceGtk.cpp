@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 #include "SDPProcessorScriptResource.h"
 
 #include "SDPProcessorScripts.h"

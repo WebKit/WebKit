@@ -31,7 +31,7 @@
 #ifndef MediaEndpointConfiguration_h
 #define MediaEndpointConfiguration_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "URL.h"
 #include <wtf/RefCounted.h>
@@ -94,6 +94,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // MediaEndpointConfiguration_h

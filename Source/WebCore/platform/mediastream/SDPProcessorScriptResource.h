@@ -31,7 +31,7 @@
 #ifndef SDPProcessorScriptResource_h
 #define SDPProcessorScriptResource_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
 
 #include <wtf/text/WTFString.h>
 
@@ -45,6 +45,6 @@ const String& scriptString();
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEBRTC)
 
 #endif // SDPProcessorScriptResource_h

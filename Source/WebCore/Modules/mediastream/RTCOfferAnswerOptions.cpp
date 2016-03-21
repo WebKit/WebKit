@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 #include "RTCOfferAnswerOptions.h"
 
 #include <wtf/text/WTFString.h>
@@ -122,4 +122,4 @@ bool RTCAnswerOptions::initialize(const Dictionary& options)
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)

@@ -27,7 +27,7 @@
 #ifndef RTCOfferAnswerOptions_h
 #define RTCOfferAnswerOptions_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "Dictionary.h"
 #include "ExceptionCode.h"
@@ -79,6 +79,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCOfferAnswerOptions_h

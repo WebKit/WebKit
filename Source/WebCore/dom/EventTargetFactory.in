@@ -24,9 +24,9 @@ MessagePort
 Node
 Notification conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS
 Performance conditional=WEB_TIMING
-RTCDataChannel conditional=MEDIA_STREAM
-RTCDTMFSender conditional=MEDIA_STREAM
-RTCPeerConnection conditional=MEDIA_STREAM
+RTCDataChannel conditional=WEB_RTC
+RTCDTMFSender conditional=WEB_RTC
+RTCPeerConnection conditional=WEB_RTC
 SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE
 SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS

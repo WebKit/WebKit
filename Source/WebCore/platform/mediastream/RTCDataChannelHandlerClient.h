@@ -25,7 +25,7 @@
 #ifndef RTCDataChannelHandlerClient_h
 #define RTCDataChannelHandlerClient_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include <wtf/text/WTFString.h>
 
@@ -50,6 +50,6 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCDataChannelHandlerClient_h

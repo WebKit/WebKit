@@ -31,7 +31,7 @@
 #ifndef MediaEndpoint_h
 #define MediaEndpoint_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "MediaEndpointConfiguration.h"
 #include <wtf/text/WTFString.h>
@@ -85,6 +85,6 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // MediaEndpoint_h

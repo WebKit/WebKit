@@ -24,7 +24,7 @@
 
 [
     NoInterfaceObject,
-    Conditional=MEDIA_STREAM,
+    Conditional=WEB_RTC,
     ImplementationLacksVTable,
 ] interface RTCStatsReport {
     readonly attribute Date timestamp;

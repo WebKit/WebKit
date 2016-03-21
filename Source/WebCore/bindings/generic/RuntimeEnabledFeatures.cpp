@@ -61,6 +61,8 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 #endif
 #if ENABLE(MEDIA_STREAM)
     , m_isMediaStreamEnabled(true)
+#endif
+#if ENABLE(WEBRTC)
     , m_isPeerConnectionEnabled(true)
 #endif
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)

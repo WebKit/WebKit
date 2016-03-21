@@ -33,7 +33,7 @@
 #include "config.h"
 #include "RTCConfiguration.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "ArrayValue.h"
 #include "Dictionary.h"
@@ -162,4 +162,4 @@ void RTCConfiguration::initialize(const Dictionary& configuration, ExceptionCode
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)

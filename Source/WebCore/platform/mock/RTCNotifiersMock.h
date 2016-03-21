@@ -26,7 +26,7 @@
 #ifndef RTCNotifiersMock_h
 #define RTCNotifiersMock_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "RTCDataChannelHandlerClient.h"
 #include "RTCPeerConnectionHandlerClient.h"
@@ -111,6 +111,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCNotifiersMock_h

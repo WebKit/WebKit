@@ -31,7 +31,7 @@
 #include "config.h"
 #include "RTCTrackEvent.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
 
 #include "EventNames.h"
 #include "MediaStreamTrack.h"
@@ -65,4 +65,4 @@ RTCTrackEvent::RTCTrackEvent(const AtomicString& type, const RTCTrackEventInit& 
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEBRTC)

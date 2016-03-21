@@ -31,7 +31,7 @@
 #ifndef IceCandidate_h
 #define IceCandidate_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -112,6 +112,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // IceCandidate_h

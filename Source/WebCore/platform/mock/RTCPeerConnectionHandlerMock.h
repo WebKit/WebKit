@@ -26,7 +26,7 @@
 #ifndef RTCPeerConnectionHandlerMock_h
 #define RTCPeerConnectionHandlerMock_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "RTCPeerConnectionHandler.h"
 #include "RTCPeerConnectionHandlerClient.h"
@@ -70,6 +70,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCPeerConnectionHandlerMock_h

@@ -26,7 +26,7 @@
 #ifndef TimerEventBasedMock_h
 #define TimerEventBasedMock_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
 
 #include "Timer.h"
 #include <wtf/PassRefPtr.h>
@@ -85,6 +85,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEBRTC)
 
 #endif // TimerEventBasedMock_h

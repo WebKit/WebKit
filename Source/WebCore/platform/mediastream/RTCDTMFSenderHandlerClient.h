@@ -26,7 +26,7 @@
 #ifndef RTCDTMFSenderHandlerClient_h
 #define RTCDTMFSenderHandlerClient_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 namespace WebCore {
 
@@ -39,6 +39,6 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCDTMFSenderHandlerClient_h

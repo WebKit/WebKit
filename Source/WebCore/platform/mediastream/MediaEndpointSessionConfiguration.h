@@ -31,7 +31,7 @@
 #ifndef MediaEndpointSessionConfiguration_h
 #define MediaEndpointSessionConfiguration_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "PeerMediaDescription.h"
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -82,6 +82,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // MediaEndpointSessionConfiguration_h

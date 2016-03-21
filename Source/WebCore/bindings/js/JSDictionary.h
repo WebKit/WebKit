@@ -133,6 +133,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaStream>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaStreamTrack>& result);
+#endif
+#if ENABLE(WEB_RTC)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<RTCRtpReceiver>& result);
 #endif
 #if ENABLE(FONT_LOAD_EVENTS)

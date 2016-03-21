@@ -31,7 +31,7 @@
 #include "config.h"
 #include "MediaEndpointConfiguration.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 namespace WebCore {
 
@@ -68,4 +68,4 @@ MediaEndpointConfiguration::MediaEndpointConfiguration(Vector<RefPtr<IceServerIn
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)

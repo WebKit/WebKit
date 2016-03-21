@@ -31,7 +31,7 @@
 #ifndef MediaEndpointPeerConnection_h
 #define MediaEndpointPeerConnection_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "MediaEndpoint.h"
 #include "NotImplemented.h"
@@ -108,6 +108,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // MediaEndpointPeerConnection_h

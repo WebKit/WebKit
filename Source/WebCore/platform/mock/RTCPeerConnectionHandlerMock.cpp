@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "RTCPeerConnectionHandlerMock.h"
 
@@ -177,4 +177,4 @@ void RTCPeerConnectionHandlerMock::stop()
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)

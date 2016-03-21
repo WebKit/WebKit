@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "JSRTCPeerConnection.h"
 
@@ -71,4 +71,4 @@ EncodedJSValue JSC_HOST_CALL constructJSRTCPeerConnection(ExecState* exec)
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)

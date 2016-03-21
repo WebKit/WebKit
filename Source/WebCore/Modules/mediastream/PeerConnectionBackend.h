@@ -31,7 +31,7 @@
 #ifndef PeerConnectionBackend_h
 #define PeerConnectionBackend_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "JSDOMPromise.h"
 #include "PeerConnectionStates.h"
@@ -114,6 +114,6 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // PeerConnectionBackend_h

@@ -370,9 +370,12 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+    void setMockMediaCaptureDevicesEnabled(bool);
+#endif
+
+#if ENABLE(WEB_RTC)
     void enableMockMediaEndpoint();
     void enableMockRTCPeerConnectionHandler();
-    void setMockMediaCaptureDevicesEnabled(bool);
 #endif
 
     String getImageSourceURL(Element*, ExceptionCode&);

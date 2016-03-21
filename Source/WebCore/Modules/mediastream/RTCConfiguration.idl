@@ -27,7 +27,7 @@ enum RTCIceTransportPolicyEnum { "none", "relay", "all" };
 enum RTCBundlePolicyEnum { "balanced", "max-compat", "max-bundle" };
 
 [
-    Conditional=MEDIA_STREAM,
+    Conditional=WEB_RTC,
     NoInterfaceObject,
 ] interface RTCConfiguration {
     readonly attribute RTCIceServer[] iceServers;

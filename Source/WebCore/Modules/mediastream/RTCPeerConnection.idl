@@ -31,7 +31,7 @@
  */
 
 [
-    Conditional=MEDIA_STREAM,
+    Conditional=WEB_RTC,
     ActiveDOMObject,
     CustomConstructor(Dictionary rtcConfiguration),
     ConstructorCallWith=ScriptExecutionContext,

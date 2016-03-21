@@ -32,7 +32,7 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "RTCIceCandidate.h"
 
@@ -87,4 +87,4 @@ RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, 
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)

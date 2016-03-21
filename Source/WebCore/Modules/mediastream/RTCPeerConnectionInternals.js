@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// @conditional=ENABLE(MEDIA_STREAM)
+// @conditional=ENABLE(WEB_RTC)
 // @internal
 
 // Operation queue as specified in section 4.3.1 (WebRTC 1.0)

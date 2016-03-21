@@ -176,8 +176,11 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include "MockMediaEndpoint.h"
 #include "MockRealtimeMediaSourceCenter.h"
+#endif
+
+#if ENABLE(WEB_RTC)
+#include "MockMediaEndpoint.h"
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionHandlerMock.h"
 #endif
@@ -431,6 +434,9 @@ Internals::Internals(Document* document)
 
 #if ENABLE(MEDIA_STREAM)
     setMockMediaCaptureDevicesEnabled(true);
+#endif
+
+#if ENABLE(WEB_RTC)
     enableMockMediaEndpoint();
     enableMockRTCPeerConnectionHandler();
 #endif
@@ -1031,7 +1037,7 @@ void Internals::enableMockSpeechSynthesizer()
 }
 #endif
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 void Internals::enableMockMediaEndpoint()
 {
     MediaEndpoint::create = MockMediaEndpoint::create;
@@ -1041,7 +1047,9 @@ void Internals::enableMockRTCPeerConnectionHandler()
 {
     RTCPeerConnectionHandler::create = RTCPeerConnectionHandlerMock::create;
 }
+#endif
 
+#if ENABLE(MEDIA_STREAM)
 void Internals::setMockMediaCaptureDevicesEnabled(bool enabled)
 {
     WebCore::Settings::setMockCaptureDevicesEnabled(enabled);

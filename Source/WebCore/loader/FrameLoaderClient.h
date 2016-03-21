@@ -91,7 +91,7 @@ namespace WebCore {
     class ResourceHandle;
     class ResourceRequest;
     class ResourceResponse;
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
     class RTCPeerConnectionHandler;
 #endif
     class SecurityOrigin;
@@ -326,7 +326,7 @@ namespace WebCore {
         virtual void dispatchDidReconnectDOMWindowExtensionToGlobalObject(DOMWindowExtension*) { }
         virtual void dispatchWillDestroyGlobalObjectForDOMWindowExtension(DOMWindowExtension*) { }
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
         virtual void dispatchWillStartUsingPeerConnectionHandler(RTCPeerConnectionHandler*) { }
 #endif
 

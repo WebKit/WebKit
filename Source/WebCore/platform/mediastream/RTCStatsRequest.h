@@ -31,7 +31,7 @@
 #ifndef RTCStatsRequest_h
 #define RTCStatsRequest_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -58,6 +58,6 @@ protected:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEBRTC)
 
 #endif // RTCStatsRequest_h

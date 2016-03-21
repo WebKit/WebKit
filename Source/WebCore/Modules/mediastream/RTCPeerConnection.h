@@ -33,7 +33,7 @@
 #ifndef RTCPeerConnection_h
 #define RTCPeerConnection_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "ActiveDOMObject.h"
 #include "Dictionary.h"
@@ -151,6 +151,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCPeerConnection_h

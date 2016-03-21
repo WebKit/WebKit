@@ -31,7 +31,7 @@
 #ifndef RTCSessionDescriptionDescriptor_h
 #define RTCSessionDescriptionDescriptor_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -59,6 +59,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEBRTC)
 
 #endif // RTCSessionDescriptionDescriptor_h

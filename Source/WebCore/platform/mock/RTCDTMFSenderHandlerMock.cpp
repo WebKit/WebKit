@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 #include "RTCDTMFSenderHandlerMock.h"
 
 #include "RTCDTMFSenderHandlerClient.h"
@@ -59,4 +59,4 @@ bool RTCDTMFSenderHandlerMock::insertDTMF(const String& tones, long duration, lo
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)

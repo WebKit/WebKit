@@ -26,7 +26,7 @@
 #ifndef RTCDTMFToneChangeEvent_h
 #define RTCDTMFToneChangeEvent_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "Event.h"
 #include <wtf/text/AtomicString.h>
@@ -57,6 +57,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCDTMFToneChangeEvent_h

@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEBRTC)
 #include "SDPProcessor.h"
 
 #include "Document.h"
@@ -538,4 +538,4 @@ bool SDPProcessor::callScript(const String& functionName, const String& argument
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEBRTC)

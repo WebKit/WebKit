@@ -1,3 +1,146 @@
+2016-03-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Add a WebRTC specific compile flag
+        https://bugs.webkit.org/show_bug.cgi?id=155663
+
+        Guard WebRTC-only files with ENABLE(WEB_RTC) rather than ENABLE(MEDIA_STREAM).
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/PeerConnectionStates.h:
+        * Modules/mediastream/RTCConfiguration.cpp:
+        * Modules/mediastream/RTCConfiguration.h:
+        * Modules/mediastream/RTCConfiguration.idl:
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.cpp:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.h:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.idl:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCDataChannelEvent.cpp:
+        * Modules/mediastream/RTCDataChannelEvent.h:
+        * Modules/mediastream/RTCDataChannelEvent.idl:
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        * Modules/mediastream/RTCIceCandidate.h:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCIceCandidateEvent.cpp:
+        * Modules/mediastream/RTCIceCandidateEvent.h:
+        * Modules/mediastream/RTCIceCandidateEvent.idl:
+        * Modules/mediastream/RTCIceServer.h:
+        * Modules/mediastream/RTCIceServer.idl:
+        * Modules/mediastream/RTCOfferAnswerOptions.cpp:
+        * Modules/mediastream/RTCOfferAnswerOptions.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCPeerConnection.js:
+        (createOffer):
+        * Modules/mediastream/RTCPeerConnectionInternals.js:
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        * Modules/mediastream/RTCRtpReceiver.h:
+        * Modules/mediastream/RTCRtpReceiver.idl:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSenderReceiverBase.h:
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        * Modules/mediastream/RTCSessionDescription.h:
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * Modules/mediastream/RTCStatsReport.cpp:
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/RTCStatsResponse.cpp:
+        * Modules/mediastream/RTCStatsResponse.idl:
+        * Modules/mediastream/RTCTrackEvent.cpp:
+        * Modules/mediastream/RTCTrackEvent.h:
+        * Modules/mediastream/RTCTrackEvent.idl:
+        * Modules/mediastream/SDPProcessor.cpp:
+        * Modules/mediastream/SDPProcessor.h:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setMediaStreamEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitGetUserMediaEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitMediaStreamEnabled):
+        (WebCore::RuntimeEnabledFeatures::peerConnectionEnabled):
+        (WebCore::RuntimeEnabledFeatures::setPeerConnectionEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitRTCPeerConnectionEnabled):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDictionary.h:
+        * bindings/js/JSRTCIceCandidateCustom.cpp:
+        * bindings/js/JSRTCPeerConnectionCustom.cpp:
+        * bindings/js/JSRTCSessionDescriptionCustom.cpp:
+        * bindings/js/JSRTCStatsResponseCustom.cpp:
+        * bindings/js/WebCoreJSBuiltinInternals.cpp:
+        (WebCore::JSBuiltinInternalFunctions::JSBuiltinInternalFunctions):
+        (WebCore::JSBuiltinInternalFunctions::visit):
+        (WebCore::JSBuiltinInternalFunctions::initialize):
+        * bindings/js/WebCoreJSBuiltinInternals.h:
+        (WebCore::JSBuiltinInternalFunctions::rtcPeerConnectionInternals):
+        * bindings/js/WebCoreJSBuiltins.h:
+        (WebCore::JSBuiltinFunctions::JSBuiltinFunctions):
+        (WebCore::JSBuiltinFunctions::mediaDevicesBuiltins):
+        (WebCore::JSBuiltinFunctions::navigatorUserMediaBuiltins):
+        (WebCore::JSBuiltinFunctions::rtcPeerConnectionBuiltins):
+        (WebCore::JSBuiltinFunctions::rtcPeerConnectionInternalsBuiltins):
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * loader/FrameLoaderClient.h:
+        * platform/mediastream/IceCandidate.h:
+        * platform/mediastream/MediaEndpoint.cpp:
+        * platform/mediastream/MediaEndpoint.h:
+        * platform/mediastream/MediaEndpointConfiguration.cpp:
+        * platform/mediastream/MediaEndpointConfiguration.h:
+        * platform/mediastream/MediaEndpointSessionConfiguration.h:
+        * platform/mediastream/MediaPayload.h:
+        * platform/mediastream/PeerMediaDescription.h:
+        * platform/mediastream/RTCConfigurationPrivate.h:
+        * platform/mediastream/RTCDTMFSenderHandler.h:
+        * platform/mediastream/RTCDTMFSenderHandlerClient.h:
+        * platform/mediastream/RTCDataChannelHandler.h:
+        * platform/mediastream/RTCDataChannelHandlerClient.h:
+        * platform/mediastream/RTCIceCandidateDescriptor.cpp:
+        * platform/mediastream/RTCIceCandidateDescriptor.h:
+        * platform/mediastream/RTCIceServerPrivate.h:
+        * platform/mediastream/RTCPeerConnectionHandler.cpp:
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        * platform/mediastream/RTCPeerConnectionHandlerClient.h:
+        * platform/mediastream/RTCSessionDescriptionDescriptor.cpp:
+        * platform/mediastream/RTCSessionDescriptionDescriptor.h:
+        * platform/mediastream/RTCSessionDescriptionRequest.h:
+        * platform/mediastream/RTCStatsRequest.h:
+        * platform/mediastream/RTCStatsResponseBase.h:
+        * platform/mediastream/RTCVoidRequest.h:
+        * platform/mediastream/SDPProcessorScriptResource.cpp:
+        * platform/mediastream/SDPProcessorScriptResource.h:
+        * platform/mock/MockMediaEndpoint.cpp:
+        * platform/mock/MockMediaEndpoint.h:
+        * platform/mock/RTCDTMFSenderHandlerMock.cpp:
+        * platform/mock/RTCDTMFSenderHandlerMock.h:
+        * platform/mock/RTCDataChannelHandlerMock.cpp:
+        * platform/mock/RTCDataChannelHandlerMock.h:
+        * platform/mock/RTCNotifiersMock.cpp:
+        * platform/mock/RTCNotifiersMock.h:
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp:
+        * platform/mock/RTCPeerConnectionHandlerMock.h:
+        * platform/mock/TimerEventBasedMock.h:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::enableMockSpeechSynthesizer):
+        (WebCore::Internals::enableMockMediaEndpoint):
+        (WebCore::Internals::enableMockRTCPeerConnectionHandler):
+        (WebCore::Internals::setMockMediaCaptureDevicesEnabled):
+        * testing/Internals.h:
+
 2016-03-21  Joonghun Park  <jh718.park@samsung.com>
 
         [JSC] Add ArrayBuffer::tryCreate and change the callsites where it is needed

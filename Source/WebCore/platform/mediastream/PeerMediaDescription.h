@@ -31,7 +31,7 @@
 #ifndef PeerMediaDescription_h
 #define PeerMediaDescription_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "IceCandidate.h"
 #include "MediaPayload.h"
@@ -179,6 +179,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // PeerMediaDescription_h

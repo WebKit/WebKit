@@ -26,7 +26,7 @@
 #ifndef RTCDataChannelHandlerMock_h
 #define RTCDataChannelHandlerMock_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include "RTCDataChannelHandler.h"
 #include "RTCPeerConnectionHandler.h"
@@ -68,6 +68,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCDataChannelHandlerMock_h

@@ -31,7 +31,7 @@
 #ifndef RTCPeerConnectionHandlerClient_h
 #define RTCPeerConnectionHandlerClient_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
 
 #include <wtf/PassRefPtr.h>
 
@@ -82,6 +82,6 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCPeerConnectionHandlerClient_h
