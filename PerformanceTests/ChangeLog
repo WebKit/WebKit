@@ -1,3 +1,13 @@
+2016-03-20  Jon Lee  <jonlee@apple.com>
+
+        Add a link to show debug data
+        https://bugs.webkit.org/show_bug.cgi?id=155724
+
+        Reviewed by Simon Fraser.
+
+        * Animometer/developer.html: Attach the onclick handler to the score.
+        * Animometer/index.html: Ditto.
+
 2016-03-18  Dean Jackson  <dino@apple.com>
 
         Add a basic WebGL test to Animometer
