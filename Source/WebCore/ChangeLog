@@ -1,3 +1,19 @@
+2016-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        WebCore::RenderTableCell::setCol should put a cap on the column value. 
+        https://bugs.webkit.org/show_bug.cgi?id=155642
+        <rdar://problem/15895201>
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that we don't crash when the column number is large enough.
+        see webkit.org/b/71135 for more information.
+
+        Test: tables/colspan-with-large-value-crash.html
+
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::setCol):
+
 2016-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Use larger tiles when possible to reduce per-tile painting overhead
