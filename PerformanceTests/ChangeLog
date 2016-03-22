@@ -1,3 +1,20 @@
+2016-03-22  Geoffrey Garen  <ggaren@apple.com>
+
+        MallocBench: consolidate regression testing for aligned allocation
+        https://bugs.webkit.org/show_bug.cgi?id=155762
+
+        Reviewed by Michael Saboff.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj:
+        * MallocBench/MallocBench/Benchmark.cpp:
+        * MallocBench/MallocBench/memalign.cpp: Removed.
+        * MallocBench/MallocBench/memalign.h: Removed. The stress_aligned test
+        covers this and much more.
+
+        * MallocBench/MallocBench/stress_aligned.cpp:
+        (benchmark_stress_aligned): Include specific tests for extreme sizes
+        and alignments.
+
 2016-03-21  Jon Lee  <jonlee@apple.com>
 
         Update benchmark tests

@@ -34,7 +34,6 @@
 #include "fragment.h"
 #include "list.h"
 #include "medium.h"
-#include "memalign.h"
 #include "message.h"
 #include "nimlang.h"
 #include "reddit.h"
@@ -75,7 +74,6 @@ static const BenchmarkPair benchmarkPairs[] = {
     { "list_allocate", benchmark_list_allocate },
     { "list_traverse", benchmark_list_traverse },
     { "medium", benchmark_medium },
-    { "memalign", benchmark_memalign },
     { "message_many", benchmark_message_many },
     { "message_one", benchmark_message_one },
     { "nimlang", benchmark_nimlang },
