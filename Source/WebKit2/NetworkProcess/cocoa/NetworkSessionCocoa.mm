@@ -315,8 +315,6 @@ NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID, CustomPr
     if (auto& data = globalSourceApplicationAuditTokenData())
         configuration._sourceApplicationAuditTokenData = (NSData *)data.get();
     
-    configuration._sourceApplicationBundleIdentifier = SessionTracker::getIdentifierBase();
-    
     if (customProtocolManager)
         customProtocolManager->registerProtocolClass(configuration);
     

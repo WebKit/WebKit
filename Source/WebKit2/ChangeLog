@@ -1,3 +1,18 @@
+2016-03-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix HTTPS on Mac using NSURLSession after r198457
+        https://bugs.webkit.org/show_bug.cgi?id=155774
+        <rdar://problem/25301027>
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::NetworkSession):
+        r198457 was intended to fix an issue on iOS and have no change in behavior on Mac.
+        It did have a subtle change in behavior, setting the source application bundle identifier
+        on iOS and was causing problems with HTTPS connections using NSURLSession, so this patch
+        reverts that change.
+
 2016-03-22  Beth Dakin  <bdakin@apple.com>
 
         Advanced spell checking should be guarded behind 
