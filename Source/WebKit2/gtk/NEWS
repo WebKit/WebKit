@@ -1,4 +1,15 @@
 ==================
+WebKitGTK+  2.12.0
+==================
+
+What's new in WebKitGTK+ 2.12.0?
+
+  - Enable GSS-Negotiate support when available in libsoup.
+  - Fix overlay scrollbar indicator position.
+  - Fix smooth scrolling behavior that was not fixed in all cases in 2.11.92.
+  - Fix the build with newer versions of GCC and clang.
+
+==================
 WebKitGTK+ 2.11.92
 ==================
 
