@@ -1,3 +1,14 @@
+2016-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Improve SharedBuffer testing
+        https://bugs.webkit.org/show_bug.cgi?id=93078
+        <rdar://problem/25277829>
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/SharedBuffer.h: Mark a few methods as WEBCORE_EXPORT so they
+        can be used by TestWebKitAPI.
+
 2016-03-21  Zalan Bujtas  <zalan@apple.com>
 
         WebCore::RenderTableCell::setCol should put a cap on the column value. 

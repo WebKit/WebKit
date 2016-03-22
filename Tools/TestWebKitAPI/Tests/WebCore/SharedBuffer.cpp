@@ -1,5 +1,7 @@
 /*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Canon Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,6 +116,79 @@ TEST_F(SharedBufferTest, appendBufferCreatedWithContentsOfExistingFile)
     EXPECT_TRUE(buffer->size() == (strlen(SharedBufferTestData) + 1));
     EXPECT_TRUE(!memcmp(buffer->data(), SharedBufferTestData, strlen(SharedBufferTestData)));
     EXPECT_EQ('a', buffer->data()[strlen(SharedBufferTestData)]);
+}
+
+TEST_F(SharedBufferTest, createArrayBuffer)
+{
+    char testData0[] = "Hello";
+    char testData1[] = "World";
+    char testData2[] = "Goodbye";
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(testData0, strlen(testData0));
+    sharedBuffer->append(testData1, strlen(testData1));
+    sharedBuffer->append(testData2, strlen(testData2));
+    RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->createArrayBuffer();
+    char expectedConcatenation[] = "HelloWorldGoodbye";
+    ASSERT_EQ(strlen(expectedConcatenation), arrayBuffer->byteLength());
+    EXPECT_EQ(0, memcmp(expectedConcatenation, arrayBuffer->data(), strlen(expectedConcatenation)));
+}
+
+TEST_F(SharedBufferTest, createArrayBufferLargeSegments)
+{
+    Vector<char> vector0(0x4000, 'a');
+    Vector<char> vector1(0x4000, 'b');
+    Vector<char> vector2(0x4000, 'c');
+
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::adoptVector(vector0);
+    sharedBuffer->append(vector1);
+    sharedBuffer->append(vector2);
+    RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->createArrayBuffer();
+    ASSERT_EQ(0x4000U + 0x4000U + 0x4000U, arrayBuffer->byteLength());
+    int position = 0;
+    for (int i = 0; i < 0x4000; ++i) {
+        EXPECT_EQ('a', static_cast<char*>(arrayBuffer->data())[position]);
+        ++position;
+    }
+    for (int i = 0; i < 0x4000; ++i) {
+        EXPECT_EQ('b', static_cast<char*>(arrayBuffer->data())[position]);
+        ++position;
+    }
+    for (int i = 0; i < 0x4000; ++i) {
+        EXPECT_EQ('c', static_cast<char*>(arrayBuffer->data())[position]);
+        ++position;
+    }
+}
+
+TEST_F(SharedBufferTest, copy)
+{
+    char testData[] = "Habitasse integer eros tincidunt a scelerisque! Enim elit? Scelerisque magnis,"
+    "et montes ultrices tristique a! Pid. Velit turpis, dapibus integer rhoncus sociis amet facilisis,"
+    "adipiscing pulvinar nascetur magnis tempor sit pulvinar, massa urna enim porttitor sociis sociis proin enim?"
+    "Lectus, platea dolor, integer a. A habitasse hac nunc, nunc, nec placerat vut in sit nunc nec, sed. Sociis,"
+    "vut! Hac, velit rhoncus facilisis. Rhoncus et, enim, sed et in tristique nunc montes,"
+    "natoque nunc sagittis elementum parturient placerat dolor integer? Pulvinar,"
+    "magnis dignissim porttitor ac pulvinar mid tempor. A risus sed mid! Magnis elit duis urna,"
+    "cras massa, magna duis. Vut magnis pid a! Penatibus aliquet porttitor nunc, adipiscing massa odio lundium,"
+    "risus elementum ac turpis massa pellentesque parturient augue. Purus amet turpis pid aliquam?"
+    "Dolor est tincidunt? Dolor? Dignissim porttitor sit in aliquam! Tincidunt, non nunc, rhoncus dictumst!"
+    "Porta augue etiam. Cursus augue nunc lacus scelerisque. Rhoncus lectus, integer hac, nec pulvinar augue massa,"
+    "integer amet nisi facilisis? A! A, enim velit pulvinar elit in non scelerisque in et ultricies amet est!"
+    "in porttitor montes lorem et, hac aliquet pellentesque a sed? Augue mid purus ridiculus vel dapibus,"
+    "sagittis sed, tortor auctor nascetur rhoncus nec, rhoncus, magna integer. Sit eu massa vut?"
+    "Porta augue porttitor elementum, enim, rhoncus pulvinar duis integer scelerisque rhoncus natoque,"
+    "mattis dignissim massa ac pulvinar urna, nunc ut. Sagittis, aliquet penatibus proin lorem, pulvinar lectus,"
+    "augue proin! Ac, arcu quis. Placerat habitasse, ridiculus ridiculus.";
+    unsigned length = strlen(testData);
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(testData, length);
+    sharedBuffer->append(testData, length);
+    sharedBuffer->append(testData, length);
+    sharedBuffer->append(testData, length);
+    // sharedBuffer must contain data more than segmentSize (= 0x1000) to check copy().
+    ASSERT_EQ(length * 4, sharedBuffer->size());
+    RefPtr<SharedBuffer> clone = sharedBuffer->copy();
+    ASSERT_EQ(length * 4, clone->size());
+    ASSERT_EQ(0, memcmp(clone->data(), sharedBuffer->data(), clone->size()));
+    clone->append(testData, length);
+    ASSERT_EQ(length * 5, clone->size());
 }
 
 }

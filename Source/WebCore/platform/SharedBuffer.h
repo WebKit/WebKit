@@ -83,7 +83,7 @@ public:
     WEBCORE_EXPORT const char* data() const;
     // Creates an ArrayBuffer and copies this SharedBuffer's contents to that
     // ArrayBuffer without merging segmented buffers into a flat buffer.
-    RefPtr<ArrayBuffer> createArrayBuffer() const;
+    WEBCORE_EXPORT RefPtr<ArrayBuffer> createArrayBuffer() const;
 
     WEBCORE_EXPORT unsigned size() const;
 
@@ -92,7 +92,7 @@ public:
 
     WEBCORE_EXPORT void append(SharedBuffer*);
     WEBCORE_EXPORT void append(const char*, unsigned);
-    void append(const Vector<char>&);
+    WEBCORE_EXPORT void append(const Vector<char>&);
 
     WEBCORE_EXPORT void clear();
     const char* platformData() const;
