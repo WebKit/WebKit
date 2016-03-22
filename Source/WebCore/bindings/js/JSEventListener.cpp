@@ -21,6 +21,7 @@
 #include "JSEventListener.h"
 
 #include "BeforeUnloadEvent.h"
+#include "ContentSecurityPolicy.h"
 #include "Event.h"
 #include "Frame.h"
 #include "HTMLElement.h"
@@ -92,6 +93,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     if (scriptExecutionContext->isDocument()) {
         JSDOMWindow* window = jsCast<JSDOMWindow*>(globalObject);
         if (!window->wrapped().isCurrentlyDisplayedInFrame())
+            return;
+        if (wasCreatedFromMarkup() && !scriptExecutionContext->contentSecurityPolicy()->allowInlineEventHandlers(sourceURL(), sourcePosition().m_line))
             return;
         // FIXME: Is this check needed for other contexts?
         ScriptController& script = window->wrapped().frame()->script();

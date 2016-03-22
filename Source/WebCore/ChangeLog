@@ -1,3 +1,37 @@
+2016-03-22  Daniel Bates  <dabates@apple.com>
+
+        CSP: Check inline event handlers on each run, not only the first
+        https://bugs.webkit.org/show_bug.cgi?id=115700
+        <rdar://problem/24211159>
+
+        Reviewed by Andy Estes.
+
+        Fixes an issue where an inline event handler would always be allowed to execute if it
+        executed at least once.
+
+        Currently we query whether the Content Security Policy (CSP) of the page permits inline event
+        handlers each time we register a new handler for an event. And a handler is registered exactly
+        once the first time the event associated with it is dispatched. Once a handler is registered
+        as a listener for an event E then we will always invoke the handler when event E is dispatched
+        regardless of whether the CSP of the page changes (say, as a result of programmatically inserting
+        a <meta http-equiv="Content-Security-Policy">). Instead we should always check the
+        CSP of the page whenever we are going to invoke an event handler.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent): Check the CSP of the page and bail out if the
+        policy does not permit execution of an inline event handler.
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::sourceURL): Added. Default implementation that returns an empty string.
+        (WebCore::JSEventListener::sourcePosition): Added. Default implementation that returns a default position.
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener): Update code following instance variable
+        renaming in JSLazyEventListener.h.
+        (WebCore::JSLazyEventListener::initializeJSFunction): Ditto. 
+        * bindings/js/JSLazyEventListener.h: Override JSEventListener::sourceURL() and JSEventListener::sourcePosition().
+        Changed all mutable instance variables to immutable ones as we do not modify these variables
+        in any const member functions. Also renamed instance variable m_position to m_sourcePosition
+        to better describe that it represents the source code position where the event handler was defined.
+
 2016-03-22  Jer Noble  <jer.noble@apple.com>
 
         Media elements allowed to play without a user gesture, but requiring fullscreen playback, should not be allowed to autoplay.

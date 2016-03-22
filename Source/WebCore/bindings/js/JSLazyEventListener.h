@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,6 @@
 #define JSLazyEventListener_h
 
 #include "JSEventListener.h"
-#include <wtf/text/TextPosition.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -40,6 +38,9 @@ public:
 
     virtual ~JSLazyEventListener();
 
+    String sourceURL() const final { return m_sourceURL; }
+    TextPosition sourcePosition() const final { return m_sourcePosition; }
+
 private:
     struct CreationArguments;
     static RefPtr<JSLazyEventListener> create(const CreationArguments&);
@@ -49,11 +50,11 @@ private:
     JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const override;
     bool wasCreatedFromMarkup() const override { return true; }
 
-    mutable String m_functionName;
-    mutable String m_eventParameterName;
-    mutable String m_code;
-    mutable String m_sourceURL;
-    TextPosition m_position;
+    String m_functionName;
+    String m_eventParameterName;
+    String m_code;
+    String m_sourceURL;
+    TextPosition m_sourcePosition;
     ContainerNode* m_originalNode;
 };
 

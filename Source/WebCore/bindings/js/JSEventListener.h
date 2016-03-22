@@ -26,6 +26,8 @@
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/text/TextPosition.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -60,6 +62,9 @@ public:
 
     JSC::JSObject* wrapper() const { return m_wrapper.get(); }
     void setWrapper(JSC::VM&, JSC::JSObject* wrapper) const { m_wrapper = JSC::Weak<JSC::JSObject>(wrapper); }
+
+    virtual String sourceURL() const { return String(); }
+    virtual TextPosition sourcePosition() const { return TextPosition::minimumPosition(); }
 
 private:
     virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const;

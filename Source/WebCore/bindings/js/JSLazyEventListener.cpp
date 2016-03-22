@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2016 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -37,13 +37,13 @@ namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, eventListenerCounter, ("JSLazyEventListener"));
 
-JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, ContainerNode* node, const String& sourceURL, const TextPosition& position, JSObject* wrapper, DOMWrapperWorld& isolatedWorld)
+JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, ContainerNode* node, const String& sourceURL, const TextPosition& sourcePosition, JSObject* wrapper, DOMWrapperWorld& isolatedWorld)
     : JSEventListener(0, wrapper, true, isolatedWorld)
     , m_functionName(functionName)
     , m_eventParameterName(eventParameterName)
     , m_code(code)
     , m_sourceURL(sourceURL)
-    , m_position(position)
+    , m_sourcePosition(sourcePosition)
     , m_originalNode(node)
 {
     // We don't retain the original node because we assume it
@@ -54,8 +54,8 @@ JSLazyEventListener::JSLazyEventListener(const String& functionName, const Strin
 
     // A JSLazyEventListener can be created with a line number of zero when it is created with
     // a setAttribute call from JavaScript, so make the line number 1 in that case.
-    if (m_position == TextPosition::belowRangePosition())
-        m_position = TextPosition::minimumPosition();
+    if (m_sourcePosition == TextPosition::belowRangePosition())
+        m_sourcePosition = TextPosition::minimumPosition();
 
     ASSERT(m_eventParameterName == "evt" || m_eventParameterName == "event");
 
@@ -87,7 +87,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
     if (!document.frame())
         return nullptr;
 
-    if (!document.contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL, m_position.m_line))
+    if (!document.contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL, m_sourcePosition.m_line))
         return nullptr;
 
     ScriptController& script = document.frame()->script();
@@ -106,11 +106,11 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
 
     // We want all errors to refer back to the line on which our attribute was
     // declared, regardless of any newlines in our JavaScript source text.
-    int overrideLineNumber = m_position.m_line.oneBasedInt();
+    int overrideLineNumber = m_sourcePosition.m_line.oneBasedInt();
 
     JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
         exec, exec->lexicalGlobalObject(), args, Identifier::fromString(exec, m_functionName),
-        m_sourceURL, m_position, overrideLineNumber);
+        m_sourceURL, m_sourcePosition, overrideLineNumber);
 
     if (exec->hadException()) {
         reportCurrentException(exec);

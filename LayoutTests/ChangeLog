@@ -1,3 +1,17 @@
+2016-03-22  Daniel Bates  <dabates@apple.com>
+
+        CSP: Check inline event handlers on each run, not only the first
+        https://bugs.webkit.org/show_bug.cgi?id=115700
+        <rdar://problem/24211159>
+
+        Reviewed by Andy Estes.
+
+        Update expected result for test http/tests/security/contentSecurityPolicy/inline-event-handler-blocked-after-injecting-meta.html
+        and remove its entry from file LayoutTests/TestExpectations now that it passes.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/inline-event-handler-blocked-after-injecting-meta-expected.txt:
+
 2016-03-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping media/media-document-audio-repaint.html on El Capitan Debug WK2
