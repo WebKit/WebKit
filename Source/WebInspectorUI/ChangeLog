@@ -1,3 +1,30 @@
+2016-03-22  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Consider Automation script names as internal and hide them
+
+        https://bugs.webkit.org/show_bug.cgi?id=155753
+        rdar://problem/25293310
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Utilities.js:
+        (isWebKitInternalScript): Renamed from isWebInspectorDebugScript.
+        Check for "__Web" prefix and "__" suffix.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager):
+        (WebInspector.DebuggerManager.prototype.get knownNonResourceScripts):
+        (WebInspector.DebuggerManager.prototype.reset):
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        (WebInspector.DebuggerManager.prototype.scriptDidParse):
+        (WebInspector.DebuggerManager.prototype._debugUIEnabledDidChange):
+        Renamed _inspectorDebugScripts to _internalWebKitScripts. And renamed
+        isWebInspectorDebugScript to isWebKitInternalScript.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.findFunctionSourceCodeLocation):
+        Renamed isWebInspectorDebugScript to isWebKitInternalScript.
+
 2016-03-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION: Shift + Click on record button should create a new recording

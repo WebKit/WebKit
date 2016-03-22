@@ -64,7 +64,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this._pauseReason = null;
         this._pauseData = null;
 
-        this._inspectorDebugScripts = [];
+        this._internalWebKitScripts = [];
         this._scriptIdMap = new Map;
         this._scriptURLMap = new Map;
 
@@ -327,7 +327,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         for (let script of this._scriptIdMap.values()) {
             if (script.resource)
                 continue;
-            if (!WebInspector.isDebugUIEnabled() && isWebInspectorDebugScript(script.url))
+            if (!WebInspector.isDebugUIEnabled() && isWebKitInternalScript(script.url))
                 continue;
             knownScripts.push(script);
         }
@@ -447,7 +447,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this._pauseReason = null;
         this._pauseData = null;
 
-        this._inspectorDebugScripts = [];
+        this._internalWebKitScripts = [];
         this._scriptIdMap.clear();
         this._scriptURLMap.clear();
 
@@ -497,7 +497,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
                 continue;
 
             // Exclude the case where the call frame is in the inspector code.
-            if (!WebInspector.isDebugUIEnabled() && isWebInspectorDebugScript(sourceCodeLocation.sourceCode.url))
+            if (!WebInspector.isDebugUIEnabled() && isWebKitInternalScript(sourceCodeLocation.sourceCode.url))
                 continue;
 
             let scopeChain = this._scopeChainFromPayload(callFramePayload.scopeChain);
@@ -556,8 +556,8 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             scripts.push(script);
         }
 
-        if (isWebInspectorDebugScript(script.url)) {
-            this._inspectorDebugScripts.push(script);
+        if (isWebKitInternalScript(script.url)) {
+            this._internalWebKitScripts.push(script);
             if (!WebInspector.isDebugUIEnabled())
                 return;
         }
@@ -925,7 +925,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     _debugUIEnabledDidChange()
     {
         let eventType = WebInspector.isDebugUIEnabled() ? WebInspector.DebuggerManager.Event.ScriptAdded : WebInspector.DebuggerManager.Event.ScriptRemoved;
-        for (let script of this._inspectorDebugScripts)
+        for (let script of this._internalWebKitScripts)
             this.dispatchEventToListeners(eventType, {script});
     }
 };
