@@ -1,3 +1,16 @@
+2016-03-22  Alex Christensen  <achristensen@webkit.org>
+
+        Add null check in CachedResourceLoader::determineRevalidationPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=155758
+        rdar://problem/25108408
+
+        Reviewed by Jer Noble.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::frame):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        Null-check frame() before dereferencing it.
+
 2016-03-22  Daniel Bates  <dabates@apple.com>
 
         CSP: Check inline event handlers on each run, not only the first
