@@ -1,3 +1,14 @@
+2016-03-22  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed typo fixes.
+
+        * Shared/linux/WebMemorySamplerLinux.cpp:
+        (WebKit::WebMemorySampler::sampleWebKit): "Commited" => "Committed"
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        (webkit_file_chooser_request_select_files): "choosen" => "chosen"
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequest.cpp:
+        (webkit_user_media_permission_request_class_init): "Wether" => "Whether"
+
 2016-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remove unused display and scroll view methods from PageClient and WebPageProxy

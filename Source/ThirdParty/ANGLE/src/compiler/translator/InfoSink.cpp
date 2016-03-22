@@ -26,7 +26,7 @@ void TInfoSinkBase::prefix(TPrefixType p) {
             sink.append("NOTE: ");
             break;
         default:
-            sink.append("UNKOWN ERROR: ");
+            sink.append("UNKNOWN ERROR: ");
             break;
     }
 }

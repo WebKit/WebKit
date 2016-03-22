@@ -1,3 +1,10 @@
+2016-03-22  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed typo fix.
+
+        * src/compiler/translator/InfoSink.cpp:
+        (TInfoSinkBase::prefix): "UNKOWN" => "UNKOWN".
+
 2016-03-20  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Determine TARGET_MAC_OS_X_VERSION_MAJOR from MACOSX_DEPLOYMENT_TARGET rather than from MAC_OS_X_VERSION_MAJOR

@@ -1,3 +1,10 @@
+2016-03-22  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed typo fix.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::textTrackAutomaticMenuItemText): "choosen" => "chosen"
+
 2016-03-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [TextureMapper] Destructing TextureMapperLayer should clean up its effect target

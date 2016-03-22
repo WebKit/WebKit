@@ -1,3 +1,32 @@
+2016-03-22  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed typo fix "choosen" => "chosen"
+
+        * as.po:
+        * bg.po:
+        * ca.po:
+        * de.po:
+        * en_GB.po:
+        * es.po:
+        * fr.po:
+        * gl.po:
+        * gu.po:
+        * he.po:
+        * hi.po:
+        * it.po:
+        * ja.po:
+        * kn.po:
+        * mr.po:
+        * nl.po:
+        * or.po:
+        * pl.po:
+        * pt_BR.po:
+        * sl.po:
+        * sv.po:
+        * ta.po:
+        * te.po:
+        * tr.po:
+
 2016-02-22  Piotr Drąg <piotrdrag@gmail.com>
 
         [l10n] Updated Polish translation of WebKitGTK+ for 2.12

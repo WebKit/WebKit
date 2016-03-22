@@ -802,7 +802,7 @@ String textTrackOffMenuItemText()
 
 String textTrackAutomaticMenuItemText()
 {
-    return String::fromUTF8(C_("Menu item label for the automatically choosen track", "Auto"));
+    return String::fromUTF8(C_("Menu item label for the automatically chosen track", "Auto"));
 }
 
 String textTrackNoLabelText()
