@@ -1,3 +1,29 @@
+2016-03-22  John Wilander  <wilander@apple.com>
+
+        Restrict WebSockets header parsing according to RFC6455 and RFC7230. Based on Lamarque V. Souza's original patch.
+        https://bugs.webkit.org/show_bug.cgi?id=82714
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404.html
+               http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version.html
+               http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept.html
+               http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions.html
+               http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol.html
+               http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line.html
+               http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status.html
+               http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1.html
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::httpURLForAuthenticationAndCookies):
+        (WebCore::headerHasValidHTTPVersion):
+            - Check for HTTP version 1.1 and above.
+        (WebCore::WebSocketHandshake::readStatusLine):
+            - Only allow ASCII characters in status line.
+            - Only allow HTTP version 1.1 and above in status line.
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+            - Only allow ASCII characters in values for new HTTP headers.
+
 2016-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [RTL Scrollbars] Position: absolute divs are covered by vertical scrollbar

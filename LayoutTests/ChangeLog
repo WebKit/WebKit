@@ -1,3 +1,70 @@
+2016-03-22  John Wilander  <wilander@apple.com>
+
+        Restrict WebSockets header parsing according to RFC6455 and RFC7230. Based on Lamarque V. Souza's original patch.
+        https://bugs.webkit.org/show_bug.cgi?id=82714
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/websocket/tests/hybi/error-event-ready-state-expected.txt: Removed.
+            - See comment below on the associated HTML file.
+        * http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404.html: Added.
+            - Uses PHP to respond with an HTTP 1.1 404. The old (now removed) test case failed once we restricted WebSockets to HTTP 1.1 and above because the test server responded with an HTTP 1.0 404 for non-existing files.
+        * http/tests/websocket/tests/hybi/error-event-ready-state.html: Removed.
+            - This test case was renamed "error-event-ready-state-non-existent-url-with-server-responding-404" to make it clear it now relies on a server responding with HTTP 1.1 404.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+            - Test case for lower than HTTP 1.1 versions.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-extensions-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header-expected.txt:
+            - Updated to pass with lowercase 'must not' in the failure reason.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+            - Test case for non-ASCII characters in new HTTP header Sec-WebSocket-Accept.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+            - Test case for non-ASCII characters in new HTTP header Sec-WebSocket-Extensions.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+            - Test case for non-ASCII characters in new HTTP header Sec-WebSocket-Protocol.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+            - Test case for non-ASCII characters in HTTP status line.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+            - Test case for null character in the middle of the HTTP status line.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null_wsh.py:
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+            - This test case was changed to prepend a null character to the actual status line. Previously it used a WebSockets frame with a prepended null before the status line. The Python WebSockets lib uses non-ASCII characters in that frame which meant the test case hit the non-ASCII check before the null check. It was confusing to me that the description and intent of the test was to run with a null in the status line, not in a frame before the status line. I believe the changed test case better reflects the intention of the test.
+        * http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+            - Test case for HTTP versions higher than 1.1.
+        * http/tests/websocket/tests/hybi/resources/status-404-without-body.php: Added.
+            - To use with the error-event-ready-state-non-existent-url-with-server-responding-404.html test described above.
+
 2016-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [RTL Scrollbars] Position: absolute divs are covered by vertical scrollbar
