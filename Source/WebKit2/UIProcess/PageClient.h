@@ -96,13 +96,6 @@ public:
     // Tell the view to invalidate the given rect. The rect is in view coordinates.
     virtual void setViewNeedsDisplay(const WebCore::IntRect&) = 0;
 
-    // Tell the view to immediately display its invalid rect.
-    virtual void displayView() = 0;
-
-    // Return true if scrollView() can copy bits in the view.
-    virtual bool canScrollView() = 0;
-    // Tell the view to scroll scrollRect by scrollOffset.
-    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
     // Tell the view to scroll to the given position, and whether this was a programmatic scroll.
     virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, bool isProgrammaticScroll) = 0;
 

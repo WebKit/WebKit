@@ -67,16 +67,6 @@ void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
     gtk_widget_queue_draw_area(m_viewWidget, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
-void PageClientImpl::displayView()
-{
-    notImplemented();
-}
-
-void PageClientImpl::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& /* scrollOffset */)
-{
-    setViewNeedsDisplay(scrollRect);
-}
-
 void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, bool)
 {
     notImplemented();

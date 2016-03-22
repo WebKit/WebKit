@@ -156,10 +156,6 @@ private:
 
     void setViewNeedsDisplay(const WebCore::IntRect&) override;
 
-    void displayView() override;
-
-    bool canScrollView() override { return false; }
-    void scrollView(const WebCore::IntRect&, const WebCore::IntSize&) override;
     void requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, bool) override;
 
     WebCore::IntSize viewSize() override;

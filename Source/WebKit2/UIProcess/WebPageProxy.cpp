@@ -1324,21 +1324,6 @@ void WebPageProxy::setViewNeedsDisplay(const IntRect& rect)
     m_pageClient.setViewNeedsDisplay(rect);
 }
 
-void WebPageProxy::displayView()
-{
-    m_pageClient.displayView();
-}
-
-bool WebPageProxy::canScrollView()
-{
-    return m_pageClient.canScrollView();
-}
-
-void WebPageProxy::scrollView(const IntRect& scrollRect, const IntSize& scrollOffset)
-{
-    m_pageClient.scrollView(scrollRect, scrollOffset);
-}
-
 void WebPageProxy::requestScroll(const FloatPoint& scrollPosition, const IntPoint& scrollOrigin, bool isProgrammaticScroll)
 {
     m_pageClient.requestScroll(scrollPosition, scrollOrigin, isProgrammaticScroll);

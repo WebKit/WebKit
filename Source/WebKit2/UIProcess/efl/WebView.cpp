@@ -414,16 +414,6 @@ void WebView::setViewNeedsDisplay(const WebCore::IntRect& area)
     m_client.viewNeedsDisplay(this, area);
 }
 
-void WebView::displayView()
-{
-    notImplemented();
-}
-
-void WebView::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize&)
-{
-    setViewNeedsDisplay(scrollRect);
-}
-
 void WebView::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, bool)
 {
     notImplemented();

@@ -228,21 +228,11 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
         m_backingStore = std::make_unique<BackingStore>(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
 
     m_backingStore->incorporateUpdate(updateInfo);
-
-    bool shouldScroll = !updateInfo.scrollRect.isEmpty();
-
-    if (shouldScroll)
-        m_webPageProxy.scrollView(updateInfo.scrollRect, updateInfo.scrollOffset);
-    
-    if (shouldScroll && !m_webPageProxy.canScrollView())
+    if (updateInfo.scrollRect.isEmpty()) {
+        for (const auto& rect : updateInfo.updateRects)
+            m_webPageProxy.setViewNeedsDisplay(rect);
+    } else
         m_webPageProxy.setViewNeedsDisplay(IntRect(IntPoint(), m_webPageProxy.viewSize()));
-    else {
-        for (size_t i = 0; i < updateInfo.updateRects.size(); ++i)
-            m_webPageProxy.setViewNeedsDisplay(updateInfo.updateRects[i]);
-    }
-
-    if (shouldScroll)
-        m_webPageProxy.displayView();
 }
 
 void DrawingAreaProxyImpl::backingStoreStateDidChange(RespondImmediatelyOrNot respondImmediatelyOrNot)

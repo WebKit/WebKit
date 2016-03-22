@@ -1,3 +1,42 @@
+2016-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove unused display and scroll view methods from PageClient and WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=155744
+
+        Reviewed by Andreas Kling.
+
+        We have displayView(), canScrollView() and scrollView() that are
+        used by DrawingAreaProxyImpl which is only used by GTK+ port that
+        doesn't implement those methods.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::displayView): Deleted.
+        (WebKit::PageClientImpl::scrollView): Deleted.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate): Update the
+        whole view when scrolling, or the damage area otherwise.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::displayView): Deleted.
+        (WebKit::WebPageProxy::canScrollView): Deleted.
+        (WebKit::WebPageProxy::scrollView): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::displayView): Deleted.
+        (WebKit::WebView::scrollView): Deleted.
+        * UIProcess/efl/WebView.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::displayView): Deleted.
+        (WebKit::PageClientImpl::canScrollView): Deleted.
+        (WebKit::PageClientImpl::scrollView): Deleted.
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::displayView): Deleted.
+        (WebKit::PageClientImpl::canScrollView): Deleted.
+        (WebKit::PageClientImpl::scrollView): Deleted.
+
 2016-03-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] Polish std::function<> usage in ThreadedCompositor, CoordinatedGraphicsScene

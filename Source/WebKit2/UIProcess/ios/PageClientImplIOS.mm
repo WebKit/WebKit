@@ -128,22 +128,6 @@ void PageClientImpl::setViewNeedsDisplay(const IntRect& rect)
     ASSERT_NOT_REACHED();
 }
 
-void PageClientImpl::displayView()
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool PageClientImpl::canScrollView()
-{
-    notImplemented();
-    return false;
-}
-
-void PageClientImpl::scrollView(const IntRect&, const IntSize&)
-{
-    ASSERT_NOT_REACHED();
-}
-
 void PageClientImpl::requestScroll(const FloatPoint& scrollPosition, const IntPoint& scrollOrigin, bool isProgrammaticScroll)
 {
     UNUSED_PARAM(isProgrammaticScroll);
