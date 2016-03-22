@@ -371,8 +371,10 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this.dispatchEventToListeners(WebInspector.ContentView.Event.NavigationItemsDidChange);
     }
 
-    _pathComponentSelected(event)
+    _timelinePathComponentSelected(event)
     {
+        let selectedTimeline = event.data.pathComponent.representedObject;
+        this.showTimelineViewForTimeline(selectedTimeline);
     }
 
     _timeRangePathComponentSelected(event)
@@ -601,7 +603,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         let displayName = WebInspector.TimelineTabContentView.displayNameForTimelineType(timeline.type);
         let iconClassName = WebInspector.TimelineTabContentView.iconClassNameForTimelineType(timeline.type);
         let pathComponent = new WebInspector.HierarchicalPathComponent(displayName, iconClassName, timeline);
-        pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+        pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._timelinePathComponentSelected, this);
         this._pathComponentMap.set(timeline, pathComponent);
 
         this._timelineCountChanged();

@@ -1,3 +1,15 @@
+2016-03-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION: Switching Timelines via Path Component does not work
+        https://bugs.webkit.org/show_bug.cgi?id=155767
+        <rdar://problem/25298945>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._timelinePathComponentSelected):
+        (WebInspector.TimelineRecordingContentView.prototype._instrumentAdded):
+
 2016-03-22  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Consider Automation script names as internal and hide them
