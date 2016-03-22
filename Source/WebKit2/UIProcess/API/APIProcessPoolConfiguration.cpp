@@ -75,6 +75,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_shouldHaveLegacyDataStore = this->m_shouldHaveLegacyDataStore;
     copy->m_maximumProcessCount = this->m_maximumProcessCount;
     copy->m_cacheModel = this->m_cacheModel;
+    copy->m_diskCacheSpeculativeValidationEnabled = this->m_diskCacheSpeculativeValidationEnabled;
     copy->m_diskCacheSizeOverride = this->m_diskCacheSizeOverride;
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;
     copy->m_diskCacheDirectory = this->m_diskCacheDirectory;

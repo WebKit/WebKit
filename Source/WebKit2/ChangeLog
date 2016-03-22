@@ -1,3 +1,17 @@
+2016-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Add a setting to let the client toggle support for network cache speculative validation
+        https://bugs.webkit.org/show_bug.cgi?id=155622
+        <rdar://problem/25233209>
+
+        Reviewed by Antti Koivisto.
+
+        Copy new m_diskCacheSpeculativeValidationEnabled member introduced
+        in r198470 in ProcessPoolConfiguration::copy().
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+
 2016-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebInspector broken after r197620
