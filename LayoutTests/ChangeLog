@@ -1,3 +1,11 @@
+2016-03-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Fixing a typo in the Mac TestExpectations file.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-03-22  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Implement RegExp.prototype[@@match]
