@@ -786,14 +786,17 @@ MacroAssemblerCodeRef floorThunkGenerator(VM* vm)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-#if CPU(ARM64)
-    SpecializedThunkJIT::JumpList doubleResult;
-    jit.floorDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
-    jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
-    jit.returnInt32(SpecializedThunkJIT::regT0);
-    doubleResult.link(&jit);
-    jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-#else
+
+    if (jit.supportsFloatingPointRounding()) {
+        SpecializedThunkJIT::JumpList doubleResult;
+        jit.floorDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
+        jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
+        jit.returnInt32(SpecializedThunkJIT::regT0);
+        doubleResult.link(&jit);
+        jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+        return jit.finalize(vm->jitStubs->ctiNativeTailCall(vm), "floor");
+    }
+
     SpecializedThunkJIT::Jump intResult;
     SpecializedThunkJIT::JumpList doubleResult;
     if (jit.supportsFloatingPointTruncate()) {
@@ -813,7 +816,6 @@ MacroAssemblerCodeRef floorThunkGenerator(VM* vm)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-#endif // CPU(ARM64)
     return jit.finalize(vm->jitStubs->ctiNativeTailCall(vm), "floor");
 }
 

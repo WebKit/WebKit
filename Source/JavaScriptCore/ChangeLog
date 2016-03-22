@@ -1,3 +1,16 @@
+2016-03-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Clean up Math.floor thunk and use SSE round instruction
+        https://bugs.webkit.org/show_bug.cgi?id=155705
+
+        Reviewed by Geoffrey Garen.
+
+        SSE now allow us to use round instruction to implement Math.floor.
+        MacroAssembler's floorDouble is now only used in ARM64, but it can be allowed in x86 SSE.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::floorThunkGenerator):
+
 2016-03-21  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed compilation with GCC 4.8.
