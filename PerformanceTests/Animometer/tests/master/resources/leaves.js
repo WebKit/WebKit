@@ -2,7 +2,7 @@ Leaf = Utilities.createSubclass(Particle,
     function(stage)
     {
         this.element = document.createElement("img");
-        this.element.setAttribute("src", stage.images[Stage.randomInt(0, stage.images.length - 1)].src);
+        this.element.setAttribute("src", Stage.randomElementInArray(stage.images).src);
         var sizeString = this.sizeMinimum + "px";
         this.element.style.width = sizeString;
         this.element.style.height = sizeString;

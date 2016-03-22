@@ -720,6 +720,11 @@ Utilities.extendObject(Stage, {
         return filterList[this.randomInt(0, filterList.length)];
     },
 
+    randomElementInArray: function(array)
+    {
+        return array[Stage.randomInt(0, array.length - 1)];
+    },
+
     rotatingColor: function(cycleLengthMs, saturation, lightness)
     {
         return "hsl("

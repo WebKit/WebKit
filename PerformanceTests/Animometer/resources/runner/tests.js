@@ -25,16 +25,12 @@ Suites.push(new Suite("Animometer",
             name: "Leaves"
         },
         {
-            url: "master/canvas-stage.html?pathType=linePath&lineJoin=round&lineCap=round",
-            name: "Canvas line path, round join"
+            url: "master/canvas-stage.html?pathType=linePath",
+            name: "Paths"
         },
         {
             url: "master/canvas-stage.html?pathType=line&lineCap=square",
             name: "Canvas line segments"
-        },
-        {
-            url: "master/text.html",
-            name: "A to Z"
         },
         {
             url: "master/focus.html",
@@ -45,7 +41,7 @@ Suites.push(new Suite("Animometer",
             name: "Images"
         },
         {
-            url: "master/international.html",
+            url: "master/text.html",
             name: "Design"
         },
         {

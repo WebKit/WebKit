@@ -1,3 +1,79 @@
+2016-03-21  Jon Lee  <jonlee@apple.com>
+
+        Update benchmark tests
+        https://bugs.webkit.org/show_bug.cgi?id=155723
+
+        Reviewed by Darin Adler.
+        Provisionally reviewed by Said Abou-Hallawa.
+
+        Add quadratic and bezier segments to the canvas path test.
+
+        * Animometer/resources/runner/tests.js: Some of the query strings are unnecessary.
+        Rename the test.
+        * Animometer/tests/master/resources/canvas-stage.js:
+        (tune): Update to be able to take an array of possible constructors. Choose one randomly.
+        * Animometer/tests/master/resources/canvas-tests.js:
+        (CanvasLinePoint.Utilities.createClass): Move the point selection out to a separate
+        function called randomPoint() for reuse. Move X_LOOPS, Y_LOOPS, and offsets into the
+        class definition.
+        (randomPoint): Scale the grid down a little bit so that the lines along the edge of the
+        canvas are not cut off when the stroke size is thick.
+        (CanvasQuadraticSegment): Added.
+        (CanvasBezierSegment): Added.
+        (SimpleCanvasStage): Pass in an array of the different segment types. Since line segments
+        are short compared to the curved ones, make it twice as likely to render a line segment.
+        (SimpleCanvasStage.animate): Update the drawing code so that we render all line segments.
+
+        Add a helper method that selects a random element from an array.
+
+        * Animometer/tests/resources/main.js:
+        (Stage.randomElementInArray): Select a random element from the provided array.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-tagged-images.js: Refactor.
+        * Animometer/tests/dom/resources/leaves.js: Ditto.
+        * Animometer/tests/master/resources/dom-particles.js: Ditto.
+        * Animometer/tests/master/resources/image-data.js: Ditto.
+        * Animometer/tests/master/resources/leaves.js: Ditto.
+        * Animometer/tests/simple/resources/simple-canvas-paths.js: Ditto.
+
+        Add canvas tests that includes all stroke and fill paths. This makes it possible to avoid having to
+        include the full simple canvas suite for perf testing.
+
+        * Animometer/resources/debug-runner/tests.js: Add new tests. Move the canvas test into the Canvas
+        suite.
+        * Animometer/tests/simple/resources/simple-canvas-paths.js: Add a CanvasStroke and CanvasFill particle
+        that random selects an object to render.
+
+        * Animometer/resources/debug-runner/tests.js: Move 3D suite before basic canvas suite.
+        When updating the perf bot script, we will include the suites up to this one, but exclude
+        the basic canvas suite.
+
+        Move compositing transforms test to HTML suite and remove the empty Miscellaneous suite.
+
+        * Animometer/resources/debug-runner/tests.js:
+        * Animometer/tests/dom/compositing-transforms.html: Renamed from PerformanceTests/Animometer/tests/misc/compositing-transforms.html.
+        * Animometer/tests/dom/resources/compositing-transforms.js: Renamed from PerformanceTests/Animometer/tests/misc/resources/compositing-transforms.js.
+
+        Clean up miscellaneous test suite. Add a canvas ellipse test, and remove the other
+        canvas tests.
+
+        * Animometer/resources/debug-runner/tests.js: Add ellipse tests to the simple suite.
+        * Animometer/tests/misc/canvas-electrons.html: Removed.
+        * Animometer/tests/misc/canvas-stars.html: Removed.
+        * Animometer/tests/misc/resources/canvas-electrons.js: Removed.
+        * Animometer/tests/misc/resources/canvas-stars.js: Removed.
+        * Animometer/tests/simple/resources/simple-canvas-paths.js: Add ellipse primitives.
+
+        Merge text tests together into one.
+
+        * Animometer/resources/runner/tests.js: Remove international.html.
+        * Animometer/tests/master/international.html: Removed.
+        * Animometer/tests/master/resources/text.js:
+        (animate): Update styling. Manually calculate gradients for the shadow particles.
+        Reduce the step size for y direction to avoid cutting text off at the margins. Increase
+        step for x since there will be a little more room.
+        * Animometer/tests/master/text.html: Add more translations and lay it out in a table.
+
 2016-03-20  Jon Lee  <jonlee@apple.com>
 
         Add a link to show debug data

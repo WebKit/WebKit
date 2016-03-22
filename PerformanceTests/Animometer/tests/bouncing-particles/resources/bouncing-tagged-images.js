@@ -8,7 +8,7 @@ BouncingTaggedImage = Utilities.createSubclass(BouncingParticle,
         this.element = document.createElement("img");
         this.element.style.width = this.size.x + "px";
         this.element.style.height = this.size.y + "px";
-        this.element.setAttribute("src", stage.images[Stage.randomInt(0, stage.images.length - 1)].src);
+        this.element.setAttribute("src", Stage.randomElementInArray(stage.images).src);
 
         stage.element.appendChild(this.element);
         this._move();

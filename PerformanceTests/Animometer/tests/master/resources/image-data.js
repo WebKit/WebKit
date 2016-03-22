@@ -146,7 +146,7 @@ var ImageDataStage = Utilities.createSubclass(Stage,
                 context.putImageData(imageData, 0, 0);
             else {
                 this._refreshElement(element);
-                element.getContext("2d").drawImage(this.images[Stage.randomInt(0, this.images.length - 1)], 0, 0, this.imageWidth, this.imageHeight);
+                element.getContext("2d").drawImage(Stage.randomElementInArray(this.images), 0, 0, this.imageWidth, this.imageHeight);
             }
         }
     },

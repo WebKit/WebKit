@@ -13,7 +13,7 @@ DOMParticle = Utilities.createSubclass(Particle,
     {
         Particle.prototype.reset.call(this);
 
-        var emitLocation = this.stage.emitLocation[Stage.randomInt(0, this.stage.emitLocation.length - 1)];
+        var emitLocation = Stage.randomElementInArray(this.stage.emitLocation);
         this.position = new Point(emitLocation.x, emitLocation.y);
 
         var angle = Stage.randomInt(0, this.stage.emitSteps) / this.stage.emitSteps * Math.PI * 2 + Stage.dateCounterValue(100) * this.stage.emissionSpin;

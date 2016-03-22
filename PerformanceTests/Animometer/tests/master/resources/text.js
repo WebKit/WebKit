@@ -10,12 +10,20 @@ var TextStage = Utilities.createSubclass(Stage,
     }, {
 
     shadowFalloff: new UnitBezier(new Point(0.015, 0.750), new Point(0.755, 0.235)),
-    shimmerAverage: 0.4,
+    shimmerAverage: 0,
     shimmerMax: 0.5,
     millisecondsPerRotation: 1000 / (.26 * Math.PI * 2),
-    particleDistance: 1,
+    particleDistanceX: 1.5,
+    particleDistanceY: .5,
     lightnessMin: 13,
     lightnessMax: 94,
+    gradients: [
+        [10, 176, 176, 209, 148, 140],
+        [171, 120, 154, 245, 196, 154],
+        [224, 99, 99, 71, 134, 148],
+        [101, 100, 117, 80, 230, 175],
+        [232, 165, 30, 69, 186, 172]
+    ],
 
     initialize: function(benchmark)
     {
@@ -66,21 +74,24 @@ var TextStage = Utilities.createSubclass(Stage,
         var x = 0;
         var y = 0;
         var progress = 0;
-        var stepX = Math.sin(angle) * this.particleDistance;
-        var stepY = Math.cos(angle) * this.particleDistance;
+        var stepX = Math.sin(angle) * this.particleDistanceX;
+        var stepY = Math.cos(angle) * this.particleDistanceY;
+        var gradient = this.gradients[Math.floor(angle/(Math.PI * 2)) % this.gradients.length];
+        var offset = Stage.dateCounterValue(200);
         for (var i = 0; i < this._offsetIndex; ++i) {
-            x += stepX;
-            y += stepY;
-
             var element = this.testElements[i];
 
             var colorProgress = this.shadowFalloff.solve(progress);
-            var shimmer = Math.sin(Stage.dateCounterValue(100) - colorProgress);
-            colorProgress += Utilities.lerp(shimmer, this.shimmerAverage, this.shimmerMax);
-            var interpolatedLightness = Math.round(Utilities.lerp(Math.max(Math.min(colorProgress, 1), 0), this.lightnessMin, this.lightnessMax));
+            var shimmer = Math.sin(offset - colorProgress);
+            colorProgress = Math.max(Math.min(colorProgress + Utilities.lerp(shimmer, this.shimmerAverage, this.shimmerMax), 1), 0);
+            var r = Math.round(Utilities.lerp(colorProgress, gradient[0], gradient[3]));
+            var g = Math.round(Utilities.lerp(colorProgress, gradient[1], gradient[4]));
+            var b = Math.round(Utilities.lerp(colorProgress, gradient[2], gradient[5]));
+            element.style.color = "rgb(" + r + "," + g + "," + b + ")";
 
-            element.style.color = "hsl(0,0%," + interpolatedLightness + "%)";
-            element.style.transform = "translateX(" + Math.floor(y) + "px) translateY(" + Math.floor(x) + "px)";
+            x += stepX;
+            y += stepY;
+            element.style.transform = "translateX(" + Math.floor(x) + "px) translateY(" + Math.floor(y) + "px)";
 
             progress += this._stepProgress;
         }

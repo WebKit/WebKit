@@ -209,6 +209,78 @@ CanvasRectFill = Utilities.createClass(
     }
 });
 
+CanvasEllipse = Utilities.createClass(
+    function(stage) {
+        this._radius = new Point(Stage.randomInt(20, 200), Stage.randomInt(20, 200));
+        var toCenter = Stage.randomPosition(stage.size).subtract(this._radius.multiply(.5));
+
+        this._center = Stage.randomPosition(this._radius).add(toCenter);
+        this._rotation = Stage.randomAngle();
+        this._startAngle = Stage.randomAngle();
+        this._endAngle = Stage.randomAngle();
+        this._anticlockwise = Stage.randomBool();
+        this._color = Stage.randomColor();
+        this._lineWidth = Stage.randomInt(1, 20);
+    }, {
+
+    draw: function(context) {
+        context.strokeStyle = this._color;
+        context.lineWidth = this._lineWidth;
+        context.beginPath();
+        context.ellipse(this._center.x, this._center.y, this._radius.width, this._radius.height, this._rotation, this._startAngle, this._endAngle, this._anticlockwise);
+        context.stroke();
+    }
+});
+
+CanvasEllipseFill = Utilities.createClass(
+    function(stage) {
+        CanvasEllipse.call(this, stage);
+    }, {
+
+    draw: function(context) {
+        context.fillStyle = this._color;
+        context.beginPath();
+        context.ellipse(this._center.x, this._center.y, this._radius.width, this._radius.height, this._rotation, this._startAngle, this._endAngle, this._anticlockwise);
+        context.fill();
+    }
+});
+
+CanvasStroke = Utilities.createClass(
+    function (stage) {
+        this._object = new (Stage.randomElementInArray(this.objectTypes))(stage);
+    }, {
+
+    objectTypes: [
+        CanvasQuadraticSegment,
+        CanvasBezierSegment,
+        CanvasArcToSegment,
+        CanvasArcSegment,
+        CanvasRect,
+        CanvasEllipse
+    ],
+
+    draw: function(context) {
+        this._object.draw(context);
+    }
+});
+
+CanvasFill = Utilities.createClass(
+    function (stage) {
+        this._object = new (Stage.randomElementInArray(this.objectTypes))(stage);
+    }, {
+
+    objectTypes: [
+        CanvasArcToSegmentFill,
+        CanvasArcSegmentFill,
+        CanvasRectFill,
+        CanvasEllipseFill
+    ],
+
+    draw: function(context) {
+        this._object.draw(context);
+    }
+});
+
 // === STAGES ===
 
 SimpleCanvasPathStrokeStage = Utilities.createSubclass(SimpleCanvasStage,
@@ -340,6 +412,9 @@ CanvasPathBenchmark = Utilities.createSubclass(Benchmark,
         case "rect":
             stage = new SimpleCanvasStage(CanvasRect);
             break;
+        case "ellipse":
+            stage = new SimpleCanvasStage(CanvasEllipse);
+            break;
         case "lineFill":
             stage = new SimpleCanvasPathFillStage(CanvasLinePoint);
             break;
@@ -357,6 +432,15 @@ CanvasPathBenchmark = Utilities.createSubclass(Benchmark,
             break;
         case "rectFill":
             stage = new SimpleCanvasStage(CanvasRectFill);
+            break;
+        case "ellipseFill":
+            stage = new SimpleCanvasStage(CanvasEllipseFill);
+            break;
+        case "strokes":
+            stage = new SimpleCanvasStage(CanvasStroke);
+            break;
+        case "fills":
+            stage = new SimpleCanvasStage(CanvasFill);
             break;
         }
 

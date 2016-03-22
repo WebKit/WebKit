@@ -81,43 +81,95 @@ CanvasArc = Utilities.createClass(
 // CanvasLinePoint contains no draw() method since it is either moveTo or
 // lineTo depending on its index.
 CanvasLinePoint = Utilities.createClass(
-    function(stage, coordinateMaximum)
+    function(stage)
     {
-        var X_LOOPS = 40;
-        var Y_LOOPS = 20;
+        var colors = ["#101010", "#808080", "#c0c0c0", "#101010", "#808080", "#c0c0c0", "#e01040"];
+        this.color = Stage.randomElementInArray(colors);
+        this.width = Math.pow(Pseudo.random(), 5) * 20 + 1;
+        this.isSplit = Pseudo.random() > 0.95;
 
-        var offsets = [[-2, -1], [2, 1], [-1, 0], [1, 0], [-1, 2], [1, -2]];
-        var offset = offsets[Math.floor(Pseudo.random() * offsets.length)];
+        var nextPoint;
+        if (stage.objects.length)
+            nextPoint = this.randomPoint(stage, stage.objects[stage.objects.length - 1].coordinate);
+        else
+            nextPoint = this.randomPoint(stage, this.gridSize.center);
+        this.point = nextPoint.point;
+        this.coordinate = nextPoint.coordinate;
+    }, {
 
-        this.coordinate = new Point(X_LOOPS/2, Y_LOOPS/2);
+    gridSize: new Point(80, 40),
+    offsets: [
+        new Point(-4, 0),
+        new Point(2, 0),
+        new Point(1, -2),
+        new Point(1, 2),
+    ],
+
+    randomPoint: function(stage, startCoordinate)
+    {
+        var coordinate = startCoordinate;
         if (stage.objects.length) {
-            var head = stage.objects[stage.objects.length - 1].coordinate;
-            this.coordinate.x = head.x;
-            this.coordinate.y = head.y;
+            var offset = Stage.randomElementInArray(this.offsets);
+
+            coordinate = coordinate.add(offset);
+            if (coordinate.x < 0 || coordinate.x > this.gridSize.width)
+                coordinate.x -= offset.x * 2;
+            if (coordinate.y < 0 || coordinate.y > this.gridSize.height)
+                coordinate.y -= offset.y * 2;
         }
 
-        var nextCoordinate = this.coordinate.x + offset[0];
-        if (nextCoordinate < 0 || nextCoordinate > X_LOOPS)
-            this.coordinate.x -= offset[0];
-        else
-            this.coordinate.x = nextCoordinate;
-        nextCoordinate = this.coordinate.y + offset[1];
-        if (nextCoordinate < 0 || nextCoordinate > Y_LOOPS)
-            this.coordinate.y -= offset[1];
-        else
-            this.coordinate.y = nextCoordinate;
+        var x = (coordinate.x + .5) * stage.size.x / (this.gridSize.width + 1);
+        var y = (coordinate.y + .5) * stage.size.y / (this.gridSize.height + 1);
+        return {
+            point: new Point(x, y),
+            coordinate: coordinate
+        };
+    },
 
-        var xOff = .25 * (this.coordinate.y % 2);
-        var randX = (xOff + this.coordinate.x) * stage.size.x / X_LOOPS;
-        var randY = this.coordinate.y * stage.size.y / Y_LOOPS;
-        var colors = ["#101010", "#808080", "#c0c0c0", "#101010", "#808080", "#c0c0c0", "#e01040"];
-        this.color = colors[Math.floor(Pseudo.random() * colors.length)];
-
-        this.width = Math.pow(Pseudo.random(), 5) * 20 + 1;
-        this.isSplit = Pseudo.random() > 0.9;
-        this.point = new Point(randX, randY);
+    draw: function(context)
+    {
+        context.lineTo(this.point.x, this.point.y);
     }
-);
+});
+
+CanvasQuadraticSegment = Utilities.createSubclass(CanvasLinePoint,
+    function(stage)
+    {
+        CanvasLinePoint.call(this, stage);
+        // The chosen point is instead the control point.
+        this._point2 = this.point;
+
+        // Get another random point for the actual end point of the segment.
+        var nextPoint = this.randomPoint(stage, this.coordinate);
+        this.point = nextPoint.point;
+        this.coordinate = nextPoint.coordinate;
+    }, {
+
+    draw: function(context)
+    {
+        context.quadraticCurveTo(this._point2.x, this._point2.y, this.point.x, this.point.y);
+    }
+});
+
+CanvasBezierSegment = Utilities.createSubclass(CanvasLinePoint,
+    function(stage)
+    {
+        CanvasLinePoint.call(this, stage);
+        // The chosen point is instead the first control point.
+        this._point2 = this.point;
+        var nextPoint = this.randomPoint(stage, this.coordinate);
+        this._point3 = nextPoint.point;
+
+        nextPoint = this.randomPoint(stage, nextPoint.coordinate);
+        this.point = nextPoint.point;
+        this.coordinate = nextPoint.coordinate;
+    }, {
+
+    draw: function(context, off)
+    {
+        context.bezierCurveTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y, this.point.x, this.point.y);
+    }
+});
 
 // === STAGES ===
 
@@ -190,7 +242,7 @@ CanvasLineSegmentStage = Utilities.createSubclass(SimpleCanvasStage,
 CanvasLinePathStage = Utilities.createSubclass(SimpleCanvasStage,
     function()
     {
-        SimpleCanvasStage.call(this, CanvasLinePoint);
+        SimpleCanvasStage.call(this, [CanvasLinePoint, CanvasLinePoint, CanvasQuadraticSegment, CanvasBezierSegment]);
     }, {
 
     initialize: function(benchmark, options)
@@ -210,19 +262,21 @@ CanvasLinePathStage = Utilities.createSubclass(SimpleCanvasStage,
             if (i == this.offsetIndex) {
                 context.lineWidth = object.width;
                 context.strokeStyle = object.color;
+                context.beginPath();
                 context.moveTo(object.point.x, object.point.y);
             } else {
+                object.draw(context);
+
                 if (object.isSplit) {
                     context.stroke();
 
                     context.lineWidth = object.width;
                     context.strokeStyle = object.color;
                     context.beginPath();
+                    context.moveTo(object.point.x, object.point.y);
                 }
 
-                context.lineTo(object.point.x, object.point.y);
-
-                if (Pseudo.random() > 0.999)
+                if (Pseudo.random() > 0.995)
                     object.isSplit = !object.isSplit;
             }
         }
