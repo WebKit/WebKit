@@ -7145,7 +7145,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return;
 
     BOOL needToRemoveSoftSpace = NO;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if HAVE(ADVANCED_SPELL_CHECKING)
     if (_private->softSpaceRange.location != NSNotFound && (replacementRange.location == NSMaxRange(_private->softSpaceRange) || replacementRange.location == NSNotFound) && !replacementRange.length && [[NSSpellChecker sharedSpellChecker] deletesAutospaceBeforeString:text language:nil]) {
         replacementRange = _private->softSpaceRange;
         needToRemoveSoftSpace = YES;

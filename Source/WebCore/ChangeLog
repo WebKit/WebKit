@@ -1,3 +1,15 @@
+2016-03-22  Beth Dakin  <bdakin@apple.com>
+
+        Advanced spell checking should be guarded behind 
+        HAVE(ADVANCED_SPELL_CHECKING)
+        https://bugs.webkit.org/show_bug.cgi?id=155738
+
+        Reviewed by Geoff Garen.
+
+        * config.h:
+        (WebCore::ScrollableArea::systemLanguageIsRTL):
+        * platform/spi/mac/NSSpellCheckerSPI.h:
+
 2016-03-22  Nan Wang  <n_wang@apple.com>
 
         AX: Change "dialog" role description to "web dialog" so users can distinguish from native alerts

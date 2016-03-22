@@ -129,3 +129,7 @@
 #define HAVE_LINK_PREVIEW 0
 #endif
 #endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebKitAdditionsDefines.h>
+#endif

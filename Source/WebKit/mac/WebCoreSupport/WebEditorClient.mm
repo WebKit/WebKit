@@ -1050,7 +1050,7 @@ static Vector<TextCheckingResult> core(NSArray *incomingResults, TextCheckingTyp
     return results;
 }
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if HAVE(ADVANCED_SPELL_CHECKING)
 static int insertionPointFromCurrentSelection(const VisibleSelection& currentSelection)
 {
     VisiblePosition selectionStart = currentSelection.visibleStart();
@@ -1062,7 +1062,7 @@ static int insertionPointFromCurrentSelection(const VisibleSelection& currentSel
 Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView string, TextCheckingTypeMask checkingTypes, const VisibleSelection& currentSelection)
 {
     NSDictionary *options = nil;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if HAVE(ADVANCED_SPELL_CHECKING)
     options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPointFromCurrentSelection(currentSelection)] };
 #endif
     return core([[NSSpellChecker sharedSpellChecker] checkString:string.createNSStringWithoutCopying().get() range:NSMakeRange(0, string.length()) types:(checkingTypes | NSTextCheckingTypeOrthography) options:options inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL], checkingTypes);
@@ -1108,7 +1108,7 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     NSDictionary *options = nil;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if HAVE(ADVANCED_SPELL_CHECKING)
     options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPointFromCurrentSelection(currentSelection)] };
 #endif
     if (context.length()) {
@@ -1145,6 +1145,7 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
 
     m_lastSelectionForRequestedCandidates = selection;
 
+#if HAVE(ADVANCED_SPELL_CHECKING)
     VisiblePosition selectionStart = selection.visibleStart();
     VisiblePosition selectionEnd = selection.visibleEnd();
     VisiblePosition paragraphStart = startOfParagraph(selectionStart);
@@ -1164,6 +1165,7 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
             weakEditor->handleRequestedCandidates(sequenceNumber, candidates);
         });
     }];
+#endif // HAVE(ADVANCED_SPELL_CHECKING)
 }
 
 void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates)
@@ -1296,7 +1298,7 @@ void WebEditorClient::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRe
     NSRange range = NSMakeRange(0, m_textCheckingRequest->data().text().length());
     NSRunLoop* currentLoop = [NSRunLoop currentRunLoop];
     NSDictionary *options = nil;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if HAVE(ADVANCED_SPELL_CHECKING)
     options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPointFromCurrentSelection(currentSelection)] };
 #endif
     [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:m_textCheckingRequest->data().text() range:range types:NSTextCheckingAllSystemTypes options:options inSpellDocumentWithTag:0 completionHandler:^(NSInteger, NSArray* results, NSOrthography*, NSInteger) {

@@ -130,3 +130,6 @@ typedef float CGFloat;
 
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebKitAdditionsDefines.h>
+#endif

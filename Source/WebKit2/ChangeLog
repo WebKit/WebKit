@@ -1,3 +1,20 @@
+2016-03-22  Beth Dakin  <bdakin@apple.com>
+
+        Advanced spell checking should be guarded behind 
+        HAVE(ADVANCED_SPELL_CHECKING)
+        https://bugs.webkit.org/show_bug.cgi?id=155738
+
+        Reviewed by Geoff Garen.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::requestCandidatesForSelectionIfNeeded):
+        (WebKit::WebViewImpl::handleRequestedCandidates):
+        (WebKit::WebViewImpl::insertText):
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::getGuessesForWord):
+        * config.h:
+
 2016-03-22  Chris Dumez  <cdumez@apple.com>
 
         Add a setting to let the client toggle support for network cache speculative validation

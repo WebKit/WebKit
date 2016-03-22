@@ -297,7 +297,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 
     RetainPtr<NSString> textString = text.createNSStringWithoutCopying();
     NSDictionary *options = nil;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if HAVE(ADVANCED_SPELL_CHECKING)
     options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPoint] };
 #endif
     NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString.get()
@@ -436,7 +436,7 @@ void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     NSDictionary *options = nil;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if HAVE(ADVANCED_SPELL_CHECKING)
     options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPoint] };
 #endif
     if (context.length()) {
