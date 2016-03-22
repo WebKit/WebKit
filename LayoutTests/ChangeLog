@@ -1,3 +1,14 @@
+2016-03-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Skip HeapSnapshot test on WebKit1. Shared VM skews the data.
+
+        Rubber-stamped by Timothy Hatcher.
+
+        In this case, snapshots with snapshots with snapshots in the same VM
+        causes the test to run out of memory. This does not happen in WebKit2.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-03-21  Zalan Bujtas  <zalan@apple.com>
 
         WebCore::RenderTableCell::setCol should put a cap on the column value. 

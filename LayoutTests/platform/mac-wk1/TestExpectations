@@ -194,6 +194,7 @@ inspector/script-profiler/event-type-API.html [ Skip ]
 # WK1 Inspector running in the same VM as the inspected page skews heap snapshot results.
 inspector/heap/getPreview.html [ Skip ]
 inspector/heap/getRemoteObject.html [ Skip ]
+inspector/unit-tests/heap-snapshot.html [ Skip ]
 
 # This test checks ScrollAnimator events only for main frame scrollbars that use native widgets in WK1.
 fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
