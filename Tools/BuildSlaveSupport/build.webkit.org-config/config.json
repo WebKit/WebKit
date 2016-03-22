@@ -74,10 +74,11 @@
                     { "name": "gtk-linux-slave-8", "platform": "gtk" },
 
                     { "name": "efl-linux-slave-2", "platform": "efl" },
-                    { "name": "efl-linux-szeged-slave-1", "platform": "efl" },
-                    { "name": "efl-linux-szeged-slave-2", "platform": "efl" },
-                    { "name": "efl-linux-szeged-slave-3", "platform": "efl" },
-                    { "name": "efl-linux-szeged-slave-4", "platform": "efl" }
+                    { "name": "efl-linux-slave-3", "platform": "efl" },
+
+                    { "name": "jsconly-linux-szeged-slave-1", "platform": "jsc-only" },
+                    { "name": "jsconly-linux-szeged-slave-2", "platform": "jsc-only" },
+                    { "name": "jsconly-linux-szeged-slave-3", "platform": "jsc-only" }
 
                   ],
 
@@ -317,35 +318,35 @@
                       "slavenames": ["efl-linux-slave-2"]
                     },
                     {
-                      "name": "EFL Linux ARMv7 Thumb2 Release", "type": "BuildAndRemoteJSCTests", "builddir": "efl-linux-armv7-thumb2-release",
-                      "platform": "efl", "configuration": "release", "architectures": ["armv7"],
-                      "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
-                      "slavenames": ["efl-linux-szeged-slave-1"]
-                    },
-                    {
-                      "name": "EFL Linux ARMv7 Traditional Release", "type": "BuildAndRemoteJSCTests", "builddir": "efl-linux-armv7-traditional-release",
-                      "platform": "efl", "configuration": "release", "architectures": ["armv7"],
-                      "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
-                      "slavenames": ["efl-linux-szeged-slave-2"]
-                    },
-                    {
-                      "name": "EFL Linux AArch64 Release", "type": "BuildAndRemoteJSCTests", "builddir": "efl-linux-aarch64-release",
-                      "platform": "efl", "configuration": "release", "architectures": ["aarch64"],
-                      "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
-                      "slavenames": ["efl-linux-szeged-slave-4"]
-                    },
-                    {
                       "name": "EFL Linux 64-bit Release WK2 (Perf)", "type": "BuildAndPerfTest", "builddir": "efl-linux-64-release-wk2-perf",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["efl-linux-szeged-slave-3"]
+                      "slavenames": ["efl-linux-slave-3"]
+                    },
+                    {
+                      "name": "JSCOnly Linux AArch64 Release", "type": "BuildAndRemoteJSCTests", "builddir": "jsconly-linux-aarch64-release",
+                      "platform": "jsc-only", "configuration": "release", "architectures": ["aarch64"],
+                      "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
+                      "slavenames": ["jsconly-linux-szeged-slave-1"]
+                    },
+                    {
+                      "name": "JSCOnly Linux ARMv7 Thumb2 Release", "type": "BuildAndRemoteJSCTests", "builddir": "jsconly-linux-armv7-thumb2-release",
+                      "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
+                      "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
+                      "slavenames": ["jsconly-linux-szeged-slave-2"]
+                    },
+                    {
+                      "name": "JSCOnly Linux ARMv7 Traditional Release", "type": "BuildAndRemoteJSCTests", "builddir": "jsconly-linux-armv7-traditional-release",
+                      "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
+                      "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
+                      "slavenames": ["jsconly-linux-szeged-slave-3"]
                     }
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)", "GTK Linux ARM Release",
-                                       "EFL Linux 64-bit Release WK2",
-                                       "EFL Linux ARMv7 Thumb2 Release", "EFL Linux ARMv7 Traditional Release", "EFL Linux AArch64 Release",
-                                       "EFL Linux 64-bit Release WK2 (Perf)", "WinCairo 64-Bit Release"]
+                                       "EFL Linux 64-bit Release WK2", "EFL Linux 64-bit Release WK2 (Perf)",
+                                       "JSCOnly Linux AArch64 Release", "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Traditional Release",
+                                       "WinCairo 64-Bit Release"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-yosemite", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Yosemite Release (Build)", "Apple Yosemite Debug (Build)", "Apple Yosemite LLINT CLoop (BuildAndTest)", "Apple Yosemite 32-bit JSC (BuildAndTest)", "Apple Yosemite Release (32-bit Build)"]

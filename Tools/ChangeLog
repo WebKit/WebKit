@@ -1,3 +1,22 @@
+2016-03-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [buildbot] Move ARM Linux bots to JSCOnly port
+        https://bugs.webkit.org/show_bug.cgi?id=155655
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (ConfigureBuild.__init__):
+        (appendCustomBuildFlags):
+        (CompileJSCOnly):
+        (Factory.__init__):
+        (BuildAndRemoteJSCTestsFactory):
+        (BuildAndRemoteJSCTestsFactory.__init__):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        * BuildSlaveSupport/clean-build:
+        (main):
+
 2016-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         Improve SharedBuffer testing
