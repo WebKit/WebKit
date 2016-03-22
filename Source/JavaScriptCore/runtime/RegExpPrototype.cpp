@@ -22,8 +22,10 @@
 #include "RegExpPrototype.h"
 
 #include "ArrayPrototype.h"
+#include "BuiltinNames.h"
 #include "Error.h"
 #include "JSArray.h"
+#include "JSCBuiltins.h"
 #include "JSCJSValue.h"
 #include "JSFunction.h"
 #include "JSObject.h"
@@ -36,12 +38,14 @@
 #include "RegExp.h"
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"
+#include "RegExpMatchesArray.h"
 #include "StringRecursionChecker.h"
 
 namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchPrivate(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearch(ExecState*);
@@ -53,29 +57,7 @@ static EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState*);
 
-}
-
-#include "RegExpPrototype.lut.h"
-
-namespace JSC {
-
-const ClassInfo RegExpPrototype::s_info = { "Object", &Base::s_info, &regExpPrototypeTable, CREATE_METHOD_TABLE(RegExpPrototype) };
-
-/* Source for RegExpPrototype.lut.h
-@begin regExpPrototypeTable
-  compile       regExpProtoFuncCompile      DontEnum|Function 2
-  exec          regExpProtoFuncExec         DontEnum|Function 1
-  test          regExpProtoFuncTest         DontEnum|Function 1
-  toString      regExpProtoFuncToString     DontEnum|Function 0
-  global        regExpProtoGetterGlobal     DontEnum|Accessor
-  ignoreCase    regExpProtoGetterIgnoreCase DontEnum|Accessor
-  multiline     regExpProtoGetterMultiline  DontEnum|Accessor
-  sticky        regExpProtoGetterSticky     DontEnum|Accessor
-  unicode       regExpProtoGetterUnicode    DontEnum|Accessor
-  source        regExpProtoGetterSource     DontEnum|Accessor
-  flags         regExpProtoGetterFlags      DontEnum|Accessor
-@end
-*/
+const ClassInfo RegExpPrototype::s_info = { "Object", &Base::s_info, 0, CREATE_METHOD_TABLE(RegExpPrototype) };
 
 RegExpPrototype::RegExpPrototype(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)
@@ -86,14 +68,25 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    JSC_NATIVE_FUNCTION(vm.propertyNames->searchSymbol, regExpProtoFuncSearch, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->compile, regExpProtoFuncCompile, DontEnum, 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->test, regExpProtoFuncTest, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, regExpProtoFuncToString, DontEnum, 0);
+    JSC_NATIVE_GETTER(vm.propertyNames->global, regExpProtoGetterGlobal, DontEnum | Accessor);
+    JSC_NATIVE_GETTER(vm.propertyNames->ignoreCase, regExpProtoGetterIgnoreCase, DontEnum | Accessor);
+    JSC_NATIVE_GETTER(vm.propertyNames->multiline, regExpProtoGetterMultiline, DontEnum | Accessor);
+    JSC_NATIVE_GETTER(vm.propertyNames->sticky, regExpProtoGetterSticky, DontEnum | Accessor);
+    JSC_NATIVE_GETTER(vm.propertyNames->unicode, regExpProtoGetterUnicode, DontEnum | Accessor);
+    JSC_NATIVE_GETTER(vm.propertyNames->source, regExpProtoGetterSource, DontEnum | Accessor);
+    JSC_NATIVE_GETTER(vm.propertyNames->flags, regExpProtoGetterFlags, DontEnum | Accessor);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().matchPrivateName(), regExpProtoFuncMatchPrivate, DontEnum | DontDelete | ReadOnly, 1);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->matchSymbol, regExpPrototypeMatchCodeGenerator, DontEnum);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->searchSymbol, regExpProtoFuncSearch, DontEnum, 1);
+
+    JSFunction* execFunction = JSFunction::create(vm, globalObject, 1, vm.propertyNames->exec.string(), regExpProtoFuncExec, RegExpExecIntrinsic);
+    putDirectWithoutTransition(vm, vm.propertyNames->execPrivateName, execFunction, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->exec, execFunction, DontEnum);
 
     m_emptyRegExp.set(vm, this, RegExp::create(vm, "", NoFlags));
-}
-
-bool RegExpPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<Base>(exec, regExpPrototypeTable, jsCast<RegExpPrototype*>(object), propertyName, slot);
 }
 
 void RegExpPrototype::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -127,6 +120,17 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
     if (!string)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(asRegExpObject(thisValue)->exec(exec, exec->lexicalGlobalObject(), string));
+}
+
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchPrivate(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!thisValue.inherits(RegExpObject::info()))
+        return throwVMTypeError(exec);
+    JSString* string = exec->argument(0).toStringOrNull(exec);
+    if (!string)
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(asRegExpObject(thisValue)->matchGlobal(exec, exec->lexicalGlobalObject(), string));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)

@@ -169,4 +169,65 @@ MatchResult RegExpObject::match(ExecState* exec, JSGlobalObject* globalObject, J
     return matchInline(exec, globalObject, string);
 }
 
+JSValue RegExpObject::matchGlobal(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
+{
+    RegExp* regExp = this->regExp();
+
+    ASSERT(regExp->global());
+
+    VM* vm = &globalObject->vm();
+
+    setLastIndex(exec, 0);
+    if (exec->hadException())
+        return jsUndefined();
+
+    String s = string->value(exec);
+    RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
+    MatchResult result = regExpConstructor->performMatch(*vm, regExp, string, s, 0);
+
+    // return array of matches
+    MarkedArgumentBuffer list;
+    // We defend ourselves from crazy.
+    const size_t maximumReasonableMatchSize = 1000000000;
+
+    if (regExp->unicode()) {
+        while (result) {
+            if (list.size() > maximumReasonableMatchSize) {
+                throwOutOfMemoryError(exec);
+                return jsUndefined();
+            }
+
+            size_t end = result.end;
+            size_t length = end - result.start;
+            list.append(jsSubstring(exec, s, result.start, length));
+            if (!length)
+                end = advanceStringUnicode(s, length, end);
+            result = regExpConstructor->performMatch(*vm, regExp, string, s, end);
+        }
+    } else {
+        while (result) {
+            if (list.size() > maximumReasonableMatchSize) {
+                throwOutOfMemoryError(exec);
+                return jsUndefined();
+            }
+
+            size_t end = result.end;
+            size_t length = end - result.start;
+            list.append(jsSubstring(exec, s, result.start, length));
+            if (!length)
+                ++end;
+            result = regExpConstructor->performMatch(*vm, regExp, string, s, end);
+        }
+    }
+
+    if (list.isEmpty()) {
+        // if there are no matches at all, it's important to return
+        // Null instead of an empty array, because this matches
+        // other browsers and because Null is a false value.
+        return jsNull();
+    }
+
+    return constructArray(exec, static_cast<ArrayAllocationProfile*>(0), list);
+}
+
 } // namespace JSC

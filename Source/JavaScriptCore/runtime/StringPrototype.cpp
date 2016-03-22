@@ -66,10 +66,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCodePointAt(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeat(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState*);
@@ -111,6 +109,7 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, &st
 
 /* Source for StringConstructor.lut.h
 @begin stringPrototypeTable
+    match     JSBuiltin    DontEnum|Function 1
     search    JSBuiltin    DontEnum|Function 1
 @end
 */
@@ -134,7 +133,6 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("concat", stringProtoFuncConcat, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("indexOf", stringProtoFuncIndexOf, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf", stringProtoFuncLastIndexOf, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("match", stringProtoFuncMatch, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("repeat", stringProtoFuncRepeat, DontEnum, 1);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replace", stringProtoFuncReplace, DontEnum, 2, StringPrototypeReplaceIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("slice", stringProtoFuncSlice, DontEnum, 2);
@@ -1028,107 +1026,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec)
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
-{
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec);
-    JSString* string = thisValue.toString(exec);
-    String s = string->value(exec);
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    VM* vm = &globalObject->vm();
-
-    JSValue a0 = exec->argument(0);
-
-    RegExp* regExp;
-    unsigned startOffset = 0;
-    bool global = false;
-    bool sticky = false;
-    RegExpObject* regExpObject = nullptr;
-    if (a0.inherits(RegExpObject::info())) {
-        regExpObject = asRegExpObject(a0);
-        regExp = regExpObject->regExp();
-        if ((global = regExp->global())) {
-            // ES6 21.2.5.6 step 6.b.
-            regExpObject->setLastIndex(exec, 0);
-            if (exec->hadException())
-                return JSValue::encode(jsUndefined());
-        }
-        sticky = regExp->sticky();
-        if (!global && sticky) {
-            JSValue jsLastIndex = regExpObject->getLastIndex();
-            unsigned lastIndex;
-            if (LIKELY(jsLastIndex.isUInt32())) {
-                lastIndex = jsLastIndex.asUInt32();
-                if (lastIndex > s.length()) {
-                    regExpObject->setLastIndex(exec, 0);
-                    return JSValue::encode(jsUndefined());
-                }
-            } else {
-                double doubleLastIndex = jsLastIndex.toInteger(exec);
-                if (doubleLastIndex < 0 || doubleLastIndex > s.length()) {
-                    regExpObject->setLastIndex(exec, 0);
-                    return JSValue::encode(jsUndefined());
-                }
-                lastIndex = static_cast<unsigned>(doubleLastIndex);
-            }
-
-            startOffset = lastIndex;
-        }
-    } else {
-        /*
-         *  ECMA 15.5.4.12 String.prototype.search (regexp)
-         *  If regexp is not an object whose [[Class]] property is "RegExp", it is
-         *  replaced with the result of the expression new RegExp(regexp).
-         *  Per ECMA 15.10.4.1, if a0 is undefined substitute the empty string.
-         */
-        String patternString = emptyString();
-        if (!a0.isUndefined()) {
-            patternString = a0.toString(exec)->value(exec);
-            if (exec->hadException())
-                return JSValue::encode(jsUndefined());
-        }
-        regExp = RegExp::create(exec->vm(), patternString, NoFlags);
-        if (!regExp->isValid())
-            return throwVMError(exec, createSyntaxError(exec, regExp->errorMessage()));
-    }
-    RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
-    MatchResult result = regExpConstructor->performMatch(*vm, regExp, string, s, startOffset);
-    // case without 'g' flag is handled like RegExp.prototype.exec
-    if (!global) {
-        if (sticky)
-            regExpObject->setLastIndex(exec, result ? result.end : 0);
-
-        return JSValue::encode(result ? createRegExpMatchesArray(exec, globalObject, string, regExp, result.start) : jsNull());
-    }
-
-    // return array of matches
-    MarkedArgumentBuffer list;
-    while (result) {
-        // We defend ourselves from crazy.
-        const size_t maximumReasonableMatchSize = 1000000000;
-        if (list.size() > maximumReasonableMatchSize) {
-            throwOutOfMemoryError(exec);
-            return JSValue::encode(jsUndefined());
-        }
-        
-        size_t end = result.end;
-        size_t length = end - result.start;
-        list.append(jsSubstring(exec, s, result.start, length));
-        if (!length)
-            ++end;
-        result = regExpConstructor->performMatch(*vm, regExp, string, s, end);
-    }
-    if (list.isEmpty()) {
-        // if there are no matches at all, it's important to return
-        // Null instead of an empty array, because this matches
-        // other browsers and because Null is a false value.
-        return JSValue::encode(jsNull());
-    }
-
-    return JSValue::encode(constructArray(exec, static_cast<ArrayAllocationProfile*>(0), list));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)

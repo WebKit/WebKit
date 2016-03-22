@@ -108,6 +108,22 @@ MatchResult RegExpObject::matchInline(
     return result;
 }
 
+unsigned RegExpObject::advanceStringUnicode(String s, unsigned length, unsigned currentIndex)
+{
+    if (currentIndex + 1 >= length)
+        return currentIndex + 1;
+
+    UChar first = s[currentIndex];
+    if (first < 0xD800 || first > 0xDBFF)
+        return currentIndex + 1;
+
+    UChar second = s[currentIndex];
+    if (second < 0xDC00 || second > 0xDFFF)
+        return currentIndex + 1;
+
+    return currentIndex + 2;
+}
+
 } // namespace JSC
 
 #endif // RegExpObjectInlines_h

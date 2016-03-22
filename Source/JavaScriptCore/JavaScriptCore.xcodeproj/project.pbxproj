@@ -1464,7 +1464,6 @@
 		996B73211BDA08EF00331B84 /* NumberPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730D1BD9FA2C00331B84 /* NumberPrototype.lut.h */; };
 		996B73221BDA08EF00331B84 /* ObjectConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */; };
 		996B73231BDA08EF00331B84 /* ReflectObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730F1BD9FA2C00331B84 /* ReflectObject.lut.h */; };
-		996B73241BDA08EF00331B84 /* RegExpPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73101BD9FA2C00331B84 /* RegExpPrototype.lut.h */; };
 		996B73251BDA08EF00331B84 /* StringConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73111BD9FA2C00331B84 /* StringConstructor.lut.h */; };
 		996B73261BDA08EF00331B84 /* StringIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73121BD9FA2C00331B84 /* StringIteratorPrototype.lut.h */; };
 		996B73271BDA08EF00331B84 /* SymbolConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */; };
@@ -3355,6 +3354,7 @@
 		6540C79F1B82D9CE000F6B79 /* RegisterAtOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterAtOffset.h; sourceTree = "<group>"; };
 		6546F51F1A32A59C006F07D5 /* NullGetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NullGetterFunction.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		6546F5201A32A59C006F07D5 /* NullGetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullGetterFunction.h; sourceTree = "<group>"; };
+		654788421C937D2C000781A0 /* RegExpPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = RegExpPrototype.js; sourceTree = "<group>"; };
 		65525FC31A6DD3B3007B5495 /* NullSetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NullSetterFunction.cpp; sourceTree = "<group>"; };
 		65525FC41A6DD3B3007B5495 /* NullSetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullSetterFunction.h; sourceTree = "<group>"; };
 		6553A32F17A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonSlowPathsExceptions.cpp; sourceTree = "<group>"; };
@@ -3669,7 +3669,6 @@
 		996B730D1BD9FA2C00331B84 /* NumberPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberPrototype.lut.h; sourceTree = "<group>"; };
 		996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectConstructor.lut.h; sourceTree = "<group>"; };
 		996B730F1BD9FA2C00331B84 /* ReflectObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.lut.h; sourceTree = "<group>"; };
-		996B73101BD9FA2C00331B84 /* RegExpPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpPrototype.lut.h; sourceTree = "<group>"; };
 		996B73111BD9FA2C00331B84 /* StringConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConstructor.lut.h; sourceTree = "<group>"; };
 		996B73121BD9FA2C00331B84 /* StringIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringIteratorPrototype.lut.h; sourceTree = "<group>"; };
 		996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolConstructor.lut.h; sourceTree = "<group>"; };
@@ -5370,7 +5369,6 @@
 				996B730F1BD9FA2C00331B84 /* ReflectObject.lut.h */,
 				BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */,
 				A718F61A11754A21002465A7 /* RegExpJitTables.h */,
-				996B73101BD9FA2C00331B84 /* RegExpPrototype.lut.h */,
 				7035587F1C418458004BD7BF /* SetPrototype.lut.h */,
 				996B73111BD9FA2C00331B84 /* StringConstructor.lut.h */,
 				996B73121BD9FA2C00331B84 /* StringIteratorPrototype.lut.h */,
@@ -6843,6 +6841,7 @@
 				7CFBAC1C18B535E500D00750 /* PromisePrototype.js */,
 				7CF9BC5E1B65D9B1009DB1EF /* PromiseConstructor.js */,
 				7CF9BC5F1B65D9B1009DB1EF /* ReflectObject.js */,
+				654788421C937D2C000781A0 /* RegExpPrototype.js */,
 				7035587D1C418419004BD7BF /* SetPrototype.js */,
 				7CF9BC601B65D9B1009DB1EF /* StringConstructor.js */,
 				7CF9BC611B65D9B1009DB1EF /* StringIteratorPrototype.js */,
@@ -7897,7 +7896,6 @@
 				A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */,
 				BC18C45B0E16F5CD00B34460 /* RegExpObject.h in Headers */,
 				BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */,
-				996B73241BDA08EF00331B84 /* RegExpPrototype.lut.h in Headers */,
 				BC18C45D0E16F5CD00B34460 /* Register.h in Headers */,
 				969A072B0ED1CE6900F1F681 /* RegisterID.h in Headers */,
 				623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */,

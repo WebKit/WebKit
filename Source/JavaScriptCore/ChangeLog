@@ -1,3 +1,73 @@
+2016-03-22  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Implement RegExp.prototype[@@match]
+        https://bugs.webkit.org/show_bug.cgi?id=155711
+
+        Reviewed by Filip Pizlo.
+
+        Implemented ES6 spec for String.prototype.match and RegExp.prototype[@@match].
+        Implemented both as builtins, with String.prototype.match calling 
+        RegExp.prototype[@@match].
+
+        For performance reasons, RegExp.prototype[@@match] has a C++ fast path when
+        RegExp.prototype.exec has not been overridden.  This fast path,
+        RegExpObject::matchGlobal, was taken from the prior StringPrototype::match.
+        It only handles global matches.
+
+        Added new test, stress/regexp-match.js.
+
+        Updated various tests for changes exception string and now passing ES6 behavior.
+
+        * CMakeLists.txt: 
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Added builtins/RegExpPrototype.js and eliminated RegExpPrototype.lut.h.
+
+        * builtins/RegExpPrototype.js: Added.
+        (match.advanceStringIndexUnicode): Helper.
+        (match): Implements RegExp.prototype[@@match].
+        * builtins/StringPrototype.js:
+        (match): Implements String.prototype.match.
+
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        (JSC::BytecodeIntrinsicRegistry::lookup):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * runtime/CommonIdentifiers.h:
+        Added Symbol.match and builtins @match and @exec.
+
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpObjectInlines.h:
+        (JSC::RegExpObject::matchGlobal): Added.
+        (JSC::RegExpObject::advanceStringUnicode): Added helper.
+
+        * runtime/RegExpPrototype.cpp:
+        * runtime/RegExpPrototype.h:
+        (JSC::RegExpPrototype::RegExpPrototype):
+        (JSC::RegExpPrototype::finishCreation):
+        (JSC::RegExpPrototype::visitChildren):
+        (JSC::regExpProtoFuncMatchPrivate):
+        (JSC::RegExpPrototype::getOwnPropertySlot): Deleted.
+        (JSC::RegExpPrototype::create):
+        Restructured to create properties explicitly due to having two names for native regExpProtoFuncExec.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        Made match a builtin.
+        Removed unused declaration of stringProtoFuncSearch() since it was made a builtin.
+
+        * tests/es6.yaml:
+        * tests/stress/regexp-match.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (errorKey.toString):
+        (primitive.of.primitives.shouldThrow):
+        (testRegExpMatch):
+        (testMatch):
+        (testBoth):
+        (alwaysUnmatch):
+
 2016-03-22  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] allow duplicate property names returned from Proxy ownKeys() trap

@@ -1,3 +1,17 @@
+2016-03-22  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Implement RegExp.prototype[@@match]
+        https://bugs.webkit.org/show_bug.cgi?id=155711
+
+        Reviewed by Filip Pizlo.
+
+        Updated tests for exception string changes and added Symbol.match.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/dom/string-prototype-properties-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T3-expected.txt:
+
 2016-03-22  Daniel Bates  <dabates@apple.com>
 
         CSP: Should only execute <script> or apply <style> if its hash appears in all policies

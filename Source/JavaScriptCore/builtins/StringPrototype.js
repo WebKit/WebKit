@@ -26,6 +26,27 @@
 
 // @conditional=ENABLE(INTL)
 
+function match(regexp)
+{
+    "use strict";
+
+    if (this == null) {
+        if (this === null)
+            throw new @TypeError("String.prototype.match requires that |this| not be null");
+        throw new @TypeError("String.prototype.match requires that |this| not be undefined");
+    }
+
+    if (regexp != null) {
+        var matcher = regexp[@symbolMatch];
+        if (matcher !== @undefined)
+            return matcher.@call(regexp, this);
+    }
+
+    let thisString = @toString(this);
+    let createdRegExp = new @RegExp(regexp, @undefined);
+    return createdRegExp[@symbolMatch](thisString);
+}
+
 function search(regexp)
 {
     "use strict";

@@ -99,6 +99,7 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/PromiseOperations.js \
     $(JavaScriptCore)/builtins/PromisePrototype.js \
     $(JavaScriptCore)/builtins/ReflectObject.js \
+    $(JavaScriptCore)/builtins/RegExpPrototype.js \
     $(JavaScriptCore)/builtins/SetPrototype.js \
     $(JavaScriptCore)/builtins/StringConstructor.js \
     $(JavaScriptCore)/builtins/StringIteratorPrototype.js \
@@ -147,7 +148,6 @@ OBJECT_LUT_HEADERS = \
     ObjectConstructor.lut.h \
     ReflectObject.lut.h \
     RegExpConstructor.lut.h \
-    RegExpPrototype.lut.h \
     SetPrototype.lut.h \
     StringConstructor.lut.h \
     StringIteratorPrototype.lut.h \

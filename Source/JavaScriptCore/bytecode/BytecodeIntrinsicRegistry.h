@@ -53,6 +53,7 @@ class Identifier;
     macro(promiseStateFulfilled) \
     macro(promiseStateRejected) \
     macro(symbolIterator) \
+    macro(symbolMatch) \
     macro(symbolSearch) \
     macro(symbolSpecies)
 

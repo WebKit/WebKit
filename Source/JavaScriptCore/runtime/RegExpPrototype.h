@@ -29,7 +29,7 @@ namespace JSC {
 class RegExpPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags;
 
     static RegExpPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
@@ -54,7 +54,6 @@ protected:
 
 private:
     void finishCreation(VM&, JSGlobalObject*);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
     WriteBarrier<RegExp> m_emptyRegExp;
 };
