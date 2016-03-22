@@ -2971,7 +2971,7 @@ begin
   }
   
   ASMBENCH = BenchmarkSuite.new("AsmBench", :geometricMean, 0)
-  if JSBENCH_PATH
+  if ASMBENCH_PATH
     Dir.foreach(ASMBENCH_PATH) {
       | filename |
       if filename =~ /\.js$/

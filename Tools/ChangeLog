@@ -1,3 +1,14 @@
+2016-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] ASMBench cannot be run without JSBENCH_PATH
+        https://bugs.webkit.org/show_bug.cgi?id=155751
+
+        Reviewed by Saam Barati.
+
+        Check ASMBENCH_PATH instead of JSBENCH_PATH for ASMBench files.
+
+        * Scripts/run-jsc-benchmarks:
+
 2016-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] SharedBuffer::copy() can cause a segmentation fault.
