@@ -1,3 +1,20 @@
+2016-03-22  Daniel Bates  <dabates@apple.com>
+
+        CSP: Should only execute <script> or apply <style> if its hash appears in all policies
+        https://bugs.webkit.org/show_bug.cgi?id=155709
+        <rdar://problem/25263368>
+
+        Reviewed by Darin Adler.
+
+        Add tests to ensure that we only execute/apply a <script>/<style> if its hash is listed in all CSPs
+        delivered with the page.
+
+        * TestExpectations: Mark added tests as PASS so that we run them.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-multiple-policies-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-multiple-policies.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-multiple-policies-expected.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-multiple-policies.html: Added.
+
 2016-03-22  Nan Wang  <n_wang@apple.com>
 
         AX: Change "dialog" role description to "web dialog" so users can distinguish from native alerts

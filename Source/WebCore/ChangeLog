@@ -1,3 +1,23 @@
+2016-03-22  Daniel Bates  <dabates@apple.com>
+
+        CSP: Should only execute <script> or apply <style> if its hash appears in all policies
+        https://bugs.webkit.org/show_bug.cgi?id=155709
+        <rdar://problem/25263368>
+
+        Reviewed by Darin Adler.
+
+        Fixes an issue where a <script>/<style> was allowed to execute/be applied if its hash is listed
+        in at least one Content Security Policy (CSP) delivered with the page. We should only execute/apply
+        such a script/stylesheet if its hash is listed in all CSPs delivered with the page.
+
+        Tests: http/tests/security/contentSecurityPolicy/1.1/scripthash-multiple-policies.html
+               http/tests/security/contentSecurityPolicy/1.1/stylehash-multiple-policies.html
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::isAllowedByAllWithHash): Added. Checks if the specified hash is allowed by all policies.
+        (WebCore::isAllowedByAllWithHashFromContent): Modified to call WebCore::isAllowedByAllWithHash()
+        to determine if the <script>/<style> is allowed by all CSPs delivered with the page.
+
 2016-03-18  Jer Noble  <jer.noble@apple.com>
 
         CRASH in WebCore::MediaResourceLoader::requestResource + 698
