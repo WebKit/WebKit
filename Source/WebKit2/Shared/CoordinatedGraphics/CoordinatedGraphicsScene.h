@@ -73,7 +73,7 @@ public:
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, const WebCore::Color& backgroundColor, bool drawsBackground, const WebCore::FloatPoint&, WebCore::TextureMapper::PaintFlags = 0);
     void paintToGraphicsContext(PlatformGraphicsContext*, const WebCore::Color& backgroundColor, bool drawsBackground);
     void detach();
-    void appendUpdate(std::function<void()>);
+    void appendUpdate(std::function<void()>&&);
 
     WebCore::TextureMapperLayer* findScrollableContentsLayerAt(const WebCore::FloatPoint&);
 
@@ -131,8 +131,8 @@ private:
     void syncRemoteContent();
     void adjustPositionForFixedLayers(const WebCore::FloatPoint& contentPosition);
 
-    void dispatchOnMainThread(std::function<void()>);
-    void dispatchOnClientRunLoop(std::function<void()>);
+    void dispatchOnMainThread(std::function<void()>&&);
+    void dispatchOnClientRunLoop(std::function<void()>&&);
     void updateViewport();
     void renderNextFrame();
     void purgeBackingStores();

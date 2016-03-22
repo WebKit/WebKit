@@ -94,7 +94,7 @@ private:
     WebCore::GLContext* glContext();
     SimpleViewportController* viewportController() { return m_viewportController.get(); }
 
-    void callOnCompositingThread(std::function<void()>);
+    void callOnCompositingThread(std::function<void()>&&);
     void createCompositingThread();
     void runCompositingThread();
     void terminateCompositingThread();

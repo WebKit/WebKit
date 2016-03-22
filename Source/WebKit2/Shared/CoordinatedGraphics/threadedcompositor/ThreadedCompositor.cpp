@@ -52,7 +52,7 @@ public:
         WaitUntilNextFrame,
     };
 
-    CompositingRunLoop(std::function<void()> updateFunction)
+    CompositingRunLoop(std::function<void()>&& updateFunction)
         : m_runLoop(RunLoop::current())
         , m_updateTimer(m_runLoop, this, &CompositingRunLoop::updateTimerFired)
         , m_updateFunction(WTFMove(updateFunction))
@@ -60,7 +60,7 @@ public:
     {
     }
 
-    void callOnCompositingRunLoop(std::function<void()> function)
+    void callOnCompositingRunLoop(std::function<void()>&& function)
     {
         if (&m_runLoop == &RunLoop::current()) {
             function();
@@ -130,7 +130,7 @@ ThreadedCompositor::~ThreadedCompositor()
 void ThreadedCompositor::setNeedsDisplay()
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([=] {
+    callOnCompositingThread([protector] {
         protector->scheduleDisplayImmediately();
     });
 }
@@ -138,7 +138,7 @@ void ThreadedCompositor::setNeedsDisplay()
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([=] {
+    callOnCompositingThread([protector, handle] {
         protector->m_nativeSurfaceHandle = handle;
         protector->m_scene->setActive(true);
     });
@@ -147,24 +147,24 @@ void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 void ThreadedCompositor::setDeviceScaleFactor(float scale)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([=] {
+    callOnCompositingThread([protector, scale] {
         protector->m_deviceScaleFactor = scale;
         protector->scheduleDisplayImmediately();
     });
 }
 
-void ThreadedCompositor::didChangeViewportSize(const IntSize& newSize)
+void ThreadedCompositor::didChangeViewportSize(const IntSize& size)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([=] {
-        protector->viewportController()->didChangeViewportSize(newSize);
+    callOnCompositingThread([protector, size] {
+        protector->viewportController()->didChangeViewportSize(size);
     });
 }
 
 void ThreadedCompositor::didChangeViewportAttribute(const ViewportAttributes& attr)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([=] {
+    callOnCompositingThread([protector, attr] {
         protector->viewportController()->didChangeViewportAttribute(attr);
     });
 }
@@ -172,7 +172,7 @@ void ThreadedCompositor::didChangeViewportAttribute(const ViewportAttributes& at
 void ThreadedCompositor::didChangeContentsSize(const IntSize& size)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([=] {
+    callOnCompositingThread([protector, size] {
         protector->viewportController()->didChangeContentsSize(size);
     });
 }
@@ -180,7 +180,7 @@ void ThreadedCompositor::didChangeContentsSize(const IntSize& size)
 void ThreadedCompositor::scrollTo(const IntPoint& position)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([=] {
+    callOnCompositingThread([protector, position] {
         protector->viewportController()->scrollTo(position);
     });
 }
@@ -188,7 +188,7 @@ void ThreadedCompositor::scrollTo(const IntPoint& position)
 void ThreadedCompositor::scrollBy(const IntSize& delta)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([=] {
+    callOnCompositingThread([protector, delta] {
         protector->viewportController()->scrollBy(delta);
     });
 }
@@ -250,10 +250,11 @@ void ThreadedCompositor::scheduleDisplayImmediately()
 
 void ThreadedCompositor::didChangeVisibleRect()
 {
+    RefPtr<ThreadedCompositor> protector(this);
     FloatRect visibleRect = viewportController()->visibleContentsRect();
     float scale = viewportController()->pageScaleFactor();
-    RunLoop::main().dispatch([=] {
-        m_client->setVisibleContentsRect(visibleRect, FloatPoint::zero(), scale);
+    RunLoop::main().dispatch([protector, visibleRect, scale] {
+        protector->m_client->setVisibleContentsRect(visibleRect, FloatPoint::zero(), scale);
     });
 
     scheduleDisplayImmediately();
@@ -289,7 +290,7 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
     setNeedsDisplay();
 }
 
-void ThreadedCompositor::callOnCompositingThread(std::function<void()> function)
+void ThreadedCompositor::callOnCompositingThread(std::function<void()>&& function)
 {
     m_compositingRunLoop->callOnCompositingRunLoop(WTFMove(function));
 }

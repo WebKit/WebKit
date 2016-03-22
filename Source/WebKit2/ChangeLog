@@ -1,5 +1,48 @@
 2016-03-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordinatedGraphics] Polish std::function<> usage in ThreadedCompositor, CoordinatedGraphicsScene
+        https://bugs.webkit.org/show_bug.cgi?id=155726
+
+        Reviewed by Darin Adler.
+
+        Adjust the methods in ThreadedCompositor and CoordinatedGraphicsScene
+        classes to accept std::function<> arguments via rvalue references. This
+        should prevent both unnecessary copies and moves.
+
+        Fix lambda expressions that are most commonly used to construct the
+        std::function<> objects so that they don't capture-by-value by default,
+        but instead list the captured values verbosely. This part alone exposed
+        an issue in ThreadedCompositor::didChangeVisibleRect() where we were
+        capturing the `this' value by default, instead of a protector RefPtr.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::dispatchOnMainThread):
+        (WebKit::CoordinatedGraphicsScene::dispatchOnClientRunLoop):
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        (WebKit::CoordinatedGraphicsScene::onNewBufferAvailable):
+        (WebKit::CoordinatedGraphicsScene::commitSceneState):
+        (WebKit::CoordinatedGraphicsScene::purgeGLResources):
+        (WebKit::CoordinatedGraphicsScene::commitScrollOffset):
+        (WebKit::CoordinatedGraphicsScene::appendUpdate):
+        (WebKit::CoordinatedGraphicsScene::setActive):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::CompositingRunLoop::CompositingRunLoop):
+        (WebKit::CompositingRunLoop::callOnCompositingRunLoop):
+        (WebKit::ThreadedCompositor::setNeedsDisplay):
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing):
+        (WebKit::ThreadedCompositor::setDeviceScaleFactor):
+        (WebKit::ThreadedCompositor::didChangeViewportSize):
+        (WebKit::ThreadedCompositor::didChangeViewportAttribute):
+        (WebKit::ThreadedCompositor::didChangeContentsSize):
+        (WebKit::ThreadedCompositor::scrollTo):
+        (WebKit::ThreadedCompositor::scrollBy):
+        (WebKit::ThreadedCompositor::didChangeVisibleRect):
+        (WebKit::ThreadedCompositor::callOnCompositingThread):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
+2016-03-22  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordinatedGraphics] Prefer RunLoop::main().dispatch() over callOnMainThread()
         https://bugs.webkit.org/show_bug.cgi?id=155725
 
