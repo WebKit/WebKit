@@ -1,3 +1,14 @@
+2016-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [RTL Scrollbars] Position: absolute divs are covered by vertical scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=155533
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        * fast/scrolling/rtl-scrollbars-positioning-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-positioning.html: Added.
+
 2016-03-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/console/console-api.html as flaky on Mac

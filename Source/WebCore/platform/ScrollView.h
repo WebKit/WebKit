@@ -73,6 +73,8 @@ public:
 
     virtual void notifyPageThatContentAreaWillPaint() const;
 
+    IntPoint locationOfContents() const;
+
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     virtual void scrollTo(const ScrollPosition&);
 

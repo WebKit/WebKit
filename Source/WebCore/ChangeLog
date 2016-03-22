@@ -1,3 +1,45 @@
+2016-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [RTL Scrollbars] Position: absolute divs are covered by vertical scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=155533
+
+        Reviewed by Darin Adler.
+
+        This patch changes the behavior of position: absolute elements when their
+        containing block has overflow: scroll in RTL scrollbar mode. Previously, we
+        were only adjusting the overflow calculation for such elements (but not
+        their position calculation). This patch updates the position calculation,
+        which automatically makes the overflow calculation work propertly, so the
+        old calculation is no longer necessary.
+
+        This patch also updates iframes to appropriately move their dirty rects
+        and their painting CTM by the scrollbar width when traversing frame
+        boundaries. This fixes all our existing RTL scrollbar RTL tests.
+
+        The RTL scrollbar tests are only marked as passing on certain OSes, so these
+        tests are transitioning from failing to passing in that other repository.
+
+        Test: fast/scrolling/rtl-scrollbars-positioning.html
+              fast/scrolling/rtl-scrollbars-overflow-elementFromPoint.html
+              fast/scrolling/rtl-scrollbars-overflow-position-absolute.html
+              fast/scrolling/rtl-scrollbars-iframe-offset.html
+              fast/scrolling/rtl-scrollbars-iframe-position-absolute.html
+              fast/scrolling/rtl-scrollbars-iframe-scrolled.html
+              fast/scrolling/rtl-scrollbars-iframe.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paint):
+        (WebCore::ScrollView::locationOfContents):
+        * platform/ScrollView.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::repaintLayerDirtyRects):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverflowFromPositionedObjects):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+
 2016-03-22  Antti Koivisto  <antti@apple.com>
 
         Non-const DocumentRuleSets::features() does not check default style version

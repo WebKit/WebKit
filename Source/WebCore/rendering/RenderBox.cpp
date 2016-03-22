@@ -3522,6 +3522,11 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
 #endif
 
     computedValues.m_extent += bordersPlusPadding;
+    if (is<RenderBox>(*containerBlock)) {
+        auto& containingBox = downcast<RenderBox>(*containerBlock);
+        if (containingBox.layer() && containingBox.layer()->verticalScrollbarIsOnLeft())
+            computedValues.m_position += containingBox.verticalScrollbarWidth();
+    }
     
     // Adjust logicalLeft if we need to for the flipped version of our writing mode in regions.
     // FIXME: Add support for other types of objects as containerBlock, not only RenderBlock.

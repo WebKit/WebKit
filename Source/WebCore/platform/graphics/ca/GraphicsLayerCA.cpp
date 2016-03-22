@@ -2675,11 +2675,8 @@ void GraphicsLayerCA::repaintLayerDirtyRects()
         return;
     }
 
-    if (!m_dirtyRects.size())
-        return;
-
-    for (size_t i = 0; i < m_dirtyRects.size(); ++i)
-        m_layer->setNeedsDisplayInRect(m_dirtyRects[i]);
+    for (auto& dirtyRect : m_dirtyRects)
+        m_layer->setNeedsDisplayInRect(dirtyRect);
     
     m_dirtyRects.clear();
 }
