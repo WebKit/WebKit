@@ -1,3 +1,24 @@
+2016-03-22  Brent Fulgham  <bfulgham@apple.com>
+
+        SharedBuffer::copy() can cause a segmentation fault.
+        https://bugs.webkit.org/show_bug.cgi?id=155739
+
+        Reviewed by Ryosuke Niwa.
+
+        Based on a Blink patch by Huang Dongsung <luxtella@company100.net>.
+        <https://src.chromium.org/viewvc/blink?revision=153850&view=revision>
+
+        After SharedBuffer::copy(), SharedBuffer::append() can cause segmentation fault,
+        because copy() calls clone->m_buffer.append(m_segments[i], segmentSize) even if
+        'i' is the last index. The data size of m_segments.last() is often less than
+        segmentSize. So, in the cloned instance m_size < (m_buffer.size() + SUM(m_segments[i].size())).
+        This patch appends the exact size of the last segment instead of segmentSize.
+
+        Tested by TestWebKitAPI SharedBufferTest::copy
+
+        * platform/SharedBuffer.cpp:
+        (SharedBuffer::copy): 
+
 2016-03-22  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed typo fix.

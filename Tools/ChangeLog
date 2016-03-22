@@ -1,3 +1,13 @@
+2016-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] SharedBuffer::copy() can cause a segmentation fault.
+        https://bugs.webkit.org/show_bug.cgi?id=155739
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/PlatformWin.cmake: Build and run the
+        SharedBuffer tests.
+
 2016-03-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [buildbot] Move ARM Linux bots to JSCOnly port

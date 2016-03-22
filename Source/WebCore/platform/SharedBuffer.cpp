@@ -264,8 +264,14 @@ Ref<SharedBuffer> SharedBuffer::copy() const
     clone->m_buffer->data.append(m_buffer->data.data(), m_buffer->data.size());
 
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    for (char* segment : m_segments)
-        clone->m_buffer->data.append(segment, segmentSize);
+    if (!m_segments.isEmpty()) {
+        unsigned lastIndex = m_segments.size() - 1;
+        for (unsigned i = 0; i < lastIndex; ++i)
+            clone->m_buffer->data.append(m_segments[i], segmentSize);
+
+        unsigned sizeOfLastSegment = m_size - m_buffer->data.size() - lastIndex * segmentSize;
+        clone->m_buffer->data.append(m_segments.last(), sizeOfLastSegment);
+    }
 #else
     for (auto& data : m_dataArray)
         clone->m_dataArray.append(data.get());
