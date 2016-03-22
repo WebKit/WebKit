@@ -1060,7 +1060,7 @@ void Structure::getPropertyNamesFromStructure(VM& vm, PropertyNameArray& propert
             if (iter->key->isSymbol() && !propertyNames.includeSymbolProperties())
                 continue;
             if (knownUnique)
-                propertyNames.addKnownUnique(iter->key);
+                propertyNames.addUnchecked(iter->key);
             else
                 propertyNames.add(iter->key);
         }

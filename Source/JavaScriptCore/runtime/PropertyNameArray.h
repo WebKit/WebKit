@@ -69,7 +69,7 @@ public:
 
     void add(const Identifier&);
     void add(UniquedStringImpl*);
-    void addKnownUnique(UniquedStringImpl*);
+    void addUnchecked(UniquedStringImpl*);
 
     Identifier& operator[](unsigned i) { return m_data->propertyNameVector()[i]; }
     const Identifier& operator[](unsigned i) const { return m_data->propertyNameVector()[i]; }
@@ -103,7 +103,7 @@ ALWAYS_INLINE void PropertyNameArray::add(const Identifier& identifier)
     add(identifier.impl());
 }
 
-ALWAYS_INLINE void PropertyNameArray::addKnownUnique(UniquedStringImpl* identifier)
+ALWAYS_INLINE void PropertyNameArray::addUnchecked(UniquedStringImpl* identifier)
 {
     if (!isUidMatchedToTypeMode(identifier))
         return;
@@ -131,7 +131,7 @@ ALWAYS_INLINE void PropertyNameArray::add(UniquedStringImpl* identifier)
             return;
     }
 
-    addKnownUnique(identifier);
+    addUnchecked(identifier);
 }
 
 ALWAYS_INLINE bool PropertyNameArray::isUidMatchedToTypeMode(UniquedStringImpl* identifier)

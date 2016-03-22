@@ -1,3 +1,25 @@
+2016-03-22  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] allow duplicate property names returned from Proxy ownKeys() trap
+        https://bugs.webkit.org/show_bug.cgi?id=155560
+
+        Reviewed by Darin Adler.
+
+        Specification allows duplicate property names to be reported by the
+        Proxy ownKeys() trap --- and this is observable in any API which
+        operates on the returned list, such as Object.keys(),
+        Object.getOwnPropertyNames(), Object.getOwnPropertySymbols(), or
+        Object.getOwnPropertyDescriptors().
+
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::addUnchecked):
+        (JSC::PropertyNameArray::add):
+        (JSC::PropertyNameArray::addKnownUnique): Deleted.
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        * runtime/Structure.cpp:
+        (JSC::Structure::getPropertyNamesFromStructure):
+
 2016-03-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Clean up Math.floor thunk and use SSE round instruction

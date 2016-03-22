@@ -878,7 +878,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
         ++uncheckedResultKeys.add(ident.impl(), 0).iterator->value;
         ++totalSize;
 
-        trapResult.add(ident.impl());
+        trapResult.addUnchecked(ident.impl());
 
         return dontExitEarly;
     };
