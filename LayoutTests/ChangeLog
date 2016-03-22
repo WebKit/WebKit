@@ -1,5 +1,14 @@
 2016-03-22  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking inspector/console/console-api.html as flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=143719
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-03-22  Ryan Haddad  <ryanhaddad@apple.com>
+
         Fixing a typo in the Mac TestExpectations file.
 
         Unreviewed test gardening.
