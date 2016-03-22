@@ -1954,3 +1954,5 @@ webkit.org/b/155056 fast/viewport/ios/force-always-user-scalable.html [ Skip ]
 webkit.org/b/155501 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
 
 webkit.org/b/155495 compositing/visible-rect/animated-from-none.html [ Pass Failure ]
+
+webkit.org/b/155755 perf/document-contains.html [ Pass Timeout ]
