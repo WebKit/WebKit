@@ -1,3 +1,161 @@
+2016-03-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Timelines UI redesign: Provide a way to configure which instruments to use
+        https://bugs.webkit.org/show_bug.cgi?id=153672
+        <rdar://problem/24417575>
+
+        Reviewed by Timothy Hatcher.
+
+        Adds UI for configuring a timeline recording's instrument list. TimelineManager
+        maintains the list of supported timeline types, and tracks the subset
+        of user-configured timelines which are used to create the instrument list
+        that is passed to new recordings.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings for "Edit" Timelines button.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        Added setting for user-configured (enabled) timeline types.
+        Initialized to the default timeline types.
+
+        (WebInspector.TimelineManager.defaultTimelineTypes):
+        (WebInspector.TimelineManager.availableTimelineTypes):
+        Get the list of all supported timeline types, which is a superset
+        of the list of default timeline types.
+
+        (WebInspector.TimelineManager.prototype.get enabledTimelineTypes):
+        (WebInspector.TimelineManager.prototype.set enabledTimelineTypes):
+        List of user-configured timeline types, backed by a Setting.
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        Create new recordings with the current user-configured instrument list.
+        (WebInspector.TimelineManager.defaultInstruments): Deleted.
+        Renamed defaultTimelineTypes.
+
+        * UserInterface/Main.html:
+        New class, TimelineTreeElement.
+
+        * UserInterface/Models/Instrument.js:
+        (WebInspector.Instrument.createForTimelineType):
+        Factory method for creating Instruments.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording):
+        Replace fixed instrument list with TimelineManager's list.
+        (WebInspector.TimelineRecording.prototype.instrumentForTimeline):
+        Get the instrument in the recording for a given timeline.
+        (WebInspector.TimelineRecording.prototype.addInstrument):
+        (WebInspector.TimelineRecording.prototype.removeInstrument):
+        Drive-by syntax error fixes: Array.prototype.contains doesn't exist.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview > .navigation-bar.timelines):
+        (.navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):matches(:focus, .activate.activated, .radio.selected)):
+        (.navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):active:matches(:focus, .activate.activated, .radio.selected)):
+        (.navigation-bar.timelines .item.button.toggle-edit-instruments.disabled):
+        (.navigation-bar.timelines .toggle-edit-instruments:not(.disabled):active):
+        (.timeline-overview > .tree-outline.timelines):
+        (.timeline-overview.edit-instruments > .tree-outline.timelines):
+        (.timeline-overview.edit-instruments > .tree-outline.timelines .item.selected):
+        (.timeline-overview > .tree-outline.timelines input[type=checkbox].status-button):
+        (.timeline-overview.frames > :matches(.tree-outline.timelines, .navigation-bar.timelines)):
+        (.timeline-overview > .tree-outline.timelines::before): Deleted.
+        (.timeline-overview.frames > .tree-outline.timelines): Deleted.
+        Styles for the "Edit" navigation bar above the timelines tree outline,
+        and tree element styles for showing checkboxes and hiding the current
+        selection while in edit mode.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        Create "Edit" button and navigation bar and add event handlers for
+        capturing events, so that timeline editing can be closed and
+        disabled when capturing begins.
+
+        (WebInspector.TimelineOverview.prototype.set selectedTimeline):
+        Prevent timeline selection while in edit mode.
+        (WebInspector.TimelineOverview.prototype.get editingInstruments):
+        (WebInspector.TimelineOverview.prototype.set viewMode):
+        Prevent view mode change while in edit mode.
+
+        (WebInspector.TimelineOverview.prototype._instrumentAdded):
+        Create a TimelineTreeElement, and insert into the tree outline and graph
+        container in sorted order instead of appending timeline elements.
+
+        (WebInspector.TimelineOverview.prototype._toggleEditingInstruments):
+        Handler for Edit button click event.
+        (WebInspector.TimelineOverview.prototype._editingInstrumentsDidChange):
+        Update UI in response to editing mode change: toggle CSS, enable/disable
+        the timeline ruler and wheel/gesture events, and update Edit button appearance.
+
+        (WebInspector.TimelineOverview.prototype._updateEditInstrumentsButton):
+        Update label text and button state.
+        (WebInspector.TimelineOverview.prototype._updateWheelAndGestureHandlers):
+        Add/remove event handlers based on editing state.
+
+        (WebInspector.TimelineOverview.prototype._startEditingInstruments):
+        Enable edit mode UI. Placeholder elements are added for timelines that
+        aren't included in the recording, and all tree elements have checkboxes
+        for toggling their associated timelines.
+
+        (WebInspector.TimelineOverview.prototype._stopEditingInstruments):
+        Disable edit mode UI. Unchecked instruments are first removed from the
+        recording, then placeholder tree elements are removed, and their instruments
+        added, as needed. TimelineManager's list of user-configured timeline types
+        is then updated.
+
+        (WebInspector.TimelineOverview.prototype._capturingStarted):
+        (WebInspector.TimelineOverview.prototype._capturingStopped):
+        Enable/disable the Edit button. Quit editing mode when capturing starts.
+        (WebInspector.TimelineOverview.prototype._compareTimelineTreeElements):
+        Special sorting for the timelines tree outline. The sort order is:
+            1. Instruments that are in the recording, except Rendering Frames.
+            2. Instruments that aren't in the recording (placeholders).
+            3. Rendering Frames.
+
+        Timelines in groups 1 & 2 are sorted based on the order of the list returned
+        by TimelineManager.availableTimelineTypes(). The Rendering Frames tree
+        element must be last, since it's always hidden and would otherwise interfere
+        with the alternating tree element CSS styles.
+
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording.edit-instruments > .timeline-overview):
+        (.content-view.timeline-recording.edit-instruments > .content-browser):
+        Hide lower content browser and extend timelines tree height in edit mode.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        Listen for edit mode changes on TimelineOverview.
+        (WebInspector.TimelineRecordingContentView.prototype.contentBrowserTreeElementForRepresentedObject):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimelineOverviewHeight):
+        When in edit mode, remove inline style rule for TimelineOverview height.
+        (WebInspector.TimelineRecordingContentView.prototype._instrumentAdded):
+        (WebInspector.TimelineRecordingContentView.prototype._editingInstrumentsDidChange):
+        Update CSS and TimelineOverview height when edit mode changes.
+        (WebInspector.TimelineRecordingContentView.prototype.get timelineOverviewHeight): Deleted.
+        No longer used.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.displayNameForTimelineType):
+        (WebInspector.TimelineTabContentView.iconClassNameForTimelineType):
+        (WebInspector.TimelineTabContentView.genericClassNameForTimelineType):
+        (WebInspector.TimelineTabContentView.displayNameForTimeline): Deleted.
+        (WebInspector.TimelineTabContentView.iconClassNameForTimeline): Deleted.
+        (WebInspector.TimelineTabContentView.genericClassNameForTimeline): Deleted.
+        Helper functions now take a timeline type instead of a timeline object.
+
+        * UserInterface/Views/TimelineTreeElement.js: Added.
+        New tree element class to encapsulate behavior specific to the timelines
+        tree outline, such as status element changes and disabling selection
+        when editing.
+
+        (WebInspector.TimelineTreeElement):
+        (WebInspector.TimelineTreeElement.prototype.get placeholder):
+        (WebInspector.TimelineTreeElement.prototype.get editing):
+        (WebInspector.TimelineTreeElement.prototype.set editing):
+        (WebInspector.TimelineTreeElement.prototype._showCloseButton):
+        (WebInspector.TimelineTreeElement.prototype._showCheckbox):
+        (WebInspector.TimelineTreeElement.prototype._updateStatusButton):
+
 2016-03-21  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: New icon for Heap Allocations timeline

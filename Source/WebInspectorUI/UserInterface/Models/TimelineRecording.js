@@ -38,16 +38,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         this._topDownCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.TopDown);
         this._bottomUpCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.BottomUp);
 
-        let timelines = [
-            WebInspector.TimelineRecord.Type.Network,
-            WebInspector.TimelineRecord.Type.Layout,
-            WebInspector.TimelineRecord.Type.Script,
-            WebInspector.TimelineRecord.Type.RenderingFrame,
-            WebInspector.TimelineRecord.Type.Memory,
-            WebInspector.TimelineRecord.Type.HeapAllocations,
-        ];
-
-        for (let type of timelines) {
+        for (let type of WebInspector.TimelineManager.availableTimelineTypes()) {
             let timeline = WebInspector.Timeline.create(type);
             this._timelines.set(type, timeline);
             timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
@@ -196,6 +187,11 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         return this._timelines.get(instrument.timelineRecordType);
     }
 
+    instrumentForTimeline(timeline)
+    {
+        return this._instruments.find((instrument) => instrument.timelineRecordType === timeline.type);
+    }
+
     timelineForRecordType(recordType)
     {
         return this._timelines.get(recordType);
@@ -204,7 +200,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
     addInstrument(instrument)
     {
         console.assert(instrument instanceof WebInspector.Instrument, instrument);
-        console.assert(!this._instruments.contains(instrument), this._instruments, instrument);
+        console.assert(!this._instruments.includes(instrument), this._instruments, instrument);
 
         this._instruments.push(instrument);
 
@@ -214,7 +210,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
     removeInstrument(instrument)
     {
         console.assert(instrument instanceof WebInspector.Instrument, instrument);
-        console.assert(this._instruments.contains(instrument), this._instruments, instrument);
+        console.assert(this._instruments.includes(instrument), this._instruments, instrument);
 
         this._instruments.remove(instrument);
 

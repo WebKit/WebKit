@@ -36,6 +36,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         WebInspector.heapManager.addEventListener(WebInspector.HeapManager.Event.GarbageCollected, this._garbageCollected, this);
         WebInspector.memoryManager.addEventListener(WebInspector.MemoryManager.Event.MemoryPressure, this._memoryPressure, this);
 
+        this._enabledTimelineTypesSetting = new WebInspector.Setting("enabled-instrument-types", WebInspector.TimelineManager.defaultTimelineTypes());
+
         this._persistentNetworkTimeline = new WebInspector.NetworkTimeline;
 
         this._isCapturing = false;
@@ -51,31 +53,40 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
     // Static
 
-    static defaultInstruments()
+    static defaultTimelineTypes()
     {
         if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript) {
-            let defaults = [new WebInspector.ScriptInstrument];
+            let defaultTypes = [WebInspector.TimelineRecord.Type.Script];
             if (WebInspector.HeapAllocationsInstrument.supported())
-                defaults.push(new WebInspector.HeapAllocationsInstrument);
-            return defaults;
+                defaultTypes.push(WebInspector.TimelineRecord.Type.HeapAllocations);
+            return defaultTypes;
         }
 
-        let defaults = [
-            new WebInspector.NetworkInstrument,
-            new WebInspector.LayoutInstrument,
-            new WebInspector.ScriptInstrument,
+        let defaultTypes = [
+            WebInspector.TimelineRecord.Type.Network,
+            WebInspector.TimelineRecord.Type.Layout,
+            WebInspector.TimelineRecord.Type.Script,
         ];
 
+        if (WebInspector.FPSInstrument.supported())
+            defaultTypes.push(WebInspector.TimelineRecord.Type.RenderingFrame);
+
+        return defaultTypes;
+    }
+
+    static availableTimelineTypes()
+    {
+        let types = WebInspector.TimelineManager.defaultTimelineTypes();
+        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
+            return types;
+
         if (WebInspector.MemoryInstrument.supported())
-            defaults.push(new WebInspector.MemoryInstrument);
+            types.push(WebInspector.TimelineRecord.Type.Memory);
 
         if (WebInspector.HeapAllocationsInstrument.supported())
-            defaults.push(new WebInspector.HeapAllocationsInstrument);
+            types.push(WebInspector.TimelineRecord.Type.HeapAllocations);
 
-        if (WebInspector.FPSInstrument.supported())
-            defaults.push(new WebInspector.FPSInstrument);
-
-        return defaults;
+        return types;
     }
 
     // Public
@@ -117,6 +128,17 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
     set autoCaptureOnPageLoad(autoCapture)
     {
         this._autoCaptureOnPageLoad = autoCapture;
+    }
+
+    get enabledTimelineTypes()
+    {
+        let availableTimelineTypes = WebInspector.TimelineManager.availableTimelineTypes();
+        return this._enabledTimelineTypesSetting.value.filter((type) => availableTimelineTypes.includes(type));
+    }
+
+    set enabledTimelineTypes(x)
+    {
+        this._enabledTimelineTypesSetting.value = x || [];
     }
 
     isCapturing()
@@ -546,12 +568,9 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (this._activeRecording && this._activeRecording.isEmpty())
             return;
 
-        // FIXME: <https://webkit.org/b/153672> Web Inspector: Timelines UI redesign: Provide a way to configure which instruments to use
-        // FIXME: Move the list of instruments for a new recording to a Setting when new Instruments are supported.
-        let instruments = WebInspector.TimelineManager.defaultInstruments();
-
-        var identifier = this._nextRecordingIdentifier++;
-        var newRecording = new WebInspector.TimelineRecording(identifier, WebInspector.UIString("Timeline Recording %d").format(identifier), instruments);
+        let instruments = this.enabledTimelineTypes.map((type) => WebInspector.Instrument.createForTimelineType(type));
+        let identifier = this._nextRecordingIdentifier++;
+        let newRecording = new WebInspector.TimelineRecording(identifier, WebInspector.UIString("Timeline Recording %d").format(identifier), instruments);
 
         this._recordings.push(newRecording);
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingCreated, {recording: newRecording});

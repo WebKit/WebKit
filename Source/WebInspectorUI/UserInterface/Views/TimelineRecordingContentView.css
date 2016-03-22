@@ -30,6 +30,14 @@
     right: 0;
 }
 
+.content-view.timeline-recording.edit-instruments > .timeline-overview {
+    bottom: 0;
+}
+
+.content-view.timeline-recording.edit-instruments > .content-browser {
+    display: none;
+}
+
 .content-view.timeline-recording > .content-browser {
     position: absolute;
     left: 0;

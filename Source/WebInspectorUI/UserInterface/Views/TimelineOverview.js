@@ -32,6 +32,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         console.assert(timelineRecording instanceof WebInspector.TimelineRecording);
 
         this._timelinesViewModeSettings = this._createViewModeSettings(WebInspector.TimelineOverview.ViewMode.Timelines, 0.0001, 60, 0.01, 0, 15);
+        this._instrumentTypes = WebInspector.TimelineManager.availableTimelineTypes();
 
         if (WebInspector.FPSInstrument.supported()) {
             let minimumDurationPerPixel = 1 / WebInspector.TimelineRecordFrame.MaximumWidthPixels;
@@ -48,16 +49,23 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this._delegate = delegate;
 
         this.element.classList.add("timeline-overview");
-        this.element.addEventListener("wheel", this._handleWheelEvent.bind(this));
-        this.element.addEventListener("gesturestart", this._handleGestureStart.bind(this));
-        this.element.addEventListener("gesturechange", this._handleGestureChange.bind(this));
-        this.element.addEventListener("gestureend", this._handleGestureEnd.bind(this));
+        this._updateWheelAndGestureHandlers();
 
         this._graphsContainerView = new WebInspector.View;
         this._graphsContainerView.element.classList.add("graphs-container");
         this.addSubview(this._graphsContainerView);
 
         this._overviewGraphsByTypeMap = new Map;
+
+        this._editInstrumentsButton = new WebInspector.ActivateButtonNavigationItem("toggle-edit-instruments", WebInspector.UIString("Edit configuration"), WebInspector.UIString("Save configuration"));
+        this._editInstrumentsButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleEditingInstruments, this);
+        this._editingInstruments = false;
+        this._updateEditInstrumentsButton();
+
+        let instrumentsNavigationBar = new WebInspector.NavigationBar;
+        instrumentsNavigationBar.element.classList.add("timelines");
+        instrumentsNavigationBar.addNavigationItem(this._editInstrumentsButton);
+        this.addSubview(instrumentsNavigationBar);
 
         this._timelinesTreeOutline = new WebInspector.TreeOutline;
         this._timelinesTreeOutline.element.classList.add("timelines");
@@ -106,6 +114,9 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
             this._resetSelection();
 
         this._viewModeDidChange();
+
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
     }
 
     // Public
@@ -117,6 +128,9 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
     set selectedTimeline(x)
     {
+        if (this._editingInstruments)
+            return;
+
         if (this._selectedTimeline === x)
             return;
 
@@ -132,6 +146,11 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
             this._timelinesTreeOutline.selectedTreeElement.deselect();
     }
 
+    get editingInstruments()
+    {
+        return this._editingInstruments;
+    }
+
     get viewMode()
     {
         return this._viewMode;
@@ -139,6 +158,9 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
     set viewMode(x)
     {
+        if (this._editingInstruments)
+            return;
+
         if (this._viewMode === x)
             return;
 
@@ -588,25 +610,17 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         console.assert(!this._overviewGraphsByTypeMap.has(timeline.type), timeline);
         console.assert(!this._treeElementsByTypeMap.has(timeline.type), timeline);
 
+        let treeElement = new WebInspector.TimelineTreeElement(timeline);
+        let insertionIndex = insertionIndexForObjectInListSortedByFunction(treeElement, this._timelinesTreeOutline.children, this._compareTimelineTreeElements.bind(this));
+        this._timelinesTreeOutline.insertChild(treeElement, insertionIndex);
+        this._treeElementsByTypeMap.set(timeline.type, treeElement);
+
         let overviewGraph = WebInspector.TimelineOverviewGraph.createForTimeline(timeline, this);
         overviewGraph.addEventListener(WebInspector.TimelineOverviewGraph.Event.RecordSelected, this._recordSelected, this);
         this._overviewGraphsByTypeMap.set(timeline.type, overviewGraph);
+        this._graphsContainerView.insertSubviewBefore(overviewGraph, this._graphsContainerView.subviews[insertionIndex]);
 
-        this._graphsContainerView.addSubview(overviewGraph);
-
-        let displayName = WebInspector.TimelineTabContentView.displayNameForTimeline(timeline);
-        let iconClassName = WebInspector.TimelineTabContentView.iconClassNameForTimeline(timeline);
-        let genericClassName = WebInspector.TimelineTabContentView.genericClassNameForTimeline(timeline);
-        let treeElement = new WebInspector.GeneralTreeElement([iconClassName, genericClassName], displayName, null, timeline);
-        let tooltip = WebInspector.UIString("Close %s timeline view").format(displayName);
-        let button = new WebInspector.TreeElementStatusButton(useSVGSymbol("Images/CloseLarge.svg", "close-button", tooltip));
-        button.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, () => { treeElement.deselect(); });
-        treeElement.status = button.element;
-
-        this._timelinesTreeOutline.appendChild(treeElement);
         treeElement.element.style.height = overviewGraph.height + "px";
-
-        this._treeElementsByTypeMap.set(timeline.type, treeElement);
 
         if (!this._canShowTimelineType(timeline.type)) {
             overviewGraph.hidden();
@@ -788,9 +802,153 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this._selectedTimeline = timeline;
         this.dispatchEventToListeners(WebInspector.TimelineOverview.Event.TimelineSelected);
     }
+
+    _toggleEditingInstruments(event)
+    {
+        if (this._editingInstruments)
+            this._stopEditingInstruments();
+        else
+            this._startEditingInstruments();
+    }
+
+    _editingInstrumentsDidChange()
+    {
+        this.element.classList.toggle(WebInspector.TimelineOverview.EditInstrumentsStyleClassName, this._editingInstruments);
+        this._timelineRuler.enabled = !this._editingInstruments;
+
+        this._updateWheelAndGestureHandlers();
+        this._updateEditInstrumentsButton();
+
+        this.dispatchEventToListeners(WebInspector.TimelineOverview.Event.EditingInstrumentsDidChange);
+    }
+
+    _updateEditInstrumentsButton()
+    {
+        let newLabel = this._editingInstruments ? WebInspector.UIString("Done") : WebInspector.UIString("Edit");
+        this._editInstrumentsButton.label = newLabel;
+        this._editInstrumentsButton.activated = this._editingInstruments;
+        this._editInstrumentsButton.enabled = !WebInspector.timelineManager.isCapturing();
+    }
+
+    _updateWheelAndGestureHandlers()
+    {
+        if (this._editingInstruments) {
+            this.element.removeEventListener("wheel", this._handleWheelEventListener);
+            this.element.removeEventListener("gesturestart", this._handleGestureStartEventListener);
+            this.element.removeEventListener("gesturechange", this._handleGestureChangeEventListener);
+            this.element.removeEventListener("gestureend", this._handleGestureEndEventListener);
+            this._handleWheelEventListener = null;
+            this._handleGestureStartEventListener = null;
+            this._handleGestureChangeEventListener = null;
+            this._handleGestureEndEventListener = null;
+        } else {
+            this._handleWheelEventListener = this._handleWheelEvent.bind(this);
+            this._handleGestureStartEventListener = this._handleGestureStart.bind(this);
+            this._handleGestureChangeEventListener = this._handleGestureChange.bind(this);
+            this._handleGestureEndEventListener = this._handleGestureEnd.bind(this);
+            this.element.addEventListener("wheel", this._handleWheelEventListener);
+            this.element.addEventListener("gesturestart", this._handleGestureStartEventListener);
+            this.element.addEventListener("gesturechange", this._handleGestureChangeEventListener);
+            this.element.addEventListener("gestureend", this._handleGestureEndEventListener);
+        }
+    }
+
+    _startEditingInstruments()
+    {
+        console.assert(this._viewMode === WebInspector.TimelineOverview.ViewMode.Timelines);
+
+        if (this._editingInstruments)
+            return;
+
+        this._editingInstruments = true;
+
+        for (let type of this._instrumentTypes) {
+            let treeElement = this._treeElementsByTypeMap.get(type);
+            let checked = !!treeElement;
+            if (!treeElement) {
+                let timeline = this._recording.timelines.get(type);
+                console.assert(timeline, "Missing timeline for type " + type);
+
+                const placeholder = true;
+                treeElement = new WebInspector.TimelineTreeElement(timeline, placeholder);
+
+                let insertionIndex = insertionIndexForObjectInListSortedByFunction(treeElement, this._timelinesTreeOutline.children, this._compareTimelineTreeElements.bind(this));
+                this._timelinesTreeOutline.insertChild(treeElement, insertionIndex);
+            }
+
+            treeElement.editing = true;
+        }
+
+        this._editingInstrumentsDidChange();
+    }
+
+    _stopEditingInstruments()
+    {
+        if (!this._editingInstruments)
+            return;
+
+        this._editingInstruments = false;
+
+        let instruments = this._recording.instruments;
+        for (let treeElement of this._treeElementsByTypeMap.values()) {
+            if (treeElement.status.checked) {
+                treeElement.editing = false;
+                continue;
+            }
+
+            let timelineInstrument = instruments.find((instrument) => instrument.timelineRecordType === treeElement.representedObject.type);
+            this._recording.removeInstrument(timelineInstrument);
+        }
+
+        let placeholderTreeElements = this._timelinesTreeOutline.children.filter((treeElement) => treeElement.placeholder);
+        for (let treeElement of placeholderTreeElements) {
+            this._timelinesTreeOutline.removeChild(treeElement);
+
+            if (treeElement.status.checked) {
+                let instrument = WebInspector.Instrument.createForTimelineType(treeElement.representedObject.type);
+                this._recording.addInstrument(instrument);
+            }
+        }
+
+        let instrumentTypes = instruments.map((instrument) => instrument.timelineRecordType);
+        WebInspector.timelineManager.enabledTimelineTypes = instrumentTypes;
+
+        this._editingInstrumentsDidChange();
+    }
+
+    _capturingStarted()
+    {
+        this._editInstrumentsButton.enabled = false;
+        this._stopEditingInstruments();
+    }
+
+    _capturingStopped()
+    {
+        this._editInstrumentsButton.enabled = true;
+    }
+
+    _compareTimelineTreeElements(a, b)
+    {
+        let aTimelineType = a.representedObject.type;
+        let bTimelineType = b.representedObject.type;
+
+        // Always sort the Rendering Frames timeline last.
+        if (aTimelineType === WebInspector.TimelineRecord.Type.RenderingFrame)
+            return 1;
+        if (bTimelineType === WebInspector.TimelineRecord.Type.RenderingFrame)
+            return -1;
+
+        if (a.placeholder !== b.placeholder)
+            return a.placeholder ? 1 : -1;
+
+        let aTimelineIndex = this._instrumentTypes.indexOf(aTimelineType);
+        let bTimelineIndex = this._instrumentTypes.indexOf(bTimelineType);
+        return aTimelineIndex - bTimelineIndex;
+    }
 };
 
 WebInspector.TimelineOverview.ScrollDeltaDenominator = 500;
+WebInspector.TimelineOverview.EditInstrumentsStyleClassName = "edit-instruments";
 
 WebInspector.TimelineOverview.ViewMode = {
     Timelines: "timeline-overview-view-mode-timelines",
@@ -798,6 +956,7 @@ WebInspector.TimelineOverview.ViewMode = {
 };
 
 WebInspector.TimelineOverview.Event = {
+    EditingInstrumentsDidChange: "editing-instruments-did-change",
     RecordSelected: "timeline-overview-record-selected",
     TimelineSelected: "timeline-overview-timeline-selected",
     TimeRangeSelectionChanged: "timeline-overview-time-range-selection-changed"

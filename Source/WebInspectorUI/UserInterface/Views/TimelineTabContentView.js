@@ -105,9 +105,9 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         return !!window.TimelineAgent || !!window.ScriptProfilerAgent;
     }
 
-    static displayNameForTimeline(timeline)
+    static displayNameForTimelineType(timelineType)
     {
-        switch (timeline.type) {
+        switch (timelineType) {
         case WebInspector.TimelineRecord.Type.Network:
             return WebInspector.UIString("Network Requests");
         case WebInspector.TimelineRecord.Type.Layout:
@@ -121,15 +121,15 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         case WebInspector.TimelineRecord.Type.HeapAllocations:
             return WebInspector.UIString("JavaScript Allocations");
         default:
-            console.error("Unknown Timeline type:", timeline.type);
+            console.error("Unknown Timeline type:", timelineType);
         }
 
         return null;
     }
 
-    static iconClassNameForTimeline(timeline)
+    static iconClassNameForTimelineType(timelineType)
     {
-        switch (timeline.type) {
+        switch (timelineType) {
         case WebInspector.TimelineRecord.Type.Network:
             return "network-icon";
         case WebInspector.TimelineRecord.Type.Layout:
@@ -143,15 +143,15 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         case WebInspector.TimelineRecord.Type.RenderingFrame:
             return "rendering-frame-icon";
         default:
-            console.error("Unknown Timeline type:", timeline.type);
+            console.error("Unknown Timeline type:", timelineType);
         }
 
         return null;
     }
 
-    static genericClassNameForTimeline(timeline)
+    static genericClassNameForTimelineType(timelineType)
     {
-        switch (timeline.type) {
+        switch (timelineType) {
         case WebInspector.TimelineRecord.Type.Network:
             return "network";
         case WebInspector.TimelineRecord.Type.Layout:
@@ -165,7 +165,7 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         case WebInspector.TimelineRecord.Type.RenderingFrame:
             return "rendering-frame";
         default:
-            console.error("Unknown Timeline type:", timeline.type);
+            console.error("Unknown Timeline type:", timelineType);
         }
 
         return null;

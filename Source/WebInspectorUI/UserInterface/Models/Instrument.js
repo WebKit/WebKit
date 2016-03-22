@@ -27,6 +27,27 @@ WebInspector.Instrument = class Instrument extends WebInspector.Object
 {
     // Static
 
+    static createForTimelineType(type)
+    {
+        switch (type) {
+        case WebInspector.TimelineRecord.Type.Network:
+            return new WebInspector.NetworkInstrument;
+        case WebInspector.TimelineRecord.Type.Layout:
+            return new WebInspector.LayoutInstrument;
+        case WebInspector.TimelineRecord.Type.Script:
+            return new WebInspector.ScriptInstrument;
+        case WebInspector.TimelineRecord.Type.RenderingFrame:
+            return new WebInspector.FPSInstrument;
+        case WebInspector.TimelineRecord.Type.Memory:
+            return new WebInspector.MemoryInstrument;
+        case WebInspector.TimelineRecord.Type.HeapAllocations:
+            return new WebInspector.HeapAllocationsInstrument;
+        default:
+            console.error("Unknown TimelineRecord.Type: " + type);
+            return null;
+        }
+    }
+
     static startLegacyTimelineAgent()
     {
         console.assert(window.TimelineAgent, "Attempted to start legacy timeline agent without TimelineAgent.");

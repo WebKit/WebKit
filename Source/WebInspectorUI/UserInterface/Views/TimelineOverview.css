@@ -23,9 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-overview > .tree-outline.timelines {
+.timeline-overview > .navigation-bar.timelines {
+    justify-content: flex-start;
     position: absolute;
     top: 0;
+    left: 0;
+    width: 185px;
+    height: 23px;
+
+    box-sizing: border-box;
+    z-index: var(--z-index-header);
+
+    background-color: white;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):matches(:focus, .activate.activated, .radio.selected) {
+    color: var(--glyph-color-active);
+}
+
+.navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):active:matches(:focus, .activate.activated, .radio.selected) {
+    color: var(--glyph-color-active-pressed);
+}
+
+.navigation-bar.timelines .item.button.toggle-edit-instruments.disabled {
+    color: var(--glyph-color-disabled);
+}
+
+.navigation-bar.timelines .toggle-edit-instruments:not(.disabled):active {
+    color: var(--glyph-color-pressed);
+}
+
+.timeline-overview > .tree-outline.timelines {
+    position: absolute;
+    top: 23px;
     left: 0;
     width: 185px;
     z-index: var(--z-index-header);
@@ -33,21 +65,13 @@
     border-right: 1px solid var(--border-color);
 }
 
-.timeline-overview > .tree-outline.timelines::before {
-    display: block;
-    content: "";
-    left: 0;
-    top: 0;
-    width: 185px;
-    height: 23px;
-    box-sizing: border-box;
-    background-color: white;
-    border-right: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+.timeline-overview.edit-instruments > .tree-outline.timelines {
+    bottom: 0;
 }
 
-.timeline-overview.frames > .tree-outline.timelines {
-    display: none;
+.timeline-overview.edit-instruments > .tree-outline.timelines .item.selected {
+    color: initial;
+    background-color: transparent;
 }
 
 .timeline-overview > .tree-outline.timelines .close-button {
@@ -60,11 +84,18 @@
     visibility: visible;
 }
 
+.timeline-overview > .tree-outline.timelines input[type=checkbox].status-button {
+    width: 12px;
+    height: 12px;
+}
+
+.timeline-overview.edit-instruments > .tree-outline.timelines .item:nth-child(even),
 .timeline-overview > .tree-outline.timelines .item:not(.selected):nth-child(even) {
     background-color: hsla(0, 0%, 0%, 0.03);
     background-clip: padding-box;
 }
 
+.timeline-overview.edit-instruments > .tree-outline.timelines .item:not(:first-child),
 .timeline-overview > .tree-outline.timelines .item:not(.selected):not(:first-child) {
     border-top: 1px solid hsla(0, 0%, 0%, 0.09);
 }
@@ -93,6 +124,10 @@ body.window-inactive .timeline-overview > .tree-outline.timelines .item.selected
 
  /* Allows the horizontal scroll bar to be interacted with. */
     z-index: calc(var(--z-index-resizer) + 1);
+}
+
+.timeline-overview.frames > :matches(.tree-outline.timelines, .navigation-bar.timelines) {
+    display: none;
 }
 
 .timeline-overview.frames > .scroll-container {
