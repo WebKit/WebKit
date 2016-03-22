@@ -1,3 +1,27 @@
+2016-03-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Switching Away and Back to Timelines Tab may select a different Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=155742
+        <rdar://problem/25284330>
+
+        Reviewed by Timothy Hatcher.
+
+        When switching to the Timeline tab, or switching recordings within the
+        the Timeline tab, the TimelineTabContentView does work to correctly
+        save/restore its view state.
+
+        When switching to the Timeline tab, the TimelineTabContentView correctly
+        restores the state of the tab, but when showing the RecordingContentView
+        the RecordingContentView restores its state from a stale cookie.
+
+        Since TimelineTabContentView already seems to handle correctly restoring
+        RecordingContentViews on its own. Removing the RecordingContentView's
+        implementation of save/restore made everything work as expected.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.saveToCookie): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype.restoreFromCookie): Deleted.
+
 2016-03-22  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: remove the remaining TimelineSidebarPanel references

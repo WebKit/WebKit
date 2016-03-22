@@ -214,26 +214,6 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._timelineContentBrowser.goForward();
     }
 
-    saveToCookie(cookie)
-    {
-        cookie.type = WebInspector.ContentViewCookieType.Timelines;
-
-        let currentContentView = this._timelineContentBrowser.currentContentView;
-        if (!currentContentView || currentContentView === this._overviewTimelineView)
-            cookie[WebInspector.TimelineRecordingContentView.SelectedTimelineTypeCookieKey] = WebInspector.TimelineRecordingContentView.OverviewTimelineViewCookieValue;
-        else if (currentContentView.representedObject instanceof WebInspector.Timeline)
-            cookie[WebInspector.TimelineRecordingContentView.SelectedTimelineTypeCookieKey] = this.currentTimelineView.representedObject.type;
-    }
-
-    restoreFromCookie(cookie)
-    {
-        var timelineType = cookie[WebInspector.TimelineRecordingContentView.SelectedTimelineTypeCookieKey];
-        if (timelineType === WebInspector.TimelineRecordingContentView.OverviewTimelineViewCookieValue)
-            this.showOverviewTimelineView();
-        else
-            this.showTimelineViewForTimeline(this.representedObject.timelines.get(timelineType));
-    }
-
     filterDidChange()
     {
         if (!this.currentTimelineView)
@@ -830,6 +810,3 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._updateTimelineOverviewHeight();
     }
 };
-
-WebInspector.TimelineRecordingContentView.SelectedTimelineTypeCookieKey = "timeline-recording-content-view-selected-timeline-type";
-WebInspector.TimelineRecordingContentView.OverviewTimelineViewCookieValue = "timeline-recording-content-view-overview-timeline-view";
