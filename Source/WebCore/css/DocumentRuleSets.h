@@ -46,7 +46,6 @@ public:
     ~DocumentRuleSets();
     RuleSet* authorStyle() const { return m_authorStyle.get(); }
     RuleSet* userStyle() const { return m_userStyle.get(); }
-    RuleFeatureSet& features() { return m_features; }
     const RuleFeatureSet& features() const;
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
     RuleSet* uncommonAttribute() const { return m_uncommonAttributeRuleSet.get(); }
@@ -61,6 +60,8 @@ public:
     void initUserStyle(ExtensionStyleSheets&, const MediaQueryEvaluator&, StyleResolver&);
     void resetAuthorStyle();
     void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, StyleResolver*);
+
+    RuleFeatureSet& mutableFeatures();
 
 private:
     void collectFeatures() const;
@@ -78,6 +79,14 @@ private:
 };
 
 inline const RuleFeatureSet& DocumentRuleSets::features() const
+{
+    if (m_defaultStyleVersionOnFeatureCollection < CSSDefaultStyleSheets::defaultStyleVersion)
+        collectFeatures();
+    return m_features;
+}
+
+// FIXME: There should be just the const version.
+inline RuleFeatureSet& DocumentRuleSets::mutableFeatures()
 {
     if (m_defaultStyleVersionOnFeatureCollection < CSSDefaultStyleSheets::defaultStyleVersion)
         collectFeatures();

@@ -1,3 +1,20 @@
+2016-03-22  Antti Koivisto  <antti@apple.com>
+
+        Non-const DocumentRuleSets::features() does not check default style version
+        https://bugs.webkit.org/show_bug.cgi?id=155766
+
+        Reviewed by Andreas Kling.
+
+        This may leave it out of date when the default stylesheet expands.
+
+        No test, don't know how to hit this with current codebase. With some further optimizations
+        it starts affecting some tests involving UA media control stylesheets.
+
+        * css/DocumentRuleSets.h:
+        (WebCore::DocumentRuleSets::mutableFeatures):
+
+            Check the default style version number in non-const case too.
+
 2016-03-22  Daniel Bates  <dabates@apple.com>
 
         CSP: Should only execute <script> or apply <style> if its hash appears in all policies
