@@ -807,7 +807,7 @@ div[role=alert]
 div[role=alertdialog]
       AXRole: AXGroup
       AXSubrole: AXApplicationAlertDialog
-      AXRoleDescription: alert dialog
+      AXRoleDescription: web alert dialog
       
 div[role=application]
       AXRole: AXGroup
@@ -857,7 +857,7 @@ div[role=definition]
 div[role=dialog]
       AXRole: AXGroup
       AXSubrole: AXApplicationDialog
-      AXRoleDescription: dialog
+      AXRoleDescription: web dialog
       
 div[role=directory]
       AXRole: AXList

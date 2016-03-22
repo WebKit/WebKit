@@ -713,7 +713,7 @@
 "alert" = "alert";
 
 /* An ARIA accessibility group that acts as an alert dialog. */
-"alert dialog" = "alert dialog";
+"alert dialog" = "web alert dialog";
 
 /* An ARIA accessibility group that acts as an application. */
 "application" = "application";
@@ -788,7 +788,7 @@
 "description list" = "description list";
 
 /* An ARIA accessibility group that acts as an dialog. */
-"dialog" = "dialog";
+"dialog" = "web dialog";
 
 /* An ARIA accessibility group that acts as a document. */
 "document" = "document";

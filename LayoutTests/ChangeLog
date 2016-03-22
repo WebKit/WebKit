@@ -1,3 +1,13 @@
+2016-03-22  Nan Wang  <n_wang@apple.com>
+
+        AX: Change "dialog" role description to "web dialog" so users can distinguish from native alerts
+        https://bugs.webkit.org/show_bug.cgi?id=154292
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac-mavericks/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2016-03-22  Daniel Bates  <dabates@apple.com>
 
         CSP: Check inline event handlers on each run, not only the first
