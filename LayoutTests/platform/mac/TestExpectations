@@ -996,7 +996,6 @@ webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_4.htm
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html [ Failure ]
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
 
-media/media-document-audio-repaint.html [ Failure ]
 webkit.org/b/84357 media/audio-repaint.html [ Failure ]
 
 webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]

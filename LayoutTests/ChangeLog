@@ -1,3 +1,14 @@
+2016-03-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [OSX] Rebase media/media-document-audio-repaint.html
+        https://bugs.webkit.org/show_bug.cgi?id=155733
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/media/media-document-audio-repaint-expected.png:
+        * platform/mac/media/media-document-audio-repaint-expected.txt: Added.
+
 2016-03-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Skip HeapSnapshot test on WebKit1. Shared VM skews the data.
