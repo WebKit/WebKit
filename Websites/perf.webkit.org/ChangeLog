@@ -1,5 +1,11 @@
 2016-03-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix A/B testing after r198503.
+
+        * public/include/build-requests-fetcher.php:
+
+2016-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Analysis task page is broken after r198479
         https://bugs.webkit.org/show_bug.cgi?id=155735
 
