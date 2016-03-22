@@ -7,21 +7,27 @@ class CommitLogViewer extends ComponentBase {
         this._repository = null;
         this._fetchingPromise = null;
         this._commits = null;
+        this._from = null;
+        this._to = null;
     }
 
     currentRepository() { return this._repository; }
 
     view(repository, from, to)
     {
+        if (this._repository == repository && this._from == from && this._to == to)
+            return Promise.resolve(null);
+
         this._commits = null;
+        this._repository = repository;
+        this._from = from;
+        this._to = to;
 
         if (!repository) {
             this._fetchingPromise = null;
             this._repository = null;
             return Promise.resolve(null);
         }
-
-        this._repository = repository;
 
         if (!to) {
             this._fetchingPromise = null;

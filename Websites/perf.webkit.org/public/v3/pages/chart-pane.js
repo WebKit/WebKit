@@ -82,8 +82,8 @@ class ChartPane extends ChartPaneBase {
 
     _indicatorDidChange(indicatorID, isLocked)
     {
+        this._chartsPage.mainChartIndicatorDidChange(this, isLocked != this._mainChartIndicatorWasLocked);
         this._mainChartIndicatorWasLocked = isLocked;
-        this._chartsPage.mainChartIndicatorDidChange(this, isLocked || this._mainChartIndicatorWasLocked);
         super._indicatorDidChange(indicatorID, isLocked);
     }
 

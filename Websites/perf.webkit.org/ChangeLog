@@ -1,5 +1,29 @@
 2016-03-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Commit log viewer repaints too frequently after r198499
+        https://bugs.webkit.org/show_bug.cgi?id=155732
+
+        Reviewed by Joseph Pecoraro.
+
+        The bug was caused by InteractiveTimeSeriesChart invoking onchange callback whenever mouse moved even
+        if the current point didn't change. Fixed the bug by avoiding the work if the indicator hadn't changed
+        and avoiding work in the commit log viewer when the requested repository and the revision range were
+        the same as those of the last request.
+
+        * public/v3/components/commit-log-viewer.js:
+        (CommitLogViewer):
+        (CommitLogViewer.prototype.currentRepository): Exit early when repository and the revision range are
+        identical to the one we already have to avoid repaints and issuing multiple network requests.
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype._mouseMove): Don't invoke _notifyIndicatorChanged if the current
+        indicator hadn't changed.
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype._indicatorDidChange): Fixed the bug that unlocking the indicator wouldn't update
+        the URL. We need to check whether the lock state had changed. The old condition was also redundant
+        since _mainChartIndicatorWasLocked is always identically equal to isLocked per the prior assignment.
+
+2016-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix A/B testing after r198503.
 
         * public/include/build-requests-fetcher.php:

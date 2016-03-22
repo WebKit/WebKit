@@ -175,13 +175,21 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
 
         var oldIndicatorID = this._indicatorID;
 
-        this._currentAnnotation = this._findAnnotation(cursorLocation);
+        var newAnnotation = this._findAnnotation(cursorLocation);
+        var newIndicatorID = null;
         if (this._currentAnnotation)
-            this._indicatorID = null;
+            newIndicatorID = null;
         else
-            this._indicatorID = this._findClosestPoint(cursorLocation);
+            newIndicatorID = this._findClosestPoint(cursorLocation);
 
         this._forceRender = true;
+
+        if (this._currentAnnotation == newAnnotation && this._indicatorID == newIndicatorID)
+            return;
+
+        this._currentAnnotation = newAnnotation;
+        this._indicatorID = newIndicatorID;
+
         this._notifyIndicatorChanged();
     }
 
