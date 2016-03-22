@@ -60,6 +60,18 @@ add_filter('the_content', function($content) {
     return $content;
 });
 
+add_action('wp_head', function () {
+    if (!is_single()) return;
+
+    $style = get_post_meta(get_the_ID(), 'style', true);
+    if (!empty($style))
+        echo '<style type="text/css">' . $style . '</style>';
+
+    $script = get_post_meta(get_the_ID(), 'script', true);
+    if (!empty($script))
+        echo '<script type="text/javascript">' . $script . '</script>';
+});
+
 // Hide category 41: Legacy from archives
 add_filter('pre_get_posts', function ($query) {
     if ( $query->is_home() )
