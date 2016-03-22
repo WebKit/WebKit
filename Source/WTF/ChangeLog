@@ -1,3 +1,15 @@
+2016-03-22  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] [64-bit] Remove MSVC 2013 FMA3 Bug Workaround
+        https://bugs.webkit.org/show_bug.cgi?id=141499
+
+        Reviewed by Brent Fulgham.
+
+        As we have moved on to VS2015, this workaround is no longer needed.
+
+        * wtf/PlatformWin.cmake:
+        * wtf/win/WTFDLL.cpp: Removed.
+
 2016-03-20  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Determine TARGET_MAC_OS_X_VERSION_MAJOR from MACOSX_DEPLOYMENT_TARGET rather than from MAC_OS_X_VERSION_MAJOR
