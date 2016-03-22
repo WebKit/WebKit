@@ -80,8 +80,8 @@ private:
         "compactBegin must be encodable in a BoundaryTag.");
 
     static_assert(
-        (1 << sizeBits) - 1 >= largeMax,
-        "largeMax must be encodable in a BoundaryTag.");
+        (1 << sizeBits) - 1 >= largeObjectMax,
+        "largeObjectMax must be encodable in a BoundaryTag.");
 
     bool m_isFree: 1;
     bool m_isEnd: 1;

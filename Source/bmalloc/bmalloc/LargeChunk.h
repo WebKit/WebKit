@@ -69,12 +69,12 @@ private:
 };
 
 static_assert(largeChunkMetadataSize == sizeof(LargeChunk), "Our largeChunkMetadataSize math in Sizes.h is wrong");
-static_assert(largeChunkMetadataSize + largeMax == largeChunkSize, "largeMax is too small or too big");
+static_assert(largeChunkMetadataSize + largeObjectMax == largeChunkSize, "largeObjectMax is too small or too big");
 
 inline LargeChunk::LargeChunk()
 {
     Range range(begin(), end() - begin());
-    BASSERT(range.size() == largeMax);
+    BASSERT(range.size() == largeObjectMax);
 
     BeginTag* beginTag = LargeChunk::beginTag(range.begin());
     beginTag->setRange(range);

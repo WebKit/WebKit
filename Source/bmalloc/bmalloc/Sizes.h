@@ -71,7 +71,8 @@ namespace Sizes {
     static const size_t largeAlignment = 64;
     static const size_t largeMin = smallMax;
     static const size_t largeChunkMetadataSize = 4 * kB; // sizeof(LargeChunk)
-    static const size_t largeMax = largeChunkSize - largeChunkMetadataSize;
+    static const size_t largeObjectMax = largeChunkSize - largeChunkMetadataSize;
+    static const size_t largeMax = largeObjectMax / 2;
 
     static const size_t xLargeAlignment = superChunkSize;
     static const size_t xLargeMask = ~(xLargeAlignment - 1);

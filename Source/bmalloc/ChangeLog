@@ -1,3 +1,26 @@
+2016-03-22  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: shrink largeMax
+        https://bugs.webkit.org/show_bug.cgi?id=155759
+
+        Reviewed by Michael Saboff.
+
+        If a largeChunk contains N bytes and we allocate objects of size
+        N / 2 + 8 bytes, then we waste 50% of physical memory at peak.
+
+        This patch sets largeMax to N / 2, reducing maximum waste to 25%.
+
+        * bmalloc/BoundaryTag.h:
+        * bmalloc/LargeChunk.h:
+        (bmalloc::LargeChunk::LargeChunk):
+        * bmalloc/SegregatedFreeList.cpp:
+        (bmalloc::SegregatedFreeList::SegregatedFreeList):
+        (bmalloc::SegregatedFreeList::insert): Honor largeMax vs largeObjectMax.
+
+        * bmalloc/Sizes.h: Distinguish between the largest thing we can store
+        in a free list (largeObjectMax) and the largest thing we're willing to
+        allocate (largeMax).
+
 2016-03-20  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Determine TARGET_MAC_OS_X_VERSION_MAJOR from MACOSX_DEPLOYMENT_TARGET rather than from MAC_OS_X_VERSION_MAJOR
