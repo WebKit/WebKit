@@ -128,33 +128,6 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         dataGridNode.revealAndSelect();
     }
 
-    canShowContentViewForTreeElement(treeElement)
-    {
-        if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement)
-            return true;
-        return super.canShowContentViewForTreeElement(treeElement);
-    }
-
-    showContentViewForTreeElement(treeElement)
-    {
-        if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
-            WebInspector.showSourceCode(treeElement.representedObject);
-            return;
-        }
-
-        if (!(treeElement instanceof WebInspector.SourceCodeTimelineTreeElement)) {
-            console.error("Unknown tree element selected.");
-            return;
-        }
-
-        if (!treeElement.sourceCodeTimeline.sourceCodeLocation) {
-            this.timelineSidebarPanel.showTimelineOverview();
-            return;
-        }
-
-        WebInspector.showOriginalOrFormattedSourceCodeLocation(treeElement.sourceCodeTimeline.sourceCodeLocation);
-    }
-
     layout()
     {
         let oldZeroTime = this._timelineRuler.zeroTime;

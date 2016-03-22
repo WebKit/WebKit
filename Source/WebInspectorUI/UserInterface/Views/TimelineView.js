@@ -164,33 +164,6 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
     // Protected
 
-    canShowContentViewForTreeElement(treeElement)
-    {
-        // Implemented by sub-classes if needed.
-
-        if (treeElement instanceof WebInspector.TimelineRecordTreeElement)
-            return !!treeElement.sourceCodeLocation;
-        return false;
-    }
-
-    showContentViewForTreeElement(treeElement)
-    {
-        // Implemented by sub-classes if needed.
-
-        if (!(treeElement instanceof WebInspector.TimelineRecordTreeElement)) {
-            console.error("Unknown tree element selected.", treeElement);
-            return;
-        }
-
-        var sourceCodeLocation = treeElement.sourceCodeLocation;
-        if (!sourceCodeLocation) {
-            this._timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
-            return;
-        }
-
-        WebInspector.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation);
-    }
-
     userSelectedRecordFromOverview(timelineRecord)
     {
         // Implemented by sub-classes if needed.

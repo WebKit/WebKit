@@ -147,24 +147,6 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
 
     // Protected
 
-    canShowContentViewForTreeElement(treeElement)
-    {
-        if (treeElement instanceof WebInspector.ProfileNodeTreeElement)
-            return !!treeElement.profileNode.sourceCodeLocation;
-        return super.canShowContentViewForTreeElement(treeElement);
-    }
-
-    showContentViewForTreeElement(treeElement)
-    {
-        if (treeElement instanceof WebInspector.ProfileNodeTreeElement) {
-            if (treeElement.profileNode.sourceCodeLocation)
-                WebInspector.showOriginalOrFormattedSourceCodeLocation(treeElement.profileNode.sourceCodeLocation);
-            return;
-        }
-
-        super.showContentViewForTreeElement(treeElement);
-    }
-
     dataGridNodePathComponentSelected(event)
     {
         let dataGridNode = event.data.pathComponent.timelineDataGridNode;

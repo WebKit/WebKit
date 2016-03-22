@@ -1,5 +1,34 @@
 2016-03-22  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: remove the remaining TimelineSidebarPanel references
+        https://bugs.webkit.org/show_bug.cgi?id=155765
+        <rdar://problem/25296980>
+
+        Reviewed by Timothy Hatcher.
+
+        Remove dead code from TimelineView and TimelineTabContentView.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype.canShowContentViewForTreeElement): Deleted.
+        (WebInspector.OverviewTimelineView.prototype.showContentViewForTreeElement): Deleted.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.prototype.canShowContentViewForTreeElement): Deleted.
+        (WebInspector.RenderingFrameTimelineView.prototype.showContentViewForTreeElement): Deleted.
+
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WebInspector.ScriptDetailsTimelineView.prototype.canShowContentViewForTreeElement): Deleted.
+        (WebInspector.ScriptDetailsTimelineView.prototype.showContentViewForTreeElement): Deleted.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView):
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.canShowContentViewForTreeElement): Deleted.
+        (WebInspector.TimelineView.prototype.showContentViewForTreeElement): Deleted.
+
+2016-03-22  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Timelines UI redesign: Provide a way to configure which instruments to use
         https://bugs.webkit.org/show_bug.cgi?id=153672
         <rdar://problem/24417575>
