@@ -1,3 +1,17 @@
+2016-03-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Shrink-to-fit the CompositingCoordinator's update atlases vector after cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=155719
+
+        Reviewed by Carlos Garcia Campos.
+
+        Shrink the Vector object containing the cached UpdateAtlas objects
+        after the inactive ones are removed. This way the capacity of the
+        Vector is kept under control, preventing unnecessary waste of memory.
+
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::releaseInactiveAtlasesTimerFired):
+
 2016-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         Improve SharedBuffer testing
