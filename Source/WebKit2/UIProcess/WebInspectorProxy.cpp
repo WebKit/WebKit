@@ -43,7 +43,6 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/NotImplemented.h>
-#include <WebCore/SchemeRegistry.h>
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(INSPECTOR_SERVER)
@@ -332,14 +331,10 @@ bool WebInspectorProxy::isInspectorPage(WebPageProxy& webPage)
 
 static bool isMainOrTestInspectorPage(WKURLRequestRef requestRef)
 {
-    URL requestURL(URL(), toImpl(requestRef)->resourceRequest().url());
-    if (!WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(requestURL.protocol()))
-        return false;
-
-    // Use URL so we can compare just the paths.
+    // Use URL so we can compare the paths and protocols.
+    const URL& requestURL = toImpl(requestRef)->resourceRequest().url();
     URL mainPageURL(URL(), WebInspectorProxy::inspectorPageURL());
-    ASSERT(WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(mainPageURL.protocol()));
-    if (decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(mainPageURL.path()))
+    if (requestURL.protocol() == mainPageURL.protocol() && decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(mainPageURL.path()))
         return true;
 
     // We might not have a Test URL in Production builds.
@@ -348,8 +343,7 @@ static bool isMainOrTestInspectorPage(WKURLRequestRef requestRef)
         return false;
 
     URL testPageURL(URL(), testPageURLString);
-    ASSERT(WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(testPageURL.protocol()));
-    return decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(testPageURL.path());
+    return requestURL.protocol() == testPageURL.protocol() && decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(testPageURL.path());
 }
 
 static void processDidCrash(WKPageRef, const void* clientInfo)

@@ -1,3 +1,16 @@
+2016-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebInspector broken after r197620
+        https://bugs.webkit.org/show_bug.cgi?id=155497
+        <rdar://problem/25171910>
+
+        Reviewed by Philippe Normand.
+
+        Add resource scheme to the list of secure protocols.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::secureSchemes):
+
 2016-03-22  Brent Fulgham  <bfulgham@apple.com>
 
         SharedBuffer::copy() can cause a segmentation fault.

@@ -1,3 +1,26 @@
+2016-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebInspector broken after r197620
+        https://bugs.webkit.org/show_bug.cgi?id=155497
+        <rdar://problem/25171910>
+
+        Reviewed by Philippe Normand.
+
+        Stop registering resource:// URLs as local, because they are not
+        like a local file at all. Compare also the URL protocols when
+        checking whether requested URL is main or test inspector page
+        instead of checking that the protocol is registered as local.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::isMainOrTestInspectorPage): Compare also the URL protocols.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Do not
+        set setAllowFileAccessFromFileURLs setting to true.
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Do not
+        register resource:// URLS as local.
+
 2016-03-22  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed typo fixes.
