@@ -1,5 +1,20 @@
 2016-03-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TextureMapper] Destructing TextureMapperLayer should clean up its effect target
+        https://bugs.webkit.org/show_bug.cgi?id=155718
+
+        Reviewed by Darin Adler.
+
+        TextureMapperLayer destructor should, in case of non-null effect target,
+        null out the effect target's mask and replica layer pointers if those
+        pointers point to the TextureMapperLayer object that's being destroyed,
+        avoiding use-after-free occurrences.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::~TextureMapperLayer):
+
+2016-03-22  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Shrink-to-fit the CompositingCoordinator's update atlases vector after cleanup
         https://bugs.webkit.org/show_bug.cgi?id=155719
 
