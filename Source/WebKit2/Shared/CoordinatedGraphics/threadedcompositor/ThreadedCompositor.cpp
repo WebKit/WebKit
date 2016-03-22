@@ -252,7 +252,7 @@ void ThreadedCompositor::didChangeVisibleRect()
 {
     FloatRect visibleRect = viewportController()->visibleContentsRect();
     float scale = viewportController()->pageScaleFactor();
-    callOnMainThread([=] {
+    RunLoop::main().dispatch([=] {
         m_client->setVisibleContentsRect(visibleRect, FloatPoint::zero(), scale);
     });
 

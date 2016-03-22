@@ -29,7 +29,6 @@
 #include <WebCore/TextureMapperGL.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <wtf/Atomics.h>
-#include <wtf/MainThread.h>
 
 using namespace WebCore;
 
@@ -40,7 +39,7 @@ void CoordinatedGraphicsScene::dispatchOnMainThread(std::function<void()> functi
     if (isMainThread())
         function();
     else
-        callOnMainThread(WTFMove(function));
+        RunLoop::main().dispatch(WTFMove(function));
 }
 
 void CoordinatedGraphicsScene::dispatchOnClientRunLoop(std::function<void()> function)

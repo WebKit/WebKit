@@ -1,3 +1,21 @@
+2016-03-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordinatedGraphics] Prefer RunLoop::main().dispatch() over callOnMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=155725
+
+        Reviewed by Darin Adler.
+
+        Unify the CoordinatedGraphics code in the WebKit2 layer to use RunLoop
+        for dispatching tasks on either the main thread or the composition thread
+        in case of using the threaded compositor. The latter is already the default,
+        so this patch just replaces calls to callOnMainThread() with calls to
+        RunLoop::main().dispatch().
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::dispatchOnMainThread):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::didChangeVisibleRect):
+
 2016-03-18  Enrica Casucci  <enrica@apple.com>
 
         Enable preview of images as attachments.
