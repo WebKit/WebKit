@@ -393,8 +393,9 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
 
     _recordButtonClicked(event)
     {
+        let shouldCreateNewRecording = window.event ? window.event.shiftKey : false;
         this._recordButton.toggled = !WebInspector.timelineManager.isCapturing();
-        this._toggleRecording(event.shiftKey);
+        this._toggleRecording(shouldCreateNewRecording);
     }
 
     _recordingsTreeSelectionDidChange(event)

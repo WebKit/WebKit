@@ -1,5 +1,16 @@
 2016-03-22  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: REGRESSION: Shift + Click on record button should create a new recording
+        https://bugs.webkit.org/show_bug.cgi?id=155763
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.prototype._recordButtonClicked):
+        Use the shiftKey from the DOM Event.
+
+2016-03-22  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Switching Away and Back to Timelines Tab may select a different Timeline
         https://bugs.webkit.org/show_bug.cgi?id=155742
         <rdar://problem/25284330>
