@@ -1,3 +1,24 @@
+2016-03-21  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: New icon for Heap Allocations timeline
+        https://bugs.webkit.org/show_bug.cgi?id=155731
+        <rdar://problem/25275494>
+
+        Reviewed by Joseph Pecoraro and Timothy Hatcher.
+
+        * UserInterface/Images/HeapAllocationsInstrument.svg: Added.
+        New artwork from Jon Davis.
+
+        * UserInterface/Views/TimelineIcons.css:
+        (.heap-allocations-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .memory-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .heap-allocations-icon .icon):
+        New icon styles/fallbacks for GTK.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.iconClassNameForTimeline):
+        Add new icon class to UI helper method.
+
 2016-03-20  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Determine TARGET_MAC_OS_X_VERSION_MAJOR from MACOSX_DEPLOYMENT_TARGET rather than from MAC_OS_X_VERSION_MAJOR

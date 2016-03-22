@@ -35,6 +35,10 @@
     content: url(../Images/MemoryInstrument.svg);
 }
 
+.heap-allocations-icon .icon {
+    content: url(../Images/HeapAllocationsInstrument.svg);
+}
+
 .layout-icon .icon {
     content: url(../Images/LayoutInstrument.svg);
 }
@@ -70,6 +74,14 @@ body:not(.mac-platform, .windows-platform) .script-icon.large .icon {
  
 body:not(.mac-platform, .windows-platform) .rendering-frame-icon .icon {
     content: -webkit-image-set(url(../Images/Frames.png) 1x, url(../Images/Frames@2x.png) 2x);
+}
+
+body:not(.mac-platform, .windows-platform) .memory-icon .icon {
+    content: -webkit-image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
+}
+
+body:not(.mac-platform, .windows-platform) .heap-allocations-icon .icon {
+    content: -webkit-image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
 }
 
 .stopwatch-icon .icon {

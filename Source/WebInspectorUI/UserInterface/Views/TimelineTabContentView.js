@@ -137,8 +137,7 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         case WebInspector.TimelineRecord.Type.Memory:
             return "memory-icon";
         case WebInspector.TimelineRecord.Type.HeapAllocations:
-            // FIXME: HeapAllocation Timeline needs a new icon.
-            return "memory-icon";
+            return "heap-allocations-icon";
         case WebInspector.TimelineRecord.Type.Script:
             return "script-icon";
         case WebInspector.TimelineRecord.Type.RenderingFrame:
