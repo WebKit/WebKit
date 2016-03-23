@@ -1,3 +1,12 @@
+2016-03-22  Jon Davis  <jond@apple.com>
+
+        Add Download Attribute to the Feature Status page
+        https://bugs.webkit.org/show_bug.cgi?id=155772
+
+        Reviewed by Timothy Hatcher.
+
+        * features.json:
+
 2016-03-22  Jer Noble  <jer.noble@apple.com>
 
         CachedResource::MediaResource types shouldn't be blocked due to mixed-content.
