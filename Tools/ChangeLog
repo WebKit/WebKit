@@ -1,3 +1,9 @@
+2016-03-22  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed: add Keith Rollin to the committers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-03-22  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] [64-bit] Remove MSVC 2013 FMA3 Bug Workaround
