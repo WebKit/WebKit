@@ -1,5 +1,14 @@
 2016-03-22  Darin Adler  <darin@apple.com>
 
+        Tiny tweak to test I just landed.
+
+        * http/tests/security/cross-origin-modal-dialog-base-expected.txt:
+        Fix expected result now that I fixed the less than sign.
+        * http/tests/security/cross-origin-modal-dialog-base.html: Use &lt;
+        so the < character won't create an HTML element instead of text.
+
+2016-03-22  Darin Adler  <darin@apple.com>
+
         showModalDialog code runs with "first window" set to wrong window
         https://bugs.webkit.org/show_bug.cgi?id=155710
 
