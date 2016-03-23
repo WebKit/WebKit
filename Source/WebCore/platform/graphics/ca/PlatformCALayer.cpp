@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformCALayer.h"
 
+#include "GraphicsContextCG.h"
 #include "LayerPool.h"
 #include "PlatformCALayerClient.h"
 #include "TextStream.h"
@@ -64,12 +65,11 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
     char text[16]; // that's a lot of repaints
     snprintf(text, sizeof(text), "%d", repaintCount);
     
-    CGRect indicatorBox = platformCALayer->bounds();
+    FloatRect indicatorBox = platformCALayer->bounds();\
+    indicatorBox.setLocation( { 1, 1 } );
+    indicatorBox.setSize(FloatSize(12 + 10 * strlen(text), 27));
 
-    CGContextSaveGState(context);
-
-    indicatorBox.size.width = 12 + 10 * strlen(text);
-    indicatorBox.size.height = 27;
+    CGContextStateSaver stateSaver(context);
     
     CGContextSetAlpha(context, 0.5f);
     CGContextBeginTransparencyLayerWithRect(context, indicatorBox, 0);
@@ -79,23 +79,37 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
     else
         CGContextSetRGBFillColor(context, 0, 0.5f, 0.25f, 1);
     
-    CGContextFillRect(context, indicatorBox);
-    
-    if (platformCALayer->acceleratesDrawing())
-        CGContextSetRGBFillColor(context, 1, 0, 0, 1);
-    else
-        CGContextSetRGBFillColor(context, 1, 1, 1, 1);
+    if (platformCALayer->isOpaque())
+        CGContextFillRect(context, indicatorBox);
+    else {
+        Path boundsPath;
+        boundsPath.moveTo(indicatorBox.maxXMinYCorner());
+        boundsPath.addLineTo(indicatorBox.maxXMaxYCorner());
+        boundsPath.addLineTo(indicatorBox.minXMaxYCorner());
+
+        const float cornerChunk = 8;
+        boundsPath.addLineTo(FloatPoint(indicatorBox.x(), indicatorBox.y() + cornerChunk));
+        boundsPath.addLineTo(FloatPoint(indicatorBox.x() + cornerChunk, indicatorBox.y()));
+        boundsPath.closeSubpath();
+
+        CGContextAddPath(context, boundsPath.platformPath());
+        CGContextFillPath(context);
+    }
 
     if (platformCALayer->owner()->isUsingDisplayListDrawing(platformCALayer)) {
         CGContextSetRGBStrokeColor(context, 0, 0, 0, 0.65);
         CGContextSetLineWidth(context, 2);
         CGContextStrokeRect(context, indicatorBox);
     }
+
+    if (platformCALayer->acceleratesDrawing())
+        CGContextSetRGBFillColor(context, 1, 0, 0, 1);
+    else
+        CGContextSetRGBFillColor(context, 1, 1, 1, 1);
     
-    platformCALayer->drawTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, CGSizeMake(1, -1), 22, text, strlen(text));
+    platformCALayer->drawTextAtPoint(context, indicatorBox.x() + 5, indicatorBox.y() + 22, CGSizeMake(1, -1), 22, text, strlen(text));
     
     CGContextEndTransparencyLayer(context);
-    CGContextRestoreGState(context);
 }
 
 void PlatformCALayer::flipContext(CGContextRef context, CGFloat height)

@@ -1,3 +1,19 @@
+2016-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Change the paint count indicator to indicate whether a layer is opaque
+        https://bugs.webkit.org/show_bug.cgi?id=155810
+
+        Reviewed by Tim Horton.
+
+        In non-opaque layers, give the paint count indicator a diagonal top left corner. Being
+        able to see layer opaqueness helps diagnose bugs.
+        
+        Also use CGContextStateSaver, and move the indicator in by a pixel to overlap less
+        with the layer border.
+
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+
 2016-03-23  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: y2 >= y1 in WebCore::RenderElement::drawLineForBoxSide
