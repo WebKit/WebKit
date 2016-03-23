@@ -39,7 +39,7 @@ WebInspector.FormattedValue.createLinkifiedElementString = function(string)
 {
     var span = document.createElement("span");
     span.className = "formatted-string";
-    span.append("\"", WebInspector.linkifyStringAsFragment(string.replace(/"/g, "\\\"")), "\"");
+    span.append("\"", WebInspector.linkifyStringAsFragment(string.replace(/\\/g, "\\\\").replace(/"/g, "\\\"")), "\"");
     return span;
 };
 

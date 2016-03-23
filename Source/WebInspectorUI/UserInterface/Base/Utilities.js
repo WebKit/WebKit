@@ -1198,7 +1198,7 @@ function isFunctionStringNativeCode(str)
 
 function doubleQuotedString(str)
 {
-    return "\"" + str.replace(/"/g, "\\\"") + "\"";
+    return "\"" + str.replace(/\\/g, "\\\\").replace(/"/g, "\\\"") + "\"";
 }
 
 function insertionIndexForObjectInListSortedByFunction(object, list, comparator, insertionIndexAfter)

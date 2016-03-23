@@ -1,3 +1,17 @@
+2016-03-22  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: String double quoting in the console and elsewhere needs to escape backslash too
+
+        https://bugs.webkit.org/show_bug.cgi?id=155752
+        rdar://problem/25293141
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Utilities.js:
+        (doubleQuotedString): Escape backslashes too.
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createLinkifiedElementString): Ditto.
+
 2016-03-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION: Switching Timelines via Path Component does not work
