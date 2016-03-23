@@ -210,8 +210,6 @@ private:
     WebScriptDebugDelegateImplementationCache scriptDebugDelegateImplementations;
     WebHistoryDelegateImplementationCache historyDelegateImplementations;
 
-    void *observationInfo;
-    
     BOOL closed;
 #if PLATFORM(IOS)
     BOOL closing;

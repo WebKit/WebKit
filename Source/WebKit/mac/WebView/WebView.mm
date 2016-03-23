@@ -2866,16 +2866,6 @@ static inline IMP getMethod(id o, SEL s)
     return declaredKeys;
 }
 
-- (void)setObservationInfo:(void *)info
-{
-    _private->observationInfo = info;
-}
-
-- (void *)observationInfo
-{
-    return _private->observationInfo;
-}
-
 - (void)_willChangeBackForwardKeys
 {
     [self _willChangeValueForKey: _WebCanGoBackKey];
