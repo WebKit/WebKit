@@ -1,3 +1,17 @@
+2016-03-22  Darin Adler  <darin@apple.com>
+
+        showModalDialog code runs with “first window” set to wrong window
+        https://bugs.webkit.org/show_bug.cgi?id=155710
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/security/cross-origin-modal-dialog-base.html
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runModal): Null out entryScope so that the "first window"
+        checks inside the modal dialog won't run in the context of the original window
+        that presented the dialog.
+
 2016-03-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         userSpaceOnUse patterns are not stroked for empty object bounding box elements

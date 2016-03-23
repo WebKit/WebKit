@@ -48,8 +48,10 @@
 #include "Settings.h"
 #include "StorageNamespace.h"
 #include "WindowFeatures.h"
+#include <runtime/VM.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -218,6 +220,10 @@ void Chrome::runModal() const
     // Defer callbacks in all the other pages in this group, so we don't try to run JavaScript
     // in a way that could interact with this view.
     PageGroupLoadDeferrer deferrer(m_page, false);
+
+    // JavaScript that runs within the nested event loop must not be run in the context of the
+    // script that called showModalDialog. Null out entryScope to break the connection.
+    TemporaryChange<JSC::VMEntryScope*> entryScopeNullifier { m_page.mainFrame().document()->vm().entryScope, nullptr };
 
     TimerBase::fireTimersInNestedEventLoop();
     m_client.runModal();

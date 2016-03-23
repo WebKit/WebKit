@@ -323,6 +323,7 @@ http/tests/loading/cross-origin-XHR-willLoadRequest.html
 # WebKit2 needs showModalDialog
 fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
+http/tests/security/cross-origin-modal-dialog-base.html [ Skip ]
 
 # WebKit2 needs to support synchronous creation of about:blank/data:url frames
 fast/dom/HTMLDocument/hasFocus.html
