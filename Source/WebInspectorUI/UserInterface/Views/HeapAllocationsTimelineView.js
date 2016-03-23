@@ -196,6 +196,8 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
     {
         super.shown();
 
+        this._dataGrid.shown();
+
         if (!this._showingSnapshotList)
             this._contentViewContainer.shown();
     }
@@ -203,6 +205,8 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
     hidden()
     {
         super.hidden();
+
+        this._dataGrid.hidden();
 
         if (!this._showingSnapshotList)
             this._contentViewContainer.hidden();
@@ -212,6 +216,8 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
     {
         console.assert(this.representedObject instanceof WebInspector.Timeline);
         this.representedObject.removeEventListener(null, null, this);
+
+        this._dataGrid.closed();
 
         this._contentViewContainer.closeAllContentViews();
     }
@@ -233,6 +239,8 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
     reset()
     {
         super.reset();
+
+        this._dataGrid.reset();
 
         this.showHeapSnapshotList();
         this._pendingRecords = [];

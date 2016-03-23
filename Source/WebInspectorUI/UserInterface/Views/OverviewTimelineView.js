@@ -115,6 +115,8 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
     {
         super.reset();
 
+        this._dataGrid.removeChildren();
+
         this._pendingRepresentedObjects = [];
     }
 

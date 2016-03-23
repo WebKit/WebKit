@@ -83,6 +83,9 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
     {
         // May be overridden by subclasses. If so, they should call the superclass.
 
+        if (!this._treeOutlineDataGridSynchronizer)
+            this.removeChildren();
+
         this._hidePopover();
     }
 
