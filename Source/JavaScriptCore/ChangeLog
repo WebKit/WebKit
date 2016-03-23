@@ -1,3 +1,20 @@
+2016-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Allow undefined/null for Symbol.search and Symbol.match
+        https://bugs.webkit.org/show_bug.cgi?id=155785
+
+        Reviewed by Saam Barati.
+
+        Undefined and null for Symbol.search and Symbol.match properties of the given RegExp (like) object are allowed.
+        When they are specified, we go to the fallback path; creating the RegExp with the given object and matching.
+
+        * builtins/StringPrototype.js:
+        (match):
+        (search):
+        * tests/stress/string-symbol-customization.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2016-03-22  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] correctly handle indexed properties in Object.getOwnPropertyDescriptors

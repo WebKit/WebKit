@@ -24,8 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// @conditional=ENABLE(INTL)
-
 function match(regexp)
 {
     "use strict";
@@ -38,7 +36,7 @@ function match(regexp)
 
     if (regexp != null) {
         var matcher = regexp[@symbolMatch];
-        if (matcher !== @undefined)
+        if (matcher != @undefined)
             return matcher.@call(regexp, this);
     }
 
@@ -59,7 +57,7 @@ function search(regexp)
 
     if (regexp != null) {
          var searcher = regexp[@symbolSearch];
-         if (searcher !== @undefined)
+         if (searcher != @undefined)
             return searcher.@call(regexp, this);
     }
 
