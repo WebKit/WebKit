@@ -1,3 +1,13 @@
+2016-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Post-review test update after r198560
+        https://bugs.webkit.org/show_bug.cgi?id=155533
+
+        Unreviewed.
+
+        * fast/scrolling/rtl-scrollbars-positioning-expected.html:
+        * fast/scrolling/rtl-scrollbars-positioning.html:
+
 2016-03-22  John Wilander  <wilander@apple.com>
 
         Restrict WebSockets header parsing according to RFC6455 and RFC7230. Based on Lamarque V. Souza's original patch.
