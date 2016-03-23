@@ -1,3 +1,4 @@
+'use strict';
 
 class BuildRequest extends DataModelObject {
 
@@ -61,3 +62,6 @@ class BuildRequest extends DataModelObject {
         this._testGroup.didSetResult(this);
     }
 }
+
+if (typeof module != 'undefined')
+    module.exports.BuildRequest = BuildRequest;

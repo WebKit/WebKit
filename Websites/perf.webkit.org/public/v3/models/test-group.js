@@ -1,3 +1,4 @@
+'use strict';
 
 class TestGroup extends LabeledObject {
 
@@ -241,3 +242,6 @@ class TestGroup extends LabeledObject {
         return testGroups;
     }
 }
+
+if (typeof module != 'undefined')
+    module.exports.TestGroup = TestGroup;

@@ -203,6 +203,7 @@ class ChartPaneBase extends ComponentBase {
             switch (task.changeType()) {
             case 'inconclusive':
                 fillStyle = '#fcc';
+                break;
             case 'progression':
                 fillStyle = '#39f';
                 break;

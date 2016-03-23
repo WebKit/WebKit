@@ -3,19 +3,7 @@
 var assert = require('assert');
 
 require('./resources/mock-remote-api.js');
-
-global.DataModelObject = require('../public/v3/models/data-model.js').DataModelObject;
-global.LabeledObject = require('../public/v3/models/data-model.js').LabeledObject;
-global.CommitLog = require('../public/v3/models/commit-log.js').CommitLog;
-global.Build = require('../public/v3/models/builder.js').Build;
-global.Builder = require('../public/v3/models/builder.js').Builder;
-global.MeasurementRootSet = require('../public/v3/models/root-set.js').MeasurementRootSet;
-global.MeasurementAdaptor = require('../public/v3/models/measurement-adaptor.js').MeasurementAdaptor;
-global.MeasurementCluster = require('../public/v3/models/measurement-cluster.js').MeasurementCluster;
-global.MeasurementSet = require('../public/v3/models/measurement-set.js').MeasurementSet;
-global.Repository = require('../public/v3/models/repository.js').Repository;
-global.RootSet = require('../public/v3/models/root-set.js').RootSet;
-global.Statistics = require('../public/shared/statistics.js');
+require('./resources/v3-models.js');
 
 describe('MeasurementSet', function () {
     beforeEach(function () {

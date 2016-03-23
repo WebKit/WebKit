@@ -1,5 +1,27 @@
 2016-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add unit tests for test-group.js
+        https://bugs.webkit.org/show_bug.cgi?id=155781
+
+        Reviewed by Joseph Pecoraro.
+
+        Added unit tests for test-group.js that would have caught regressions fixed in r198503.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype._renderAnnotations): Added a forgotten break statement.
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.setResult):
+        (BuildRequest):
+        * public/v3/models/test-group.js:
+        * unit-tests/measurement-set-tests.js: Use ./resources/v3-models.js to reduce the code duplication.
+        * unit-tests/resources/v3-models.js: Import more stuff from v3 models.
+        (beforeEach):
+        * unit-tests/test-groups-tests.js: Added. Added some unit tests for TestGroup.
+        (sampleTestGroup):
+        (.testGroupWithStatusList):
+
+2016-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a typo.
 
         * config.json:
