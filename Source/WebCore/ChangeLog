@@ -1,3 +1,33 @@
+2016-03-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Non-power-of-two texture optimization
+        https://bugs.webkit.org/show_bug.cgi?id=118409
+
+        Reviewed by Dean Jackson.
+
+        Based on a patch by Przemyslaw Szymanski  <p.szymanski3@samsung.com>
+ 
+        This patch optimizes usage of handleNPOTTextures. We do not need to
+        iterate over each texture unit if no black textures were set. This
+        optimization provides a few more frames per seconds for certain
+        draw calls.
+    
+        Tested by:
+        (1) Existing tests: webgl/resources/webgl_test_files/conformance/textures/texture-npot.html
+        (2) New test case: fast/canvas/webgl/texture-alternating-npot.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::compressedTexImage2D): Use new helper method.
+        (WebCore::WebGLRenderingContextBase::validateNPOTTextureLevel): Added.
+        (WebCore::WebGLRenderingContextBase::drawArrays): Only check texture completeness
+        if a black texture was used.
+        (WebCore::WebGLRenderingContextBase::drawElements): Ditto.
+        (WebCore::WebGLRenderingContextBase::texImage2DBase): Use new helper method.
+        (WebCore::WebGLRenderingContextBase::validateTexFunc): Ditto.
+        (WebCore::WebGLRenderingContextBase::checkTextureCompleteness): Return flag to indicate
+        if a black fallbacktexture was used.
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2016-03-23  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix for a new warning.

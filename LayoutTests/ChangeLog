@@ -1,3 +1,13 @@
+2016-03-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Non-power-of-two texture optimization
+        https://bugs.webkit.org/show_bug.cgi?id=118409
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/texture-alternating-npot-expected.txt: Added.
+        * fast/canvas/webgl/texture-alternating-npot.html: Added.
+
 2016-03-23  Saam barati  <sbarati@apple.com>
 
         We should not disable inlining when the debugger is enabled
