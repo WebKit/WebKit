@@ -178,7 +178,7 @@ void Heap::allocateSmallBumpRanges(std::lock_guard<StaticMutex>& lock, size_t si
 SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t sizeClass)
 {
     if (!m_smallPagesWithFreeLines[sizeClass].isEmpty())
-        return m_smallPagesWithFreeLines[sizeClass].pop();
+        return m_smallPagesWithFreeLines[sizeClass].popFront();
 
     SmallPage* page = [this, &lock]() {
         if (!m_smallPages.isEmpty())

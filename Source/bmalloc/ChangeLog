@@ -1,3 +1,38 @@
+2016-03-23  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: process the object log before asking for new memory
+        https://bugs.webkit.org/show_bug.cgi?id=155801
+
+        Reviewed by Gavin Barraclough.
+
+        This is a step toward merging large and small objects: In future, if we
+        have large objects in the log, we need to process them right away to
+        avoid pushing up peak memory use.
+
+        But it also appears to be a speedup and memory use improvement now.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocate):
+        (bmalloc::Allocator::refillAllocatorSlowCase):
+        (bmalloc::Allocator::allocateLarge): Process the log before asking for
+        more memory.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        * bmalloc/Deallocator.h: Provide a public API for processing the object log.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateSmallPage): Pop fragmented pages from the front
+        instead of from the back. This resolves a regression on tree_churn
+        --parallel. Popping from the front gives us the oldest pages. The oldest
+        pages have had the most time to accumulate free lines. They are therefore
+        the least fragmented on average.
+
+        * bmalloc/List.h:
+        (bmalloc::List::popFront):
+        (bmalloc::List::insertAfter): New API to pop from front.
+
 2016-03-22  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: use a log scale for large-ish size classes
