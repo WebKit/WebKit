@@ -1,6 +1,6 @@
 2016-03-22  Darin Adler  <darin@apple.com>
 
-        showModalDialog code runs with “first window” set to wrong window
+        showModalDialog code runs with "first window" set to wrong window
         https://bugs.webkit.org/show_bug.cgi?id=155710
 
         Test by John Wilander.
