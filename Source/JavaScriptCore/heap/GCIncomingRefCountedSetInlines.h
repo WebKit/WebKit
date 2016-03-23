@@ -38,7 +38,7 @@ GCIncomingRefCountedSet<T>::GCIncomingRefCountedSet()
 }
 
 template<typename T>
-GCIncomingRefCountedSet<T>::~GCIncomingRefCountedSet()
+void GCIncomingRefCountedSet<T>::lastChanceToFinalize()
 {
     for (size_t i = m_vector.size(); i--;)
         m_vector[i]->filterIncomingReferences(removeAll);

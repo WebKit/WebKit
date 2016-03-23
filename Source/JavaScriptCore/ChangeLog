@@ -1,3 +1,29 @@
+2016-03-22  Keith Miller  <keith_miller@apple.com>
+
+        REGRESSION(r197543): Use-after-free on storage/indexeddb/transaction-abort-private.html
+        https://bugs.webkit.org/show_bug.cgi?id=155067
+
+        Reviewed by Filip Pizlo.
+
+        GCIncommingRefCountedSets need to be finalized before we start
+        destructing members of the Heap object. Previously, we would
+        clear all our ArrayBuffer objects when the GCIncommingRefCountedSet
+        holding them was destroyed. However, ArrayBuffers have a weak
+        reference to their wrappers. When we would attempt to destroy the
+        ArrayBuffer object we would end up accessing the WeakImpl for
+        the weak reference, which had already been freed as we destroyed
+        our weak block. The solution to this is to move the old
+        GCIncommingRefCountedSet destructor functionality to a new
+        function lastChanceToFinalize. This function is called when
+        we finalize our other objects on Heap destruction.
+
+        * heap/GCIncomingRefCountedSet.h:
+        * heap/GCIncomingRefCountedSetInlines.h:
+        (JSC::GCIncomingRefCountedSet<T>::lastChanceToFinalize):
+        (JSC::GCIncomingRefCountedSet<T>::~GCIncomingRefCountedSet): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::lastChanceToFinalize):
+
 2016-03-22  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] [64-bit] Remove MSVC 2013 FMA3 Bug Workaround

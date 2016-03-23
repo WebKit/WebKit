@@ -36,8 +36,9 @@ template<typename T>
 class GCIncomingRefCountedSet {
 public:
     GCIncomingRefCountedSet();
-    ~GCIncomingRefCountedSet();
-    
+
+    void lastChanceToFinalize();
+
     // Returns true if the native object is new to this set.
     bool addReference(JSCell*, T*);
     
