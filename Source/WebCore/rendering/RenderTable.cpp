@@ -272,10 +272,10 @@ void RenderTable::updateLogicalWidth()
         setMarginEnd(computedValues.m_margins.m_end);
     }
 
-    RenderBlock* cb = containingBlock();
+    RenderBlock& cb = *containingBlock();
 
     LayoutUnit availableLogicalWidth = containingBlockLogicalWidthForContent();
-    bool hasPerpendicularContainingBlock = cb->style().isHorizontalWritingMode() != style().isHorizontalWritingMode();
+    bool hasPerpendicularContainingBlock = cb.style().isHorizontalWritingMode() != style().isHorizontalWritingMode();
     LayoutUnit containerWidthInInlineDirection = hasPerpendicularContainingBlock ? perpendicularContainingBlockLogicalHeight() : availableLogicalWidth;
 
     Length styleLogicalWidth = style().logicalWidth();
@@ -289,7 +289,7 @@ void RenderTable::updateLogicalWidth()
 
         // Subtract out our margins to get the available content width.
         LayoutUnit availableContentLogicalWidth = std::max<LayoutUnit>(0, containerWidthInInlineDirection - marginTotal);
-        if (shrinkToAvoidFloats() && cb->containsFloats() && !hasPerpendicularContainingBlock) {
+        if (shrinkToAvoidFloats() && cb.containsFloats() && !hasPerpendicularContainingBlock) {
             // FIXME: Work with regions someday.
             availableContentLogicalWidth = shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, cb, 0);
         }
@@ -321,10 +321,10 @@ void RenderTable::updateLogicalWidth()
     setMarginEnd(0);
     if (!hasPerpendicularContainingBlock) {
         LayoutUnit containerLogicalWidthForAutoMargins = availableLogicalWidth;
-        if (avoidsFloats() && cb->containsFloats())
+        if (avoidsFloats() && cb.containsFloats())
             containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidthInRegion(0); // FIXME: Work with regions someday.
         ComputedMarginValues marginValues;
-        bool hasInvertedDirection =  cb->style().isLeftToRightDirection() == style().isLeftToRightDirection();
+        bool hasInvertedDirection =  cb.style().isLeftToRightDirection() == style().isLeftToRightDirection();
         computeInlineDirectionMargins(cb, containerLogicalWidthForAutoMargins, logicalWidth(),
             hasInvertedDirection ? marginValues.m_start : marginValues.m_end,
             hasInvertedDirection ? marginValues.m_end : marginValues.m_start);

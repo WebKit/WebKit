@@ -462,7 +462,7 @@ Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(RenderBox&
     }
     // FIXME: Figure out how this should work for regions and pass in the appropriate values.
     RenderRegion* region = nullptr;
-    return child.computeLogicalWidthInRegionUsing(sizeType, size, contentLogicalWidth(), this, region) - child.borderAndPaddingLogicalWidth();
+    return child.computeLogicalWidthInRegionUsing(sizeType, size, contentLogicalWidth(), *this, region) - child.borderAndPaddingLogicalWidth();
 }
 
 WritingMode RenderFlexibleBox::transformedWritingMode() const
@@ -1397,7 +1397,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox& child, LayoutUni
         // FIXME: If the child doesn't have orthogonal flow, then it already has an override width set, so use it.
         if (hasOrthogonalFlow(child)) {
             LayoutUnit childWidth = std::max<LayoutUnit>(0, lineCrossAxisExtent - crossAxisMarginExtentForChild(child));
-            childWidth = child.constrainLogicalWidthInRegionByMinMax(childWidth, childWidth, this);
+            childWidth = child.constrainLogicalWidthInRegionByMinMax(childWidth, childWidth, *this);
 
             if (childWidth != child.logicalWidth()) {
                 child.setOverrideLogicalContentWidth(childWidth - child.borderAndPaddingLogicalWidth());

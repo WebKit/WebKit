@@ -748,7 +748,7 @@ LayoutUnit RenderGrid::minSizeForChild(RenderBox& child, GridTrackSizingDirectio
         return minContentForChild(child, direction, columnTracks);
 
     if (isRowAxis)
-        return child.computeLogicalWidthInRegionUsing(MinSize, childMinSize, contentLogicalWidth(), this, nullptr);
+        return child.computeLogicalWidthInRegionUsing(MinSize, childMinSize, contentLogicalWidth(), *this, nullptr);
 
     return child.computeContentAndScrollbarLogicalHeightUsing(MinSize, childMinSize, child.logicalHeight()).valueOr(0);
 }
@@ -1661,7 +1661,7 @@ LayoutUnit RenderGrid::computeMarginLogicalHeightForChild(const RenderBox& child
 
     LayoutUnit marginBefore;
     LayoutUnit marginAfter;
-    child.computeBlockDirectionMargins(this, marginBefore, marginAfter);
+    child.computeBlockDirectionMargins(*this, marginBefore, marginAfter);
 
     return marginBefore + marginAfter;
 }

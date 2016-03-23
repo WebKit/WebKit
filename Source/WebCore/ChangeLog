@@ -1,3 +1,65 @@
+2016-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Use references instead of pointers for absolute positioning code
+        https://bugs.webkit.org/show_bug.cgi?id=155775
+
+        Reviewed by Simon Fraser.
+
+        There are many pointers which will never be null in this code. This patch
+        migrates them to use references.
+
+        No new tests because there is no behavior change.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::RenderBlockFlow::marginBeforeEstimateForChild):
+        (WebCore::RenderBlockFlow::insertFloatingObject):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::constrainLogicalWidthInRegionByMinMax):
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats):
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::computeLogicalWidthInRegionUsing):
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+        (WebCore::RenderBox::renderBoxRegionInfo):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::skipContainingBlockForPercentHeightCalculation):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        (WebCore::RenderBox::computeBlockDirectionMargins):
+        (WebCore::RenderBox::computeAndSetBlockDirectionMargins):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        (WebCore::computeInlineStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::computeLogicalLeftPositionedOffset):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        (WebCore::computeBlockStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        (WebCore::computeLogicalTopPositionedOffset):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+        (WebCore::percentageLogicalHeightIsResolvable):
+        (WebCore::RenderBox::percentageLogicalHeightIsResolvableFromBlock):
+        (WebCore::RenderBox::hasDefiniteLogicalHeight):
+        (WebCore::RenderBox::hasUnsplittableScrollingOverflow):
+        * rendering/RenderBox.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeMainAxisExtentForChild):
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::minSizeForChild):
+        (WebCore::RenderGrid::computeMarginLogicalHeightForChild):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateLogicalWidth):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+
 2016-03-22  Jon Davis  <jond@apple.com>
 
         Add Download Attribute to the Feature Status page
