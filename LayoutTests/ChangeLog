@@ -1,3 +1,17 @@
+2016-03-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r198582.
+        https://bugs.webkit.org/show_bug.cgi?id=155812
+
+        "It broke debugging in the web inspector" (Requested by
+        saamyjoon on #webkit).
+
+        Reverted changeset:
+
+        "We should not disable inlining when the debugger is enabled"
+        https://bugs.webkit.org/show_bug.cgi?id=155741
+        http://trac.webkit.org/changeset/198582
+
 2016-03-23  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: y2 >= y1 in WebCore::RenderElement::drawLineForBoxSide

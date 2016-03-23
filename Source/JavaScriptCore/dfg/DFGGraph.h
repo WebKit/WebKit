@@ -797,6 +797,8 @@ public:
         BasicBlock*, const char* file, int line, const char* function,
         const char* assertion);
 
+    bool hasDebuggerEnabled() const { return m_hasDebuggerEnabled; }
+
     void ensureDominators();
     void ensurePrePostNumbering();
     void ensureNaturalLoops();
@@ -894,6 +896,7 @@ public:
     UnificationState m_unificationState;
     PlanStage m_planStage { PlanStage::Initial };
     RefCountState m_refCountState;
+    bool m_hasDebuggerEnabled;
     bool m_hasExceptionHandlers { false };
 private:
 
