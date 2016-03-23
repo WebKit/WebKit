@@ -51,9 +51,9 @@ enum EFragmentSerialization { HTMLFragmentSerialization, XMLFragmentSerializatio
 
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text);
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, ParserContentPolicy = AllowScriptingContent);
-PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String&, Element*, ParserContentPolicy, ExceptionCode&);
-PassRefPtr<DocumentFragment> createFragmentForTransformToFragment(const String&, const String& sourceMIMEType, Document* outputDoc);
-PassRefPtr<DocumentFragment> createContextualFragment(const String&, HTMLElement*, ParserContentPolicy, ExceptionCode&);
+RefPtr<DocumentFragment> createFragmentForInnerOuterHTML(Element&, const String& markup, ParserContentPolicy, ExceptionCode&);
+RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document&, const String& sourceString, const String& sourceMIMEType);
+RefPtr<DocumentFragment> createContextualFragment(HTMLElement&, const String& markup, ParserContentPolicy, ExceptionCode&);
 
 bool isPlainTextMarkup(Node*);
 

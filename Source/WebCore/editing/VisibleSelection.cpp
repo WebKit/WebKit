@@ -123,10 +123,10 @@ void VisibleSelection::setExtent(const VisiblePosition& visiblePosition)
     validate();
 }
 
-PassRefPtr<Range> VisibleSelection::firstRange() const
+RefPtr<Range> VisibleSelection::firstRange() const
 {
     if (isNone())
-        return 0;
+        return nullptr;
     Position start = m_start.parentAnchoredEquivalent();
     Position end = m_end.parentAnchoredEquivalent();
     return Range::create(start.anchorNode()->document(), start, end);
@@ -197,17 +197,17 @@ bool VisibleSelection::expandUsingGranularity(TextGranularity granularity)
     return true;
 }
 
-static PassRefPtr<Range> makeSearchRange(const Position& pos)
+static RefPtr<Range> makeSearchRange(const Position& pos)
 {
     Node* n = pos.deprecatedNode();
     if (!n)
-        return 0;
+        return nullptr;
     Node* de = n->document().documentElement();
     if (!de)
-        return 0;
+        return nullptr;
     Element* boundary = deprecatedEnclosingBlockFlowElement(n);
     if (!boundary)
-        return 0;
+        return nullptr;
 
     RefPtr<Range> searchRange(Range::create(n->document()));
     ExceptionCode ec = 0;
@@ -218,9 +218,9 @@ static PassRefPtr<Range> makeSearchRange(const Position& pos)
 
     ASSERT(!ec);
     if (ec)
-        return 0;
+        return nullptr;
 
-    return searchRange.release();
+    return WTFMove(searchRange);
 }
 
 bool VisibleSelection::isAll(EditingBoundaryCrossingRule rule) const

@@ -79,7 +79,7 @@ public:
     {
     }
 
-    AttributeChange(PassRefPtr<Element> element, const QualifiedName& name, const String& value)
+    AttributeChange(Element* element, const QualifiedName& name, const String& value)
         : m_element(element), m_name(name), m_value(value)
     {
     }
@@ -466,7 +466,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
 static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestorBlock)
 {
     if (!commonAncestorBlock)
-        return 0;
+        return nullptr;
 
     if (commonAncestorBlock->hasTagName(tbodyTag) || commonAncestorBlock->hasTagName(trTag)) {
         ContainerNode* table = commonAncestorBlock->parentNode();
@@ -479,7 +479,7 @@ static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestor
     if (isNonTableCellHTMLBlockElement(commonAncestorBlock))
         return commonAncestorBlock;
 
-    return 0;
+    return nullptr;
 }
 
 static inline Node* ancestorToRetainStructureAndAppearance(Node* commonAncestor)
@@ -508,17 +508,17 @@ static bool needInterchangeNewlineAfter(const VisiblePosition& v)
     return isEndOfParagraph(v) && isStartOfParagraph(next) && !(upstreamNode->hasTagName(brTag) && upstreamNode == downstreamNode);
 }
 
-static PassRefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(const Node* node)
+static RefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(const Node* node)
 {
     if (!node->isHTMLElement())
-        return 0;
+        return nullptr;
 
     // FIXME: Having to const_cast here is ugly, but it is quite a bit of work to untangle
     // the non-const-ness of styleFromMatchedRulesForElement.
     HTMLElement* element = const_cast<HTMLElement*>(static_cast<const HTMLElement*>(node));
     RefPtr<EditingStyle> style = EditingStyle::create(element->inlineStyle());
     style->mergeStyleFromRules(element);
-    return style.release();
+    return style;
 }
 
 static bool isElementPresentational(const Node* node)
@@ -878,50 +878,50 @@ String urlToMarkup(const URL& url, const String& title)
     return markup.toString();
 }
 
-PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String& markup, Element* contextElement, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
+RefPtr<DocumentFragment> createFragmentForInnerOuterHTML(Element& contextElement, const String& markup, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
 {
-    Document* document = &contextElement->document();
+    Document* document = &contextElement.document();
 #if ENABLE(TEMPLATE_ELEMENT)
-    if (contextElement->hasTagName(templateTag))
+    if (contextElement.hasTagName(templateTag))
         document = &document->ensureTemplateDocument();
 #endif
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(*document);
 
     if (document->isHTMLDocument()) {
-        fragment->parseHTML(markup, contextElement, parserContentPolicy);
+        fragment->parseHTML(markup, &contextElement, parserContentPolicy);
         return fragment;
     }
 
-    bool wasValid = fragment->parseXML(markup, contextElement, parserContentPolicy);
+    bool wasValid = fragment->parseXML(markup, &contextElement, parserContentPolicy);
     if (!wasValid) {
         ec = SYNTAX_ERR;
-        return 0;
+        return nullptr;
     }
-    return fragment.release();
+    return fragment;
 }
 
-PassRefPtr<DocumentFragment> createFragmentForTransformToFragment(const String& sourceString, const String& sourceMIMEType, Document* outputDoc)
+RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDoc, const String& sourceString, const String& sourceMIMEType)
 {
-    RefPtr<DocumentFragment> fragment = outputDoc->createDocumentFragment();
+    RefPtr<DocumentFragment> fragment = outputDoc.createDocumentFragment();
     
     if (sourceMIMEType == "text/html") {
         // As far as I can tell, there isn't a spec for how transformToFragment is supposed to work.
         // Based on the documentation I can find, it looks like we want to start parsing the fragment in the InBody insertion mode.
         // Unfortunately, that's an implementation detail of the parser.
         // We achieve that effect here by passing in a fake body element as context for the fragment.
-        RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(*outputDoc);
+        RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(outputDoc);
         fragment->parseHTML(sourceString, fakeBody.get());
     } else if (sourceMIMEType == "text/plain")
-        fragment->parserAppendChild(Text::create(*outputDoc, sourceString));
+        fragment->parserAppendChild(Text::create(outputDoc, sourceString));
     else {
         bool successfulParse = fragment->parseXML(sourceString, 0);
         if (!successfulParse)
-            return 0;
+            return nullptr;
     }
     
     // FIXME: Do we need to mess with URLs here?
     
-    return fragment.release();
+    return fragment;
 }
 
 static Vector<Ref<HTMLElement>> collectElementsToRemoveFromFragment(ContainerNode& container)
@@ -950,21 +950,20 @@ static void removeElementFromFragmentPreservingChildren(DocumentFragment& fragme
     fragment.removeChild(element, ASSERT_NO_EXCEPTION);
 }
 
-PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTMLElement* element, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
+RefPtr<DocumentFragment> createContextualFragment(HTMLElement& element, const String& markup, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
 {
-    ASSERT(element);
-    if (element->ieForbidsInsertHTML()) {
+    if (element.ieForbidsInsertHTML()) {
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
 
-    if (element->hasTagName(colTag) || element->hasTagName(colgroupTag) || element->hasTagName(framesetTag)
-        || element->hasTagName(headTag) || element->hasTagName(styleTag) || element->hasTagName(titleTag)) {
+    if (element.hasTagName(colTag) || element.hasTagName(colgroupTag) || element.hasTagName(framesetTag)
+        || element.hasTagName(headTag) || element.hasTagName(styleTag) || element.hasTagName(titleTag)) {
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
 
-    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, element, parserContentPolicy, ec);
+    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(element, markup, parserContentPolicy, ec);
     if (!fragment)
         return nullptr;
 
@@ -975,7 +974,7 @@ PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTML
     for (auto& element : toRemove)
         removeElementFromFragmentPreservingChildren(*fragment, element);
 
-    return fragment.release();
+    return fragment;
 }
 
 static inline bool hasOneChild(ContainerNode& node)

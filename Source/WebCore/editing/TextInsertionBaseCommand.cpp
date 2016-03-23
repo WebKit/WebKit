@@ -40,16 +40,16 @@ TextInsertionBaseCommand::TextInsertionBaseCommand(Document& document)
 {
 }
 
-void TextInsertionBaseCommand::applyTextInsertionCommand(Frame* frame, PassRefPtr<TextInsertionBaseCommand> command, const VisibleSelection& selectionForInsertion, const VisibleSelection& endingSelection)
+void TextInsertionBaseCommand::applyTextInsertionCommand(Frame* frame, TextInsertionBaseCommand& command, const VisibleSelection& selectionForInsertion, const VisibleSelection& endingSelection)
 {
     bool changeSelection = selectionForInsertion != endingSelection;
     if (changeSelection) {
-        command->setStartingSelection(selectionForInsertion);
-        command->setEndingSelection(selectionForInsertion);
+        command.setStartingSelection(selectionForInsertion);
+        command.setEndingSelection(selectionForInsertion);
     }
-    applyCommand(command);
+    applyCommand(&command);
     if (changeSelection) {
-        command->setEndingSelection(endingSelection);
+        command.setEndingSelection(endingSelection);
         frame->selection().setSelection(endingSelection);
     }
 }

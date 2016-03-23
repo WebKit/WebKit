@@ -1,3 +1,72 @@
+2016-03-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Reduce PassRefPtr uses in editing
+        https://bugs.webkit.org/show_bug.cgi?id=155743
+
+        Reviewed by Darin Adler.
+
+        Use RefPtr<>&&, raw pointer, or reference in arugments instead of PassRefPtr.
+        Besides RefPtr is used if function may be able to return nullptr.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setOuterHTML):
+        (WebCore::Element::setInnerHTML):
+        * dom/Range.cpp:
+        (WebCore::Range::createContextualFragment):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setInnerHTML):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::wrapContentsInDummySpan):
+        * editing/CompositeEditCommand.h:
+        * editing/DictationCommand.cpp:
+        (WebCore::DictationCommand::insertText):
+        * editing/SplitTextNodeContainingElementCommand.cpp:
+        (WebCore::SplitTextNodeContainingElementCommand::doApply):
+        * editing/TextInsertionBaseCommand.cpp:
+        (WebCore::TextInsertionBaseCommand::applyTextInsertionCommand):
+        * editing/TextInsertionBaseCommand.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteSelection):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::lastTypingCommandIfStillOpenForTyping):
+        (WebCore::TypingCommand::closeTyping):
+        (WebCore::TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping):
+        * editing/TypingCommand.h:
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::firstRange):
+        (WebCore::makeSearchRange):
+        * editing/VisibleSelection.h:
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand):
+        * editing/WrapContentsInDummySpanCommand.h:
+        (WebCore::WrapContentsInDummySpanCommand::create):
+        * editing/atk/FrameSelectionAtk.cpp:
+        (WebCore::maybeEmitTextFocusChange):
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * editing/htmlediting.cpp:
+        (WebCore::createOrderedListElement):
+        (WebCore::createUnorderedListElement):
+        (WebCore::createListItemElement):
+        (WebCore::createTabSpanElement):
+        * editing/htmlediting.h:
+        * editing/markup.cpp:
+        (WebCore::AttributeChange::AttributeChange):
+        (WebCore::ancestorToRetainStructureAndAppearanceForBlock):
+        (WebCore::styleFromMatchedRulesAndInlineDecl):
+        (WebCore::createFragmentForInnerOuterHTML):
+        (WebCore::createFragmentForTransformToFragment):
+        (WebCore::createContextualFragment):
+        * editing/markup.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::insertAdjacentHTML):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::transformToFragment):
+
 2016-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Use Region instead of IntRect in PageClient and WebPageProxy setViewNeedsDisplay method

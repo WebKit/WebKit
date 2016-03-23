@@ -2368,7 +2368,7 @@ void Element::setOuterHTML(const String& html, ExceptionCode& ec)
     RefPtr<Node> prev = previousSibling();
     RefPtr<Node> next = nextSibling();
 
-    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, parent.get(), AllowScriptingContent, ec);
+    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(*parent, html, AllowScriptingContent, ec);
     if (ec)
         return;
     
@@ -2383,7 +2383,7 @@ void Element::setOuterHTML(const String& html, ExceptionCode& ec)
 
 void Element::setInnerHTML(const String& html, ExceptionCode& ec)
 {
-    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, AllowScriptingContent, ec)) {
+    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(*this, html, AllowScriptingContent, ec)) {
         ContainerNode* container = this;
 
 #if ENABLE(TEMPLATE_ELEMENT)

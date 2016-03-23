@@ -941,7 +941,7 @@ RefPtr<DocumentFragment> Range::createContextualFragment(const String& markup, E
         return nullptr;
     }
 
-    return WebCore::createContextualFragment(markup, downcast<HTMLElement>(element.get()), AllowScriptingContentAndDoNotMarkAlreadyStarted, ec);
+    return WebCore::createContextualFragment(downcast<HTMLElement>(*element), markup, AllowScriptingContentAndDoNotMarkAlreadyStarted, ec);
 }
 
 

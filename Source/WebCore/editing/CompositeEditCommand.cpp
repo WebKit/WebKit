@@ -493,7 +493,7 @@ void CompositeEditCommand::mergeIdenticalElements(PassRefPtr<Element> prpFirst, 
     applyCommandToComposite(MergeIdenticalElementsCommand::create(first, second));
 }
 
-void CompositeEditCommand::wrapContentsInDummySpan(PassRefPtr<Element> element)
+void CompositeEditCommand::wrapContentsInDummySpan(Element& element)
 {
     applyCommandToComposite(WrapContentsInDummySpanCommand::create(element));
 }

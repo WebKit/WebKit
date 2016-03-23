@@ -34,13 +34,13 @@ class HTMLElement;
 
 class WrapContentsInDummySpanCommand : public SimpleEditCommand {
 public:
-    static Ref<WrapContentsInDummySpanCommand> create(PassRefPtr<Element> element)
+    static Ref<WrapContentsInDummySpanCommand> create(Element& element)
     {
         return adoptRef(*new WrapContentsInDummySpanCommand(element));
     }
 
 private:
-    explicit WrapContentsInDummySpanCommand(PassRefPtr<Element>);
+    explicit WrapContentsInDummySpanCommand(Element&);
 
     void doApply() override;
     void doUnapply() override;
@@ -51,7 +51,7 @@ private:
     void getNodesInCommand(HashSet<Node*>&) override;
 #endif
 
-    RefPtr<Element> m_element;
+    Ref<Element> m_element;
     RefPtr<HTMLElement> m_dummySpan;
 };
 

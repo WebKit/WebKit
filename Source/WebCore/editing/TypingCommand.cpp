@@ -99,7 +99,7 @@ void TypingCommand::deleteSelection(Document& document, Options options)
     if (!frame->selection().isRange())
         return;
 
-    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(frame)) {
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*frame)) {
         lastTypingCommand->setShouldPreventSpellChecking(options & PreventSpellChecking);
         lastTypingCommand->deleteSelection(options & SmartDelete);
         return;
@@ -111,7 +111,7 @@ void TypingCommand::deleteSelection(Document& document, Options options)
 void TypingCommand::deleteKeyPressed(Document& document, Options options, TextGranularity granularity)
 {
     if (granularity == CharacterGranularity) {
-        if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document.frame())) {
+        if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*document.frame())) {
             updateSelectionIfDifferentFromCurrentSelection(lastTypingCommand.get(), document.frame());
             lastTypingCommand->setShouldPreventSpellChecking(options & PreventSpellChecking);
             lastTypingCommand->deleteKeyPressed(granularity, options & AddsToKillRing);
@@ -127,7 +127,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document& document, Options options,
     // FIXME: Forward delete in TextEdit appears to open and close a new typing command.
     Frame* frame = document.frame();
     if (granularity == CharacterGranularity) {
-        if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(frame)) {
+        if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*frame)) {
             updateSelectionIfDifferentFromCurrentSelection(lastTypingCommand.get(), frame);
             lastTypingCommand->setShouldPreventSpellChecking(options & PreventSpellChecking);
             lastTypingCommand->forwardDeleteKeyPressed(granularity, options & AddsToKillRing);
@@ -173,7 +173,7 @@ void TypingCommand::insertText(Document& document, const String& text, const Vis
     // Set the starting and ending selection appropriately if we are using a selection
     // that is different from the current selection.  In the future, we should change EditCommand
     // to deal with custom selections in a general way that can be used by all of the commands.
-    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(frame.get())) {
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*frame)) {
         if (lastTypingCommand->endingSelection() != selectionForInsertion) {
             lastTypingCommand->setStartingSelection(selectionForInsertion);
             lastTypingCommand->setEndingSelection(selectionForInsertion);
@@ -187,12 +187,12 @@ void TypingCommand::insertText(Document& document, const String& text, const Vis
     }
 
     RefPtr<TypingCommand> cmd = TypingCommand::create(document, InsertText, newText, options, compositionType);
-    applyTextInsertionCommand(frame.get(), cmd, selectionForInsertion, currentSelection);
+    applyTextInsertionCommand(frame.get(), *cmd, selectionForInsertion, currentSelection);
 }
 
 void TypingCommand::insertLineBreak(Document& document, Options options)
 {
-    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document.frame())) {
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*document.frame())) {
         lastTypingCommand->setShouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator);
         lastTypingCommand->insertLineBreak();
         return;
@@ -203,7 +203,7 @@ void TypingCommand::insertLineBreak(Document& document, Options options)
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent(Document& document)
 {
-    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document.frame())) {
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*document.frame())) {
         lastTypingCommand->insertParagraphSeparatorInQuotedContent();
         return;
     }
@@ -213,7 +213,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent(Document& document)
 
 void TypingCommand::insertParagraphSeparator(Document& document, Options options)
 {
-    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document.frame())) {
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*document.frame())) {
         lastTypingCommand->setShouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator);
         lastTypingCommand->insertParagraphSeparator();
         return;
@@ -222,27 +222,25 @@ void TypingCommand::insertParagraphSeparator(Document& document, Options options
     applyCommand(TypingCommand::create(document, InsertParagraphSeparator, "", options));
 }
 
-PassRefPtr<TypingCommand> TypingCommand::lastTypingCommandIfStillOpenForTyping(Frame* frame)
+RefPtr<TypingCommand> TypingCommand::lastTypingCommandIfStillOpenForTyping(Frame& frame)
 {
-    ASSERT(frame);
-
-    RefPtr<CompositeEditCommand> lastEditCommand = frame->editor().lastEditCommand();
+    RefPtr<CompositeEditCommand> lastEditCommand = frame.editor().lastEditCommand();
     if (!lastEditCommand || !lastEditCommand->isTypingCommand() || !static_cast<TypingCommand*>(lastEditCommand.get())->isOpenForMoreTyping())
-        return 0;
+        return nullptr;
 
     return static_cast<TypingCommand*>(lastEditCommand.get());
 }
 
 void TypingCommand::closeTyping(Frame* frame)
 {
-    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(frame))
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*frame))
         lastTypingCommand->closeTyping();
 }
 
 #if PLATFORM(IOS)
 void TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(Frame* frame, const VisibleSelection& newSelection)
 {
-    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(frame)) {
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*frame)) {
         lastTypingCommand->setEndingSelection(newSelection);
         lastTypingCommand->setEndingSelectionOnLastInsertCommand(newSelection);
     }

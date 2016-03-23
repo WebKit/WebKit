@@ -140,7 +140,7 @@ protected:
     void splitElement(PassRefPtr<Element>, PassRefPtr<Node> atChild);
     void splitTextNode(PassRefPtr<Text>, unsigned offset);
     void splitTextNodeContainingElement(PassRefPtr<Text>, unsigned offset);
-    void wrapContentsInDummySpan(PassRefPtr<Element>);
+    void wrapContentsInDummySpan(Element&);
 
     void deleteInsignificantText(PassRefPtr<Text>, unsigned start, unsigned end);
     void deleteInsignificantText(const Position& start, const Position& end);
