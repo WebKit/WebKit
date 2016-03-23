@@ -1,3 +1,18 @@
+2016-03-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exceptions closing Timeline tab
+        https://bugs.webkit.org/show_bug.cgi?id=155805
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView.prototype._scriptClusterViewCurrentContentViewDidChange):
+        Gracefully handle if there is no content view.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.closed): Deleted.
+        Fix typo.
+
 2016-03-23  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Quick Open dialog has fuzzy icons at 1x

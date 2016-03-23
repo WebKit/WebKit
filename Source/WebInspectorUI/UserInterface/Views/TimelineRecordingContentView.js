@@ -185,7 +185,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     closed()
     {
-        this._timelinContentBrowser.contentViewContainer.closeAllContentViews();
+        this._timelineContentBrowser.contentViewContainer.closeAllContentViews();
 
         this._recording.removeEventListener(null, null, this);
 

@@ -187,6 +187,9 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
     _scriptClusterViewCurrentContentViewDidChange(event)
     {
         let currentContentView = this._contentViewContainer.currentContentView;
+        if (!currentContentView)
+            return;
+
         let previousContentView = currentContentView === this._eventsContentView ? this._profileContentView : this._eventsContentView;
 
         currentContentView.zeroTime = previousContentView.zeroTime;
