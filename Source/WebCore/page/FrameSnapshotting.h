@@ -31,9 +31,11 @@
 #define FrameSnapshotting_h
 
 #include <memory>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class FloatRect;
 class Frame;
 class IntRect;
 class ImageBuffer;
@@ -50,6 +52,7 @@ enum {
 typedef unsigned SnapshotOptions;
 
 WEBCORE_EXPORT std::unique_ptr<ImageBuffer> snapshotFrameRect(Frame&, const IntRect&, SnapshotOptions = SnapshotOptionsNone);
+std::unique_ptr<ImageBuffer> snapshotFrameRectWithClip(Frame&, const IntRect&, Vector<FloatRect>& clipRects, SnapshotOptions = SnapshotOptionsNone);
 std::unique_ptr<ImageBuffer> snapshotNode(Frame&, Node&);
 WEBCORE_EXPORT std::unique_ptr<ImageBuffer> snapshotSelection(Frame&, SnapshotOptions = SnapshotOptionsNone);
 

@@ -1,3 +1,17 @@
+2016-03-22  Tim Horton  <timothy_horton@apple.com>
+
+        Invoking a link preview on a complex link (e.g. an image) results in an empty TextIndicator
+        https://bugs.webkit.org/show_bug.cgi?id=155779
+        <rdar://problem/22408793>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForRange):
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+        Use the TextIndicator mode where we give up on selection-only snapshotting
+        and just paint all content on Mac, similar to what we do for 3D Touch indicators.
+
 2016-03-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix HTTPS on Mac using NSURLSession after r198457

@@ -1,3 +1,24 @@
+2016-03-22  Tim Horton  <timothy_horton@apple.com>
+
+        Invoking a link preview on a complex link (e.g. an image) results in an empty TextIndicator
+        https://bugs.webkit.org/show_bug.cgi?id=155779
+        <rdar://problem/22408793>
+
+        Reviewed by Simon Fraser.
+
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotFrameRect):
+        (WebCore::snapshotFrameRectWithClip):
+        * page/FrameSnapshotting.h:
+        * page/TextIndicator.cpp:
+        (WebCore::takeSnapshot):
+        (WebCore::takeSnapshots):
+        (WebCore::initializeIndicator):
+        When snapshotting, clip to the indicated range's rects. This is important
+        to avoid painting into the margins in the non-selection-only painting case.
+        This didn't come up with normal selection-only painting because the text
+        didn't intersect the margin, and the background doesn't paint.
+
 2016-03-22  Darin Adler  <darin@apple.com>
 
         showModalDialog code runs with "first window" set to wrong window
