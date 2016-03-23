@@ -220,7 +220,7 @@ static RefPtr<Range> makeSearchRange(const Position& pos)
     if (ec)
         return nullptr;
 
-    return WTFMove(searchRange);
+    return searchRange;
 }
 
 bool VisibleSelection::isAll(EditingBoundaryCrossingRule rule) const

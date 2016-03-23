@@ -1,3 +1,10 @@
+2016-03-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix for a new warning.
+
+        * editing/VisibleSelection.cpp: (WebCore::makeSearchRange): Don't move when returning,
+        as that prevents copy elision.
+
 2016-03-23  Antti Koivisto  <antti@apple.com>
 
         Share style by sharing RenderStyle substructures not the object itself
