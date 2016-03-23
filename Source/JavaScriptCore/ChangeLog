@@ -1,3 +1,18 @@
+2016-03-23  Keith Miller  <keith_miller@apple.com>
+
+        Array.prototype native functions' species constructors should work with proxies
+        https://bugs.webkit.org/show_bug.cgi?id=155798
+
+        Reviewed by Mark Lam.
+
+        Before native the species constructors were checking if the this value was a JSArray.
+        Instead they should look check that the this value returns true on Array.isArray.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::speciesConstructArray):
+        * tests/es6.yaml:
+        * tests/stress/proxy-array-prototype-methods.js:
+
 2016-03-23  Saam barati  <sbarati@apple.com>
 
         We should not disable inlining when the debugger is enabled

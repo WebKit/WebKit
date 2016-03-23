@@ -184,7 +184,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
 {
     // ECMA 9.4.2.3: https://tc39.github.io/ecma262/#sec-arrayspeciescreate
     JSValue constructor = jsUndefined();
-    if (LIKELY(isJSArray(thisObject))) {
+    if (LIKELY(isArray(exec, thisObject))) {
         // Fast path in the normal case where the user has not set an own constructor and the Array.prototype.constructor is normal.
         // We need prototype check for subclasses of Array, which are Array objects but have a different prototype by default.
         if (LIKELY(!thisObject->hasCustomProperties()
@@ -207,7 +207,9 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
             if (constructor.isNull())
                 return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
         }
-    }
+    } else if (exec->hadException())
+        return std::make_pair(SpeciesConstructResult::Exception, nullptr);
+
     if (constructor.isUndefined())
         return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
 

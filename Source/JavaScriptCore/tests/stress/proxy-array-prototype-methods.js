@@ -140,9 +140,50 @@ test(function() {
     assert(hasProps.has("3"));
     assert(hasProps.has("4"));
 
-    assert(getProps.size === 4);
+    assert(getProps.size === 5);
     assert(getProps.has("splice"));
     assert(getProps.has("length"));
+    assert(getProps.has("constructor"));
+    assert(getProps.has("2"));
+    assert(getProps.has("4"));
+});
+
+test(function() {
+    let delProps = new Set;
+    let hasProps = new Set;
+    let getProps = new Set;
+    let target = [ 0, , 1, , 2];
+    let handler = {
+        get(theTarget, key) {
+            getProps.add(key);
+            return Reflect.get(theTarget, key);
+        },
+        has(theTarget, key) {
+            hasProps.add(key);
+            return Reflect.has(theTarget, key);
+        },
+        deleteProperty(theTarget, key)
+        {
+            delProps.add(key);
+            return Reflect.deleteProperty(theTarget, key);
+        }
+    };
+
+    let proxy = new Proxy(target, handler);
+    proxy.slice(1, 5);
+
+    assert(delProps.size === 0);
+
+    assert(hasProps.size === 4);
+    assert(hasProps.has("1"));
+    assert(hasProps.has("2"));
+    assert(hasProps.has("3"));
+    assert(hasProps.has("4"));
+
+    assert(getProps.size === 5);
+    assert(getProps.has("slice"));
+    assert(getProps.has("length"));
+    assert(getProps.has("constructor"));
     assert(getProps.has("2"));
     assert(getProps.has("4"));
 });
