@@ -1,3 +1,28 @@
+2016-03-23  Daniel Bates  <dabates@apple.com>
+
+        CSP: Make violation console messages concise and consistent
+        https://bugs.webkit.org/show_bug.cgi?id=155777
+        <rdar://problem/25304031>
+
+        Reviewed by Darin Adler.
+
+        Update expected results to reflect new violation message text.
+
+        * fast/workers/worker-inherits-csp-blocks-xhr-expected.txt:
+        * http/tests/contentextensions/block-cookies-in-csp-report-expected.txt:
+        * http/tests/contentextensions/block-csp-report-expected.txt:
+        * http/tests/contentextensions/hide-on-csp-report-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/base-uri-deny-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-blocked-expected.txt:
+        ...
+        * http/tests/security/contentSecurityPolicy/xsl-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/xsl-img-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1-expected.txt:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr-expected.txt:
+        * http/tests/security/isolatedWorld/image-load-should-not-bypass-main-world-csp-expected.txt:
+        * media/csp-blocks-video-expected.txt:
+
 2016-03-23  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Non-power-of-two texture optimization

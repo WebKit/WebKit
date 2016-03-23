@@ -1,8 +1,6 @@
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src https:  taco".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The value for Content Security Policy directive 'script-src' contains an invalid character: 'https:  '. Non-whitespace characters outside ASCII 0x21-0x7E must be percent-encoded, as described in RFC 3986, section 2.1: http://tools.ietf.org/html/rfc3986#section-2.1.
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'none'".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 None of these scripts should execute even though there are parse errors in the policy.
 
 

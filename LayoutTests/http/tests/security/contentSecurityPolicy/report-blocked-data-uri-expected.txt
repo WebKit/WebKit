@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Refused to load the image 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' because it violates the following Content Security Policy directive: "img-src 'none'".
-
+CONSOLE MESSAGE: Refused to load data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== because it does not appear in the img-src directive of the Content Security Policy.
 CSP report received:
 CONTENT_TYPE: application/csp-report
 HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-data-uri.php

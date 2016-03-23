@@ -1,7 +1,5 @@
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'none'".
-
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'none'".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 Check that a CSP header added by a 304 response does not override one from the original request.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,7 +1,5 @@
-CONSOLE MESSAGE: line 1: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'".
-
-CONSOLE MESSAGE: line 6: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'".
-
+CONSOLE MESSAGE: line 1: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 6: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
 Style that does not match a 'nonce-*' expression in 'style-src' should not be applied to the page.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

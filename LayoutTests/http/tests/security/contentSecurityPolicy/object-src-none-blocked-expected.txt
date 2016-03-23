@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Refused to load plugin data from 'data:application/x-webkit-test-netscape,logifloaded' because it violates the following Content Security Policy directive: "object-src 'none'".
-
+CONSOLE MESSAGE: Refused to load data:application/x-webkit-test-netscape,logifloaded because it does not appear in the object-src directive of the Content Security Policy.
 
 
 --------

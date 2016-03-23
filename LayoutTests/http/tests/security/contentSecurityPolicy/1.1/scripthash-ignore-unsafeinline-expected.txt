@@ -1,4 +1,3 @@
 ALERT: PASS (1/1)
-CONSOLE MESSAGE: line 10: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'sha256-0WwzeJrO6lcDUe7o6BR3lx0b8uiBvXBX5MNFFKF7iYE' 'unsafe-inline'".
-
+CONSOLE MESSAGE: line 10: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 This tests that a valid hash value disables inline JavaScript, even if 'unsafe-inline' is present.

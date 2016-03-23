@@ -1,3 +1,2 @@
-CONSOLE MESSAGE: Refused to load frame 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.html' because it violates the following Content Security Policy directive: "frame-src 'none'".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.html because it does not appear in the frame-src directive of the Content Security Policy.
 

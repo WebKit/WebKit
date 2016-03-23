@@ -1,7 +1,5 @@
-CONSOLE MESSAGE: Refused to load the script 'data:application/javascript;base64,dmFyIHJlc3VsdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZXN1bHQnKTtyZXN1bHQuZmlyc3RDaGlsZC5ub2RlVmFsdWUgPSByZXN1bHQuYXR0cmlidXRlcy5nZXROYW1lZEl0ZW0oJ3RleHQnKS52YWx1ZTs=' because it violates the following Content Security Policy directive: "script-src 'self'".
-
-CONSOLE MESSAGE: Refused to load the script 'data:application/javascript;base64,dmFyIHJlc3VsdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZXN1bHQnKTtyZXN1bHQuZmlyc3RDaGlsZC5ub2RlVmFsdWUgPSByZXN1bHQuYXR0cmlidXRlcy5nZXROYW1lZEl0ZW0oJ3RleHQnKS52YWx1ZTs=' because it violates the following Content Security Policy directive: "script-src https://127.0.0.1:8000".
-
+CONSOLE MESSAGE: Refused to load data:application/javascript;base64,dmFyIHJlc3VsdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZXN1bHQnKTtyZXN1bHQuZmlyc3RDaGlsZC5ub2RlVmFsdWUgPSByZXN1bHQuYXR0cmlidXRlcy5nZXROYW1lZEl0ZW0oJ3RleHQnKS52YWx1ZTs= because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load data:application/javascript;base64,dmFyIHJlc3VsdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZXN1bHQnKTtyZXN1bHQuZmlyc3RDaGlsZC5ub2RlVmFsdWUgPSByZXN1bHQuYXR0cmlidXRlcy5nZXROYW1lZEl0ZW0oJ3RleHQnKS52YWx1ZTs= because it does not appear in the script-src directive of the Content Security Policy.
 Test proper handling of data: URLs.
 
 

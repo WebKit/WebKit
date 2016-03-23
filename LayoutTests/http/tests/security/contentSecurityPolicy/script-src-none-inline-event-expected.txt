@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: line 3: Refused to execute inline event handler because it violates the following Content Security Policy directive: "script-src 'none'".
-
+CONSOLE MESSAGE: line 3: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
   
 
 --------

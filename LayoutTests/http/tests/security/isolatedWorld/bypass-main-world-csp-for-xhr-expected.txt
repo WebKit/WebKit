@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Refused to connect to 'http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt' because it violates the following Content Security Policy directive: "connect-src 'none'".
-
+CONSOLE MESSAGE: Refused to connect to http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt because it does not appear in the connect-src directive of the Content Security Policy.
 Tests that isolated worlds can have XHRs that the page's CSP wouldn't allow.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

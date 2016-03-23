@@ -1,7 +1,5 @@
-CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
-
-CONSOLE MESSAGE: line 9: [Report Only] Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/resources/abe.png because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 9: [Report Only] Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 ALERT: PASS
 CSP report received:
 CONTENT_TYPE: application/csp-report

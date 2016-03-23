@@ -1,35 +1,25 @@
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''n'. It will be ignored.
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'n".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce'. It will be ignored.
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-''. It will be ignored.
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce-'".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-'. It will be ignored.
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce-".
-
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src nonce-abcd".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-'. It will be ignored.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: '''. It will be ignored.
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce- '".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-'. It will be ignored.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: '''. It will be ignored.
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce-     '".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-'. It will be ignored.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: 'spaces''. It will be ignored.
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce- nonces have no spaces'".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-{}''. It will be ignored.
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce-{}'".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-/\''. It will be ignored.
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce-/\'".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 None of these scripts should execute, as all the nonces are invalid.
 
 

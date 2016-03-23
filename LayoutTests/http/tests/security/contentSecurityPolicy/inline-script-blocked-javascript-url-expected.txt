@@ -1,6 +1,5 @@
 CONSOLE MESSAGE: The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect.
 CONSOLE MESSAGE: The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect.
 CONSOLE MESSAGE: The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect.
-CONSOLE MESSAGE: line 1: Refused to execute JavaScript URL because it violates the following Content Security Policy directive: "script-src http://127.0.0.1:*".
-
+CONSOLE MESSAGE: line 1: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 This test passes if it doesn't alert fail. 

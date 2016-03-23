@@ -100,13 +100,6 @@ private:
 
     void setEvalDisabledErrorMessage(const String& errorMessage) { m_evalDisabledErrorMessage = errorMessage; }
 
-    bool checkEvalAndReportViolation(ContentSecurityPolicySourceListDirective*, const String& consoleMessage, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = nullptr) const;
-    bool checkInlineAndReportViolation(ContentSecurityPolicySourceListDirective*, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine, bool isScript) const;
-
-    bool checkSourceAndReportViolation(ContentSecurityPolicySourceListDirective*, const URL&, const String& effectiveDirective) const;
-    bool checkFrameAncestorsAndReportViolation(ContentSecurityPolicySourceListDirective*, const Frame&, const URL&, const String& effectiveDirective) const;
-    bool checkMediaTypeAndReportViolation(ContentSecurityPolicyMediaListDirective*, const String& type, const String& typeAttribute, const String& consoleMessage) const;
-
     bool denyIfEnforcingPolicy() const { return m_reportOnly; }
 
     // FIXME: Make this a const reference once we teach applySandboxPolicy() to store its policy as opposed to applying it directly onto ContentSecurityPolicy.

@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/resources/abe.png because it does not appear in the img-src directive of the Content Security Policy.
 Tests that we prevent the document from loading an image that was loaded earlier from a user agent shadow tree. This test can only be run in the test tool. This test PASSED if you see the word PASS below and there is exactly one Content Security Policy console message about a blocked image load.
 
 PASS image was not loaded by document.

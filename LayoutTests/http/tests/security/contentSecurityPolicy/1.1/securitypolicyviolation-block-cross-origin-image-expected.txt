@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Refused to load the image 'http://localhost:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
-
+CONSOLE MESSAGE: Refused to load http://localhost:8000/security/resources/abe.png because it does not appear in the img-src directive of the Content Security Policy.
 Check that a SecurityPolicyViolationEvent strips detail from cross-origin blocked URLs.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

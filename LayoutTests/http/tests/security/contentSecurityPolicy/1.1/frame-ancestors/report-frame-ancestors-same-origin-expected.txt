@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-intertag.pl?header=Content-Security-Policy%3A+frame-ancestors+%27none%27%3B+report-uri+../../resources/save-report.php%3Ftest%3D/security/contentSecurityPolicy/1.1/report-frame-ancestors-same-origin.html&q=FAIL' in a frame because an ancestor violates the following Content Security Policy directive: "frame-ancestors 'none'".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-intertag.pl?header=Content-Security-Policy%3A+frame-ancestors+%27none%27%3B+report-uri+../../resources/save-report.php%3Ftest%3D/security/contentSecurityPolicy/1.1/report-frame-ancestors-same-origin.html&q=FAIL because it does not appear in the frame-ancestors directive of the Content Security Policy.
 CSP report received:
 CONTENT_TYPE: application/csp-report
 REQUEST_METHOD: POST

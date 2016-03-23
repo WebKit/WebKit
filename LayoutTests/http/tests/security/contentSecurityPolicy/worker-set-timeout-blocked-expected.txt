@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Refused to evaluate script because it violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
-
+CONSOLE MESSAGE: Refused to execute a script because 'unsafe-eval' does not appear in the script-src directive of the Content Security Policy.
 ALERT: setTimeout blocked
 

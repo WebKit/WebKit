@@ -1,7 +1,5 @@
-CONSOLE MESSAGE: line 1: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'".
-
-CONSOLE MESSAGE: line 79: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'".
-
+CONSOLE MESSAGE: line 1: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 79: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
 This test ensures that styles can be set by object.cloneNode()
 PASS node1.style.background is "yellow"
 PASS node2.style.background is "yellow"

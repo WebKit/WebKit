@@ -1,3 +1,57 @@
+2016-03-23  Daniel Bates  <dabates@apple.com>
+
+        CSP: Make violation console messages concise and consistent
+        https://bugs.webkit.org/show_bug.cgi?id=155777
+        <rdar://problem/25304031>
+
+        Reviewed by Darin Adler.
+
+        As a first step towards making the log messages that are emitted by the ContentSecurityPolicy object
+        concise and consistent with the language and formatting used in other WebKit console messages, including
+        other Content Security Policy messages, make the violation error messages concise and consistent.
+        Being concise and consistent will help make it straightforward for a person to understand the reason
+        for the violation by taking advantage of their familiarity with the language and formatting seen in
+        other WebKit console messages.
+
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::consoleMessageForViolation): Added. Builds up a console message for violation.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowJavaScriptURLs): Extract logic for logging a console message/reporting
+        a violation from ContentSecurityPolicyDirectiveList::checkInlineAndReportViolation() to here and make use of WebCore::consoleMessageForViolation()
+        to build the actual console message.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineEventHandlers): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineScript): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineStyle): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowEval): Extract logic for logging a console message/reporting
+        a violation from ContentSecurityPolicyDirectiveList::checkEvalAndReportViolation() to here and make use of WebCore::consoleMessageForViolation()
+        to build the actual console message.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowPluginType): Extract logic for logging a console message/reporting
+        a violation from ContentSecurityPolicyDirectiveList::checkMediaTypeAndReportViolation() to here and make use of WebCore::consoleMessageForViolation()
+        to build the actual console message.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowScriptFromSource): Extract logic for logging a console message/reporting
+        a violation from ContentSecurityPolicyDirectiveList::checkSourceAndReportViolation() to here and make use of WebCore::consoleMessageForViolation()
+        to build the actual console message.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowObjectFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowChildContextFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowChildFrameFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowImageFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowStyleFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowFontFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowMediaFromSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowConnectToSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowFormAction): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowBaseURI): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowFrameAncestors): Extract logic for logging a console message/reporting
+        a violation from ContentSecurityPolicyDirectiveList::checkFrameAncestorsAndReportViolation() to here and make use of WebCore::consoleMessageForViolation()
+        to build the actual console message.
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective): Add FIXME comment to log that the frame-src directive is
+        deprecated. See <https://bugs.webkit.org/show_bug.cgi?id=155773> for more details.
+        (WebCore::ContentSecurityPolicyDirectiveList::checkEvalAndReportViolation): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::checkMediaTypeAndReportViolation): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::checkInlineAndReportViolation): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::checkSourceAndReportViolation): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::checkFrameAncestorsAndReportViolation): Deleted.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+
 2016-03-23  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Non-power-of-two texture optimization

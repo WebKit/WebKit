@@ -1,50 +1,33 @@
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-rrdh0QCl46qqHxfnnk08ydh/rkhVi2JvD6DLuUP30MI='".
-
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-W4kKNfgvUMesHeVX1eGn6f3LfuntH7p4YjLeOauCA/I='".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA=''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA='".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha-dummy''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha-dummy'".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''d&mmy''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'd&mmy'".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA=''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' '/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA='".
-
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha384-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA='".
-
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha512-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA='".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-/Vet2Rva6wwsny8xybL+=bQal0Gtf0FZW7EOVqqg+Hna=''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-/Vet2Rva6wwsny8xybL+=bQal0Gtf0FZW7EOVqqg+Hna='".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA==''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA=='".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA===''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA==='".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-'. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-'".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-#''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-#'".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-abc&=''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-abc&='".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-abc&==''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-abc&=='".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-LyogVGhpcyBpcyBhIGxvbmcgY29tbWVudCB0aGF0IHdpbGwgYmUgZW5jb2RlZCB1c2luZyBCYXNlNjQgdG8gcHJvZHVjZSBhbiBlbmNvZGVkIHN0cmluZyBvdXRwdXQgdGhhdCBpcyBsb25nZXIgdGhhbiBhIFNlY3VyZSBIYXNoIEFsZ29yaXRobS01MTIgZGlnZXN0LiAqLw==''. It will be ignored.
-CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'sha256-LyogVGhpcyBpcyBhIGxvbmcgY29tbWVudCB0aGF0IHdpbGwgYmUgZW5jb2RlZCB1c2luZyBCYXNlNjQgdG8gcHJvZHVjZSBhbiBlbmNvZGVkIHN0cmluZyBvdXRwdXQgdGhhdCBpcyBsb25nZXIgdGhhbiBhIFNlY3VyZSBIYXNoIEFsZ29yaXRobS01MTIgZGlnZXN0LiAqLw=='".
-
+CONSOLE MESSAGE: line 5: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 This tests that script hashes work and conform to the Content Security Policy 2.0 specification.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

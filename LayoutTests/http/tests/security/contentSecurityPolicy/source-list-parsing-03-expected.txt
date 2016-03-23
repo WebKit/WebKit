@@ -1,7 +1,5 @@
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src https:".
-
-CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src https:".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
 None of these scripts should execute.
 
 

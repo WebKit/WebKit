@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Refused to display 'http://localhost:8080/security/contentSecurityPolicy/resources/frame-ancestors.pl?policy=http://example.com/' in a frame because an ancestor violates the following Content Security Policy directive: "frame-ancestors http://example.com/".
-
+CONSOLE MESSAGE: Refused to load http://localhost:8080/security/contentSecurityPolicy/resources/frame-ancestors.pl?policy=http://example.com/ because it does not appear in the frame-ancestors directive of the Content Security Policy.
 A 'frame-ancestors' CSP directive with a URL which doesn't match this origin should be blocked. This test PASSED if you do not see any content in the iframe below. Otherwise, it FAILED.
 
 

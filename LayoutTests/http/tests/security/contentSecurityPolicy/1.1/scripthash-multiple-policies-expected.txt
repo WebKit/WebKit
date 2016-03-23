@@ -1,6 +1,4 @@
-CONSOLE MESSAGE: line 13: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'sha256-CYFBl0kdL4jzV5rJMIUoDtxfH9SQTP1JFh2GOcvAFGA=' 'sha256-F/ojdO7hFCTL+kP9GCfFTGQjf48FyI/WJIuqgntJh7Y='".
-
-CONSOLE MESSAGE: line 14: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'sha256-CYFBl0kdL4jzV5rJMIUoDtxfH9SQTP1JFh2GOcvAFGA=' 'sha256-F/ojdO7hFCTL+kP9GCfFTGQjf48FyI/WJIuqgntJh7Y='".
-
+CONSOLE MESSAGE: line 13: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 14: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 ALERT: PASS
 Tests that an inline script is allowed to execute only if its hash appears in all policies. This test PASSED if there are two console warnings and a JavaScript alert with message PASS. Otherwise, it FAILED.

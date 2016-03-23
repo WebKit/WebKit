@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/frame-ancestors.pl?policy='none'' in a frame because an ancestor violates the following Content Security Policy directive: "frame-ancestors 'none'".
-
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/frame-ancestors.pl?policy='none' because it does not appear in the frame-ancestors directive of the Content Security Policy.
 A 'frame-ancestors' CSP directive with a value 'none' should block rendering. This test PASSED if you do not see any content in the iframe below. Otherwise, it FAILED.
 
 

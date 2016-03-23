@@ -1,8 +1,5 @@
-CONSOLE MESSAGE: line 6: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'sha256-FSRZotz4y83Ib8ZaoVj9eXKaeWXVUawM8zAPfYeYySs='".
-
-CONSOLE MESSAGE: line 7: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'sha256-FSRZotz4y83Ib8ZaoVj9eXKaeWXVUawM8zAPfYeYySs='".
-
-CONSOLE MESSAGE: line 8: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'sha256-FSRZotz4y83Ib8ZaoVj9eXKaeWXVUawM8zAPfYeYySs='".
-
+CONSOLE MESSAGE: line 6: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 7: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 8: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
 ALERT: PASS: The 'p' element's text is green, which means the style was correctly applied.
 This tests the effect of a valid style-hash value, with one valid style and several invalid ones. It passes if the valid style is applied and three console warnings are visible.

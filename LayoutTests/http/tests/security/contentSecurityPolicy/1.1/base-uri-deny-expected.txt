@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Refused to set the document's base URI to 'http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/resources/base-href/' because it violates the following Content Security Policy directive: "base-uri 'none'".
-
+CONSOLE MESSAGE: Refused to change the document base URL to http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/resources/base-href/ because it does not appear in the base-uri directive of the Content Security Policy.
 ALERT: This is a safe script.
 

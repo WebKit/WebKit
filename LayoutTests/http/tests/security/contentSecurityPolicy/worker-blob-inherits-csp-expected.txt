@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Refused to load the script 'http://localhost:8000/security/contentSecurityPolicy/resources/post-message.js' because it violates the following Content Security Policy directive: "script-src 'unsafe-inline' http://127.0.0.1:8000".
-
+CONSOLE MESSAGE: Refused to load http://localhost:8000/security/contentSecurityPolicy/resources/post-message.js because it does not appear in the script-src directive of the Content Security Policy.
 
 PASS Blob worker inherits CSP 
 

@@ -1,3 +1,2 @@
-CONSOLE MESSAGE: Refused to load '' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types text/plain'.
-
+CONSOLE MESSAGE: Refused to load because its MIME type does not appear in the plugin-types directive of the Content Security Policy.
 This test passes if there is a console message saying the plugin was blocked. 

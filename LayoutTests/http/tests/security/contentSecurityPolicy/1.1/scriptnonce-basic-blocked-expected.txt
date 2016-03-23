@@ -1,9 +1,6 @@
 ALERT: PASS (1/2)
 ALERT: PASS (2/2)
-CONSOLE MESSAGE: line 13: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'nonce-noncynonce'".
-
-CONSOLE MESSAGE: line 16: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'nonce-noncynonce'".
-
-CONSOLE MESSAGE: line 19: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'nonce-noncynonce'".
-
+CONSOLE MESSAGE: line 13: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 16: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 19: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 This tests the effect of a valid script-nonce value. It passes if three console warnings are visible, and the two PASS alerts are executed.
