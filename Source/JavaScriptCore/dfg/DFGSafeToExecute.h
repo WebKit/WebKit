@@ -242,7 +242,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case NewArrayWithSize:
     case NewArrayBuffer:
     case NewRegexp:
-    case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:
     case ProfileType:

@@ -744,7 +744,6 @@ private:
         case DFG::Jump:
         case Branch:
         case Switch:
-        case Breakpoint:
         case ProfileWillCall:
         case ProfileDidCall:
         case ProfileType:

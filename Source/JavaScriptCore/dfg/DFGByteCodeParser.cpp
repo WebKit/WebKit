@@ -3517,9 +3517,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         // === Misc operations ===
 
-        case op_debug:
-            addToGraph(Breakpoint);
+        case op_debug: {
+            // This is a nop in the DFG/FTL because when we set a breakpoint in the debugger,
+            // we will jettison all optimized CodeBlocks that contains the breakpoint.
+            addToGraph(Check); // We add a nop here so that basic block linking doesn't break.
             NEXT_OPCODE(op_debug);
+        }
 
         case op_profile_will_call: {
             addToGraph(ProfileWillCall);

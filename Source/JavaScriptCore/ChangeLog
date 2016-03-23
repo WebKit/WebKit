@@ -1,3 +1,37 @@
+2016-03-22  Saam Barati  <sbarati@apple.com>
+
+        We should FTL compile code when the debugger is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=155740
+
+        Reviewed by Oliver Hunt.
+
+        There was no fundamental reason why we didn't support debugging
+        with the FTL. It looks like this was just an oversight. We had
+        a Breakpoint node in the DFG that amounted to a nop. By removing
+        this node, we now support debugging in the FTL. Anytime a breakpoint
+        is set, we will jettison any DFG/FTL CodeBlocks that contain the breakpoint
+        that was set.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2016-03-22  Keith Miller  <keith_miller@apple.com>
 
         REGRESSION(r197543): Use-after-free on storage/indexeddb/transaction-abort-private.html

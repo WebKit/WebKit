@@ -285,7 +285,6 @@ namespace JSC { namespace DFG {
     macro(MaterializeCreateActivation, NodeResultJS | NodeHasVarArgs) \
     \
     /* Nodes for misc operations. */\
-    macro(Breakpoint, NodeMustGenerate) \
     macro(ProfileWillCall, NodeMustGenerate) \
     macro(ProfileDidCall, NodeMustGenerate) \
     macro(OverridesHasInstance, NodeMustGenerate | NodeResultBoolean) \
