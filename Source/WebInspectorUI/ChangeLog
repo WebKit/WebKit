@@ -1,3 +1,47 @@
+2016-03-23  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Quick Open dialog has fuzzy icons at 1x
+        https://bugs.webkit.org/show_bug.cgi?id=155557
+        <rdar://problem/25200217>
+
+        Reviewed by Timothy Hatcher.
+
+        New resource icons (documents and clippings) for large  tree items,
+        for use in the Quick Open dialog's tree outline.
+
+        * UserInterface/Images/ClippingCSSLarge.png: Added.
+        * UserInterface/Images/ClippingCSSLarge@2x.png: Added.
+        * UserInterface/Images/ClippingGenericLarge.png: Added.
+        * UserInterface/Images/ClippingGenericLarge@2x.png: Added.
+        * UserInterface/Images/ClippingJSLarge.png: Added.
+        * UserInterface/Images/ClippingJSLarge@2x.png: Added.
+        * UserInterface/Images/DocumentCSSLarge.png: Added.
+        * UserInterface/Images/DocumentCSSLarge@2x.png: Added.
+        * UserInterface/Images/DocumentFontLarge.png: Added.
+        * UserInterface/Images/DocumentFontLarge@2x.png: Added.
+        * UserInterface/Images/DocumentGenericLarge.png: Added.
+        * UserInterface/Images/DocumentGenericLarge@2x.png: Added.
+        * UserInterface/Images/DocumentImageLarge.png: Added.
+        * UserInterface/Images/DocumentImageLarge@2x.png: Added.
+        * UserInterface/Images/DocumentJSLarge.png: Added.
+        * UserInterface/Images/DocumentJSLarge@2x.png: Added.
+        * UserInterface/Images/DocumentMarkupLarge.png: Added.
+        * UserInterface/Images/DocumentMarkupLarge@2x.png: Added.
+        32px icons at 1x and 2x.
+
+        * UserInterface/Views/ResourceIcons.css:
+        (.large .resource-icon .icon):
+        (.large .resource-icon.resource-type-document .icon):
+        (.large .resource-icon.resource-type-image .icon):
+        (.large .resource-icon.resource-type-font .icon):
+        (.large .resource-icon.resource-type-stylesheet .icon):
+        (.large .resource-icon.resource-type-script .icon):
+        (.large .anonymous-script-icon .icon):
+        (.large .source-map-resource.resource-icon .icon):
+        (.large .source-map-resource.resource-icon.resource-type-stylesheet .icon):
+        (.large .source-map-resource.resource-icon.resource-type-script .icon):
+        Large icon styles.
+
 2016-03-22  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: String double quoting in the console and elsewhere needs to escape backslash too
