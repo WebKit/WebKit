@@ -1,3 +1,17 @@
+2016-03-23  Tim Horton  <timothy_horton@apple.com>
+
+        MiniBrowser doesn't use accelerated drawing in WebKit2 windows if a WebKit1 window was opened first
+        https://bugs.webkit.org/show_bug.cgi?id=141576
+        <rdar://problem/25304548>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences init]):
+        Make the NSUserDefaults key prefix for debug preferences (the only ones read
+        from NSUserDefaults) "WebKitDebug" instead of just "WebKit" so that they
+        don't conflict with the names that WebKit1 registers default values for.
+
 2016-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Use Region instead of IntRect in PageClient and WebPageProxy setViewNeedsDisplay method
