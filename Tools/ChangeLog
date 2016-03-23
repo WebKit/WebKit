@@ -1,3 +1,12 @@
+2016-03-23  Lucas Forschler  <lforschler@apple.com>
+
+        Teach kill-old-processes about perl 5.18.
+        
+        Reviewed by Alexey Proskuryakov
+
+        * BuildSlaveSupport/kill-old-processes:
+        (main):
+
 2016-03-22  Keith Rollin  <krollin@apple.com>
 
         Unreviewed: add Keith Rollin to the committers list.

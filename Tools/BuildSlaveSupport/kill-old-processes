@@ -69,6 +69,7 @@ def main():
         "make",
         "perl5.12",
         "perl5.16",
+        "perl5.18",        
         "perl",
         "Problem Reporter",
         "ruby",
