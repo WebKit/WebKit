@@ -1,3 +1,18 @@
+2016-03-23  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: y2 >= y1 in WebCore::RenderElement::drawLineForBoxSide
+        https://bugs.webkit.org/show_bug.cgi?id=155791
+
+        Reviewed by Simon Fraser.
+
+        With certain combination of border rect and adjacent width, we could end up with an empty final rect.
+        This patch ensures that we don't try to paint this empty rect. 
+
+        Test: fast/borders/empty-outline-border-assert.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::drawLineForBoxSide):
+
 2016-03-23  Dean Jackson  <dino@apple.com>
 
         Screen queries should query the exact screen, not a default

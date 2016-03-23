@@ -1830,6 +1830,13 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
         graphicsContext.drawRect(rect);
     };
 
+    auto drawLineFor = [this, &graphicsContext, color, antialias] (const FloatRect& rect, BoxSide side, EBorderStyle borderStyle, const FloatSize& adjacent)
+    {
+        if (rect.isEmpty())
+            return;
+        drawLineForBoxSide(graphicsContext, rect, side, color, borderStyle, adjacent.width(), adjacent.height(), antialias);
+    };
+
     float x1 = rect.x();
     float x2 = rect.maxX();
     float y1 = rect.y();
@@ -1912,39 +1919,31 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
             switch (side) {
             case BSTop:
                 paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset1, y1, (x2 - mitreOffset3) - (x1 + mitreOffset1), thirdOfThickness), deviceScaleFactor);
-                drawLineForBoxSide(graphicsContext, paintBorderRect, side, color, SOLID,
-                    adjacent1BigThird, adjacent2BigThird, antialias);
+                drawLineFor(paintBorderRect, side, SOLID, FloatSize(adjacent1BigThird, adjacent2BigThird));
 
                 paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset2, y2 - thirdOfThickness, (x2 - mitreOffset4) - (x1 + mitreOffset2), thirdOfThickness), deviceScaleFactor);
-                drawLineForBoxSide(graphicsContext, paintBorderRect, side, color, SOLID,
-                    adjacent1BigThird, adjacent2BigThird, antialias);
+                drawLineFor(paintBorderRect, side, SOLID, FloatSize(adjacent1BigThird, adjacent2BigThird));
                 break;
             case BSLeft:
                 paintBorderRect = snapRectToDevicePixels(LayoutRect(x1, y1 + mitreOffset1, thirdOfThickness, (y2 - mitreOffset3) - (y1 + mitreOffset1)), deviceScaleFactor);
-                drawLineForBoxSide(graphicsContext, paintBorderRect, side, color, SOLID,
-                    adjacent1BigThird, adjacent2BigThird, antialias);
+                drawLineFor(paintBorderRect, side, SOLID, FloatSize(adjacent1BigThird, adjacent2BigThird));
 
                 paintBorderRect = snapRectToDevicePixels(LayoutRect(x2 - thirdOfThickness, y1 + mitreOffset2, thirdOfThickness, (y2 - mitreOffset4) - (y1 + mitreOffset2)), deviceScaleFactor);
-                drawLineForBoxSide(graphicsContext, paintBorderRect, side, color, SOLID,
-                    adjacent1BigThird, adjacent2BigThird, antialias);
+                drawLineFor(paintBorderRect, side, SOLID, FloatSize(adjacent1BigThird, adjacent2BigThird));
                 break;
             case BSBottom:
                 paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset2, y1, (x2 - mitreOffset4) - (x1 + mitreOffset2), thirdOfThickness), deviceScaleFactor);
-                drawLineForBoxSide(graphicsContext, paintBorderRect, side, color, SOLID,
-                    adjacent1BigThird, adjacent2BigThird, antialias);
+                drawLineFor(paintBorderRect, side, SOLID, FloatSize(adjacent1BigThird, adjacent2BigThird));
 
                 paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset1, y2 - thirdOfThickness, (x2 - mitreOffset3) - (x1 + mitreOffset1), thirdOfThickness), deviceScaleFactor);
-                drawLineForBoxSide(graphicsContext, paintBorderRect, side, color, SOLID,
-                    adjacent1BigThird, adjacent2BigThird, antialias);
+                drawLineFor(paintBorderRect, side, SOLID, FloatSize(adjacent1BigThird, adjacent2BigThird));
                 break;
             case BSRight:
                 paintBorderRect = snapRectToDevicePixels(LayoutRect(x1, y1 + mitreOffset2, thirdOfThickness, (y2 - mitreOffset4) - (y1 + mitreOffset2)), deviceScaleFactor);
-                drawLineForBoxSide(graphicsContext, paintBorderRect, side, color, SOLID,
-                    adjacent1BigThird, adjacent2BigThird, antialias);
+                drawLineFor(paintBorderRect, side, SOLID, FloatSize(adjacent1BigThird, adjacent2BigThird));
 
                 paintBorderRect = snapRectToDevicePixels(LayoutRect(x2 - thirdOfThickness, y1 + mitreOffset1, thirdOfThickness, (y2 - mitreOffset3) - (y1 + mitreOffset1)), deviceScaleFactor);
-                drawLineForBoxSide(graphicsContext, paintBorderRect, side, color, SOLID,
-                    adjacent1BigThird, adjacent2BigThird, antialias);
+                drawLineFor(paintBorderRect, side, SOLID, FloatSize(adjacent1BigThird, adjacent2BigThird));
                 break;
             default:
                 break;
@@ -1997,20 +1996,20 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
 
         switch (side) {
         case BSTop:
-            drawLineForBoxSide(graphicsContext, FloatRect(FloatPoint(x1 + offset1, y1), FloatPoint(x2 - offset2, adjustedY)), side, color, s1, adjacent1BigHalf, adjacent2BigHalf, antialias);
-            drawLineForBoxSide(graphicsContext, FloatRect(FloatPoint(x1 + offset3, adjustedY), FloatPoint(x2 - offset4, y2)), side, color, s2, adjacent1SmallHalf, adjacent2SmallHalf, antialias);
+            drawLineFor(FloatRect(FloatPoint(x1 + offset1, y1), FloatPoint(x2 - offset2, adjustedY)), side, s1, FloatSize(adjacent1BigHalf, adjacent2BigHalf));
+            drawLineFor(FloatRect(FloatPoint(x1 + offset3, adjustedY), FloatPoint(x2 - offset4, y2)), side, s2, FloatSize(adjacent1SmallHalf, adjacent2SmallHalf));
             break;
         case BSLeft:
-            drawLineForBoxSide(graphicsContext, FloatRect(FloatPoint(x1, y1 + offset1), FloatPoint(adjustedX, y2 - offset2)), side, color, s1, adjacent1BigHalf, adjacent2BigHalf, antialias);
-            drawLineForBoxSide(graphicsContext, FloatRect(FloatPoint(adjustedX, y1 + offset3), FloatPoint(x2, y2 - offset4)), side, color, s2, adjacent1SmallHalf, adjacent2SmallHalf, antialias);
+            drawLineFor(FloatRect(FloatPoint(x1, y1 + offset1), FloatPoint(adjustedX, y2 - offset2)), side, s1, FloatSize(adjacent1BigHalf, adjacent2BigHalf));
+            drawLineFor(FloatRect(FloatPoint(adjustedX, y1 + offset3), FloatPoint(x2, y2 - offset4)), side, s2, FloatSize(adjacent1SmallHalf, adjacent2SmallHalf));
             break;
         case BSBottom:
-            drawLineForBoxSide(graphicsContext, FloatRect(FloatPoint(x1 + offset1, y1), FloatPoint(x2 - offset2, adjustedY)), side, color, s2, adjacent1BigHalf, adjacent2BigHalf, antialias);
-            drawLineForBoxSide(graphicsContext, FloatRect(FloatPoint(x1 + offset3, adjustedY), FloatPoint(x2 - offset4, y2)), side, color, s1, adjacent1SmallHalf, adjacent2SmallHalf, antialias);
+            drawLineFor(FloatRect(FloatPoint(x1 + offset1, y1), FloatPoint(x2 - offset2, adjustedY)), side, s2, FloatSize(adjacent1BigHalf, adjacent2BigHalf));
+            drawLineFor(FloatRect(FloatPoint(x1 + offset3, adjustedY), FloatPoint(x2 - offset4, y2)), side, s1, FloatSize(adjacent1SmallHalf, adjacent2SmallHalf));
             break;
         case BSRight:
-            drawLineForBoxSide(graphicsContext, FloatRect(FloatPoint(x1, y1 + offset1), FloatPoint(adjustedX, y2 - offset2)), side, color, s2, adjacent1BigHalf, adjacent2BigHalf, antialias);
-            drawLineForBoxSide(graphicsContext, FloatRect(FloatPoint(adjustedX, y1 + offset3), FloatPoint(x2, y2 - offset4)), side, color, s1, adjacent1SmallHalf, adjacent2SmallHalf, antialias);
+            drawLineFor(FloatRect(FloatPoint(x1, y1 + offset1), FloatPoint(adjustedX, y2 - offset2)), side, s2, FloatSize(adjacent1BigHalf, adjacent2BigHalf));
+            drawLineFor(FloatRect(FloatPoint(adjustedX, y1 + offset3), FloatPoint(x2, y2 - offset4)), side, s1, FloatSize(adjacent1SmallHalf, adjacent2SmallHalf));
             break;
         }
         break;
