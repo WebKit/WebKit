@@ -44,6 +44,7 @@ class FloatPoint;
 class IntSize;
 class IntRect;
 class Path;
+class Region;
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr);
 void setSourceRGBAFromColor(cairo_t*, const Color&);
@@ -64,6 +65,8 @@ IntSize cairoSurfaceSize(cairo_surface_t*);
 void flipImageSurfaceVertically(cairo_surface_t*);
 void cairoSurfaceSetDeviceScale(cairo_surface_t*, double xScale, double yScale);
 void cairoSurfaceGetDeviceScale(cairo_surface_t*, double& xScale, double& yScale);
+
+RefPtr<cairo_region_t> toCairoRegion(const Region&);
 
 } // namespace WebCore
 

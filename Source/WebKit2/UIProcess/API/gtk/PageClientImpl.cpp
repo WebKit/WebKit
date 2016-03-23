@@ -41,9 +41,11 @@
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyGtk.h"
 #include "WebProcessPool.h"
+#include <WebCore/CairoUtilities.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/RefPtrCairo.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -62,9 +64,10 @@ std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
     return std::make_unique<DrawingAreaProxyImpl>(*webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)));
 }
 
-void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
+void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
 {
-    gtk_widget_queue_draw_area(m_viewWidget, rect.x(), rect.y(), rect.width(), rect.height());
+    RefPtr<cairo_region_t> damageRegion = toCairoRegion(region);
+    gtk_widget_queue_draw_region(m_viewWidget, damageRegion.get());
 }
 
 void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, bool)

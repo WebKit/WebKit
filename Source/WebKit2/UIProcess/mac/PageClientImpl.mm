@@ -115,7 +115,7 @@ std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
     return m_impl->createDrawingAreaProxy();
 }
 
-void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
+void PageClientImpl::setViewNeedsDisplay(const WebCore::Region&)
 {
     ASSERT_NOT_REACHED();
 }

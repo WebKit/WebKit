@@ -123,7 +123,7 @@ std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
     return [m_contentView _createDrawingAreaProxy];
 }
 
-void PageClientImpl::setViewNeedsDisplay(const IntRect& rect)
+void PageClientImpl::setViewNeedsDisplay(const Region&)
 {
     ASSERT_NOT_REACHED();
 }

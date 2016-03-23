@@ -409,9 +409,10 @@ std::unique_ptr<DrawingAreaProxy> WebView::createDrawingAreaProxy()
     return std::make_unique<CoordinatedDrawingAreaProxy>(*m_page);
 }
 
-void WebView::setViewNeedsDisplay(const WebCore::IntRect& area)
+void WebView::setViewNeedsDisplay(const WebCore::Region& region)
 {
-    m_client.viewNeedsDisplay(this, area);
+    for (const auto& rect : region.rects())
+        m_client.viewNeedsDisplay(this, rect);
 }
 
 void WebView::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, bool)

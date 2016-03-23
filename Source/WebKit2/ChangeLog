@@ -1,3 +1,39 @@
+2016-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Use Region instead of IntRect in PageClient and WebPageProxy setViewNeedsDisplay method
+        https://bugs.webkit.org/show_bug.cgi?id=155747
+
+        Reviewed by Darin Adler.
+
+        This way instead of calling setViewNeedsDisplay() for every
+        rectangle in the damage area, we can build a region and call
+        setViewNeedsDisplay() once. GTK+ has API to queue a redraw for a
+        given region, so we also avoid scheduling multiple redraws in GTK+
+        port.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setViewNeedsDisplay): Convert the Region
+        into a cairo_region_t and use gtk_widget_queue_draw_region()
+        instyead of gtk_widget_queue_draw_area().
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate): Build a Region
+        with the damage rectangles and call
+        WebPageProxy::setViewNeedsDisplay() once.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setViewNeedsDisplay):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::setViewNeedsDisplay):
+        * UIProcess/efl/WebView.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+
 2016-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Invoking a link preview on a complex link (e.g. an image) results in an empty TextIndicator

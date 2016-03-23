@@ -1319,9 +1319,9 @@ void WebPageProxy::viewWillEndLiveResize()
     m_process->send(Messages::WebPage::ViewWillEndLiveResize(), m_pageID);
 }
 
-void WebPageProxy::setViewNeedsDisplay(const IntRect& rect)
+void WebPageProxy::setViewNeedsDisplay(const Region& region)
 {
-    m_pageClient.setViewNeedsDisplay(rect);
+    m_pageClient.setViewNeedsDisplay(region);
 }
 
 void WebPageProxy::requestScroll(const FloatPoint& scrollPosition, const IntPoint& scrollOrigin, bool isProgrammaticScroll)

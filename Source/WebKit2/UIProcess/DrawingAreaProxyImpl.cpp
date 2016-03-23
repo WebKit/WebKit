@@ -228,11 +228,14 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
         m_backingStore = std::make_unique<BackingStore>(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
 
     m_backingStore->incorporateUpdate(updateInfo);
+
+    Region damageRegion;
     if (updateInfo.scrollRect.isEmpty()) {
         for (const auto& rect : updateInfo.updateRects)
-            m_webPageProxy.setViewNeedsDisplay(rect);
+            damageRegion.unite(rect);
     } else
-        m_webPageProxy.setViewNeedsDisplay(IntRect(IntPoint(), m_webPageProxy.viewSize()));
+        damageRegion = IntRect(IntPoint(), m_webPageProxy.viewSize());
+    m_webPageProxy.setViewNeedsDisplay(damageRegion);
 }
 
 void DrawingAreaProxyImpl::backingStoreStateDidChange(RespondImmediatelyOrNot respondImmediatelyOrNot)

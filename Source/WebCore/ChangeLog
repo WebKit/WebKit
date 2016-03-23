@@ -1,3 +1,16 @@
+2016-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Use Region instead of IntRect in PageClient and WebPageProxy setViewNeedsDisplay method
+        https://bugs.webkit.org/show_bug.cgi?id=155747
+
+        Reviewed by Darin Adler.
+
+        Add helper function to make cairo region out of a WebCore::Region.
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::toCairoRegion):
+        * platform/graphics/cairo/CairoUtilities.h:
+
 2016-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Invoking a link preview on a complex link (e.g. an image) results in an empty TextIndicator

@@ -37,6 +37,7 @@
 #include "Path.h"
 #include "PlatformPathCairo.h"
 #include "RefPtrCairo.h"
+#include "Region.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
@@ -306,6 +307,16 @@ void cairoSurfaceGetDeviceScale(cairo_surface_t* surface, double& xScale, double
     xScale = 1;
     yScale = 1;
 #endif
+}
+
+RefPtr<cairo_region_t> toCairoRegion(const Region& region)
+{
+    RefPtr<cairo_region_t> cairoRegion = adoptRef(cairo_region_create());
+    for (const auto& rect : region.rects()) {
+        cairo_rectangle_int_t cairoRect = rect;
+        cairo_region_union_rectangle(cairoRegion.get(), &cairoRect);
+    }
+    return cairoRegion;
 }
 
 } // namespace WebCore

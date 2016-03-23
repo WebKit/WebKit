@@ -413,7 +413,7 @@ public:
     void clearSelection();
     void restoreSelectionInFocusedEditableElement();
 
-    void setViewNeedsDisplay(const WebCore::IntRect&);
+    void setViewNeedsDisplay(const WebCore::Region&);
     void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, bool isProgrammaticScroll);
     
     void setDelegatesScrolling(bool delegatesScrolling) { m_delegatesScrolling = delegatesScrolling; }

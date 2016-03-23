@@ -93,8 +93,8 @@ public:
     // Create a new drawing area proxy for the given page.
     virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() = 0;
 
-    // Tell the view to invalidate the given rect. The rect is in view coordinates.
-    virtual void setViewNeedsDisplay(const WebCore::IntRect&) = 0;
+    // Tell the view to invalidate the given region. The region is in view coordinates.
+    virtual void setViewNeedsDisplay(const WebCore::Region&) = 0;
 
     // Tell the view to scroll to the given position, and whether this was a programmatic scroll.
     virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, bool isProgrammaticScroll) = 0;
