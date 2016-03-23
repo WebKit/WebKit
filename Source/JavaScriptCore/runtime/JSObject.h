@@ -627,6 +627,7 @@ public:
     //  - does not walk the prototype chain (to check for accessors or non-writable properties).
     // This is used by JSLexicalEnvironment.
     bool putOwnDataProperty(VM&, PropertyName, JSValue, PutPropertySlot&);
+    bool putOwnDataPropertyMayBeIndex(ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     // Fast access to known property offsets.
     JSValue getDirect(PropertyOffset offset) const { return locationForOffset(offset)->get(); }
@@ -1480,6 +1481,19 @@ inline bool JSObject::putOwnDataProperty(VM& vm, PropertyName propertyName, JSVa
     ASSERT(!structure()->hasCustomGetterSetterProperties());
 
     return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
+}
+
+inline bool JSObject::putOwnDataPropertyMayBeIndex(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+{
+    ASSERT(value);
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    ASSERT(!structure()->hasGetterSetterProperties());
+    ASSERT(!structure()->hasCustomGetterSetterProperties());
+
+    if (Optional<uint32_t> index = parseIndex(propertyName))
+        return putDirectIndex(exec, index.value(), value, 0, PutDirectIndexLikePutDirect);
+
+    return putDirectInternal<PutModePut>(exec->vm(), propertyName, value, 0, slot);
 }
 
 inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)

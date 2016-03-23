@@ -51,6 +51,8 @@ function shouldBeDataProperty(expected, value, name) {
     function F() {};
     F.prototype.a = 'A';
     F.prototype.b = 'B';
+    F.prototype[9999] = '0';
+    F.prototype[0] = '0';
 
     var F2 = new F();
     Object.defineProperties(F2, {
@@ -65,10 +67,26 @@ function shouldBeDataProperty(expected, value, name) {
             configurable: true,
             writable: false,
             value: 'C'
+        },
+        9998: {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 'X'
         }
     });
 
     var result = Object.getOwnPropertyDescriptors(F2);
+
+    shouldBe(undefined, result[0]);
+
+    shouldBe(result[9998].enumerable, true);
+    shouldBe(result[9998].configurable, true);
+    shouldBe(result[9998].writable, true);
+    shouldBe(result[9998].value, 'X')
+
+    shouldBe(undefined, result[9999]);
+
     shouldBe(undefined, result.a);
 
     shouldBe(result.b.enumerable, false);
@@ -91,3 +109,40 @@ function shouldBeDataProperty(expected, value, name) {
     shouldBeDataProperty(result[symbol], 'Symbol(test)', 'global[Symbol(test)]');
     delete global[symbol];
 })(this);
+
+(function testIndexedProperties() {
+    var object = { 0: 'test' };
+    var result = Object.getOwnPropertyDescriptors(object);
+    shouldBeDataProperty(result[0], 'test', 'result[0]');
+    shouldBeDataProperty(result['0'], 'test', 'result["0"]');
+    shouldBe(result[0], result['0']);
+})();
+
+
+(function testPropertiesIndexedSetterOnPrototypeThrows() {
+    var symbol = Symbol('test');
+    Object.defineProperties(Object.prototype, {
+        0: {
+            configurable: true,
+            get() { return; },
+            set(v) { throw new Error("Setter on prototype should be unreachable!"); }
+        },
+        a: {
+            configurable: true,
+            get() { return; },
+            set(v) { throw new Error("Setter on prototype should be unreachable!"); }
+        },
+        [symbol]: {
+            configurable: true,
+            get() { return; },
+            set(v) { throw new Error("Setter on prototype should be unreachable!"); }
+        }
+    });
+    var result = Object.getOwnPropertyDescriptors({ 0: 1, a: 2, [symbol]: 3 })
+    delete Object.prototype[0];
+    delete Object.prototype.a;
+    delete Object.prototype[symbol];
+    shouldBeDataProperty(result[0], 1, 'result[0]');
+    shouldBeDataProperty(result.a, 2, 'result["a"]');
+    shouldBeDataProperty(result[symbol], 3, 'result[symbol]');
+})();

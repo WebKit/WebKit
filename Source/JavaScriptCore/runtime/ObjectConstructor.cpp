@@ -243,13 +243,17 @@ JSValue objectConstructorGetOwnPropertyDescriptors(ExecState* exec, JSObject* ob
         return jsUndefined();
 
     JSObject* descriptors = constructEmptyObject(exec);
+    if (exec->hadException())
+        return jsUndefined();
 
     for (auto& propertyName : properties) {
         JSValue fromDescriptor = objectConstructorGetOwnPropertyDescriptor(exec, object, propertyName);
         if (exec->hadException())
             return jsUndefined();
 
-        descriptors->putDirect(exec->vm(), propertyName, fromDescriptor, 0);
+        PutPropertySlot slot(descriptors);
+        descriptors->putOwnDataPropertyMayBeIndex(exec, propertyName, fromDescriptor, slot);
+        ASSERT(!exec->hadException());
     }
 
     return descriptors;
