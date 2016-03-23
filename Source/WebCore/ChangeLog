@@ -1,3 +1,43 @@
+2016-03-23  Antti Koivisto  <antti@apple.com>
+
+        Share style by sharing RenderStyle substructures not the object itself
+        https://bugs.webkit.org/show_bug.cgi?id=155787
+
+        Reviewed by Anreas Kling.
+
+        The current approach where we share RenderStyle objects between elements leads to lot of awkward and bug-prone code.
+        Most of the RenderStyle consists of shareable substructures. It is better to just share those.
+
+        With this patch we create shared styles with RenderStyle::clone(). Sharing is traced as state in Style::SharingResolver
+        instead of relying on RenderStyle equality to locate potential sharing cousins.
+
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::operator==):
+
+            m_altText was missing from operator==
+            This was exposed by TreeResolver::resolveElement change, tested by fast/css/alt-inherit-initial.html
+
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::elementHasDirectionAuto):
+        (WebCore::Style::SharingResolver::resolve):
+
+            Save share results to a map.
+
+        (WebCore::Style::SharingResolver::findSibling):
+        (WebCore::Style::SharingResolver::locateCousinList):
+
+            Instead of traversing we can now just do a hash lookup to locate a candidate cousin list.
+            There is no need for recursion anymore, the map covers sharing beyond immediate siblings too.
+            Remove most tests here as they have been already covered when sharing occured.
+
+        (WebCore::Style::canShareStyleWithControl):
+        * style/StyleSharingResolver.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::TreeResolver::resolveElement):
+
+            No need to do forced setting anymore just to support style sharing.
+
 2016-03-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Reduce PassRefPtr uses in editing

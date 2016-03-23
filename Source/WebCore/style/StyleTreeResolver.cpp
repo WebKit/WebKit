@@ -186,8 +186,8 @@ Ref<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& in
         }
     }
 
-    if (auto* sharingElement = scope().sharingResolver.resolve(element))
-        return *sharingElement->renderStyle();
+    if (auto style = scope().sharingResolver.resolve(element))
+        return *style;
 
     auto elementStyle = scope().styleResolver.styleForElement(element, &inheritedStyle, MatchAllRules, nullptr, &scope().selectorFilter);
 
@@ -697,11 +697,6 @@ Change TreeResolver::resolveElement(Element& current)
     if (RenderElement* renderer = current.renderer()) {
         if (localChange != NoChange || pseudoStyleCacheIsInvalid(renderer, newStyle.get()) || (parent().change == Force && renderer->requiresForcedStyleRecalcPropagation()) || current.styleChangeType() == SyntheticStyleChange)
             renderer->setAnimatableStyle(*newStyle, current.styleChangeType() == SyntheticStyleChange ? StyleDifferenceRecompositeLayer : StyleDifferenceEqual);
-        else if (current.needsStyleRecalc()) {
-            // Although no change occurred, we use the new style so that the cousin style sharing code won't get
-            // fooled into believing this style is the same.
-            renderer->setStyleInternal(*newStyle);
-        }
     }
 
     // If "rem" units are used anywhere in the document, and if the document element's font size changes, then force font updating

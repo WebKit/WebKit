@@ -244,6 +244,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #endif
         && contentDataEquivalent(o)
         && arePointingToEqualData(m_counterDirectives, o.m_counterDirectives)
+        && m_altText == o.m_altText
         && arePointingToEqualData(m_boxShadow, o.m_boxShadow)
         && arePointingToEqualData(m_willChange, o.m_willChange)
         && arePointingToEqualData(m_boxReflect, o.m_boxReflect)
