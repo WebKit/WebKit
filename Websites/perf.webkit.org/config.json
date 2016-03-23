@@ -25,7 +25,7 @@
         "httpdPID": "tools/remote-server-relay.pid",
         "httpdErrorLog": "tools/remote-server-relay.log",
         "httpdMutexDir": "/tmp/org.webkit.perf.remote/",
-        "url": "https://perf-safari.apple.com",
+        "url": "https://perf.webkit.org",
         "basicAuth": {
             "username": "username",
             "password": "password"

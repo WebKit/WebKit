@@ -1,3 +1,9 @@
+2016-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a typo.
+
+        * config.json:
+
 2016-03-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Commit log viewer repaints too frequently after r198499
