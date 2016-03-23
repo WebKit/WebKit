@@ -60,6 +60,15 @@ WebInspector.TimelineTreeElement = class TimelineTreeElement extends WebInspecto
         this._updateStatusButton();
     }
 
+    // Protected
+
+    onattach()
+    {
+        super.onattach();
+
+        this.listItemElement.addEventListener("click", this._clickHandler.bind(this));
+    }
+
     // Private
 
     _showCloseButton()
@@ -87,5 +96,13 @@ WebInspector.TimelineTreeElement = class TimelineTreeElement extends WebInspecto
             this._showCheckbox();
         else
             this._showCloseButton();
+    }
+
+    _clickHandler()
+    {
+        if (!this._editing)
+            return;
+
+        this.status.checked = !this.status.checked;
     }
 };

@@ -1,5 +1,21 @@
 2016-03-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Allow clicking the Timeline in Editing Mode to toggle the checkbox
+        https://bugs.webkit.org/show_bug.cgi?id=155815
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype._startEditingInstruments):
+        Remove unused variable.
+        
+        * UserInterface/Views/TimelineTreeElement.js:
+        (WebInspector.TimelineTreeElement.prototype.onattach):
+        (WebInspector.TimelineTreeElement.prototype._clickHandler):
+        Make clicking on the tree element toggle the checkbox.
+
+2016-03-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Timeline Tab sometimes restores as blank
         https://bugs.webkit.org/show_bug.cgi?id=155811
 

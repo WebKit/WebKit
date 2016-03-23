@@ -864,7 +864,6 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
         for (let type of this._instrumentTypes) {
             let treeElement = this._treeElementsByTypeMap.get(type);
-            let checked = !!treeElement;
             if (!treeElement) {
                 let timeline = this._recording.timelines.get(type);
                 console.assert(timeline, "Missing timeline for type " + type);
