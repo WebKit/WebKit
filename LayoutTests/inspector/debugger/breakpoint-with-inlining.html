@@ -1,0 +1,62 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+// Put this here instead of on <body onload> to prevent an extra Debugger.scriptParsed event.
+window.onload = runTest;
+
+function test()
+{
+    // This test sets a breakpoint on line:column in the <script> below.
+    // We first warm the function up to get foo inlined. Then we set a breakpoint
+    // and make sure that we hit it.
+
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/breakpoint-with-inlining\.html$/.test(messageObject.params.url) && messageObject.params.startLine > 10) {
+            ProtocolTest.log("Found <script>");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var lineNumber = messageObject.params.startLine + 2;
+            var columnNumber = 4;
+            var location = {scriptId: scriptIdentifier, lineNumber: lineNumber, columnNumber: columnNumber};
+
+            ProtocolTest.log("Running testInlining() without a breakpoint to get it DFG or FTL compiled with foo() inlined.");
+
+            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "testInlining(100000)"}, function() {
+                InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location}, function() {
+                    ProtocolTest.log("Running testInlining() again with a breakpoint set at foo().");
+                    InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "testInlining(10)"});
+                });
+            });
+        }
+    }
+
+    let iters = 0;
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorProtocol.sendCommand("Debugger.resume", {});
+
+        iters++;
+        if (iters === 10) {
+            ProtocolTest.log("We paused all 10 times as expected!");
+            ProtocolTest.completeTest();
+        }
+    }
+}
+</script>
+</head>
+<body>
+<p>Debugger.setBreakpoint on line:column in &lt;script&gt;</p>
+<script>          // Line 0
+function foo(i) { // Line 1;
+    return i*2;   // Line 2;
+}
+function testInlining(iters) {
+    for (let i = 0; i < iters; i++)
+        foo(i);
+}
+</script>
+</body>
+</html>

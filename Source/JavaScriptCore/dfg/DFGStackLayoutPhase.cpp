@@ -173,10 +173,7 @@ public:
             data->machineLocal = assign(allocation, data->local);
         }
         
-        if (LIKELY(!m_graph.hasDebuggerEnabled()))
-            codeBlock()->setScopeRegister(VirtualRegister());
-        else
-            codeBlock()->setScopeRegister(assign(allocation, codeBlock()->scopeRegister()));
+        codeBlock()->setScopeRegister(VirtualRegister());
 
         for (unsigned i = m_graph.m_inlineVariableData.size(); i--;) {
             InlineVariableData data = m_graph.m_inlineVariableData[i];

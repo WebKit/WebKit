@@ -1,0 +1,7 @@
+Debugger.setBreakpoint on line:column in <script>
+
+Found <script>
+Running testInlining() without a breakpoint to get it DFG or FTL compiled with foo() inlined.
+Running testInlining() again with a breakpoint set at foo().
+We paused all 10 times as expected!
+

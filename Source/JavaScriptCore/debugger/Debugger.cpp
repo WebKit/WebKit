@@ -23,9 +23,11 @@
 #include "Debugger.h"
 
 #include "CodeBlock.h"
+#include "DFGCommonData.h"
 #include "DebuggerCallFrame.h"
 #include "Error.h"
 #include "HeapIterationScope.h"
+#include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"
 #include "JSFunction.h"
@@ -248,40 +250,64 @@ void Debugger::didEvaluateScript(double startTime, ProfilingReason reason)
 
 void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, BreakpointState enabledOrNot)
 {
-    ScriptExecutable* executable = codeBlock->ownerScriptExecutable();
+    auto isBreakpointInCodeBlock = [&] (CodeBlock* codeBlock) -> bool {
+        ScriptExecutable* executable = codeBlock->ownerScriptExecutable();
 
-    SourceID sourceID = static_cast<SourceID>(executable->sourceID());
-    if (breakpoint.sourceID != sourceID)
+        SourceID sourceID = static_cast<SourceID>(executable->sourceID());
+        if (breakpoint.sourceID != sourceID)
+            return false;
+
+        unsigned line = breakpoint.line;
+        unsigned column = breakpoint.column;
+        
+        unsigned startLine = executable->firstLine();
+        unsigned startColumn = executable->startColumn();
+        unsigned endLine = executable->lastLine();
+        unsigned endColumn = executable->endColumn();
+        line += 1;
+        column = column ? column + 1 : Breakpoint::unspecifiedColumn;
+
+        if (line < startLine || line > endLine)
+            return false;
+        if (column != Breakpoint::unspecifiedColumn) {
+            if (line == startLine && column < startColumn)
+                return false;
+            if (line == endLine && column > endColumn)
+                return false;
+        }
+
+        if (!codeBlock->hasOpDebugForLineAndColumn(line, column))
+            return false;
+
+        return true;
+    };
+
+    if (isBreakpointInCodeBlock(codeBlock)) {
+        if (enabledOrNot == BreakpointEnabled)
+            codeBlock->addBreakpoint(1);
+        else
+            codeBlock->removeBreakpoint(1);
+
         return;
+    } 
 
-    unsigned line = breakpoint.line;
-    unsigned column = breakpoint.column;
-
-    unsigned startLine = executable->firstLine();
-    unsigned startColumn = executable->startColumn();
-    unsigned endLine = executable->lastLine();
-    unsigned endColumn = executable->endColumn();
-
-    // Inspector breakpoint line and column values are zero-based but the executable
-    // and CodeBlock line and column values are one-based.
-    line += 1;
-    column = column ? column + 1 : Breakpoint::unspecifiedColumn;
-
-    if (line < startLine || line > endLine)
-        return;
-    if (column != Breakpoint::unspecifiedColumn) {
-        if (line == startLine && column < startColumn)
+#if ENABLE(DFG_JIT)
+    if (enabledOrNot == BreakpointEnabled) {
+        // See if any of our inlinees contain the breakpoint. We only care about this
+        // when we set a breakpoint.
+        if (!JITCode::isOptimizingJIT(codeBlock->jitType()))
             return;
-        if (line == endLine && column > endColumn)
+        InlineCallFrameSet* inlineCallFrameSet = codeBlock->jitCode()->dfgCommon()->inlineCallFrames.get();
+        if (!inlineCallFrameSet)
             return;
+        for (InlineCallFrame* inlineCallFrame : *inlineCallFrameSet) {
+            if (isBreakpointInCodeBlock(inlineCallFrame->baselineCodeBlock.get())) {
+                codeBlock->jettison(Profiler::JettisonDueToDebuggerBreakpoint);
+                break;
+            }
+        }
     }
-    if (!codeBlock->hasOpDebugForLineAndColumn(line, column))
-        return;
-
-    if (enabledOrNot == BreakpointEnabled)
-        codeBlock->addBreakpoint(1);
-    else
-        codeBlock->removeBreakpoint(1);
+#endif // ENABLE(DFG_JIT)
 }
 
 void Debugger::applyBreakpoints(CodeBlock* codeBlock)

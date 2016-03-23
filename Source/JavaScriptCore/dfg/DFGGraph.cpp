@@ -77,9 +77,6 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     , m_refCountState(EverythingIsLive)
 {
     ASSERT(m_profiledBlock);
-    
-    m_hasDebuggerEnabled = m_profiledBlock->globalObject()->hasDebugger()
-        || Options::forceDebuggerBytecodeGeneration();
 }
 
 Graph::~Graph()

@@ -1,3 +1,36 @@
+2016-03-23  Saam barati  <sbarati@apple.com>
+
+        We should not disable inlining when the debugger is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=155741
+
+        Reviewed by Oliver Hunt.
+
+        We can enable inlining when the debugger is enabled as long
+        as we make sure we still jettison the proper CodeBlocks when
+        a breakpoint is set. This means that for any optimized CodeBlock,
+        we must ask if any of its inlinees contain the breakpoint that
+        is being set. If any inlinees do contain the breakpoint, we must
+        jettison the machine code block that they are a part of.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::toggleBreakpoint):
+        (JSC::Debugger::applyBreakpoints):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::flushForTerminal):
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::~Graph):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::hasDebuggerEnabled): Deleted.
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+
 2016-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Allow undefined/null for Symbol.search and Symbol.match
