@@ -51,26 +51,6 @@ static NSScreen *screenForDisplayID(PlatformDisplayID displayID)
     return nil;
 }
 
-int screenDepth(Widget*)
-{
-    return NSBitsPerPixelFromDepth([[NSScreen deepestScreen] depth]);
-}
-
-int screenDepthPerComponent(Widget*)
-{
-    return NSBitsPerSampleFromDepth([[NSScreen deepestScreen] depth]);
-}
-
-bool screenIsMonochrome(Widget*)
-{
-    return CGDisplayUsesForceToGray();
-}
-
-bool screenHasInvertedColors()
-{
-    return CGDisplayUsesInvertedPolarity();
-}
-
 // These functions scale between screen and page coordinates because JavaScript/DOM operations
 // assume that the screen and the page share the same coordinate system.
 
@@ -98,6 +78,34 @@ static NSScreen *screenForWidget(Widget* widget, NSWindow *window)
     
     // Widget's window is offscreen, or no screens. Fall back to the first screen if available.
     return screenForWindow(nil);
+}
+
+int screenDepth(Widget* widget)
+{
+    NSWindow *window = widget ? [widget->platformWidget() window] : nil;
+    NSScreen *screen = screenForWidget(widget, window);
+    return NSBitsPerPixelFromDepth(screen.depth);
+}
+
+int screenDepthPerComponent(Widget* widget)
+{
+    NSWindow *window = widget ? [widget->platformWidget() window] : nil;
+    NSScreen *screen = screenForWidget(widget, window);
+    return NSBitsPerSampleFromDepth(screen.depth);
+}
+
+bool screenIsMonochrome(Widget*)
+{
+    // At the moment this is a system-wide accessibility setting,
+    // so we don't need to check the screen we're using.
+    return CGDisplayUsesForceToGray();
+}
+
+bool screenHasInvertedColors()
+{
+    // At the moment this is a system-wide accessibility setting,
+    // so we don't need to check the screen we're using.
+    return CGDisplayUsesInvertedPolarity();
 }
 
 FloatRect screenRect(Widget* widget)

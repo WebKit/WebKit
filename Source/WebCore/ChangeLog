@@ -1,3 +1,26 @@
+2016-03-23  Dean Jackson  <dino@apple.com>
+
+        Screen queries should query the exact screen, not a default
+        https://bugs.webkit.org/show_bug.cgi?id=155806
+        <rdar://problem/25322916>
+
+        Reviewed by Simon Fraser.
+
+        Some of our media queries were using helper functions that
+        would query the capabilities of the deepest screen, rather
+        than the currently used screen. I changed them to use
+        the existing helper function (that works with WebKit 2)
+        and comment in some other helpers why a generic check is
+        ok.
+
+        Covered by the existing tests.
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenDepth): Use the helper function.
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome): Move these and make a comment.
+        (WebCore::screenHasInvertedColors):
+
 2016-03-23  Daniel Bates  <dabates@apple.com>
 
         CSP: Make violation console messages concise and consistent
