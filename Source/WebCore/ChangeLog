@@ -1,3 +1,18 @@
+2016-03-22  Jer Noble  <jer.noble@apple.com>
+
+        CachedResource::MediaResource types shouldn't be blocked due to mixed-content.
+        https://bugs.webkit.org/show_bug.cgi?id=155588
+        <rdar://problem/25177795>
+
+        Reviewed by Brent Fulgham.
+
+        Follow-up to address crashes caused by r198549. Rather than destroy MediaResourceLoader on a background thread,
+        migrate the Ref to the main thread before releasing.
+
+        * platform/graphics/PlatformMediaResourceLoader.h:
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession dealloc]):
+
 2016-03-22  John Wilander  <wilander@apple.com>
 
         Restrict WebSockets header parsing according to RFC6455 and RFC7230. Based on Lamarque V. Souza's original patch.

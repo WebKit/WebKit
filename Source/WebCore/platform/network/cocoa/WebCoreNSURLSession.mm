@@ -91,6 +91,12 @@ NS_ASSUME_NONNULL_END
 {
     for (auto& task : _dataTasks)
         task.get().session = nil;
+
+    // FIXME(C++14): When we can move RefPtrs directly into blocks, replace this with a RefPtr&&:
+    WebCore::PlatformMediaResourceLoader* loader = _loader.leakRef();
+    callOnMainThread([loader] {
+        loader->deref();
+    });
     [super dealloc];
 }
 
