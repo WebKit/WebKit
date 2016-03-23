@@ -1,3 +1,14 @@
+2016-03-23  Saam Barati  <sbarati@apple.com>
+
+        SmallPtrSet leaks memory in its move assignment operator when !this->isSmall()
+        https://bugs.webkit.org/show_bug.cgi?id=155701
+
+        Reviewed by Darin Adler.
+
+        * wtf/SmallPtrSet.h:
+        (WTF::SmallPtrSet::SmallPtrSet):
+        (WTF::SmallPtrSet::operator=):
+
 2016-03-22  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] [64-bit] Remove MSVC 2013 FMA3 Bug Workaround

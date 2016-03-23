@@ -57,13 +57,14 @@ public:
 
     SmallPtrSet(SmallPtrSet&& other)
     {
-        *this = WTFMove(other);
+        memcpy(this, &other, sizeof(SmallPtrSet));
+        other.initialize();
     }
 
     SmallPtrSet& operator=(SmallPtrSet&& other)
     {
-        memcpy(this, &other, sizeof(SmallPtrSet));
-        other.initialize();
+        this->~SmallPtrSet();
+        new (this) SmallPtrSet(WTFMove(other));
         return *this;
     }
 
