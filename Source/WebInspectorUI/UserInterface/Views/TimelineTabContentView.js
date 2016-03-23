@@ -306,8 +306,11 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         console.assert(this._displayedContentView);
 
         this._restoredShowingTimelineRecordingContentView = cookie[WebInspector.TimelineTabContentView.ShowingTimelineRecordingContentViewCookieKey];
-        if (!this._restoredShowingTimelineRecordingContentView)
+        if (!this._restoredShowingTimelineRecordingContentView) {
+            if (!this.contentBrowser.currentContentView)
+                this._showTimelineViewForType(WebInspector.TimelineTabContentView.OverviewTimelineIdentifierCookieValue);
             return;
+        }
 
         let selectedTimelineViewIdentifier = cookie[WebInspector.TimelineTabContentView.SelectedTimelineViewIdentifierCookieKey];
         if (selectedTimelineViewIdentifier === WebInspector.TimelineRecord.Type.RenderingFrame && !WebInspector.FPSInstrument.supported())

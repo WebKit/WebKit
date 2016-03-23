@@ -1,5 +1,17 @@
 2016-03-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Timeline Tab sometimes restores as blank
+        https://bugs.webkit.org/show_bug.cgi?id=155811
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.prototype.restoreFromCookie):
+        When early bailing in restore, if there is no content view to restore,
+        then at least fallback to showing the Overview.
+
+2016-03-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: REGRESSION: Timeline Reset does not clear datagrids
         https://bugs.webkit.org/show_bug.cgi?id=155804
 
