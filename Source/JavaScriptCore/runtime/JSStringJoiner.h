@@ -38,6 +38,7 @@ public:
     ~JSStringJoiner();
 
     void append(ExecState&, JSValue);
+    bool appendWithoutSideEffects(ExecState&, JSValue);
     void appendEmptyString();
 
     JSValue join(ExecState&);
@@ -97,7 +98,7 @@ ALWAYS_INLINE void JSStringJoiner::appendEmptyString()
     m_strings.uncheckedAppend({ { }, { } });
 }
 
-ALWAYS_INLINE void JSStringJoiner::append(ExecState& state, JSValue value)
+ALWAYS_INLINE bool JSStringJoiner::appendWithoutSideEffects(ExecState& state, JSValue value)
 {
     // The following code differs from using the result of JSValue::toString in the following ways:
     // 1) It's inlined more than JSValue::toString is.
@@ -105,35 +106,44 @@ ALWAYS_INLINE void JSStringJoiner::append(ExecState& state, JSValue value)
     // 3) It doesn't create a JSString for numbers, true, or false.
     // 4) It turns undefined and null into the empty string instead of "undefined" and "null".
     // 5) It uses optimized code paths for all the cases known to be 8-bit and for the empty string.
+    // If we might make an effectful calls, return false. Otherwise return true.
 
     if (value.isCell()) {
         JSString* jsString;
-        if (value.asCell()->isString())
-            jsString = asString(value);
-        else
-            jsString = value.toString(&state);
+        if (!value.asCell()->isString())
+            return false;
+        jsString = asString(value);
         append(jsString->viewWithUnderlyingString(state));
-        return;
+        return true;
     }
 
     if (value.isInt32()) {
         append8Bit(state.vm().numericStrings.add(value.asInt32()));
-        return;
+        return true;
     }
     if (value.isDouble()) {
         append8Bit(state.vm().numericStrings.add(value.asDouble()));
-        return;
+        return true;
     }
     if (value.isTrue()) {
         append8Bit(state.vm().propertyNames->trueKeyword.string());
-        return;
+        return true;
     }
     if (value.isFalse()) {
         append8Bit(state.vm().propertyNames->falseKeyword.string());
-        return;
+        return true;
     }
     ASSERT(value.isUndefinedOrNull());
     appendEmptyString();
+    return true;
+}
+
+ALWAYS_INLINE void JSStringJoiner::append(ExecState& state, JSValue value)
+{
+    if (!appendWithoutSideEffects(state, value)) {
+        JSString* jsString = value.toString(&state);
+        append(jsString->viewWithUnderlyingString(state));
+    }
 }
 
 }

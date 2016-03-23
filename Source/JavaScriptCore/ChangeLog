@@ -1,3 +1,22 @@
+2016-03-23  Michael Saboff  <msaboff@apple.com>
+
+        JavaScriptCore ArrayPrototype::join shouldn't cache butterfly when it makes effectful calls
+        https://bugs.webkit.org/show_bug.cgi?id=155776
+
+        Reviewed by Saam Barati.
+
+        Array.join ends up calling toString, possibly on some object.  Since these calls
+        could be effectful and could change the array itself, we can't hold the butterfly
+        pointer while making effectful calls.  Changed the code to fall back to the general
+        case when an effectful toString() call might be made.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::join):
+        * runtime/JSStringJoiner.h:
+        (JSC::JSStringJoiner::appendWithoutSideEffects): New helper that doesn't make effectful
+        toString() calls.
+        (JSC::JSStringJoiner::append): Built upon appendWithoutSideEffects.
+
 2016-03-23  Keith Miller  <keith_miller@apple.com>
 
         Array.prototype native functions' species constructors should work with proxies
