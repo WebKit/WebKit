@@ -47,8 +47,8 @@ void Heap::initializeLineMetadata()
 {
     // We assume that m_smallLineMetadata is zero-filled.
 
-    for (size_t size = alignment; size <= smallMax; size += alignment) {
-        size_t sizeClass = bmalloc::sizeClass(size);
+    for (size_t sizeClass = 0; sizeClass < sizeClassCount; ++sizeClass) {
+        size_t size = objectSize(sizeClass);
         auto& metadata = m_smallLineMetadata[sizeClass];
 
         size_t object = 0;

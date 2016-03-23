@@ -50,8 +50,6 @@ public:
     void refill(const BumpRange&);
 
 private:
-    void validate(void*);
-
     char* m_ptr;
     unsigned short m_size;
     unsigned short m_remaining;
@@ -71,18 +69,6 @@ inline void BumpAllocator::init(size_t size)
     m_remaining = 0;
 }
 
-inline void BumpAllocator::validate(void* ptr)
-{
-    UNUSED(ptr);
-    if (m_size <= smallMax) {
-        BASSERT(isSmall(ptr));
-        return;
-    }
-    
-    BASSERT(m_size <= smallMax);
-    BASSERT(isSmall(ptr));
-}
-
 inline void* BumpAllocator::allocate()
 {
     BASSERT(m_remaining);
@@ -90,7 +76,7 @@ inline void* BumpAllocator::allocate()
     --m_remaining;
     char* result = m_ptr;
     m_ptr += m_size;
-    validate(result);
+    BASSERT(isSmall(result));
     return result;
 }
 

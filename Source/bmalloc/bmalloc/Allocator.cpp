@@ -42,8 +42,8 @@ Allocator::Allocator(Heap* heap, Deallocator& deallocator)
     : m_isBmallocEnabled(heap->environment().isBmallocEnabled())
     , m_deallocator(deallocator)
 {
-    for (unsigned short size = alignment; size <= smallMax; size += alignment)
-        m_bumpAllocators[sizeClass(size)].init(size);
+    for (size_t sizeClass = 0; sizeClass < sizeClassCount; ++sizeClass)
+        m_bumpAllocators[sizeClass].init(objectSize(sizeClass));
 }
 
 Allocator::~Allocator()
@@ -164,9 +164,9 @@ void* Allocator::reallocate(void* object, size_t newSize)
 
 void Allocator::scavenge()
 {
-    for (unsigned short i = alignment; i <= smallMax; i += alignment) {
-        BumpAllocator& allocator = m_bumpAllocators[sizeClass(i)];
-        BumpRangeCache& bumpRangeCache = m_bumpRangeCaches[sizeClass(i)];
+    for (size_t sizeClass = 0; sizeClass < sizeClassCount; ++sizeClass) {
+        BumpAllocator& allocator = m_bumpAllocators[sizeClass];
+        BumpRangeCache& bumpRangeCache = m_bumpRangeCaches[sizeClass];
 
         while (allocator.canAllocate())
             m_deallocator.deallocate(allocator.allocate());
@@ -210,17 +210,29 @@ NO_INLINE void* Allocator::allocateXLarge(size_t size)
     return PerProcess<Heap>::getFastCase()->allocateXLarge(lock, size);
 }
 
+NO_INLINE void* Allocator::allocateLogSizeClass(size_t size)
+{
+    size_t sizeClass = bmalloc::sizeClass(size);
+    BumpAllocator& allocator = m_bumpAllocators[sizeClass];
+    if (!allocator.canAllocate())
+        refillAllocator(allocator, sizeClass);
+    return allocator.allocate();
+}
+
 void* Allocator::allocateSlowCase(size_t size)
 {
     if (!m_isBmallocEnabled)
         return malloc(size);
 
-    if (size <= smallMax) {
-        size_t sizeClass = bmalloc::sizeClass(size);
+    if (size <= maskSizeClassMax) {
+        size_t sizeClass = bmalloc::maskSizeClass(size);
         BumpAllocator& allocator = m_bumpAllocators[sizeClass];
         refillAllocator(allocator, sizeClass);
         return allocator.allocate();
     }
+
+    if (size <= smallMax)
+        return allocateLogSizeClass(size);
 
     if (size <= largeMax)
         return allocateLarge(size);
