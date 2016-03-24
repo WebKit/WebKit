@@ -516,7 +516,10 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
                 iteratorCount++;
             }
             currentRange = iterator.range();
-            fragmentRanges.append(currentRange);
+            if (fragmentIndex == queryRange.end.queryIndex)
+                fragmentRanges.append(Range::create(currentRange->ownerDocument(), &currentRange->startContainer(), currentRange->startOffset(), &currentRange->endContainer(), currentRange->startOffset() + queryRange.end.offset));
+            else
+                fragmentRanges.append(currentRange);
         }
         allResultRanges.append(fragmentRanges);
     }

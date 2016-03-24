@@ -1,3 +1,19 @@
+2016-03-24  Enrica Casucci  <enrica@apple.com>
+
+        DataDetection creates links that are longer than the actual result.
+        https://bugs.webkit.org/show_bug.cgi?id=155850
+        rdar://problem/25280740
+
+        Reviewed by Anders Carlsson.
+
+        When a data detection result is composed of multiple fragments,
+        the range for the last fragment should take into account the end
+        offset of the query range structure, since there could be additional
+        content in that range that is not part of the result.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+
 2016-03-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r198627.
