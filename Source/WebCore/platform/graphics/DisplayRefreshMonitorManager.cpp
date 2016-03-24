@@ -109,8 +109,8 @@ void DisplayRefreshMonitorManager::displayDidRefresh(DisplayRefreshMonitor& moni
         return;
 
     size_t monitorIndex = m_monitors.find(&monitor);
-    ASSERT(monitorIndex != notFound);
-    m_monitors.remove(monitorIndex);
+    if (monitorIndex != notFound)
+        m_monitors.remove(monitorIndex);
 }
 
 void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displayID, DisplayRefreshMonitorClient& client)
