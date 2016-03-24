@@ -117,7 +117,7 @@ unsigned RegExpObject::advanceStringUnicode(String s, unsigned length, unsigned 
     if (first < 0xD800 || first > 0xDBFF)
         return currentIndex + 1;
 
-    UChar second = s[currentIndex];
+    UChar second = s[currentIndex + 1];
     if (second < 0xDC00 || second > 0xDFFF)
         return currentIndex + 1;
 

@@ -191,6 +191,7 @@ JSValue RegExpObject::matchGlobal(ExecState* exec, JSGlobalObject* globalObject,
     const size_t maximumReasonableMatchSize = 1000000000;
 
     if (regExp->unicode()) {
+        unsigned stringLength = s.length();
         while (result) {
             if (list.size() > maximumReasonableMatchSize) {
                 throwOutOfMemoryError(exec);
@@ -201,7 +202,7 @@ JSValue RegExpObject::matchGlobal(ExecState* exec, JSGlobalObject* globalObject,
             size_t length = end - result.start;
             list.append(jsSubstring(exec, s, result.start, length));
             if (!length)
-                end = advanceStringUnicode(s, length, end);
+                end = advanceStringUnicode(s, stringLength, end);
             result = regExpConstructor->performMatch(*vm, regExp, string, s, end);
         }
     } else {

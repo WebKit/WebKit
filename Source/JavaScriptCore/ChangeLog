@@ -1,3 +1,25 @@
+2016-03-24  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Greedy unicode RegExp's don't properly backtrack past non BMP characters
+        https://bugs.webkit.org/show_bug.cgi?id=155829
+
+        Reviewed by Saam Barati.
+
+        When we backup when matching part of a unicode pattern, we can't just backup one character.
+        Instead we need to save our start position before trying to match a character and
+        restore the position if the match fails.  This was done in other places, but wasn't
+        done for all greedy types.
+
+        Fixed matchGlobal() to properly handle advancing past non BMP characters.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::matchGlobal):
+        * runtime/RegExpObjectInlines.h:
+        (JSC::RegExpObject::advanceStringUnicode):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchCharacterClass):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+
 2016-03-24  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] In some cases, the integer range optimization phase never converges

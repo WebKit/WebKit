@@ -113,6 +113,11 @@ shouldBe('"a\u{10428}\u{10428}\u{10428}c".match(/ac|a\u{10400}*cd|a\u{10400}+cd|
 shouldBe('"ab\u{10428}\u{10428}\u{10428}c\u{10a01}".match(/abc|ab\u{10400}*cd|ab\u{10400}+c\u{10a01}d|ab\u{10400}+c\u{10a01}/iu)[0]', '"ab\u{10428}\u{10428}\u{10428}c\u{10a01}"');
 shouldBe('"ab\u{10428}\u{10428}\u{10428}".match(/abc|ab\u{10428}*./u)[0]', '"ab\u{10428}\u{10428}\u{10428}"');
 shouldBe('"ab\u{10428}\u{10428}\u{10428}".match(/abc|ab\u{10400}*./iu)[0]', '"ab\u{10428}\u{10428}\u{10428}"');
+shouldBe('"\u{10400}".match(/a*/u)[0].length', '0');
+shouldBe('"\u{10400}".match(/a*/ui)[0].length', '0');
+shouldBe('"\u{10400}".match(/\\d*/u)[0].length', '0');
+shouldBe('"123\u{10400}".match(/\\d*/u)[0]', '"123"');
+shouldBe('"12X3\u{10400}4".match(/\\d{0,1}/ug)', '["1", "2", "", "3", "", "4", ""]');
 
 var re3 = new RegExp("(a\u{10410}*bc)|(a\u{10410}*b)", "u");
 var match3 = "a\u{10410}\u{10410}b".match(re3);

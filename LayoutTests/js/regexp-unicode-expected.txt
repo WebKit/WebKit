@@ -77,6 +77,11 @@ PASS "a𐐨𐐨𐐨c".match(/ac|a𐐀*cd|a𐐀+cd|a𐐀+c/iu)[0] is "a𐐨𐐨�
 PASS "ab𐐨𐐨𐐨c𐨁".match(/abc|ab𐐀*cd|ab𐐀+c𐨁d|ab𐐀+c𐨁/iu)[0] is "ab𐐨𐐨𐐨c𐨁"
 PASS "ab𐐨𐐨𐐨".match(/abc|ab𐐨*./u)[0] is "ab𐐨𐐨𐐨"
 PASS "ab𐐨𐐨𐐨".match(/abc|ab𐐀*./iu)[0] is "ab𐐨𐐨𐐨"
+PASS "𐐀".match(/a*/u)[0].length is 0
+PASS "𐐀".match(/a*/ui)[0].length is 0
+PASS "𐐀".match(/\d*/u)[0].length is 0
+PASS "123𐐀".match(/\d*/u)[0] is "123"
+PASS "12X3𐐀4".match(/\d{0,1}/ug) is ["1", "2", "", "3", "", "4", ""]
 PASS match3[0] is "a𐐐𐐐b"
 PASS match3[1] is undefined.
 PASS match3[2] is "a𐐐𐐐b"

@@ -507,14 +507,16 @@ public:
         }
 
         case QuantifierGreedy: {
-            backTrack->begin = input.getPos();
+            unsigned position = input.getPos();
+            backTrack->begin = position;
             unsigned matchAmount = 0;
             while ((matchAmount < term.atom.quantityCount) && input.checkInput(1)) {
                 if (!checkCharacterClass(term.atom.characterClass, term.invert(), term.inputPosition + 1)) {
-                    input.uncheckInput(1);
+                    input.setPos(position);
                     break;
                 }
                 ++matchAmount;
+                position = input.getPos();
             }
             backTrack->matchAmount = matchAmount;
 
@@ -1242,12 +1244,14 @@ public:
         case ByteTerm::TypePatternCharacterGreedy: {
             BackTrackInfoPatternCharacter* backTrack = reinterpret_cast<BackTrackInfoPatternCharacter*>(context->frame + currentTerm().frameLocation);
             unsigned matchAmount = 0;
+            unsigned position = input.getPos(); // May need to back out reading a surrogate pair.
             while ((matchAmount < currentTerm().atom.quantityCount) && input.checkInput(1)) {
                 if (!checkCharacter(currentTerm().atom.patternCharacter, currentTerm().inputPosition + 1)) {
-                    input.uncheckInput(1);
+                    input.setPos(position);
                     break;
                 }
                 ++matchAmount;
+                position = input.getPos();
             }
             backTrack->matchAmount = matchAmount;
 
