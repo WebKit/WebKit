@@ -1,5 +1,0 @@
-RUN(internals.settings.setAllowsInlineMediaPlayback(false))
-EVENT(canplaythrough)
-Video did not begin playing OK
-END OF TEST
-

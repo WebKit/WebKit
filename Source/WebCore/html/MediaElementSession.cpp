@@ -146,11 +146,6 @@ bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) con
     if (pageExplicitlyAllowsElementToAutoplayInline(element))
         return true;
 
-    if (requiresFullscreenForVideoPlayback(element) && !ScriptController::processingUserGestureForMedia()) {
-        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE");
-        return false;
-    }
-
     if (m_restrictions & OverrideUserGestureRequirementForMainContent && updateIsMainContent())
         return true;
 
