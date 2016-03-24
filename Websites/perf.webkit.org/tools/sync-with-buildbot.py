@@ -41,7 +41,7 @@ def main():
             'slaveName': server_config['slave']['name'],
             'slavePassword': server_config['slave']['password']}
 
-        build_requests_url = server_config['server']['url'] + '/api/build-requests/' + args.triggerable
+        build_requests_url = server_config['server']['url'] + '/api/build-requests/' + args.triggerable + '?useLegacyIdResolution=true'
         response = update_and_fetch_build_requests(build_requests_url, payload)
         open_requests = response.get('buildRequests', [])
 

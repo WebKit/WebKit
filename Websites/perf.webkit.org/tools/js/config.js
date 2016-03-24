@@ -28,10 +28,9 @@ var Config = new (class Config {
         return content;
     }
 
-    path(key)
-    {
-        return path.resolve(this._rootDirectory, this.value(key));
-    }
+    path(key) { return path.resolve(this._rootDirectory, this.value(key)); }
+    serverRoot() { return path.resolve(this._rootDirectory, 'public'); }
+    pathFromRoot(relativePathFromRoot) { return path.resolve(this._rootDirectory, relativePathFromRoot); }
 });
 
 if (typeof module != 'undefined')

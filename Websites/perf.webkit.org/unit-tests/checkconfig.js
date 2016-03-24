@@ -2,7 +2,6 @@
 
 var assert = require('assert');
 var fs = require('fs');
-var pg = require('pg');
 
 var Config = require('../tools/js/config.js');
 var Database = require('../tools/js/database.js');

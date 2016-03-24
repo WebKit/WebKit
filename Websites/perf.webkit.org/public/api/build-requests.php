@@ -30,11 +30,11 @@ function main($id, $path, $post_data) {
         $requests_fetcher->fetch_incomplete_requests_for_triggerable($triggerable['triggerable_id']);
     }
 
+    $resolve_id = array_get($_GET, 'useLegacyIdResolution');
     exit_with_success(array(
-        'buildRequests' => $requests_fetcher->results_with_resolved_ids(),
+        'buildRequests' => $resolve_id ? $requests_fetcher->results_with_resolved_ids() : $requests_fetcher->results(),
         'rootSets' => $requests_fetcher->root_sets(),
         'roots' => $requests_fetcher->roots(),
-        'updates' => $updates,
     ));
 }
 
