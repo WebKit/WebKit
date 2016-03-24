@@ -132,6 +132,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         } else if (event.keyCode === WebInspector.KeyboardShortcut.Key.Enter.keyCode) {
             if (this._treeOutline.selectedTreeElement) {
                 this.dismiss(this._treeOutline.selectedTreeElement.representedObject);
+                event.preventDefault();
                 return;
             }
 
