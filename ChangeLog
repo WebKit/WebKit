@@ -1,3 +1,12 @@
+2016-03-23  Bill Ming  <mbbill@gmail.com>
+
+        Fixed ninja build path.
+        https://bugs.webkit.org/show_bug.cgi?id=155796
+
+        Reviewed by Alex Christensen.
+
+        * Tools/Scripts/build-webkit:
+
 2016-03-21  Eric Carlson  <eric.carlson@apple.com>
 
         Add a WebRTC specific compile flag

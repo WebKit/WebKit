@@ -249,7 +249,7 @@ if (isAppleWinWebKit() || isWinCairo()) {
     }
     chdirWebKit();
     if (canUseNinja()) {
-        chdir File::Spec->catdir("WebKitBuild", configuration());
+        chdir File::Spec->catdir($baseProductDir, configuration());
         $result = system("ninja");
     } else {
         $result = buildVisualStudioProject(File::Spec->catfile("WebKitBuild", configuration(), "WebKit.sln"), $clean);
