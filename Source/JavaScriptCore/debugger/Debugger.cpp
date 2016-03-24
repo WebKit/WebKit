@@ -528,7 +528,11 @@ void Debugger::clearDebuggerRequests(JSGlobalObject* globalObject)
 
 void Debugger::setBreakpointsActivated(bool activated)
 {
+    if (activated == m_breakpointsActivated)
+        return;
+
     m_breakpointsActivated = activated;
+    recompileAllJSFunctions();
 }
 
 void Debugger::setPauseOnExceptionsState(PauseOnExceptionsState pause)

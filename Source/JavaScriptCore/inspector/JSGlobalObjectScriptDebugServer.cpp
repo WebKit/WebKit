@@ -43,7 +43,6 @@ JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer(JSGlobalObject&
 void JSGlobalObjectScriptDebugServer::attachDebugger()
 {
     attach(&m_globalObject);
-    recompileAllJSFunctions();
 }
 
 void JSGlobalObjectScriptDebugServer::detachDebugger(bool isBeingDestroyed)

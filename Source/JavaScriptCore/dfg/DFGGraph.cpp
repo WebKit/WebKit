@@ -78,7 +78,7 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
 {
     ASSERT(m_profiledBlock);
     
-    m_hasDebuggerEnabled = m_profiledBlock->globalObject()->hasDebugger()
+    m_hasDebuggerEnabled = m_profiledBlock->globalObject()->hasInteractiveDebugger()
         || Options::forceDebuggerBytecodeGeneration();
 }
 

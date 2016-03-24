@@ -368,7 +368,8 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    bool hasDebugger() const { return m_debugger; }
+    bool hasDebugger() const;
+    bool hasInteractiveDebugger() const;
     bool hasLegacyProfiler() const;
     const RuntimeFlags& runtimeFlags() const { return m_runtimeFlags; }
 

@@ -88,7 +88,6 @@ void InspectorDebuggerAgent::enable()
     if (m_enabled)
         return;
 
-    m_scriptDebugServer.setBreakpointsActivated(true);
     m_scriptDebugServer.addListener(this);
 
     if (m_listener)

@@ -60,7 +60,6 @@ PageScriptDebugServer::PageScriptDebugServer(Page& page)
 void PageScriptDebugServer::attachDebugger()
 {
     m_page.setDebugger(this);
-    recompileAllJSFunctions();
 }
 
 void PageScriptDebugServer::detachDebugger(bool isBeingDestroyed)

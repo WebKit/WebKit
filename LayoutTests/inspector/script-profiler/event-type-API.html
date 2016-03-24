@@ -36,7 +36,7 @@ function test()
         }
     });
 
-    // FIXME: <https://webkit.org/b/152193> Web Inspector: Separate Debugger enable state from being attached
+    // FIXME: <https://webkit.org/b/155851> Web Inspector: We should separate out attaching the debugger from the Debugger.enable event
     // Debugger should not need to be enabled for profiling to work.
     InspectorProtocol.sendCommand("Debugger.enable", {});
 
