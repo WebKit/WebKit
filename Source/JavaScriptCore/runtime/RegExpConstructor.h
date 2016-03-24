@@ -131,6 +131,21 @@ ALWAYS_INLINE void RegExpConstructor::recordMatch(VM& vm, RegExp* regExp, JSStri
     m_cachedResult.record(vm, this, regExp, string, result);
 }
 
+ALWAYS_INLINE bool isRegExp(VM& vm, ExecState* exec, JSValue value)
+{
+    if (!value.isObject())
+        return false;
+
+    JSObject* object = asObject(value);
+    JSValue matchValue = object->get(exec, vm.propertyNames->matchSymbol);
+    if (vm.exception())
+        return false;
+    if (!matchValue.isUndefined())
+        return matchValue.toBoolean(exec);
+
+    return object->inherits(RegExpObject::info());
+}
+
 } // namespace JSC
 
 #endif // RegExpConstructor_h

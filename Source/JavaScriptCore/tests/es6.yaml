@@ -1220,6 +1220,12 @@
   cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.toStringTag_misc._built-ins.js
   cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.match_String.prototype.startsWith.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.match_String.prototype.endsWith.js
+  cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.match_String.prototype.includes.js
+  cmd: runES6 :normal
 # Late-stage proposals for a future ECMAScript standard
 # FIXME: move these to a new directory?
 - path: es6/Object_static_methods_Object.getOwnPropertyDescriptors.js

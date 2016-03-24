@@ -1,5 +1,38 @@
 2016-03-24  Saam barati  <sbarati@apple.com>
 
+        ES6: Implement IsRegExp function and use where needed in String.prototype.* methods
+        https://bugs.webkit.org/show_bug.cgi?id=155854
+
+        Reviewed by Mark Lam.
+
+        This patch is a straight forward implementation of IsRegExp
+        in the ES6 spec:
+        https://tc39.github.io/ecma262/#sec-isregexp
+        We now use this IsRegExp function inside String.prototype.(startsWith | endsWith | includes)
+        as is dictated by the spec.
+
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::recordMatch):
+        (JSC::isRegExp):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncStartsWith):
+        (JSC::stringProtoFuncEndsWith):
+        (JSC::stringProtoFuncIncludes):
+        * tests/es6.yaml:
+        * tests/es6/well-known_symbols_Symbol.match_String.prototype.endsWith.js: Added.
+        (test):
+        * tests/es6/well-known_symbols_Symbol.match_String.prototype.includes.js: Added.
+        (test):
+        * tests/es6/well-known_symbols_Symbol.match_String.prototype.startsWith.js: Added.
+        (test):
+        * tests/stress/string-prototype-methods-endsWith-startsWith-includes-correctness.js: Added.
+        (assert):
+        (test):
+        (test.get let):
+        (get let):
+
+2016-03-24  Saam barati  <sbarati@apple.com>
+
         Web Inspector: Separate Debugger enable state from the debugger breakpoints enabled state
         https://bugs.webkit.org/show_bug.cgi?id=152193
         <rdar://problem/23867520>

@@ -1840,8 +1840,12 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     JSValue a0 = exec->argument(0);
-    if (jsDynamicCast<RegExpObject*>(a0))
-        return throwVMTypeError(exec);
+    VM& vm = exec->vm();
+    bool isRegularExpression = isRegExp(vm, exec, a0);
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+    if (isRegularExpression)
+        return throwVMTypeError(exec, "Argument to String.prototype.startsWith can not be a RegExp.");
 
     String searchString = a0.toString(exec)->value(exec);
     if (exec->hadException())
@@ -1872,8 +1876,12 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     JSValue a0 = exec->argument(0);
-    if (jsDynamicCast<RegExpObject*>(a0))
-        return throwVMTypeError(exec);
+    VM& vm = exec->vm();
+    bool isRegularExpression = isRegExp(vm, exec, a0);
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+    if (isRegularExpression)
+        return throwVMTypeError(exec, "Argument to String.prototype.endsWith can not be a RegExp.");
 
     String searchString = a0.toString(exec)->value(exec);
     if (exec->hadException())
@@ -1905,8 +1913,12 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     JSValue a0 = exec->argument(0);
-    if (jsDynamicCast<RegExpObject*>(a0))
-        return throwVMTypeError(exec);
+    VM& vm = exec->vm();
+    bool isRegularExpression = isRegExp(vm, exec, a0);
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+    if (isRegularExpression)
+        return throwVMTypeError(exec, "Argument to String.prototype.includes can not be a RegExp.");
 
     String searchString = a0.toString(exec)->value(exec);
     if (exec->hadException())
