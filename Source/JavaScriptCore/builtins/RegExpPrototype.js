@@ -23,25 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+function advanceStringIndexUnicode(string, stringLength, index)
+{
+    // This function implements AdvanceStringIndex described in ES6 21.2.5.2.3, steps 6-11.
+    // It assumes that "unicode" is true for its callers.
+    "use strict";
+
+    if (index + 1 >= stringLength)
+        return index + 1;
+
+    let first = string.@charCodeAt(index);
+    if (first < 0xD800 || first > 0xDBFF)
+        return index + 1;
+
+    let second = string.@charCodeAt(index + 1);
+    if (second < 0xDC00 || second > 0xDFFF)
+        return index + 1;
+
+    return index + 2;
+}
+
 function match(str)
 {
     "use strict";
-
-    function advanceStringIndexUnicode(string, stringLength, index)
-    {
-        if (index + 1 >= stringLength)
-            return index + 1;
-
-        let first = string.@charCodeAt(index);
-        if (first < 0xD800 || first > 0xDBFF)
-            return index + 1;
-
-        let second = string.@charCodeAt(index + 1);
-        if (second < 0xDC00 || second > 0xDFFF)
-            return index + 1;
-
-        return index + 2;
-    }
 
     if (!(this instanceof @Object))
         throw new @TypeError("RegExp.prototype.@@match requires that |this| be an Object");
@@ -75,7 +79,7 @@ function match(str)
 
             if (!resultString.length) {
                 if (unicode)
-                    regexp.lastIndex = advanceStringIndexUnicode(stringArg, stringLength, regexp.lastIndex);
+                    regexp.lastIndex = @advanceStringIndexUnicode(stringArg, stringLength, regexp.lastIndex);
                 else
                     regexp.lastIndex++;
             }
