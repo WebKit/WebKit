@@ -58,10 +58,12 @@ public:
     WEBCORE_EXPORT static RetainPtr<DDActionContext> detectItemAroundHitTestResult(const HitTestResult&, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange);
 #endif
     WEBCORE_EXPORT static NSArray *detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes);
-    WEBCORE_EXPORT static bool isDataDetectorLink(Element*);
-    WEBCORE_EXPORT static String dataDetectorIdentifier(Element*);
-    WEBCORE_EXPORT static bool shouldCancelDefaultAction(Element*);
-    WEBCORE_EXPORT static bool requiresExtendedContext(Element*);
+#if PLATFORM(IOS)
+    WEBCORE_EXPORT static bool isDataDetectorLink(Element&);
+    WEBCORE_EXPORT static String dataDetectorIdentifier(Element&);
+    WEBCORE_EXPORT static bool shouldCancelDefaultAction(Element&);
+    WEBCORE_EXPORT static bool requiresExtendedContext(Element&);
+#endif
 };
 
 } // namespace WebCore

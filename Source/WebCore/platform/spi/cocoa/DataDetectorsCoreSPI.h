@@ -26,6 +26,8 @@
 #ifndef DataDetectorsCoreSPI_h
 #define DataDetectorsCoreSPI_h
 
+typedef struct __DDResult *DDResultRef;
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <DataDetectorsCore/DDBinderKeys_Private.h>
@@ -97,6 +99,7 @@ extern NSString * const DDURLScheme;
 
 @interface DDScannerResult : NSObject <NSCoding, NSSecureCoding>
 + (NSArray *)resultsFromCoreResults:(CFArrayRef)coreResults;
+- (DDResultRef)coreResult;
 @end
 
 #define DDResultPropertyPassiveDisplay   (1 << 0)
@@ -113,7 +116,6 @@ typedef struct __DDQueryRange {
 
 #endif // !USE(APPLE_INTERNAL_SDK)
 
-typedef struct __DDResult *DDResultRef;
 typedef struct __DDScanQuery *DDScanQueryRef;
 typedef struct __DDScanner *DDScannerRef;
 

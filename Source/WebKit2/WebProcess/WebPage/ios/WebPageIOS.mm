@@ -600,7 +600,7 @@ void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransaction
 
     if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
-    else if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(&downcast<Element>(*nodeRespondingToClick))) {
+    else if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
         requestPositionInformation(adjustedIntPoint);
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
     } else
@@ -683,7 +683,7 @@ void WebPage::commitPotentialTap(uint64_t lastLayerTreeTransactionId)
     }
 
     if (m_potentialTapNode == nodeRespondingToClick) {
-        if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(&downcast<Element>(*nodeRespondingToClick))) {
+        if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
             requestPositionInformation(roundedIntPoint(m_potentialTapLocation));
             commitPotentialTapFailed();
         } else
@@ -2223,12 +2223,12 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                             info.linkIndicator = textIndicator->data();
                     }
 #if ENABLE(DATA_DETECTION)
-                    info.isDataDetectorLink = DataDetection::isDataDetectorLink(element);
+                    info.isDataDetectorLink = DataDetection::isDataDetectorLink(*element);
                     if (info.isDataDetectorLink) {
                         const int dataDetectionExtendedContextLength = 350;
-                        info.dataDetectorIdentifier = DataDetection::dataDetectorIdentifier(element);
+                        info.dataDetectorIdentifier = DataDetection::dataDetectorIdentifier(*element);
                         info.dataDetectorResults = element->document().frame()->dataDetectionResults();
-                        if (DataDetection::requiresExtendedContext(element)) {
+                        if (DataDetection::requiresExtendedContext(*element)) {
                             RefPtr<Range> linkRange = Range::create(element->document());
                             linkRange->selectNodeContents(element, ASSERT_NO_EXCEPTION);
                             info.textBefore = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(linkRange->startPosition(), dataDetectionExtendedContextLength, DirectionBackward).get(), TextIteratorDefaultBehavior, true);

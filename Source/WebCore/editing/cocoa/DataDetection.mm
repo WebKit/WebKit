@@ -55,46 +55,6 @@ const char *dataDetectorsAttributeResultKey = "x-apple-data-detectors-result";
 
 namespace WebCore {
 
-bool DataDetection::isDataDetectorLink(Element* element)
-{
-    // FIXME: We should be able to ask this from DataDetectorsCore when rdar://problem/25206062 is fixed.
-    if (!is<HTMLAnchorElement>(*element))
-        return false;
-
-    if (element->getAttribute(dataDetectorsURLScheme) == "true")
-        return true;
-    URL url = downcast<HTMLAnchorElement>(*element).href();
-    return url.protocolIs("mailto") || url.protocolIs("tel");
-}
-
-bool DataDetection::requiresExtendedContext(Element* element)
-{
-    return element->getAttribute(dataDetectorsAttributeTypeKey) == "calendar-event";
-}
-
-String DataDetection::dataDetectorIdentifier(Element* element)
-{
-    return element->getAttribute(dataDetectorsAttributeResultKey);
-}
-
-bool DataDetection::shouldCancelDefaultAction(Element* element)
-{
-#if PLATFORM(MAC)
-    UNUSED_PARAM(element);
-    return false;
-#else
-    // FIXME: We should be able to retrieve this information from DataDetectorsCore when rdar://problem/25169133 is fixed.
-    if (!is<HTMLAnchorElement>(*element))
-        return false;
-    if (element->getAttribute(dataDetectorsURLScheme) != "true")
-        return false;
-    String type = element->getAttribute(dataDetectorsAttributeTypeKey);
-    if (type == "misc" || type == "calendar-event" || type == "telephone")
-        return true;
-    return false;
-#endif
-}
-
 #if PLATFORM(MAC)
 
 static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition position, RefPtr<Range> contextRange, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
@@ -189,7 +149,49 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS)
+bool DataDetection::isDataDetectorLink(Element& element)
+{
+    if (!is<HTMLAnchorElement>(element))
+        return false;
     
+    return [softLink_DataDetectorsCore_DDURLTapAndHoldSchemes() containsObject:(NSString *)downcast<HTMLAnchorElement>(element).href().protocol().convertToASCIILowercase()];
+}
+
+bool DataDetection::requiresExtendedContext(Element& element)
+{
+    return equalIgnoringASCIICase(element.fastGetAttribute(QualifiedName(nullAtom, dataDetectorsAttributeTypeKey, nullAtom)), "calendar-event");
+}
+
+String DataDetection::dataDetectorIdentifier(Element& element)
+{
+    return element.fastGetAttribute(QualifiedName(nullAtom, dataDetectorsAttributeResultKey, nullAtom));
+}
+
+bool DataDetection::shouldCancelDefaultAction(Element& element)
+{
+    if (!isDataDetectorLink(element))
+        return false;
+    
+    if (softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForURL(downcast<HTMLAnchorElement>(element).href()))
+        return true;
+    
+    const AtomicString& resultAttribute = element.fastGetAttribute(QualifiedName(nullAtom, dataDetectorsAttributeResultKey, nullAtom));
+    if (resultAttribute.isEmpty())
+        return false;
+    NSArray *results = element.document().frame()->dataDetectionResults();
+    if (!results)
+        return false;
+    Vector<String> resultIndices;
+    resultAttribute.string().split('/', resultIndices);
+    DDResultRef result = [[results objectAtIndex:resultIndices[0].toInt()] coreResult];
+    // Handle the case of a signature block, where we need to check the correct subresult.
+    for (size_t i = 1; i < resultIndices.size(); i++) {
+        results = (NSArray *)softLink_DataDetectorsCore_DDResultGetSubResults(result);
+        result = (DDResultRef)[results objectAtIndex:resultIndices[i].toInt()];
+    }
+    return softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForResult(result);
+}
+
 static BOOL resultIsURL(DDResultRef result)
 {
     if (!result)
