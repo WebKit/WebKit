@@ -36,25 +36,6 @@ PlatformTimeRanges::PlatformTimeRanges(const MediaTime& start, const MediaTime& 
     add(start, end);
 }
 
-PlatformTimeRanges::PlatformTimeRanges(const PlatformTimeRanges& other)
-{
-    copy(other);
-}
-
-PlatformTimeRanges& PlatformTimeRanges::operator=(const PlatformTimeRanges& other)
-{
-    return copy(other);
-}
-
-PlatformTimeRanges& PlatformTimeRanges::copy(const PlatformTimeRanges& other)
-{
-    unsigned size = other.m_ranges.size();
-    for (unsigned i = 0; i < size; i++)
-        add(other.m_ranges[i].m_start, other.m_ranges[i].m_end);
-    
-    return *this;
-}
-
 void PlatformTimeRanges::invert()
 {
     PlatformTimeRanges inverted;

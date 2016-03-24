@@ -125,6 +125,9 @@ public:
 
     void rangeRemoval(const MediaTime&, const MediaTime&);
 
+    bool isBufferedDirty() const { return m_bufferedDirty; }
+    void setBufferedDirty(bool flag) { m_bufferedDirty = flag; }
+
     // ActiveDOMObject API.
     bool hasPendingActivity() const override;
 
@@ -225,6 +228,7 @@ private:
 
     HashMap<AtomicString, TrackBuffer> m_trackBufferMap;
     RefPtr<TimeRanges> m_buffered;
+    bool m_bufferedDirty { true };
 
     enum AppendStateType { WaitingForSegment, ParsingInitSegment, ParsingMediaSegment };
     AppendStateType m_appendState;

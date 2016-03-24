@@ -136,6 +136,7 @@ protected:
     RefPtr<MediaSourcePrivate> m_private;
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
+    mutable std::unique_ptr<PlatformTimeRanges> m_buffered;
     HTMLMediaElement* m_mediaElement;
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;

@@ -141,13 +141,20 @@ MediaTime MediaSource::currentTime() const
 
 std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 {
+    if (m_buffered && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [] (RefPtr<SourceBuffer>& buffer) { return !buffer->isBufferedDirty(); }))
+        return std::make_unique<PlatformTimeRanges>(*m_buffered);
+
+    m_buffered = std::make_unique<PlatformTimeRanges>();
+    for (auto& sourceBuffer : *m_activeSourceBuffers)
+        sourceBuffer->setBufferedDirty(false);
+
     // Implements MediaSource algorithm for HTMLMediaElement.buffered.
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#htmlmediaelement-extensions
     Vector<PlatformTimeRanges> activeRanges = this->activeRanges();
 
     // 1. If activeSourceBuffers.length equals 0 then return an empty TimeRanges object and abort these steps.
     if (activeRanges.isEmpty())
-        return std::make_unique<PlatformTimeRanges>();
+        return std::make_unique<PlatformTimeRanges>(*m_buffered);
 
     // 2. Let active ranges be the ranges returned by buffered for each SourceBuffer object in activeSourceBuffers.
     // 3. Let highest end time be the largest range end time in the active ranges.
@@ -160,10 +167,10 @@ std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 
     // Return an empty range if all ranges are empty.
     if (!highestEndTime)
-        return std::make_unique<PlatformTimeRanges>();
+        return std::make_unique<PlatformTimeRanges>(*m_buffered);
 
     // 4. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
-    PlatformTimeRanges intersectionRanges(MediaTime::zeroTime(), highestEndTime);
+    m_buffered->add(MediaTime::zeroTime(), highestEndTime);
 
     // 5. For each SourceBuffer object in activeSourceBuffers run the following steps:
     bool ended = readyState() == endedKeyword();
@@ -175,10 +182,10 @@ std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 
         // 5.3 Let new intersection ranges equal the the intersection between the intersection ranges and the source ranges.
         // 5.4 Replace the ranges in intersection ranges with the new intersection ranges.
-        intersectionRanges.intersectWith(sourceRanges);
+        m_buffered->intersectWith(sourceRanges);
     }
 
-    return std::make_unique<PlatformTimeRanges>(intersectionRanges);
+    return std::make_unique<PlatformTimeRanges>(*m_buffered);
 }
 
 void MediaSource::seekToTime(const MediaTime& time)
@@ -914,6 +921,8 @@ void MediaSource::regenerateActiveSourceBuffers()
             newList.append(sourceBuffer);
     }
     m_activeSourceBuffers->swap(newList);
+    for (auto& sourceBuffer : *m_activeSourceBuffers)
+        sourceBuffer->setBufferedDirty(true);
 }
 
 }
