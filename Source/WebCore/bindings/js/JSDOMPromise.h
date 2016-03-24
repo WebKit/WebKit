@@ -56,6 +56,8 @@ private:
 };
 
 void fulfillPromiseWithJSON(DeferredWrapper&, const String&);
+void fulfillPromiseWithArrayBuffer(DeferredWrapper&, ArrayBuffer*);
+void fulfillPromiseWithArrayBuffer(DeferredWrapper&, const void*, size_t);
 void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
 
 inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, JSC::EncodedJSValue promiseFunction(JSC::ExecState*, JSC::JSPromiseDeferred*))
@@ -165,16 +167,6 @@ inline void DeferredWrapper::resolve<JSC::JSValue>(const JSC::JSValue& value)
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     resolve(*exec, value);
-}
-template<>
-inline void DeferredWrapper::resolve<Vector<unsigned char>>(const Vector<unsigned char>& result)
-{
-    ASSERT(m_deferred);
-    ASSERT(m_globalObject);
-    JSC::ExecState* exec = m_globalObject->globalExec();
-    JSC::JSLockHolder locker(exec);
-    auto buffer = ArrayBuffer::tryCreate(result.data(), result.size());
-    resolve(*exec, toJS(exec, m_globalObject.get(), buffer.get()));
 }
 
 template<>

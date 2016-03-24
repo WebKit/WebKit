@@ -1,3 +1,31 @@
+2016-03-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Remove DeferredWrapper::resolve<Vector<unsigned char>>
+        https://bugs.webkit.org/show_bug.cgi?id=154849
+
+        Reviewed by Darin Adler.
+
+        Adding fulfillPromiseWithArrayBuffer to resolve a promise with an ArrayBuffer.
+        If the ArrayBuffer is null, the promise is rejected with an OutOfMemory exception.
+
+        Not covered by tests since we would need to make tryCreate return null on failing allocation.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::processIfEmptyOrDisturbed):
+        (WebCore::FetchBody::loadedAsArrayBuffer):
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::fulfillPromiseWithArrayBuffer):
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredWrapper::resolve<JSC::JSValue>): Deleted.
+        (WebCore::DeferredWrapper::resolve): Deleted.
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::JSSubtleCrypto::encrypt):
+        (WebCore::JSSubtleCrypto::decrypt):
+        (WebCore::JSSubtleCrypto::sign):
+        (WebCore::JSSubtleCrypto::digest):
+        (WebCore::JSSubtleCrypto::exportKey):
+        (WebCore::JSSubtleCrypto::wrapKey):
+
 2016-03-23  Daniel Bates  <dabates@apple.com>
 
         CSP: Simplify logic for checking policies

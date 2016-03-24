@@ -167,7 +167,7 @@ JSValue JSSubtleCrypto::encrypt(ExecState& state)
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
     DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
-        wrapper.resolve(result);
+        fulfillPromiseWithArrayBuffer(wrapper, result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
         wrapper.reject(nullptr);
@@ -219,7 +219,7 @@ JSValue JSSubtleCrypto::decrypt(ExecState& state)
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
     DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
-        wrapper.resolve(result);
+        fulfillPromiseWithArrayBuffer(wrapper, result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
         wrapper.reject(nullptr);
@@ -271,7 +271,7 @@ JSValue JSSubtleCrypto::sign(ExecState& state)
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
     DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
-        wrapper.resolve(result);
+        fulfillPromiseWithArrayBuffer(wrapper, result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
         wrapper.reject(nullptr);
@@ -371,7 +371,7 @@ JSValue JSSubtleCrypto::digest(ExecState& state)
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
     DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
-        wrapper.resolve(result);
+        fulfillPromiseWithArrayBuffer(wrapper, result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
         wrapper.reject(nullptr);
@@ -613,7 +613,7 @@ JSValue JSSubtleCrypto::exportKey(ExecState& state)
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
     DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
-        wrapper.resolve(result);
+        fulfillPromiseWithArrayBuffer(wrapper, result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
         wrapper.reject(nullptr);
@@ -673,7 +673,7 @@ JSValue JSSubtleCrypto::wrapKey(ExecState& state)
         auto encryptSuccessCallback = [wrapper, algorithmPtr, parametersPtr](const Vector<uint8_t>& encryptedData) mutable {
             delete algorithmPtr;
             delete parametersPtr;
-            wrapper.resolve(encryptedData);
+            fulfillPromiseWithArrayBuffer(wrapper, encryptedData.data(), encryptedData.size());
         };
         auto encryptFailureCallback = [wrapper, algorithmPtr, parametersPtr]() mutable {
             delete algorithmPtr;

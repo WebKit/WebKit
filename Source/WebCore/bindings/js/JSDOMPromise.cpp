@@ -93,4 +93,18 @@ void fulfillPromiseWithJSON(DeferredWrapper& promise, const String& data)
         promise.resolve(value);
 }
 
+void fulfillPromiseWithArrayBuffer(DeferredWrapper& promise, ArrayBuffer* arrayBuffer)
+{
+    if (!arrayBuffer) {
+        promise.reject<JSValue>(createOutOfMemoryError(promise.globalObject().globalExec()));
+        return;
+    }
+    promise.resolve(arrayBuffer);
+}
+
+void fulfillPromiseWithArrayBuffer(DeferredWrapper& promise, const void* data, size_t length)
+{
+    fulfillPromiseWithArrayBuffer(promise, ArrayBuffer::tryCreate(data, length).get());
+}
+
 }
