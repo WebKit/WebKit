@@ -173,13 +173,6 @@ button:disabled {
     margin: 0 auto;
 }
 
-@media screen and (min-device-width: 1800px) {
-    .frame-container > iframe {
-        width: 1600px;
-        height: 800px;
-    }
-}
-
 @media screen and (max-device-width: 414px) {
     #test-container {
         padding: 0;
@@ -188,7 +181,6 @@ button:disabled {
     .frame-container {
         width: 100%;
         height: 100%;
-        overflow: hidden;
     }
 
     .frame-container > iframe {
@@ -197,9 +189,24 @@ button:disabled {
     }
 }
 
-@media screen and (max-device-width: 1024px) {
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
     .frame-container > iframe {
         width: 900px;
+        height: 600px;
+    }
+}
+
+@media screen and (min-device-width: 1024px) and (max-device-width: 1366px) {
+    .frame-container > iframe {
+        width: 1200px;
+        height: 800px;
+    }
+}
+
+@media screen and (min-width: 1800px) {
+    .frame-container > iframe {
+        width: 1600px;
+        height: 800px;
     }
 }
 

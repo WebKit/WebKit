@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="resources/stage.css">
+    <link rel="stylesheet" type="text/css" href="../resources/stage.css">
     <style type="text/css">
 
         #stage {
@@ -10,6 +10,17 @@
             font-size: 48px;
             background-color: #313534;/* #d1948c;*/
         }
+        @media screen and (max-device-width: 414px) {
+            #stage {
+                font-size: 36px;
+            }
+        }
+        @media screen and (max-device-width: 320px) {
+            #stage {
+                font-size: 24px;
+            }
+        }
+
         #stage div {
             width: 80%;
             height: 90%;

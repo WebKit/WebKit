@@ -1,5 +1,32 @@
 2016-03-23  Jon Lee  <jonlee@apple.com>
 
+        Update support for other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=155824
+
+        Reviewed by Simon Fraser.
+
+        * Animometer/resources/debug-runner/animometer.css: Remove extraneous media query. All of it should
+        be handled in the release stylesheet.
+        * Animometer/resources/debug-runner/animometer.js: Add support for browsers that return an HTMLCollection
+        when retrieving radio elements with a name, instead of the selected value.
+        * Animometer/resources/runner/animometer.css: Adjust the queries for devices of varying widths.
+        (.frame-container): Move overflow:hidden to #stage.
+        * Animometer/tests/master/resources/stage.css: Consolidate into tests/resources/stage.css.
+        * Animometer/tests/resources/stage.css:
+        (body): Remove overflow:hidden.
+        (#stage): Set overflow:hidden here.
+        (#center-text): Moved from master/resources/stage.css.
+
+        Update stylesheet hrefs.
+        * Animometer/tests/master/canvas-stage.html:
+        * Animometer/tests/master/focus.html:
+        * Animometer/tests/master/leaves.html:
+        * Animometer/tests/master/multiply.html:
+        * Animometer/tests/master/particles.html:
+        * Animometer/tests/master/text.html: Adjust text size to fit in the device screen.
+
+2016-03-23  Jon Lee  <jonlee@apple.com>
+
         Make the benchmark require device to be in landscape orientation
         https://bugs.webkit.org/show_bug.cgi?id=155822
         rdar://problem/25258650

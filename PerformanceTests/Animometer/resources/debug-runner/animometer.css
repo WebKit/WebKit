@@ -290,13 +290,6 @@ label.tree-label {
     background-color: rgb(235, 96, 32);
 }
 
-@media screen and (min-device-width: 1800px) {
-    .frame-container > iframe {
-        width: 1600px;
-        height: 800px;
-    }
-}
-
 /* -------------------------------------------------------------------------- */
 /*                           Results Section                                  */
 /* -------------------------------------------------------------------------- */

@@ -142,6 +142,14 @@ window.optionsManager =
         var formElement = document.forms["benchmark-options"].elements[name];
         if (formElement.type == "checkbox")
             return formElement.checked;
+        else if (formElement.constructor === HTMLCollection) {
+            for (var i = 0; i < formElement.length; ++i) {
+                var radio = formElement[i];
+                if (radio.checked)
+                    return formElement.value;
+            }
+            return null;
+        }
         return formElement.value;
     },
 
@@ -181,8 +189,19 @@ window.optionsManager =
                 options[name] = +formElement.value;
             else if (type == "checkbox")
                 options[name] = formElement.checked;
-            else if (type == "radio")
-                options[name] = formElements[name].value;
+            else if (type == "radio") {
+                var radios = formElements[name];
+                if (radios.constructor === HTMLCollection) {
+                    for (var j = 0; j < radios.length; ++j) {
+                        var radio = radios[j];
+                        if (radio.checked) {
+                            options[name] = radio.value;
+                            break;
+                        }
+                    }
+                } else
+                    options[name] = formElements[name].value;
+            }
 
             try {
                 localStorage.setItem(name, options[name]);
