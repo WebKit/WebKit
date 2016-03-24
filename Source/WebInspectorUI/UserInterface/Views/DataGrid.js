@@ -606,17 +606,25 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             var headerTableColumnElements = this._headerTableColumnGroupElement.children;
             var tableWidth = this._dataTableElement.offsetWidth;
             var numColumns = headerTableColumnElements.length;
-            for (var i = 0; i < numColumns; i++) {
-                var headerCellElement = this._headerTableBodyElement.rows[0].cells[i]
+            var cells = this._headerTableBodyElement.rows[0].cells;
+
+            // Calculate widths.
+            var columnWidths = [];
+            for (var i = 0; i < numColumns; ++i) {
+                var headerCellElement = cells[i];
                 if (this._isColumnVisible(headerCellElement.columnIdentifier)) {
                     var columnWidth = headerCellElement.offsetWidth;
                     var percentWidth = ((columnWidth / tableWidth) * 100) + "%";
-                    this._headerTableColumnGroupElement.children[i].style.width = percentWidth;
-                    this._dataTableColumnGroupElement.children[i].style.width = percentWidth;
-                } else {
-                    this._headerTableColumnGroupElement.children[i].style.width = 0;
-                    this._dataTableColumnGroupElement.children[i].style.width = 0;
-                }
+                    columnWidths.push(percentWidth);
+                } else
+                    columnWidths.push(0);
+            }
+
+            // Apply widths.
+            for (var i = 0; i < numColumns; i++) {
+                let percentWidth = columnWidths[i];
+                this._headerTableColumnGroupElement.children[i].style.width = percentWidth;
+                this._dataTableColumnGroupElement.children[i].style.width = percentWidth;
             }
 
             this._columnWidthsInitialized = true;
@@ -693,21 +701,30 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         var previousResizer = null;
 
         // Make n - 1 resizers for n columns.
-        for (var i = 0; i < this.orderedColumns.length - 1; ++i) {
+        var numResizers = this.orderedColumns.length - 1;
+
+        // Calculate left offsets.
+        // Get the width of the cell in the first (and only) row of the
+        // header table in order to determine the width of the column, since
+        // it is not possible to query a column for its width.
+        var cells = this._headerTableBodyElement.rows[0].cells;
+        var columnWidths = [];
+        for (var i = 0; i < numResizers; ++i) {
+            left += cells[i].getBoundingClientRect().width;
+            columnWidths.push(left);
+        }
+
+        // Apply left offsets.
+        for (var i = 0; i < numResizers; ++i) {
             // Create a new resizer if one does not exist for this column.
-            if (i === this.resizers.length) {
-                resizer = new WebInspector.Resizer(WebInspector.Resizer.RuleOrientation.Vertical, this);
-                this.resizers[i] = resizer;
-                // This resizer is associated with the column to its right.
+            // This resizer is associated with the column to its right.
+            var resizer = this.resizers[i];
+            if (!resizer) {
+                resizer = this.resizers[i] = new WebInspector.Resizer(WebInspector.Resizer.RuleOrientation.Vertical, this);
                 this.element.appendChild(resizer.element);
             }
-
-            var resizer = this.resizers[i];
-
-            // Get the width of the cell in the first (and only) row of the
-            // header table in order to determine the width of the column, since
-            // it is not possible to query a column for its width.
-            left += this._headerTableBodyElement.rows[0].cells[i].getBoundingClientRect().width;
+            
+            left = columnWidths[i];
 
             if (this._isColumnVisible(this.orderedColumns[i])) {
                 resizer.element.style.removeProperty("display");
@@ -740,6 +757,11 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             return;
 
         let left = 0;
+        let headerViews = [];
+        let lefts = [];
+        let columnWidths = [];
+
+        // Calculate left offsets and widths.
         for (let columnIdentifier of this.orderedColumns) {
             let column = this.columns.get(columnIdentifier);
             console.assert(column, "Missing column data for header cell with columnIdentifier " + columnIdentifier);
@@ -749,12 +771,20 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             let columnWidth = this._headerTableCellElements.get(columnIdentifier).offsetWidth;
             let headerView = column["headerView"];
             if (headerView) {
-                headerView.element.style.left = left + "px";
-                headerView.element.style.width = columnWidth + "px";
-                headerView.updateLayout(WebInspector.View.LayoutReason.Resize);
+                headerViews.push(headerView);
+                lefts.push(left);
+                columnWidths.push(columnWidth);
             }
 
             left += columnWidth;
+        }
+
+        // Apply left offsets and widths.
+        for (let i = 0; i < headerViews.length; ++i) {
+            let headerView = headerViews[i];
+            headerView.element.style.left = lefts[i] + "px";
+            headerView.element.style.width = columnWidths[i] + "px";
+            headerView.updateLayout(WebInspector.View.LayoutReason.Resize);
         }
     }
 

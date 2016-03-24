@@ -28,6 +28,8 @@ WebInspector.RadioButtonNavigationItem = class RadioButtonNavigationItem extends
     constructor(identifier, toolTip, image, imageWidth, imageHeight)
     {
         super(identifier, toolTip, image, imageWidth, imageHeight, null, "tab");
+
+        this._initializedMinWidth = false;
     }
 
     // Public
@@ -70,9 +72,13 @@ WebInspector.RadioButtonNavigationItem = class RadioButtonNavigationItem extends
             this.element.setAttribute("aria-selected", "true");
         }
 
-        var selectedWidth = this.element.offsetWidth;
-        if (selectedWidth)
-            this.element.style.minWidth = selectedWidth + "px";
+        if (!this._initializedMinWidth) {
+            var width = this.element.offsetWidth;
+            if (width) {
+                this._initializedMinWidth = true;
+                this.element.style.minWidth = width + "px";
+            }
+        }
 
         if (!isSelected) {
             this.element.classList.remove(WebInspector.RadioButtonNavigationItem.SelectedStyleClassName);
