@@ -96,8 +96,7 @@ private:
     bool m_shouldHaveLegacyDataStore { false };
 
     unsigned m_maximumProcessCount { 0 };
-    // FIXME: This should be disabled by default once Safari has been updated to explicitly enable it.
-    bool m_diskCacheSpeculativeValidationEnabled { true };
+    bool m_diskCacheSpeculativeValidationEnabled { false };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
     int64_t m_diskCacheSizeOverride { -1 };
 
