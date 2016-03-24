@@ -1,3 +1,17 @@
+2016-03-24  Tim Horton  <timothy_horton@apple.com>
+
+        Fix some new PDFKit-related warnings
+        https://bugs.webkit.org/show_bug.cgi?id=155847
+        <rdar://problem/25340312>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView setViewState:]):
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences PDFDisplayMode]):
+        PDFDisplayMode is now a real enum.
+
 2016-03-23  Anders Carlsson  <andersca@apple.com>
 
         Crash when using KVO from within -[WebView initWithCoder:]

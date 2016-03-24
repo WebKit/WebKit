@@ -860,7 +860,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     ASSERT([statePList isKindOfClass:[NSArray class]]);
     NSArray *state = statePList;
     int i = 0;
-    PDFDisplayMode mode = [[state objectAtIndex:i++] intValue];
+    PDFDisplayMode mode = static_cast<PDFDisplayMode>([[state objectAtIndex:i++] intValue]);
     [PDFSubview setDisplayMode:mode];
     if (mode == kPDFDisplaySinglePage || mode == kPDFDisplayTwoUp) {
         unsigned int pageIndex = [[state objectAtIndex:i++] unsignedIntValue];
