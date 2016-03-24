@@ -129,13 +129,16 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
 
     _recreate()
     {
+        let hadFocusNodes = this.hasFocusNodes();
+
         let sortComparator = WebInspector.ProfileDataGridTree.buildSortComparator(this._dataGrid.sortColumnIdentifier, this._dataGrid.sortOrder);
         this._profileDataGridTree = new WebInspector.ProfileDataGridTree(this._callingContextTree, this._startTime, this._endTime, sortComparator);
         this._profileDataGridTree.addEventListener(WebInspector.ProfileDataGridTree.Event.FocusChanged, this._dataGridTreeFocusChanged, this);
         this._profileDataGridTree.addEventListener(WebInspector.ProfileDataGridTree.Event.ModifiersChanged, this._dataGridTreeModifiersChanged, this);
         this._repopulateDataGridFromTree();
 
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+        if (hadFocusNodes)
+            this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
     _repopulateDataGridFromTree(skipRefresh)

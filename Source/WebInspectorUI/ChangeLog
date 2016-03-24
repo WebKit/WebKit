@@ -1,5 +1,17 @@
 2016-03-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Timeline range selection changes with ProfileView should not cause navigation bar items to flicker
+        https://bugs.webkit.org/show_bug.cgi?id=155834
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ProfileView.js:
+        (WebInspector.ProfileView.prototype._recreate):
+        The only reason our selection path components would change is if we
+        had focus nodes before and do not anymore.
+
+2016-03-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Allow clicking the Timeline in Editing Mode to toggle the checkbox
         https://bugs.webkit.org/show_bug.cgi?id=155815
 
