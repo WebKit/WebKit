@@ -1,5 +1,11 @@
 2016-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Delete a file that was supposed to be removed in r198614 for real.
+
+        * unit-tests/resources/v3-models.js: Removed.
+
+2016-03-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a model for parsing buildbot JSON with unit tests
         https://bugs.webkit.org/show_bug.cgi?id=155814
 
