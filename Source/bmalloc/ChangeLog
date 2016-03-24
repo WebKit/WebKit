@@ -1,5 +1,60 @@
 2016-03-23  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: Added an Object helper class
+        https://bugs.webkit.org/show_bug.cgi?id=155818
+
+        Reviewed by Gavin Barraclough.
+
+        Object is an abstraction that breaks out a void* into its component
+        metadata pointers.
+
+        This is slightly faster than recomputing them, and it enables a future
+        patch in which Object will tell us whether it is small or large.
+
+        * bmalloc.xcodeproj/project.pbxproj: Added to the project.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate): Use Object to compute size.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::processObjectLog):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::deallocateSmallLine):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::derefSmallLine): Use Object to deallocate.
+
+        * bmalloc/Object.h: Added.
+        (bmalloc::Object::Object):
+        (bmalloc::Object::chunk):
+        (bmalloc::Object::line):
+        (bmalloc::Object::page): Helper class to break out a void* into its
+        component metadata pointers.
+
+        * bmalloc/SmallChunk.h:
+        (bmalloc::SmallChunk::SmallChunk): SmallPage::get doesn't exist anymore
+        so we use our new helper functions instead.
+
+        (bmalloc::SmallChunk::offset):
+        (bmalloc::SmallChunk::object):
+        (bmalloc::SmallChunk::page):
+        (bmalloc::SmallChunk::line):
+        (bmalloc::SmallLine::begin):
+        (bmalloc::SmallLine::end):
+        (bmalloc::SmallPage::begin): New helpers that operate on the data
+        stored in Object.
+
+        (bmalloc::SmallLine::get): Deleted.
+        (bmalloc::SmallPage::get): Deleted.
+
+        * bmalloc/SmallLine.h:
+        (bmalloc::SmallLine::refCount): Added a default ref value for convenience.
+
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::SmallPage):
+
+2016-03-23  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: process the object log before asking for new memory
         https://bugs.webkit.org/show_bug.cgi?id=155801
 

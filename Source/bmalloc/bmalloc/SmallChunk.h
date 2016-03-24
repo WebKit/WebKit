@@ -26,6 +26,7 @@
 #ifndef SmallChunk_h
 #define SmallChunk_h
 
+#include "Object.h"
 #include "Sizes.h"
 #include "SmallLine.h"
 #include "SmallPage.h"
@@ -38,8 +39,13 @@ public:
     SmallChunk(std::lock_guard<StaticMutex>&);
 
     static SmallChunk* get(void*);
+    size_t offset(void*);
 
-    SmallPage* begin() { return SmallPage::get(SmallLine::get(m_memory)); }
+    void* object(size_t offset);
+    SmallPage* page(size_t offset);
+    SmallLine* line(size_t offset);
+
+    SmallPage* begin() { return Object(m_memory).page(); }
     SmallPage* end() { return m_pages.end(); }
     
     SmallLine* lines() { return m_lines.begin(); }
@@ -60,15 +66,11 @@ static_assert(
 inline SmallChunk::SmallChunk(std::lock_guard<StaticMutex>& lock)
 {
     // Track the memory used for metadata by allocating imaginary objects.
-    for (SmallLine* line = m_lines.begin(); line < SmallLine::get(m_memory); ++line) {
-        line->ref(lock, 1);
-
-        SmallPage* page = SmallPage::get(line);
-        page->ref(lock);
+    for (char* it = reinterpret_cast<char*>(this); it < m_memory; it += smallLineSize) {
+        Object object(it);
+        object.line()->ref(lock);
+        object.page()->ref(lock);
     }
-
-    for (SmallPage* page = begin(); page != end(); ++page)
-        page->setHasFreeLines(lock, true);
 }
 
 inline SmallChunk* SmallChunk::get(void* object)
@@ -77,12 +79,28 @@ inline SmallChunk* SmallChunk::get(void* object)
     return static_cast<SmallChunk*>(mask(object, smallChunkMask));
 }
 
-inline SmallLine* SmallLine::get(void* object)
+inline size_t SmallChunk::offset(void* object)
 {
-    BASSERT(isSmall(object));
-    SmallChunk* chunk = SmallChunk::get(object);
-    size_t lineNumber = (reinterpret_cast<char*>(object) - reinterpret_cast<char*>(chunk)) / smallLineSize;
-    return &chunk->lines()[lineNumber];
+    BASSERT(object >= this);
+    BASSERT(object < reinterpret_cast<char*>(this) + smallChunkSize);
+    return static_cast<char*>(object) - reinterpret_cast<char*>(this);
+}
+
+inline void* SmallChunk::object(size_t offset)
+{
+    return reinterpret_cast<char*>(this) + offset;
+}
+
+inline SmallPage* SmallChunk::page(size_t offset)
+{
+    size_t pageNumber = offset / vmPageSize;
+    return &m_pages[pageNumber];
+}
+
+inline SmallLine* SmallChunk::line(size_t offset)
+{
+    size_t lineNumber = offset / smallLineSize;
+    return &m_lines[lineNumber];
 }
 
 inline char* SmallLine::begin()
@@ -98,14 +116,6 @@ inline char* SmallLine::end()
     return begin() + smallLineSize;
 }
 
-inline SmallPage* SmallPage::get(SmallLine* line)
-{
-    SmallChunk* chunk = SmallChunk::get(line);
-    size_t lineNumber = line - chunk->lines();
-    size_t pageNumber = lineNumber * smallLineSize / vmPageSize;
-    return &chunk->pages()[pageNumber];
-}
-
 inline SmallLine* SmallPage::begin()
 {
     SmallChunk* chunk = SmallChunk::get(this);
@@ -117,6 +127,29 @@ inline SmallLine* SmallPage::begin()
 inline SmallLine* SmallPage::end()
 {
     return begin() + smallLineCount;
+}
+
+inline Object::Object(void* object)
+    : m_chunk(SmallChunk::get(object))
+    , m_offset(m_chunk->offset(object))
+{
+}
+
+inline Object::Object(SmallChunk* chunk, void* object)
+    : m_chunk(chunk)
+    , m_offset(m_chunk->offset(object))
+{
+    BASSERT(chunk == SmallChunk::get(object));
+}
+
+inline SmallLine* Object::line()
+{
+    return m_chunk->line(m_offset);
+}
+
+inline SmallPage* Object::page()
+{
+    return m_chunk->page(m_offset);
 }
 
 }; // namespace bmalloc
