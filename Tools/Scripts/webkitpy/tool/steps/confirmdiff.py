@@ -53,7 +53,7 @@ class ConfirmDiff(AbstractStep):
             pretty_patch = PrettyPatch(self._tool.executive,
                                        self._tool.scm().checkout_root)
             pretty_diff_file = pretty_patch.pretty_diff_file(diff)
-            url = "file://%s" % urllib.quote(pretty_diff_file.name)
+            url = "file:%s" % urllib.pathname2url(pretty_diff_file.name)
             self._tool.user.open_url(url)
             # We return the pretty_diff_file here because we need to keep the
             # file alive until the user has had a chance to confirm the diff.

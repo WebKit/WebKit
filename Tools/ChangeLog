@@ -1,3 +1,13 @@
+2016-03-23  Bill Ming  <mbbill@gmail.com>
+
+        webkit-patch failed to open pretty diff on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=155827
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/tool/steps/confirmdiff.py:
+        (ConfirmDiff._show_pretty_diff):
+
 2016-03-23  Jer Noble  <jer.noble@apple.com>
 
         [ios-sim] RequiresUserActionForPlaybackTest.DoesNotRequireUserActionForMediaPlayback and RequiresUserActionForVideoButNotAudioPlayback failing
