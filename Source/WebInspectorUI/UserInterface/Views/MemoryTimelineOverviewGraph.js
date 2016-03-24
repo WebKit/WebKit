@@ -65,6 +65,7 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
         super.reset();
 
         this._maxSize = 0;
+        this._cachedMaxSize = undefined;
 
         this._updateLegend();
         this._chart.clear();
@@ -76,6 +77,9 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
 
     layout()
     {
+        if (!this.visible)
+            return;
+
         this._updateLegend();
         this._chart.clear();
 
@@ -165,6 +169,11 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
 
     _updateLegend()
     {
+        if (this._cachedMaxSize === this._maxSize)
+            return;
+
+        this._cachedMaxSize = this._maxSize;
+
         if (!this._maxSize) {
             this._legendElement.hidden = true;
             this._legendElement.textContent = "";

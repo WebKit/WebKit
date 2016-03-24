@@ -64,6 +64,9 @@ WebInspector.MemoryCategoryView = class MemoryCategoryView extends WebInspector.
 
     clear()
     {
+        this._cachedMinSize = undefined;
+        this._cachedMaxSize = undefined;
+
         this._chart.clear();
         this._chart.needsLayout();
     }
@@ -109,6 +112,12 @@ WebInspector.MemoryCategoryView = class MemoryCategoryView extends WebInspector.
 
     _updateDetails(minSize, maxSize)
     {
+        if (this._cachedMinSize === minSize && this._cachedMaxSize === maxSize)
+            return;
+
+        this._cachedMinSize = minSize;
+        this._cachedMaxSize = maxSize;
+
         this._detailsMaxElement.textContent = WebInspector.UIString("Highest: %s").format(Number.isFinite(maxSize) ? Number.bytesToString(maxSize) : emDash);
         this._detailsMinElement.textContent = WebInspector.UIString("Lowest: %s").format(Number.isFinite(minSize) ? Number.bytesToString(minSize) : emDash);
     }

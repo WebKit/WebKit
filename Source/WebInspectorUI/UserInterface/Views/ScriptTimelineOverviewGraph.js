@@ -52,6 +52,9 @@ WebInspector.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph ext
 
     layout()
     {
+        if (!this.visible)
+            return;
+
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;
         let recordBarIndex = 0;
 

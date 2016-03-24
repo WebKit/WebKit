@@ -102,6 +102,9 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
 
     layout()
     {
+        if (!this.visible)
+            return;
+
         if (!this._renderingFrameTimeline.records.length)
             return;
 

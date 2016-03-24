@@ -135,6 +135,10 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
         this._maxSize = 0;
 
+        this._cachedLegendRecord = null;
+        this._cachedLegendMaxSize = undefined;
+        this._cachedLegendCurrentSize = undefined;
+
         this._usageCircleChart.clear();
         this._usageCircleChart.needsLayout();
         this._clearUsageLegend();
@@ -244,6 +248,11 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
     _updateUsageLegend(record)
     {
+        if (this._cachedLegendRecord === record)
+            return;
+
+        this._cachedLegendRecord = record;
+
         for (let {type, size} of record.categories) {
             let sizeElement = this._usageLegendSizeElementMap.get(type);
             sizeElement.textContent = Number.isFinite(size) ? Number.bytesToString(size) : emDash;
@@ -276,6 +285,12 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
     _updateMaxComparisonLegend(currentSize)
     {
+        if (this._cachedLegendMaxSize === this._maxSize && this._cachedLegendCurrentSize === currentSize)
+            return;
+
+        this._cachedLegendMaxSize = this._maxSize;
+        this._cachedLegendCurrentSize = currentSize;
+
         this._maxComparisonMaximumSizeElement.textContent = Number.isFinite(this._maxSize) ? Number.bytesToString(this._maxSize) : emDash;
         this._maxComparisonCurrentSizeElement.textContent = Number.isFinite(currentSize) ? Number.bytesToString(currentSize) : emDash;
 

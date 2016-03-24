@@ -593,8 +593,10 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
     //
     // If this function is not called after the DataGrid is attached to its
     // parent element, then the DataGrid's columns will not be resizable.
-    layout()
+    layout(layoutReason)
     {
+        let firstUpdate = false;
+
         // Do not attempt to use offsets if we're not attached to the document tree yet.
         if (!this._columnWidthsInitialized && this.element.offsetWidth) {
             // Give all the columns initial widths now so that during a resize,
@@ -618,10 +620,13 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             }
 
             this._columnWidthsInitialized = true;
+            firstUpdate = true;
         }
 
-        this._positionResizerElements();
-        this._positionHeaderViews();
+        if (layoutReason == WebInspector.View.LayoutReason.Resize || firstUpdate) {
+            this._positionResizerElements();
+            this._positionHeaderViews();
+        }
     }
 
     columnWidthsMap()

@@ -42,6 +42,7 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.View
         this.element.addEventListener("keydown", this._keyDown.bind(this), false);
         this.element.addEventListener("mousedown", this._mouseDown.bind(this), false);
 
+        this._forceLayout = false;
         this._minimumWidth = NaN;
         this._navigationItems = [];
 
@@ -160,8 +161,20 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.View
         return false;
     }
 
-    layout()
+    needsLayout()
     {
+        this._forceLayout = true;
+
+        super.needsLayout();
+    }
+
+    layout(layoutReason)
+    {
+        if (layoutReason !== WebInspector.View.LayoutReason.Resize && !this._forceLayout)
+            return;
+
+        this._forceLayout = false;
+
         // Remove the collapsed style class to test if the items can fit at full width.
         this.element.classList.remove(WebInspector.NavigationBar.CollapsedStyleClassName);
 

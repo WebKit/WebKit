@@ -51,7 +51,8 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
         // FIXME: Do a binary search for records that fall inside start and current time.
 
-        for (var record of records) {
+        for (var i = 0; i < records.length; ++i) {
+            var record = records[i];
             if (isNaN(record.startTime))
                 continue;
 
@@ -99,7 +100,9 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
             var inactiveEndTime = NaN;
             var inactiveRecords = [];
 
-            for (var record of visibleRecords) {
+            for (var i = 0; i < visibleRecords.length; ++i) {
+                var record = visibleRecords[i];
+
                 // Check if the previous record is far enough away to create the inactive bar.
                 if (!isNaN(inactiveStartTime) && inactiveStartTime + Math.max(inactiveEndTime - inactiveStartTime, minimumDuration) + minimumMargin <= record.startTime) {
                     createBarCallback(inactiveRecords, WebInspector.TimelineRecordBar.RenderMode.InactiveOnly);
@@ -131,7 +134,8 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
         var startTimeProperty = usesActiveStartTime ? "activeStartTime" : "startTime";
 
-        for (var record of visibleRecords) {
+        for (var i = 0; i < visibleRecords.length; ++i) {
+            var record = visibleRecords[i];
             var startTime = record[startTimeProperty];
 
             // Check if the previous record is far enough away to create the active bar. We also create it now if the current record has no active state time.
@@ -193,8 +197,6 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
         }
 
         records = records || [];
-
-        console.assert(records instanceof Array, "records should be an array");
 
         this._records = records;
 

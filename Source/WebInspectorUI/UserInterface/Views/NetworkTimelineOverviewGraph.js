@@ -65,6 +65,9 @@ WebInspector.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph e
 
     layout()
     {
+        if (!this.visible)
+            return;
+
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;
         let recordBarIndex = 0;
 

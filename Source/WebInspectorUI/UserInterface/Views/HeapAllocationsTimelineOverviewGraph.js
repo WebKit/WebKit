@@ -48,6 +48,9 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
 
     layout()
     {
+        if (!this.visible)
+            return;
+
         this.element.removeChildren();
 
         // This may display records past the current time marker.

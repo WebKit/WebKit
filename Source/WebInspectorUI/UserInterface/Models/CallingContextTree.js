@@ -244,7 +244,7 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
 
     hasChildren()
     {
-        return !!Object.getOwnPropertyNames(this._children).length;
+        return !isEmptyObject(this._children);
     }
 
     findOrMakeChild(stackFrame)

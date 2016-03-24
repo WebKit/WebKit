@@ -61,6 +61,9 @@ WebInspector.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph ext
 
     layout()
     {
+        if (!this.visible)
+            return;
+
         this._updateRowLayout(this._timelinePaintRecordRow);
         this._updateRowLayout(this._timelineLayoutRecordRow);
     }

@@ -1,3 +1,63 @@
+2016-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Miscellaneous performance fixes in Timeline recording
+        https://bugs.webkit.org/show_bug.cgi?id=155832
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CallingContextTree.js:
+        (WebInspector.CCTNode.prototype.hasChildren):
+        No need to allocate an array with all of the properties, we can just
+        check if there is at least one property using a short circuit for..in.
+        Performance was always faster for empty, small, and large objects
+        in micro benchmarks.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.layout):
+        Avoid causing DOM layout when positioning resizers. They only need
+        a layout if we are resizing the DataGrid, or the initial layout.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar):
+        (WebInspector.NavigationBar.prototype.needsLayout):
+        (WebInspector.NavigationBar.prototype.layout):
+        Avoid causing DOM layout every View layout. In fact, only do a
+        DOM layout when someone has triggered a needsLayout on this
+        navigation bar. A basic dirty layout (triggered by a parent)
+        should not have caused us to resize.
+
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.js:
+        * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+        (WebInspector.LayoutTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.reset):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype._updateLegend):
+        * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/ScriptTimelineOverviewGraph.js:
+        Avoid doing any work in non-visible graphs. This was very common
+        because the RenderingFrameTimelineOverviewGraph is never visible
+        when the other timeline graphs are, but was performing lots of work.
+
+        * UserInterface/Views/MemoryCategoryView.js:
+        (WebInspector.MemoryCategoryView.prototype.clear):
+        (WebInspector.MemoryCategoryView.prototype._updateDetails):
+        (WebInspector.MemoryCategoryView):
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WebInspector.MemoryTimelineView.prototype.reset):
+        (WebInspector.MemoryTimelineView.prototype._updateUsageLegend):
+        (WebInspector.MemoryTimelineView.prototype._updateMaxComparisonLegend):
+        Cache values to avoid textContent calls even if the content did not change.
+        This reduces unnecessary work when the values wouldn't change.
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.createCombinedBars):
+        (WebInspector.TimelineRecordBar.prototype.set records):
+        Revert to fast loop and as this code path is very hot and for..of iteration
+        was showing up in profiles. Remove assert which seems rather pointless but
+        showed up in profiles.
+
 2016-03-24  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Large repaints while typing in the console tab
