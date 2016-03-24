@@ -75,7 +75,11 @@
                     </form>
                 </div>
             </div>
-            <button onclick="benchmarkController.startBenchmark()">Start Test</button>
+            <p>For accurate results, please take the browser window full screen, or rotate the device to landscape orientation.</p>
+            <div class="orientation-check">
+                <p class="hidden">Please rotate the device to orientation before starting.</p>
+                <button id="run-benchmark" onclick="benchmarkController.startBenchmark()">Run benchmark</button>
+            </div>
         </section>
         <section id="test-container">
             <div id="running-test" class="frame-container"></div>

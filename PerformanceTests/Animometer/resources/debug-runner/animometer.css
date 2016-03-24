@@ -3,10 +3,6 @@ body {
     color: rgb(235, 235, 235);
 }
 
-.hidden {
-    display: none;
-}
-
 h1 {
     margin: 5vh 0;
 }
@@ -140,9 +136,9 @@ label.tree-label {
     font-size: 1.2em;
 }
 
-#intro > div {
+#intro > div:first-of-type {
     width: 100%;
-    margin: 2em 0;
+    margin: 2em 0 0;
     flex-direction: row;
     display: flex;
     align-content: flex-start;
@@ -179,7 +175,7 @@ label.tree-label {
 }
 
 #suites > div {
-    margin-top: 3em;
+    margin: 3em 0;
 }
 
 #drop-target {
@@ -220,6 +216,20 @@ label.tree-label {
     padding: .1em 0;
 }
 
+#intro > p {
+    padding: 0 5px 1em;
+    font-size: 1em;
+}
+
+#intro .orientation-check {
+    padding: 0 0 10vh;
+    margin-top: 0;
+}
+
+#intro .orientation-check p {
+    color: hsl(11, 100%, 66%);
+}
+
 @media screen and (min-device-width: 1800px) {
     #intro {
         min-height: 800px;
@@ -231,7 +241,7 @@ label.tree-label {
         min-height: 100%;
     }
 
-    #intro > div {
+    #intro > div:first-of-type {
         flex-direction: column;
     }
 

@@ -20,7 +20,11 @@
         <section id="intro" class="selected">
             <h1>Animometer</h1>
             <p>Animometer is a graphics benchmark that measures a browser’s capability to animate complex scenes at a target frame rate.</p>
-            <button onclick="benchmarkController.startBenchmark()">Run benchmark</button>
+            <p>For accurate results, please take the browser window full screen, or rotate the device to landscape orientation.</p>
+            <div class="orientation-check">
+                <p class="hidden">Please rotate the device to orientation before starting.</p>
+                <button id="run-benchmark" onclick="benchmarkController.startBenchmark()">Run benchmark</button>
+            </div>
         </section>
         <section id="test-container" class="frame-container">
         </section>

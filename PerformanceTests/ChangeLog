@@ -1,3 +1,35 @@
+2016-03-23  Jon Lee  <jonlee@apple.com>
+
+        Make the benchmark require device to be in landscape orientation
+        https://bugs.webkit.org/show_bug.cgi?id=155822
+        rdar://problem/25258650
+
+        Reviewed by Ryosuke Niwa.
+
+        Check that the device is in landscape orientation. If not, disable the button to start it,
+        and show a warning message.
+
+        * Animometer/developer.html: Add a message about how the browser should be set up. Include a
+        warning message that appears if the orientation is incorrect on mobile devices.
+        * Animometer/index.html: Ditto.
+
+        * Animometer/resources/debug-runner/animometer.css: Migrate the .hidden rule into the release
+        stylesheet. Update the style to accommodate the new UI.
+        * Animometer/resources/runner/animometer.css:
+
+        * Animometer/resources/runner/animometer.js:
+        (window.benchmarkController.initialize): Add the orientation listener is needed.
+        (window.benchmarkController.addOrientationListenerIfNecessary): Only mobile devices need this. Check
+        to see for support of window.orientation.
+        (window.benchmarkController._orientationChanged): Toggle the warning based on whether we match the
+        landscape query. Set a state variable, which is needed for the debug harness. Call updateStartButtonState.
+        (window.benchmarkController.updateStartButtonState):
+        * Animometer/resources/debug-runner/animometer.js: Change _updateStartButtonState to return
+        a boolean about whether at least one test is selected. That will be used in
+        benchmarkController.updateStartButtonState(). Move the load event listener to the release version.
+        (window.benchmarkController.updateStartButtonState): Override the release version, and also check
+        that at least one test is selected.
+
 2016-03-22  Geoffrey Garen  <ggaren@apple.com>
 
         MallocBench: consolidate regression testing for aligned allocation

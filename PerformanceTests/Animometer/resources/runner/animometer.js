@@ -355,6 +355,35 @@ window.sectionsManager =
 };
 
 window.benchmarkController = {
+    initialize: function()
+    {
+        benchmarkController.addOrientationListenerIfNecessary();
+    },
+
+    addOrientationListenerIfNecessary: function() {
+        if (!("orientation" in window))
+            return;
+
+        this.orientationQuery = window.matchMedia("(orientation: landscape)");
+        this._orientationChanged(this.orientationQuery);
+        this.orientationQuery.addListener(this._orientationChanged);
+    },
+
+    _orientationChanged: function(match)
+    {
+        benchmarkController.isInLandscapeOrientation = match.matches;
+        if (match.matches)
+            document.querySelector(".orientation-check p").classList.add("hidden");
+        else
+            document.querySelector(".orientation-check p").classList.remove("hidden");
+        benchmarkController.updateStartButtonState();
+    },
+
+    updateStartButtonState: function()
+    {
+        document.getElementById("run-benchmark").disabled = !this.isInLandscapeOrientation;
+    },
+
     _startBenchmark: function(suites, options, frameContainerID)
     {
         benchmarkRunnerClient.initialize(suites, options);
@@ -479,3 +508,5 @@ window.benchmarkController = {
         selection.addRange(range);
     }
 };
+
+window.addEventListener("load", function() { benchmarkController.initialize(); });

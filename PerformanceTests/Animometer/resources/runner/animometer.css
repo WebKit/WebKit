@@ -46,6 +46,10 @@ h1 {
     flex: 0 1 1em;
 }
 
+.hidden {
+    display: none;
+}
+
 button {
     flex: 0 0 auto;
     display: block;
@@ -68,6 +72,10 @@ button:active {
     background-color: rgba(0, 0, 0, .2);
 }
 
+button:disabled {
+    border-color: rgba(96, 96, 96, .5);
+    color: rgba(96, 96, 96, .5);
+}
 
 @media screen and (min-device-width: 768px) {
     section {
@@ -105,10 +113,27 @@ button:active {
     flex: 1 0 auto;
 }
 
-#intro p {
-    flex: 1 1 auto;
-    padding: 0 0 10vh 0;
+#intro > p {
+    flex: 0 1 auto;
+    padding: .5em 0;
+    margin: 0;
     font-size: 2em;
+}
+
+#intro .orientation-check {
+    padding: 10vh 0;
+    text-align: center;
+}
+
+#intro .orientation-check p {
+    font-size: 1em;
+    color: hsl(11, 72%, 50%);
+    margin-bottom: 1em;
+    -apple-trailing-word: -apple-partially-balanced;
+}
+
+#intro .orientation-check button {
+    margin: 0 auto;
 }
 
 @media screen and (min-device-width: 768px) {
