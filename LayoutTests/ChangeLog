@@ -1,3 +1,22 @@
+2016-03-24  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r198592. rdar://problem/25332806
+
+    2016-03-23  Michael Saboff  <msaboff@apple.com>
+
+            JavaScriptCore ArrayPrototype::join shouldn't cache butterfly when it makes effectful calls
+            https://bugs.webkit.org/show_bug.cgi?id=155776
+
+            Reviewed by Saam Barati.
+
+            New test.
+
+            * js/regress-155776-expected.txt: Added.
+            * js/regress-155776.html: Added.
+            * js/script-tests/regress-155776.js: Added.
+            (fillBigArrayViaToString):
+            (Function.prototype.toString):
+
 2016-03-18  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r192285.
