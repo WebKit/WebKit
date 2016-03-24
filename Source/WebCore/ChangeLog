@@ -1,3 +1,57 @@
+2016-03-23  Daniel Bates  <dabates@apple.com>
+
+        CSP: Simplify logic for checking policies
+        https://bugs.webkit.org/show_bug.cgi?id=155817
+        <rdar://problem/25326546>
+
+        Reviewed by Zalan Bujtas.
+
+        Consolidate the various static template functions into a single function called ContentSecurityPolicy::allPoliciesAllow()
+        that tests whether a resource request when evaluated with respect to a directive (given as a ContentSecurityPolicyDirectiveList
+        pointer-to-member function) violates any of the CSPs that were delivered with the document.
+
+        No functionality changed. So, no new tests.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allPoliciesAllowHashFromContent): Formerly name isAllowedByAllWithHash. Made it
+        a member function so that we query for the document encoding instead of taking it as an argument. Modified
+        it to take a predicate function to pass it to allPoliciesAllow().
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs): Modified to use ContentSecurityPolicy::allPoliciesAllow().
+        (WebCore::ContentSecurityPolicy::allowInlineEventHandlers): Ditto.
+        (WebCore::ContentSecurityPolicy::allowScriptWithNonce): Ditto.
+        (WebCore::ContentSecurityPolicy::allowStyleWithNonce): Ditto.
+        (WebCore::ContentSecurityPolicy::allowInlineScript): Modified to use ContentSecurityPolicy::allPoliciesAllow() and
+        ContentSecurityPolicy::allPoliciesAllowHashFromContent().
+        (WebCore::ContentSecurityPolicy::allowInlineStyle): Ditto.
+        (WebCore::ContentSecurityPolicy::allowEval): Modified to use ContentSecurityPolicy::allPoliciesAllow().
+        (WebCore::ContentSecurityPolicy::allowFrameAncestors): Ditto.
+        (WebCore::ContentSecurityPolicy::allowPluginType): Ditto.
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowChildFrameFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowChildContextFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowImageFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowStyleFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowFontFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowMediaFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowConnectToSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowFormAction): Ditto.
+        (WebCore::ContentSecurityPolicy::allowBaseURI): Ditto.
+        (WebCore::isAllowedByAllWithFrame): Deleted.
+        (WebCore::isAllowedByAll): Deleted.
+        (WebCore::isAllowedByAllWithState): Deleted.
+        (WebCore::isAllowedByAllWithContext): Deleted.
+        (WebCore::isAllowedByAllWithNonce): Deleted.
+        (WebCore::isAllowedByAllWithHash): Deleted.
+        (WebCore::isAllowedByAllWithHashFromContent): Deleted.
+        (WebCore::isAllowedByAllWithURL): Deleted.
+        (WebCore::ContentSecurityPolicy::documentEncoding): Deleted. Incorporated its functionality into ContentSecurityPolicy::allPoliciesAllowHashFromContent().
+        (WebCore::ContentSecurityPolicy::isActive): Deleted. This function has been unused since the removal of the CSP script
+        interface in <http://trac.webkit.org/changeset/197142>.
+        * page/csp/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::allPoliciesAllow): Added. Returns whether the predicate function evaluates to true
+        for all CSP policies.
+
 2016-03-23  Jer Noble  <jer.noble@apple.com>
 
         Media elements allowed to play without a user gesture, but requiring fullscreen playback, should not be allowed to autoplay.

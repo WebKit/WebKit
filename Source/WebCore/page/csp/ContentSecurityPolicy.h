@@ -107,8 +107,6 @@ public:
 
     void setOverrideAllowInlineStyle(bool);
 
-    bool isActive() const;
-
     void gatherReportURIs(DOMStringList&) const;
 
     bool experimentalFeaturesEnabled() const;
@@ -157,7 +155,8 @@ private:
 
     void didReceiveHeader(const String&, ContentSecurityPolicyHeaderType, ContentSecurityPolicy::PolicyFrom);
 
-    const TextEncoding& documentEncoding() const;
+    template<typename Predicate, typename... Args> bool allPoliciesAllow(Predicate&&, Args&&...) const WARN_UNUSED_RETURN;
+    template<typename Predicate> bool allPoliciesAllowHashFromContent(Predicate&&, const String& content, OptionSet<ContentSecurityPolicyHashAlgorithm>) const WARN_UNUSED_RETURN;
 
     // We can never have both a script execution context and a frame.
     ScriptExecutionContext* m_scriptExecutionContext { nullptr };
@@ -172,6 +171,16 @@ private:
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineScripts;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;
 };
+
+template<typename Predicate, typename... Args>
+inline bool ContentSecurityPolicy::allPoliciesAllow(Predicate&& predicate, Args&&... args) const
+{
+    for (auto& policy : m_policies) {
+        if (!(policy.get()->*predicate)(std::forward<Args>(args)...))
+            return false;
+    }
+    return true;
+}
 
 }
 

@@ -174,56 +174,6 @@ bool ContentSecurityPolicy::protocolMatchesSelf(const URL& url) const
     return equalIgnoringASCIICase(url.protocol(), m_selfSourceProtocol);
 }
 
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const Frame&, const URL&, ContentSecurityPolicyDirectiveList::ReportingStatus) const>
-static bool isAllowedByAllWithFrame(const CSPDirectiveListVector& policies, const Frame& frame, const URL& url, ContentSecurityPolicyDirectiveList::ReportingStatus reportingStatus)
-{
-    for (auto& policy : policies) {
-        if (!(policy.get()->*allowed)(frame, url, reportingStatus))
-            return false;
-    }
-    return true;
-}
-
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(ContentSecurityPolicyDirectiveList::ReportingStatus) const>
-static bool isAllowedByAll(const CSPDirectiveListVector& policies, ContentSecurityPolicyDirectiveList::ReportingStatus reportingStatus)
-{
-    for (auto& policy : policies) {
-        if (!(policy.get()->*allowed)(reportingStatus))
-            return false;
-    }
-    return true;
-}
-
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(JSC::ExecState* state, ContentSecurityPolicyDirectiveList::ReportingStatus) const>
-static bool isAllowedByAllWithState(const CSPDirectiveListVector& policies, JSC::ExecState* state, ContentSecurityPolicyDirectiveList::ReportingStatus reportingStatus)
-{
-    for (auto& policy : policies) {
-        if (!(policy.get()->*allowed)(state, reportingStatus))
-            return false;
-    }
-    return true;
-}
-
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const String&, const WTF::OrdinalNumber&, ContentSecurityPolicyDirectiveList::ReportingStatus) const>
-static bool isAllowedByAllWithContext(const CSPDirectiveListVector& policies, const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus reportingStatus)
-{
-    for (auto& policy : policies) {
-        if (!(policy.get()->*allowed)(contextURL, contextLine, reportingStatus))
-            return false;
-    }
-    return true;
-}
-
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const String& nonce) const>
-static bool isAllowedByAllWithNonce(const CSPDirectiveListVector& policies, const String& nonce)
-{
-    for (auto& policy : policies) {
-        if (!(policy.get()->*allowed)(nonce))
-            return false;
-    }
-    return true;
-}
-
 static CryptoDigest::Algorithm toCryptoDigestAlgorithm(ContentSecurityPolicyHashAlgorithm algorithm)
 {
     switch (algorithm) {
@@ -238,64 +188,40 @@ static CryptoDigest::Algorithm toCryptoDigestAlgorithm(ContentSecurityPolicyHash
     return CryptoDigest::Algorithm::SHA_512;
 }
 
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const ContentSecurityPolicyHash&) const>
-static bool isAllowedByAllWithHash(const CSPDirectiveListVector& policies, const ContentSecurityPolicyHash& hash)
+template<typename Predicate>
+bool ContentSecurityPolicy::allPoliciesAllowHashFromContent(Predicate&& predicate, const String& content, OptionSet<ContentSecurityPolicyHashAlgorithm> algorithms) const
 {
-    for (auto& policy : policies) {
-        if (!(policy.get()->*allowed)(hash))
-            return false;
-    }
-    return true;
-}
+    // FIXME: We should compute the document encoding once and cache it instead of computing it on each invocation.
+    TextEncoding documentEncoding;
+    if (is<Document>(m_scriptExecutionContext))
+        documentEncoding = downcast<Document>(*m_scriptExecutionContext).textEncoding();
+    const TextEncoding& encodingToUse = documentEncoding.isValid() ? documentEncoding : UTF8Encoding();
 
-template<bool (ContentSecurityPolicyDirectiveList::*allowed)(const ContentSecurityPolicyHash&) const>
-static bool isAllowedByAllWithHashFromContent(const CSPDirectiveListVector& policies, const String& content, const TextEncoding& encoding, OptionSet<ContentSecurityPolicyHashAlgorithm> algorithms)
-{
     // FIXME: Compute the digest with respect to the raw bytes received from the page.
     // See <https://bugs.webkit.org/show_bug.cgi?id=155184>.
-    CString contentCString = encoding.encode(content, EntitiesForUnencodables);
+    CString contentCString = encodingToUse.encode(content, EntitiesForUnencodables);
     for (auto algorithm : algorithms) {
         auto cryptoDigest = CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
         cryptoDigest->addBytes(contentCString.data(), contentCString.length());
         Vector<uint8_t> digest = cryptoDigest->computeHash();
-        if (isAllowedByAllWithHash<allowed>(policies, { algorithm, digest }))
+        if (allPoliciesAllow(std::forward<Predicate>(predicate), std::make_pair(algorithm, digest)))
             return true;
     }
     return false;
 }
 
-template<bool (ContentSecurityPolicyDirectiveList::*allowFromURL)(const URL&, ContentSecurityPolicyDirectiveList::ReportingStatus) const>
-static bool isAllowedByAllWithURL(const CSPDirectiveListVector& policies, const URL& url, ContentSecurityPolicyDirectiveList::ReportingStatus reportingStatus)
-{
-    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
-        return true;
-
-    for (auto& policy : policies) {
-        if (!(policy.get()->*allowFromURL)(url, reportingStatus))
-            return false;
-    }
-    return true;
-}
-
 bool ContentSecurityPolicy::allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowJavaScriptURLs>(m_policies, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowJavaScriptURLs, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineEventHandlers>(m_policies, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
-}
-
-// FIXME: We should compute the document encoding once and cache it instead of computing it on each invocation.
-const TextEncoding& ContentSecurityPolicy::documentEncoding() const
-{
-    if (!is<Document>(m_scriptExecutionContext))
-        return UTF8Encoding();
-    Document& document = downcast<Document>(*m_scriptExecutionContext);
-    if (TextResourceDecoder* decoder = document.decoder())
-        return decoder->encoding();
-    return UTF8Encoding();
+    if (overrideContentSecurityPolicy)
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowInlineEventHandlers, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowScriptWithNonce(const String& nonce, bool overrideContentSecurityPolicy) const
@@ -305,7 +231,7 @@ bool ContentSecurityPolicy::allowScriptWithNonce(const String& nonce, bool overr
     String strippedNonce = stripLeadingAndTrailingHTMLSpaces(nonce);
     if (strippedNonce.isEmpty())
         return false;
-    if (isAllowedByAllWithNonce<&ContentSecurityPolicyDirectiveList::allowScriptWithNonce>(m_policies, strippedNonce))
+    if (allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowScriptWithNonce, strippedNonce))
         return true;
     return false;
 }
@@ -317,7 +243,7 @@ bool ContentSecurityPolicy::allowStyleWithNonce(const String& nonce, bool overri
     String strippedNonce = stripLeadingAndTrailingHTMLSpaces(nonce);
     if (strippedNonce.isEmpty())
         return false;
-    if (isAllowedByAllWithNonce<&ContentSecurityPolicyDirectiveList::allowStyleWithNonce>(m_policies, strippedNonce))
+    if (allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowStyleWithNonce, strippedNonce))
         return true;
     return false;
 }
@@ -327,9 +253,9 @@ bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const WT
     if (overrideContentSecurityPolicy)
         return true;
     if (!m_hashAlgorithmsForInlineScripts.isEmpty() && !scriptContent.isEmpty()
-        && isAllowedByAllWithHashFromContent<&ContentSecurityPolicyDirectiveList::allowInlineScriptWithHash>(m_policies, scriptContent, documentEncoding(), m_hashAlgorithmsForInlineScripts))
+        && allPoliciesAllowHashFromContent(&ContentSecurityPolicyDirectiveList::allowInlineScriptWithHash, scriptContent, m_hashAlgorithmsForInlineScripts))
         return true;
-    return isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineScript>(m_policies, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowInlineScript, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, const String& styleContent, bool overrideContentSecurityPolicy) const
@@ -339,14 +265,16 @@ bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF
     if (m_overrideInlineStyleAllowed)
         return true;
     if (!m_hashAlgorithmsForInlineStylesheets.isEmpty() && !styleContent.isEmpty()
-        && isAllowedByAllWithHashFromContent<&ContentSecurityPolicyDirectiveList::allowInlineStyleWithHash>(m_policies, styleContent, documentEncoding(), m_hashAlgorithmsForInlineStylesheets))
+        && allPoliciesAllowHashFromContent(&ContentSecurityPolicyDirectiveList::allowInlineStyleWithHash, styleContent, m_hashAlgorithmsForInlineStylesheets))
         return true;
-    return isAllowedByAllWithContext<&ContentSecurityPolicyDirectiveList::allowInlineStyle>(m_policies, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowInlineStyle, contextURL, contextLine, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowEval(JSC::ExecState* state, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithState<&ContentSecurityPolicyDirectiveList::allowEval>(m_policies, state, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowEval, state, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowFrameAncestors(const Frame& frame, const URL& url, bool overrideContentSecurityPolicy) const
@@ -356,78 +284,113 @@ bool ContentSecurityPolicy::allowFrameAncestors(const Frame& frame, const URL& u
     Frame& topFrame = frame.tree().top();
     if (&frame == &topFrame)
         return true;
-    return isAllowedByAllWithFrame<&ContentSecurityPolicyDirectiveList::allowFrameAncestors>(m_policies, frame, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowFrameAncestors, frame, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowPluginType(const String& type, const String& typeAttribute, const URL& url, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)
         return true;
-    for (auto& policy : m_policies) {
-        if (!policy->allowPluginType(type, typeAttribute, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport))
-            return false;
-    }
-    return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowPluginType, type, typeAttribute, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowScriptFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowScriptFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowScriptFromSource, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowObjectFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowObjectFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowObjectFromSource, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowChildFrameFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowChildFrameFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowChildFrameFromSource, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowChildContextFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowChildContextFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowChildContextFromSource, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowImageFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowImageFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowImageFromSource, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowStyleFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowStyleFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowStyleFromSource, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowFontFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowFontFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowFontFromSource, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowMediaFromSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowMediaFromSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowMediaFromSource, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowConnectToSource(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowConnectToSource>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowConnectToSource, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowFormAction(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowFormAction>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowFormAction, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 bool ContentSecurityPolicy::allowBaseURI(const URL& url, bool overrideContentSecurityPolicy) const
 {
-    return overrideContentSecurityPolicy || isAllowedByAllWithURL<&ContentSecurityPolicyDirectiveList::allowBaseURI>(m_policies, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
-}
-
-bool ContentSecurityPolicy::isActive() const
-{
-    return !m_policies.isEmpty();
+    if (overrideContentSecurityPolicy)
+        return true;
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+    return allPoliciesAllow(&ContentSecurityPolicyDirectiveList::allowBaseURI, url, ContentSecurityPolicyDirectiveList::ReportingStatus::SendReport);
 }
 
 ContentSecurityPolicy::ReflectedXSSDisposition ContentSecurityPolicy::reflectedXSSDisposition() const
