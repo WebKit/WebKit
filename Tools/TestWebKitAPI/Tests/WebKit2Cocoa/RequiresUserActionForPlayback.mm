@@ -76,6 +76,7 @@ public:
         configuration.get()._mediaDataLoadsAutomatically = YES;
 #if TARGET_OS_IPHONE
         configuration.get().allowsInlineMediaPlayback = YES;
+        configuration.get()._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
         configuration.get().requiresUserActionForMediaPlayback = NO;
 #endif
     }
