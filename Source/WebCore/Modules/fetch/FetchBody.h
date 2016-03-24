@@ -44,7 +44,6 @@ class JSValue;
 namespace WebCore {
 
 class FetchBodyOwner;
-class FormData;
 
 class FetchBody {
 public:
@@ -62,22 +61,18 @@ public:
 
     static FetchBody extract(JSC::ExecState&, JSC::JSValue);
     static FetchBody extractFromBody(FetchBody*);
-    static FetchBody loadingBody() { return { Type::Loading }; }
     FetchBody() = default;
 
     void loadingFailed();
     void loadedAsArrayBuffer(RefPtr<ArrayBuffer>&&);
     void loadedAsText(String&&);
 
-    RefPtr<FormData> bodyForInternalRequest() const;
-
 private:
-    enum class Type { None, ArrayBuffer, Loading, Text, Blob, FormData };
+    enum class Type { None, Text, Blob, FormData };
 
     FetchBody(Ref<Blob>&&);
     FetchBody(Ref<DOMFormData>&&);
     FetchBody(String&&);
-    FetchBody(Type type) : m_type(type) { }
 
     struct Consumer {
         enum class Type { Text, Blob, JSON, ArrayBuffer };
@@ -89,21 +84,17 @@ private:
 
     Vector<char> extractFromText() const;
     bool processIfEmptyOrDisturbed(Consumer::Type, DeferredWrapper&);
-    void consumeArrayBuffer(Consumer::Type, DeferredWrapper&);
-    void consumeText(Consumer::Type, DeferredWrapper&);
+    void consumeText(Consumer::Type, DeferredWrapper&&);
     void consumeBlob(FetchBodyOwner&, Consumer::Type, DeferredWrapper&&);
     static FetchLoader::Type loadingType(Consumer::Type);
-    static void fulfillTextPromise(FetchBody::Consumer::Type, const String&, DeferredWrapper&);
-    static void fulfillArrayBufferPromise(FetchBody::Consumer::Type, const String&, DeferredWrapper&);
 
-    Type m_type { Type::None };
+    Type m_type = Type::None;
     String m_mimeType;
-    bool m_isDisturbed { false };
+    bool m_isDisturbed = false;
 
     // FIXME: Add support for BufferSource and URLSearchParams.
     RefPtr<Blob> m_blob;
     RefPtr<DOMFormData> m_formData;
-    RefPtr<ArrayBuffer> m_data;
     String m_text;
 
     Optional<Consumer> m_consumer;

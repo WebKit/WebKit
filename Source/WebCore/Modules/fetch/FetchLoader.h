@@ -39,7 +39,6 @@ namespace WebCore {
 
 class Blob;
 class FetchLoaderClient;
-class FetchRequest;
 class ScriptExecutionContext;
 
 class FetchLoader final : public ThreadableLoaderClient {
@@ -48,8 +47,7 @@ public:
 
     FetchLoader(Type, FetchLoaderClient&);
 
-    void start(ScriptExecutionContext&, const FetchRequest&);
-    void start(ScriptExecutionContext&, Blob&);
+    bool start(ScriptExecutionContext&, Blob&);
     void stop();
 
 private:
@@ -58,7 +56,6 @@ private:
     void didReceiveData(const char*, int) final;
     void didFinishLoading(unsigned long, double) final;
     void didFail(const ResourceError&) final;
-    void didFailRedirectCheck() final;
 
 private:
     Type m_type { Type::ArrayBuffer };

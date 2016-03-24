@@ -72,9 +72,6 @@ public:
         String integrity;
     };
 
-    const FetchOptions& fetchOptions() const { return m_internalRequest.options; }
-    ResourceRequest internalRequest() const;
-
 private:
     FetchRequest(ScriptExecutionContext&, FetchBody&&, Ref<FetchHeaders>&&, InternalRequest&&);
 

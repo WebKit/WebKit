@@ -1,26 +1,26 @@
 
-PASS Accept-Charset is a forbidden request header 
-PASS Accept-Encoding is a forbidden request header 
-PASS Access-Control-Request-Headers is a forbidden request header 
-PASS Access-Control-Request-Method is a forbidden request header 
-PASS Connection is a forbidden request header 
-PASS Content-Length is a forbidden request header 
-PASS Cookie is a forbidden request header 
-PASS Cookie2 is a forbidden request header 
-PASS Date is a forbidden request header 
-PASS DNT is a forbidden request header 
-PASS Expect is a forbidden request header 
-PASS Host is a forbidden request header 
-PASS Keep-Alive is a forbidden request header 
-PASS Origin is a forbidden request header 
-PASS Referer is a forbidden request header 
-PASS TE is a forbidden request header 
-PASS Trailer is a forbidden request header 
-PASS Transfer-Encoding is a forbidden request header 
-PASS Upgrade is a forbidden request header 
-PASS Via is a forbidden request header 
-PASS Proxy- is a forbidden request header 
-PASS Proxy-Test is a forbidden request header 
-PASS Sec- is a forbidden request header 
-PASS Sec-Test is a forbidden request header 
+FAIL Accept-Charset is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Accept-Encoding is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Access-Control-Request-Headers is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Access-Control-Request-Method is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Connection is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Content-Length is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Cookie is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Cookie2 is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Date is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL DNT is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Expect is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Host is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Keep-Alive is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Origin is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Referer is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL TE is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Trailer is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Transfer-Encoding is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Upgrade is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Via is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Proxy- is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Proxy-Test is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Sec- is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Sec-Test is a forbidden request header promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
 

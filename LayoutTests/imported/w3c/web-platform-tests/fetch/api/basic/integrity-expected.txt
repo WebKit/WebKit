@@ -1,15 +1,15 @@
 
-PASS Empty string integrity 
-PASS SHA-256 integrity 
-PASS SHA-384 integrity 
-PASS SHA-512 integrity 
-FAIL Invalid integrity assert_unreached: Should have rejected. Reached unreachable code
-PASS Multiple integrities: valid stronger than invalid 
-FAIL Multiple integrities: invalid stronger than valid assert_unreached: Should have rejected. Reached unreachable code
-PASS Multiple integrities: invalid as strong as valid 
-PASS Multiple integrities: both are valid 
-FAIL Multiple integrities: both are invalid assert_unreached: Should have rejected. Reached unreachable code
-FAIL CORS empty integrity promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL CORS SHA-512 integrity promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS CORS invalid integrity 
+FAIL Empty string integrity promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL SHA-256 integrity promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL SHA-384 integrity promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL SHA-512 integrity promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Invalid integrity assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+FAIL Multiple integrities: valid stronger than invalid promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Multiple integrities: invalid stronger than valid assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+FAIL Multiple integrities: invalid as strong as valid promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Multiple integrities: both are valid promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Multiple integrities: both are invalid assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+FAIL CORS empty integrity promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL CORS SHA-512 integrity promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL CORS invalid integrity assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
 

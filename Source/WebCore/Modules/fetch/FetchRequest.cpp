@@ -435,14 +435,6 @@ String FetchRequest::redirect() const
     return String();
 }
 
-ResourceRequest FetchRequest::internalRequest() const
-{
-    ResourceRequest request = m_internalRequest.request;
-    request.setHTTPHeaderFields(m_headers->internalHeaders());
-    request.setHTTPBody(body().bodyForInternalRequest());
-    return request;
-}
-
 RefPtr<FetchRequest> FetchRequest::clone(ScriptExecutionContext& context, ExceptionCode& ec)
 {
     if (isDisturbed()) {

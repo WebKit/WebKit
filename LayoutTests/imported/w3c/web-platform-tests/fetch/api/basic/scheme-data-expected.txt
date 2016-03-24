@@ -1,8 +1,8 @@
 
-FAIL Fetching data:,response%27s%20body is OK promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Fetching data:text/plain;base64,cmVzcG9uc2UncyBib[...] is OK promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Fetching data:image/png;base64,cmVzcG9uc2UncyBib2[...] is OK promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS Fetching [GET] data:notAdataUrl.com is KO 
-PASS Fetching [POST] data:,response%27s%20body is KO 
-PASS Fetching [HEAD] data:,response%27s%20body is KO 
+FAIL Fetching data:,response%27s%20body is OK promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetching data:text/plain;base64,cmVzcG9uc2UncyBib[...] is OK promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetching data:image/png;base64,cmVzcG9uc2UncyBib2[...] is OK promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetching [GET] data:notAdataUrl.com is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+FAIL Fetching [POST] data:,response%27s%20body is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+FAIL Fetching [HEAD] data:,response%27s%20body is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
 

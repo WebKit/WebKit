@@ -1,11 +1,11 @@
 
-FAIL Fetch with GET assert_equals: Request has header origin: http://localhost:8800 expected (string) "http://localhost:8800" but got (object) null
-FAIL Fetch with HEAD assert_equals: Request has header origin: http://localhost:8800 expected (string) "http://localhost:8800" but got (object) null
-FAIL Fetch with HEAD with body promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS Fetch with PUT without body 
-PASS Fetch with PUT with body 
-PASS Fetch with POST without body 
-PASS Fetch with POST with body 
-FAIL Fetch with Chicken assert_equals: Request has header content-length: null expected (object) null but got (string) "0"
-PASS Fetch with Chicken with body 
+FAIL Fetch with GET promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with HEAD promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with HEAD with body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with PUT without body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with PUT with body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with POST without body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with POST with body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with Chicken promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+FAIL Fetch with Chicken with body promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
 
