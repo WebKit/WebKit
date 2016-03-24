@@ -2,7 +2,8 @@
 
 var assert = require('assert');
 
-require('./resources/v3-models.js');
+require('../tools/js/v3-models.js');
+require('./resources/mock-v3-models.js');
 
 function sampleTestGroup() {
     return {

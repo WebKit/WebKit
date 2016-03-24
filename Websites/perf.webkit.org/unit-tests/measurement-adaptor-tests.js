@@ -2,7 +2,8 @@
 
 var assert = require('assert');
 
-require('./resources/v3-models');
+require('../tools/js/v3-models.js');
+require('./resources/mock-v3-models.js');
 
 var sampleCluster = {
     'clusterStart': 946684800000,

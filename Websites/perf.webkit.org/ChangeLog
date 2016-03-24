@@ -1,3 +1,44 @@
+2016-03-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a model for parsing buildbot JSON with unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=155814
+
+        Reviewed by Joseph Pecoraro.
+
+        Added BuildbotSyncer and BuildbotBuildEntry classes to parse buildbot JSON files with unit tests.
+        They will be used in the new syncing scripts to improve A/B testing.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest):
+        * tools/js/buildbot-syncer.js: Added.
+        (BuildbotBuildEntry): Added.
+        (BuildbotBuildEntry.prototype.slaveName): Added.
+        (BuildbotBuildEntry.prototype.buildRequestId): Added.
+        (BuildbotBuildEntry.prototype.isInProgress): Added.
+        (BuildbotSyncer): Added.
+        (BuildbotSyncer.prototype.testPath): Added.
+        (BuildbotSyncer.prototype.builderName): Added.
+        (BuildbotSyncer.prototype.platformName): Added.
+        (BuildbotSyncer.prototype.fetchPendingRequests): Added.
+        (BuildbotSyncer.prototype._propertiesForBuildRequest): Added.
+        (BuildbotSyncer.prototype._revisionSetFromRootSetWithExclusionList): Added.
+        (BuildbotSyncer._loadConfig): Added.
+        (BuildbotSyncer._validateAndMergeConfig): Added.
+        (BuildbotSyncer._validateAndMergeProperties): Added.
+        * tools/js/v3-models.js: Copied from unit-tests/resources/v3-models.js.
+        (beforeEach): Deleted since this only defined inside mocha.
+        * unit-tests/analysis-task-tests.js:
+        * unit-tests/buildbot-syncer-tests.js: Added.
+        (sampleiOSConfig):
+        (createSampleBuildRequest):
+        (.smallConfiguration):
+        * unit-tests/measurement-adaptor-tests.js:
+        * unit-tests/measurement-set-tests.js:
+        * unit-tests/resources/mock-v3-models.js: Renamed from unit-tests/resources/v3-models.js.
+        (beforeEach):
+        * unit-tests/test-groups-tests.js:
+        (sampleTestGroup):
+
 2016-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add unit tests for test-group.js
