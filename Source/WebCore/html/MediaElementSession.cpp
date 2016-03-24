@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLAudioElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLMediaElementEnums.h"
 #include "HTMLNames.h"
@@ -391,6 +392,9 @@ MediaPlayer::Preload MediaElementSession::effectivePreloadForElement(const HTMLM
 bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElement& element) const
 {
     if (pageExplicitlyAllowsElementToAutoplayInline(element))
+        return false;
+
+    if (is<HTMLAudioElement>(element))
         return false;
 
     Settings* settings = element.document().settings();
