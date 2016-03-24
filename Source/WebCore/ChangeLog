@@ -1,3 +1,14 @@
+2016-03-24  Andreas Kling  <akling@apple.com>
+
+        Remove virtual inheritance from SVGTransformable.
+        <https://webkit.org/b/155837>
+
+        Reviewed by Anders Carlsson.
+
+        Nothing else inherits SVGLocatable, so make the inheritance non-virtual.
+
+        * svg/SVGTransformable.h:
+
 2016-03-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove DeferredWrapper::resolve<Vector<unsigned char>>

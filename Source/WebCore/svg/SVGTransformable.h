@@ -30,7 +30,7 @@ namespace WebCore {
 class AffineTransform;
 class SVGTransformList;
 
-class SVGTransformable : virtual public SVGLocatable {
+class SVGTransformable : public SVGLocatable {
 public:
     enum TransformParsingMode {
         ClearList,
