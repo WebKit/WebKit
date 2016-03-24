@@ -53,42 +53,35 @@ inline NetworkStorageSession& storageSession(const Document* document)
     NetworkingContext* context = networkingContext(document);
     return context ? context->storageSession() : NetworkStorageSession::defaultStorageSession();
 }
-#define LOCAL_SESSION(document) NetworkStorageSession& session = storageSession(document);
 
 String cookies(const Document* document, const URL& url)
 {
-    LOCAL_SESSION(document)
-    return platformStrategies()->cookiesStrategy()->cookiesForDOM(session, document->firstPartyForCookies(), url);
+    return platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document->firstPartyForCookies(), url);
 }
 
 void setCookies(Document* document, const URL& url, const String& cookieString)
 {
-    LOCAL_SESSION(document)
-    platformStrategies()->cookiesStrategy()->setCookiesFromDOM(session, document->firstPartyForCookies(), url, cookieString);
+    platformStrategies()->cookiesStrategy()->setCookiesFromDOM(storageSession(document), document->firstPartyForCookies(), url, cookieString);
 }
 
 bool cookiesEnabled(const Document* document)
 {
-    LOCAL_SESSION(document)
-    return platformStrategies()->cookiesStrategy()->cookiesEnabled(session, document->firstPartyForCookies(), document->cookieURL());
+    return platformStrategies()->cookiesStrategy()->cookiesEnabled(storageSession(document), document->firstPartyForCookies(), document->cookieURL());
 }
 
 String cookieRequestHeaderFieldValue(const Document* document, const URL& url)
 {
-    LOCAL_SESSION(document)
-    return platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(session, document->firstPartyForCookies(), url);
+    return platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(storageSession(document), document->firstPartyForCookies(), url);
 }
 
 bool getRawCookies(const Document* document, const URL& url, Vector<Cookie>& cookies)
 {
-    LOCAL_SESSION(document)
-    return platformStrategies()->cookiesStrategy()->getRawCookies(session, document->firstPartyForCookies(), url, cookies);
+    return platformStrategies()->cookiesStrategy()->getRawCookies(storageSession(document), document->firstPartyForCookies(), url, cookies);
 }
 
 void deleteCookie(const Document* document, const URL& url, const String& cookieName)
 {
-    LOCAL_SESSION(document)
-    platformStrategies()->cookiesStrategy()->deleteCookie(session, url, cookieName);
+    platformStrategies()->cookiesStrategy()->deleteCookie(storageSession(document), url, cookieName);
 }
 
 }
