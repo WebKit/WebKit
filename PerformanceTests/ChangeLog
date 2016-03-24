@@ -1,5 +1,22 @@
 2016-03-23  Jon Lee  <jonlee@apple.com>
 
+        Update focus and leaves tests
+        https://bugs.webkit.org/show_bug.cgi?id=155825
+
+        Reviewed by Simon Fraser.
+
+        Particles would improperly disappear, before they were fully off stage. Update the calculation.
+        * Animometer/tests/dom/resources/leaves.js:
+        * Animometer/tests/master/resources/leaves.js:
+
+        * Animometer/tests/master/focus.html: Update the center element styling.
+        * Animometer/tests/master/resources/focus.js:
+        (FocusElement.Utilities.createClass): Give enough space in the container for each particle for the blur
+        to spread. It should be about 3x more space than the blur radius on each side.
+        (Stage.call.initialize): Ditto for the center element.
+
+2016-03-23  Jon Lee  <jonlee@apple.com>
+
         Update support for other platforms
         https://bugs.webkit.org/show_bug.cgi?id=155824
 

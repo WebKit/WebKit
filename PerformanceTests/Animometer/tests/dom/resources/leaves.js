@@ -32,11 +32,11 @@ Leaf = Utilities.createSubclass(Particle,
         if (this._opacity > 1) {
             this._opacity = 1;
             this._opacityRate *= -1;
-        } else if (this._opacity < 0 || this._position.y > this.stage.size.y)
+        } else if (this._opacity < 0 || this._position.y > this.stage.size.height)
             this.reset();
 
-        if (this._position.x < -this.size.width || this._position.x > this.maxPosition.x)
-            this._position.x = (this._position.x + this.maxPosition.x) % this.maxPosition.x;
+        if (this._position.x < -this.size.width || this._position.x > this.stage.size.width)
+            this._position.x = this._position.x - Math.sign(this._position.x) * (this.size.width + this.stage.size.width);
         this.move();
     },
 

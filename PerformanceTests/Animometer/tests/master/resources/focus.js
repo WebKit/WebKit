@@ -24,8 +24,8 @@ var FocusElement = Utilities.createClass(
         var size = 2 * radius + sizeVariance - distance;
 
         this.container = document.createElement('div');
-        this.container.style.width = (size + stage.maxBlurValue * 2) + "px";
-        this.container.style.height = (size + stage.maxBlurValue * 2) + "px";
+        this.container.style.width = (size + stage.maxBlurValue * 6) + "px";
+        this.container.style.height = (size + stage.maxBlurValue * 6) + "px";
         this.container.style.top = top + "px";
         this.container.style.left = left + "px";
         this.container.style.zIndex = Math.round((1 - this._depth) * 10);
@@ -33,8 +33,9 @@ var FocusElement = Utilities.createClass(
         var particle = Utilities.createElement("div", {}, this.container);
         particle.style.width = size + "px";
         particle.style.height = size + "px";
-        particle.style.top = stage.maxBlurValue + "px";
-        particle.style.left = stage.maxBlurValue + "px";
+        particle.style.top = (stage.maxBlurValue * 3) + "px";
+        particle.style.left = (stage.maxBlurValue * 3) + "px";
+        this.particle = particle;
 
         var depthMultiplier = Utilities.lerp(1 - this._depth, 0.8, 1);
         this._sinMultiplier = Pseudo.random() * Stage.randomSign() * depthMultiplier;
@@ -85,15 +86,15 @@ var FocusStage = Utilities.createSubclass(Stage,
         this._offsetIndex = 0;
 
         this._centerElement = document.getElementById("center-text");
-        this._centerElement.style.width = (centerDiameter + this.maxCenterObjectBlurValue * 2) + "px";
-        this._centerElement.style.height = (centerDiameter + this.maxCenterObjectBlurValue * 2) + "px";
+        this._centerElement.style.width = (centerDiameter + this.maxCenterObjectBlurValue * 6) + "px";
+        this._centerElement.style.height = (centerDiameter + this.maxCenterObjectBlurValue * 6) + "px";
         this._centerElement.style.zIndex = Math.round(10 * this.centerObjectDepth);
 
         var particle = document.querySelector("#center-text div");
         particle.style.width = centerDiameter + "px";
         particle.style.height = centerDiameter + "px";
-        particle.style.top = this.maxCenterObjectBlurValue + "px";
-        particle.style.left = this.maxCenterObjectBlurValue + "px";
+        particle.style.top = (this.maxCenterObjectBlurValue * 3) + "px";
+        particle.style.left = (this.maxCenterObjectBlurValue * 3) + "px";
 
         var blur = this.getBlurValue(this.centerObjectDepth, true);
         Utilities.setElementPrefixedProperty(this._centerElement, "filter", "blur(" + blur + "px)");
