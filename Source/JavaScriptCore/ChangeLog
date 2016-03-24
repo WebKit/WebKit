@@ -1,5 +1,34 @@
 2016-03-24  Michael Saboff  <msaboff@apple.com>
 
+        [ES6] Add Proxy based tests for RegExp.prototype[@@match]
+        https://bugs.webkit.org/show_bug.cgi?id=155807
+
+        Reviewed by Saam Barati.
+
+        Added new test that uses Proxy to verify RegExp.prototype[@@match] processing
+        conforms to the ES6 standard
+
+        Modified builtin RegExp.prototype[@@match] to be ES6 spec conformant.
+
+        Updated es6.yaml as Proxy_internal_get_calls_RegExp.prototype[Symbol.match].js now passes.
+
+        * builtins/RegExpPrototype.js:
+        (match):
+        * tests/es6.yaml: Updated.
+        * tests/stress/regexp-match-proxy.js: Added.
+        (assert):
+        (let.getProxyNullExec.new.Proxy):
+        (let.getSetProxyNullExec.new.Proxy):
+        (get resetTracking):
+        (let.getSetProxyMatches_s.new.Proxy):
+        (set get getSetProxyNullExec):
+        (let.getSetProxyMatches_tx_Greedy.new.Proxy):
+        (set get getSetProxyMatches_s):
+        (let.getSetProxyMatchesUnicode_digit_nonGreedy.new.Proxy):
+        (set get getSetProxyMatches_tx_Greedy):
+
+2016-03-24  Michael Saboff  <msaboff@apple.com>
+
         [ES6] Greedy unicode RegExp's don't properly backtrack past non BMP characters
         https://bugs.webkit.org/show_bug.cgi?id=155829
 

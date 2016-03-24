@@ -52,17 +52,17 @@ function match(str)
     if (!regexp.global)
         return regexp.exec(stringArg);
 
+    let unicode = regexp.unicode;
     regexp.lastIndex = 0;
-
     let resultList = [];
+    let execFunc = regexp.exec;
 
-    if (regexp.exec !== @RegExp.prototype.@exec && typeof(regexp.exec) === "function") {
+    if (execFunc !== @RegExp.prototype.@exec && typeof execFunc === "function") {
         // Match using the overridden exec.
-        let unicode = regexp.unicode;
-        let stringLength = str.length;
+        let stringLength = stringArg.length;
 
         while (true) {
-            let result = regexp.exec(stringArg);
+            let result = execFunc(stringArg);
             
             if (result === null) {
                 if (resultList.length === 0)
@@ -81,6 +81,8 @@ function match(str)
             }
 
             resultList.@push(resultString);
+
+            execFunc = regexp.exec;
         }
     }
 
