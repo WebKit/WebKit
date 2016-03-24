@@ -2,19 +2,20 @@
 
 # Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
 # Copyright (C) 2011 Carl Lobo.  All rights reserved.
+# Copyright (C) 2016 Jeremy Zerfas.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
 #
 # 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer. 
+#     notice, this list of conditions and the following disclaimer.
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution. 
+#     documentation and/or other materials provided with the distribution.
 # 3.  Neither the name of Apple Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -27,7 +28,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Updates a development environment to the new WebKitAuxiliaryLibrary
+# Updates a dependency for the development environment.
 
 use strict;
 use warnings;
@@ -51,13 +52,12 @@ if ($#ARGV != 1) {
 Usage:
         update-webkit-dependancy <URL with the dependancy zip file> <*prefix dir inside zip without filename>
 
-        * If filename is requirements.zip and the contents of the zipfile are "requirements/x" then prefix = "."
-        * If filename is xyz.zip and the contents of the zipfile are xyz/abc/x" then prefix = "abc"
+        * If filename is requirements.zip and the contents of the zip file are "requirements/x" then prefix = "."
+        * If filename is xyz.zip and the contents of the zip file are xyz/abc/x" then prefix = "abc"
         * x is lib or include or bin.
 EOF
 }
 
-sub lastModifiedToUnixTime($);
 sub getLibraryName($);
 
 # Time in seconds that the new zip file must be newer than the old for us to
@@ -71,68 +71,118 @@ my $libsURL = shift;
 my $prefixInZip = shift;
 my $sourceDir = sourceDir();
 my $file = getLibraryName($libsURL);
-my $zipFile = "$file.zip"; 
+my $zipFile = "$file.zip";
 my $webkitLibrariesDir = $ENV{'WEBKIT_LIBRARIES'} || File::Spec->catdir($sourceDir, "WebKitLibraries", "win");
 my $tmpRelativeDir = File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1);
 my $tmpAbsDir = File::Spec->rel2abs($tmpRelativeDir);
 my $ua = LWP::UserAgent->new();
 $ua->env_proxy;
 
-print "Checking Last-Modified date of $zipFile...\n";
+print "Checking for newer version of $zipFile...\n";
 
-my $response = $ua->get($libsURL);
+# Ideally we could just use a previous modification time and/or ETag to do a single conditional request for the file,
+# however there are some problems with this approach. Some servers may not support conditional requests (Dropbox and
+# GitHub don't currently support conditional requests using If-Modified-Since headers plus they also don't emit
+# Last-Modified headers either). If mirrors are being used, some servers may have different ETags for the same file.
+# Some servers may not implement conditional requests properly. Etc...
+#
+# Instead we will assume that we need to download a new version of the file unless we can be reasonably certain that we
+# already previously got an up to date copy of the file. We can do this by making a quick, small request to check for
+# the presence of Last-Modified and/or ETag headers (or alternatively a separate *.headers file that contains a
+# Last-Modified header) and see if they match values that we may have gotten previously.
 
-unless ($response->is_success) {
-    print "Could not access $libsURL:\n" . $response->headers_as_string . "\n";
-    print "You may not be connected to the internet. Attempting to build without updating.\n";
+# It would be nice to be able to just use a HEAD request for this initial check but developer.apple.com returns 401
+# errors for those requests. Instead we can just set a size limit for a GET request (which we can also set the range for
+# to request just the first byte) so that we don't have to retrieve the entire file.
+$ua->max_size(0);
+my $response = $ua->get($libsURL, "Range", "bytes=0-0");
+$ua->max_size(undef);
+
+if (! $response->is_success) {
+    print STDERR "Could not access $libsURL:\n", $response->headers_as_string, "\n";
+    print STDERR "Please ensure that $libsURL is reachable";
+    if ($libsURL =~ /^https/i) {
+        print STDERR " and that Perl can use LWP::Simple to connect to HTTPS URLs.\n";
+        print STDERR "You may have to run \"\$ cpan LWP::Protocol::https\"";
+    }
+    print STDERR ".\n";
+
+    if (-f File::Spec->catfile($webkitLibrariesDir, "$file.headers")) {
+        print STDERR "Falling back to existing version of $file.\n";
+        exit 0;
+    } else {
+        print STDERR "No existing version of $file to fall back to.\n";
+        exit 1;
+    }
+}
+
+my $contentType = $response->header('Content-Type');
+# Try to determine the file size based on the Content-Range or Content-Length headers. Normally we will need to use the
+# Content-Range header since we are just requesting a range but if the server doesn't support ranges then we will try
+# using the Content-Length header instead. Also note that neither header is affected by using max_size() to limit the
+# response size and the Content-Length header also shouldn't be affected from the use of HTTP compression since LWP
+# doesn't use it by default.
+my $contentLength = $response->header('Content-Length');
+# If the Content-Range header is defined and has a number after the slash, then that's the file size we want.
+if (defined $response->header('Content-Range') && $response->header('Content-Range') =~ /^.+\/(\d+)/) {
+    $contentLength=$1;
+}
+my $lastModified = $response->header('Last-Modified');
+my $etag = $response->header('ETag');
+
+print "Located a file";
+print " of type $contentType" if defined $contentType;
+print " of size $contentLength" if defined $contentLength;
+print ".\n";
+
+# Get any old headers that are available.
+my $oldLastModified;
+my $oldETag;
+if (open OLDHEADERSFILE, "<", File::Spec->catfile($webkitLibrariesDir, "$file.headers")) {
+    local $/ = undef;
+    my $oldHeaders = <OLDHEADERSFILE>;
+    close OLDHEADERSFILE;
+
+    ($oldLastModified) = $oldHeaders =~ /^Last-Modified: (.+)$/mi;
+    ($oldETag) = $oldHeaders =~ /^ETag: (.+)$/mi;
+}
+
+# If we have matching old and new ETags, then that is a very good indication that we already had gotten an up to date
+# copy of the file previously. On the other hand if we have ETags that don't match, that doesn't necessarily indicate
+# that the files are different since different servers may compute different ETags for the same file. If they don't
+# match we will continue to see if we can skip downloading the file via other tests.
+if (defined $etag && defined $oldETag && $etag eq $oldETag) {
+    print "Current $file is up to date.\n";
     exit 0;
 }
 
-my $content_type = $response->header('Content-Type');
-my $document_length = $response->header('Content-Length');
-my $modified_time = str2time($response->header('Last-Modified')); 
-
-if (defined $modified_time) {
-    print STDERR "Located a file of type $content_type, of size $document_length.\n";
-    open NEW, ">", File::Spec->catfile($tmpAbsDir, "$file.headers");
-    print NEW "Last-Modified: " . time2str($modified_time) . "\n";
-    close NEW;
-} else {
-    #Note: Neither GitHub nor DropBox emit the Last-Modified HTTP header, so fall back to a file
-	#containing the necessary information if we do not receive the information in our initial query.
+# If on the initial request we didn't get a Last-Modified header, then we will try getting the Last-Modified header from
+# a separate *.headers file that may have been put on the server.
+if (! defined $lastModified) {
     my $headerURL = $libsURL;
     $headerURL =~ s/\.zip$/\.headers/;
 
-    my $result = getstore($headerURL, File::Spec->catfile($tmpAbsDir, "$file.headers"));
+    $response = $ua->get($headerURL);
 
-    if (!is_success($result)) {
-        print STDERR "Couldn't check Last-Modified date of new $zipFile.\n";
-        print STDERR "Response was: $result.\n";
-        print STDERR "Please ensure that Perl can use LWP::Simple to connect to HTTPS urls, and that $libsURL is reachable.\n";
-        print STDERR "You may have to run \$ cpan LWP::Protocol::https\n";
-
-        if (! -f File::Spec->catfile($webkitLibrariesDir, "$file.headers")) {
-            print STDERR "Unable to check Last-Modified date and no version of $file to fall back to.\n";
-            exit 1;
+    if (! $response->is_success) {
+        print STDERR "Could not access $headerURL:\n", $response->headers_as_string, "\n";
+        print STDERR "Please ensure that $headerURL is reachable";
+        if ($headerURL =~ /^https/i) {
+            print STDERR " and that Perl can use LWP::Simple to connect to HTTPS URLs.\n";
+            print STDERR "You may have to run \"\$ cpan LWP::Protocol::https\"";
         }
-
-        print STDERR "Falling back to existing version of $file.\n";
-        exit 0;
+        print STDERR ".\n";
     }
+
+    ($lastModified) = $response->content =~ /^Last-Modified: (.+)$/mi;
 }
 
-if (open NEW, File::Spec->catfile($tmpAbsDir, "$file.headers")) {
-    my $new = lastModifiedToUnixTime(<NEW>);
-    close NEW;
-
-    if (defined $new && open OLD, File::Spec->catfile($webkitLibrariesDir, "$file.headers")) {
-        my $old = lastModifiedToUnixTime(<OLD>);
-        close OLD;
-        if (defined $old && abs($new - $old) < $newnessThreshold) {
-            print "Current $file is up to date\n";
-            exit 0;
-        }
-    }
+my $lastModifiedTime = str2time($lastModified);
+my $oldLastModifiedTime = str2time($oldLastModified);
+if (defined $lastModifiedTime && defined $oldLastModifiedTime
+    && abs($lastModifiedTime-$oldLastModifiedTime) < $newnessThreshold) {
+    print "Current $file is up to date.\n";
+    exit 0;
 }
 
 print "Downloading $zipFile...\n\n";
@@ -141,6 +191,22 @@ my $result = getstore($libsURL, File::Spec->catfile($tmpAbsDir, $zipFile));
 die "Couldn't download $zipFile!" if is_error($result);
 
 my $zip = Archive::Zip->new(File::Spec->catfile($tmpAbsDir, $zipFile));
+
+# Make sure the zip file contains a directory with the same name as the zip file (minus the extension) and a prefix
+# directory if applicable.
+my $prefixDirectoryPathInZipFile = "$file/".(($prefixInZip eq ".") ? "" : "$prefixInZip/");
+if (! $zip->memberNamed($prefixDirectoryPathInZipFile)) {
+    print STDERR "Couldn't find $prefixDirectoryPathInZipFile directory in zip file.\n";
+
+    if (-f File::Spec->catfile($webkitLibrariesDir, "$file.headers")) {
+        print STDERR "Falling back to existing version of $file.\n";
+        exit 0;
+    } else {
+        print STDERR "No existing version of $file to fall back to.\n";
+        exit 1;
+    }
+}
+
 $result = $zip->extractTree("", $tmpAbsDir);
 die "Couldn't unzip $zipFile." if $result != AZ_OK;
 
@@ -161,19 +227,16 @@ sub wanted
 
 File::Find::find(\&wanted, File::Spec->catfile($tmpAbsDir, $file));
 
-$result = move(File::Spec->catfile($tmpAbsDir, "$file.headers"), $webkitLibrariesDir);
-print STDERR "Couldn't move $file.headers to $webkitLibrariesDir" . ".\n" if $result == 0;
+if (open HEADERSFILE, ">", File::Spec->catfile($webkitLibrariesDir, "$file.headers")) {
+    print HEADERSFILE "Last-Modified: $lastModified\n" if defined $lastModified;
+    print HEADERSFILE "ETag: $etag\n" if defined $etag;
+    close HEADERSFILE;
+} else {
+    print STDERR "Couldn't write $file.headers to $webkitLibrariesDir.\n"
+}
 
 print "The $file has been sucessfully installed in\n $webkitLibrariesDir\n";
 exit;
-
-sub lastModifiedToUnixTime($)
-{
-    my ($str) = @_;
-
-    $str =~ /^Last-Modified: (.*)$/ or return;
-    return str2time($1);
-}
 
 sub getLibraryName($)
 {
@@ -181,4 +244,3 @@ sub getLibraryName($)
     $url =~ m#/([^/]+)\.zip$#;
     return $1;
 }
-

@@ -1,3 +1,21 @@
+2016-03-24  Jeremy Zerfas  <WebKit@JeremyZerfas.com>
+
+        Improve update-webkit-dependency script.
+        https://bugs.webkit.org/show_bug.cgi?id=155576
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/update-webkit-dependency:
+        -Updated script to also use ETags for helping to determine whether dependency is up to date.
+        -Updated script so it usually won't need to download the entire dependency each time it is
+         ran.
+        -Updated script to ensure zip file contains expected directories before trying to install.
+        -Added some more error checking and improved error messages.
+        (lastModifiedToUnixTime): Deleted.
+
+        * Scripts/update-webkit-wincairo-libs:
+        -Corrected comment about what script does.
+
 2016-03-24 Bill Ming <mbbill@gmail.com>
 
         Fix webkitpy tests after r198617
