@@ -364,13 +364,15 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
         return;
     }
     
-    if (auto* pendingDownload = m_task->pendingDownload())
-        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, m_challenge, completionHandler);
-    else
-        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, m_challenge, completionHandler);
-#else
-    m_handle->continueCanAuthenticateAgainstProtectionSpace(result);
+    if (m_task) {
+        if (auto* pendingDownload = m_task->pendingDownload())
+            NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, m_challenge, completionHandler);
+        else
+            NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, m_challenge, completionHandler);
+    }
 #endif
+    if (m_handle)
+        m_handle->continueCanAuthenticateAgainstProtectionSpace(result);
 }
 #endif
 
