@@ -42,6 +42,7 @@ namespace JSC { namespace DFG {
 namespace {
 
 const bool verbose = false;
+const unsigned giveUpThreshold = 50;
 
 int64_t clampedSumImpl() { return 0; }
 
@@ -216,6 +217,19 @@ public:
     {
         return m_left == other.m_left
             && m_right == other.m_right;
+    }
+
+    bool isEquivalentTo(const Relationship& other) const
+    {
+        if (m_left != other.m_left || m_kind != other.m_kind)
+            return false;
+
+        if (*this == other)
+            return true;
+
+        if (m_right->isInt32Constant() && other.m_right->isInt32Constant())
+            return (m_right->asInt32() + m_offset) == (other.m_right->asInt32() + other.m_offset);
+        return false;
     }
     
     bool operator==(const Relationship& other) const
@@ -1072,6 +1086,19 @@ public:
         // the comment above Relationship::merge() for details.
         bool changed = true;
         while (changed) {
+            ++m_iterations;
+            if (m_iterations >= giveUpThreshold) {
+                // This case is not necessarily wrong but it can be a sign that this phase
+                // does not converge.
+                // If you hit this assertion for a legitimate case, update the giveUpThreshold
+                // to the smallest values that converges.
+                ASSERT_NOT_REACHED();
+
+                // In release, do not risk holding the thread for too long since this phase
+                // is really slow.
+                return false;
+            }
+
             changed = false;
             for (unsigned postOrderIndex = postOrder.size(); postOrderIndex--;) {
                 BasicBlock* block = postOrder[postOrderIndex];
@@ -1682,7 +1709,13 @@ private:
                 changed = true;
                 continue;
             }
-            
+
+            Vector<Relationship> constantRelationshipsAtHead;
+            for (Relationship& relationshipAtHead : entry.value) {
+                if (relationshipAtHead.right()->isInt32Constant())
+                    constantRelationshipsAtHead.append(relationshipAtHead);
+            }
+
             Vector<Relationship> mergedRelationships;
             for (Relationship targetRelationship : entry.value) {
                 for (Relationship sourceRelationship : iter->value) {
@@ -1693,6 +1726,24 @@ private:
                         [&] (Relationship newRelationship) {
                             if (verbose)
                                 dataLog("    Got ", newRelationship, "\n");
+
+                            if (newRelationship.right()->isInt32Constant()) {
+                                // We can produce a relationship with a constant equivalent to
+                                // an existing relationship yet of a different form. For example:
+                                //
+                                //     @a == @b(42) + 0
+                                //     @a == @c(41) + 1
+                                //
+                                // We do not want to perpetually switch between those two forms,
+                                // so we always prefer the one already at head.
+
+                                for (Relationship& existingRelationshipAtHead : constantRelationshipsAtHead) {
+                                    if (existingRelationshipAtHead.isEquivalentTo(newRelationship)) {
+                                        newRelationship = existingRelationshipAtHead;
+                                        break;
+                                    }
+                                }
+                            }
                             
                             // We need to filter() to avoid exponential explosion of identical
                             // relationships. We do this here to avoid making setOneSide() do
@@ -1764,6 +1815,8 @@ private:
     BlockSet m_seenBlocks;
     BlockMap<RelationshipMap> m_relationshipsAtHead;
     InsertionSet m_insertionSet;
+
+    unsigned m_iterations { 0 };
 };
     
 } // anonymous namespace

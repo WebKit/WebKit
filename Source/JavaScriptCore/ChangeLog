@@ -1,3 +1,73 @@
+2016-03-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] In some cases, the integer range optimization phase never converges
+        https://bugs.webkit.org/show_bug.cgi?id=155828
+        rdar://problem/25155460
+
+        Reviewed by Filip Pizlo.
+
+        In certain conditions, the integer range optimization phase continuously
+        changes the representation of the same truth, preventing it from
+        converging to a stable state.
+
+        The bug starts by having the same ground truth incomming into a block
+        in different valid forms. For example, you can have x < 42 coming as:
+            1) x < 42
+            2) x < 41 + 1
+            3) x < 43 - 1
+
+        Having those 3 alone coming from predecessors would be okay, we would
+        just accumulate them. The problem is when you have a combination
+        of rule that filter out the previously obtained truth, then add a new
+        form of the same truth.
+
+        Let's use the test case as an example. We have two incoming blocks:
+            Block #1:
+              -i < 42
+              -i != 41
+            Block #2:
+              -i < 41
+              -i == 42 - 42 (i == 0 refining the rule above).
+
+        Let say that our conditions at head are now [i < 41, i < 42 - 1].
+
+        If we merge block #2:
+              -i < 42 and i < 41      -> i < 42
+              -i < 42 and i < 42 - 1  -> i < 42
+              -i != 41 and i < 41     -> i < 41
+              -i != 41 and i < 42 - 1 -> nothing
+
+        The new head is: [i < 41, i < 42]
+
+        If we merge block #1:
+              -i < 41 and i < 41       -> i < 41
+              -i < 41 and i < 42       -> i < 42
+              -i == 42 - 42 and i < 41 -> (i < 41 and i < 42 - 1)
+              -i == 42 - 42 and i < 42 -> i < 42
+
+        After filter, we are back to [i < 41, i < 42 - 1].
+
+        There are several variations of this idea where the same truth
+        rotate different forms with each merge().
+
+        One possible solution is to make filter() more aggressive
+        to avoid the better form occuring at merge(). I'll probably
+        do that at some point but that seems fragile since the same
+        problem could reappear if merge() is later improved.
+
+        For this patch, I went with a more generic solution after
+        merge(): if the generated form is equivalent to one that
+        previously existed at head, pick the existing form.
+
+        In the previous example, what happens is we only have
+        either [i < 41] or [i < 42 - 1] but never both simultaneously.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * tests/stress/integer-range-optimization-constant-representation-1.js: Added.
+        * tests/stress/integer-range-optimization-constant-representation-2.js: Added.
+        Two variation. One timeout in release because of the additional flags.
+        The other is gets more type of run but only assert in debug.
+
 2016-03-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r198582.
