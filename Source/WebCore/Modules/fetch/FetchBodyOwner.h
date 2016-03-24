@@ -54,6 +54,13 @@ public:
 
     bool isActive() const { return !!m_blobLoader; }
 
+protected:
+    const FetchBody& body() const { return m_body; }
+    FetchBody& body() { return m_body; }
+
+    // ActiveDOMObject API
+    void stop() override;
+
 private:
     // Blob loading routines
     void loadedBlobAsText(String&&);
@@ -61,9 +68,6 @@ private:
     void blobLoadingSucceeded() { finishBlobLoading(); }
     void blobLoadingFailed();
     void finishBlobLoading();
-
-    // ActiveDOMObject API
-    void stop() override;
 
     struct BlobLoader final : FetchLoaderClient {
         BlobLoader(FetchBodyOwner&);

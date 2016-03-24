@@ -1,3 +1,29 @@
+2016-03-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Add basic loading of resources
+        https://bugs.webkit.org/show_bug.cgi?id=155637
+
+        Reviewed by Darin Adler.
+
+        Rebasing test expectations.
+        Updating scheme-blob.js to ensure generated test names are stable run after run.
+
+        * web-platform-tests/fetch/api/basic/accept-header-expected.txt:
+        * web-platform-tests/fetch/api/basic/integrity-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-no-cors-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-same-origin-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob.js:
+        (checkFetchResponse): Deleted.
+        (checkKoUrl): Deleted.
+        * web-platform-tests/fetch/api/basic/scheme-data-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-others-expected.txt:
+        * web-platform-tests/fetch/api/basic/stream-response-expected.txt:
+
 2016-03-18  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Move IndexedDB regular test to web-platform-tests

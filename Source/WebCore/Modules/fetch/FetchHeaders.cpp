@@ -156,14 +156,19 @@ void FetchHeaders::set(const String& name, const String& value, ExceptionCode& e
 
 void FetchHeaders::fill(const FetchHeaders* headers)
 {
+    ASSERT(m_guard != Guard::Immutable);
+
     if (!headers)
         return;
 
-    ASSERT(m_guard != Guard::Immutable);
+    filterAndFill(headers->m_headers, m_guard);
+}
 
+void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
+{
     ExceptionCode ec;
-    for (auto& header : headers->m_headers) {
-        if (canWriteHeader(header.key, header.value, m_guard, ec)) {
+    for (auto& header : headers) {
+        if (canWriteHeader(header.key, header.value, guard, ec)) {
             if (header.keyAsHTTPHeaderName)
                 m_headers.add(header.keyAsHTTPHeaderName.value(), header.value);
             else

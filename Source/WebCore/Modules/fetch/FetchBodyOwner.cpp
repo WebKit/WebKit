@@ -59,17 +59,14 @@ void FetchBodyOwner::loadBlob(Blob& blob, FetchLoader::Type type)
     ASSERT(m_body.isDisturbed());
     ASSERT(!m_blobLoader);
 
+    if (!scriptExecutionContext())
+        blobLoadingFailed();
+
     m_blobLoader = { *this };
     m_blobLoader->loader = std::make_unique<FetchLoader>(type, *m_blobLoader);
 
     setPendingActivity(this);
-    if (!scriptExecutionContext() || !m_blobLoader->loader->start(*scriptExecutionContext(), blob))
-        blobLoadingFailed();
-}
-
-void FetchBodyOwner::loadedBlobAsText(String&& text)
-{
-    m_body.loadedAsText(WTFMove(text));
+    m_blobLoader->loader->start(*scriptExecutionContext(), blob);
 }
 
 void FetchBodyOwner::finishBlobLoading()
@@ -78,6 +75,11 @@ void FetchBodyOwner::finishBlobLoading()
 
     m_blobLoader = Nullopt;
     unsetPendingActivity(this);
+}
+
+void FetchBodyOwner::loadedBlobAsText(String&& text)
+{
+    m_body.loadedAsText(WTFMove(text));
 }
 
 void FetchBodyOwner::blobLoadingFailed()

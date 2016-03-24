@@ -1,5 +1,5 @@
 
-FAIL Fetching blob:http://localhost:8800/4580501e-3c0f-4b03[...] is OK promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
-FAIL Fetching [GET] blob:http://www.localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching [POST] blob:http://localhost:8800/ad829fe3-9045-4b29[...] is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+PASS Regular Blob loading 
+PASS Loading an erroneous blob scheme URL 
+FAIL Loading a blob URL using POST assert_unreached: Should have rejected. Reached unreachable code
 

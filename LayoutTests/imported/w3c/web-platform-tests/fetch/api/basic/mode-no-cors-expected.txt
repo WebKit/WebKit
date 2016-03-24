@@ -1,6 +1,6 @@
 
-FAIL Fetch ../resources/top.txt with no-cors mode promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
-FAIL Fetch http://localhost:8800/fetch/api/resources/top.txt with no-cors mode promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
-FAIL Fetch https://localhost:9443/fetch/api/resources/top.txt with no-cors mode promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
-FAIL Fetch http://www.localhost:8800/fetch/api/resources/top.txt with no-cors mode promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
+PASS Fetch ../resources/top.txt with no-cors mode 
+PASS Fetch http://localhost:8800/fetch/api/resources/top.txt with no-cors mode 
+FAIL Fetch https://localhost:9443/fetch/api/resources/top.txt with no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Fetch http://www.localhost:8800/fetch/api/resources/top.txt with no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Type error"
 
