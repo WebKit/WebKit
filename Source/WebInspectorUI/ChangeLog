@@ -1,3 +1,24 @@
+2016-03-24  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Large repaints while typing in the console tab
+        https://bugs.webkit.org/show_bug.cgi?id=155627
+        <rdar://problem/25234875>
+
+        Reviewed by Timothy Hatcher.
+
+        Use a `position: absolute` workaround to reduce large repaint areas caused by flexbox.
+
+        * UserInterface/Views/LogContentView.css:
+        (body.selected-tab-console #content):
+        This selector must only affect the console tab as it breaks sidebars in other tabs.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._tabBarItemSelected):
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.prototype.set selectedTabBarItem):
+        Add "selected-tab-console" class to <body> when the console tab is selected.
+
 2016-03-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timeline range selection changes with ProfileView should not cause navigation bar items to flicker
