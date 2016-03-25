@@ -421,7 +421,10 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
                 ensureArrayStorage(exec->vm()));
         }
         if (newLength > butterfly->publicLength()) {
-            ensureLength(exec->vm(), newLength);
+            if (!ensureLength(exec->vm(), newLength)) {
+                throwOutOfMemoryError(exec);
+                return false;
+            }
             return true;
         }
 
@@ -1014,7 +1017,10 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
         if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX)
             return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(exec->vm()));
         
-        ensureLength(exec->vm(), oldLength + count);
+        if (!ensureLength(exec->vm(), oldLength + count)) {
+            throwOutOfMemoryError(exec);
+            return false;
+        }
         butterfly = m_butterfly.get();
 
         // We have to check for holes before we start moving things around so that we don't get halfway 
@@ -1047,7 +1053,10 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
         if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX)
             return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(exec->vm()));
         
-        ensureLength(exec->vm(), oldLength + count);
+        if (!ensureLength(exec->vm(), oldLength + count)) {
+            throwOutOfMemoryError(exec);
+            return false;
+        }
         butterfly = m_butterfly.get();
         
         // We have to check for holes before we start moving things around so that we don't get halfway 

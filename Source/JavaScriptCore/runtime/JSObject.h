@@ -868,16 +868,18 @@ protected:
         
     // Call this if you want setIndexQuickly to succeed and you're sure that
     // the array is contiguous.
-    void ensureLength(VM& vm, unsigned length)
+    bool WARN_UNUSED_RETURN ensureLength(VM& vm, unsigned length)
     {
         ASSERT(length < MAX_ARRAY_INDEX);
         ASSERT(hasContiguous(indexingType()) || hasInt32(indexingType()) || hasDouble(indexingType()) || hasUndecided(indexingType()));
 
+        bool result = true;
         if (m_butterfly.get()->vectorLength() < length)
-            ensureLengthSlow(vm, length);
+            result = ensureLengthSlow(vm, length);
             
         if (m_butterfly.get()->publicLength() < length)
             m_butterfly.get()->setPublicLength(length);
+        return result;
     }
         
     // Call this if you want to shrink the butterfly backing store, and you're
@@ -933,7 +935,7 @@ private:
     JS_EXPORT_PRIVATE void convertInt32ToDoubleOrContiguousWhilePerformingSetIndex(VM&, unsigned index, JSValue);
     JS_EXPORT_PRIVATE void convertDoubleToContiguousWhilePerformingSetIndex(VM&, unsigned index, JSValue);
         
-    void ensureLengthSlow(VM&, unsigned length);
+    bool ensureLengthSlow(VM&, unsigned length);
         
     ContiguousJSValues ensureInt32Slow(VM&);
     ContiguousDoubles ensureDoubleSlow(VM&);

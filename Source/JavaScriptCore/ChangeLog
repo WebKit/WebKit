@@ -1,3 +1,24 @@
+2016-03-25  Keith Miller  <keith_miller@apple.com>
+
+        putByIndexBeyondVectorLengthWithoutAttributes should not crash if it can't ensureLength
+        https://bugs.webkit.org/show_bug.cgi?id=155730
+
+        Reviewed by Saam Barati.
+
+        This patch makes ensureLength return a boolean indicating if it was able to set the length.
+        ensureLength also no longer sets the butterfly to null if the allocation of the butterfly
+        fails. All of ensureLengths callers including putByIndexBeyondVectorLengthWithoutAttributes
+        have been adapted to throw an out of memory error if ensureLength fails.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::ensureLengthSlow):
+        * runtime/JSObject.h:
+        (JSC::JSObject::ensureLength):
+
 2016-03-25  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] implement String.prototype.padStart() and String.prototype.padEnd() proposal
