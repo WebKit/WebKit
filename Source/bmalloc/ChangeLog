@@ -1,3 +1,74 @@
+2016-03-25  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Renamed LargeChunk => Chunk
+        https://bugs.webkit.org/show_bug.cgi?id=155894
+
+        Reviewed by Michael Saboff.
+
+        A Chunk can contain both small and large objects now.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocate):
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::isFree):
+        * bmalloc/Chunk.h: Copied from Source/bmalloc/bmalloc/LargeChunk.h.
+        (bmalloc::Chunk::pages):
+        (bmalloc::Chunk::begin):
+        (bmalloc::Chunk::end):
+        (bmalloc::Chunk::Chunk):
+        (bmalloc::Chunk::get):
+        (bmalloc::Chunk::beginTag):
+        (bmalloc::Chunk::endTag):
+        (bmalloc::Chunk::offset):
+        (bmalloc::Chunk::object):
+        (bmalloc::Chunk::page):
+        (bmalloc::Chunk::line):
+        (bmalloc::SmallLine::begin):
+        (bmalloc::SmallPage::begin):
+        (bmalloc::SmallPage::end):
+        (bmalloc::Object::Object):
+        (bmalloc::Object::begin):
+        (bmalloc::LargeChunk::pages): Deleted.
+        (bmalloc::LargeChunk::begin): Deleted.
+        (bmalloc::LargeChunk::end): Deleted.
+        (bmalloc::LargeChunk::LargeChunk): Deleted.
+        (bmalloc::LargeChunk::get): Deleted.
+        (bmalloc::LargeChunk::beginTag): Deleted.
+        (bmalloc::LargeChunk::endTag): Deleted.
+        (bmalloc::LargeChunk::offset): Deleted.
+        (bmalloc::LargeChunk::object): Deleted.
+        (bmalloc::LargeChunk::page): Deleted.
+        (bmalloc::LargeChunk::line): Deleted.
+        * bmalloc/Deallocator.cpp:
+        * bmalloc/FreeList.cpp:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateLarge):
+        * bmalloc/LargeChunk.h: Removed.
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::LargeObject):
+        (bmalloc::LargeObject::merge):
+        (bmalloc::LargeObject::split):
+        * bmalloc/Object.h:
+        (bmalloc::Object::chunk):
+        * bmalloc/ObjectType.cpp:
+        * bmalloc/Sizes.h:
+        * bmalloc/SmallAllocator.h: Removed.
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::VMHeap):
+        (bmalloc::VMHeap::allocateChunk):
+        (bmalloc::VMHeap::allocateLargeChunk): Deleted.
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateLargeObject):
+        (bmalloc::VMHeap::deallocateLargeObject):
+        * bmalloc/Zone.cpp:
+        (bmalloc::enumerator):
+        * bmalloc/Zone.h:
+        (bmalloc::Zone::chunks):
+        (bmalloc::Zone::addChunk):
+        (bmalloc::Zone::largeChunks): Deleted.
+        (bmalloc::Zone::addLargeChunk): Deleted.
+
 2016-03-24  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: small and large objects should share memory

@@ -25,7 +25,7 @@
 
 #include "ObjectType.h"
 
-#include "LargeChunk.h"
+#include "Chunk.h"
 #include "Object.h"
 
 namespace bmalloc {

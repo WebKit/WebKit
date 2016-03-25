@@ -25,9 +25,9 @@
 
 #include "Allocator.h"
 #include "BAssert.h"
+#include "Chunk.h"
 #include "Deallocator.h"
 #include "Heap.h"
-#include "LargeChunk.h"
 #include "LargeObject.h"
 #include "PerProcess.h"
 #include "Sizes.h"
@@ -91,7 +91,7 @@ void* Allocator::allocate(size_t alignment, size_t size)
         size = std::max(largeMin, roundUpToMultipleOf<largeAlignment>(size));
         alignment = roundUpToMultipleOf<largeAlignment>(alignment);
         size_t unalignedSize = largeMin + alignment - largeAlignment + size;
-        if (unalignedSize <= largeMax && alignment <= largeChunkSize / 2) {
+        if (unalignedSize <= largeMax && alignment <= chunkSize / 2) {
             std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
             m_deallocator.processObjectLog(lock);
             return PerProcess<Heap>::getFastCase()->allocateLarge(lock, alignment, size, unalignedSize);
