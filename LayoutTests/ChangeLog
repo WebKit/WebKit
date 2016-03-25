@@ -1,3 +1,12 @@
+2016-03-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking compositing/repaint/become-overlay-composited-layer.html as flaky on ios-sim-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=155737
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-03-25  Brady Eidson  <beidson@apple.com>
 
         Soften push/replaceState frequency restrictions.
