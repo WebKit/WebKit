@@ -26,7 +26,7 @@
 #ifndef MediaTimeQTKit_h
 #define MediaTimeQTKit_h
 
-#if PLATFORM(MAC) && USE(QTKIT)
+#if PLATFORM(MAC)
 
 #include <QTKit/QTTime.h>
 #include <wtf/MediaTime.h>

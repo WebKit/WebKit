@@ -1,5 +1,16 @@
 2016-03-25  Alex Christensen  <achristensen@webkit.org>
 
+        Revert most of r198673.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::buildMediaEnginesVector):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/graphics/mac/MediaTimeQTKit.h:
+        * platform/graphics/mac/MediaTimeQTKit.mm:
+        * platform/mac/WebVideoFullscreenController.mm:
+
+2016-03-25  Alex Christensen  <achristensen@webkit.org>
+
         Add a compile time flag for using QTKit
         https://bugs.webkit.org/show_bug.cgi?id=155868
 

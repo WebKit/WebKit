@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(VIDEO) && USE(QTKIT)
+#if ENABLE(VIDEO)
 
 #import "MediaPlayerPrivateQTKit.h"
 
