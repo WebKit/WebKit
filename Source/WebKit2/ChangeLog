@@ -1,5 +1,13 @@
 2016-03-25  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused lambda capture after r196984.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        resourceResponse is not used in the lambda.
+
+2016-03-25  Alex Christensen  <achristensen@webkit.org>
+
         Fix Mac CMake build.
 
         * PlatformMac.cmake:
