@@ -33,11 +33,6 @@
 #import "QuartzCoreSPI.h"
 #import <QuartzCore/QuartzCore.h>
 
-#if ENABLE(FILTERS_LEVEL_2)
-@interface CABackdropLayer : CALayer
-@end
-#endif
-
 using namespace WebCore;
 
 // FIXME: Should share these values with FilterEffectRenderer::build() (https://bugs.webkit.org/show_bug.cgi?id=76008).

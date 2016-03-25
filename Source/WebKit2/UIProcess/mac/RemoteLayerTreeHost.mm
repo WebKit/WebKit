@@ -41,11 +41,6 @@
 #import <UIKit/UIView.h>
 #endif
 
-#if ENABLE(FILTERS_LEVEL_2)
-@interface CABackdropLayer : CALayer
-@end
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {

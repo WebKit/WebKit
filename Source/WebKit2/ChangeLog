@@ -1,3 +1,16 @@
+2016-03-25  Dean Jackson  <dino@apple.com>
+
+        Remove use of extern "C" to include QuartzCore files
+        https://bugs.webkit.org/show_bug.cgi?id=155905
+
+        Reviewed by Anders Carlson.
+
+        We can avoid having to wrap constants in extern "C", since they
+        are mangled the same in both C and C++.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm: Remove the
+        mention of CABackdropLayer.
+
 2016-03-25  Brian Burg  <bburg@apple.com>
 
         Web Inspector: protocol generator should prefix C++ filenames with the protocol group

@@ -1,3 +1,20 @@
+2016-03-25  Dean Jackson  <dino@apple.com>
+
+        Remove use of extern "C" to include QuartzCore files
+        https://bugs.webkit.org/show_bug.cgi?id=155905
+        <rdar://problem/25364798>
+
+        Reviewed by Anders Carlson.
+
+        We can avoid having to wrap constants in extern "C", since they
+        are mangled the same in both C and C++.
+
+        * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm: Now that
+        QuartzCoreSPI.h has CABackdropLayer, remove the duplicate entry.
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm: Ditto.
+        * platform/spi/cocoa/QuartzCoreSPI.h: Include the framework private
+        file. Repace EXTERN_C with "extern".
+
 2016-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Add a compile time flag for using QTKit

@@ -59,12 +59,6 @@
 #import "ThemeMac.h"
 #endif
 
-#if ENABLE(FILTERS_LEVEL_2)
-@interface CABackdropLayer : CALayer
-@property BOOL windowServerAware;
-@end
-#endif
-
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/LayerBackingStoreAdditions.mm>
 #else

@@ -32,29 +32,15 @@
 #include <QuartzCore/CARenderServer.h>
 
 #ifdef __OBJC__
+
 #import <QuartzCore/CALayerHost.h>
 #import <QuartzCore/CALayerPrivate.h>
+#import <QuartzCore/QuartzCorePrivate.h>
 
 #if PLATFORM(IOS)
 #import <QuartzCore/CADisplay.h>
 #endif
 
-// FIXME: As a workaround for <rdar://problem/18985152>, we conditionally enclose the following
-// headers in an extern "C" linkage block to make it suitable for Objective-C++ use. Once this
-// bug has been fixed we can simply include header <QuartzCore/QuartzCorePrivate.h> instead of
-// including specific QuartzCore headers.
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#import <QuartzCore/CAContext.h>
-#import <QuartzCore/CAFilter.h>
-#import <QuartzCore/CATiledLayerPrivate.h>
-#import <QuartzCore/CATransactionPrivate.h>
-
-#ifdef __cplusplus
-}
-#endif
 #endif // __OBJC__
 
 #else
@@ -106,6 +92,12 @@ extern "C" {
 
 @interface CADisplay ()
 @property (nonatomic, readonly) NSString *name;
+@end
+#endif
+
+#if ENABLE(FILTERS_LEVEL_2)
+@interface CABackdropLayer : CALayer
+@property BOOL windowServerAware;
 @end
 #endif
 
@@ -166,33 +158,33 @@ EXTERN_C void CARenderServerRenderDisplayLayerWithTransformAndTimeOffset(mach_po
 #endif
 @end
 
-EXTERN_C NSString * const kCATiledLayerRemoveImmediately;
+extern NSString * const kCATiledLayerRemoveImmediately;
 
-EXTERN_C NSString * const kCAFilterColorInvert;
-EXTERN_C NSString * const kCAFilterColorMatrix;
-EXTERN_C NSString * const kCAFilterColorMonochrome;
-EXTERN_C NSString * const kCAFilterColorHueRotate;
-EXTERN_C NSString * const kCAFilterColorSaturate;
-EXTERN_C NSString * const kCAFilterGaussianBlur;
-EXTERN_C NSString * const kCAFilterPlusD;
-EXTERN_C NSString * const kCAFilterPlusL;
+extern NSString * const kCAFilterColorInvert;
+extern NSString * const kCAFilterColorMatrix;
+extern NSString * const kCAFilterColorMonochrome;
+extern NSString * const kCAFilterColorHueRotate;
+extern NSString * const kCAFilterColorSaturate;
+extern NSString * const kCAFilterGaussianBlur;
+extern NSString * const kCAFilterPlusD;
+extern NSString * const kCAFilterPlusL;
 
-EXTERN_C NSString * const kCAFilterNormalBlendMode;
-EXTERN_C NSString * const kCAFilterMultiplyBlendMode;
-EXTERN_C NSString * const kCAFilterScreenBlendMode;
-EXTERN_C NSString * const kCAFilterOverlayBlendMode;
-EXTERN_C NSString * const kCAFilterDarkenBlendMode;
-EXTERN_C NSString * const kCAFilterLightenBlendMode;
-EXTERN_C NSString * const kCAFilterColorDodgeBlendMode;
-EXTERN_C NSString * const kCAFilterColorBurnBlendMode;
-EXTERN_C NSString * const kCAFilterSoftLightBlendMode;
-EXTERN_C NSString * const kCAFilterHardLightBlendMode;
-EXTERN_C NSString * const kCAFilterDifferenceBlendMode;
-EXTERN_C NSString * const kCAFilterExclusionBlendMode;
+extern NSString * const kCAFilterNormalBlendMode;
+extern NSString * const kCAFilterMultiplyBlendMode;
+extern NSString * const kCAFilterScreenBlendMode;
+extern NSString * const kCAFilterOverlayBlendMode;
+extern NSString * const kCAFilterDarkenBlendMode;
+extern NSString * const kCAFilterLightenBlendMode;
+extern NSString * const kCAFilterColorDodgeBlendMode;
+extern NSString * const kCAFilterColorBurnBlendMode;
+extern NSString * const kCAFilterSoftLightBlendMode;
+extern NSString * const kCAFilterHardLightBlendMode;
+extern NSString * const kCAFilterDifferenceBlendMode;
+extern NSString * const kCAFilterExclusionBlendMode;
 
-EXTERN_C NSString * const kCAContextDisplayName;
-EXTERN_C NSString * const kCAContextDisplayId;
-EXTERN_C NSString * const kCAContextIgnoresHitTest;
+extern NSString * const kCAContextDisplayName;
+extern NSString * const kCAContextDisplayId;
+extern NSString * const kCAContextIgnoresHitTest;
 
 #if (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED < 100000) \
     || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED < 30000) \
