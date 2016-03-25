@@ -18,6 +18,11 @@ list(APPEND JavaScriptCore_SOURCES
 )
 add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
 
+find_library(SECURITY_LIBRARY Security)
+list(APPEND JavaScriptCore_LIBRARIES
+    ${SECURITY_LIBRARY}
+)
+
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/TracingDtrace.h
     DEPENDS ${JAVASCRIPTCORE_DIR}/runtime/Tracing.d

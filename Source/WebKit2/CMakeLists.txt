@@ -145,13 +145,17 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/runtime"
     "${WTF_DIR}"
     "${DERIVED_SOURCES_DIR}"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${DERIVED_SOURCES_WEBKIT2_DIR}"
     "${DERIVED_SOURCES_WEBKIT2_DIR}/include"
     "${CMAKE_BINARY_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
     "${CMAKE_SOURCE_DIR}/WebKitLibraries"
+)
+
+# FIXME: We shouldn't need to have this after DERIVED_SOURCES_WEBCORE_DIR, but there are too many files named InspectorBackendDispatchers.h on Mac.
+list(APPEND WebKit2_INCLUDE_DIRECTORIES
+    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
 )
 
 set(PROTOCOL_GENERATOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")

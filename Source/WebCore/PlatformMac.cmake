@@ -532,6 +532,7 @@ list(APPEND WebCore_SOURCES
 
     platform/network/cocoa/CredentialCocoa.mm
     platform/network/cocoa/ProtectionSpaceCocoa.mm
+    platform/network/cocoa/ResourceLoadTiming.mm
     platform/network/cocoa/ResourceRequestCocoa.mm
     platform/network/cocoa/ResourceResponseCocoa.mm
     platform/network/cocoa/WebCoreNSURLSession.mm
@@ -595,7 +596,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     Modules/notifications
     Modules/webdatabase
 
-    Modules/indexeddb/legacy
+    Modules/indexeddb/client
     Modules/indexeddb/shared
     Modules/indexeddb/server
 
