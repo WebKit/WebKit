@@ -106,7 +106,8 @@ public:
     float hangablePunctuationEndWidth(unsigned index) const;
     unsigned firstCharacterIndexStrippingSpaces() const;
     unsigned lastCharacterIndexStrippingSpaces() const;
-
+    bool isHangableStopOrComma(UChar) const;
+    
     WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
 

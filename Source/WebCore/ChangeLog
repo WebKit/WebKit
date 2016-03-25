@@ -1,3 +1,44 @@
+2016-03-23  Dave Hyatt  <hyatt@apple.com>
+
+        Implement the allow-end value of the hanging-punctuation CSS property.
+        https://bugs.webkit.org/show_bug.cgi?id=104996
+
+        Reviewed by Simon Fraser.
+
+        Added new tests in fast/text.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::constructLine):
+        Fix a bug where empty RenderInlines were incorrectly excluding their end borders if
+        they occurred at the end of a line. Needed to adequately test allow-end and empty
+        inline borders.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::isHangableStopOrComma):
+        Helper function that identifies the hangable stops and commas.
+
+        * rendering/RenderText.h:
+        Add new isHangableStopOrComma function to RenderText.
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::lineBreak):
+        (WebCore::BreakingContext::lineWidth):
+        (WebCore::BreakingContext::atEnd):
+        (WebCore::BreakingContext::fitsOnLineOrHangsAtEnd):
+        (WebCore::BreakingContext::clearLineBreakIfFitsOnLine):
+        (WebCore::BreakingContext::commitLineBreakAtCurrentWidth):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::BreakingContext::handleEmptyInline):
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::tryHyphenating):
+        (WebCore::BreakingContext::computeAdditionalBetweenWordsWidth):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::commitAndUpdateLineBreakIfNeeded):
+        Modified breaking rules to handle allow-end. The basic idea is to see if you can
+        fit without the comma and only hang if you do, and if nothing else gets added to the
+        line after the comma. This involves tracking a new state, m_hangsAtEnd, that can
+        be set/cleared while iterating over the objects that will end up on the line.
+
 2016-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Revert most of r198673.

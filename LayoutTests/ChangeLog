@@ -1,3 +1,17 @@
+2016-03-23  Dave Hyatt  <hyatt@apple.com>
+
+        Implement the allow-end value of the hanging-punctuation CSS property.
+        https://bugs.webkit.org/show_bug.cgi?id=104996
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/hanging-punctuation-allow-end-basic-expected.html: Added.
+        * fast/text/hanging-punctuation-allow-end-basic.html: Added.
+        * fast/text/hanging-punctuation-allow-end-expected.html: Added.
+        * fast/text/hanging-punctuation-allow-end-inlines-expected.html: Added.
+        * fast/text/hanging-punctuation-allow-end-inlines.html: Added.
+        * fast/text/hanging-punctuation-allow-end.html: Added.
+
 2016-03-25  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] implement String.prototype.padStart() and String.prototype.padEnd() proposal

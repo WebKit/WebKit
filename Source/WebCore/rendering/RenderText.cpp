@@ -546,6 +546,13 @@ float RenderText::hangablePunctuationEndWidth(unsigned index) const
     return widthFromCache(font, 0, 1, 0, 0, 0, style);
 }
 
+bool RenderText::isHangableStopOrComma(UChar c) const
+{
+    return c == 0x002C || c == 0x002E || c == 0x060C || c == 0x06D4 || c == 0x3001
+        || c == 0x3002 || c == 0xFF0C || c == 0xFF0E || c == 0xFE50 || c == 0xFE51
+        || c == 0xFE52 || c == 0xFF61 || c == 0xFF64;
+}
+
 unsigned RenderText::firstCharacterIndexStrippingSpaces() const
 {
     if (!style().collapseWhiteSpace())

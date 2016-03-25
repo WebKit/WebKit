@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+            <style>
+                    .hang { hanging-punctuation: allow-end; }
+                    .not-hang { hanging-punctuation: allow-end; }
+                    .frame { width: 65px; font-family: ahem; border: solid 3px cyan; }
+            </style>
+        </head>
+    <body>
+        <!--
+          Test for checking overflowing conditions of hanging-punctuation: allow-end.
+          http://www.w3.org/TR/2012/WD-css3-text-20121113/#hanging-punctuation0
+          -->
+        <!-- Overflow occurred at U+3001. This should hang. -->
+        <div class="hang frame">
+            ab c&#x3001;
+        </div>
+        <!-- Overflow occurred at "d". This should NOT hang. -->
+        <div class="not-hang frame">
+            ab cd&#x3001;
+            </div>
+        <!-- Overflow occurred at first U+3001. This should NOT hang. -->
+        <div class="not-hang frame">
+            ab c&#x3001;&#x3001;
+            </div>
+        <!-- Overflow occurred at second U+3001. This should hang. -->
+        <div class="hang frame">
+            a b&#x3001;&#x3001;
+            </div>
+        <!-- Hanging with soft hyphen. This should hang. -->
+        <div class="hang frame">
+            a b&shy;c&#x3001;
+            </div>
+        <!-- Overflow occurred at U+3001 and there is a <br> after it. This should hang. -->
+        <div class="hang frame">
+            ab c&#x3001;<br>
+        </div>
+    </body>
+</html>
