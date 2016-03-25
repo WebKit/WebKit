@@ -1,3 +1,12 @@
+2016-03-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, try to fix a crash seen on the bots.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate): We have to take the lock even if we're
+        only reading our own data becuse LargeObject contains validation code
+        that will read our neighbors' data as well.
+
 2016-03-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r198679.
