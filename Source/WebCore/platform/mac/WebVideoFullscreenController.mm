@@ -33,20 +33,20 @@
 #import "WebWindowAnimation.h"
 #import <AVFoundation/AVFoundation.h>
 #import <Carbon/Carbon.h>
-#import <QTKit/QTKit.h>
 #import <WebCore/DisplaySleepDisabler.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
 
-using namespace WebCore;
-
+#if USE(QTKIT)
+#import <QTKit/QTKit.h>
 SOFT_LINK_FRAMEWORK(QTKit)
 SOFT_LINK_CLASS(QTKit, QTMovieLayer)
-
 SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
-
 #define QTMovieRateDidChangeNotification getQTMovieRateDidChangeNotification()
+#endif
+
+using namespace WebCore;
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
@@ -127,6 +127,7 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
         return;
 
     if ([self isWindowLoaded]) {
+#if USE(QTKIT)
         if (_videoElement->platformMedia().type == PlatformMedia::QTMovieType) {
             QTMovie *movie = _videoElement->platformMedia().media.qtMovie;
             QTMovieLayer *layer = [allocQTMovieLayerInstance() init];
@@ -138,7 +139,9 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
                                                          name:QTMovieRateDidChangeNotification
                                                        object:movie];
 
-        } else if (_videoElement->platformMedia().type == PlatformMedia::AVFoundationMediaPlayerType) {
+        } else
+#endif
+        if (_videoElement->platformMedia().type == PlatformMedia::AVFoundationMediaPlayerType) {
             AVPlayer *player = _videoElement->platformMedia().media.avfMediaPlayer;
             AVPlayerLayer *layer = [allocAVPlayerLayerInstance() init];
             [self setupVideoOverlay:layer];
@@ -357,6 +360,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 
 - (void)updatePowerAssertions
 {
+#if USE(QTKIT)
     float rate = 0;
     if (_videoElement && _videoElement->platformMedia().type == PlatformMedia::QTMovieType)
         rate = [_videoElement->platformMedia().media.qtMovie rate];
@@ -365,6 +369,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
         if (!_displaySleepDisabler)
             _displaySleepDisabler = DisplaySleepDisabler::create("com.apple.WebCore - Fullscreen video");
     } else
+#endif
         _displaySleepDisabler = nullptr;
 }
 

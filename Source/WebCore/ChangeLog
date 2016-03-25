@@ -1,3 +1,20 @@
+2016-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add a compile time flag for using QTKit
+        https://bugs.webkit.org/show_bug.cgi?id=155868
+
+        Reviewed by Daniel Bates.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::buildMediaEnginesVector):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/graphics/mac/MediaTimeQTKit.h:
+        * platform/graphics/mac/MediaTimeQTKit.mm:
+        * platform/mac/WebVideoFullscreenController.mm:
+        (SOFT_LINK_CLASS):
+        (-[WebVideoFullscreenController setVideoElement:]):
+        (-[WebVideoFullscreenController updatePowerAssertions]):
+
 2016-03-25  Beth Dakin  <bdakin@apple.com>
 
         Autoscrolling from a drag selection does not work in full screen, or when the 
