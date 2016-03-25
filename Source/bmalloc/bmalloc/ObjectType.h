@@ -31,14 +31,9 @@
 
 namespace bmalloc {
 
-enum ObjectType { Small, Large, XLarge };
+enum class ObjectType : unsigned char { Small, Large, XLarge };
 
 ObjectType objectType(void*);
-
-inline bool isSmall(void* object)
-{
-    return test(object, smallMask);
-}
 
 inline bool isXLarge(void* object)
 {

@@ -25,7 +25,6 @@
 
 #include "LargeObject.h"
 #include "PerProcess.h"
-#include "SuperChunk.h"
 #include "VMHeap.h"
 #include <thread>
 
@@ -36,36 +35,16 @@ VMHeap::VMHeap()
 {
 }
 
-void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock)
-{
-    if (!m_smallChunks.size())
-        allocateSuperChunk(lock);
-
-    // We initialize chunks lazily to avoid dirtying their metadata pages.
-    SmallChunk* smallChunk = new (m_smallChunks.pop()->smallChunk()) SmallChunk(lock);
-    for (auto* it = smallChunk->begin(); it < smallChunk->end(); ++it)
-        m_smallPages.push(it);
-}
-
 LargeObject VMHeap::allocateLargeChunk(std::lock_guard<StaticMutex>& lock)
 {
-    if (!m_largeChunks.size())
-        allocateSuperChunk(lock);
+    LargeChunk* largeChunk =
+        new (vmAllocate(largeChunkSize, largeChunkSize)) LargeChunk(lock);
 
-    // We initialize chunks lazily to avoid dirtying their metadata pages.
-    LargeChunk* largeChunk = new (m_largeChunks.pop()->largeChunk()) LargeChunk;
-    return LargeObject(largeChunk->begin());
-}
-
-void VMHeap::allocateSuperChunk(std::lock_guard<StaticMutex>&)
-{
-    SuperChunk* superChunk =
-        new (vmAllocate(superChunkSize, superChunkSize)) SuperChunk;
-    m_smallChunks.push(superChunk);
-    m_largeChunks.push(superChunk);
 #if BOS(DARWIN)
-    m_zone.addSuperChunk(superChunk);
+    m_zone.addLargeChunk(largeChunk);
 #endif
+
+    return LargeObject(largeChunk->begin());
 }
 
 } // namespace bmalloc
