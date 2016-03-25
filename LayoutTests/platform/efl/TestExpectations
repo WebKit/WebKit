@@ -2992,9 +2992,20 @@ webkit.org/b/151943 imported/blink/http/tests/security/contentSecurityPolicy/obj
 webkit.org/b/151943 imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase.html [ Failure ]
 webkit.org/b/151943 imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code.html [ Failure ]
 webkit.org/b/151943 imported/blink/media/track/media-element-move-to-new-document-assert.html [ Failure ]
+webkit.org/b/151943 imported/blink/compositing/draws-content/webgl-simple-background.html [ Timeout ]
+webkit.org/b/151943 imported/blink/fast/css/crash-corner-present.html [ Timeout ]
+webkit.org/b/151943 imported/blink/fast/events/popup-forwarded-gesture.html [ Timeout ]
+webkit.org/b/151943 imported/blink/fast/box-shadow/basic-shadows-2.html [ ImageOnlyFailure ]
+webkit.org/b/151943 imported/blink/fast/box-shadow/normal-box-shadow-with-background-image.html [ ImageOnlyFailure ]
+webkit.org/b/151943 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageOnlyFailure ]
 
 webkit.org/b/153772 fast/shadow-dom/slot-removal-crash-2.html [ Timeout ]
 
 webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
 webkit.org/b/155505 webkit.org/b/153866 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 
+webkit.org/b/155878 accessibility/w3c-svg-description-calculation.html [ Missing ]
+webkit.org/b/155878 accessibility/w3c-svg-elements-not-exposed.html [ Missing ]
+webkit.org/b/155878 accessibility/w3c-svg-name-calculation.html [ Missing ]
+webkit.org/b/155878 accessibility/w3c-svg-presentational-role.html [ Missing ]
+webkit.org/b/155878 accessibility/w3c-svg-roles.html [ Missing ]

@@ -1,3 +1,12 @@
+2016-03-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL gardening.
+
+        Mark some blink imported tests to timeout, imageonlyfailure.
+        Besides some AX tests need to have new baseline, which have been tested since r197616.
+
+        * platform/efl/TestExpectations:
+
 2016-03-24  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed EFL gardening. Mark crash tests in proper category.
