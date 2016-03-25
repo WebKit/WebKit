@@ -66,23 +66,23 @@ noInline(foo3);
 noInline(foo4);
 
 var array = new Array(1000);
-for (var i = 0; i < 4000000; ++i) {
+for (var i = 0; i < 400000; ++i) {
     var o = foo0(true);
     array[i % array.length] = o;
 }
-for (var i = 0; i < 4000000; ++i) {
+for (var i = 0; i < 400000; ++i) {
     var o = foo1(true);
     array[i % array.length] = o;
 }
-for (var i = 0; i < 4000000; ++i) {
+for (var i = 0; i < 400000; ++i) {
     var o = foo2(true);
     array[i % array.length] = o;
 }
-for (var i = 0; i < 4000000; ++i) {
+for (var i = 0; i < 400000; ++i) {
     var o = foo3(true);
     array[i % array.length] = o;
 }
-for (var i = 0; i < 4000000; ++i) {
+for (var i = 0; i < 400000; ++i) {
     var o = foo4(true);
     array[i % array.length] = o;
 }

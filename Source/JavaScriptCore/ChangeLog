@@ -1,3 +1,11 @@
+2016-03-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] materialize-past-butterfly-allocation.js time out in debug
+
+        * tests/stress/materialize-past-butterfly-allocation.js:
+        The test times out on the debug bots. We suspect there is nothing
+        wrong, just overkill loops.
+
 2016-03-25  Brian Burg  <bburg@apple.com>
 
         Web Inspector: protocol generator should prefix C++ filenames with the protocol group
