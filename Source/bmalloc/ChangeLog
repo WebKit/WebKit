@@ -1,5 +1,65 @@
 2016-03-25  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: support physical page sizes that don't match the virtual page size
+        https://bugs.webkit.org/show_bug.cgi?id=155898
+
+        Reviewed by Gavin Barraclough.
+
+        This is a memory savings on iOS devices where the virtual page size
+        is 16kB but the physical page size is 4kB.
+
+        * bmalloc/Chunk.h:
+        (bmalloc::Chunk::Chunk): smallPageSize is now unrelated to the OS's
+        page size -- it just reflects the optimal unit of memory to recycle
+        between small objects.
+
+        We only need to round up to largeAlignment because small objects allocate
+        as subsets of large objects now.
+
+        (bmalloc::Chunk::page):
+        (bmalloc::Object::pageBegin):
+        (bmalloc::Object::line): Adopt smallPageSize.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::initializeLineMetadata):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::allocateLarge): Adopt smallPageSize.
+
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateXLarge):
+        (bmalloc::Heap::shrinkXLarge): Adopt vmPageSizePhysical(). We want the
+        physical page size because that's the unit at which the hardware MMU
+        will recycle memory.
+
+        * bmalloc/Sizes.h: Adopt smallPageSize.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmPageSizePhysical):
+        (bmalloc::vmPageSize): Distinguish between page size, which is the virtual
+        memory page size advertised by the OS, and physical page size, which the
+        true hardware page size.
+
+        (bmalloc::vmSize):
+        (bmalloc::vmValidate):
+        (bmalloc::vmValidatePhysical):
+        (bmalloc::tryVMAllocate):
+        (bmalloc::vmDeallocatePhysicalPages):
+        (bmalloc::vmAllocatePhysicalPages):
+        (bmalloc::vmDeallocatePhysicalPagesSloppy):
+        (bmalloc::vmAllocatePhysicalPagesSloppy): Adopt vmPageSize() and
+        vmPageSizePhyiscal().
+
+        * bmalloc/Vector.h:
+        (bmalloc::Vector::initialCapacity):
+        (bmalloc::Vector<T>::shrink):
+        (bmalloc::Vector<T>::shrinkCapacity):
+        (bmalloc::Vector<T>::growCapacity): Adopt vmPageSize(). We'd prefer to
+        use vmPageSizePhysical() but mmap() doesn't support it.
+
+        * bmalloc/XLargeMap.cpp: #include.
+
+2016-03-25  Geoffrey Garen  <ggaren@apple.com>
+
         Unreviewed, rolling in r198679.
 
         r198679 was just a rename. The regression was caused by r198675 and then

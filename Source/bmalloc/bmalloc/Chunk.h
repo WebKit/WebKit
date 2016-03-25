@@ -81,14 +81,14 @@ private:
     // We use the X's for boundary tags and the O's for edge sentinels.
 
     std::array<SmallLine, chunkSize / smallLineSize> m_lines;
-    std::array<SmallPage, chunkSize / vmPageSize> m_pages;
+    std::array<SmallPage, chunkSize / smallPageSize> m_pages;
     std::array<BoundaryTag, boundaryTagCount> m_boundaryTags;
-    char m_memory[] __attribute__((aligned(2 * smallMax + 0)));
+    char m_memory[] __attribute__((aligned(largeAlignment + 0)));
 };
 
 static_assert(sizeof(Chunk) + largeMax <= chunkSize, "largeMax is too big");
 static_assert(
-    sizeof(Chunk) % vmPageSize + 2 * smallMax <= vmPageSize,
+    sizeof(Chunk) % smallPageSize + 2 * smallMax <= smallPageSize,
     "the first page of object memory in a small chunk must be able to allocate smallMax");
 
 inline Chunk::Chunk(std::lock_guard<StaticMutex>& lock)
@@ -165,7 +165,7 @@ inline void* Chunk::object(size_t offset)
 
 inline SmallPage* Chunk::page(size_t offset)
 {
-    size_t pageNumber = offset / vmPageSize;
+    size_t pageNumber = offset / smallPageSize;
     return &m_pages[pageNumber];
 }
 
@@ -221,7 +221,7 @@ inline void* Object::begin()
 
 inline void* Object::pageBegin()
 {
-    return m_chunk->object(roundDownToMultipleOf(vmPageSize, m_offset));
+    return m_chunk->object(roundDownToMultipleOf(smallPageSize, m_offset));
 }
 
 inline SmallLine* Object::line()

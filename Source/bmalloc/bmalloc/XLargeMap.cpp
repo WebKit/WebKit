@@ -24,6 +24,7 @@
  */
 
 #include "XLargeMap.h"
+#include "Sizes.h"
 
 namespace bmalloc {
 
