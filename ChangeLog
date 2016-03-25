@@ -1,3 +1,12 @@
+2016-03-24  Bill Ming  <mbbill@gmail.com>
+
+        Determine architecture for running jsc stress tests on windows
+        https://bugs.webkit.org/show_bug.cgi?id=155840
+
+        Reviewed by Alex Christensen.
+
+        * Tools/Scripts/run-jsc-stress-tests:
+
 2016-03-23  Bill Ming  <mbbill@gmail.com>
 
         Fixed ninja build path.

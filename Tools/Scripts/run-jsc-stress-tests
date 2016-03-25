@@ -355,12 +355,43 @@ def determineArchitectureFromELFBinary
     end
 end
 
+def determineArchitectureFromPEBinary
+    f = File.open($jscPath.to_s)
+    data = f.read(1024)
+
+    if !(data[0, 2] == "MZ")
+        $stderr.puts "Warning: Missing PE magic in file #{Shellwords.shellescape($jscPath.to_s)}"
+        return nil
+    end
+
+    peHeaderAddr = data[0x3c, 4].unpack('V').first # 32-bit unsigned int little endian
+
+    if !(data[peHeaderAddr, 4] == "PE\0\0")
+        $stderr.puts "Warning: Incorrect PE header in file #{Shellwords.shellescape($jscPath.to_s)}"
+        return nil
+    end
+
+    machine = data[peHeaderAddr + 4, 2].unpack('v').first # 16-bit unsigned short, little endian
+
+    case machine
+    when 0x014c
+        "x86"
+    when 0x8664
+        "x86-64"
+    else
+        $stderr.puts "Warning: unsupported machine type: #{machine}"
+        nil
+    end
+end
+
 def determineArchitecture
     case $hostOS
     when "darwin"
         determineArchitectureFromMachOBinary
     when "linux"
         determineArchitectureFromELFBinary
+    when "windows"
+        determineArchitectureFromPEBinary
     else
         $stderr.puts "Warning: unable to determine architecture on this platform."
         nil
