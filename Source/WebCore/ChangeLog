@@ -1,3 +1,34 @@
+2016-03-25  Zalan Bujtas  <zalan@apple.com>
+
+        RenderImage::repaintOrMarkForLayout fails when the renderer is detached.
+        https://bugs.webkit.org/show_bug.cgi?id=155885
+        <rdar://problem/25359164>
+
+        Reviewed by Simon Fraser.
+
+        Making containingBlockFor* functions standalone ensures that we don't
+        call them on an invalid object. 
+
+        Covered by existing tests.
+
+        * dom/Element.cpp:
+        (WebCore::layoutOverflowRectContainsAllDescendants):
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches):
+        * rendering/RenderElement.cpp:
+        (WebCore::containingBlockForFixedPosition):
+        (WebCore::containingBlockForAbsolutePosition):
+        (WebCore::containingBlockForObjectInFlow):
+        (WebCore::RenderElement::containingBlockForFixedPosition): Deleted.
+        (WebCore::RenderElement::containingBlockForAbsolutePosition): Deleted.
+        (WebCore::isNonRenderBlockInline): Deleted.
+        (WebCore::RenderElement::containingBlockForObjectInFlow): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleWillChange):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+
 2016-03-25  Dean Jackson  <dino@apple.com>
 
         Remove use of extern "C" to include QuartzCore files

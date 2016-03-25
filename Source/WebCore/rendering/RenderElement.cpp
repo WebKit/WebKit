@@ -1585,48 +1585,6 @@ PassRefPtr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleR
     return styleResolver.pseudoStyleForElement(*element(), pseudoStyleRequest, *parentStyle);
 }
 
-RenderBlock* RenderElement::containingBlockForFixedPosition() const
-{
-    const RenderElement* object = this;
-    while (object && !object->canContainFixedPositionObjects())
-        object = object->parent();
-
-    ASSERT(!object || !object->isAnonymousBlock());
-    return const_cast<RenderBlock*>(downcast<RenderBlock>(object));
-}
-
-RenderBlock* RenderElement::containingBlockForAbsolutePosition() const
-{
-    const RenderElement* object = this;
-    while (object && !object->canContainAbsolutelyPositionedObjects())
-        object = object->parent();
-
-    // For a relatively positioned inline, return its nearest non-anonymous containing block,
-    // not the inline itself, to avoid having a positioned objects list in all RenderInlines
-    // and use RenderBlock* as RenderElement::containingBlock's return type.
-    // Use RenderBlock::container() to obtain the inline.
-    if (object && !is<RenderBlock>(*object))
-        object = object->containingBlock();
-
-    while (object && object->isAnonymousBlock())
-        object = object->containingBlock();
-
-    return const_cast<RenderBlock*>(downcast<RenderBlock>(object));
-}
-
-static inline bool isNonRenderBlockInline(const RenderElement& object)
-{
-    return (object.isInline() && !object.isReplaced()) || !object.isRenderBlock();
-}
-
-RenderBlock* RenderElement::containingBlockForObjectInFlow() const
-{
-    const RenderElement* object = this;
-    while (object && isNonRenderBlockInline(*object))
-        object = object->parent();
-    return const_cast<RenderBlock*>(downcast<RenderBlock>(object));
-}
-
 Color RenderElement::selectionColor(int colorProperty) const
 {
     // If the element is unselectable, or we are only painting the selection,
@@ -2208,6 +2166,43 @@ void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto) const
     }
     if (hasContinuation())
         downcast<RenderBoxModelObject>(*this).continuation()->updateOutlineAutoAncestor(hasOutlineAuto);
+}
+
+RenderBlock* containingBlockForFixedPosition(const RenderElement* element)
+{
+    const auto* object = element;
+    while (object && !object->canContainFixedPositionObjects())
+        object = object->parent();
+
+    ASSERT(!object || !object->isAnonymousBlock());
+    return const_cast<RenderBlock*>(downcast<RenderBlock>(object));
+}
+
+RenderBlock* containingBlockForAbsolutePosition(const RenderElement* element)
+{
+    const auto* object = element;
+    while (object && !object->canContainAbsolutelyPositionedObjects())
+        object = object->parent();
+
+    // For a relatively positioned inline, return its nearest non-anonymous containing block,
+    // not the inline itself, to avoid having a positioned objects list in all RenderInlines
+    // and use RenderBlock* as RenderElement::containingBlock's return type.
+    // Use RenderBlock::container() to obtain the inline.
+    if (object && !is<RenderBlock>(*object))
+        object = object->containingBlock();
+
+    while (object && object->isAnonymousBlock())
+        object = object->containingBlock();
+
+    return const_cast<RenderBlock*>(downcast<RenderBlock>(object));
+}
+
+RenderBlock* containingBlockForObjectInFlow(const RenderElement* element)
+{
+    const auto* object = element;
+    while (object && ((object->isInline() && !object->isReplaced()) || !object->isRenderBlock()))
+        object = object->parent();
+    return const_cast<RenderBlock*>(downcast<RenderBlock>(object));
 }
 
 }
