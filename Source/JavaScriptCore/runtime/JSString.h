@@ -87,6 +87,8 @@ public:
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
 
+    static const unsigned MaxLength = std::numeric_limits<int32_t>::max();
+
 private:
     JSString(VM& vm, PassRefPtr<StringImpl> value)
         : JSCell(vm, vm.stringStructure.get())

@@ -66,6 +66,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCodePointAt(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncPadEnd(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncPadStart(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeat(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState*);
@@ -133,6 +135,8 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("concat", stringProtoFuncConcat, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("indexOf", stringProtoFuncIndexOf, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf", stringProtoFuncLastIndexOf, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("padEnd", stringProtoFuncPadEnd, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("padStart", stringProtoFuncPadStart, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("repeat", stringProtoFuncRepeat, DontEnum, 1);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replace", stringProtoFuncReplace, DontEnum, 2, StringPrototypeReplaceIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("slice", stringProtoFuncSlice, DontEnum, 2);
@@ -775,6 +779,39 @@ static inline JSValue repeatCharacter(ExecState* exec, CharacterType character, 
     return jsString(exec, impl.release());
 }
 
+template <typename CharacterType>
+static inline JSString* repeatCharacter(ExecState& exec, CharacterType character, unsigned repeatCount)
+{
+    CharacterType* buffer = nullptr;
+    RefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(repeatCount, buffer);
+    if (!impl)
+        return throwOutOfMemoryError(&exec), nullptr;
+
+    std::fill_n(buffer, repeatCount, character);
+
+    return jsString(&exec, impl.release());
+}
+
+static inline bool repeatStringPattern(ExecState& exec, unsigned maxLength, JSString* string, JSRopeString::RopeBuilder& ropeBuilder)
+{
+    unsigned repeatCount = maxLength / string->length();
+    unsigned remainingCharacters = maxLength - repeatCount * string->length();
+    for (unsigned i = 0; i < repeatCount; ++i) {
+        if (!ropeBuilder.append(string)) {
+            throwOutOfMemoryError(&exec);
+            return false;
+        }
+    }
+    if (remainingCharacters) {
+        JSString* substr = jsSubstring(&exec, string, 0, remainingCharacters);
+        if (!substr || !ropeBuilder.append(substr)) {
+            throwOutOfMemoryError(&exec);
+            return false;
+        }
+    }
+    return true;
+}
+
 EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeat(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
@@ -820,6 +857,79 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeat(ExecState* exec)
             return JSValue::encode(throwOutOfMemoryError(exec));
     }
     return JSValue::encode(ropeBuilder.release());
+}
+
+enum class StringPaddingLocation { Start, End };
+
+static EncodedJSValue padString(ExecState& exec, StringPaddingLocation paddingLocation)
+{
+    JSValue thisValue = exec.thisValue();
+    if (!thisValue.requireObjectCoercible(&exec))
+        return JSValue::encode(jsUndefined());
+    JSString* thisString = thisValue.toString(&exec);
+    if (exec.hadException())
+        return JSValue::encode(jsUndefined());
+
+    double maxLengthAsDouble = exec.argument(0).toLength(&exec);
+    if (exec.hadException())
+        return JSValue::encode(jsUndefined());
+    ASSERT(maxLengthAsDouble >= 0.0);
+    ASSERT(maxLengthAsDouble == std::trunc(maxLengthAsDouble));
+
+    if (maxLengthAsDouble <= thisString->length())
+        return JSValue::encode(thisString);
+
+    if (maxLengthAsDouble > JSString::MaxLength)
+        return JSValue::encode(throwOutOfMemoryError(&exec));
+
+    unsigned maxLength = static_cast<unsigned>(maxLengthAsDouble);
+
+    JSValue fillString = exec.argument(1);
+    JSString* filler = nullptr;
+    if (!fillString.isUndefined()) {
+        filler = fillString.toString(&exec);
+        if (!filler)
+            return JSValue::encode(jsUndefined());
+    }
+
+    unsigned fillLength = static_cast<unsigned>(maxLength) - thisString->length();
+
+    JSRopeString::RopeBuilder ropeBuilder(exec.vm());
+    if (paddingLocation == StringPaddingLocation::End) {
+        if (!ropeBuilder.append(thisString))
+            return JSValue::encode(throwOutOfMemoryError(&exec));
+    }
+
+    if (!filler || filler->length() == 1) {
+        UChar character = filler ? filler->view(&exec)[0] : ' ';
+        if (!(character & ~0xff))
+            filler = repeatCharacter(exec, static_cast<LChar>(character), fillLength);
+        else
+            filler = repeatCharacter(exec, character, fillLength);
+        if (!filler || !ropeBuilder.append(filler))
+            return JSValue::encode(throwOutOfMemoryError(&exec));
+        ASSERT(filler->length() == fillLength);
+    } else {
+        if (!repeatStringPattern(exec, fillLength, filler, ropeBuilder))
+            return JSValue::encode(throwOutOfMemoryError(&exec));
+    }
+
+    if (paddingLocation == StringPaddingLocation::Start) {
+        if (!ropeBuilder.append(thisString))
+            return JSValue::encode(throwOutOfMemoryError(&exec));
+    }
+    ASSERT(!exec.hadException());
+    return JSValue::encode(ropeBuilder.release());
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncPadEnd(ExecState* exec)
+{
+    return padString(*exec, StringPaddingLocation::End);
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncPadStart(ExecState* exec)
+{
+    return padString(*exec, StringPaddingLocation::Start);
 }
 
 ALWAYS_INLINE EncodedJSValue replace(

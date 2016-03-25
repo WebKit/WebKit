@@ -574,6 +574,10 @@
   cmd: runES6 :normal
 - path: es6/String.prototype_methods_String.prototype.normalize.js
   cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.padEnd.js
+  cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.padStart.js
+  cmd: runES6 :normal
 - path: es6/String.prototype_methods_String.prototype.repeat.js
   cmd: runES6 :normal
 - path: es6/String.prototype_methods_String.prototype.startsWith.js
