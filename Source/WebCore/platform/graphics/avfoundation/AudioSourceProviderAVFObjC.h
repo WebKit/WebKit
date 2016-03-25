@@ -29,6 +29,8 @@
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
 #include "AudioSourceProvider.h"
+#include <atomic>
+#include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -89,13 +91,15 @@ private:
     std::unique_ptr<AudioStreamBasicDescription> m_outputDescription;
     std::unique_ptr<CARingBuffer> m_ringBuffer;
 
+    Lock m_mutex;
     MediaTime m_startTimeAtLastProcess;
     MediaTime m_endTimeAtLastProcess;
-    uint64_t m_writeAheadCount;
-    uint64_t m_writeCount;
-    uint64_t m_readCount;
-    bool m_paused;
-    AudioSourceProviderClient* m_client;
+    std::atomic<uint64_t> m_writeAheadCount { 0 };
+    uint64_t m_readCount { 0 };
+    enum { NoSeek = std::numeric_limits<uint64_t>::max() };
+    std::atomic<uint64_t> m_seekTo { NoSeek };
+    bool m_paused { true };
+    AudioSourceProviderClient* m_client { nullptr };
 };
     
 }
