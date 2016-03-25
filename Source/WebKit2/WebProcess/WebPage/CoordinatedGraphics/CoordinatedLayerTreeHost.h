@@ -72,7 +72,7 @@ public:
 
     void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
 
-    static PassRefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
+    static RefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
 protected:
     explicit CoordinatedLayerTreeHost(WebPage*);

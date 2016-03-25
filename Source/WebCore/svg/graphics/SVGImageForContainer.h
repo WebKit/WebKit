@@ -63,7 +63,7 @@ public:
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() override { return false; }
 
-    PassNativeImagePtr nativeImageForCurrentFrame() override;
+    NativeImagePtr nativeImageForCurrentFrame() override;
 
 private:
     SVGImageForContainer(SVGImage* image, const FloatSize& containerSize, float zoom)

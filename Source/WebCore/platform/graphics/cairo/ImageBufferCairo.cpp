@@ -235,7 +235,7 @@ RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavio
         return BitmapImage::create(copyCairoImageSurface(m_data.m_surface.get()));
 
     // BitmapImage will release the passed in surface on destruction
-    return BitmapImage::create(m_data.m_surface);
+    return BitmapImage::create(RefPtr<cairo_surface_t>(m_data.m_surface));
 }
 
 BackingStoreCopy ImageBuffer::fastCopyImageMode()
@@ -286,7 +286,7 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
     cairo_surface_mark_dirty_rectangle(m_data.m_surface.get(), 0, 0, m_size.width(), m_size.height());
 }
 
-PassRefPtr<cairo_surface_t> copySurfaceToImageAndAdjustRect(cairo_surface_t* surface, IntRect& rect)
+RefPtr<cairo_surface_t> copySurfaceToImageAndAdjustRect(cairo_surface_t* surface, IntRect& rect)
 {
     cairo_surface_type_t surfaceType = cairo_surface_get_type(surface);
 
@@ -301,7 +301,7 @@ PassRefPtr<cairo_surface_t> copySurfaceToImageAndAdjustRect(cairo_surface_t* sur
 }
 
 template <Multiply multiplied>
-PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBufferData& data, const IntSize& size)
+RefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBufferData& data, const IntSize& size)
 {
     RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
 
@@ -377,12 +377,12 @@ PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBuffe
     return result.release();
 }
 
-PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
+RefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Unmultiplied>(rect, m_data, m_size);
 }
 
-PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
+RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Premultiplied>(rect, m_data, m_size);
 }

@@ -58,18 +58,17 @@ bool FrameData::clear(bool clearMetadata)
     m_orientation = DefaultImageOrientation;
     m_subsamplingLevel = 0;
 
-    if (m_frame) {
+    if (m_image) {
 #if CACHE_SUBIMAGES
-        subimageCache().clearImage(m_frame);
+        subimageCache().clearImage(m_image.get());
 #endif
-        CGImageRelease(m_frame);
-        m_frame = 0;
+        m_image = nullptr;
         return true;
     }
     return false;
 }
 
-BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
+BitmapImage::BitmapImage(RetainPtr<CGImageRef>&& image, ImageObserver* observer)
     : Image(observer)
     , m_minimumSubsamplingLevel(0)
     , m_imageOrientation(OriginTopLeft)
@@ -89,8 +88,8 @@ BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
     , m_sizeAvailable(true)
     , m_haveFrameCount(true)
 {
-    CGFloat width = CGImageGetWidth(cgImage);
-    CGFloat height = CGImageGetHeight(cgImage);
+    CGFloat width = CGImageGetWidth(image.get());
+    CGFloat height = CGImageGetHeight(image.get());
     m_decodedSize = width * height * 4;
     m_size = IntSize(width, height);
 
@@ -99,7 +98,7 @@ BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
     m_sizeRespectingOrientation = m_size;
 
     m_frames.grow(1);
-    m_frames[0].m_frame = CGImageRetain(cgImage);
+    m_frames[0].m_image = WTFMove(image);
     m_frames[0].m_hasAlpha = true;
     m_frames[0].m_haveMetadata = true;
 
@@ -136,7 +135,7 @@ void BitmapImage::checkForSolidColor()
     if (frameCount() > 1)
         return;
 
-    if (!haveFrameAtIndex(0)) {
+    if (!haveFrameImageAtIndex(0)) {
         IntSize size = m_source.frameSizeAtIndex(0, 0);
         if (size.width() != 1 || size.height() != 1)
             return;
@@ -147,7 +146,7 @@ void BitmapImage::checkForSolidColor()
 
     CGImageRef image = nullptr;
     if (m_frames.size())
-        image = m_frames[0].m_frame;
+        image = m_frames[0].m_image.get();
 
     if (!image)
         return;
@@ -173,14 +172,14 @@ void BitmapImage::checkForSolidColor()
 
 CGImageRef BitmapImage::getCGImageRef()
 {
-    return frameAtIndex(0);
+    return frameImageAtIndex(0).get();
 }
 
 CGImageRef BitmapImage::getFirstCGImageRefOfSize(const IntSize& size)
 {
     size_t count = frameCount();
     for (size_t i = 0; i < count; ++i) {
-        CGImageRef cgImage = frameAtIndex(i);
+        CGImageRef cgImage = frameImageAtIndex(i).get();
         if (cgImage && IntSize(CGImageGetWidth(cgImage), CGImageGetHeight(cgImage)) == size)
             return cgImage;
     }
@@ -193,11 +192,11 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
 {
     size_t count = frameCount();
     if (!count)
-        return 0;
+        return nullptr;
     
     CFMutableArrayRef array = CFArrayCreateMutable(NULL, count, &kCFTypeArrayCallBacks);
     for (size_t i = 0; i < count; ++i) {
-        if (CGImageRef currFrame = frameAtIndex(i))
+        if (CGImageRef currFrame = frameImageAtIndex(i).get())
             CFArrayAppendValue(array, currFrame);
     }
     return adoptCF(array);
@@ -214,12 +213,12 @@ void BitmapImage::draw(GraphicsContext& ctxt, const FloatRect& destRect, const F
     RetainPtr<CGImageRef> image;
     // Never use subsampled images for drawing into PDF contexts.
     if (wkCGContextIsPDFContext(ctxt.platformContext()))
-        image = adoptCF(copyUnscaledFrameAtIndex(m_currentFrame));
+        image = copyUnscaledFrameImageAtIndex(m_currentFrame);
     else {
         CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(ctxt.platformContext()));
         float subsamplingScale = std::min<float>(1, std::max(transformedDestinationRect.size.width / srcRect.width(), transformedDestinationRect.size.height / srcRect.height()));
 
-        image = frameAtIndex(m_currentFrame, subsamplingScale);
+        image = frameImageAtIndex(m_currentFrame, subsamplingScale);
     }
 
     if (!image) // If it's too early we won't have an image yet.
@@ -245,24 +244,24 @@ void BitmapImage::draw(GraphicsContext& ctxt, const FloatRect& destRect, const F
     if (description.respectImageOrientation() == RespectImageOrientation)
         orientation = frameOrientationAtIndex(m_currentFrame);
 
-    ctxt.drawNativeImage(image.get(), imageSize, destRect, scaledSrcRect, compositeOp, blendMode, orientation);
+    ctxt.drawNativeImage(image, imageSize, destRect, scaledSrcRect, compositeOp, blendMode, orientation);
 
     if (imageObserver())
         imageObserver()->didDraw(this);
 }
 
-PassNativeImagePtr BitmapImage::copyUnscaledFrameAtIndex(size_t index)
+RetainPtr<CGImageRef> BitmapImage::copyUnscaledFrameImageAtIndex(size_t index)
 {
     if (index >= frameCount())
         return nullptr;
 
-    if (index >= m_frames.size() || !m_frames[index].m_frame)
+    if (index >= m_frames.size() || !m_frames[index].m_image)
         cacheFrame(index, 0);
 
     if (!m_frames[index].m_subsamplingLevel)
-        return CGImageRetain(m_frames[index].m_frame);
+        return m_frames[index].m_image;
 
-    return m_source.createFrameAtIndex(index);
+    return m_source.createFrameImageAtIndex(index);
 }
 
 }

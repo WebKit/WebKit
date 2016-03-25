@@ -64,7 +64,7 @@ void ShareableBitmap::Handle::clear()
     m_flags = Flag::NoFlags;
 }
 
-PassRefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags)
+RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags)
 {
     size_t numBytes = numBytesForSize(size);
     
@@ -75,7 +75,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags f
     return adoptRef(new ShareableBitmap(size, flags, data));
 }
 
-PassRefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Flags flags)
+RefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Flags flags)
 {
     size_t numBytes = numBytesForSize(size);
 
@@ -86,7 +86,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size
     return adoptRef(new ShareableBitmap(size, flags, sharedMemory));
 }
 
-PassRefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags, PassRefPtr<SharedMemory> sharedMemory)
+RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags, RefPtr<SharedMemory> sharedMemory)
 {
     ASSERT(sharedMemory);
 
@@ -96,7 +96,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags f
     return adoptRef(new ShareableBitmap(size, flags, sharedMemory));
 }
 
-PassRefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, SharedMemory::Protection protection)
+RefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, SharedMemory::Protection protection)
 {
     // Create the shared memory.
     RefPtr<SharedMemory> sharedMemory = SharedMemory::map(handle.m_handle, protection);
@@ -124,7 +124,7 @@ ShareableBitmap::ShareableBitmap(const IntSize& size, Flags flags, void* data)
 {
 }
 
-ShareableBitmap::ShareableBitmap(const IntSize& size, Flags flags, PassRefPtr<SharedMemory> sharedMemory)
+ShareableBitmap::ShareableBitmap(const IntSize& size, Flags flags, RefPtr<SharedMemory> sharedMemory)
     : m_size(size)
     , m_flags(flags)
     , m_sharedMemory(sharedMemory)

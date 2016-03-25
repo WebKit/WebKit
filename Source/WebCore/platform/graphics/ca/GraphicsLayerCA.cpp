@@ -1008,16 +1008,16 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
 void GraphicsLayerCA::setContentsToImage(Image* image)
 {
     if (image) {
-        CGImageRef newImage = image->nativeImageForCurrentFrame();
+        auto newImage = image->nativeImageForCurrentFrame();
         if (!newImage)
             return;
 
         // FIXME: probably don't need m_uncorrectedContentsImage at all now.
-        if (m_uncorrectedContentsImage && m_uncorrectedContentsImage.get() == newImage)
+        if (m_uncorrectedContentsImage == newImage)
             return;
         
-        m_uncorrectedContentsImage = newImage;
-        m_pendingContentsImage = newImage;
+        m_uncorrectedContentsImage = WTFMove(newImage);
+        m_pendingContentsImage = m_uncorrectedContentsImage;
 
         m_contentsLayerPurpose = ContentsLayerForImage;
         if (!m_contentsLayer)

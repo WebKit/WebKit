@@ -95,7 +95,7 @@ CFDataRef BitmapImage::getTIFFRepresentation()
 
     Vector<CGImageRef> images;
     for (unsigned i = 0; i < numFrames; ++i ) {
-        CGImageRef cgImage = frameAtIndex(i);
+        CGImageRef cgImage = frameImageAtIndex(i).get();
         if (cgImage)
             images.append(cgImage);
     }

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
+RefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
 {
     DIBSECTION dibSection;
     if (!GetObject(hBitmap, sizeof(DIBSECTION), &dibSection))
@@ -54,9 +54,9 @@ PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
         dibSection.dsBm.bmWidthBytes, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
 
     // The BitmapImage takes ownership of this.
-    CGImageRef cgImage = CGBitmapContextCreateImage(bitmapContext.get());
+    RetainPtr<CGImageRef> cgImage = adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
 
-    return adoptRef(new BitmapImage(cgImage));
+    return adoptRef(new BitmapImage(WTFMove(cgImage)));
 }
 
 bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
@@ -90,7 +90,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
 {
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
-        CGImageRef image = frameAtIndex(i);
+        CGImageRef image = frameImageAtIndex(i).get();
         if (image && CGImageGetHeight(image) == static_cast<size_t>(srcSize.height()) && CGImageGetWidth(image) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;

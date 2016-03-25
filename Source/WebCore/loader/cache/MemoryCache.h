@@ -155,12 +155,8 @@ public:
     WEBCORE_EXPORT void getOriginsWithCache(SecurityOriginSet& origins);
     WEBCORE_EXPORT HashSet<RefPtr<SecurityOrigin>> originsWithCache(SessionID) const;
 
-#if USE(CG)
-    // FIXME: Remove the USE(CG) once we either make NativeImagePtr a smart pointer on all platforms or
-    // remove the usage of CFRetain() in MemoryCache::addImageToCache() so as to make the code platform-independent.
-    WEBCORE_EXPORT bool addImageToCache(NativeImagePtr, const URL&, const String& domainForCachePartition);
+    WEBCORE_EXPORT bool addImageToCache(NativeImagePtr&&, const URL&, const String& domainForCachePartition);
     WEBCORE_EXPORT void removeImageFromCache(const URL&, const String& domainForCachePartition);
-#endif
 
     // pruneDead*() - Flush decoded and encoded data from resources not referenced by Web pages.
     // pruneLive*() - Flush decoded data from resources still referenced by Web pages.

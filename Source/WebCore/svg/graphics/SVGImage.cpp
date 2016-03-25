@@ -180,17 +180,17 @@ void SVGImage::drawForContainer(GraphicsContext& context, const FloatSize contai
 }
 
 #if USE(CAIRO)
-// Passes ownership of the native image to the caller so PassNativeImagePtr needs
+// Passes ownership of the native image to the caller so NativeImagePtr needs
 // to be a smart pointer type.
-PassNativeImagePtr SVGImage::nativeImageForCurrentFrame()
+NativeImagePtr SVGImage::nativeImageForCurrentFrame()
 {
     if (!m_page)
-        return 0;
+        return nullptr;
 
     // Cairo does not use the accelerated drawing flag, so it's OK to make an unconditionally unaccelerated buffer.
     std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(size(), Unaccelerated);
     if (!buffer) // failed to allocate image
-        return 0;
+        return nullptr;
 
     draw(buffer->context(), rect(), rect(), CompositeSourceOver, BlendModeNormal, ImageOrientationDescription());
 

@@ -106,13 +106,13 @@ void ShareableBitmap::releaseDataProviderData(void* typelessBitmap, const void* 
     bitmap->deref(); // Balanced by ref in createCGImage.
 }
 
-PassRefPtr<Image> ShareableBitmap::createImage()
+RefPtr<Image> ShareableBitmap::createImage()
 {
     RetainPtr<CGImageRef> platformImage = makeCGImage();
     if (!platformImage)
         return nullptr;
 
-    return BitmapImage::create(platformImage.get());
+    return BitmapImage::create(WTFMove(platformImage));
 }
 
 } // namespace WebKit

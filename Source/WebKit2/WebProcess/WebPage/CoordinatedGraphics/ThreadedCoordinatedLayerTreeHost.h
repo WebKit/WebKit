@@ -98,7 +98,7 @@ public:
 #endif
 
     void setViewOverlayRootLayer(WebCore::GraphicsLayer*);
-    static PassRefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
+    static RefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
 protected:
     explicit ThreadedCoordinatedLayerTreeHost(WebPage*);

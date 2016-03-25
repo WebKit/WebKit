@@ -247,7 +247,7 @@ private:
     void updateLastImage();
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
-    PassNativeImagePtr nativeImageForCurrentTime() override;
+    NativeImagePtr nativeImageForCurrentTime() override;
     void waitForVideoOutputMediaDataWillChange();
 
     void createOpenGLVideoOutput();

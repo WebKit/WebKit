@@ -66,7 +66,7 @@ public:
     void resetAnimation() override;
 
 #if USE(CAIRO)
-    PassNativeImagePtr nativeImageForCurrentFrame() override;
+    NativeImagePtr nativeImageForCurrentFrame() override;
 #endif
 
 private:

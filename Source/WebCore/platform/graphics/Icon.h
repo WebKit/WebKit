@@ -22,8 +22,8 @@
 #define Icon_h
 
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
@@ -45,19 +45,19 @@ class FloatRect;
     
 class Icon : public RefCounted<Icon> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<Icon> createIconForFiles(const Vector<String>& filenames);
+    WEBCORE_EXPORT static RefPtr<Icon> createIconForFiles(const Vector<String>& filenames);
 
     WEBCORE_EXPORT ~Icon();
 
     void paint(GraphicsContext&, const FloatRect&);
 
 #if PLATFORM(WIN)
-    static PassRefPtr<Icon> create(HICON hIcon) { return adoptRef(new Icon(hIcon)); }
+    static RefPtr<Icon> create(HICON hIcon) { return adoptRef(new Icon(hIcon)); }
 #endif
 
 #if PLATFORM(IOS)
     // FIXME: Make this work for non-iOS ports and remove the PLATFORM(IOS)-guard.
-    WEBCORE_EXPORT static PassRefPtr<Icon> createIconForImage(NativeImagePtr);
+    WEBCORE_EXPORT static RefPtr<Icon> createIconForImage(const NativeImagePtr&);
 #endif
 
 #if PLATFORM(MAC)
@@ -68,7 +68,7 @@ public:
 
 private:
 #if PLATFORM(IOS)
-    Icon(CGImageRef);
+    Icon(const RetainPtr<CGImageRef>&);
     RetainPtr<CGImageRef> m_cgImage;
 #elif PLATFORM(MAC)
     Icon(NSImage*);

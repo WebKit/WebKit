@@ -62,7 +62,7 @@ ImageGStreamer::ImageGStreamer(GstSample* sample)
 
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(bufferData, cairoFormat, width, height, stride));
     ASSERT(cairo_surface_status(surface.get()) == CAIRO_STATUS_SUCCESS);
-    m_image = BitmapImage::create(surface.release());
+    m_image = BitmapImage::create(WTFMove(surface));
 
     if (GstVideoCropMeta* cropMeta = gst_buffer_get_video_crop_meta(buffer))
         setCropRect(FloatRect(cropMeta->x, cropMeta->y, cropMeta->width, cropMeta->height));

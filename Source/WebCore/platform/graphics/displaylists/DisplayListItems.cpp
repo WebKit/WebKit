@@ -491,11 +491,11 @@ static TextStream& operator<<(TextStream& ts, const DrawTiledScaledImage& item)
 }
 
 #if USE(CG) || USE(CAIRO)
-DrawNativeImage::DrawNativeImage(PassNativeImagePtr imagePtr, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+DrawNativeImage::DrawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
     : DrawingItem(ItemType::DrawNativeImage)
 #if USE(CG)
     // FIXME: Need to store an image for Cairo.
-    , m_imagePtr(imagePtr)
+    , m_image(image)
 #endif
     , m_imageSize(imageSize)
     , m_destination(destRect)
@@ -507,7 +507,7 @@ DrawNativeImage::DrawNativeImage(PassNativeImagePtr imagePtr, const FloatSize& i
     , m_orientation(orientation)
 {
 #if !USE(CG)
-    UNUSED_PARAM(imagePtr);
+    UNUSED_PARAM(image);
     UNUSED_PARAM(op);
     UNUSED_PARAM(blendMode);
 #endif
@@ -516,7 +516,7 @@ DrawNativeImage::DrawNativeImage(PassNativeImagePtr imagePtr, const FloatSize& i
 void DrawNativeImage::apply(GraphicsContext& context) const
 {
 #if USE(CG)
-    context.drawNativeImage(m_imagePtr.get(), m_imageSize, m_destination, m_srcRect, m_op, m_blendMode, m_orientation);
+    context.drawNativeImage(m_image, m_imageSize, m_destination, m_srcRect, m_op, m_blendMode, m_orientation);
 #else
     UNUSED_PARAM(context);
 #endif

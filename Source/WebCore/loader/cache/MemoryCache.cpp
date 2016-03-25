@@ -204,29 +204,24 @@ unsigned MemoryCache::liveCapacity() const
     return m_capacity - deadCapacity();
 }
 
-#if USE(CG)
-// FIXME: Remove the USE(CG) once we either make NativeImagePtr a smart pointer on all platforms or
-// remove the usage of CFRetain() in MemoryCache::addImageToCache() so as to make the code platform-independent.
 static CachedImageClient& dummyCachedImageClient()
 {
     static NeverDestroyed<CachedImageClient> client;
     return client;
 }
 
-bool MemoryCache::addImageToCache(NativeImagePtr image, const URL& url, const String& domainForCachePartition)
+bool MemoryCache::addImageToCache(NativeImagePtr&& image, const URL& url, const String& domainForCachePartition)
 {
     ASSERT(image);
     SessionID sessionID = SessionID::defaultSessionID();
     removeImageFromCache(url, domainForCachePartition); // Remove cache entry if it already exists.
 
-    RefPtr<BitmapImage> bitmapImage = BitmapImage::create(image, nullptr);
+    RefPtr<BitmapImage> bitmapImage = BitmapImage::create(WTFMove(image), nullptr);
     if (!bitmapImage)
         return false;
 
     std::unique_ptr<CachedImage> cachedImage = std::make_unique<CachedImage>(url, bitmapImage.get(), CachedImage::ManuallyCached, sessionID);
 
-    // Actual release of the CGImageRef is done in BitmapImage.
-    CFRetain(image);
     cachedImage->addClient(&dummyCachedImageClient());
     cachedImage->setDecodedSize(bitmapImage->decodedSize());
 #if ENABLE(CACHE_PARTITIONING)
@@ -264,7 +259,6 @@ void MemoryCache::removeImageFromCache(const URL& url, const String& domainForCa
     // resource may be deleted after this call.
     downcast<CachedImage>(*resource).removeClient(&dummyCachedImageClient());
 }
-#endif
 
 void MemoryCache::pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveResources)
 {

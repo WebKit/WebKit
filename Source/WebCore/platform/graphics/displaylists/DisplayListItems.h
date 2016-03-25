@@ -639,23 +639,23 @@ private:
 #if USE(CG) || USE(CAIRO)
 class DrawNativeImage : public DrawingItem {
 public:
-    static Ref<DrawNativeImage> create(PassNativeImagePtr imagePtr, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+    static Ref<DrawNativeImage> create(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
     {
-        return adoptRef(*new DrawNativeImage(imagePtr, imageSize, destRect, srcRect, op, blendMode, orientation));
+        return adoptRef(*new DrawNativeImage(image, imageSize, destRect, srcRect, op, blendMode, orientation));
     }
 
     FloatRect source() const { return m_srcRect; }
     FloatRect destination() const { return m_destination; }
 
 private:
-    DrawNativeImage(PassNativeImagePtr, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientation);
+    DrawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientation);
 
     void apply(GraphicsContext&) const override;
 
     Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
 
 #if USE(CG)
-    RetainPtr<CGImageRef> m_imagePtr;
+    RetainPtr<CGImageRef> m_image;
 #endif
     FloatSize m_imageSize;
     FloatRect m_destination;

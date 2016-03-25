@@ -27,7 +27,7 @@
 #import "IntRect.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "UTIUtilities.h"
-#import <wtf/PassRefPtr.h>
+#import <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -47,7 +47,7 @@ Icon::~Icon()
 }
 
 // FIXME: Move the code to ChromeClient::iconForFiles().
-PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
+RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
     if (filenames.isEmpty())
         return nullptr;

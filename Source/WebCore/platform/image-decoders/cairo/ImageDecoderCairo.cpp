@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-PassNativeImagePtr ImageFrame::asNewNativeImage() const
+NativeImagePtr ImageFrame::asNewNativeImage() const
 {
     return adoptRef(cairo_image_surface_create_for_data(
         reinterpret_cast<unsigned char*>(const_cast<PixelData*>(m_bytes)),

@@ -23,7 +23,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "IntRect.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -44,9 +44,9 @@ public:
         virtual void paintToSurfaceContext(GraphicsContext&) = 0;
     };
 
-    typedef PassRefPtr<CoordinatedSurface> Factory(const IntSize&, Flags);
+    typedef RefPtr<CoordinatedSurface> Factory(const IntSize&, Flags);
     static void setFactory(Factory);
-    static PassRefPtr<CoordinatedSurface> create(const IntSize&, Flags);
+    static RefPtr<CoordinatedSurface> create(const IntSize&, Flags);
 
     virtual ~CoordinatedSurface() { }
 
@@ -56,7 +56,7 @@ public:
     virtual void paintToSurface(const IntRect&, Client*) = 0;
 
 #if USE(TEXTURE_MAPPER)
-    virtual void copyToTexture(PassRefPtr<BitmapTexture>, const IntRect& target, const IntPoint& sourceOffset) = 0;
+    virtual void copyToTexture(RefPtr<BitmapTexture>, const IntRect& target, const IntPoint& sourceOffset) = 0;
 #endif
 
 protected:

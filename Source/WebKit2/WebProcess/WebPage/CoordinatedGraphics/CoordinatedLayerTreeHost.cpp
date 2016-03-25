@@ -237,7 +237,7 @@ void CoordinatedLayerTreeHost::commitSceneState(const WebCore::CoordinatedGraphi
     m_isWaitingForRenderer = true;
 }
 
-PassRefPtr<CoordinatedSurface> CoordinatedLayerTreeHost::createCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags)
+RefPtr<CoordinatedSurface> CoordinatedLayerTreeHost::createCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags)
 {
     return WebCoordinatedSurface::create(size, flags);
 }

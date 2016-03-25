@@ -217,7 +217,7 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
     cairo_restore(cr);
 }
 
-PassRefPtr<cairo_surface_t> copyCairoImageSurface(cairo_surface_t* originalSurface)
+RefPtr<cairo_surface_t> copyCairoImageSurface(cairo_surface_t* originalSurface)
 {
     // Cairo doesn't provide a way to copy a cairo_surface_t.
     // See http://lists.cairographics.org/archives/cairo/2007-June/010877.html

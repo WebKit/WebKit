@@ -78,7 +78,7 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage* webP
     scheduleLayerFlush();
 }
 
-PassRefPtr<CoordinatedSurface> ThreadedCoordinatedLayerTreeHost::createCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags)
+RefPtr<CoordinatedSurface> ThreadedCoordinatedLayerTreeHost::createCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags)
 {
     return ThreadSafeCoordinatedSurface::create(size, flags);
 }

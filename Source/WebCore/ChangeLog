@@ -1,3 +1,236 @@
+2016-03-24  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        Change NativeImagePtr for CG to be RetainPtr<CGImageRef>
+        https://bugs.webkit.org/show_bug.cgi?id=155412
+
+        Reviewed by Darin Adler.
+
+        Having NativeImagePtr as a raw pointer makes managing the life cycle of
+        the returned CGImageRef hard. A lot of work was done to ensure the CG
+        pointer is refcounted correctly. It was also not possible to move a
+        FrameData since calling the destructor was releasing the CGImageRef.
+
+        With this change, PassNativeImagePtr is not needed anymore. So all the
+        instance of PassNativeImagePtr can be replaced by NativeImagePtr.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::nativeImageForCurrentTime):
+        * html/HTMLVideoElement.h: Replace PassNativeImagePtr with NativeImagePtr.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage): Replace PassNativeImagePtr
+        with NativeImagePtr.
+ 
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::addImageToCache):
+        * loader/cache/MemoryCache.h: Remove USE(CG) and CFRetain(image) since
+        this code can compile on all platforms. The image refcount will be
+        incremented when the image is assigned to FrameData.m_image in the
+        BitmapImage constructor.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::synchronousNativeIconForPageURL):
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseBase.h: Replace PassNativeImagePtr with NativeImagePtr.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::haveFrameImageAtIndex):
+        (WebCore::BitmapImage::cacheFrame):
+        (WebCore::BitmapImage::ensureFrameIsCached):
+        (WebCore::BitmapImage::frameImageAtIndex):
+        (WebCore::BitmapImage::nativeImageForCurrentFrame):
+        (WebCore::BitmapImage::haveFrameAtIndex): Deleted.
+        (WebCore::BitmapImage::frameAtIndex): Deleted.
+        Replace PassNativeImagePtr with NativeImagePtr, m_frame with m_image and
+        *Frame* with *FrameImage*.
+
+        * platform/graphics/BitmapImage.h:
+        (WebCore::FrameData::FrameData):
+        A BitmapImage can have one or more FrameData. A FrameData member can be
+        named for shortness as "frame", "m_frames", etc. A FrameData can have
+        zero or one NativeImagePtr. A NativeImagePtr can be named as "image",
+        "m_image", etc.
+
+        * platform/graphics/GraphicsContext.h: Replace PassNativeImagePtr with
+        NativeImagePtr.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/Icon.h:
+        Change the members of type CGImageRef to be RetainPtr<CGImageRef>.
+                
+        * platform/graphics/Image.h:
+        (WebCore::Image::nativeImageForCurrentFrame):
+        (WebCore::Image::getNSImage):
+        (WebCore::Image::getTIFFRepresentation):
+        (WebCore::Image::getCGImageRef):
+        (WebCore::Image::getFirstCGImageRefOfSize):
+        (WebCore::Image::getCGImageArray):
+        (WebCore::Image::getGdkPixbuf):
+        (WebCore::Image::getEvasObject):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::createFrameImageAtIndex):
+        (WebCore::ImageSource::createFrameAtIndex): Deleted.
+        * platform/graphics/ImageSource.h:
+        Change 0 to nullptr, PassRefPtr to RefPtr and PassNativeImagePtr to
+        NativeImagePtr.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::nativeImageForCurrentTime):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::nativeImageForCurrentTime):
+        Replace PassNativeImagePtr with NativeImagePtr.
+
+        * platform/graphics/NativeImagePtr.h:
+        Make NativeImagePtr a smart pointer for CG. Get rid of PassNativeImagePtr
+        since NativeImagePtr is now a smart pointer on all platforms.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime):
+        Replace PassNativeImagePtr with NativeImagePtr.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+        Since Image::nativeImageForCurrentFrame() returns a RetainPtr, move it
+        to m_pendingContentsImage to remove the refcount churn.
+
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::FrameData::clear):
+        Replace m_frame with m_image and frame* with frameImage*.
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::copyCairoImageSurface):
+        * platform/graphics/cairo/CairoUtilities.h:
+        Replace PassRefPtr with RefPtr.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+        Replace *Frame* with *FrameImage*.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        Replace PassNativeImagePtr with NativeImagePtr.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::copyImage): Create a new NativeImagePtr so it can
+        be moved to the BitmapImage::create().
+        (WebCore::copySurfaceToImageAndAdjustRect):
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        Replace PassRefPtr with RefPtr.
+
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::FrameData::clear): No need to call CGImageRelease(). Just assign
+        m_image to nullptr and CGImageRelease() will be called from the RetainPtr
+        destructor.
+
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::BitmapImage::getCGImageRef):
+        (WebCore::BitmapImage::getFirstCGImageRefOfSize):
+        (WebCore::BitmapImage::getCGImageArray):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::copyUnscaledFrameImageAtIndex):
+        (WebCore::BitmapImage::copyUnscaledFrameAtIndex): Deleted.
+        Replace CGImageRef with RetainPtr<CGImageRef>. Replace *Frame* with
+        *FrameImage*.
+
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        Use m_cgImage.get() instead of m_cgImage when calling CG functions.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::GraphicsContext::drawPattern):
+        Replace PassNativeImagePtr with NativeImagePtr. Get the raw CGImageRef
+        from the NativeImagePtr when calling the CG functions.
+        
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::createBitmapImageAfterScalingIfNeeded): Move the image argument
+        when calling BitmapImage::create().
+        
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        Replace PassRefPtr with RefPtr.
+        
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameImageAtIndex):
+        (WebCore::ImageSource::createFrameAtIndex): Deleted.
+        Rename the function and simplify the code since the local variable
+        and the return value are both smart pointers.
+        
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawNativeImage::DrawNativeImage):
+        (WebCore::DisplayList::DrawNativeImage::apply):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawNativeImage::create):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawNativeImage):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        Replace PassNativeImagePtr with NativeImagePtr and use constant reference. 
+        
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+        Call a function with its new name.
+        
+        * platform/graphics/efl/IconEfl.cpp:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        (ImageGStreamer::ImageGStreamer):
+        * platform/graphics/gtk/IconGtk.cpp:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/ios/IconIOS.mm:
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::createIconForFiles):
+        (WebCore::Icon::createIconForImage):
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::createIconForFiles):
+        Use smart pointers RetainPtr<CGImageRef> instead of raw pointers CGImageRef.
+        And change PassRefPtr to RefPtr and 0 to nullptr.
+        
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::getTIFFRepresentation): Get the raw pointer from the
+        returned smart pointer.
+        
+        * platform/graphics/texmap/coordinated/CoordinatedSurface.cpp:
+        (WebCore::CoordinatedSurface::create):
+        * platform/graphics/texmap/coordinated/CoordinatedSurface.h:
+        Replace PassRefPtr with RefPtr.
+
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::createIconForFiles): Change PassRefPtr to RefPtr.
+        
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::create): Replace PassRefPtr with RefPtr.
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize): Call the function
+        with its new name and get the raw pointer from the returned smart pointer.
+        
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::create): Replace PassRefPtr with ReftPtr and use
+        the move semantics for passing the argument to BitmapImage::create().
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize): Call the function
+        with its new name.
+        
+        * platform/image-decoders/ImageDecoder.h:
+        * platform/image-decoders/cairo/ImageDecoderCairo.cpp:
+        (WebCore::ImageFrame::asNewNativeImage):
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::createDragImageFromImage):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::nativeImageForCurrentFrame):
+        * svg/graphics/SVGImageForContainer.h:
+        Replace PassNativeImagePtr with NativeImagePtr.
+        
 2016-03-24  Jer Noble  <jer.noble@apple.com>
 
         Safari Crashes if audio.src is changed while connected to AudioAnalyserNode

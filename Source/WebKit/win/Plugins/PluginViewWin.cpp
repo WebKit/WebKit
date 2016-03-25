@@ -920,7 +920,7 @@ void PluginView::platformDestroy()
     setPlatformPluginWidget(0);
 }
 
-PassRefPtr<Image> PluginView::snapshot()
+RefPtr<Image> PluginView::snapshot()
 {
 #if !USE(WINGDI)
     auto hdc = adoptGDIObject(::CreateCompatibleDC(0));

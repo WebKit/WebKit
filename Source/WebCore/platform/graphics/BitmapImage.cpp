@@ -96,7 +96,7 @@ void BitmapImage::startTimer(double delay)
     m_frameTimer->startOneShot(delay);
 }
 
-bool BitmapImage::haveFrameAtIndex(size_t index)
+bool BitmapImage::haveFrameImageAtIndex(size_t index)
 {
     if (index >= frameCount())
         return false;
@@ -104,7 +104,7 @@ bool BitmapImage::haveFrameAtIndex(size_t index)
     if (index >= m_frames.size())
         return false;
 
-    return m_frames[index].m_frame;
+    return m_frames[index].m_image;
 }
 
 bool BitmapImage::hasSingleSecurityOrigin() const
@@ -184,9 +184,9 @@ void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, Im
         m_frames.grow(numFrames);
 
     if (frameCaching == CacheMetadataAndFrame) {
-        m_frames[index].m_frame = m_source.createFrameAtIndex(index, subsamplingLevel);
+        m_frames[index].m_image = m_source.createFrameImageAtIndex(index, subsamplingLevel);
         m_frames[index].m_subsamplingLevel = subsamplingLevel;
-        if (numFrames == 1 && m_frames[index].m_frame)
+        if (numFrames == 1 && m_frames[index].m_image)
             checkForSolidColor();
     }
 
@@ -204,7 +204,7 @@ void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, Im
     if (!subsamplingLevel && frameSize != m_size)
         m_hasUniformFrameSize = false;
 
-    if (m_frames[index].m_frame) {
+    if (m_frames[index].m_image) {
         int deltaBytes = safeCast<int>(m_frames[index].m_frameBytes);
         m_decodedSize += deltaBytes;
         // The fully-decoded frame will subsume the partially decoded data used
@@ -379,14 +379,14 @@ bool BitmapImage::ensureFrameIsCached(size_t index, ImageFrameCaching frameCachi
         return false;
 
     if (index >= m_frames.size()
-        || (frameCaching == CacheMetadataAndFrame && !m_frames[index].m_frame)
+        || (frameCaching == CacheMetadataAndFrame && !m_frames[index].m_image)
         || (frameCaching == CacheMetadataOnly && !m_frames[index].m_haveMetadata))
         cacheFrame(index, 0, frameCaching);
 
     return true;
 }
 
-PassNativeImagePtr BitmapImage::frameAtIndex(size_t index, float presentationScaleHint)
+NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, float presentationScaleHint)
 {
     if (index >= frameCount())
         return nullptr;
@@ -395,7 +395,7 @@ PassNativeImagePtr BitmapImage::frameAtIndex(size_t index, float presentationSca
 
     // We may have cached a frame with a higher subsampling level, in which case we need to
     // re-decode with a lower level.
-    if (index < m_frames.size() && m_frames[index].m_frame && subsamplingLevel < m_frames[index].m_subsamplingLevel) {
+    if (index < m_frames.size() && m_frames[index].m_image && subsamplingLevel < m_frames[index].m_subsamplingLevel) {
         // If the image is already cached, but at too small a size, re-decode a larger version.
         int sizeChange = -m_frames[index].m_frameBytes;
         m_frames[index].clear(true);
@@ -406,10 +406,10 @@ PassNativeImagePtr BitmapImage::frameAtIndex(size_t index, float presentationSca
     }
 
     // If we haven't fetched a frame yet, do so.
-    if (index >= m_frames.size() || !m_frames[index].m_frame)
+    if (index >= m_frames.size() || !m_frames[index].m_image)
         cacheFrame(index, subsamplingLevel, CacheMetadataAndFrame);
 
-    return m_frames[index].m_frame;
+    return m_frames[index].m_image;
 }
 
 bool BitmapImage::frameIsCompleteAtIndex(size_t index)
@@ -428,9 +428,9 @@ float BitmapImage::frameDurationAtIndex(size_t index)
     return m_frames[index].m_duration;
 }
 
-PassNativeImagePtr BitmapImage::nativeImageForCurrentFrame()
+NativeImagePtr BitmapImage::nativeImageForCurrentFrame()
 {
-    return frameAtIndex(currentFrame());
+    return frameImageAtIndex(currentFrame());
 }
 
 bool BitmapImage::frameHasAlphaAtIndex(size_t index)

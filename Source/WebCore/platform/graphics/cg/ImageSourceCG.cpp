@@ -340,7 +340,7 @@ size_t ImageSource::frameCount() const
     return m_decoder ? CGImageSourceGetCount(m_decoder) : 0;
 }
 
-CGImageRef ImageSource::createFrameAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
+RetainPtr<CGImageRef> ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
 {
     if (!initialized())
         return nullptr;
@@ -366,18 +366,15 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index, SubsamplingLevel subsam
     static const CFStringRef xbmUTI = CFSTR("public.xbitmap-image");
 
     if (!imageUTI)
-        return image.leakRef();
+        return image;
 
     if (!CFEqual(imageUTI, xbmUTI))
-        return image.leakRef();
+        return image;
     
     // If it is an xbm image, mask out all the white areas to render them transparent.
     const CGFloat maskingColors[6] = {255, 255,  255, 255, 255, 255};
     RetainPtr<CGImageRef> maskedImage = adoptCF(CGImageCreateWithMaskingColors(image.get(), maskingColors));
-    if (!maskedImage)
-        return image.leakRef();
-
-    return maskedImage.leakRef();
+    return maskedImage ? maskedImage : image;
 }
 
 bool ImageSource::frameIsCompleteAtIndex(size_t index)

@@ -88,7 +88,7 @@ public:
     WEBCORE_EXPORT void setIconURLForPageURL(const String& iconURL, const String& pageURL) override;
 
     WEBCORE_EXPORT Image* synchronousIconForPageURL(const String&, const IntSize&) override;
-    PassNativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&) override;
+    NativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&) override;
     WEBCORE_EXPORT String synchronousIconURLForPageURL(const String&) override;
     bool synchronousIconDataKnownForIconURL(const String&) override;
     WEBCORE_EXPORT IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) override;

@@ -179,7 +179,7 @@ public:
     virtual bool synchronousIconDataKnownForIconURL(const String&) { return false; }
     virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) { return IconLoadNo; }
     virtual Image* synchronousIconForPageURL(const String&, const IntSize&) { return nullptr; }
-    virtual PassNativeImagePtr synchronousNativeIconForPageURL(const String&, const IntSize&) { return nullptr; }
+    virtual NativeImagePtr synchronousNativeIconForPageURL(const String&, const IntSize&) { return nullptr; }
 
     // Asynchronous calls we should use to replace the above when supported.
     virtual bool supportsAsynchronousMode() { return false; }

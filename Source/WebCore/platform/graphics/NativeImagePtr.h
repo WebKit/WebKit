@@ -29,6 +29,7 @@
 #define NativeImagePtr_h
 
 #if USE(CG)
+#include <wtf/RetainPtr.h>
 typedef struct CGImage* CGImageRef;
 #elif USE(CAIRO)
 #include "RefPtrCairo.h"
@@ -38,19 +39,12 @@ typedef struct CGImage* CGImageRef;
 
 namespace WebCore {
 
-// FIXME: NativeImagePtr and PassNativeImagePtr should be smart
-// pointers (see SVGImage::nativeImageForCurrentFrame()).
 #if USE(CG)
-typedef CGImageRef NativeImagePtr;
+typedef RetainPtr<CGImageRef> NativeImagePtr;
 #elif USE(CAIRO)
 typedef RefPtr<cairo_surface_t> NativeImagePtr;
-typedef PassRefPtr<cairo_surface_t> PassNativeImagePtr;
 #elif USE(WINGDI)
 typedef RefPtr<SharedBitmap> NativeImagePtr;
-#endif
-
-#if !USE(CAIRO)
-typedef NativeImagePtr PassNativeImagePtr;
 #endif
 
 }

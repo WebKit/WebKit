@@ -128,7 +128,6 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
     if (!hbmp || !drawContext)
         return 0;
 
-    CGImageRef srcImage = img->getCGImageRef();
     CGRect rect;
     rect.size = IntSize(img->size());
     rect.origin.x = 0;
@@ -137,7 +136,7 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
     CGContextScaleCTM(drawContext, 1, -1);
     CGContextSetFillColor(drawContext, white);
     CGContextFillRect(drawContext, rect);
-    if (srcImage) {
+    if (auto srcImage = img->getCGImageRef()) {
         CGContextSetBlendMode(drawContext, kCGBlendModeNormal);
         CGContextDrawImage(drawContext, rect, srcImage);
     }

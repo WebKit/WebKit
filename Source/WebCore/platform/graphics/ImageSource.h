@@ -110,7 +110,7 @@ public:
     // decoded frames.
     //
     // Callers should not call clear(false, n) and subsequently call
-    // createFrameAtIndex(m) with m < n, unless they first call clear(true).
+    // createFrameImageAtIndex(m) with m < n, unless they first call clear(true).
     // This ensures that stateful ImageSources/decoders will work properly.
     //
     // The |data| and |allDataReceived| parameters should be supplied by callers
@@ -146,7 +146,7 @@ public:
 
     // Callers should not call this after calling clear() with a higher index;
     // see comments on clear() above.
-    PassNativeImagePtr createFrameAtIndex(size_t, SubsamplingLevel = 0);
+    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = 0);
 
     float frameDurationAtIndex(size_t);
     bool frameHasAlphaAtIndex(size_t); // Whether or not the frame actually used any alpha.

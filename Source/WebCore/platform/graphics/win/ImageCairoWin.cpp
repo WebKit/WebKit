@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
+RefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
 {
     DIBSECTION dibSection;
     if (!GetObject(hBitmap, sizeof(DIBSECTION), &dibSection))
@@ -52,7 +52,7 @@ PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
 
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_win32_surface_create_with_dib(CAIRO_FORMAT_ARGB32, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight));
 
-    return BitmapImage::create(surface.release());
+    return BitmapImage::create(WTFMove(surface));
 }
 
 bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
@@ -93,7 +93,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
 {
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
-        RefPtr<cairo_surface_t> surface = frameAtIndex(i);
+        auto surface = frameImageAtIndex(i);
         if (!surface)
             continue;
 

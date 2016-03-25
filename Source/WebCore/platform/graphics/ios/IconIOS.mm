@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-Icon::Icon(CGImageRef image)
+Icon::Icon(const NativeImagePtr& image)
     : m_cgImage(image)
 {
 }
@@ -42,17 +42,17 @@ Icon::~Icon()
 {
 }
 
-PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& /*filenames*/)
+RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& /*filenames*/)
 {
     return nullptr;
 }
 
-PassRefPtr<Icon> Icon::createIconForImage(NativeImagePtr imageRef)
+RefPtr<Icon> Icon::createIconForImage(const RetainPtr<CGImageRef>& image)
 {
-    if (!imageRef)
+    if (!image)
         return nullptr;
 
-    return adoptRef(new Icon(imageRef));
+    return adoptRef(new Icon(image));
 }
 
 void Icon::paint(GraphicsContext& context, const FloatRect& destRect)

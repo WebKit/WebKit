@@ -1,3 +1,43 @@
+2016-03-24  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        Change NativeImagePtr for CG to be RetainPtr<CGImageRef>
+        https://bugs.webkit.org/show_bug.cgi?id=155412
+
+        Reviewed by Darin Adler.
+
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::createWithSurface):
+        (WebKit::WebCoordinatedSurface::create):
+        (WebKit::WebCoordinatedSurface::WebCoordinatedSurface):
+        (WebKit::WebCoordinatedSurface::copyToTexture):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createShareable):
+        (WebKit::ShareableBitmap::ShareableBitmap):
+        * Shared/ShareableBitmap.h:
+        Replace PassRefPtr with RefPtr and use WTFMove() instead of RefPtr::release()
+        when passing the RefPtr.
+        
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::createSurfaceFromData):
+        (WebKit::ShareableBitmap::createCairoSurface):
+        Replace PassRefPtr with RefPtr.
+        
+        (WebKit::ShareableBitmap::createImage):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::createImage):
+        Replace PassRefPtr with RefPtr and use the move semantics when calling
+        BitmapImage::create().
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::createCoordinatedSurface):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::createCoordinatedSurface):
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        Replace PassRefPtr with RefPtr
+
 2016-03-24  Enrica Casucci  <enrica@apple.com>
 
         Adopt new SPI from DataDetectorsCore to decide link behavior.

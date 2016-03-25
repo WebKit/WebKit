@@ -199,7 +199,7 @@ static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(RetainPtr<CGImageRef>
     if (!image)
         return nullptr;
 
-    return BitmapImage::create(image.get());
+    return BitmapImage::create(WTFMove(image));
 }
 
 RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior scaleBehavior) const
@@ -319,7 +319,7 @@ void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& src
     }
 }
 
-PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
+RefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
 {
     if (context().isAcceleratedContext())
         flushContext();
@@ -331,7 +331,7 @@ PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRec
     return m_data.getData(srcRect, internalSize(), context().isAcceleratedContext(), true, 1);
 }
 
-PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
+RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
 {
     if (context().isAcceleratedContext())
         flushContext();
