@@ -1,3 +1,17 @@
+2016-03-25  Daniel Bates  <dabates@apple.com>
+
+        Use webkitdirs::determineXcodeSDK() instead of webkitdirs::willUseIOSDeviceSDK()
+        in copy-webkitlibraries-to-product-directory
+        https://bugs.webkit.org/show_bug.cgi?id=155869
+
+        Reviewed by Alexey Proskuryakov.
+
+        It is sufficient and more direct to call webkitdirs::determineXcodeSDK() instead of
+        webkitdirs::willUseIOSDeviceSDK() to process the --sdk/--device/--ios-simulator command
+        line argument.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2016-03-25  Konstantin Tokarev  <annulen@yandex.ru>
 
         Turned on ENABLE_REQUEST_ANIMATION_FRAME by default for any port.
