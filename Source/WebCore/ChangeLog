@@ -1,3 +1,20 @@
+2016-03-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Improve CMake build performance 
+        https://bugs.webkit.org/show_bug.cgi?id=155871
+        <rdar://problem/24747822>
+
+        Reviewed by Alex Christensen.
+
+        Treat DerivedSources.cpp as an 'All-in-one' file. Pass a flag to the
+        PROCESS_ALLINONE_FILE macro so that it does not remove the contents of
+        the file, since this breaks dependency checking and generation of the
+        sources from the IDL files. Instead, include the header files in the
+        project so that all files get generated.        
+        
+        * CMakeLists.txt: Updated for 'DerivedSources.cpp'
+        * DerivedSources.cpp: Add some generated files that were missing.
+
 2016-03-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Add basic loading of resources

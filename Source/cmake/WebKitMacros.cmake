@@ -357,9 +357,10 @@ endmacro()
 # _file_list is a list of source files
 # _all_in_one_file is an all-in-one cpp file includes other cpp files
 # _result_file_list is the output file list
-macro(PROCESS_ALLINONE_FILE _file_list _all_in_one_file _result_file_list)
+macro(PROCESS_ALLINONE_FILE _file_list _all_in_one_file _result_file_list _no_compile)
     file(STRINGS ${_all_in_one_file} _all_in_one_file_content)
     set(${_result_file_list} ${_file_list})
+    set(_allins "")
     foreach (_line ${_all_in_one_file_content})
         string(REGEX MATCH "^#include [\"<](.*)[\">]" _found ${_line})
         if (_found)
@@ -368,7 +369,14 @@ macro(PROCESS_ALLINONE_FILE _file_list _all_in_one_file _result_file_list)
     endforeach ()
 
     foreach (_allin ${_allins})
-        string(REGEX REPLACE ";[^;]*/${_allin};" ";" _new_result "${${_result_file_list}};")
+        if (${_no_compile})
+            # For DerivedSources.cpp, we still need the derived sources to be generated, but we do not want them to be compiled
+            # individually. We add the header to the result file list so that CMake knows to keep generating the files.
+            string(REGEX REPLACE "(.*)\\.cpp" "\\1" _allin_no_ext ${_allin})
+            string(REGEX REPLACE ";([^;]*/)${_allin_no_ext}\\.cpp;" ";\\1${_allin_no_ext}.h;" _new_result "${${_result_file_list}};")
+        else ()
+            string(REGEX REPLACE ";[^;]*/${_allin};" ";" _new_result "${${_result_file_list}};")
+        endif ()
         set(${_result_file_list} ${_new_result})
     endforeach ()
 
