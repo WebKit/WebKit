@@ -1,3 +1,46 @@
+2016-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Overflow:scroll scrollbars do not obey overlay/always-on system preference changes
+        https://bugs.webkit.org/show_bug.cgi?id=155830
+
+        Reviewed by Simon Fraser.
+
+        When the scrollbar style changes, the available width of all ScrollableAreas change,
+        and therefore a relayout must occur.
+
+        Each ScrollableArea owns its own ScrollAnimator (if necessary). Upon creation, the
+        ScrollAnimator will start listening for changes to the system preference for
+        overlay / always-on scrollbars. When notified, the ScrollAnimator tells its owning
+        ScrollableArea that scrollbarStyleChanged().
+
+        For main-frame scrolling, FrameView overrides scrollbarStyleChanged and causes a
+        relayout. However, for overflow:scroll elements, no relayout is triggered. This
+        patch overrides availableContentSizeChanged() for RenderLayer (which is used for
+        overflow:scroll elements). This override triggers a relayout.
+
+        It also updates the mechanism in RenderBlock::recomputeLogicalWidth() to ensure that
+        a change in scrollbar size causes RenderBlockFlow::layoutBlock() to relayout its
+        children. This is appropriate because block child positioning is affected by
+        scrollbar size.
+
+        No new tests (for now). Presumably we could mock the message we receive when the
+        system preference is changed. However, I haven't implemented that yet.
+
+        * rendering/RenderBlock.cpp: Rename setHasBorderOrPaddingLogicalWidthChanged().
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::recomputeLogicalWidth):
+        * rendering/RenderBlock.h: Ditto.
+        (WebCore::RenderBlock::setShouldForceRelayoutChildren):
+        (WebCore::RenderBlock::shouldForceRelayoutChildren):
+        * rendering/RenderElement.cpp: Ditto.
+        (WebCore::RenderElement::RenderElement):
+        * rendering/RenderElement.h: Ditto.
+        (WebCore::RenderElement::setRenderBlockShouldForceRelayoutChildren):
+        (WebCore::RenderElement::renderBlockShouldForceRelayoutChildren):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::availableContentSizeChanged): Cause a relayout to occur.
+        * rendering/RenderLayer.h:
+
 2016-03-24  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
         Change NativeImagePtr for CG to be RetainPtr<CGImageRef>

@@ -2916,6 +2916,17 @@ IntSize RenderLayer::scrollableContentsSize() const
     return contentsSize;
 }
 
+void RenderLayer::availableContentSizeChanged(AvailableSizeChangeReason reason)
+{
+    ScrollableArea::availableContentSizeChanged(reason);
+
+    if (reason == AvailableSizeChangeReason::ScrollbarsChanged) {
+        if (is<RenderBlock>(renderer()))
+            downcast<RenderBlock>(renderer()).setShouldForceRelayoutChildren(true);
+        renderer().setNeedsLayout();
+    }
+}
+
 bool RenderLayer::shouldSuspendScrollAnimations() const
 {
     return renderer().view().frameView().shouldSuspendScrollAnimations();

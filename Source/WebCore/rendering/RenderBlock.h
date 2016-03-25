@@ -103,11 +103,11 @@ public:
 
     void setHasMarginBeforeQuirk(bool b) { setRenderBlockHasMarginBeforeQuirk(b); }
     void setHasMarginAfterQuirk(bool b) { setRenderBlockHasMarginAfterQuirk(b); }
-    void setHasBorderOrPaddingLogicalWidthChanged(bool b) { setRenderBlockHasBorderOrPaddingLogicalWidthChanged(b); }
+    void setShouldForceRelayoutChildren(bool b) { setRenderBlockShouldForceRelayoutChildren(b); }
 
     bool hasMarginBeforeQuirk() const { return renderBlockHasMarginBeforeQuirk(); }
     bool hasMarginAfterQuirk() const { return renderBlockHasMarginAfterQuirk(); }
-    bool hasBorderOrPaddingLogicalWidthChanged() const { return renderBlockHasBorderOrPaddingLogicalWidthChanged(); }
+    bool hasBorderOrPaddingLogicalWidthChanged() const { return renderBlockShouldForceRelayoutChildren(); }
 
     bool hasMarginBeforeQuirk(const RenderBox& child) const;
     bool hasMarginAfterQuirk(const RenderBox& child) const;

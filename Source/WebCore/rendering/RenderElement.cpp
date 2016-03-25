@@ -95,7 +95,7 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, Ref<Render
     , m_hasContinuation(false)
     , m_renderBlockHasMarginBeforeQuirk(false)
     , m_renderBlockHasMarginAfterQuirk(false)
-    , m_renderBlockHasBorderOrPaddingLogicalWidthChanged(false)
+    , m_renderBlockShouldForceRelayoutChildren(false)
     , m_renderBlockFlowHasMarkupTruncation(false)
     , m_renderBlockFlowLineLayoutPath(RenderBlockFlow::UndeterminedPath)
     , m_firstChild(nullptr)
