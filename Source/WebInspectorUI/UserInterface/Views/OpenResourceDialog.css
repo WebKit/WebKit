@@ -24,6 +24,8 @@
  */
 
 .open-resource-dialog {
+    display: flex;
+    flex-direction: column;
     position: absolute;
     left: 50%;
     top: 50px;
@@ -85,6 +87,8 @@
 }
 
 .open-resource-dialog > .tree-outline {
+    display: flex;
+    flex-direction: column;
     overflow-y: scroll;
 
     border-bottom-left-radius: 4px;
