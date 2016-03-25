@@ -31,26 +31,28 @@
 
 namespace WebCore {
 
-class ContentSecurityPolicy;
+class ContentSecurityPolicyDirectiveList;
 
 class ContentSecurityPolicyDirective {
 public:
-    ContentSecurityPolicyDirective(const String& name, const String& value, const ContentSecurityPolicy& policy)
+    ContentSecurityPolicyDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
         : m_name(name)
         , m_text(name + ' ' + value)
-        , m_policy(policy)
+        , m_directiveList(directiveList)
     {
     }
 
+    const String& name() const { return m_name; }
     const String& text() const { return m_text; }
 
-protected:
-    const ContentSecurityPolicy& policy() const { return m_policy; }
+    const ContentSecurityPolicyDirectiveList& directiveList() const { return m_directiveList; }
+
+    bool isDefaultSrc() const;
 
 private:
     String m_name;
     String m_text;
-    const ContentSecurityPolicy& m_policy;
+    const ContentSecurityPolicyDirectiveList& m_directiveList;
 };
 
 } // namespace WebCore

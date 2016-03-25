@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-class ContentSecurityPolicy;
+class ContentSecurityPolicyDirectiveList;
 
 class ContentSecurityPolicyMediaListDirective : public ContentSecurityPolicyDirective {
 public:
-    ContentSecurityPolicyMediaListDirective(const String& name, const String& value, const ContentSecurityPolicy&);
+    ContentSecurityPolicyMediaListDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
 
     bool allows(const String& type) const;
 

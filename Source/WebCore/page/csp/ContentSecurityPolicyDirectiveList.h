@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-bool isCSPDirectiveName(const String&);
-
 class ContentSecurityPolicyDirectiveList {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ContentSecurityPolicyDirectiveList)
@@ -48,39 +46,39 @@ public:
     const String& header() const { return m_header; }
     ContentSecurityPolicyHeaderType headerType() const { return m_headerType; }
 
-    enum class ReportingStatus {
-        SendReport,
-        SuppressReport
-    };
-    bool allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus) const;
-    bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus) const;
-    bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus) const;
-    bool allowInlineScriptWithHash(const ContentSecurityPolicyHash&) const;
-    bool allowScriptWithNonce(const String& nonce) const;
-    bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus) const;
-    bool allowInlineStyleWithHash(const ContentSecurityPolicyHash&) const;
-    bool allowStyleWithNonce(const String& nonce) const;
-    bool allowEval(JSC::ExecState*, ReportingStatus) const;
-    bool allowPluginType(const String& type, const String& typeAttribute, const URL&, ReportingStatus) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeEval() const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineScript() const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyle() const;
 
-    bool allowScriptFromSource(const URL&, ReportingStatus) const;
-    bool allowObjectFromSource(const URL&, ReportingStatus) const;
-    bool allowChildFrameFromSource(const URL&, ReportingStatus) const;
-    bool allowChildContextFromSource(const URL&, ReportingStatus) const;
-    bool allowImageFromSource(const URL&, ReportingStatus) const;
-    bool allowStyleFromSource(const URL&, ReportingStatus) const;
-    bool allowFontFromSource(const URL&, ReportingStatus) const;
-    bool allowMediaFromSource(const URL&, ReportingStatus) const;
-    bool allowConnectToSource(const URL&, ReportingStatus) const;
-    bool allowFormAction(const URL&, ReportingStatus) const;
-    bool allowBaseURI(const URL&, ReportingStatus) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForScriptHash(const ContentSecurityPolicyHash&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForStyleHash(const ContentSecurityPolicyHash&) const;
 
-    bool allowFrameAncestors(const Frame&, const URL&, ReportingStatus) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForScriptNonce(const String&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForStyleNonce(const String&) const;
+
+    const ContentSecurityPolicyDirective* violatedDirectiveForBaseURI(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForChildContext(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForConnectSource(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForFont(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForFormAction(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForFrame(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForFrameAncestor(const Frame&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForImage(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForMedia(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForObjectSource(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForPluginType(const String& type, const String& typeAttribute) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForScript(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForStyle(const URL&) const;
+
+    const ContentSecurityPolicyDirective* defaultSrc() const { return m_defaultSrc.get(); }
 
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
     ContentSecurityPolicy::ReflectedXSSDisposition reflectedXSSDisposition() const { return m_reflectedXSSDisposition; }
     bool isReportOnly() const { return m_reportOnly; }
     const Vector<String>& reportURIs() const { return m_reportURIs; }
+
+    // FIXME: Remove this once we teach ContentSecurityPolicyDirectiveList how to log an arbitrary console message.
+    const ContentSecurityPolicy& policy() const { return m_policy; }
 
 private:
     void parse(const String&, ContentSecurityPolicy::PolicyFrom);
@@ -96,11 +94,8 @@ private:
     void setCSPDirective(const String& name, const String& value, std::unique_ptr<CSPDirectiveType>&);
 
     ContentSecurityPolicySourceListDirective* operativeDirective(ContentSecurityPolicySourceListDirective*) const;
-    void reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const URL& blockedURL = URL(), const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = nullptr) const;
 
     void setEvalDisabledErrorMessage(const String& errorMessage) { m_evalDisabledErrorMessage = errorMessage; }
-
-    bool denyIfEnforcingPolicy() const { return m_reportOnly; }
 
     // FIXME: Make this a const reference once we teach applySandboxPolicy() to store its policy as opposed to applying it directly onto ContentSecurityPolicy.
     ContentSecurityPolicy& m_policy;

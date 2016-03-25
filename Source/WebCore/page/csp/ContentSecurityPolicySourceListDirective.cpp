@@ -28,13 +28,14 @@
 #include "ContentSecurityPolicySourceListDirective.h"
 
 #include "ContentSecurityPolicy.h"
+#include "ContentSecurityPolicyDirectiveList.h"
 #include "URL.h"
 
 namespace WebCore {
 
-ContentSecurityPolicySourceListDirective::ContentSecurityPolicySourceListDirective(const String& name, const String& value, const ContentSecurityPolicy& policy)
-    : ContentSecurityPolicyDirective(name, value, policy)
-    , m_sourceList(policy, name)
+ContentSecurityPolicySourceListDirective::ContentSecurityPolicySourceListDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
+    : ContentSecurityPolicyDirective(directiveList, name, value)
+    , m_sourceList(directiveList.policy(), name)
 {
     m_sourceList.parse(value);
 }

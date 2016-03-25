@@ -28,6 +28,7 @@
 #include "ContentSecurityPolicyMediaListDirective.h"
 
 #include "ContentSecurityPolicy.h"
+#include "ContentSecurityPolicyDirectiveList.h"
 #include "ParsingUtilities.h"
 #include <wtf/text/StringHash.h>
 
@@ -43,8 +44,8 @@ static bool isNotASCIISpace(UChar c)
     return !isASCIISpace(c);
 }
 
-ContentSecurityPolicyMediaListDirective::ContentSecurityPolicyMediaListDirective(const String& name, const String& value, const ContentSecurityPolicy& policy)
-    : ContentSecurityPolicyDirective(name, value, policy)
+ContentSecurityPolicyMediaListDirective::ContentSecurityPolicyMediaListDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
+    : ContentSecurityPolicyDirective(directiveList, name, value)
 {
     parse(value);
 }
@@ -63,7 +64,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
 
     // 'plugin-types ____;' OR 'plugin-types;'
     if (value.isEmpty()) {
-        policy().reportInvalidPluginTypes(value);
+        directiveList().policy().reportInvalidPluginTypes(value);
         return;
     }
 
@@ -79,7 +80,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
         begin = position;
         if (!skipExactly<UChar, isMediaTypeCharacter>(position, end)) {
             skipWhile<UChar, isNotASCIISpace>(position, end);
-            policy().reportInvalidPluginTypes(String(begin, position - begin));
+            directiveList().policy().reportInvalidPluginTypes(String(begin, position - begin));
             continue;
         }
         skipWhile<UChar, isMediaTypeCharacter>(position, end);
@@ -88,7 +89,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
         //      ^
         if (!skipExactly<UChar>(position, end, '/')) {
             skipWhile<UChar, isNotASCIISpace>(position, end);
-            policy().reportInvalidPluginTypes(String(begin, position - begin));
+            directiveList().policy().reportInvalidPluginTypes(String(begin, position - begin));
             continue;
         }
 
@@ -96,7 +97,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
         //       ^
         if (!skipExactly<UChar, isMediaTypeCharacter>(position, end)) {
             skipWhile<UChar, isNotASCIISpace>(position, end);
-            policy().reportInvalidPluginTypes(String(begin, position - begin));
+            directiveList().policy().reportInvalidPluginTypes(String(begin, position - begin));
             continue;
         }
         skipWhile<UChar, isMediaTypeCharacter>(position, end);
@@ -105,7 +106,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
         //            ^                          ^               ^
         if (position < end && isNotASCIISpace(*position)) {
             skipWhile<UChar, isNotASCIISpace>(position, end);
-            policy().reportInvalidPluginTypes(String(begin, position - begin));
+            directiveList().policy().reportInvalidPluginTypes(String(begin, position - begin));
             continue;
         }
         m_pluginTypes.add(String(begin, position - begin));

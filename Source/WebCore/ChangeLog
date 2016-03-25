@@ -1,3 +1,166 @@
+2016-03-24  Daniel Bates  <dabates@apple.com>
+
+        CSP: Move logic for reporting a violation from ContentSecurityPolicyDirectiveList to ContentSecurityPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=155842
+        <rdar://problem/25340377>
+        And
+        https://bugs.webkit.org/show_bug.cgi?id=155133
+
+        Reviewed by Brent Fulgham.
+
+        Towards associating source file, line-, and column- numbers (https://bugs.webkit.org/show_bug.cgi?id=114317)
+        with a CSP console message we should move the logic for logging the console message/reporting the violation
+        from class ContentSecurityPolicyDirectiveList to class ContentSecurityPolicy so that it is closer to the
+        script execution context that can access such information.
+
+        The responsibilities of the class ContentSecurityPolicyDirectiveList have been reduced. It is responsible
+        for parsing a string representation of the Content Security Policy and providing functions to determine
+        the violated directive (if any) for a given source (e.g. URL). ContentSecurityPolicyDirectiveList no longer
+        takes responsibility logging a console message or sending a violation report (if applicable). Falling out
+        from this decrease in responsibility is the removal of enum ContentSecurityPolicyDirectiveList::ReportingStatus
+        and the need to pass a enumerator of this enum to each ContentSecurityPolicyDirectiveList to suppress
+        the sending of a violation report. The caller of ContentSecurityPolicyDirectiveList is responsible for
+        making this determination.
+
+        With the exception of a change to the error message for an inline event handler violation, there are no
+        other functional changes. When an inline event handler violation occurs we will emit either:
+
+            Refused to execute a script for an inline event handler because 'unsafe-inline' does not appear in the
+            script-src directive of the Content Security Policy.
+
+        Or:
+
+            Refused to execute a script for an inline event handler because 'unsafe-inline' appears in neither the
+            script-src directive nor the default-src directive of the Content Security Policy.
+
+        depending on whether the Content Security Policy contains a script-src directive or not.
+
+        * CMakeLists.txt: Add files ContentSecurityPolicyDirective.cpp and ContentSecurityPolicyDirectiveNames.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Add files ContentSecurityPolicyDirective.cpp and ContentSecurityPolicyDirectiveNames.{cpp, h}.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::consoleMessageForViolation): Moved from file ContentSecurityPolicyDirectiveList.cpp and
+        incorporates the functionality of ContentSecurityPolicyDirectiveList::reportViolation(). Modified
+        to take a reference to the violated directive (ContentSecurityPolicyDirective object) and removed
+        the boolean parameter violatesDefaultSrc as we can deduce this from the violated directive.
+        (WebCore::ContentSecurityPolicy::didReceiveHeader): Modified to call ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeEval().
+        (WebCore::ContentSecurityPolicy::foundHashOfContentInAllPolicies): Renamed; Formerly named allPoliciesAllowHashFromContent.
+        Modified to early return if either no algorithms are given or the specified content to hash is
+        the empty string.
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs): Moved logic for reporting a violation from
+        ContentSecurityPolicyDirectiveList member function of the same name to here.
+        (WebCore::ContentSecurityPolicy::allowInlineEventHandlers): Moved logic for reporting a violation from
+        ContentSecurityPolicyDirectiveList member function of the same name to here. Additionally, changed the
+        error message text to better describe the reason for the violation.
+        (WebCore::ContentSecurityPolicy::allowScriptWithNonce): Ditto.
+        (WebCore::ContentSecurityPolicy::allowStyleWithNonce): Ditto.
+        (WebCore::ContentSecurityPolicy::allowInlineScript): Ditto.
+        (WebCore::ContentSecurityPolicy::allowInlineStyle): Ditto.
+        (WebCore::ContentSecurityPolicy::allowEval): Ditto.
+        (WebCore::ContentSecurityPolicy::allowFrameAncestors): Ditto.
+        (WebCore::ContentSecurityPolicy::allowPluginType): Ditto.
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowChildFrameFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowChildContextFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowImageFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowStyleFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowFontFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowMediaFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowConnectToSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowFormAction): Ditto.
+        (WebCore::ContentSecurityPolicy::allowBaseURI): Ditto.
+        (WebCore::ContentSecurityPolicy::reportViolation): Simplified signature by having it take a reference to
+        a ContentSecurityPolicyDirective object. Also split functionality into two variants: one variant takes a
+        pointer to a JSC::ExecState, one variant takes a source file, and line and column positions.
+        (WebCore::ContentSecurityPolicy::allPoliciesAllowHashFromContent): Deleted.
+        (WebCore::ContentSecurityPolicy::gatherReportURIs): Deleted.
+        * page/csp/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::violatedDirectiveInAnyPolicy): Formerly named allPoliciesAllow. Modified
+        to return the violated directive.
+        (WebCore::ContentSecurityPolicy::allPoliciesAllow): Deleted.
+        * page/csp/ContentSecurityPolicyDirective.cpp: Added.
+        * page/csp/ContentSecurityPolicyDirective.h: Added.
+        (WebCore::ContentSecurityPolicyDirective::ContentSecurityPolicyDirective): Modified to take a reference to the
+        directive list that contains this directive instead of pointer to a ContentSecurityPolicy object.
+        (WebCore::ContentSecurityPolicyDirective::name): Added.
+        (WebCore::ContentSecurityPolicyDirective::directiveList): Added.
+        (WebCore::ContentSecurityPolicyDirective::isDefaultSrc): Added.
+        (WebCore::ContentSecurityPolicyDirective::policy): Deleted.
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp: Remove unused header <wtf/Optional.h>. Also remove header wtf/text/StringBuilder.h
+        as the function that made use of it, consoleMessageForViolation, was moved to file ContentSecurityPolicy.cpp.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeEval): Formerly named allowEval.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineScript): Formerly named allowInlineScript.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyle): Formerly named allowInlineStyle.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash): Formerly named allowInlineScriptWithHash.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleHash): Formerly named allowInlineStyleWithHash.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptNonce): Formerly named allowScriptWithNonce.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleNonce): Formerly named allowStyleWithNonce.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForBaseURI): Formerly named allowBaseURI.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForChildContext): Formerly named allowChildContextFromSource.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForConnectSource): Formerly named allowConnectToSource.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForFont): Formerly named allowFontFromSource.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForFormAction): Formerly named allowFormAction.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForFrame): Formerly named allowChildFrameFromSource.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestor): Formerly named allowFrameAncestors.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForImage): Formerly named allowImageFromSource.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForMedia): Formerly named allowMediaFromSource.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForObjectSource): Formerly named allowObjectFromSource.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForPluginType): Formerly named allowPluginType.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForScript): Formerly named allowScriptFromSource.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForStyle): Formerly named allowStyleFromSource.
+        (WebCore::ContentSecurityPolicyDirectiveList::parse): Update code to make use of ContentSecurityPolicyDirectiveNames constants.
+        (WebCore::ContentSecurityPolicyDirectiveList::setCSPDirective): Pass |this| instead of the ContentSecurityPolicy object.
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective): Update code to make use of ContentSecurityPolicyDirectiveNames constants.
+        (WebCore::isExperimentalDirectiveName): Deleted.
+        (WebCore::isCSPDirectiveName): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::reportViolation): Deleted.
+        (WebCore::consoleMessageForViolation): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowJavaScriptURLs): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineEventHandlers): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineScript): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineScriptWithHash): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowScriptWithNonce): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineStyle): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowInlineStyleWithHash): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowStyleWithNonce): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowEval): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowPluginType): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowScriptFromSource): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowObjectFromSource): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowChildContextFromSource): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowChildFrameFromSource): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowImageFromSource): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowStyleFromSource): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowFontFromSource): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowMediaFromSource): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowConnectToSource): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowFormAction): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowBaseURI): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowFrameAncestors): Deleted.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        (WebCore::ContentSecurityPolicyDirectiveList::defaultSrc): Added.
+        (WebCore::ContentSecurityPolicyDirectiveList::policy): Added. Also added FIXME comment to remove this function. This
+        function is only used by ContentSecurityPolicyMediaListDirective so that it can log a console message on a parsing error.
+        (WebCore::ContentSecurityPolicyDirectiveList::denyIfEnforcingPolicy): Deleted.
+        * page/csp/ContentSecurityPolicyDirectiveNames.cpp: Added.
+        * page/csp/ContentSecurityPolicyDirectiveNames.h: Added.
+        * page/csp/ContentSecurityPolicyMediaListDirective.cpp:
+        (WebCore::ContentSecurityPolicyMediaListDirective::ContentSecurityPolicyMediaListDirective): Modified to take a reference to the
+        directive list that contains this directive instead of pointer to a ContentSecurityPolicy object.
+        (WebCore::ContentSecurityPolicyMediaListDirective::parse): Updated code to use ContentSecurityPolicyDirectiveList::policy() instead
+        of ContentSecurityPolicyDirective::policy() as the latter was removed. Ideally this class should not need to use the ContentSecurityPolicy
+        object to log a console message.
+        * page/csp/ContentSecurityPolicyMediaListDirective.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::isExperimentalDirectiveName): Moved from file ContentSecurityPolicyDirectiveList.cpp because this function is only used
+        in this file.
+        (WebCore::isCSPDirectiveName): Ditto.
+        (WebCore::ContentSecurityPolicySourceList::isProtocolAllowedByStar): Update code to make use of ContentSecurityPolicyDirectiveNames constants.
+        * page/csp/ContentSecurityPolicySourceListDirective.cpp:
+        (WebCore::ContentSecurityPolicySourceListDirective::ContentSecurityPolicySourceListDirective): Modified to take a reference to
+        the directive list that contains this directive instead of pointer to a ContentSecurityPolicy object. 
+        * page/csp/ContentSecurityPolicySourceListDirective.h:
+
 2016-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Overflow:scroll scrollbars do not obey overlay/always-on system preference changes

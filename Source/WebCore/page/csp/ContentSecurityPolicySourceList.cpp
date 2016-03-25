@@ -28,7 +28,7 @@
 #include "ContentSecurityPolicySourceList.h"
 
 #include "ContentSecurityPolicy.h"
-#include "ContentSecurityPolicyDirectiveList.h"
+#include "ContentSecurityPolicyDirectiveNames.h"
 #include "ParsingUtilities.h"
 #include "SecurityOrigin.h"
 #include "URL.h"
@@ -37,6 +37,35 @@
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
+
+static inline bool isExperimentalDirectiveName(const String& name)
+{
+#if ENABLE(CSP_NEXT)
+    return equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::reflectedXSS);
+#else
+    UNUSED_PARAM(name);
+    return false;
+#endif
+}
+
+static bool isCSPDirectiveName(const String& name)
+{
+    return equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::baseURI)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::connectSrc)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::defaultSrc)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::fontSrc)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::formAction)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::frameSrc)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::imgSrc)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::mediaSrc)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::objectSrc)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::pluginTypes)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::reportURI)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::sandbox)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::scriptSrc)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::styleSrc)
+        || isExperimentalDirectiveName(name);
+}
 
 static bool isSourceCharacter(UChar c)
 {
@@ -101,12 +130,10 @@ bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) co
 {
     // Although not allowed by the Content Security Policy Level 3 spec., we allow a data URL to match
     // "img-src *" and either a data URL or blob URL to match "media-src *" for web compatibility.
-    // FIXME: We should not hardcode the directive names. We should make use of the constants in ContentSecurityPolicyDirectiveList.cpp.
-    // See <https://bugs.webkit.org/show_bug.cgi?id=155133>.
     bool isAllowed = url.protocolIsInHTTPFamily();
-    if (equalLettersIgnoringASCIICase(m_directiveName, "img-src"))
+    if (equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::imgSrc))
         isAllowed |= url.protocolIsData();
-    else if (equalLettersIgnoringASCIICase(m_directiveName, "media-src"))
+    else if (equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::mediaSrc))
         isAllowed |= url.protocolIsData() || url.protocolIsBlob();
     return isAllowed;
 }

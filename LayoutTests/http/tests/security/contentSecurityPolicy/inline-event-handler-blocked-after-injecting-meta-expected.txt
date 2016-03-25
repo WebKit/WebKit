@@ -2,5 +2,5 @@ CONSOLE MESSAGE: line 8: Clicking a link, pre-policy:
 CONSOLE MESSAGE: line 21: PASS: Event handler triggered pre-policy.
 CONSOLE MESSAGE: line 14: Injecting Content-Security-Policy.
 CONSOLE MESSAGE: line 19: Clicking a link, post-policy:
-CONSOLE MESSAGE: line 21: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' appears in neither the script-src directive nor the default-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 21: Refused to execute a script for an inline event handler because 'unsafe-inline' appears in neither the script-src directive nor the default-src directive of the Content Security Policy.
 This test checks that CSP is evaluated on each call to an inline event handler, even if it's been executed pre-policy. It passes if one 'PASS' and no 'FAIL' messages appear.
