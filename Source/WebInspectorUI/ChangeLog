@@ -1,3 +1,18 @@
+2016-03-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r198619.
+        https://bugs.webkit.org/show_bug.cgi?id=155902
+
+        Switching to Console tab sometimes results in blank tab.
+        (Requested by JoePeck on #webkit).
+
+        Reverted changeset:
+
+        "Web Inspector: Large repaints while typing in the console
+        tab"
+        https://bugs.webkit.org/show_bug.cgi?id=155627
+        http://trac.webkit.org/changeset/198619
+
 2016-03-25  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Scrolling/selection is broken in Quick Open dialog resource tree

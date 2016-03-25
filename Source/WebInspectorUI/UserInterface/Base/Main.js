@@ -226,7 +226,6 @@ WebInspector.contentLoaded = function()
     this.tabBar = new WebInspector.TabBar(document.getElementById("tab-bar"));
     this.tabBar.addEventListener(WebInspector.TabBar.Event.NewTabItemClicked, this._newTabItemClicked, this);
     this.tabBar.addEventListener(WebInspector.TabBar.Event.OpenDefaultTab, this._openDefaultTab, this);
-    this.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemSelected, this._tabBarItemSelected, this);
 
     this._contentElement = document.getElementById("content");
     this._contentElement.setAttribute("role", "main");
@@ -539,18 +538,6 @@ WebInspector._newTabItemClicked = function(event)
 WebInspector._openDefaultTab = function(event)
 {
     this.showNewTabTab();
-};
-
-WebInspector._tabBarItemSelected = function(event)
-{
-    let {previouslySelectedTabIdentifier, selectedTabIdentifier} = event.data;
-    const classNamePrefix = "selected-tab-";
-
-    if (previouslySelectedTabIdentifier)
-        document.body.classList.remove(classNamePrefix + previouslySelectedTabIdentifier);
-
-    console.assert(selectedTabIdentifier);
-    document.body.classList.add(classNamePrefix + selectedTabIdentifier);
 };
 
 WebInspector._tryToRestorePendingTabs = function()

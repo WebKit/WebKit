@@ -23,15 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-body.selected-tab-console #content {
-    /* FIXME: This shouldn't be necessary once https://webkit.org/b/145324 is resolved. */
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-
 .log-scope-bar > li.unread::before {
     content: '';
     display: inline-block;

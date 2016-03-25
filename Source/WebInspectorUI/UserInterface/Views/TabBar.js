@@ -363,23 +363,15 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
         if (this._selectedTabBarItem === tabBarItem)
             return;
 
-        let previouslySelectedTabIdentifier = "";
-
-        if (this._selectedTabBarItem) {
+        if (this._selectedTabBarItem)
             this._selectedTabBarItem.selected = false;
-            previouslySelectedTabIdentifier = this._selectedTabBarItem.representedObject.identifier;
-        }
 
         this._selectedTabBarItem = tabBarItem || null;
 
-        let selectedTabIdentifier = "";
-
-        if (this._selectedTabBarItem) {
+        if (this._selectedTabBarItem)
             this._selectedTabBarItem.selected = true;
-            selectedTabIdentifier = this._selectedTabBarItem.representedObject.identifier;
-        }
 
-        this.dispatchEventToListeners(WebInspector.TabBar.Event.TabBarItemSelected, {previouslySelectedTabIdentifier, selectedTabIdentifier});
+        this.dispatchEventToListeners(WebInspector.TabBar.Event.TabBarItemSelected);
     }
 
     get tabBarItems()
