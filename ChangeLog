@@ -1,3 +1,16 @@
+2016-03-25  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r197358): WebKitSystemInterface.h copied into directory named "--llvm"
+        https://bugs.webkit.org/show_bug.cgi?id=155838
+
+        Reviewed by Alexey Proskuryakov.
+
+        Do not pass command line flag --llvm when calling script copy-webkitlibraries-to-product-directory
+        to avoid copying the WebKitSystemInterface libraries to an incorrect location. The --llvm flag was
+        removed from copy-webkitlibraries-to-product-directory in <http://trac.webkit.org/changeset/197358>.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2016-03-25  Bill Ming  <mbbill@gmail.com>
 
         Detect correct number of processors on windows
