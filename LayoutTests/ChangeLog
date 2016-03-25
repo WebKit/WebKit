@@ -1,3 +1,9 @@
+2016-03-24  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL gardening. Mark crash tests in proper category.
+
+        * platform/efl/TestExpectations:
+
 2016-03-24  Daniel Bates  <dabates@apple.com>
 
         CSP: Move logic for reporting a violation from ContentSecurityPolicyDirectiveList to ContentSecurityPolicy
