@@ -64,6 +64,8 @@ public:
 
     void fill(const FetchHeaders*);
 
+    void filterAndFill(const HTTPHeaderMap&, Guard);
+
     String fastGet(HTTPHeaderName name) const { return m_headers.get(name); }
     void fastSet(HTTPHeaderName name, const String& value) { m_headers.set(name, value); }
 
@@ -78,6 +80,8 @@ public:
         Vector<String> m_keys;
     };
     Iterator createIterator() { return Iterator(*this); }
+
+    const HTTPHeaderMap& internalHeaders() const { return m_headers; }
 
 private:
     FetchHeaders(Guard guard) : m_guard(guard) { }

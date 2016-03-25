@@ -1,3 +1,18 @@
+2016-03-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Add basic loading of resources
+        https://bugs.webkit.org/show_bug.cgi?id=155637
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: Removed flaky test expectations.
+        * http/tests/fetch/closing-while-fetching-expected.txt: Added.
+        * http/tests/fetch/closing-while-fetching.html: Added.
+        * http/tests/fetch/get-response-body-while-loading-expected.txt: Added.
+        * http/tests/fetch/get-response-body-while-loading.html: Added.
+        * http/tests/resources/download-json-with-delay.php: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-expected.txt: Added.
+
 2016-03-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed EFL gardening.

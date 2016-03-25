@@ -34,8 +34,10 @@
 #include "BlobURL.h"
 #include "FetchBody.h"
 #include "FetchLoaderClient.h"
+#include "FetchRequest.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableBlobRegistry.h"
@@ -43,11 +45,14 @@
 
 namespace WebCore {
 
-bool FetchLoader::start(ScriptExecutionContext& context, Blob& blob)
+void FetchLoader::start(ScriptExecutionContext& context, Blob& blob)
 {
     auto urlForReading = BlobURL::createPublicURL(context.securityOrigin());
-    if (urlForReading.isEmpty())
-        return false;
+    if (urlForReading.isEmpty()) {
+        m_client.didFail();
+        return;
+    }
+
     ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), urlForReading, blob.url());
 
     ResourceRequest request(urlForReading);
@@ -63,7 +68,21 @@ bool FetchLoader::start(ScriptExecutionContext& context, Blob& blob)
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     m_loader = ThreadableLoader::create(&context, this, request, options);
-    return true;
+}
+
+void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
+{
+    // FIXME: Compute loading options according fetch options.
+    ThreadableLoaderOptions options;
+    options.setSendLoadCallbacks(SendCallbacks);
+    options.setSniffContent(DoNotSniffContent);
+    options.setDataBufferingPolicy(DoNotBufferData);
+    options.preflightPolicy = ConsiderPreflight;
+    options.setAllowCredentials(AllowStoredCredentials);
+    options.crossOriginRequestPolicy = DenyCrossOriginRequests;
+    options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
+
+    m_loader = ThreadableLoader::create(&context, this, request.internalRequest(), options);
 }
 
 FetchLoader::FetchLoader(Type type, FetchLoaderClient& client)
@@ -109,6 +128,11 @@ void FetchLoader::didFinishLoading(unsigned long, double)
 }
 
 void FetchLoader::didFail(const ResourceError&)
+{
+    m_client.didFail();
+}
+
+void FetchLoader::didFailRedirectCheck()
 {
     m_client.didFail();
 }

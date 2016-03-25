@@ -31,16 +31,42 @@
 
 #if ENABLE(FETCH_API)
 
+#include "DOMWindow.h"
+#include "FetchRequest.h"
+#include "FetchResponse.h"
+
 namespace WebCore {
 
-void DOMWindowFetch::fetch(DOMWindow&, FetchRequest*, const Dictionary&, FetchPromise&& promise)
+void DOMWindowFetch::fetch(DOMWindow& window, FetchRequest* input, const Dictionary& dictionary, DeferredWrapper&& promise)
 {
-    promise.reject(ASCIILiteral("Fetch is not yet implemented"));
+    if (!window.scriptExecutionContext())
+        return;
+    ScriptExecutionContext& context = *window.scriptExecutionContext();
+
+    ExceptionCode ec = 0;
+    RefPtr<FetchRequest> fetchRequest = FetchRequest::create(context, input, dictionary, ec);
+    if (ec) {
+        promise.reject(ec);
+        return;
+    }
+    ASSERT(fetchRequest);
+    FetchResponse::fetch(context, *fetchRequest, WTFMove(promise));
 }
 
-void DOMWindowFetch::fetch(DOMWindow&, const String&, const Dictionary&, FetchPromise&& promise)
+void DOMWindowFetch::fetch(DOMWindow& window, const String& url, const Dictionary& dictionary, DeferredWrapper&& promise)
 {
-    promise.reject(ASCIILiteral("Fetch is not yet implemented"));
+    if (!window.scriptExecutionContext())
+        return;
+    ScriptExecutionContext& context = *window.scriptExecutionContext();
+    
+    ExceptionCode ec = 0;
+    RefPtr<FetchRequest> fetchRequest = FetchRequest::create(context, url, dictionary, ec);
+    if (ec) {
+        promise.reject(ec);
+        return;
+    }
+    ASSERT(fetchRequest);
+    FetchResponse::fetch(context, *fetchRequest, WTFMove(promise));
 }
 
 } // namespace WebCore

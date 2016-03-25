@@ -1,3 +1,74 @@
+2016-03-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Add basic loading of resources
+        https://bugs.webkit.org/show_bug.cgi?id=155637
+
+        Reviewed by Darin Adler.
+
+        Adding support for basic fetch for Window (no support for Worker yet).
+        A FetchResponse object is created for every fetch task.
+        But it will only be exposed to JS at promise fulfillment time, i.e. once initial response headers are retrieved.
+
+        Updating Blob resource handle to add Content-Type and Content-Length header and notifying of error in case of erroneous HTTP method.
+
+        Fetch is limited to same origin requests currently due to some WPT tests that would timeout otherwise.
+
+        Tests: http/tests/fetch/closing-while-fetching.html
+               http/tests/fetch/get-response-body-while-loading.html
+        Also covered by rebased tests.
+
+        * Modules/fetch/DOMWindowFetch.cpp: Creating a FetchResponse to start fetching.
+        (WebCore::DOMWindowFetch::fetch):
+        * Modules/fetch/DOMWindowFetch.h:
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::consume):
+        (WebCore::FetchBody::consumeArrayBuffer): Handling of body promises in case of data stored as a buffer.
+        (WebCore::FetchBody::consumeText): Passing the promise as a reference.
+        (WebCore::blobFromArrayBuffer): Helper routine.
+        (WebCore::FetchBody::fulfillTextPromise): Helper routine.
+        (WebCore::FetchBody::loadedAsArrayBuffer): Updated to handle storing of data as a buffer.
+        (WebCore::FetchBody::loadedAsText):
+        (WebCore::FetchBody::bodyForInternalRequest): Helper routine to generate the request body data to be sent as part of the fetch request.
+        (WebCore::FetchBody::extractFromText):
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::loadingBody):
+        (WebCore::FetchBody::FetchBody):
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::loadBlob): Updated to cope with the change that FetchLoader::start does not return a boolean anymore
+        but will directly call failure callbacks.
+        (WebCore::FetchBodyOwner::loadedBlobAsText): Moving it closer to other blob loading routines.
+        (WebCore::FetchBodyOwner::finishBlobLoading):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::body):
+        (WebCore::FetchBodyOwner::loadedBlobAsArrayBuffer):
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::FetchHeaders::fill):
+        (WebCore::FetchHeaders::filterAndFill): Helper routine to fill headers from a HTTPHeaderMap after being filtered.
+        * Modules/fetch/FetchHeaders.h:
+        (WebCore::FetchHeaders::internalHeaders):
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::start):
+        (WebCore::FetchLoader::didFailRedirectCheck):
+        * Modules/fetch/FetchLoader.h:
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::internalRequest): Routine used to create the ResourceRequest transmitted to ThreadableLoader.
+       * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::fetch): Start fetching by creating a FetchLoader based on passed request.
+        (WebCore::FetchResponse::BodyLoader::didSucceed): FetchLoader callback.
+        (WebCore::FetchResponse::BodyLoader::didFail): Ditto.
+        (WebCore::FetchResponse::BodyLoader::BodyLoader): Ditto.
+        (WebCore::FetchResponse::BodyLoader::didReceiveResponse): Ditto.
+        (WebCore::FetchResponse::BodyLoader::didFinishLoadingAsArrayBuffer): Ditto.
+        (WebCore::FetchResponse::BodyLoader::start): Starting fetch loader.
+        (WebCore::FetchResponse::BodyLoader::stop): Stopping fetch loader.
+        (WebCore::FetchResponse::stop): Stop loader if any.
+        * Modules/fetch/FetchResponse.h:
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::doStart: Notifying the loader with an error if verb is not GET.
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess): Adding support for Content-Type and Content-Lenth headers.
+        (WebCore::BlobResourceHandle::createAsync): Removing GET verb check.
+
 2016-03-25  Konstantin Tokarev  <annulen@yandex.ru>
 
         Removed leftovers of WCHAR_UNICODE code path after r162782.

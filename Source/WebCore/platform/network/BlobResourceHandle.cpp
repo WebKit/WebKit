@@ -136,10 +136,6 @@ void BlobResourceSynchronousLoader::didFail(ResourceHandle*, const ResourceError
 
 PassRefPtr<BlobResourceHandle> BlobResourceHandle::createAsync(BlobData* blobData, const ResourceRequest& request, ResourceHandleClient* client)
 {
-    // FIXME: Should probably call didFail() instead of blocking the load without explanation.
-    if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get"))
-        return nullptr;
-
     return adoptRef(new BlobResourceHandle(blobData, request, client, true));
 }
 
@@ -206,6 +202,12 @@ void BlobResourceHandle::doStart()
     // Do not continue if the request is aborted or an error occurs.
     if (m_aborted || m_errorCode)
         return;
+
+    if (!equalLettersIgnoringASCIICase(firstRequest().httpMethod(), "get")) {
+        m_errorCode = methodNotAllowed;
+        notifyResponse();
+        return;
+    }
 
     // If the blob data is not found, fail now.
     if (!m_blobData) {
@@ -578,6 +580,10 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     ResourceResponse response(firstRequest().url(), m_blobData->contentType(), m_totalRemainingSize, String());
     response.setHTTPStatusCode(isRangeRequest ? httpPartialContent : httpOK);
     response.setHTTPStatusText(isRangeRequest ? httpPartialContentText : httpOKText);
+
+    response.setHTTPHeaderField(HTTPHeaderName::ContentType, m_blobData->contentType());
+    response.setHTTPHeaderField(HTTPHeaderName::ContentLength, String::number(m_totalRemainingSize));
+
     if (isRangeRequest)
         response.setHTTPHeaderField(HTTPHeaderName::ContentRange, ParsedContentRange(m_rangeOffset, m_rangeEnd, m_totalSize).headerValue());
     // FIXME: If a resource identified with a blob: URL is a File object, user agents must use that file's name attribute,

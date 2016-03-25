@@ -42,6 +42,7 @@ class ArrayBuffer;
 namespace WebCore {
 
 class Dictionary;
+class FetchRequest;
 
 typedef int ExceptionCode;
 
@@ -52,6 +53,9 @@ public:
     static RefPtr<FetchResponse> redirect(ScriptExecutionContext&, const String&, int, ExceptionCode&);
     // FIXME: Binding generator should not require below method to handle optional status parameter.
     static RefPtr<FetchResponse> redirect(ScriptExecutionContext& context, const String& url, ExceptionCode& ec) { return redirect(context, url, 302, ec); }
+
+    using FetchPromise = DOMPromise<RefPtr<FetchResponse>, ExceptionCode>;
+    static void fetch(ScriptExecutionContext&, const FetchRequest&, FetchPromise&&);
 
     void initializeWith(const Dictionary&, ExceptionCode&);
 
@@ -71,14 +75,35 @@ private:
     FetchResponse(ScriptExecutionContext&, Type, FetchBody&&, Ref<FetchHeaders>&&, ResourceResponse&&);
 
     // ActiveDOMObject API
+    void stop() final;
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
+
+    class BodyLoader final : public FetchLoaderClient {
+    public:
+        BodyLoader(FetchResponse&, FetchPromise&&);
+
+        bool start(ScriptExecutionContext&, const FetchRequest&);
+        void stop();
+
+    private:
+        // FetchLoaderClient API
+        void didSucceed() final;
+        void didFail() final;
+        void didReceiveResponse(const ResourceResponse&);
+        void didFinishLoadingAsArrayBuffer(RefPtr<ArrayBuffer>&&) final;
+
+        FetchResponse& m_response;
+        Optional<FetchPromise> m_promise;
+        std::unique_ptr<FetchLoader> m_loader;
+    };
 
     Type m_type;
     ResourceResponse m_response;
     Ref<FetchHeaders> m_headers;
     bool m_isLocked = false;
     bool m_isRedirected = false;
+    Optional<BodyLoader> m_bodyLoader;
 };
 
 } // namespace WebCore

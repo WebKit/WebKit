@@ -59,17 +59,21 @@ void FetchBodyOwner::loadBlob(Blob& blob, FetchLoader::Type type)
     ASSERT(m_body.isDisturbed());
     ASSERT(!m_blobLoader);
 
+    if (!scriptExecutionContext()) {
+        m_body.loadingFailed();
+        return;
+    }
+
     m_blobLoader = { *this };
     m_blobLoader->loader = std::make_unique<FetchLoader>(type, *m_blobLoader);
 
+    m_blobLoader->loader->start(*scriptExecutionContext(), blob);
+    if (!m_blobLoader->loader->isStarted()) {
+        m_body.loadingFailed();
+        m_blobLoader = Nullopt;
+        return;
+    }
     setPendingActivity(this);
-    if (!scriptExecutionContext() || !m_blobLoader->loader->start(*scriptExecutionContext(), blob))
-        blobLoadingFailed();
-}
-
-void FetchBodyOwner::loadedBlobAsText(String&& text)
-{
-    m_body.loadedAsText(WTFMove(text));
 }
 
 void FetchBodyOwner::finishBlobLoading()
@@ -78,6 +82,11 @@ void FetchBodyOwner::finishBlobLoading()
 
     m_blobLoader = Nullopt;
     unsetPendingActivity(this);
+}
+
+void FetchBodyOwner::loadedBlobAsText(String&& text)
+{
+    m_body.loadedAsText(WTFMove(text));
 }
 
 void FetchBodyOwner::blobLoadingFailed()
@@ -95,6 +104,13 @@ void FetchBodyOwner::BlobLoader::didReceiveResponse(const ResourceResponse& resp
 {
     if (response.httpStatusCode() != 200)
         didFail();
+}
+
+void FetchBodyOwner::BlobLoader::didFail()
+{
+    // didFail might be called within FetchLoader::start call.
+    if (loader->isStarted())
+        owner.blobLoadingFailed();
 }
 
 } // namespace WebCore
