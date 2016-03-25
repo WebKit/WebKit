@@ -1,3 +1,22 @@
+2016-03-25  Mark Lam  <mark.lam@apple.com>
+
+        ES6's throwing of TypeErrors on access of RegExp.prototype flag properties breaks websites.
+        https://bugs.webkit.org/show_bug.cgi?id=155904
+
+        Reviewed by Geoffrey Garen.
+
+        * ietestcenter/Javascript/TestCases/15.10.7.2-1.js:
+        (ES5Harness.registerTest.test):
+        * ietestcenter/Javascript/TestCases/15.10.7.3-1.js:
+        (ES5Harness.registerTest.test):
+        * ietestcenter/Javascript/TestCases/15.10.7.4-1.js:
+        (ES5Harness.registerTest.test):
+        - updated these tests to not expect a TypeError due to the workaround.
+
+        * js/pic/cached-named-property-getter.html:
+        - updated this test to use the source property (which still throws a TypeError)
+          instead of the ignoreCase property which no longer does.
+
 2016-03-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking compositing/repaint/become-overlay-composited-layer.html as flaky on ios-sim-wk2

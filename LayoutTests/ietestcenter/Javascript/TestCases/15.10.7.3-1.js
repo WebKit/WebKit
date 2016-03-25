@@ -27,11 +27,8 @@ path: "TestCases/chapter15/15.10/15.10.7/15.10.7.3/15.10.7.3-1.js",
 description: "RegExp.prototype.ignoreCase should throw because RegExp.prototype is not a RegExp",
 
 test: function testcase() {
-    try {
-        RegExp.prototype.ignoreCase;
-        return false;
-    } catch (e) {
+    if ((typeof(RegExp.prototype.ignoreCase)) === 'undefined')
         return true;
-    }
+    return false;
  }
 });

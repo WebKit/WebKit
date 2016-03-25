@@ -1,3 +1,44 @@
+2016-03-25  Mark Lam  <mark.lam@apple.com>
+
+        ES6's throwing of TypeErrors on access of RegExp.prototype flag properties breaks websites.
+        https://bugs.webkit.org/show_bug.cgi?id=155904
+
+        Reviewed by Geoffrey Garen.
+
+        There exists a JS library XRegExp (see http://xregexp.com) that extends the regexp
+        implementation.  XRegExp does feature testing by comparing RegExp.prototype.sticky
+        to undefined.  See:
+
+        Example 1. https://github.com/slevithan/xregexp/blob/28a2b033c5951477bed8c7c867ddf7e89c431cd4/tests/perf/index.html
+            ...
+            } else if (knownVersion[version]) {
+                // Hack around ES6 incompatibility in XRegExp versions prior to 3.0.0
+                if (parseInt(version, 10) < 3) {
+                    delete RegExp.prototype.sticky;
+            }
+            ...
+
+        Example 2. https://github.com/slevithan/xregexp/blob/d0e665d4068cec4d15919215b098b2373f1f12e9/tests/perf/versions/xregexp-all-v2.0.0.js
+            ...
+            // Check for flag y support (Firefox 3+)
+                hasNativeY = RegExp.prototype.sticky !== undef,
+            ...
+
+        The ES6 spec states that we should throw a TypeError here because RegExp.prototype
+        is not a RegExp object, and the sticky getter is only allowed to be called on
+        RegExp objects.  See https://tc39.github.io/ecma262/2016/#sec-get-regexp.prototype.sticky.
+        As a result, websites that uses XRegExp can break (e.g. some Atlassian tools).
+
+        As a workaround, we'll return undefined instead of throwing on access of these
+        flag properties that may be used for feature testing.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoGetterGlobal):
+        (JSC::regExpProtoGetterIgnoreCase):
+        (JSC::regExpProtoGetterMultiline):
+        (JSC::regExpProtoGetterSticky):
+        (JSC::regExpProtoGetterUnicode):
+
 2016-03-25  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] fix divide-by-zero in String.prototype.padStart/padEnd

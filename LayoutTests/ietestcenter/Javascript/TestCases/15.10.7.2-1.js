@@ -27,11 +27,8 @@ path: "TestCases/chapter15/15.10/15.10.7/15.10.7.2/15.10.7.2-1.js",
 description: "RegExp.prototype.global should throw because RegExp.prototype is not a RegExp",
 
 test: function testcase() {
-    try {
-        RegExp.prototype.global;
-        return false;
-    } catch (e) {
+    if ((typeof(RegExp.prototype.global)) === 'undefined')
         return true;
-    }
+    return false;
  }
 });

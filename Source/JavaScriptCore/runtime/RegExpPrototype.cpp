@@ -245,7 +245,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(RegExpObject::info()))
-        return throwVMTypeError(exec);
+        return JSValue::encode(jsUndefined());
 
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->global()));
 }
@@ -254,7 +254,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(RegExpObject::info()))
-        return throwVMTypeError(exec);
+        return JSValue::encode(jsUndefined());
 
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->ignoreCase()));
 }
@@ -263,7 +263,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(RegExpObject::info()))
-        return throwVMTypeError(exec);
+        return JSValue::encode(jsUndefined());
 
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->multiline()));
 }
@@ -272,7 +272,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterSticky(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(RegExpObject::info()))
-        return throwVMTypeError(exec);
+        return JSValue::encode(jsUndefined());
     
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->sticky()));
 }
@@ -281,7 +281,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(RegExpObject::info()))
-        return throwVMTypeError(exec);
+        return JSValue::encode(jsUndefined());
     
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->unicode()));
 }
