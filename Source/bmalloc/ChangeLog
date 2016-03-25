@@ -1,5 +1,20 @@
 2016-03-25  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: stress_aligned fails when allocating a zero-sized object with XLarge alignment
+        https://bugs.webkit.org/show_bug.cgi?id=155896
+
+        Reviewed by Andreas Kling.
+
+        We normally filter zero-sized allocations into small allocations, but
+        a zero-sized allocation can sneak through if it requires sufficiently
+        large alignment.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::tryAllocateXLarge): Set a floor on allocation size to
+        catch zero-sized allocations.
+
+2016-03-25  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: Renamed LargeChunk => Chunk
         https://bugs.webkit.org/show_bug.cgi?id=155894
 
