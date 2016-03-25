@@ -1,3 +1,13 @@
+2016-03-25  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] fix divide-by-zero in String.prototype.padStart/padEnd
+        https://bugs.webkit.org/show_bug.cgi?id=155903
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::padString):
+
 2016-03-25  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] materialize-past-butterfly-allocation.js time out in debug

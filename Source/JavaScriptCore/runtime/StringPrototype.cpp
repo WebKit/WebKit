@@ -900,8 +900,8 @@ static EncodedJSValue padString(ExecState& exec, StringPaddingLocation paddingLo
             return JSValue::encode(throwOutOfMemoryError(&exec));
     }
 
-    if (!filler || filler->length() == 1) {
-        UChar character = filler ? filler->view(&exec)[0] : ' ';
+    if (!filler || filler->length() <= 1) {
+        UChar character = filler && filler->length() ? filler->view(&exec)[0] : ' ';
         if (!(character & ~0xff))
             filler = repeatCharacter(exec, static_cast<LChar>(character), fillLength);
         else
