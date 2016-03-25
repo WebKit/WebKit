@@ -531,6 +531,12 @@
 
 #if PLATFORM(MAC)
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+#define USE_QTKIT 1
+#else
+#define USE_QTKIT 0
+#endif
+
 #define USE_APPKIT 1
 #define HAVE_RUNLOOP_TIMER 1
 #define HAVE_SEC_IDENTITY 1

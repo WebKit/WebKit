@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && USE(QTKIT)
 
 #import "WebVideoFullscreenController.h"
 
