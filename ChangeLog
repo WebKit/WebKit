@@ -1,3 +1,12 @@
+2016-03-25  Bill Ming  <mbbill@gmail.com>
+
+        Detect correct number of processors on windows
+        https://bugs.webkit.org/show_bug.cgi?id=155884
+
+        Reviewed by Alex Christensen.
+
+        * Tools/Scripts/run-jsc-stress-tests:
+
 2016-03-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Improve CMake build performance 

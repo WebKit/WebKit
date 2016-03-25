@@ -1694,17 +1694,21 @@ def runCommandOnTester(cmd)
 end
 
 def numberOfProcessors
-    begin
-        numProcessors = runCommandOnTester("sysctl -n hw.activecpu 2>/dev/null").to_i
-    rescue
-        numProcessors = 0
-    end
-
-    if numProcessors == 0
+    if $hostOS == "windows"
+        numProcessors = runCommandOnTester("cmd /c echo %NUMBER_OF_PROCESSORS%").to_i
+    else
         begin
-            numProcessors = runCommandOnTester("nproc --all 2>/dev/null").to_i
+            numProcessors = runCommandOnTester("sysctl -n hw.activecpu 2>/dev/null").to_i
         rescue
-            numProcessors == 0
+            numProcessors = 0
+        end
+
+        if numProcessors == 0
+            begin
+                numProcessors = runCommandOnTester("nproc --all 2>/dev/null").to_i
+            rescue
+                numProcessors == 0
+            end
         end
     end
 
