@@ -1723,7 +1723,7 @@ private:
 
     RefPtr<NamedFlowCollection> m_namedFlows;
 
-    void sharedObjectPoolClearTimerFired();
+    void clearSharedObjectPool();
     Timer m_sharedObjectPoolClearTimer;
 
     std::unique_ptr<DocumentSharedObjectPool> m_sharedObjectPool;
