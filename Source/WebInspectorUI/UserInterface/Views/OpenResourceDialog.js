@@ -49,9 +49,11 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         this._clearIconElement.addEventListener("click", this._handleClickEvent.bind(this));
 
         this._treeOutline = new WebInspector.TreeOutline(document.createElement("ol"));
+        this._treeOutline.allowsRepeatSelection = true;
         this._treeOutline.disclosureButtons = false;
         this._treeOutline.large = true;
 
+        this._treeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
         this._treeOutline.element.addEventListener("focus", () => {this._inputElement.focus();});
 
         this.element.appendChild(this._treeOutline.element);
@@ -90,7 +92,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         }
 
         if (this._treeOutline.children.length)
-            this._treeOutline.children[0].select(true);
+            this._treeOutline.children[0].select(true, false, true, true);
     }
 
     didPresentDialog()
@@ -161,6 +163,10 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
 
     _handleBlurEvent(event)
     {
+        // Prevent the dialog from being dismissed while handling a tree item click event.
+        if (event.relatedTarget === this._treeOutline.element)
+            return;
+
         this.dismiss();
     }
 
@@ -220,6 +226,18 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         this._populateResourceTreeOutline();
         if (this._treeOutline.children.length)
             this._treeOutline.hidden = false;
+    }
+
+    _treeSelectionDidChange(event)
+    {
+        let treeElement = event.data.selectedElement;
+        if (!treeElement)
+            return;
+
+        if (!event.data.selectedByUser)
+            return;
+
+        this.dismiss(treeElement.representedObject);
     }
 };
 

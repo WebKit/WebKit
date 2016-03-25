@@ -1,3 +1,25 @@
+2016-03-25  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Clicking a result in Quick Open dialog dismisses the dialog, does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=155892
+        <rdar://problem/25361220>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WebInspector.OpenResourceDialog):
+        Allow repeat selection so clicking a selected element makes a selection
+        and dismisses the dialog.
+
+        (WebInspector.OpenResourceDialog.prototype._populateResourceTreeOutline):
+        Suppress select and deselect. Only user clicks should cause a selection event.
+
+        (WebInspector.OpenResourceDialog.prototype._handleBlurEvent):
+        Prevent the dialog from being dismissed before tree item selection occurs.
+
+        (WebInspector.OpenResourceDialog.prototype._treeSelectionDidChange):
+        Set the represented object (dialog result) and dismiss.
+
 2016-03-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r198619.
