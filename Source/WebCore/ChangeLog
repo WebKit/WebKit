@@ -1,3 +1,19 @@
+2016-03-24  Enrica Casucci  <enrica@apple.com>
+
+        Data Detection creates multiple links even when the detected content is within the same node.
+        https://bugs.webkit.org/show_bug.cgi?id=155860
+        rdar://problem/25319579
+
+        Reviewed by Tim Horton.
+
+        If the detected content spans over multiple query fragments,
+        we need to check if consecutive fragments are all within the
+        same node. This way we can avoid creating multiple ranges and
+        consequntly more links.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+
 2016-03-23  Dave Hyatt  <hyatt@apple.com>
 
         Implement the allow-end value of the hanging-punctuation CSS property.

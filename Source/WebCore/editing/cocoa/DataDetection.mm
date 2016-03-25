@@ -518,10 +518,13 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
                 iteratorCount++;
             }
             currentRange = iterator.range();
-            if (fragmentIndex == queryRange.end.queryIndex)
-                fragmentRanges.append(Range::create(currentRange->ownerDocument(), &currentRange->startContainer(), currentRange->startOffset(), &currentRange->endContainer(), currentRange->startOffset() + queryRange.end.offset));
-            else
-                fragmentRanges.append(currentRange);
+            RefPtr<Range> fragmentRange = (fragmentIndex == queryRange.end.queryIndex) ?  Range::create(currentRange->ownerDocument(), &currentRange->startContainer(), currentRange->startOffset(), &currentRange->endContainer(), currentRange->startOffset() + queryRange.end.offset) : currentRange;
+            RefPtr<Range> previousRange = fragmentRanges.last();
+            if (&previousRange->startContainer() == &fragmentRange->startContainer()) {
+                fragmentRange = Range::create(currentRange->ownerDocument(), &previousRange->startContainer(), previousRange->startOffset(), &fragmentRange->endContainer(), fragmentRange->endOffset());
+                fragmentRanges.last() = fragmentRange;
+            } else
+                fragmentRanges.append(fragmentRange);
         }
         allResultRanges.append(fragmentRanges);
     }
