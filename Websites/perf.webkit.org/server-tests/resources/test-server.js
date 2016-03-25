@@ -30,7 +30,7 @@ let TestServer = (new class TestServer {
 
     start()
     {        
-        let testConfigContent = this._constructTestConfig(this._dataDirectory);
+        let testConfigContent = this.testConfig();
         fs.writeFileSync(this._testConfigPath, JSON.stringify(testConfigContent, null, '    '));
 
         this._ensureTestDatabase();
@@ -61,13 +61,13 @@ let TestServer = (new class TestServer {
         return this._database;
     }
 
-    _constructTestConfig(dataDirectory)
+    testConfig()
     {
         return {
             'siteTitle': 'Test Dashboard',
             'debug': true,
             'jsonCacheMaxAge': 600,
-            'dataDirectory': dataDirectory,
+            'dataDirectory': Config.value('dataDirectory'),
             'database': {
                 'host': Config.value('database.host'),
                 'port': Config.value('database.port'),
@@ -86,17 +86,14 @@ let TestServer = (new class TestServer {
 
     _ensureDataDirectory()
     {
-
         let backupPath = path.resolve(this._dataDirectory, '../original-data');
         if (fs.existsSync(this._dataDirectory)) {
             assert.ok(!fs.existsSync(backupPath), `Both ${this._dataDirectory} and ${backupPath} exist. Cannot make a backup of data`);
-            fs.rename(this._dataDirectory, backupPath);
+            fs.renameSync(this._dataDirectory, backupPath);
             this._backupDataPath = backupPath;
-        } else {
-            if (fs.existsSync(backupPath)) // Assume this is a backup from the last failed run
-                this._backupDataPath = backupPath;
-            fs.mkdirSync(this._dataDirectory, 0o755);
-        }
+        } else if (fs.existsSync(backupPath)) // Assume this is a backup from the last failed run
+            this._backupDataPath = backupPath;
+        fs.mkdirSync(this._dataDirectory, 0o755);
     }
 
     _restoreDataDirectory()
@@ -104,6 +101,13 @@ let TestServer = (new class TestServer {
         childProcess.execFileSync('rm', ['-rf', this._dataDirectory]);
         if (this._backupDataPath)
             fs.rename(this._backupDataPath, this._dataDirectory);
+    }
+
+    cleanDataDirectory()
+    {
+        let fileList = fs.readdirSync(this._dataDirectory);
+        for (let filename of fileList)
+            fs.unlinkSync(path.resolve(this._dataDirectory, filename));
     }
 
     _ensureTestDatabase()
@@ -206,23 +210,28 @@ let TestServer = (new class TestServer {
         }
         resolve();
     }
+
+    inject()
+    {
+        let self = this;
+        before(function () {
+            this.timeout(5000);
+            return self.start();
+        });
+
+        beforeEach(function () {
+            this.timeout(10000);
+            self.initDatabase();
+            self.cleanDataDirectory();
+        });
+
+        after(function () {
+            this.timeout(5000);
+            return self.stop();
+        });
+    }
 });
 
-
-before(function () {
-    this.timeout(5000);
-    return TestServer.start();
-});
-
-beforeEach(function () {
-    this.timeout(5000);
-    return TestServer.initDatabase();
-});
-
-after(function () {
-    this.timeout(5000);
-    return TestServer.stop();
-});
 
 if (typeof module != 'undefined')
     module.exports = TestServer;

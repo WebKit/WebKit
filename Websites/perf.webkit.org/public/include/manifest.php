@@ -165,7 +165,7 @@ class ManifestGenerator {
                     'name' => $row['tracker_name'],
                     'bugUrl' => $row['tracker_bug_url'],
                     'newBugUrl' => $row['tracker_new_bug_url'],
-                    'repositories' => $tracker_id_to_repositories[$row['tracker_id']]);
+                    'repositories' => array_get($tracker_id_to_repositories, $row['tracker_id']));
             }
         }
 

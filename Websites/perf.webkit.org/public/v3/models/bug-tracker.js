@@ -1,3 +1,4 @@
+'use strict';
 
 class BugTracker extends LabeledObject {
     constructor(id, object)
@@ -9,4 +10,9 @@ class BugTracker extends LabeledObject {
     }
 
     bugUrl(bugNumber) { return this._bugUrl && bugNumber ? this._bugUrl.replace(/\$number/g, bugNumber) : null; }
+    newBugUrl() { return this._newBugUrl; }
+    repositories() { return this._repositories; }
 }
+
+if (typeof module != 'undefined')
+    module.exports.BugTracker = BugTracker;

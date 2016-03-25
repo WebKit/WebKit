@@ -79,13 +79,18 @@ class Database {
 }
 
 let tableToPrefixMap = {
+    'aggregators': 'aggregator',
     'analysis_tasks': 'task',
     'analysis_test_groups': 'testgroup',
+    'bug_trackers': 'tracker',
     'build_triggerables': 'triggerable',
     'build_requests': 'request',
+    'builders': 'builder',
     'commits': 'commit',
+    'test_configurations': 'config',
     'test_metrics': 'metric',
     'tests': 'test',
+    'tracker_repositories': 'tracrepo',
     'platforms': 'platform',
     'repositories': 'repository',
     'root_sets': 'rootset',

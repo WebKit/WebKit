@@ -17,14 +17,14 @@ class Platform extends LabeledObject {
         if (!this._containingTests) {
             this._containingTests = {};
             for (var metric of this._metrics) {
-                for (var test = metric.test(); test; test = test.parentTest()) {
-                    if (test.id() in this._containingTests)
+                for (var currentTest = metric.test(); currentTest; currentTest = currentTest.parentTest()) {
+                    if (currentTest.id() in this._containingTests)
                         break;
-                    this._containingTests[test.id()] = true;
+                    this._containingTests[currentTest.id()] = true;
                 }
             }
         }
-        return this._containingTests[test.id()];
+        return test.id() in this._containingTests;
     }
 
     hasMetric(metric) { return !!this.lastModified(metric); }

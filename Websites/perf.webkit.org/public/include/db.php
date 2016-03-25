@@ -34,14 +34,14 @@ function config($key, $default = NULL) {
     if (!$_config) {
         $file_path = getenv('ORG_WEBKIT_PERF_CONFIG_PATH');
         if (!$file_path)
-            $file_path = CONFIG_DIR . 'config.json';
+            $file_path = CONFIG_DIR . '/config.json';
         $_config = json_decode(file_get_contents($file_path), true);
     }
     return array_get($_config, $key, $default);
 }
 
 function config_path($key, $path) {
-    return CONFIG_DIR . config($key) . '/' . $path;
+    return CONFIG_DIR . '/' . config($key) . '/' . $path;
 }
 
 function generate_data_file($filename, $content) {

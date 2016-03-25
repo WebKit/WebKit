@@ -1,3 +1,49 @@
+2016-03-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Migrate admin-regenerate-manifest.js to mocha.js and test v3 UI code
+        https://bugs.webkit.org/show_bug.cgi?id=155863
+
+        Reviewed by Joseph Pecoraro.
+
+        Replaced admin-regenerate-manifest.js by a new mocha.js tests using the new server testing capability
+        added in r198642 and tested v3 UI code (parsing manifest.json and creating models). Also removed
+        /admin/regenerate-manifest since it has been superseded by /api/manifest.
+
+        This patch also extracts manifest.js out of main.js so that it could be used and tested without the
+        DOM support in node.
+
+        * public/admin/regenerate-manifest.php: Deleted.
+        * public/include/db.php: Fixed a regression from r198642 since CONFIG_DIR now doesn't end with
+        a trailing backslash.
+        * public/include/manifest.php:
+        (ManifestGenerator::bug_trackers): Avoid a warning message when there are no repositories.
+        * public/v3/index.html:
+        * public/v3/main.js:
+        (main):
+        * public/v3/models/bug-tracker.js:
+        (BugTracker.prototype.newBugUrl): Added.
+        (BugTracker.prototype.repositories): Added.
+        * public/v3/models/manifest.js: Added. Extracted from main.js.
+        (Manifest.fetch): Moved from main.js' fetchManifest.
+        (Manifest._didFetchManifest): Moved from main.js' didFetchManifest.
+        * public/v3/models/platform.js:
+        (Platform.prototype.hasTest): Fixed the bug that "test" here was shadowing the function parameter of
+        the same name. This is tested by the newly added test cases.
+        * server-tests/api-build-requests-tests.js:
+        * server-tests/api-manifest.js: Added. Migrated test cases from tests/admin-regenerate-manifest.js
+        with additional assertions for v3 UI model objects.
+        * server-tests/resources/test-server.js:
+        (TestServer.prototype.start):
+        (TestServer.prototype.testConfig): Renamed from _constructTestConfig now that this is a public API.
+        Also no longer takes dataDirectory as an argument since it's always the same.
+        (TestServer.prototype._ensureDataDirectory): Fixed a bug that we weren't making public/data.
+        (TestServer.prototype.cleanDataDirectory): Added. Remove all files inside public/data between tests.
+        (TestServer.prototype.inject): Added. Calls before, etc... because always calling before had an
+        unintended side effect of slowing down unit tests even through they don't need Postgres or Apache.
+        * tests/admin-regenerate-manifest.js: Removed.
+        * tools/js/database.js:
+        * tools/js/v3-models.js:
+
 2016-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add mocha server tests for /api/build-requests

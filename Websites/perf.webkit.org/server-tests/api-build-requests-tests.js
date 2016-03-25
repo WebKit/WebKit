@@ -5,6 +5,7 @@ let TestServer = require('./resources/test-server.js');
 
 describe('/api/build-requests', function () {
     this.timeout(10000);
+    TestServer.inject();
 
     it('should return "TriggerableNotFound" when the database is empty', function (done) {
         TestServer.remoteAPI().fetchJSON('/api/build-requests/build-webkit').then(function (content) {

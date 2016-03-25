@@ -10,10 +10,12 @@ importFromV3('models/data-model.js', 'DataModelObject');
 importFromV3('models/data-model.js', 'LabeledObject');
 
 importFromV3('models/analysis-task.js', 'AnalysisTask');
+importFromV3('models/bug-tracker.js', 'BugTracker');
 importFromV3('models/build-request.js', 'BuildRequest');
 importFromV3('models/builder.js', 'Build');
 importFromV3('models/builder.js', 'Builder');
 importFromV3('models/commit-log.js', 'CommitLog');
+importFromV3('models/manifest.js', 'Manifest');
 importFromV3('models/measurement-adaptor.js', 'MeasurementAdaptor');
 importFromV3('models/measurement-cluster.js', 'MeasurementCluster');
 importFromV3('models/measurement-set.js', 'MeasurementSet');
