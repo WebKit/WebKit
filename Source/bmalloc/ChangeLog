@@ -1,3 +1,15 @@
+2016-03-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r198679.
+
+        This change caused flaky LayoutTest crashes
+
+        Reverted changeset:
+
+        "bmalloc: Renamed LargeChunk => Chunk"
+        https://bugs.webkit.org/show_bug.cgi?id=155894
+        http://trac.webkit.org/changeset/198679
+
 2016-03-25  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: stress_aligned fails when allocating a zero-sized object with XLarge alignment

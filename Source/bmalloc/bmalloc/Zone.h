@@ -31,7 +31,7 @@
 
 namespace bmalloc {
 
-class Chunk;
+class LargeChunk;
 
 class Zone : public malloc_zone_t {
 public:
@@ -41,30 +41,30 @@ public:
     Zone();
     Zone(task_t, memory_reader_t, vm_address_t);
 
-    void addChunk(Chunk*);
-    FixedVector<Chunk*, capacity>& chunks() { return m_chunks; }
+    void addLargeChunk(LargeChunk*);
+    FixedVector<LargeChunk*, capacity>& largeChunks() { return m_largeChunks; }
     
 private:
     // This vector has two purposes:
-    //     (1) It stores the list of Chunks so that we can enumerate
-    //         each Chunk and request that it be scanned if reachable.
-    //     (2) It roots a pointer to each Chunk in a global non-malloc
-    //         VM region, making each Chunk appear reachable, and therefore
+    //     (1) It stores the list of LargeChunks so that we can enumerate
+    //         each LargeChunk and request that it be scanned if reachable.
+    //     (2) It roots a pointer to each LargeChunk in a global non-malloc
+    //         VM region, making each LargeChunk appear reachable, and therefore
     //         ensuring that the leaks tool will scan it. (The leaks tool
     //         conservatively scans all writeable VM regions that are not malloc
     //         regions, and then scans malloc regions using the introspection API.)
     // This prevents the leaks tool from reporting false positive leaks for
     // objects pointed to from bmalloc memory -- though it also prevents the
     // leaks tool from finding any leaks in bmalloc memory.
-    FixedVector<Chunk*, capacity> m_chunks;
+    FixedVector<LargeChunk*, capacity> m_largeChunks;
 };
 
-inline void Zone::addChunk(Chunk* chunk)
+inline void Zone::addLargeChunk(LargeChunk* largeChunk)
 {
-    if (m_chunks.size() == m_chunks.capacity())
+    if (m_largeChunks.size() == m_largeChunks.capacity())
         return;
     
-    m_chunks.push(chunk);
+    m_largeChunks.push(largeChunk);
 }
 
 } // namespace bmalloc

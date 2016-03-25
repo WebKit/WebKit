@@ -58,15 +58,15 @@ namespace Sizes {
     static const size_t smallMax = 1 * kB;
     static const size_t maskSizeClassMax = 512;
 
-    static const size_t chunkSize = 2 * MB;
-    static const size_t chunkMask = ~(chunkSize - 1ul);
+    static const size_t largeChunkSize = 2 * MB;
+    static const size_t largeChunkMask = ~(largeChunkSize - 1ul);
 
     static const size_t largeAlignment = 64;
     static const size_t largeMin = smallMax;
-    static const size_t largeObjectMax = chunkSize;
+    static const size_t largeObjectMax = largeChunkSize;
     static const size_t largeMax = largeObjectMax / 2;
 
-    static const size_t xLargeAlignment = chunkSize;
+    static const size_t xLargeAlignment = largeChunkSize;
     static const size_t xLargeMask = ~(xLargeAlignment - 1);
     static const size_t xLargeMax = std::numeric_limits<size_t>::max() - xLargeAlignment; // Make sure that rounding up to xLargeAlignment does not overflow.
 

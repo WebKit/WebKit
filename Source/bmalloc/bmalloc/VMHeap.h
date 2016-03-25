@@ -27,8 +27,8 @@
 #define VMHeap_h
 
 #include "AsyncTask.h"
-#include "Chunk.h"
 #include "FixedVector.h"
+#include "LargeChunk.h"
 #include "LargeObject.h"
 #include "Range.h"
 #include "SegregatedFreeList.h"
@@ -54,7 +54,7 @@ public:
     void deallocateLargeObject(std::unique_lock<StaticMutex>&, LargeObject);
     
 private:
-    LargeObject allocateChunk(std::lock_guard<StaticMutex>&);
+    LargeObject allocateLargeChunk(std::lock_guard<StaticMutex>&);
 
     SegregatedFreeList m_largeObjects;
 
@@ -69,7 +69,7 @@ inline LargeObject VMHeap::allocateLargeObject(std::lock_guard<StaticMutex>& loc
         return largeObject;
 
     BASSERT(size <= largeMax);
-    return allocateChunk(lock);
+    return allocateLargeChunk(lock);
 }
 
 inline LargeObject VMHeap::allocateLargeObject(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size, size_t unalignedSize)
@@ -78,7 +78,7 @@ inline LargeObject VMHeap::allocateLargeObject(std::lock_guard<StaticMutex>& loc
         return largeObject;
 
     BASSERT(unalignedSize <= largeMax);
-    return allocateChunk(lock);
+    return allocateLargeChunk(lock);
 }
 
 inline void VMHeap::deallocateLargeObject(std::unique_lock<StaticMutex>& lock, LargeObject largeObject)

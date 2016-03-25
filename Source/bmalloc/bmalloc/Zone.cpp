@@ -88,8 +88,8 @@ static size_t zoneSize(malloc_zone_t*, const void*)
 static kern_return_t enumerator(task_t task, void* context, unsigned type_mask, vm_address_t zone_address, memory_reader_t reader, vm_range_recorder_t recorder)
 {
     Zone remoteZone(task, reader, zone_address);
-    for (auto* chunk : remoteZone.chunks()) {
-        vm_range_t range = { reinterpret_cast<vm_address_t>(chunk), chunkSize };
+    for (auto* largeChunk : remoteZone.largeChunks()) {
+        vm_range_t range = { reinterpret_cast<vm_address_t>(largeChunk), largeChunkSize };
 
         if ((type_mask & MALLOC_PTR_REGION_RANGE_TYPE))
             (*recorder)(task, context, MALLOC_PTR_REGION_RANGE_TYPE, &range, 1);

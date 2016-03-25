@@ -27,8 +27,8 @@
 #define LargeObject_h
 
 #include "BeginTag.h"
-#include "Chunk.h"
 #include "EndTag.h"
+#include "LargeChunk.h"
 #include "Range.h"
 
 namespace bmalloc {
@@ -85,16 +85,16 @@ inline LargeObject::LargeObject()
 }
 
 inline LargeObject::LargeObject(void* object)
-    : m_beginTag(Chunk::beginTag(object))
-    , m_endTag(Chunk::endTag(object, m_beginTag->size()))
+    : m_beginTag(LargeChunk::beginTag(object))
+    , m_endTag(LargeChunk::endTag(object, m_beginTag->size()))
     , m_object(object)
 {
     validate();
 }
 
 inline LargeObject::LargeObject(DoNotValidateTag, void* object)
-    : m_beginTag(Chunk::beginTag(object))
-    , m_endTag(Chunk::endTag(object, m_beginTag->size()))
+    : m_beginTag(LargeChunk::beginTag(object))
+    , m_endTag(LargeChunk::endTag(object, m_beginTag->size()))
     , m_object(object)
 {
 }
@@ -194,7 +194,7 @@ inline LargeObject LargeObject::merge() const
         prev->clear();
         beginTag->clear();
 
-        beginTag = Chunk::beginTag(range.begin());
+        beginTag = LargeChunk::beginTag(range.begin());
     }
 
     BeginTag* next = endTag->next();
@@ -206,7 +206,7 @@ inline LargeObject LargeObject::merge() const
         endTag->clear();
         next->clear();
 
-        endTag = Chunk::endTag(range.begin(), range.size());
+        endTag = LargeChunk::endTag(range.begin(), range.size());
     }
 
     beginTag->setRange(range);
@@ -225,9 +225,9 @@ inline std::pair<LargeObject, LargeObject> LargeObject::split(size_t size) const
     BASSERT(leftover.size() >= largeMin);
 
     BeginTag* splitBeginTag = m_beginTag;
-    EndTag* splitEndTag = Chunk::endTag(split.begin(), size);
+    EndTag* splitEndTag = LargeChunk::endTag(split.begin(), size);
 
-    BeginTag* leftoverBeginTag = Chunk::beginTag(leftover.begin());
+    BeginTag* leftoverBeginTag = LargeChunk::beginTag(leftover.begin());
     EndTag* leftoverEndTag = m_endTag;
 
     splitBeginTag->setRange(split);

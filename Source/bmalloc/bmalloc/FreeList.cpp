@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "LargeChunk.h"
 #include "FreeList.h"
-#include "Chunk.h"
 #include "Vector.h"
 
 namespace bmalloc {
