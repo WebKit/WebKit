@@ -140,7 +140,8 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
 {
     // Each unique main-frame document is only allowed to send 64mb of state object payload to the UI client/process.
     static uint32_t totalStateObjectPayloadLimit = 0x4000000;
-    static unsigned perUserGestureStateObjectLimit = 100;
+    static double stateObjectTimeSpan = 30.0;
+    static unsigned perStateObjectTimeSpanLimit = 100;
 
     if (!m_frame || !m_frame->page())
         return;
@@ -161,31 +162,19 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
     if (!mainHistory)
         return;
 
-    bool processingUserGesture = ScriptController::processingUserGesture();
-    if (!processingUserGesture && mainHistory->m_nonUserGestureObjectsAdded >= perUserGestureStateObjectLimit) {
+    double currentTimestamp = currentTime();
+    if (currentTimestamp - mainHistory->m_currentStateObjectTimeSpanStart > stateObjectTimeSpan) {
+        mainHistory->m_currentStateObjectTimeSpanStart = currentTimestamp;
+        mainHistory->m_currentStateObjectTimeSpanObjectsAdded = 0;
+    }
+    
+    if (mainHistory->m_currentStateObjectTimeSpanObjectsAdded >= perStateObjectTimeSpanLimit) {
         ec.code = SECURITY_ERR;
         if (stateObjectType == StateObjectType::Replace)
-            ec.message = String::format("Attempt to use history.replaceState() more than %u times without a user gesture", perUserGestureStateObjectLimit);
+            ec.message = String::format("Attempt to use history.replaceState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan);
         else
-            ec.message = String::format("Attempt to use history.pushState() more than %u times without a user gesture", perUserGestureStateObjectLimit);
+            ec.message = String::format("Attempt to use history.pushState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan);
         return;
-    }
-
-    double userGestureTimestamp = mainDocument->lastHandledUserGestureTimestamp();
-    if (processingUserGesture) {
-        if (mainHistory->m_currentUserGestureTimestamp < userGestureTimestamp) {
-            mainHistory->m_currentUserGestureTimestamp = userGestureTimestamp;
-            mainHistory->m_currentUserGestureObjectsAdded = 0;
-        }
-
-        if (mainHistory->m_currentUserGestureObjectsAdded >= perUserGestureStateObjectLimit) {
-            ec.code = SECURITY_ERR;
-            if (stateObjectType == StateObjectType::Replace)
-                ec.message = String::format("Attempt to use history.replaceState() more than %u times per gesture", perUserGestureStateObjectLimit);
-            else
-                ec.message = String::format("Attempt to use history.pushState() more than %u times per user gesture", perUserGestureStateObjectLimit);
-            return;
-        }
     }
 
     Checked<unsigned> titleSize = title.length();
@@ -216,10 +205,7 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
     m_mostRecentStateObjectUsage = payloadSize.unsafeGet();
 
     mainHistory->m_totalStateObjectUsage = newTotalUsage.unsafeGet();
-    if (processingUserGesture)
-        ++mainHistory->m_currentUserGestureObjectsAdded;
-    else
-        ++mainHistory->m_nonUserGestureObjectsAdded;
+    ++mainHistory->m_currentStateObjectTimeSpanObjectsAdded;
 
     if (!urlString.isEmpty())
         m_frame->document()->updateURLForPushOrReplaceState(fullURL);

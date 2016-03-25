@@ -73,9 +73,8 @@ private:
 
     RefPtr<SerializedScriptValue> m_lastStateObjectRequested;
 
-    unsigned m_nonUserGestureObjectsAdded { 0 };
-    unsigned m_currentUserGestureObjectsAdded { 0 };
-    double m_currentUserGestureTimestamp { 0 };
+    unsigned m_currentStateObjectTimeSpanObjectsAdded { 0 };
+    double m_currentStateObjectTimeSpanStart { 0.0 };
 
     // For the main frame's History object to keep track of all state object usage.
     uint64_t m_totalStateObjectUsage { 0 };

@@ -1,3 +1,15 @@
+2016-03-25  Brady Eidson  <beidson@apple.com>
+
+        Soften push/replaceState frequency restrictions.
+        <rdar://problem/25228439> and https://bugs.webkit.org/show_bug.cgi?id=155901
+
+        Rubber-stamped by Timothy Hatcher.
+
+        * fast/loader/stateobjects/pushstate-frequency-with-user-gesture-expected.txt: Removed.
+        * fast/loader/stateobjects/pushstate-frequency-with-user-gesture.html: Removed.
+        * fast/loader/stateobjects/replacestate-frequency-with-user-gesture-expected.txt: Removed.
+        * fast/loader/stateobjects/replacestate-frequency-with-user-gesture.html: Removed.
+
 2016-03-23  Dave Hyatt  <hyatt@apple.com>
 
         Implement the allow-end value of the hanging-punctuation CSS property.

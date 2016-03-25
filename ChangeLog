@@ -1,3 +1,12 @@
+2016-03-25  Brady Eidson  <beidson@apple.com>
+
+        Soften push/replaceState frequency restrictions.
+        <rdar://problem/25228439> and https://bugs.webkit.org/show_bug.cgi?id=155901
+        
+        Rubber-stamped by Timothy Hatcher.
+
+        * ManualTests/state-objects-time-limit.html: Added.
+
 2016-03-25  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r197358): WebKitSystemInterface.h copied into directory named "--llvm"
