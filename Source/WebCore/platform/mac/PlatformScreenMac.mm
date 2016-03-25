@@ -42,15 +42,6 @@ static PlatformDisplayID displayIDFromScreen(NSScreen *screen)
     return (PlatformDisplayID)[[[screen deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
 }
 
-static NSScreen *screenForDisplayID(PlatformDisplayID displayID)
-{
-    for (NSScreen *screen in [NSScreen screens]) {
-        if (displayIDFromScreen(screen) == displayID)
-            return screen;
-    }
-    return nil;
-}
-
 // These functions scale between screen and page coordinates because JavaScript/DOM operations
 // assume that the screen and the page share the same coordinate system.
 
@@ -132,6 +123,15 @@ NSScreen *screenForWindow(NSWindow *window)
     if ([screens count] > 0)
         return [screens objectAtIndex:0]; // screen containing the menubar
     
+    return nil;
+}
+
+NSScreen *screenForDisplayID(PlatformDisplayID displayID)
+{
+    for (NSScreen *screen in [NSScreen screens]) {
+        if (displayIDFromScreen(screen) == displayID)
+            return screen;
+    }
     return nil;
 }
 

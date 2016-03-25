@@ -1106,4 +1106,61 @@ VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(c
     return VisibleSelection();
 }
 
+static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& screenPoint, const FloatRect& screenRect)
+{
+    // If the window is at the edge of the screen, and the mouse position is also at that edge of the screen,
+    // we need to adjust the autoscroll amount in order for the user to be able to autoscroll in that direction.
+    // We can pretend that the mouse position is slightly beyond the edge of the screen, and then autoscrolling
+    // will occur as excpected. This function figures out just how much to adjust the autoscroll amount by
+    // in order to get autoscrolling to feel natural in this situation.
+
+    IntSize adjustmentFactor;
+    
+#define EDGE_DISTANCE_THRESHOLD 50
+#define PIXELS_MULTIPLIER 20
+
+    float screenLeftEdge = screenRect.x();
+    float insetScreenLeftEdge = screenLeftEdge + EDGE_DISTANCE_THRESHOLD;
+    float screenRightEdge = screenRect.maxX();
+    float insetScreenRightEdge = screenRightEdge - EDGE_DISTANCE_THRESHOLD;
+    if (screenPoint.x() >= screenLeftEdge && screenPoint.x() < insetScreenLeftEdge) {
+        float distanceFromEdge = screenPoint.x() - screenLeftEdge - EDGE_DISTANCE_THRESHOLD;
+        if (distanceFromEdge < 0)
+            adjustmentFactor.setWidth((distanceFromEdge / EDGE_DISTANCE_THRESHOLD) * PIXELS_MULTIPLIER);
+    } else if (screenPoint.x() >= insetScreenRightEdge && screenPoint.x() < screenRightEdge) {
+        float distanceFromEdge = EDGE_DISTANCE_THRESHOLD - (screenRightEdge - screenPoint.x());
+        if (distanceFromEdge > 0)
+            adjustmentFactor.setWidth((distanceFromEdge / EDGE_DISTANCE_THRESHOLD) * PIXELS_MULTIPLIER);
+    }
+
+    float screenTopEdge = screenRect.y();
+    float insetScreenTopEdge = screenTopEdge + EDGE_DISTANCE_THRESHOLD;
+    float screenBottomEdge = screenRect.maxY();
+    float insetScreenBottomEdge = screenBottomEdge - EDGE_DISTANCE_THRESHOLD;
+
+    if (screenPoint.y() >= screenTopEdge && screenPoint.y() < insetScreenTopEdge) {
+        float distanceFromEdge = screenPoint.y() - screenTopEdge - EDGE_DISTANCE_THRESHOLD;
+        if (distanceFromEdge < 0)
+            adjustmentFactor.setHeight((distanceFromEdge / EDGE_DISTANCE_THRESHOLD) * PIXELS_MULTIPLIER);
+    } else if (screenPoint.y() >= insetScreenBottomEdge && screenPoint.y() < screenBottomEdge) {
+        float distanceFromEdge = EDGE_DISTANCE_THRESHOLD - (screenBottomEdge - screenPoint.y());
+        if (distanceFromEdge > 0)
+            adjustmentFactor.setHeight((distanceFromEdge / EDGE_DISTANCE_THRESHOLD) * PIXELS_MULTIPLIER);
+    }
+
+    return adjustmentFactor;
+}
+
+IntPoint EventHandler::effectiveMousePositionForSelectionAutoscroll() const
+{
+    Page* page = m_frame.page();
+    if (!page)
+        return m_lastKnownMousePosition;
+
+    NSScreen *screen = screenForDisplayID(page->chrome().displayID());
+    IntSize autoscrollAdjustmentFactor = autoscrollAdjustmentFactorForScreenBoundaries(m_lastKnownMouseGlobalPosition, toUserSpace(screen.frame, nil));
+
+    return m_lastKnownMousePosition + autoscrollAdjustmentFactor;
+}
+
 }

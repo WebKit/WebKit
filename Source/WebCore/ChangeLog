@@ -1,3 +1,42 @@
+2016-03-25  Beth Dakin  <bdakin@apple.com>
+
+        Autoscrolling from a drag selection does not work in full screen, or when the 
+        window is against the screen edge
+        https://bugs.webkit.org/show_bug.cgi?id=155858
+        -and corresponding-
+        rdar://problem/9338465
+
+        Reviewed by Simon Fraser.
+
+        WebKit2 has always had this bug. Since WebKit1 scrolling in handled largely 
+        by AppKit, we did not have this bug because AppKit adjusts the autoscroll 
+        amount whenever the window is at the edge of the screen and the user is 
+        trying to autoscroll in that direction. This patch employs the same technique 
+        in WebCore.
+
+        Instead of using EventHandler::lastKnownMousePosition() as the autoscroll 
+        amount, use EventHandler::effectiveMousePositionForSelectionAutoscroll() 
+        which will adjust the lastKnownMousePosition if the window is at the edge of 
+        the screen.
+        * page/AutoscrollController.cpp:
+        (WebCore::AutoscrollController::autoscrollTimerFired):
+
+        For most ports, effectiveMousePositionForSelectionAutoscroll() will just 
+        return m_lastKnownMousePosition. We override it in EventHandlerMac to return 
+        an adjusted amount.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::effectiveMousePositionForSelectionAutoscroll):
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::autoscrollAdjustmentFactorForScreenBoundaries):
+        (WebCore::EventHandler::effectiveMousePositionForSelectionAutoscroll):
+
+        Make screenForDisplayID available as on PlatformScreen.h instead of just 
+        being a static function in the implementation file.
+        * platform/PlatformScreen.h:
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenForDisplayID):
+
 2016-03-25  Brady Eidson  <beidson@apple.com>
 
         Soften push/replaceState frequency restrictions.
