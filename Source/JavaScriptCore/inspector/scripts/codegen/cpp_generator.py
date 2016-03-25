@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@ import logging
 import os.path
 import re
 
-from generator import ucfirst
+from generator import ucfirst, Generator
 from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 
 log = logging.getLogger('global')
@@ -43,10 +43,12 @@ _PRIMITIVE_TO_CPP_NAME_MAP = {
     'any': 'Inspector::InspectorValue'
 }
 
-# This class contains extra static methods used for generation, but does
-# not participate in any inheritance hierarchy. File generators should
-# extend the generic "Generator" class instead.
-class CppGenerator:
+class CppGenerator(Generator):
+    def __init__(self, model, input_filepath):
+        Generator.__init__(self, model, input_filepath)
+
+    def protocol_name(self):
+        return self.model().framework.setting('protocol_group', '')
 
     # Miscellaneous text manipulation routines.
     @staticmethod

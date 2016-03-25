@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
+# Copyright (c) 2014-2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,26 +38,25 @@ from models import EnumType
 log = logging.getLogger('global')
 
 
-class CppBackendDispatcherHeaderGenerator(Generator):
+class CppBackendDispatcherHeaderGenerator(CppGenerator):
     def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+        CppGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "InspectorBackendDispatchers.h"
+        return "%sBackendDispatchers.h" % self.protocol_name()
 
     def domains_to_generate(self):
         return filter(lambda domain: len(domain.commands) > 0, Generator.domains_to_generate(self))
 
     def generate_output(self):
         headers = [
-            '"InspectorProtocolObjects.h"',
+            '"%sProtocolObjects.h"' % self.protocol_name(),
             '<inspector/InspectorBackendDispatcher.h>',
             '<wtf/text/WTFString.h>']
 
         typedefs = [('String', 'ErrorString')]
 
         header_args = {
-            'headerGuardString': re.sub('\W+', '_', self.output_filename()),
             'includes': '\n'.join(['#include ' + header for header in headers]),
             'typedefs': '\n'.join(['typedef %s %s;' % typedef for typedef in typedefs]),
         }

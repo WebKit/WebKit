@@ -1,3 +1,22 @@
+2016-03-25  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: protocol generator should prefix C++ filenames with the protocol group
+        https://bugs.webkit.org/show_bug.cgi?id=155859
+        <rdar://problem/25349859>
+
+        Reviewed by Alex Christensen and Joseph Pecoraro.
+
+        Adjust header include and build system paths.
+
+        * CMakeLists.txt:
+        Revert the workaround introduced in r198659 since this change fixes the
+        underlying issue.
+
+        * DerivedSources.make:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        * UIProcess/Automation/WebAutomationSession.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused lambda capture after r196984.

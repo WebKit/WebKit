@@ -27,7 +27,7 @@
 #include "WebAutomationSession.h"
 
 #include "APIAutomationSessionClient.h"
-#include "InspectorProtocolObjects.h"
+#include "AutomationProtocolObjects.h"
 #include "WebProcessPool.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>

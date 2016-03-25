@@ -145,17 +145,13 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/runtime"
     "${WTF_DIR}"
     "${DERIVED_SOURCES_DIR}"
+    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${DERIVED_SOURCES_WEBKIT2_DIR}"
     "${DERIVED_SOURCES_WEBKIT2_DIR}/include"
     "${CMAKE_BINARY_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
     "${CMAKE_SOURCE_DIR}/WebKitLibraries"
-)
-
-# FIXME: We shouldn't need to have this after DERIVED_SOURCES_WEBCORE_DIR, but there are too many files named InspectorBackendDispatchers.h on Mac.
-list(APPEND WebKit2_INCLUDE_DIRECTORIES
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
 )
 
 set(PROTOCOL_GENERATOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
@@ -786,20 +782,20 @@ set(WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.h ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.h ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.cpp
+    OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.h ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.h ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.cpp
     MAIN_DEPENDENCY ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS}
     DEPENDS ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS}
     COMMAND ${PYTHON_EXECUTABLE} ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_WEBKIT2_DIR}" --framework WebKit --backend ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS}
     VERBATIM)
 
 list(APPEND WebKit2_HEADERS
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.h
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.h
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.h
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.h
 )
 
 list(APPEND WebKit2_SOURCES
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.cpp
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.cpp
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.cpp
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.cpp
 )
 
 WEBKIT_FRAMEWORK(WebKit2)

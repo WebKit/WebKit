@@ -42,6 +42,7 @@ _FRAMEWORK_CONFIG_MAP = {
     "Global": {
     },
     "JavaScriptCore": {
+        "protocol_group": "Inspector",
         "export_macro": "JS_EXPORT_PRIVATE",
         "alternate_dispatchers": True,
     },

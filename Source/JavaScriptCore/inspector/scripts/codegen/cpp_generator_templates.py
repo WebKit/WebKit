@@ -30,8 +30,7 @@
 class CppGeneratorTemplates:
 
     HeaderPrelude = (
-    """#ifndef ${headerGuardString}
-#define ${headerGuardString}
+    """#pragma once
 
 ${includes}
 
@@ -40,9 +39,7 @@ namespace Inspector {
 ${typedefs}""")
 
     HeaderPostlude = (
-    """} // namespace Inspector
-
-#endif // !defined(${headerGuardString})""")
+    """} // namespace Inspector""")
 
     ImplementationPrelude = (
     """#include "config.h"
@@ -57,8 +54,7 @@ namespace Inspector {""")
 """)
 
     AlternateDispatchersHeaderPrelude = (
-    """#ifndef ${headerGuardString}
-#define ${headerGuardString}
+    """#pragma once
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
@@ -78,9 +74,7 @@ private:
     AlternateDispatchersHeaderPostlude = (
     """} // namespace Inspector
 
-#endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-
-#endif // !defined(${headerGuardString})""")
+#endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)""")
 
     AlternateBackendDispatcherHeaderDomainHandlerInterfaceDeclaration = (
     """class Alternate${domainName}BackendDispatcher : public AlternateBackendDispatcher {

@@ -1,3 +1,82 @@
+2016-03-25  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: protocol generator should prefix C++ filenames with the protocol group
+        https://bugs.webkit.org/show_bug.cgi?id=155859
+        <rdar://problem/25349859>
+
+        Reviewed by Alex Christensen and Joseph Pecoraro.
+
+        Like for generated Objective-C files, we should use the 'protocol group' name
+        as the prefix for generated C++ files so that headers from different protocol
+        groups have unambiguous names.
+
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator):
+        (CppGenerator.__init__):
+        (CppGenerator.protocol_name):
+        Make all C++ code generators extend the CppGenerator python class and use the
+        protocol_name() instance method. This matches a recent change to the ObjC generator.
+
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        (CppGeneratorTemplates):
+        Drive-by cleanup to use #pragma once instead of header guards.
+
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py:
+        (CppAlternateBackendDispatcherHeaderGenerator):
+        (CppAlternateBackendDispatcherHeaderGenerator.__init__):
+        (CppAlternateBackendDispatcherHeaderGenerator.output_filename):
+        (CppAlternateBackendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator):
+        (CppBackendDispatcherHeaderGenerator.__init__):
+        (CppBackendDispatcherHeaderGenerator.output_filename):
+        (CppBackendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator):
+        (CppBackendDispatcherImplementationGenerator.__init__):
+        (CppBackendDispatcherImplementationGenerator.output_filename):
+        (CppBackendDispatcherImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        (CppFrontendDispatcherHeaderGenerator):
+        (CppFrontendDispatcherHeaderGenerator.__init__):
+        (CppFrontendDispatcherHeaderGenerator.output_filename):
+        (CppFrontendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator):
+        (CppFrontendDispatcherImplementationGenerator.__init__):
+        (CppFrontendDispatcherImplementationGenerator.output_filename):
+        (CppFrontendDispatcherImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator):
+        (CppProtocolTypesHeaderGenerator.__init__):
+        (CppProtocolTypesHeaderGenerator.output_filename):
+        (CppProtocolTypesHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator):
+        (CppProtocolTypesImplementationGenerator.__init__):
+        (CppProtocolTypesImplementationGenerator.output_filename):
+        (CppProtocolTypesImplementationGenerator.generate_output):
+        Use the protocol_name() instance method to compute generated protocol file names.
+
+        * inspector/scripts/codegen/models.py:
+        Explicitly set the 'protocol_group' for the Inspector protocol.
+
+        Rebaseline generator test results.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-03-25  Keith Miller  <keith_miller@apple.com>
 
         putByIndexBeyondVectorLengthWithoutAttributes should not crash if it can't ensureLength

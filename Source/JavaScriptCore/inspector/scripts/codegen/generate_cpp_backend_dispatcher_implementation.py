@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
+# Copyright (c) 2014-2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,12 +37,12 @@ from models import ObjectType, ArrayType
 log = logging.getLogger('global')
 
 
-class CppBackendDispatcherImplementationGenerator(Generator):
+class CppBackendDispatcherImplementationGenerator(CppGenerator):
     def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+        CppGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "InspectorBackendDispatchers.cpp"
+        return "%sBackendDispatchers.cpp" % self.protocol_name()
 
     def domains_to_generate(self):
         return filter(lambda domain: len(domain.commands) > 0, Generator.domains_to_generate(self))
@@ -59,11 +59,11 @@ class CppBackendDispatcherImplementationGenerator(Generator):
         if self.model().framework.setting('alternate_dispatchers', False):
             secondary_includes.append('')
             secondary_includes.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
-            secondary_includes.append('#include "InspectorAlternateBackendDispatchers.h"')
+            secondary_includes.append('#include "%sAlternateBackendDispatchers.h"' % self.protocol_name())
             secondary_includes.append('#endif')
 
         header_args = {
-            'primaryInclude': '"InspectorBackendDispatchers.h"',
+            'primaryInclude': '"%sBackendDispatchers.h"' % self.protocol_name(),
             'secondaryIncludes': '\n'.join(secondary_includes),
         }
 

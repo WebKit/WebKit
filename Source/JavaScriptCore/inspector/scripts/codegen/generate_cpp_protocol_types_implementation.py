@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,12 +37,12 @@ from models import AliasedType, ArrayType, EnumType, ObjectType
 log = logging.getLogger('global')
 
 
-class CppProtocolTypesImplementationGenerator(Generator):
+class CppProtocolTypesImplementationGenerator(CppGenerator):
     def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+        CppGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "InspectorProtocolObjects.cpp"
+        return "%sProtocolObjects.cpp" % self.protocol_name()
 
     def generate_output(self):
         domains = self.domains_to_generate()
@@ -51,7 +51,7 @@ class CppProtocolTypesImplementationGenerator(Generator):
         secondary_headers = ['<wtf/text/CString.h>']
 
         header_args = {
-            'primaryInclude': '"InspectorProtocolObjects.h"',
+            'primaryInclude': '"%sProtocolObjects.h"' % self.protocol_name(),
             'secondaryIncludes': "\n".join(['#include %s' % header for header in secondary_headers]),
         }
 

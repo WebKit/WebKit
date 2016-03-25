@@ -1227,10 +1227,10 @@
 		9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */; };
 		9955A6ED1C7980CA00EB6A93 /* WebAutomationSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */; };
 		9955A6EF1C79810800EB6A93 /* Automation.json in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6E91C7980BB00EB6A93 /* Automation.json */; settings = {ATTRIBUTES = (Private, ); }; };
-		9955A6F41C7986DC00EB6A93 /* InspectorBackendDispatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6F01C79866400EB6A93 /* InspectorBackendDispatchers.cpp */; };
-		9955A6F51C7986E000EB6A93 /* InspectorBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F11C79866400EB6A93 /* InspectorBackendDispatchers.h */; };
-		9955A6F61C7986E300EB6A93 /* InspectorProtocolObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6F21C79866400EB6A93 /* InspectorProtocolObjects.cpp */; };
-		9955A6F71C7986E500EB6A93 /* InspectorProtocolObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F31C79866400EB6A93 /* InspectorProtocolObjects.h */; };
+		9955A6F41C7986DC00EB6A93 /* AutomationBackendDispatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6F01C79866400EB6A93 /* AutomationBackendDispatchers.cpp */; };
+		9955A6F51C7986E000EB6A93 /* AutomationBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F11C79866400EB6A93 /* AutomationBackendDispatchers.h */; };
+		9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6F21C79866400EB6A93 /* AutomationProtocolObjects.cpp */; };
+		9955A6F71C7986E500EB6A93 /* AutomationProtocolObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */; };
 		99C81D591C20E1E5005C4C82 /* AutomationClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C81D561C20DFBE005C4C82 /* AutomationClient.mm */; };
 		99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D551C20DFBE005C4C82 /* AutomationClient.h */; };
 		99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */; };
@@ -3250,10 +3250,10 @@
 		9955A6E91C7980BB00EB6A93 /* Automation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Automation.json; sourceTree = "<group>"; };
 		9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAutomationSession.cpp; sourceTree = "<group>"; };
 		9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutomationSession.h; sourceTree = "<group>"; };
-		9955A6F01C79866400EB6A93 /* InspectorBackendDispatchers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatchers.cpp; sourceTree = "<group>"; };
-		9955A6F11C79866400EB6A93 /* InspectorBackendDispatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackendDispatchers.h; sourceTree = "<group>"; };
-		9955A6F21C79866400EB6A93 /* InspectorProtocolObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorProtocolObjects.cpp; sourceTree = "<group>"; };
-		9955A6F31C79866400EB6A93 /* InspectorProtocolObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorProtocolObjects.h; sourceTree = "<group>"; };
+		9955A6F01C79866400EB6A93 /* AutomationBackendDispatchers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutomationBackendDispatchers.cpp; sourceTree = "<group>"; };
+		9955A6F11C79866400EB6A93 /* AutomationBackendDispatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationBackendDispatchers.h; sourceTree = "<group>"; };
+		9955A6F21C79866400EB6A93 /* AutomationProtocolObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutomationProtocolObjects.cpp; sourceTree = "<group>"; };
+		9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationProtocolObjects.h; sourceTree = "<group>"; };
 		99C81D551C20DFBE005C4C82 /* AutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationClient.h; sourceTree = "<group>"; };
 		99C81D561C20DFBE005C4C82 /* AutomationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutomationClient.mm; sourceTree = "<group>"; };
 		99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationClient.h; sourceTree = "<group>"; };
@@ -6796,6 +6796,10 @@
 			children = (
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
+				9955A6F01C79866400EB6A93 /* AutomationBackendDispatchers.cpp */,
+				9955A6F11C79866400EB6A93 /* AutomationBackendDispatchers.h */,
+				9955A6F21C79866400EB6A93 /* AutomationProtocolObjects.cpp */,
+				9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */,
 				51FAEC361B0657310009C4E7 /* ChildProcessMessageReceiver.cpp */,
 				51FAEC371B0657310009C4E7 /* ChildProcessMessages.h */,
 				E115C715190F8A2500ECC516 /* com.apple.WebKit.Databases.sb */,
@@ -6819,10 +6823,6 @@
 				1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */,
 				1AA575FF1496B7C000A4EE06 /* EventDispatcherMessageReceiver.cpp */,
 				1AA576001496B7C000A4EE06 /* EventDispatcherMessages.h */,
-				9955A6F01C79866400EB6A93 /* InspectorBackendDispatchers.cpp */,
-				9955A6F11C79866400EB6A93 /* InspectorBackendDispatchers.h */,
-				9955A6F21C79866400EB6A93 /* InspectorProtocolObjects.cpp */,
-				9955A6F31C79866400EB6A93 /* InspectorProtocolObjects.h */,
 				51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */,
 				51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */,
 				517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */,
@@ -7347,7 +7347,7 @@
 				BCA8C6A911E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h in Headers */,
 				BC8147A912F64CDA007B2C32 /* InjectedBundlePagePolicyClient.h in Headers */,
 				BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */,
-				9955A6F71C7986E500EB6A93 /* InspectorProtocolObjects.h in Headers */,
+				9955A6F71C7986E500EB6A93 /* AutomationProtocolObjects.h in Headers */,
 				BC33E0D112408E8600360F3F /* InjectedBundleRangeHandle.h in Headers */,
 				BC14DF77120B5B7900826C0C /* InjectedBundleScriptWorld.h in Headers */,
 				C58CDF2A1887548B00871536 /* InteractionInformationAtPosition.h in Headers */,
@@ -7414,7 +7414,7 @@
 				5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */,
 				93A253ED1C922E1E00F9F68D /* WKPreviewActionItem.h in Headers */,
 				513A163D163088F6005D7D22 /* NetworkProcessProxyMessages.h in Headers */,
-				9955A6F51C7986E000EB6A93 /* InspectorBackendDispatchers.h in Headers */,
+				9955A6F51C7986E000EB6A93 /* AutomationBackendDispatchers.h in Headers */,
 				51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */,
 				E152551B17011819003D7ADB /* NetworkResourceLoaderMessages.h in Headers */,
 				5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */,
@@ -8640,7 +8640,7 @@
 			files = (
 				37A5E01318BBF937000A081E /* _WKActivatedElementInfo.mm in Sources */,
 				1A5704F71BE01FF400874AF1 /* _WKContextMenuElementInfo.mm in Sources */,
-				9955A6F41C7986DC00EB6A93 /* InspectorBackendDispatchers.cpp in Sources */,
+				9955A6F41C7986DC00EB6A93 /* AutomationBackendDispatchers.cpp in Sources */,
 				A1A4FE5B18DCE9FA00B5EA8A /* _WKDownload.mm in Sources */,
 				379A873918BBFE0F00588AF2 /* _WKElementAction.mm in Sources */,
 				1A5704F11BE0173F00874AF1 /* WKElementInfo.mm in Sources */,
@@ -9141,7 +9141,7 @@
 				BC857FB612B830E600EDEB2E /* WebOpenPanelParameters.cpp in Sources */,
 				BC857F8612B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp in Sources */,
 				BC857F7E12B82CEE00EDEB2E /* WebOpenPanelResultListenerProxy.cpp in Sources */,
-				9955A6F61C7986E300EB6A93 /* InspectorProtocolObjects.cpp in Sources */,
+				9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */,
 				BC963D6B113DD19200574BE2 /* WebPage.cpp in Sources */,
 				C06C6095124C144B0001682F /* WebPageCreationParameters.cpp in Sources */,
 				8372DB281A67562800C697C5 /* WebPageDiagnosticLoggingClient.cpp in Sources */,

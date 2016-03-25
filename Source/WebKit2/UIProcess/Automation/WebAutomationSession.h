@@ -27,7 +27,7 @@
 #define WebAutomationSession_h
 
 #include "APIObject.h"
-#include "InspectorBackendDispatchers.h"
+#include "AutomationBackendDispatchers.h"
 #include <wtf/Forward.h>
 
 #if ENABLE(REMOTE_INSPECTOR)

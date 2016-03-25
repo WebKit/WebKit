@@ -210,8 +210,8 @@ AUTOMATION_PROTOCOL_INPUT_FILES = \
 #
 
 AUTOMATION_PROTOCOL_OUTPUT_FILES = \
-    InspectorBackendDispatchers.h \
-    InspectorBackendDispatchers.cpp \
+    AutomationBackendDispatchers.h \
+    AutomationBackendDispatchers.cpp \
 #
 
 # JSON-RPC Backend Dispatchers, Type Builders
