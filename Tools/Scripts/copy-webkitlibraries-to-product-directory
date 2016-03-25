@@ -139,6 +139,8 @@ if ($wksi) {
             "libWebKitSystemInterfaceIOSSimulator9.0.a",
             "libWebKitSystemInterfaceIOSDevice9.2.a",
             "libWebKitSystemInterfaceIOSSimulator9.2.a",
+            "libWebKitSystemInterfaceIOSDevice9.3.a",
+            "libWebKitSystemInterfaceIOSSimulator9.3.a",
         ));
     } else {
         push(@librariesToCopy, (

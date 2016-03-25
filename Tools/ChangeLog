@@ -1,5 +1,14 @@
 2016-03-25  Daniel Bates  <dabates@apple.com>
 
+        Add WebKitSystemInterface for iOS 9.3
+        https://bugs.webkit.org/show_bug.cgi?id=155893
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
+2016-03-25  Daniel Bates  <dabates@apple.com>
+
         Use webkitdirs::determineXcodeSDK() instead of webkitdirs::willUseIOSDeviceSDK()
         in copy-webkitlibraries-to-product-directory
         https://bugs.webkit.org/show_bug.cgi?id=155869
