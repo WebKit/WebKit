@@ -95,7 +95,7 @@ inline void vmValidatePhysical(size_t vmSize)
 
 inline void vmValidatePhysical(void* p, size_t vmSize)
 {
-    vmValidate(vmSize);
+    vmValidatePhysical(vmSize);
     
     UNUSED(p);
     BASSERT(p);

@@ -1,5 +1,17 @@
 2016-03-25  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: fix an ASSERT on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=155911
+
+        Reviewed by Gavin Barraclough.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmValidatePhysical): Call through to vmValidatePhysical because
+        the vmValidate function validates virtual sizes rather than physical
+        sizes.
+
+2016-03-25  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: support physical page sizes that don't match the virtual page size
         https://bugs.webkit.org/show_bug.cgi?id=155898
 
