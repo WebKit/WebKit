@@ -1,3 +1,116 @@
+2016-03-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Put the x86 Assembler on a binary diet
+        https://bugs.webkit.org/show_bug.cgi?id=155683
+
+        Reviewed by Darin Adler.
+
+        The MacroAssemblers are heavily inlined. This is unfortunately
+        important for baseline JIT where many branches can be eliminated
+        at compile time.
+
+        This inlining causes a lot of binary bloat. The phases
+        lowering to ASM are massively large.
+
+        This patch improves the situation a bit for x86 through
+        many small improvements:
+
+        -Every instruction starts with ensureSpace(). The slow
+         path realloc the buffer.
+         From that slow path, only fastRealloc() was a function
+         call. What is around does not need to be fast, I moved
+         the whole grow() function out of line for those cases.
+
+        -When testing multiple registers for REX requirements,
+         we had something like this:
+             byteRegRequiresRex(reg) || byteRegRequiresRex(rm)
+             regRequiresRex(index) || regRequiresRex(base)
+         Those were producing multiple test-and-branch. Those branches
+         are effectively random so we don't have to care about individual
+         branches being predictable.
+
+         The new code effectively does:
+             byteRegRequiresRex(reg | rm)
+             regRequiresRex(index | base)
+
+        -Change "ModRmMode" to have the value we can OR directly
+         to the generated ModRm.
+         This is important because some ModRM code is so large
+         that is goes out of line;
+
+        -Finally, a big change on how we write to the AssemblerBuffer.
+
+         Previously, instructions were written byte by byte into
+         the assembler buffer of the MacroAssembler.
+
+         The problem with that is the compiler cannot prove that
+         the buffer pointer and the AssemblerBuffer are not pointing
+         to the same memory.
+
+         Because of that, before any write, all the local register
+         were pushed back to the AssemblerBuffer memory, then everything
+         was read back after the write to compute the next write.
+
+         I attempted to use the "restrict" keyword and wrapper types
+         to help Clang with that but nothing worked.
+
+         The current solution is to keep a local copy of the index
+         and the buffer pointer in the scope of each instruction.
+         That is done by AssemblerBuffer::LocalWriter.
+
+         Since LocalWriter only exists locally, it stays in
+         register and we don't have all the memory churn between
+         each byte writing. This also allows clang to combine
+         obvious cases since there are no longer observable side
+         effects between bytes.
+
+        This patch reduces the binary size by 66k. It is a small
+        speed-up on Sunspider.
+
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::ensureSpace):
+        (JSC::AssemblerBuffer::LocalWriter::LocalWriter):
+        (JSC::AssemblerBuffer::LocalWriter::~LocalWriter):
+        (JSC::AssemblerBuffer::LocalWriter::putByteUnchecked):
+        (JSC::AssemblerBuffer::LocalWriter::putShortUnchecked):
+        (JSC::AssemblerBuffer::LocalWriter::putIntUnchecked):
+        (JSC::AssemblerBuffer::LocalWriter::putInt64Unchecked):
+        (JSC::AssemblerBuffer::LocalWriter::putIntegralUnchecked):
+        (JSC::AssemblerBuffer::putIntegral):
+        (JSC::AssemblerBuffer::outOfLineGrow):
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::X86InstructionFormatter::byteRegRequiresRex):
+        (JSC::X86Assembler::X86InstructionFormatter::regRequiresRex):
+        (JSC::X86Assembler::X86InstructionFormatter::LocalBufferWriter::LocalBufferWriter):
+        (JSC::X86Assembler::X86InstructionFormatter::LocalBufferWriter::emitRex):
+        (JSC::X86Assembler::X86InstructionFormatter::LocalBufferWriter::emitRexW):
+        (JSC::X86Assembler::X86InstructionFormatter::LocalBufferWriter::emitRexIf):
+        (JSC::X86Assembler::X86InstructionFormatter::LocalBufferWriter::emitRexIfNeeded):
+        (JSC::X86Assembler::X86InstructionFormatter::LocalBufferWriter::putModRm):
+        (JSC::X86Assembler::X86InstructionFormatter::LocalBufferWriter::putModRmSib):
+        (JSC::X86Assembler::X86InstructionFormatter::LocalBufferWriter::registerModRM):
+        (JSC::X86Assembler::X86InstructionFormatter::LocalBufferWriter::memoryModRM):
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp_disp32): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp_disp8): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::twoByteOp): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::threeByteOp): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp64): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp64_disp32): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp64_disp8): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::twoByteOp64): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp8): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::twoByteOp8): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::emitRex): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::emitRexW): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::emitRexIf): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::emitRexIfNeeded): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::putModRm): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::putModRmSib): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::registerModRM): Deleted.
+        (JSC::X86Assembler::X86InstructionFormatter::memoryModRM): Deleted.
+
 2016-03-25  Saam barati  <sbarati@apple.com>
 
         RegExp.prototype.test should be an intrinsic again

@@ -2852,16 +2852,14 @@ private:
     }
 
     class X86InstructionFormatter {
-
         static const int maxInstructionSize = 16;
 
     public:
-
         enum ModRmMode {
-            ModRmMemoryNoDisp,
-            ModRmMemoryDisp8,
-            ModRmMemoryDisp32,
-            ModRmRegister,
+            ModRmMemoryNoDisp = 0,
+            ModRmMemoryDisp8 = 1 << 6,
+            ModRmMemoryDisp32 = 2 << 6,
+            ModRmRegister = 3 << 6,
         };
 
         // Legacy prefix bytes:
@@ -2872,6 +2870,205 @@ private:
         {
             m_buffer.putByte(pre);
         }
+
+#if CPU(X86_64)
+        // Byte operand register spl & above require a REX prefix (to prevent the 'H' registers be accessed).
+        static bool byteRegRequiresRex(int reg)
+        {
+            static_assert(X86Registers::esp == 4, "Necessary condition for OR-masking");
+            return (reg >= X86Registers::esp);
+        }
+        static bool byteRegRequiresRex(int a, int b)
+        {
+            return byteRegRequiresRex(a | b);
+        }
+
+        // Registers r8 & above require a REX prefixe.
+        static bool regRequiresRex(int reg)
+        {
+            static_assert(X86Registers::r8 == 8, "Necessary condition for OR-masking");
+            return (reg >= X86Registers::r8);
+        }
+        static bool regRequiresRex(int a, int b)
+        {
+            return regRequiresRex(a | b);
+        }
+        static bool regRequiresRex(int a, int b, int c)
+        {
+            return regRequiresRex(a | b | c);
+        }
+#else
+        static bool byteRegRequiresRex(int) { return false; }
+        static bool byteRegRequiresRex(int, int) { return false; }
+        static bool regRequiresRex(int) { return false; }
+        static bool regRequiresRex(int, int) { return false; }
+        static bool regRequiresRex(int, int, int) { return false; }
+#endif
+
+        class SingleInstructionBufferWriter : public AssemblerBuffer::LocalWriter {
+        public:
+            SingleInstructionBufferWriter(AssemblerBuffer& buffer)
+                : AssemblerBuffer::LocalWriter(buffer, maxInstructionSize)
+            {
+            }
+
+            // Internals; ModRm and REX formatters.
+
+            static constexpr RegisterID noBase = X86Registers::ebp;
+            static constexpr RegisterID hasSib = X86Registers::esp;
+            static constexpr RegisterID noIndex = X86Registers::esp;
+
+#if CPU(X86_64)
+            static constexpr RegisterID noBase2 = X86Registers::r13;
+            static constexpr RegisterID hasSib2 = X86Registers::r12;
+
+            // Format a REX prefix byte.
+            ALWAYS_INLINE void emitRex(bool w, int r, int x, int b)
+            {
+                ASSERT(r >= 0);
+                ASSERT(x >= 0);
+                ASSERT(b >= 0);
+                putByteUnchecked(PRE_REX | ((int)w << 3) | ((r>>3)<<2) | ((x>>3)<<1) | (b>>3));
+            }
+
+            // Used to plant a REX byte with REX.w set (for 64-bit operations).
+            ALWAYS_INLINE void emitRexW(int r, int x, int b)
+            {
+                emitRex(true, r, x, b);
+            }
+
+            // Used for operations with byte operands - use byteRegRequiresRex() to check register operands,
+            // regRequiresRex() to check other registers (i.e. address base & index).
+            ALWAYS_INLINE void emitRexIf(bool condition, int r, int x, int b)
+            {
+                if (condition)
+                    emitRex(false, r, x, b);
+            }
+
+            // Used for word sized operations, will plant a REX prefix if necessary (if any register is r8 or above).
+            ALWAYS_INLINE void emitRexIfNeeded(int r, int x, int b)
+            {
+                emitRexIf(regRequiresRex(r, x, b), r, x, b);
+            }
+#else
+            // No REX prefix bytes on 32-bit x86.
+            ALWAYS_INLINE void emitRexIf(bool, int, int, int) { }
+            ALWAYS_INLINE void emitRexIfNeeded(int, int, int) { }
+#endif
+
+            ALWAYS_INLINE void putModRm(ModRmMode mode, int reg, RegisterID rm)
+            {
+                putByteUnchecked(mode | ((reg & 7) << 3) | (rm & 7));
+            }
+
+            ALWAYS_INLINE void putModRmSib(ModRmMode mode, int reg, RegisterID base, RegisterID index, int scale)
+            {
+                ASSERT(mode != ModRmRegister);
+
+                putModRm(mode, reg, hasSib);
+                putByteUnchecked((scale << 6) | ((index & 7) << 3) | (base & 7));
+            }
+
+            ALWAYS_INLINE void registerModRM(int reg, RegisterID rm)
+            {
+                putModRm(ModRmRegister, reg, rm);
+            }
+
+            ALWAYS_INLINE void memoryModRM(int reg, RegisterID base, int offset)
+            {
+                // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
+#if CPU(X86_64)
+                if ((base == hasSib) || (base == hasSib2)) {
+#else
+                if (base == hasSib) {
+#endif
+                    if (!offset) // No need to check if the base is noBase, since we know it is hasSib!
+                        putModRmSib(ModRmMemoryNoDisp, reg, base, noIndex, 0);
+                    else if (CAN_SIGN_EXTEND_8_32(offset)) {
+                        putModRmSib(ModRmMemoryDisp8, reg, base, noIndex, 0);
+                        putByteUnchecked(offset);
+                    } else {
+                        putModRmSib(ModRmMemoryDisp32, reg, base, noIndex, 0);
+                        putIntUnchecked(offset);
+                    }
+                } else {
+#if CPU(X86_64)
+                    if (!offset && (base != noBase) && (base != noBase2))
+#else
+                    if (!offset && (base != noBase))
+#endif
+                        putModRm(ModRmMemoryNoDisp, reg, base);
+                    else if (CAN_SIGN_EXTEND_8_32(offset)) {
+                        putModRm(ModRmMemoryDisp8, reg, base);
+                        putByteUnchecked(offset);
+                    } else {
+                        putModRm(ModRmMemoryDisp32, reg, base);
+                        putIntUnchecked(offset);
+                    }
+                }
+            }
+
+            ALWAYS_INLINE void memoryModRM_disp8(int reg, RegisterID base, int offset)
+            {
+                // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
+                ASSERT(CAN_SIGN_EXTEND_8_32(offset));
+#if CPU(X86_64)
+                if ((base == hasSib) || (base == hasSib2)) {
+#else
+                if (base == hasSib) {
+#endif
+                    putModRmSib(ModRmMemoryDisp8, reg, base, noIndex, 0);
+                    putByteUnchecked(offset);
+                } else {
+                    putModRm(ModRmMemoryDisp8, reg, base);
+                    putByteUnchecked(offset);
+                }
+            }
+
+            ALWAYS_INLINE void memoryModRM_disp32(int reg, RegisterID base, int offset)
+            {
+                // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
+#if CPU(X86_64)
+                if ((base == hasSib) || (base == hasSib2)) {
+#else
+                if (base == hasSib) {
+#endif
+                    putModRmSib(ModRmMemoryDisp32, reg, base, noIndex, 0);
+                    putIntUnchecked(offset);
+                } else {
+                    putModRm(ModRmMemoryDisp32, reg, base);
+                    putIntUnchecked(offset);
+                }
+            }
+        
+            ALWAYS_INLINE void memoryModRM(int reg, RegisterID base, RegisterID index, int scale, int offset)
+            {
+                ASSERT(index != noIndex);
+
+#if CPU(X86_64)
+                if (!offset && (base != noBase) && (base != noBase2))
+#else
+                if (!offset && (base != noBase))
+#endif
+                    putModRmSib(ModRmMemoryNoDisp, reg, base, index, scale);
+                else if (CAN_SIGN_EXTEND_8_32(offset)) {
+                    putModRmSib(ModRmMemoryDisp8, reg, base, index, scale);
+                    putByteUnchecked(offset);
+                } else {
+                    putModRmSib(ModRmMemoryDisp32, reg, base, index, scale);
+                    putIntUnchecked(offset);
+                }
+            }
+
+#if !CPU(X86_64)
+            ALWAYS_INLINE void memoryModRM(int reg, const void* address)
+            {
+                // noBase + ModRmMemoryNoDisp means noBase + ModRmMemoryDisp32!
+                putModRm(ModRmMemoryNoDisp, reg, noBase);
+                putIntUnchecked(reinterpret_cast<int32_t>(address));
+            }
+#endif
+        };
 
         // Word-sized operands / no operand instruction formatters.
         //
@@ -2889,136 +3086,136 @@ private:
 
         void oneByteOp(OneByteOpcodeID opcode)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            m_buffer.putByteUnchecked(opcode);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.putByteUnchecked(opcode);
         }
 
         void oneByteOp(OneByteOpcodeID opcode, RegisterID reg)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(0, 0, reg);
-            m_buffer.putByteUnchecked(opcode + (reg & 7));
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(0, 0, reg);
+            writer.putByteUnchecked(opcode + (reg & 7));
         }
 
         void oneByteOp(OneByteOpcodeID opcode, int reg, RegisterID rm)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, 0, rm);
-            m_buffer.putByteUnchecked(opcode);
-            registerModRM(reg, rm);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(reg, 0, rm);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(reg, rm);
         }
 
         void oneByteOp(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, 0, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(reg, 0, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, offset);
         }
 
         void oneByteOp_disp32(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, 0, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM_disp32(reg, base, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(reg, 0, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM_disp32(reg, base, offset);
         }
         
         void oneByteOp_disp8(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, 0, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM_disp8(reg, base, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(reg, 0, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM_disp8(reg, base, offset);
         }
 
         void oneByteOp(OneByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, index, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, index, scale, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(reg, index, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, index, scale, offset);
         }
 
 #if !CPU(X86_64)
         void oneByteOp(OneByteOpcodeID opcode, int reg, const void* address)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, address);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, address);
         }
 #endif
 
         void twoByteOp(TwoByteOpcodeID opcode)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(opcode);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode);
         }
 
         void twoByteOp(TwoByteOpcodeID opcode, int reg, RegisterID rm)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, 0, rm);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(opcode);
-            registerModRM(reg, rm);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(reg, 0, rm);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(reg, rm);
         }
 
         void twoByteOp(TwoByteOpcodeID opcode, int reg, RegisterID base, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, 0, base);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(reg, 0, base);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, offset);
         }
 
         void twoByteOp(TwoByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, index, base);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, index, scale, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(reg, index, base);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, index, scale, offset);
         }
 
 #if !CPU(X86_64)
         void twoByteOp(TwoByteOpcodeID opcode, int reg, const void* address)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, address);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, address);
         }
 #endif
 
         void threeByteOp(TwoByteOpcodeID twoBytePrefix, ThreeByteOpcodeID opcode)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(twoBytePrefix);
-            m_buffer.putByteUnchecked(opcode);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(twoBytePrefix);
+            writer.putByteUnchecked(opcode);
         }
 
         void threeByteOp(TwoByteOpcodeID twoBytePrefix, ThreeByteOpcodeID opcode, int reg, RegisterID rm)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, 0, rm);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(twoBytePrefix);
-            m_buffer.putByteUnchecked(opcode);
-            registerModRM(reg, rm);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(reg, 0, rm);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(twoBytePrefix);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(reg, rm);
         }
 
         void threeByteOp(TwoByteOpcodeID twoBytePrefix, ThreeByteOpcodeID opcode, int reg, RegisterID base, int displacement)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, 0, base);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(twoBytePrefix);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, displacement);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(reg, 0, base);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(twoBytePrefix);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, displacement);
         }
 
 #if CPU(X86_64)
@@ -3030,83 +3227,83 @@ private:
 
         void oneByteOp64(OneByteOpcodeID opcode)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(0, 0, 0);
-            m_buffer.putByteUnchecked(opcode);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(0, 0, 0);
+            writer.putByteUnchecked(opcode);
         }
 
         void oneByteOp64(OneByteOpcodeID opcode, RegisterID reg)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(0, 0, reg);
-            m_buffer.putByteUnchecked(opcode + (reg & 7));
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(0, 0, reg);
+            writer.putByteUnchecked(opcode + (reg & 7));
         }
 
         void oneByteOp64(OneByteOpcodeID opcode, int reg, RegisterID rm)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(reg, 0, rm);
-            m_buffer.putByteUnchecked(opcode);
-            registerModRM(reg, rm);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(reg, 0, rm);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(reg, rm);
         }
 
         void oneByteOp64(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(reg, 0, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(reg, 0, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, offset);
         }
 
         void oneByteOp64_disp32(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(reg, 0, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM_disp32(reg, base, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(reg, 0, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM_disp32(reg, base, offset);
         }
         
         void oneByteOp64_disp8(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(reg, 0, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM_disp8(reg, base, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(reg, 0, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM_disp8(reg, base, offset);
         }
 
         void oneByteOp64(OneByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(reg, index, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, index, scale, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(reg, index, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, index, scale, offset);
         }
 
         void twoByteOp64(TwoByteOpcodeID opcode, int reg, RegisterID rm)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(reg, 0, rm);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(opcode);
-            registerModRM(reg, rm);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(reg, 0, rm);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(reg, rm);
         }
 
         void twoByteOp64(TwoByteOpcodeID opcode, int reg, RegisterID base, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(reg, 0, base);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(reg, 0, base);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, offset);
         }
 
         void twoByteOp64(TwoByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(reg, index, base);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, index, scale, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(reg, index, base);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, index, scale, offset);
         }
 #endif
 
@@ -3137,52 +3334,52 @@ private:
 
         void oneByteOp8(OneByteOpcodeID opcode, GroupOpcodeID groupOp, RegisterID rm)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIf(byteRegRequiresRex(rm), 0, 0, rm);
-            m_buffer.putByteUnchecked(opcode);
-            registerModRM(groupOp, rm);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIf(byteRegRequiresRex(rm), 0, 0, rm);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(groupOp, rm);
         }
 
         void oneByteOp8(OneByteOpcodeID opcode, int reg, RegisterID rm)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIf(byteRegRequiresRex(reg) || byteRegRequiresRex(rm), reg, 0, rm);
-            m_buffer.putByteUnchecked(opcode);
-            registerModRM(reg, rm);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIf(byteRegRequiresRex(reg, rm), reg, 0, rm);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(reg, rm);
         }
 
         void oneByteOp8(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIf(byteRegRequiresRex(reg) || byteRegRequiresRex(base), reg, 0, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIf(byteRegRequiresRex(reg, base), reg, 0, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, offset);
         }
 
         void oneByteOp8(OneByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIf(byteRegRequiresRex(reg) || regRequiresRex(index) || regRequiresRex(base), reg, index, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM(reg, base, index, scale, offset);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIf(byteRegRequiresRex(reg) || regRequiresRex(index, base), reg, index, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(reg, base, index, scale, offset);
         }
 
         void twoByteOp8(TwoByteOpcodeID opcode, RegisterID reg, RegisterID rm)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIf(byteRegRequiresRex(reg)|byteRegRequiresRex(rm), reg, 0, rm);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(opcode);
-            registerModRM(reg, rm);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIf(byteRegRequiresRex(reg, rm), reg, 0, rm);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(reg, rm);
         }
 
         void twoByteOp8(TwoByteOpcodeID opcode, GroupOpcodeID groupOp, RegisterID rm)
         {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIf(byteRegRequiresRex(rm), 0, 0, rm);
-            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(opcode);
-            registerModRM(groupOp, rm);
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIf(byteRegRequiresRex(rm), 0, 0, rm);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(groupOp, rm);
         }
 
         // Immediates:
@@ -3224,177 +3421,6 @@ private:
         void* data() const { return m_buffer.data(); }
 
         unsigned debugOffset() { return m_buffer.debugOffset(); }
-
-    private:
-
-        // Internals; ModRm and REX formatters.
-
-        static const RegisterID noBase = X86Registers::ebp;
-        static const RegisterID hasSib = X86Registers::esp;
-        static const RegisterID noIndex = X86Registers::esp;
-#if CPU(X86_64)
-        static const RegisterID noBase2 = X86Registers::r13;
-        static const RegisterID hasSib2 = X86Registers::r12;
-
-        // Registers r8 & above require a REX prefixe.
-        inline bool regRequiresRex(int reg)
-        {
-            return (reg >= X86Registers::r8);
-        }
-
-        // Byte operand register spl & above require a REX prefix (to prevent the 'H' registers be accessed).
-        inline bool byteRegRequiresRex(int reg)
-        {
-            return (reg >= X86Registers::esp);
-        }
-
-        // Format a REX prefix byte.
-        inline void emitRex(bool w, int r, int x, int b)
-        {
-            ASSERT(r >= 0);
-            ASSERT(x >= 0);
-            ASSERT(b >= 0);
-            m_buffer.putByteUnchecked(PRE_REX | ((int)w << 3) | ((r>>3)<<2) | ((x>>3)<<1) | (b>>3));
-        }
-
-        // Used to plant a REX byte with REX.w set (for 64-bit operations).
-        inline void emitRexW(int r, int x, int b)
-        {
-            emitRex(true, r, x, b);
-        }
-
-        // Used for operations with byte operands - use byteRegRequiresRex() to check register operands,
-        // regRequiresRex() to check other registers (i.e. address base & index).
-        inline void emitRexIf(bool condition, int r, int x, int b)
-        {
-            if (condition) emitRex(false, r, x, b);
-        }
-
-        // Used for word sized operations, will plant a REX prefix if necessary (if any register is r8 or above).
-        inline void emitRexIfNeeded(int r, int x, int b)
-        {
-            emitRexIf(regRequiresRex(r) || regRequiresRex(x) || regRequiresRex(b), r, x, b);
-        }
-#else
-        // No REX prefix bytes on 32-bit x86.
-        inline bool regRequiresRex(int) { return false; }
-        inline bool byteRegRequiresRex(int) { return false; }
-        inline void emitRexIf(bool, int, int, int) {}
-        inline void emitRexIfNeeded(int, int, int) {}
-#endif
-
-        void putModRm(ModRmMode mode, int reg, RegisterID rm)
-        {
-            m_buffer.putByteUnchecked((mode << 6) | ((reg & 7) << 3) | (rm & 7));
-        }
-
-        void putModRmSib(ModRmMode mode, int reg, RegisterID base, RegisterID index, int scale)
-        {
-            ASSERT(mode != ModRmRegister);
-
-            putModRm(mode, reg, hasSib);
-            m_buffer.putByteUnchecked((scale << 6) | ((index & 7) << 3) | (base & 7));
-        }
-
-        void registerModRM(int reg, RegisterID rm)
-        {
-            putModRm(ModRmRegister, reg, rm);
-        }
-
-        void memoryModRM(int reg, RegisterID base, int offset)
-        {
-            // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
-#if CPU(X86_64)
-            if ((base == hasSib) || (base == hasSib2)) {
-#else
-            if (base == hasSib) {
-#endif
-                if (!offset) // No need to check if the base is noBase, since we know it is hasSib!
-                    putModRmSib(ModRmMemoryNoDisp, reg, base, noIndex, 0);
-                else if (CAN_SIGN_EXTEND_8_32(offset)) {
-                    putModRmSib(ModRmMemoryDisp8, reg, base, noIndex, 0);
-                    m_buffer.putByteUnchecked(offset);
-                } else {
-                    putModRmSib(ModRmMemoryDisp32, reg, base, noIndex, 0);
-                    m_buffer.putIntUnchecked(offset);
-                }
-            } else {
-#if CPU(X86_64)
-                if (!offset && (base != noBase) && (base != noBase2))
-#else
-                if (!offset && (base != noBase))
-#endif
-                    putModRm(ModRmMemoryNoDisp, reg, base);
-                else if (CAN_SIGN_EXTEND_8_32(offset)) {
-                    putModRm(ModRmMemoryDisp8, reg, base);
-                    m_buffer.putByteUnchecked(offset);
-                } else {
-                    putModRm(ModRmMemoryDisp32, reg, base);
-                    m_buffer.putIntUnchecked(offset);
-                }
-            }
-        }
-
-        void memoryModRM_disp8(int reg, RegisterID base, int offset)
-        {
-            // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
-            ASSERT(CAN_SIGN_EXTEND_8_32(offset));
-#if CPU(X86_64)
-            if ((base == hasSib) || (base == hasSib2)) {
-#else
-            if (base == hasSib) {
-#endif
-                putModRmSib(ModRmMemoryDisp8, reg, base, noIndex, 0);
-                m_buffer.putByteUnchecked(offset);
-            } else {
-                putModRm(ModRmMemoryDisp8, reg, base);
-                m_buffer.putByteUnchecked(offset);
-            }
-        }
-
-        void memoryModRM_disp32(int reg, RegisterID base, int offset)
-        {
-            // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
-#if CPU(X86_64)
-            if ((base == hasSib) || (base == hasSib2)) {
-#else
-            if (base == hasSib) {
-#endif
-                putModRmSib(ModRmMemoryDisp32, reg, base, noIndex, 0);
-                m_buffer.putIntUnchecked(offset);
-            } else {
-                putModRm(ModRmMemoryDisp32, reg, base);
-                m_buffer.putIntUnchecked(offset);
-            }
-        }
-    
-        void memoryModRM(int reg, RegisterID base, RegisterID index, int scale, int offset)
-        {
-            ASSERT(index != noIndex);
-
-#if CPU(X86_64)
-            if (!offset && (base != noBase) && (base != noBase2))
-#else
-            if (!offset && (base != noBase))
-#endif
-                putModRmSib(ModRmMemoryNoDisp, reg, base, index, scale);
-            else if (CAN_SIGN_EXTEND_8_32(offset)) {
-                putModRmSib(ModRmMemoryDisp8, reg, base, index, scale);
-                m_buffer.putByteUnchecked(offset);
-            } else {
-                putModRmSib(ModRmMemoryDisp32, reg, base, index, scale);
-                m_buffer.putIntUnchecked(offset);
-            }
-        }
-
-#if !CPU(X86_64)
-        void memoryModRM(int reg, const void* address)
-        {
-            // noBase + ModRmMemoryNoDisp means noBase + ModRmMemoryDisp32!
-            putModRm(ModRmMemoryNoDisp, reg, noBase);
-            m_buffer.putIntUnchecked(reinterpret_cast<int32_t>(address));
-        }
-#endif
 
     public:
         AssemblerBuffer m_buffer;

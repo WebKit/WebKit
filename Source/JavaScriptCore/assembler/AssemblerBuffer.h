@@ -121,15 +121,15 @@ namespace JSC {
         {
         }
 
-        bool isAvailable(int space)
+        bool isAvailable(unsigned space)
         {
             return m_index + space <= m_storage.capacity();
         }
 
-        void ensureSpace(int space)
+        void ensureSpace(unsigned space)
         {
             if (!isAvailable(space))
-                grow();
+                outOfLineGrow();
         }
 
         bool isAligned(int alignment) const
@@ -165,13 +165,63 @@ namespace JSC {
 
         AssemblerData releaseAssemblerData() { return WTFMove(m_storage); }
 
+        // LocalWriter is a trick to keep the storage buffer and the index
+        // in memory while issuing multiple Stores.
+        // It is created in a block scope and its attribute can stay live
+        // between writes.
+        //
+        // LocalWriter *CANNOT* be mixed with other types of access to AssemblerBuffer.
+        // AssemblerBuffer cannot be used until its LocalWriter goes out of scope.
+        class LocalWriter {
+        public:
+            LocalWriter(AssemblerBuffer& buffer, unsigned requiredSpace)
+                : m_buffer(buffer)
+            {
+                buffer.ensureSpace(requiredSpace);
+                m_storageBuffer = buffer.m_storage.buffer();
+                m_index = buffer.m_index;
+#if !defined(NDEBUG)
+                m_initialIndex = m_index;
+                m_requiredSpace = requiredSpace;
+#endif
+            }
+
+            ~LocalWriter()
+            {
+                ASSERT(m_index - m_initialIndex <= m_requiredSpace);
+                ASSERT(m_buffer.m_index == m_initialIndex);
+                ASSERT(m_storageBuffer == m_buffer.m_storage.buffer());
+                m_buffer.m_index = m_index;
+            }
+
+            void putByteUnchecked(int8_t value) { putIntegralUnchecked(value); }
+            void putShortUnchecked(int16_t value) { putIntegralUnchecked(value); }
+            void putIntUnchecked(int32_t value) { putIntegralUnchecked(value); }
+            void putInt64Unchecked(int64_t value) { putIntegralUnchecked(value); }
+        private:
+            template<typename IntegralType>
+            void putIntegralUnchecked(IntegralType value)
+            {
+                ASSERT(m_index + sizeof(IntegralType) <= m_buffer.m_storage.capacity());
+                *reinterpret_cast_ptr<IntegralType*>(m_storageBuffer + m_index) = value;
+                m_index += sizeof(IntegralType);
+            }
+            AssemblerBuffer& m_buffer;
+            char* m_storageBuffer;
+            unsigned m_index;
+#if !defined(NDEBUG)
+            unsigned m_initialIndex;
+            unsigned m_requiredSpace;
+#endif
+        };
+
     protected:
         template<typename IntegralType>
         void putIntegral(IntegralType value)
         {
             unsigned nextIndex = m_index + sizeof(IntegralType);
             if (UNLIKELY(nextIndex > m_storage.capacity()))
-                grow();
+                outOfLineGrow();
             ASSERT(isAvailable(sizeof(IntegralType)));
             *reinterpret_cast_ptr<IntegralType*>(m_storage.buffer() + m_index) = value;
             m_index = nextIndex;
@@ -200,6 +250,13 @@ namespace JSC {
         }
 
     private:
+        NEVER_INLINE void outOfLineGrow()
+        {
+            m_storage.grow();
+        }
+
+        friend LocalWriter;
+
         AssemblerData m_storage;
         unsigned m_index;
     };

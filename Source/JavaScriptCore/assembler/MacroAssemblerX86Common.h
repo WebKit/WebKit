@@ -230,7 +230,7 @@ public:
         }
         m_assembler.leal_mr(index.offset, index.base, index.index, index.scale, dest);
     }
-    
+
     void and32(RegisterID src, RegisterID dest)
     {
         m_assembler.andl_rr(src, dest);
