@@ -1,3 +1,23 @@
+2016-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Sometimes clearing focused nodes in ProfileView leaves a dangling call stack that can never be removed
+        https://bugs.webkit.org/show_bug.cgi?id=155915
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridTree.prototype.addFocusNode):
+        (WebInspector.ProfileDataGridTree.prototype.rollbackFocusNode):
+        (WebInspector.ProfileDataGridTree.prototype.clearFocusNodes):
+        (WebInspector.ProfileDataGridTree.prototype._focusChanged):
+        (WebInspector.ProfileDataGridTree.prototype._saveFocusedNodeOriginalParent):
+        (WebInspector.ProfileDataGridTree.prototype._restoreFocusedNodeToOriginalParent):
+        Be a little more explicit about saving and resotring nodes.
+        When restoring, work around a DataGrid issue by temporarily
+        collapsing and expanding the part of the node we are being
+        reattached to. This is a cheap workaround for an otherwise
+        complex DataGrid / DataGridTree issue.
+
 2016-03-25  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Clicking a result in Quick Open dialog dismisses the dialog, does nothing
