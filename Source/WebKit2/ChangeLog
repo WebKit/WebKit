@@ -1,3 +1,14 @@
+2016-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Treat SHA-1-signed certificates as insecure by default.
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/APIPageConfiguration.h: Initialize m_treatsSHA1SignedCertificatesAsInsecure
+          to true.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Initialize _treatsSHA1SignedCertificatesAsInsecure to YES.
+
 2016-03-25  Dean Jackson  <dino@apple.com>
 
         Remove use of extern "C" to include QuartzCore files

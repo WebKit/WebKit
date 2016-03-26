@@ -175,6 +175,7 @@ private:
     _convertsPositionStyleOnCopy = NO;
     _allowsMetaRefresh = YES;
     _allowUniversalAccessFromFileURLs = NO;
+    _treatsSHA1SignedCertificatesAsInsecure = YES;
 
     return self;
 }

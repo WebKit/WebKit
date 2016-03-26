@@ -105,7 +105,7 @@ private:
     // Once we get rid of it we should get rid of this configuration parameter as well.
     WebCore::SessionID m_sessionID;
 
-    bool m_treatsSHA1SignedCertificatesAsInsecure = false;
+    bool m_treatsSHA1SignedCertificatesAsInsecure = true;
 #if PLATFORM(IOS)
     bool m_alwaysRunsAtForegroundPriority = false;
 #endif
