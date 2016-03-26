@@ -1,3 +1,26 @@
+2016-03-25  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Audio tracks in alternate groups are not represented correctly as AudioTracks
+        https://bugs.webkit.org/show_bug.cgi?id=155891
+        <rdar://problem/24841372>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/video-track-alternate-groups.html
+
+        Previously, we created an AudioTrack for every AVPlayerItemTrack, and additionally, a
+        AudioTrack for every AVMediaSelectionOption that did not have an associated AVAssetTrack.
+        This caused a number of issues with various types of media, including media with fallback
+        tracks.
+
+        Now, we will create an AudioTrack for every AVMediaSelectionOption, and only create an
+        AudioTrack for every AVPlayerItem track if no AVMediaSelectionGroups (and thus no
+        AVMediaSeletionOptions) exist.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::determineChangedTracksFromNewTracksAndOldItems):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateAudioTracks):
+
 2016-03-25  Zalan Bujtas  <zalan@apple.com>
 
         RenderImage::repaintOrMarkForLayout fails when the renderer is detached.

@@ -1,3 +1,18 @@
+2016-03-25  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Audio tracks in alternate groups are not represented correctly as AudioTracks
+        https://bugs.webkit.org/show_bug.cgi?id=155891
+        <rdar://problem/24841372>
+
+        Reviewed by Eric Carlson.
+
+        * media/content/audio-tracks-alternate-group-with-fallback.mp4: Added.
+        * media/content/audio-tracks-no-alternate-group.mp4: Added.
+        * media/content/audio-tracks-some-in-alternate-group.mp4: Added.
+        * media/track/video-track-alternate-groups-expected.txt: Added.
+        * media/track/video-track-alternate-groups.html: Added.
+        * platform/mac-yosemite/media/track/video-track-alternate-groups-expected.txt: Added.
+
 2016-03-25  Mark Lam  <mark.lam@apple.com>
 
         ES6's throwing of TypeErrors on access of RegExp.prototype flag properties breaks websites.
