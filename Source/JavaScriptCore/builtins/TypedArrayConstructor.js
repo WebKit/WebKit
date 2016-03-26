@@ -34,7 +34,7 @@ function of(/* items... */)
     let len = arguments.length;
     let constructFunction = this.@allocateTypedArray;
     if (constructFunction === @undefined)
-        throw new @TypeError("TypedArray.from requires its this argument to subclass a TypedArray constructor");
+        throw new @TypeError("TypedArray.of requires its this argument to subclass a TypedArray constructor");
 
     let result = constructFunction(len);
 
@@ -126,56 +126,47 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
     return result;
 }
 
-function allocateInt8Array(length) {
-
+function allocateInt8Array(length)
+{
     return new @Int8Array(length);
-
 }
 
-function allocateInt16Array(length) {
-
-    return new @Int16Array(length);
-    
+function allocateInt16Array(length)
+{
+    return new @Int16Array(length);    
 }
 
-function allocateInt32Array(length) {
-
-    return new @Int32Array(length);
-    
+function allocateInt32Array(length)
+{
+    return new @Int32Array(length);   
 }
 
-function allocateUint32Array(length) {
-
+function allocateUint32Array(length)
+{
     return new @Uint32Array(length);
-
 }
 
-function allocateUint16Array(length) {
-
-    return new @Uint16Array(length);
-    
+function allocateUint16Array(length)
+{
+    return new @Uint16Array(length);   
 }
 
-function allocateUint8Array(length) {
-
-    return new @Uint8Array(length);
-    
+function allocateUint8Array(length)
+{
+    return new @Uint8Array(length);   
 }
 
-function allocateUint8ClampedArray(length) {
-
+function allocateUint8ClampedArray(length)
+{
     return new @Uint8ClampedArray(length);
-
 }
 
-function allocateFloat32Array(length) {
-
+function allocateFloat32Array(length)
+{
     return new @Float32Array(length);
-
 }
 
-function allocateFloat64Array(length) {
-
+function allocateFloat64Array(length)
+{
     return new @Float64Array(length);
-
 }

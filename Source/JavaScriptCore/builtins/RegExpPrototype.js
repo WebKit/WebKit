@@ -72,7 +72,9 @@ function match(str)
                 if (resultList.length === 0)
                     return null;
                 return resultList;
-            } else if (!@isObject(result))
+            }
+
+            if (!@isObject(result))
                 throw new @TypeError("RegExp.prototype.@@match call to RegExp.exec didn't return null or an object");
 
             let resultString = @toString(result[0]);
