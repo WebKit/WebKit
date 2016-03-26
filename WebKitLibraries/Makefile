@@ -7,7 +7,7 @@ cleanlibs:
 	@true
 else
 libs:
-	perl $(SCRIPTS_PATH)/copy-webkitlibraries-to-product-directory --wksi --llvm
+	perl $(SCRIPTS_PATH)/copy-webkitlibraries-to-product-directory --wksi
 cleanlibs:
 	perl $(SCRIPTS_PATH)/copy-webkitlibraries-to-product-directory --clean
 endif
