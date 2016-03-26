@@ -1,3 +1,22 @@
+2016-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Date.prototype.toLocaleDateString uses overridable Object.create
+        https://bugs.webkit.org/show_bug.cgi?id=155917
+
+        Reviewed by Mark Lam.
+
+        * builtins/DatePrototype.js:
+        (toLocaleString.toDateTimeOptionsAnyAll):
+        (toLocaleDateString.toDateTimeOptionsDateDate):
+        (toLocaleTimeString.toDateTimeOptionsTimeTime):
+        Switch from @Object.create to @Object.@create to guarentee we are
+        using the built-in create method and not user defined code.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        Setup the @create private symbol.
+
 2016-03-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Put the x86 Assembler on a binary diet

@@ -55,7 +55,7 @@ function toLocaleString(/* locales, options */)
 
         // Only create descendant if it will have own properties.
         if (needsDefaults) {
-            options = @Object.create(options)
+            options = @Object.@create(options);
             options.year = "numeric";
             options.month = "numeric";
             options.day = "numeric";
@@ -109,7 +109,7 @@ function toLocaleDateString(/* locales, options */)
 
         // Only create descendant if it will have own properties.
         if (needsDefaults) {
-            options = @Object.create(options)
+            options = @Object.@create(options);
             options.year = "numeric";
             options.month = "numeric";
             options.day = "numeric";
@@ -158,7 +158,7 @@ function toLocaleTimeString(/* locales, options */)
 
         // Only create descendant if it will have own properties.
         if (needsDefaults) {
-            options = @Object.create(options)
+            options = @Object.@create(options);
             options.hour = "numeric";
             options.minute = "numeric";
             options.second = "numeric";

@@ -1,3 +1,15 @@
+2016-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Date.prototype.toLocaleDateString uses overridable Object.create
+        https://bugs.webkit.org/show_bug.cgi?id=155917
+
+        Reviewed by Mark Lam.
+
+        * js/regress-155917-expected.txt: Added.
+        * js/regress-155917.html: Added.
+        * js/script-tests/regress-155917.js: Added.
+        (Object.create):
+
 2016-03-25  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Audio tracks in alternate groups are not represented correctly as AudioTracks
