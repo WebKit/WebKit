@@ -69,7 +69,7 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->compile, regExpProtoFuncCompile, DontEnum, 2);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->test, regExpProtoFuncTest, DontEnum, 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->test, regExpProtoFuncTest, DontEnum, 1, RegExpTestIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, regExpProtoFuncToString, DontEnum, 0);
     JSC_NATIVE_GETTER(vm.propertyNames->global, regExpProtoGetterGlobal, DontEnum | Accessor);
     JSC_NATIVE_GETTER(vm.propertyNames->ignoreCase, regExpProtoGetterIgnoreCase, DontEnum | Accessor);

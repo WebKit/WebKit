@@ -1,3 +1,13 @@
+2016-03-25  Saam barati  <sbarati@apple.com>
+
+        RegExp.prototype.test should be an intrinsic again
+        https://bugs.webkit.org/show_bug.cgi?id=155861
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+
 2016-03-25  Mark Lam  <mark.lam@apple.com>
 
         ES6's throwing of TypeErrors on access of RegExp.prototype flag properties breaks websites.
