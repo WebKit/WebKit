@@ -1,3 +1,11 @@
+2016-03-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Remove duplicated tests in EFL TextExpectations.
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: Clean up duplicated pathes.
+
 2016-03-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         ES6 Class syntax. Invoking method of parent class in constructor before super() lead to crash
