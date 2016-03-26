@@ -77,9 +77,7 @@ shouldBe('(new B()).getValueParentFunction()', 'expectedValue');
 
 shouldBe('(new C(false)).value', 'expectedValue');
 
-// FIXME: Problem with access to the super before super() in constructor
-// https://bugs.webkit.org/show_bug.cgi?id=152108
-//shouldThrow('(new C(true))', 'ReferenceError');
+shouldThrow('(new C(true))', '"ReferenceError: Cannot access uninitialized variable."');
 
 shouldBe('E.getParentStaticValue()', 'expectedValue');
 

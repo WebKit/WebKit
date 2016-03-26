@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS (new B()).getValueParentFunction() is expectedValue
 PASS (new C(false)).value is expectedValue
+PASS (new C(true)) threw exception ReferenceError: Cannot access uninitialized variable..
 PASS E.getParentStaticValue() is expectedValue
 PASS f.prop is expectedValue + "-" + expectedValue
 PASS f.prop is expectedValue + "-" + "new-value"

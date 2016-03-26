@@ -33,7 +33,6 @@ shouldBe("class A { get 0() { return 20; } }; A[0]", "undefined");
 shouldBe("class A { static get 1() { return 21; } }; A[1]", "21");
 shouldBe("class A { static get 1() { return 21; } }; (new A)[1]", "undefined");
 
-// FIXME: This test case fails due to webkit.org/b/144252.
 shouldBe("setterValue = 0; X = class { set 2(x) { setterValue = x; } }; (new X)[2] = 22; setterValue", "22");
 shouldBe("X[2] = 23; setterValue", "22");
 
@@ -43,7 +42,6 @@ shouldBe("(new X)[3] = 23; setterValue", "23");
 shouldBe("X = class { get 4() { return 24 } set 4(x) { } }; x = new X; x[4]", "24");
 shouldBe("X[4]", "undefined");
 
-// FIXME: This test case fails due to webkit.org/b/144252.
 shouldBe("setterValue = 0; X = class { get 5() { } set 5(x) { setterValue = x; } }; (new X)[5] = 25; setterValue", "25");
 shouldBe("X[5] = 26; setterValue", "25");
 

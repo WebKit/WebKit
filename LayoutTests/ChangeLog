@@ -1,3 +1,16 @@
+2016-03-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6 Class syntax. Invoking method of parent class in constructor before super() lead to crash
+        https://bugs.webkit.org/show_bug.cgi?id=152108
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/arrowfunction-superproperty-expected.txt:
+        * js/script-tests/arrowfunction-superproperty.js:
+        * js/script-tests/class-syntax-name.js:
+        * js/script-tests/class-syntax-string-and-numeric-names.js:
+        Remove stale FIXMEs from LayoutTests where the bugs have been fixed.
+
 2016-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Date.prototype.toLocaleDateString uses overridable Object.create
