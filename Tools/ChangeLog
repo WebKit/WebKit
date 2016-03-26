@@ -1,3 +1,13 @@
+2016-03-25  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Dromaeo patch used by run-benchmark should not include an invalid address.
+        https://bugs.webkit.org/show_bug.cgi?id=155910
+
+        Reviewed by Ryosuke Niwa.
+
+        Should not use invalid 'http://127.0.0.1/Icons/w3c_home' in the patched version of test.
+        * Scripts/webkitpy/benchmark_runner/data/patches/Dromaeo.patch:
+
 2016-03-25  Daniel Bates  <dabates@apple.com>
 
         Add WebKitSystemInterface for iOS 9.3
