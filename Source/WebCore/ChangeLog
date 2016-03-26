@@ -1,3 +1,36 @@
+2016-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Layout  sometimes flakily assumes overlay scrollbars when clicky-scroll-wheel-mouse is attached and system preference detects scrollbar mode
+        https://bugs.webkit.org/show_bug.cgi?id=155912
+
+        Reviewed by Simon Fraser.
+
+        When the system preference is set to detect the scrollbar type (overlay or
+        always-on, and a clicky scroll wheel mouse is connected, AppKit
+        asynchronously tells all the NSScrollerImpPairs about the kind of scrollbar
+        it should be using. However, when this notification is delivered, it may
+        be in between FrameViews, which means we may not have any
+        NSScrollerImpPairs created to listen to the notification.
+
+        r198444 solved this by asking if we missed any update whenever we create
+        an NSScrollerImpPair. This works partially; however, there is a significant
+        amount of layout which occurs before we create the first ScrollAnimatorMac.
+        This layout will ask the ScrollbarThemeMac if overlay scrollbars are
+        enabled, and the results will be stale (because we haven't created any the
+        NSScrollerImpPairs yet).
+
+        Luckly, AppKit fires a notification when it discovers what kind of
+        scrollbars should be used. We can rely on this notification in the event
+        that we don't have any NSScrollerImpPairs created.
+
+        Covered (as best as possible) by existing RTL scrollbar tests. However,
+        the system preference that governs this is not currently testable.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (+[WebScrollbarPrefsObserver registerAsObserver]):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):  Remove the old code.
+
 2016-03-25  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Audio tracks in alternate groups are not represented correctly as AudioTracks

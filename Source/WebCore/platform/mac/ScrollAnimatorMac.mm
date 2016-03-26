@@ -630,9 +630,6 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)
     m_scrollbarPainterController = adoptNS([[NSScrollerImpPair alloc] init]);
     [m_scrollbarPainterController setDelegate:m_scrollbarPainterControllerDelegate.get()];
     [m_scrollbarPainterController setScrollerStyle:recommendedScrollerStyle()];
-
-    if (auto* theme = macScrollbarTheme())
-        theme->usesOverlayScrollbarsChanged();
 }
 
 ScrollAnimatorMac::~ScrollAnimatorMac()
