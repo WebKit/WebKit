@@ -26,16 +26,15 @@
 #ifndef VMAllocate_h
 #define VMAllocate_h
 
-#include "Algorithm.h"
 #include "BAssert.h"
 #include "Range.h"
+#include "Sizes.h"
 #include "Syscall.h"
 #include <algorithm>
 #include <sys/mman.h>
 #include <unistd.h>
 
 #if BOS(DARWIN)
-#include <mach/vm_page_size.h>
 #include <mach/vm_statistics.h>
 #endif
 
@@ -47,59 +46,31 @@ namespace bmalloc {
 #define BMALLOC_VM_TAG -1
 #endif
 
-inline size_t vmPageSizePhysical()
-{
-#if BPLATFORM(DARWIN)
-    return vm_kernel_page_size;
-#else
-    return sysconf(_SC_PAGESIZE);
-#endif
-}
-
-inline size_t vmPageSize()
-{
-#if BPLATFORM(DARWIN)
-    return vm_page_size;
-#else
-    return sysconf(_SC_PAGESIZE);
-#endif
-}
-
 inline size_t vmSize(size_t size)
 {
-    return roundUpToMultipleOf(vmPageSize(), size);
+    return roundUpToMultipleOf<vmPageSize>(size);
 }
 
 inline void vmValidate(size_t vmSize)
 {
+    // We use getpagesize() here instead of vmPageSize because vmPageSize is
+    // allowed to be larger than the OS's true page size.
+
     UNUSED(vmSize);
     BASSERT(vmSize);
-    BASSERT(vmSize == roundUpToMultipleOf(vmPageSize(), vmSize));
+    BASSERT(vmSize == roundUpToMultipleOf(static_cast<size_t>(getpagesize()), vmSize));
 }
 
 inline void vmValidate(void* p, size_t vmSize)
 {
+    // We use getpagesize() here instead of vmPageSize because vmPageSize is
+    // allowed to be larger than the OS's true page size.
+
     vmValidate(vmSize);
     
     UNUSED(p);
     BASSERT(p);
-    BASSERT(p == mask(p, ~(vmPageSize() - 1)));
-}
-
-inline void vmValidatePhysical(size_t vmSize)
-{
-    UNUSED(vmSize);
-    BASSERT(vmSize);
-    BASSERT(vmSize == roundUpToMultipleOf(vmPageSizePhysical(), vmSize));
-}
-
-inline void vmValidatePhysical(void* p, size_t vmSize)
-{
-    vmValidatePhysical(vmSize);
-    
-    UNUSED(p);
-    BASSERT(p);
-    BASSERT(p == mask(p, ~(vmPageSizePhysical() - 1)));
+    BASSERT(p == mask(p, ~(getpagesize() - 1)));
 }
 
 inline void* tryVMAllocate(size_t vmSize)
@@ -164,7 +135,7 @@ inline void* vmAllocate(size_t vmAlignment, size_t vmSize)
 
 inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
 {
-    vmValidatePhysical(p, vmSize);
+    vmValidate(p, vmSize);
 #if BOS(DARWIN)
     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSABLE));
 #else
@@ -174,7 +145,7 @@ inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
 
 inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 {
-    vmValidatePhysical(p, vmSize);
+    vmValidate(p, vmSize);
 #if BOS(DARWIN)
     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSE));
 #else
@@ -185,8 +156,8 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 // Trims requests that are un-page-aligned.
 inline void vmDeallocatePhysicalPagesSloppy(void* p, size_t size)
 {
-    char* begin = roundUpToMultipleOf(vmPageSizePhysical(), static_cast<char*>(p));
-    char* end = roundDownToMultipleOf(vmPageSizePhysical(), static_cast<char*>(p) + size);
+    char* begin = roundUpToMultipleOf<vmPageSize>(static_cast<char*>(p));
+    char* end = roundDownToMultipleOf<vmPageSize>(static_cast<char*>(p) + size);
 
     if (begin >= end)
         return;
@@ -197,8 +168,8 @@ inline void vmDeallocatePhysicalPagesSloppy(void* p, size_t size)
 // Expands requests that are un-page-aligned.
 inline void vmAllocatePhysicalPagesSloppy(void* p, size_t size)
 {
-    char* begin = roundDownToMultipleOf(vmPageSizePhysical(), static_cast<char*>(p));
-    char* end = roundUpToMultipleOf(vmPageSizePhysical(), static_cast<char*>(p) + size);
+    char* begin = roundDownToMultipleOf<vmPageSize>(static_cast<char*>(p));
+    char* end = roundUpToMultipleOf<vmPageSize>(static_cast<char*>(p) + size);
 
     if (begin >= end)
         return;

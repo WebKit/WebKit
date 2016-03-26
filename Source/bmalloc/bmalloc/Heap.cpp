@@ -52,7 +52,7 @@ void Heap::initializeLineMetadata()
 
         size_t object = 0;
         size_t line = 0;
-        while (object < smallPageSize) {
+        while (object < vmPageSize) {
             line = object / smallLineSize;
             size_t leftover = object % smallLineSize;
 
@@ -66,7 +66,7 @@ void Heap::initializeLineMetadata()
         }
 
         // Don't allow the last object in a page to escape the page.
-        if (object > smallPageSize) {
+        if (object > vmPageSize) {
             BASSERT(metadata[line].objectCount);
             --metadata[line].objectCount;
         }
@@ -200,8 +200,8 @@ SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t si
         return page;
     }
 
-    size_t unalignedSize = largeMin + smallPageSize - largeAlignment + smallPageSize;
-    LargeObject largeObject = allocateLarge(lock, smallPageSize, smallPageSize, unalignedSize);
+    size_t unalignedSize = largeMin + vmPageSize - largeAlignment + vmPageSize;
+    LargeObject largeObject = allocateLarge(lock, vmPageSize, vmPageSize, unalignedSize);
 
     // Transform our large object into a small object page. We deref here
     // because our small objects will keep their own refcounts on the line.
@@ -307,7 +307,7 @@ void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t size)
     BASSERT(size >= largeMin);
     BASSERT(size == roundUpToMultipleOf<largeAlignment>(size));
     
-    if (size <= smallPageSize)
+    if (size <= vmPageSize)
         scavengeSmallPages(lock);
 
     LargeObject largeObject = m_largeObjects.take(size);
@@ -338,7 +338,7 @@ void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, 
     BASSERT(alignment >= largeAlignment);
     BASSERT(isPowerOfTwo(alignment));
 
-    if (size <= smallPageSize)
+    if (size <= vmPageSize)
         scavengeSmallPages(lock);
 
     LargeObject largeObject = m_largeObjects.take(alignment, size, unalignedSize);
@@ -412,7 +412,7 @@ XLargeRange Heap::splitAndAllocate(XLargeRange& range, size_t alignment, size_t 
     // in the allocated list. This is an important optimization because it
     // keeps the free list short, speeding up allocation and merging.
 
-    std::pair<XLargeRange, XLargeRange> allocated = range.split(roundUpToMultipleOf(vmPageSizePhysical(), size));
+    std::pair<XLargeRange, XLargeRange> allocated = range.split(roundUpToMultipleOf<vmPageSize>(size));
     if (allocated.first.vmState().hasVirtual()) {
         vmAllocatePhysicalPagesSloppy(allocated.first.begin(), allocated.first.size());
         allocated.first.setVMState(VMState::Physical);
@@ -429,7 +429,7 @@ void* Heap::tryAllocateXLarge(std::lock_guard<StaticMutex>&, size_t alignment, s
 
     m_isAllocatingPages = true;
 
-    size = std::max(vmPageSizePhysical(), size);
+    size = std::max(vmPageSize, size);
     alignment = roundUpToMultipleOf<xLargeAlignment>(alignment);
 
     XLargeRange range = m_xLargeMap.takeFree(alignment, size);
@@ -456,7 +456,7 @@ void Heap::shrinkXLarge(std::unique_lock<StaticMutex>&, const Range& object, siz
 {
     BASSERT(object.size() > newSize);
 
-    if (object.size() - newSize < vmPageSizePhysical())
+    if (object.size() - newSize < vmPageSize)
         return;
     
     XLargeRange range = m_xLargeMap.takeAllocated(object.begin());
