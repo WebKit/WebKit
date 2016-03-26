@@ -1,3 +1,45 @@
+2016-03-25  Dean Jackson  <dino@apple.com>
+
+        Move extended color detection into Open Source
+        https://bugs.webkit.org/show_bug.cgi?id=155909
+        <rdar://problem/25369754>
+
+        Reviewed by Anders Carlsson.
+
+        The code for detecting extended color displays
+        was hidden while the iPad Pro 9.7" was in development.
+        Now it is public, move the detection to Open Source.
+
+        While doing this, add a new method to PlatformScreen
+        so that we have a more obvious way to detect such
+        displays.
+
+        * platform/PlatformScreen.h: Add screenSupportsExtendedColor.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::commonInit): Set the backing
+        store format to the RGBA10XR if we're on an extended
+        display.
+        * platform/ios/LegacyTileGridTile.mm:
+        (WebCore::LegacyTileGridTile::LegacyTileGridTile): Ditto.
+        (WebCore::setBackingStoreFormat): Deleted. Now set directly
+        in the constructor.
+
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenDepthPerComponent): Cleanup.
+        (WebCore::screenSupportsExtendedColor): Implement the
+        iOS version of this using MobileGestalt.
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::displayFromWidget): Whitespace cleanup.
+        (WebCore::screenForWidget):
+        (WebCore::screenForWindow):
+        (WebCore::screenSupportsExtendedColor): Default implementation
+        returns false for all screens at the moment.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h: New constant.
+        * platform/spi/ios/MobileGestaltSPI.h: Ditto.
+
 2016-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Layout  sometimes flakily assumes overlay scrollbars when clicky-scroll-wheel-mouse is attached and system preference detects scrollbar mode

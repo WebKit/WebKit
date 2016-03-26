@@ -38,6 +38,7 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/MachSendRight.h>
 #import <WebCore/PlatformCALayerClient.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WebLayer.h>
 
@@ -45,26 +46,19 @@
 #import <mach/mach_port.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/RemoteLayerBackingStoreAdditions.mm>
-#else
+using namespace WebCore;
 
 namespace WebKit {
 
 #if USE(IOSURFACE)
-static WebCore::IOSurface::Format bufferFormat(bool)
+static WebCore::IOSurface::Format bufferFormat(bool isOpaque)
 {
+    if (screenSupportsExtendedColor())
+        return isOpaque ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGB10A8;
+
     return WebCore::IOSurface::Format::RGBA;
 }
 #endif // USE(IOSURFACE)
-
-} // namespace WebKit
-
-#endif
-
-using namespace WebCore;
-
-namespace WebKit {
 
 RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
     : m_layer(layer)

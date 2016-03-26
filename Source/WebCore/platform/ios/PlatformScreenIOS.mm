@@ -56,7 +56,7 @@ int screenDepth(Widget*)
 int screenDepthPerComponent(Widget*)
 {
     // Assume the screen depth is evenly divided into four color components. See <rdar://problem/9378829>.
-    return screenDepth(0) / 4;
+    return screenDepth(nullptr) / 4;
 }
 
 bool screenIsMonochrome(Widget*)
@@ -67,6 +67,15 @@ bool screenIsMonochrome(Widget*)
 bool screenHasInvertedColors()
 {
     return UIAccessibilityIsInvertColorsEnabled();
+}
+
+bool screenSupportsExtendedColor()
+{
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300
+    return MGGetBoolAnswer(kMGQHasExtendedColorDisplay);
+#else
+    return false;
+#endif
 }
 
 // These functions scale between screen and page coordinates because JavaScript/DOM operations

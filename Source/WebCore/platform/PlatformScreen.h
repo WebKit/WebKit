@@ -63,6 +63,8 @@ namespace WebCore {
     FloatRect screenRect(Widget*);
     FloatRect screenAvailableRect(Widget*);
 
+    WEBCORE_EXPORT bool screenSupportsExtendedColor();
+
 #if PLATFORM(MAC)
     NSScreen *screenForWindow(NSWindow *);
     NSScreen *screenForDisplayID(PlatformDisplayID);

@@ -1,3 +1,23 @@
+2016-03-25  Dean Jackson  <dino@apple.com>
+
+        Move extended color detection into Open Source
+        https://bugs.webkit.org/show_bug.cgi?id=155909
+        <rdar://problem/25369754>
+
+        Reviewed by Anders Carlsson.
+
+        The code for detecting extended color displays
+        was hidden while the iPad Pro 9.7" was in development.
+        Now it is public, move the detection to Open Source.
+
+        While doing this, add a new method to PlatformScreen
+        so that we have a more obvious way to detect such
+        displays.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::bufferFormat): No need to use WebKitAdditions any
+        more.
+
 2016-03-26  Dan Bernstein  <mitz@apple.com>
 
         Treat SHA-1-signed certificates as insecure by default.

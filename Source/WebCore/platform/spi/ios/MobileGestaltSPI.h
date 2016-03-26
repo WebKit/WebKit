@@ -44,6 +44,7 @@ static const CFStringRef kMGQMainScreenScale = CFSTR("main-screen-scale");
 static const CFStringRef kMGQiPadCapability = CFSTR("ipad");
 static const CFStringRef kMGQDeviceName = CFSTR("DeviceName");
 static const CFStringRef kMGQDeviceClassNumber = CFSTR("DeviceClassNumber");
+static const CFStringRef kMGQHasExtendedColorDisplay = CFSTR("HasExtendedColorDisplay");
 
 typedef enum {
     MGDeviceClassInvalid = -1,
