@@ -1,3 +1,10 @@
+2016-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+
 2016-03-26  Dean Jackson  <dino@apple.com>
 
         Fix build after my most recent commit.

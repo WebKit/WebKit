@@ -85,6 +85,7 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/NSTextFinderSPI.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
@@ -1321,7 +1322,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
 
 #if USE(IOSURFACE)
-    WebCore::IOSurface::Format snapshotFormat = WebKit::bufferFormat(true /* is opaque */);
+    WebCore::IOSurface::Format snapshotFormat = screenSupportsExtendedColor() ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGBA;
     auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::ColorSpaceSRGB, snapshotFormat);
     CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform);
 
