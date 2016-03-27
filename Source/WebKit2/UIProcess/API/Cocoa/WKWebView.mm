@@ -154,19 +154,6 @@ enum class DynamicViewportUpdateMode {
     ResizingWithDocumentHidden,
 };
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/RemoteLayerBackingStoreAdditions.mm>
-#else
-
-namespace WebKit {
-
-#if USE(IOSURFACE)
-static WebCore::IOSurface::Format bufferFormat(bool)
-{
-    return WebCore::IOSurface::Format::RGBA;
-}
-#endif // USE(IOSURFACE)
-
 } // namespace WebKit
 
 #endif

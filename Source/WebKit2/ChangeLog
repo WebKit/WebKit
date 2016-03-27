@@ -1,3 +1,10 @@
+2016-03-26  Dean Jackson  <dino@apple.com>
+
+        Fix build after my most recent commit.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (WebKit::bufferFormat): Delete the WebKitAdditions include.
+
 2016-03-25  Dean Jackson  <dino@apple.com>
 
         Move extended color detection into Open Source
