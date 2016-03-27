@@ -1,3 +1,11 @@
+2016-03-27  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Mark rtl-scrollbar's tests to pass with incorrectly
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: Though rtl scrollbar isn't supported by EFL yet, it has been passed.
+
 2016-03-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove duplicated tests in EFL TextExpectations.
