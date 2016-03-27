@@ -154,10 +154,6 @@ enum class DynamicViewportUpdateMode {
     ResizingWithDocumentHidden,
 };
 
-} // namespace WebKit
-
-#endif
-
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)
