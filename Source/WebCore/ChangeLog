@@ -1,3 +1,10 @@
+2016-03-26  Alex Christensen  <achristensen@webkit.org>
+
+        Mac CMake build fix.
+
+        * PlatformMac.cmake:
+        Link with AVFoundation libraries.
+
 2016-03-25  Dean Jackson  <dino@apple.com>
 
         Move extended color detection into Open Source
