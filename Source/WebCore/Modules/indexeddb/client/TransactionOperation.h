@@ -28,9 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBRequestImpl.h"
+#include "IDBRequest.h"
 #include "IDBResourceIdentifier.h"
-#include "IDBTransactionImpl.h"
+#include "IDBTransaction.h"
 
 namespace WebCore {
 

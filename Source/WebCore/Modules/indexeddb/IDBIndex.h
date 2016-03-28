@@ -23,73 +23,90 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBIndex_h
-#define IDBIndex_h
+#pragma once
 
-#include "IDBCursor.h"
-#include "IDBDatabase.h"
-#include "IDBKeyPath.h"
-#include "IDBKeyRange.h"
-#include "IDBObjectStore.h"
-#include "IDBRequest.h"
-#include "ScriptWrappable.h"
-#include <wtf/Forward.h>
-#include <wtf/text/WTFString.h>
+#include "IDBIndex.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ActiveDOMObject.h"
+#include "ExceptionCode.h"
+#include "IDBCursor.h"
+#include "IDBIndexInfo.h"
+#include "IDBRequest.h"
+#include <bindings/ScriptValue.h>
+
 namespace WebCore {
 
+class IDBAny;
+class IDBKeyRange;
 class IDBObjectStore;
+struct IDBKeyRangeData;
 
-class IDBIndex {
+class IDBIndex : public ActiveDOMObject {
 public:
-    virtual ~IDBIndex() { }
+    IDBIndex(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);
+
+    virtual ~IDBIndex();
 
     // Implement the IDL
-    virtual const String& name() const = 0;
-    virtual RefPtr<IDBObjectStore> objectStore() = 0;
-    virtual RefPtr<IDBAny> keyPathAny() const = 0;
-    virtual const IDBKeyPath& keyPath() const = 0;
-    virtual bool unique() const = 0;
-    virtual bool multiEntry() const = 0;
+    const String& name() const;
+    RefPtr<IDBObjectStore> objectStore();
+    RefPtr<IDBAny> keyPathAny() const;
+    const IDBKeyPath& keyPath() const;
+    bool unique() const;
+    bool multiEntry() const;
 
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&) = 0;
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec) { return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec) { return openCursor(context, keyRange, IDBCursor::directionNext(), ec); }
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec) { return openCursor(context, key, IDBCursor::directionNext(), ec); }
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&);
 
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext&, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
+    RefPtr<IDBRequest> count(ScriptExecutionContext&, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> count(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> count(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
 
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext&, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext&, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext&, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&) = 0;
+    RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec) { return openKeyCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec) { return openKeyCursor(context, keyRange, IDBCursor::directionNext(), ec); }
+    RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec) { return openKeyCursor(context, key, IDBCursor::directionNext(), ec); }
+    RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext&, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext&, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&);
 
-    virtual RefPtr<IDBRequest> get(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> get(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
+    RefPtr<IDBRequest> get(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> get(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> getKey(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> getKey(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
 
-    virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
+    const IDBIndexInfo& info() const { return m_info; }
 
-    virtual bool isModern() const { return false; }
+    IDBObjectStore& modernObjectStore() { return m_objectStore; }
 
-    // We use our own ref/deref function because Legacy IDB and Modern IDB have very different
-    // lifetime management of their indexes.
-    // This will go away once Legacy IDB is dropped.
-    virtual void ref() = 0;
-    virtual void deref() = 0;
+    void markAsDeleted();
+    bool isDeleted() const { return m_deleted; }
 
-protected:
-    IDBIndex();
+    void ref();
+    void deref();
+
+private:
+    RefPtr<IDBRequest> doCount(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> doGet(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> doGetKey(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
+
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const;
+    bool canSuspendForDocumentSuspension() const;
+    bool hasPendingActivity() const;
+
+    IDBIndexInfo m_info;
+
+    bool m_deleted { false };
+
+    // IDBIndex objects are always owned by their referencing IDBObjectStore.
+    // Indexes will never outlive ObjectStores so its okay to keep a raw C++ reference here.
+    IDBObjectStore& m_objectStore;
 };
 
 } // namespace WebCore
 
-#endif
-
-#endif // IDBIndex_h
+#endif // ENABLE(INDEXED_DATABASE)

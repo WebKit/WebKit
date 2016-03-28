@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBIndexImpl.h"
+#include "IDBIndex.h"
 
 using namespace JSC;
 
@@ -36,10 +36,7 @@ namespace WebCore {
 
 void JSIDBIndex::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    if (!wrapped().isModern())
-        return;
-
-    visitor.addOpaqueRoot(&static_cast<IDBClient::IDBIndex&>(wrapped()).modernObjectStore());
+    visitor.addOpaqueRoot(&static_cast<IDBIndex&>(wrapped()).modernObjectStore());
 }
 
 } // namespace WebCore

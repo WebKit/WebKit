@@ -29,7 +29,8 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBConnectionToServer.h"
-#include "IDBOpenDBRequestImpl.h"
+#include "IDBDatabase.h"
+#include "IDBOpenDBRequest.h"
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ IDBRequestData::IDBRequestData()
 {
 }
 
-IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionToServer& connection, const IDBClient::IDBOpenDBRequest& request)
+IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionToServer& connection, const IDBOpenDBRequest& request)
     : m_serverConnectionIdentifier(connection.identifier())
     , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(connection, request))
     , m_databaseIdentifier(request.databaseIdentifier())

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-IDBRequestCompletionEvent::IDBRequestCompletionEvent(const AtomicString& type, bool canBubble, bool cancelable, IDBClient::IDBRequest& request)
+IDBRequestCompletionEvent::IDBRequestCompletionEvent(const AtomicString& type, bool canBubble, bool cancelable, IDBRequest& request)
     : Event(type, canBubble, cancelable)
     , m_request(request)
 {

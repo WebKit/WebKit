@@ -31,7 +31,7 @@
 #include "DOMWindow.h"
 #include "DatabaseProvider.h"
 #include "Document.h"
-#include "IDBFactoryImpl.h"
+#include "IDBFactory.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
 
@@ -112,7 +112,7 @@ IDBFactory* DOMWindowIndexedDatabase::indexedDB()
         return nullptr;
 
     if (!m_idbFactory)
-        m_idbFactory = IDBClient::IDBFactory::create(page->idbConnection());
+        m_idbFactory = IDBFactory::create(page->idbConnection());
 
     return m_idbFactory.get();
 }

@@ -39,15 +39,15 @@
 namespace WebCore {
 
 class IDBCursorInfo;
+class IDBDatabase;
 class IDBError;
 class IDBObjectStoreInfo;
+class IDBOpenDBRequest;
 class IDBResultData;
+class IDBTransaction;
 
 namespace IDBClient {
 
-class IDBDatabase;
-class IDBOpenDBRequest;
-class IDBTransaction;
 class TransactionOperation;
 
 class IDBConnectionToServer : public RefCounted<IDBConnectionToServer> {
@@ -130,7 +130,7 @@ private:
 
     Ref<IDBConnectionToServerDelegate> m_delegate;
 
-    HashMap<IDBResourceIdentifier, RefPtr<IDBClient::IDBOpenDBRequest>> m_openDBRequestMap;
+    HashMap<IDBResourceIdentifier, RefPtr<IDBOpenDBRequest>> m_openDBRequestMap;
     HashMap<uint64_t, IDBDatabase*> m_databaseConnectionMap;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_pendingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;

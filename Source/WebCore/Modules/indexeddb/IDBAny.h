@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBAny_h
-#define IDBAny_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -32,8 +31,6 @@
 #include "ScriptWrappable.h"
 #include <bindings/ScriptValue.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -43,13 +40,47 @@ class IDBCursorWithValue;
 class IDBDatabase;
 class IDBFactory;
 class IDBIndex;
-class IDBKeyPath;
 class IDBObjectStore;
 class IDBTransaction;
 
 class IDBAny : public ScriptWrappable, public RefCounted<IDBAny> {
 public:
-    virtual ~IDBAny() { }
+    static RefPtr<IDBAny> create(Ref<IDBDatabase>&& database)
+    {
+        return adoptRef(new IDBAny(WTFMove(database)));
+    }
+
+    static Ref<IDBAny> create(Ref<IDBObjectStore>&& objectStore)
+    {
+        return adoptRef(*new IDBAny(WTFMove(objectStore)));
+    }
+
+    static Ref<IDBAny> create(Ref<IDBIndex>&& index)
+    {
+        return adoptRef(*new IDBAny(WTFMove(index)));
+    }
+
+    static RefPtr<IDBAny> create(Ref<IDBCursor>&& cursor)
+    {
+        return adoptRef(new IDBAny(WTFMove(cursor)));
+    }
+
+    static RefPtr<IDBAny> create(const IDBKeyPath& keyPath)
+    {
+        return adoptRef(new IDBAny(keyPath));
+    }
+
+    static RefPtr<IDBAny> create(const Deprecated::ScriptValue& value)
+    {
+        return adoptRef(new IDBAny(value));
+    }
+
+    static RefPtr<IDBAny> createUndefined()
+    {
+        return adoptRef(new IDBAny(IDBAny::Type::Undefined));
+    }
+
+    virtual ~IDBAny();
 
     enum class Type {
         Undefined = 0,
@@ -68,30 +99,42 @@ public:
         KeyPath,
     };
 
-    // FIXME: This is a temporary hack to allow casts in WebInspector code while Modern IDB and Legacy IDB live side-by-side.
-    // It should be removed when the legacy implementation is removed as part of https://bugs.webkit.org/show_bug.cgi?id=149117
-    virtual bool isLegacy() const { return false; }
+    Type type() const { return m_type; }
+    RefPtr<DOMStringList> domStringList();
+    RefPtr<IDBCursor> idbCursor();
+    RefPtr<IDBCursorWithValue> idbCursorWithValue();
+    RefPtr<IDBDatabase> idbDatabase();
+    RefPtr<IDBFactory> idbFactory();
+    RefPtr<IDBIndex> idbIndex();
+    RefPtr<IDBObjectStore> idbObjectStore();
+    RefPtr<IDBTransaction> idbTransaction();
+    const Deprecated::ScriptValue& scriptValue();
+    int64_t integer();
+    const String& string();
+    const IDBKeyPath& keyPath();
 
-    virtual Type type() const = 0;
-    virtual RefPtr<DOMStringList> domStringList() = 0;
-    virtual RefPtr<IDBCursor> idbCursor() = 0;
-    virtual RefPtr<IDBCursorWithValue> idbCursorWithValue() = 0;
-    virtual RefPtr<IDBDatabase> idbDatabase() = 0;
-    virtual RefPtr<IDBFactory> idbFactory() = 0;
-    virtual RefPtr<IDBIndex> idbIndex() = 0;
-    virtual RefPtr<IDBObjectStore> idbObjectStore() = 0;
-    virtual RefPtr<IDBTransaction> idbTransaction() = 0;
-    virtual const Deprecated::ScriptValue& scriptValue() = 0;
-    virtual int64_t integer() = 0;
-    virtual const String& string() = 0;
-    virtual const IDBKeyPath& keyPath() = 0;
+private:
+    explicit IDBAny(IDBAny::Type);
+    explicit IDBAny(Ref<IDBDatabase>&&);
+    explicit IDBAny(Ref<IDBObjectStore>&&);
+    explicit IDBAny(Ref<IDBIndex>&&);
+    explicit IDBAny(Ref<IDBCursor>&&);
+    explicit IDBAny(const IDBKeyPath&);
+    explicit IDBAny(const Deprecated::ScriptValue&);
 
-protected:
-    IDBAny();
+    IDBAny::Type m_type { IDBAny::Type::Undefined };
+    RefPtr<IDBDatabase> m_database;
+    RefPtr<IDBObjectStore> m_objectStore;
+    RefPtr<IDBIndex> m_index;
+    RefPtr<IDBCursor> m_cursor;
+    RefPtr<IDBCursorWithValue> m_cursorWithValue;
+
+    const IDBKeyPath m_idbKeyPath;
+    const Deprecated::ScriptValue m_scriptValue;
+    const String m_string;
+    const int64_t m_integer { 0 };
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-
-#endif // IDBAny_h

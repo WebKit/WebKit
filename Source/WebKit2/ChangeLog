@@ -1,3 +1,12 @@
+2016-03-28  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Remove abstract base classes for all IDB DOM classes.
+        https://bugs.webkit.org/show_bug.cgi?id=155951
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+
 2016-03-28  Brian Burg  <bburg@apple.com>
 
         Web Automation: add commands to move and resize a browsing context's window

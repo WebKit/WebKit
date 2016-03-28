@@ -39,7 +39,7 @@
 #include <WebCore/IDBIndexInfo.h>
 #include <WebCore/IDBKeyRangeData.h>
 #include <WebCore/IDBObjectStoreInfo.h>
-#include <WebCore/IDBOpenDBRequestImpl.h>
+#include <WebCore/IDBOpenDBRequest.h>
 #include <WebCore/IDBRequestData.h>
 #include <WebCore/IDBResourceIdentifier.h>
 #include <WebCore/IDBResultData.h>

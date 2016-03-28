@@ -23,26 +23,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBOpenDBRequest_h
-#define IDBOpenDBRequest_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMError.h"
+#include "IDBDatabaseIdentifier.h"
 #include "IDBRequest.h"
-#include "IndexedDB.h"
 
 namespace WebCore {
 
+class Event;
+class IDBDatabaseIdentifier;
+class IDBResultData;
+class ScriptExecutionContext;
+
+namespace IDBClient {
+class IDBConnectionToServer;
+}
+
 class IDBOpenDBRequest : public IDBRequest {
 public:
-    virtual ~IDBOpenDBRequest() { }
+    static Ref<IDBOpenDBRequest> createDeleteRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&);
+    static Ref<IDBOpenDBRequest> createOpenRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
 
-protected:
-    IDBOpenDBRequest(ScriptExecutionContext&);
+    ~IDBOpenDBRequest() final;
+    
+    const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
+    uint64_t version() const { return m_version; }
+
+    void requestCompleted(const IDBResultData&);
+    void requestBlocked(uint64_t oldVersion, uint64_t newVersion);
+
+    void versionChangeTransactionDidFinish();
+    void fireSuccessAfterVersionChangeCommit();
+    void fireErrorAfterVersionChangeCompletion();
+
+    bool dispatchEvent(Event&) final;
+
+private:
+    IDBOpenDBRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version, IndexedDB::RequestType);
+
+    void onError(const IDBResultData&);
+    void onSuccess(const IDBResultData&);
+    void onUpgradeNeeded(const IDBResultData&);
+    void onDeleteDatabaseSuccess(const IDBResultData&);
+
+    bool isOpenDBRequest() const override { return true; }
+
+    IDBDatabaseIdentifier m_databaseIdentifier;
+    uint64_t m_version { 0 };
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-
-#endif // IDBOpenDBRequest_h

@@ -23,31 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBCursor_h
-#define IDBCursor_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBKey.h"
-#include "IDBTransaction.h"
-#include "IndexedDB.h"
-#include "ScriptWrappable.h"
-#include <bindings/ScriptValue.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "ActiveDOMObject.h"
+#include "ExceptionCode.h"
+#include "IDBAny.h"
+#include "IDBCursorInfo.h"
 
 namespace WebCore {
 
-class DOMRequestState;
 class IDBAny;
-class IDBCallbacks;
-class IDBRequest;
-class ScriptExecutionContext;
+class IDBGetResult;
+class IDBIndex;
+class IDBObjectStore;
+class IDBTransaction;
 
-struct ExceptionCodeWithMessage;
-
-class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor> {
+class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor>, public ActiveDOMObject {
 public:
+    static Ref<IDBCursor> create(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
+
     static const AtomicString& directionNext();
     static const AtomicString& directionNextUnique();
     static const AtomicString& directionPrev();
@@ -55,39 +51,73 @@ public:
 
     static IndexedDB::CursorDirection stringToDirection(const String& modeString, ExceptionCode&);
     static const AtomicString& directionToString(IndexedDB::CursorDirection mode);
-
-    virtual ~IDBCursor() { }
+    
+    virtual ~IDBCursor();
 
     // Implement the IDL
-    virtual const String& direction() const = 0;
-    virtual const Deprecated::ScriptValue& key() const = 0;
-    virtual const Deprecated::ScriptValue& primaryKey() const = 0;
-    virtual const Deprecated::ScriptValue& value() const = 0;
-    virtual IDBAny* source() = 0;
+    const String& direction() const;
+    const Deprecated::ScriptValue& key() const;
+    const Deprecated::ScriptValue& primaryKey() const;
+    const Deprecated::ScriptValue& value() const;
+    IDBAny* source();
 
-    virtual RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&) = 0;
-    virtual void advance(unsigned long, ExceptionCodeWithMessage&) = 0;
+    RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&);
+    void advance(unsigned long, ExceptionCodeWithMessage&);
+    void continueFunction(ScriptExecutionContext&, ExceptionCodeWithMessage&);
+    void continueFunction(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
+    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext&, ExceptionCodeWithMessage&);
 
-    // FIXME: We should not need that method (taking a ScriptExecutionContext pointer and not a reference)
-    // but InspectorIndexedDBAgent wants to call it with a null context. 
-    virtual void continueFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) = 0;
-    // FIXME: Try to modify the code generator so this overload is unneeded.
-    void continueFunction(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec) { continueFunction(&context, ec); }
-    virtual void continueFunction(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
-    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext&, ExceptionCodeWithMessage&) = 0;
+    void continueFunction(const IDBKeyData&, ExceptionCodeWithMessage&);
 
-    virtual bool isKeyCursor() const = 0;
+    const IDBCursorInfo& info() const { return m_info; }
 
-    virtual bool isModernCursor() const { return false; }
+    void setRequest(IDBRequest& request) { m_request = &request; }
+    void clearRequest() { m_request = nullptr; }
+    IDBRequest* request() { return m_request; }
 
-    virtual bool hasPendingActivity() const { return false; }
+    void setGetResult(IDBRequest&, const IDBGetResult&);
+
+    virtual bool isKeyCursor() const { return true; }
+
+    void decrementOutstandingRequestCount();
+
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const;
+    bool canSuspendForDocumentSuspension() const;
+    bool hasPendingActivity() const;
 
 protected:
-    IDBCursor();
+    IDBCursor(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
+    IDBCursor(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
+
+private:
+    // Cursors are created with an outstanding iteration request.
+    unsigned m_outstandingRequestCount { 1 };
+
+    IDBCursorInfo m_info;
+    Ref<IDBAny> m_source;
+    IDBObjectStore* m_objectStore { nullptr };
+    IDBIndex* m_index { nullptr };
+    IDBRequest* m_request;
+
+    bool sourcesDeleted() const;
+    IDBObjectStore& effectiveObjectStore() const;
+    IDBTransaction& transaction() const;
+
+    void uncheckedIterateCursor(const IDBKeyData&, unsigned long count);
+
+    bool m_gotValue { false };
+
+    IDBKeyData m_currentKeyData;
+    IDBKeyData m_currentPrimaryKeyData;
+
+    // FIXME: When ditching Legacy IDB and combining this implementation with the abstract IDBCursor,
+    // these Deprecated::ScriptValue members should be JSValues instead.
+    Deprecated::ScriptValue m_deprecatedCurrentKey;
+    Deprecated::ScriptValue m_deprecatedCurrentPrimaryKey;
+    Deprecated::ScriptValue m_deprecatedCurrentValue;
 };
 
 } // namespace WebCore
 
-#endif
-
-#endif // IDBCursor_h
+#endif // ENABLE(INDEXED_DATABASE)

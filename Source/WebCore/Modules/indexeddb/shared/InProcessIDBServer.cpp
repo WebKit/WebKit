@@ -32,7 +32,7 @@
 #include "IDBConnectionToServer.h"
 #include "IDBCursorInfo.h"
 #include "IDBKeyRangeData.h"
-#include "IDBOpenDBRequestImpl.h"
+#include "IDBOpenDBRequest.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"

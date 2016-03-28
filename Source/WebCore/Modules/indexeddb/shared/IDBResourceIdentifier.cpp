@@ -30,7 +30,7 @@
 
 #include "IDBConnectionToClient.h"
 #include "IDBConnectionToServer.h"
-#include "IDBRequestImpl.h"
+#include "IDBRequest.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -65,7 +65,7 @@ IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionToSer
 {
 }
 
-IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionToServer& connection, const IDBClient::IDBRequest& request)
+IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionToServer& connection, const IDBRequest& request)
     : m_idbConnectionIdentifier(connection.identifier())
     , m_resourceNumber(request.resourceIdentifier().m_resourceNumber)
 {

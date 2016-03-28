@@ -1,3 +1,393 @@
+2016-03-28  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Remove abstract base classes for all IDB DOM classes.
+        https://bugs.webkit.org/show_bug.cgi?id=155951
+
+        Reviewed by Alex Christensen.
+
+        Refactor - No behavior change.
+
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::indexedDB):
+        * Modules/indexeddb/IDBAny.cpp:
+        (WebCore::IDBAny::IDBAny):
+        (WebCore::IDBAny::~IDBAny):
+        (WebCore::IDBAny::idbDatabase):
+        (WebCore::IDBAny::domStringList):
+        (WebCore::IDBAny::idbCursor):
+        (WebCore::IDBAny::idbCursorWithValue):
+        (WebCore::IDBAny::idbFactory):
+        (WebCore::IDBAny::idbIndex):
+        (WebCore::IDBAny::idbObjectStore):
+        (WebCore::IDBAny::idbTransaction):
+        (WebCore::IDBAny::scriptValue):
+        (WebCore::IDBAny::integer):
+        (WebCore::IDBAny::string):
+        (WebCore::IDBAny::keyPath):
+        * Modules/indexeddb/IDBAny.h:
+        (WebCore::IDBAny::create):
+        (WebCore::IDBAny::createUndefined):
+        (WebCore::IDBAny::type):
+        (WebCore::IDBAny::~IDBAny): Deleted.
+        (WebCore::IDBAny::isLegacy): Deleted.
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::create):
+        (WebCore::IDBCursor::IDBCursor):
+        (WebCore::IDBCursor::~IDBCursor):
+        (WebCore::IDBCursor::sourcesDeleted):
+        (WebCore::IDBCursor::effectiveObjectStore):
+        (WebCore::IDBCursor::transaction):
+        (WebCore::IDBCursor::direction):
+        (WebCore::IDBCursor::key):
+        (WebCore::IDBCursor::primaryKey):
+        (WebCore::IDBCursor::value):
+        (WebCore::IDBCursor::source):
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::advance):
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::uncheckedIterateCursor):
+        (WebCore::IDBCursor::deleteFunction):
+        (WebCore::IDBCursor::setGetResult):
+        (WebCore::IDBCursor::activeDOMObjectName):
+        (WebCore::IDBCursor::canSuspendForDocumentSuspension):
+        (WebCore::IDBCursor::hasPendingActivity):
+        (WebCore::IDBCursor::decrementOutstandingRequestCount):
+        * Modules/indexeddb/IDBCursor.h:
+        (WebCore::IDBCursor::info):
+        (WebCore::IDBCursor::setRequest):
+        (WebCore::IDBCursor::clearRequest):
+        (WebCore::IDBCursor::request):
+        (WebCore::IDBCursor::isKeyCursor):
+        (WebCore::IDBCursor::~IDBCursor): Deleted.
+        (WebCore::IDBCursor::continueFunction): Deleted.
+        (WebCore::IDBCursor::isModernCursor): Deleted.
+        (WebCore::IDBCursor::hasPendingActivity): Deleted.
+        * Modules/indexeddb/IDBCursorWithValue.cpp:
+        (WebCore::IDBCursorWithValue::create):
+        (WebCore::IDBCursorWithValue::IDBCursorWithValue):
+        (WebCore::IDBCursorWithValue::~IDBCursorWithValue):
+        * Modules/indexeddb/IDBCursorWithValue.h:
+        (WebCore::IDBCursorWithValue::~IDBCursorWithValue): Deleted.
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::create):
+        (WebCore::IDBDatabase::IDBDatabase):
+        (WebCore::IDBDatabase::~IDBDatabase):
+        (WebCore::IDBDatabase::hasPendingActivity):
+        (WebCore::IDBDatabase::name):
+        (WebCore::IDBDatabase::version):
+        (WebCore::IDBDatabase::objectStoreNames):
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::transaction):
+        (WebCore::IDBDatabase::deleteObjectStore):
+        (WebCore::IDBDatabase::close):
+        (WebCore::IDBDatabase::maybeCloseInServer):
+        (WebCore::IDBDatabase::activeDOMObjectName):
+        (WebCore::IDBDatabase::canSuspendForDocumentSuspension):
+        (WebCore::IDBDatabase::stop):
+        (WebCore::IDBDatabase::startVersionChangeTransaction):
+        (WebCore::IDBDatabase::didStartTransaction):
+        (WebCore::IDBDatabase::willCommitTransaction):
+        (WebCore::IDBDatabase::didCommitTransaction):
+        (WebCore::IDBDatabase::willAbortTransaction):
+        (WebCore::IDBDatabase::didAbortTransaction):
+        (WebCore::IDBDatabase::didCommitOrAbortTransaction):
+        (WebCore::IDBDatabase::fireVersionChangeEvent):
+        (WebCore::IDBDatabase::dispatchEvent):
+        (WebCore::IDBDatabase::didCreateIndexInfo):
+        (WebCore::IDBDatabase::didDeleteIndexInfo):
+        * Modules/indexeddb/IDBDatabase.h:
+        (WebCore::IDBDatabase::info):
+        (WebCore::IDBDatabase::databaseConnectionIdentifier):
+        (WebCore::IDBDatabase::serverConnection):
+        (WebCore::IDBDatabase::isClosingOrClosed):
+        (WebCore::IDBDatabase::~IDBDatabase): Deleted.
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::shouldThrowSecurityException):
+        (WebCore::IDBFactory::create):
+        (WebCore::IDBFactory::IDBFactory):
+        (WebCore::IDBFactory::getDatabaseNames):
+        (WebCore::IDBFactory::open):
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        (WebCore::IDBFactory::cmp):
+        * Modules/indexeddb/IDBFactory.h:
+        (WebCore::IDBFactory::~IDBFactory): Deleted.
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::IDBIndex):
+        (WebCore::IDBIndex::~IDBIndex):
+        (WebCore::IDBIndex::activeDOMObjectName):
+        (WebCore::IDBIndex::canSuspendForDocumentSuspension):
+        (WebCore::IDBIndex::hasPendingActivity):
+        (WebCore::IDBIndex::name):
+        (WebCore::IDBIndex::objectStore):
+        (WebCore::IDBIndex::keyPathAny):
+        (WebCore::IDBIndex::keyPath):
+        (WebCore::IDBIndex::unique):
+        (WebCore::IDBIndex::multiEntry):
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::count):
+        (WebCore::IDBIndex::doCount):
+        (WebCore::IDBIndex::openKeyCursor):
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::doGet):
+        (WebCore::IDBIndex::getKey):
+        (WebCore::IDBIndex::doGetKey):
+        (WebCore::IDBIndex::markAsDeleted):
+        (WebCore::IDBIndex::ref):
+        (WebCore::IDBIndex::deref):
+        * Modules/indexeddb/IDBIndex.h:
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        (WebCore::IDBIndex::info):
+        (WebCore::IDBIndex::modernObjectStore):
+        (WebCore::IDBIndex::isDeleted):
+        (WebCore::IDBIndex::~IDBIndex): Deleted.
+        (WebCore::IDBIndex::isModern): Deleted.
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::create):
+        (WebCore::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBObjectStore::~IDBObjectStore):
+        (WebCore::IDBObjectStore::activeDOMObjectName):
+        (WebCore::IDBObjectStore::canSuspendForDocumentSuspension):
+        (WebCore::IDBObjectStore::hasPendingActivity):
+        (WebCore::IDBObjectStore::name):
+        (WebCore::IDBObjectStore::keyPathAny):
+        (WebCore::IDBObjectStore::keyPath):
+        (WebCore::IDBObjectStore::indexNames):
+        (WebCore::IDBObjectStore::transaction):
+        (WebCore::IDBObjectStore::autoIncrement):
+        (WebCore::IDBObjectStore::openCursor):
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        (WebCore::IDBObjectStore::putForCursorUpdate):
+        (WebCore::IDBObjectStore::putOrAdd):
+        (WebCore::IDBObjectStore::deleteFunction):
+        (WebCore::IDBObjectStore::doDelete):
+        (WebCore::IDBObjectStore::modernDelete):
+        (WebCore::IDBObjectStore::clear):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::deleteIndex):
+        (WebCore::IDBObjectStore::count):
+        (WebCore::IDBObjectStore::doCount):
+        (WebCore::IDBObjectStore::markAsDeleted):
+        (WebCore::IDBObjectStore::rollbackInfoForVersionChangeAbort):
+        (WebCore::IDBObjectStore::visitReferencedIndexes):
+        * Modules/indexeddb/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::isDeleted):
+        (WebCore::IDBObjectStore::info):
+        (WebCore::IDBObjectStore::modernTransaction):
+        (WebCore::IDBObjectStore::~IDBObjectStore): Deleted.
+        (WebCore::IDBObjectStore::isModern): Deleted.
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::createDeleteRequest):
+        (WebCore::IDBOpenDBRequest::createOpenRequest):
+        (WebCore::IDBOpenDBRequest::IDBOpenDBRequest):
+        (WebCore::IDBOpenDBRequest::~IDBOpenDBRequest):
+        (WebCore::IDBOpenDBRequest::onError):
+        (WebCore::IDBOpenDBRequest::versionChangeTransactionDidFinish):
+        (WebCore::IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit):
+        (WebCore::IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion):
+        (WebCore::IDBOpenDBRequest::dispatchEvent):
+        (WebCore::IDBOpenDBRequest::onSuccess):
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        (WebCore::IDBOpenDBRequest::onDeleteDatabaseSuccess):
+        (WebCore::IDBOpenDBRequest::requestCompleted):
+        (WebCore::IDBOpenDBRequest::requestBlocked):
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+        (WebCore::IDBOpenDBRequest::databaseIdentifier):
+        (WebCore::IDBOpenDBRequest::version):
+        (WebCore::IDBOpenDBRequest::~IDBOpenDBRequest): Deleted.
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::create):
+        (WebCore::IDBRequest::createCount):
+        (WebCore::IDBRequest::createGet):
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::~IDBRequest):
+        (WebCore::IDBRequest::result):
+        (WebCore::IDBRequest::errorCode):
+        (WebCore::IDBRequest::error):
+        (WebCore::IDBRequest::source):
+        (WebCore::IDBRequest::setSource):
+        (WebCore::IDBRequest::setVersionChangeTransaction):
+        (WebCore::IDBRequest::transaction):
+        (WebCore::IDBRequest::readyState):
+        (WebCore::IDBRequest::sourceObjectStoreIdentifier):
+        (WebCore::IDBRequest::sourceIndexIdentifier):
+        (WebCore::IDBRequest::requestedIndexRecordType):
+        (WebCore::IDBRequest::eventTargetInterface):
+        (WebCore::IDBRequest::activeDOMObjectName):
+        (WebCore::IDBRequest::canSuspendForDocumentSuspension):
+        (WebCore::IDBRequest::hasPendingActivity):
+        (WebCore::IDBRequest::stop):
+        (WebCore::IDBRequest::enqueueEvent):
+        (WebCore::IDBRequest::dispatchEvent):
+        (WebCore::IDBRequest::uncaughtExceptionInEventHandler):
+        (WebCore::IDBRequest::setResult):
+        (WebCore::IDBRequest::setResultToStructuredClone):
+        (WebCore::IDBRequest::setResultToUndefined):
+        (WebCore::IDBRequest::resultCursor):
+        (WebCore::IDBRequest::willIterateCursor):
+        (WebCore::IDBRequest::didOpenOrIterateCursor):
+        (WebCore::IDBRequest::requestCompleted):
+        (WebCore::IDBRequest::onError):
+        (WebCore::IDBRequest::onSuccess):
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::resourceIdentifier):
+        (WebCore::IDBRequest::connection):
+        (WebCore::IDBRequest::modernResult):
+        (WebCore::IDBRequest::pendingCursor):
+        (WebCore::IDBRequest::requestType):
+        (WebCore::IDBRequest::isOpenDBRequest):
+        (WebCore::IDBRequest::~IDBRequest): Deleted.
+        * Modules/indexeddb/IDBRequestCompletionEvent.cpp:
+        (WebCore::IDBRequestCompletionEvent::IDBRequestCompletionEvent):
+        * Modules/indexeddb/IDBRequestCompletionEvent.h:
+        (WebCore::IDBRequestCompletionEvent::create):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::create):
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::~IDBTransaction):
+        (WebCore::IDBTransaction::mode):
+        (WebCore::IDBTransaction::db):
+        (WebCore::IDBTransaction::serverConnection):
+        (WebCore::IDBTransaction::error):
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::abortDueToFailedRequest):
+        (WebCore::IDBTransaction::transitionedToFinishing):
+        (WebCore::IDBTransaction::abort):
+        (WebCore::IDBTransaction::abortOnServerAndCancelRequests):
+        (WebCore::IDBTransaction::activeDOMObjectName):
+        (WebCore::IDBTransaction::canSuspendForDocumentSuspension):
+        (WebCore::IDBTransaction::hasPendingActivity):
+        (WebCore::IDBTransaction::stop):
+        (WebCore::IDBTransaction::isActive):
+        (WebCore::IDBTransaction::isFinishedOrFinishing):
+        (WebCore::IDBTransaction::addRequest):
+        (WebCore::IDBTransaction::removeRequest):
+        (WebCore::IDBTransaction::scheduleOperation):
+        (WebCore::IDBTransaction::scheduleOperationTimer):
+        (WebCore::IDBTransaction::operationTimerFired):
+        (WebCore::IDBTransaction::commit):
+        (WebCore::IDBTransaction::commitOnServer):
+        (WebCore::IDBTransaction::finishAbortOrCommit):
+        (WebCore::IDBTransaction::didStart):
+        (WebCore::IDBTransaction::notifyDidAbort):
+        (WebCore::IDBTransaction::didAbort):
+        (WebCore::IDBTransaction::didCommit):
+        (WebCore::IDBTransaction::fireOnComplete):
+        (WebCore::IDBTransaction::fireOnAbort):
+        (WebCore::IDBTransaction::enqueueEvent):
+        (WebCore::IDBTransaction::dispatchEvent):
+        (WebCore::IDBTransaction::createObjectStore):
+        (WebCore::IDBTransaction::createObjectStoreOnServer):
+        (WebCore::IDBTransaction::didCreateObjectStoreOnServer):
+        (WebCore::IDBTransaction::createIndex):
+        (WebCore::IDBTransaction::createIndexOnServer):
+        (WebCore::IDBTransaction::didCreateIndexOnServer):
+        (WebCore::IDBTransaction::requestOpenCursor):
+        (WebCore::IDBTransaction::doRequestOpenCursor):
+        (WebCore::IDBTransaction::openCursorOnServer):
+        (WebCore::IDBTransaction::didOpenCursorOnServer):
+        (WebCore::IDBTransaction::iterateCursor):
+        (WebCore::IDBTransaction::iterateCursorOnServer):
+        (WebCore::IDBTransaction::didIterateCursorOnServer):
+        (WebCore::IDBTransaction::requestGetRecord):
+        (WebCore::IDBTransaction::requestGetValue):
+        (WebCore::IDBTransaction::requestGetKey):
+        (WebCore::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBTransaction::getRecordOnServer):
+        (WebCore::IDBTransaction::didGetRecordOnServer):
+        (WebCore::IDBTransaction::requestCount):
+        (WebCore::IDBTransaction::getCountOnServer):
+        (WebCore::IDBTransaction::didGetCountOnServer):
+        (WebCore::IDBTransaction::requestDeleteRecord):
+        (WebCore::IDBTransaction::deleteRecordOnServer):
+        (WebCore::IDBTransaction::didDeleteRecordOnServer):
+        (WebCore::IDBTransaction::requestClearObjectStore):
+        (WebCore::IDBTransaction::clearObjectStoreOnServer):
+        (WebCore::IDBTransaction::didClearObjectStoreOnServer):
+        (WebCore::IDBTransaction::requestPutOrAdd):
+        (WebCore::IDBTransaction::putOrAddOnServer):
+        (WebCore::IDBTransaction::didPutOrAddOnServer):
+        (WebCore::IDBTransaction::deleteObjectStore):
+        (WebCore::IDBTransaction::deleteObjectStoreOnServer):
+        (WebCore::IDBTransaction::didDeleteObjectStoreOnServer):
+        (WebCore::IDBTransaction::deleteIndex):
+        (WebCore::IDBTransaction::deleteIndexOnServer):
+        (WebCore::IDBTransaction::didDeleteIndexOnServer):
+        (WebCore::IDBTransaction::operationDidComplete):
+        (WebCore::IDBTransaction::establishOnServer):
+        (WebCore::IDBTransaction::activate):
+        (WebCore::IDBTransaction::deactivate):
+        * Modules/indexeddb/IDBTransaction.h:
+        (WebCore::IDBTransaction::info):
+        (WebCore::IDBTransaction::database):
+        (WebCore::IDBTransaction::originalDatabaseInfo):
+        (WebCore::IDBTransaction::isVersionChange):
+        (WebCore::IDBTransaction::isReadOnly):
+        (WebCore::IDBTransaction::isFinished):
+        (WebCore::TransactionActivator::TransactionActivator):
+        (WebCore::TransactionActivator::~TransactionActivator):
+        (WebCore::IDBTransaction::~IDBTransaction): Deleted.
+        * Modules/indexeddb/IDBVersionChangeEvent.cpp:
+        (WebCore::IDBVersionChangeEvent::IDBVersionChangeEvent):
+        (WebCore::IDBVersionChangeEvent::newVersion):
+        (WebCore::IDBVersionChangeEvent::eventInterface):
+        (WebCore::IDBVersionChangeEvent::create): Deleted.
+        * Modules/indexeddb/IDBVersionChangeEvent.h:
+        (isType):
+        * Modules/indexeddb/client/IDBAnyImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBAnyImpl.h: Removed.
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBCursorImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBCursorImpl.h: Removed.
+        * Modules/indexeddb/client/IDBCursorWithValueImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBCursorWithValueImpl.h: Removed.
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBDatabaseImpl.h: Removed.
+        * Modules/indexeddb/client/IDBFactoryImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBFactoryImpl.h: Removed.
+        * Modules/indexeddb/client/IDBIndexImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBIndexImpl.h: Removed.
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBObjectStoreImpl.h: Removed.
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.h: Removed.
+        * Modules/indexeddb/client/IDBRequestImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBRequestImpl.h: Removed.
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBTransactionImpl.h: Removed.
+        * Modules/indexeddb/client/IDBVersionChangeEventImpl.cpp: Removed.
+        * Modules/indexeddb/client/IDBVersionChangeEventImpl.h: Removed.
+        * Modules/indexeddb/client/TransactionOperation.cpp:
+        * Modules/indexeddb/client/TransactionOperation.h:
+        * Modules/indexeddb/shared/IDBCursorInfo.cpp:
+        (WebCore::IDBCursorInfo::objectStoreCursor):
+        (WebCore::IDBCursorInfo::indexCursor):
+        (WebCore::IDBCursorInfo::IDBCursorInfo):
+        * Modules/indexeddb/shared/IDBCursorInfo.h:
+        * Modules/indexeddb/shared/IDBRequestData.cpp:
+        (WebCore::IDBRequestData::IDBRequestData):
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        (WebCore::IDBResourceIdentifier::IDBResourceIdentifier):
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSIDBCursorCustom.cpp:
+        (WebCore::JSIDBCursor::visitAdditionalChildren):
+        * bindings/js/JSIDBCursorWithValueCustom.cpp:
+        * bindings/js/JSIDBIndexCustom.cpp:
+        (WebCore::JSIDBIndex::visitAdditionalChildren):
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        (WebCore::JSIDBObjectStore::visitAdditionalChildren):
+        * inspector/InspectorIndexedDBAgent.cpp:
+
 2016-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [RTL Scrollbars] Position:sticky can be positioned under vertical RTL scrollbar

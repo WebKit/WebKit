@@ -23,54 +23,144 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBRequest_h
-#define IDBRequest_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ActiveDOMObject.h"
-#include "DOMError.h"
-#include "DOMStringList.h"
-#include "Event.h"
-#include "EventListener.h"
 #include "EventTarget.h"
 #include "IDBAny.h"
-#include "IDBCursor.h"
-#include "ScriptWrappable.h"
+#include "IDBResourceIdentifier.h"
+#include "IDBTransaction.h"
+#include "ScopeGuard.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class IDBTransaction;
+class Event;
+class IDBAny;
+class IDBCursor;
+class IDBIndex;
+class IDBKeyData;
+class IDBObjectStore;
+class IDBResultData;
+class ThreadSafeDataBuffer;
 
-struct ExceptionCodeWithMessage;
+namespace IDBClient {
+class IDBConnectionToServer;
+}
 
-typedef int ExceptionCode;
+namespace IndexedDB {
+enum class IndexRecordType;
+}
 
 // Defined in the IDL
 enum class IDBRequestReadyState {
     Pending = 1,
     Done = 2,
-    DeprecatedEarlyDeath = 3, // FIXME: https://bugs.webkit.org/show_bug.cgi?id=149117 - Remove this when removing LegacyIDB
 };
 
-class IDBRequest : public EventTargetWithInlineData, public ActiveDOMObject {
+class IDBRequest : public EventTargetWithInlineData, public ActiveDOMObject, public RefCounted<IDBRequest> {
 public:
-    virtual ~IDBRequest() { }
+    static Ref<IDBRequest> create(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
+    static Ref<IDBRequest> create(ScriptExecutionContext&, IDBCursor&, IDBTransaction&);
+    static Ref<IDBRequest> createCount(ScriptExecutionContext&, IDBIndex&, IDBTransaction&);
+    static Ref<IDBRequest> createGet(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
-    virtual RefPtr<IDBAny> result(ExceptionCodeWithMessage&) const = 0;
-    virtual unsigned short errorCode(ExceptionCode&) const = 0;
-    virtual RefPtr<DOMError> error(ExceptionCodeWithMessage&) const = 0;
-    virtual RefPtr<IDBAny> source() const = 0;
-    virtual RefPtr<IDBTransaction> transaction() const = 0;
+    const IDBResourceIdentifier& resourceIdentifier() const { return m_resourceIdentifier; }
 
-    virtual const String& readyState() const = 0;
+    virtual ~IDBRequest();
+
+    RefPtr<IDBAny> result(ExceptionCodeWithMessage&) const;
+    unsigned short errorCode(ExceptionCode&) const;
+    RefPtr<DOMError> error(ExceptionCodeWithMessage&) const;
+    RefPtr<IDBAny> source() const;
+    RefPtr<IDBTransaction> transaction() const;
+    const String& readyState() const;
+
+    uint64_t sourceObjectStoreIdentifier() const;
+    uint64_t sourceIndexIdentifier() const;
+    IndexedDB::IndexRecordType requestedIndexRecordType() const;
+
+    // EventTarget
+    EventTargetInterface eventTargetInterface() const override;
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+
+    using RefCounted<IDBRequest>::ref;
+    using RefCounted<IDBRequest>::deref;
+
+    void enqueueEvent(Ref<Event>&&);
+    bool dispatchEvent(Event&) override;
+
+    IDBClient::IDBConnectionToServer& connection() { return m_connection; }
+
+    void requestCompleted(const IDBResultData&);
+
+    void setResult(const IDBKeyData*);
+    void setResult(uint64_t);
+    void setResultToStructuredClone(const ThreadSafeDataBuffer&);
+    void setResultToUndefined();
+
+    IDBAny* modernResult() { return m_result.get(); }
+
+    void willIterateCursor(IDBCursor&);
+    void didOpenOrIterateCursor(const IDBResultData&);
+
+    const IDBCursor* pendingCursor() const { return m_pendingCursor.get(); }
+
+    void setSource(IDBCursor&);
+    void setVersionChangeTransaction(IDBTransaction&);
+
+    IndexedDB::RequestType requestType() const { return m_requestType; }
+
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+    bool hasPendingActivity() const final;
+    void stop() final;
 
 protected:
-    IDBRequest(ScriptExecutionContext&);
+    IDBRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&);
+    IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
+    IDBRequest(ScriptExecutionContext&, IDBCursor&, IDBTransaction&);
+    IDBRequest(ScriptExecutionContext&, IDBIndex&, IDBTransaction&);
+    IDBRequest(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
+
+    // EventTarget.
+    void refEventTarget() final { RefCounted<IDBRequest>::ref(); }
+    void derefEventTarget() final { RefCounted<IDBRequest>::deref(); }
+    void uncaughtExceptionInEventHandler() final;
+
+    virtual bool isOpenDBRequest() const { return false; }
+
+    IDBRequestReadyState m_readyState { IDBRequestReadyState::Pending };
+    RefPtr<IDBAny> m_result;
+    RefPtr<IDBTransaction> m_transaction;
+    bool m_shouldExposeTransactionToDOM { true };
+    RefPtr<DOMError> m_domError;
+    IDBError m_idbError;
+    IndexedDB::RequestType m_requestType = { IndexedDB::RequestType::Other };
+    bool m_contextStopped { false };
+
+    Event* m_openDatabaseSuccessEvent { nullptr };
+
+private:
+    void onError();
+    void onSuccess();
+
+    IDBCursor* resultCursor();
+
+    IDBClient::IDBConnectionToServer& m_connection;
+    IDBResourceIdentifier m_resourceIdentifier;
+    RefPtr<IDBAny> m_source;
+    bool m_hasPendingActivity { true };
+    IndexedDB::IndexRecordType m_requestedIndexRecordType;
+
+    RefPtr<IDBCursor> m_pendingCursor;
+
+    std::unique_ptr<ScopeGuard> m_cursorRequestNotifier;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-
-#endif // LegacyRequest_h

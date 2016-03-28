@@ -28,8 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabase.h"
 #include "IDBKeyRangeData.h"
-#include "IDBOpenDBRequestImpl.h"
+#include "IDBOpenDBRequest.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"

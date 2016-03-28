@@ -28,10 +28,129 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMStringList.h"
+#include "IDBCursorWithValue.h"
+#include "IDBDatabase.h"
+#include "IDBFactory.h"
+#include "IDBIndex.h"
+#include "IDBObjectStore.h"
+#include "IDBTransaction.h"
+
 namespace WebCore {
 
-IDBAny::IDBAny()
+IDBAny::IDBAny(IDBAny::Type type)
+    : m_type(type)
 {
+}
+
+IDBAny::IDBAny(Ref<IDBDatabase>&& database)
+    : m_type(IDBAny::Type::IDBDatabase)
+    , m_database(WTFMove(database))
+{
+}
+
+IDBAny::IDBAny(Ref<IDBObjectStore>&& objectStore)
+    : m_type(IDBAny::Type::IDBObjectStore)
+    , m_objectStore(WTFMove(objectStore))
+{
+}
+
+IDBAny::IDBAny(Ref<IDBIndex>&& index)
+    : m_type(IDBAny::Type::IDBIndex)
+    , m_index(WTFMove(index))
+{
+}
+
+IDBAny::IDBAny(Ref<IDBCursor>&& cursor)
+{
+    if (cursor->isKeyCursor()) {
+        m_type = IDBAny::Type::IDBCursor;
+        m_cursor = WTFMove(cursor);
+    } else {
+        m_type = IDBAny::Type::IDBCursorWithValue;
+        m_cursorWithValue = static_cast<IDBCursorWithValue*>(&cursor.get());
+    }
+}
+
+IDBAny::IDBAny(const IDBKeyPath& keyPath)
+    : m_type(IDBAny::Type::KeyPath)
+    , m_idbKeyPath(keyPath)
+{
+}
+
+IDBAny::IDBAny(const Deprecated::ScriptValue& value)
+    : m_type(IDBAny::Type::ScriptValue)
+    , m_scriptValue(value)
+{
+}
+
+IDBAny::~IDBAny()
+{
+}
+
+RefPtr<IDBDatabase> IDBAny::idbDatabase()
+{
+    ASSERT(m_type == IDBAny::Type::IDBDatabase);
+    return m_database.get();
+}
+
+RefPtr<DOMStringList> IDBAny::domStringList()
+{
+    return nullptr;
+}
+
+RefPtr<IDBCursor> IDBAny::idbCursor()
+{
+    ASSERT(m_type == IDBAny::Type::IDBCursor || m_type == IDBAny::Type::IDBCursorWithValue);
+    return m_cursor ? m_cursor.get() : m_cursorWithValue.get();
+}
+
+RefPtr<IDBCursorWithValue> IDBAny::idbCursorWithValue()
+{
+    ASSERT(m_type == IDBAny::Type::IDBCursorWithValue);
+    return m_cursorWithValue.get();
+}
+
+RefPtr<IDBFactory> IDBAny::idbFactory()
+{
+    return nullptr;
+}
+
+RefPtr<IDBIndex> IDBAny::idbIndex()
+{
+    ASSERT(m_type == IDBAny::Type::IDBIndex);
+    return m_index.get();
+}
+
+RefPtr<IDBObjectStore> IDBAny::idbObjectStore()
+{
+    ASSERT(m_type == IDBAny::Type::IDBObjectStore);
+    return m_objectStore.get();
+}
+
+RefPtr<IDBTransaction> IDBAny::idbTransaction()
+{
+    return nullptr;
+}
+
+const Deprecated::ScriptValue& IDBAny::scriptValue()
+{
+    return m_scriptValue;
+}
+
+int64_t IDBAny::integer()
+{
+    return m_integer;
+}
+
+const String& IDBAny::string()
+{
+    return m_string;
+}
+
+const IDBKeyPath& IDBAny::keyPath()
+{
+    return m_idbKeyPath;
 }
 
 } // namespace WebCore

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBCursorWithValue_h
-#define IDBCursorWithValue_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -34,14 +33,18 @@ namespace WebCore {
 
 class IDBCursorWithValue : public IDBCursor {
 public:
-    virtual ~IDBCursorWithValue() { }
+    static Ref<IDBCursorWithValue> create(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
+    static Ref<IDBCursorWithValue> create(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
 
-protected:
-    IDBCursorWithValue();
+    virtual ~IDBCursorWithValue();
+
+    bool isKeyCursor() const final { return false; }
+
+private:
+    IDBCursorWithValue(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
+    IDBCursorWithValue(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
 };
 
 } // namespace WebCore
 
-#endif
-
-#endif // LegacyCursorWithValue_h
+#endif // ENABLE(INDEXED_DATABASE)

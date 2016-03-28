@@ -30,7 +30,7 @@
 
 #include "IDBConnectionToClient.h"
 #include "IDBConnectionToServer.h"
-#include "IDBOpenDBRequestImpl.h"
+#include "IDBOpenDBRequest.h"
 #include "IDBServer.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

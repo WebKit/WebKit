@@ -185,13 +185,10 @@ public:
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected result type.");
             return;
         }
-        if (!requestResult->isLegacy()) {
-            m_executableWithDatabase->requestCallback().sendFailure("Only Legacy IDB is supported right now.");
-            return;
-        }
 
         // FIXME (webkit.org/b/154686) - Reimplement this.
-        m_executableWithDatabase->execute();
+        m_executableWithDatabase->requestCallback().sendFailure("Modern IDB is not supported yet");
+        return;
     }
 
 private:

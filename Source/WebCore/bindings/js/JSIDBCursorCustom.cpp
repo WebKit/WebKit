@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBCursorImpl.h"
+#include "IDBCursor.h"
 
 using namespace JSC;
 
@@ -36,11 +36,8 @@ namespace WebCore {
 
 void JSIDBCursor::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    if (!wrapped().isModernCursor())
-        return;
-
-    auto& modernCursor = static_cast<IDBClient::IDBCursor&>(wrapped());
-    if (auto* request = modernCursor.request())
+    auto& cursor = static_cast<IDBCursor&>(wrapped());
+    if (auto* request = cursor.request())
         visitor.addOpaqueRoot(request);
 }
 

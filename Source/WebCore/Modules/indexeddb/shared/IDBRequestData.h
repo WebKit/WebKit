@@ -34,20 +34,21 @@
 
 namespace WebCore {
 
+class IDBOpenDBRequest;
+class IDBTransaction;
+
 namespace IndexedDB {
 enum class IndexRecordType;
 }
 
 namespace IDBClient {
 class IDBConnectionToServer;
-class IDBOpenDBRequest;
-class IDBTransaction;
 class TransactionOperation;
 }
 
 class IDBRequestData {
 public:
-    IDBRequestData(const IDBClient::IDBConnectionToServer&, const IDBClient::IDBOpenDBRequest&);
+    IDBRequestData(const IDBClient::IDBConnectionToServer&, const IDBOpenDBRequest&);
     explicit IDBRequestData(IDBClient::TransactionOperation&);
     IDBRequestData(const IDBRequestData&);
 

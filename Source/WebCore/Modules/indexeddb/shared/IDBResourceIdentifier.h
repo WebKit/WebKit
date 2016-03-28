@@ -32,9 +32,10 @@
 
 namespace WebCore {
 
+class IDBRequest;
+
 namespace IDBClient {
 class IDBConnectionToServer;
-class IDBRequest;
 }
 
 namespace IDBServer {
@@ -44,7 +45,7 @@ class IDBConnectionToClient;
 class IDBResourceIdentifier {
 public:
     explicit IDBResourceIdentifier(const IDBClient::IDBConnectionToServer&);
-    IDBResourceIdentifier(const IDBClient::IDBConnectionToServer&, const IDBClient::IDBRequest&);
+    IDBResourceIdentifier(const IDBClient::IDBConnectionToServer&, const IDBRequest&);
     explicit IDBResourceIdentifier(const IDBServer::IDBConnectionToClient&);
 
     static IDBResourceIdentifier deletedValue();

@@ -23,48 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBFactory_h
-#define IDBFactory_h
-
-#include "IDBOpenDBRequest.h"
-#include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBConnectionToServer.h"
+#include "IDBFactory.h"
+#include "IDBOpenDBRequest.h"
+
 namespace WebCore {
-
-class IDBKey;
-class IDBKeyRange;
-class ScriptExecutionContext;
-
-struct ExceptionCodeWithMessage;
-
-typedef int ExceptionCode;
 
 class IDBFactory : public RefCounted<IDBFactory> {
 public:
-    virtual ~IDBFactory() { }
+    static Ref<IDBFactory> create(IDBClient::IDBConnectionToServer&);
 
     // FIXME: getDatabaseNames is no longer a web-facing API, and should be removed from IDBFactory.
     // The Web Inspector currently uses this to enumerate the list of databases, but is more complicated as a result.
     // We should provide a simpler API to the Web Inspector then remove getDatabaseNames.
-    virtual RefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext&, ExceptionCode&) = 0;
+    RefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext&, ExceptionCode&);
 
-    virtual RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, ExceptionCode&) = 0;
-    virtual RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCode&) = 0;
-    virtual RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const String& name, ExceptionCode&) = 0;
+    RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, ExceptionCode&);
+    RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCode&);
+    RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const String& name, ExceptionCode&);
 
-    virtual short cmp(ScriptExecutionContext&, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCodeWithMessage&) = 0;
+    short cmp(ScriptExecutionContext&, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCodeWithMessage&);
 
-protected:
-    IDBFactory();
+private:
+    IDBFactory(IDBClient::IDBConnectionToServer&);
+    
+    RefPtr<IDBOpenDBRequest> openInternal(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCode&);
+    
+    Ref<IDBClient::IDBConnectionToServer> m_connectionToServer;
 };
 
 } // namespace WebCore
 
-#endif
-
-#endif // IDBFactory_h
+#endif // ENABLE(INDEXED_DATABASE)

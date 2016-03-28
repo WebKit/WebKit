@@ -28,11 +28,183 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabase.h"
+#include "IDBError.h"
+#include "IDBRequestCompletionEvent.h"
+#include "IDBResultData.h"
+#include "IDBTransaction.h"
+#include "IDBVersionChangeEvent.h"
+#include "Logging.h"
+
 namespace WebCore {
 
-IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext& context)
-    : IDBRequest(context)
+Ref<IDBOpenDBRequest> IDBOpenDBRequest::createDeleteRequest(IDBClient::IDBConnectionToServer& connection, ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier)
 {
+    ASSERT(databaseIdentifier.isValid());
+    return adoptRef(*new IDBOpenDBRequest(connection, context, databaseIdentifier, 0, IndexedDB::RequestType::Delete));
+}
+
+Ref<IDBOpenDBRequest> IDBOpenDBRequest::createOpenRequest(IDBClient::IDBConnectionToServer& connection, ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
+{
+    ASSERT(databaseIdentifier.isValid());
+    return adoptRef(*new IDBOpenDBRequest(connection, context, databaseIdentifier, version, IndexedDB::RequestType::Open));
+}
+    
+IDBOpenDBRequest::IDBOpenDBRequest(IDBClient::IDBConnectionToServer& connection, ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version, IndexedDB::RequestType requestType)
+    : IDBRequest(connection, context)
+    , m_databaseIdentifier(databaseIdentifier)
+    , m_version(version)
+{
+    m_requestType = requestType;
+}
+
+IDBOpenDBRequest::~IDBOpenDBRequest()
+{
+}
+
+void IDBOpenDBRequest::onError(const IDBResultData& data)
+{
+    m_domError = DOMError::create(data.error().name());
+    enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, true, true, *this));
+}
+
+void IDBOpenDBRequest::versionChangeTransactionDidFinish()
+{
+    // 3.3.7 "versionchange" transaction steps
+    // When the transaction is finished, after firing complete/abort on the transaction, immediately set request's transaction property to null.
+    m_shouldExposeTransactionToDOM = false;
+}
+
+void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
+{
+    LOG(IndexedDB, "IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()");
+
+    ASSERT(hasPendingActivity());
+    ASSERT(m_result);
+    ASSERT(m_result->type() == IDBAny::Type::IDBDatabase);
+    m_transaction->addRequest(*this);
+
+    auto event = IDBRequestCompletionEvent::create(eventNames().successEvent, false, false, *this);
+    m_openDatabaseSuccessEvent = &event.get();
+
+    enqueueEvent(WTFMove(event));
+}
+
+void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
+{
+    LOG(IndexedDB, "IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()");
+
+    ASSERT(hasPendingActivity());
+
+    IDBError idbError(IDBDatabaseException::AbortError);
+    m_domError = DOMError::create(idbError.name());
+    m_result = IDBAny::createUndefined();
+
+    m_transaction->addRequest(*this);
+    enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, true, true, *this));
+}
+
+bool IDBOpenDBRequest::dispatchEvent(Event& event)
+{
+    bool result = IDBRequest::dispatchEvent(event);
+
+    if (m_transaction && m_transaction->isVersionChange() && (event.type() == eventNames().errorEvent || event.type() == eventNames().successEvent))
+        m_transaction->database().serverConnection().didFinishHandlingVersionChangeTransaction(*m_transaction);
+
+    return result;
+}
+
+void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBOpenDBRequest::onSuccess()");
+
+    if (!scriptExecutionContext())
+        return;
+
+    Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connection(), resultData);
+    m_result = IDBAny::create(WTFMove(database));
+    m_readyState = IDBRequestReadyState::Done;
+
+    enqueueEvent(IDBRequestCompletionEvent::create(eventNames().successEvent, false, false, *this));
+}
+
+void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
+{
+    Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connection(), resultData);
+    Ref<IDBTransaction> transaction = database->startVersionChangeTransaction(resultData.transactionInfo(), *this);
+
+    ASSERT(transaction->info().mode() == IndexedDB::TransactionMode::VersionChange);
+    ASSERT(transaction->originalDatabaseInfo());
+
+    uint64_t oldVersion = transaction->originalDatabaseInfo()->version();
+    uint64_t newVersion = transaction->info().newVersion();
+
+    LOG(IndexedDB, "IDBOpenDBRequest::onUpgradeNeeded() - current version is %" PRIu64 ", new is %" PRIu64, oldVersion, newVersion);
+
+    m_result = IDBAny::create(WTFMove(database));
+    m_readyState = IDBRequestReadyState::Done;
+    m_transaction = adoptRef(&transaction.leakRef());
+    m_transaction->addRequest(*this);
+
+    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().upgradeneededEvent));
+}
+
+void IDBOpenDBRequest::onDeleteDatabaseSuccess(const IDBResultData& resultData)
+{
+    uint64_t oldVersion = resultData.databaseInfo().version();
+
+    LOG(IndexedDB, "IDBOpenDBRequest::onDeleteDatabaseSuccess() - current version is %" PRIu64, oldVersion);
+
+    m_readyState = IDBRequestReadyState::Done;
+    m_result = IDBAny::createUndefined();
+
+    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, 0, eventNames().successEvent));
+}
+
+void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
+{
+    LOG(IndexedDB, "IDBOpenDBRequest::requestCompleted");
+
+    // If an Open request was completed after the page has navigated, leaving this request
+    // with a stopped script execution context, we need to message back to the server so it
+    // doesn't hang waiting on a database connection or transaction that will never exist.
+    if (m_contextStopped) {
+        switch (data.type()) {
+        case IDBResultType::OpenDatabaseSuccess:
+            connection().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), IDBResourceIdentifier::emptyValue());
+            break;
+        case IDBResultType::OpenDatabaseUpgradeNeeded:
+            connection().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), data.transactionInfo().identifier());
+            break;
+        default:
+            break;
+        }
+
+        return;
+    }
+
+    switch (data.type()) {
+    case IDBResultType::Error:
+        onError(data);
+        break;
+    case IDBResultType::OpenDatabaseSuccess:
+        onSuccess(data);
+        break;
+    case IDBResultType::OpenDatabaseUpgradeNeeded:
+        onUpgradeNeeded(data);
+        break;
+    case IDBResultType::DeleteDatabaseSuccess:
+        onDeleteDatabaseSuccess(data);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+void IDBOpenDBRequest::requestBlocked(uint64_t oldVersion, uint64_t newVersion)
+{
+    LOG(IndexedDB, "IDBOpenDBRequest::requestBlocked");
+    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().blockedEvent));
 }
 
 } // namespace WebCore

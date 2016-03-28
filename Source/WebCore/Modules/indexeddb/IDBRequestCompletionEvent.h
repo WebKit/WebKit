@@ -29,21 +29,21 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Event.h"
-#include "IDBRequestImpl.h"
+#include "IDBRequest.h"
 
 namespace WebCore {
 
 class IDBRequestCompletionEvent : public Event {
 public:
-    static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable, IDBClient::IDBRequest& request)
+    static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable, IDBRequest& request)
     {
         return adoptRef(*new IDBRequestCompletionEvent(type, canBubble, cancelable, request));
     }
 
 private:
-    IDBRequestCompletionEvent(const AtomicString& type, bool canBubble, bool cancelable, IDBClient::IDBRequest&);
+    IDBRequestCompletionEvent(const AtomicString& type, bool canBubble, bool cancelable, IDBRequest&);
 
-    Ref<IDBClient::IDBRequest> m_request;
+    Ref<IDBRequest> m_request;
 };
 
 

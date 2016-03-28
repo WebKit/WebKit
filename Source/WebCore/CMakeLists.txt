@@ -853,18 +853,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
 
-    Modules/indexeddb/client/IDBAnyImpl.cpp
     Modules/indexeddb/client/IDBConnectionToServer.cpp
-    Modules/indexeddb/client/IDBCursorImpl.cpp
-    Modules/indexeddb/client/IDBCursorWithValueImpl.cpp
-    Modules/indexeddb/client/IDBDatabaseImpl.cpp
-    Modules/indexeddb/client/IDBFactoryImpl.cpp
-    Modules/indexeddb/client/IDBIndexImpl.cpp
-    Modules/indexeddb/client/IDBObjectStoreImpl.cpp
-    Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp
-    Modules/indexeddb/client/IDBRequestImpl.cpp
-    Modules/indexeddb/client/IDBTransactionImpl.cpp
-    Modules/indexeddb/client/IDBVersionChangeEventImpl.cpp
     Modules/indexeddb/client/TransactionOperation.cpp
 
     Modules/indexeddb/server/IDBConnectionToClient.cpp
