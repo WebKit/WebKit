@@ -36,6 +36,7 @@ VPATH = \
     $(WebKit2)/Shared/Authentication \
     $(WebKit2)/Shared/mac \
     $(WebKit2)/WebProcess/ApplicationCache \
+    $(WebKit2)/WebProcess/Automation \
     $(WebKit2)/WebProcess/Cookies \
     $(WebKit2)/WebProcess/Databases/IndexedDB \
     $(WebKit2)/WebProcess/FullScreen \
@@ -70,6 +71,15 @@ VPATH = \
     $(WebKit2)/UIProcess/ios \
     $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) \
 #
+
+PYTHON = python
+PERL = perl
+
+ifeq ($(OS),Windows_NT)
+    DELETE = cmd //C del
+else
+    DELETE = rm -f
+endif
 
 MESSAGE_RECEIVERS = \
     AuthenticationManager \
@@ -108,6 +118,8 @@ MESSAGE_RECEIVERS = \
     ViewUpdateDispatcher \
     VisitedLinkStore \
     VisitedLinkTableController \
+    WebAutomationSession \
+    WebAutomationSessionProxy \
     WebConnection \
     WebCookieManager \
     WebCookieManagerProxy \
@@ -219,3 +231,11 @@ $(firstword $(AUTOMATION_PROTOCOL_OUTPUT_FILES)) : $(AUTOMATION_PROTOCOL_INPUT_F
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py --framework WebKit --backend --outputDir . $(AUTOMATION_PROTOCOL_INPUT_FILES)
 
 all : $(firstword $(AUTOMATION_PROTOCOL_OUTPUT_FILES))
+
+%ScriptSource.h : %.js $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl
+	echo "//# sourceURL=__WebAutomationInjectedScript__" > $(basename $(notdir $<)).min.js
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py < $< >> $(basename $(notdir $<)).min.js
+	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl $(basename $(notdir $<))ScriptSource $(basename $(notdir $<)).min.js $@
+	$(DELETE) $(basename $(notdir $<)).min.js
+
+all : WebAutomationSessionProxyScriptSource.h

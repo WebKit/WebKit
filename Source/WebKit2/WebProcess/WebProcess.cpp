@@ -41,6 +41,7 @@
 #include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "UserData.h"
+#include "WebAutomationSessionProxy.h"
 #include "WebConnectionToUIProcess.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
@@ -1437,6 +1438,16 @@ void WebProcess::setEnabledServices(bool hasImageServices, bool hasSelectionServ
     m_hasRichContentServices = hasRichContentServices;
 }
 #endif
+
+void WebProcess::ensureAutomationSessionProxy(const String& sessionIdentifier)
+{
+    m_automationSessionProxy = std::make_unique<WebAutomationSessionProxy>(sessionIdentifier);
+}
+
+void WebProcess::destroyAutomationSessionProxy()
+{
+    m_automationSessionProxy = nullptr;
+}
 
 void WebProcess::prefetchDNS(const String& hostname)
 {

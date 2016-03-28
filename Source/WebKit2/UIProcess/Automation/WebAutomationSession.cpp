@@ -28,6 +28,8 @@
 
 #include "APIAutomationSessionClient.h"
 #include "AutomationProtocolObjects.h"
+#include "WebAutomationSessionMessages.h"
+#include "WebAutomationSessionProxyMessages.h"
 #include "WebProcessPool.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
@@ -57,11 +59,25 @@ WebAutomationSession::WebAutomationSession()
 WebAutomationSession::~WebAutomationSession()
 {
     ASSERT(!m_client);
+
+    if (m_processPool)
+        m_processPool->removeMessageReceiver(Messages::WebAutomationSession::messageReceiverName());
 }
 
 void WebAutomationSession::setClient(std::unique_ptr<API::AutomationSessionClient> client)
 {
     m_client = WTFMove(client);
+}
+
+void WebAutomationSession::setProcessPool(WebKit::WebProcessPool* processPool)
+{
+    if (m_processPool)
+        m_processPool->removeMessageReceiver(Messages::WebAutomationSession::messageReceiverName());
+
+    m_processPool = processPool;
+
+    if (m_processPool)
+        m_processPool->addMessageReceiver(Messages::WebAutomationSession::messageReceiverName(), *this);
 }
 
 // NOTE: this class could be split at some point to support local and remote automation sessions.

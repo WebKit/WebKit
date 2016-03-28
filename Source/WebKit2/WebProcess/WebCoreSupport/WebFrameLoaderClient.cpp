@@ -37,6 +37,7 @@
 #include "PluginView.h"
 #include "UserData.h"
 #include "WKBundleAPICast.h"
+#include "WebAutomationSessionProxy.h"
 #include "WebBackForwardListProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDocumentLoader.h"
@@ -1578,6 +1579,9 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& 
         return;
 
     webPage->injectedBundleLoaderClient().didClearWindowObjectForFrame(webPage, m_frame, world);
+
+    if (auto automationSessionProxy = WebProcess::singleton().automationSessionProxy())
+        automationSessionProxy->didClearWindowObjectForFrame(*m_frame);
 
 #if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
     // Ensure the accessibility hierarchy is updated.

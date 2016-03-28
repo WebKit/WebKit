@@ -1,3 +1,65 @@
+2016-03-14  Timothy Hatcher  <timothy@apple.com>
+
+        Add WebAutomationSessionProxy for WebProcess side automation tasks
+
+        https://bugs.webkit.org/show_bug.cgi?id=155221
+        rdar://problem/25054868
+
+        Reviewed by Joseph Pecoraro.
+
+        * CMakeLists.txt: Add build step to build-in WebAutomationSessionProxy.js.
+        * DerivedSources.make: Ditto.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::~WebAutomationSession):
+        (WebKit::WebAutomationSession::setProcessPool): Add / remove message receiver.
+        * UIProcess/Automation/WebAutomationSession.h:
+
+        * UIProcess/Automation/WebAutomationSession.messages.in: Added.
+        Test message to get things to build.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::removeMessageReceiver):
+        (WebKit::WebProcessPool::setAutomationSession):
+        * UIProcess/WebProcessPool.h:
+
+        * WebKit2.xcodeproj/project.pbxproj: Added new files.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp: Added.
+        (WebKit::toJSString):
+        (WebKit::toJSValue):
+        (WebKit::WebAutomationSessionProxy::WebAutomationSessionProxy):
+        (WebKit::WebAutomationSessionProxy::~WebAutomationSessionProxy):
+        (WebKit::evaluate):
+        (WebKit::createUUID):
+        (WebKit::WebAutomationSessionProxy::scriptObjectForFrame):
+        (WebKit::WebAutomationSessionProxy::didClearWindowObjectForFrame):
+        Create a script object per frame that is evaluated from WebAutomationSessionProxy.js.
+        Clear the script object when the window object is cleared.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.h: Added.
+        (WebKit::WebAutomationSessionProxy::test):
+        Added test message to let the messages files build.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.js: Added.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in: Added.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        Call WebAutomationSessionProxy::didClearWindowObjectForFrame to clear the script object.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureAutomationSessionProxy):
+        (WebKit::WebProcess::destroyAutomationSessionProxy):
+        Creates and destroys the WebAutomationSessionProxy when the UIProcess WebAutomationSession
+        is set or removed on the WebProcessPool.
+
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::automationSessionProxy): Added.
+
+        * WebProcess/WebProcess.messages.in: Added. Test message to get things to build.
+
 2016-03-28  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the build after r198728.

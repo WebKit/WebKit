@@ -42,6 +42,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/WebsiteData"
     "${WEBKIT2_DIR}/WebProcess"
     "${WEBKIT2_DIR}/WebProcess/ApplicationCache"
+    "${WEBKIT2_DIR}/WebProcess/Automation"
     "${WEBKIT2_DIR}/WebProcess/Battery"
     "${WEBKIT2_DIR}/WebProcess/Cookies"
     "${WEBKIT2_DIR}/WebProcess/Databases"
@@ -502,6 +503,8 @@ set(WebKit2_SOURCES
     WebProcess/WebConnectionToUIProcess.cpp
     WebProcess/WebProcess.cpp
 
+    WebProcess/Automation/WebAutomationSessionProxy.cpp
+
     WebProcess/Battery/WebBatteryManager.cpp
 
     WebProcess/Cookies/WebCookieManager.cpp
@@ -673,6 +676,8 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebResourceLoadStatisticsStore.messages.in
     UIProcess/WebVibrationProxy.messages.in
 
+    UIProcess/Automation/WebAutomationSession.messages.in
+
     UIProcess/Databases/DatabaseProcessProxy.messages.in
 
     UIProcess/Downloads/DownloadProxy.messages.in
@@ -688,6 +693,8 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/UserContent/WebUserContentControllerProxy.messages.in
 
     WebProcess/WebProcess.messages.in
+
+    WebProcess/Automation/WebAutomationSessionProxy.messages.in
 
     WebProcess/Battery/WebBatteryManager.messages.in
 
@@ -796,6 +803,19 @@ list(APPEND WebKit2_HEADERS
 list(APPEND WebKit2_SOURCES
     ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.cpp
     ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.cpp
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxyScriptSource.h ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxy.min.js
+    MAIN_DEPENDENCY ${WEBKIT2_DIR}/WebProcess/Automation/WebAutomationSessionProxy.js
+    DEPENDS ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py
+    COMMAND ${CMAKE_COMMAND} -E echo "//# sourceURL=__WebAutomationInjectedScript__" > ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxy.min.js
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py < ${WEBKIT2_DIR}/WebProcess/Automation/WebAutomationSessionProxy.js >> ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxy.min.js
+    COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl WebAutomationSessionProxyScriptSource ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxy.min.js ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxyScriptSource.h
+    VERBATIM)
+
+list(APPEND WebKit2_HEADERS
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/WebauotmationSessionProxyScriptSource.h
 )
 
 WEBKIT_FRAMEWORK(WebKit2)

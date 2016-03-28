@@ -92,6 +92,9 @@ messages -> WebProcess LegacyReceiver {
     SetEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices)
 #endif
 
+    EnsureAutomationSessionProxy(String sessionIdentifier)
+    DestroyAutomationSessionProxy()
+
     ProcessWillSuspendImminently() -> (bool handled)
     PrepareToSuspend()
     CancelPrepareToSuspend()

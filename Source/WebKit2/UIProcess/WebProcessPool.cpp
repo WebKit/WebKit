@@ -647,6 +647,9 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
         process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
 
+    if (m_automationSession)
+        process->send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
+
     m_processes.append(process.ptr());
 
     ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
@@ -992,6 +995,11 @@ void WebProcessPool::addMessageReceiver(IPC::StringReference messageReceiverName
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
 }
 
+void WebProcessPool::removeMessageReceiver(IPC::StringReference messageReceiverName)
+{
+    m_messageReceiverMap.removeMessageReceiver(messageReceiverName);
+}
+
 void WebProcessPool::removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
@@ -1127,7 +1135,10 @@ void WebProcessPool::setAutomationSession(RefPtr<WebAutomationSession>&& automat
     if (m_automationSession) {
         m_automationSession->init();
         m_automationSession->setProcessPool(this);
-    }
+
+        sendToAllProcesses(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()));
+    } else
+        sendToAllProcesses(Messages::WebProcess::DestroyAutomationSessionProxy());
 #endif
 }
 

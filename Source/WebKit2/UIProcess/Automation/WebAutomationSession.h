@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "AutomationBackendDispatchers.h"
+#include "Connection.h"
 #include <wtf/Forward.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -49,7 +50,7 @@ class WebAutomationSessionClient;
 class WebPageProxy;
 class WebProcessPool;
 
-class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>
+class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>, public IPC::MessageReceiver
 #if ENABLE(REMOTE_INSPECTOR)
     , public Inspector::RemoteAutomationTarget
 #endif
@@ -68,7 +69,7 @@ public:
     String sessionIdentifier() const { return m_sessionIdentifier; }
 
     WebKit::WebProcessPool* processPool() const { return m_processPool; }
-    void setProcessPool(WebKit::WebProcessPool* processPool) { m_processPool = processPool; }
+    void setProcessPool(WebKit::WebProcessPool*);
 
 #if ENABLE(REMOTE_INSPECTOR)
     // Inspector::RemoteAutomationTarget API
@@ -92,6 +93,13 @@ public:
 private:
     WebKit::WebPageProxy* webPageProxyForHandle(const String&);
     String handleForWebPageProxy(WebKit::WebPageProxy*);
+
+    // Implemented in generated WebAutomationSessionMessageReceiver.cpp
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+
+    // Called by WebAutomationSession messages
+    // FIXME: Add message functions here.
+    void test() { };
 
     WebKit::WebProcessPool* m_processPool { nullptr };
     std::unique_ptr<API::AutomationSessionClient> m_client;
