@@ -42,6 +42,11 @@ public:
     virtual String sessionIdentifier() const { return String(); }
     virtual void didDisconnectFromRemote(WebKit::WebAutomationSession*) { }
     virtual WebKit::WebPageProxy* didRequestNewWindow(WebKit::WebAutomationSession*) { return nullptr; }
+    virtual bool isShowingJavaScriptDialogOnPage(WebKit::WebAutomationSession*, WebKit::WebPageProxy*) { return false; }
+    virtual void dismissCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession*, WebKit::WebPageProxy*) { }
+    virtual void acceptCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession*, WebKit::WebPageProxy*) { }
+    virtual String messageOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession*, WebKit::WebPageProxy*) { return String(); }
+    virtual void setUserInputForCurrentJavaScriptPromptOnPage(WebKit::WebAutomationSession*, WebKit::WebPageProxy*, const String&) { }
 };
 
 } // namespace API

@@ -51,6 +51,7 @@
                 "WindowNotFound",
                 "FrameNotFound",
                 "NodeNotFound",
+                "NoJavaScriptDialog",
                 "NotImplemented",
                 "MissingParameter"
             ]
@@ -191,6 +192,48 @@
                 { "name": "rect", "$ref": "Rect", "description": "The layout rect for the requested element. Specified in page or viewport coordinates based on the useViewportCoordinates parameter." }
             ],
             "async": true
+        },
+        {
+            "name": "isShowingJavaScriptDialog",
+            "description": "Checks if a browsing context is showing a JavaScript alert, confirm, or prompt dialog.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ],
+            "returns": [
+                { "name": "result", "type": "boolean", "description": "If the browsing context is showing a JavaScript dialog or not." }
+            ]
+        },
+        {
+            "name": "dismissCurrentJavaScriptDialog",
+            "description": "Dismisses a JavaScript alert, confirm, or prompt dialog currently showing in a browsing context. Equivalent to clicking the 'Cancel' button.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ]
+        },
+        {
+            "name": "acceptCurrentJavaScriptDialog",
+            "description": "Accepts a JavaScript alert, confirm, or prompt dialog currently showing in a browsing context. Equivalent to clicking the 'OK' button.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ]
+        },
+        {
+            "name": "messageOfCurrentJavaScriptDialog",
+            "description": "Returns the text displayed in a JavaScript alert, confirm, or prompt dialog currently showing in a browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ],
+            "returns": [
+                { "name": "message", "type": "string", "description": "Text being displayed in the current JavaScript dialog." }
+            ]
+        },
+        {
+            "name": "setUserInputForCurrentJavaScriptPrompt",
+            "description": "Sets the user entered value in a JavaScript prompt dialog currently showing in a browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "userInput", "type": "string", "description": "The text to enter in the prompt." }
+            ]
         }
     ]
 }

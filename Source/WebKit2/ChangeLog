@@ -1,3 +1,40 @@
+2016-03-25  Timothy Hatcher  <timothy@apple.com>
+
+        Web Automation: Add Automation protocol commands to handle JavaScript dialogs
+
+        https://bugs.webkit.org/show_bug.cgi?id=155888
+        rdar://problem/25360218
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::isShowingJavaScriptDialogOnPage): Added.
+        (API::AutomationSessionClient::dismissCurrentJavaScriptDialogOnPage): Added.
+        (API::AutomationSessionClient::acceptCurrentJavaScriptDialogOnPage): Added.
+        (API::AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage): Added.
+        (API::AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage): Added.
+
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+
+        * UIProcess/Automation/Automation.json: Added new commands.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::isShowingJavaScriptDialog): Added.
+        (WebKit::WebAutomationSession::dismissCurrentJavaScriptDialog): Added.
+        (WebKit::WebAutomationSession::acceptCurrentJavaScriptDialog): Added.
+        (WebKit::WebAutomationSession::messageOfCurrentJavaScriptDialog): Added.
+        (WebKit::WebAutomationSession::setUserInputForCurrentJavaScriptPrompt): Added.
+        * UIProcess/Automation/WebAutomationSession.h:
+
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::AutomationSessionClient): Added.
+        (WebKit::AutomationSessionClient::isShowingJavaScriptDialogOnPage): Added.
+        (WebKit::AutomationSessionClient::dismissCurrentJavaScriptDialogOnPage): Added.
+        (WebKit::AutomationSessionClient::acceptCurrentJavaScriptDialogOnPage): Added.
+        (WebKit::AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage): Added.
+        (WebKit::AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage): Added.
+
 2016-03-24  Timothy Hatcher  <timothy@apple.com>
 
         Web Automation: Add commands to compute layout of an element

@@ -465,4 +465,81 @@ void WebAutomationSession::didComputeElementLayout(uint64_t callbackID, WebCore:
     callback->sendSuccess(WTFMove(rectObject));
 }
 
+void WebAutomationSession::isShowingJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle, bool* result)
+{
+    ASSERT(m_client);
+    if (!m_client)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InternalError);
+
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    *result = m_client->isShowingJavaScriptDialogOnPage(this, page);
+}
+
+void WebAutomationSession::dismissCurrentJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle)
+{
+    ASSERT(m_client);
+    if (!m_client)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InternalError);
+
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    if (!m_client->isShowingJavaScriptDialogOnPage(this, page))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NoJavaScriptDialog);
+
+    m_client->dismissCurrentJavaScriptDialogOnPage(this, page);
+}
+
+void WebAutomationSession::acceptCurrentJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle)
+{
+    ASSERT(m_client);
+    if (!m_client)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InternalError);
+
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    if (!m_client->isShowingJavaScriptDialogOnPage(this, page))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NoJavaScriptDialog);
+
+    m_client->acceptCurrentJavaScriptDialogOnPage(this, page);
+}
+
+void WebAutomationSession::messageOfCurrentJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle, String* text)
+{
+    ASSERT(m_client);
+    if (!m_client)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InternalError);
+
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    if (!m_client->isShowingJavaScriptDialogOnPage(this, page))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NoJavaScriptDialog);
+
+    *text = m_client->messageOfCurrentJavaScriptDialogOnPage(this, page);
+}
+
+void WebAutomationSession::setUserInputForCurrentJavaScriptPrompt(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String& promptValue)
+{
+    ASSERT(m_client);
+    if (!m_client)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InternalError);
+
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    if (!m_client->isShowingJavaScriptDialogOnPage(this, page))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NoJavaScriptDialog);
+
+    m_client->setUserInputForCurrentJavaScriptPromptOnPage(this, page, promptValue);
+}
+
 } // namespace WebKit
