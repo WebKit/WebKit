@@ -28,6 +28,7 @@
 
 #include "Connection.h"
 #include <JavaScriptCore/JSBase.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class Element;
