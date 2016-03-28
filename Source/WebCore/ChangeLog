@@ -1,3 +1,20 @@
+2016-03-28  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Rename PlatformWheelEvent::isEndGesture to isEndOfMomentumScroll.
+        https://bugs.webkit.org/show_bug.cgi?id=155940
+
+        Reviewed by Simon Fraser.
+
+        No new tests needed.
+
+        The new name better reflects its purpose. Also it is a preparation to fix bug 155746.
+
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::shouldResetLatching):
+        (WebCore::PlatformWheelEvent::isEndOfMomentumScroll: Renamed; Formally isEndGesture.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::gestureShouldBeginSnap):
+
 2016-03-28  Zalan Bujtas  <zalan@apple.com>
 
         Setup cloned continuation renderer properly.

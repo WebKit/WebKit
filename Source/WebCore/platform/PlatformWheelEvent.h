@@ -159,7 +159,7 @@ namespace WebCore {
         bool useLatchedEventElement() const;
         bool shouldConsiderLatching() const;
         bool shouldResetLatching() const;
-        bool isEndGesture() const;
+        bool isEndOfMomentumScroll() const;
 #else
         bool useLatchedEventElement() const { return false; }
 #endif
@@ -203,10 +203,10 @@ namespace WebCore {
     
     inline bool PlatformWheelEvent::shouldResetLatching() const
     {
-        return m_phase == PlatformWheelEventPhaseCancelled || m_phase == PlatformWheelEventPhaseMayBegin || isEndGesture();
+        return m_phase == PlatformWheelEventPhaseCancelled || m_phase == PlatformWheelEventPhaseMayBegin || isEndOfMomentumScroll();
     }
-    
-    inline bool PlatformWheelEvent::isEndGesture() const
+
+    inline bool PlatformWheelEvent::isEndOfMomentumScroll() const
     {
         return m_phase == PlatformWheelEventPhaseNone && m_momentumPhase == PlatformWheelEventPhaseEnded;
     }
