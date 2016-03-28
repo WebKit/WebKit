@@ -1,3 +1,12 @@
+2016-03-28  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Upstream webkitdirs.pm from trunk.
+        rdar://problem/25253479
+
+        Rubber-stamped by Dean Johnson.
+
+        * Scripts/webkitdirs.pm:
+
 2016-03-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r194060. rdar://problem/24560757
