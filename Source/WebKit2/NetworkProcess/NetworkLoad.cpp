@@ -178,7 +178,7 @@ void NetworkLoad::convertTaskToDownload(DownloadID downloadID)
     
     ASSERT(m_responseCompletionHandler);
     if (m_responseCompletionHandler)
-        NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), WTFMove(m_responseCompletionHandler));
+        NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), std::exchange(m_responseCompletionHandler, nullptr));
 }
 
 void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
@@ -345,7 +345,7 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
 #if USE(NETWORK_SESSION)
     ASSERT_WITH_MESSAGE(!m_handle, "Blobs should never give authentication challenges");
     ASSERT(m_challengeCompletionHandler);
-    auto completionHandler = WTFMove(m_challengeCompletionHandler);
+    auto completionHandler = std::exchange(m_challengeCompletionHandler, nullptr);
     if (!result) {
         if (m_task && m_task->allowsSpecificHTTPSCertificateForHost(m_challenge))
             completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(m_challenge));

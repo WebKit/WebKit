@@ -1,3 +1,17 @@
+2016-03-28  Alex Christensen  <achristensen@webkit.org>
+
+        Use std::exchange for std::functions instead of WTFMove
+        https://bugs.webkit.org/show_bug.cgi?id=155950
+        rdar://problem/25348817
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::convertTaskToDownload):
+        (WebKit::NetworkLoad::setPendingDownloadID):
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        This makes the member variable nullptr when the value is moved so we don't use it again.
+
 2016-03-28  Brian Burg  <bburg@apple.com>
 
         Web Automation: report the browsing context's window frame (size and origin)
