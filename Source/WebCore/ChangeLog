@@ -1,3 +1,26 @@
+2016-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [RTL Scrollbars] Position:sticky can be positioned under vertical RTL scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=155949
+
+        Reviewed by Simon Fraser.
+
+        When performing sticky positioning logic, we were setting the clip rect's position
+        equal to the scrollPosition of the layer. This computation assumes that the top
+        left of the scroll position is the same as the top left of the clip rect. When
+        using RTL scrollbars, this is not true, so this code simply needs to be made aware
+        of the presence of an RTL scrollbar.
+
+        Tests: fast/scrolling/rtl-scrollbars-sticky-document-2.html
+               fast/scrolling/rtl-scrollbars-sticky-document.html
+               fast/scrolling/rtl-scrollbars-sticky-iframe-2.html
+               fast/scrolling/rtl-scrollbars-sticky-iframe.html
+               fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html
+               fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::constrainingRectForStickyPosition):
+
 2016-03-28  Antonio Gomes  <tonikitoo@webkit.org>
 
         Rename PlatformWheelEvent::isEndGesture to isEndOfMomentumScroll.

@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+</head>
+<body style="margin: 0px;">
+This test makes sure that position-sticky obeys RTL scrollbars when positioning.
+<iframe style="position: relative; width: 600px; height: 500px; border: 0px solid black;" srcdoc="<!DOCTYPE html>
+<head>
+</head>
+<body>
+<div style='position: absolute; top: 0px; left: 0px; width: 2000px; height: 2000px'>
+    <div style='position: absolute; left: 850px; width: 100px; height: 100px; background: green;'></div>
+    <div style='position: absolute; left: 950px; width: 485px; height: 100px; background: blue;'></div>
+</div>
+<script>
+window.scroll(850, 0);
+</script>
+</body>
+</html">
+</body>
+</html>

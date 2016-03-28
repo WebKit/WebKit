@@ -1,3 +1,24 @@
+2016-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [RTL Scrollbars] Position:sticky can be positioned under vertical RTL scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=155949
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios-simulator/TestExpectations:
+        * fast/scrolling/rtl-scrollbars-sticky-document-2-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-document-2.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-document-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-document.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-iframe-2-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-iframe-2.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-iframe-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-iframe.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html: Added.
+
 2016-03-28  Zalan Bujtas  <zalan@apple.com>
 
         Setup cloned continuation renderer properly.
