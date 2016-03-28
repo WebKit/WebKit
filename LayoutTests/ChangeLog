@@ -1,5 +1,13 @@
 2016-03-27  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
+        [EFL][AX] Mark AX failing tests to failure
+
+        Unreveiwed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
+2016-03-27  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
         Mark rtl-scrollbar's tests to pass with incorrectly
 
         Unreviewed EFL gardening.
