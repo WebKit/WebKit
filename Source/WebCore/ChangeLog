@@ -1,3 +1,18 @@
+2016-03-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Remove unneeded lines in offsetAndBreadthForPositionedChild()
+        https://bugs.webkit.org/show_bug.cgi?id=155788
+
+        Reviewed by Sergio Villar Senin.
+
+        Just remove 2 lines/variables that were not needed at all in
+        RenderGrid::offsetAndBreadthForPositionedChild().
+
+        No new tests, no change of behavior.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+
 2016-03-27  Konstantin Tokarev  <annulen@yandex.ru>
 
         Removed redundant #if conditions in ANGLEWebKitBridge.h

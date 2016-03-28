@@ -1517,11 +1517,8 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
         || (endLine < firstExplicitLine)
         || (endLine > lastExplicitLine);
 
-    unsigned initialPosition = startIsAuto ? 0 : startLine;
-    unsigned finalPosition = endIsAuto ? lastExplicitLine : endLine;
-
-    LayoutUnit start = startIsAuto ? LayoutUnit() : isRowAxis ?  m_columnPositions[initialPosition] : m_rowPositions[initialPosition];
-    LayoutUnit end = endIsAuto ? (isRowAxis ? logicalWidth() : logicalHeight()) : (isRowAxis ?  m_columnPositions[finalPosition] : m_rowPositions[finalPosition]);
+    LayoutUnit start = startIsAuto ? LayoutUnit() : (isRowAxis ?  m_columnPositions[startLine] : m_rowPositions[startLine]);
+    LayoutUnit end = endIsAuto ? (isRowAxis ? logicalWidth() : logicalHeight()) : (isRowAxis ?  m_columnPositions[endLine] : m_rowPositions[endLine]);
 
     breadth = end - start;
 
