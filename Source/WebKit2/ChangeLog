@@ -1,3 +1,17 @@
+2016-03-28  Brian Burg  <bburg@apple.com>
+
+        Web Automation: split protocol object BrowsingContext.windowFrame into two separate members
+        https://bugs.webkit.org/show_bug.cgi?id=155952
+        <rdar://problem/25393597>
+
+        Reviewed by Timothy Hatcher.
+
+        Using the name 'windowFrame' causes conflicts with some Objective-C code.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::buildBrowsingContextForPage):
+
 2016-03-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Unreviewed build fix after r198736.

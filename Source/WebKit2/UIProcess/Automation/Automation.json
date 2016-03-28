@@ -64,7 +64,8 @@
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "Opaque handle for a browsing context (window or tab). Used as a key for window-related commands." },
                 { "name": "active", "type": "boolean", "description": "Whether the browsing context has focus at the time the command is handled." },
                 { "name": "url", "type": "string", "description": "The URL loaded by the browsing context at the time the command is handled." },
-                { "name": "windowFrame", "$ref": "Rect", "description": "The current frame (position and size) of the browsing context's window." }
+                { "name": "windowSize", "$ref": "Size", "description": "The current size of the browsing context's window." },
+                { "name": "windowOrigin", "$ref": "Point", "description": "The current (x, y) position of the browsing context's window relative to the top-left of the screen." }
             ]
         }
     ],

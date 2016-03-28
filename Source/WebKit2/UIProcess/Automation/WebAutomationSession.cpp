@@ -205,18 +205,14 @@ RefPtr<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::b
         .setHeight(windowFrame.height())
         .release();
 
-    auto windowFrameObject = Inspector::Protocol::Automation::Rect::create()
-        .setOrigin(WTFMove(originObject))
-        .setSize(WTFMove(sizeObject))
-        .release();
-
     String handle = handleForWebPageProxy(page);
 
     return Inspector::Protocol::Automation::BrowsingContext::create()
         .setHandle(handle)
         .setActive(m_activeBrowsingContextHandle == handle)
         .setUrl(page.pageLoadState().activeURL())
-        .setWindowFrame(WTFMove(windowFrameObject))
+        .setWindowOrigin(WTFMove(originObject))
+        .setWindowSize(WTFMove(sizeObject))
         .release();
 }
 
