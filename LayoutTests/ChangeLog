@@ -1,3 +1,9 @@
+2016-03-28  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed rebaselining; Different track IDs are selected in El Capitan.
+
+        * platform/mac/media/track/video-track-alternate-groups-expected.txt: Added.
+
 2016-03-28  Chris Dumez  <cdumez@apple.com>
 
         Disk cache speculative validation requests do not have the 'Referer' HTTP header set
