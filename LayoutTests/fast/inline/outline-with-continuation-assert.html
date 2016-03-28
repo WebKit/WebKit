@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that inline continuation inherits outline painting properly.</title>
+</head>
+<style>
+div {
+    outline: auto
+}
+</style>
+</head>
+<body>
+PASS if no assert in Debug.
+<div>
+<span><span><span id="foo"></span>a</span></span>
+</div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.execCommand('selectAll');
+    var child = document.createElement('frame');
+    parent = document.getElementById('foo');
+    parent.appendChild(child);
+</script>
+</body>
+</html>

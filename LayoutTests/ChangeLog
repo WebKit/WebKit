@@ -1,3 +1,18 @@
+2016-03-28  Zalan Bujtas  <zalan@apple.com>
+
+        Setup cloned continuation renderer properly.
+        https://bugs.webkit.org/show_bug.cgi?id=155640
+
+        Reviewed by Simon Fraser.
+
+        Set the "renderer has outline ancestor" flag on the cloned inline renderer when
+        we split the original renderer for continuation.
+        It ensures that when the cloned part of the continuation requests repaint, we properly
+        invalidate the ancestor outline (if needed).
+
+        * fast/inline/outline-with-continuation-assert-expected.txt: Added.
+        * fast/inline/outline-with-continuation-assert.html: Added.
+
 2016-03-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking transitions/cancel-transition.html as flaky on ios-sim-wk2

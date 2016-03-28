@@ -1,3 +1,20 @@
+2016-03-28  Zalan Bujtas  <zalan@apple.com>
+
+        Setup cloned continuation renderer properly.
+        https://bugs.webkit.org/show_bug.cgi?id=155640
+
+        Reviewed by Simon Fraser.
+
+        Set the "renderer has outline ancestor" flag on the cloned inline renderer when
+        we split the original renderer for continuation.
+        It ensures that when the cloned part of the continuation requests repaint, we properly
+        invalidate the ancestor outline (if needed).
+
+        Test: fast/inline/outline-with-continuation-assert.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clone):
+
 2016-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Inspector Memory Timeline sometimes encounters unstoppable rAF drawing
