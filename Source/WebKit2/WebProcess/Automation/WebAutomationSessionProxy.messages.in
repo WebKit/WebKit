@@ -29,4 +29,6 @@ messages -> WebAutomationSessionProxy {
     ResolveParentFrame(uint64_t frameID, uint64_t callbackID)
 
     FocusFrame(uint64_t frameID)
+
+    ComputeElementLayout(uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool useViewportCoordinates, uint64_t callbackID)
 }

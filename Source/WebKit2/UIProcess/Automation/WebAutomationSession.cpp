@@ -417,4 +417,52 @@ void WebAutomationSession::didResolveParentFrame(uint64_t callbackID, uint64_t f
         callback->sendSuccess(handleForWebFrameID(frameID));
 }
 
+void WebAutomationSession::computeElementLayout(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String& frameHandle, const String& nodeHandle, const bool* optionalScrollIntoViewIfNeeded, const bool* optionalUseViewportCoordinates, Ref<ComputeElementLayoutCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    WebFrameProxy* frame = webFrameProxyForHandle(frameHandle, *page);
+    if (!frame)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(FrameNotFound);
+
+    uint64_t callbackID = m_nextComputeElementLayoutCallbackID++;
+    m_computeElementLayoutCallbacks.set(callbackID, WTFMove(callback));
+
+    bool scrollIntoViewIfNeeded = optionalScrollIntoViewIfNeeded ? *optionalScrollIntoViewIfNeeded : false;
+    bool useViewportCoordinates = optionalUseViewportCoordinates ? *optionalUseViewportCoordinates : false;
+
+    page->process().send(Messages::WebAutomationSessionProxy::ComputeElementLayout(frame->frameID(), nodeHandle, scrollIntoViewIfNeeded, useViewportCoordinates, callbackID), 0);
+}
+
+void WebAutomationSession::didComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, const String& errorType)
+{
+    auto callback = m_computeElementLayoutCallbacks.take(callbackID);
+    if (!callback)
+        return;
+
+    if (!errorType.isEmpty()) {
+        callback->sendFailure(errorType);
+        return;
+    }
+
+    auto originObject = Inspector::Protocol::Automation::Point::create()
+        .setX(rect.x())
+        .setY(rect.y())
+        .release();
+
+    auto sizeObject = Inspector::Protocol::Automation::Size::create()
+        .setWidth(rect.width())
+        .setHeight(rect.height())
+        .release();
+
+    auto rectObject = Inspector::Protocol::Automation::Rect::create()
+        .setOrigin(WTFMove(originObject))
+        .setSize(WTFMove(sizeObject))
+        .release();
+
+    callback->sendSuccess(WTFMove(rectObject));
+}
+
 } // namespace WebKit

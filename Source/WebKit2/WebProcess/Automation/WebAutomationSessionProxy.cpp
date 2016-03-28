@@ -41,6 +41,7 @@
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameTree.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/HTMLFrameElementBase.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/MainFrame.h>
@@ -405,6 +406,47 @@ void WebAutomationSessionProxy::focusFrame(uint64_t frameID)
         return;
 
     coreDOMWindow->focus(true);
+}
+
+void WebAutomationSessionProxy::computeElementLayout(uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool useViewportCoordinates, uint64_t callbackID)
+{
+    String frameNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+    String nodeNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
+
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, WebCore::IntRect(), frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
+    if (!coreElement) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, WebCore::IntRect(), nodeNotFoundErrorType), 0);
+        return;
+    }
+
+    if (scrollIntoViewIfNeeded)
+        coreElement->scrollIntoViewIfNeeded(false);
+
+    WebCore::IntRect rect = coreElement->clientRect();
+
+    if (!useViewportCoordinates) {
+        WebCore::Frame* coreFrame = frame->coreFrame();
+        if (!coreFrame) {
+            WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, WebCore::IntRect(), frameNotFoundErrorType), 0);
+            return;
+        }
+
+        WebCore::FrameView *coreFrameView = coreFrame->view();
+        if (!coreFrameView) {
+            WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, WebCore::IntRect(), frameNotFoundErrorType), 0);
+            return;
+        }
+
+        rect = coreFrameView->rootViewToContents(rect);
+    }
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, rect, emptyString()), 0);
 }
 
 } // namespace WebKit

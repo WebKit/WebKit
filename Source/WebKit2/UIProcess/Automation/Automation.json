@@ -3,6 +3,30 @@
     "description": "Automation domain exposes commands for automating user interactions with the browser.",
     "types": [
         {
+            "id": "Point",
+            "type": "object",
+            "properties": [
+                { "name": "x", "type": "number" },
+                { "name": "y", "type": "number" }
+            ]
+        },
+        {
+            "id": "Size",
+            "type": "object",
+            "properties": [
+                { "name": "width", "type": "number" },
+                { "name": "height", "type": "number" }
+            ]
+        },
+        {
+            "id": "Rect",
+            "type": "object",
+            "properties": [
+                { "name": "origin", "$ref": "Point" },
+                { "name": "size", "$ref": "Size" }
+            ]
+        },
+        {
             "id": "BrowsingContextHandle",
             "type": "string",
             "description": "An opaque identifier for a browsing context."
@@ -150,6 +174,21 @@
             ],
             "returns": [
                 { "name": "result", "$ref": "FrameHandle", "description": "The <code>FrameHandle</code> for the requested frame." }
+            ],
+            "async": true
+        },
+        {
+            "name": "computeElementLayout",
+            "description": "Computes the layout for an element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context the frame is located." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the element." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to use." },
+                { "name": "scrollIntoViewIfNeeded", "optional": true, "type": "boolean", "description": "If the element should be scrolled into view before computing its layout." },
+                { "name": "useViewportCoordinates", "optional": true, "type": "boolean", "description": "If the result coordinates should be represented as viewport coordinates or not. Defaults to false, which means coordinates should be represented as page coordinates." }
+            ],
+            "returns": [
+                { "name": "rect", "$ref": "Rect", "description": "The layout rect for the requested element. Specified in page or viewport coordinates based on the useViewportCoordinates parameter." }
             ],
             "async": true
         }

@@ -286,7 +286,7 @@ public:
 
     WEBCORE_EXPORT IntPoint rootViewToContents(const IntPoint&) const;
     WEBCORE_EXPORT IntPoint contentsToRootView(const IntPoint&) const;
-    IntRect rootViewToContents(const IntRect&) const;
+    WEBCORE_EXPORT IntRect rootViewToContents(const IntRect&) const;
     WEBCORE_EXPORT IntRect contentsToRootView(const IntRect&) const;
 
     IntPoint viewToContents(const IntPoint&) const;

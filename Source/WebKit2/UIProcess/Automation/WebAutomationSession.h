@@ -44,6 +44,10 @@ class BackendDispatcher;
 class FrontendRouter;
 }
 
+namespace WebCore {
+class IntRect;
+}
+
 namespace WebKit {
 
 class WebAutomationSessionClient;
@@ -90,6 +94,7 @@ public:
     void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, bool expectsImplicitCallbackArgument, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
     void resolveChildFrameHandle(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const int* optionalOrdinal, const String* optionalName, const String* optionalNodeHandle, Ref<ResolveChildFrameHandleCallback>&&) override;
     void resolveParentFrameHandle(Inspector::ErrorString&, const String& browsingContextHandle, const String& frameHandle, Ref<ResolveParentFrameHandleCallback>&&) override;
+    void computeElementLayout(Inspector::ErrorString&, const String& browsingContextHandle, const String& frameHandle, const String& nodeHandle, const bool* optionalScrollIntoViewIfNeeded, const bool* useViewportCoordinates, Ref<Inspector::AutomationBackendDispatcherHandler::ComputeElementLayoutCallback>&&) override;
 
 private:
     WebPageProxy* webPageProxyForHandle(const String&);
@@ -106,6 +111,7 @@ private:
     void didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType);
     void didResolveChildFrame(uint64_t callbackID, uint64_t frameID, const String& errorType);
     void didResolveParentFrame(uint64_t callbackID, uint64_t frameID, const String& errorType);
+    void didComputeElementLayout(uint64_t callbackID, WebCore::IntRect, const String& errorType);
 
     WebProcessPool* m_processPool { nullptr };
 
@@ -130,6 +136,9 @@ private:
 
     uint64_t m_nextResolveParentFrameCallbackID { 1 };
     HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::ResolveParentFrameHandleCallback>> m_resolveParentFrameHandleCallbacks;
+
+    uint64_t m_nextComputeElementLayoutCallbackID { 1 };
+    HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::ComputeElementLayoutCallback>> m_computeElementLayoutCallbacks;
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };

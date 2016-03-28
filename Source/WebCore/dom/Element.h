@@ -124,7 +124,7 @@ public:
     unsigned findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const { return elementData()->findAttributeIndexByName(name, shouldIgnoreAttributeCase); }
 
     void scrollIntoView(bool alignToTop = true);
-    void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
+    WEBCORE_EXPORT void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
     WEBCORE_EXPORT void scrollIntoViewIfNotVisible(bool centerIfNotVisible = true);
 
     void scrollByLines(int lines);
@@ -157,7 +157,7 @@ public:
 
     Ref<ClientRectList> getClientRects();
     Ref<ClientRect> getBoundingClientRect();
-    
+
     // Returns the absolute bounding box translated into client coordinates.
     WEBCORE_EXPORT IntRect clientRect() const;
     // Returns the absolute bounding box translated into screen coordinates.
