@@ -1,3 +1,12 @@
+2016-03-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking fast/loader/scroll-position-restored-on-back.html as flaky on ios-sim debug WK2
+        https://bugs.webkit.org/show_bug.cgi?id=155947
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-03-28  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed rebaselining; Different track IDs are selected in El Capitan.

@@ -1958,3 +1958,5 @@ webkit.org/b/155495 compositing/visible-rect/animated-from-none.html [ Pass Fail
 webkit.org/b/155755 perf/document-contains.html [ Pass Timeout ]
 
 webkit.org/b/155737 compositing/repaint/become-overlay-composited-layer.html [ Pass Failure ]
+
+webkit.org/b/155947 [ Debug ] fast/loader/scroll-position-restored-on-back.html [ Pass Failure ]
