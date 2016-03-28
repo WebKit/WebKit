@@ -1,5 +1,25 @@
 2016-03-28  Brady Eidson  <beidson@apple.com>
 
+        Fix build on some stricter compilers by removing unnecessary WTFMove.
+        Opportunistically remove some unnecessary "WebCore::"s
+        Followup to r198762
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::keyPathAny):
+        (WebCore::IDBObjectStore::transaction):
+        (WebCore::IDBObjectStore::openCursor):
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        (WebCore::IDBObjectStore::deleteFunction):
+        (WebCore::IDBObjectStore::clear):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::count):
+        (WebCore::IDBObjectStore::doCount):
+
+2016-03-28  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Remove abstract base classes for all IDB DOM classes.
         https://bugs.webkit.org/show_bug.cgi?id=155951
 

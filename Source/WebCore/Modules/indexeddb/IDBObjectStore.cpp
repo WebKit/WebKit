@@ -85,7 +85,7 @@ const String IDBObjectStore::name() const
     return m_info.name();
 }
 
-RefPtr<WebCore::IDBAny> IDBObjectStore::keyPathAny() const
+RefPtr<IDBAny> IDBObjectStore::keyPathAny() const
 {
     return IDBAny::create(m_info.keyPath());
 }
@@ -105,7 +105,7 @@ RefPtr<DOMStringList> IDBObjectStore::indexNames() const
     return indexNames;
 }
 
-RefPtr<WebCore::IDBTransaction> IDBObjectStore::transaction()
+RefPtr<IDBTransaction> IDBObjectStore::transaction()
 {
     return &m_transaction.get();
 }
@@ -115,22 +115,22 @@ bool IDBObjectStore::autoIncrement() const
     return m_info.autoIncrement();
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, keyRange, IDBCursor::directionNext(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, key, IDBCursor::directionNext(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, IDBKeyRange* range, const String& directionString, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, IDBKeyRange* range, const String& directionString, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::openCursor");
 
@@ -155,7 +155,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& c
     return WTFMove(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
     if (ec.code) {
@@ -166,7 +166,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& c
     return openCursor(context, keyRange.get(), direction, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::get");
 
@@ -194,7 +194,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context,
     return WTFMove(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::get");
 
@@ -219,12 +219,12 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context,
     return WTFMove(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& state, JSC::JSValue value, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState& state, JSC::JSValue value, ExceptionCodeWithMessage& ec)
 {
     return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, InlineKeyCheck::Perform, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKey> idbKey;
     if (!key.isUndefined())
@@ -232,7 +232,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, JSC::
     return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, InlineKeyCheck::Perform, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKey> idbKey;
     if (!key.isUndefined())
@@ -240,7 +240,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, JSC::
     return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::Overwrite, InlineKeyCheck::Perform, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& state, JSC::JSValue value, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState& state, JSC::JSValue value, ExceptionCodeWithMessage& ec)
 {
     return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::Overwrite, InlineKeyCheck::Perform, ec);
 }
@@ -349,7 +349,7 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue 
     return adoptRef(request.leakRef());
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     return doDelete(context, keyRange, ec);
 }
@@ -392,7 +392,7 @@ RefPtr<IDBRequest> IDBObjectStore::doDelete(ScriptExecutionContext& context, IDB
     return WTFMove(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     return modernDelete(context, key.jsValue(), ec);
 }
@@ -410,7 +410,7 @@ RefPtr<IDBRequest> IDBObjectStore::modernDelete(ScriptExecutionContext& context,
     return doDelete(context, &IDBKeyRange::create(idbKey.get()).get(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::clear(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::clear");
 
@@ -441,7 +441,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::clear(ScriptExecutionContext& contex
     return adoptRef(request.leakRef());
 }
 
-RefPtr<WebCore::IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext&, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCodeWithMessage& ec)
+RefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext&, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::createIndex %s", name.utf8().data());
 
@@ -496,10 +496,10 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext&, c
     Locker<Lock> locker(m_referencedIndexLock);
     m_referencedIndexes.set(name, WTFMove(index));
 
-    return WTFMove(refIndex);
+    return refIndex;
 }
 
-RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, ExceptionCodeWithMessage& ec)
+RefPtr<IDBIndex> IDBObjectStore::index(const String& indexName, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::index");
 
@@ -583,14 +583,14 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCodeWithMessage& e
     m_transaction->deleteIndex(m_info.identifier(), name);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
     return doCount(context, IDBKeyRangeData::allKeys(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
@@ -605,14 +605,14 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext& contex
     return doCount(context, IDBKeyRangeData(idbKey.get()), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
     return doCount(context, range ? IDBKeyRangeData(range) : IDBKeyRangeData::allKeys(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::doCount(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::doCount(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
 {
     // The IDB spec for several IDBObjectStore methods states that transaction related exceptions should fire before
     // the exception for an object store being deleted.
