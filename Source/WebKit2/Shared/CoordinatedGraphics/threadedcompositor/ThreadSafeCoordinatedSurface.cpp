@@ -77,10 +77,8 @@ void ThreadSafeCoordinatedSurface::endPaint()
     m_imageBuffer->context().restore();
 }
 
-void ThreadSafeCoordinatedSurface::copyToTexture(PassRefPtr<BitmapTexture> passTexture, const IntRect& target, const IntPoint& sourceOffset)
+void ThreadSafeCoordinatedSurface::copyToTexture(RefPtr<BitmapTexture> texture, const IntRect& target, const IntPoint& sourceOffset)
 {
-    RefPtr<BitmapTexture> texture(passTexture);
-
     ASSERT(m_imageBuffer);
     RefPtr<Image> image = m_imageBuffer->copyImage(DontCopyBackingStore);
     texture->updateContents(image.get(), target, sourceOffset, BitmapTexture::UpdateCanModifyOriginalImageData);

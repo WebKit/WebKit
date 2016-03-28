@@ -1,3 +1,12 @@
+2016-03-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix for the threaded compositor feature after r198655.
+        Adjust the first parameter of ThreadSafeCoordinatedSurface::copyToTexture().
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.cpp:
+        (WebKit::ThreadSafeCoordinatedSurface::copyToTexture):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.h:
+
 2016-03-27  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] REGRESSION(r188793): It made 200 layout tests and Bindings/event-target-wrapper.html performance test fail
