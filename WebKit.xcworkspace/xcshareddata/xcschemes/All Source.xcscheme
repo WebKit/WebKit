@@ -9,7 +9,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "&quot;$SRCROOT/../../Tools/Scripts/copy-webkitlibraries-to-product-directory&quot; --wksi">
+               scriptText = "&quot;$SRCROOT/../../Tools/Scripts/copy-webkitlibraries-to-product-directory&quot; --wksi --sdk &quot;$SDKROOT&quot;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
