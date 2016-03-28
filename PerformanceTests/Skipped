@@ -93,9 +93,5 @@ Layout/Multicol
 # rdar://problem/21227453
 Dromaeo/jslib-modify-prototype.html
 
-# [EFL] REGRESSION(r188793): It made 200 layout tests and Bindings/event-target-wrapper.html performance test fail
-# https://bugs.webkit.org/show_bug.cgi?id=148470
-[ EFL ] Bindings/event-target-wrapper.html
-
 # Still under development so skip it for now.
 Animometer

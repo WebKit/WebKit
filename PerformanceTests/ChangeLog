@@ -1,3 +1,12 @@
+2016-03-27  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] REGRESSION(r188793): It made 200 layout tests and Bindings/event-target-wrapper.html performance test fail
+        https://bugs.webkit.org/show_bug.cgi?id=148470 
+
+        Reviewed by Darin Adler.
+
+        * Skipped: Unskip the Bindings/event-target-wrapper test.
+
 2016-03-23  Jon Lee  <jonlee@apple.com>
 
         Update focus and leaves tests
