@@ -1,3 +1,18 @@
+2016-03-27  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed redundant #if conditions in ANGLEWebKitBridge.h
+        https://bugs.webkit.org/show_bug.cgi?id=155880
+
+        Reviewed by Csaba Osztrogonác.
+
+        GTK, Efl, AppleWin, and WinCairo ports can be built only with cmake,
+        so condition !defined(BUILDING_WITH_CMAKE) implies
+        !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATOFRM(WIN).
+
+        No new tests needed.
+
+        * platform/graphics/ANGLEWebKitBridge.h:
+
 2016-03-26  Alex Christensen  <achristensen@webkit.org>
 
         Mac CMake build fix.

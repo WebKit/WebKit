@@ -26,6 +26,7 @@
 #ifndef ANGLEWebKitBridge_h
 #define ANGLEWebKitBridge_h
 
+#include <ANGLE/ShaderLang.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,14 +42,6 @@
 #else
 #include "OpenGLShims.h"
 #endif
-#endif
-
-#if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(WIN) && !defined(BUILDING_WITH_CMAKE)
-#include "ANGLE/ShaderLang.h"
-#elif PLATFORM(WIN) && !defined(BUILDING_WITH_CMAKE)
-#include "GLSLANG/ShaderLang.h"
-#else
-#include <ANGLE/ShaderLang.h>
 #endif
 
 namespace WebCore {
