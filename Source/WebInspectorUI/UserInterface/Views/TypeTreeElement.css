@@ -23,12 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.type-tree-element {
+.item.type-tree-element {
     margin-top: 1px;
+    height: auto;
 }
 
-.type-tree-element > .titles {
+.item.type-tree-element > .titles {
     position: relative;
+    top: auto;
     line-height: normal;
     padding-bottom: 1px;
     text-overflow: ellipsis;
@@ -38,12 +40,11 @@
     vertical-align: top;
 }
 
-.type-tree-element > .disclosure-button {
+.item.type-tree-element > .disclosure-button {
     display: inline-block;
     vertical-align: top;
 
     width: 15px;
-    height: 16px;
 
     margin-left: -1px;
     border: 0;
@@ -51,7 +52,7 @@
     -webkit-appearance: none;
 }
 
-.type-tree-element.parent > .disclosure-button {
+.item.type-tree-element.parent > .disclosure-button {
     background-color: transparent;
     background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
     background-repeat: no-repeat;
@@ -59,15 +60,15 @@
     background-size: 13px 13px;
 }
 
-.type-tree-element.parent.expanded > .disclosure-button {
+.item.type-tree-element.parent.expanded > .disclosure-button {
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
-.type-tree-element > .icon {
+.item.type-tree-element > .icon {
     display: none;
 }
 
-.type-tree-element.prototype {
+.item.type-tree-element.prototype {
     display: inline-block;
 
     border: 1px solid hsla(0, 0%, 0%, 0.06);
@@ -75,14 +76,14 @@
     border-radius: 3px;
 
     padding: 0 10px 1px 0;
-    margin: 3px 0 2px 0;
+    margin: 3px 0 2px -1px;
 }
 
-.type-tree-element.prototype:hover,
-.type-tree-element.prototype:focus {
+.item.type-tree-element.prototype:hover,
+.item.type-tree-element.prototype:focus {
     border-color: hsla(0, 0%, 0%, 0.1);
 }
 
-.type-tree-element.prototype + ol {
+.item.type-tree-element.prototype + ol {
     -webkit-padding-start: 0px;
 }

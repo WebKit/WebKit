@@ -37,6 +37,7 @@ WebInspector.TypeTreeView = class TypeTreeView extends WebInspector.Object
         this._element.className = "type-tree";
 
         this._outline = new WebInspector.TreeOutline;
+        this._outline.customIndent = true;
         this._outline.element.classList.add("type");
         this._element.appendChild(this._outline.element);
 

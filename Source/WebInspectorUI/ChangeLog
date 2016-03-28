@@ -1,3 +1,42 @@
+2016-03-28  Matt Baker  <mattbaker@apple.com>
+
+        REGRESSION (r195303): Web Inspector: Wrong indentation in the type coverage profiler popovers
+        https://bugs.webkit.org/show_bug.cgi?id=155930
+        <rdar://problem/25377042>
+
+        Reviewed by Timothy Hatcher.
+
+        Increased specificity of TypeTreeView CSS selectors, and added new
+        overrides for rules made global by r195303, which don't apply to the
+        TypeTreeView's or its tree elements.
+
+        * UserInterface/Views/TypeTreeElement.css:
+        (.item.type-tree-element):
+        (.item.type-tree-element > .titles):
+        (.item.type-tree-element > .disclosure-button):
+        (.item.type-tree-element.parent > .disclosure-button):
+        (.item.type-tree-element.parent.expanded > .disclosure-button):
+        (.item.type-tree-element > .icon):
+        (.item.type-tree-element.prototype):
+        (.item.type-tree-element.prototype:focus):
+        (.item.type-tree-element.prototype + ol):
+        (.type-tree-element): Deleted.
+        (.type-tree-element > .titles): Deleted.
+        (.type-tree-element > .disclosure-button): Deleted.
+        (.type-tree-element.parent > .disclosure-button): Deleted.
+        (.type-tree-element.parent.expanded > .disclosure-button): Deleted.
+        (.type-tree-element > .icon): Deleted.
+        (.type-tree-element.prototype): Deleted.
+        (.type-tree-element.prototype:focus): Deleted.
+        (.type-tree-element.prototype + ol): Deleted.
+
+        * UserInterface/Views/TypeTreeView.css:
+        (.tree-outline.type li):
+
+        * UserInterface/Views/TypeTreeView.js:
+        (WebInspector.TypeTreeView):
+        Use custom indentation.
+
 2016-03-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Large repaints while typing in the console tab

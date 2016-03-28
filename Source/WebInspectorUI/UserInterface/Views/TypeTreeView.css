@@ -41,6 +41,7 @@
 }
 
 .tree-outline.type li {
+    padding: 0;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
