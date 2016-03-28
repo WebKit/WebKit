@@ -1,5 +1,14 @@
 2016-03-28  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking transitions/cancel-transition.html as flaky on ios-sim-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=155948
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2016-03-28  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking fast/loader/scroll-position-restored-on-back.html as flaky on ios-sim debug WK2
         https://bugs.webkit.org/show_bug.cgi?id=155947
 
