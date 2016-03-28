@@ -1,3 +1,48 @@
+2016-03-18  Timothy Hatcher  <timothy@apple.com>
+
+        Web Automation: Add Automation protocol commands to resolve frames as handles
+
+        https://bugs.webkit.org/show_bug.cgi?id=155650
+        rdar://problem/25242422
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Automation/Automation.json:
+        Added resolveFrameHandle and resolveParentFrameHandle.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::webFrameProxyForHandle): Added.
+        (WebKit::WebAutomationSession::handleForWebFrameID): Added.
+        (WebKit::WebAutomationSession::handleForWebFrameProxy): Added.
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction): Use frame handles now.
+        (WebKit::WebAutomationSession::resolveChildFrameHandle): Added.
+        (WebKit::WebAutomationSession::didChildResolveFrame): Added.
+        (WebKit::WebAutomationSession::resolveParentFrameHandle): Added.
+        (WebKit::WebAutomationSession::didResolveParentFrame): Added.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.messages.in:
+        (DidResolveChildFrame): Added.
+        (DidResolveParentFrame): Added.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::elementForNodeHandle): Added.
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithOrdinal): Added.
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithNodeHandle): Added.
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithName): Added.
+        (WebKit::WebAutomationSessionProxy::resolveParentFrame): Added.
+        (WebKit::WebAutomationSessionProxy::focusFrame): Added.
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+        (ResolveChildFrameWithOrdinal): Added.
+        (ResolveChildFrameWithNodeHandle): Added.
+        (ResolveChildFrameWithName): Added.
+        (ResolveParentFrame): Added.
+        (FocusFrame): Added.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (AutomationSessionProxy.prototype.nodeForIdentifier): Added.
+        Public method that eats the exception thrown by the private method.
+
 2016-03-17  Timothy Hatcher  <timothy@apple.com>
 
         Web Automation: Add Automation.evaluateJavaScriptFunction

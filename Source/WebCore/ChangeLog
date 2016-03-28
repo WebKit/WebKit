@@ -1,3 +1,15 @@
+2016-03-18  Timothy Hatcher  <timothy@apple.com>
+
+        Web Automation: Add Automation protocol commands to resolve frames as handles
+
+        https://bugs.webkit.org/show_bug.cgi?id=155650
+        rdar://problem/25242422
+
+        Reviewed by Brian Burg.
+
+        * page/DOMWindow.h: Marked focus() method as exported so WK2 can use them.
+        * page/FrameTree.h: Marked scopedChild() methods as exported so WK2 can use them.
+
 2016-03-28  Konstantin Tokarev  <annulen@yandex.ru>
 
         Remove USE(TEXTURE_MAPPER) guards inside TextureMapper sources.

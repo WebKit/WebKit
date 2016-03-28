@@ -47,6 +47,7 @@ class FrontendRouter;
 namespace WebKit {
 
 class WebAutomationSessionClient;
+class WebFrameProxy;
 class WebPageProxy;
 class WebProcessPool;
 
@@ -57,9 +58,6 @@ class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::Aut
     , public Inspector::AutomationBackendDispatcherHandler
 {
 public:
-    typedef HashMap<uint64_t, String> WebPageHandleMap;
-    typedef HashMap<String, uint64_t> HandleWebPageMap;
-
     WebAutomationSession();
     ~WebAutomationSession();
 
@@ -68,8 +66,8 @@ public:
     void setSessionIdentifier(const String& sessionIdentifier) { m_sessionIdentifier = sessionIdentifier; }
     String sessionIdentifier() const { return m_sessionIdentifier; }
 
-    WebKit::WebProcessPool* processPool() const { return m_processPool; }
-    void setProcessPool(WebKit::WebProcessPool*);
+    WebProcessPool* processPool() const { return m_processPool; }
+    void setProcessPool(WebProcessPool*);
 
 #if ENABLE(REMOTE_INSPECTOR)
     // Inspector::RemoteAutomationTarget API
@@ -84,36 +82,54 @@ public:
     void getBrowsingContext(Inspector::ErrorString&, const String&, RefPtr<Inspector::Protocol::Automation::BrowsingContext>&) override;
     void createBrowsingContext(Inspector::ErrorString&, String*) override;
     void closeBrowsingContext(Inspector::ErrorString&, const String&) override;
-    void switchToBrowsingContext(Inspector::ErrorString&, const String&) override;
+    void switchToBrowsingContext(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle) override;
     void navigateBrowsingContext(Inspector::ErrorString&, const String& handle, const String& url) override;
     void goBackInBrowsingContext(Inspector::ErrorString&, const String&) override;
     void goForwardInBrowsingContext(Inspector::ErrorString&, const String&) override;
     void reloadBrowsingContext(Inspector::ErrorString&, const String&) override;
-    void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& handle, const String& function, const Inspector::InspectorArray& arguments, bool expectsImplicitCallbackArgument, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
+    void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, bool expectsImplicitCallbackArgument, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
+    void resolveChildFrameHandle(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const int* optionalOrdinal, const String* optionalName, const String* optionalNodeHandle, Ref<ResolveChildFrameHandleCallback>&&) override;
+    void resolveParentFrameHandle(Inspector::ErrorString&, const String& browsingContextHandle, const String& frameHandle, Ref<ResolveParentFrameHandleCallback>&&) override;
 
 private:
-    WebKit::WebPageProxy* webPageProxyForHandle(const String&);
-    String handleForWebPageProxy(WebKit::WebPageProxy*);
+    WebPageProxy* webPageProxyForHandle(const String&);
+    String handleForWebPageProxy(const WebPageProxy&);
+
+    WebFrameProxy* webFrameProxyForHandle(const String&, WebPageProxy&);
+    String handleForWebFrameID(uint64_t frameID);
+    String handleForWebFrameProxy(const WebFrameProxy&);
 
     // Implemented in generated WebAutomationSessionMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     // Called by WebAutomationSession messages
     void didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType);
+    void didResolveChildFrame(uint64_t callbackID, uint64_t frameID, const String& errorType);
+    void didResolveParentFrame(uint64_t callbackID, uint64_t frameID, const String& errorType);
 
-    WebKit::WebProcessPool* m_processPool { nullptr };
+    WebProcessPool* m_processPool { nullptr };
+
     std::unique_ptr<API::AutomationSessionClient> m_client;
     String m_sessionIdentifier { ASCIILiteral("Untitled Session") };
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Ref<Inspector::AutomationBackendDispatcher> m_domainDispatcher;
 
-    WebPageHandleMap m_webPageHandleMap;
-    HandleWebPageMap m_handleWebPageMap;
+    HashMap<uint64_t, String> m_webPageHandleMap;
+    HashMap<String, uint64_t> m_handleWebPageMap;
     String m_activeBrowsingContextHandle;
+
+    HashMap<uint64_t, String> m_webFrameHandleMap;
+    HashMap<String, uint64_t> m_handleWebFrameMap;
 
     uint64_t m_nextEvaluateJavaScriptCallbackID { 1 };
     HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>> m_evaluateJavaScriptFunctionCallbacks;
+
+    uint64_t m_nextResolveFrameCallbackID { 1 };
+    HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::ResolveChildFrameHandleCallback>> m_resolveChildFrameHandleCallbacks;
+
+    uint64_t m_nextResolveParentFrameCallbackID { 1 };
+    HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::ResolveParentFrameHandleCallback>> m_resolveParentFrameHandleCallbacks;
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };

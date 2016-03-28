@@ -56,6 +56,15 @@ let AutomationSessionProxy = class AutomationSessionProxy
             callback(functionValue.apply(null, argumentValues));
     }
 
+    nodeForIdentifier(identifier)
+    {
+        try {
+            return this._nodeForIdentifier(identifier);
+        } catch (error) {
+            return null;
+        }
+    }
+
     // Private
 
     _jsonParse(string)

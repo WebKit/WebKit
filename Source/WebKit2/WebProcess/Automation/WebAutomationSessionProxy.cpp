@@ -33,9 +33,17 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefPrivate.h>
 #include <JavaScriptCore/OpaqueJSString.h>
+#include <WebCore/DOMWindow.h>
+#include <WebCore/Frame.h>
+#include <WebCore/FrameTree.h>
+#include <WebCore/HTMLFrameElementBase.h>
+#include <WebCore/JSElement.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/UUID.h>
 
 namespace WebKit {
@@ -161,6 +169,33 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
     return scriptObject;
 }
 
+WebCore::Element* WebAutomationSessionProxy::elementForNodeHandle(WebFrame& frame, const String& nodeHandle)
+{
+    // Don't use scriptObjectForFrame() since we can assume if the script object
+    // does not exist, there are no nodes mapped to handles. Using scriptObjectForFrame()
+    // will make a new script object if it can't find one, preventing us from returning fast.
+    JSObjectRef scriptObject = m_webFrameScriptObjectMap.get(frame.frameID());
+    if (!scriptObject)
+        return nullptr;
+
+    JSGlobalContextRef context = frame.jsContext();
+
+    JSValueRef functionArguments[] = {
+        toJSValue(context, nodeHandle)
+    };
+
+    JSValueRef result = callPropertyFunction(context, scriptObject, ASCIILiteral("nodeForIdentifier"), WTF_ARRAY_LENGTH(functionArguments), functionArguments, nullptr);
+    JSObjectRef element = JSValueToObject(context, result, nullptr);
+    if (!element)
+        return nullptr;
+
+    auto elementWrapper = JSC::jsDynamicCast<WebCore::JSElement*>(toJS(element));
+    if (!elementWrapper)
+        return nullptr;
+
+    return &elementWrapper->wrapped();
+}
+
 void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 {
     uint64_t frameID = frame.frameID();
@@ -237,6 +272,139 @@ void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(uint64_t frameID, 
     }
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, result, errorType), 0);
+}
+
+void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(uint64_t frameID, uint32_t ordinal, uint64_t callbackID)
+{
+    String frameNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebCore::Frame* coreFrame = frame->coreFrame();
+    if (!coreFrame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebCore::Frame* coreChildFrame = coreFrame->tree().scopedChild(ordinal);
+    if (!coreChildFrame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebFrame* childFrame = WebFrame::fromCoreFrame(*coreChildFrame);
+    if (!childFrame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, childFrame->frameID(), emptyString()), 0);
+}
+
+void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(uint64_t frameID, const String& nodeHandle, uint64_t callbackID)
+{
+    String frameNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
+    if (!coreElement || !coreElement->isFrameElementBase()) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebCore::Frame* coreFrameFromElement = static_cast<WebCore::HTMLFrameElementBase*>(coreElement)->contentFrame();
+    if (!coreFrameFromElement) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebFrame* frameFromElement = WebFrame::fromCoreFrame(*coreFrameFromElement);
+    if (!frameFromElement) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, frameFromElement->frameID(), emptyString()), 0);
+}
+
+void WebAutomationSessionProxy::resolveChildFrameWithName(uint64_t frameID, const String& name, uint64_t callbackID)
+{
+    String frameNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebCore::Frame* coreFrame = frame->coreFrame();
+    if (!coreFrame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebCore::Frame* coreChildFrame = coreFrame->tree().scopedChild(name);
+    if (!coreChildFrame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebFrame* childFrame = WebFrame::fromCoreFrame(*coreChildFrame);
+    if (!childFrame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, childFrame->frameID(), emptyString()), 0);
+}
+
+void WebAutomationSessionProxy::resolveParentFrame(uint64_t frameID, uint64_t callbackID)
+{
+    String frameNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveParentFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebFrame* parentFrame = frame->parentFrame();
+    if (!parentFrame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveParentFrame(callbackID, 0, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveParentFrame(callbackID, parentFrame->frameID(), emptyString()), 0);
+}
+
+void WebAutomationSessionProxy::focusFrame(uint64_t frameID)
+{
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+
+    WebCore::Frame* coreFrame = frame->coreFrame();
+    if (!coreFrame)
+        return;
+
+    WebCore::Document* coreDocument = coreFrame->document();
+    if (!coreDocument)
+        return;
+
+    WebCore::DOMWindow* coreDOMWindow = coreDocument->domWindow();
+    if (!coreDOMWindow)
+        return;
+
+    coreDOMWindow->focus(true);
 }
 
 } // namespace WebKit

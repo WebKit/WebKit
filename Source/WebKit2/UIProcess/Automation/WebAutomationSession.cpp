@@ -125,24 +125,70 @@ WebPageProxy* WebAutomationSession::webPageProxyForHandle(const String& handle)
     return WebProcessProxy::webPage(iter->value);
 }
 
-String WebAutomationSession::handleForWebPageProxy(WebPageProxy* webPageProxy)
+String WebAutomationSession::handleForWebPageProxy(const WebPageProxy& webPageProxy)
 {
-    auto iter = m_webPageHandleMap.find(webPageProxy->pageID());
+    auto iter = m_webPageHandleMap.find(webPageProxy.pageID());
     if (iter != m_webPageHandleMap.end())
         return iter->value;
 
-    String handle = WebCore::createCanonicalUUIDString().convertToASCIIUppercase();
+    String handle = "page-" + WebCore::createCanonicalUUIDString().convertToASCIIUppercase();
 
-    auto firstAddResult = m_webPageHandleMap.add(webPageProxy->pageID(), handle);
+    auto firstAddResult = m_webPageHandleMap.add(webPageProxy.pageID(), handle);
     RELEASE_ASSERT(firstAddResult.isNewEntry);
 
-    auto secondAddResult = m_handleWebPageMap.add(handle, webPageProxy->pageID());
+    auto secondAddResult = m_handleWebPageMap.add(handle, webPageProxy.pageID());
     RELEASE_ASSERT(secondAddResult.isNewEntry);
 
     return handle;
 }
 
-// Inspector::AutomationBackendDispatcherHandler API
+WebFrameProxy* WebAutomationSession::webFrameProxyForHandle(const String& handle, WebPageProxy& page)
+{
+    if (handle.isEmpty())
+        return page.mainFrame();
+
+    auto iter = m_handleWebFrameMap.find(handle);
+    if (iter == m_handleWebFrameMap.end())
+        return nullptr;
+
+    if (WebFrameProxy* frame = page.process().webFrame(iter->value))
+        return frame;
+
+    return nullptr;
+}
+
+String WebAutomationSession::handleForWebFrameID(uint64_t frameID)
+{
+    if (!frameID)
+        return emptyString();
+
+    for (auto& process : m_processPool->processes()) {
+        if (WebFrameProxy* frame = process->webFrame(frameID)) {
+            if (frame->isMainFrame())
+                return emptyString();
+            break;
+        }
+    }
+
+    auto iter = m_webFrameHandleMap.find(frameID);
+    if (iter != m_webFrameHandleMap.end())
+        return iter->value;
+
+    String handle = "frame-" + WebCore::createCanonicalUUIDString().convertToASCIIUppercase();
+
+    auto firstAddResult = m_webFrameHandleMap.add(frameID, handle);
+    RELEASE_ASSERT(firstAddResult.isNewEntry);
+
+    auto secondAddResult = m_handleWebFrameMap.add(handle, frameID);
+    RELEASE_ASSERT(secondAddResult.isNewEntry);
+
+    return handle;
+}
+
+String WebAutomationSession::handleForWebFrameProxy(const WebFrameProxy& webFrameProxy)
+{
+    return handleForWebFrameID(webFrameProxy.frameID());
+}
 
 void WebAutomationSession::getBrowsingContexts(Inspector::ErrorString& errorString, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>>& contexts)
 {
@@ -153,10 +199,10 @@ void WebAutomationSession::getBrowsingContexts(Inspector::ErrorString& errorStri
             if (!page->isControlledByAutomation())
                 continue;
 
-            String handle = handleForWebPageProxy(page);
+            String handle = handleForWebPageProxy(*page);
 
             auto browsingContext = Inspector::Protocol::Automation::BrowsingContext::create()
-                .setHandle(handleForWebPageProxy(page))
+                .setHandle(handleForWebPageProxy(*page))
                 .setActive(m_activeBrowsingContextHandle == handle)
                 .setUrl(page->pageLoadState().activeURL())
                 .release();
@@ -173,7 +219,7 @@ void WebAutomationSession::getBrowsingContext(Inspector::ErrorString& errorStrin
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
 
     context = Inspector::Protocol::Automation::BrowsingContext::create()
-        .setHandle(handleForWebPageProxy(page))
+        .setHandle(handleForWebPageProxy(*page))
         .setActive(m_activeBrowsingContextHandle == handle)
         .setUrl(page->pageLoadState().activeURL())
         .release();
@@ -189,7 +235,7 @@ void WebAutomationSession::createBrowsingContext(Inspector::ErrorString& errorSt
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InternalError);
 
-    m_activeBrowsingContextHandle = *handle = handleForWebPageProxy(page);
+    m_activeBrowsingContextHandle = *handle = handleForWebPageProxy(*page);
 }
 
 void WebAutomationSession::closeBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
@@ -204,17 +250,21 @@ void WebAutomationSession::closeBrowsingContext(Inspector::ErrorString& errorStr
     page->closePage(false);
 }
 
-void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
+void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle)
 {
-    WebPageProxy* page = webPageProxyForHandle(handle);
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
 
-    m_activeBrowsingContextHandle = handle;
+    WebFrameProxy* frame = webFrameProxyForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), *page);
+    if (!frame)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(FrameNotFound);
 
-    // FIXME: Verify this is enough. We still might want to go through the AutomationSessionClient
-    // to get closer a user pressing focusing the window / page.
+    // FIXME: We don't need to track this in WK2. Remove in a follow up.
+    m_activeBrowsingContextHandle = browsingContextHandle;
+
     page->setFocus(true);
+    page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(frame->frameID()), 0);
 }
 
 void WebAutomationSession::navigateBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const String& url)
@@ -255,12 +305,15 @@ void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorSt
     page->reload(reloadFromOrigin, contentBlockersEnabled);
 }
 
-void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& handle, const String& function, const Inspector::InspectorArray& arguments, bool expectsImplicitCallbackArgument, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
+void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, bool expectsImplicitCallbackArgument, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
 {
-    // FIXME 24172439: This should be a frame handle, not a page handle. Change this once we have frame support.
-    WebPageProxy* page = webPageProxyForHandle(handle);
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    WebFrameProxy* frame = webFrameProxyForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), *page);
+    if (!frame)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(FrameNotFound);
 
     Vector<String> argumentsVector;
     argumentsVector.reserveCapacity(arguments.length());
@@ -274,7 +327,7 @@ void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& er
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(page->mainFrame()->frameID(), function, argumentsVector, expectsImplicitCallbackArgument, callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(frame->frameID(), function, argumentsVector, expectsImplicitCallbackArgument, callbackID), 0);
 }
 
 void WebAutomationSession::didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType)
@@ -288,6 +341,80 @@ void WebAutomationSession::didEvaluateJavaScriptFunction(uint64_t callbackID, co
         callback->sendFailure(errorType);
     } else
         callback->sendSuccess(result);
+}
+
+void WebAutomationSession::resolveChildFrameHandle(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const int* optionalOrdinal, const String* optionalName, const String* optionalNodeHandle, Ref<ResolveChildFrameHandleCallback>&& callback)
+{
+    if (!optionalOrdinal && !optionalName && !optionalNodeHandle)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    WebFrameProxy* frame = webFrameProxyForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString(), *page);
+    if (!frame)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(FrameNotFound);
+
+    uint64_t callbackID = m_nextResolveFrameCallbackID++;
+    m_resolveChildFrameHandleCallbacks.set(callbackID, WTFMove(callback));
+
+    if (optionalNodeHandle) {
+        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle(frame->frameID(), *optionalNodeHandle, callbackID), 0);
+        return;
+    }
+
+    if (optionalName) {
+        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithName(frame->frameID(), *optionalName, callbackID), 0);
+        return;
+    }
+
+    if (optionalOrdinal) {
+        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithOrdinal(frame->frameID(), *optionalOrdinal, callbackID), 0);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+void WebAutomationSession::didResolveChildFrame(uint64_t callbackID, uint64_t frameID, const String& errorType)
+{
+    auto callback = m_resolveChildFrameHandleCallbacks.take(callbackID);
+    if (!callback)
+        return;
+
+    if (!errorType.isEmpty())
+        callback->sendFailure(errorType);
+    else
+        callback->sendSuccess(handleForWebFrameID(frameID));
+}
+
+void WebAutomationSession::resolveParentFrameHandle(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String& frameHandle, Ref<ResolveParentFrameHandleCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    WebFrameProxy* frame = webFrameProxyForHandle(frameHandle, *page);
+    if (!frame)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(FrameNotFound);
+
+    uint64_t callbackID = m_nextResolveParentFrameCallbackID++;
+    m_resolveParentFrameHandleCallbacks.set(callbackID, WTFMove(callback));
+
+    page->process().send(Messages::WebAutomationSessionProxy::ResolveParentFrame(frame->frameID(), callbackID), 0);
+}
+
+void WebAutomationSession::didResolveParentFrame(uint64_t callbackID, uint64_t frameID, const String& errorType)
+{
+    auto callback = m_resolveParentFrameHandleCallbacks.take(callbackID);
+    if (!callback)
+        return;
+
+    if (!errorType.isEmpty())
+        callback->sendFailure(errorType);
+    else
+        callback->sendSuccess(handleForWebFrameID(frameID));
 }
 
 } // namespace WebKit

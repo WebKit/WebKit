@@ -160,7 +160,7 @@ namespace WebCore {
 
         Element* frameElement() const;
 
-        void focus(bool allowFocus = false);
+        WEBCORE_EXPORT void focus(bool allowFocus = false);
         void focus(Document&);
         void blur();
         WEBCORE_EXPORT void close();

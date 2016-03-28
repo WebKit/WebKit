@@ -80,8 +80,8 @@ namespace WebCore {
 
         WEBCORE_EXPORT Frame& top() const;
 
-        Frame* scopedChild(unsigned index) const;
-        Frame* scopedChild(const AtomicString& name) const;
+        WEBCORE_EXPORT Frame* scopedChild(unsigned index) const;
+        WEBCORE_EXPORT Frame* scopedChild(const AtomicString& name) const;
         unsigned scopedChildCount() const;
 
         unsigned indexInParent() const;

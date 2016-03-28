@@ -22,4 +22,7 @@
 
 messages -> WebAutomationSession {
     DidEvaluateJavaScriptFunction(uint64_t callbackID, String result, String errorType)
+
+    DidResolveChildFrame(uint64_t callbackID, uint64_t frameID, String errorType)
+    DidResolveParentFrame(uint64_t callbackID, uint64_t frameID, String errorType)
 }
