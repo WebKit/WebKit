@@ -1,7 +1,7 @@
 ### Begin File: InspectorBackendCommands.js
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ InspectorBackend.registerEnum("Debugger.Reason", {Died: "Died", Fainted: "Fainte
 ### Begin File: TestAlternateBackendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -93,7 +93,7 @@ private:
 ### Begin File: TestBackendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -139,7 +139,7 @@ typedef String ErrorString;
 ### Begin File: TestBackendDispatchers.cpp
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -190,7 +190,7 @@ namespace Inspector {
 ### Begin File: TestFrontendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -234,7 +234,7 @@ class FrontendRouter;
 ### Begin File: TestFrontendDispatchers.cpp
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -277,7 +277,7 @@ namespace Inspector {
 ### Begin File: TestProtocolObjects.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -356,6 +356,13 @@ enum class Reason {
 
 
 
+template<typename ProtocolEnumType>
+Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+
+// Enums in the 'Debugger' Domain
+template<>
+Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String&);
+
 } // namespace Protocol
 
 } // namespace Inspector
@@ -364,7 +371,7 @@ enum class Reason {
 ### Begin File: TestProtocolObjects.cpp
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -395,6 +402,7 @@ enum class Reason {
 #include "config.h"
 #include "TestProtocolObjects.h"
 
+#include <wtf/Optional.h>
 #include <wtf/text/CString.h>
 
 namespace Inspector {
@@ -411,6 +419,23 @@ String getEnumConstantValue(int code) {
     return enum_constant_values[code];
 }
 
+// Enums in the 'Debugger' Domain
+template<>
+Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String& protocolString)
+{
+    static const size_t constantValues[] = {
+        (size_t)Inspector::Protocol::Debugger::Reason::Died,
+        (size_t)Inspector::Protocol::Debugger::Reason::Fainted,
+        (size_t)Inspector::Protocol::Debugger::Reason::Hungry,
+    };
+    for (size_t i = 0; i < 3; ++i)
+        if (protocolString == enum_constant_values[constantValues[i]])
+            return (Inspector::Protocol::Debugger::Reason)constantValues[i];
+
+    return Nullopt;
+}
+
+
 
 
 } // namespace Protocol
@@ -422,7 +447,7 @@ String getEnumConstantValue(int code) {
 ### Begin File: TestProtocolBackendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -469,7 +494,7 @@ namespace Inspector {
 ### Begin File: TestProtocolConfiguration.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -537,7 +562,7 @@ using namespace Inspector;
 ### Begin File: TestProtocolConfiguration.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -577,7 +602,7 @@ __attribute__((visibility ("default")))
 ### Begin File: TestProtocolBackendDispatchers.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -625,7 +650,7 @@ namespace Inspector {
 ### Begin File: TestProtocolEventDispatchers.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -671,7 +696,7 @@ using namespace Inspector;
 ### Begin File: TestProtocol.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -725,7 +750,7 @@ typedef NS_ENUM(NSInteger, TestProtocolDebuggerReason) {
 ### Begin File: TestProtocolInternal.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -766,7 +791,7 @@ typedef NS_ENUM(NSInteger, TestProtocolDebuggerReason) {
 ### Begin File: TestProtocolTypeConversions.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -837,7 +862,7 @@ inline TestProtocolDebuggerReason fromProtocolString(const String& value)
 ### Begin File: TestProtocolTypeConversions.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -946,7 +971,7 @@ using namespace Inspector;
 ### Begin File: TestProtocolTypes.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

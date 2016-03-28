@@ -1,7 +1,7 @@
 ### Begin File: InspectorBackendCommands.js
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ InspectorBackend.activateDomain("EventDomain");
 ### Begin File: TestAlternateBackendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -107,7 +107,7 @@ public:
 ### Begin File: TestBackendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -186,7 +186,7 @@ private:
 ### Begin File: TestBackendDispatchers.cpp
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -285,7 +285,7 @@ void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, 
 ### Begin File: TestFrontendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -343,7 +343,7 @@ private:
 ### Begin File: TestFrontendDispatchers.cpp
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -397,7 +397,7 @@ void EventDomainFrontendDispatcher::eventWithEnumParameter(Parameter parameter)
 ### Begin File: TestProtocolObjects.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -464,6 +464,13 @@ enum class TypeDomainEnum {
 
 
 
+template<typename ProtocolEnumType>
+Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+
+// Enums in the 'TypeDomain' Domain
+template<>
+Optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String&);
+
 } // namespace Protocol
 
 } // namespace Inspector
@@ -472,7 +479,7 @@ enum class TypeDomainEnum {
 ### Begin File: TestProtocolObjects.cpp
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -503,6 +510,7 @@ enum class TypeDomainEnum {
 #include "config.h"
 #include "TestProtocolObjects.h"
 
+#include <wtf/Optional.h>
 #include <wtf/text/CString.h>
 
 namespace Inspector {
@@ -525,6 +533,24 @@ String getEnumConstantValue(int code) {
     return enum_constant_values[code];
 }
 
+// Enums in the 'TypeDomain' Domain
+template<>
+Optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String& protocolString)
+{
+    static const size_t constantValues[] = {
+        (size_t)Inspector::Protocol::TypeDomain::TypeDomainEnum::Shared,
+        (size_t)Inspector::Protocol::TypeDomain::TypeDomainEnum::Red,
+        (size_t)Inspector::Protocol::TypeDomain::TypeDomainEnum::Green,
+        (size_t)Inspector::Protocol::TypeDomain::TypeDomainEnum::Blue,
+    };
+    for (size_t i = 0; i < 4; ++i)
+        if (protocolString == enum_constant_values[constantValues[i]])
+            return (Inspector::Protocol::TypeDomain::TypeDomainEnum)constantValues[i];
+
+    return Nullopt;
+}
+
+
 
 
 } // namespace Protocol
@@ -536,7 +562,7 @@ String getEnumConstantValue(int code) {
 ### Begin File: TestProtocolBackendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -591,7 +617,7 @@ private:
 ### Begin File: TestProtocolConfiguration.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -688,7 +714,7 @@ using namespace Inspector;
 ### Begin File: TestProtocolConfiguration.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -730,7 +756,7 @@ __attribute__((visibility ("default")))
 ### Begin File: TestProtocolBackendDispatchers.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -795,7 +821,7 @@ void ObjCInspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(lon
 ### Begin File: TestProtocolEventDispatchers.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -870,7 +896,7 @@ using namespace Inspector;
 ### Begin File: TestProtocol.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -944,7 +970,7 @@ __attribute__((visibility ("default")))
 ### Begin File: TestProtocolInternal.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -987,7 +1013,7 @@ __attribute__((visibility ("default")))
 ### Begin File: TestProtocolTypeConversions.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1116,7 +1142,7 @@ inline TestProtocolEventDomainEventWithEnumParameterParameter fromProtocolString
 ### Begin File: TestProtocolTypeConversions.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1175,7 +1201,7 @@ using namespace Inspector;
 ### Begin File: TestProtocolTypes.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

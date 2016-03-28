@@ -1,7 +1,7 @@
 ### Begin File: InspectorBackendCommands.js
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ InspectorBackend.registerEnum("Test.CastedAnimals", {Ducks: "Ducks", Hens: "Hens
 ### Begin File: TestAlternateBackendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -94,7 +94,7 @@ private:
 ### Begin File: TestBackendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -140,7 +140,7 @@ typedef String ErrorString;
 ### Begin File: TestBackendDispatchers.cpp
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -191,7 +191,7 @@ namespace Inspector {
 ### Begin File: TestFrontendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -235,7 +235,7 @@ class FrontendRouter;
 ### Begin File: TestFrontendDispatchers.cpp
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -278,7 +278,7 @@ namespace Inspector {
 ### Begin File: TestProtocolObjects.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -319,11 +319,11 @@ namespace Protocol {
 
 // Forward declarations.
 namespace Test {
+class TypeNeedingCast;
 class RecursiveObject1;
 class RecursiveObject2;
-class TypeNeedingCast;
-enum class CastedAnimals;
 enum class UncastedAnimals;
+enum class CastedAnimals;
 } // Test
 // End of forward declarations.
 
@@ -575,6 +575,15 @@ static void assertValueHasExpectedType(Inspector::InspectorValue*);
 #endif // !ASSERT_DISABLED
 };
 
+template<typename ProtocolEnumType>
+Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+
+// Enums in the 'Test' Domain
+template<>
+Optional<Inspector::Protocol::Test::UncastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::UncastedAnimals>(const String&);
+template<>
+Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::CastedAnimals>(const String&);
+
 } // namespace Protocol
 
 } // namespace Inspector
@@ -583,7 +592,7 @@ static void assertValueHasExpectedType(Inspector::InspectorValue*);
 ### Begin File: TestProtocolObjects.cpp
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -614,6 +623,7 @@ static void assertValueHasExpectedType(Inspector::InspectorValue*);
 #include "config.h"
 #include "TestProtocolObjects.h"
 
+#include <wtf/Optional.h>
 #include <wtf/text/CString.h>
 
 namespace Inspector {
@@ -633,6 +643,40 @@ static const char* const enum_constant_values[] = {
 String getEnumConstantValue(int code) {
     return enum_constant_values[code];
 }
+
+// Enums in the 'Test' Domain
+template<>
+Optional<Inspector::Protocol::Test::UncastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::UncastedAnimals>(const String& protocolString)
+{
+    static const size_t constantValues[] = {
+        (size_t)Inspector::Protocol::Test::UncastedAnimals::Pigs,
+        (size_t)Inspector::Protocol::Test::UncastedAnimals::Cows,
+        (size_t)Inspector::Protocol::Test::UncastedAnimals::Cats,
+        (size_t)Inspector::Protocol::Test::UncastedAnimals::Hens,
+    };
+    for (size_t i = 0; i < 4; ++i)
+        if (protocolString == enum_constant_values[constantValues[i]])
+            return (Inspector::Protocol::Test::UncastedAnimals)constantValues[i];
+
+    return Nullopt;
+}
+
+template<>
+Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::CastedAnimals>(const String& protocolString)
+{
+    static const size_t constantValues[] = {
+        (size_t)Inspector::Protocol::Test::CastedAnimals::Ducks,
+        (size_t)Inspector::Protocol::Test::CastedAnimals::Hens,
+        (size_t)Inspector::Protocol::Test::CastedAnimals::Crows,
+        (size_t)Inspector::Protocol::Test::CastedAnimals::Flamingos,
+    };
+    for (size_t i = 0; i < 4; ++i)
+        if (protocolString == enum_constant_values[constantValues[i]])
+            return (Inspector::Protocol::Test::CastedAnimals)constantValues[i];
+
+    return Nullopt;
+}
+
 
 
 
@@ -750,7 +794,7 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasE
 ### Begin File: TestProtocolBackendDispatchers.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -795,7 +839,7 @@ namespace Inspector {
 ### Begin File: TestProtocolConfiguration.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -863,7 +907,7 @@ using namespace Inspector;
 ### Begin File: TestProtocolConfiguration.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -903,7 +947,7 @@ __attribute__((visibility ("default")))
 ### Begin File: TestProtocolBackendDispatchers.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -949,7 +993,7 @@ namespace Inspector {
 ### Begin File: TestProtocolEventDispatchers.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -993,7 +1037,7 @@ using namespace Inspector;
 ### Begin File: TestProtocol.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1082,7 +1126,7 @@ __attribute__((visibility ("default")))
 ### Begin File: TestProtocolInternal.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1123,7 +1167,7 @@ __attribute__((visibility ("default")))
 ### Begin File: TestProtocolTypeConversions.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1225,7 +1269,7 @@ inline TestProtocolTestCastedAnimals fromProtocolString(const String& value)
 ### Begin File: TestProtocolTypeConversions.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1326,7 +1370,7 @@ using namespace Inspector;
 ### Begin File: TestProtocolTypes.mm
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -28,6 +28,7 @@
 import logging
 import string
 from string import Template
+from operator import methodcaller
 
 from cpp_generator import CppGenerator
 from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
@@ -48,7 +49,10 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         domains = self.domains_to_generate()
         self.calculate_types_requiring_shape_assertions(domains)
 
-        secondary_headers = ['<wtf/text/CString.h>']
+        secondary_headers = [
+            '<wtf/Optional.h>',
+            '<wtf/text/CString.h>',
+        ]
 
         header_args = {
             'primaryInclude': '"%sProtocolObjects.h"' % self.protocol_name(),
@@ -60,6 +64,8 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         sections.append(Template(CppTemplates.ImplementationPrelude).substitute(None, **header_args))
         sections.append('namespace Protocol {')
         sections.append(self._generate_enum_mapping())
+        enum_parser_sections = map(self._generate_enum_conversion_methods_for_domain, domains)
+        sections.extend(filter(lambda section: len(section) > 0, enum_parser_sections))
         sections.append(self._generate_open_field_names())
         builder_sections = map(self._generate_builders_for_domain, domains)
         sections.extend(filter(lambda section: len(section) > 0, builder_sections))
@@ -80,6 +86,61 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         lines.append('    return enum_constant_values[code];')
         lines.append('}')
         return '\n'.join(lines)
+
+    def _generate_enum_conversion_methods_for_domain(self, domain):
+
+        def type_member_is_anonymous_enum_type(type_member):
+            return isinstance(type_member.type, EnumType) and type_member.type.is_anonymous
+
+        def generate_conversion_method_body(enum_type, cpp_protocol_type):
+            body_lines = []
+            body_lines.extend([
+                'template<>',
+                'Optional<%s> parseEnumValueFromString<%s>(const String& protocolString)' % (cpp_protocol_type, cpp_protocol_type),
+                '{',
+                '    static const size_t constantValues[] = {',
+            ])
+
+            enum_values = enum_type.enum_values()
+            for enum_value in enum_values:
+                body_lines.append('        (size_t)%s::%s,' % (cpp_protocol_type, Generator.stylized_name_for_enum_value(enum_value)))
+
+            body_lines.extend([
+                '    };',
+                '    for (size_t i = 0; i < %d; ++i)' % len(enum_values),
+                '        if (protocolString == enum_constant_values[constantValues[i]])',
+                '            return (%s)constantValues[i];' % cpp_protocol_type,
+                '',
+                '    return Nullopt;',
+                '}',
+                '',
+            ])
+            return body_lines
+
+        declaration_types = [decl.type for decl in domain.type_declarations]
+        object_types = filter(lambda _type: isinstance(_type, ObjectType), declaration_types)
+        enum_types = filter(lambda _type: isinstance(_type, EnumType), declaration_types)
+        if len(object_types) + len(enum_types) == 0:
+            return ''
+
+        sorted(object_types, key=methodcaller('raw_name'))
+        sorted(enum_types, key=methodcaller('raw_name'))
+
+        lines = []
+        lines.append("// Enums in the '%s' Domain" % domain.domain_name)
+        for enum_type in enum_types:
+            cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type(enum_type)
+            lines.extend(generate_conversion_method_body(enum_type, cpp_protocol_type))
+
+        for object_type in object_types:
+            for enum_member in filter(type_member_is_anonymous_enum_type, object_type.members):
+                cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type_member(enum_member, object_type.declaration())
+                lines.extend(generate_conversion_method_body(enum_member.type, cpp_protocol_type))
+
+        if len(lines) == 1:
+            return ''  # No real declarations to emit, just the domain comment.
+
+        return self.wrap_with_guard_for_domain(domain, '\n'.join(lines))
 
     def _generate_open_field_names(self):
         lines = []

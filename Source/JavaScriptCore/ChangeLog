@@ -1,3 +1,78 @@
+2016-03-28  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: protocol generator should generate C++ string-to-enum helper functions
+        https://bugs.webkit.org/show_bug.cgi?id=155691
+        <rdar://problem/25258078>
+
+        Reviewed by Timothy Hatcher.
+
+        There's a lot of code throughout the Inspector agents and automation code
+        that needs to convert a raw string into a typed protocol enum. Generate
+        some helpers that do this conversion so clients can move over to using it.
+
+        These helpers are necessary for when we eventually switch to calling backend
+        dispatcher handlers with typed arguments instead of untyped JSON objects.
+
+        To correctly generate a conversion function for an anonymous enum, the
+        generator needs to be able to get the containing object type's declaration.
+        Since the model's Type object each have only one instance, there is a
+        one-to-one association between type and its declaration.
+
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator.generate_output):
+        (CppProtocolTypesHeaderGenerator._generate_forward_declarations):
+        Clean up this method to use methodcaller to sort types by raw name.
+
+        (_generate_declarations_for_enum_conversion_methods):
+        (_generate_declarations_for_enum_conversion_methods.return_type_with_export_macro):
+        (_generate_declarations_for_enum_conversion_methods.type_member_is_anonymous_enum_type):
+        Added. Generates a new section with an unfilled template and specializations of
+        the template for every named and anonymous enum in every domain. Guards for
+        domains wrap the forward declarations. This is added to the end of the header
+        file so that specializations for both types of enums are in the same place.
+
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator.generate_output):
+        (CppProtocolTypesImplementationGenerator._generate_enum_conversion_methods_for_domain):
+        (CppProtocolTypesImplementationGenerator._generate_enum_conversion_methods_for_domain.type_member_is_anonymous_enum_type):
+        (CppProtocolTypesImplementationGenerator._generate_enum_conversion_methods_for_domain.generate_conversion_method_body):
+        Added. Generate a static array of offsets into the enum constant value array.
+        Then, loop over this array of offsets and do string comparisons against the
+        provided string and enum constant values at the relevant offsets for this enum.
+
+        * inspector/scripts/codegen/generator_templates.py:
+        (GeneratorTemplates): Update copyright year in generated files.
+
+        * inspector/scripts/codegen/models.py:
+        (AliasedType.__init__):
+        (EnumType.__init__):
+        (EnumType.enum_values):
+        (EnumType.declaration):
+        (ArrayType.__init__):
+        (ArrayType.declaration):
+        (ObjectType.__init__):
+        (ObjectType.declaration):
+        (Protocol.resolve_types):
+        (Protocol.lookup_type_reference):
+        Pass the type declaration to Type constructors if available. If not,
+        fill in a placeholder name for the type in the constructor instead of caller.
+
+        Rebaseline all the things, mostly for copyright block changes.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Misc. JavaScriptCore built-ins cleanups

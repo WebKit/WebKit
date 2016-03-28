@@ -28,6 +28,7 @@
 import logging
 import re
 import string
+from operator import methodcaller
 from string import Template
 
 from cpp_generator import CppGenerator
@@ -82,6 +83,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         builder_sections = map(self._generate_builders_for_domain, domains)
         sections.extend(filter(lambda section: len(section) > 0, builder_sections))
         sections.append(self._generate_forward_declarations_for_binding_traits())
+        sections.append(self._generate_declarations_for_enum_conversion_methods())
         sections.append('} // namespace Protocol')
         sections.append(Template(CppTemplates.HeaderPostlude).substitute(None, **header_args))
         return "\n\n".join(sections)
@@ -97,18 +99,18 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             declaration_types = [decl.type for decl in domain.type_declarations]
             object_types = filter(lambda _type: isinstance(_type, ObjectType), declaration_types)
             enum_types = filter(lambda _type: isinstance(_type, EnumType), declaration_types)
+            sorted(object_types, key=methodcaller('raw_name'))
+            sorted(enum_types, key=methodcaller('raw_name'))
+
             if len(object_types) + len(enum_types) == 0:
                 continue
 
             domain_lines = []
             domain_lines.append('namespace %s {' % domain.domain_name)
 
-            object_type_names = [_type.raw_name() for _type in object_types]
-            enum_type_names = [_type.raw_name() for _type in enum_types]
-
             # Forward-declare all classes so the type builders won't break if rearranged.
-            domain_lines.extend('class %s;' % name for name in sorted(object_type_names))
-            domain_lines.extend('enum class %s;' % name for name in sorted(enum_type_names))
+            domain_lines.extend('class %s;' % object_type.raw_name() for object_type in object_types)
+            domain_lines.extend('enum class %s;' % enum_type.raw_name() for enum_type in enum_types)
             domain_lines.append('} // %s' % domain.domain_name)
             sections.append(self.wrap_with_guard_for_domain(domain, '\n'.join(domain_lines)))
 
@@ -349,3 +351,51 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             lines.append('#endif // !ASSERT_DISABLED')
             lines.append('};')
         return '\n'.join(lines)
+
+    def _generate_declarations_for_enum_conversion_methods(self):
+        sections = []
+        sections.append('\n'.join([
+            'template<typename ProtocolEnumType>',
+            'Optional<ProtocolEnumType> parseEnumValueFromString(const String&);',
+        ]))
+
+        def return_type_with_export_macro(cpp_protocol_type):
+            enum_return_type = 'Optional<%s>' % cpp_protocol_type
+            result_terms = [enum_return_type]
+            if export_macro is not None:
+                result_terms[:0] = [export_macro]
+            return ' '.join(result_terms)
+
+        def type_member_is_anonymous_enum_type(type_member):
+            return isinstance(type_member.type, EnumType) and type_member.type.is_anonymous
+
+        for domain in self.domains_to_generate():
+            declaration_types = [decl.type for decl in domain.type_declarations]
+            object_types = filter(lambda _type: isinstance(_type, ObjectType), declaration_types)
+            enum_types = filter(lambda _type: isinstance(_type, EnumType), declaration_types)
+            if len(object_types) + len(enum_types) == 0:
+                continue
+
+            sorted(object_types, key=methodcaller('raw_name'))
+            sorted(enum_types, key=methodcaller('raw_name'))
+
+            domain_lines = []
+            domain_lines.append("// Enums in the '%s' Domain" % domain.domain_name)
+            export_macro = self.model().framework.setting('export_macro', None)
+            for enum_type in enum_types:
+                cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type(enum_type)
+                domain_lines.append('template<>')
+                domain_lines.append('%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type))
+
+            for object_type in object_types:
+                for enum_member in filter(type_member_is_anonymous_enum_type, object_type.members):
+                    cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type_member(enum_member, object_type.declaration())
+                    domain_lines.append('template<>')
+                    domain_lines.append('%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type))
+
+            if len(domain_lines) == 1:
+                continue  # No real declarations to emit, just the domain comment. Skip.
+
+            sections.append(self.wrap_with_guard_for_domain(domain, '\n'.join(domain_lines)))
+
+        return '\n\n'.join(sections)
