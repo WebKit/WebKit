@@ -2808,3 +2808,13 @@ webkit.org/b/155936 accessibility/aria-current.html [ Failure ]
 webkit.org/b/155937 accessibility/aria-table-attributes.html [ Failure ]
 webkit.org/b/155938 accessibility/auto-fill-types.html [ Failure ]
 webkit.org/b/155939 accessibility/double-nested-inline-element-missing-from-tree.html [ Failure ]
+
+webkit.org/b/155945 storage/indexeddb/modern/date-basic-private.html [ Failure ]
+webkit.org/b/155945 storage/indexeddb/modern/date-basic.html [ Failure ]
+webkit.org/b/155945 storage/indexeddb/modern/get-keyrange-private.html [ Failure ]
+webkit.org/b/155945 storage/indexeddb/modern/get-keyrange.html [ Failure ]
+webkit.org/b/155945 storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
+webkit.org/b/155945 storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
+
+# Shadow dom is not enabled on EFL port yet.
+Bug(EFL) fast/shadow-dom/slot-removal-crash-2.html

@@ -1,3 +1,13 @@
+2016-03-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Mark failing indexeddb tests to failure
+
+        Unreviewed EFL gardening.
+
+        Additionally a shadow dom test is marked to failure because shadow dom is not enabled on EFL port yet.
+
+        * platform/efl/TestExpectations:
+
 2016-03-28  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Remove the more passed tests after r198728
