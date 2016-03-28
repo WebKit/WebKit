@@ -1,3 +1,27 @@
+2016-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Inspector Memory Timeline sometimes encounters unstoppable rAF drawing
+        https://bugs.webkit.org/show_bug.cgi?id=155906
+
+        Reviewed by Anders Carlsson.
+
+        It was possible to get Web Inspector into a state where repeated, expensive
+        requestAnimationFrame calls prevented user events from being handled, making it
+        unresponsive.
+        
+        requestAnimationFrame uses callOnMainThread() to get a notification from the 
+        CVDispayLink thread to the main thread, which is a -performSelectorOnMainThread...
+        Under the hood, this ends up as a CFRunLoopPerformBlock().
+        
+        User events come in via Connection::enqueueIncomingMessage(), which uses RunLoop::main()::dispatch(),
+        which uses a CFRunLoopSource. Evidently, repeated calls to CFRunLoopPerformBlock() can prevent the
+        CFRunLoopSource from being handled.
+        
+        Fix by moving requestAnimationFrame from callOnMainThread() to RunLoop::main()::dispatch().
+
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        (WebCore::DisplayRefreshMonitorMac::displayLinkFired):
+
 2016-03-28  Chris Dumez  <cdumez@apple.com>
 
         Disk cache speculative validation requests do not have the 'Referer' HTTP header set

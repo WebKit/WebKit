@@ -30,7 +30,7 @@
 
 #include <QuartzCore/QuartzCore.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -103,7 +103,7 @@ void DisplayRefreshMonitorMac::displayLinkFired(double nowSeconds, double output
 
     auto weakPtr = m_weakFactory.createWeakPtr();
 
-    callOnMainThread([weakPtr] {
+    RunLoop::main().dispatch([weakPtr] {
         if (auto* monitor = weakPtr.get())
             handleDisplayRefreshedNotificationOnMainThread(monitor);
     });
