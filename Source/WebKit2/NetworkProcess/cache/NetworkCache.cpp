@@ -368,7 +368,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     }
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (m_speculativeLoadManager && m_speculativeLoadManager->retrieve(frameID, storageKey, [request, completionHandler](std::unique_ptr<Entry> entry) {
+    if (m_speculativeLoadManager && m_speculativeLoadManager->retrieve(frameID, storageKey, request, [request, completionHandler](std::unique_ptr<Entry> entry) {
         if (entry && verifyVaryingRequestHeaders(entry->varyingRequestHeaders(), request))
             completionHandler(WTFMove(entry));
         else

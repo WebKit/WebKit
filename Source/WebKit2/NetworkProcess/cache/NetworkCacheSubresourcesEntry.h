@@ -39,23 +39,21 @@ namespace WebKit {
 namespace NetworkCache {
 
 struct SubresourceInfo {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+
     void encode(Encoder&) const;
     static bool decode(Decoder&, SubresourceInfo&);
 
     SubresourceInfo() = default;
     SubresourceInfo(const WebCore::ResourceRequest& request, bool isTransient = false)
         : firstPartyForCookies(request.firstPartyForCookies())
-        , httpUserAgent(request.httpUserAgent())
+        , requestHeaders(request.httpHeaderFields())
         , isTransient(isTransient)
     { }
 
-    SubresourceInfo(const SubresourceInfo&);
-    SubresourceInfo(SubresourceInfo&&) = default;
-    SubresourceInfo& operator=(const SubresourceInfo&);
-    SubresourceInfo& operator=(SubresourceInfo&&) = default;
-
     WebCore::URL firstPartyForCookies;
-    String httpUserAgent;
+    WebCore::HTTPHeaderMap requestHeaders;
     bool isTransient { false };
 };
 

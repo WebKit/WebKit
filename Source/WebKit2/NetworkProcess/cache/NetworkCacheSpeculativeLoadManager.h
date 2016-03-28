@@ -51,17 +51,21 @@ public:
     void registerLoad(const GlobalFrameID&, const WebCore::ResourceRequest&, const Key& resourceKey);
 
     typedef std::function<void (std::unique_ptr<Entry>)> RetrieveCompletionHandler;
-    bool retrieve(const GlobalFrameID&, const Key& storageKey, const RetrieveCompletionHandler&);
+    bool retrieve(const GlobalFrameID&, const Key& storageKey, const WebCore::ResourceRequest&, const RetrieveCompletionHandler&);
 
 private:
-    enum class WasRevalidated { No, Yes };
-    void addPreloadedEntry(std::unique_ptr<Entry>, const GlobalFrameID&, WasRevalidated);
+    class PreloadedEntry;
+
+    void addPreloadedEntry(std::unique_ptr<Entry>, const GlobalFrameID&, std::unique_ptr<WebCore::ResourceRequest> revalidationRequest = nullptr);
     void preloadEntry(const Key&, const SubresourceInfo&, const GlobalFrameID&);
     void retrieveEntryFromStorage(const Key&, const RetrieveCompletionHandler&);
     void revalidateEntry(std::unique_ptr<Entry>, const SubresourceInfo&, const GlobalFrameID&);
     bool satisfyPendingRequests(const Key&, Entry*);
     void retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>);
     void startSpeculativeRevalidation(const GlobalFrameID&, SubresourcesEntry&);
+
+    static bool canUsePreloadedEntry(const PreloadedEntry&, const WebCore::ResourceRequest& actualRequest);
+    static bool canUsePendingPreload(const SpeculativeLoad&, const WebCore::ResourceRequest& actualRequest);
 
     Storage& m_storage;
 
@@ -71,7 +75,6 @@ private:
     HashMap<Key, std::unique_ptr<SpeculativeLoad>> m_pendingPreloads;
     HashMap<Key, std::unique_ptr<Vector<RetrieveCompletionHandler>>> m_pendingRetrieveRequests;
 
-    class PreloadedEntry;
     HashMap<Key, std::unique_ptr<PreloadedEntry>> m_preloadedEntries;
 
     class ExpiringEntry;

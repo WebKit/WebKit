@@ -130,7 +130,7 @@ namespace WebCore {
         WEBCORE_EXPORT void setPriority(ResourceLoadPriority);
 
         WEBCORE_EXPORT bool isConditional() const;
-        void makeUnconditional();
+        WEBCORE_EXPORT void makeUnconditional();
 
         // Whether the associated ResourceHandleClient needs to be notified of
         // upload progress made for that resource.

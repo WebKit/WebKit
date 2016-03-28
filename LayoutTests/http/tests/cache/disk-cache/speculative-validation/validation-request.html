@@ -5,6 +5,9 @@ jsTestIsAsync = true;
 
 state = "warmup";
 
+var headersToCheck = ["Accept", "Accept-Encoding", "Accept-Language", "Connection", "Referer", "User-Agent"];
+var headerToCheck;
+
 function validationRequestHeader(headerName)
 {
     return frames[0].allRequestHeaders[headerName];
@@ -14,7 +17,11 @@ function validationRequestHeader(headerName)
 function frameLoaded()
 {
     if (state == "warmup") {
-        initialUserAgent = validationRequestHeader('User-Agent');
+        initialHeaderValues = [];
+        for (var i = 0; i < headersToCheck.length; i++) {
+            headerToCheck = headersToCheck[i];
+            initialHeaderValues[headerToCheck] = validationRequestHeader(headerToCheck);
+        }
         // Navigate frame to 'about:blank' to flush to subresource loads metadata to disk.
         state = "flushingMetadata";
         document.getElementById("testFrame").src = "about:blank";
@@ -30,7 +37,11 @@ function frameLoaded()
     if (state == "speculativeRevalidation") {
         // Validate the HTTP headers of the speculative validation request.
         shouldBeEqualToString("validationRequestHeader('If-None-Match')", "123456789");
-        shouldBe("validationRequestHeader('User-Agent')", "initialUserAgent");
+
+        for (var i = 0; i < headersToCheck.length; i++) {
+            headerToCheck = headersToCheck[i];
+            shouldBe("validationRequestHeader('" + headerToCheck + "')", "initialHeaderValues['" + headerToCheck + "']");
+        }
         finishJSTest();
         return;
     }

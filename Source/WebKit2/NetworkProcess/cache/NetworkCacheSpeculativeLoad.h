@@ -49,6 +49,8 @@ public:
 
     virtual ~SpeculativeLoad();
 
+    const WebCore::ResourceRequest& originalRequest() const { return m_originalRequest; }
+
 private:
     // NetworkLoadClient.
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override { }

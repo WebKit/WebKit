@@ -4,7 +4,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS validationRequestHeader('If-None-Match') is "123456789"
-PASS validationRequestHeader('User-Agent') is initialUserAgent
+PASS validationRequestHeader('Accept') is initialHeaderValues['Accept']
+PASS validationRequestHeader('Accept-Encoding') is initialHeaderValues['Accept-Encoding']
+PASS validationRequestHeader('Accept-Language') is initialHeaderValues['Accept-Language']
+PASS validationRequestHeader('Connection') is initialHeaderValues['Connection']
+PASS validationRequestHeader('Referer') is initialHeaderValues['Referer']
+PASS validationRequestHeader('User-Agent') is initialHeaderValues['User-Agent']
 PASS successfullyParsed is true
 
 TEST COMPLETE

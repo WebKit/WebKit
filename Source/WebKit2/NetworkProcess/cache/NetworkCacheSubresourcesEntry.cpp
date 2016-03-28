@@ -40,7 +40,7 @@ void SubresourceInfo::encode(Encoder& encoder) const
 {
     encoder << firstPartyForCookies;
     encoder << isTransient;
-    encoder << httpUserAgent;
+    requestHeaders.encode(encoder);
 }
 
 bool SubresourceInfo::decode(Decoder& decoder, SubresourceInfo& info)
@@ -49,24 +49,9 @@ bool SubresourceInfo::decode(Decoder& decoder, SubresourceInfo& info)
         return false;
     if (!decoder.decode(info.isTransient))
         return false;
-    if (!decoder.decode(info.httpUserAgent))
+    if (!WebCore::HTTPHeaderMap::decode(decoder, info.requestHeaders))
         return false;
     return true;
-}
-
-SubresourceInfo::SubresourceInfo(const SubresourceInfo& subresourceInfo)
-    : firstPartyForCookies(subresourceInfo.firstPartyForCookies.isolatedCopy())
-    , httpUserAgent(subresourceInfo.httpUserAgent.isolatedCopy())
-    , isTransient(subresourceInfo.isTransient)
-{
-}
-
-SubresourceInfo& SubresourceInfo::operator=(const SubresourceInfo& other)
-{
-    firstPartyForCookies = other.firstPartyForCookies.isolatedCopy();
-    httpUserAgent = other.httpUserAgent.isolatedCopy();
-    isTransient = other.isTransient;
-    return *this;
 }
 
 Storage::Record SubresourcesEntry::encodeAsStorageRecord() const

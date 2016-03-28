@@ -1,3 +1,17 @@
+2016-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Disk cache speculative validation requests do not have the 'Referer' HTTP header set
+        https://bugs.webkit.org/show_bug.cgi?id=155890
+        <rdar://problem/25279962>
+
+        Reviewed by Antti Koivisto.
+
+        Update existing layout test to make sure that speculative validation
+        requests have their HTTP 'Referer' header set.
+
+        * http/tests/cache/disk-cache/speculative-validation/validation-request-expected.txt:
+        * http/tests/cache/disk-cache/speculative-validation/validation-request.html:
+
 2016-03-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Mark failing indexeddb tests to failure

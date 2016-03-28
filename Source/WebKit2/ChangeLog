@@ -1,3 +1,78 @@
+2016-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Disk cache speculative validation requests do not have the 'Referer' HTTP header set
+        https://bugs.webkit.org/show_bug.cgi?id=155890
+        <rdar://problem/25279962>
+
+        Reviewed by Antti Koivisto.
+
+        Disk cache speculative validation requests did not have the 'Referer'
+        HTTP header set. This was breaking some streaming sites (such as
+        twitch.tv).
+
+        We now store all the original request's HTTP headers in the disk cache
+        so we can re-use them for the speculative validation requests. When the
+        actual request comes later on, we also make sure that the HTTP headers
+        used in the speculative validation request match the ones from the
+        effective request. If they don't we don't use the speculatively
+        validated resource as the server may return a different resource in
+        such case.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        Pass the effective ResourceRequest to the NetworkCacheSpeculativeLoadManager
+        so it can check that the speculative validation request's HTTP headers
+        match the effective request's headers.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::PreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::revalidationRequest):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::wasRevalidated):
+        We now have a member in PreloadedEntry to keep the request used for validation, if
+        speculative validation was done. This is so that we can compare its HTTP headers
+        with the ones of the effective request later on.
+
+        (WebKit::NetworkCache::dumpHTTPHeadersDiff):
+        Debug function that prints which HTTP headers did not match in the speculative
+        validation request and in the effective request.
+
+        (WebKit::NetworkCache::requestsHeadersMatch):
+        New utility function to check that the speculative validation request's HTTP
+        headers match the ones of the effective requests. Note that we allow for
+        headers related to validation to differ.
+
+        (WebKit::NetworkCache::SpeculativeLoadManager::canUsePreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::canUsePendingPreload):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieve):
+        Check that the speculative validation request's HTTP headers match the
+        ones of the effective request. If they don't then do not use the
+        speculatively validated resource.
+
+        (WebKit::NetworkCache::SpeculativeLoadManager::addPreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourceInfo::encode):
+        (WebKit::NetworkCache::SubresourceInfo::decode):
+        (WebKit::NetworkCache::SubresourcesEntry::encodeAsStorageRecord):
+        (WebKit::NetworkCache::SubresourcesEntry::decodeStorageRecord):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        (WebKit::NetworkCache::SubresourceInfo::SubresourceInfo):
+        - Keep all the request's headers in SubresourceInfo instead of just the
+          'User-Agent' one.
+        - Drop the custom copy constructor / assignment operator for
+          SubresourceInfo that were making isolated copies on the members.
+          We technically don't need to use SubresourceInfo objects in other
+          threads than the main one. In SpeculativeLoadManager::preloadEntry(),
+          we now make capture a SubresourceInfo* in the lambda to avoid calling
+          the copy constructor. We also make sure that the object gets destroyed
+          in the lambda function, which is executed in the main thread.
+
 2016-03-25  Timothy Hatcher  <timothy@apple.com>
 
         Web Automation: Add Automation protocol commands to handle JavaScript dialogs
