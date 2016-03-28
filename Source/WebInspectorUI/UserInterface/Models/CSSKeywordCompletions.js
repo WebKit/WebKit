@@ -92,7 +92,7 @@ WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder = "__all-properti
 WebInspector.CSSKeywordCompletions.InheritedProperties = [
     "azimuth", "border-collapse", "border-spacing", "caption-side", "clip-rule", "color", "color-interpolation",
     "color-interpolation-filters", "color-rendering", "cursor", "direction", "elevation", "empty-cells", "fill",
-    "fill-opacity", "fill-rule", "font", "font-family", "font-size", "font-style", "font-variant", "font-weight",
+    "fill-opacity", "fill-rule", "font", "font-family", "font-size", "font-style", "font-variant", "font-variant-numeric", "font-weight",
     "glyph-orientation-horizontal", "glyph-orientation-vertical", "hanging-punctuation", "image-rendering", "kerning", "letter-spacing",
     "line-height", "list-style", "list-style-image", "list-style-position", "list-style-type", "marker", "marker-end",
     "marker-mid", "marker-start", "orphans", "pitch", "pitch-range", "pointer-events", "quotes", "resize", "richness",
@@ -378,7 +378,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "-webkit-control", "status-bar", "italic", "oblique", "small-caps", "normal", "bold", "bolder", "lighter",
         "100", "200", "300", "400", "500", "600", "700", "800", "900", "xx-small", "x-small", "small", "medium",
         "large", "x-large", "xx-large", "-webkit-xxx-large", "smaller", "larger", "serif", "sans-serif", "cursive",
-        "fantasy", "monospace", "-webkit-body", "-webkit-pictograph", "-apple-system", "-apple-system-monospaced-numbers",
+        "fantasy", "monospace", "-webkit-body", "-webkit-pictograph", "-apple-system",
         "-apple-system-headline", "-apple-system-body", "-apple-system-subheadline", "-apple-system-footnote",
         "-apple-system-caption1", "-apple-system-caption2", "-apple-system-short-headline", "-apple-system-short-body",
         "-apple-system-short-subheadline", "-apple-system-short-footnote", "-apple-system-short-caption1",
@@ -487,7 +487,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "font-family": [
         "serif", "sans-serif", "cursive", "fantasy", "monospace", "-webkit-body", "-webkit-pictograph",
-        "-apple-system", "-apple-system-monospaced-numbers", "-apple-system-headline", "-apple-system-body",
+        "-apple-system", "-apple-system-headline", "-apple-system-body",
         "-apple-system-subheadline", "-apple-system-footnote", "-apple-system-caption1", "-apple-system-caption2",
         "-apple-system-short-headline", "-apple-system-short-body", "-apple-system-short-subheadline",
         "-apple-system-short-footnote", "-apple-system-short-caption1", "-apple-system-tall-body",
@@ -579,6 +579,10 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "font-variant": [
         "small-caps", "normal"
+    ],
+    "font-variant-numeric": [
+        "normal", "ordinal", "slashed-zero", "lining-nums", "oldstyle-nums", "proportional-nums", "tabular-nums",
+        "diagonal-fractions", "stacked-fractions"
     ],
     "vertical-align": [
         "baseline", "middle", "sub", "super", "text-top", "text-bottom", "top", "bottom", "-webkit-baseline-middle"

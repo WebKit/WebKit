@@ -1,3 +1,16 @@
+2016-03-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add font-variant-numeric to CSS autocompletions
+        https://bugs.webkit.org/show_bug.cgi?id=155941
+        <rdar://problem/25381735>
+
+        Reviewed by Timothy Hatcher.
+
+        Also, remove -apple-system-monospaced-numbers.
+        `font-variant-numeric: tabular-nuns` should be used instead.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2016-03-28  Matt Baker  <mattbaker@apple.com>
 
         REGRESSION (r195303): Web Inspector: Wrong indentation in the type coverage profiler popovers
