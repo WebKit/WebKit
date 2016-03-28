@@ -140,7 +140,8 @@
     padding: 2px 6px;
     white-space: nowrap;
     overflow: hidden;
-    font-family: -apple-system-monospaced-numbers, sans-serif;
+    font-family: -apple-system, sans-serif;
+    font-variant-numeric: tabular-nums;
 }
 
 .data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child) {

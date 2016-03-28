@@ -76,7 +76,8 @@
 
     color: hsl(0, 0%, 57%);
 
-    font: 8px/13px -apple-system-monospaced-numbers, Menlo, Monaco, monospace;
+    font: 8px/13px -apple-system, Menlo, Monaco, monospace;
+    font-variant-numeric: tabular-nums;
     text-align: right;
 }
 

@@ -1,5 +1,22 @@
 2016-03-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Use font-variant-numeric: tabular-nums instead of -apple-system-monospaced-numbers
+        https://bugs.webkit.org/show_bug.cgi?id=155826
+        <rdar://problem/25330631>
+
+        Reviewed by Myles C. Maxfield.
+
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (.CodeMirror .CodeMirror-linenumber):
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid td):
+        * UserInterface/Views/DefaultDashboardView.css:
+        (.toolbar .dashboard.default > .item):
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.css:
+        (.object-tree-array-index .index-name):
+
+2016-03-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Add font-variant-numeric to CSS autocompletions
         https://bugs.webkit.org/show_bug.cgi?id=155941
         <rdar://problem/25381735>

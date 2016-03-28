@@ -52,7 +52,8 @@ body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourc
     border-radius: 4px;
     border: 1px solid transparent;
 
-    font-family: -apple-system-monospaced-numbers, sans-serif;
+    font-family: -apple-system, sans-serif;
+    font-variant-numeric: tabular-nums;
 }
 
 .toolbar .dashboard.default > :matches(.time, .resourcesSize) {
