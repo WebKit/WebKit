@@ -1,3 +1,11 @@
+2016-03-28  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Remove the more passed tests after r198728
+
+        Unreviewed EFL gardening. 
+
+        * platform/efl/TestExpectations:
+
 2016-03-27  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] REGRESSION(r188793): It made 200 layout tests and Bindings/event-target-wrapper.html performance test fail
