@@ -53,7 +53,8 @@
                 "NodeNotFound",
                 "NoJavaScriptDialog",
                 "NotImplemented",
-                "MissingParameter"
+                "MissingParameter",
+                "InvalidParameter"
             ]
         },
         {
@@ -107,6 +108,22 @@
             "parameters": [
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be made focused." },
                 { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame that should be focused. Defaults to the main frame if omitted." }
+            ]
+        },
+        {
+            "name": "resizeWindowOfBrowsingContext",
+            "description": "Resizes the window of the specified browsing context to the specified size.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to be resized." },
+                { "name": "size", "$ref": "Size", "description": "The new size for the browsing context's window." }
+            ]
+        },
+        {
+            "name": "moveWindowOfBrowsingContext",
+            "description": "Moves the window of the specified browsing context to the specified position.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to be moved." },
+                { "name": "origin", "$ref": "Point", "description": "The new origin for the browsing context's window. The position is interpreted in screen coordinate space, relative to the upper left corner of the screen." }
             ]
         },
         {

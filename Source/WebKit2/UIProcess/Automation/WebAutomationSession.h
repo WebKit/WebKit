@@ -87,6 +87,8 @@ public:
     void createBrowsingContext(Inspector::ErrorString&, String*) override;
     void closeBrowsingContext(Inspector::ErrorString&, const String&) override;
     void switchToBrowsingContext(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle) override;
+    void resizeWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& size) override;
+    void moveWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& position) override;
     void navigateBrowsingContext(Inspector::ErrorString&, const String& handle, const String& url) override;
     void goBackInBrowsingContext(Inspector::ErrorString&, const String&) override;
     void goForwardInBrowsingContext(Inspector::ErrorString&, const String&) override;
