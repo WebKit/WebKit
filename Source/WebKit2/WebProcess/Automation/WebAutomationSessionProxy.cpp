@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebAutomationSessionProxy.h"
 
-#include "InspectorProtocolObjects.h"
+#include "AutomationProtocolObjects.h"
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
 #include "WebAutomationSessionProxyScriptSource.h"

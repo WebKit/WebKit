@@ -1,3 +1,10 @@
+2016-03-28  Brian Burg  <bburg@apple.com>
+
+        Unreviewed, fix the build.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        InspectorProtocolObjects.h was renamed to AutomationProtocolObjects.h.
+
 2016-03-28  Chris Dumez  <cdumez@apple.com>
 
         Disk cache speculative validation requests do not have the 'Referer' HTTP header set
