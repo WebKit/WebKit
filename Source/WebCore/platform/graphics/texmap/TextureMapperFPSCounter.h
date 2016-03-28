@@ -22,7 +22,6 @@
 #ifndef TextureMapperFPSCounter_h
 #define TextureMapperFPSCounter_h
 
-#if USE(TEXTURE_MAPPER)
 #include "FloatPoint.h"
 #include "TransformationMatrix.h"
 #include <wtf/Noncopyable.h>
@@ -47,8 +46,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER)
-
 #endif // TextureMapperFPSCounter_h
-
-

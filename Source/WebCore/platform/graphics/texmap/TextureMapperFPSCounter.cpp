@@ -21,8 +21,6 @@
 
 #include "config.h"
 
-#if USE(TEXTURE_MAPPER)
-
 #include "TextureMapperFPSCounter.h"
 
 #include "TextureMapper.h"
@@ -63,5 +61,3 @@ void TextureMapperFPSCounter::updateFPSAndDisplay(TextureMapper& textureMapper, 
 }
 
 } // namespace WebCore
-
-#endif // USE(TEXTURE_MAPPER)

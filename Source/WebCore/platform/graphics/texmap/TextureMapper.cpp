@@ -26,8 +26,6 @@
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
 
-#if USE(TEXTURE_MAPPER)
-
 namespace WebCore {
 
 PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, const BitmapTexture::Flags flags)
@@ -54,5 +52,3 @@ TextureMapper::~TextureMapper()
 { }
 
 } // namespace
-
-#endif

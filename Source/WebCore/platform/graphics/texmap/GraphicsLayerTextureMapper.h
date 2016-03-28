@@ -20,7 +20,7 @@
 #ifndef GraphicsLayerTextureMapper_h
 #define GraphicsLayerTextureMapper_h
 
-#if USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS)
+#if !USE(COORDINATED_GRAPHICS)
 
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"

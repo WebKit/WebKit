@@ -19,7 +19,6 @@
 
 #include "config.h"
 
-#if USE(TEXTURE_MAPPER)
 #include "TextureMapperTiledBackingStore.h"
 
 #include "ImageBuffer.h"
@@ -175,4 +174,3 @@ RefPtr<BitmapTexture> TextureMapperTiledBackingStore::texture() const
 }
 
 } // namespace WebCore
-#endif

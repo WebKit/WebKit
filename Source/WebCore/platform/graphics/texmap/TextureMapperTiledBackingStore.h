@@ -20,8 +20,6 @@
 #ifndef TextureMapperTiledBackingStore_h
 #define TextureMapperTiledBackingStore_h
 
-#if USE(TEXTURE_MAPPER)
-
 #include "FloatRect.h"
 #include "Image.h"
 #include "TextureMapperBackingStore.h"
@@ -69,6 +67,5 @@ private:
 };
 
 } // namespace WebCore
-#endif
 
 #endif

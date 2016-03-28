@@ -20,8 +20,6 @@
 #ifndef TextureMapperLayer_h
 #define TextureMapperLayer_h
 
-#if USE(TEXTURE_MAPPER)
-
 #include "FilterOperations.h"
 #include "FloatRect.h"
 #include "GraphicsLayerTransform.h"
@@ -264,6 +262,5 @@ private:
 };
 
 }
-#endif
 
 #endif // TextureMapperLayer_h

@@ -1,3 +1,30 @@
+2016-03-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Remove USE(TEXTURE_MAPPER) guards inside TextureMapper sources.
+        https://bugs.webkit.org/show_bug.cgi?id=155944
+
+        Reviewed by Michael Catanzaro.
+
+        After r196429 TextureMapper sources are built only in ports which actually
+        use TextureMapper, so USE(TEXTURE_MAPPER) guards in them are redundant now.
+
+        No new tests needed.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapper.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        * platform/graphics/texmap/TextureMapperFPSCounter.cpp:
+        * platform/graphics/texmap/TextureMapperFPSCounter.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/TextureMapperTile.cpp:
+        * platform/graphics/texmap/TextureMapperTile.h:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.h:
+
 2016-03-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Remove unneeded lines in offsetAndBreadthForPositionedChild()

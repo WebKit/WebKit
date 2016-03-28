@@ -19,7 +19,6 @@
 
 #include "config.h"
 
-#if USE(TEXTURE_MAPPER)
 #include "TextureMapperBackingStore.h"
 
 #include "GraphicsLayer.h"
@@ -48,4 +47,3 @@ unsigned TextureMapperBackingStore::calculateExposedTileEdges(const FloatRect& t
 }
 
 }
-#endif
