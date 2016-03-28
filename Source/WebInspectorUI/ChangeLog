@@ -1,3 +1,18 @@
+2016-03-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Large repaints while typing in the console tab
+        https://bugs.webkit.org/show_bug.cgi?id=155627
+        <rdar://problem/25234875>
+
+        Reviewed by Timothy Hatcher.
+
+        Specify the height of flexbox elements to reduce repaint areas.
+
+        * UserInterface/Views/Main.css:
+        (#navigation-sidebar):
+        (#content): z-index doesn't affect repaint areas once the height is set.
+        (#details-sidebar):
+
 2016-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Sometimes clearing focused nodes in ProfileView leaves a dangling call stack that can never be removed

@@ -131,6 +131,7 @@ input[type=range]::-webkit-slider-runnable-track::before {
 
 #navigation-sidebar {
     width: 300px;
+    height: 100%;
 }
 
 body.docked.right #navigation-sidebar.collapsed > .resizer {
@@ -142,7 +143,7 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
     flex-direction: column;
     flex: 1;
 
-    z-index: 1; /* This reduces paint areas when typing in the console. http://webkit.org/b/145324 */
+    height: 100%; /* This reduces paint areas when typing in the console. http://webkit.org/b/145324 */
 }
 
 #tab-browser {
@@ -187,6 +188,7 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
 
 #details-sidebar {
     width: 300px;
+    height: 100%;
 }
 
 .message-text-view {
