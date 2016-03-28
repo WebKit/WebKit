@@ -2298,11 +2298,8 @@ static bool handleGestureEvent(const WebGestureEvent& event, Page* page)
 
 void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
 {
-    bool handled = false;
-    if (canHandleUserEvents()) {
-        CurrentEvent currentEvent(gestureEvent);
-        handled = handleGestureEvent(gestureEvent, m_page.get());
-    }
+    CurrentEvent currentEvent(gestureEvent);
+    bool handled = handleGestureEvent(gestureEvent, m_page.get());
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(gestureEvent.type()), handled));
 }
 
