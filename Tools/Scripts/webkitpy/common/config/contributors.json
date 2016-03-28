@@ -1476,15 +1476,6 @@
             "jinwoo"
          ]
       },
-      "Joanmarie Diggs" : {
-         "emails" : [
-            "jdiggs@igalia.com"
-         ],
-         "expertise" : "Accessibility, WebKitGTK+",
-         "nicks" : [
-            "joanie"
-         ]
-      },
       "Joe Thomas" : {
          "emails" : [
             "joethomas@motorola.com"
@@ -4368,6 +4359,15 @@
          "expertise" : "The Chromium Port, Workers, File API, FormData",
          "nicks" : [
             "jianli"
+         ]
+      },
+      "Joanmarie Diggs" : {
+         "emails" : [
+            "jdiggs@igalia.com"
+         ],
+         "expertise" : "Accessibility, WebKitGTK+",
+         "nicks" : [
+            "joanie"
          ]
       },
       "Jocelyn Turcotte" : {

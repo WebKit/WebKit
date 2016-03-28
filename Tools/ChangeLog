@@ -1,3 +1,11 @@
+2016-03-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        Adding myself as a reviewer.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-03-25  Dewei Zhu  <dewei_zhu@apple.com>
 
         Dromaeo patch used by run-benchmark should not include an invalid address.
