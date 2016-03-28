@@ -27,14 +27,91 @@
 
 (function (sessionIdentifier, evaluate, createUUID) {
 
-// Protect against Object overwritten by the page.
-let Object = {}.constructor;
+const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 
 let AutomationSessionProxy = class AutomationSessionProxy
 {
+    constructor()
+    {
+        this._nodeToIdMap = new Map;
+        this._idToNodeMap = new Map;
+    }
+
     // Public
 
-    // FIXME: Add functions here.
+    evaluateJavaScriptFunction(functionString, argumentStrings, expectsImplicitCallbackArgument, frameID, callbackID, resultCallback)
+    {
+        // The script is expected to be a function declaration. Evaluate it inside parenthesis to get the function value.
+        let functionValue = evaluate("(" + functionString + ")");
+        if (typeof functionValue !== "function")
+            throw new TypeError("Script did not evaluate to a function.");
+
+        let argumentValues = argumentStrings.map(this._jsonParse, this);
+        let callback = (result) => resultCallback(frameID, callbackID, this._jsonStringify(result));
+
+        if (expectsImplicitCallbackArgument) {
+            argumentValues.push(callback);
+            functionValue.apply(null, argumentValues);
+        } else
+            callback(functionValue.apply(null, argumentValues));
+    }
+
+    // Private
+
+    _jsonParse(string)
+    {
+        return JSON.parse(string, (key, value) => this._reviveJSONValue(key, value));
+    }
+
+    _jsonStringify(original)
+    {
+        return JSON.stringify(original, (key, value) => this._replaceJSONValue(key, value));
+    }
+
+    _reviveJSONValue(key, value)
+    {
+        if (value && typeof value === "object" && value[sessionNodePropertyName])
+            return this._nodeForIdentifier(value[sessionNodePropertyName]);
+        return value;
+    }
+
+    _replaceJSONValue(key, value)
+    {
+        if (value instanceof Node)
+            return this._createNodeHandle(value);
+
+        if (value instanceof NodeList || value instanceof HTMLCollection)
+            value = Array.from(value).map(this._createNodeHandle, this);
+
+        return value;
+    }
+
+    _createNodeHandle(node)
+    {
+        return {[sessionNodePropertyName]: this._identifierForNode(node)};
+    }
+
+    _nodeForIdentifier(identifier)
+    {
+        let node = this._idToNodeMap.get(identifier);
+        if (node)
+            return node;
+        throw {name: "NodeNotFound", message: "Node with identifier '" + identifier + "' was not found"};
+    }
+
+    _identifierForNode(node)
+    {
+        let identifier = this._nodeToIdMap.get(node);
+        if (identifier)
+            return identifier;
+
+        identifier = "node-" + createUUID();
+
+        this._nodeToIdMap.set(node, identifier);
+        this._idToNodeMap.set(identifier, node);
+
+        return identifier;
+    }
 };
 
 return new AutomationSessionProxy;

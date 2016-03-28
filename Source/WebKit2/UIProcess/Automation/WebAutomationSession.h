@@ -89,6 +89,7 @@ public:
     void goBackInBrowsingContext(Inspector::ErrorString&, const String&) override;
     void goForwardInBrowsingContext(Inspector::ErrorString&, const String&) override;
     void reloadBrowsingContext(Inspector::ErrorString&, const String&) override;
+    void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& handle, const String& function, const Inspector::InspectorArray& arguments, bool expectsImplicitCallbackArgument, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
 
 private:
     WebKit::WebPageProxy* webPageProxyForHandle(const String&);
@@ -98,8 +99,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     // Called by WebAutomationSession messages
-    // FIXME: Add message functions here.
-    void test() { };
+    void didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType);
 
     WebKit::WebProcessPool* m_processPool { nullptr };
     std::unique_ptr<API::AutomationSessionClient> m_client;
@@ -111,6 +111,9 @@ private:
     WebPageHandleMap m_webPageHandleMap;
     HandleWebPageMap m_handleWebPageMap;
     String m_activeBrowsingContextHandle;
+
+    uint64_t m_nextEvaluateJavaScriptCallbackID { 1 };
+    HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>> m_evaluateJavaScriptFunctionCallbacks;
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };

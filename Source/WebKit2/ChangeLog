@@ -1,3 +1,42 @@
+2016-03-17  Timothy Hatcher  <timothy@apple.com>
+
+        Web Automation: Add Automation.evaluateJavaScriptFunction
+
+        https://bugs.webkit.org/show_bug.cgi?id=155524
+        rdar://problem/25181888
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/Automation/Automation.json: Added evaluateJavaScriptFunction command.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction): Added.
+        (WebKit::WebAutomationSession::didEvaluateJavaScriptFunction): Added.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.messages.in: Added didEvaluateJavaScriptFunction.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::toJSArray): Added.
+        (WebKit::callPropertyFunction): Added.
+        (WebKit::evaluateJavaScriptCallback): Added.
+        (WebKit::WebAutomationSessionProxy::didClearWindowObjectForFrame): Dispatch pending callbacks as errors.
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction): Added.
+        (WebKit::WebAutomationSessionProxy::didEvaluateJavaScriptFunction): Added.
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (AutomationSessionProxy): Added maps for node handles.
+        (AutomationSessionProxy.prototype.evaluateJavaScriptFunction): Added.
+        (AutomationSessionProxy.prototype._jsonParse): Added.
+        (AutomationSessionProxy.prototype._jsonStringify): Added.
+        (AutomationSessionProxy.prototype._reviveJSONValue): Added.
+        (AutomationSessionProxy.prototype._replaceJSONValue): Added.
+        (AutomationSessionProxy.prototype._createNodeHandle): Added.
+        (AutomationSessionProxy.prototype._nodeForIdentifier): Added.
+        (AutomationSessionProxy.prototype._identifierForNode): Added.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in: Added evaluateJavaScriptFunction.
+
 2016-03-14  Timothy Hatcher  <timothy@apple.com>
 
         Add WebAutomationSessionProxy for WebProcess side automation tasks

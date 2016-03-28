@@ -255,4 +255,39 @@ void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorSt
     page->reload(reloadFromOrigin, contentBlockersEnabled);
 }
 
+void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& handle, const String& function, const Inspector::InspectorArray& arguments, bool expectsImplicitCallbackArgument, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
+{
+    // FIXME 24172439: This should be a frame handle, not a page handle. Change this once we have frame support.
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    Vector<String> argumentsVector;
+    argumentsVector.reserveCapacity(arguments.length());
+
+    for (auto& argument : arguments) {
+        String argumentString;
+        argument->asString(argumentString);
+        argumentsVector.uncheckedAppend(argumentString);
+    }
+
+    uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
+    m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTFMove(callback));
+
+    page->process().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(page->mainFrame()->frameID(), function, argumentsVector, expectsImplicitCallbackArgument, callbackID), 0);
+}
+
+void WebAutomationSession::didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType)
+{
+    auto callback = m_evaluateJavaScriptFunctionCallbacks.take(callbackID);
+    if (!callback)
+        return;
+
+    if (!errorType.isEmpty()) {
+        // FIXME: We should send both the errorType and result, since result has the specific exception message.
+        callback->sendFailure(errorType);
+    } else
+        callback->sendSuccess(result);
+}
+
 } // namespace WebKit

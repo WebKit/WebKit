@@ -13,7 +13,9 @@
             "description": "This enum contains predefined error messages that can be used to signal a well-defined error condition, such as a missing implementation, unknown window handle, and so forth. The backend signals one of these errors by using it as a prefix of the commands's error message (the errorString argument in generated C++ backend dispatchers). This will be reported to the frontend as a protocol error with a JSON-RPC error code of 'ServerError'. It is up to the frontend whether and how to deal with errors.",
             "enum": [
                 "InternalError",
+                "JavaScriptError",
                 "WindowNotFound",
+                "NodeNotFound",
                 "NotImplemented"
             ]
         },
@@ -95,6 +97,20 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be reloaded." }
             ]
+        },
+        {
+            "name": "evaluateJavaScriptFunction",
+            "description": "Evaluates a script function in a browsing context and calls it with the supplied arguments.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context the script should be evaluated." },
+                { "name": "function", "type": "string", "description": "The script to evaluate in the browsing context. The script is expected to be a function declaration, or otherwise evaluate to a function result." },
+                { "name": "arguments", "type": "array", "items": { "type": "string" }, "description": "The arguments to pass to the function when called. They will be parsed as JSON before calling the function." },
+                { "name": "expectsImplicitCallbackArgument", "type": "boolean", "description": "The function expects a callback function as the last argument. It is expected to call this callback with a result." }
+            ],
+            "returns": [
+                { "name": "result", "type": "string", "description": "The result returned by the called function. It is JSON encoded after the function returns or calls the callback." }
+            ],
+            "async": true
         }
     ]
 }

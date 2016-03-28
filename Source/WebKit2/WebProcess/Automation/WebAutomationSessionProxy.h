@@ -43,6 +43,8 @@ public:
 
     void didClearWindowObjectForFrame(WebFrame&);
 
+    void didEvaluateJavaScriptFunction(uint64_t frameID, uint64_t callbackID, const String& result, const String& errorType);
+
 private:
     JSObjectRef scriptObjectForFrame(WebFrame&);
 
@@ -50,13 +52,12 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
 
     // Called by WebAutomationSessionProxy messages
-    // FIXME: Add message functions here.
-    void test() { };
+    void evaluateJavaScriptFunction(uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, uint64_t callbackID);
 
     String m_sessionIdentifier;
 
-    typedef HashMap<uint64_t, JSObjectRef> WebFrameScriptObjectMap;
-    WebFrameScriptObjectMap m_webFrameScriptObjectMap;
+    HashMap<uint64_t, JSObjectRef> m_webFrameScriptObjectMap;
+    HashMap<uint64_t, Vector<uint64_t>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
 };
 
 } // namespace WebKit

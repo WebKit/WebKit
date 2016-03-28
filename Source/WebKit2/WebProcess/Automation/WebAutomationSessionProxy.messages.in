@@ -21,6 +21,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebAutomationSessionProxy {
-    // FIXME: Add messages here.
-    Test()
+    EvaluateJavaScriptFunction(uint64_t frame, String function, Vector<String> arguments, bool expectsImplicitCallbackArgument, uint64_t callbackID)
 }

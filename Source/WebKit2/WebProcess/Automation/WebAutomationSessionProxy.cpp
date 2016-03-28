@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebAutomationSessionProxy.h"
 
+#include "InspectorProtocolObjects.h"
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
 #include "WebAutomationSessionProxyScriptSource.h"
@@ -39,6 +40,31 @@
 
 namespace WebKit {
 
+template <typename T>
+static JSObjectRef toJSArray(JSContextRef context, const Vector<T>& data, JSValueRef (*converter)(JSContextRef, const T&), JSValueRef* exception)
+{
+    ASSERT_ARG(converter, converter);
+
+    if (data.isEmpty())
+        return JSObjectMakeArray(context, 0, nullptr, exception);
+
+    Vector<JSValueRef, 8> convertedData;
+    convertedData.reserveCapacity(data.size());
+
+    for (auto& originalValue : data) {
+        JSValueRef convertedValue = converter(context, originalValue);
+        JSValueProtect(context, convertedValue);
+        convertedData.uncheckedAppend(convertedValue);
+    }
+
+    JSObjectRef array = JSObjectMakeArray(context, convertedData.size(), convertedData.data(), exception);
+
+    for (auto& convertedValue : convertedData)
+        JSValueUnprotect(context, convertedValue);
+
+    return array;
+}
+
 static inline JSRetainPtr<JSStringRef> toJSString(const String& string)
 {
     return JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::create(string).leakRef());
@@ -47,6 +73,17 @@ static inline JSRetainPtr<JSStringRef> toJSString(const String& string)
 static inline JSValueRef toJSValue(JSContextRef context, const String& string)
 {
     return JSValueMakeString(context, toJSString(string).get());
+}
+
+static inline JSValueRef callPropertyFunction(JSContextRef context, JSObjectRef object, const String& propertyName, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    ASSERT_ARG(object, object);
+    ASSERT_ARG(object, JSValueIsObject(context, object));
+
+    JSObjectRef function = const_cast<JSObjectRef>(JSObjectGetProperty(context, object, toJSString(propertyName).get(), exception));
+    ASSERT(JSObjectIsFunction(context, function));
+
+    return JSObjectCallAsFunction(context, function, object, argumentCount, arguments, exception);
 }
 
 WebAutomationSessionProxy::WebAutomationSessionProxy(const String& sessionIdentifier)
@@ -75,6 +112,26 @@ static JSValueRef evaluate(JSContextRef context, JSObjectRef function, JSObjectR
 static JSValueRef createUUID(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     return toJSValue(context, WebCore::createCanonicalUUIDString().convertToASCIIUppercase());
+}
+
+static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    ASSERT_ARG(argumentCount, argumentCount == 3);
+    ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[0]));
+    ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[1]));
+    ASSERT_ARG(arguments, JSValueIsString(context, arguments[2]));
+
+    auto automationSessionProxy = WebProcess::singleton().automationSessionProxy();
+    if (!automationSessionProxy)
+        return JSValueMakeUndefined(context);
+
+    uint64_t frameID = JSValueToNumber(context, arguments[0], exception);
+    uint64_t callbackID = JSValueToNumber(context, arguments[1], exception);
+    JSRetainPtr<JSStringRef> result(Adopt, JSValueToStringCopy(context, arguments[2], exception));
+
+    automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result->string(), emptyString());
+
+    return JSValueMakeUndefined(context);
 }
 
 JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
@@ -106,8 +163,80 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
 
 void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 {
-    if (JSObjectRef scriptObject = m_webFrameScriptObjectMap.take(frame.frameID()))
+    uint64_t frameID = frame.frameID();
+    if (JSObjectRef scriptObject = m_webFrameScriptObjectMap.take(frameID))
         JSValueUnprotect(frame.jsContext(), scriptObject);
+
+    String errorMessage = ASCIILiteral("Callback was not called before the unload event.");
+    String errorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
+
+    auto pendingFrameCallbacks = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frameID);
+    for (uint64_t callbackID : pendingFrameCallbacks)
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, emptyString(), errorType), 0);
+}
+
+void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, uint64_t callbackID)
+{
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+
+    JSObjectRef scriptObject = scriptObjectForFrame(*frame);
+    if (!scriptObject)
+        return;
+
+    JSValueRef exception = nullptr;
+    JSGlobalContextRef context = frame->jsContext();
+
+    JSObjectRef callbackFunction = JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback);
+
+    if (expectsImplicitCallbackArgument) {
+        auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, Vector<uint64_t>());
+        result.iterator->value.append(callbackID);
+    }
+
+    JSValueRef functionArguments[] = {
+        toJSValue(context, function),
+        toJSArray(context, arguments, toJSValue, &exception),
+        JSValueMakeBoolean(context, expectsImplicitCallbackArgument),
+        JSValueMakeNumber(context, frameID),
+        JSValueMakeNumber(context, callbackID),
+        callbackFunction
+    };
+
+    callPropertyFunction(context, scriptObject, ASCIILiteral("evaluateJavaScriptFunction"), WTF_ARRAY_LENGTH(functionArguments), functionArguments, &exception);
+
+    if (!exception)
+        return;
+
+    String errorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
+
+    JSRetainPtr<JSStringRef> exceptionMessage;
+    if (JSValueIsObject(context, exception)) {
+        JSValueRef nameValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), toJSString(ASCIILiteral("name")).get(), nullptr);
+        JSRetainPtr<JSStringRef> exceptionName(Adopt, JSValueToStringCopy(context, nameValue, nullptr));
+        if (exceptionName->string() == "NodeNotFound")
+            errorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
+
+        JSValueRef messageValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), toJSString(ASCIILiteral("message")).get(), nullptr);
+        exceptionMessage.adopt(JSValueToStringCopy(context, messageValue, nullptr));
+    } else
+        exceptionMessage.adopt(JSValueToStringCopy(context, exception, nullptr));
+
+    didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage->string(), errorType);
+}
+
+void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(uint64_t frameID, uint64_t callbackID, const String& result, const String& errorType)
+{
+    auto findResult = m_webFramePendingEvaluateJavaScriptCallbacksMap.find(frameID);
+    if (findResult != m_webFramePendingEvaluateJavaScriptCallbacksMap.end()) {
+        findResult->value.removeFirst(callbackID);
+        ASSERT(!findResult->value.contains(callbackID));
+        if (findResult->value.isEmpty())
+            m_webFramePendingEvaluateJavaScriptCallbacksMap.remove(findResult);
+    }
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, result, errorType), 0);
 }
 
 } // namespace WebKit
