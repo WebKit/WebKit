@@ -190,24 +190,47 @@ String WebAutomationSession::handleForWebFrameProxy(const WebFrameProxy& webFram
     return handleForWebFrameID(webFrameProxy.frameID());
 }
 
+RefPtr<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buildBrowsingContextForPage(WebPageProxy& page)
+{
+    WebCore::FloatRect windowFrame;
+    page.getWindowFrame(windowFrame);
+
+    auto originObject = Inspector::Protocol::Automation::Point::create()
+        .setX(windowFrame.x())
+        .setY(windowFrame.y())
+        .release();
+
+    auto sizeObject = Inspector::Protocol::Automation::Size::create()
+        .setWidth(windowFrame.width())
+        .setHeight(windowFrame.height())
+        .release();
+
+    auto windowFrameObject = Inspector::Protocol::Automation::Rect::create()
+        .setOrigin(WTFMove(originObject))
+        .setSize(WTFMove(sizeObject))
+        .release();
+
+    String handle = handleForWebPageProxy(page);
+
+    return Inspector::Protocol::Automation::BrowsingContext::create()
+        .setHandle(handle)
+        .setActive(m_activeBrowsingContextHandle == handle)
+        .setUrl(page.pageLoadState().activeURL())
+        .setWindowFrame(WTFMove(windowFrameObject))
+        .release();
+}
+
 void WebAutomationSession::getBrowsingContexts(Inspector::ErrorString& errorString, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>>& contexts)
 {
     contexts = Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>::create();
 
     for (auto& process : m_processPool->processes()) {
-        for (auto& page : process->pages()) {
+        for (auto* page : process->pages()) {
+            ASSERT(page);
             if (!page->isControlledByAutomation())
                 continue;
 
-            String handle = handleForWebPageProxy(*page);
-
-            auto browsingContext = Inspector::Protocol::Automation::BrowsingContext::create()
-                .setHandle(handleForWebPageProxy(*page))
-                .setActive(m_activeBrowsingContextHandle == handle)
-                .setUrl(page->pageLoadState().activeURL())
-                .release();
-
-            contexts->addItem(browsingContext.copyRef());
+            contexts->addItem(buildBrowsingContextForPage(*page));
         }
     }
 }
@@ -218,11 +241,7 @@ void WebAutomationSession::getBrowsingContext(Inspector::ErrorString& errorStrin
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
 
-    context = Inspector::Protocol::Automation::BrowsingContext::create()
-        .setHandle(handleForWebPageProxy(*page))
-        .setActive(m_activeBrowsingContextHandle == handle)
-        .setUrl(page->pageLoadState().activeURL())
-        .release();
+    context = buildBrowsingContextForPage(*page);
 }
 
 void WebAutomationSession::createBrowsingContext(Inspector::ErrorString& errorString, String* handle)

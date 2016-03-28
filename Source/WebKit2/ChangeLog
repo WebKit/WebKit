@@ -1,5 +1,36 @@
 2016-03-28  Brian Burg  <bburg@apple.com>
 
+        Web Automation: report the browsing context's window frame (size and origin)
+        https://bugs.webkit.org/show_bug.cgi?id=155323
+        <rdar://problem/25094089>
+
+        Reviewed by Timothy Hatcher.
+
+        To prepare for implementing resize and move commands, add a
+        windowFrame member to the browsing context protocol type.
+
+        * UIProcess/Automation/Automation.json:
+        Add a frame Rect to BrowsingContext.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::handleForWebPageProxy):
+        (WebKit::WebAutomationSession::buildBrowsingContextForPage):
+        Extract the code to build a BrowsingContext object. Add
+        code to calculate and insert the page's window frame size.
+
+        (WebKit::WebAutomationSession::getBrowsingContexts):
+        (WebKit::WebAutomationSession::getBrowsingContext):
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        Refactoring as above.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        Adjust signatures.
+
+        * UIProcess/WebPageProxy.h: Make getWindowFrame public.
+
+2016-03-28  Brian Burg  <bburg@apple.com>
+
         Unreviewed, fix the build.
 
         * WebProcess/Automation/WebAutomationSessionProxy.cpp:

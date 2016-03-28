@@ -104,6 +104,7 @@ public:
 private:
     WebPageProxy* webPageProxyForHandle(const String&);
     String handleForWebPageProxy(const WebPageProxy&);
+    RefPtr<Inspector::Protocol::Automation::BrowsingContext> buildBrowsingContextForPage(WebPageProxy&);
 
     WebFrameProxy* webFrameProxyForHandle(const String&, WebPageProxy&);
     String handleForWebFrameID(uint64_t frameID);
