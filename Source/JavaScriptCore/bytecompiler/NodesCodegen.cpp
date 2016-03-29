@@ -2151,6 +2151,8 @@ RegisterID* EmptyLetExpression::emitBytecode(BytecodeGenerator& generator, Regis
         generator.emitProfileType(value.get(), var, position(), JSTextPosition(-1, position().offset + m_ident.length(), -1)); 
     }
 
+    generator.liftTDZCheckIfPossible(var);
+
     // It's safe to return null here because this node will always be a child node of DeclarationStatement which ignores our return value.
     return nullptr;
 }
