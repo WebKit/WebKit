@@ -1,5 +1,13 @@
 2016-03-28  Alex Christensen  <achristensen@webkit.org>
 
+        Fix Mac Ninja build after r198766.
+
+        * Source/cmake/WebKitMacros.cmake:
+        WebCore_DERIVED_SOURCES are intentionally in a separate library to reduce linker line length.
+        This is now only specific to WebKit2_DERIVED_SOURCES, so I'm moving it there.
+
+2016-03-28  Alex Christensen  <achristensen@webkit.org>
+
         Fix Windows build after r198766.
 
         * Source/cmake/WebKitMacros.cmake:

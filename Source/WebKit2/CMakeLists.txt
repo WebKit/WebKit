@@ -826,6 +826,8 @@ list(APPEND WebKit2_HEADERS
     ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxyScriptSource.h
 )
 
+list(APPEND WebKit2_SOURCES ${WebKit2_DERIVED_SOURCES})
+
 WEBKIT_FRAMEWORK(WebKit2)
 add_dependencies(WebKit2 WebCore ${WEBKIT2_EXTRA_DEPENDENCIES})
 add_webkit2_prefix_header(WebKit2)

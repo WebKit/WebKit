@@ -1,3 +1,9 @@
+2016-03-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac Ninja build after r198766.
+
+        * CMakeLists.txt:
+
 2016-03-28  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Remove abstract base classes for all IDB DOM classes.
