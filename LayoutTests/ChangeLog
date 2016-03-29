@@ -1,3 +1,16 @@
+2016-03-28  Zalan Bujtas  <zalan@apple.com>
+
+        Pixel turds when bordered div is resized on SMF forum software.
+        https://bugs.webkit.org/show_bug.cgi?id=155957
+        <rdar://problem/25010646>
+
+        Reviewed by Simon Fraser.
+
+        Use unmodified, non-snapped bounding box rect when computing dirty rects.
+
+        * fast/repaint/hidpi-box-with-subpixel-height-inflates-expected.txt: Added.
+        * fast/repaint/hidpi-box-with-subpixel-height-inflates.html: Added.
+
 2016-03-28  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash when AX trying to create element for an old auto fill element

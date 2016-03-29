@@ -53,10 +53,9 @@ public:
 
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const final;
 
-    IntRect borderBoundingBox() const final
+    LayoutRect borderBoundingBox() const final
     {
-        IntRect boundingBox = linesBoundingBox();
-        return IntRect(0, 0, boundingBox.width(), boundingBox.height());
+        return LayoutRect(LayoutPoint(), linesBoundingBox().size());
     }
 
     WEBCORE_EXPORT IntRect linesBoundingBox() const;

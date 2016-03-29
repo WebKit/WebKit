@@ -82,7 +82,7 @@ private:
     LayoutUnit marginEnd(const RenderStyle*) const override { return 0; }
     LayoutUnit offsetWidth() const override { return linesBoundingBox().width(); }
     LayoutUnit offsetHeight() const override { return linesBoundingBox().height(); }
-    IntRect borderBoundingBox() const override;
+    LayoutRect borderBoundingBox() const override { return LayoutRect(LayoutPoint(), linesBoundingBox().size()); }
     LayoutRect frameRectForStickyPositioning() const override { ASSERT_NOT_REACHED(); return LayoutRect(); }
     LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const override { return LayoutRect(); }
 

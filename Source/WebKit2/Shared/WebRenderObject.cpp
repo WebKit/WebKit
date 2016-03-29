@@ -106,7 +106,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
         m_frameRect = downcast<RenderText>(*renderer).linesBoundingBox();
         m_frameRect.setLocation(downcast<RenderText>(*renderer).firstRunLocation());
     } else if (is<RenderInline>(*renderer))
-        m_frameRect = downcast<RenderInline>(*renderer).borderBoundingBox();
+        m_frameRect = IntRect(downcast<RenderInline>(*renderer).borderBoundingBox());
 
     if (!shouldIncludeDescendants)
         return;

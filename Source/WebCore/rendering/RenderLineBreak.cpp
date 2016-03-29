@@ -225,11 +225,6 @@ void RenderLineBreak::updateFromStyle()
     m_cachedLineHeight = invalidLineHeight;
 }
 
-IntRect RenderLineBreak::borderBoundingBox() const
-{
-    return IntRect(IntPoint(), linesBoundingBox().size());
-}
-
 #if PLATFORM(IOS)
 void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, unsigned)
 {
