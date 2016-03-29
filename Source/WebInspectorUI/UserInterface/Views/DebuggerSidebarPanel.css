@@ -23,7 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 .sidebar > .panel.navigation.debugger > :matches(.content, .empty-content-placeholder) {
     top: 29px;
 }
@@ -33,6 +32,22 @@
     top: 0;
     left: 0;
     right: 0;
+}
+
+.sidebar > .panel.navigation.debugger .timeline-recording-warning {
+    text-align: center;
+    font-size: 11px;
+
+    padding: 11px 6px;
+    margin-bottom: 6px;
+
+    border-bottom: 1px solid var(--border-color);
+    background-color: hsl(50, 100%, 94%);
+}
+
+.sidebar > .panel.navigation.debugger .timeline-recording-warning > a {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .sidebar > .panel.navigation.debugger .details-section {
@@ -46,7 +61,6 @@
 .sidebar > .panel.navigation.debugger .details-section.collapsed > .content {
     display: none;
 }
-
 
 .sidebar > .panel.navigation.debugger .details-section > .content > .group {
     display: block;

@@ -1,3 +1,48 @@
+2016-03-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Ensure maximum accuracy while profiling
+        https://bugs.webkit.org/show_bug.cgi?id=155809
+        <rdar://problem/25325035>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager):
+        When starting the inspector, if it was previously closed while
+        breakpoints were temporarily disabled, restore the correct
+        breakpoints enabled state.
+
+        (WebInspector.DebuggerManager.prototype.set breakpointsEnabled):
+        Warn if we ever try to enable breakpoints during timeline recordings.
+
+        (WebInspector.DebuggerManager.prototype.get breakpointsDisabledTemporarily):
+        (WebInspector.DebuggerManager.prototype.startDisablingBreakpointsTemporarily):
+        (WebInspector.DebuggerManager.prototype.stopDisablingBreakpointsTemporarily):
+        Method to start/stop temporarily disabling breakpoints.
+
+        (WebInspector.DebuggerManager.prototype._breakpointDisabledStateDidChange):
+        (WebInspector.DebuggerManager.prototype._setBreakpoint):
+        When temporarily disabling breakpoints avoid the convenience behavior of
+        enabling all breakpoints when enabling or setting a single breakpoint.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.startCapturing):
+        Emit a will start capturing event to do work before enabling instruments.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .timeline-recording-warning):
+        (.sidebar > .panel.navigation.debugger .timeline-recording-warning > a):
+        Styles for a warning section in the Debugger Sidebar when the Debugger
+        is temporarily disabled due to a Timeline recording.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._timelineRecordingWillStart):
+        (WebInspector.DebuggerSidebarPanel.prototype._timelineRecordingStopped):
+        Modify the Debugger state and UI before and after a Timeline recording.
+
 2016-03-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Use font-variant-numeric: tabular-nums instead of -apple-system-monospaced-numbers

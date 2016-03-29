@@ -46,6 +46,16 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._debuggerActiveCallFrameDidChange, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.WaitingToPause, this._debuggerWaitingToPause, this);
 
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingWillStart, this._timelineRecordingWillStart, this);
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._timelineRecordingStopped, this);        
+
+        this._timelineRecordingWarningElement = document.createElement("div");
+        this._timelineRecordingWarningElement.classList.add("timeline-recording-warning");
+        this._timelineRecordingWarningElement.append(WebInspector.UIString("Debugger is disabled during a Timeline recording."), " ");
+        let stopRecordingLink = this._timelineRecordingWarningElement.appendChild(document.createElement("a"));
+        stopRecordingLink.textContent = WebInspector.UIString("Stop recording.");
+        stopRecordingLink.addEventListener("click", () => { WebInspector.timelineManager.stopCapturing(); });
+
         this._navigationBar = new WebInspector.NavigationBar;
         this.addSubview(this._navigationBar);
 
@@ -385,6 +395,29 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._addTreeElementForSourceCodeToContentTreeOutline(resource);
         this._addBreakpointsForSourceCode(resource);
         this._addIssuesForSourceCode(resource);
+    }
+
+    _timelineRecordingWillStart(event)
+    {
+        WebInspector.debuggerManager.startDisablingBreakpointsTemporarily();
+
+        if (WebInspector.debuggerManager.paused)
+            WebInspector.debuggerManager.resume();
+
+        this._debuggerBreakpointsButtonItem.enabled = false;
+        this._debuggerPauseResumeButtonItem.enabled = false;
+
+        this.contentView.element.insertBefore(this._timelineRecordingWarningElement, this.contentView.element.firstChild);
+    }
+
+    _timelineRecordingStopped(event)
+    {
+        WebInspector.debuggerManager.stopDisablingBreakpointsTemporarily();
+
+        this._debuggerBreakpointsButtonItem.enabled = true;
+        this._debuggerPauseResumeButtonItem.enabled = true;
+
+        this._timelineRecordingWarningElement.remove();
     }
 
     _scriptAdded(event)

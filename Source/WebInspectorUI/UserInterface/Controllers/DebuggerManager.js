@@ -71,6 +71,14 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this._breakpointsSetting = new WebInspector.Setting("breakpoints", []);
         this._breakpointsEnabledSetting = new WebInspector.Setting("breakpoints-enabled", true);
 
+        // Restore the correct breakpoints enabled setting if Web Inspector had
+        // previously been left in a state where breakpoints were temporarily disabled.
+        this._temporarilyDisabledBreakpointsRestoreSetting = new WebInspector.Setting("temporarily-disabled-breakpoints-restore", null);
+        if (this._temporarilyDisabledBreakpointsRestoreSetting.value !== null) {
+            this._breakpointsEnabledSetting.value = this._temporarilyDisabledBreakpointsRestoreSetting.value;
+            this._temporarilyDisabledBreakpointsRestoreSetting.value = null;
+        }
+
         if (window.DebuggerAgent)
             DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
 
@@ -98,6 +106,10 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     set breakpointsEnabled(enabled)
     {
         if (this._breakpointsEnabledSetting.value === enabled)
+            return;
+
+        console.assert(!(enabled && this.breakpointsDisabledTemporarily), "Should not enable breakpoints when we are temporarily disabling breakpoints.");
+        if (enabled && this.breakpointsDisabledTemporarily)
             return;
 
         this._breakpointsEnabledSetting.value = enabled;
@@ -333,6 +345,34 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         }
 
         return knownScripts;
+    }
+
+    get breakpointsDisabledTemporarily()
+    {
+        return this._temporarilyDisabledBreakpointsRestoreSetting.value !== null;
+    }
+
+    startDisablingBreakpointsTemporarily()
+    {
+        console.assert(this._temporarilyDisabledBreakpointsRestoreSetting.value === null, "Already temporarily disabling breakpoints.");
+        if (this._temporarilyDisabledBreakpointsRestoreSetting.value !== null)
+            return;
+
+        this._temporarilyDisabledBreakpointsRestoreSetting.value = this._breakpointsEnabledSetting.value;
+
+        this.breakpointsEnabled = false;
+    }
+
+    stopDisablingBreakpointsTemporarily()
+    {
+        console.assert(this._temporarilyDisabledBreakpointsRestoreSetting.value !== null, "Was not temporarily disabling breakpoints.");
+        if (this._temporarilyDisabledBreakpointsRestoreSetting.value === null)
+            return;
+
+        let restoreState = this._temporarilyDisabledBreakpointsRestoreSetting.value;
+        this._temporarilyDisabledBreakpointsRestoreSetting.value = null;
+
+        this.breakpointsEnabled = restoreState;
     }
 
     addBreakpoint(breakpoint, skipEventDispatch, shouldSpeculativelyResolve)
@@ -687,7 +727,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         if (breakpoint.identifier || breakpoint.disabled)
             return;
 
-        if (!this._restoringBreakpoints) {
+        if (!this._restoringBreakpoints && !this.breakpointsDisabledTemporarily) {
             // Enable breakpoints since a breakpoint is being set. This eliminates
             // a multi-step process for the user that can be confusing.
             this.breakpointsEnabled = true;
@@ -800,7 +840,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         let breakpoint = event.target;
         if (breakpoint === this._allExceptionsBreakpoint) {
-            if (!breakpoint.disabled)
+            if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
                 this.breakpointsEnabled = true;
             this._allExceptionsBreakpointEnabledSetting.value = !breakpoint.disabled;
             this._updateBreakOnExceptionsState();
@@ -808,7 +848,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         }
 
         if (breakpoint === this._allUncaughtExceptionsBreakpoint) {
-            if (!breakpoint.disabled)
+            if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
                 this.breakpointsEnabled = true;
             this._allUncaughtExceptionsBreakpointEnabledSetting.value = !breakpoint.disabled;
             this._updateBreakOnExceptionsState();

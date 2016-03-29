@@ -158,6 +158,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (!this._activeRecording || shouldCreateRecording)
             this._loadNewRecording();
 
+        this.dispatchEventToListeners(WebInspector.TimelineManager.Event.CapturingWillStart);
+
         this._activeRecording.start();
     }
 
@@ -866,6 +868,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 WebInspector.TimelineManager.Event = {
     RecordingCreated: "timeline-manager-recording-created",
     RecordingLoaded: "timeline-manager-recording-loaded",
+    CapturingWillStart: "timeline-manager-capturing-will-start",
     CapturingStarted: "timeline-manager-capturing-started",
     CapturingStopped: "timeline-manager-capturing-stopped"
 };
