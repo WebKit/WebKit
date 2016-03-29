@@ -144,7 +144,7 @@ add_custom_command(
     COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/platform/text/mac/make-charset-table.pl ${WEBCORE_DIR}/platform/text/mac/character-sets.txt ${WEBCORE_DIR}/platform/text/mac/mac-encodings.txt kTextEncoding > ${DERIVED_SOURCES_WEBCORE_DIR}/CharsetData.cpp
     VERBATIM)
 
-list(APPEND WebCore_SOURCES
+list(APPEND WebCore_DERIVED_SOURCES
     ${DERIVED_SOURCES_WEBCORE_DIR}/CharsetData.cpp
 )
 
@@ -913,7 +913,7 @@ set(ObjC_BINDINGS_NO_MM
     XPathNSResolver
 )
 
-GENERATE_BINDINGS(WebCore_SOURCES
+GENERATE_BINDINGS(WebCore_DERIVED_SOURCES
     "${ObjC_Bindings_IDL_FILES}"
     "${WEBCORE_DIR}"
     "${IDL_INCLUDES}"

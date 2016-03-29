@@ -228,7 +228,7 @@ list(APPEND WebCore_SOURCES
 )
 
 if (USE_GEOCLUE2)
-    list(APPEND WebCore_SOURCES
+    list(APPEND WebCore_DERIVED_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c
     )
     execute_process(COMMAND pkg-config --variable dbus_interface geoclue-2.0 OUTPUT_VARIABLE GEOCLUE_DBUS_INTERFACE)
@@ -260,7 +260,7 @@ add_custom_command(
     DEPENDS ${WEBKIT_DIR}/mac/Configurations/Version.xcconfig
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/scripts/generate-webkitversion.pl --config ${WEBKIT_DIR}/mac/Configurations/Version.xcconfig --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
     VERBATIM)
-list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitVersion.h)
+list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitVersion.h)
 
 set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/efl/RenderThemeEfl.cpp)
 

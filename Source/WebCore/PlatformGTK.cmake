@@ -229,7 +229,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
 )
 
 if (USE_GEOCLUE2)
-    list(APPEND WebCore_SOURCES
+    list(APPEND WebCore_DERIVED_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c
     )
     execute_process(COMMAND pkg-config --variable dbus_interface geoclue-2.0 OUTPUT_VARIABLE GEOCLUE_DBUS_INTERFACE)
@@ -357,7 +357,8 @@ if (ENABLE_WAYLAND_TARGET)
         platform/graphics/wayland/PlatformDisplayWayland.cpp
         platform/graphics/wayland/WaylandEventSource.cpp
         platform/graphics/wayland/WaylandSurface.cpp
-
+    )
+    list(APPEND WebCore_DERIVED_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandClientProtocol.c
     )
 

@@ -1,3 +1,19 @@
+2016-03-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Ninja build on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=151399
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        This moves WebCoreDerivedSources to a separate static library to reduce linker command 
+        line lengths when using ninja on mac. This also helps Windows builds, which sometimes 
+        regenerate everything every time you build; now you'll be able to just build WebCore
+        and WebKit without all the WebCoreDerivedSources stuff.
+
 2016-03-28  Brady Eidson  <beidson@apple.com>
 
         Fix build on some stricter compilers by removing unnecessary WTFMove.
