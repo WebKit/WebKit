@@ -1,3 +1,13 @@
+2016-03-29  Jon Davis  <jond@apple.com>
+
+        Support images above the title on webkit.org posts
+        https://bugs.webkit.org/show_bug.cgi?id=155979
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/functions.php:
+        * wp-content/themes/webkit/single.php:
+
 2016-03-22  Jonathan Davis  <jond@apple.com>
 
         Allow the use of custom styles and scripts for blog posts
