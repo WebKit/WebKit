@@ -1,3 +1,12 @@
+2016-03-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Adding Timeout to ios-simulator TestExpectations for perf/adding-radio-buttons.html
+        https://bugs.webkit.org/show_bug.cgi?id=154055
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: We should have a way to capture heap snapshots programatically.
