@@ -2828,3 +2828,12 @@ webkit.org/b/155959 svg/text/text-text-04-t.svg [ Failure ]
 webkit.org/b/155959 svg/text/text-text-05-t.svg [ Failure ]
 webkit.org/b/155959 svg/text/text-text-06-t.svg [ Failure ]
 webkit.org/b/155959 svg/text/text-vkern.svg [ Failure ]
+
+# Custom element feature is not enabled on EFL yet
+Bug(EFL) fast/custom-elements [ Skip ]
+
+webkit.org/b/155970 http/tests/appcache/auth.html [ Timeout ]
+webkit.org/b/155970 http/tests/media/video-redirect.html [ Timeout ]
+webkit.org/b/155970 http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout ]
+webkit.org/b/155970 http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Timeout ]
+webkit.org/b/155970 http/tests/security/inactive-document-with-empty-security-origin.html [ Timeout ]

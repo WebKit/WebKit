@@ -1,3 +1,13 @@
+2016-03-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Skip to test custom element test cases
+
+        Unreviewed EFL gardening.
+
+        Custom element is not supported by EFL yet. Additionally mark 4 security tests to timeout.
+
+        * platform/efl/TestExpectations:
+
 2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Audit WebCore builtins for user overridable code
