@@ -1,3 +1,13 @@
+2016-03-29  Timothy Hatcher  <timothy@apple.com>
+
+        Update WebKit nightly to have a red needle to better match Safari
+
+        https://bugs.webkit.org/show_bug.cgi?id=155983
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKitLauncher/webkit.icns:
+
 2016-03-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         Adding myself as a reviewer.
