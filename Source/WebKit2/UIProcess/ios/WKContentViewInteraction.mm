@@ -1448,6 +1448,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         _hasTapHighlightForPotentialTap = NO;
     }
 
+    [_inputPeripheral endEditing];
     _page->commitPotentialTap();
 
     if (!_isExpectingFastSingleTapCommit)
@@ -1486,6 +1487,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
+    [_inputPeripheral endEditing];
     _page->handleTap(location);
 }
 
@@ -3587,7 +3589,6 @@ static bool isAssistableInputType(InputType type)
     _formInputSession = nil;
     _isEditable = NO;
     _assistedNodeInformation.elementType = InputType::None;
-    [_inputPeripheral endEditing];
     _inputPeripheral = nil;
 
     [self _stopAssistingKeyboard];

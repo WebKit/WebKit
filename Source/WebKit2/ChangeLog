@@ -1,3 +1,25 @@
+2016-03-28  Enrica Casucci  <enrica@apple.com>
+
+        When moving focus from one select element to another (iPhone) the value is committed to the newly focused element.
+        https://bugs.webkit.org/show_bug.cgi?id=155958
+        rdar://problem/22738524
+
+        Reviewed by Tim Horton.
+
+        We should not delay the call to endEditing until we receive
+        stopAssistingNode, because by then the assisted node might have already
+        changed. We need to call endEditing to commit potential changes every
+        time we tap. This way we can make sure the editing session on the select
+        element has been completed. This affects only single select elements on
+        iPhone, where the change to the actual DOM element is delayed until we
+        stop interacting with the element. On iPad or for multi-select elements,
+        the change to the DOM happens immediately.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _singleTapCommited:]):
+        (-[WKContentView _attemptClickAtLocation:]):
+        (-[WKContentView _stopAssistingNode]):
+
 2016-03-29  Brian Burg  <bburg@apple.com>
 
         Unreviewed build fix after r198793.
