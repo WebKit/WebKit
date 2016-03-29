@@ -1,3 +1,18 @@
+2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSC::Debugger cleanup after recent changes
+        https://bugs.webkit.org/show_bug.cgi?id=155982
+
+        Reviewed by Mark Lam.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        Initialize with breakpoints disabled. Web Inspector always informs
+        the backend if it should enable or disable breakpoints on startup.
+
+        (JSC::Debugger::setProfilingClient):
+        When using the Sampling profiler we do not need to recompile.
+
 2016-03-29  Saam barati  <sbarati@apple.com>
 
         "Can not" => "cannot" in String.prototype error messages

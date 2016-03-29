@@ -118,7 +118,7 @@ Debugger::Debugger(VM& vm)
     , m_pauseOnExceptionsState(DontPauseOnExceptions)
     , m_pauseOnNextStatement(false)
     , m_isPaused(false)
-    , m_breakpointsActivated(true)
+    , m_breakpointsActivated(false)
     , m_hasHandlerForExceptionCallback(false)
     , m_suppressAllPauses(false)
     , m_steppingMode(SteppingModeDisabled)
@@ -232,8 +232,6 @@ void Debugger::setProfilingClient(ProfilingClient* client)
 {
     ASSERT(!!m_profilingClient != !!client);
     m_profilingClient = client;
-
-    recompileAllJSFunctions();
 }
 
 double Debugger::willEvaluateScript()
