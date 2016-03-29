@@ -1,3 +1,41 @@
+2016-03-29  Eric Carlson  <eric.carlson@apple.com>
+
+        media/track/track-remove-track.html is flaky, crashing and failing
+        https://bugs.webkit.org/show_bug.cgi?id=130971
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Prevent HTMLMediaElement from being collected while it is creating media controls.
+        These changes prevent the test from crashing but they do not fix the flakiness,
+        which is caused by another bug. Fixing that is tracked by 
+        https://bugs.webkit.org/show_bug.cgi?id=155956.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::actionName): New, debugging-only helper function.
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize new variables.
+        (WebCore::HTMLMediaElement::scheduleDelayedAction): Log the flag names to make debugging easier.
+        (WebCore::HTMLMediaElement::scheduleNextSourceChild): Add logging.
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Update logging.
+        (WebCore::HTMLMediaElement::configureTextTrackGroup): Drive-by optimization: don't call 
+          updateCaptionContainer here, call it before exiting configureTextTracks so we only call
+          it once instead of once per track group.
+        (WebCore::controllerJSValue):
+        (WebCore::HTMLMediaElement::ensureMediaControlsShadowRoot): New, wrapper around calling
+          ensureUserAgentShadowRoot so m_creatingControls can be set and cleared appropriately.
+        (WebCore::HTMLMediaElement::updateCaptionContainer): ensureUserAgentShadowRoot -> 
+          ensureMediaControlsShadowRoot. Drive by optimization: set/test m_haveSetupCaptionContainer
+          so we only do this setup once.
+        (WebCore::HTMLMediaElement::configureTextTracks): Call updateCaptionContainer.
+        (WebCore::HTMLMediaElement::clearMediaPlayer): Log flag names.
+        (WebCore::HTMLMediaElement::hasPendingActivity): Return true when creating controls so GC
+          won't happen during controls setup.
+        (WebCore::HTMLMediaElement::updateTextTrackDisplay): ensureUserAgentShadowRoot -> 
+          ensureMediaControlsShadowRoot.
+        (WebCore::HTMLMediaElement::createMediaControls): Ditto.
+        (WebCore::HTMLMediaElement::configureMediaControls): Ditto.
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay): Ditto.
+        * html/HTMLMediaElement.h:
+
 2016-03-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed EFL build fix caused by r198773

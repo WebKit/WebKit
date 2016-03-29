@@ -1,3 +1,12 @@
+2016-03-29  Eric Carlson  <eric.carlson@apple.com>
+
+        media/track/track-remove-track.html is flaky, crashing and failing
+        https://bugs.webkit.org/show_bug.cgi?id=130971
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac/TestExpectations: Mark crash as flaky only.
+
 2016-03-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Skip to test custom element test cases
