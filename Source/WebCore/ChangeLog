@@ -1,3 +1,14 @@
+2016-03-29  Dan Bernstein  <mitz@apple.com>
+
+        Inline WebFullScreenVideoRootViewController.m
+        https://bugs.webkit.org/show_bug.cgi?id=155971
+
+        Reviewed by Anders Carlsson.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (createFullScreenVideoRootViewControllerClass): Replaced with the code from
+          WebFullScreenVideoRootViewController.m.
+
 2016-03-29  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
         Create a CG ImageDecoder class instead of defining it as CGImageSourceRef

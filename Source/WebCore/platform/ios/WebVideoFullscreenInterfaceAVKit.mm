@@ -81,9 +81,6 @@ static const char* boolString(bool val)
 }
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebFullScreenVideoRootViewController.m>
-#else
 @interface WebFullScreenVideoRootViewController : UIViewController
 - (instancetype)initWithSourceWindow:(UIWindow *)sourceWindow;
 @end
@@ -92,9 +89,27 @@ static Class createFullScreenVideoRootViewControllerClass()
 {
     Class newClass = objc_allocateClassPair(getUIViewControllerClass(), "WebFullScreenVideoRootViewController", 0);
 
-    class_addMethod(newClass, @selector(initWithSourceWindow:), imp_implementationWithBlock(^(id self, UIWindow*){
-        return [self init];
+    class_addIvar(newClass, "_sourceWindow", sizeof(UIWindow *), log2(alignof(UIWindow *)), @encode(UIWindow *));
+    Ivar sourceWindowIvar = class_getInstanceVariable(newClass, "_sourceWindow");
+
+    class_addMethod(newClass, @selector(initWithSourceWindow:), imp_implementationWithBlock(^(id self, UIWindow *sourceWindow){
+        self = [self init];
+        object_setIvar(self, sourceWindowIvar, [sourceWindow retain]);
+        return self;
     }), "@@:@");
+
+    class_addMethod(newClass, @selector(dealloc), imp_implementationWithBlock(^(id self){
+        [object_getIvar(self, sourceWindowIvar) release];
+        objc_super superClass { self, getUIViewControllerClass() };
+        ((void (*)(objc_super*, SEL))objc_msgSendSuper)(&superClass, @selector(dealloc));
+    }), "v@:");
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+    class_addMethod(newClass, @selector(childViewControllerForWhitePointAdaptivityStyle), imp_implementationWithBlock(^(id self){
+        UIWindow *sourceWindow = object_getIvar(self, sourceWindowIvar);
+        return sourceWindow.rootViewController;
+    }), "@@:");
+#endif
 
     objc_registerClassPair(newClass);
     return newClass;
@@ -105,7 +120,6 @@ static WebFullScreenVideoRootViewController *allocWebFullScreenVideoRootViewCont
     static Class fullScreenVideoRootViewControllerClass = createFullScreenVideoRootViewControllerClass();
     return [fullScreenVideoRootViewControllerClass alloc];
 }
-#endif
 
 static const double DefaultWatchdogTimerInterval = 1;
 
