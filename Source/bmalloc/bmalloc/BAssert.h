@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,6 +62,9 @@
 } while (0);
 
 #define RELEASE_BASSERT(x) BASSERT_IMPL(x)
+
+// FIXME: Implement logging: <https://webkit.org/b/155992>
+#define RELEASE_BASSERT_WITH_MESSAGE(x, f, ...) BASSERT_IMPL(x)
 
 #define UNUSED(x) (void)x
 

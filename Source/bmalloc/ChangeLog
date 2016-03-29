@@ -1,3 +1,29 @@
+2016-03-29  David Kilzer  <ddkilzer@apple.com>
+
+        bmalloc: add logging for mmap() failures
+        <http://webkit.org/b/155409>
+        <rdar://problem/24568515>
+
+        Reviewed by Saam Barati.
+
+        This patch causes additional logging to be generated on internal
+        iOS builds when mmap() fails.  We are trying to track down an
+        issue where the WebContent process runs out of VM address space
+        before it is killed by jetsam.
+
+        * CMakeLists.txt: Add Logging.cpp.
+        * bmalloc.xcodeproj/project.pbxproj: Add new files.
+
+        * bmalloc/BAssert.h:
+        (RELEASE_BASSERT_WITH_MESSAGE): Add macro.
+        * bmalloc/Logging.cpp: Added.
+        (bmalloc::logVMFailure): Implementation.
+        * bmalloc/Logging.h: Added.
+        (bmalloc::logVMFailure): Declaration.
+        * bmalloc/VMAllocate.h:
+        (bmalloc::tryVMAllocate): Call logVMFailure() on mmap() failure.
+        * bmalloc/darwin/BSoftLinking.h: Copied from Source/WebCore/platform/mac/SoftLinking.h.
+
 2016-03-26  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling out r198702, r198704.
