@@ -39,15 +39,22 @@ namespace WebKit {
 
 #if USE(APPKIT)
 
+static const void *synthesizedAutomationEventAssociatedObjectKey = &synthesizedAutomationEventAssociatedObjectKey;
+
 void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArray *eventsToSend)
 {
     NSWindow *window = page.platformWindow();
 
     for (NSEvent *event in eventsToSend) {
-        // FIXME: <https://www.webkit.org/b/155963> Set an associated object with a per-session identifier.
-        // This will allow a WebKit2 client to tell apart events synthesized on behalf of an automation command.
+        objc_setAssociatedObject(event, &synthesizedAutomationEventAssociatedObjectKey, m_sessionIdentifier, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         [window sendEvent:event];
     }
+}
+
+bool WebAutomationSession::wasEventSynthesizedForAutomation(NSEvent *event)
+{
+    NSString *senderSessionIdentifier = objc_getAssociatedObject(event, &synthesizedAutomationEventAssociatedObjectKey);
+    return [senderSessionIdentifier isEqualToString:m_sessionIdentifier];
 }
 
 void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, const WebCore::IntPoint& viewPosition, Inspector::Protocol::Automation::MouseInteraction interaction, Inspector::Protocol::Automation::MouseButton button, WebEvent::Modifiers keyModifiers)

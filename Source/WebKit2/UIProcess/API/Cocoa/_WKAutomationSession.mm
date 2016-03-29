@@ -83,6 +83,11 @@
     return _session->isPaired();
 }
 
+- (BOOL)wasEventSynthesizedForAutomation:(NSEvent *)event
+{
+    return _session->wasEventSynthesizedForAutomation(event);
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

@@ -54,6 +54,7 @@ class IntPoint;
 
 #if USE(APPKIT)
 OBJC_CLASS NSArray;
+OBJC_CLASS NSEvent;
 #endif
 
 namespace WebKit {
@@ -111,6 +112,10 @@ public:
     void acceptCurrentJavaScriptDialog(Inspector::ErrorString&, const String& browsingContextHandle) override;
     void messageOfCurrentJavaScriptDialog(Inspector::ErrorString&, const String& browsingContextHandle, String* text) override;
     void setUserInputForCurrentJavaScriptPrompt(Inspector::ErrorString&, const String& browsingContextHandle, const String& text) override;
+
+#if USE(APPKIT)
+    bool wasEventSynthesizedForAutomation(NSEvent *);
+#endif
 
 private:
     WebPageProxy* webPageProxyForHandle(const String&);

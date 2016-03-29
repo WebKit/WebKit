@@ -1,3 +1,28 @@
+2016-03-29  Brian Burg  <bburg@apple.com>
+
+        Web Automation: Add SPI to tell whether an NSEvent was synthesized for automation
+        https://bugs.webkit.org/show_bug.cgi?id=155963
+        <rdar://problem/25405747>
+
+        Reviewed by Timothy Hatcher.
+
+        Tag all NSEvents that were synthesized with an associated object before sending.
+        Do all associated object work below the API layer so we don't get into trouble
+        using things that may be guarded by WK_API_ENABLED.
+
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        (-[_WKAutomationSession wasEventSynthesizedForAutomation:]):
+        Forward to the wrapped session object.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::sendSynthesizedEventsToPage):
+        Tag outgoing NSEvents with the session identifier as an associated object.
+
+        (WebKit::WebAutomationSession::wasEventSynthesizedForAutomation):
+        Check an incoming NSEvent to see if its associated object is the session identifier.
+
 2016-03-28  Brian Burg  <bburg@apple.com>
 
         Web Automation: implement Automation.performMouseInteraction
