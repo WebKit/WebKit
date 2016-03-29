@@ -49,9 +49,11 @@ class Identifier;
     macro(arrayIterationKindKey) \
     macro(arrayIterationKindValue) \
     macro(arrayIterationKindKeyValue) \
+    macro(MAX_SAFE_INTEGER) \
     macro(promiseStatePending) \
     macro(promiseStateFulfilled) \
     macro(promiseStateRejected) \
+    macro(symbolIsConcatSpreadable) \
     macro(symbolIterator) \
     macro(symbolMatch) \
     macro(symbolSearch) \

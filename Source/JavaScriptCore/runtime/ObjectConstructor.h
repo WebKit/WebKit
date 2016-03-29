@@ -91,6 +91,13 @@ inline JSObject* constructEmptyObject(ExecState* exec)
     return constructEmptyObject(exec, exec->lexicalGlobalObject()->objectPrototype());
 }
 
+inline JSObject* constructObject(ExecState* exec, JSGlobalObject* globalObject, JSValue arg)
+{
+    if (arg.isUndefinedOrNull())
+        return constructEmptyObject(exec, globalObject->objectPrototype());
+    return arg.toObject(exec, globalObject);
+}
+
 // Section 6.2.4.4 of the ES6 specification.
 // https://tc39.github.io/ecma262/#sec-frompropertydescriptor
 inline JSObject* constructObjectFromPropertyDescriptor(ExecState* exec, const PropertyDescriptor& descriptor)

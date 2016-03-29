@@ -1,3 +1,16 @@
+2016-03-29  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add support for Symbol.isConcatSpreadable.
+        https://bugs.webkit.org/show_bug.cgi?id=155351
+
+        Reviewed by Saam Barati.
+
+        Fix tests for Symbol.isConcatSpreadable on the Symbol object.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/dom/array-prototype-properties-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2016-03-29  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver: Navigating Numbered Lists Causes Number to be announced On Each Line of List

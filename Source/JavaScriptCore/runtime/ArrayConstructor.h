@@ -91,6 +91,14 @@ inline bool isArray(ExecState* exec, JSValue argumentValue)
     ASSERT_NOT_REACHED();
 }
 
+inline bool isArrayConstructor(JSValue argumentValue)
+{
+    if (!argumentValue.isObject())
+        return false;
+
+    return jsCast<JSObject*>(argumentValue)->classInfo() == ArrayConstructor::info();
+}
+
 } // namespace JSC
 
 #endif // ArrayConstructor_h

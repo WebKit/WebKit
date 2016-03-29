@@ -1,3 +1,133 @@
+2016-03-29  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add support for Symbol.isConcatSpreadable.
+        https://bugs.webkit.org/show_bug.cgi?id=155351
+
+        Reviewed by Saam Barati.
+
+        This patch adds support for Symbol.isConcatSpreadable. In order to do so it was necessary to move the
+        Array.prototype.concat function to JS. A number of different optimizations were needed to make such the move to
+        a builtin performant. First, four new DFG intrinsics were added.
+
+        1) IsArrayObject (I would have called it IsArray but we use the same name for an IndexingType): an intrinsic of
+           the Array.isArray function.
+        2) IsJSArray: checks the first child is a JSArray object.
+        3) IsArrayConstructor: checks the first child is an instance of ArrayConstructor.
+        4) CallObjectConstructor: an intrinsic of the Object constructor.
+
+        IsActualObject, IsJSArray, and CallObjectConstructor can all be converted into constants in the abstract interpreter if
+        we are able to prove that the first child is an Array or for ToObject an Object.
+
+        In order to further improve the perfomance we also now cover more indexing types in our fast path memcpy
+        code. Before we would only memcpy Arrays if they had the same indexing type and did not have Array storage and
+        were not undecided. Now the memcpy code covers the following additional two cases: One array is undecided and
+        the other is a non-array storage and the case where one array is Int32 and the other is contiguous (we map this
+        into a contiguous array).
+
+        This patch also adds a new fast path for concat with more than one array argument by using memcpy to append
+        values onto the result array. This works roughly the same as the two array fast path using the same methodology
+        to decide if we can memcpy the other butterfly into the result butterfly.
+
+        Two new debugging tools are also added to the jsc cli. One is a version of the print function with a private
+        name so it can be used for debugging builtins. The other is dumpDataLog, which takes a JSValue and runs our
+        dataLog function on it.
+
+        Finally, this patch add a new constructor to JSValueRegsTemporary that allows it to reuse the the registers of a
+        JSValueOperand if the operand's use count is one.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ArrayPrototype.js:
+        (concatSlowPath):
+        (concat):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compileIsJSArray):
+        (JSC::DFG::SpeculativeJIT::compileIsArrayObject):
+        (JSC::DFG::SpeculativeJIT::compileIsArrayConstructor):
+        (JSC::DFG::SpeculativeJIT::compileCallObjectConstructor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallObjectConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsArrayObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsArrayConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::isArray):
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        (WTF::RuntimeArray::createStructure):
+        (GlobalObject::finishCreation):
+        (functionDebug):
+        (functionDataLogValue):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        (JSC::arrayConstructorPrivateFuncIsArrayConstructor):
+        * runtime/ArrayConstructor.h:
+        (JSC::isArrayConstructor):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        (JSC::arrayProtoPrivateFuncIsJSArray):
+        (JSC::moveElements):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        (JSC::arrayProtoPrivateFuncAppendMemcpy):
+        (JSC::arrayProtoFuncConcat): Deleted.
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::createStructure):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Intrinsic.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::fastConcatWith): Deleted.
+        * runtime/JSArray.h:
+        (JSC::JSArray::createStructure):
+        (JSC::JSArray::fastConcatType): Deleted.
+        * runtime/JSArrayInlines.h: Added.
+        (JSC::JSArray::memCopyWithIndexingType):
+        (JSC::JSArray::canFastCopy):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSType.h:
+        * runtime/ObjectConstructor.h:
+        (JSC::constructObject):
+        * tests/es6.yaml:
+        * tests/stress/array-concat-spread-object.js: Added.
+        (arrayEq):
+        * tests/stress/array-concat-spread-proxy-exception-check.js: Added.
+        (arrayEq):
+        * tests/stress/array-concat-spread-proxy.js: Added.
+        (arrayEq):
+        * tests/stress/array-concat-with-slow-indexingtypes.js: Added.
+        (arrayEq):
+        * tests/stress/array-species-config-array-constructor.js:
+
 2016-03-29  Saam barati  <sbarati@apple.com>
 
         We don't properly optimize TDZ checks when we declare a let variable without an initializer
