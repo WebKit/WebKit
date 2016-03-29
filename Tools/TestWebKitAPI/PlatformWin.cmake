@@ -32,6 +32,7 @@ set(test_webcore_LIBRARIES
     Shlwapi
     Usp10
     WebCore${DEBUG_SUFFIX}
+    WebCoreDerivedSources${DEBUG_SUFFIX}
     WebKit${DEBUG_SUFFIX}
     gtest
 )

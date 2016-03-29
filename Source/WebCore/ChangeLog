@@ -1,5 +1,11 @@
 2016-03-29  Alex Christensen  <achristensen@webkit.org>
 
+        Fix Windows build.
+
+        * CMakeLists.txt:
+
+2016-03-29  Alex Christensen  <achristensen@webkit.org>
+
         Windows build fix.
 
         * CMakeLists.txt:

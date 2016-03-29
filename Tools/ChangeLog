@@ -1,3 +1,9 @@
+2016-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows build.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+
 2016-03-29  Timothy Hatcher  <timothy@apple.com>
 
         Update WebKit nightly to have a red needle to better match Safari
