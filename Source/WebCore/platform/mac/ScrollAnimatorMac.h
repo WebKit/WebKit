@@ -69,8 +69,8 @@ private:
     RetainPtr<id> m_scrollAnimationHelper;
     RetainPtr<WebScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
 
-    RetainPtr<ScrollerImpPair> m_scrollbarPainterController;
-    RetainPtr<WebScrollerImpPairDelegate> m_scrollbarPainterControllerDelegate;
+    RetainPtr<ScrollerImpPair> m_scrollerImpPair;
+    RetainPtr<WebScrollerImpPairDelegate> m_scrollerImpPairDelegate;
     RetainPtr<WebScrollerImpDelegate> m_horizontalScrollerImpDelegate;
     RetainPtr<WebScrollerImpDelegate> m_verticalScrollerImpDelegate;
 

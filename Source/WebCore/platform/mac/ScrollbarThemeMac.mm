@@ -159,9 +159,9 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)
         return;
 
     bool isHorizontal = scrollbar.orientation() == HorizontalScrollbar;
-    NSScrollerImp *scrollbarPainter = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(scrollbar.controlSize()) horizontal:isHorizontal replacingScrollerImp:nil];
-    scrollbar.scrollableArea().setScrollbarLayoutDirection(scrollbarPainter);
-    scrollbarMap()->add(&scrollbar, scrollbarPainter);
+    NSScrollerImp *scrollerImp = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(scrollbar.controlSize()) horizontal:isHorizontal replacingScrollerImp:nil];
+    scrollbar.scrollableArea().setScrollbarLayoutDirection(scrollerImp);
+    scrollbarMap()->add(&scrollbar, scrollerImp);
     updateEnabledState(scrollbar);
     updateScrollbarOverlayStyle(scrollbar);
 }
@@ -223,9 +223,9 @@ void ScrollbarThemeMac::preferencesChanged()
 int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSScrollerImp *scrollbarPainter = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(controlSize) horizontal:NO replacingScrollerImp:nil];
-    [scrollbarPainter setExpanded:YES];
-    return [scrollbarPainter trackBoxWidth];
+    NSScrollerImp *scrollerImp = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(controlSize) horizontal:NO replacingScrollerImp:nil];
+    [scrollerImp setExpanded:YES];
+    return [scrollerImp trackBoxWidth];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -508,17 +508,17 @@ void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(Scrollbar& scrollbar
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-static void scrollbarPainterPaint(NSScrollerImp *scrollbarPainter, bool enabled)
+static void scrollerImpPaint(NSScrollerImp *scrollerImp, bool enabled)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     // Use rectForPart: here; it will take the expansion transition progress into account.
-    NSRect trackRect = [scrollbarPainter rectForPart:NSScrollerKnobSlot];
-    [scrollbarPainter drawKnobSlotInRect:trackRect highlight:NO];
+    NSRect trackRect = [scrollerImp rectForPart:NSScrollerKnobSlot];
+    [scrollerImp drawKnobSlotInRect:trackRect highlight:NO];
 
     // If the scrollbar is not enabled, then there is nothing to scroll to, and we shouldn't
     // call drawKnob.
     if (enabled)
-        [scrollbarPainter drawKnob];
+        [scrollerImp drawKnob];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -526,15 +526,16 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
 {
     setPaintCharacteristicsForScrollbar(scrollbar);
 
-    if (!scrollbar.supportsUpdateOnSecondaryThread()) {
-        TemporaryChange<bool> isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context.isCALayerContext());
+    if (scrollbar.supportsUpdateOnSecondaryThread())
+        return true;
+
+    TemporaryChange<bool> isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context.isCALayerContext());
     
-        GraphicsContextStateSaver stateSaver(context);
-        context.clip(damageRect);
-        context.translate(scrollbar.frameRect().x(), scrollbar.frameRect().y());
-        LocalCurrentGraphicsContext localContext(context);
-        scrollbarPainterPaint(scrollbarMap()->get(&scrollbar).get(), scrollbar.enabled());
-    }
+    GraphicsContextStateSaver stateSaver(context);
+    context.clip(damageRect);
+    context.translate(scrollbar.frameRect().x(), scrollbar.frameRect().y());
+    LocalCurrentGraphicsContext localContext(context);
+    scrollerImpPaint(scrollbarMap()->get(&scrollbar).get(), scrollbar.enabled());
 
     return true;
 }
