@@ -1,3 +1,66 @@
+2016-03-29  Saam barati  <sbarati@apple.com>
+
+        Allow builtin JS functions to be intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=155960
+
+        Reviewed by Mark Lam.
+
+        Builtin functions can now be recognized as intrinsics inside
+        the DFG. This gives us the flexibility to either lower a builtin
+        as an intrinsic in the DFG or as a normal function call.
+        Because we may decide to not lower it as an intrinsic, the DFG
+        inliner could still inline the function call.
+
+        You can annotate a builtin function like so to make
+        it be recognized as an intrinsic.
+        ```
+        [intrinsic=FooIntrinsic] function foo() { ... }
+        ```
+        where FooIntrinsic is an enum value of the Intrinsic enum.
+
+        So in the future if we write RegExp.prototype.test as a builtin, we would do:
+        ``` RegExpPrototype.js
+        [intrinsic=RegExpTestIntrinsic] function test() { ... }
+        ```
+
+        * Scripts/builtins/builtins_generate_combined_implementation.py:
+        (BuiltinsCombinedImplementationGenerator.generate_secondary_header_includes):
+        * Scripts/builtins/builtins_generate_separate_implementation.py:
+        (BuiltinsSeparateImplementationGenerator.generate_secondary_header_includes):
+        * Scripts/builtins/builtins_generator.py:
+        (BuiltinsGenerator.generate_embedded_code_string_section_for_function):
+        * Scripts/builtins/builtins_model.py:
+        (BuiltinObject.__init__):
+        (BuiltinFunction):
+        (BuiltinFunction.__init__):
+        (BuiltinFunction.fromString):
+        (BuiltinFunction.__str__):
+        * Scripts/builtins/builtins_templates.py:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        (JSC::UnlinkedFunctionExecutable::link):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::clearCode):
+        (JSC::NativeExecutable::destroy):
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::EvalExecutable::create):
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::ModuleProgramExecutable::ModuleProgramExecutable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::ExecutableBase::intrinsic): Deleted.
+        (JSC::NativeExecutable::intrinsic): Deleted.
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::ExecutableBase::hasJITCodeFor):
+        (JSC::ExecutableBase::intrinsic):
+        (JSC::ExecutableBase::intrinsicFor):
+        (JSC::ScriptExecutable::finishCreation):
+        * runtime/Intrinsic.h:
+
 2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSC::Debugger cleanup after recent changes

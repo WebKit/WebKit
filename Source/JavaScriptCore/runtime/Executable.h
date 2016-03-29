@@ -75,10 +75,11 @@ protected:
     static const int NUM_PARAMETERS_IS_HOST = 0;
     static const int NUM_PARAMETERS_NOT_COMPILED = -1;
 
-    ExecutableBase(VM& vm, Structure* structure, int numParameters)
+    ExecutableBase(VM& vm, Structure* structure, int numParameters, Intrinsic intrinsic)
         : JSCell(vm, structure)
         , m_numParametersForCall(numParameters)
         , m_numParametersForConstruct(numParameters)
+        , m_intrinsic(intrinsic)
     {
     }
 
@@ -231,7 +232,7 @@ public:
     }
 
     // Intrinsics are only for calls, currently.
-    Intrinsic intrinsic() const;
+    Intrinsic intrinsic() const { return m_intrinsic; }
         
     Intrinsic intrinsicFor(CodeSpecializationKind kind) const
     {
@@ -243,6 +244,7 @@ public:
     void dump(PrintStream&) const;
         
 protected:
+    Intrinsic m_intrinsic;
     RefPtr<JITCode> m_jitCodeForCall;
     RefPtr<JITCode> m_jitCodeForConstruct;
     MacroAssemblerCodePtr m_jitCodeForCallWithArityCheck;
@@ -259,8 +261,8 @@ public:
     static NativeExecutable* create(VM& vm, PassRefPtr<JITCode> callThunk, NativeFunction function, PassRefPtr<JITCode> constructThunk, NativeFunction constructor, Intrinsic intrinsic, const String& name)
     {
         NativeExecutable* executable;
-        executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
-        executable->finishCreation(vm, callThunk, constructThunk, intrinsic, name);
+        executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor, intrinsic);
+        executable->finishCreation(vm, callThunk, constructThunk, name);
         return executable;
     }
 
@@ -296,20 +298,19 @@ public:
     const String& name() const { return m_name; }
 
 protected:
-    void finishCreation(VM& vm, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, Intrinsic intrinsic, const String& name)
+    void finishCreation(VM& vm, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, const String& name)
     {
         Base::finishCreation(vm);
         m_jitCodeForCall = callThunk;
         m_jitCodeForConstruct = constructThunk;
-        m_intrinsic = intrinsic;
         m_name = name;
     }
 
 private:
     friend class ExecutableBase;
 
-    NativeExecutable(VM& vm, NativeFunction function, NativeFunction constructor)
-        : ExecutableBase(vm, vm.nativeExecutableStructure.get(), NUM_PARAMETERS_IS_HOST)
+    NativeExecutable(VM& vm, NativeFunction function, NativeFunction constructor, Intrinsic intrinsic)
+        : ExecutableBase(vm, vm.nativeExecutableStructure.get(), NUM_PARAMETERS_IS_HOST, intrinsic)
         , m_function(function)
         , m_constructor(constructor)
     {
@@ -399,7 +400,7 @@ private:
     JSObject* prepareForExecutionImpl(ExecState*, JSFunction*, JSScope*, CodeSpecializationKind);
 
 protected:
-    ScriptExecutable(Structure*, VM&, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isInArrowFunctionContext);
+    ScriptExecutable(Structure*, VM&, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isInArrowFunctionContext, Intrinsic);
 
     void finishCreation(VM& vm)
     {
@@ -580,9 +581,9 @@ public:
 
     static FunctionExecutable* create(
         VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, 
-        unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn)
+        unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn, Intrinsic intrinsic)
     {
-        FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, firstLine, lastLine, startColumn, endColumn);
+        FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, firstLine, lastLine, startColumn, endColumn, intrinsic);
         executable->finishCreation(vm);
         return executable;
     }
@@ -697,7 +698,7 @@ private:
     friend class ExecutableBase;
     FunctionExecutable(
         VM&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, 
-        unsigned lastLine, unsigned startColumn, unsigned endColumn);
+        unsigned lastLine, unsigned startColumn, unsigned endColumn, Intrinsic);
     
     void finishCreation(VM&);
 

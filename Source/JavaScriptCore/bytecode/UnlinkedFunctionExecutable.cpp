@@ -127,7 +127,7 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(&thisObject->m_unlinkedCodeBlockForConstruct);
 }
 
-FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& ownerSource, int overrideLineNumber)
+FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& ownerSource, Optional<int> overrideLineNumber, Intrinsic intrinsic)
 {
     SourceCode source = m_sourceOverride ? SourceCode(m_sourceOverride) : ownerSource;
     unsigned firstLine = source.firstLine() + m_firstLineOffset;
@@ -155,9 +155,9 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& o
         }
     }
 
-    FunctionExecutable* result = FunctionExecutable::create(vm, code, this, firstLine, firstLine + lineCount, startColumn, endColumn);
-    if (overrideLineNumber != -1)
-        result->setOverrideLineNumber(overrideLineNumber);
+    FunctionExecutable* result = FunctionExecutable::create(vm, code, this, firstLine, firstLine + lineCount, startColumn, endColumn, intrinsic);
+    if (overrideLineNumber)
+        result->setOverrideLineNumber(*overrideLineNumber);
 
     if (UNLIKELY(hasFunctionOverride)) {
         result->overrideParameterAndTypeProfilingStartEndOffsets(

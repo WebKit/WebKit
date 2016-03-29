@@ -86,6 +86,9 @@ class BuiltinsCombinedImplementationGenerator(BuiltinsGenerator):
             (["JavaScriptCore", "WebCore"],
                 ("JavaScriptCore", "runtime/VM.h"),
             ),
+            (["JavaScriptCore", "WebCore"],
+                ("JavaScriptCore", "runtime/Intrinsic.h"),
+            ),
         ]
 
         return '\n'.join(self.generate_includes_from_entries(header_includes))

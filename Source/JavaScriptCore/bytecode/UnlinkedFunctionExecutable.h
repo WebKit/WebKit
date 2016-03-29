@@ -34,6 +34,7 @@
 #include "ExpressionRangeInfo.h"
 #include "HandlerInfo.h"
 #include "Identifier.h"
+#include "Intrinsic.h"
 #include "JSCell.h"
 #include "JSString.h"
 #include "ParserModes.h"
@@ -107,7 +108,7 @@ public:
         const Identifier&, ExecState&, const SourceCode&, JSObject*& exception, 
         int overrideLineNumber);
 
-    JS_EXPORT_PRIVATE FunctionExecutable* link(VM&, const SourceCode&, int overrideLineNumber = -1);
+    JS_EXPORT_PRIVATE FunctionExecutable* link(VM&, const SourceCode&, Optional<int> overrideLineNumber = Nullopt, Intrinsic = NoIntrinsic);
 
     void clearCode()
     {

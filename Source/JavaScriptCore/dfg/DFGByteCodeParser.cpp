@@ -1570,12 +1570,6 @@ bool ByteCodeParser::attemptToInlineCall(Node* callTargetNode, int resultOperand
     if (!inliningBalance)
         return false;
     
-    bool didInsertChecks = false;
-    auto insertChecksWithAccounting = [&] () {
-        insertChecks(nullptr);
-        didInsertChecks = true;
-    };
-    
     if (verbose)
         dataLog("    Considering callee ", callee, "\n");
     
@@ -1587,6 +1581,13 @@ bool ByteCodeParser::attemptToInlineCall(Node* callTargetNode, int resultOperand
     // exit to: LoadVarargs is effectful and it's part of the op_call_varargs, so we can't exit without
     // calling LoadVarargs twice.
     if (!InlineCallFrame::isVarargs(kind)) {
+
+        bool didInsertChecks = false;
+        auto insertChecksWithAccounting = [&] () {
+            insertChecks(nullptr);
+            didInsertChecks = true;
+        };
+    
         if (InternalFunction* function = callee.internalFunction()) {
             if (handleConstantInternalFunction(callTargetNode, resultOperand, function, registerOffset, argumentCountIncludingThis, specializationKind, insertChecksWithAccounting)) {
                 RELEASE_ASSERT(didInsertChecks);
@@ -1608,8 +1609,9 @@ bool ByteCodeParser::attemptToInlineCall(Node* callTargetNode, int resultOperand
                 inliningBalance--;
                 return true;
             }
+
             RELEASE_ASSERT(!didInsertChecks);
-            return false;
+            // We might still try to inline the Intrinsic because it might be a builtin JS function.
         }
     }
     

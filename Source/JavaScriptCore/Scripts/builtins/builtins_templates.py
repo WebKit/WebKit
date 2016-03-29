@@ -89,7 +89,7 @@ ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \\
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \\
 {\\
-    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source()); \
+    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source(), Nullopt, s_##codeName##Intrinsic); \
 }
 ${macroPrefix}_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
@@ -100,7 +100,7 @@ ${macroPrefix}_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \\
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \\
 {\\
-    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source()); \
+    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source(), Nullopt, s_##codeName##Intrinsic); \
 }
 ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
@@ -112,7 +112,7 @@ ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \\
 {\\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \\
-    return clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Executable()->link(vm, clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Source()); \\
+    return clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Executable()->link(vm, clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Source(), Nullopt, s_##codeName##Intrinsic); \\
 }
 ${macroPrefix}_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
@@ -124,7 +124,7 @@ ${macroPrefix}_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \\
 {\\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \\
-    return clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Executable()->link(vm, clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Source()); \\
+    return clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Executable()->link(vm, clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Source(), Nullopt, s_##codeName##Intrinsic); \\
 }
 ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR

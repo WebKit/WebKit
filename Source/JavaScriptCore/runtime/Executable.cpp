@@ -101,20 +101,6 @@ void ExecutableBase::clearCode()
     ASSERT(classInfo() == NativeExecutable::info());
 }
 
-#if ENABLE(DFG_JIT)
-Intrinsic ExecutableBase::intrinsic() const
-{
-    if (const NativeExecutable* nativeExecutable = jsDynamicCast<const NativeExecutable*>(this))
-        return nativeExecutable->intrinsic();
-    return NoIntrinsic;
-}
-#else
-Intrinsic ExecutableBase::intrinsic() const
-{
-    return NoIntrinsic;
-}
-#endif
-
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, CREATE_METHOD_TABLE(NativeExecutable) };
 
 void NativeExecutable::destroy(JSCell* cell)
@@ -122,17 +108,10 @@ void NativeExecutable::destroy(JSCell* cell)
     static_cast<NativeExecutable*>(cell)->NativeExecutable::~NativeExecutable();
 }
 
-#if ENABLE(DFG_JIT)
-Intrinsic NativeExecutable::intrinsic() const
-{
-    return m_intrinsic;
-}
-#endif
-
 const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, CREATE_METHOD_TABLE(ScriptExecutable) };
 
-ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCode& source, bool isInStrictContext, DerivedContextType derivedContextType, bool isInArrowFunctionContext)
-    : ExecutableBase(vm, structure, NUM_PARAMETERS_NOT_COMPILED)
+ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCode& source, bool isInStrictContext, DerivedContextType derivedContextType, bool isInArrowFunctionContext, Intrinsic intrinsic)
+    : ExecutableBase(vm, structure, NUM_PARAMETERS_NOT_COMPILED, intrinsic)
     , m_features(isInStrictContext ? StrictModeFeature : 0)
     , m_didTryToEnterInLoop(false)
     , m_hasCapturedVariables(false)
@@ -436,7 +415,7 @@ EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source
 }
 
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext)
-    : ScriptExecutable(exec->vm().evalExecutableStructure.get(), exec->vm(), source, inStrictContext, derivedContextType, isArrowFunctionContext)
+    : ScriptExecutable(exec->vm().evalExecutableStructure.get(), exec->vm(), source, inStrictContext, derivedContextType, isArrowFunctionContext, NoIntrinsic)
 {
 }
 
@@ -448,7 +427,7 @@ void EvalExecutable::destroy(JSCell* cell)
 const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(ProgramExecutable) };
 
 ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
-    : ScriptExecutable(exec->vm().programExecutableStructure.get(), exec->vm(), source, false, DerivedContextType::None, false)
+    : ScriptExecutable(exec->vm().programExecutableStructure.get(), exec->vm(), source, false, DerivedContextType::None, false, NoIntrinsic)
 {
     m_typeProfilingStartOffset = 0;
     m_typeProfilingEndOffset = source.length() - 1;
@@ -464,7 +443,7 @@ void ProgramExecutable::destroy(JSCell* cell)
 const ClassInfo ModuleProgramExecutable::s_info = { "ModuleProgramExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(ModuleProgramExecutable) };
 
 ModuleProgramExecutable::ModuleProgramExecutable(ExecState* exec, const SourceCode& source)
-    : ScriptExecutable(exec->vm().moduleProgramExecutableStructure.get(), exec->vm(), source, false, DerivedContextType::None, false)
+    : ScriptExecutable(exec->vm().moduleProgramExecutableStructure.get(), exec->vm(), source, false, DerivedContextType::None, false, NoIntrinsic)
 {
     m_typeProfilingStartOffset = 0;
     m_typeProfilingEndOffset = source.length() - 1;
@@ -495,8 +474,8 @@ void ModuleProgramExecutable::destroy(JSCell* cell)
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(FunctionExecutable) };
 
-FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn)
-    : ScriptExecutable(vm.functionExecutableStructure.get(), vm, source, unlinkedExecutable->isInStrictContext(), unlinkedExecutable->derivedContextType(), false)
+FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn, Intrinsic intrinsic)
+    : ScriptExecutable(vm.functionExecutableStructure.get(), vm, source, unlinkedExecutable->isInStrictContext(), unlinkedExecutable->derivedContextType(), false, intrinsic)
     , m_unlinkedExecutable(vm, this, unlinkedExecutable)
 {
     RELEASE_ASSERT(!source.isNull());

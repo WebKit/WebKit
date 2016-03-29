@@ -129,12 +129,14 @@ class BuiltinsGenerator:
             'codeName': BuiltinsGenerator.mangledNameForFunction(function) + 'Code',
             'embeddedSource': embeddedSource,
             'embeddedSourceLength': embeddedSourceLength,
-            'canConstruct': constructAbility
+            'canConstruct': constructAbility,
+            'intrinsic': function.intrinsic
         }
 
         lines = []
         lines.append("const JSC::ConstructAbility s_%(codeName)sConstructAbility = JSC::ConstructAbility::%(canConstruct)s;" % args);
         lines.append("const int s_%(codeName)sLength = %(embeddedSourceLength)d;" % args);
+        lines.append("static const JSC::Intrinsic s_%(codeName)sIntrinsic = JSC::%(intrinsic)s;" % args);
         lines.append("const char* s_%(codeName)s =\n%(embeddedSource)s\n;" % args);
         return '\n'.join(lines)
 
