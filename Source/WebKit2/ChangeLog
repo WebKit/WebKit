@@ -1,3 +1,9 @@
+2016-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build after r198792.
+
+        * PlatformMac.cmake:
+
 2016-03-29  Brian Burg  <bburg@apple.com>
 
         Web Automation: Add SPI to tell whether an NSEvent was synthesized for automation

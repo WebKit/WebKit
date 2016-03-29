@@ -223,6 +223,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Cocoa/VersionChecks.mm
     UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm
     UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm
+    UIProcess/Cocoa/WebAutomationSessionCocoa.mm
     UIProcess/Cocoa/WebPageProxyCocoa.mm
     UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
     UIProcess/Cocoa/WebProcessPoolCocoa.mm
