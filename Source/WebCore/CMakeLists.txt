@@ -3807,10 +3807,14 @@ add_library(WebCoreDerivedSources STATIC ${WebCore_DERIVED_SOURCES})
 set_target_properties(WebCoreDerivedSources PROPERTIES OUTPUT_NAME WebCoreDerivedSources${DEBUG_SUFFIX})
 set_target_properties(WebCoreDerivedSources PROPERTIES FOLDER "WebCore")
 if (NOT WIN32)
-    list(APPEND WebCore_LIBRARIES WebCoreDerivedSources${DEBUG_SUFFIX})
+    list(APPEND WebCore_LIBRARIES WebCoreDerivedSources)
 endif ()
 
 WEBKIT_FRAMEWORK(WebCore)
+
+if (WIN32)
+    add_dependencies(WebCore WebCoreDerivedSources)
+endif ()
 
 # The -ftree-sra optimization (implicit with -O2) causes crashes when
 # allocating large chunks of memory using bmalloc on Intel 32bit.

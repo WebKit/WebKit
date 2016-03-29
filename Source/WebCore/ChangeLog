@@ -1,3 +1,10 @@
+2016-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows clean build.
+
+        * CMakeLists.txt:
+        Make sure WebCoreDerivedSources is done building before building WebCore.
+
 2016-03-29  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for Symbol.isConcatSpreadable.
