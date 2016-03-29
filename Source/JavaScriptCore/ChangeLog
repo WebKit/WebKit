@@ -1,3 +1,18 @@
+2016-03-29  Saam barati  <sbarati@apple.com>
+
+        "Can not" => "cannot" in String.prototype error messages
+        https://bugs.webkit.org/show_bug.cgi?id=155895
+
+        Reviewed by Mark Lam.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncStartsWith):
+        (JSC::stringProtoFuncEndsWith):
+        (JSC::stringProtoFuncIncludes):
+        * tests/stress/string-prototype-methods-endsWith-startsWith-includes-correctness.js:
+        (test):
+        (test.get let):
+
 2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: We should have a way to capture heap snapshots programatically.

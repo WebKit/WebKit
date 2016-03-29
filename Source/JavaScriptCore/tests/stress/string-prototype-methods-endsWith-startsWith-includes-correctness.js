@@ -14,7 +14,7 @@ test(function() {
     try {
         foo.endsWith(/foo/);
     } catch(e) {
-        assert(e.toString() === "TypeError: Argument to String.prototype.endsWith can not be a RegExp.");
+        assert(e.toString() === "TypeError: Argument to String.prototype.endsWith cannot be a RegExp.");
         threw = true;
     }
     assert(threw);
@@ -26,7 +26,7 @@ test(function() {
     try {
         foo.startsWith(/foo/);
     } catch(e) {
-        assert(e.toString() === "TypeError: Argument to String.prototype.startsWith can not be a RegExp.");
+        assert(e.toString() === "TypeError: Argument to String.prototype.startsWith cannot be a RegExp.");
         threw = true;
     }
     assert(threw);
@@ -38,7 +38,7 @@ test(function() {
     try {
         foo.includes(/foo/);
     } catch(e) {
-        assert(e.toString() === "TypeError: Argument to String.prototype.includes can not be a RegExp.");
+        assert(e.toString() === "TypeError: Argument to String.prototype.includes cannot be a RegExp.");
         threw = true;
     }
     assert(threw);
@@ -58,7 +58,7 @@ test(function() {
     try {
         foo.endsWith(proxy);
     } catch(e) {
-        assert(e.toString() === "TypeError: Argument to String.prototype.endsWith can not be a RegExp.");
+        assert(e.toString() === "TypeError: Argument to String.prototype.endsWith cannot be a RegExp.");
         threw = true;
     }
     assert(threw);
@@ -80,7 +80,7 @@ test(function() {
     try {
         foo.startsWith(proxy);
     } catch(e) {
-        assert(e.toString() === "TypeError: Argument to String.prototype.startsWith can not be a RegExp.");
+        assert(e.toString() === "TypeError: Argument to String.prototype.startsWith cannot be a RegExp.");
         threw = true;
     }
     assert(threw);
@@ -102,7 +102,7 @@ test(function() {
     try {
         foo.includes(proxy);
     } catch(e) {
-        assert(e.toString() === "TypeError: Argument to String.prototype.includes can not be a RegExp.");
+        assert(e.toString() === "TypeError: Argument to String.prototype.includes cannot be a RegExp.");
         threw = true;
     }
     assert(threw);

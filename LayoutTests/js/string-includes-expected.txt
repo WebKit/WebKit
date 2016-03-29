@@ -118,9 +118,9 @@ PASS 'abc'.endsWith('bc', 3) is true
 PASS (function() { var f = String.prototype.startsWith; (function() { f('a'); })(); })() threw exception TypeError: Type error.
 PASS (function() { var f = String.prototype.endsWith; (function() { f('a'); })(); })() threw exception TypeError: Type error.
 PASS (function() { var f = String.prototype.includes; (function() { f('a'); })(); })() threw exception TypeError: Type error.
-PASS 'foo bar'.startsWith(/w+/) threw exception TypeError: Argument to String.prototype.startsWith can not be a RegExp..
-PASS 'foo bar'.endsWith(/w+/) threw exception TypeError: Argument to String.prototype.endsWith can not be a RegExp..
-PASS 'foo bar'.includes(/w+/) threw exception TypeError: Argument to String.prototype.includes can not be a RegExp..
+PASS 'foo bar'.startsWith(/w+/) threw exception TypeError: Argument to String.prototype.startsWith cannot be a RegExp..
+PASS 'foo bar'.endsWith(/w+/) threw exception TypeError: Argument to String.prototype.endsWith cannot be a RegExp..
+PASS 'foo bar'.includes(/w+/) threw exception TypeError: Argument to String.prototype.includes cannot be a RegExp..
 PASS stringToSearchIn.startsWith(searchString, startOffset) is true
 PASS sideEffect == 'ABC' is true
 PASS stringToSearchIn.startsWith(searchString, startOffset) threw exception error.
