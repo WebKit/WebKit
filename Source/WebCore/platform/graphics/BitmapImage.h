@@ -123,7 +123,7 @@ public:
 
     // FloatSize due to override.
     FloatSize size() const override;
-    IntSize sizeRespectingOrientation(ImageOrientationDescription = ImageOrientationDescription()) const;
+    IntSize sizeRespectingOrientation() const;
 
     bool getHotSpot(IntPoint&) const override;
 
@@ -179,16 +179,14 @@ public:
     
     bool canAnimate();
 
-    bool allowSubsampling() const { return m_allowSubsampling; }
-    void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
+    void setAllowSubsampling(bool allowSubsampling) { m_source.setAllowSubsampling(allowSubsampling); }
 
     size_t currentFrame() const { return m_currentFrame; }
     
 private:
     bool isBitmapImage() const override { return true; }
 
-    void updateSize(ImageOrientationDescription = ImageOrientationDescription()) const;
-    void determineMinimumSubsamplingLevel() const;
+    void updateSize() const;
 
 protected:
     enum RepetitionCountStatus {
@@ -295,11 +293,6 @@ private:
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
     mutable IntSize m_sizeRespectingOrientation;
 
-    mutable SubsamplingLevel m_minimumSubsamplingLevel;
-
-    mutable unsigned m_imageOrientation : 4; // ImageOrientationEnum
-    mutable unsigned m_shouldRespectImageOrientation : 1; // RespectImageOrientationEnum
-
     size_t m_currentFrame; // The index of the current frame of animation.
     Vector<FrameData, 1> m_frames; // An array of the cached frames of the animation. We have to ref frames to pin them in the cache.
 
@@ -327,8 +320,6 @@ private:
     double m_progressiveLoadChunkTime;
     uint16_t m_progressiveLoadChunkCount;
 #endif
-
-    bool m_allowSubsampling : 1; // Whether we should attempt subsampling if this image is very large.
     bool m_isSolidColor : 1; // Whether or not we are a 1x1 solid image.
     bool m_checkedForSolidColor : 1; // Whether we've checked the frame for solid color.
 

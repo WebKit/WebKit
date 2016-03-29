@@ -29,6 +29,7 @@
 
 #include "ImageOrientation.h"
 #include "NativeImagePtr.h"
+#include "TextStream.h"
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -45,19 +46,7 @@ class ImageOrientation;
 class IntPoint;
 class IntSize;
 class SharedBuffer;
-
-#if USE(CG)
-typedef CGImageSourceRef NativeImageDecoderPtr;
-#else
 class ImageDecoder;
-typedef ImageDecoder* NativeImageDecoderPtr;
-#endif
-
-#if USE(CG)
-#define NativeImageDecoder ImageDecoder
-#else
-typedef ImageDecoder NativeImageDecoder;
-#endif
 
 // Right now GIFs are the only recognized image format that supports animation.
 // The animation system and the constants below are designed with this in mind.
@@ -82,6 +71,7 @@ typedef short SubsamplingLevel;
 
 class ImageSource {
     WTF_MAKE_NONCOPYABLE(ImageSource);
+    friend class BitmapImage;
 public:
     enum AlphaOption {
         AlphaPremultiplied,
@@ -122,19 +112,24 @@ public:
                SharedBuffer* data = NULL,
                bool allDataReceived = false);
 
-    bool initialized() const;
+    bool initialized() const { return m_decoder.get(); }
 
     void setData(SharedBuffer* data, bool allDataReceived);
     String filenameExtension() const;
 
     SubsamplingLevel subsamplingLevelForScale(float) const;
     bool allowSubsamplingOfFrameAtIndex(size_t) const;
+    void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
+    SubsamplingLevel maximumSubsamplingLevel() const;
 
     bool isSizeAvailable();
+    
     // Always original size, without subsampling.
-    IntSize size(ImageOrientationDescription = ImageOrientationDescription()) const;
+    IntSize size() const;
+    IntSize sizeRespectingOrientation() const;
+    
     // Size of optionally subsampled frame.
-    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = 0, ImageOrientationDescription = ImageOrientationDescription()) const;
+    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = 0, RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
 
     bool getHotSpot(IntPoint&) const;
 
@@ -163,7 +158,17 @@ public:
 #endif
 
 private:
-    NativeImageDecoderPtr m_decoder;
+    void ensureDecoderIsCreated(SharedBuffer*);
+    SubsamplingLevel calculateMaximumSubsamplingLevel() const;
+    void dump(TextStream&) const;
+    
+    std::unique_ptr<ImageDecoder> m_decoder;
+    
+#if PLATFORM(IOS)
+    bool m_allowSubsampling { true };
+#else
+    bool m_allowSubsampling { false };
+#endif
 
 #if !USE(CG)
     AlphaOption m_alphaOption;

@@ -272,22 +272,14 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
     if (!m_image)
         return LayoutSize();
 
-    LayoutSize imageSize(m_image->size());
+    LayoutSize imageSize;
 
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-    if (renderer && is<BitmapImage>(*m_image)) {
-        ImageOrientationDescription orientationDescription(renderer->shouldRespectImageOrientation(), renderer->style().imageOrientation());
-        if (orientationDescription.respectImageOrientation() == RespectImageOrientation)
-            imageSize = LayoutSize(downcast<BitmapImage>(*m_image).sizeRespectingOrientation(orientationDescription));
-    }
-#else
-    if (is<BitmapImage>(*m_image) && (renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation))
+    if (is<BitmapImage>(*m_image) && renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation)
         imageSize = LayoutSize(downcast<BitmapImage>(*m_image).sizeRespectingOrientation());
-#endif // ENABLE(CSS_IMAGE_ORIENTATION)
-
-    else if (is<SVGImage>(*m_image) && sizeType == UsedSize) {
+    else if (is<SVGImage>(*m_image) && sizeType == UsedSize)
         imageSize = LayoutSize(m_svgImageCache->imageSizeForRenderer(renderer));
-    }
+    else
+        imageSize = LayoutSize(m_image->size());
 
     if (multiplier == 1.0f)
         return imageSize;

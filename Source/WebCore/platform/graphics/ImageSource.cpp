@@ -43,8 +43,7 @@ unsigned ImageSource::s_maxPixelsPerDecodedImage = 1024 * 1024;
 #endif
 
 ImageSource::ImageSource(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
-    : m_decoder(0)
-    , m_alphaOption(alphaOption)
+    : m_alphaOption(alphaOption)
     , m_gammaAndColorProfileOption(gammaAndColorProfileOption)
 {
 }
@@ -62,29 +61,38 @@ void ImageSource::clear(bool destroyAll, size_t clearBeforeFrame, SharedBuffer* 
         return;
     }
 
-    delete m_decoder;
-    m_decoder = 0;
+    m_decoder = nullptr;
+
     if (data)
         setData(data, allDataReceived);
 }
 
-bool ImageSource::initialized() const
+void ImageSource::ensureDecoderIsCreated(SharedBuffer* data)
 {
-    return m_decoder;
-}
-
-void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
-{
+    if (initialized())
+        return;
+    
     // Make the decoder by sniffing the bytes.
     // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
     // made.
-    if (!m_decoder) {
-        m_decoder = static_cast<NativeImageDecoderPtr>(NativeImageDecoder::create(*data, m_alphaOption, m_gammaAndColorProfileOption));
+    m_decoder = ImageDecoder::create(*data, m_alphaOption, m_gammaAndColorProfileOption);
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-        if (m_decoder && s_maxPixelsPerDecodedImage)
-            m_decoder->setMaxNumPixels(s_maxPixelsPerDecodedImage);
+    if (m_decoder && s_maxPixelsPerDecodedImage)
+        m_decoder->setMaxNumPixels(s_maxPixelsPerDecodedImage);
 #endif
+}
+
+void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
+{
+    if (!data)
+        return;
+    
+    ensureDecoderIsCreated(data);
+    
+    if (!initialized()) {
+        ASSERT_NOT_REACHED();
+        return;
     }
 
     if (m_decoder)
@@ -108,29 +116,33 @@ bool ImageSource::allowSubsamplingOfFrameAtIndex(size_t) const
 
 bool ImageSource::isSizeAvailable()
 {
-    return m_decoder && m_decoder->isSizeAvailable();
+    return initialized() && m_decoder->isSizeAvailable();
 }
 
-IntSize ImageSource::size(ImageOrientationDescription description) const
+IntSize ImageSource::size() const
 {
-    return frameSizeAtIndex(0, 0, description);
+    return frameSizeAtIndex(0, 0);
 }
 
-IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel, ImageOrientationDescription description) const
+IntSize ImageSource::sizeRespectingOrientation() const
 {
-    if (!m_decoder)
-        return IntSize();
+    return frameSizeAtIndex(0, 0, RespectImageOrientation);
+}
+
+IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel, RespectImageOrientationEnum shouldRespectImageOrientation) const
+{
+    if (!initialized())
+        return { };
 
     IntSize size = m_decoder->frameSizeAtIndex(index);
-    if ((description.respectImageOrientation() == RespectImageOrientation) && m_decoder->orientation().usesWidthAsHeight())
-        return IntSize(size.height(), size.width());
-
-    return size;
+    ImageOrientation orientation = m_decoder->orientation();
+    
+    return shouldRespectImageOrientation == RespectImageOrientation && orientation.usesWidthAsHeight() ? size.transposedSize() : size;
 }
 
 bool ImageSource::getHotSpot(IntPoint& hotSpot) const
 {
-    return m_decoder ? m_decoder->hotSpot(hotSpot) : false;
+    return initialized() && m_decoder->hotSpot(hotSpot);
 }
 
 size_t ImageSource::bytesDecodedToDetermineProperties() const
@@ -140,26 +152,26 @@ size_t ImageSource::bytesDecodedToDetermineProperties() const
 
 int ImageSource::repetitionCount()
 {
-    return m_decoder ? m_decoder->repetitionCount() : cAnimationNone;
+    return initialized() ? m_decoder->repetitionCount() : cAnimationNone;
 }
 
 size_t ImageSource::frameCount() const
 {
-    return m_decoder ? m_decoder->frameCount() : 0;
+    return initialized() ? m_decoder->frameCount() : 0;
 }
 
 NativeImagePtr ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLevel)
 {
-    if (!m_decoder)
-        return nullptr;
-
-    ImageFrame* buffer = m_decoder->frameBufferAtIndex(index);
-    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
+    if (!initialized())
         return nullptr;
 
     // Zero-height images can cause problems for some ports.  If we have an
     // empty image dimension, just bail.
     if (size().isEmpty())
+        return nullptr;
+
+    ImageFrame* buffer = m_decoder->frameBufferAtIndex(index);
+    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
         return nullptr;
 
     // Return the buffer contents as a native image.  For some ports, the data
@@ -169,7 +181,7 @@ NativeImagePtr ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLev
 
 float ImageSource::frameDurationAtIndex(size_t index)
 {
-    if (!m_decoder)
+    if (!initialized())
         return 0;
 
     ImageFrame* buffer = m_decoder->frameBufferAtIndex(index);
@@ -188,19 +200,17 @@ float ImageSource::frameDurationAtIndex(size_t index)
 
 ImageOrientation ImageSource::orientationAtIndex(size_t) const
 {
-    return m_decoder ? m_decoder->orientation() : DefaultImageOrientation;
+    return initialized() ? m_decoder->orientation() : ImageOrientation();
 }
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)
 {
-    if (!m_decoder)
-        return true;
-    return m_decoder->frameHasAlphaAtIndex(index);
+    return !initialized() || m_decoder->frameHasAlphaAtIndex(index);
 }
 
 bool ImageSource::frameIsCompleteAtIndex(size_t index)
 {
-    if (!m_decoder)
+    if (!initialized())
         return false;
 
     ImageFrame* buffer = m_decoder->frameBufferAtIndex(index);
@@ -209,11 +219,19 @@ bool ImageSource::frameIsCompleteAtIndex(size_t index)
 
 unsigned ImageSource::frameBytesAtIndex(size_t index, SubsamplingLevel) const
 {
-    if (!m_decoder)
-        return 0;
-    return m_decoder->frameBytesAtIndex(index);
+    return initialized() ? m_decoder->frameBytesAtIndex(index) : 0;
 }
 
+void ImageSource::dump(TextStream& ts) const
+{
+    if (m_allowSubsampling)
+        ts.dumpProperty("allow-subsampling", m_allowSubsampling);
+    
+    ImageOrientation orientation = orientationAtIndex(0);
+    if (orientation != OriginTopLeft)
+        ts.dumpProperty("orientation", orientation);
+}
+    
 }
 
 #endif // USE(CG)

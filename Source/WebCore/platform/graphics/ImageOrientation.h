@@ -84,7 +84,12 @@ struct ImageOrientationDescription {
 
 class ImageOrientation {
 public:
-    ImageOrientation(ImageOrientationEnum orientation = DefaultImageOrientation)
+    ImageOrientation()
+        : m_orientation(DefaultImageOrientation)
+    {
+    }
+
+    explicit ImageOrientation(ImageOrientationEnum orientation)
         : m_orientation(orientation)
     {
     }
@@ -101,14 +106,16 @@ public:
     {
         // Values direct from images may be invalid, in which case we use the default.
         if (exifValue < OriginTopLeft || exifValue > OriginLeftBottom)
-            return DefaultImageOrientation;
-        return static_cast<ImageOrientationEnum>(exifValue);
+            return ImageOrientation();
+        return ImageOrientation(static_cast<ImageOrientationEnum>(exifValue));
     }
 
     // This transform can be used for drawing an image according to the orientation.
     // It should be used in a right-handed coordinate system.
     AffineTransform transformFromDefault(const FloatSize& drawnSize) const;
 
+    inline operator ImageOrientationEnum() const { return m_orientation; }
+    
     inline bool operator==(const ImageOrientation& other) const { return other.m_orientation == m_orientation; }
     inline bool operator!=(const ImageOrientation& other) const { return !(*this == other); }
 

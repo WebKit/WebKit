@@ -1,3 +1,184 @@
+2016-03-29  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        Create a CG ImageDecoder class instead of defining it as CGImageSourceRef
+        https://bugs.webkit.org/show_bug.cgi?id=155422
+
+        Reviewed by Simon Fraser.
+
+        Move the image CG decoding code from the class ImageSource out to a new
+        class named ImageDecoder. The purpose of this split is to unify the code
+        of the ImageSource for all platforms. This class should be a container
+        for the ImageDecoder. All the direct frame manipulation like querying the
+        frame metadata or creating a frame image should be the responsibility of
+        the ImageDecoder. The ImageSource will be responsible of the image frame
+        caching. When responding to a frame metadata query, for example. the
+        ImageSource checks its cache first. If an entry does not exist for the
+        requested frame, the ImageSource will cache the image and the metadata
+        of this frame. The ImageSource will respond at the end from the image
+        frame cache.
+ 
+        The plan after this patch is is the following:
+            -- Move the new class to separate files
+            -- Merge the ImageSource.cpp and ImageSourceCG.cpp. in one file
+            -- Move caching the FrameData from BitmapImage to ImageSource.
+ 
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer):
+        BitmapImage::sizeRespectingOrientation() does not take any argument now.
+        Fix the call to this function and delete the conditionally compiled code 
+        since the code is the same for the two cases.
+ 
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::updateSize):
+        (WebCore::BitmapImage::sizeRespectingOrientation):
+        (WebCore::BitmapImage::frameImageAtIndex):
+        (WebCore::BitmapImage::BitmapImage):
+        An image can have two sizes: size() and sizeRespectingOrientation(). The
+        sizeRespectingOrientation() is the transpose of size() iff the image
+        orientation has usesWidthAsHeight() is true. So there is no need for the
+        ImageOrientationDescription argument. So there is no need for the members
+        m_imageOrientation or m_shouldRespectImageOrientation. Also move
+        m_allowSubsampling and m_minimumSubsamplingLevel (which should be named
+        m_maximumSubsamplingLevel) to ImageSource instead.
+
+        (WebCore::BitmapImage::frameOrientationAtIndex): Replace DefaultImageOrientation
+        by ImageOrientation().
+        
+        (WebCore::BitmapImage::dump): Move dumping the image metadata to the
+        ImageSource.
+        
+        * platform/graphics/BitmapImage.h:
+        
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageOrientation.h:
+        (WebCore::ImageOrientation::ImageOrientation):
+        (WebCore::ImageOrientation::fromEXIFValue):
+        (WebCore::ImageOrientation::operator ImageOrientationEnum):
+        Add a casting operator to ImageOrientation so it can be dumped as enum
+        value. Also add a default constructor and make the other constructor be
+        explicit. All the rvalues DefaultImageOrientation should be replaced by
+        ImageOrientation().
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::ImageSource::clear):
+        m_decoder is now a unique_ptr. To release it, assign it to nullptr.
+
+        (WebCore::ImageSource::ensureDecoderIsCreated): Ensure m_decoder is created.
+        
+        (WebCore::ImageSource::setData): Call ensureDecoderIsCreated() before
+        actually setting the data.
+        
+        (WebCore::ImageSource::isSizeAvailable): Use initialized();
+        
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::sizeRespectingOrientation):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        These functions return the size of the image.
+    
+        (WebCore::ImageSource::getHotSpot):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::frameCount):
+        (WebCore::ImageSource::createFrameImageAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::orientationAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        (WebCore::ImageSource::frameBytesAtIndex):
+        Check for initialized() instead of checking m_decoder.
+        
+        (WebCore::ImageSource::dump): Dump the image metadata.
+        
+        (WebCore::ImageSource::initialized): Deleted.
+        
+        * platform/graphics/ImageSource.h: The image decoder is now named
+        ImageDecoder for all platforms.
+        
+        (WebCore::ImageSource::initialized): Moved to the header file.
+
+        (WebCore::ImageSource::setAllowSubsampling): Moved from BitmapImage.
+        
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::determineMinimumSubsamplingLevel): Deleted.
+        Delete initializing m_minimumSubsamplingLevel and determineMinimumSubsamplingLevel()
+        since they are moved to ImageSource.
+        
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::determineMinimumSubsamplingLevel): Deleted.
+        Delete members and methods which are now owned and calculated by ImageSource.
+        
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageDecoder::create): Returns a CG ImageDecoder object.
+        
+        (WebCore::orientationFromProperties):  Replace DefaultImageOrientation
+        by ImageOrientation().
+        
+        (WebCore::ImageDecoder::ImageDecoder): Creates a native CG image decoder.
+        
+        (WebCore::ImageDecoder::~ImageDecoder): Releases the native CG image decoder.
+        
+        (WebCore::ImageDecoder::subsamplingLevelForScale): Moved from ImageSource.
+        A new argument named 'maximumSubsamplingLevel' is added to low filter the
+        return value.
+        
+        (WebCore::ImageDecoder::bytesDecodedToDetermineProperties):
+        (WebCore::ImageDecoder::filenameExtension):
+        (WebCore::ImageDecoder::isSizeAvailable):
+        (WebCore::ImageDecoder::size):
+        (WebCore::ImageDecoder::frameCount):
+        (WebCore::ImageDecoder::repetitionCount):
+        (WebCore::ImageDecoder::hotSpot):
+        (WebCore::ImageDecoder::frameSizeAtIndex):
+        (WebCore::ImageDecoder::frameIsCompleteAtIndex):
+        (WebCore::ImageDecoder::orientationAtIndex):
+        (WebCore::ImageDecoder::frameDurationAtIndex):
+        (WebCore::ImageDecoder::allowSubsamplingOfFrameAtIndex):
+        (WebCore::ImageDecoder::frameHasAlphaAtIndex):
+        (WebCore::ImageDecoder::frameBytesAtIndex):
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+        (WebCore::ImageDecoder::setData):
+        The code of these function was moved from the functions of ImageSource.
+        
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::clear):
+        (WebCore::ImageSource::ensureDecoderIsCreated):
+        (WebCore::ImageSource::setData):
+        (WebCore::ImageSource::filenameExtension):
+        (WebCore::ImageSource::calculateMaximumSubsamplingLevel):
+        (WebCore::ImageSource::maximumSubsamplingLevel):
+        (WebCore::ImageSource::subsamplingLevelForScale):
+        (WebCore::ImageSource::isSizeAvailable):
+        (WebCore::ImageSource::allowSubsamplingOfFrameAtIndex):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::orientationAtIndex):
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::sizeRespectingOrientation):
+        (WebCore::ImageSource::getHotSpot):
+        (WebCore::ImageSource::bytesDecodedToDetermineProperties):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::frameCount):
+        (WebCore::ImageSource::createFrameImageAtIndex):
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        (WebCore::ImageSource::frameBytesAtIndex):
+        Call m_decoder's function to do the real work.
+        
+        (WebCore::ImageSource::dump): Dump the image metadata.
+        
+        (WebCore::ImageSource::initialized): Deleted.
+        
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        * platform/image-decoders/ImageDecoder.h:
+        Change the return of ImageDecoder::create() to be unique_ptr.
+        
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageFromImage): Delete unneeded argument.
+
 2016-03-29  Eric Carlson  <eric.carlson@apple.com>
 
         media/track/track-remove-track.html is flaky, crashing and failing

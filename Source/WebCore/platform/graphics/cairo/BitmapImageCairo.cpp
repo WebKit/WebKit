@@ -41,7 +41,6 @@ namespace WebCore {
 BitmapImage::BitmapImage(RefPtr<cairo_surface_t>&& nativeImage, ImageObserver* observer)
     : Image(observer)
     , m_size(cairoSurfaceSize(nativeImage.get()))
-    , m_minimumSubsamplingLevel(0)
     , m_currentFrame(0)
     , m_repetitionCount(cAnimationNone)
     , m_repetitionCountStatus(Unknown)
@@ -120,11 +119,6 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& dst, const Flo
 
     if (imageObserver())
         imageObserver()->didDraw(this);
-}
-
-void BitmapImage::determineMinimumSubsamplingLevel() const
-{
-    m_minimumSubsamplingLevel = 0;
 }
 
 void BitmapImage::checkForSolidColor()

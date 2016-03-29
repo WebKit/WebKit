@@ -55,7 +55,6 @@ bool FrameData::clear(bool clearMetadata)
     if (clearMetadata)
         m_haveMetadata = false;
 
-    m_orientation = DefaultImageOrientation;
     m_subsamplingLevel = 0;
 
     if (m_image) {
@@ -70,9 +69,6 @@ bool FrameData::clear(bool clearMetadata)
 
 BitmapImage::BitmapImage(RetainPtr<CGImageRef>&& image, ImageObserver* observer)
     : Image(observer)
-    , m_minimumSubsamplingLevel(0)
-    , m_imageOrientation(OriginTopLeft)
-    , m_shouldRespectImageOrientation(false)
     , m_currentFrame(0)
     , m_repetitionCount(cAnimationNone)
     , m_repetitionCountStatus(Unknown)
@@ -103,28 +99,6 @@ BitmapImage::BitmapImage(RetainPtr<CGImageRef>&& image, ImageObserver* observer)
     m_frames[0].m_haveMetadata = true;
 
     checkForSolidColor();
-}
-
-void BitmapImage::determineMinimumSubsamplingLevel() const
-{
-    if (!m_allowSubsampling)
-        return;
-
-    if (!m_source.allowSubsamplingOfFrameAtIndex(0))
-        return;
-
-    // Values chosen to be appropriate for iOS.
-    const int cMaximumImageAreaBeforeSubsampling = 5 * 1024 * 1024;
-    const SubsamplingLevel maxSubsamplingLevel = 3;
-
-    SubsamplingLevel currentLevel = 0;
-    for ( ; currentLevel <= maxSubsamplingLevel; ++currentLevel) {
-        IntSize frameSize = m_source.frameSizeAtIndex(0, currentLevel);
-        if (frameSize.area() < cMaximumImageAreaBeforeSubsampling)
-            break;
-    }
-
-    m_minimumSubsamplingLevel = currentLevel;
 }
 
 void BitmapImage::checkForSolidColor()

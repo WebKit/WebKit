@@ -47,9 +47,6 @@ namespace WebCore {
 
 BitmapImage::BitmapImage(ImageObserver* observer)
     : Image(observer)
-    , m_minimumSubsamplingLevel(0)
-    , m_imageOrientation(OriginTopLeft)
-    , m_shouldRespectImageOrientation(false)
     , m_currentFrame(0)
     , m_repetitionCount(cAnimationNone)
     , m_repetitionCountStatus(Unknown)
@@ -62,9 +59,6 @@ BitmapImage::BitmapImage(ImageObserver* observer)
     // FIXME: We should expose a setting to enable/disable progressive loading remove the PLATFORM(IOS)-guard.
     , m_progressiveLoadChunkTime(0)
     , m_progressiveLoadChunkCount(0)
-    , m_allowSubsampling(true)
-#else
-    , m_allowSubsampling(false)
 #endif
     , m_isSolidColor(false)
     , m_checkedForSolidColor(false)
@@ -236,20 +230,15 @@ void BitmapImage::didDecodeProperties() const
         imageObserver()->decodedSizeChanged(this, deltaBytes);
 }
 
-void BitmapImage::updateSize(ImageOrientationDescription description) const
+void BitmapImage::updateSize() const
 {
     if (!m_sizeAvailable || m_haveSize)
         return;
 
-    m_size = m_source.size(description);
-    m_sizeRespectingOrientation = m_source.size(ImageOrientationDescription(RespectImageOrientation, description.imageOrientation()));
-
-    m_imageOrientation = static_cast<unsigned>(description.imageOrientation());
-    m_shouldRespectImageOrientation = static_cast<unsigned>(description.respectImageOrientation());
+    m_size = m_source.size();
+    m_sizeRespectingOrientation = m_source.sizeRespectingOrientation();
 
     m_haveSize = true;
-
-    determineMinimumSubsamplingLevel();
     didDecodeProperties();
 }
 
@@ -259,9 +248,9 @@ FloatSize BitmapImage::size() const
     return m_size;
 }
 
-IntSize BitmapImage::sizeRespectingOrientation(ImageOrientationDescription description) const
+IntSize BitmapImage::sizeRespectingOrientation() const
 {
-    updateSize(description);
+    updateSize();
     return m_sizeRespectingOrientation;
 }
 
@@ -391,7 +380,7 @@ NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, float presentationSc
     if (index >= frameCount())
         return nullptr;
 
-    SubsamplingLevel subsamplingLevel = std::min(m_source.subsamplingLevelForScale(presentationScaleHint), m_minimumSubsamplingLevel);
+    SubsamplingLevel subsamplingLevel = m_source.subsamplingLevelForScale(presentationScaleHint);
 
     // We may have cached a frame with a higher subsampling level, in which case we need to
     // re-decode with a lower level.
@@ -452,7 +441,7 @@ bool BitmapImage::currentFrameKnownToBeOpaque()
 ImageOrientation BitmapImage::frameOrientationAtIndex(size_t index)
 {
     if (!ensureFrameIsCached(index, CacheMetadataOnly))
-        return DefaultImageOrientation;
+        return ImageOrientation();
 
     if (m_frames[index].m_haveMetadata)
         return m_frames[index].m_orientation;
@@ -710,13 +699,10 @@ void BitmapImage::dump(TextStream& ts) const
         ts.dumpProperty("current-frame", m_currentFrame);
     }
     
-    if (allowSubsampling())
-        ts.dumpProperty("allow-subsampling", allowSubsampling());
     if (m_isSolidColor)
         ts.dumpProperty("solid-color", m_isSolidColor);
     
-    if (m_imageOrientation != OriginTopLeft)
-        ts.dumpProperty("orientation", m_imageOrientation);
+    m_source.dump(ts);
 }
 
 }

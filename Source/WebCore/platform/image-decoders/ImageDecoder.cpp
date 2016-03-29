@@ -95,35 +95,35 @@ bool matchesCURSignature(char* contents)
 
 }
 
-ImageDecoder* ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+std::unique_ptr<ImageDecoder> ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     static const unsigned lengthOfLongestSignature = 14; // To wit: "RIFF????WEBPVP"
     char contents[lengthOfLongestSignature];
     unsigned length = copyFromSharedBuffer(contents, lengthOfLongestSignature, data, 0);
     if (length < lengthOfLongestSignature)
-        return 0;
+        return nullptr;
 
     if (matchesGIFSignature(contents))
-        return new GIFImageDecoder(alphaOption, gammaAndColorProfileOption);
+        return std::unique_ptr<ImageDecoder> { std::make_unique<GIFImageDecoder>(alphaOption, gammaAndColorProfileOption) };
 
     if (matchesPNGSignature(contents))
-        return new PNGImageDecoder(alphaOption, gammaAndColorProfileOption);
+        return std::unique_ptr<ImageDecoder> { std::make_unique<PNGImageDecoder>(alphaOption, gammaAndColorProfileOption) };
 
     if (matchesICOSignature(contents) || matchesCURSignature(contents))
-        return new ICOImageDecoder(alphaOption, gammaAndColorProfileOption);
+        return std::unique_ptr<ImageDecoder> { std::make_unique<ICOImageDecoder>(alphaOption, gammaAndColorProfileOption) };
 
     if (matchesJPEGSignature(contents))
-        return new JPEGImageDecoder(alphaOption, gammaAndColorProfileOption);
+        return std::unique_ptr<ImageDecoder> { std::make_unique<JPEGImageDecoder>(alphaOption, gammaAndColorProfileOption) };
 
 #if USE(WEBP)
     if (matchesWebPSignature(contents))
-        return new WEBPImageDecoder(alphaOption, gammaAndColorProfileOption);
+        return std::unique_ptr<ImageDecoder> { std::make_unique<WEBPImageDecoder>(alphaOption, gammaAndColorProfileOption) };
 #endif
 
     if (matchesBMPSignature(contents))
-        return new BMPImageDecoder(alphaOption, gammaAndColorProfileOption);
+        return std::unique_ptr<ImageDecoder> { std::make_unique<BMPImageDecoder>(alphaOption, gammaAndColorProfileOption) };
 
-    return 0;
+    return nullptr;
 }
 
 ImageFrame::ImageFrame()
