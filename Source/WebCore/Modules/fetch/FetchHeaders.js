@@ -51,9 +51,11 @@ function initializeFetchHeaders(headersInit)
         return this;
     }
 
-    @Object.@getOwnPropertyNames(headersInit).forEach((name) => {
+    let propertyNames = @Object.@getOwnPropertyNames(headersInit);
+    for (let i = 0; i < propertyNames.length; ++i) {
+        let name = propertyNames[i];
         this.@appendFromJS(name, headersInit[name]);
-    });
+    }
 
     return this;
 }

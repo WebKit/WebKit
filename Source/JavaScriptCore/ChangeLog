@@ -1,3 +1,15 @@
+2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Audit WebCore builtins for user overridable code
+        https://bugs.webkit.org/show_bug.cgi?id=155923
+
+        Reviewed by Youenn Fablet.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        Expose @Object.@defineProperty to built-ins.
+
 2016-03-28  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] ArithSub should not propagate "UsesAsOther"

@@ -111,7 +111,7 @@ function write(chunk)
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(new @TypeError("The WritableStream.close method can only be used on instances of WritableStream"));
+        return @Promise.@reject(new @TypeError("The WritableStream.write method can only be used on instances of WritableStream"));
 
     if (this.@state === @streamClosed || this.@state === @streamClosing)
         return @Promise.@reject(new @TypeError("Cannot write on a WritableString that is closed or closing"));

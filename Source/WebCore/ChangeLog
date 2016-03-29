@@ -1,3 +1,31 @@
+2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Audit WebCore builtins for user overridable code
+        https://bugs.webkit.org/show_bug.cgi?id=155923
+
+        Reviewed by Youenn Fablet.
+
+        Tests: fetch/builtin-overrides.html
+               streams/builtin-overrides.html
+
+        * Modules/fetch/FetchHeaders.js:
+        (initializeFetchHeaders):
+        Avoid using an Array.prototype.forEach that could be overriden.
+
+        * Modules/streams/ByteLengthQueuingStrategy.js:
+        (initializeByteLengthQueuingStrategy):
+        * Modules/streams/CountQueuingStrategy.js:
+        (initializeCountQueuingStrategy):
+        Use the private Object.defineProperty not one that could be overriden.
+
+        * Modules/streams/ReadableStreamInternals.js:
+        (finishClosingReadableStream):
+        Fix style.
+
+        * Modules/streams/WritableStream.js:
+        (write):
+        Fix error message to use the correct function name.
+
 2016-03-28  Zalan Bujtas  <zalan@apple.com>
 
         Pixel turds when bordered div is resized on SMF forum software.

@@ -318,6 +318,7 @@
     macro(isFinite) \
     macro(isNaN) \
     macro(create) \
+    macro(defineProperty) \
     macro(getPrototypeOf) \
     macro(getOwnPropertyDescriptor) \
     macro(getOwnPropertyNames) \

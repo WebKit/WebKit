@@ -279,7 +279,7 @@ function finishClosingReadableStream(stream)
 {
     "use strict";
 
-    @assert(stream.@state ===  @streamReadable);
+    @assert(stream.@state === @streamReadable);
     stream.@state = @streamClosed;
     const reader = stream.@reader;
     if (!reader)
