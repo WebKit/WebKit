@@ -54,4 +54,13 @@ bool ScrollableArea::systemLanguageIsRTL()
 #endif
 }
 
+void ScrollableArea::setScrollbarLayoutDirection(NSScrollerImp *scroller) const
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    scroller.userInterfaceLayoutDirection = verticalScrollbarIsOnLeft() ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
+#else
+    UNUSED_PARAM(scroller);
+#endif
+}
+
 }

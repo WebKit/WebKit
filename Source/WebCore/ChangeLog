@@ -1,3 +1,34 @@
+2016-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] [RTL Scrollbars] Overlay RTL scrollbars animate in from the wrong side
+        https://bugs.webkit.org/show_bug.cgi?id=155962
+
+        Reviewed by Simon Fraser.
+
+        We can control the animation direction with the NSScrollerImp property
+        userInterfaceLayoutDirection.
+
+        Not testable.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::setScrollbarLayoutDirection):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::horizontalScrollbar):
+        (WebCore::ScrollableArea::verticalScrollbar):
+        (WebCore::ScrollableArea::tiledBacking):
+        (WebCore::ScrollableArea::layerForHorizontalScrollbar):
+        (WebCore::ScrollableArea::layerForVerticalScrollbar):
+        (WebCore::ScrollableArea::layerForScrolling):
+        (WebCore::ScrollableArea::layerForScrollCorner):
+        (WebCore::ScrollableArea::layerForOverhangAreas):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        * platform/mac/ScrollableAreaMac.mm:
+        (WebCore::ScrollableArea::setScrollbarDirection):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        * platform/spi/mac/NSScrollerImpSPI.h:
+
 2016-03-29  Dan Bernstein  <mitz@apple.com>
 
         Inline WebFullScreenVideoRootViewController.m
