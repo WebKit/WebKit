@@ -1,5 +1,12 @@
 2016-03-29  Alex Christensen  <achristensen@webkit.org>
 
+        Windows build fix.
+
+        * CMakeLists.txt:
+        DerivedSources.cpp should be in WebCore_DERIVED_SOURCES because it depends on the derived sources.
+
+2016-03-29  Alex Christensen  <achristensen@webkit.org>
+
         Fix Windows build after r198777
 
         * CMakeLists.txt:
