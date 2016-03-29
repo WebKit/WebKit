@@ -1,5 +1,13 @@
 2016-03-29  Brian Burg  <bburg@apple.com>
 
+        Unreviewed build fix after r198793.
+
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        The wasEventSynthesizedForAutomation method should only be available on Mac.
+
+2016-03-29  Brian Burg  <bburg@apple.com>
+
         Unreviewed build fix after r198792.
 
         * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:

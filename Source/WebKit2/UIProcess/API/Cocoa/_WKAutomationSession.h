@@ -40,7 +40,9 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @property (nonatomic, weak) id <_WKAutomationSessionDelegate> delegate;
 @property (nonatomic, readonly, getter=isPaired) BOOL paired;
 
+#if !TARGET_OS_IPHONE
 - (BOOL)wasEventSynthesizedForAutomation:(NSEvent *)event;
+#endif
 
 @end
 
