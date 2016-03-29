@@ -2769,8 +2769,6 @@ webkit.org/b/151943 imported/blink/fast/box-shadow/basic-shadows-2.html [ ImageO
 webkit.org/b/151943 imported/blink/fast/box-shadow/normal-box-shadow-with-background-image.html [ ImageOnlyFailure ]
 webkit.org/b/151943 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageOnlyFailure ]
 
-webkit.org/b/153772 fast/shadow-dom/slot-removal-crash-2.html [ Timeout ]
-
 webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
 webkit.org/b/155505 webkit.org/b/153866 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 
@@ -2818,3 +2816,14 @@ webkit.org/b/155945 storage/indexeddb/modern/idbobjectstore-delete-1.html [ Fail
 
 # Shadow dom is not enabled on EFL port yet.
 Bug(EFL) fast/shadow-dom/slot-removal-crash-2.html
+
+webkit.org/b/155959 svg/text/kerning.svg [ Failure ]
+webkit.org/b/155959 svg/text/multichar-glyph.svg [ Failure ]
+webkit.org/b/155959 svg/text/text-altglyph-01-b.svg [ Failure ]
+webkit.org/b/155959 svg/text/text-hkern.svg [ Failure ]
+webkit.org/b/155959 svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html [ Failure ]
+webkit.org/b/155959 svg/text/text-overflow-ellipsis-svgfont.html [ Failure ]
+webkit.org/b/155959 svg/text/text-text-04-t.svg [ Failure ]
+webkit.org/b/155959 svg/text/text-text-05-t.svg [ Failure ]
+webkit.org/b/155959 svg/text/text-text-06-t.svg [ Failure ]
+webkit.org/b/155959 svg/text/text-vkern.svg [ Failure ]

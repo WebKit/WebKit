@@ -1,3 +1,11 @@
+2016-03-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL gardening on 29th Mar.
+
+        Mark svg text tests to failure. Besides remove duplicated a test.
+
+        * platform/efl/TestExpectations:
+
 2016-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [RTL Scrollbars] Position:sticky can be positioned under vertical RTL scrollbar
