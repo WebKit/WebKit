@@ -1,3 +1,38 @@
+2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: We should have a way to capture heap snapshots programatically.
+        https://bugs.webkit.org/show_bug.cgi?id=154407
+        <rdar://problem/24726292>
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector/console/heapSnapshot.html
+
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::takeHeapSnapshot):
+        * page/PageConsoleClient.h:
+        Pass through to Inspector Instrumentation.
+
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::takeHeapSnapshot):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::takeHeapSnapshotImpl):
+        * inspector/InspectorInstrumentation.h:
+        Pass through to InspectorConsoleAgent.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::PageConsoleAgent):
+        * inspector/PageConsoleAgent.h:
+        * inspector/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::WebConsoleAgent):
+        * inspector/WebConsoleAgent.h:
+        * workers/WorkerConsoleClient.cpp:
+        (WebCore::WorkerConsoleClient::takeHeapSnapshot):
+        * workers/WorkerConsoleClient.h:
+        Provide a HeapAgent to the ConsoleAgent.
+
 2016-03-29  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r196813): Missing plug-in placeholder is missing

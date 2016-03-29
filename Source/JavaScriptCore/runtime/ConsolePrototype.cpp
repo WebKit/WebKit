@@ -52,6 +52,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncAssert(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncCount(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfile(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfileEnd(ExecState*);
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTakeHeapSnapshot(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTime(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeEnd(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeStamp(ExecState*);
@@ -86,6 +87,7 @@ void ConsolePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("time", consoleProtoFuncTime, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeEnd", consoleProtoFuncTimeEnd, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeStamp", consoleProtoFuncTimeStamp, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("takeHeapSnapshot", consoleProtoFuncTakeHeapSnapshot, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("group", consoleProtoFuncGroup, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("groupCollapsed", consoleProtoFuncGroupCollapsed, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("groupEnd", consoleProtoFuncGroupEnd, None, 0);
@@ -258,7 +260,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfile(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     size_t argsCount = exec->argumentCount();
-    if (argsCount <= 0) {
+    if (!argsCount) {
         client->profile(exec, String());
         return JSValue::encode(jsUndefined());
     }
@@ -282,7 +284,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfileEnd(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     size_t argsCount = exec->argumentCount();
-    if (argsCount <= 0) {
+    if (!argsCount) {
         client->profileEnd(exec, String());
         return JSValue::encode(jsUndefined());
     }
@@ -292,6 +294,30 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfileEnd(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     client->profileEnd(exec, title);
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTakeHeapSnapshot(ExecState* exec)
+{
+    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
+    if (!castedThis)
+        return throwVMTypeError(exec);
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
+    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    if (!client)
+        return JSValue::encode(jsUndefined());
+
+    size_t argsCount = exec->argumentCount();
+    if (!argsCount) {
+        client->takeHeapSnapshot(exec, String());
+        return JSValue::encode(jsUndefined());
+    }
+
+    const String& title(valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    client->takeHeapSnapshot(exec, title);
     return JSValue::encode(jsUndefined());
 }
 

@@ -162,7 +162,11 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_timelineAgent = timelineAgentPtr.get();
     m_agents.append(WTFMove(timelineAgentPtr));
 
-    auto consoleAgentPtr = std::make_unique<PageConsoleAgent>(pageContext, m_domAgent);
+    auto heapAgentPtr = std::make_unique<InspectorHeapAgent>(pageContext);
+    InspectorHeapAgent* heapAgent = heapAgentPtr.get();
+    m_agents.append(WTFMove(heapAgentPtr));
+
+    auto consoleAgentPtr = std::make_unique<PageConsoleAgent>(pageContext, heapAgent, m_domAgent);
     WebConsoleAgent* consoleAgent = consoleAgentPtr.get();
     m_instrumentingAgents->setWebConsoleAgent(consoleAgentPtr.get());
     m_agents.append(WTFMove(consoleAgentPtr));
@@ -172,7 +176,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_agents.append(WTFMove(debuggerAgentPtr));
 
     m_agents.append(std::make_unique<InspectorDOMDebuggerAgent>(pageContext, m_domAgent, debuggerAgent));
-    m_agents.append(std::make_unique<InspectorHeapAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorScriptProfilerAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(pageContext, pageAgent));
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(pageContext));

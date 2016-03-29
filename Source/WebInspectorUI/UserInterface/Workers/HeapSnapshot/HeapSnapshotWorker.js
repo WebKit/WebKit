@@ -39,10 +39,10 @@ HeapSnapshotWorker = class HeapSnapshotWorker
 
     // Actions
 
-    createSnapshot(snapshotString)
+    createSnapshot(snapshotString, title)
     {
         let objectId = this._nextObjectId++;
-        let snapshot = new HeapSnapshot(objectId, snapshotString);
+        let snapshot = new HeapSnapshot(objectId, snapshotString, title);
         this._objects.set(objectId, snapshot);
         return {objectId, snapshot: snapshot.serialize()};
     }

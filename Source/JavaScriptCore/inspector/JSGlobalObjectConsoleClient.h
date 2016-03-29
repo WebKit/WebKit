@@ -46,6 +46,7 @@ protected:
     void count(JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
     void profile(JSC::ExecState*, const String& title) override;
     void profileEnd(JSC::ExecState*, const String& title) override;
+    void takeHeapSnapshot(JSC::ExecState*, const String& title) override;
     void time(JSC::ExecState*, const String& title) override;
     void timeEnd(JSC::ExecState*, const String& title) override;
     void timeStamp(JSC::ExecState*, RefPtr<ScriptArguments>&&) override;

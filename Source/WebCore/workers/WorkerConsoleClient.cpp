@@ -56,6 +56,7 @@ void WorkerConsoleClient::profileEnd(JSC::ExecState*, const String&) { }
 
 // FIXME: <https://webkit.org/b/127634> Web Inspector: support debugging web workers
 void WorkerConsoleClient::count(JSC::ExecState*, RefPtr<ScriptArguments>&&) { }
+void WorkerConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String&) { }
 void WorkerConsoleClient::time(JSC::ExecState*, const String&) { }
 void WorkerConsoleClient::timeEnd(JSC::ExecState*, const String&) { }
 void WorkerConsoleClient::timeStamp(JSC::ExecState*, RefPtr<ScriptArguments>&&) { }

@@ -52,4 +52,13 @@ WebInspector.ConsoleObserver = class ConsoleObserver
     {
         WebInspector.logManager.messagesCleared();
     }
+
+    heapSnapshot(timestamp, snapshotStringData, title)
+    {
+        let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+        workerProxy.createSnapshot(snapshotStringData, title || null, ({objectId, snapshot: serializedSnapshot}) => {
+            let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+            WebInspector.timelineManager.heapSnapshotAdded(timestamp, snapshot);
+        });
+    }
 };

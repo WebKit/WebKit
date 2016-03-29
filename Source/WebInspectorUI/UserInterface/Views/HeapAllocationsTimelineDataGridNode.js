@@ -33,7 +33,7 @@ WebInspector.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimeline
         this._heapAllocationsView = heapAllocationsView;
 
         this._data = {
-            name: WebInspector.UIString("Snapshot %d").format(this._record.heapSnapshot.identifier),
+            name: WebInspector.TimelineTabContentView.displayNameForRecord(heapAllocationsTimelineRecord),
             timestamp: this._record.timestamp - zeroTime,
             size: this._record.heapSnapshot.totalSize,
         };

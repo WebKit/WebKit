@@ -44,6 +44,7 @@ namespace Inspector {
 
 class ConsoleMessage;
 class InjectedScriptManager;
+class InspectorHeapAgent;
 class ScriptArguments;
 class ScriptCallStack;
 typedef String ErrorString;
@@ -52,7 +53,7 @@ class JS_EXPORT_PRIVATE InspectorConsoleAgent : public InspectorAgentBase, publi
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorConsoleAgent(AgentContext&);
+    InspectorConsoleAgent(AgentContext&, InspectorHeapAgent*);
     virtual ~InspectorConsoleAgent();
 
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
@@ -71,6 +72,7 @@ public:
 
     void startTiming(const String& title);
     void stopTiming(const String& title, PassRefPtr<ScriptCallStack>);
+    void takeHeapSnapshot(const String& title);
     void count(JSC::ExecState*, PassRefPtr<ScriptArguments>);
 
 protected:
@@ -79,6 +81,7 @@ protected:
     InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<ConsoleFrontendDispatcher> m_frontendDispatcher;
     RefPtr<ConsoleBackendDispatcher> m_backendDispatcher;
+    InspectorHeapAgent* m_heapAgent;
 
     ConsoleMessage* m_previousMessage { nullptr };
     Vector<std::unique_ptr<ConsoleMessage>> m_consoleMessages;

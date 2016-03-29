@@ -855,6 +855,12 @@ void InspectorInstrumentation::consoleCountImpl(InstrumentingAgents& instrumenti
         consoleAgent->count(state, arguments);
 }
 
+void InspectorInstrumentation::takeHeapSnapshotImpl(InstrumentingAgents& instrumentingAgents, const String& title)
+{
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
+        consoleAgent->takeHeapSnapshot(title);
+}
+
 void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, const String& title)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())

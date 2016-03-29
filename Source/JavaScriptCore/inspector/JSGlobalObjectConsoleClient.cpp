@@ -83,6 +83,11 @@ void JSGlobalObjectConsoleClient::profileEnd(JSC::ExecState*, const String&)
     // FIXME: support |console.profile| for JSContexts. <https://webkit.org/b/136466>
 }
 
+void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String& title)
+{
+    m_consoleAgent->takeHeapSnapshot(title);
+}
+
 void JSGlobalObjectConsoleClient::time(ExecState*, const String& title)
 {
     m_consoleAgent->startTiming(title);

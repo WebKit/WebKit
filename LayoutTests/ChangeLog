@@ -1,3 +1,16 @@
+2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: We should have a way to capture heap snapshots programatically.
+        https://bugs.webkit.org/show_bug.cgi?id=154407
+        <rdar://problem/24726292>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/console/heapSnapshot-expected.txt: Added.
+        * inspector/console/heapSnapshot.html: Added.
+        Test that we get expected data and events after calling
+        console.takeHeapSnapshot when the inspector is open.
+
 2016-03-29  Eric Carlson  <eric.carlson@apple.com>
 
         media/track/track-remove-track.html is flaky, crashing and failing

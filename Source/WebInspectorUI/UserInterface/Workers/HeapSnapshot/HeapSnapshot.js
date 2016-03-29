@@ -72,10 +72,11 @@ let nextSnapshotIdentifier = 1;
 
 HeapSnapshot = class HeapSnapshot
 {
-    constructor(objectId, snapshotDataString)
+    constructor(objectId, snapshotDataString, title = null)
     {
         this._identifier = nextSnapshotIdentifier++;
         this._objectId = objectId;
+        this._title = title;
 
         let json = JSON.parse(snapshotDataString);
         snapshotDataString = null;
@@ -309,6 +310,7 @@ HeapSnapshot = class HeapSnapshot
     {
         return {
             identifier: this._identifier,
+            title: this._title,
             totalSize: this._totalSize,
             totalObjectCount: this._nodeCount - 1, // <root>.
             categories: this._categories,

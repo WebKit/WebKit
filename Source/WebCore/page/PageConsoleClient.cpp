@@ -195,6 +195,11 @@ void PageConsoleClient::profileEnd(JSC::ExecState* exec, const String& title)
         m_profiles.append(WTFMove(profile));
 }
 
+void PageConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String& title)
+{
+    InspectorInstrumentation::takeHeapSnapshot(m_page.mainFrame(), title);
+}
+
 void PageConsoleClient::time(JSC::ExecState*, const String& title)
 {
     InspectorInstrumentation::startConsoleTiming(m_page.mainFrame(), title);

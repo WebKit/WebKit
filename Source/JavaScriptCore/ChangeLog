@@ -1,3 +1,39 @@
+2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: We should have a way to capture heap snapshots programatically.
+        https://bugs.webkit.org/show_bug.cgi?id=154407
+        <rdar://problem/24726292>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Console.json:
+        Add a new Console.heapSnapshot event for when a heap snapshot is taken.
+
+        * runtime/ConsolePrototype.cpp:
+        (JSC::ConsolePrototype::finishCreation):
+        (JSC::consoleProtoFuncProfile):
+        (JSC::consoleProtoFuncProfileEnd):
+        (JSC::consoleProtoFuncTakeHeapSnapshot):
+        * runtime/ConsoleClient.h:
+        Add the console.takeHeapSnapshot method and dispatch to the ConsoleClient.
+
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::takeHeapSnapshot):
+        * inspector/JSGlobalObjectConsoleClient.h:
+        Have the InspectorConsoleAgent handle this.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::InspectorConsoleAgent):
+        (Inspector::InspectorConsoleAgent::takeHeapSnapshot):
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/JSGlobalObjectConsoleAgent.cpp:
+        (Inspector::JSGlobalObjectConsoleAgent::JSGlobalObjectConsoleAgent):
+        * inspector/agents/JSGlobalObjectConsoleAgent.h:
+        Give the ConsoleAgent a HeapAgent pointer so that it can have the HeapAgent
+        perform the snapshot building work like it normally does.
+
 2016-03-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r192914): 10% regression on Sunspider's date-format-tofte

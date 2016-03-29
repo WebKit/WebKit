@@ -54,6 +54,13 @@ inline void InspectorInstrumentation::consoleCount(Page& page, JSC::ExecState* s
     consoleCountImpl(instrumentingAgentsForPage(page), state, WTFMove(arguments));
 }
 
+inline void InspectorInstrumentation::takeHeapSnapshot(Frame& frame, const String& title)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        takeHeapSnapshotImpl(*instrumentingAgents, title);
+}
+
 inline void InspectorInstrumentation::startConsoleTiming(Frame& frame, const String& title)
 {
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))

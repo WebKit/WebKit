@@ -25,13 +25,14 @@
 
 WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Object
 {
-    constructor(snapshotObjectId, identifier, totalSize, totalObjectCount, categories)
+    constructor(snapshotObjectId, identifier, title, totalSize, totalObjectCount, categories)
     {
         super();
 
         this._proxyObjectId = snapshotObjectId;
 
         this._identifier = identifier;
+        this._title = title;
         this._totalSize = totalSize;
         this._totalObjectCount = totalObjectCount;
         this._categories = Map.fromObject(categories);
@@ -41,14 +42,15 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
 
     static deserialize(objectId, serializedSnapshot)
     {
-        let {identifier, totalSize, totalObjectCount, categories} = serializedSnapshot;
-        return new WebInspector.HeapSnapshotProxy(objectId, identifier, totalSize, totalObjectCount, categories);
+        let {identifier, title, totalSize, totalObjectCount, categories} = serializedSnapshot;
+        return new WebInspector.HeapSnapshotProxy(objectId, identifier, title, totalSize, totalObjectCount, categories);
     }
 
     // Public
 
     get proxyObjectId() { return this._proxyObjectId; }
     get identifier() { return this._identifier; }
+    get title() { return this._title; }
     get totalSize() { return this._totalSize; }
     get totalObjectCount() { return this._totalObjectCount; }
     get categories() { return this._categories; }

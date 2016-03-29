@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function triggerHeapSnapshotNoTitle() {
+    console.takeHeapSnapshot();
+}
+
+function triggerHeapSnapshotWithTitle() {
+    console.takeHeapSnapshot("Snapshot Title");
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Console.heapSnapshot");
+
+    suite.addTestCase({
+        name: "TriggerHeapSnapshotNoTitle",
+        test: function(resolve, reject) {
+            InspectorProtocol.awaitEvent({event: "Console.heapSnapshot"}).then((messageObject) => {
+                ProtocolTest.log("Console.heapSnapshot");
+                ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp.");
+                ProtocolTest.expectThat(typeof messageObject.params.snapshotData === "string", "Should have snapshotData.");
+                ProtocolTest.expectThat(!messageObject.params.title, "Should not have a title.");
+                resolve();
+            });
+
+            ProtocolTest.evaluateInPage("triggerHeapSnapshotNoTitle()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TriggerHeapSnapshotWithTitle",
+        test: function(resolve, reject) {
+            InspectorProtocol.awaitEvent({event: "Console.heapSnapshot"}).then((messageObject) => {
+                ProtocolTest.log("Console.heapSnapshot");
+                ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp.");
+                ProtocolTest.expectThat(typeof messageObject.params.snapshotData === "string", "Should have snapshotData.");
+                ProtocolTest.expectThat(messageObject.params.title === "Snapshot Title", "Should have expected title.");
+                resolve();
+            });
+
+            ProtocolTest.evaluateInPage("triggerHeapSnapshotWithTitle()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for the Console.heapSnapshot event triggered by console.takeHeapSnapshot.</p>
+</body>
+</html>

@@ -251,6 +251,8 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         case WebInspector.TimelineRecord.Type.RenderingFrame:
             return WebInspector.UIString("Frame %d").format(timelineRecord.frameNumber);
         case WebInspector.TimelineRecord.Type.HeapAllocations:
+            if (timelineRecord.heapSnapshot.title)
+                return WebInspector.UIString("Snapshot %d \u2014 %s").format(timelineRecord.heapSnapshot.identifier, timelineRecord.heapSnapshot.title);
             return WebInspector.UIString("Snapshot %d").format(timelineRecord.heapSnapshot.identifier);
         case WebInspector.TimelineRecord.Type.Memory:
             // Not used. Fall through to error just in case.

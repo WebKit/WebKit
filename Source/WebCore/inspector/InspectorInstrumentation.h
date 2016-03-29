@@ -209,6 +209,7 @@ public:
     static void addMessageToConsole(WorkerGlobalScope*, std::unique_ptr<Inspector::ConsoleMessage>);
 
     static void consoleCount(Page&, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&);
+    static void takeHeapSnapshot(Frame&, const String& title);
     static void startConsoleTiming(Frame&, const String& title);
     static void stopConsoleTiming(Frame&, const String& title, RefPtr<Inspector::ScriptCallStack>&&);
     static void consoleTimeStamp(Frame&, RefPtr<Inspector::ScriptArguments>&&);
@@ -382,6 +383,7 @@ private:
     static void addMessageToConsoleImpl(InstrumentingAgents&, std::unique_ptr<Inspector::ConsoleMessage>);
 
     static void consoleCountImpl(InstrumentingAgents&, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&);
+    static void takeHeapSnapshotImpl(InstrumentingAgents&, const String& title);
     static void startConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title);
     static void stopConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title, RefPtr<Inspector::ScriptCallStack>&&);
     static void consoleTimeStampImpl(InstrumentingAgents&, Frame&, RefPtr<Inspector::ScriptArguments>&&);

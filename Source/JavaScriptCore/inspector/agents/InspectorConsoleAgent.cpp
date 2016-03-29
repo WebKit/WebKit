@@ -29,6 +29,7 @@
 #include "ConsoleMessage.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontendRouter.h"
+#include "InspectorHeapAgent.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
@@ -43,11 +44,12 @@ namespace Inspector {
 static const unsigned maximumConsoleMessages = 100;
 static const int expireConsoleMessagesStep = 10;
 
-InspectorConsoleAgent::InspectorConsoleAgent(AgentContext& context)
+InspectorConsoleAgent::InspectorConsoleAgent(AgentContext& context, InspectorHeapAgent* heapAgent)
     : InspectorAgentBase(ASCIILiteral("Console"))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_frontendDispatcher(std::make_unique<ConsoleFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(ConsoleBackendDispatcher::create(context.backendDispatcher, this))
+    , m_heapAgent(heapAgent)
 {
 }
 
@@ -151,6 +153,19 @@ void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCal
     double elapsed = monotonicallyIncreasingTime() - startTime;
     String message = title + String::format(": %.3fms", elapsed * 1000);
     addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, callStack));
+}
+
+void InspectorConsoleAgent::takeHeapSnapshot(const String& title)
+{
+    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
+    ErrorString ignored;
+    double timestamp;
+    String snapshotData;
+    m_heapAgent->snapshot(ignored, &timestamp, &snapshotData);
+
+    m_frontendDispatcher->heapSnapshot(timestamp, snapshotData, title.isEmpty() ? nullptr : &title);
 }
 
 void InspectorConsoleAgent::count(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)

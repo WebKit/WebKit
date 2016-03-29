@@ -28,8 +28,8 @@
 
 namespace Inspector {
 
-JSGlobalObjectConsoleAgent::JSGlobalObjectConsoleAgent(AgentContext& context)
-    : InspectorConsoleAgent(context)
+JSGlobalObjectConsoleAgent::JSGlobalObjectConsoleAgent(AgentContext& context, InspectorHeapAgent* heapAgent)
+    : InspectorConsoleAgent(context, heapAgent)
 {
 }
 

@@ -59,6 +59,7 @@ public:
     virtual void count(ExecState*, RefPtr<Inspector::ScriptArguments>&&) = 0;
     virtual void profile(ExecState*, const String& title) = 0;
     virtual void profileEnd(ExecState*, const String& title) = 0;
+    virtual void takeHeapSnapshot(ExecState*, const String& title) = 0;
     virtual void time(ExecState*, const String& title) = 0;
     virtual void timeEnd(ExecState*, const String& title) = 0;
     virtual void timeStamp(ExecState*, RefPtr<Inspector::ScriptArguments>&&) = 0;

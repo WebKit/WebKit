@@ -84,6 +84,15 @@
         {
             "name": "messagesCleared",
             "description": "Issued when console is cleared. This happens either upon <code>clearMessages</code> command or after page navigation."
+        },
+        {
+            "name": "heapSnapshot",
+            "description": "Issued from console.takeHeapSnapshot.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" },
+                { "name": "snapshotData", "$ref": "Heap.HeapSnapshotData", "description": "Snapshot at the end of tracking." },
+                { "name": "title", "type": "string", "optional": true, "description": "Optional title provided to console.takeHeapSnapshot." }
+            ]
         }
     ]
 }
