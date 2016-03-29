@@ -1264,6 +1264,13 @@ String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const V
     if (!isStartOfLine(visiblePositionStart))
         return String();
 
+    // We should speak the list marker only for the first line.
+    RenderListItem* listItem = renderListItemContainerForNode(node);
+    if (!listItem)
+        return String();
+    if (!inSameLine(visiblePositionStart, firstPositionInNode(&listItem->element())))
+        return String();
+    
     return listMarkerTextForNode(node);
 }
 
@@ -1281,7 +1288,9 @@ String AccessibilityObject::stringForRange(RefPtr<Range> range) const
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length()) {
             // Add a textual representation for list marker text.
-            builder.append(listMarkerTextForNode(it.node()));
+            // Don't add list marker text for new line character.
+            if (it.text().length() != 1 || !isSpaceOrNewline(it.text()[0]))
+                builder.append(listMarkerTextForNodeAndPosition(it.node(), VisiblePosition(range->startPosition())));
             it.appendTextToStringBuilder(builder);
         } else {
             // locate the node and starting offset for this replaced range

@@ -1,3 +1,18 @@
+2016-03-29  Nan Wang  <n_wang@apple.com>
+
+        AX: VoiceOver: Navigating Numbered Lists Causes Number to be announced On Each Line of List
+        https://bugs.webkit.org/show_bug.cgi?id=155984
+
+        Reviewed by Chris Fleizach.
+
+        We should limit the list marker text only to the first line of that list item.
+
+        Test: accessibility/mac/attributed-string-with-listitem-multiple-lines.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::listMarkerTextForNodeAndPosition):
+        (WebCore::AccessibilityObject::stringForRange):
+
 2016-03-29  Antonio Gomes  <tonikitoo@webkit.org>
 
         Wheel events' latching state is not reset when appropriate
