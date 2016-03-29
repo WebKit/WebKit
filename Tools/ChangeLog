@@ -1,3 +1,16 @@
+2016-03-29  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Add machine-readable results for JSC stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=155771
+
+        Reviewed by Darin Adler and Dean Johnson
+
+        Add an option to output JSC stress test results to a user-specified file in JSON format.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Add JSON output support
+        (readAllLines): Remove trailing newline from the end of each item
+
 2016-03-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows build.

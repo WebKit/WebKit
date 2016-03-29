@@ -31,12 +31,14 @@
 # as well as other tests: testapi on Mac and LayoutTests/js.
 
 use strict;
+use File::Spec;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
-use List::Util qw(min max);
+use JSON::PP;
 use lib $FindBin::Bin;
-use webkitdirs;
+use List::Util qw(min max);
 use POSIX;
+use webkitdirs;
 
 # determine configuration
 setConfiguration();
@@ -66,6 +68,7 @@ my $enableFTL = isAppleMacWebKit() || isX86_64() && (isGtk() || isEfl());
 my $createTarball = 0;
 my $remoteHost = 0;
 my $remoteConfigFile;
+my $jsonFileName;
 
 my $programName = basename($0);
 my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
@@ -87,6 +90,7 @@ Usage: $programName [options] [options to pass to build system]
                                 If the runner only runs some it will run the default and no-cjit-validate modes.
                                 Note, this will not change the behavior of tests that specify their own modes.
 
+  --json-output=                Create a file at specified path, listing failed stress tests in JSON format.
   --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
   --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
   --remote-config-file=         Same as remote, but read config from JSON file.
@@ -112,6 +116,7 @@ GetOptions(
     'jsc-stress!' => \$runJSCStress,
     'jit-stress-tests!' => \$runJITStressTests,
     'quick!' => \$runQuickMode,
+    'json-output=s' => \$jsonFileName,
     'tarball!' => \$createTarball,
     'remote=s' => \$remoteHost,
     'remote-config-file=s' => \$remoteConfigFile,
@@ -121,7 +126,7 @@ GetOptions(
     'filter=s' => \$filter,
     'help' => \$showHelp,
     'env-vars=s' => \$envVars,
-    'gmalloc:s' => \$gmallocPath
+    'gmalloc:s' => \$gmallocPath,
 );
 
 # Assume any arguments left over from GetOptions are assumed to be build arguments
@@ -138,6 +143,10 @@ if ($showHelp) {
 }
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
+
+if (defined($jsonFileName)) {
+    $jsonFileName = File::Spec->rel2abs($jsonFileName);
+}
 
 if (!defined($root) && $buildJSC) {
     chdirWebKit();
@@ -283,7 +292,7 @@ sub runJSCStressTests
     if ($makeRunner) {
         push(@jscStressDriverCmd, "--make-runner");
     }
-    
+
     if ($filter) {
         push(@jscStressDriverCmd, "--filter");
         push(@jscStressDriverCmd, $filter);
@@ -309,7 +318,7 @@ sub runJSCStressTests
     if ($numJSCStressFailures) {
         print "\n** The following JSC stress test failures have been introduced:\n";
         foreach my $testFailure (@jscStressFailList) {
-            print "\t$testFailure";
+            print "\t$testFailure\n";
         }
     }
     print "\n";
@@ -319,6 +328,17 @@ sub runJSCStressTests
     print "    OK.\n" if $numJSCStressFailures == 0;
 
     print "\n";
+
+    if (defined($jsonFileName)) {
+        my %jsonData = (
+            "numJSCStressFailures" => $numJSCStressFailures,
+            "jscStressFailList" => \@jscStressFailList,
+        );
+
+        open(my $fileHandler, ">", $jsonFileName) or die;
+        print $fileHandler "${\encode_json(\%jsonData)}\n";
+        close($fileHandler);
+    }
 
     exit(1) if $numJSCStressFailures;
 }
@@ -330,6 +350,7 @@ sub readAllLines
     eval {
         open FILE, $filename or die;
         while (<FILE>) {
+            chomp;
             push @array, $_;
         }
         close FILE;
