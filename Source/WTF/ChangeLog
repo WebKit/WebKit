@@ -1,3 +1,13 @@
+2016-03-28  Brian Burg  <bburg@apple.com>
+
+        Web Automation: implement Automation.performMouseInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=155606
+        <rdar://problem/25227576>
+
+        Reviewed by Timothy Hatcher.
+
+        * wtf/mac/AppKitCompatibilityDeclarations.h: Add missing some NSEventTypes.
+
 2016-03-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r192914): 10% regression on Sunspider's date-format-tofte

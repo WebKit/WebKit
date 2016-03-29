@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebAutomationSession_h
-#define WebAutomationSession_h
+#pragma once
 
 #include "APIObject.h"
 #include "AutomationBackendDispatchers.h"
 #include "Connection.h"
+#include "WebEvent.h"
 #include <wtf/Forward.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -47,6 +47,14 @@ class FrontendRouter;
 namespace WebCore {
 class IntRect;
 }
+
+namespace WebCore {
+class IntPoint;
+}
+
+#if USE(APPKIT)
+OBJC_CLASS NSArray;
+#endif
 
 namespace WebKit {
 
@@ -94,6 +102,7 @@ public:
     void goForwardInBrowsingContext(Inspector::ErrorString&, const String&) override;
     void reloadBrowsingContext(Inspector::ErrorString&, const String&) override;
     void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, bool expectsImplicitCallbackArgument, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
+    void performMouseInteraction(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& requestedPosition, const String& mouseButton, const String& mouseInteraction, const Inspector::InspectorArray& keyModifiers, RefPtr<Inspector::Protocol::Automation::Point>& updatedPosition) override;
     void resolveChildFrameHandle(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const int* optionalOrdinal, const String* optionalName, const String* optionalNodeHandle, Ref<ResolveChildFrameHandleCallback>&&) override;
     void resolveParentFrameHandle(Inspector::ErrorString&, const String& browsingContextHandle, const String& frameHandle, Ref<ResolveParentFrameHandleCallback>&&) override;
     void computeElementLayout(Inspector::ErrorString&, const String& browsingContextHandle, const String& frameHandle, const String& nodeHandle, const bool* optionalScrollIntoViewIfNeeded, const bool* useViewportCoordinates, Ref<Inspector::AutomationBackendDispatcherHandler::ComputeElementLayoutCallback>&&) override;
@@ -120,6 +129,13 @@ private:
     void didResolveChildFrame(uint64_t callbackID, uint64_t frameID, const String& errorType);
     void didResolveParentFrame(uint64_t callbackID, uint64_t frameID, const String& errorType);
     void didComputeElementLayout(uint64_t callbackID, WebCore::IntRect, const String& errorType);
+
+    // Platform-specific helper methods.
+    void platformSimulateMouseInteraction(WebPageProxy&, const WebCore::IntPoint& viewPosition, Inspector::Protocol::Automation::MouseInteraction, Inspector::Protocol::Automation::MouseButton, WebEvent::Modifiers);
+
+#if USE(APPKIT)
+    void sendSynthesizedEventsToPage(WebPageProxy&, NSArray *eventsToSend);
+#endif
 
     WebProcessPool* m_processPool { nullptr };
 
@@ -154,5 +170,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebAutomationSession_h

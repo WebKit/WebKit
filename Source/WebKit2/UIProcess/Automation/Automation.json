@@ -68,6 +68,41 @@
                 { "name": "windowSize", "$ref": "Size", "description": "The current size of the browsing context's window." },
                 { "name": "windowOrigin", "$ref": "Point", "description": "The current (x, y) position of the browsing context's window relative to the top-left of the screen." }
             ]
+        },
+        {
+            "id": "MouseInteraction",
+            "type": "string",
+            "description": "Enumerates different ways of interacting with a mouse cursor.",
+            "enum": [
+                "Move",
+                "Down",
+                "Up",
+                "SingleClick",
+                "DoubleClick"
+            ]
+        },
+        {
+            "id": "MouseButton",
+            "type": "string",
+            "description": "Enumerates different mouse buttons that can be used.",
+            "enum": [
+                "None",
+                "Left",
+                "Middle",
+                "Right"
+            ]
+        },
+        {
+            "id": "KeyModifier",
+            "type": "string",
+            "description": "Enumerates different key modifiers that can remain pressed during other mouse/touch interactions.",
+            "enum": [
+                "CapsLock",
+                "Control",
+                "Shift",
+                "Meta",
+                "Alt"
+            ]
         }
     ],
     "commands": [
@@ -169,6 +204,20 @@
                 { "name": "result", "type": "string", "description": "The result returned by the called function. It is JSON encoded after the function returns or calls the callback." }
             ],
             "async": true
+        },
+        {
+            "name": "performMouseInteraction",
+            "description": "Simulates interaction with a mouse cursor.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The browsing context to be interacted with." },
+                { "name": "position", "$ref": "Point", "description": "The requested position for the mouse cursor, specified in viewport coordinates." },
+                { "name": "button", "$ref": "MouseButton", "description": "The button to use to perform the interaction. This parameter only has an effect for the <code>Down</code>, <code>Up</code>, <code>Click</code>, and <code>DoubleClick</code> mouse interactions." },
+                { "name": "interaction", "$ref": "MouseInteraction", "description": "The type of interaction to be performed with the mouse cursor." },
+                { "name": "modifiers", "type": "array", "items": { "$ref": "KeyModifier" }, "description": "Key modifiers to be active during the mouse interaction." }
+            ],
+            "returns": [
+                { "name": "position", "$ref": "Point", "description": "The updated position of the mouse cursor, specified in viewport coordinates." }
+            ]
         },
         {
             "name": "resolveChildFrameHandle",

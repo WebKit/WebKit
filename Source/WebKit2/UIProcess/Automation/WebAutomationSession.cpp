@@ -35,6 +35,7 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <WebCore/URL.h>
 #include <WebCore/UUID.h>
+#include <algorithm>
 #include <wtf/HashMap.h>
 
 using namespace Inspector;
@@ -630,5 +631,87 @@ void WebAutomationSession::setUserInputForCurrentJavaScriptPrompt(Inspector::Err
 
     m_client->setUserInputForCurrentJavaScriptPromptOnPage(this, page, promptValue);
 }
+
+#if USE(APPKIT)
+static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protocol::Automation::KeyModifier modifier)
+{
+    switch (modifier) {
+    case Inspector::Protocol::Automation::KeyModifier::Alt:
+        return WebEvent::AltKey;
+    case Inspector::Protocol::Automation::KeyModifier::Meta:
+        return WebEvent::MetaKey;
+    case Inspector::Protocol::Automation::KeyModifier::Control:
+        return WebEvent::ControlKey;
+    case Inspector::Protocol::Automation::KeyModifier::Shift:
+        return WebEvent::ShiftKey;
+    case Inspector::Protocol::Automation::KeyModifier::CapsLock:
+        return WebEvent::CapsLockKey;
+    }
+}
+#endif // USE(APPKIT)
+
+void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& requestedPositionObject, const String& mouseButtonString, const String& mouseInteractionString, const Inspector::InspectorArray& keyModifierStrings, RefPtr<Inspector::Protocol::Automation::Point>& updatedPositionObject)
+{
+#if !USE(APPKIT)
+    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+#else
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    // FIXME <rdar://problem/25094106>: Specify what parameter was missing or invalid and how.
+    // This requires some changes to the other end's error handling. Right now it looks for an
+    // exact error message match. We could stuff this into the 'data' field on error object.
+    float x;
+    if (!requestedPositionObject.getDouble(WTF::ASCIILiteral("x"), x))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    float y;
+    if (!requestedPositionObject.getDouble(WTF::ASCIILiteral("y"), y))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    WebCore::FloatRect windowFrame;
+    page->getWindowFrame(windowFrame);
+
+    x = std::max(std::min(0.0f, x), windowFrame.size().width());
+    y = std::max(std::min(0.0f, y), windowFrame.size().height());
+
+    WebCore::IntPoint viewPosition = WebCore::IntPoint(static_cast<int>(x), static_cast<int>(y));
+
+    auto parsedInteraction = Inspector::Protocol::parseEnumValueFromString<Inspector::Protocol::Automation::MouseInteraction>(mouseInteractionString);
+    if (!parsedInteraction)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
+
+    auto parsedButton = Inspector::Protocol::parseEnumValueFromString<Inspector::Protocol::Automation::MouseButton>(mouseButtonString);
+    if (!parsedButton)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
+
+    WebEvent::Modifiers keyModifiers = (WebEvent::Modifiers)0;
+    for (auto it = keyModifierStrings.begin(); it != keyModifierStrings.end(); ++it) {
+        String modifierString;
+        if (!it->get()->asString(modifierString))
+            FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
+
+        auto parsedModifier = Inspector::Protocol::parseEnumValueFromString<Inspector::Protocol::Automation::KeyModifier>(modifierString);
+        if (!parsedModifier)
+            FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
+        WebEvent::Modifiers enumValue = protocolModifierToWebEventModifier(parsedModifier.value());
+        keyModifiers = (WebEvent::Modifiers)(enumValue | keyModifiers);
+    }
+
+    platformSimulateMouseInteraction(*page, viewPosition, parsedInteraction.value(), parsedButton.value(), keyModifiers);
+
+    updatedPositionObject = Inspector::Protocol::Automation::Point::create()
+        .setX(x)
+        .setY(y)
+        .release();
+#endif // USE(APPKIT)
+}
+
+#if !USE(APPKIT)
+void WebAutomationSession::platformSimulateMouseInteraction(WebKit::WebPageProxy&, const WebCore::IntPoint&, Inspector::Protocol::Automation::MouseInteraction, Inspector::Protocol::Automation::MouseButton, WebEvent::Modifiers)
+{
+}
+#endif // !USE(APPKIT)
 
 } // namespace WebKit

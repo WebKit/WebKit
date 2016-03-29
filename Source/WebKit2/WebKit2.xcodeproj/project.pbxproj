@@ -1238,6 +1238,7 @@
 		9955A6F51C7986E000EB6A93 /* AutomationBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F11C79866400EB6A93 /* AutomationBackendDispatchers.h */; };
 		9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6F21C79866400EB6A93 /* AutomationProtocolObjects.cpp */; };
 		9955A6F71C7986E500EB6A93 /* AutomationProtocolObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */; };
+		9986BDD71CA9A22C004800AA /* WebAutomationSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9986BDD61CA9A222004800AA /* WebAutomationSessionCocoa.mm */; };
 		99C81D591C20E1E5005C4C82 /* AutomationClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C81D561C20DFBE005C4C82 /* AutomationClient.mm */; };
 		99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D551C20DFBE005C4C82 /* AutomationClient.h */; };
 		99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */; };
@@ -3271,6 +3272,7 @@
 		9955A6F11C79866400EB6A93 /* AutomationBackendDispatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationBackendDispatchers.h; sourceTree = "<group>"; };
 		9955A6F21C79866400EB6A93 /* AutomationProtocolObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutomationProtocolObjects.cpp; sourceTree = "<group>"; };
 		9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationProtocolObjects.h; sourceTree = "<group>"; };
+		9986BDD61CA9A222004800AA /* WebAutomationSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionCocoa.mm; sourceTree = "<group>"; };
 		99C81D551C20DFBE005C4C82 /* AutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationClient.h; sourceTree = "<group>"; };
 		99C81D561C20DFBE005C4C82 /* AutomationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutomationClient.mm; sourceTree = "<group>"; };
 		99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationClient.h; sourceTree = "<group>"; };
@@ -4631,6 +4633,7 @@
 				1AFE436318B6C081009C7A48 /* UIDelegate.mm */,
 				E4E8648E1B1673FB00C82F40 /* VersionChecks.h */,
 				E4E8648F1B1673FB00C82F40 /* VersionChecks.mm */,
+				9986BDD61CA9A222004800AA /* WebAutomationSessionCocoa.mm */,
 				1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */,
 				7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */,
 				7CE4D2151A49148400C7F152 /* WebProcessPoolCocoa.mm */,
@@ -9455,6 +9458,7 @@
 				C5E1AFEA16B20B7B006CC1F2 /* WKWebArchiveResource.cpp in Sources */,
 				1AA2E56618D77508003814BD /* WKWebProcessBundleParameters.mm in Sources */,
 				BC989D81161A7E5D000D46D3 /* WKWebProcessPlugIn.mm in Sources */,
+				9986BDD71CA9A22C004800AA /* WebAutomationSessionCocoa.mm in Sources */,
 				BC8F2F2A16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.mm in Sources */,
 				1F7506AD1859161C00EC0FF7 /* WKWebProcessPlugInFrame.mm in Sources */,
 				1F7506AE1859162200EC0FF7 /* WKWebProcessPlugInHitTestResult.mm in Sources */,

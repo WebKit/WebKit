@@ -78,8 +78,12 @@ static const NSEventType NSEventTypeLeftMouseDragged = NSLeftMouseDragged;
 static const NSEventType NSEventTypeLeftMouseUp = NSLeftMouseUp;
 static const NSEventType NSEventTypeMouseMoved = NSMouseMoved;
 static const NSEventType NSEventTypeOtherMouseDown = NSOtherMouseDown;
+static const NSEventType NSEventTypeOtherMouseDragged = NSOtherMouseDragged;
+static const NSEventType NSEventTypeOtherMouseUp = NSOtherMouseUp;
 static const NSEventType NSEventTypePeriodic = NSPeriodic;
 static const NSEventType NSEventTypeRightMouseDown = NSRightMouseDown;
+static const NSEventType NSEventTypeRightMouseDragged = NSRightMouseDragged;
+static const NSEventType NSEventTypeRightMouseUp = NSRightMouseUp;
 static const NSEventType NSEventTypeScrollWheel = NSScrollWheel;
 static const NSEventType NSEventTypeSystemDefined = NSSystemDefined;
 

@@ -1,3 +1,40 @@
+2016-03-28  Brian Burg  <bburg@apple.com>
+
+        Web Automation: implement Automation.performMouseInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=155606
+        <rdar://problem/25227576>
+
+        Reviewed by Timothy Hatcher.
+
+        This method implements common mouse interactions by synthesizing native events.
+        The creation and dispatching of simulated events is implemented separately per
+        application/window/event framework. This patch adds an implementation for ports
+        that use AppKit.
+
+        The event is created synthetically in a platform-specific way and delivered to
+        the platform's window in the UIProcess. The event goes through all the
+        layers of processing that a real mouse event could go through once it reaches
+        WebKit itself.
+
+        * UIProcess/Automation/Automation.json: Add new enums and command.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::protocolModifierToWebEventModifier):
+        (WebKit::WebAutomationSession::performMouseInteraction): Added.
+        Clip the requested cursor position so that it stays within the selected window's
+        frame and doesn't wander off into other windows or applications. Fire it using
+        the platform-specific simulation method.
+
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction): Added.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction): Added.
+        Convert Automation protocol values to AppKit values. Simulate and dispatch
+        one or more events depending on the desired interaction.
+        * WebKit2Prefix.h: Include AppKitCompatibilityDeclarations.h so newer
+        NSEventTypes can be used.
+
 2016-03-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Follow up to r198580.
