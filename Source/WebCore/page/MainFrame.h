@@ -26,6 +26,7 @@
 #ifndef MainFrame_h
 #define MainFrame_h
 
+#include "EventHandler.h"
 #include "Frame.h"
 #include <wtf/Vector.h>
 

@@ -75,6 +75,8 @@ namespace WebCore {
 const double EventHandler::TextDragDelay = 0.15;
 #endif
 
+const double resetLatchedStateTimeout = 0.1;
+
 static RetainPtr<NSEvent>& currentNSEventSlot()
 {
     static NeverDestroyed<RetainPtr<NSEvent>> event;
@@ -931,8 +933,34 @@ static bool latchedToFrameOrBody(ContainerNode& container)
     return is<HTMLFrameSetElement>(container) || is<HTMLBodyElement>(container);
 }
 
+void EventHandler::clearOrScheduleClearingLatchedStateIfNeeded(const PlatformWheelEvent& event)
+{
+    if (!m_frame.isMainFrame())
+        return;
+
+    // Platform does not provide an indication that it will switch from non-momentum to momentum scrolling
+    // when handling wheel events.
+    // Logic below installs a timer when non-momentum scrolling ends. If momentum scroll does not start within that interval,
+    // reset the latched state. If it does, stop the timer, leaving the latched state untouched.
+    if (!m_pendingMomentumWheelEventsTimer.isActive()) {
+        if (event.isEndOfNonMomentumScroll())
+            m_pendingMomentumWheelEventsTimer.startOneShot(resetLatchedStateTimeout);
+    } else {
+        // If another wheel event scrolling starts, stop the timer manually, and reset the latched state immediately.
+        if (event.shouldConsiderLatching()) {
+            m_frame.mainFrame().resetLatchingState();
+            m_pendingMomentumWheelEventsTimer.stop();
+        } else if (event.isTransitioningToMomentumScroll()) {
+            // Wheel events machinary is transitioning to momenthum scrolling, so no need to reset latched state. Stop the timer.
+            m_pendingMomentumWheelEventsTimer.stop();
+        }
+    }
+}
+
 void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheelEvent, const HitTestResult& result, RefPtr<Element>& wheelEventTarget, RefPtr<ContainerNode>& scrollableContainer, ScrollableArea*& scrollableArea, bool& isOverWidget)
 {
+    clearOrScheduleClearingLatchedStateIfNeeded(wheelEvent);
+
     FrameView* view = m_frame.view();
 
     scrollableContainer = nullptr;
