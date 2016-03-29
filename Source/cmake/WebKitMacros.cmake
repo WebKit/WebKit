@@ -25,7 +25,7 @@ endmacro()
 
 macro(ADD_PRECOMPILED_HEADER _header _cpp _source)
     if (MSVC)
-        get_filename_component(PrecompiledBasename ${_header} NAME_WE)
+        get_filename_component(PrecompiledBasename ${_cpp} NAME_WE)
         file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${_source}")
         set(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${_source}/${PrecompiledBasename}.pch")
         set(_sources ${${_source}})
