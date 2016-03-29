@@ -1499,18 +1499,17 @@ static void clearTextSelectionIntent(AXObjectCache* cache)
 
 void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range)
 {
+    setTextSelectionIntent(axObjectCache(), range.length ? AXTextStateChangeTypeSelectionExtend : AXTextStateChangeTypeSelectionMove);
+
     if (isNativeTextControl()) {
-        setTextSelectionIntent(axObjectCache(), range.length ? AXTextStateChangeTypeSelectionExtend : AXTextStateChangeTypeSelectionMove);
         HTMLTextFormControlElement& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
         textControl.setSelectionRange(range.start, range.start + range.length);
-        clearTextSelectionIntent(axObjectCache());
-        return;
+    } else {
+        VisiblePosition start = visiblePositionForIndexUsingCharacterIterator(node(), range.start);
+        VisiblePosition end = visiblePositionForIndexUsingCharacterIterator(node(), range.start + range.length);
+        m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered));
     }
-
-    Node* node = m_renderer->node();
-    VisibleSelection newSelection(Position(node, range.start, Position::PositionIsOffsetInAnchor), Position(node, range.start + range.length, Position::PositionIsOffsetInAnchor), DOWNSTREAM);
-    setTextSelectionIntent(axObjectCache(), range.length ? AXTextStateChangeTypeSelectionExtend : AXTextStateChangeTypeSelectionMove);
-    m_renderer->frame().selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions());
+    
     clearTextSelectionIntent(axObjectCache());
 }
 
@@ -2848,7 +2847,6 @@ bool AccessibilityRenderObject::canSetExpandedAttribute() const
 
 bool AccessibilityRenderObject::canSetValueAttribute() const
 {
-
     // In the event of a (Boolean)@readonly and (True/False/Undefined)@aria-readonly
     // value mismatch, the host language native attribute value wins.    
     if (isNativeTextControl())

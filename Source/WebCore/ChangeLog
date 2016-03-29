@@ -1,3 +1,21 @@
+2016-03-28  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS: Can't navigate inside ContentEditable fields with voiceover enabled
+        https://bugs.webkit.org/show_bug.cgi?id=155942
+
+        Reviewed by Joanmarie Diggs.
+
+        The code to set the selected text range on a non-native text control (like a contenteditable) was either
+        wrong or broke at some point. It assumed that creating a Position with the contenteditable node with the right
+        offset would make a valid Position, but it almost never did.
+
+        Instead we can use this helper method to create a valid Position.
+
+        Test: accessibility/set-selected-text-range-contenteditable.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+
 2016-03-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix Ninja build on Mac

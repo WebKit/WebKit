@@ -2103,6 +2103,7 @@ webkit.org/b/112012 accessibility/svg-bounds.html [ Failure ]
 webkit.org/b/112014 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 webkit.org/b/112018 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/112021 accessibility/visible-elements.html [ Failure Crash ]
+webkit.org/b/133148 accessibility/set-selected-text-range-contenteditable.html [ Skip ]
 
 # New accessibility test added in r151079 that is failing for EFL.
 webkit.org/b/117182 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
