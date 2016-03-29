@@ -50,7 +50,6 @@ public:
     WEBCORE_EXPORT void setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason, const String& description);
 
     bool isPluginUnavailable() const { return m_isPluginUnavailable; }
-    bool showsUnavailablePluginIndicator() const { return isPluginUnavailable() && m_isUnavailablePluginIndicatorState == UnavailablePluginIndicatorState::Visible; }
 
     WEBCORE_EXPORT void setUnavailablePluginIndicatorIsHidden(bool);
 
@@ -73,6 +72,7 @@ private:
     const char* renderName() const override { return "RenderEmbeddedObject"; }
     bool isEmbeddedObject() const final { return true; }
 
+    bool showsUnavailablePluginIndicator() const { return isPluginUnavailable() && m_isUnavailablePluginIndicatorState != UnavailablePluginIndicatorState::Hidden; }
     void paintSnapshotImage(PaintInfo&, const LayoutPoint&, Image&);
     void paintContents(PaintInfo&, const LayoutPoint&) final;
 

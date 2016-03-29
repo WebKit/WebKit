@@ -1,3 +1,19 @@
+2016-03-29  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r196813): Missing plug-in placeholder is missing
+        https://bugs.webkit.org/show_bug.cgi?id=155973
+        <rdar://problem/25068392>
+
+        Reviewed by Andy Estes.
+
+        Show unavailable plugin indicator when UnavailablePluginIndicatorState (uninitialized, hidden, visible) is not set to hidden explicitly.
+        It matches pre-196813 behaviour.
+
+        Unable to test.
+
+        * rendering/RenderEmbeddedObject.h:
+        (WebCore::RenderEmbeddedObject::showsUnavailablePluginIndicator):
+
 2016-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] [RTL Scrollbars] Overlay RTL scrollbars animate in from the wrong side
