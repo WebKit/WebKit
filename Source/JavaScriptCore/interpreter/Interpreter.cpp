@@ -157,12 +157,8 @@ JSValue eval(CallFrame* callFrame)
     JSScope* callerScopeChain = callerFrame->uncheckedR(callerCodeBlock->scopeRegister().offset()).Register::scope();
     UnlinkedCodeBlock* callerUnlinkedCodeBlock = callerCodeBlock->unlinkedCodeBlock();
 
-    ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded;
-    if (callerUnlinkedCodeBlock->constructorKind() == ConstructorKind::Derived)
-        thisTDZMode = ThisTDZMode::AlwaysCheck;
-
-    SourceCode sourceCode(makeSource(programSource));
-    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(callerCodeBlock->isStrictMode(), sourceCode, thisTDZMode, callerScopeChain);
+    bool isArrowFunctionContext = callerUnlinkedCodeBlock->isArrowFunction() || callerUnlinkedCodeBlock->isArrowFunctionContext();
+    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(callerCodeBlock->isStrictMode(), programSource, isArrowFunctionContext, callerScopeChain);
 
     if (!eval) {
         if (!callerCodeBlock->isStrictMode()) {
@@ -179,18 +175,20 @@ JSValue eval(CallFrame* callFrame)
         
         // If the literal parser bailed, it should not have thrown exceptions.
         ASSERT(!callFrame->vm().exception());
-        bool isInArrowFunctionContext = callerCodeBlock->unlinkedCodeBlock()->isArrowFunction() || callerCodeBlock->unlinkedCodeBlock()->isArrowFunctionContext();
 
-        DerivedContextType derivedContextType = callerCodeBlock->unlinkedCodeBlock()->derivedContextType();
+        ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded;
+        if (callerUnlinkedCodeBlock->constructorKind() == ConstructorKind::Derived)
+            thisTDZMode = ThisTDZMode::AlwaysCheck;
+
+        DerivedContextType derivedContextType = callerUnlinkedCodeBlock->derivedContextType();
         
-        if (!isInArrowFunctionContext && callerCodeBlock->unlinkedCodeBlock()->isClassContext()) {
-            derivedContextType = callerCodeBlock->unlinkedCodeBlock()->isConstructor()
+        if (!isArrowFunctionContext && callerUnlinkedCodeBlock->isClassContext()) {
+            derivedContextType = callerUnlinkedCodeBlock->isConstructor()
                 ? DerivedContextType::DerivedConstructorContext
                 : DerivedContextType::DerivedMethodContext;
         }
 
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, derivedContextType, isInArrowFunctionContext, sourceCode, callerScopeChain);
-
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, derivedContextType, isArrowFunctionContext, programSource, callerScopeChain);
         if (!eval)
             return jsUndefined();
     }

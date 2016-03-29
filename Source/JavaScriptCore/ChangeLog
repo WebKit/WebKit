@@ -1,3 +1,48 @@
+2016-03-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r192914): 10% regression on Sunspider's date-format-tofte
+        https://bugs.webkit.org/show_bug.cgi?id=155559
+
+        Reviewed by Saam Barati.
+
+        The fast path of the eval function is the super hot path in date-format-tofte.
+        Any performance regression is not allowed here.
+        Before this patch, we allocated SourceCode in the fast path.
+        This allocation incurs 10% performance regression.
+
+        This patch removes this allocation in the fast path.
+        And change the key of the EvalCodeCache to EvalCodeCache::CacheKey.
+        It combines RefPtr<StringImpl> and isArrowFunctionContext.
+        Since EvalCodeCache does not cache any eval code evaluated under the strict mode,
+        it is unnecessary to include several options (ThisTDZMode, and DerivedContextType) in the cache map's key.
+        But isArrowFunctionContext is necessary since the sloppy mode arrow function exists.
+
+        To validate this change, we add a new test that evaluates the same code
+        under the non-arrow function context and the arrow function context.
+
+        After introducing CacheKey, we observed 1% regression compared to the RefPtr<StringImpl> keyed case.
+        This is because HashMap<RefPtr<T>, ...>::get(T*) is specially optimized; this path is inlined while the normal ::get() is not inlined.
+        To avoid this performance regression, we introduce HashMap::fastGet, that aggressively encourages inlining.
+        The relationship between fastGet() and get() is similar to fastAdd() and add().
+        After applying this change, the evaluation shows no performance regression in comparison with the RefPtr<StringImpl> keyed case.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::CacheKey::CacheKey):
+        (JSC::EvalCodeCache::CacheKey::hash):
+        (JSC::EvalCodeCache::CacheKey::isEmptyValue):
+        (JSC::EvalCodeCache::CacheKey::operator==):
+        (JSC::EvalCodeCache::CacheKey::isHashTableDeletedValue):
+        (JSC::EvalCodeCache::CacheKey::Hash::hash):
+        (JSC::EvalCodeCache::CacheKey::Hash::equal):
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::getSlow):
+        (JSC::EvalCodeCache::isCacheable):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * tests/stress/eval-in-arrow-function.js: Added.
+        (shouldBe):
+        (i):
+
 2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Audit WebCore builtins for user overridable code

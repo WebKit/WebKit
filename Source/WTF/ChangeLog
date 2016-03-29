@@ -1,3 +1,15 @@
+2016-03-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r192914): 10% regression on Sunspider's date-format-tofte
+        https://bugs.webkit.org/show_bug.cgi?id=155559
+
+        Reviewed by Saam Barati.
+
+        Add HashTable::inlineLookup and HashMap::fastGet.
+
+        * wtf/HashMap.h:
+        * wtf/HashTable.h:
+
 2016-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Add a compile time flag for using QTKit

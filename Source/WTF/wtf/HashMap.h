@@ -102,6 +102,9 @@ public:
     bool contains(const KeyType&) const;
     MappedPeekType get(const KeyType&) const;
 
+    // Same as get(), but aggressively inlined.
+    MappedPeekType fastGet(const KeyType&) const;
+
     // Replaces the value but not the key if the key is already present.
     // Return value includes both an iterator to the key location,
     // and an isNewEntry boolean that's true if a new entry was added.
@@ -392,6 +395,15 @@ auto HashMap<T, U, V, W, MappedTraits>::get(const KeyType& key) const -> MappedP
     return MappedTraits::peek(entry->value);
 }
 
+template<typename T, typename U, typename V, typename W, typename MappedTraits>
+ALWAYS_INLINE auto HashMap<T, U, V, W, MappedTraits>::fastGet(const KeyType& key) const -> MappedPeekType
+{
+    KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<typename HashTableType::IdentityTranslatorType>(key);
+    if (!entry)
+        return MappedTraits::peek(MappedTraits::emptyValue());
+    return MappedTraits::peek(entry->value);
+}
+
 template<typename T, typename U, typename V, typename W, typename X>
 inline bool HashMap<T, U, V, W, X>::remove(iterator it)
 {
@@ -457,7 +469,7 @@ template<typename T, typename U, typename V, typename W, typename X>
 template<typename K>
 inline auto HashMap<T, U, V, W, X>::inlineGet(typename GetPtrHelper<K>::PtrType key) const -> typename std::enable_if<IsSmartPtr<K>::value, MappedPeekType>::type
 {
-    KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).template lookup<HashMapTranslator<KeyValuePairTraits, HashFunctions>>(key);
+    KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<HashMapTranslator<KeyValuePairTraits, HashFunctions>>(key);
     if (!entry)
         return MappedTraits::peek(MappedTraits::emptyValue());
     return MappedTraits::peek(entry->value);
