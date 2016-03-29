@@ -1,3 +1,43 @@
+2016-03-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] ArithSub should not propagate "UsesAsOther"
+        https://bugs.webkit.org/show_bug.cgi?id=155932
+
+        Reviewed by Mark Lam.
+
+        The node ArithSub was backpropagating UsesAsOther.
+        This causes any GetByVal on a Double Array to have an extra
+        hole check if it flows into an ArithSub.
+
+        The definition of ArithSub (12.8.4.1) has both operands go
+        through ToNumber(). ToNumber() on "undefined" always produces
+        NaN. It is safe to ignore the NaN marker from hole when
+        the DAG flows into ArithSub.
+
+        This patch also adds this change and test coverage to ArithAdd.
+        ArithAdd was not a problem in practice because it is only
+        generated before Fixup if both operands are known to be numerical.
+        The change to ArithAdd is there to protect us of the ArithSub-like
+        problems if we ever improve our support of arithmetic operators.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * tests/stress/arith-add-on-double-array-with-holes.js: Added.
+        (let.testCase.of.testCases.eval.nonObservableHoleOnLhs):
+        (let.testCase.of.testCases.observableHoleOnLhs):
+        (let.testCase.of.testCases.nonObservableHoleOnRhs):
+        (let.testCase.of.testCases.observableHoleOnRhs):
+        * tests/stress/arith-sub-on-double-array-with-holes.js: Added.
+        (let.testCase.of.testCases.eval.nonObservableHoleOnLhs):
+        (let.testCase.of.testCases.observableHoleOnLhs):
+        (let.testCase.of.testCases.nonObservableHoleOnRhs):
+        (let.testCase.of.testCases.observableHoleOnRhs):
+        * tests/stress/value-add-on-double-array-with-holes.js: Added.
+        (let.testCase.of.testCases.eval.nonObservableHoleOnLhs):
+        (let.testCase.of.testCases.observableHoleOnLhs):
+        (let.testCase.of.testCases.nonObservableHoleOnRhs):
+        (let.testCase.of.testCases.observableHoleOnRhs):
+
 2016-03-28  Brian Burg  <bburg@apple.com>
 
         Web Inspector: protocol generator should generate C++ string-to-enum helper functions
