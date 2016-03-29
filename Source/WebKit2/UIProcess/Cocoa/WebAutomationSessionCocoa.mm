@@ -100,7 +100,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         break;
     }
 
-    NSMutableArray<NSEvent *> *eventsToBeSent = [NSMutableArray new];
+    auto eventsToBeSent = adoptNS([[NSMutableArray alloc] init]);
 
     switch (interaction) {
     case Inspector::Protocol::Automation::MouseInteraction::Move:
@@ -130,7 +130,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         [eventsToBeSent addObject:[NSEvent mouseEventWithType:upEventType location:windowPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:2 pressure:0.0f]];
     }
 
-    sendSynthesizedEventsToPage(page, eventsToBeSent);
+    sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }
 
 #endif // USE(APPKIT)
