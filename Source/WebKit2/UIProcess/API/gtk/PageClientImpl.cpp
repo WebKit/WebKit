@@ -66,8 +66,7 @@ std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
 {
-    RefPtr<cairo_region_t> damageRegion = toCairoRegion(region);
-    gtk_widget_queue_draw_region(m_viewWidget, damageRegion.get());
+    gtk_widget_queue_draw_region(m_viewWidget, toCairoRegion(region).get());
 }
 
 void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, bool)

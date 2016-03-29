@@ -1,3 +1,12 @@
+2016-03-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Follow up to r198580.
+
+        Simplify the code even more as suggested by Darin.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+
 2016-03-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac Ninja build after r198766.
