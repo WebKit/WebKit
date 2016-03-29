@@ -1,3 +1,9 @@
+2016-03-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL build fix caused by r198773
+
+        * CMakeLists.txt: Append WebCore_DERIVED_SOURCES to WebCore source list.
+
 2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Audit WebCore builtins for user overridable code
