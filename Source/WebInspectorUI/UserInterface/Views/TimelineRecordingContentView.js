@@ -42,7 +42,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this.addSubview(this._timelineOverview);
 
         const disableBackForward = true;
-        this._timelineContentBrowser = new WebInspector.ContentBrowser(null, this, disableBackForward);
+        const disableFindBanner = true;
+        this._timelineContentBrowser = new WebInspector.ContentBrowser(null, this, disableBackForward, disableFindBanner);
         this._timelineContentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
 
         this._entireRecordingPathComponent = this._createTimelineRangePathComponent(WebInspector.UIString("Entire Recording"));

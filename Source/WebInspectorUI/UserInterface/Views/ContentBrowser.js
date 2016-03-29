@@ -25,7 +25,7 @@
 
 WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 {
-    constructor(element, delegate, disableBackForward)
+    constructor(element, delegate, disableBackForward, disableFindBanner)
     {
         super(element);
 
@@ -37,10 +37,6 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         this._contentViewContainer = new WebInspector.ContentViewContainer;
         this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
         this.addSubview(this._contentViewContainer);
-
-        this._findBanner = new WebInspector.FindBanner(this);
-        this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidShow, this._findBannerDidShow, this);
-        this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidHide, this._findBannerDidHide, this);
 
         if (!disableBackForward) {
             this._backKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Left, this._backButtonClicked.bind(this), this.element);
@@ -57,6 +53,12 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
             this._navigationBar.addNavigationItem(this._forwardButtonNavigationItem);
 
             this._navigationBar.addNavigationItem(new WebInspector.DividerNavigationItem);
+        }
+
+        if (!disableFindBanner) {
+            this._findBanner = new WebInspector.FindBanner(this);
+            this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidShow, this._findBannerDidShow, this);
+            this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidHide, this._findBannerDidHide, this);
         }
 
         this._hierarchicalPathNavigationItem = new WebInspector.HierarchicalPathNavigationItem;
@@ -197,6 +199,9 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
     handleFindEvent(event)
     {
+        if (!this._findBanner)
+            return;
+
         var currentContentView = this.currentContentView;
         if (!currentContentView || !currentContentView.supportsSearch)
             return;
@@ -259,14 +264,16 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
     {
         this._contentViewContainer.shown();
 
-        this._findBanner.enableKeyboardShortcuts();
+        if (this._findBanner)
+            this._findBanner.enableKeyboardShortcuts();
     }
 
     hidden()
     {
         this._contentViewContainer.hidden();
 
-        this._findBanner.disableKeyboardShortcuts();
+        if (this._findBanner)
+            this._findBanner.disableKeyboardShortcuts();
     }
 
     // Private
@@ -301,6 +308,9 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
     _contentViewNumberOfSearchResultsDidChange(event)
     {
+        if (!this._findBanner)
+            return;
+
         if (event.target !== this.currentContentView)
             return;
 
@@ -393,6 +403,9 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
     _updateFindBanner(currentContentView)
     {
+        if (!this._findBanner)
+            return;
+
         if (!currentContentView) {
             this._findBanner.targetElement = null;
             this._findBanner.numberOfResults = null;

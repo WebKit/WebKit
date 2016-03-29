@@ -1,5 +1,38 @@
 2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: REGRESSION: ⌘E and ⌘G text searching does not work
+        https://bugs.webkit.org/show_bug.cgi?id=155981
+        <rdar://problem/25418983>
+
+        Reviewed by Timothy Hatcher.
+
+        Disable the unused find banner in the RecordingContentView's
+        ContentBrowser. This is a workaround for the background tab
+        thinking it is visible, but still useful since the find
+        banner wouldn't be used in the TimelineContentView anyways so
+        can avoid being created.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser):
+        Add a construction option to not create a FindBanner.
+        
+        (WebInspector.ContentBrowser.prototype.handleFindEvent):
+        (WebInspector.ContentBrowser.prototype.shown):
+        (WebInspector.ContentBrowser.prototype.hidden):
+        (WebInspector.ContentBrowser.prototype._contentViewNumberOfSearchResultsDidChange):
+        (WebInspector.ContentBrowser.prototype._updateFindBanner):
+        Handle when we don't have a find banner.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        Do not create a FindBanner in the RecordingContentView.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        This global content browser can also avoid creating a FindBanner.
+
+2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: We should have a way to capture heap snapshots programatically.
         https://bugs.webkit.org/show_bug.cgi?id=154407
         <rdar://problem/24726292>
