@@ -1,3 +1,16 @@
+2016-03-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] CMake seems to build all generated files every time
+        https://bugs.webkit.org/show_bug.cgi?id=155872
+
+        Reviewed by Alex Christensen.
+
+        This seems to be caused by Visual Studio being unhappy receiving multiple output targets
+        for its custom build rules. If I limit the output to just the header file on Windows, the
+        dependency check seems to do the right thing.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2016-03-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac Ninja build after r198766.
