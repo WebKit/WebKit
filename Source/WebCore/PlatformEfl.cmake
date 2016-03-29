@@ -452,3 +452,5 @@ if (DEVELOPER_MODE)
         add_definitions(-DTEST_HYPHENATAION_PATH=\"${CMAKE_SOURCE_DIR}/WebKitBuild/DependenciesEFL/Root/webkitgtk-test-dicts\")
     endif ()
 endif ()
+
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES})

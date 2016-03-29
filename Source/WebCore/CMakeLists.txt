@@ -3809,8 +3809,6 @@ set_target_properties(WebCoreDerivedSources PROPERTIES OUTPUT_NAME WebCoreDerive
 set_target_properties(WebCoreDerivedSources PROPERTIES FOLDER "WebCore")
 list(APPEND WebCore_LIBRARIES WebCoreDerivedSources${DEBUG_SUFFIX})
 
-list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES})
-
 WEBKIT_FRAMEWORK(WebCore)
 
 # The -ftree-sra optimization (implicit with -O2) causes crashes when

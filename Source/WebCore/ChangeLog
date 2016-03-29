@@ -1,3 +1,14 @@
+2016-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows build after r198777
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        WebCore_DERIVED_SOURCES should not be in WebCore_SOURCES.  If it's needed for EFL,
+        then keep it in the EFL-specific platform.
+        * PlatformWin.cmake:
+        Make more derived sources in WebCore_DERIVED_SOURCES.
+
 2016-03-29  Saam barati  <sbarati@apple.com>
 
         Allow builtin JS functions to be intrinsics

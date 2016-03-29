@@ -155,7 +155,7 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/themeWinQuirks.css
 )
 
-list(APPEND WebCore_SOURCES
+list(APPEND WebCore_DERIVED_SOURCES
     "${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreHeaderDetection.h"
 )
 
@@ -251,7 +251,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 )
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/makesafeseh.obj)
+    list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/makesafeseh.obj)
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/makesafeseh.obj
         DEPENDS ${WEBCORE_DIR}/platform/win/makesafeseh.asm
