@@ -1,3 +1,13 @@
+2016-03-29  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Fix build break since r198800. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=156011
+
+        Currently libWebCoreDerivedSources.a cannot see the symbol located in WebCore Source files.
+        This patch let the library can see the symbols of WebCore Sources.
+
+        * PlatformEfl.cmake:
+
 2016-03-26  Antti Koivisto  <antti@apple.com>
 
         Separate render tree updating from style resolve

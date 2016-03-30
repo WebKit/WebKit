@@ -453,4 +453,4 @@ if (DEVELOPER_MODE)
     endif ()
 endif ()
 
-list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES})
+list(APPEND WebCore_DERIVED_SOURCES ${WebCore_SOURCES})
