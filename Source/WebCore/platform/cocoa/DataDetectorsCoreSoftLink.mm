@@ -50,6 +50,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDURLStringForResult, 
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDURLTapAndHoldSchemes, NSArray *, (), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDShouldImmediatelyShowActionSheetForURL, BOOL, (NSURL *url), (url))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDShouldImmediatelyShowActionSheetForResult, BOOL, (DDResultRef result), (result))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDShouldUseLightLinksForResult, BOOL, (DDResultRef result, BOOL extractedFromSignature), (result, extractedFromSignature))
 SOFT_LINK_POINTER_FOR_SOURCE(WebCore, DataDetectorsCore, DDBinderHttpURLKey, CFStringRef)
 SOFT_LINK_POINTER_FOR_SOURCE(WebCore, DataDetectorsCore, DDBinderWebURLKey, CFStringRef)
 SOFT_LINK_POINTER_FOR_SOURCE(WebCore, DataDetectorsCore, DDBinderMailURLKey, CFStringRef)

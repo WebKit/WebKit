@@ -1,3 +1,19 @@
+2016-03-30  Enrica Casucci  <enrica@apple.com>
+
+        Add a style for Data Detectors links.
+        https://bugs.webkit.org/show_bug.cgi?id=155996
+        rdar://problem/25343514
+
+        Reviewed by Sam Weinig.
+
+        Based on indication from the data detection engine,
+        we style some of the links differently.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        * platform/cocoa/DataDetectorsCoreSoftLink.h:
+        * platform/cocoa/DataDetectorsCoreSoftLink.mm:
+
 2016-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] [RTL Scrollbars] Overlay RTL scrollbars animate in from the wrong side

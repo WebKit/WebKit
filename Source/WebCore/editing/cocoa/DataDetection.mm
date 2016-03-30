@@ -49,9 +49,10 @@
 #import <WebKitAdditions/DataDetectorsAdditions.h>
 #endif
 
-const char *dataDetectorsURLScheme = "x-apple-data-detectors";
-const char *dataDetectorsAttributeTypeKey = "x-apple-data-detectors-type";
-const char *dataDetectorsAttributeResultKey = "x-apple-data-detectors-result";
+const char* dataDetectorsURLScheme = "x-apple-data-detectors";
+const char* dataDetectorsAttributeTypeKey = "x-apple-data-detectors-type";
+const char* dataDetectorsAttributeResultKey = "x-apple-data-detectors-result";
+const char* dataDetectorsLinkStyle = "-webkit-text-decoration-color:rgb(199, 199, 204); color:initial;";
 
 namespace WebCore {
 
@@ -575,6 +576,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         }
         
         lastModifiedQueryOffset = queryRange.end;
+        BOOL shouldUseLightLinks = softLink_DataDetectorsCore_DDShouldUseLightLinksForResult(coreResult, [indexPaths[resultIndex] length] > 1);
 
         for (auto& range : resultRanges) {
             Node* parentNode = range->startContainer().parentNode();
@@ -605,10 +607,13 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
             RefPtr<HTMLAnchorElement> anchorElement = HTMLAnchorElement::create(document);
             anchorElement->setHref(correspondingURL);
             anchorElement->setDir("ltr");
-            RefPtr<Attr> color = downcast<Element>(parentNode)->getAttributeNode("color");
-            if (color)
-                anchorElement->setAttribute(HTMLNames::styleAttr, color->style()->cssText());
-            
+            if (shouldUseLightLinks)
+                anchorElement->setAttribute(HTMLNames::styleAttr, dataDetectorsLinkStyle);
+            else {
+                RefPtr<Attr> color = downcast<Element>(parentNode)->getAttributeNode("color");
+                if (color)
+                    anchorElement->setAttribute(HTMLNames::styleAttr, color->style()->cssText());
+            }
             anchorElement->Node::appendChild(newNode, ASSERT_NO_EXCEPTION);
             parentNode->insertBefore(anchorElement, &currentTextNode, ASSERT_NO_EXCEPTION);
             // Add a special attribute to mark this URLification as the result of data detectors.
