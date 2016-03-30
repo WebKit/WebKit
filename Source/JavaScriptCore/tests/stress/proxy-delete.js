@@ -1,6 +1,6 @@
 function assert(b) {
     if (!b)
-        throw new Error("bad assertion.");
+        throw new Error("bad assertion");
 }
 
 {
@@ -59,7 +59,7 @@ function assert(b) {
         try {
             delete proxy.x;
         } catch(e) {
-            assert(e.toString() === "TypeError: 'deleteProperty' property of a Proxy's handler should be callable.");
+            assert(e.toString() === "TypeError: 'deleteProperty' property of a Proxy's handler should be callable");
             threw = true;
         }
         assert(threw);
@@ -85,7 +85,7 @@ function assert(b) {
         try {
             delete proxy.x;
         } catch(e) {
-            assert(e.toString() === "TypeError: Proxy handler's 'deleteProperty' method should return false when the target's property is not configurable.");
+            assert(e.toString() === "TypeError: Proxy handler's 'deleteProperty' method should return false when the target's property is not configurable");
             threw = true;
         }
         assert(threw);

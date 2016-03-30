@@ -1,6 +1,6 @@
 function assert(b) {
     if (!b)
-        throw new Error("Bad assertion.");
+        throw new Error("Bad assertion");
 }
 
 {
@@ -116,7 +116,7 @@ function assert(b) {
             try {
                 get();
             } catch(e) {
-                assert(e.toString() === "TypeError: 'getPrototypeOf' property of a Proxy's handler should be callable.");
+                assert(e.toString() === "TypeError: 'getPrototypeOf' property of a Proxy's handler should be callable");
                 threw = true;
             }
             assert(threw);
@@ -144,7 +144,7 @@ function assert(b) {
             try {
                 get();
             } catch(e) {
-                assert(e.toString() === "TypeError: Proxy handler's 'getPrototypeOf' trap should either return an object or null.");
+                assert(e.toString() === "TypeError: Proxy handler's 'getPrototypeOf' trap should either return an object or null");
                 threw = true;
             }
             assert(threw);
@@ -172,7 +172,7 @@ function assert(b) {
             try {
                 get();
             } catch(e) {
-                assert(e.toString() === "TypeError: Proxy handler's 'getPrototypeOf' trap should either return an object or null.");
+                assert(e.toString() === "TypeError: Proxy handler's 'getPrototypeOf' trap should either return an object or null");
                 threw = true;
             }
             assert(threw);
@@ -201,7 +201,7 @@ function assert(b) {
             try {
                 get();
             } catch(e) {
-                assert(e.toString() === "TypeError: Proxy's 'getPrototypeOf' trap for a non-extensible target should return the same value as the target's prototype.");
+                assert(e.toString() === "TypeError: Proxy's 'getPrototypeOf' trap for a non-extensible target should return the same value as the target's prototype");
                 threw = true;
             }
             assert(threw);
@@ -231,7 +231,7 @@ function assert(b) {
             try {
                 get();
             } catch(e) {
-                assert(e.toString() === "TypeError: Proxy's 'getPrototypeOf' trap for a non-extensible target should return the same value as the target's prototype.");
+                assert(e.toString() === "TypeError: Proxy's 'getPrototypeOf' trap for a non-extensible target should return the same value as the target's prototype");
                 threw = true;
             }
             assert(threw);

@@ -630,7 +630,7 @@ Structure* Structure::preventExtensionsTransition(VM& vm, Structure* structure)
 {
     Structure* transition = create(vm, structure);
 
-    // Don't set m_offset, as one can not transition to this.
+    // Don't set m_offset, as one cannot transition to this.
 
     DeferGC deferGC(vm.heap);
     structure->materializePropertyMapIfNecessary(vm, deferGC);

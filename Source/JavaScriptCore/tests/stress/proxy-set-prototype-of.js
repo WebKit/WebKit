@@ -82,7 +82,7 @@ function assert(b) {
             try {
                 set();
             } catch(e) {
-                assert(e.toString() === "TypeError: 'setPrototypeOf' property of a Proxy's handler should be callable.");
+                assert(e.toString() === "TypeError: 'setPrototypeOf' property of a Proxy's handler should be callable");
                 threw = true;
             }
             assert(threw);
@@ -177,7 +177,7 @@ function assert(b) {
                 threw = true;
                 assert(called);
                 called = false;
-                assert(e.toString() === "TypeError: Proxy 'setPrototypeOf' trap returned true when its target is non-extensible and the new prototype value is not the same as the current prototype value. It should have returned false.");
+                assert(e.toString() === "TypeError: Proxy 'setPrototypeOf' trap returned true when its target is non-extensible and the new prototype value is not the same as the current prototype value. It should have returned false");
             }
 
             assert(threw);
@@ -278,7 +278,7 @@ function assert(b) {
             Object.setPrototypeOf(proxy, obj);
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed.");
+            assert(e.toString() === "TypeError: Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed");
         }
 
         assert(threw);
@@ -307,7 +307,7 @@ function assert(b) {
             proxy.__proto__ = obj;
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed.");
+            assert(e.toString() === "TypeError: Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed");
         }
 
         assert(threw);

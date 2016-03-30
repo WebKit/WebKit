@@ -133,7 +133,7 @@ assert(Proxy.prototype === undefined);
                 proxy["foo"];
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: 'get' property of a Proxy's handler object should be callable.");
+            assert(e.toString() === "TypeError: 'get' property of a Proxy's handler object should be callable");
         }
         assert(threw);
     }

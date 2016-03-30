@@ -1,6 +1,6 @@
 function assert(b) {
     if (!b)
-        throw new Error("Bad assertion.");
+        throw new Error("Bad assertion");
 }
 
 {
@@ -88,7 +88,7 @@ function assert(b) {
         try {
             Reflect.preventExtensions(proxy);
         } catch(e) {
-            assert(e.toString() === "TypeError: 'preventExtensions' property of a Proxy's handler should be callable.");
+            assert(e.toString() === "TypeError: 'preventExtensions' property of a Proxy's handler should be callable");
             threw = true;
         }
         assert(threw);
@@ -137,7 +137,7 @@ function assert(b) {
         try {
             Reflect.preventExtensions(proxy);
         } catch(e) {
-            assert(e.toString() === "TypeError: Proxy's 'preventExtensions' trap returned true even though its target is extensible. It should have returned false.");
+            assert(e.toString() === "TypeError: Proxy's 'preventExtensions' trap returned true even though its target is extensible. It should have returned false");
             threw = true;
         }
         assert(threw);

@@ -57,7 +57,7 @@ ProxyConstructor::ProxyConstructor(VM& vm, Structure* structure)
 static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(ExecState* exec)
 {
     if (exec->argumentCount() < 2)
-        return throwVMTypeError(exec, ASCIILiteral("Proxy.revocable needs to be called with two arguments: the target and the handler."));
+        return throwVMTypeError(exec, ASCIILiteral("Proxy.revocable needs to be called with two arguments: the target and the handler"));
 
     VM& vm = exec->vm();
     ArgList args(exec);
@@ -81,7 +81,7 @@ static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL proxyRevocableConstructorThrowError(ExecState* exec)
 {
-    return throwVMTypeError(exec, ASCIILiteral("Proxy.revocable can not be constructed. It can only be called."));
+    return throwVMTypeError(exec, ASCIILiteral("Proxy.revocable cannot be constructed. It can only be called"));
 }
 
 void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* globalObject)
@@ -95,7 +95,7 @@ void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* 
 static EncodedJSValue JSC_HOST_CALL constructProxyObject(ExecState* exec)
 {
     if (exec->newTarget().isUndefined())
-        return throwVMTypeError(exec, ASCIILiteral("new.target of Proxy construct should not be undefined."));
+        return throwVMTypeError(exec, ASCIILiteral("new.target of Proxy construct should not be undefined"));
 
     ArgList args(exec);
     JSValue target = args.at(0);

@@ -15,7 +15,7 @@ function assert(b) {
             new proxy;
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: 'construct' property of a Proxy's handler should be constructible.");
+            assert(e.toString() === "TypeError: 'construct' property of a Proxy's handler should be constructible");
         }
         assert(threw);
     }
@@ -33,7 +33,7 @@ function assert(b) {
             new proxy;
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: 'construct' property of a Proxy's handler should be constructible.");
+            assert(e.toString() === "TypeError: 'construct' property of a Proxy's handler should be constructible");
         }
         assert(threw);
     }
@@ -121,7 +121,7 @@ function assert(b) {
             new proxy;
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Result from Proxy handler's 'construct' method should be an object.");
+            assert(e.toString() === "TypeError: Result from Proxy handler's 'construct' method should be an object");
         }
         assert(threw);
     }
@@ -141,7 +141,7 @@ function assert(b) {
             new proxy;
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Result from Proxy handler's 'construct' method should be an object.");
+            assert(e.toString() === "TypeError: Result from Proxy handler's 'construct' method should be an object");
         }
         assert(threw);
     }
@@ -161,7 +161,7 @@ function assert(b) {
             new proxy;
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Result from Proxy handler's 'construct' method should be an object.");
+            assert(e.toString() === "TypeError: Result from Proxy handler's 'construct' method should be an object");
         }
         assert(threw);
     }

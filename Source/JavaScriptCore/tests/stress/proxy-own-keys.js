@@ -1,6 +1,6 @@
 function assert(b) {
     if (!b)
-        throw new Error("Bad assertion.");
+        throw new Error("Bad assertion");
 }
 
 {
@@ -68,7 +68,7 @@ function assert(b) {
             Object.keys(proxy);
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' method must return a array-like object containing only Strings and Symbols.");
+            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' method must return an array-like object containing only Strings and Symbols");
         }
         assert(threw);
         assert(called);
@@ -98,7 +98,7 @@ function assert(b) {
             Object.keys(proxy);
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy object's 'target' has the non-configurable property 'x' that was not in the result from the 'ownKeys' trap.");
+            assert(e.toString() === "TypeError: Proxy object's 'target' has the non-configurable property 'x' that was not in the result from the 'ownKeys' trap");
         }
         assert(threw);
         assert(called);
@@ -129,7 +129,7 @@ function assert(b) {
             Object.keys(proxy);
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy object's non-extensible 'target' has configurable property 'x' that was not in the result from the 'ownKeys' trap.");
+            assert(e.toString() === "TypeError: Proxy object's non-extensible 'target' has configurable property 'x' that was not in the result from the 'ownKeys' trap");
         }
         assert(threw);
         assert(called);
@@ -160,7 +160,7 @@ function assert(b) {
             Object.keys(proxy);
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' method returned a key that was not present in its target or it returned duplicate keys.");
+            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' method returned a key that was not present in its target or it returned duplicate keys");
         }
         assert(threw);
         assert(called);
@@ -191,7 +191,7 @@ function assert(b) {
             Object.keys(proxy);
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' method returned a key that was not present in its target or it returned duplicate keys.");
+            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' method returned a key that was not present in its target or it returned duplicate keys");
         }
         assert(threw);
         assert(called);
@@ -212,7 +212,7 @@ function assert(b) {
             Object.keys(proxy);
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: 'ownKeys' property of a Proxy's handler should be callable.");
+            assert(e.toString() === "TypeError: 'ownKeys' property of a Proxy's handler should be callable");
         }
         assert(threw);
     }

@@ -1955,7 +1955,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState* exec)
     if (vm.exception())
         return JSValue::encode(JSValue());
     if (isRegularExpression)
-        return throwVMTypeError(exec, "Argument to String.prototype.startsWith cannot be a RegExp.");
+        return throwVMTypeError(exec, "Argument to String.prototype.startsWith cannot be a RegExp");
 
     String searchString = a0.toString(exec)->value(exec);
     if (exec->hadException())
@@ -1991,7 +1991,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
     if (vm.exception())
         return JSValue::encode(JSValue());
     if (isRegularExpression)
-        return throwVMTypeError(exec, "Argument to String.prototype.endsWith cannot be a RegExp.");
+        return throwVMTypeError(exec, "Argument to String.prototype.endsWith cannot be a RegExp");
 
     String searchString = a0.toString(exec)->value(exec);
     if (exec->hadException())
@@ -2028,7 +2028,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
     if (vm.exception())
         return JSValue::encode(JSValue());
     if (isRegularExpression)
-        return throwVMTypeError(exec, "Argument to String.prototype.includes cannot be a RegExp.");
+        return throwVMTypeError(exec, "Argument to String.prototype.includes cannot be a RegExp");
 
     String searchString = a0.toString(exec)->value(exec);
     if (exec->hadException())

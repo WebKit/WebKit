@@ -19,7 +19,7 @@ function assert(b) {
         try {
             proxy.x = 40;
         } catch(e) {
-            assert(e.toString() === "TypeError: 'set' property of a Proxy's handler should be callable.");
+            assert(e.toString() === "TypeError: 'set' property of a Proxy's handler should be callable");
             threw = true;
         }
         assert(threw);
@@ -131,7 +131,7 @@ function assert(b) {
             proxy.x = 40;
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'.");
+            assert(e.toString() === "TypeError: Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'");
         }
         assert(threw);
     }
@@ -191,7 +191,7 @@ function assert(b) {
             proxy.x = 40;
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy handler's 'set' method on a non-configurable accessor property without a setter should return false.");
+            assert(e.toString() === "TypeError: Proxy handler's 'set' method on a non-configurable accessor property without a setter should return false");
         }
         assert(threw);
     }

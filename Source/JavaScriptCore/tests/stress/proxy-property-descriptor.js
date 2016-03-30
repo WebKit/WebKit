@@ -58,7 +58,7 @@ for (let i = 0; i < 1000; i++) {
             proxy["y"];
     } catch(e) {
         threw = true;
-        assert(e.toString() === "TypeError: Proxy handler's 'get' result of a non-configurable and non-writable property should be the same value as the target's property.");
+        assert(e.toString() === "TypeError: Proxy handler's 'get' result of a non-configurable and non-writable property should be the same value as the target's property");
     }
     assert(threw === true);
 }
@@ -77,7 +77,7 @@ for (let i = 0; i < 1000; i++) {
 
     } catch(e) {
         threw = true;
-        assert(e.toString() === "TypeError: Proxy handler's 'get' result of a non-configurable accessor property without a getter should be undefined.");
+        assert(e.toString() === "TypeError: Proxy handler's 'get' result of a non-configurable accessor property without a getter should be undefined");
     }
     assert(threw === true);
 }

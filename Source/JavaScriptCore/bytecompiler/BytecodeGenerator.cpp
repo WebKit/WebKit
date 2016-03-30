@@ -412,7 +412,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         }
     } else if (isSimpleParameterList) {
         // Create the formal parameters the normal way. Any of them could be captured, or not. If
-        // captured, lift them into the scope. We can not do this if we have default parameter expressions
+        // captured, lift them into the scope. We cannot do this if we have default parameter expressions
         // because when default parameter expressions exist, they belong in their own lexical environment
         // separate from the "var" lexical environment.
         for (unsigned i = 0; i < parameters.size(); ++i) {

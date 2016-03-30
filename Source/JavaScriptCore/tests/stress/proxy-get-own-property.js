@@ -1,6 +1,6 @@
 function assert(b) {
     if (!b)
-        throw new Error("bad assertion.");
+        throw new Error("bad assertion");
 }
 
 {
@@ -35,7 +35,7 @@ function assert(b) {
         try {
             Object.getOwnPropertyDescriptor(proxy, "x");
         } catch(e) {
-            assert(e.toString() === "TypeError: result of 'getOwnPropertyDescriptor' call should either be an Object or undefined.");
+            assert(e.toString() === "TypeError: result of 'getOwnPropertyDescriptor' call should either be an Object or undefined");
             threw = true;
         }
         assert(threw);
@@ -61,7 +61,7 @@ function assert(b) {
         try {
             Object.getOwnPropertyDescriptor(proxy, "x");
         } catch(e) {
-            assert(e.toString() === "TypeError: When the result of 'getOwnPropertyDescriptor' is undefined the target must be configurable.");
+            assert(e.toString() === "TypeError: When the result of 'getOwnPropertyDescriptor' is undefined the target must be configurable");
             threw = true;
         }
         assert(threw);
@@ -87,7 +87,7 @@ function assert(b) {
         try {
             Object.getOwnPropertyDescriptor(proxy, "x");
         } catch(e) {
-            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' can't be non-configurable when the 'target' doesn't have it as an own property or if it is a configurable own property on 'target'.");
+            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' can't be non-configurable when the 'target' doesn't have it as an own property or if it is a configurable own property on 'target'");
             threw = true;
         }
         assert(threw);
@@ -113,7 +113,7 @@ function assert(b) {
         try {
             Object.getOwnPropertyDescriptor(proxy, "x");
         } catch(e) {
-            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test.");
+            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test");
             threw = true;
         }
         assert(threw);
@@ -131,7 +131,7 @@ function assert(b) {
         try {
             Object.getOwnPropertyDescriptor(proxy, "x");
         } catch(e) {
-            assert(e.toString() === "TypeError: 'getOwnPropertyDescriptor' property of a Proxy's handler should be callable.");
+            assert(e.toString() === "TypeError: 'getOwnPropertyDescriptor' property of a Proxy's handler should be callable");
             threw = true;
         }
         assert(threw);
@@ -367,7 +367,7 @@ Object.prototype.fooBarBaz = 20; // Make for-in go over the prototype chain to t
             Object.getOwnPropertyDescriptor(proxy, "x");
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test.");
+            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test");
         }
         assert(threw);
     }
@@ -415,7 +415,7 @@ Object.prototype.fooBarBaz = 20; // Make for-in go over the prototype chain to t
             Object.getOwnPropertyDescriptor(proxy, "x");
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test.");
+            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test");
         }
         assert(threw);
     }

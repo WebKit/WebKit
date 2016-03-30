@@ -1,3 +1,101 @@
+2016-03-29  Saam barati  <sbarati@apple.com>
+
+        Fix typos in our error messages and remove some trailing periods
+        https://bugs.webkit.org/show_bug.cgi?id=155985
+
+        Reviewed by Mark Lam.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * runtime/ArrayConstructor.h:
+        (JSC::isArray):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::makeRevocableProxy):
+        (JSC::proxyRevocableConstructorThrowError):
+        (JSC::ProxyConstructor::finishCreation):
+        (JSC::constructProxyObject):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::finishCreation):
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::performPut):
+        (JSC::performProxyCall):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::performIsExtensible):
+        (JSC::ProxyObject::performDefineOwnProperty):
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::performSetPrototype):
+        (JSC::ProxyObject::performGetPrototype):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncStartsWith):
+        (JSC::stringProtoFuncEndsWith):
+        (JSC::stringProtoFuncIncludes):
+        * runtime/Structure.cpp:
+        (JSC::Structure::preventExtensionsTransition):
+        * tests/stress/proxy-basic.js:
+        * tests/stress/proxy-construct.js:
+        (throw.new.Error):
+        (assert):
+        * tests/stress/proxy-define-own-property.js:
+        (assert):
+        (throw.new.Error):
+        (i.catch):
+        (assert.set get catch):
+        * tests/stress/proxy-delete.js:
+        (assert):
+        * tests/stress/proxy-get-own-property.js:
+        (assert):
+        (i.catch):
+        (set get let):
+        * tests/stress/proxy-get-prototype-of.js:
+        (assert):
+        (assert.get let):
+        (assert.get catch):
+        * tests/stress/proxy-has-property.js:
+        (assert):
+        * tests/stress/proxy-is-array.js:
+        (test):
+        * tests/stress/proxy-is-extensible.js:
+        (assert):
+        * tests/stress/proxy-json.js:
+        (assert):
+        (test):
+        * tests/stress/proxy-own-keys.js:
+        (assert):
+        (i.catch):
+        * tests/stress/proxy-prevent-extensions.js:
+        (assert):
+        * tests/stress/proxy-property-descriptor.js:
+        * tests/stress/proxy-revoke.js:
+        (assert):
+        (throw.new.Error.):
+        (throw.new.Error):
+        (shouldThrowNullHandler):
+        * tests/stress/proxy-set-prototype-of.js:
+        (assert.set let):
+        (assert.set catch):
+        (assert):
+        (set catch):
+        * tests/stress/proxy-set.js:
+        (throw.new.Error.let.handler.set 45):
+        (throw.new.Error):
+        * tests/stress/proxy-with-private-symbols.js:
+        (assert):
+        * tests/stress/proxy-with-unbalanced-getter-setter.js:
+        (assert):
+        * tests/stress/reflect-set-proxy-set.js:
+        (throw.new.Error.let.handler.set 45):
+        (throw.new.Error):
+        * tests/stress/reflect-set-receiver-proxy-set.js:
+        (let.handler.set 45):
+        (catch):
+        * tests/stress/string-prototype-methods-endsWith-startsWith-includes-correctness.js:
+        (test):
+        (test.get let):
+
 2016-03-29  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for Symbol.isConcatSpreadable.

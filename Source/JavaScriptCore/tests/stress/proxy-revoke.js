@@ -1,6 +1,6 @@
 function assert(b) {
     if (!b)
-        throw new Error("bad assertion.");
+        throw new Error("bad assertion");
 }
 
 {
@@ -13,7 +13,7 @@ function assert(b) {
             new Proxy.revocable;
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy.revocable can not be constructed. It can only be called.");
+            assert(e.toString() === "TypeError: Proxy.revocable cannot be constructed. It can only be called");
         }
         assert(threw);
     }
@@ -24,7 +24,7 @@ function assert(b) {
             Proxy.revocable();
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy.revocable needs to be called with two arguments: the target and the handler.");
+            assert(e.toString() === "TypeError: Proxy.revocable needs to be called with two arguments: the target and the handler");
         }
         assert(threw);
     }
@@ -35,7 +35,7 @@ function assert(b) {
             Proxy.revocable({});
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy.revocable needs to be called with two arguments: the target and the handler.");
+            assert(e.toString() === "TypeError: Proxy.revocable needs to be called with two arguments: the target and the handler");
         }
         assert(threw);
     }
@@ -93,7 +93,7 @@ function assert(b) {
                 new Proxy(proxy, {});
             } catch(e) {
                 threw = true;
-                assert(e.toString() === "TypeError: If a Proxy's handler is another Proxy object, the other Proxy should not have been revoked.");
+                assert(e.toString() === "TypeError: If a Proxy's handler is another Proxy object, the other Proxy should not have been revoked");
             }
             assert(threw);
         }
@@ -123,7 +123,7 @@ function shouldThrowNullHandler(f) {
         f();
     } catch(e) {
         threw = true;
-        assert(e.toString() === "TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it.");
+        assert(e.toString() === "TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it");
     }
     assert(threw);
 }

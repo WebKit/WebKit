@@ -23,7 +23,7 @@ test(function() {
         Array.isArray(proxy);
     } catch(e) {
         threw = true;
-        assert(e.toString() === "TypeError: Array.isArray can not be called on a Proxy that has been revoked.");
+        assert(e.toString() === "TypeError: Array.isArray cannot be called on a Proxy that has been revoked");
     }
     assert(threw);
 });
@@ -55,7 +55,7 @@ test(function() {
         Array.isArray(proxyChain);
     } catch(e) {
         threw = true;
-        assert(e.toString() === "TypeError: Array.isArray can not be called on a Proxy that has been revoked.");
+        assert(e.toString() === "TypeError: Array.isArray cannot be called on a Proxy that has been revoked");
     }
     assert(threw);
 });

@@ -90,7 +90,7 @@ function assert(b) {
         try {
             Reflect.isExtensible(proxy);
         } catch(e) {
-            assert(e.toString() === "TypeError: Proxy object's 'isExtensible' trap returned false when the target is extensible. It should have returned true.");
+            assert(e.toString() === "TypeError: Proxy object's 'isExtensible' trap returned false when the target is extensible. It should have returned true");
             threw = true;
         }
         assert(threw);
@@ -112,7 +112,7 @@ function assert(b) {
         try {
             Reflect.isExtensible(proxy);
         } catch(e) {
-            assert(e.toString() === "TypeError: Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false.");
+            assert(e.toString() === "TypeError: Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false");
             threw = true;
         }
         assert(threw);
@@ -134,7 +134,7 @@ function assert(b) {
         try {
             Reflect.isExtensible(proxy);
         } catch(e) {
-            assert(e.toString() === "TypeError: Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false.");
+            assert(e.toString() === "TypeError: Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false");
             threw = true;
         }
         assert(threw);
@@ -156,7 +156,7 @@ function assert(b) {
         try {
             Reflect.isExtensible(proxy);
         } catch(e) {
-            assert(e.toString() === "TypeError: Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false.");
+            assert(e.toString() === "TypeError: Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false");
             threw = true;
         }
         assert(threw);
@@ -178,7 +178,7 @@ function assert(b) {
         try {
             Reflect.isExtensible(proxy);
         } catch(e) {
-            assert(e.toString() === "TypeError: Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false.");
+            assert(e.toString() === "TypeError: Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false");
             threw = true;
         }
         assert(threw);

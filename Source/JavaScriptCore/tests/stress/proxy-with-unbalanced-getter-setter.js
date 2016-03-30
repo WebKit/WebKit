@@ -1,6 +1,6 @@
 function assert(b) {
     if (!b)
-        throw new Error("Bad assertion.");
+        throw new Error("Bad assertion");
 }
 
 // Setting the getter only.  

@@ -1,6 +1,6 @@
 function assert(b) {
     if (!b)
-        throw new Error("bad assertion.");
+        throw new Error("bad assertion");
 }
 
 // Currently, only "get", "getOwnPropertyDescriptor", and "set" are testable.

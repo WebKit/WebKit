@@ -1,6 +1,6 @@
 function assert(b) {
     if (!b)
-        throw new Error("Bad assertion.");
+        throw new Error("Bad assertion");
 }
 
 {
@@ -20,7 +20,7 @@ function assert(b) {
             });
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: 'defineProperty' property of a Proxy's handler should be callable.");
+            assert(e.toString() === "TypeError: 'defineProperty' property of a Proxy's handler should be callable");
         }
 
         assert(threw);
@@ -213,7 +213,7 @@ function assert(b) {
             });
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap returned true for a non-configurable field even though getOwnPropertyDescriptor of the Proxy's target returned undefined.");
+            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap returned true for a non-configurable field even though getOwnPropertyDescriptor of the Proxy's target returned undefined");
         }
         assert(called);
         assert(threw);
@@ -243,7 +243,7 @@ function assert(b) {
             });
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap returned true even though getOwnPropertyDescriptor of the Proxy's target returned undefined and the target is non-extensible.");
+            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap returned true even though getOwnPropertyDescriptor of the Proxy's target returned undefined and the target is non-extensible");
         }
         assert(called);
         assert(threw);
@@ -277,7 +277,7 @@ function assert(b) {
             });
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap did not define a non-configurable property on its target even though the input descriptor to the trap said it must do so.");
+            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap did not define a non-configurable property on its target even though the input descriptor to the trap said it must do so");
         }
         assert(called);
         assert(threw);
@@ -325,7 +325,7 @@ function assert(b) {
             });
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor.");
+            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor");
         }
         assert(called);
         assert(threw);
@@ -368,7 +368,7 @@ function assert(b) {
             });
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor.");
+            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor");
         }
         assert(called);
         assert(threw);
@@ -412,7 +412,7 @@ function assert(b) {
             });
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor.");
+            assert(e.toString() === "TypeError: Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor");
         }
         assert(called);
         assert(threw);
@@ -604,7 +604,7 @@ function assert(b) {
         let result = Reflect.defineProperty(proxy, "x", {
             writable: true,
             configurable: false,
-            value: "whatever value goes here."
+            value: "whatever value goes here"
         });
         assert(!result);
         assert(target.x === 55);

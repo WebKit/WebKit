@@ -1,6 +1,6 @@
 function assert(b) {
     if (!b)
-        throw new Error("Bad assertion.");
+        throw new Error("Bad assertion");
 }
 
 function test(f) {
@@ -81,7 +81,7 @@ test(function() {
         JSON.stringify(proxy); // Things are not ok.
     } catch(e) {
         threw = true;
-        assert(e.toString() === "TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it.");
+        assert(e.toString() === "TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it");
     }
     assert(threw);
 });
@@ -108,7 +108,7 @@ test(function() {
         JSON.stringify(proxy); // Things are not ok.
     } catch(e) {
         threw = true;
-        assert(e.toString() === "TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it.");
+        assert(e.toString() === "TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it");
     }
     assert(threw);
 });
