@@ -1,3 +1,13 @@
+2016-03-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Make animation events non-cancelable
+        https://bugs.webkit.org/show_bug.cgi?id=78110
+
+        Reviewed by Dan Bates.
+
+        * animations/animation-events-not-cancelable-expected.txt: Added.
+        * animations/animation-events-not-cancelable.html: Added.
+
 2016-03-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Mark svg zoom and pageoverlay tests to failure

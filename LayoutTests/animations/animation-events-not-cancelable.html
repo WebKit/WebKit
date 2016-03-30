@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<style>
+#box {
+    height: 10px;
+    width: 10px;
+    background-color: blue;
+    position: relative;
+}
+#box.running {
+    animation: move 0.02s 2 linear;
+}
+@keyframes move {
+    from { left: 0px; }
+    to   { left: 10px; }
+}
+</style>
+</head>
+<body>
+<div id="box"></div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script>
+jsTestIsAsync = true;
+
+description('Tests that animation events are not cancelable.');
+
+var box = document.getElementById('box');
+box.addEventListener('animationstart', function(event) {
+    debug(event.type + ':');
+    shouldBe('event.cancelable', 'false');
+}, false);
+
+box.addEventListener('animationiteration', function(event) {
+    debug(event.type + ':');
+    shouldBe('event.cancelable', 'false');
+}, false);
+
+box.addEventListener('animationend', function(event) {
+    debug(event.type + ':');
+    shouldBe('event.cancelable', 'false');
+    finishJSTest();
+}, false);
+
+box.classList.add('running');
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
