@@ -29,7 +29,6 @@
 #include "Element.h"
 #include "NodeRenderStyle.h"
 #include "RenderStyle.h"
-#include "StyleUpdate.h"
 
 namespace WebCore {
 namespace Style {
@@ -86,7 +85,7 @@ std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, cons
     return remainingRelations;
 }
 
-void commitRelations(std::unique_ptr<Relations> relations, Update& update)
+void commitRelationsToDocument(std::unique_ptr<Relations> relations)
 {
     if (!relations)
         return;
@@ -125,20 +124,18 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
             element.setChildrenAffectedByLastChildRules();
             break;
         case Relation::FirstChild:
-            if (auto* style = update.elementStyle(element))
+            if (auto* style = element.renderStyle())
                 style->setFirstChildState();
             break;
         case Relation::LastChild:
-            if (auto* style = update.elementStyle(element))
+            if (auto* style = element.renderStyle())
                 style->setLastChildState();
             break;
         case Relation::NthChildIndex:
-            if (auto* style = update.elementStyle(element))
-                style->setUnique();
             element.setChildIndex(relation.value);
             break;
         case Relation::Unique:
-            if (auto* style = update.elementStyle(element))
+            if (auto* style = element.renderStyle())
                 style->setUnique();
             break;
         }

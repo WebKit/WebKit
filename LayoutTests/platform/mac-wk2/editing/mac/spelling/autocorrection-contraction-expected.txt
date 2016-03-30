@@ -259,4 +259,4 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 172x28
             text run at (0,0) width 166: "wouldn' wouldn't"
             text run at (165,0) width 7: " "
-caret: position 17 of child 0 {#text} of child 6 {DIV} of child 3 {DIV} of body
+caret: position 17 of child 0 {#text} of child 5 {DIV} of child 3 {DIV} of body

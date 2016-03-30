@@ -1,3 +1,16 @@
+2016-03-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r198828.
+        https://bugs.webkit.org/show_bug.cgi?id=156030
+
+        Confirming PLT regression (Requested by anttik on #webkit).
+
+        Reverted changeset:
+
+        "Separate render tree updating from style resolve"
+        https://bugs.webkit.org/show_bug.cgi?id=155298
+        http://trac.webkit.org/changeset/198828
+
 2016-03-30  Keith Miller <keith_miller@apple.com>
 
         Unreviewed, rollout r198808. The patch causes crashes on 32-bit and appears to be a JSBench regression.

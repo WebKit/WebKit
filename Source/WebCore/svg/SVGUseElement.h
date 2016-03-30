@@ -63,7 +63,7 @@ private:
     void buildPendingResource() override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
-    bool willRecalcStyle(Style::Change) override;
+    void willAttachRenderers() override;
     RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
     void toClipPath(Path&) override;
     bool haveLoadedRequiredResources() override;

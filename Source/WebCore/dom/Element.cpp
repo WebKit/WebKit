@@ -2564,6 +2564,8 @@ void Element::setChildrenAffectedByPropertyBasedBackwardPositionalRules()
 void Element::setChildIndex(unsigned index)
 {
     ElementRareData& rareData = ensureElementRareData();
+    if (RenderStyle* style = renderStyle())
+        style->setUnique();
     rareData.setChildIndex(index);
 }
 

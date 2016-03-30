@@ -164,8 +164,6 @@ public:
 
     const MediaQueryEvaluator& mediaQueryEvaluator() const { return *m_medium; }
 
-    void setOverrideDocumentElementStyle(RenderStyle* style) { m_overrideDocumentElementStyle = style; }
-
 private:
     Ref<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleKeyframe*, KeyframeValue&);
 
@@ -361,7 +359,7 @@ public:
     class State {
     public:
         State() { }
-        State(Element&, RenderStyle* parentStyle, RenderStyle* documentElementStyle = nullptr, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
+        State(Element&, RenderStyle* parentStyle, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
 
     public:
         void clear();
@@ -525,8 +523,6 @@ private:
     Document& m_document;
 
     bool m_matchAuthorAndUserStyles;
-
-    RefPtr<RenderStyle> m_overrideDocumentElementStyle;
 
     Vector<std::unique_ptr<MediaQueryResult>> m_viewportDependentMediaQueryResults;
 

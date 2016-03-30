@@ -178,12 +178,11 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
-bool SVGUseElement::willRecalcStyle(Style::Change change)
+void SVGUseElement::willAttachRenderers()
 {
-    // FIXME: Shadow tree should be updated before style recalc.
     if (m_shadowTreeNeedsUpdate)
         updateShadowTree();
-    return SVGGraphicsElement::willRecalcStyle(change);
+    SVGGraphicsElement::willAttachRenderers();
 }
 
 static HashSet<AtomicString> createAllowedElementSet()
