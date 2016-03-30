@@ -5,9 +5,9 @@ if (!assert.notReached)
 
 global.requests = [];
 global.RemoteAPI = {
-    getJSON: function ()
+    getJSON: function (url)
     {
-        assert.notReached();
+        return this.getJSONWithStatus(url);
     },
     getJSONWithStatus: function (url)
     {

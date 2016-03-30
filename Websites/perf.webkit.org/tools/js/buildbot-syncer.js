@@ -5,19 +5,20 @@ let assert = require('assert');
 require('./v3-models.js');
 
 class BuildbotBuildEntry {
-    constructor(syncer, type, rawData)
+    constructor(syncer, rawData)
     {
         assert.equal(syncer.builderName(), rawData['builderName']);
 
+        this._syncer = syncer;
         this._slaveName = null;
         this._buildRequestId = null;
-        this._isInProgress = 'currentStep' in rawData;
+        this._isInProgress = rawData['currentStep'] || (rawData['times'] && !rawData['times'][1]);
         this._buildNumber = rawData['number'];
 
-        for (var propertyTuple of (rawData['properties'] || [])) {
+        for (let propertyTuple of (rawData['properties'] || [])) {
             // e.g. ['build_request_id', '16733', 'Force Build Form']
-            var name = propertyTuple[0];
-            var value = propertyTuple[1];
+            let name = propertyTuple[0];
+            let value = propertyTuple[1];
             if (name == syncer._slavePropertyName)
                 this._slaveName = value;
             else if (name == syncer._buildRequestPropertyName)
@@ -25,9 +26,13 @@ class BuildbotBuildEntry {
         }
     }
 
+    buildNumber() { return this._buildNumber; }
     slaveName() { return this._slaveName; }
     buildRequestId() { return this._buildRequestId; }
+    isPending() { return !this._buildNumber; }
     isInProgress() { return this._isInProgress; }
+    hasFinished() { return !this.isPending() && !this.isInProgress(); }
+    url() { return this.isPending() ? this._syncer.url() : this._syncer.urlForBuildNumber(this._buildNumber); }
 }
 
 class BuildbotSyncer {
@@ -47,23 +52,56 @@ class BuildbotSyncer {
     builderName() { return this._builderName; }
     platformName() { return this._platformName; }
 
-    fetchPendingRequests()
+    pullBuildbot(count)
     {
-        return RemoteAPI.fetchJSON(`${this._url}/json/builders/${this._name}/pendingBuilds`).then(function (content) {
-            var requests = [];
-            for (var entry of content) {
-                var properties = entry['properties'];
-                if (!properties)
-                    continue;
-                for (var propertyTuple of properties) {
-                    // e.g. ['build_request_id', '16733', 'Force Build Form']
-                    if (propertyTuple[0] == this._buildRequestPropertyName)
-                        requests.push(propertyTuple[1]);
-                }
-            }
-            return requests;
+        let self = this;
+        return RemoteAPI.getJSON(this.urlForPendingBuildsJSON()).then(function (content) {
+            let pendingEntries = content.map(function (entry) { return new BuildbotBuildEntry(self, entry); });
+
+            return self._pullRecentBuilds(count).then(function (entries) {
+                let entryByRequest = {};
+
+                for (let entry of pendingEntries)
+                    entryByRequest[entry.buildRequestId()] = entry;
+
+                for (let entry of entries)
+                    entryByRequest[entry.buildRequestId()] = entry;
+
+                return entryByRequest;
+            });
         });
     }
+
+    _pullRecentBuilds(count)
+    {
+        if (!count)
+            return Promise.resolve([]);
+
+        let selectedBuilds = new Array(count);
+        for (let i = 0; i < count; i++)
+            selectedBuilds[i] = -i - 1;
+
+        let self = this;
+        return RemoteAPI.getJSON(this.urlForBuildJSON(selectedBuilds)).then(function (content) {
+            let entries = [];
+            for (let index of selectedBuilds) {
+                let entry = content[index];
+                if (entry && !entry['error'])
+                    entries.push(new BuildbotBuildEntry(self, entry));
+            }
+            return entries;
+        });
+    }
+
+    urlForPendingBuildsJSON() { return `${this._url}/json/builders/${this._builderName}/pendingBuilds`; }
+    urlForBuildJSON(selectedBuilds)
+    {
+        return `${this._url}/json/builders/${this._builderName}/builds/?`
+            + selectedBuilds.map(function (number) { return 'select=' + number; }).join('&');
+    }
+
+    url() { return `${this._url}/builders/${this._builderName}/`; }
+    urlForBuildNumber(number) { return `${this._url}/builders/${this._builderName}/builds/${number}`; }
 
     _propertiesForBuildRequest(buildRequest)
     {

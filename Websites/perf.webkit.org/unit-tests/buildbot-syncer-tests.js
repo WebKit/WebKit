@@ -2,8 +2,8 @@
 
 let assert = require('assert');
 
-require('./resources/mock-remote-api.js');
 require('../tools/js/v3-models.js');
+require('./resources/mock-remote-api.js');
 require('./resources/mock-v3-models.js');
 
 let BuildbotBuildEntry = require('../tools/js/buildbot-syncer.js').BuildbotBuildEntry;
@@ -83,12 +83,13 @@ function createSampleBuildRequest()
     return request;
 }
 
-let samplePendingBuilds = [
-    {
+function samplePendingBuild(buildRequestId)
+{
+    return {
         'builderName': 'ABTest-iPad-RunBenchmark-Tests',
         'builds': [],
         'properties': [
-            ['build_request_id', '16733', 'Force Build Form'],
+            ['build_request_id', buildRequestId || '16733', 'Force Build Form'],
             ['desired_image', '13A452', 'Force Build Form'],
             ['owner', '<unknown>', 'Force Build Form'],
             ['test_name', 'speedometer', 'Force Build Form'],
@@ -98,7 +99,7 @@ let samplePendingBuilds = [
                 JSON.stringify(sampleRootSetData),
                 'Force Build Form'
             ],
-            ['scheduler', 'ABTest-iPad-Performance-Tests-ForceScheduler', 'Scheduler']
+            ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler']
         ],
         'source': {
             'branch': '',
@@ -110,14 +111,176 @@ let samplePendingBuilds = [
             'revision': ''
         },
         'submittedAt': 1458704983
-    }
-];
+    };
+}
+
+function sampleInProgressBuild()
+{
+    return {
+        'blame': [],
+        'builderName': 'ABTest-iPad-RunBenchmark-Tests',
+        'currentStep': {
+            'eta': 0.26548067698460565,
+            'expectations': [['output', 845, 1315.0]],
+            'hidden': false,
+            'isFinished': false,
+            'isStarted': true,
+            'logs': [['stdio', 'https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/Some%20step/logs/stdio']],
+            'name': 'Some step',
+            'results': [null,[]],
+            'statistics': {},
+            'step_number': 1,
+            'text': [''],
+            'times': [1458718657.581628, null],
+            'urls': {}
+        },
+        'eta': 6497.991612434387,
+        'logs': [['stdio','https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/shell/logs/stdio']],
+        'number': 614,
+        'properties': [
+            ['build_request_id', '16733', 'Force Build Form'],
+            ['buildername', 'ABTest-iPad-RunBenchmark-Tests', 'Builder'],
+            ['buildnumber', 614, 'Build'],
+            ['desired_image', '13A452', 'Force Build Form'],
+            ['owner', '<unknown>', 'Force Build Form'],
+            ['reason', 'force build', 'Force Build Form'],
+            ['roots_dict', JSON.stringify(sampleRootSetData), 'Force Build Form'],
+            ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler'],
+            ['slavename', 'ABTest-iPad-0', 'BuildSlave'],
+        ],
+        'reason': 'A build was forced by \'<unknown>\': force build',
+        'results': null,
+        'slave': 'ABTest-iPad-0',
+        'sourceStamps': [{'branch': '', 'changes': [], 'codebase': 'compiler-rt', 'hasPatch': false, 'project': '', 'repository': '', 'revision': ''}],
+        'steps': [
+            {
+                'eta': null,
+                'expectations': [['output',2309,2309.0]],
+                'hidden': false,
+                'isFinished': true,
+                'isStarted': true,
+                'logs': [['stdio', 'https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/shell/logs/stdio']],
+                'name': 'Finished step',
+                'results': [0, []],
+                'statistics': {},
+                'step_number': 0,
+                'text': [''],
+                'times': [1458718655.419865, 1458718655.453633],
+                'urls': {}
+            },
+            {
+                'eta': 0.26548067698460565,
+                'expectations': [['output', 845, 1315.0]],
+                'hidden': false,
+                'isFinished': false,
+                'isStarted': true,
+                'logs': [['stdio', 'https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/Some%20step/logs/stdio']],
+                'name': 'Some step',
+                'results': [null,[]],
+                'statistics': {},
+                'step_number': 1,
+                'text': [''],
+                'times': [1458718657.581628, null],
+                'urls': {}
+            },
+            {
+                'eta': null,
+                'expectations': [['output', null, null]],
+                'hidden': false,
+                'isFinished': false,
+                'isStarted': false,
+                'logs': [],
+                'name': 'Some other step',
+                'results': [null, []],
+                'statistics': {},
+                'step_number': 2,
+                'text': [],
+                'times': [null, null],
+                'urls': {}
+            },
+        ],
+        'text': [],
+        'times': [1458718655.415821, null]
+    };
+}
+
+function sampleFinishedBuild(buildRequestId)
+{
+    return {
+        'blame': [],
+        'builderName': 'ABTest-iPad-RunBenchmark-Tests',
+        'currentStep': null,
+        'eta': null,
+        'logs': [['stdio','https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/1755/steps/shell/logs/stdio']],
+        'number': 1755,
+        'properties': [
+            ['build_request_id', buildRequestId || '18935', 'Force Build Form'],
+            ['buildername', 'ABTest-iPad-RunBenchmark-Tests', 'Builder'],
+            ['buildnumber', 1755, 'Build'],
+            ['desired_image', '13A452', 'Force Build Form'],
+            ['owner', '<unknown>', 'Force Build Form'],
+            ['reason', 'force build', 'Force Build Form'],
+            ['roots_dict', JSON.stringify(sampleRootSetData), 'Force Build Form'],
+            ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler'],
+            ['slavename', 'ABTest-iPad-0', 'BuildSlave'],
+        ],
+        'reason': 'A build was forced by \'<unknown>\': force build',
+        'results': 2,
+        'slave': 'ABTest-iPad-0',
+        'sourceStamps': [{'branch': '', 'changes': [], 'codebase': 'compiler-rt', 'hasPatch': false, 'project': '', 'repository': '', 'revision': ''}],
+        'steps': [
+            {
+                'eta': null,
+                'expectations': [['output',2309,2309.0]],
+                'hidden': false,
+                'isFinished': true,
+                'isStarted': true,
+                'logs': [['stdio', 'https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/shell/logs/stdio']],
+                'name': 'Finished step',
+                'results': [0, []],
+                'statistics': {},
+                'step_number': 0,
+                'text': [''],
+                'times': [1458718655.419865, 1458718655.453633],
+                'urls': {}
+            },
+            {
+                'eta': null,
+                'expectations': [['output', 845, 1315.0]],
+                'hidden': false,
+                'isFinished': true,
+                'isStarted': true,
+                'logs': [['stdio', 'https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/Some%20step/logs/stdio']],
+                'name': 'Some step',
+                'results': [null,[]],
+                'statistics': {},
+                'step_number': 1,
+                'text': [''],
+                'times': [1458718657.581628, null],
+                'urls': {}
+            },
+            {
+                'eta': null,
+                'expectations': [['output', null, null]],
+                'hidden': false,
+                'isFinished': true,
+                'isStarted': true,
+                'logs': [],
+                'name': 'Some other step',
+                'results': [null, []],
+                'statistics': {},
+                'step_number': 2,
+                'text': [],
+                'times': [null, null],
+                'urls': {}
+            },
+        ],
+        'text': [],
+        'times': [1458937478.25837, 1458946147.173785]
+    };
+}
 
 describe('BuildbotSyncer', function () {
-    describe('fetchPendingBuilds', function () {
-        BuildbotSyncer.fetchPendingBuilds
-    });
-
     describe('_loadConfig', function () {
 
         function smallConfiguration()
@@ -292,4 +455,226 @@ describe('BuildbotSyncer', function () {
         });
     });
 
+    describe('pullBuildbot', function () {
+        it('should fetch pending builds from the right URL', function () {
+            let syncer = BuildbotSyncer._loadConfig('http://build.webkit.org', sampleiOSConfig())[3];
+            assert.equal(syncer.builderName(), 'ABTest-iPad-RunBenchmark-Tests');
+            let expectedURL = 'http://build.webkit.org/json/builders/ABTest-iPad-RunBenchmark-Tests/pendingBuilds';
+            assert.equal(syncer.urlForPendingBuildsJSON(), expectedURL);
+            syncer.pullBuildbot();
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, expectedURL);
+        });
+
+        it('should fetch recent builds once pending builds have been fetched', function (done) {
+            let syncer = BuildbotSyncer._loadConfig('http://build.webkit.org', sampleiOSConfig())[3];
+            assert.equal(syncer.builderName(), 'ABTest-iPad-RunBenchmark-Tests');
+
+            syncer.pullBuildbot(1);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, 'http://build.webkit.org/json/builders/ABTest-iPad-RunBenchmark-Tests/pendingBuilds');
+            requests[0].resolve([]);
+            Promise.resolve().then(function () {
+                assert.equal(requests.length, 2);
+                assert.equal(requests[1].url, 'http://build.webkit.org/json/builders/ABTest-iPad-RunBenchmark-Tests/builds/?select=-1');
+                done();
+            }).catch(done);
+        });
+
+        it('should fetch the right number of recent builds', function (done) {
+            let syncer = BuildbotSyncer._loadConfig('http://build.webkit.org', sampleiOSConfig())[3];
+
+            syncer.pullBuildbot(3);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, 'http://build.webkit.org/json/builders/ABTest-iPad-RunBenchmark-Tests/pendingBuilds');
+            requests[0].resolve([]);
+            Promise.resolve().then(function () {
+                assert.equal(requests.length, 2);
+                assert.equal(requests[1].url, 'http://build.webkit.org/json/builders/ABTest-iPad-RunBenchmark-Tests/builds/?select=-1&select=-2&select=-3');
+                done();
+            }).catch(done);
+        });
+
+        it('should create BuildbotBuildEntry for pending builds', function (done) {
+            let syncer = BuildbotSyncer._loadConfig('http://build.webkit.org', sampleiOSConfig())[3];
+            let promise = syncer.pullBuildbot();
+            requests[0].resolve([samplePendingBuild()]);
+            promise.then(function (entries) {
+                assert.deepEqual(Object.keys(entries), ['16733']);
+                let entry = entries['16733'];
+                assert.ok(entry instanceof BuildbotBuildEntry);
+                assert.ok(!entry.buildNumber());
+                assert.ok(!entry.slaveName());
+                assert.equal(entry.buildRequestId(), 16733);
+                assert.ok(entry.isPending());
+                assert.ok(!entry.isInProgress());
+                assert.ok(!entry.hasFinished());
+                assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/');
+                done();
+            }).catch(done);
+        });
+
+        it('should create BuildbotBuildEntry for in-progress builds', function (done) {
+            let syncer = BuildbotSyncer._loadConfig('http://build.webkit.org', sampleiOSConfig())[3];
+
+            let promise = syncer.pullBuildbot(1);
+            assert.equal(requests.length, 1);
+            requests[0].resolve([]);
+            Promise.resolve().then(function () {
+                assert.equal(requests.length, 2);
+                requests[1].resolve({[-1]: sampleInProgressBuild()});
+            }).catch(done);
+
+            promise.then(function (entries) {
+                assert.deepEqual(Object.keys(entries), ['16733']);
+                let entry = entries['16733'];
+                assert.ok(entry instanceof BuildbotBuildEntry);
+                assert.equal(entry.buildNumber(), 614);
+                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.buildRequestId(), 16733);
+                assert.ok(!entry.isPending());
+                assert.ok(entry.isInProgress());
+                assert.ok(!entry.hasFinished());
+                assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614');
+                done();
+            }).catch(done);
+        });
+
+        it('should create BuildbotBuildEntry for finished builds', function (done) {
+            let syncer = BuildbotSyncer._loadConfig('http://build.webkit.org', sampleiOSConfig())[3];
+
+            let promise = syncer.pullBuildbot(1);
+            assert.equal(requests.length, 1);
+            requests[0].resolve([]);
+            Promise.resolve().then(function () {
+                assert.equal(requests.length, 2);
+                requests[1].resolve({[-1]: sampleFinishedBuild()});
+            }).catch(done);
+
+            promise.then(function (entries) {
+                assert.deepEqual(Object.keys(entries), ['18935']);
+                let entry = entries['18935'];
+                assert.ok(entry instanceof BuildbotBuildEntry);
+                assert.equal(entry.buildNumber(), 1755);
+                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.buildRequestId(), 18935);
+                assert.ok(!entry.isPending());
+                assert.ok(!entry.isInProgress());
+                assert.ok(entry.hasFinished());
+                assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/1755');
+                done();
+            }).catch(done);
+        });
+
+        it('should create BuildbotBuildEntry for mixed pending, in-progress, finished, and missing builds', function (done) {
+            let syncer = BuildbotSyncer._loadConfig('http://build.webkit.org', sampleiOSConfig())[3];
+
+            let promise = syncer.pullBuildbot(5);
+            assert.equal(requests.length, 1);
+
+            requests[0].resolve([samplePendingBuild(123, 456)]);
+
+            Promise.resolve().then(function () {
+                assert.equal(requests.length, 2);
+                requests[1].resolve({[-1]: sampleFinishedBuild(), [-2]: {'error': 'Not available'}, [-4]: sampleInProgressBuild()});
+            }).catch(done);
+
+            promise.then(function (entries) {
+                assert.deepEqual(Object.keys(entries), ['123', '16733', '18935']);
+
+                let entry = entries['123'];
+                assert.ok(entry instanceof BuildbotBuildEntry);
+                assert.equal(entry.buildNumber(), null);
+                assert.equal(entry.slaveName(), null);
+                assert.equal(entry.buildRequestId(), 123);
+                assert.ok(entry.isPending());
+                assert.ok(!entry.isInProgress());
+                assert.ok(!entry.hasFinished());
+                assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/');
+
+                entry = entries['16733'];
+                assert.ok(entry instanceof BuildbotBuildEntry);
+                assert.equal(entry.buildNumber(), 614);
+                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.buildRequestId(), 16733);
+                assert.ok(!entry.isPending());
+                assert.ok(entry.isInProgress());
+                assert.ok(!entry.hasFinished());
+                assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614');
+
+                entry = entries['18935'];
+                assert.ok(entry instanceof BuildbotBuildEntry);
+                assert.equal(entry.buildNumber(), 1755);
+                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.buildRequestId(), 18935);
+                assert.ok(!entry.isPending());
+                assert.ok(!entry.isInProgress());
+                assert.ok(entry.hasFinished());
+                assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/1755');
+
+                done();
+            }).catch(done);
+        });
+
+        it('should override BuildbotBuildEntry for pending builds by in-progress builds', function (done) {
+            let syncer = BuildbotSyncer._loadConfig('http://build.webkit.org', sampleiOSConfig())[3];
+
+            let promise = syncer.pullBuildbot(5);
+            assert.equal(requests.length, 1);
+
+            requests[0].resolve([samplePendingBuild()]);
+
+            Promise.resolve().then(function () {
+                assert.equal(requests.length, 2);
+                requests[1].resolve({[-1]: sampleInProgressBuild()});
+            }).catch(done);
+
+            promise.then(function (entries) {
+                assert.deepEqual(Object.keys(entries), ['16733']);
+
+                let entry = entries['16733'];
+                assert.ok(entry instanceof BuildbotBuildEntry);
+                assert.equal(entry.buildNumber(), 614);
+                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.buildRequestId(), 16733);
+                assert.ok(!entry.isPending());
+                assert.ok(entry.isInProgress());
+                assert.ok(!entry.hasFinished());
+                assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614');
+
+                done();
+            }).catch(done);
+        });
+
+        it('should override BuildbotBuildEntry for pending builds by finished builds', function (done) {
+            let syncer = BuildbotSyncer._loadConfig('http://build.webkit.org', sampleiOSConfig())[3];
+
+            let promise = syncer.pullBuildbot(5);
+            assert.equal(requests.length, 1);
+
+            requests[0].resolve([samplePendingBuild()]);
+
+            Promise.resolve().then(function () {
+                assert.equal(requests.length, 2);
+                requests[1].resolve({[-1]: sampleFinishedBuild(16733)});
+            }).catch(done);
+
+            promise.then(function (entries) {
+                assert.deepEqual(Object.keys(entries), ['16733']);
+
+                let entry = entries['16733'];
+                assert.ok(entry instanceof BuildbotBuildEntry);
+                assert.equal(entry.buildNumber(), 1755);
+                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.buildRequestId(), 16733);
+                assert.ok(!entry.isPending());
+                assert.ok(!entry.isInProgress());
+                assert.ok(entry.hasFinished());
+                assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/1755');
+
+                done();
+            }).catch(done);
+        });
+
+    });
 });

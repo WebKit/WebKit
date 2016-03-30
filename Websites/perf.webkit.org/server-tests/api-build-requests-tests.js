@@ -8,7 +8,7 @@ describe('/api/build-requests', function () {
     TestServer.inject();
 
     it('should return "TriggerableNotFound" when the database is empty', function (done) {
-        TestServer.remoteAPI().fetchJSON('/api/build-requests/build-webkit').then(function (content) {
+        TestServer.remoteAPI().getJSON('/api/build-requests/build-webkit').then(function (content) {
             assert.equal(content['status'], 'TriggerableNotFound');
             done();
         }).catch(done);
@@ -18,7 +18,7 @@ describe('/api/build-requests', function () {
         TestServer.database().connect().then(function () {
             return TestServer.database().insert('build_triggerables', {name: 'build-webkit'});
         }).then(function () {
-            return TestServer.remoteAPI().fetchJSON('/api/build-requests/build-webkit');
+            return TestServer.remoteAPI().getJSON('/api/build-requests/build-webkit');
         }).then(function (content) {
             assert.equal(content['status'], 'OK');
             assert.deepEqual(content['buildRequests'], []);
@@ -61,7 +61,7 @@ describe('/api/build-requests', function () {
         db.connect().then(function () {
             return addMockData(db);
         }).then(function () {
-            return TestServer.remoteAPI().fetchJSONWithStatus('/api/build-requests/build-webkit');
+            return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
         }).then(function (content) {
             assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'rootSets', 'roots', 'status']);
 
@@ -119,7 +119,7 @@ describe('/api/build-requests', function () {
         db.connect().then(function () {
             return addMockData(db);
         }).then(function () {
-            return TestServer.remoteAPI().fetchJSONWithStatus('/api/build-requests/build-webkit?useLegacyIdResolution=true');
+            return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit?useLegacyIdResolution=true');
         }).then(function (content) {
             assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'rootSets', 'roots', 'status']);
 

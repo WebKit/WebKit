@@ -1,3 +1,50 @@
+2016-03-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        BuildbotSyncer should be able to fetch JSON from buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=155921
+
+        Reviewed by Joseph Pecoraro.
+
+        Added BuildbotSyncer.pullBuildbot which fetches pending, in-progress, and finished builds from buildbot
+        with lots of unit tests as this has historically been a source of subtle bugs in the old script.
+
+        New implementation fixes a subtle bug in the old pythons script which overlooked the possibility that
+        the state of some builds may change between each HTTP request. In the old script, we fetched the list
+        of the pending builds, and requested -1, -2, etc... builds for N times. But between each request,
+        a pending build may start running or an in-progress build finish and shift the offset by one. The new
+        script avoids this problem by first requesting all pending builds, then all in-progress and finished
+        builds in a single HTTP request. The results are then merged so that entries for in-progress and
+        finished builds would override the entries for pending builds if they overlap.
+
+        Also renamed RemoteAPI.fetchJSON to RemoteAPI.getJSON to match v3 UI's RemoteAPI. This change makes
+        the class interchangeable between frontend (public/v3/remote.js) and backend (tools/js/remote.js).
+
+        * server-tests/api-build-requests-tests.js:
+        * server-tests/api-manifest.js:
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry): Removed the unused argument "type". Store the syncer as an instance variable as
+        we'd need to query for the buildbot URL. Also fixed a bug that _isInProgress was true for finished
+        builds as 'currentStep' is always defined but null in those builds.
+        (BuildbotBuildEntry.prototype.buildNumber): Added.
+        (BuildbotBuildEntry.prototype.isPending): Added.
+        (BuildbotBuildEntry.prototype.hasFinished): Added.
+        (BuildbotSyncer.prototype.pullBuildbot): Added. Fetches pending builds first and then finished builds.
+        (BuildbotSyncer.prototype._pullRecentBuilds): Added. Fetches in-progress and finished builds.
+        (BuildbotSyncer.prototype.urlForPendingBuildsJSON): Added.
+        (BuildbotSyncer.prototype.urlForBuildJSON): Added.
+        (BuildbotSyncer.prototype.url): Added.
+        (BuildbotSyncer.prototype.urlForBuildNumber): Added.
+        * tools/js/remote.js:
+        (RemoteAPI.prototype.getJSON): Renamed from fetchJSON.
+        (RemoteAPI.prototype.getJSONWithStatus): Renamed from fetchJSONWithStatus.
+        * tools/js/v3-models.js: Load tools/js/remote.js instead of public/v3/remote.js inside node.
+        * unit-tests/buildbot-syncer-tests.js: Added a lot of unit tests for BuildbotSyncer.pullBuildbot
+        (samplePendingBuild):
+        (sampleInProgressBuild): Added.
+        (sampleFinishedBuild): Added.
+        * unit-tests/resources/mock-remote-api.js:
+        (global.RemoteAPI.getJSON): Use the same mock as getJSONWithStatus.
+
 2016-03-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Migrate admin-regenerate-manifest.js to mocha.js and test v3 UI code

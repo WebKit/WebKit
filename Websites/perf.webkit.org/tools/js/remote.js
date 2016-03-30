@@ -22,7 +22,7 @@ let RemoteAPI = new (class RemoteAPI {
         this._server = server;
     }
 
-    fetchJSON(path, data)
+    getJSON(path, data)
     {
         let contentType = null;
         if (data) {
@@ -34,9 +34,9 @@ let RemoteAPI = new (class RemoteAPI {
         });
     }
 
-    fetchJSONWithStatus(path, data)
+    getJSONWithStatus(path, data)
     {
-        return this.fetchJSON(path, data).then(function (result) {
+        return this.getJSON(path, data).then(function (result) {
             if (result['status'] != 'OK')
                 return Promise.reject(result);
             return result;
