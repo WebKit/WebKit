@@ -8,7 +8,7 @@
                 <p class="date"><?php the_time('M j, Y')?></p>
                 <p class="author">by <span><?php the_author() ?></span></p>
                 <?php if ( '' !== ( $twitter_handle = get_the_author_meta('twitter') ) ): ?>
-                <p class="twitter"><a href="https://twitter.com/intent/user?screen_name=<?php echo get_the_author_meta('twitter'); ?>" target="_blank">@<?php echo esc_html($twitter_handle); ?></a></p>
+                <p class="twitter"><a href="https://twitter.com/<?php echo get_the_author_meta('twitter'); ?>" target="_blank">@<?php echo esc_html($twitter_handle); ?></a></p>
                 <?php endif; ?>
             </div>
             
