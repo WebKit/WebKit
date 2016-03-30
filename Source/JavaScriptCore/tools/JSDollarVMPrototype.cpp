@@ -301,8 +301,6 @@ static EncodedJSValue JSC_HOST_CALL functionPrintByteCodeFor(ExecState* exec)
 static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 {
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
-        if (i)
-            dataLog(" ");
         String argStr = exec->uncheckedArgument(i).toString(exec)->value(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());

@@ -1,3 +1,29 @@
+2016-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Make the $vm debugging tools available to builtins as @$vm.
+        https://bugs.webkit.org/show_bug.cgi?id=156012
+
+        Reviewed by Saam Barati.
+
+        We also need some debugging tools for builtin development.  The $vm object will
+        be made available to builtins as @$vm, which gives us, amongst many goodies,
+        @$vm.print() (which prints the toString() values of its args) and
+        @$vm.printValue() (which dataLogs its arg as a JSValue).  @$vm will only be
+        available if we run with JSC_useDollarVM=true.
+
+        Also changed @$vm.print() to not automatically insert a space between the
+        printing of each of its args.  This makes it clearer as to what will be printed
+        i.e. it will only print what is passed to it.
+
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::BuiltinNames):
+        (JSC::BuiltinNames::dollarVMPublicName):
+        (JSC::BuiltinNames::dollarVMPrivateName):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::functionPrint):
+
 2016-03-30  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, buildfix.

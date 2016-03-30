@@ -39,16 +39,23 @@ class BuiltinNames {
     WTF_MAKE_NONCOPYABLE(BuiltinNames); WTF_MAKE_FAST_ALLOCATED;
     
 public:
+    // We treat the dollarVM name as a special case below for $vm (because CommonIdentifiers does not
+    // yet support the $ character).
+
     BuiltinNames(VM* vm, CommonIdentifiers* commonIdentifiers)
         : m_emptyIdentifier(commonIdentifiers->emptyIdentifier)
         JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES)
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_BUILTIN_NAMES)
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_BUILTIN_SYMBOLS)
+        , m_dollarVMName(Identifier::fromString(vm, "$vm"))
+        , m_dollarVMPrivateName(Identifier::fromUid(PrivateName(PrivateName::Description, ASCIILiteral("PrivateSymbol.$vm"))))
     {
         JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_PRIVATE_TO_PUBLIC_ENTRY)
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PRIVATE_TO_PUBLIC_ENTRY)
         JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
+        m_privateToPublicMap.add(m_dollarVMPrivateName.impl(), &m_dollarVMName);
+        m_publicToPrivateMap.add(m_dollarVMName.impl(), &m_dollarVMPrivateName);
     }
 
     bool isPrivateName(SymbolImpl& uid) const;
@@ -62,12 +69,16 @@ public:
     JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_IDENTIFIER_ACCESSOR)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_IDENTIFIER_ACCESSOR)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DECLARE_BUILTIN_SYMBOL_ACCESSOR)
+    const JSC::Identifier& dollarVMPublicName() const { return m_dollarVMName; }
+    const JSC::Identifier& dollarVMPrivateName() const { return m_dollarVMPrivateName; }
 
 private:
     Identifier m_emptyIdentifier;
     JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_NAMES)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_NAMES)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DECLARE_BUILTIN_SYMBOLS)
+    const JSC::Identifier m_dollarVMName;
+    const JSC::Identifier m_dollarVMPrivateName;
     typedef HashMap<RefPtr<UniquedStringImpl>, const Identifier*, IdentifierRepHash> BuiltinNamesMap;
     BuiltinNamesMap m_publicToPrivateMap;
     BuiltinNamesMap m_privateToPublicMap;
