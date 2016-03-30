@@ -1057,13 +1057,20 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     }
 
     unsigned rowRangeIndex = static_cast<unsigned>(rowRange.first);
-    if (rowRangeIndex < rowHeaders.size()) {
-        RefPtr<AccessibilityObject> rowHeader = rowHeaders[rowRange.first];
-        AccessibilityObjectWrapper* wrapper = rowHeader->wrapper();
-        if (wrapper)
-            [headers addObject:wrapper];
+    // We should consider the cases where the row number does NOT match the index in
+    // rowHeaders, the most common case is when row0/col0 does not have a header.
+    for (const auto& rowHeader : rowHeaders) {
+        if (!is<AccessibilityTableCell>(*rowHeader))
+            break;
+        std::pair<unsigned, unsigned> rowHeaderRange;
+        downcast<AccessibilityTableCell>(*rowHeader).rowIndexRange(rowHeaderRange);
+        if (rowRangeIndex >= rowHeaderRange.first && rowRangeIndex < rowHeaderRange.first + rowHeaderRange.second) {
+            if (AccessibilityObjectWrapper* wrapper = rowHeader->wrapper())
+                [headers addObject:wrapper];
+            break;
+        }
     }
-        
+
     return headers;
 }
 

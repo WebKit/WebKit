@@ -1,3 +1,13 @@
+2016-03-29  Nan Wang  <n_wang@apple.com>
+
+        AX: VoiceOver not announcing the right header information for table on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=155907
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/table-row-column-headers-expected.txt: Added.
+        * accessibility/ios-simulator/table-row-column-headers.html: Added.
+
 2016-03-29  Dana Burkart and Matthew Hanson  <dburkart@apple.com>
 
         Web Inspector: JS PrettyPrinting in do/while loops, "while" should be on the same line as "}" if there was a closing brace

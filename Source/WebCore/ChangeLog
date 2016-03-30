@@ -1,3 +1,18 @@
+2016-03-29  Nan Wang  <n_wang@apple.com>
+
+        AX: VoiceOver not announcing the right header information for table on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=155907
+
+        Reviewed by Chris Fleizach.
+
+        Make sure we consider the case where header elements size does not equal to
+        row size.
+
+        Test: accessibility/ios-simulator/table-row-column-headers.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityHeaderElements]):
+
 2016-03-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r198782): CGImageSourceUpdateData() is called twice with the same data every time ImageSource::setData() is called
