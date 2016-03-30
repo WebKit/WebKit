@@ -135,6 +135,8 @@ private:
     bool createOutputNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>&);
     bool createSourceStreamNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>&);
 
+    COMPtr<IMFVideoDisplayControl> videoDisplay();
+
     void onCreatedMediaSource();
     void onTopologySet();
 
