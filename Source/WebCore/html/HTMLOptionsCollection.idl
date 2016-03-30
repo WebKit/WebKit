@@ -21,6 +21,7 @@
 [
     JSGenerateToNativeObject,
     CustomIndexedSetter,
+    UsePointersEvenForNonNullableObjectArguments,
     GenerateIsReachable=ImplOwnerNodeRoot,
 ] interface HTMLOptionsCollection : HTMLCollection {
     attribute long selectedIndex;

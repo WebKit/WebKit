@@ -30,6 +30,7 @@
 // This is based off of Mozilla's Selection interface
 // https://developer.mozilla.org/En/DOM/Selection
 [
+    UsePointersEvenForNonNullableObjectArguments,
     GenerateIsReachable=ImplFrame,
     InterfaceName=Selection,
 ] interface DOMSelection {

@@ -22,8 +22,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-interface SVGGraphicsElement : SVGElement {
+[
+    UsePointersEvenForNonNullableObjectArguments,
+] interface SVGGraphicsElement : SVGElement {
     readonly attribute SVGAnimatedTransformList transform;
 
     readonly attribute SVGElement nearestViewportElement;

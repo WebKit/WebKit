@@ -19,6 +19,7 @@
  */
 
 [
+    UsePointersEvenForNonNullableObjectArguments,
     GenerateIsReachable=ImplElementRoot,
     ImplementationLacksVTable,
 ] interface NamedNodeMap {

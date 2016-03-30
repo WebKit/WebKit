@@ -41,7 +41,7 @@ class FetchRequest;
 
 class DOMWindowFetch {
 public:
-    static void fetch(DOMWindow&, FetchRequest*, const Dictionary&, DeferredWrapper&&);
+    static void fetch(DOMWindow&, FetchRequest&, const Dictionary&, DeferredWrapper&&);
     static void fetch(DOMWindow&, const String&, const Dictionary&, DeferredWrapper&&);
 };
 

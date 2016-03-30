@@ -20,11 +20,12 @@
 
 // Introduced in DOM Level 2:
 [
-    ObjCProtocol,
     CPPPureInterface,
     CustomToJSObject,
+    UsePointersEvenForNonNullableObjectArguments,
     JSCustomToNativeObject,
     JSCustomHeader,
+    ObjCProtocol,
 ] interface EventTarget {
     [ObjCLegacyUnnamedParameters] void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     [ObjCLegacyUnnamedParameters] void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);

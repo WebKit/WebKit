@@ -64,6 +64,7 @@ enum AutoFillButtonType {
 };
 
 [
+    UsePointersEvenForNonNullableObjectArguments,
     NoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);

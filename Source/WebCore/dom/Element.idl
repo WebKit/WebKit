@@ -19,6 +19,7 @@
  */
 
 [
+    UsePointersEvenForNonNullableObjectArguments,
     JSCustomHeader,
     JSGenerateToNativeObject,
 ] interface Element : Node {

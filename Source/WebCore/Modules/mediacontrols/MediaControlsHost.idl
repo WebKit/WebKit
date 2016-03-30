@@ -32,6 +32,7 @@ enum DeviceType {
 [
     NoInterfaceObject,
     Conditional=MEDIA_CONTROLS_SCRIPT,
+    UsePointersEvenForNonNullableObjectArguments,
     ImplementationLacksVTable,
 ] interface MediaControlsHost {
     TextTrack[] sortedTrackListForMenu(TextTrackList trackList);

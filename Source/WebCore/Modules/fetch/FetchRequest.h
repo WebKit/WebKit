@@ -45,7 +45,7 @@ typedef int ExceptionCode;
 
 class FetchRequest final : public FetchBodyOwner {
 public:
-    static RefPtr<FetchRequest> create(ScriptExecutionContext&, FetchRequest*, const Dictionary&, ExceptionCode&);
+    static RefPtr<FetchRequest> create(ScriptExecutionContext&, FetchRequest&, const Dictionary&, ExceptionCode&);
     static RefPtr<FetchRequest> create(ScriptExecutionContext&, const String&, const Dictionary&, ExceptionCode&);
 
     // Request API

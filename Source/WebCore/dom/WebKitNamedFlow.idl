@@ -28,6 +28,7 @@
  */
 
 [
+    UsePointersEvenForNonNullableObjectArguments,
     NoInterfaceObject,
     GenerateIsReachable=ImplOwnerNodeRoot,
 ] interface WebKitNamedFlow : EventTarget

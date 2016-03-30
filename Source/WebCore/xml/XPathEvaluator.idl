@@ -19,6 +19,7 @@
 
 [
     Constructor,
+    UsePointersEvenForNonNullableObjectArguments,
     ImplementationLacksVTable,
 ] interface XPathEvaluator {
     [RaisesException] XPathExpression createExpression([Default=Undefined] optional DOMString expression,

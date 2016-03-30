@@ -25,6 +25,7 @@
 
 [
     ConstructorTemplate=Event,
+    UsePointersEvenForNonNullableObjectArguments,
 ] interface StorageEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString key;
     [InitializedByEventConstructor] readonly attribute DOMString? oldValue;

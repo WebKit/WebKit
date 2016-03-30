@@ -23,7 +23,9 @@
 // TODO: no css::ViewCSS available!
 // TODO: Fix SVGSVGElement inheritance (css::DocumentCSS)! 
 // TODO: no events::DocumentEvent available!
-interface SVGSVGElement : SVGGraphicsElement {
+[
+    UsePointersEvenForNonNullableObjectArguments,
+] interface SVGSVGElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
     readonly attribute SVGAnimatedLength width;

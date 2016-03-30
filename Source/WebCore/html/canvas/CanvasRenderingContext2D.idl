@@ -26,7 +26,9 @@
 enum ImageSmoothingQuality { "low", "medium", "high" };
 enum CanvasWindingRule { "nonzero", "evenodd" };
 
-interface CanvasRenderingContext2D : CanvasRenderingContext {
+[
+    UsePointersEvenForNonNullableObjectArguments,
+] interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     void save();
     void restore();

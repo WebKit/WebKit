@@ -24,6 +24,7 @@
     JSCustomPushEventHandlerScope,
     CustomIsReachable,
     CustomToJSObject,
+    UsePointersEvenForNonNullableObjectArguments,
     ObjCPolymorphic,
 ] interface Node
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

@@ -32,6 +32,7 @@
 
 [
     NoInterfaceObject,
+    UsePointersEvenForNonNullableObjectArguments,
     ImplementationLacksVTable
 ] interface InspectorFrontendHost {
     void loaded();

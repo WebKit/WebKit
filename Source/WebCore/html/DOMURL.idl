@@ -30,6 +30,7 @@
     Constructor(DOMString url, DOMString base),
     Constructor(DOMString url, DOMURL base),
     ConstructorRaisesException,
+    UsePointersEvenForNonNullableObjectArguments,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     InterfaceName=URL,

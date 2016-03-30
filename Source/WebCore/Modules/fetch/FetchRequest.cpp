@@ -269,29 +269,27 @@ RefPtr<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, const
     return adoptRef(*new FetchRequest(context, WTFMove(body), headers.releaseNonNull(), WTFMove(internalRequest)));
 }
 
-RefPtr<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, FetchRequest* input, const Dictionary& init, ExceptionCode& ec)
+RefPtr<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, FetchRequest& input, const Dictionary& init, ExceptionCode& ec)
 {
-    ASSERT(input);
-
-    if (input->isDisturbed()) {
+    if (input.isDisturbed()) {
         ec = TypeError;
         return nullptr;
     }
 
-    FetchRequest::InternalRequest internalRequest(input->m_internalRequest);
+    FetchRequest::InternalRequest internalRequest(input.m_internalRequest);
 
     if (!buildOptions(internalRequest, context, init)) {
         ec = TypeError;
         return nullptr;
     }
 
-    RefPtr<FetchHeaders> headers = buildHeaders(init, internalRequest, input->m_headers.ptr());
+    RefPtr<FetchHeaders> headers = buildHeaders(init, internalRequest, input.m_headers.ptr());
     if (!headers) {
         ec = TypeError;
         return nullptr;
     }
 
-    FetchBody body = buildBody(init, *headers, &input->m_body);
+    FetchBody body = buildBody(init, *headers, &input.m_body);
     if (!validateBodyAndMethod(body, internalRequest)) {
         ec = TypeError;
         return nullptr;

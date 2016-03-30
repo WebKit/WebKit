@@ -30,6 +30,7 @@
     Constructor,
     Constructor(DOMPath path),
     Constructor(DOMString text),
+    UsePointersEvenForNonNullableObjectArguments,
     InterfaceName=Path2D,
 ] interface DOMPath {
 

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope&, FetchRequest*, const Dictionary&, FetchPromise&& promise)
+void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope&, FetchRequest&, const Dictionary&, FetchPromise&& promise)
 {
     promise.reject(ASCIILiteral("Fetch is not yet implemented"));
 }

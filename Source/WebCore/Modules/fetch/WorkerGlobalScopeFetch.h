@@ -43,7 +43,7 @@ class WorkerGlobalScope;
 class WorkerGlobalScopeFetch {
 public:
     using FetchPromise = DOMPromise<RefPtr<FetchResponse>, String>;
-    static void fetch(WorkerGlobalScope&, FetchRequest*, const Dictionary&, FetchPromise&&);
+    static void fetch(WorkerGlobalScope&, FetchRequest&, const Dictionary&, FetchPromise&&);
     static void fetch(WorkerGlobalScope&, const String&, const Dictionary&, FetchPromise&&);
 };
 

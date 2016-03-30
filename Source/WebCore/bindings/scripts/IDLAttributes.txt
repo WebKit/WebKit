@@ -51,6 +51,7 @@ CustomPutFunction
 CustomReturn
 CustomSetter
 CustomToJSObject
+UsePointersEvenForNonNullableObjectArguments
 Default=NullString|Undefined
 Deletable
 DoNotCheckConstants

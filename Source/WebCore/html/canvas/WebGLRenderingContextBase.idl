@@ -42,6 +42,7 @@ typedef unrestricted float GLclampf;
 NoInterfaceObject,
 Conditional=WEBGL,
 JSCustomMarkFunction,
+UsePointersEvenForNonNullableObjectArguments,
 DoNotCheckConstants,
 ] interface WebGLRenderingContextBase : CanvasRenderingContext {
 

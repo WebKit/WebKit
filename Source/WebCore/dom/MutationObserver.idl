@@ -31,6 +31,7 @@
 [
     CustomConstructor(MutationCallback callback),
     CustomIsReachable,
+    UsePointersEvenForNonNullableObjectArguments,
     ImplementationLacksVTable,
 ] interface MutationObserver {
     [RaisesException] void observe(Node target, Dictionary options);

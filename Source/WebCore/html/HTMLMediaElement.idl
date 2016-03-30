@@ -25,6 +25,7 @@
 
 [
     Conditional=VIDEO,
+    UsePointersEvenForNonNullableObjectArguments,
     JSGenerateToNativeObject,
     ActiveDOMObject,
 ] interface HTMLMediaElement : HTMLElement {

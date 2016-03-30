@@ -27,5 +27,6 @@
     Conditional=WEBGL,
     JSCustomMarkFunction,
     DoNotCheckConstants,
+    UsePointersEvenForNonNullableObjectArguments,
 ] interface WebGLRenderingContext : WebGLRenderingContextBase {
 };

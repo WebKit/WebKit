@@ -27,6 +27,7 @@
 [
     Constructor([Default=NullString] optional DOMString cssValue),
     ConstructorRaisesException,
+    UsePointersEvenForNonNullableObjectArguments,
     ImplementationLacksVTable,
 ] interface WebKitCSSMatrix {
 

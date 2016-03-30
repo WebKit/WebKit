@@ -1,3 +1,121 @@
+2016-03-30  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Binding generator should allow passing DOM objects parameters as references
+        https://bugs.webkit.org/show_bug.cgi?id=155953
+
+        Reviewed by Alex Christensen.
+
+        Updating binding generator to pass DOM object parameters as references.
+        Introducing UsePointersEvenForNonNullableObjectArguments to disable that change.
+
+        Updating FetchRequest.idl and DOMWindowFetch.idl to pass parameters as references.
+
+        Updated other IDL interfaces to keep passing DOM object parameters as pointers.
+        This should not change the behavior for these interfaces.
+        UsePointersEvenForNonNullableObjectArguments should be progressively removed on those interfaces.
+
+        Binding generator tests covered by rebased binding tests.
+
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/fetch/DOMWindowFetch.cpp:
+        (WebCore::DOMWindowFetch::fetch):
+        * Modules/fetch/DOMWindowFetch.h:
+        * Modules/fetch/DOMWindowFetch.idl:
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::create):
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/WorkerGlobalScopeFetch.cpp:
+        (WebCore::WorkerGlobalScopeFetch::fetch):
+        * Modules/fetch/WorkerGlobalScopeFetch.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/speech/SpeechSynthesis.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        (IsParameterPassedByReference):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionExcitingFunction):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionByteMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionLongMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod8):
+        (WebCore::jsTestObjPrototypeFunctionConvert1):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithSequence):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithArray):
+        (WebCore::jsTestObjPrototypeFunctionVariadicNodeMethod):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValue):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod7):
+        (WebCore::jsTestObjPrototypeFunctionGetSVGDocument):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunction):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors3):
+        * css/FontFaceSet.idl:
+        * css/WebKitCSSMatrix.idl:
+        * dom/CompositionEvent.idl:
+        * dom/DataTransfer.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/EventTarget.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/MutationObserver.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/Range.idl:
+        * dom/TextEvent.idl:
+        * dom/TouchEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WebKitNamedFlow.idl:
+        * dom/WheelEvent.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderSync.idl:
+        * html/DOMURL.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLSelectElement.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/DOMPath.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * html/track/TextTrack.idl:
+        * inspector/InspectorFrontendHost.idl:
+        * page/DOMSelection.idl:
+        * storage/StorageEvent.idl:
+        * svg/SVGGraphicsElement.idl:
+        * svg/SVGLengthList.idl:
+        * svg/SVGNumberList.idl:
+        * svg/SVGPathSegList.idl:
+        * svg/SVGPointList.idl:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGTransformList.idl:
+        * testing/Internals.idl:
+        * xml/XMLSerializer.idl:
+        * xml/XPathEvaluator.idl:
+        * xml/XPathExpression.idl:
+        * xml/XSLTProcessor.idl:
+
 2016-03-29  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix build break since r198800. Unreviewed.

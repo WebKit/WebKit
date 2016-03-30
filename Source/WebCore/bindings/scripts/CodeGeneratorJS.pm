@@ -3558,7 +3558,7 @@ sub GenerateParametersCheck
             push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
 
-            if ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $interfaceName =~ /List$/) {
+            if (IsPointerParameterPassedByReference($parameter, $interface) or ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $interfaceName =~ /List$/)) {
                 push(@$outputArray, "    if (!$name) {\n");
                 push(@$outputArray, "        setDOMException(state, TYPE_MISMATCH_ERR);\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
@@ -3577,6 +3577,8 @@ sub GenerateParametersCheck
             push @arguments, "$name.get()";
         } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $interfaceName =~ /List$/) {
             push @arguments, "$name->propertyReference()";
+        } elsif (IsPointerParameterPassedByReference($parameter, $interface)) {
+            push @arguments, "*$name";
         } else {
             push @arguments, $name;
         }
@@ -4065,6 +4067,19 @@ sub GetNativeType
 
     # For all other types, the native type is a pointer with same type name as the IDL type.
     return "${type}*";
+}
+
+sub IsPointerParameterPassedByReference
+{
+    my $parameter = shift;
+    my $interface = shift;
+
+    return 0 if $parameter->isVariadic;
+    return 0 if $parameter->isNullable;
+    return 0 if $interface->extendedAttributes->{"UsePointersEvenForNonNullableObjectArguments"};
+    return 0 if $codeGenerator->IsCallbackInterface($parameter->type);
+    return 0 if $parameter->isOptional and $parameter->extendedAttributes->{"Default"} and $parameter->extendedAttributes->{"Default"} eq "Undefined";
+    return substr(GetNativeType($parameter->type), -1) eq '*';
 }
 
 sub GetNativeVectorInnerType
@@ -4944,7 +4959,11 @@ END
             my $index = 0;
             foreach my $parameter (@{$function->parameters}) {
                 last if $index eq $paramIndex;
-                push(@constructorArgList, $parameter->name);
+                if (IsPointerParameterPassedByReference($parameter, $interface)) {
+                    push(@constructorArgList, "*" . $parameter->name);
+                } else {
+                    push(@constructorArgList, $parameter->name);
+                }
                 $index++;
             }
 

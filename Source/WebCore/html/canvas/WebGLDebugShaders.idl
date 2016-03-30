@@ -24,9 +24,10 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=WEBGL,
+    UsePointersEvenForNonNullableObjectArguments,
     GenerateIsReachable=ImplWebGLRenderingContext,
+    NoInterfaceObject,
 ] interface WebGLDebugShaders {
     [StrictTypeChecking, RaisesException] DOMString? getTranslatedShaderSource(WebGLShader shader);
 };

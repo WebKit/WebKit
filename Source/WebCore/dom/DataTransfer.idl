@@ -27,6 +27,7 @@
  */
 
 [
+    UsePointersEvenForNonNullableObjectArguments,
     SkipVTableValidation,
 ] interface DataTransfer {
     attribute DOMString dropEffect;

@@ -22,6 +22,7 @@
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
     CustomToJSObject,
+    UsePointersEvenForNonNullableObjectArguments,
     JSCustomHeader,
     JSGenerateToNativeObject,
 ] interface Document : Node {

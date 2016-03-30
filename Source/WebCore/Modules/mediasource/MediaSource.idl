@@ -39,6 +39,7 @@ enum EndOfStreamError {
     EnabledBySetting=MediaSource,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
+    UsePointersEvenForNonNullableObjectArguments,
 ] interface MediaSource : EventTarget {
     // All the source buffers created by this object.
     readonly attribute SourceBufferList sourceBuffers;

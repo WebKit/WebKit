@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-void DOMWindowFetch::fetch(DOMWindow& window, FetchRequest* input, const Dictionary& dictionary, DeferredWrapper&& promise)
+void DOMWindowFetch::fetch(DOMWindow& window, FetchRequest& input, const Dictionary& dictionary, DeferredWrapper&& promise)
 {
     if (!window.scriptExecutionContext())
         return;

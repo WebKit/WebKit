@@ -73,7 +73,11 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* s
     ArrayBuffer* arrayBuffer = toArrayBuffer(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(arrayBuffer);
+    if (!arrayBuffer) {
+        setDOMException(state, TYPE_MISMATCH_ERR);
+        return JSValue::encode(jsUndefined());
+    }
+    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*arrayBuffer);
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
@@ -97,7 +101,11 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* s
     Blob* blob = JSBlob::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(blob);
+    if (!blob) {
+        setDOMException(state, TYPE_MISMATCH_ERR);
+        return JSValue::encode(jsUndefined());
+    }
+    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*blob);
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 

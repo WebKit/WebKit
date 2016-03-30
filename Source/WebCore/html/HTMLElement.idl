@@ -22,6 +22,7 @@
 #if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
     CustomConstructor(),
 #endif
+    UsePointersEvenForNonNullableObjectArguments,
     JSGenerateToNativeObject,
     JSCustomPushEventHandlerScope,
 ] interface HTMLElement : Element {

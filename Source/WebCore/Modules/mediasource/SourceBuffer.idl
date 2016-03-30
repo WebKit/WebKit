@@ -37,6 +37,7 @@
     Conditional=MEDIA_SOURCE,
     NoInterfaceObject,
     ActiveDOMObject,
+    UsePointersEvenForNonNullableObjectArguments,
 ] interface SourceBuffer : EventTarget {
 
     [SetterRaisesException] attribute AppendMode mode;

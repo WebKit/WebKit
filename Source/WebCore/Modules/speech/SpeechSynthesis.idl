@@ -26,6 +26,7 @@
 [
     NoInterfaceObject,
     Conditional=SPEECH_SYNTHESIS,
+    UsePointersEvenForNonNullableObjectArguments,
 ] interface SpeechSynthesis  {
     readonly attribute boolean pending;
     readonly attribute boolean speaking;
