@@ -1,5 +1,33 @@
 2016-03-29  Jon Davis  <jond@apple.com>
 
+        Add WebKit Nightly Archives, WebKit Nightly Start, and Downloads pages
+        https://bugs.webkit.org/show_bug.cgi?id=155989
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/plugins/sync-nightly-builds.php: Added.
+        * wp-content/themes/webkit/downloads.php: Added.
+        * wp-content/themes/webkit/functions.php:
+        * wp-content/themes/webkit/images/download.svg:
+        * wp-content/themes/webkit/images/spinner.svg: Added.
+        * wp-content/themes/webkit/nightly-archives.php: Added.
+        * wp-content/themes/webkit/nightly-start.php: Added.
+        * wp-content/themes/webkit/nightly.php:
+        * wp-content/themes/webkit/scripts/searchbuilds.js: Added.
+        (initsearch.xhrPromise.):
+        (initsearch):
+        (initsearch.displayResults.addEntry):
+        (initsearch.displayResults):
+        (initsearch.displayError):
+        (initsearch.clearErrors):
+        * wp-content/themes/webkit/style.css:
+        (input[type=text]):
+        (input[type=submit]):
+        (article .byline):
+        (article .abovetitle):
+
+2016-03-29  Jon Davis  <jond@apple.com>
+
         Support images above the title on webkit.org posts
         https://bugs.webkit.org/show_bug.cgi?id=155979
 

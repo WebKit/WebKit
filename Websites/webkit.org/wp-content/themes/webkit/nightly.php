@@ -3,41 +3,6 @@
  * Template Name: Nightly Downloads
  **/
 
-define('WEBKIT_NIGHTLY_ARCHIVE_URL', "http://nightly.webkit.org/builds/trunk/%s/all");
-
-function get_nightly_build() {
-    return get_nightly_download_details('mac');
-}
-
-function get_nightly_source() {
-    return get_nightly_download_details('src');
-}
-
-function get_nightly_download_details( $type = 'mac' ) {
-    $types = array('mac', 'src');
-    if ( ! in_array($type, $types) ) 
-        $type = $types[0];
-    
-    $cachekey = 'nightly_download_' . $type;
-    if ( false !== ( $cached = get_transient($cachekey) ) )
-        return json_decode($cached);
-	
-    $url = sprintf(WEBKIT_NIGHTLY_ARCHIVE_URL, $type);
-    $resource = fopen($url, 'r');
-    $rawdata = fread($resource, 128);
-    list($data,) = explode("\n", $rawdata);
-    fclose($resource);
-    
-    if ( ! empty($data) ) {
-        $record = explode(',', $data);
-        set_transient($cachekey, json_encode($record), HOUR_IN_SECONDS * 6); // Expire every 6 hours
-        return $record;
-	}
-    
-    return false;
-    
-}
-
 add_filter('the_content', function ($content) {
         
     $build = get_nightly_build();
@@ -100,10 +65,6 @@ body {
     font-weight: 200;
 }
 
-#nightly img {
-    width: 33%;
-}
-
 #nightly blockquote:first-child p {
     color: #FFD15E;
 }
@@ -124,6 +85,7 @@ body {
 .page-template-nightly hr {
     border-color: #999;
 }
+
 .page-template-nightly #footer-nav a {
     color: #999;
 }

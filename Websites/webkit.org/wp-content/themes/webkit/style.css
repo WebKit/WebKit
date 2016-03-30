@@ -136,6 +136,42 @@ h6 a[name] {
     visibility: hidden;
 }
 
+input[type=text] {
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align: top;
+    height: 4.2rem;
+    padding-top: 3px;
+    margin-bottom: 3rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    color: #333333;
+    text-align: left;
+    border: 1px solid #d6d6d6;
+    border-radius: 4px;
+    background: white;
+    background-clip: padding-box;
+    font-family: "Myriad Set Pro", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    line-height: 1.33333;
+    font-weight: 400;
+    letter-spacing: normal;
+    font-size: 2rem;
+}
+
+input[type=submit] {
+    background-color: #1d9bd9;
+    background: -webkit-linear-gradient(#3baee7, #0088cc);
+    background: linear-gradient(#3baee7, #0088cc);
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    border: 0;
+}
+
+
 .admin-bar a[name] {
     top: calc(-32px - 3rem);
 }
@@ -1040,6 +1076,10 @@ article .alignnone.size-full {
     transform: translate(-50vw, 0);
 }
 
+article .abovetitle {
+    margin-bottom: 0.8em;
+}
+
 article .pull-left {
     float: left;
     margin: 1.5rem 1.5rem 1.5rem -25%;
@@ -1388,17 +1428,6 @@ header .menu-item { /* add bottom dimension to main menu items */
     padding-bottom: 3rem;
 }
 
-/* Improves mouse accessibility of menus */
-/*header .menu > .menu-item-has-children:hover > a::before {
-    position: absolute;
-    content: '';
-    width: 100%;
-    height: 100%;
-    padding: 0rem 10rem 1rem 0;
-    top: 2rem;
-    right: -3rem;
-}
-*/
 .sub-menu-layer {
     text-align: center;
     padding: 3rem;
@@ -1704,7 +1733,6 @@ header .menu-item { /* add bottom dimension to main menu items */
         float: none;
         text-align: center;
         margin-bottom: 3rem;
-        padding-right: 0;
     }
 
     article .byline p {
@@ -1726,7 +1754,6 @@ header .menu-item { /* add bottom dimension to main menu items */
         float: none;
         text-align: center;
         margin-bottom: 3rem;
-        padding-right: 0;
     }
 
     article .byline p {
