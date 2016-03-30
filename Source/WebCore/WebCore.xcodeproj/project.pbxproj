@@ -2267,6 +2267,8 @@
 		53EF766C16531994004CBE49 /* SettingsMacros.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 53EF766A16530A61004CBE49 /* SettingsMacros.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		555B87EC1CAAF0AB00349425 /* ImageDecoderCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */; };
+		555B87ED1CAAF0AB00349425 /* ImageDecoderCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */; };
 		572A7F211C6E5719009C6149 /* SimulatedClick.h in Headers */ = {isa = PBXBuildFile; fileRef = 572A7F201C6E5719009C6149 /* SimulatedClick.h */; };
 		572A7F231C6E5A66009C6149 /* SimulatedClick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572A7F221C6E5A66009C6149 /* SimulatedClick.cpp */; };
 		580371611A66F00A00BAF519 /* ClipRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5803715F1A66F00A00BAF519 /* ClipRect.cpp */; };
@@ -9831,6 +9833,8 @@
 		53EF766A16530A61004CBE49 /* SettingsMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsMacros.h; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDecoderCG.cpp; sourceTree = "<group>"; };
+		555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDecoderCG.h; sourceTree = "<group>"; };
 		55D408F71A7C631800C78450 /* SVGImageClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageClients.h; sourceTree = "<group>"; };
 		572A7F201C6E5719009C6149 /* SimulatedClick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatedClick.h; sourceTree = "<group>"; };
 		572A7F221C6E5A66009C6149 /* SimulatedClick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulatedClick.cpp; sourceTree = "<group>"; };
@@ -21771,6 +21775,8 @@
 				2292B27B1356669400CF11EF /* ImageBufferDataCG.cpp */,
 				22BD9F80135364FE009BD102 /* ImageBufferDataCG.h */,
 				B27535300B053814002CE64F /* ImageCG.cpp */,
+				555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */,
+				555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */,
 				B27535310B053814002CE64F /* ImageSourceCG.cpp */,
 				4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */,
 				4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */,
@@ -26271,6 +26277,7 @@
 				5185FC8D1BB4C4E80012898F /* IDBFactory.h in Headers */,
 				69A6CBAD1C6BE42C00B836E9 /* AccessibilitySVGElement.h in Headers */,
 				5185FC8F1BB4C4E80012898F /* IDBGetResult.h in Headers */,
+				555B87ED1CAAF0AB00349425 /* ImageDecoderCG.h in Headers */,
 				5185FC911BB4C4E80012898F /* IDBIndex.h in Headers */,
 				51F798F01BE880E7008AE491 /* IDBIndexInfo.h in Headers */,
 				5185FC951BB4C4E80012898F /* IDBKey.h in Headers */,
@@ -31259,6 +31266,7 @@
 				99CC0B5918BE984A006CEBCC /* ReplaySession.cpp in Sources */,
 				99CC0B5B18BE984A006CEBCC /* ReplaySessionSegment.cpp in Sources */,
 				F55B3DCF1251F12D003EF269 /* ResetInputType.cpp in Sources */,
+				555B87EC1CAAF0AB00349425 /* ImageDecoderCG.cpp in Sources */,
 				934F713E0D5A6F2800018D69 /* ResourceErrorBase.cpp in Sources */,
 				7EE6846B12D26E3800E79415 /* ResourceErrorCF.cpp in Sources */,
 				514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */,

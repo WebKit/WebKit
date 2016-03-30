@@ -1,3 +1,69 @@
+2016-03-30  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        Move the CG ImageDecoder class from ImageSourceCG.cpp to ImageDecoderCG.h and .cpp
+        https://bugs.webkit.org/show_bug.cgi?id=155980
+
+        Reviewed by Simon Fraser.
+
+        After this step, ImageSource.cpp and ImageSourceCG.cpp look very similar
+        so they can be merged in one file. All the redundant code in these two files
+        can be removed.
+
+        * PlatformAppleWin.cmake:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cg/ImageDecoderCG.cpp: Copied from Source/WebCore/platform/graphics/cg/ImageSourceCG.cpp.
+        (WebCore::createImageSourceOptions):
+        (WebCore::imageSourceOptions):
+        (WebCore::orientationFromProperties):
+        (WebCore::sharedBufferGetBytesAtPosition):
+        (WebCore::sharedBufferRelease):
+        (WebCore::ImageDecoder::ImageDecoder):
+        (WebCore::ImageDecoder::subsamplingLevelForScale):
+        (WebCore::ImageDecoder::bytesDecodedToDetermineProperties):
+        (WebCore::ImageDecoder::filenameExtension):
+        (WebCore::ImageDecoder::isSizeAvailable):
+        (WebCore::ImageDecoder::size):
+        (WebCore::ImageDecoder::frameCount):
+        (WebCore::ImageDecoder::repetitionCount):
+        (WebCore::ImageDecoder::hotSpot):
+        (WebCore::ImageDecoder::frameSizeAtIndex):
+        (WebCore::ImageDecoder::frameIsCompleteAtIndex):
+        (WebCore::ImageDecoder::orientationAtIndex):
+        (WebCore::ImageDecoder::frameDurationAtIndex):
+        (WebCore::ImageDecoder::allowSubsamplingOfFrameAtIndex):
+        (WebCore::ImageDecoder::frameHasAlphaAtIndex):
+        (WebCore::ImageDecoder::frameBytesAtIndex):
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+        (WebCore::ImageDecoder::setData):
+        * platform/graphics/cg/ImageDecoderCG.h: Added.
+        (WebCore::ImageDecoder::create):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageDecoder::create): Deleted.
+        (WebCore::createImageSourceOptions): Deleted.
+        (WebCore::imageSourceOptions): Deleted.
+        (WebCore::orientationFromProperties): Deleted.
+        (WebCore::sharedBufferGetBytesAtPosition): Deleted.
+        (WebCore::sharedBufferRelease): Deleted.
+        (WebCore::ImageDecoder::ImageDecoder): Deleted.
+        (WebCore::ImageDecoder::subsamplingLevelForScale): Deleted.
+        (WebCore::ImageDecoder::bytesDecodedToDetermineProperties): Deleted.
+        (WebCore::ImageDecoder::filenameExtension): Deleted.
+        (WebCore::ImageDecoder::isSizeAvailable): Deleted.
+        (WebCore::ImageDecoder::size): Deleted.
+        (WebCore::ImageDecoder::frameCount): Deleted.
+        (WebCore::ImageDecoder::repetitionCount): Deleted.
+        (WebCore::ImageDecoder::hotSpot): Deleted.
+        (WebCore::ImageDecoder::frameSizeAtIndex): Deleted.
+        (WebCore::ImageDecoder::frameIsCompleteAtIndex): Deleted.
+        (WebCore::ImageDecoder::orientationAtIndex): Deleted.
+        (WebCore::ImageDecoder::frameDurationAtIndex): Deleted.
+        (WebCore::ImageDecoder::allowSubsamplingOfFrameAtIndex): Deleted.
+        (WebCore::ImageDecoder::frameHasAlphaAtIndex): Deleted.
+        (WebCore::ImageDecoder::frameBytesAtIndex): Deleted.
+        (WebCore::ImageDecoder::createFrameImageAtIndex): Deleted.
+        (WebCore::ImageDecoder::setData): Deleted.
+
 2016-03-30  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][MediaFoundation] Video size is not always set.
