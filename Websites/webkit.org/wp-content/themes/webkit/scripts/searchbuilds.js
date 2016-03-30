@@ -85,7 +85,7 @@
         function displayError(message) {
             var note = document.createElement('div');
 
-            if ( message === undefined ) 
+            if ( typeof message !== 'string' ) 
                 message = 'A communication error occured preventing any results from being returned by the server.';
 
             note.classList.add('note');

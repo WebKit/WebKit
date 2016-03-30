@@ -4,22 +4,15 @@
  **/
 
 add_filter('the_content', function ($content) {
-        
+
     $build = get_nightly_build();
     $source = get_nightly_source();
-    
-    $content = sprintf($content, 
-                        
-        $build[0], 
-        date(get_option( 'date_format' ), $build[1]),
-        $build[2],
-    
-        $source[0],
-        date(get_option( 'date_format' ), $source[1]),
-        $source[2]
-                            
+
+    $content = sprintf($content,
+        $build[0], $build[1], $build[2],
+        $source[0], $source[1], $source[2]
     );
-    
+
     return $content;
 });
 
@@ -80,6 +73,8 @@ body {
 #nightly a.download {
     color: #ffffff;
     font-size: 3rem;
+    background: none;
+    padding-right: 0;
 }
 
 .page-template-nightly hr {
@@ -91,17 +86,17 @@ body {
 }
 </style>
 
-	<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+    <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 
         <article class="page" id="nightly">
-			<h1><a href="<?php echo get_permalink() ?>" rel="bookmark" title="Permanent Link: <?php the_title(); ?>"><?php the_title(); ?></a></h1>
-            
-			<div class="bodycopy">
-				<?php the_content(''); ?>
-			</div>
-            
+            <h1><a href="<?php echo get_permalink() ?>" rel="bookmark" title="Permanent Link: <?php the_title(); ?>"><?php the_title(); ?></a></h1>
+
+            <div class="bodycopy">
+                <?php the_content(''); ?>
+            </div>
+
         </article>
 
-	<?php endwhile; endif; ?>
+    <?php endwhile; endif; ?>
 
 <?php get_footer(); ?>

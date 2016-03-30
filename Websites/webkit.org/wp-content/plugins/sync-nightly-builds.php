@@ -34,6 +34,7 @@ class SyncWebKitNightlyBuilds {
         $this->uploads_dir = trailingslashit($upload_dir_info['basedir']);
 
         add_action('update_webkit_nightly_builds', array($this, 'sync'));
+        add_action('wp_ajax_nopriv_search_nightly_builds', array($this, 'search'));
         add_action('wp_ajax_search_nightly_builds', array($this, 'search'));
 
         register_activation_hook(__FILE__, function () {
