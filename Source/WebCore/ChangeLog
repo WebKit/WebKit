@@ -1,5 +1,41 @@
 2016-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [OS X] [RTL Scrollbars] List boxes should obey RTL scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=155991
+
+        Reviewed by Darin Adler.
+
+        List boxes were created before RenderLayers, and therefore don't share
+        the scollbar logic with them. Instead, they manage their own Scrollbars.
+        The placement logic needs to be updated to take RTL scrollbars into
+        account.
+
+        Tests: fast/scrolling/rtl-scrollbars-listbox-scroll.html
+               fast/scrolling/rtl-scrollbars-listbox-select-left.html
+               fast/scrolling/rtl-scrollbars-listbox-select-right.html
+               fast/scrolling/rtl-scrollbars-listbox-simple.html
+               fast/scrolling/rtl-scrollbars-listbox.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::contentBoxRect):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::contentBoxRect): Deleted.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::itemBoundingBoxRect):
+        (WebCore::RenderListBox::paintScrollbar):
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::isPointInOverflowControl):
+        (WebCore::RenderListBox::listIndexAtOffset):
+        (WebCore::RenderListBox::nodeAtPoint):
+        (WebCore::RenderListBox::controlClipRect):
+        (WebCore::RenderListBox::invalidateScrollbarRect):
+        (WebCore::RenderListBox::convertFromScrollbarToContainingView):
+        (WebCore::RenderListBox::convertFromContainingViewToScrollbar):
+        (WebCore::RenderListBox::scrolledToTop):
+        (WebCore::RenderListBox::scrolledToBottom):
+
+2016-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Use references instead of pointers in scrollbar-related code
         https://bugs.webkit.org/show_bug.cgi?id=155998
 

@@ -690,6 +690,15 @@ RoundedRect::Radii RenderBox::borderRadii() const
     return style.getRoundedBorderFor(bounds).radii();
 }
 
+LayoutRect RenderBox::contentBoxRect() const
+{
+    LayoutUnit x = borderLeft() + paddingLeft();
+    if (layer() && layer()->verticalScrollbarIsOnLeft())
+        x += verticalScrollbarWidth();
+    LayoutUnit y = borderTop() + paddingTop();
+    return LayoutRect(x, y, contentWidth(), contentHeight());
+}
+
 IntRect RenderBox::absoluteContentBox() const
 {
     // This is wrong with transforms and flipped writing modes.

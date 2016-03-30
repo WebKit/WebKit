@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+</head>
+<body style="margin: 0px;">
+<div style="position: absolute; left: 8px; top: 200px;">This test makes sure that cliking on the rightmost part of an item causes it to be selected.</div>
+<select id="container" multiple="multiple" style="margin: 0px; border: 0px solid black; padding: 0px; width: 200px;">
+<option id="january">January</option>
+<option>February</option>
+<option>March</option>
+<option>April</option>
+<option>May</option>
+<option>June</option>
+<option>July</option>
+<option>August</option>
+<option>September</option>
+<option>October</option>
+<option>November</option>
+<option>December</option>
+</select>
+<script>
+var container = document.getElementById("container");
+container.focus();
+var january = document.getElementById("january");
+january.selected = true;
+</script>
+</body>
+</html>

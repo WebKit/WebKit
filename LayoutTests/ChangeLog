@@ -1,3 +1,25 @@
+2016-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] [RTL Scrollbars] List boxes should obey RTL scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=155991
+
+        Reviewed by Darin Adler.
+
+        As with the previous patches, mark new tests as failing on all OSes that
+        don't support RTL scrollbars.
+
+        * TestExpectations:
+        * fast/scrolling/rtl-scrollbars-listbox-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-listbox-scroll-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-listbox-scroll.html: Added.
+        * fast/scrolling/rtl-scrollbars-listbox-select-left-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-listbox-select-left.html: Added.
+        * fast/scrolling/rtl-scrollbars-listbox-select-right-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-listbox-select-right.html: Added.
+        * fast/scrolling/rtl-scrollbars-listbox-simple-expected-mismatch.html: Added.
+        * fast/scrolling/rtl-scrollbars-listbox-simple.html: Added.
+        * fast/scrolling/rtl-scrollbars-listbox.html: Added.
+
 2016-03-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Implement String.prototype.repeat in builtins JS
