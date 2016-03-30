@@ -1,3 +1,24 @@
+2016-03-30  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Refactor positioned children code
+        https://bugs.webkit.org/show_bug.cgi?id=155972
+
+        Reviewed by Sergio Villar Senin.
+
+        This is a refactoring of RenderGrid::offsetAndBreadthForPositionedChild()
+        in order to calculate offset and breadth in a more clean way.
+        Hopefully making the code easier to follow.
+
+        Thanks to the refactoring, now positioned children in RTL
+        are working fine if they use the static inline position
+        (when "left" and "right" properties are both "auto").
+
+        The other case (not having a static inline position)
+        will be fixed in a separated patch.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+
 2016-03-30  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Binding generator should allow passing DOM objects parameters as references

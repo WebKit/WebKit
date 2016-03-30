@@ -1,3 +1,34 @@
+2016-03-30  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Refactor positioned children code
+        https://bugs.webkit.org/show_bug.cgi?id=155972
+
+        Reviewed by Sergio Villar Senin.
+
+        Added RTL cases for most of the positioned tests,
+        which are now passing with this patch.
+
+        Pending to add RTL tests when "left" and "right" are not "auto"
+        (the item doesn't use the static inline position),
+        but that will be done in the other patch.
+
+        * fast/css-grid-layout/absolute-positioning-grid-container-containing-block-expected.txt:
+        * fast/css-grid-layout/absolute-positioning-grid-container-containing-block.html:
+        * fast/css-grid-layout/absolute-positioning-grid-container-parent-expected.txt:
+        * fast/css-grid-layout/absolute-positioning-grid-container-parent.html:
+        * fast/css-grid-layout/grid-positioned-items-background-expected.html:
+        * fast/css-grid-layout/grid-positioned-items-background.html:
+        Fix test setting transparent background as it couldn't fail before.
+        Also using a different width, to have different values when we create the RTL version.
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid-expected.txt:
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid-line-expected.txt:
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid-line.html:
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid.html:
+        * fast/css-grid-layout/grid-positioned-items-unknown-named-grid-line-expected.txt:
+        * fast/css-grid-layout/grid-positioned-items-unknown-named-grid-line.html:
+        * fast/css-grid-layout/grid-sizing-positioned-items-expected.txt:
+        * fast/css-grid-layout/grid-sizing-positioned-items.html:
+
 2016-03-26  Antti Koivisto  <antti@apple.com>
 
         Separate render tree updating from style resolve

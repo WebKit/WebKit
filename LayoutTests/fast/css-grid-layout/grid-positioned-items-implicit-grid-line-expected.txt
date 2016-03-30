@@ -2,3 +2,5 @@ This test checks that grid placement properties of absolutely positioned items u
 
 PASS
 PASS
+PASS
+PASS
