@@ -35,7 +35,7 @@
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
 #else
-#include <WebCore/CoreGraphicsSPI.h>
+#include "CoreGraphicsSPI.h"
 #include <wtf/StdLibExtras.h>
 #endif // !PLATFORM(IOS)
 

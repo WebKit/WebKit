@@ -48,11 +48,11 @@
 
 #if PLATFORM(IOS)
 #include "RuntimeApplicationChecks.h"
-#include <WebCore/WebCoreThread.h>
+#include "WebCoreThread.h"
 #endif
 
 #if PLATFORM(COCOA)
-#include <WebCore/RunLoopObserver.h>
+#include "RunLoopObserver.h"
 #endif
 
 using namespace Inspector;

@@ -30,7 +30,7 @@
 #endif
 
 #if PLATFORM(WIN) && !USE(WINGDI)
-#include <WebCore/WebCoreHeaderDetection.h>
+#include "WebCoreHeaderDetection.h"
 #endif
 
 #include <wtf/ExportMacros.h>

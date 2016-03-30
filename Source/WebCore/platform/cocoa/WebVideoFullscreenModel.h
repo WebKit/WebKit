@@ -29,8 +29,8 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-#include <WebCore/FloatRect.h>
-#include <WebCore/HTMLMediaElementEnums.h>
+#include "FloatRect.h"
+#include "HTMLMediaElementEnums.h"
 
 namespace WebCore {
 

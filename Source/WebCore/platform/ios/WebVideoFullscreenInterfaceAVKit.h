@@ -29,11 +29,11 @@
 
 #if PLATFORM(IOS)
 
-#include <WebCore/EventListener.h>
-#include <WebCore/HTMLMediaElementEnums.h>
-#include <WebCore/PlatformLayer.h>
-#include <WebCore/Timer.h>
-#include <WebCore/WebVideoFullscreenInterface.h>
+#include "EventListener.h"
+#include "HTMLMediaElementEnums.h"
+#include "PlatformLayer.h"
+#include "Timer.h"
+#include "WebVideoFullscreenInterface.h"
 #include <functional>
 #include <objc/objc.h>
 #include <wtf/RefCounted.h>

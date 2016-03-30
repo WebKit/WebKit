@@ -54,7 +54,7 @@
 #endif
 
 #if USE(CG)
-#include <WebCore/CoreGraphicsSPI.h>
+#include "CoreGraphicsSPI.h"
 #endif
 
 namespace WebCore {

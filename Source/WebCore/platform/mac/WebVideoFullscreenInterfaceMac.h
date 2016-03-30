@@ -28,8 +28,8 @@
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
-#include <WebCore/HTMLMediaElementEnums.h>
-#include <WebCore/WebVideoFullscreenInterface.h>
+#include "HTMLMediaElementEnums.h"
+#include "WebVideoFullscreenInterface.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>

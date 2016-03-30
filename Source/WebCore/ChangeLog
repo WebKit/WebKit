@@ -1,3 +1,26 @@
+2016-03-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid WebCore-prefixed paths when building WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=156027
+
+        Reviewed by David Kilzer.
+
+        Replace instances of '#include <WebCore/XXXYYY.h>"' with the normal
+        '#include "XXXYYY.h"' for files inside WebCore.
+
+        * config.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        * page/ViewportConfiguration.cpp:
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        * platform/cocoa/WebVideoFullscreenModel.h:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.h:
+        * platform/graphics/Font.h:
+        * platform/graphics/ca/cocoa/LayerFlushSchedulerMac.cpp:
+        * platform/graphics/cg/ColorCG.cpp:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+
 2016-03-30  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
         Move the CG ImageDecoder class from ImageSourceCG.cpp to ImageDecoderCG.h and .cpp

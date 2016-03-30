@@ -38,9 +38,9 @@
 #include "FloatConversion.h"
 #include "Logging.h"
 #include "Page.h"
+#include "RuntimeApplicationChecks.h"
 #include "SoftLinking.h"
 #include <AudioToolbox/AudioServices.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 

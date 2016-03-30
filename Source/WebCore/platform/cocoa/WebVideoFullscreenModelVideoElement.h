@@ -29,11 +29,11 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-#include <WebCore/EventListener.h>
-#include <WebCore/FloatRect.h>
-#include <WebCore/HTMLMediaElementEnums.h>
-#include <WebCore/PlatformLayer.h>
-#include <WebCore/WebVideoFullscreenModel.h>
+#include "EventListener.h"
+#include "FloatRect.h"
+#include "HTMLMediaElementEnums.h"
+#include "PlatformLayer.h"
+#include "WebVideoFullscreenModel.h"
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ViewportConfiguration.h"
 
-#include <WebCore/TextStream.h>
+#include "TextStream.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
