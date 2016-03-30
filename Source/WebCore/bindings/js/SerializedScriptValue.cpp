@@ -2672,22 +2672,6 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& string
     return adoptRef(*new SerializedScriptValue(WTFMove(buffer)));
 }
 
-#if ENABLE(INDEXED_DATABASE)
-Ref<SerializedScriptValue> SerializedScriptValue::numberValue(double value)
-{
-    Vector<uint8_t> buffer;
-    CloneSerializer::serializeNumber(value, buffer);
-    return adoptRef(*new SerializedScriptValue(WTFMove(buffer)));
-}
-
-Ref<SerializedScriptValue> SerializedScriptValue::undefinedValue()
-{
-    Vector<uint8_t> buffer;
-    CloneSerializer::serializeUndefined(buffer);
-    return adoptRef(*new SerializedScriptValue(WTFMove(buffer)));
-}
-#endif
-
 RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, JSValueRef* exception)
 {
     ExecState* exec = toJS(originContext);

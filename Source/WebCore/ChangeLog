@@ -1,3 +1,18 @@
+2016-03-30  Brady Eidson  <beidson@apple.com>
+
+        Random SerializedScriptValue cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=156032
+
+        Rubberstamped by Tim Hatcher.
+
+        - Remove two unused functions.
+        - Make the class always be ThreadSafeRefCounted.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::numberValue): Deleted.
+        (WebCore::SerializedScriptValue::undefinedValue): Deleted.
+        * bindings/js/SerializedScriptValue.h:
+
 2016-03-30  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid WebCore-prefixed paths when building WebCore
