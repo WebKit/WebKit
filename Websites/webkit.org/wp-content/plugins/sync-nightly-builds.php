@@ -33,17 +33,8 @@ class SyncWebKitNightlyBuilds {
         $upload_dir_info = wp_upload_dir();
         $this->uploads_dir = trailingslashit($upload_dir_info['basedir']);
 
-        add_action('update_webkit_nightly_builds', function () {
-            $SyncBuild = SyncWebKitNightlyBuilds::object();
-            foreach ($SyncBuild->archives as $endpoint => $filename) {
-                // Download a copy of the archives
-                $url = sprintf(self::WEBKIT_NIGHTLY_ARCHIVE_URL, $endpoint);
-
-                if (!copy($url, $SyncBuild->uploads_dir. $filename))  {
-                    error_log("Couldn't download the $filename archive index. ({$errors['type']}) {$errors['message']}");
-                }
-            }
-        });
+        add_action('update_webkit_nightly_builds', array($this, 'sync'));
+        add_action('wp_ajax_search_nightly_builds', array($this, 'search'));
 
         register_activation_hook(__FILE__, function () {
             if (!wp_next_scheduled('update_webkit_nightly_builds'))
@@ -51,10 +42,17 @@ class SyncWebKitNightlyBuilds {
 
             do_action('update_webkit_nightly_builds');
         });
+    }
 
+    public function sync() {
+        foreach ($this->archives as $endpoint => $filename) {
+            // Download a copy of the archives
+            $url = sprintf(self::WEBKIT_NIGHTLY_ARCHIVE_URL, $endpoint);
 
-        add_action('wp_ajax_search_nightly_builds', array($this, 'search'));
-
+            if (!copy($url, $this->uploads_dir. $filename))  {
+                error_log("Couldn't download the $filename archive index. ({$errors['type']}) {$errors['message']}");
+            }
+        }
     }
 
     public function latest($archive = 'builds') {

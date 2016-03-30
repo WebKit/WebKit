@@ -1,5 +1,12 @@
 2016-03-29  Jon Davis  <jond@apple.com>
 
+        Fixed a property access error by removing the lamda function for updates
+        https://bugs.webkit.org/show_bug.cgi?id=155989
+
+        * wp-content/plugins/sync-nightly-builds.php: 
+
+2016-03-29  Jon Davis  <jond@apple.com>
+
         Fixed a context error for Nightly Build sync plugin, tightens layout styles for abovetitle
         https://bugs.webkit.org/show_bug.cgi?id=155989
 
