@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
 
 #include "DumpRenderTreeMac.h"
 
@@ -38,7 +38,7 @@ int main(int argc, const char *argv[])
 
 int main(int, const char*[])
 {
-    RELEASE_ASSERT_WITH_MESSAGE(false, "DumpRenderTree command is not supported on iOS; use DumpRenderTree.app.");
+    RELEASE_ASSERT_WITH_MESSAGE(false, "DumpRenderTree.app is not supported on OS X; use DumpRenderTree command.");
     return 0;
 }
 
