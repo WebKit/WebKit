@@ -27,21 +27,27 @@
 #define UD_SYN_H
 
 #include "udis86_types.h"
-#include <wtf/Assertions.h>
-
 #ifndef __UD_STANDALONE__
 # include <stdarg.h>
 #endif /* __UD_STANDALONE__ */
 
 extern const char* ud_reg_tab[];
 
-static void mkasm(struct ud* u, const char* fmt, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
-static void mkasm(struct ud* u, const char* fmt, ...)
-{
-  va_list ap;
-  va_start(ap, fmt);
-  u->insn_fill += vsnprintf((char*) u->insn_buffer + u->insn_fill, UD_STRING_BUFFER_SIZE - u->insn_fill, fmt, ap);
-  va_end(ap);
-}
+uint64_t ud_syn_rel_target(struct ud*, struct ud_operand*);
 
+#ifdef __GNUC__
+int ud_asmprintf(struct ud *u, const char *fmt, ...)
+    __attribute__ ((format (printf, 2, 3)));
+#else
+int ud_asmprintf(struct ud *u, const char *fmt, ...);
 #endif
+
+void ud_syn_print_addr(struct ud *u, uint64_t addr);
+void ud_syn_print_imm(struct ud* u, const struct ud_operand *op);
+void ud_syn_print_mem_disp(struct ud* u, const struct ud_operand *, int sign);
+
+#endif /* UD_SYN_H */
+
+/*
+vim: set ts=2 sw=2 expandtab
+*/

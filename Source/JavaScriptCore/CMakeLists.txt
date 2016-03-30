@@ -388,7 +388,6 @@ set(JavaScriptCore_SOURCES
 
     disassembler/udis86/udis86.c
     disassembler/udis86/udis86_decode.c
-    disassembler/udis86/udis86_input.c
     disassembler/udis86/udis86_itab_holder.c
     disassembler/udis86/udis86_syn-att.c
     disassembler/udis86/udis86_syn-intel.c
@@ -912,14 +911,13 @@ endforeach ()
 
 set(UDIS_GEN_DEP
     disassembler/udis86/ud_opcode.py
-    disassembler/udis86/ud_optable.py
 )
 
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.c ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.h
     DEPENDS ${UDIS_GEN_DEP}
     WORKING_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/disassembler/udis86/itab.py ${JAVASCRIPTCORE_DIR}/disassembler/udis86/optable.xml
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/disassembler/udis86/ud_itab.py ${JAVASCRIPTCORE_DIR}/disassembler/udis86/optable.xml ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
     VERBATIM)
 
 list(APPEND JavaScriptCore_HEADERS

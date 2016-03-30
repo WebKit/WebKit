@@ -894,8 +894,6 @@
 		0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42734158EBD94004CB9FF /* udis86_decode.c */; };
 		0FF42741158EBE8D004CB9FF /* udis86_decode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF42735158EBD94004CB9FF /* udis86_decode.h */; };
 		0FF42742158EBE91004CB9FF /* udis86_extern.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF42736158EBD94004CB9FF /* udis86_extern.h */; };
-		0FF42743158EBE91004CB9FF /* udis86_input.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42737158EBD94004CB9FF /* udis86_input.c */; };
-		0FF42744158EBE91004CB9FF /* udis86_input.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF42738158EBD94004CB9FF /* udis86_input.h */; };
 		0FF42745158EBE91004CB9FF /* udis86_syn-att.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42739158EBD94004CB9FF /* udis86_syn-att.c */; };
 		0FF42746158EBE91004CB9FF /* udis86_syn-intel.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4273A158EBD94004CB9FF /* udis86_syn-intel.c */; };
 		0FF42747158EBE91004CB9FF /* udis86_syn.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4273B158EBD94004CB9FF /* udis86_syn.c */; };
@@ -3053,8 +3051,6 @@
 		0FF42734158EBD94004CB9FF /* udis86_decode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_decode.c; path = disassembler/udis86/udis86_decode.c; sourceTree = "<group>"; };
 		0FF42735158EBD94004CB9FF /* udis86_decode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86_decode.h; path = disassembler/udis86/udis86_decode.h; sourceTree = "<group>"; };
 		0FF42736158EBD94004CB9FF /* udis86_extern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86_extern.h; path = disassembler/udis86/udis86_extern.h; sourceTree = "<group>"; };
-		0FF42737158EBD94004CB9FF /* udis86_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_input.c; path = disassembler/udis86/udis86_input.c; sourceTree = "<group>"; };
-		0FF42738158EBD94004CB9FF /* udis86_input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86_input.h; path = disassembler/udis86/udis86_input.h; sourceTree = "<group>"; };
 		0FF42739158EBD94004CB9FF /* udis86_syn-att.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "udis86_syn-att.c"; path = "disassembler/udis86/udis86_syn-att.c"; sourceTree = "<group>"; };
 		0FF4273A158EBD94004CB9FF /* udis86_syn-intel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "udis86_syn-intel.c"; path = "disassembler/udis86/udis86_syn-intel.c"; sourceTree = "<group>"; };
 		0FF4273B158EBD94004CB9FF /* udis86_syn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_syn.c; path = disassembler/udis86/udis86_syn.c; sourceTree = "<group>"; };
@@ -3281,6 +3277,7 @@
 		43AB26C41C1A52F700D82AE6 /* B3MathExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3MathExtras.cpp; path = b3/B3MathExtras.cpp; sourceTree = "<group>"; };
 		43AB26C51C1A52F700D82AE6 /* B3MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3MathExtras.h; path = b3/B3MathExtras.h; sourceTree = "<group>"; };
 		43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerCommon.h; sourceTree = "<group>"; };
+		43CBA1601CAB67BA00328A5C /* udis86_udint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86_udint.h; path = disassembler/udis86/udis86_udint.h; sourceTree = "<group>"; };
 		449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		451539B812DC994500EF7AC4 /* Yarr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Yarr.h; path = yarr/Yarr.h; sourceTree = "<group>"; };
 		45E12D8806A49B0F00E9DF84 /* jsc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsc.cpp; sourceTree = "<group>"; tabWidth = 4; };
@@ -4884,9 +4881,8 @@
 				0FF42734158EBD94004CB9FF /* udis86_decode.c */,
 				0FF42735158EBD94004CB9FF /* udis86_decode.h */,
 				0FF42736158EBD94004CB9FF /* udis86_extern.h */,
-				0FF42737158EBD94004CB9FF /* udis86_input.c */,
-				0FF42738158EBD94004CB9FF /* udis86_input.h */,
 				0FF4274C158EBFE1004CB9FF /* udis86_itab_holder.c */,
+				43CBA1601CAB67BA00328A5C /* udis86_udint.h */,
 				0FF42739158EBD94004CB9FF /* udis86_syn-att.c */,
 				0FF4273A158EBD94004CB9FF /* udis86_syn-intel.c */,
 				0FF4273B158EBD94004CB9FF /* udis86_syn.c */,
@@ -8016,7 +8012,6 @@
 				0FF4274B158EBE91004CB9FF /* udis86.h in Headers */,
 				0FF42741158EBE8D004CB9FF /* udis86_decode.h in Headers */,
 				0FF42742158EBE91004CB9FF /* udis86_extern.h in Headers */,
-				0FF42744158EBE91004CB9FF /* udis86_input.h in Headers */,
 				0FF42748158EBE91004CB9FF /* udis86_syn.h in Headers */,
 				0FF42749158EBE91004CB9FF /* udis86_types.h in Headers */,
 				A7E5AB391799E4B200D2833D /* UDis86Disassembler.h in Headers */,
@@ -9328,7 +9323,6 @@
 				0F6B8AE41C4EFE1700969052 /* B3FixSSA.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,
-				0FF42743158EBE91004CB9FF /* udis86_input.c in Sources */,
 				FEA1E4391C213A2B00277A16 /* ValueProfile.cpp in Sources */,
 				0FF4274D158EBFE6004CB9FF /* udis86_itab_holder.c in Sources */,
 				0FF42745158EBE91004CB9FF /* udis86_syn-att.c in Sources */,
