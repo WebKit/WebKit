@@ -2,11 +2,14 @@
 
 var assert = require('assert');
 
-require('./resources/mock-remote-api.js');
+let MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 require('../tools/js/v3-models.js');
-require('./resources/mock-v3-models.js');
+let MockModels = require('./resources/mock-v3-models.js').MockModels;
 
 describe('MeasurementSet', function () {
+    MockModels.inject();
+    let requests = MockRemoteAPI.inject();
+
     beforeEach(function () {
         MeasurementSet._set = null;
     });

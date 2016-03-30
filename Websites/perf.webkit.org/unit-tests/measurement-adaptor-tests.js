@@ -3,7 +3,7 @@
 var assert = require('assert');
 
 require('../tools/js/v3-models.js');
-require('./resources/mock-v3-models.js');
+let MockModels = require('./resources/mock-v3-models.js').MockModels;
 
 var sampleCluster = {
     'clusterStart': 946684800000,
@@ -26,6 +26,8 @@ var sampleCluster = {
 var sampleData = sampleCluster.configurations.current[0];
 
 describe('MeasurementAdaptor', function () {
+    MockModels.inject();
+
     describe('applyTo', function () {
         it('should adapt id', function () {
             var adoptor = new MeasurementAdaptor(sampleCluster.formatMap);
@@ -50,7 +52,7 @@ describe('MeasurementAdaptor', function () {
             assert.ok(adoptor.applyTo(sampleData).build() instanceof Build);
             assert.equal(adoptor.applyTo(sampleData).build().id(), 184629);
             assert.equal(adoptor.applyTo(sampleData).build().buildNumber(), '178');
-            assert.equal(adoptor.applyTo(sampleData).build().builder(), builder);
+            assert.equal(adoptor.applyTo(sampleData).build().builder(), MockModels.builder);
             assert.equal(adoptor.applyTo(sampleData).build().label(), 'Build 178 on WebKit Perf Builder');
             assert.equal(adoptor.applyTo(sampleData).build().url(), 'http://build.webkit.org/builders/WebKit Perf Builder/178');
         });
@@ -68,12 +70,12 @@ describe('MeasurementAdaptor', function () {
             assert.ok(rootSet instanceof RootSet);
             assert.equal(rootSet.latestCommitTime(), 1447707055576);
 
-            assert.ok(rootSet.repositories().indexOf(osx) >= 0);
-            assert.equal(rootSet.revisionForRepository(osx), '10.11 15D21');
+            assert.ok(rootSet.repositories().indexOf(MockModels.osx) >= 0);
+            assert.equal(rootSet.revisionForRepository(MockModels.osx), '10.11 15D21');
 
-            var commit = rootSet.commitForRepository(osx);
+            var commit = rootSet.commitForRepository(MockModels.osx);
             assert.ok(commit instanceof CommitLog);
-            assert.equal(commit.repository(), osx);
+            assert.equal(commit.repository(), MockModels.osx);
             assert.ok(commit.time() instanceof Date);
             assert.equal(commit.id(), 111);
             assert.equal(commit.revision(), '10.11 15D21');
@@ -86,12 +88,12 @@ describe('MeasurementAdaptor', function () {
             var adoptor = new MeasurementAdaptor(sampleCluster.formatMap);
             var rootSet = adoptor.applyTo(sampleData).rootSet();
 
-            assert.ok(rootSet.repositories().indexOf(webkit) >= 0);
-            assert.equal(rootSet.revisionForRepository(webkit), '192483');
+            assert.ok(rootSet.repositories().indexOf(MockModels.webkit) >= 0);
+            assert.equal(rootSet.revisionForRepository(MockModels.webkit), '192483');
 
-            var commit = rootSet.commitForRepository(webkit);
+            var commit = rootSet.commitForRepository(MockModels.webkit);
             assert.ok(commit instanceof CommitLog);
-            assert.equal(commit.repository(), webkit);
+            assert.equal(commit.repository(), MockModels.webkit);
             assert.ok(commit.time() instanceof Date);
             assert.equal(commit.id(), 222);
             assert.equal(+commit.time(), 1447707055576);
@@ -103,11 +105,11 @@ describe('MeasurementAdaptor', function () {
 
         it('should not create separate CommitLog object for the same revision', function () {
             var adoptor = new MeasurementAdaptor(sampleCluster.formatMap);
-            assert.equal(adoptor.applyTo(sampleData).rootSet().commitForRepository(webkit),
-                adoptor.applyTo(sampleData).rootSet().commitForRepository(webkit));
+            assert.equal(adoptor.applyTo(sampleData).rootSet().commitForRepository(MockModels.webkit),
+                adoptor.applyTo(sampleData).rootSet().commitForRepository(MockModels.webkit));
 
-            assert.equal(adoptor.applyTo(sampleData).rootSet().commitForRepository(osx),
-                adoptor.applyTo(sampleData).rootSet().commitForRepository(osx));
+            assert.equal(adoptor.applyTo(sampleData).rootSet().commitForRepository(MockModels.osx),
+                adoptor.applyTo(sampleData).rootSet().commitForRepository(MockModels.osx));
         });
 
     });

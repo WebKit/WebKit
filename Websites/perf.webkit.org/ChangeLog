@@ -1,5 +1,33 @@
 2016-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Make dependency injection in unit tests more explicit
+        https://bugs.webkit.org/show_bug.cgi?id=156006
+
+        Reviewed by Joseph Pecoraro.
+
+        Make the dependency injection of model objects in unit tests explicit so that server tests that create
+        "real" model objects won't create these mock objects. Now each test that uses mock model objects would call
+        MockModels.inject() to inject before / beforeEach and access each object using a property on MockModels
+        instead of them being implicitly defined on the global object.
+
+        Similarly, MockRemoteAPI now only replaces global.RemoteAPI during each test so that server tests can use
+        real RemoteAPI to access the test Apache server.
+
+        * unit-tests/analysis-task-tests.js:
+        * unit-tests/buildbot-syncer-tests.js:
+        (createSampleBuildRequest):
+        * unit-tests/measurement-adaptor-tests.js:
+        * unit-tests/measurement-set-tests.js:
+        * unit-tests/resources/mock-remote-api.js:
+        (MockRemoteAPI.getJSONWithStatus):
+        (MockRemoteAPI.inject): Added. Override RemoteAPI on the global object during each test.
+        * unit-tests/resources/mock-v3-models.js:
+        (MockModels.inject): Added. Create mock model objects before each test, and clear all static maps of
+        various v3 model classes (to remove all singleton objects for those model classes).
+        * unit-tests/test-groups-tests.js:
+
+2016-03-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         BuildbotSyncer should be able to fetch JSON from buildbot
         https://bugs.webkit.org/show_bug.cgi?id=155921
 

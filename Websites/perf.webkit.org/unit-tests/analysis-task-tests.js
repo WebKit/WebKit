@@ -3,8 +3,8 @@
 var assert = require('assert');
 
 require('../tools/js/v3-models.js');
-require('./resources/mock-v3-models.js');
-require('./resources/mock-remote-api.js');
+let MockModels = require('./resources/mock-v3-models.js').MockModels;
+let MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 
 function sampleAnalysisTask()
 {
@@ -117,6 +117,9 @@ function measurementCluster()
 }
 
 describe('AnalysisTask', function () {
+    MockModels.inject();
+    let requests = MockRemoteAPI.inject();
+
     describe('fetchAll', function () {
         it('should request all analysis tasks', function () {
             var callCount = 0;
@@ -167,8 +170,8 @@ describe('AnalysisTask', function () {
                 assert.equal(AnalysisTask.all().length, 1);
                 var task = AnalysisTask.all()[0];
                 assert.equal(task.id(), 1082);
-                assert.equal(task.metric(), someMetric);
-                assert.equal(task.platform(), somePlatform);
+                assert.equal(task.metric(), MockModels.someMetric);
+                assert.equal(task.platform(), MockModels.somePlatform);
                 assert.ok(task.hasResults());
                 assert.ok(task.hasPendingRequests());
                 assert.equal(task.requestLabel(), '6 of 14');
@@ -194,7 +197,7 @@ describe('AnalysisTask', function () {
                 var commit = task.causes()[0];
 
                 assert.equal(commit.revision(), '196051');
-                assert.equal(commit.repository(), webkit);
+                assert.equal(commit.repository(), MockModels.webkit);
                 assert.equal(+commit.time(), 1454481246108);
                 done();
             }).catch(function (error) { done(error); });
@@ -204,7 +207,7 @@ describe('AnalysisTask', function () {
             var adoptor = new MeasurementAdaptor(measurementCluster().formatMap);
             var adoptedMeasurement = adoptor.applyTo(measurementCluster().configurations.current[0]);
             assert.equal(adoptedMeasurement.id, 37188161);
-            assert.equal(adoptedMeasurement.rootSet().commitForRepository(webkit).revision(), '196051');
+            assert.equal(adoptedMeasurement.rootSet().commitForRepository(MockModels.webkit).revision(), '196051');
 
             var promise = AnalysisTask.fetchAll();
             requests[0].resolve(sampleAnalysisTask());
@@ -216,7 +219,7 @@ describe('AnalysisTask', function () {
                 assert.equal(task.causes().length, 1);
                 var commit = task.causes()[0];
                 assert.equal(commit.revision(), '196051');
-                assert.equal(commit.repository(), webkit);
+                assert.equal(commit.repository(), MockModels.webkit);
                 assert.equal(+commit.time(), 1454481246108);
                 done();
             }).catch(function (error) { done(error); });

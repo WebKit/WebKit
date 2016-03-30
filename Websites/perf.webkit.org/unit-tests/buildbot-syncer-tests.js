@@ -3,8 +3,8 @@
 let assert = require('assert');
 
 require('../tools/js/v3-models.js');
-require('./resources/mock-remote-api.js');
-require('./resources/mock-v3-models.js');
+let MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
+let MockModels = require('./resources/mock-v3-models.js').MockModels;
 
 let BuildbotBuildEntry = require('../tools/js/buildbot-syncer.js').BuildbotBuildEntry;
 let BuildbotSyncer = require('../tools/js/buildbot-syncer.js').BuildbotSyncer;
@@ -74,9 +74,9 @@ let sampleRootSetData = {
 function createSampleBuildRequest()
 {
     let rootSet = RootSet.ensureSingleton('4197', {roots: [
-        {'id': '111127', 'time': 1456955807334, 'repository': webkit, 'revision': '197463'},
-        {'id': '111237', 'time': 1456931874000, 'repository': sharedRepository, 'revision': '80229'},
-        {'id': '88930', 'time': 0, 'repository': ios, 'revision': '13A452'},
+        {'id': '111127', 'time': 1456955807334, 'repository': MockModels.webkit, 'revision': '197463'},
+        {'id': '111237', 'time': 1456931874000, 'repository': MockModels.sharedRepository, 'revision': '80229'},
+        {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'},
     ]});
 
     let request = BuildRequest.ensureSingleton('16733', {'rootSet': rootSet, 'status': 'pending'});
@@ -281,6 +281,9 @@ function sampleFinishedBuild(buildRequestId)
 }
 
 describe('BuildbotSyncer', function () {
+    MockModels.inject();
+    let requests = MockRemoteAPI.inject();
+
     describe('_loadConfig', function () {
 
         function smallConfiguration()

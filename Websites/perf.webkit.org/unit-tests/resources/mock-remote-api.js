@@ -3,8 +3,7 @@ var assert = require('assert');
 if (!assert.notReached)
     assert.notReached = function () { assert(false, 'This code path should not be reached'); }
 
-global.requests = [];
-global.RemoteAPI = {
+var MockRemoteAPI = {
     getJSON: function (url)
     {
         return this.getJSONWithStatus(url);
@@ -23,11 +22,27 @@ global.RemoteAPI = {
             request.reject = reject;
         });
 
-        requests.push(request);
+        MockRemoteAPI.requests.push(request);
         return request.promise;
     },
-};
+    inject: function ()
+    {
+        var originalRemoteAPI = global.RemoteAPI;
 
-beforeEach(function () {
-    requests = [];
-});
+        beforeEach(function () {
+            MockRemoteAPI.requests.length = 0;
+            originalRemoteAPI = global.RemoteAPI;
+            global.RemoteAPI = MockRemoteAPI;
+        });
+
+        afterEach(function () {        
+            global.RemoteAPI = originalRemoteAPI;
+        });
+
+        return MockRemoteAPI.requests;
+    }
+};
+MockRemoteAPI.requests = [];
+
+if (typeof module != 'undefined')
+    module.exports.MockRemoteAPI = MockRemoteAPI;
