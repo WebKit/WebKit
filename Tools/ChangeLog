@@ -1,3 +1,42 @@
+2016-03-30  Daniel Bates  <dabates@apple.com>
+
+        run-webkit-tests must create parent directory of user's cache directory before running tests
+        https://bugs.webkit.org/show_bug.cgi?id=156009
+        <rdar://problem/25442682>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The script run-webkit-tests must create the parent directory of the user's cache directory
+        before running tests because a WebKit2 child process expects that this directory exists
+        when it starts.
+
+        The script run-webkit-tests influences the path chosen by a WebKit2 child process for the
+        user's temporary directory and user's cache directory via the environment variable
+        DIRHELPER_USER_DIR_SUFFIX. For the user's temporary directory, run-webkit-tests creates it
+        as part of setting up the test environment. But run-webkit-tests does not create the user's
+        cache directory. Therefore there is race between the time AppKit creates it and when the
+        launched WebContent and Network processes query for the path to the user's cache directory
+        such that the OS may return the empty string to the WebContent and Network processes if
+        queried for this directory before AppKit creates it.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._path_to_user_cache_directory): Added. Base class implementation that returns the
+        empty string. We will override this method for the OS X port to return the path to the
+        user's cache directory with the specified suffix.
+        (Port.remove_cache_directory): Deleted.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.__init__): Initialize self._driver_user_directory_suffix and self._driver_user_cache_directory
+        to the suffix to use for the user's temporary and cache directories and the path to the
+        user's cache directory, respectively.
+        (Driver._setup_environ_for_driver): Modified to set the environment variable DIRHELPER_USER_DIR_SUFFIX
+        to self._driver_user_directory_suffix.
+        (Driver._start): Compute the user directory suffix and the path to the user's cache
+        directory. Create the user's cache directory (if applicable).
+        (Driver.stop): Modified to remove directory self._driver_user_cache_directory (if applicable).
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.user_cache_directory): Added. Overrides Port._path_to_user_cache_directory().
+        (MacPort.remove_cache_directory): Deleted.
+
 2016-03-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [WTF] Removing a smart pointer from HashTable issues two stores to the same location

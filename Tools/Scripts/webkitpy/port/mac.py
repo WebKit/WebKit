@@ -117,8 +117,16 @@ class MacPort(ApplePort):
         self._filesystem.rmtree(os.path.expanduser('~/Library/Caches/' + self.driver_name()))
         self._filesystem.rmtree(os.path.expanduser('~/Library/WebKit/' + self.driver_name()))
 
-    def remove_cache_directory(self, name):
-        self._filesystem.rmtree(os.confstr(65538) + name)
+    def _path_to_user_cache_directory(self, suffix=None):
+        DIRHELPER_USER_DIR_SUFFIX = "DIRHELPER_USER_DIR_SUFFIX"
+        saved_suffix = None
+        if suffix is not None:
+            saved_suffix = os.environ.get(DIRHELPER_USER_DIR_SUFFIX)
+            os.environ[DIRHELPER_USER_DIR_SUFFIX] = suffix
+        result = os.confstr(65538)  # _CS_DARWIN_USER_CACHE_DIR
+        if saved_suffix is not None:
+            os.environ[DIRHELPER_USER_DIR_SUFFIX] = saved_suffix
+        return result
 
     def operating_system(self):
         return 'mac'
