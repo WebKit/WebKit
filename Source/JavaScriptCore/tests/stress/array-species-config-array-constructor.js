@@ -16,9 +16,6 @@ if (!(result instanceof A))
 
 Object.defineProperty(Array, Symbol.species, { value: Int32Array, configurable: true });
 
-// We can't write to the length property on a typed array by default.
-Object.defineProperty(Int32Array.prototype, "length", { value: 0, writable: true });
-
 result = foo.concat([1]);
 if (!(result instanceof Int32Array))
     throw "concat failed";

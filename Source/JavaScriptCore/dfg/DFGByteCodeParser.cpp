@@ -43,7 +43,6 @@
 #include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
 #include "JSModuleEnvironment.h"
-#include "ObjectConstructor.h"
 #include "PreciseJumpTargets.h"
 #include "PutByIdFlags.h"
 #include "PutByIdStatus.h"
@@ -2122,34 +2121,6 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         }
     }
 
-    case IsArrayIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
-
-        insertChecks();
-        Node* isArray = addToGraph(IsArrayObject, OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset)));
-        set(VirtualRegister(resultOperand), isArray);
-        return true;
-    }
-
-    case IsJSArrayIntrinsic: {
-        ASSERT(argumentCountIncludingThis == 2);
-
-        insertChecks();
-        Node* isArray = addToGraph(IsJSArray, OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset)));
-        set(VirtualRegister(resultOperand), isArray);
-        return true;
-    }
-
-    case IsArrayConstructorIntrinsic: {
-        ASSERT(argumentCountIncludingThis == 2);
-
-        insertChecks();
-        Node* isArray = addToGraph(IsArrayConstructor, OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset)));
-        set(VirtualRegister(resultOperand), isArray);
-        return true;
-    }
-
     case CharCodeAtIntrinsic: {
         if (argumentCountIncludingThis != 2)
             return false;
@@ -2522,16 +2493,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         set(VirtualRegister(resultOperand), result);
         return true;
     }
-
-    // FIXME: This should handle construction as well. https://bugs.webkit.org/show_bug.cgi?id=155591
-    if (function->classInfo() == ObjectConstructor::info() && kind == CodeForCall) {
-        insertChecks();
-
-        Node* result = addToGraph(CallObjectConstructor, get(virtualRegisterForArgument(1, registerOffset)));
-        set(VirtualRegister(resultOperand), result);
-        return true;
-    }
-
+    
     for (unsigned typeIndex = 0; typeIndex < NUMBER_OF_TYPED_ARRAY_TYPES; ++typeIndex) {
         bool result = handleTypedArrayConstructor(
             resultOperand, function, registerOffset, argumentCountIncludingThis,

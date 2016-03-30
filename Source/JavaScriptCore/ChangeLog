@@ -1,3 +1,7 @@
+2016-03-30  Keith Miller <keith_miller@apple.com>
+
+        Unreviewed, rollout r198808. The patch causes crashes on 32-bit and appears to be a JSBench regression.
+
 2016-03-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Implement String.prototype.repeat in builtins JS

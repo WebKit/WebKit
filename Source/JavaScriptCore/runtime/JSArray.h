@@ -23,7 +23,6 @@
 
 #include "ArrayConventions.h"
 #include "ButterflyInlines.h"
-#include "JSCellInlines.h"
 #include "JSObject.h"
 
 namespace JSC {
@@ -79,10 +78,19 @@ public:
 
     JSArray* fastSlice(ExecState&, unsigned startIndex, unsigned count);
 
-    bool canFastCopy(VM&, JSArray* otherArray);
-    // This function returns NonArray if the indexing types are not compatable for memcpying.
-    IndexingType memCopyWithIndexingType(IndexingType other);
-    bool appendMemcpy(ExecState*, VM&, JSArray* otherArray);
+    static IndexingType fastConcatType(VM& vm, JSArray& firstArray, JSArray& secondArray)
+    {
+        IndexingType type = firstArray.indexingType();
+        if (type != secondArray.indexingType())
+            return NonArray;
+        if (type != ArrayWithDouble && type != ArrayWithInt32 && type != ArrayWithContiguous)
+            return NonArray;
+        if (firstArray.structure(vm)->holesMustForwardToPrototype(vm)
+            || secondArray.structure(vm)->holesMustForwardToPrototype(vm))
+            return NonArray;
+        return type;
+    }
+    EncodedJSValue fastConcatWith(ExecState&, JSArray&);
 
     enum ShiftCountMode {
         // This form of shift hints that we're doing queueing. With this assumption in hand,
@@ -144,7 +152,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ArrayType, StructureFlags), info(), indexingType);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info(), indexingType);
     }
         
 protected:

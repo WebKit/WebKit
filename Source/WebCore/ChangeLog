@@ -1,3 +1,7 @@
+2016-03-30  Keith Miller <keith_miller@apple.com>
+
+        Unreviewed, rollout r198808. The patch causes crashes on 32-bit and appears to be a JSBench regression.
+
 2016-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] [RTL Scrollbars] List boxes should obey RTL scrollbars

@@ -417,9 +417,6 @@ private:
         case OverridesHasInstance:
         case InstanceOf:
         case InstanceOfCustom:
-        case IsArrayObject:
-        case IsJSArray:
-        case IsArrayConstructor:
         case IsUndefined:
         case IsBoolean:
         case IsNumber:
@@ -490,11 +487,6 @@ private:
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage: {
             changed |= setPrediction(SpecOther);
-            break;
-        }
-
-        case CallObjectConstructor: {
-            changed |= setPrediction(SpecObject);
             break;
         }
 
