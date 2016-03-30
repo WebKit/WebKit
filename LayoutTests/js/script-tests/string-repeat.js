@@ -31,9 +31,9 @@ shouldBe("''.repeat(0xFFFFFFFF)", "''");
 shouldBe("''.repeat(0xFFFFFFFF + 1)", "''");
 
 // Check range errors.
-shouldThrow("'foo bar'.repeat(-1)", "'RangeError: repeat() argument must be greater than or equal to 0 and not be infinity'");
-shouldThrow("'foo bar'.repeat(Infinity)", "'RangeError: repeat() argument must be greater than or equal to 0 and not be infinity'");
-shouldThrow("'foo bar'.repeat(-Infinity)", "'RangeError: repeat() argument must be greater than or equal to 0 and not be infinity'");
+shouldThrow("'foo bar'.repeat(-1)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity'");
+shouldThrow("'foo bar'.repeat(Infinity)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity'");
+shouldThrow("'foo bar'.repeat(-Infinity)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity'");
 
 // Check out of memory errors.
 shouldThrow("'f'.repeat(0xFFFFFFFF)", "'Error: Out of memory'");

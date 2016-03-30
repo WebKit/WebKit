@@ -62,6 +62,8 @@ EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
 EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
     ExecState*, JSString* thisValue, RegExpObject* searchValue, JSString* replaceValue);
 
+EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState*);
+
 } // namespace JSC
 
 #endif // StringPrototype_h

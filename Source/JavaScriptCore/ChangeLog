@@ -1,3 +1,63 @@
+2016-03-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement String.prototype.repeat in builtins JS
+        https://bugs.webkit.org/show_bug.cgi?id=155974
+
+        Reviewed by Darin Adler.
+
+        This patch converts C++ String.prototype.repeat implementation into JS builtins.
+        |this| in strict mode is correctly inferred as String[1]. This fact encourages us
+        to write PrimitiveTypes.prototype.XXX methods in builtin JS.
+
+        LayoutTests/js/string-repeat.html already covers the tests for this change.
+
+        Note: String.prototype.repeat functionality is similar to Harmony's
+        String.prototype.{padStart, padEnd}. It's nice to port them to builtin JS in
+        the other patch.
+
+        The existing C++ code has the fast path for singleCharacterString repeating.
+        Since this use is important (e.g. generating N length spaces: ' '.repeat(N)),
+        we keep this fast path as @repeatCharacter().
+
+        The performance results show that, while the performance of the single character fast path
+        is neutral, other string repeating has significant speed up.
+        There are two reasons.
+
+        1. Not resolving string rope.
+
+        We added several tests postfixed "not-resolving". In that tests, we do not touch the content
+        of the generated string. As a result, the generated rope is not resolved.
+
+        2. O(log N) intermediate JSRopeStrings.
+
+        In the existing C++ implementation, we use JSString::RopeBuilder. We iterate N times and append
+        the given string to the builder.
+        In this case, the intermediate rope strings generated in JSString::RopeBuilder is O(N).
+        In JS builtin implementation, we only iterate log N times. As a result, the number of the
+        intermediate rope strings becomes O(log N).
+
+        [1]: http://trac.webkit.org/changeset/195938
+
+        * builtins/StringPrototype.js:
+        (repeatSlowPath):
+        (repeat):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncRepeatCharacter):
+        (JSC::StringPrototype::finishCreation): Deleted.
+        (JSC::stringProtoFuncRepeat): Deleted.
+        * runtime/StringPrototype.h:
+        * tests/stress/string-repeat-edge-cases.js: Added.
+        (shouldBe):
+        (let.object.toString):
+        (valueOf):
+        (shouldThrow):
+
 2016-03-30  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Update udis86

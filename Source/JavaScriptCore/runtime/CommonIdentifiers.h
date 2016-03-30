@@ -323,6 +323,7 @@
     macro(getOwnPropertyDescriptor) \
     macro(getOwnPropertyNames) \
     macro(ownKeys) \
+    macro(Error) \
     macro(RangeError) \
     macro(TypeError) \
     macro(typedArrayLength) \
@@ -338,6 +339,7 @@
     macro(promiseRejectReactions) \
     macro(promiseResult) \
     macro(push) \
+    macro(repeatCharacter) \
     macro(capabilities) \
     macro(starDefault) \
     macro(InspectorInstrumentation) \

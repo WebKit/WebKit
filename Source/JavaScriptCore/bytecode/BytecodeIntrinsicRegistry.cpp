@@ -44,10 +44,12 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(INITIALIZE_BYTECODE_INTRINSIC_NAMES_TO_SET)
 
     m_undefined.set(m_vm, jsUndefined());
+    m_Infinity.set(m_vm, jsDoubleNumber(std::numeric_limits<double>::infinity()));
     m_arrayIterationKindKey.set(m_vm, jsNumber(ArrayIterateKey));
     m_arrayIterationKindValue.set(m_vm, jsNumber(ArrayIterateValue));
     m_arrayIterationKindKeyValue.set(m_vm, jsNumber(ArrayIterateKeyValue));
     m_MAX_SAFE_INTEGER.set(m_vm, jsDoubleNumber(9007199254740991.0)); // 2 ^ 53 - 1
+    m_MAX_STRING_LENGTH.set(m_vm, jsNumber(JSString::MaxLength));
     m_promiseStatePending.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)));
     m_promiseStateFulfilled.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Fulfilled)));
     m_promiseStateRejected.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Rejected)));

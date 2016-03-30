@@ -30,9 +30,9 @@ PASS 'フ'.repeat(2) is 'フフ'
 PASS ''.repeat(1000) is ''
 PASS ''.repeat(0xFFFFFFFF) is ''
 PASS ''.repeat(0xFFFFFFFF + 1) is ''
-PASS 'foo bar'.repeat(-1) threw exception RangeError: repeat() argument must be greater than or equal to 0 and not be infinity.
-PASS 'foo bar'.repeat(Infinity) threw exception RangeError: repeat() argument must be greater than or equal to 0 and not be infinity.
-PASS 'foo bar'.repeat(-Infinity) threw exception RangeError: repeat() argument must be greater than or equal to 0 and not be infinity.
+PASS 'foo bar'.repeat(-1) threw exception RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity.
+PASS 'foo bar'.repeat(Infinity) threw exception RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity.
+PASS 'foo bar'.repeat(-Infinity) threw exception RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be infinity.
 PASS 'f'.repeat(0xFFFFFFFF) threw exception Error: Out of memory.
 PASS 'f'.repeat(0xFFFFFFFF + 1) threw exception Error: Out of memory.
 PASS 'foo'.repeat(0xFFFFFFFFF) threw exception Error: Out of memory.
