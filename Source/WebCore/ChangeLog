@@ -1,3 +1,27 @@
+2016-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r198784) Shouldn't add platform-dependent code to ScrollableArea.h
+        https://bugs.webkit.org/show_bug.cgi?id=155999
+
+        Rolling out the patch.
+
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::horizontalScrollbar):
+        (WebCore::ScrollableArea::verticalScrollbar):
+        (WebCore::ScrollableArea::tiledBacking):
+        (WebCore::ScrollableArea::layerForHorizontalScrollbar):
+        (WebCore::ScrollableArea::layerForVerticalScrollbar):
+        (WebCore::ScrollableArea::layerForScrolling):
+        (WebCore::ScrollableArea::layerForScrollCorner):
+        (WebCore::ScrollableArea::layerForOverhangAreas):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle): Deleted.
+        * platform/mac/ScrollableAreaMac.mm:
+        (WebCore::ScrollableArea::setScrollbarLayoutDirection): Deleted.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::registerScrollbar): Deleted.
+        * platform/spi/mac/NSScrollerImpSPI.h:
+
 2016-03-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows clean build.

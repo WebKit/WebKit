@@ -79,7 +79,6 @@ typedef NSUInteger NSOverlayScrollerState;
 @property(readonly) CGFloat knobMinLength;
 @property(readonly) CGFloat knobOverlapEndInset;
 @property(readonly) CGFloat trackOverlapEndInset;
-@property NSUserInterfaceLayoutDirection userInterfaceLayoutDirection;
 - (NSRect)rectForPart:(NSScrollerPart)partCode;
 - (void)drawKnobSlotInRect:(NSRect)slotRect highlight:(BOOL)flag alpha:(CGFloat)alpha;
 - (void)drawKnobSlotInRect:(NSRect)slotRect highlight:(BOOL)flag;

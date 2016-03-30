@@ -160,7 +160,6 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)
 
     bool isHorizontal = scrollbar.orientation() == HorizontalScrollbar;
     NSScrollerImp *scrollerImp = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(scrollbar.controlSize()) horizontal:isHorizontal replacingScrollerImp:nil];
-    scrollbar.scrollableArea().setScrollbarLayoutDirection(scrollerImp);
     scrollbarMap()->add(&scrollbar, scrollerImp);
     updateEnabledState(scrollbar);
     updateScrollbarOverlayStyle(scrollbar);
