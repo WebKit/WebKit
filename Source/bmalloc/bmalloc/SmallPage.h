@@ -58,10 +58,18 @@ public:
     SmallLine* begin();
     SmallLine* end();
 
+    unsigned char slide() const { return m_slide; }
+    void setSlide(unsigned char slide) { m_slide = slide; }
+
+    unsigned char smallPageCount() const { return m_smallPageCount; }
+    void setSmallPageCount(unsigned char smallPageCount) { m_smallPageCount = smallPageCount; }
+
 private:
     unsigned char m_hasFreeLines: 1;
     unsigned char m_refCount: 7;
     unsigned char m_sizeClass;
+    unsigned char m_smallPageCount;
+    unsigned char m_slide;
     ObjectType m_objectType;
 
 static_assert(
@@ -71,12 +79,14 @@ static_assert(
 
 inline void SmallPage::ref(std::lock_guard<StaticMutex>&)
 {
+    BASSERT(!m_slide);
     ++m_refCount;
     BASSERT(m_refCount);
 }
 
 inline bool SmallPage::deref(std::lock_guard<StaticMutex>&)
 {
+    BASSERT(!m_slide);
     BASSERT(m_refCount);
     --m_refCount;
     return !m_refCount;

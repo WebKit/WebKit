@@ -47,31 +47,35 @@ namespace bmalloc {
 #define BMALLOC_VM_TAG -1
 #endif
 
+inline size_t vmPageSize()
+{
+    return sysconf(_SC_PAGESIZE);
+}
+
+inline size_t vmPageShift()
+{
+    return log2(vmPageSize());
+}
+
 inline size_t vmSize(size_t size)
 {
-    return roundUpToMultipleOf<vmPageSize>(size);
+    return roundUpToMultipleOf(vmPageSize(), size);
 }
 
 inline void vmValidate(size_t vmSize)
 {
-    // We use getpagesize() here instead of vmPageSize because vmPageSize is
-    // allowed to be larger than the OS's true page size.
-
     UNUSED(vmSize);
     BASSERT(vmSize);
-    BASSERT(vmSize == roundUpToMultipleOf(static_cast<size_t>(getpagesize()), vmSize));
+    BASSERT(vmSize == roundUpToMultipleOf(vmPageSize(), vmSize));
 }
 
 inline void vmValidate(void* p, size_t vmSize)
 {
-    // We use getpagesize() here instead of vmPageSize because vmPageSize is
-    // allowed to be larger than the OS's true page size.
-
     vmValidate(vmSize);
     
     UNUSED(p);
     BASSERT(p);
-    BASSERT(p == mask(p, ~(getpagesize() - 1)));
+    BASSERT(p == mask(p, ~(vmPageSize() - 1)));
 }
 
 inline void* tryVMAllocate(size_t vmSize)
@@ -106,10 +110,7 @@ inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize)
     vmValidate(vmSize);
     vmValidate(vmAlignment);
 
-    // We use getpagesize() here instead of vmPageSize because vmPageSize is
-    // allowed to be larger than the OS's true page size.
-
-    size_t mappedSize = vmAlignment - getpagesize() + vmSize;
+    size_t mappedSize = vmAlignment - vmPageSize() + vmSize;
     char* mapped = static_cast<char*>(tryVMAllocate(mappedSize));
     if (!mapped)
         return nullptr;
@@ -159,8 +160,8 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 // Trims requests that are un-page-aligned.
 inline void vmDeallocatePhysicalPagesSloppy(void* p, size_t size)
 {
-    char* begin = roundUpToMultipleOf<vmPageSize>(static_cast<char*>(p));
-    char* end = roundDownToMultipleOf<vmPageSize>(static_cast<char*>(p) + size);
+    char* begin = roundUpToMultipleOf(vmPageSize(), static_cast<char*>(p));
+    char* end = roundDownToMultipleOf(vmPageSize(), static_cast<char*>(p) + size);
 
     if (begin >= end)
         return;
@@ -171,8 +172,8 @@ inline void vmDeallocatePhysicalPagesSloppy(void* p, size_t size)
 // Expands requests that are un-page-aligned.
 inline void vmAllocatePhysicalPagesSloppy(void* p, size_t size)
 {
-    char* begin = roundDownToMultipleOf<vmPageSize>(static_cast<char*>(p));
-    char* end = roundUpToMultipleOf<vmPageSize>(static_cast<char*>(p) + size);
+    char* begin = roundDownToMultipleOf(vmPageSize(), static_cast<char*>(p));
+    char* end = roundUpToMultipleOf(vmPageSize(), static_cast<char*>(p) + size);
 
     if (begin >= end)
         return;

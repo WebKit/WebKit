@@ -1,3 +1,96 @@
+2016-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: page size should be configurable at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=155993
+
+        Reviewed by Andreas Kling.
+
+        This is a memory win on 32bit iOS devices, since their page sizes are
+        4kB and not 16kB.
+
+        It's also a step toward supporting 64bit iOS devices that have a
+        16kB/4kB virtual/physical page size split.
+
+        * bmalloc/Chunk.h: Align to largeAlignment since 2 * smallMax isn't
+        required by the boundary tag allocator.
+
+        (bmalloc::Chunk::page): Account for the slide when accessing a page.
+        Each SmallPage hashes 4kB of memory. When we want to allocate a region
+        of memory larger than 4kB, we store our metadata in the first SmallPage
+        in the region and we assign a slide to the remaining SmallPages, so
+        they forward to that first SmallPage when accessed.
+
+        NOTE: We could use a less flexible technique that just hashed by
+        vmPageSize() instead of 4kB at runtime, with no slide, but I think we'll
+        be able to use this slide technique to make even more page sizes
+        dynamically at runtime, which should save some memory and simplify
+        the allocator.
+
+        (bmalloc::SmallPage::begin): It's invalid to access a SmallPage with
+        a slide, since such SmallPages do not contain meaningful data.
+
+        (bmalloc::SmallPage::end): Account for smallPageCount when computing
+        the size of a page.
+
+        (bmalloc::Chunk::pageBegin): Deleted.
+        (bmalloc::Chunk::pageEnd): Deleted.
+        (bmalloc::Object::pageBegin): Deleted.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap): Cache vmPageSize because computing it might require
+        a syscall.
+
+        (bmalloc::Heap::initializeLineMetadata): Line metadata is a vector instead
+        of a 2D array because we don't know how much metadata we'll need until
+        we know the page size.
+
+        (bmalloc::Heap::scavengeSmallPage): Be sure to revert the slide when
+        deallocating a page. Otherwise, the next attempt to allocate the page
+        will slide when initializing it, sliding to nowhere.
+
+        (bmalloc::Heap::allocateSmallBumpRanges): Account for vector change to
+        line metadata.
+
+        (bmalloc::Heap::allocateSmallPage): Initialize slide and smallPageCount
+        since they aren't constant anymore.
+
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateXLarge):
+        (bmalloc::Heap::shrinkXLarge): Adopt dynamic page size.
+
+        * bmalloc/Heap.h:
+
+        * bmalloc/Sizes.h: smallPageSize is no longer equal to the VM page
+        size -- it's just the smallest VM page size we're interested in supporting.
+
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::slide):
+        (bmalloc::SmallPage::setSlide):
+        (bmalloc::SmallPage::smallPageCount):
+        (bmalloc::SmallPage::setSmallPageCount):
+        (bmalloc::SmallPage::ref):
+        (bmalloc::SmallPage::deref): Support slide and small page count as
+        dynamic values. This doesn't increase metadata size since sizeof(SmallPage)
+        rounds up to alignment anyway.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmPageSize):
+        (bmalloc::vmPageShift):
+        (bmalloc::vmSize):
+        (bmalloc::vmValidate):
+        (bmalloc::tryVMAllocate):
+        (bmalloc::vmDeallocatePhysicalPagesSloppy):
+        (bmalloc::vmAllocatePhysicalPagesSloppy): Treat page size as a variable.
+
+        * bmalloc/Vector.h:
+        (bmalloc::Vector::initialCapacity):
+        (bmalloc::Vector<T>::insert):
+        (bmalloc::Vector<T>::grow):
+        (bmalloc::Vector<T>::shrink):
+        (bmalloc::Vector<T>::shrinkCapacity):
+        (bmalloc::Vector<T>::growCapacity): Treat page size as a variable.
+
 2016-03-29  David Kilzer  <ddkilzer@apple.com>
 
         bmalloc: add logging for mmap() failures
