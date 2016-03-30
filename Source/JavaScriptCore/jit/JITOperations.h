@@ -382,8 +382,6 @@ void JIT_OPERATION operationWriteBarrier(ExecState*, JSCell*, JSCell*);
 void JIT_OPERATION operationUnconditionalWriteBarrier(ExecState*, JSCell*);
 void JIT_OPERATION operationOSRWriteBarrier(ExecState*, JSCell*);
 
-void JIT_OPERATION operationInitGlobalConst(ExecState*, Instruction*);
-
 void JIT_OPERATION operationExceptionFuzz(ExecState*);
 
 int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(ExecState*);

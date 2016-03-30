@@ -2002,15 +2002,6 @@ void JIT_OPERATION operationUnconditionalWriteBarrier(ExecState* exec, JSCell* c
     vm->heap.writeBarrier(cell);
 }
 
-void JIT_OPERATION operationInitGlobalConst(ExecState* exec, Instruction* pc)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-
-    JSValue value = exec->r(pc[2].u.operand).jsValue();
-    pc[1].u.variablePointer->set(*vm, exec->codeBlock()->globalObject(), value);
-}
-
 void JIT_OPERATION lookupExceptionHandler(VM* vm, ExecState* exec)
 {
     NativeCallFrameTracer tracer(vm, exec);

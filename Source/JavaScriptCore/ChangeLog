@@ -1,3 +1,13 @@
+2016-03-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Get rid of operationInitGlobalConst(), it is useless
+        https://bugs.webkit.org/show_bug.cgi?id=156010
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2016-03-29  Saam barati  <sbarati@apple.com>
 
         Fix typos in our error messages and remove some trailing periods
