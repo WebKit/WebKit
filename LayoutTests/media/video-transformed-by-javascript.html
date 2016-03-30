@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src="media-file.js"></script>
     <script type="text/javascript">
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -21,11 +22,17 @@
             dumpLayers();
         }
 
-        window.addEventListener('load', rotate, false);
+        function start()
+        {
+            videoRotate.addEventListener('canplaythrough', rotate, false);
+            videoRotate.src = findMediaFile("video", "content/test");
+        }
+
+        window.addEventListener('load', start, false);
 </script>
 </head>
 <body>
     <pre id="outText"></pre>
-    <video id="videoRotate" width="480" height="270" type="video/mp4" src="test.mp4"/>
+    <video id="videoRotate" width="480" height="270"></video>
 </body>
 </html>
