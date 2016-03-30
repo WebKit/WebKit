@@ -46,7 +46,14 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMe
     // even if it is horizontal, but detecting this has performance implications. For now we only work with
     // vertical text, since we already determined the baseline type to be ideographic in that
     // case.
-    TextUnderlinePosition resolvedUnderlinePosition = underlinePosition == TextUnderlinePositionAuto && inlineTextBox && inlineTextBox->root().baselineType() == IdeographicBaseline ? TextUnderlinePositionUnder : TextUnderlinePositionAlphabetic;
+    
+    TextUnderlinePosition resolvedUnderlinePosition = underlinePosition;
+    if (resolvedUnderlinePosition == TextUnderlinePositionAuto) {
+        if (inlineTextBox)
+            resolvedUnderlinePosition = inlineTextBox->root().baselineType() == IdeographicBaseline ? TextUnderlinePositionUnder : TextUnderlinePositionAlphabetic;
+        else
+            resolvedUnderlinePosition = TextUnderlinePositionAlphabetic;
+    }
     
     switch (resolvedUnderlinePosition) {
     case TextUnderlinePositionAlphabetic:

@@ -1,3 +1,14 @@
+2016-03-30  Sam Weinig  <sam@webkit.org>
+
+        -webkit-text-underline-position: under; does not work in ToT
+        https://bugs.webkit.org/show_bug.cgi?id=156038
+
+        Reviewed by David Hyatt.
+
+        * fast/css3-text/css3-text-decoration/text-underline-position/text-underline-position-under-vs-alphabetic-expected-mismatch.html: Added.
+        * fast/css3-text/css3-text-decoration/text-underline-position/text-underline-position-under-vs-alphabetic.html: Added.
+        Add mismatch test to show that -webkit-text-underline-position: under works.
+
 2016-03-30  Eric Carlson  <eric.carlson@apple.com>
 
         Fix the media test added in r185402
