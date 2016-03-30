@@ -78,54 +78,67 @@ void ChildProcess::platformInitialize()
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
 
-static String codeSigningIdentifierForProcess(pid_t pid, OSStatus& errorCode)
+// FIXME: Remove this macro guard once we fix <rdar://problem/24308793>.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+static RetainPtr<SecCodeRef> findSecCodeForProcess(pid_t pid)
 {
     RetainPtr<CFNumberRef> pidCFNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &pid));
     const void* keys[] = { kSecGuestAttributePid };
     const void* values[] = { pidCFNumber.get() };
     RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     SecCodeRef code = nullptr;
-    if ((errorCode = SecCodeCopyGuestWithAttributes(nullptr, attributes.get(), kSecCSDefaultFlags, &code)))
-        return String();
-    RetainPtr<SecCodeRef> codePtr = adoptCF(code);
-    RELEASE_ASSERT(codePtr);
-
-    CFStringRef appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement = CFSTR("(anchor apple) or (anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.9]) or (anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13])");
-    SecRequirementRef signingRequirement = nullptr;
-    RELEASE_ASSERT(!SecRequirementCreateWithString(appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement, kSecCSDefaultFlags, &signingRequirement));
-    RetainPtr<SecRequirementRef> signingRequirementPtr = adoptCF(signingRequirement);
-    errorCode = SecCodeCheckValidity(codePtr.get(), kSecCSDefaultFlags, signingRequirementPtr.get());
-    if (errorCode == errSecCSUnsigned || errorCode == errSecCSReqFailed)
-        return String(); // Unsigned or signed by a third-party
-    if (errorCode != errSecSuccess)
-        return emptyString(); // e.g. invalid/malformed signature
-    String codeSigningIdentifier;
-    CFDictionaryRef signingInfo = nullptr;
-    RELEASE_ASSERT(!SecCodeCopySigningInformation(codePtr.get(), kSecCSDefaultFlags, &signingInfo));
-    RetainPtr<CFDictionaryRef> signingInfoPtr = adoptCF(signingInfo);
-    if (CFDictionaryRef plist = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(signingInfoPtr.get(), kSecCodeInfoPList)))
-        codeSigningIdentifier = String(dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(plist, kCFBundleIdentifierKey)));
-    else
-        codeSigningIdentifier = String(dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(signingInfoPtr.get(), kSecCodeInfoIdentifier)));
-    RELEASE_ASSERT(!codeSigningIdentifier.isEmpty());
-    return codeSigningIdentifier;
+    if (SecCodeCopyGuestWithAttributes(nullptr, attributes.get(), kSecCSDefaultFlags, &code))
+        return nullptr;
+    return adoptCF(code);
 }
+#endif
 
 void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
     String defaultProfilePath = [webkit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
 
-    bool willUseUserDirectorySuffixInitializationParameter = false;
     if (sandboxParameters.userDirectorySuffix().isNull()) {
-        auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
-        if (userDirectorySuffix != parameters.extraInitializationData.end()) {
-            willUseUserDirectorySuffixInitializationParameter = true;
-            sandboxParameters.setUserDirectorySuffix([makeString(userDirectorySuffix->value, '/', String([[NSBundle mainBundle] bundleIdentifier])) fileSystemRepresentation]);
+        // FIXME: Remove this macro guard once we fix <rdar://problem/24308793>.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+        if (const OSObjectPtr<xpc_connection_t>& xpcConnection = parameters.connectionIdentifier.xpcConnection) {
+            pid_t clientProcessID = xpc_connection_get_pid(xpcConnection.get());
+            RetainPtr<SecCodeRef> code = findSecCodeForProcess(clientProcessID);
+            RELEASE_ASSERT(code);
+
+            CFStringRef appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement = CFSTR("(anchor apple) or (anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.9]) or (anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13])");
+            SecRequirementRef signingRequirement = nullptr;
+            OSStatus status = SecRequirementCreateWithString(appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement, kSecCSDefaultFlags, &signingRequirement);
+            RELEASE_ASSERT(status == errSecSuccess);
+
+            status = SecCodeCheckValidity(code.get(), kSecCSDefaultFlags, signingRequirement);
+            if (status == errSecSuccess) {
+                String clientIdentifierToUse;
+                CFDictionaryRef signingInfo = nullptr;
+                status = SecCodeCopySigningInformation(code.get(), kSecCSDefaultFlags, &signingInfo);
+                RELEASE_ASSERT(status == errSecSuccess);
+                if (CFDictionaryRef plist = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(signingInfo, kSecCodeInfoPList)))
+                    clientIdentifierToUse = String(dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(plist, kCFBundleIdentifierKey)));
+                else
+                    clientIdentifierToUse = String(dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(signingInfo, kSecCodeInfoIdentifier)));
+                CFRelease(signingInfo);
+                RELEASE_ASSERT(!clientIdentifierToUse.isEmpty());
+                sandboxParameters.setUserDirectorySuffix(makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', clientIdentifierToUse));
+            } else {
+                // Unsigned, signed by a third party, or has an invalid/malformed signature
+                auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
+                if (userDirectorySuffix != parameters.extraInitializationData.end())
+                    sandboxParameters.setUserDirectorySuffix([makeString(userDirectorySuffix->value, '/', String([[NSBundle mainBundle] bundleIdentifier])) fileSystemRepresentation]);
+                sandboxParameters.setUserDirectorySuffix(makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier));
+            }
+            CFRelease(signingRequirement);
         } else {
-            String defaultUserDirectorySuffix = makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier);
-            sandboxParameters.setUserDirectorySuffix(defaultUserDirectorySuffix);
+            // Legacy client
+            sandboxParameters.setUserDirectorySuffix(makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier));
         }
+#else
+        sandboxParameters.setUserDirectorySuffix(makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier));
+#endif
     }
 
     Vector<String> osVersionParts;
@@ -204,19 +217,7 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
     OSStatus error = WKEnableSandboxStyleFileQuarantine();
     if (error) {
-        WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), static_cast<long>(error));
-        exit(EX_NOPERM);
-    }
-
-    error = noErr;
-    String clientCodeSigningIdentifier = codeSigningIdentifierForProcess(xpc_connection_get_pid(parameters.connectionIdentifier.xpcConnection.get()), error);
-    bool isClientCodeSigned = !clientCodeSigningIdentifier.isNull();
-    if (isClientCodeSigned && willUseUserDirectorySuffixInitializationParameter) {
-        WTFLogAlways("%s: Only unsigned clients can specify parameter user-directory-suffix\n", getprogname());
-        exit(EX_NOPERM);
-    }
-    if (isClientCodeSigned && clientCodeSigningIdentifier != parameters.clientIdentifier) {
-        WTFLogAlways("%s: Code signing identifier of client differs from passed client identifier: %ld\n", getprogname(), static_cast<long>(error));
+        WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), (long)error);
         exit(EX_NOPERM);
     }
 }
