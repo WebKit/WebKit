@@ -35,4 +35,5 @@ INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Reso
 SKIP_INSTALL = NO;
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = EventSenderProxy.mm main.mm PlatformWebViewMac.mm TestControllerMac.mm mac/*;
+INCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = mac/main.mm;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = AccessibilityUIElementIPhone.mm;

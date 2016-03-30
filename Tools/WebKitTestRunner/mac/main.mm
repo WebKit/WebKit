@@ -25,6 +25,8 @@
 
 #import "config.h"
 
+#if PLATFORM(MAC)
+
 #import "TestController.h"
 
 static void setDefaultsToConsistentValuesForTesting()
@@ -59,3 +61,12 @@ int main(int argc, const char* argv[])
     [pool drain];
     return 0;
 }
+
+#else
+
+int main(int, const char*[])
+{
+    return 0;
+}
+
+#endif // PLATFORM(MAC)
