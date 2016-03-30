@@ -1,3 +1,13 @@
+2016-03-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WTF] Removing a smart pointer from HashTable issues two stores to the same location
+        https://bugs.webkit.org/show_bug.cgi?id=155676
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+
 2016-03-29  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Add machine-readable results for JSC stress tests

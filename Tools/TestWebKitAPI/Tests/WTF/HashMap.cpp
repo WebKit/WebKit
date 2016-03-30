@@ -617,4 +617,88 @@ TEST(WTF_HashMap, Ensure_LambdasCapturingByReference)
     }
 }
 
+
+TEST(WTF_HashMap, ValueIsDestructedOnRemove)
+{
+    struct DestructorObserver {
+        DestructorObserver() = default;
+
+        DestructorObserver(bool* destructed)
+            : destructed(destructed)
+        {
+        }
+
+        ~DestructorObserver()
+        {
+            if (destructed)
+                *destructed = true;
+        }
+
+        DestructorObserver(DestructorObserver&& other)
+            : destructed(other.destructed)
+        {
+            other.destructed = nullptr;
+        }
+
+        DestructorObserver& operator=(DestructorObserver&& other)
+        {
+            destructed = other.destructed;
+            other.destructed = nullptr;
+            return *this;
+        }
+
+        bool* destructed { nullptr };
+    };
+
+    HashMap<int, DestructorObserver> map;
+
+    bool destructed = false;
+    map.add(5, DestructorObserver { &destructed });
+
+    EXPECT_FALSE(destructed);
+
+    bool removeResult = map.remove(5);
+
+    EXPECT_TRUE(removeResult);
+    EXPECT_TRUE(destructed);
+}
+
+TEST(WTF_HashMap, RefPtrNotZeroedBeforeDeref)
+{
+    struct DerefObserver {
+        NEVER_INLINE void ref()
+        {
+            ++count;
+        }
+        NEVER_INLINE void deref()
+        {
+            --count;
+            observedBucket = bucketAddress->get();
+        }
+        unsigned count { 1 };
+        const RefPtr<DerefObserver>* bucketAddress { nullptr };
+        const DerefObserver* observedBucket { nullptr };
+    };
+
+    auto observer = std::make_unique<DerefObserver>();
+
+    HashMap<RefPtr<DerefObserver>, int> map;
+    map.add(adoptRef(observer.get()), 5);
+
+    auto iterator = map.find(observer.get());
+    EXPECT_TRUE(iterator != map.end());
+
+    observer->bucketAddress = &iterator->key;
+
+    EXPECT_TRUE(observer->observedBucket == nullptr);
+    EXPECT_TRUE(map.remove(observer.get()));
+
+    // It if fine to either leave the old value intact at deletion or already set it to the deleted
+    // value.
+    // A zero would be a incorrect outcome as it would mean we nulled the bucket before an opaque
+    // call.
+    EXPECT_TRUE(observer->observedBucket == observer.get() || observer->observedBucket == RefPtr<DerefObserver>::hashTableDeletedValue());
+    EXPECT_EQ(observer->count, 0u);
+}
+
 } // namespace TestWebKitAPI

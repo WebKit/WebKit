@@ -1,3 +1,56 @@
+2016-03-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WTF] Removing a smart pointer from HashTable issues two stores to the same location
+        https://bugs.webkit.org/show_bug.cgi?id=155676
+
+        Reviewed by Darin Adler.
+
+        While working on the hot loop of r198376, I noticed something
+        weird...
+        Every time we removed a smart pointer from the hash table,
+        the code generated was something like:
+            Load([bucket]) -> Tmp
+            Store(0 -> [bucket])
+            JumpIfZero(Tmp, ->End)
+            Call fastFree()
+            Store(-1 -> [bucket])
+            -> End:
+
+        The useless store before the branch is annoying, especially on ARM.
+
+        Here is what happens:
+            1) The destructor of the smart pointer swaps its internal value with nullptr.
+            2) Since the smart pointer is not a local in-register value, that nullptr
+               is stored in memory because it could be observable from fastFree().
+            3) The destructor destroy the value if not zero (or deref for RefPtr).
+               The "if-not-zero" may or may not be eliminated depending on what
+               is between getting the iterator and the call to remove().
+            4) fastFree() is called.
+            5) The deleted value is set in the bucket.
+
+        This patch adds custom deletion for those cases to avoid the useless
+        store. The useless null check is still eliminated when we are lucky.
+
+        I went this path instead of changing the destructor of RefPtr for two reasons:
+        -I need this to work in unique_ptr for JSC.
+        -Nulling the memory may have security advantages in the cases where we do not immediately
+         write over that memory again.
+
+        This patch removes 13kb out of x86_64 WebCore.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::deleteBucket):
+        (WTF::KeyTraits>::removeIf):
+        * wtf/HashTraits.h:
+        (WTF::HashTraits<RefPtr<P>>::customDeleteBucket):
+        (WTF::hashTraitsDeleteBucket):
+        (WTF::KeyValuePairHashTraits::customDeleteBucket):
+        * wtf/text/AtomicStringHash.h:
+        (WTF::HashTraits<WTF::AtomicString>::isEmptyValue):
+        (WTF::HashTraits<WTF::AtomicString>::customDeleteBucket):
+        * wtf/text/StringHash.h:
+        (WTF::HashTraits<String>::customDeleteBucket):
+
 2016-03-28  Brian Burg  <bburg@apple.com>
 
         Web Automation: implement Automation.performMouseInteraction

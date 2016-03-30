@@ -33,6 +33,14 @@ namespace WTF {
         return value.isNull();
     }
 
+    inline void HashTraits<String>::customDeleteBucket(String& value)
+    {
+        // See unique_ptr's customDeleteBucket() for an explanation.
+        ASSERT(!isDeletedValue(value));
+        String valueToBeDestroyed = WTFMove(value);
+        constructDeletedValue(value);
+    }
+
     // The hash() functions on StringHash and ASCIICaseInsensitiveHash do not support
     // null strings. get(), contains(), and add() on HashMap<String,..., StringHash>
     // cause a null-pointer dereference when passed null strings.
