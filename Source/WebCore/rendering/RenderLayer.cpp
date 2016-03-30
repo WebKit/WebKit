@@ -2860,7 +2860,7 @@ bool RenderLayer::isScrollCornerVisible() const
     return !scrollCornerRect().isEmpty();
 }
 
-IntRect RenderLayer::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntRect& scrollbarRect) const
+IntRect RenderLayer::convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntRect& scrollbarRect) const
 {
     IntRect rect = scrollbarRect;
     rect.move(scrollbarOffset(scrollbar));
@@ -2868,21 +2868,21 @@ IntRect RenderLayer::convertFromScrollbarToContainingView(const Scrollbar* scrol
     return renderer().view().frameView().convertFromRendererToContainingView(&renderer(), rect);
 }
 
-IntRect RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
+IntRect RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntRect& parentRect) const
 {
     IntRect rect = renderer().view().frameView().convertFromContainingViewToRenderer(&renderer(), parentRect);
     rect.move(-scrollbarOffset(scrollbar));
     return rect;
 }
 
-IntPoint RenderLayer::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntPoint& scrollbarPoint) const
+IntPoint RenderLayer::convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntPoint& scrollbarPoint) const
 {
     IntPoint point = scrollbarPoint;
     point.move(scrollbarOffset(scrollbar));
     return renderer().view().frameView().convertFromRendererToContainingView(&renderer(), point);
 }
 
-IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
+IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntPoint& parentPoint) const
 {
     IntPoint point = renderer().view().frameView().convertFromContainingViewToRenderer(&renderer(), parentPoint);
     point.move(-scrollbarOffset(scrollbar));
@@ -3008,26 +3008,26 @@ LayoutUnit RenderLayer::horizontalScrollbarStart(int minX) const
     return x;
 }
 
-IntSize RenderLayer::scrollbarOffset(const Scrollbar* scrollbar) const
+IntSize RenderLayer::scrollbarOffset(const Scrollbar& scrollbar) const
 {
     RenderBox* box = renderBox();
 
-    if (scrollbar == m_vBar.get())
+    if (&scrollbar == m_vBar.get())
         return IntSize(verticalScrollbarStart(0, box->width()), box->borderTop());
 
-    if (scrollbar == m_hBar.get())
-        return IntSize(horizontalScrollbarStart(0), box->height() - box->borderBottom() - scrollbar->height());
+    if (&scrollbar == m_hBar.get())
+        return IntSize(horizontalScrollbarStart(0), box->height() - box->borderBottom() - scrollbar.height());
     
     ASSERT_NOT_REACHED();
     return IntSize();
 }
 
-void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
+void RenderLayer::invalidateScrollbarRect(Scrollbar& scrollbar, const IntRect& rect)
 {
     if (!showsOverflowControls())
         return;
 
-    if (scrollbar == m_vBar.get()) {
+    if (&scrollbar == m_vBar.get()) {
         if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
             layer->setNeedsDisplayInRect(rect);
             return;
@@ -3046,10 +3046,10 @@ void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& r
     if (!box->parent())
         return;
 
-    if (scrollbar == m_vBar.get())
+    if (&scrollbar == m_vBar.get())
         scrollRect.move(verticalScrollbarStart(0, box->width()), box->borderTop());
     else
-        scrollRect.move(horizontalScrollbarStart(0), box->height() - box->borderBottom() - scrollbar->height());
+        scrollRect.move(horizontalScrollbarStart(0), box->height() - box->borderBottom() - scrollbar.height());
     LayoutRect repaintRect = scrollRect;
     renderBox()->flipForWritingMode(repaintRect);
     renderer().repaintRectangle(repaintRect);

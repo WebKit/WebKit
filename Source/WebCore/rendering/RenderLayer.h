@@ -860,15 +860,15 @@ private:
     int scrollOffset(ScrollbarOrientation) const override;
     
     // ScrollableArea interface
-    void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
+    void invalidateScrollbarRect(Scrollbar&, const IntRect&) override;
     void invalidateScrollCornerRect(const IntRect&) override;
     bool isActive() const override;
     bool isScrollCornerVisible() const override;
     IntRect scrollCornerRect() const override;
-    IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const override;
-    IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const override;
-    IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const override;
-    IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const override;
+    IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const override;
+    IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const override;
+    IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const override;
+    IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const override;
     int scrollSize(ScrollbarOrientation) const override;
     void setScrollOffset(const ScrollOffset&) override;
 
@@ -901,7 +901,7 @@ private:
     void scrollTo(const ScrollPosition&);
     void updateCompositingLayersAfterScroll();
 
-    IntSize scrollbarOffset(const Scrollbar*) const;
+    IntSize scrollbarOffset(const Scrollbar&) const;
     
     void updateScrollableAreaSet(bool hasOverflow);
     

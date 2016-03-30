@@ -94,7 +94,7 @@ private:
     int scrollSize(ScrollbarOrientation) const override;
     int scrollOffset(ScrollbarOrientation) const override;
     void setScrollOffset(const IntPoint&) override;
-    void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
+    void invalidateScrollbarRect(Scrollbar&, const IntRect&) override;
     void invalidateScrollCornerRect(const IntRect&) override { }
     bool isActive() const override { return true; }
     ScrollableArea* enclosingScrollableArea() const override { return 0; }

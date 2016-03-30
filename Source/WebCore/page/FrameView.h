@@ -625,7 +625,7 @@ private:
     void delegatesScrollingDidChange() override;
 
     // ScrollableArea interface
-    void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
+    void invalidateScrollbarRect(Scrollbar&, const IntRect&) override;
     void scrollTo(const ScrollPosition&) override;
     void setVisibleScrollerThumbRect(const IntRect&) override;
     ScrollableArea* enclosingScrollableArea() const override;

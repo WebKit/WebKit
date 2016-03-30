@@ -367,10 +367,10 @@ public:
     virtual void paintScrollCorner(GraphicsContext&, const IntRect& cornerRect);
     virtual void paintScrollbar(GraphicsContext&, Scrollbar&, const IntRect&);
 
-    IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const override;
-    IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const override;
-    IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const override;
-    IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const override;
+    IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const override;
+    IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const override;
+    IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const override;
+    IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const override;
 
     void calculateAndPaintOverhangAreas(GraphicsContext&, const IntRect& dirtyRect);
 

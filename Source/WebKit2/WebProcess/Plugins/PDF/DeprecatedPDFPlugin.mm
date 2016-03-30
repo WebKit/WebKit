@@ -688,34 +688,34 @@ void PDFPlugin::destroyScrollbar(ScrollbarOrientation orientation)
     }
 }
 
-IntRect PDFPlugin::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntRect& scrollbarRect) const
+IntRect PDFPlugin::convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntRect& scrollbarRect) const
 {
     IntRect rect = scrollbarRect;
-    rect.move(scrollbar->location() - pluginView()->location());
+    rect.move(scrollbar.location() - pluginView()->location());
 
     return pluginView()->frame()->view()->convertFromRendererToContainingView(pluginView()->pluginElement()->renderer(), rect);
 }
 
-IntRect PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
+IntRect PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntRect& parentRect) const
 {
     IntRect rect = pluginView()->frame()->view()->convertFromContainingViewToRenderer(pluginView()->pluginElement()->renderer(), parentRect);
-    rect.move(pluginView()->location() - scrollbar->location());
+    rect.move(pluginView()->location() - scrollbar.location());
 
     return rect;
 }
 
-IntPoint PDFPlugin::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntPoint& scrollbarPoint) const
+IntPoint PDFPlugin::convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntPoint& scrollbarPoint) const
 {
     IntPoint point = scrollbarPoint;
-    point.move(scrollbar->location() - pluginView()->location());
+    point.move(scrollbar.location() - pluginView()->location());
 
     return pluginView()->frame()->view()->convertFromRendererToContainingView(pluginView()->pluginElement()->renderer(), point);
 }
 
-IntPoint PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
+IntPoint PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntPoint& parentPoint) const
 {
     IntPoint point = pluginView()->frame()->view()->convertFromContainingViewToRenderer(pluginView()->pluginElement()->renderer(), parentPoint);
-    point.move(pluginView()->location() - scrollbar->location());
+    point.move(pluginView()->location() - scrollbar.location());
     
     return point;
 }
@@ -1567,11 +1567,11 @@ void PDFPlugin::setScrollOffset(const ScrollOffset& offset)
     [CATransaction commit];
 }
 
-void PDFPlugin::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
+void PDFPlugin::invalidateScrollbarRect(Scrollbar& scrollbar, const IntRect& rect)
 {
-    if (scrollbar == horizontalScrollbar())
+    if (&scrollbar == horizontalScrollbar())
         [m_horizontalScrollbarLayer setNeedsDisplay];
-    else if (scrollbar == verticalScrollbar())
+    else if (&scrollbar == verticalScrollbar())
         [m_verticalScrollbarLayer setNeedsDisplay];
 }
 

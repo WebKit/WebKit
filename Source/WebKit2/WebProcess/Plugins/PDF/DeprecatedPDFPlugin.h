@@ -191,7 +191,7 @@ private:
     bool hasScrollableOrRubberbandableAncestor() override { return true; }
     WebCore::IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
     void setScrollOffset(const WebCore::ScrollOffset&) override;
-    void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&) override;
+    void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
     WebCore::IntPoint lastKnownMousePosition() const override { return m_lastMousePositionInPluginCoordinates; }
     int scrollSize(WebCore::ScrollbarOrientation) const override;
@@ -207,10 +207,10 @@ private:
     WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
     bool shouldSuspendScrollAnimations() const override { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
     void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
-    WebCore::IntRect convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntRect& scrollbarRect) const override;
-    WebCore::IntRect convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntRect& parentRect) const override;
-    WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntPoint& scrollbarPoint) const override;
-    WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const override;
+    WebCore::IntRect convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntRect& scrollbarRect) const override;
+    WebCore::IntRect convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntRect& parentRect) const override;
+    WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntPoint& scrollbarPoint) const override;
+    WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntPoint& parentPoint) const override;
     bool updatesScrollLayerPositionOnMainThread() const override { return true; }
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
 

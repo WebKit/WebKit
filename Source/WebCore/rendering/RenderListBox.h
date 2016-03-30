@@ -114,15 +114,15 @@ private:
     void setScrollOffset(const ScrollOffset&) override;
     ScrollPosition minimumScrollPosition() const override;
     ScrollPosition maximumScrollPosition() const override;
-    void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
+    void invalidateScrollbarRect(Scrollbar&, const IntRect&) override;
     bool isActive() const override;
     bool isScrollCornerVisible() const override { return false; } // We don't support resize on list boxes yet. If we did these would have to change.
     IntRect scrollCornerRect() const override { return IntRect(); }
     void invalidateScrollCornerRect(const IntRect&) override { }
-    IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const override;
-    IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const override;
-    IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const override;
-    IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const override;
+    IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const override;
+    IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const override;
+    IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const override;
+    IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const override;
     Scrollbar* verticalScrollbar() const override { return m_vBar.get(); }
     IntSize contentsSize() const override;
     IntSize visibleSize() const override { return IntSize(width(), height()); }

@@ -720,10 +720,10 @@ void PopupMenuWin::scrollTo(int offset)
     ::UpdateWindow(m_popup);
 }
 
-void PopupMenuWin::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
+void PopupMenuWin::invalidateScrollbarRect(Scrollbar& scrollbar, const IntRect& rect)
 {
     IntRect scrollRect = rect;
-    scrollRect.move(scrollbar->x(), scrollbar->y());
+    scrollRect.move(scrollbar.x(), scrollbar.y());
     RECT r = scrollRect;
     ::InvalidateRect(m_popup, &r, false);
 }
