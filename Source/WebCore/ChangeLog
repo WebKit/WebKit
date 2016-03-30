@@ -1,3 +1,14 @@
+2016-03-30  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows EWS after r198766
+        https://bugs.webkit.org/show_bug.cgi?id=156029
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt:
+        * PlatformWin.cmake:
+        Copy headers before compiling WebCoreDerivedSources, not just before compiling WebCore.
+
 2016-03-30  Brady Eidson  <beidson@apple.com>
 
         Random SerializedScriptValue cleanup.

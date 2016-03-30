@@ -3813,6 +3813,8 @@ endif ()
 WEBKIT_FRAMEWORK(WebCore)
 
 if (WIN32)
+    add_custom_target(WebCoreDerivedSources_PreBuild COMMAND ${WebCore_DERIVED_SOURCES_PRE_BUILD_COMMAND} VERBATIM)
+    add_dependencies(WebCoreDerivedSources WebCoreDerivedSources_PreBuild)
     add_dependencies(WebCore WebCoreDerivedSources)
 endif ()
 
