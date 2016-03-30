@@ -50,7 +50,7 @@ class Identifier;
     macro(arrayIterationKindKey) \
     macro(arrayIterationKindValue) \
     macro(arrayIterationKindKeyValue) \
-    macro(MAX_SAFE_INTEGER) \
+    macro(MAX_STRING_LENGTH) \
     macro(promiseStatePending) \
     macro(promiseStateFulfilled) \
     macro(promiseStateRejected) \
