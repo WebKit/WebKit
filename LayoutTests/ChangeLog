@@ -1,3 +1,11 @@
+2016-03-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Mark svg zoom and pageoverlay tests to failure
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: Assign new bugs to the failures.
+
 2016-03-30  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Refactor positioned children code
