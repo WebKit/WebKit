@@ -38,6 +38,7 @@
 #import <sys/ipc.h>
 #import <sys/mman.h>
 #import <sys/shm.h>
+#import <wtf/Compiler.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 namespace WebKit {
@@ -111,6 +112,9 @@ shimLSOpenCFURLRef(CFURLRef url, CFURLRef* launchedURL)
     return LSOpenCFURLRef(url, launchedURL);
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
+SUPPRESS_ASAN
+#endif
 static kern_return_t shimMachVMMap(vm_map_t task, mach_vm_address_t *address, mach_vm_size_t size, mach_vm_offset_t mask, int flags, mem_entry_name_port_t object, memory_object_offset_t offset, boolean_t copy, vm_prot_t currentProtection, vm_prot_t maxProtection, vm_inherit_t inheritance)
 {
     if (task == mach_task_self()) {

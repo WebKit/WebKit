@@ -1,3 +1,15 @@
+2016-03-29  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION: Yosemite-only: com.apple.WebKit.Plugin.32.Development crashed in PluginProcessShim.dylib: WebKit::shimMachVMMap + 26
+        <http://webkit.org/b/156000>
+        <rdar://problem/25272133>
+
+        Reviewed by Joseph Pecoraro.
+
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit::shimMachVMMap): Add SUPPRESS_ASAN attribute on
+        Yosemite.
+
 2016-03-28  Enrica Casucci  <enrica@apple.com>
 
         When moving focus from one select element to another (iPhone) the value is committed to the newly focused element.
