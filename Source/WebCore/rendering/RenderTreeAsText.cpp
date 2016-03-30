@@ -72,6 +72,10 @@
 #include <wtf/Vector.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#if PLATFORM(MAC)
+#include "ScrollbarThemeMac.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -621,6 +625,14 @@ static void write(TextStream& ts, const RenderLayer& layer, const LayoutRect& la
             ts << " scrollWidth " << layer.scrollWidth();
         if (layer.renderBox() && roundToInt(layer.renderBox()->clientHeight()) != layer.scrollHeight())
             ts << " scrollHeight " << layer.scrollHeight();
+#if PLATFORM(MAC)
+        ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
+        if (!scrollbarTheme.isMockTheme() && layer.hasVerticalScrollbar()) {
+            ScrollbarThemeMac& macTheme = *static_cast<ScrollbarThemeMac*>(&scrollbarTheme);
+            if (macTheme.isLayoutDirectionRTL(*layer.verticalScrollbar()))
+                ts << " scrollbarHasRTLLayoutDirection";
+        }
+#endif
     }
 
     if (paintPhase == LayerPaintPhaseBackground)

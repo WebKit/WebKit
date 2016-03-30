@@ -348,8 +348,9 @@ public:
 
     bool isFromCurrentWorld(Deprecated::ScriptValue) const;
 
-    void setUsesOverlayScrollbars(bool enabled);
-    void setUsesMockScrollAnimator(bool enabled);
+    void setUsesOverlayScrollbars(bool);
+    void setUsesMockScrollAnimator(bool);
+    void setMockScrollbarsEnabled(bool);
 
     String getCurrentCursorInfo(ExceptionCode&);
 

@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+<script>
+if (window.internals)
+    window.internals.setMockScrollbarsEnabled(false);
+</script>
+</head>
+<body>
+<div style="width: 200px; height: 200px; position: relative; overflow: scroll;">
+<div style="width: 1px; height: 2000px; position: absolute; left: 0px; top: 0px;"></div>
+</div>
+<div style="width: 1px; height: 2000px; position: absolute; left: 0px; top: 0px;"></div>
+</body>
+<html>

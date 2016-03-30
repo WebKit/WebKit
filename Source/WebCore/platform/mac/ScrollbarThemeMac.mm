@@ -153,6 +153,17 @@ static NSControlSize scrollbarControlSizeToNSControlSize(ScrollbarControlSize co
 #pragma clang diagnostic pop
 }
 
+void ScrollbarThemeMac::didCreateScrollerImp(Scrollbar& scrollbar)
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    NSScrollerImp *scrollerImp = painterForScrollbar(scrollbar);
+    ASSERT(scrollerImp);
+    scrollerImp.userInterfaceLayoutDirection = scrollbar.scrollableArea().verticalScrollbarIsOnLeft() ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
+#else
+    UNUSED_PARAM(scrollbar);
+#endif
+}
+
 void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)
 {
     if (scrollbar.isCustomScrollbar())
@@ -161,6 +172,7 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)
     bool isHorizontal = scrollbar.orientation() == HorizontalScrollbar;
     NSScrollerImp *scrollerImp = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(scrollbar.controlSize()) horizontal:isHorizontal replacingScrollerImp:nil];
     scrollbarMap()->add(&scrollbar, scrollerImp);
+    didCreateScrollerImp(scrollbar);
     updateEnabledState(scrollbar);
     updateScrollbarOverlayStyle(scrollbar);
 }
@@ -180,6 +192,18 @@ void ScrollbarThemeMac::setNewPainterForScrollbar(Scrollbar& scrollbar, NSScroll
 NSScrollerImp *ScrollbarThemeMac::painterForScrollbar(Scrollbar& scrollbar)
 {
     return scrollbarMap()->get(&scrollbar).get();
+}
+
+bool ScrollbarThemeMac::isLayoutDirectionRTL(Scrollbar& scrollbar)
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    NSScrollerImp *scrollerImp = painterForScrollbar(scrollbar);
+    ASSERT(scrollerImp);
+    return scrollerImp.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionRightToLeft;
+#else
+    UNUSED_PARAM(scrollbar);
+    return false;
+#endif
 }
 
 static bool g_isCurrentlyDrawingIntoLayer;

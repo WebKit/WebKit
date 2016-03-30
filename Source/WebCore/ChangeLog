@@ -1,3 +1,47 @@
+2016-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] [RTL Scrollbars] Overlay RTL scrollbars animate in from the wrong side
+        https://bugs.webkit.org/show_bug.cgi?id=155962
+
+        Reviewed by Darin Adler.
+
+        We can control the animation direction with the NSScrollerImp property
+        userInterfaceLayoutDirection.
+
+        This patch also adds an Internals function to set whether or not we
+        should mock the scrollbars. Not mocking the scrollbars is required
+        to use NSScrollerImps.
+
+        Test: fast/scrolling/rtl-scrollbars-animation-property.html
+
+        * platform/ScrollableArea.h: Use nullptr instead of 0.
+        (WebCore::ScrollableArea::horizontalScrollbar):
+        (WebCore::ScrollableArea::verticalScrollbar):
+        (WebCore::ScrollableArea::tiledBacking):
+        (WebCore::ScrollableArea::layerForHorizontalScrollbar):
+        (WebCore::ScrollableArea::layerForVerticalScrollbar):
+        (WebCore::ScrollableArea::layerForScrolling):
+        (WebCore::ScrollableArea::layerForScrollCorner):
+        (WebCore::ScrollableArea::layerForOverhangAreas):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle): Set the direction
+        of the new NSScrollerImps.
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::didCreateScrollerImp): Set the direction
+        of an NSScrollerImp.
+        (WebCore::ScrollbarThemeMac::registerScrollbar): Call
+        didCreateScrollerImp().
+        (WebCore::ScrollbarThemeMac::isLayoutDirectionRTL): Used for testing,
+        to tell if the scroller's direction is RTL.
+        * platform/spi/mac/NSScrollerImpSPI.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMockScrollbarsEnabled): Used for testing.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-03-30  Sam Weinig  <sam@webkit.org>
 
         -webkit-text-underline-position: under; does not work in ToT

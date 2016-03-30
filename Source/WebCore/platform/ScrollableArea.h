@@ -180,8 +180,8 @@ public:
     int verticalScrollbarIntrusion() const;
     WEBCORE_EXPORT IntSize scrollbarIntrusion() const;
 
-    virtual Scrollbar* horizontalScrollbar() const { return 0; }
-    virtual Scrollbar* verticalScrollbar() const { return 0; }
+    virtual Scrollbar* horizontalScrollbar() const { return nullptr; }
+    virtual Scrollbar* verticalScrollbar() const { return nullptr; }
 
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     bool scrollOriginChanged() const { return m_scrollOriginChanged; }
@@ -293,15 +293,15 @@ public:
     bool isPinnedVerticallyInDirection(int verticalScrollDelta) const;
 #endif
 
-    virtual TiledBacking* tiledBacking() const { return 0; }
+    virtual TiledBacking* tiledBacking() const { return nullptr; }
 
     // True if scrolling happens by moving compositing layers.
     virtual bool usesCompositedScrolling() const { return false; }
     // True if the contents can be scrolled asynchronously (i.e. by a ScrollingCoordinator).
     virtual bool usesAsyncScrolling() const { return false; }
 
-    virtual GraphicsLayer* layerForHorizontalScrollbar() const { return 0; }
-    virtual GraphicsLayer* layerForVerticalScrollbar() const { return 0; }
+    virtual GraphicsLayer* layerForHorizontalScrollbar() const { return nullptr; }
+    virtual GraphicsLayer* layerForVerticalScrollbar() const { return nullptr; }
 
     bool hasLayerForHorizontalScrollbar() const;
     bool hasLayerForVerticalScrollbar() const;
@@ -327,10 +327,10 @@ protected:
     virtual void invalidateScrollCornerRect(const IntRect&) = 0;
 
     friend class ScrollingCoordinator;
-    virtual GraphicsLayer* layerForScrolling() const { return 0; }
-    virtual GraphicsLayer* layerForScrollCorner() const { return 0; }
+    virtual GraphicsLayer* layerForScrolling() const { return nullptr; }
+    virtual GraphicsLayer* layerForScrollCorner() const { return nullptr; }
 #if ENABLE(RUBBER_BANDING)
-    virtual GraphicsLayer* layerForOverhangAreas() const { return 0; }
+    virtual GraphicsLayer* layerForOverhangAreas() const { return nullptr; }
 #endif
 
     bool hasLayerForScrollCorner() const;

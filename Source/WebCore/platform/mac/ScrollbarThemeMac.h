@@ -64,6 +64,9 @@ public:
     static bool isCurrentlyDrawingIntoLayer();
     static void setIsCurrentlyDrawingIntoLayer(bool);
 
+    void didCreateScrollerImp(Scrollbar&);
+    bool isLayoutDirectionRTL(Scrollbar&);
+
 #if ENABLE(RUBBER_BANDING)
     WEBCORE_EXPORT static void setUpOverhangAreaBackground(CALayer *, const Color& customBackgroundColor = Color());
     WEBCORE_EXPORT static void removeOverhangAreaBackground(CALayer *);
