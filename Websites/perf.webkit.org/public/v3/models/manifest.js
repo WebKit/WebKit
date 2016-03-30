@@ -4,8 +4,8 @@ class Manifest {
 
     static fetch()
     {
-        return RemoteAPI.getJSON('../data/manifest.json').catch(function () {
-            return RemoteAPI.getJSON('../api/manifest/');
+        return RemoteAPI.getJSON('/data/manifest.json').catch(function () {
+            return RemoteAPI.getJSON('/api/manifest/');
         }).then(this._didFetchManifest.bind(this));
     }
 

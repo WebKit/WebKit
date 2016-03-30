@@ -5,6 +5,7 @@ class BuildRequest extends DataModelObject {
     constructor(id, object)
     {
         super(id, object);
+        this._testGroupId = object.testGroupId;
         console.assert(!object.testGroup || object.testGroup instanceof TestGroup);
         this._testGroup = object.testGroup;
         if (this._testGroup)
@@ -28,13 +29,14 @@ class BuildRequest extends DataModelObject {
         this._buildId = object.build;
     }
 
+    testGroupId() { return this._testGroupId; }
     testGroup() { return this._testGroup; }
     order() { return this._order; }
     rootSet() { return this._rootSet; }
 
     hasFinished() { return this._status == 'failed' || this._status == 'completed' || this._status == 'canceled'; }
     hasStarted() { return this._status != 'pending'; }
-    hasPending() { return this._status == 'pending'; }
+    isPending() { return this._status == 'pending'; }
     statusLabel()
     {
         switch (this._status) {
@@ -61,6 +63,36 @@ class BuildRequest extends DataModelObject {
     {
         this._result = result;
         this._testGroup.didSetResult(this);
+    }
+
+    static fetchForTriggerable(triggerable)
+    {
+        return RemoteAPI.getJSONWithStatus('/api/build-requests/' + triggerable).then(function (data) {
+            return BuildRequest.constructBuildRequestsFromData(data);
+        });
+    }
+
+    static constructBuildRequestsFromData(data)
+    {
+        var rootIdMap = {};
+        for (var root of data['roots']) {
+            rootIdMap[root.id] = root;
+            root.repository = Repository.findById(root.repository);
+        }
+
+        var rootSets = data['rootSets'].map(function (row) {
+            row.roots = row.roots.map(function (rootId) { return rootIdMap[rootId]; });
+            return RootSet.ensureSingleton(row.id, row);
+        });
+
+        return data['buildRequests'].map(function (rawData) {
+            rawData.platform = Platform.findById(rawData.platform);
+            rawData.test = Test.findById(rawData.test);
+            rawData.testGroupId = rawData.testGroup;
+            rawData.testGroup = TestGroup.findById(rawData.testGroup);
+            rawData.rootSet = RootSet.findById(rawData.rootSet);
+            return BuildRequest.ensureSingleton(rawData.id, rawData);
+        });
     }
 }
 

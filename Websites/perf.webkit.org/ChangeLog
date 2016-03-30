@@ -1,3 +1,41 @@
+2016-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        BuildRequest should have a method to fetch all in-progress and pending requests for a triggerable
+        https://bugs.webkit.org/show_bug.cgi?id=156008
+
+        Reviewed by Darin Adler.
+
+        Add a method to BuildRequest that fetches all pending and in-progress requests for a triggerable.
+
+        Now, new syncing scripts must be able to figure out the build slave the first build requests in
+        a given test group had used in order to schedule subsequent build requests in the test group.
+
+        For this purpose, /api/build-requests has been modified to return all build requests whose test
+        group had not finished yet. A test group is finished if all build requests in the test group had
+        finished (completed, failed, or canceled).
+
+        * public/include/build-requests-fetcher.php:
+        (BuildRequestFetcher::fetch_incomplete_requests_for_triggerable): Return all build requests in test
+        groups that have not been finished.
+        * public/v3/models/build-request.js:
+        (BuildRequest):
+        (BuildRequest.prototype.testGroupId): Added.
+        (BuildRequest.prototype.isPending): Renamed from hasPending to fix a bad grammar.
+        (BuildRequest.fetchForTriggerable): Added.
+        (BuildRequest.constructBuildRequestsFromData): Extracted from _createModelsFromFetchedTestGroups in
+        TestGroup.
+        * public/v3/models/manifest.js:
+        (Manifest.fetch): Use the full path from root so that it works in server tests.
+        * public/v3/models/test-group.js:
+        (TestGroup.hasPending):
+        (TestGroup._createModelsFromFetchedTestGroups):
+        * server-tests/api-build-requests-tests.js: Added tests to ensure all build requests for a test group
+        is present in the response returned by /api/build-requests iff any build request in the group had not
+        finished yet.
+        (.addMockData):
+        (.addAnotherMockTestGroup): Added.
+        * unit-tests/test-groups-tests.js:
+
 2016-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make dependency injection in unit tests more explicit

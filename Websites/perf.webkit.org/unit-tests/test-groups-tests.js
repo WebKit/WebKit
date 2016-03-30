@@ -139,7 +139,7 @@ describe('TestGroup', function () {
             assert.equal(buildRequests[0].order(), 0);
             assert.ok(!buildRequests[0].hasFinished());
             assert.ok(!buildRequests[0].hasStarted());
-            assert.ok(buildRequests[0].hasPending());
+            assert.ok(buildRequests[0].isPending());
             assert.equal(buildRequests[0].statusLabel(), 'Waiting to be scheduled');
             assert.equal(buildRequests[0].buildId(), null);
             assert.equal(buildRequests[0].result(), null);
@@ -148,7 +148,7 @@ describe('TestGroup', function () {
             assert.equal(buildRequests[1].order(), 1);
             assert.ok(!buildRequests[1].hasFinished());
             assert.ok(!buildRequests[1].hasStarted());
-            assert.ok(buildRequests[1].hasPending());
+            assert.ok(buildRequests[1].isPending());
             assert.equal(buildRequests[1].statusLabel(), 'Waiting to be scheduled');
             assert.equal(buildRequests[1].buildId(), null);
             assert.equal(buildRequests[1].result(), null);

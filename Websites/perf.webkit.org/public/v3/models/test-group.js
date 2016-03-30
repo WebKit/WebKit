@@ -112,7 +112,7 @@ class TestGroup extends LabeledObject {
 
     hasPending()
     {
-        return this._buildRequests.some(function (request) { return request.hasPending(); });
+        return this._buildRequests.some(function (request) { return request.isPending(); });
     }
 
     compareTestResults(rootSetA, rootSetB)
@@ -222,22 +222,7 @@ class TestGroup extends LabeledObject {
             return TestGroup.ensureSingleton(row.id, row);
         });
 
-        var rootIdMap = {};
-        for (var root of data['roots']) {
-            rootIdMap[root.id] = root;
-            root.repository = Repository.findById(root.repository);
-        }
-
-        var rootSets = data['rootSets'].map(function (row) {
-            row.roots = row.roots.map(function (rootId) { return rootIdMap[rootId]; });
-            return RootSet.ensureSingleton(row.id, row);
-        });
-
-        var buildRequests = data['buildRequests'].map(function (rawData) {
-            rawData.testGroup = TestGroup.findById(rawData.testGroup);
-            rawData.rootSet = RootSet.findById(rawData.rootSet);
-            return BuildRequest.ensureSingleton(rawData.id, rawData);
-        });
+        BuildRequest.constructBuildRequestsFromData(data);
 
         return testGroups;
     }
