@@ -14,3 +14,18 @@ PASS
 -- Running test case: CodeMirror.PrettyPrinting.JavaScript.unary-binary-operators.js
 PASS
 
+-- Running test case: CodeMirror.PrettyPrinting.JavaScript.do-while-loop.js
+PASS
+
+-- Running test case: CodeMirror.PrettyPrinting.JavaScript.if-followed-by-while.js
+PASS
+
+-- Running test case: CodeMirror.PrettyPrinting.JavaScript.while-within-do-while.js
+PASS
+
+-- Running test case: CodeMirror.PrettyPrinting.JavaScript.if-while-within-do-while.js
+PASS
+
+-- Running test case: CodeMirror.PrettyPrinting.JavaScript.do-while-within-if.js
+PASS
+

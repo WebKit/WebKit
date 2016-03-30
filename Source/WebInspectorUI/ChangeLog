@@ -1,3 +1,40 @@
+2016-03-29  Dana Burkart and Matthew Hanson  <dburkart@apple.com>
+
+        Web Inspector: JS PrettyPrinting in do/while loops, "while" should be on the same line as "}" if there was a closing brace
+        https://bugs.webkit.org/show_bug.cgi?id=117616
+        <rdar://problem/15796884>
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch fixes the formatting of do / while loops in the WebInspector CodeFormatter.
+
+        Before:
+            do {
+              "x"
+            }
+            while (0);
+
+        After:
+            do {
+              "x"
+            } while (0);
+
+        * UserInterface/Views/CodeMirrorFormatters.js:
+        (shouldHaveSpaceBeforeToken):
+        If we encounter a while token and the last token was a closing brace, we *should* add a space if that closing
+        brace was closing a do block.
+
+        (removeLastNewline):
+        If we encounter a while token and the last token was a closing brace, we *should not* add a newline if that closing
+        brace closes a do block.
+
+        (modifyStateForTokenPre):
+        We should keep track of the last token that we encountered before entering into a block. We do this by setting
+        a lastContentBeforeBlock property on openBraceStartMarker / state objects.
+
+        In addition, this fixes a bug where we do not pop a state object off of openBraceStartMarkers if our indentCount
+        is 0. Without doing this, we cannot reliably determine whether or not our while token needs to be inline or not.
+
 2016-03-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION: ⌘E and ⌘G text searching does not work

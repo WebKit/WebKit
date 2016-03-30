@@ -53,6 +53,8 @@ CodeMirror.extendMode("javascript", {
         if (/\bkeyword\b/.test(token)) { // Most keywords require spaces before them, unless a '}' can come before it.
             if (content === "else" || content === "catch" || content === "finally")
                 return lastContent === "}";
+            if (content === "while" && lastContent === "}")
+                return state._jsPrettyPrint.lastContentBeforeBlock === "do";
             return false;
         }
 
@@ -141,6 +143,8 @@ CodeMirror.extendMode("javascript", {
         if (/\bkeyword\b/.test(token)) {
             if (content === "else" || content === "catch" || content === "finally") // "} else", "} catch", "} finally"
                 return lastContent === "}";
+            if (content === "while" && lastContent === "}")
+                return state._jsPrettyPrint.lastContentBeforeBlock === "do";
             return false;
         }
 
@@ -201,6 +205,7 @@ CodeMirror.extendMode("javascript", {
                 openBraceStartMarkers: [],  // Keep track of non-single statement blocks.
                 openBraceTrackingCount: -1, // Keep track of "{" and "}" in non-single statement blocks.
                 unaryOperatorHadLeadingExpr: false, // Try to detect if a unary operator had a leading expression and therefore may be binary.
+                lastContentBeforeBlock: undefined, // Used to detect if this was a do/while.
             };
         }
 
@@ -224,7 +229,7 @@ CodeMirror.extendMode("javascript", {
         if (!isComment && state.lexical.prev && state.lexical.prev.type === "form" && !state.lexical.prev._jsPrettyPrintMarker && (lastContent === ")" || lastContent === "else" || lastContent === "do") && (state.lexical.type !== ")")) {
             if (content === "{") {
                 // Save the state at the opening brace so we can return to it when we see "}".
-                var savedState = {indentCount: state._jsPrettyPrint.indentCount, openBraceTrackingCount: state._jsPrettyPrint.openBraceTrackingCount};
+                var savedState = {indentCount: state._jsPrettyPrint.indentCount, openBraceTrackingCount: state._jsPrettyPrint.openBraceTrackingCount, lastContentBeforeBlock: lastContent};
                 state._jsPrettyPrint.openBraceStartMarkers.push(savedState);
                 state._jsPrettyPrint.openBraceTrackingCount = 1;
             } else if (state.lexical.type !== "}") {
@@ -241,7 +246,6 @@ CodeMirror.extendMode("javascript", {
 
         // - Leaving:
         //   - Preconditions:
-        //     - we must be indented
         //     - ignore ";", wait for the next token instead.
         //   - Cases:
         //     1. "else"
@@ -250,7 +254,7 @@ CodeMirror.extendMode("javascript", {
         //       - dedent to the last "{"
         //     3. Token without a marker on the stack
         //       - dedent all the way
-        else if (state._jsPrettyPrint.indentCount) {
+        else {
             console.assert(!state._jsPrettyPrint.shouldDedent);
             console.assert(!state._jsPrettyPrint.dedentSize);
 
@@ -277,6 +281,7 @@ CodeMirror.extendMode("javascript", {
                 state._jsPrettyPrint.shouldDedent = true;
                 state._jsPrettyPrint.dedentSize = state._jsPrettyPrint.indentCount - savedState.indentCount;
                 state._jsPrettyPrint.openBraceTrackingCount = savedState.openBraceTrackingCount;
+                state._jsPrettyPrint.lastContentBeforeBlock = savedState.lastContentBeforeBlock;
             } else {
                 // Dedent all the way.
                 var shouldDedent = true;
