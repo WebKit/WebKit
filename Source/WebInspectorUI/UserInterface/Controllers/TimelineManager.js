@@ -773,17 +773,48 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         console.assert(!this._webTimelineScriptRecordsExpectingScriptProfilerEvents || this._scriptProfilerRecords.length >= this._webTimelineScriptRecordsExpectingScriptProfilerEvents.length);
 
         if (samples) {
-            // Associate the stackTraces with the ScriptProfiler created records.
             let {totalTime: totalExecutionTime, stackTraces} = samples;
             let topDownCallingContextTree = this.activeRecording.topDownCallingContextTree;
             let bottomUpCallingContextTree = this.activeRecording.bottomUpCallingContextTree;
+
+            // Calculate a per-sample duration.
+            let timestampIndex = 0;
+            let timestampCount = stackTraces.length;
+            let sampleDurations = new Array(timestampCount);
+            let sampleDurationIndex = 0;
+            const defaultDuration = 1 / 1000; // 1ms.
+            for (let i = 0; i < this._scriptProfilerRecords.length; ++i) {
+                let record = this._scriptProfilerRecords[i];
+
+                // Use a default duration for timestamps recorded outside of ScriptProfiler events.
+                while (timestampIndex < timestampCount && stackTraces[timestampIndex].timestamp < record.startTime) {
+                    sampleDurations[sampleDurationIndex++] = defaultDuration;
+                    timestampIndex++;
+                }
+
+                // Average the duration per sample across all samples during the record.
+                let samplesInRecord = 0;
+                while (timestampIndex < timestampCount && stackTraces[timestampIndex].timestamp < record.endTime) {
+                    timestampIndex++;
+                    samplesInRecord++;
+                }
+                if (samplesInRecord) {
+                    let averageDuration = (record.endTime - record.startTime) / samplesInRecord;
+                    sampleDurations.fill(averageDuration, sampleDurationIndex, sampleDurationIndex + samplesInRecord);
+                    sampleDurationIndex += samplesInRecord;
+                }
+            }
+
+            // Use a default duration for timestamps recorded outside of ScriptProfiler events.
+            if (timestampIndex < timestampCount)
+                sampleDurations.fill(defaultDuration, sampleDurationIndex);
 
             topDownCallingContextTree.increaseExecutionTime(totalExecutionTime);
             bottomUpCallingContextTree.increaseExecutionTime(totalExecutionTime);
 
             for (let i = 0; i < stackTraces.length; i++) {
-                topDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i]);
-                bottomUpCallingContextTree.updateTreeWithStackTrace(stackTraces[i]);
+                topDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
+                bottomUpCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
             }
 
             // FIXME: This transformation should not be needed after introducing ProfileView.

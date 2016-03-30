@@ -38,7 +38,7 @@ WebInspector.ProfileDataGridTree = class ProfileDataGridTree extends WebInspecto
         this._callingContextTree = callingContextTree;
         this._startTime = startTime;
         this._endTime = endTime;
-        this._numberOfSamples = this._callingContextTree.numberOfSamplesInTimeRange(startTime, endTime);
+        this._totalSampleTime = this._callingContextTree.totalDurationInTimeRange(startTime, endTime);
 
         this._focusNodes = [];
         this._modifiers = [];
@@ -60,15 +60,6 @@ WebInspector.ProfileDataGridTree = class ProfileDataGridTree extends WebInspecto
     // Public
 
     get callingContextTree() { return this._callingContextTree; }
-
-    get sampleInterval()
-    {
-        // FIXME: It would be good to bound this, but the startTime/endTime can be beyond the
-        // bounds of when the calling context tree was sampling. This could be improved when a
-        // subset within the timeline is selected (a better bounding start/end). For now just
-        // assume a constant rate, as that roughly matches what the intent is.
-        return 1 / 1000; // 1ms per sample
-    }
 
     get focusNodes()
     {
@@ -99,11 +90,11 @@ WebInspector.ProfileDataGridTree = class ProfileDataGridTree extends WebInspecto
         return this._endTime;
     }
 
-    get numberOfSamples()
+    get totalSampleTime()
     {
         if (this._focusNodes.length)
-            return this._currentFocusNumberOfSamples;
-        return this._numberOfSamples;
+            return this._currentFocusTotalSampleTime;
+        return this._totalSampleTime;
     }
 
     get children()
@@ -249,11 +240,11 @@ WebInspector.ProfileDataGridTree = class ProfileDataGridTree extends WebInspecto
     _updateCurrentFocusDetails(focusDataGridNode)
     {
         let cctNode = focusDataGridNode.node;
-        let timestampsInRange = cctNode.filteredTimestamps(this._startTime, this._endTime);
+        let {timestamps, duration} = cctNode.filteredTimestampsAndDuration(this._startTime, this._endTime);
 
-        this._currentFocusStartTime = timestampsInRange[0];
-        this._currentFocusEndTime = timestampsInRange.lastValue;
-        this._currentFocusNumberOfSamples = timestampsInRange.length;
+        this._currentFocusStartTime = timestamps[0];
+        this._currentFocusEndTime = timestamps.lastValue;
+        this._currentFocusTotalSampleTime = duration;
     }
 
     _saveFocusedNodeOriginalParent(focusDataGridNode)

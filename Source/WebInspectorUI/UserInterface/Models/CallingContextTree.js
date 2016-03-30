@@ -47,9 +47,9 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
         this._totalNumberOfSamples = 0;
     }
 
-    numberOfSamplesInTimeRange(startTime, endTime)
+    totalDurationInTimeRange(startTime, endTime)
     {
-        return this._root.filteredTimestamps(startTime, endTime).length;
+        return this._root.filteredTimestampsAndDuration(startTime, endTime).duration;
     }
 
     increaseExecutionTime(executionTime)
@@ -57,24 +57,24 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
         this._totalExecutionTime += executionTime;
     }
 
-    updateTreeWithStackTrace({timestamp, stackFrames})
+    updateTreeWithStackTrace({timestamp, stackFrames}, duration)
     {
         this._totalNumberOfSamples++;
 
         let node = this._root;
-        node.addTimestampAndExpressionLocation(timestamp, null);
+        node.addTimestampAndExpressionLocation(timestamp, duration, null);
 
         if (this._type === WebInspector.CallingContextTree.Type.TopDown) {
             for (let i = stackFrames.length; i--; ) {
                 let stackFrame = stackFrames[i];
                 node = node.findOrMakeChild(stackFrame);
-                node.addTimestampAndExpressionLocation(timestamp, stackFrame.expressionLocation || null, i === 0);
+                node.addTimestampAndExpressionLocation(timestamp, duration, stackFrame.expressionLocation || null, i === 0);
             }
         } else {
             for (let i = 0; i < stackFrames.length; ++i) {
                 let stackFrame = stackFrames[i];
                 node = node.findOrMakeChild(stackFrame);
-                node.addTimestampAndExpressionLocation(timestamp, stackFrame.expressionLocation || null, i === 0);
+                node.addTimestampAndExpressionLocation(timestamp, duration, stackFrame.expressionLocation || null, i === 0);
             }
         }
     }
@@ -83,7 +83,7 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
     {
         let cpuProfile = {};
         let roots = [];
-        let numSamplesInTimeRange = this.numberOfSamplesInTimeRange(startTime, endTime);
+        let numSamplesInTimeRange = this._root.filteredTimestampsAndDuration(startTime, endTime).timestamps.length;
 
         this._root.forEachChild((child) => {
             if (child.hasStackTraceInTimeRange(startTime, endTime))
@@ -164,7 +164,9 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         this._uid = WebInspector.CCTNode.__uid++;
 
         this._timestamps = [];
+        this._durations = [];
         this._leafTimestamps = [];
+        this._leafDurations = [];
         this._expressionLocations = {}; // Keys are "line:column" strings. Values are arrays of timestamps in sorted order.
     }
 
@@ -214,32 +216,34 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         return hasTimestampInRange;
     }
 
-    filteredTimestamps(startTime, endTime)
+    filteredTimestampsAndDuration(startTime, endTime)
     {
-        let index = this._timestamps.lowerBound(startTime); // The left-most (smallest) item that is >= startTime.
-        let result = [];
-        for (; index < this._timestamps.length; index++) {
-            let timestamp = this._timestamps[index];
-            console.assert(startTime <= timestamp);
-            if (!(timestamp <= endTime))
-                break;
-            result.push(timestamp);
-        }
-        return result;
+        let lowerIndex = this._timestamps.lowerBound(startTime);
+        let upperIndex = this._timestamps.upperBound(endTime);
+
+        let totalDuration = 0;
+        for (let i = lowerIndex; i < upperIndex; ++i)
+            totalDuration += this._durations[i];
+
+        return {
+            timestamps: this._timestamps.slice(lowerIndex, upperIndex),
+            duration: totalDuration,
+        };
     }
 
-    numberOfLeafTimestamps(startTime, endTime)
+    filteredLeafTimestampsAndDuration(startTime, endTime)
     {
-        let count = 0;
         let lowerIndex = this._leafTimestamps.lowerBound(startTime);
-        for (let i = lowerIndex; i < this._leafTimestamps.length; ++i) {
-            let timestamp = this._leafTimestamps[i];
-            console.assert(startTime <= timestamp);
-            if (!(timestamp <= endTime))
-                break;
-            count++;
-        }
-        return count;
+        let upperIndex = this._leafTimestamps.upperBound(endTime);
+
+        let totalDuration = 0;
+        for (let i = lowerIndex; i < upperIndex; ++i)
+            totalDuration += this._leafDurations[i];
+
+        return {
+            leafTimestamps: this._leafTimestamps.slice(lowerIndex, upperIndex),
+            leafDuration: totalDuration,
+        };
     }
 
     hasChildren()
@@ -258,13 +262,16 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         return node;
     }
 
-    addTimestampAndExpressionLocation(timestamp, expressionLocation, leaf)
+    addTimestampAndExpressionLocation(timestamp, duration, expressionLocation, leaf)
     {
         console.assert(!this._timestamps.length || this._timestamps.lastValue <= timestamp, "Expected timestamps to be added in sorted, increasing, order.");
         this._timestamps.push(timestamp);
+        this._durations.push(duration);
 
-        if (leaf)
+        if (leaf) {
             this._leafTimestamps.push(timestamp);
+            this._leafDurations.push(duration);
+        }
 
         if (!expressionLocation)
             return;

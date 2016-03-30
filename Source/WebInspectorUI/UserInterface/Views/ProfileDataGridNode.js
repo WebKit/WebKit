@@ -34,6 +34,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
 
         this._populated = false;
         this._childrenToChargeToSelf = new Set;
+        this._extraSelfTimeFromChargedChildren = 0;
 
         // FIXME: Make profile data grid nodes copyable.
         this.copyable = false;
@@ -159,9 +160,8 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
                 for (let {type, source} of this._tree.modifiers) {
                     if (type === WebInspector.ProfileDataGridTree.ModifierType.ChargeToCaller) {
                         if (child.equals(source)) {
-                            this._childrenToChargeToSelf.add(child);
-                            let childSubtreeSamples = child.filteredTimestamps(this._tree.startTime, this._tree.endTime).length;
-                            this._extraSelfTimeFromChargedChildren += childSubtreeSamples * this._tree.sampleInterval;
+                            this._childrenToChargeToSelf.add(child);                            
+                            this._extraSelfTimeFromChargedChildren += child.filteredTimestampsAndDuration(this._tree.startTime, this._tree.endTime).duration;                            
                             continue;
                         }
                     }
@@ -183,13 +183,12 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
 
     _recalculateData()
     {
-        let timestamps = this._node.filteredTimestamps(this._tree.startTime, this._tree.endTime);
-        let leafs = this._node.numberOfLeafTimestamps(this._tree.startTime, this._tree.endTime);
+        let {timestamps, duration} = this._node.filteredTimestampsAndDuration(this._tree.startTime, this._tree.endTime);
+        let {leafTimestamps, leafDuration} = this._node.filteredLeafTimestampsAndDuration(this._tree.startTime, this._tree.endTime);
 
-        let sampleInterval = this._tree.sampleInterval;
-        let totalTime = timestamps.length * sampleInterval;
-        let selfTime = (leafs * sampleInterval) + this._extraSelfTimeFromChargedChildren;
-        let percent = (totalTime / (this._tree.numberOfSamples * sampleInterval)) * 100;
+        let totalTime = duration;
+        let selfTime = leafDuration + this._extraSelfTimeFromChargedChildren;
+        let percent = (totalTime / this._tree.totalSampleTime) * 100;
 
         this._data = {totalTime, selfTime, percent};
     }

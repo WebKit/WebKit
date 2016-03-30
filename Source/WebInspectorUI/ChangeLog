@@ -1,3 +1,63 @@
+2016-03-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Calculate more accurate time per-sample instead of assuming 1ms
+        https://bugs.webkit.org/show_bug.cgi?id=155961
+        <rdar://problem/25404505>
+
+        Reviewed by Geoffrey Garen.
+
+        Give each sample a duration based on the best time bounds we have available.
+        Script Profiler Events give us time bounds for (nearly) all script evaluations.
+        The only evaluations that are missed are Inspector scripts.
+
+        The duration per-sample is computed per-event:
+
+            durationPerSample = (event.endTime - event.startTime) / numSamplesInTimeRange.
+
+        If a 10ms Script Event contains 5 samples, they would each get a 2ms duration.
+        If a 0.5ms Script Event contains 1 sample, it would get a 0.5ms duration.
+
+        We were seeing an average of 1.6-1.8ms per sample for events that had more
+        than 3 samples.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.scriptProfilerTrackingCompleted):
+        Associate a time duration per sample. For each Script Event we compute
+        an average time for all the samples in the event and assign it to the sample.
+
+        * UserInterface/Models/CallingContextTree.js:
+        (WebInspector.CallingContextTree.prototype.totalDurationInTimeRange):
+        (WebInspector.CallingContextTree.prototype.numberOfSamplesInTimeRange): Deleted.
+        Accumulate the duration by checking each sample. Number of samples
+        is now meaningless.
+        
+        (WebInspector.CallingContextTree.prototype.updateTreeWithStackTrace):
+        (WebInspector.CCTNode):
+        (WebInspector.CCTNode.prototype.addTimestampAndExpressionLocation):
+        Give CCTNodes a list of durations and leafDurations that parallels
+        the timestamps and leafTimestamps lists of individual samples.
+
+        (WebInspector.CCTNode.prototype.filteredTimestampsAndDuration):
+        (WebInspector.CCTNode.prototype.filteredLeafTimestampsAndDuration):
+        (WebInspector.CCTNode.prototype.filteredTimestamps): Deleted.
+        (WebInspector.CCTNode.prototype.numberOfLeafTimestamps): Deleted.
+        Whenever we get a list of timestamps, also compute the duration
+        of those timestamps at the same time.
+
+        * UserInterface/Views/ProfileDataGridNode.js:
+        (WebInspector.ProfileDataGridNode):
+        (WebInspector.ProfileDataGridNode.prototype._updateChildrenForModifiers):
+        (WebInspector.ProfileDataGridNode.prototype._recalculateData):
+        * UserInterface/Views/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridTree):
+        (WebInspector.ProfileDataGridTree.prototype.get totalSampleTime):
+        (WebInspector.ProfileDataGridTree.prototype._updateCurrentFocusDetails):
+        (WebInspector.ProfileDataGridTree.prototype.get sampleInterval): Deleted.
+        (WebInspector.ProfileDataGridTree.prototype.get numberOfSamples): Deleted.
+        Instead of computing total time from (samples * sampleInterval),
+        accumulate it by adding up the duration of each individual sample.
+        Update the Profile Data Grid nodes to use the new calculations.
+
 2016-03-29  Dana Burkart and Matthew Hanson  <dburkart@apple.com>
 
         Web Inspector: JS PrettyPrinting in do/while loops, "while" should be on the same line as "}" if there was a closing brace
