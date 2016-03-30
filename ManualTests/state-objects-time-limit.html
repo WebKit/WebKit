@@ -1,0 +1,51 @@
+<script>
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + " -- ";
+}
+
+function startTest() {
+    try {
+        for (var i = 0; i < 101; ++i) {
+            history.pushState(0, 0, i.toString());
+            log("Successfully added item: " + i);
+        }
+    } catch(e) {
+        log(e);
+    }
+
+    setTimeout(continueTest, 30050);
+}
+
+function continueTest() {
+    alert(1);
+    history.pushState(0, 0, "101");
+    log("After 30+ second delay, successfully added the 101th item");
+
+    try {
+        for (var i = 0; i < 100; ++i) {
+            history.replaceState(0, 0, i.toString());
+            log("Successfully replaced with item: " + i);
+        }
+    } catch(e) {
+        alert(2);
+        log(e);
+    }
+
+    setTimeout(finishTest, 30050);
+}
+
+function finishTest() {
+    alert(3);
+    history.replaceState(0, 0, "100");
+    log("After 30+ second delay, successfully replaced the 100th item");
+}
+
+</script>
+This test will take over a minute to run.<br>
+100 items should successfully push, and the 101th should fail.<br>
+After 30+ seconds, 101th should successfully push.<br>
+Then 99 items should successfully replace, with the 100th failing.<br>
+After 30+ seconds, the 100th should successfully replace.<br>
+<button onclick="startTest();">Click to start test</button>
+<div id="logger"></div>
