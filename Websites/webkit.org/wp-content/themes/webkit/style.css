@@ -459,9 +459,9 @@ footer .menu {
 
 .tile .background-image.loaded {
     background: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     -webkit-filter: saturate(1);
             filter: saturate(1);
-    
 }
 
 .tile .featured-image::before {
@@ -475,6 +475,7 @@ footer .menu {
     max-height: 450px;
     background-size: cover;
     background-position: 50% 50%;
+    background-repeat: no-repeat;
 
     opacity: 0;
     -webkit-transition: opacity 0.4s ease-in;
@@ -552,6 +553,15 @@ footer .menu {
 
 .featured-tile.tag-dark .tile-content a {
     color: #6cf;
+}
+
+.tag-transparent:not(.featured-tile) .featured-image {
+    box-shadow: none;
+    background-size: contain;
+}
+
+.tag-transparent:not(.featured-tile) .background-image.loaded {
+    border-bottom: none;
 }
 
 .tile-content p {
