@@ -17,19 +17,19 @@ PASS innerHeight is 600
 PASS getComputedStyle(test).fontSize is "30px"
 PASS getComputedStyle(test).width is "450px"
 PASS getComputedStyle(testpseudo, ':after').marginLeft is "120px"
-FAIL getComputedStyle(testpseudo, ':after').paddingRight should be 225px. Was 200px.
+PASS getComputedStyle(testpseudo, ':after').paddingRight is "225px"
 PASS innerWidth is 900
 PASS innerHeight is 640
 PASS getComputedStyle(test).fontSize is "32px"
 PASS getComputedStyle(test).width is "450px"
-FAIL getComputedStyle(testpseudo, ':after').marginLeft should be 128px. Was 120px.
-FAIL getComputedStyle(testpseudo, ':after').paddingRight should be 225px. Was 200px.
+PASS getComputedStyle(testpseudo, ':after').marginLeft is "128px"
+PASS getComputedStyle(testpseudo, ':after').paddingRight is "225px"
 PASS innerWidth is 500
 PASS innerHeight is 640
 PASS getComputedStyle(test).fontSize is "32px"
 PASS getComputedStyle(test).width is "250px"
-FAIL getComputedStyle(testpseudo, ':after').marginLeft should be 100px. Was 120px.
-FAIL getComputedStyle(testpseudo, ':after').paddingRight should be 160px. Was 200px.
+PASS getComputedStyle(testpseudo, ':after').marginLeft is "100px"
+PASS getComputedStyle(testpseudo, ':after').paddingRight is "160px"
 PASS innerWidth is 800
 PASS innerHeight is 600
 PASS getComputedStyle(test).fontSize is "30px"

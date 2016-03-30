@@ -32,7 +32,9 @@
 #include "SelectorFilter.h"
 #include "StyleChange.h"
 #include "StyleSharingResolver.h"
+#include "StyleUpdate.h"
 #include <functional>
+#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -47,6 +49,7 @@ class Settings;
 class ShadowRoot;
 class StyleResolver;
 class Text;
+class TreeChange;
 
 namespace Style {
 
@@ -54,25 +57,13 @@ class TreeResolver {
 public:
     TreeResolver(Document&);
 
-    void resolve(Change);
+    std::unique_ptr<const Update> resolve(Change);
 
 private:
     Ref<RenderStyle> styleForElement(Element&, RenderStyle& inheritedStyle);
 
     void resolveComposedTree();
-    Change resolveElement(Element&);
-    void resolveBeforeOrAfterPseudoElement(Element&, Change, PseudoId, RenderTreePosition&);
-
-
-    void createRenderTreeRecursively(Element&, RenderStyle&, RenderTreePosition&, RefPtr<RenderStyle>&& resolvedStyle);
-    void createRenderer(Element&, RenderTreePosition&, RefPtr<RenderStyle>&& resolvedStyle);
-    void createRenderTreeForBeforeOrAfterPseudoElement(Element&, PseudoId, RenderTreePosition&);
-    void createRenderTreeForChildren(ContainerNode&, RenderStyle&, RenderTreePosition&);
-    void createRenderTreeForShadowRoot(ShadowRoot&);
-
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-    void createRenderTreeForSlotAssignees(HTMLSlotElement&, RenderStyle& inheritedStyle, RenderTreePosition&);
-#endif
+    ElementUpdate resolveElement(Element&);
 
     struct Scope : RefCounted<Scope> {
         StyleResolver& styleResolver;
@@ -88,13 +79,12 @@ private:
     struct Parent {
         Element* element;
         Ref<RenderStyle> style;
-        RenderTreePosition renderTreePosition;
         Change change;
         bool didPushScope { false };
         bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle { false };
 
         Parent(Document&, Change);
-        Parent(Element&, RenderStyle&, RenderTreePosition, Change);
+        Parent(Element&, ElementUpdate&);
     };
 
     Scope& scope() { return m_scopeStack.last(); }
@@ -104,16 +94,21 @@ private:
     void pushEnclosingScope();
     void popScope();
 
-    void pushParent(Element&, RenderStyle&, RenderTreePosition, Change);
+    void pushParent(Element&, ElementUpdate&);
     void popParent();
     void popParentsToDepth(unsigned depth);
 
     Document& m_document;
+    RefPtr<RenderStyle> m_documentElementStyle;
+
     Vector<Ref<Scope>, 4> m_scopeStack;
     Vector<Parent, 32> m_parentStack;
+
+    std::unique_ptr<Update> m_update;
 };
 
-void detachRenderTree(Element&);
+enum DetachType { NormalDetach, ReattachDetach };
+void detachRenderTree(Element&, DetachType = NormalDetach);
 void detachTextRenderer(Text&);
 
 void updateTextRendererAfterContentChange(Text&, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);

@@ -82,4 +82,4 @@ layer at (0,0) size 800x600
             text run at (0,28) width 34: "baz"
         RenderBlock {DIV} at (14,70) size 756x28
           RenderBR {BR} at (0,0) size 0x28
-caret: position 0 of child 0 {BR} of child 4 {DIV} of child 5 {DIV} of body
+caret: position 0 of child 0 {BR} of child 5 {DIV} of child 5 {DIV} of body

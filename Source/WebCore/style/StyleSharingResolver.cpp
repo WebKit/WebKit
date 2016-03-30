@@ -33,6 +33,7 @@
 #include "NodeRenderStyle.h"
 #include "RenderStyle.h"
 #include "SVGElement.h"
+#include "StyleUpdate.h"
 #include "StyledElement.h"
 #include "VisitedLinkState.h"
 #include "WebVTTElement.h"
@@ -44,6 +45,7 @@ namespace Style {
 static const unsigned cStyleSearchThreshold = 10;
 
 struct SharingResolver::Context {
+    const Update& update;
     const StyledElement& element;
     bool elementAffectedByClassRules;
     EInsideLink elementLinkState;
@@ -67,7 +69,7 @@ static inline bool elementHasDirectionAuto(const Element& element)
     return is<HTMLElement>(element) && downcast<HTMLElement>(element).hasDirectionAuto();
 }
 
-RefPtr<RenderStyle> SharingResolver::resolve(const Element& searchElement)
+RefPtr<RenderStyle> SharingResolver::resolve(const Element& searchElement, const Update& update)
 {
     if (!is<StyledElement>(searchElement))
         return nullptr;
@@ -77,7 +79,7 @@ RefPtr<RenderStyle> SharingResolver::resolve(const Element& searchElement)
     auto& parentElement = *element.parentElement();
     if (parentElement.shadowRoot())
         return nullptr;
-    if (!parentElement.renderStyle())
+    if (!update.elementStyle(parentElement))
         return nullptr;
     // If the element has inline style it is probably unique.
     if (element.inlineStyle())
@@ -95,6 +97,7 @@ RefPtr<RenderStyle> SharingResolver::resolve(const Element& searchElement)
         return nullptr;
 
     Context context {
+        update,
         element,
         element.hasClass() && classNamesAffectedByRules(element.classNames()),
         m_document.visitedLinkState().determineLinkState(element)
@@ -127,7 +130,7 @@ RefPtr<RenderStyle> SharingResolver::resolve(const Element& searchElement)
 
     m_elementsSharingStyle.add(&element, shareElement);
 
-    return RenderStyle::clone(shareElement->renderStyle());
+    return RenderStyle::clone(update.elementStyle(*shareElement));
 }
 
 StyledElement* SharingResolver::findSibling(const Context& context, Node* node, unsigned& count) const
@@ -195,7 +198,7 @@ static bool canShareStyleWithControl(const HTMLFormControlElement& element, cons
 bool SharingResolver::canShareStyleWithElement(const Context& context, const StyledElement& candidateElement) const
 {
     auto& element = context.element;
-    auto* style = candidateElement.renderStyle();
+    auto* style = context.update.elementStyle(candidateElement);
     if (!style)
         return false;
     if (style->unique())

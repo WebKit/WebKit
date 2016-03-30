@@ -23,54 +23,63 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleRelations_h
-#define StyleRelations_h
+#ifndef RenderTreeUpdater_h
+#define RenderTreeUpdater_h
 
+#include "RenderTreePosition.h"
+#include "StyleChange.h"
+#include "StyleUpdate.h"
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class ContainerNode;
+class Document;
 class Element;
+class Node;
 class RenderStyle;
+class Text;
 
-namespace Style {
+class RenderTreeUpdater {
+public:
+    RenderTreeUpdater(Document&);
 
-class Update;
+    void commit(std::unique_ptr<const Style::Update>);
 
-struct Relation {
-    enum Type {
-        AffectedByActive,
-        AffectedByDrag,
-        AffectedByEmpty,
-        AffectedByHover,
-        AffectedByPreviousSibling,
-        AffectsNextSibling,
-        ChildrenAffectedByBackwardPositionalRules,
-        ChildrenAffectedByFirstChildRules,
-        ChildrenAffectedByPropertyBasedBackwardPositionalRules,
-        ChildrenAffectedByLastChildRules,
-        FirstChild,
-        LastChild,
-        NthChildIndex,
-        Unique,
+private:
+    void updateRenderTree(ContainerNode& root);
+    void updateTextRenderer(Text&);
+    void updateElementRenderer(Element&, const Style::ElementUpdate&);
+    void createRenderer(Element&, RenderStyle&);
+    void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node&);
+    void updateBeforeOrAfterPseudoElement(Element&, PseudoId);
+
+    struct Parent {
+        Element* element { nullptr };
+        Style::Change styleChange { Style::NoChange };
+        Optional<RenderTreePosition> renderTreePosition;
+
+        Parent(ContainerNode& root);
+        Parent(Element&, Style::Change);
     };
-    const Element& element;
-    Type type;
-    unsigned value;
+    Parent& parent() { return m_parentStack.last(); }
+    RenderTreePosition& renderTreePosition();
 
-    Relation(const Element& element, Type type, unsigned value = 1)
-        : element(element)
-        , type(type)
-        , value(value)
-    { }
+    void pushParent(Element&, Style::Change);
+    void popParent();
+    void popParentsToDepth(unsigned depth);
+
+    Document& m_document;
+    std::unique_ptr<const Style::Update> m_styleUpdate;
+
+    Vector<Parent> m_parentStack;
+
+    HashSet<Text*> m_invalidatedWhitespaceOnlyTextSiblings;
 };
 
-using Relations = Vector<Relation, 8>;
-
-std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle&, const Element&, const Relations&);
-void commitRelations(std::unique_ptr<Relations>, Update&);
-
 }
-}
-
 #endif

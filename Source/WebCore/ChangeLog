@@ -1,3 +1,218 @@
+2016-03-26  Antti Koivisto  <antti@apple.com>
+
+        Separate render tree updating from style resolve
+        https://bugs.webkit.org/show_bug.cgi?id=155298
+
+        Reviewed by Andreas Kling.
+
+        This patch splits computing document style and applying the results into two distinct steps:
+
+        Style::TreeResolver::resolve()
+                |
+                | Style::Update
+                V
+        RenderTreeUpdater::commit()
+
+        Style::TreeResolver::resolve() returns a Style::Update object that contains all the changes to be made
+        for the whole composed tree. RenderTreeUpdater then applies the changes updating, building or tearing
+        down portions of the render tree as needed.
+
+        Style::Update consists of a map that contains new style for each newly resolved element along with some
+        metadata. A separate map contains text nodes that require reconstruction. It also tracks change roots so
+        RenderTreeUpdater needs to traverse the changed subtrees only.
+
+        The patch eliminates the recursive render tree build code path replacing it with iterative functions.
+
+        This will enable future optimizations. For example we won't need to commit to immediate rendering
+        changes simply because some script or internal function requires up-to-date style.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::State):
+        (WebCore::StyleResolver::styleForElement):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::setOverrideDocumentElementStyle):
+        (WebCore::StyleResolver::State::State):
+
+            Root element style is needed for resolving other elements. Add a way to provide it without looking
+            into active document style.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+
+            Resolve the document style and commit it immediately (for now).
+
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        * dom/Document.h:
+        (WebCore::Document::setNeedsNotifyRemoveAllPendingStylesheet):
+        (WebCore::Document::inStyleRecalc):
+        (WebCore::Document::inRenderTreeUpdate):
+        * dom/Element.cpp:
+        (WebCore::Element::setChildIndex):
+
+            Setting the unique bit is now done by style relations update code.
+
+        * dom/Node.cpp:
+        (WebCore::Node::setNeedsStyleRecalc):
+
+            Prevent spurious style invalidation during render tree updating.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+
+            Capturing body element color for color:-webkit-text is now done by TreeResolver.
+
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::setAnimatableStyle): Deleted.
+
+            No longer used.
+
+        * style/RenderTreePosition.cpp:
+        (WebCore::RenderTreePosition::nextSiblingRenderer):
+
+            Skip over non-rendered slot elements.
+
+        * style/RenderTreeUpdater.cpp: Added.
+        (WebCore::RenderTreeUpdater::Parent::Parent):
+        (WebCore::RenderTreeUpdater::RenderTreeUpdater):
+        (WebCore::hasDisplayContents):
+        (WebCore::findRenderingRoot):
+        (WebCore::RenderTreeUpdater::commit):
+
+            Call updateRenderTree for each change root.
+
+        (WebCore::shouldCreateRenderer):
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+
+            Iteratively traverse the composed tree starting for a change root.
+            Apply the changes calling updateElementRenderer and updateTextRenderer as needed.
+            Enter subtrees that haves changes to apply.
+
+        (WebCore::RenderTreeUpdater::renderTreePosition):
+
+            We may not create renderers for all elements (<slot> or more generally display:contents) that
+            have rendered descendants. Search the parent stack to find the valid position.
+
+        (WebCore::RenderTreeUpdater::pushParent):
+        (WebCore::RenderTreeUpdater::popParent):
+        (WebCore::RenderTreeUpdater::popParentsToDepth):
+
+            Maintain parent stack.
+
+        (WebCore::pseudoStyleCacheIsInvalid):
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+
+            Create, delete or update the renderer.
+
+        (WebCore::moveToFlowThreadIfNeeded):
+        (WebCore::RenderTreeUpdater::createRenderer):
+        (WebCore::textRendererIsNeeded):
+        (WebCore::createTextRenderer):
+        (WebCore::RenderTreeUpdater::updateTextRenderer):
+        (WebCore::RenderTreeUpdater::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded):
+
+            This is moved from TreeResolver.
+
+        (WebCore::needsPseudoElement):
+        (WebCore::RenderTreeUpdater::updateBeforeOrAfterPseudoElement):
+
+            Pseudo elements are handled entirely during render tree construction. Compute their style and
+            create or delete them as needed.
+
+        * style/RenderTreeUpdater.h: Added.
+        (WebCore::RenderTreeUpdater::parent):
+        * style/StyleRelations.cpp:
+        (WebCore::Style::commitRelationsToRenderStyle):
+        (WebCore::Style::commitRelations):
+
+            Commit to Style::Update instead of the document if needed.
+
+        (WebCore::Style::commitRelationsToDocument): Deleted.
+        * style/StyleRelations.h:
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::elementHasDirectionAuto):
+        (WebCore::Style::SharingResolver::resolve):
+
+            Fetch the shareable style from Style::Update instead of the active document style.
+
+        (WebCore::Style::SharingResolver::findSibling):
+        (WebCore::Style::SharingResolver::canShareStyleWithElement):
+        * style/StyleSharingResolver.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::Parent::Parent):
+
+            No need for render tree position anymore.
+
+        (WebCore::Style::TreeResolver::popScope):
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded):
+        (WebCore::Style::createTextRendererIfNeeded):
+        (WebCore::Style::updateTextRendererAfterContentChange):
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        (WebCore::Style::detachChildren):
+        (WebCore::Style::detachSlotAssignees):
+        (WebCore::Style::detachRenderTree):
+        (WebCore::Style::TreeResolver::resolveElement):
+
+            Just resolve the style and return it, no more applying or entering render tree construction code paths.
+
+        (WebCore::Style::resolveTextNode):
+        (WebCore::Style::elementImplicitVisibility):
+        (WebCore::Style::TreeResolver::pushParent):
+        (WebCore::Style::TreeResolver::popParent):
+        (WebCore::Style::TreeResolver::popParentsToDepth):
+        (WebCore::Style::shouldResolvePseudoElement):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
+            Add style changes to Style::Update.
+
+        (WebCore::Style::TreeResolver::resolve):
+
+            Return Style::Update object if non-empty.
+
+        (WebCore::Style::postResolutionCallbackQueue):
+        (WebCore::Style::shouldCreateRenderer): Deleted.
+        (WebCore::Style::moveToFlowThreadIfNeeded): Deleted.
+        (WebCore::Style::TreeResolver::createRenderer): Deleted.
+        (WebCore::Style::TreeResolver::createRenderTreeForChildren): Deleted.
+        (WebCore::Style::TreeResolver::createRenderTreeForShadowRoot): Deleted.
+        (WebCore::Style::beforeOrAfterPseudoElement): Deleted.
+        (WebCore::Style::setBeforeOrAfterPseudoElement): Deleted.
+        (WebCore::Style::clearBeforeOrAfterPseudoElement): Deleted.
+        (WebCore::Style::needsPseudoElement): Deleted.
+        (WebCore::Style::TreeResolver::createRenderTreeForBeforeOrAfterPseudoElement): Deleted.
+        (WebCore::Style::TreeResolver::createRenderTreeForSlotAssignees): Deleted.
+        (WebCore::Style::TreeResolver::createRenderTreeRecursively): Deleted.
+        (WebCore::Style::pseudoStyleCacheIsInvalid): Deleted.
+        (WebCore::Style::TreeResolver::resolveBeforeOrAfterPseudoElement): Deleted.
+
+            Remove the recursive render tree building code path.
+
+        * style/StyleTreeResolver.h:
+        (WebCore::Style::TreeResolver::scope):
+        * style/StyleUpdate.cpp: Added.
+        (WebCore::Style::Update::Update):
+        (WebCore::Style::Update::elementUpdate):
+        (WebCore::Style::Update::textUpdate):
+        (WebCore::Style::Update::elementStyle):
+        (WebCore::Style::Update::addElement):
+        (WebCore::Style::Update::addText):
+        (WebCore::Style::Update::addPossibleRoot):
+        * style/StyleUpdate.h: Added.
+        (WebCore::Style::Update::roots):
+        (WebCore::Style::Update::document):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::updateRelativeLengthsInformation):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::SVGUseElement::willRecalcStyle):
+        (WebCore::SVGUseElement::willAttachRenderers): Deleted.
+
+            Switch willAttachRenderers to willRecalcStyle as the former is now called too late.
+
+        * svg/SVGUseElement.h:
+
 2016-03-29  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver not announcing the right header information for table on iOS

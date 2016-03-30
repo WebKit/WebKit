@@ -1,3 +1,42 @@
+2016-03-26  Antti Koivisto  <antti@apple.com>
+
+        Separate render tree updating from style resolve
+        https://bugs.webkit.org/show_bug.cgi?id=155298
+
+        Reviewed by Andreas Kling.
+
+        * TestExpectations:
+
+            Skip mathml/presentation/menclose-notation-attribute-change-value.html. It will be fixed by upcoming MathML refactoring.
+
+        * css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt:
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-resize-expected.txt:
+
+            This is a progression.
+
+        * editing/mac/spelling/autocorrection-contraction-expected.txt:
+        * editing/mac/spelling/autocorrection-removing-underline-after-paste-expected.txt:
+        * editing/mac/spelling/autocorrection-removing-underline-expected.txt:
+        * editing/mac/spelling/autocorrection-simple-expected.txt:
+        * editing/style/remove-underline-from-stylesheet-expected.txt:
+        * editing/style/typing-style-003-expected.txt:
+
+            Non-rendered whitespace related changes.
+
+        * platform/ios-simulator/TestExpectations:
+
+            Skip fast/regions/position-writing-modes-in-variable-width-regions.html on iOS. Similar tests are mostly already skipped.
+
+        * platform/ios-simulator/editing/style/typing-style-003-expected.txt: Added.
+        * platform/mac-wk2/editing/mac/spelling/autocorrection-contraction-expected.txt:
+        * platform/mac/editing/inserting/editable-html-element-expected.txt:
+        * platform/mac/editing/inserting/editing-empty-divs-expected.txt:
+        * platform/mac/editing/inserting/insert-at-end-02-expected.txt:
+        * platform/mac/editing/pasteboard/4989774-expected.txt:
+        * platform/mac/editing/selection/4983858-expected.txt:
+
+            Non-rendered whitespace related changes.
+
 2016-03-29  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver not announcing the right header information for table on iOS

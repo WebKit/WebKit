@@ -988,6 +988,9 @@ webkit.org/b/154686 inspector/indexeddb/requestDatabaseNames.html [ Skip ]
 storage/indexeddb/modern/exceed-open-file-limit.html [ Skip ]
 webkit.org/b/155028 storage/indexeddb/modern/256-open-databases.html [ Skip ]
 
+# Fixed by upcoming MathML refactoring
+webkit.org/b/155019 mathml/presentation/menclose-notation-attribute-change-value.html [ Skip ]
+
 ### END OF IndexedDB failures
 ########################################
 
