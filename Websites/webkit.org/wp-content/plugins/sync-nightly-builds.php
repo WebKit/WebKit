@@ -34,11 +34,12 @@ class SyncWebKitNightlyBuilds {
         $this->uploads_dir = trailingslashit($upload_dir_info['basedir']);
 
         add_action('update_webkit_nightly_builds', function () {
-            foreach ($this->archives as $endpoint => $filename) {
+            $SyncBuild = SyncWebKitNightlyBuilds::object();
+            foreach ($SyncBuild->archives as $endpoint => $filename) {
                 // Download a copy of the archives
                 $url = sprintf(self::WEBKIT_NIGHTLY_ARCHIVE_URL, $endpoint);
 
-                if (!copy($url, $this->uploads_dir. $filename))  {
+                if (!copy($url, $SyncBuild->uploads_dir. $filename))  {
                     error_log("Couldn't download the $filename archive index. ({$errors['type']}) {$errors['message']}");
                 }
             }

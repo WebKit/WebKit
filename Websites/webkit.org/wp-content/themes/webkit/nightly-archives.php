@@ -40,11 +40,6 @@ get_header();
 <style>
 #archives h1 {
     text-align: center;
-    margin-top: 3rem;
-}
-
-#archives h1 img {
-    margin-bottom: 1rem;
 }
 
 #downloads blockquote:first-child {

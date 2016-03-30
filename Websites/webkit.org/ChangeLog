@@ -1,5 +1,18 @@
 2016-03-29  Jon Davis  <jond@apple.com>
 
+        Fixed a context error for Nightly Build sync plugin, tightens layout styles for abovetitle
+        https://bugs.webkit.org/show_bug.cgi?id=155989
+
+        Unreviewed fix for the Sync Nightly Builds plugin to work with the older 
+        PHP environment on the server. Quick style adjustments for abovetitle images.
+
+        * wp-content/plugins/sync-nightly-builds.php: 
+        * wp-content/themes/webkit/nightly-archives.php: 
+        * wp-content/themes/webkit/style.css:
+        (article .abovetitle):
+
+2016-03-29  Jon Davis  <jond@apple.com>
+
         Add WebKit Nightly Archives, WebKit Nightly Start, and Downloads pages
         https://bugs.webkit.org/show_bug.cgi?id=155989
 
