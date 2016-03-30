@@ -1,3 +1,16 @@
+2016-03-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r198782): CGImageSourceUpdateData() is called twice with the same data every time ImageSource::setData() is called
+        https://bugs.webkit.org/show_bug.cgi?id=155997
+
+        Reviewed by Simon Fraser.
+
+        Remove a call to CGImageSourceUpdateData() which was mistakenly left in
+        ImageDecoder::setData() after ImageSource refactoring.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageDecoder::setData):
+
 2016-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r198784) Shouldn't add platform-dependent code to ScrollableArea.h

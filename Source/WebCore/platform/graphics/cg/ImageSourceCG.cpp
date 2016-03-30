@@ -436,7 +436,6 @@ void ImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
     // We use SharedBuffer's ability to wrap itself inside CFData to get around this, ensuring that ImageIO is
     // really looking at the SharedBuffer.
     setData(data->createCFData().get(), allDataReceived);
-    CGImageSourceUpdateData(m_nativeDecoder.get(), data->createCFData().get(), allDataReceived);
 #else
     // Create a CGDataProvider to wrap the SharedBuffer.
     data->ref();
