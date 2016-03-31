@@ -6,7 +6,7 @@ require('../tools/js/v3-models.js');
 
 let TestServer = require('./resources/test-server.js');
 
-describe('/api/build-requests', function () {
+describe('/api/manifest', function () {
     this.timeout(10000);
     TestServer.inject();
 

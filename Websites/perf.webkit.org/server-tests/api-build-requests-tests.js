@@ -215,7 +215,16 @@ describe('/api/build-requests', function () {
         }).then(function (buildRequests) {
             assert.equal(buildRequests.length, 4);
 
+            let test = Test.findById(200);
+            assert(test);
+
+            let platform = Platform.findById(65);
+            assert(platform);
+
             assert.equal(buildRequests[0].id(), 700);
+            assert.equal(buildRequests[0].testGroupId(), 600);
+            assert.equal(buildRequests[0].test(), test);
+            assert.equal(buildRequests[0].platform(), platform);
             assert.equal(buildRequests[0].order(), 0);
             assert.ok(buildRequests[0].rootSet() instanceof RootSet);
             assert.ok(!buildRequests[0].hasFinished());
@@ -224,6 +233,9 @@ describe('/api/build-requests', function () {
             assert.equal(buildRequests[0].statusLabel(), 'Waiting to be scheduled');
 
             assert.equal(buildRequests[1].id(), 701);
+            assert.equal(buildRequests[1].testGroupId(), 600);
+            assert.equal(buildRequests[1].test(), test);
+            assert.equal(buildRequests[1].platform(), platform);
             assert.equal(buildRequests[1].order(), 1);
             assert.ok(buildRequests[1].rootSet() instanceof RootSet);
             assert.ok(!buildRequests[1].hasFinished());
@@ -232,6 +244,9 @@ describe('/api/build-requests', function () {
             assert.equal(buildRequests[1].statusLabel(), 'Waiting to be scheduled');
 
             assert.equal(buildRequests[2].id(), 702);
+            assert.equal(buildRequests[2].testGroupId(), 600);
+            assert.equal(buildRequests[2].test(), test);
+            assert.equal(buildRequests[2].platform(), platform);
             assert.equal(buildRequests[2].order(), 2);
             assert.ok(buildRequests[2].rootSet() instanceof RootSet);
             assert.ok(!buildRequests[2].hasFinished());
@@ -240,6 +255,9 @@ describe('/api/build-requests', function () {
             assert.equal(buildRequests[2].statusLabel(), 'Waiting to be scheduled');
 
             assert.equal(buildRequests[3].id(), 703);
+            assert.equal(buildRequests[3].testGroupId(), 600);
+            assert.equal(buildRequests[3].test(), test);
+            assert.equal(buildRequests[3].platform(), platform);
             assert.equal(buildRequests[3].order(), 3);
             assert.ok(buildRequests[3].rootSet() instanceof RootSet);
             assert.ok(!buildRequests[3].hasFinished());

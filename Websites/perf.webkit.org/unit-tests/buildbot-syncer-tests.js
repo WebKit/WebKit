@@ -71,15 +71,18 @@ let sampleRootSetData = {
     }
 };
 
-function createSampleBuildRequest()
+function createSampleBuildRequest(platform, test)
 {
+    assert(platform instanceof Platform);
+    assert(test instanceof Test);
+
     let rootSet = RootSet.ensureSingleton('4197', {roots: [
         {'id': '111127', 'time': 1456955807334, 'repository': MockModels.webkit, 'revision': '197463'},
         {'id': '111237', 'time': 1456931874000, 'repository': MockModels.sharedRepository, 'revision': '80229'},
         {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'},
     ]});
 
-    let request = BuildRequest.ensureSingleton('16733', {'rootSet': rootSet, 'status': 'pending'});
+    let request = BuildRequest.ensureSingleton('16733', {'rootSet': rootSet, 'status': 'pending', 'platform': platform, 'test': test});
     return request;
 }
 
@@ -424,37 +427,38 @@ describe('BuildbotSyncer', function () {
     describe('_propertiesForBuildRequest', function () {
         it('should include all properties specified in a given configuration', function () {
             let syncers = BuildbotSyncer._loadConfig('http://build.webkit.org/', sampleiOSConfig());
-            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest());
+            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.deepEqual(Object.keys(properties), ['desired_image', 'roots_dict', 'test_name', 'forcescheduler', 'build_request_id']);
         });
 
         it('should preserve non-parametric property values', function () {
             let syncers = BuildbotSyncer._loadConfig('http://build.webkit.org/', sampleiOSConfig());
-            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest());
+            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.equal(properties['test_name'], 'speedometer');
             assert.equal(properties['forcescheduler'], 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler');
 
-            properties = syncers[1]._propertiesForBuildRequest(createSampleBuildRequest());
+            properties = syncers[1]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.equal(properties['test_name'], 'jetstream');
             assert.equal(properties['forcescheduler'], 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler');
         });
 
         it('should resolve "root"', function () {
             let syncers = BuildbotSyncer._loadConfig('http://build.webkit.org/', sampleiOSConfig());
-            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest());
+            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.equal(properties['desired_image'], '13A452');
         });
 
         it('should resolve "rootsExcluding"', function () {
             let syncers = BuildbotSyncer._loadConfig('http://build.webkit.org/', sampleiOSConfig());
-            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest());
+            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.equal(properties['roots_dict'], JSON.stringify(sampleRootSetData));
         });
 
         it('should set the property for the build request id', function () {
             let syncers = BuildbotSyncer._loadConfig('http://build.webkit.org/', sampleiOSConfig());
-            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest());
-            assert.equal(properties['build_request_id'], createSampleBuildRequest().id());
+            let request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
+            let properties = syncers[0]._propertiesForBuildRequest(request);
+            assert.equal(properties['build_request_id'], request.id());
         });
     });
 

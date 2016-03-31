@@ -1,5 +1,24 @@
 2016-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        BuildRequest should have associated platform and test
+        https://bugs.webkit.org/show_bug.cgi?id=156054
+
+        Reviewed by Joseph Pecoraro.
+
+        Added methods to retrieve the platform and the test associated with a build request with tests.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest):
+        (BuildRequest.prototype.platform): Added.
+        (BuildRequest.prototype.test): Added.
+        * server-tests/api-build-requests-tests.js:
+        * server-tests/api-manifest.js: Fixed a typo. This tests /api/manifest, not /api/build-requests.
+        * unit-tests/buildbot-syncer-tests.js:
+        (.createSampleBuildRequest): Now takes Platform and Test objects to avoid hitting assertions in
+        BuildRequest's constructor.
+
+2016-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         BuildRequest should have a method to fetch all in-progress and pending requests for a triggerable
         https://bugs.webkit.org/show_bug.cgi?id=156008
 

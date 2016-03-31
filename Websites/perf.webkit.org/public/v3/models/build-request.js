@@ -10,6 +10,10 @@ class BuildRequest extends DataModelObject {
         this._testGroup = object.testGroup;
         if (this._testGroup)
             this._testGroup.addBuildRequest(this);
+        console.assert(object.platform instanceof Platform);
+        this._platform = object.platform;
+        console.assert(object.test instanceof Test);
+        this._test = object.test;
         this._order = object.order;
         console.assert(object.rootSet instanceof RootSet);
         this._rootSet = object.rootSet;
@@ -31,6 +35,8 @@ class BuildRequest extends DataModelObject {
 
     testGroupId() { return this._testGroupId; }
     testGroup() { return this._testGroup; }
+    platform() { return this._platform; }
+    test() { return this._test; }
     order() { return this._order; }
     rootSet() { return this._rootSet; }
 
