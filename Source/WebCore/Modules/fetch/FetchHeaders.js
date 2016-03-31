@@ -35,10 +35,9 @@ function initializeFetchHeaders(headersInit)
     if (!@isObject(headersInit))
         throw new @TypeError("headersInit must be an object");
 
-    if (this.constructor === headersInit.constructor) {
-         headersInit.forEach((value, name) => {
-             this.@appendFromJS(name, value);
-         });
+    if (headersInit instanceof this.constructor) {
+        this.@fillFromJS(headersInit);
+        return this;
     }
 
     if (headersInit instanceof @Array) {

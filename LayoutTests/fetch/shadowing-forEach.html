@@ -11,7 +11,9 @@ Array.prototype.forEach = function() {
     throw "User overriden";
 };
 
-new Headers({a:1});
+let headers = new Headers({a:1});
+let headers2 = new Headers(headers);
+
 </script>
 <script src="../resources/js-test-post.js"></script>
 </body>

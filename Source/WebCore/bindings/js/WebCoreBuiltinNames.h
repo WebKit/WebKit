@@ -38,6 +38,7 @@ namespace WebCore {
     macro(controlledReadableStream) \
     macro(controller) \
     macro(disturbed) \
+    macro(fillFromJS) \
     macro(getUserMediaFromJS) \
     macro(initializeWith) \
     macro(operations) \

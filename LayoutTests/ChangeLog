@@ -1,5 +1,23 @@
 2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Remove forEach use from Fetch Headers builtin constructor
+        https://bugs.webkit.org/show_bug.cgi?id=155967
+
+        Reviewed by Joseph Pecoraro.
+
+        Renaming tests covering user scripts breaking some WebCore JS built ins.
+
+        * fetch/header-constructor-subclass-expected.txt: Added.
+        * fetch/header-constructor-subclass.html: Added.
+        * fetch/shadowing-forEach-expected.txt: Renamed from LayoutTests/streams/builtin-overrides-expected.txt.
+        * fetch/shadowing-forEach.html: Renamed from LayoutTests/fetch/builtin-overrides.html.
+        * streams/shadowing-Promise-expected.txt: Renamed from LayoutTests/streams/streams-promises-expected.txt.
+        * streams/shadowing-Promise.html: Renamed from LayoutTests/streams/streams-promises.html.
+        * streams/shadowing-defineProperty-expected.txt: Renamed from LayoutTests/fetch/builtin-overrides-expected.txt.
+        * streams/shadowing-defineProperty.html: Renamed from LayoutTests/streams/builtin-overrides.html.
+
+2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Fetch API] Update web-platform-test fetch API tests
         https://bugs.webkit.org/show_bug.cgi?id=155969
 
