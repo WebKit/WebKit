@@ -1,3 +1,18 @@
+2016-03-31  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r191180): Safari does not send Referer Header to iframe src in certain situations
+        https://bugs.webkit.org/show_bug.cgi?id=155754
+        <rdar://problem/25296445>
+
+        Unreviewed, roll out r191180 as it breaks sites and needs to be reworked.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::tagIdFor): Deleted.
+        (WebCore::TokenPreloadScanner::initiatorFor): Deleted.
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute): Deleted.
+        (WebCore::TokenPreloadScanner::StartTagScanner::resourceType): Deleted.
+        * html/parser/HTMLPreloadScanner.h:
+
 2016-03-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebKit should set Original URL of a download request correctly

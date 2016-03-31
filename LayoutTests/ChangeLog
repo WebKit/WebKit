@@ -1,3 +1,17 @@
+2016-03-31  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r191180): Safari does not send Referer Header to iframe src in certain situations
+        https://bugs.webkit.org/show_bug.cgi?id=155754
+        <rdar://problem/25296445>
+
+        Unreviewed, roll out r191180 as it breaks sites and needs to be reworked.
+
+        * fast/preloader/frame-src-expected.txt: Removed.
+        * fast/preloader/frame-src.html: Removed.
+        * fast/preloader/resources/testFrame.html: Removed.
+        * http/tests/loading/preload-no-store-frame-src-expected: Removed.
+        * http/tests/loading/preload-no-store-frame-src.html: Removed.
+
 2016-03-31  Eric Carlson  <eric.carlson@apple.com>
 
         Rebaseline media control tests when new media control appearances are finalized
