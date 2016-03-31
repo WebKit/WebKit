@@ -102,6 +102,7 @@ enum {
     WebMenuItemTagDictationAlternative,
     WebMenuItemTagToggleVideoFullscreen,
     WebMenuItemTagShareMenu,
+    WebMenuItemTagToggleVideoEnhancedFullscreen,
 };
 
 // Deprecated; remove when there are no more clients.

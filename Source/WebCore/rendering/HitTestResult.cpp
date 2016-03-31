@@ -773,4 +773,22 @@ Element* HitTestResult::innerNonSharedElement() const
     return node->parentElement();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/HitTestResultAdditions.cpp>
+#else
+bool HitTestResult::mediaSupportsEnhancedFullscreen() const
+{
+    return false;
+}
+
+bool HitTestResult::mediaIsInEnhancedFullscreen() const
+{
+    return false;
+}
+
+void HitTestResult::toggleEnhancedFullscreenForVideo() const
+{
+}
+#endif
+
 } // namespace WebCore

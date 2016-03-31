@@ -279,6 +279,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagMediaMute:
         m_context.hitTestResult().toggleMediaMuteState();
         break;
+    case ContextMenuItemTagToggleVideoEnhancedFullscreen:
+        m_context.hitTestResult().toggleEnhancedFullscreenForVideo();
+        break;
     case ContextMenuItemTagOpenFrameInNewWindow: {
         DocumentLoader* loader = frame->loader().documentLoader();
         if (!loader->unreachableURL().isEmpty())
@@ -766,6 +769,9 @@ void ContextMenuController::populate()
         contextMenuItemTagEnterVideoFullscreen());
     ContextMenuItem ToggleVideoFullscreen(ActionType, ContextMenuItemTagToggleVideoFullscreen,
         contextMenuItemTagEnterVideoFullscreen());
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    ContextMenuItem ToggleVideoEnhancedFullscreen(ActionType, ContextMenuItemTagToggleVideoEnhancedFullscreen, contextMenuItemTagEnterVideoEnhancedFullscreen());
+#endif
 #if PLATFORM(COCOA)
     ContextMenuItem SearchSpotlightItem(ActionType, ContextMenuItemTagSearchInSpotlight, 
         contextMenuItemTagSearchInSpotlight());
@@ -862,6 +868,9 @@ void ContextMenuController::populate()
             appendItem(ToggleVideoFullscreen, m_contextMenu.get());
 #else
             appendItem(EnterVideoFullscreen, m_contextMenu.get());
+#endif
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+            appendItem(ToggleVideoEnhancedFullscreen, m_contextMenu.get());
 #endif
             appendItem(*separatorItem(), m_contextMenu.get());
             appendItem(CopyMediaLinkItem, m_contextMenu.get());
@@ -1361,6 +1370,12 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
 #endif
         case ContextMenuItemTagEnterVideoFullscreen:
             shouldEnable = m_context.hitTestResult().mediaSupportsFullscreen();
+            break;
+        case ContextMenuItemTagToggleVideoEnhancedFullscreen:
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+            item.setTitle(m_context.hitTestResult().mediaIsInEnhancedFullscreen() ? contextMenuItemTagExitVideoEnhancedFullscreen() : contextMenuItemTagEnterVideoEnhancedFullscreen());
+#endif
+            shouldEnable = m_context.hitTestResult().mediaSupportsEnhancedFullscreen();
             break;
         case ContextMenuItemTagOpenFrameInNewWindow:
         case ContextMenuItemTagSpellingGuess:

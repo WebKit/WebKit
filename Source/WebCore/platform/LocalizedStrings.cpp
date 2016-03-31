@@ -507,6 +507,24 @@ String contextMenuItemTagExitVideoFullscreen()
     return WEB_UI_STRING("Exit Full Screen", "Video Exit Fullscreen context menu item");
 }
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ContextMenuLocalizedStringsAdditions.cpp>
+#else
+String contextMenuItemTagEnterVideoEnhancedFullscreen()
+{
+    return { };
+}
+
+String contextMenuItemTagExitVideoEnhancedFullscreen()
+{
+    return { };
+}
+#endif
+
+#endif
+
 String contextMenuItemTagMediaPlay()
 {
     return WEB_UI_STRING("Play", "Media Play context menu item");

@@ -1,3 +1,33 @@
+2016-03-30  Ada Chan  <adachan@apple.com>
+
+        Add the new "toggle enhanced fullscreen" context menu item to the video context menu on supporting platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=156031
+
+        Reviewed by Eric Carlson.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        Handle the selection of the context menu item.
+        (WebCore::ContextMenuController::populate):
+        Add this menu item on Mac.
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded):
+        Set the menu item's title depending on the current enhanced fullscreen state
+        and enable this menu item if supported.
+
+        * platform/ContextMenuItem.h:
+        Define the new tag for this menu item.
+
+        * platform/LocalizedStrings.cpp:
+        (WebCore::contextMenuItemTagEnterVideoEnhancedFullscreen):
+        (WebCore::contextMenuItemTagExitVideoEnhancedFullscreen):
+        * platform/LocalizedStrings.h:
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::mediaSupportsEnhancedFullscreen):
+        (WebCore::HitTestResult::mediaIsInEnhancedFullscreen):
+        (WebCore::HitTestResult::toggleEnhancedFullscreenForVideo):
+        * rendering/HitTestResult.h:
+
 2016-03-31  Nan Wang  <n_wang@apple.com>
 
         AX: aria-hidden=false causes video fallback content to be exposed to AX API

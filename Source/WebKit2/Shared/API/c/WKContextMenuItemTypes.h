@@ -122,6 +122,7 @@ enum {
     kWKContextMenuItemTagOpenLinkInThisWindow,
     kWKContextMenuItemTagToggleVideoFullscreen,
     kWKContextMenuItemTagShareMenu,
+    kWKContextMenuItemTagToggleVideoEnhancedFullscreen,
     kWKContextMenuItemBaseApplicationTag = 10000
 };
 typedef uint32_t WKContextMenuItemTag;

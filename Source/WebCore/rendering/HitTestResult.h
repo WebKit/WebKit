@@ -127,6 +127,10 @@ public:
     WEBCORE_EXPORT bool mediaIsVideo() const;
     bool mediaMuted() const;
     void toggleMediaMuteState() const;
+    bool mediaSupportsEnhancedFullscreen() const;
+    bool mediaIsInEnhancedFullscreen() const;
+    void toggleEnhancedFullscreenForVideo() const;
+
     WEBCORE_EXPORT bool isDownloadableMedia() const;
     WEBCORE_EXPORT bool isOverTextInsideFormControlElement() const;
     WEBCORE_EXPORT bool allowsCopy() const;
