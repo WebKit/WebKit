@@ -1,3 +1,16 @@
+2016-03-31  Daniel Bates  <dabates@apple.com>
+
+        tool tip/alt. text appears when mouse is no longer hovering over link
+        https://bugs.webkit.org/show_bug.cgi?id=24427
+        <rdar://problem/8045235>
+
+        Reviewed by Antonio Gomes.
+
+        Although the bug no longer reproduces, add a manual test that can be used to determine if a
+        tooltip for a hyperlink is shown when the cursor no longer hovers over it.
+
+        * ManualTests/tooltip-when-mouse-not-directly-over-hyperlink.html: Added.
+
 2016-03-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r198781.
