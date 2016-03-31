@@ -39,7 +39,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     // Public
 
-    evaluateJavaScriptFunction(functionString, argumentStrings, expectsImplicitCallbackArgument, frameID, callbackID, resultCallback)
+    evaluateJavaScriptFunction(functionString, argumentStrings, expectsImplicitCallbackArgument, frameID, callbackID, resultCallback, callbackTimeout)
     {
         // The script is expected to be a function declaration. Evaluate it inside parenthesis to get the function value.
         let functionValue = evaluate("(" + functionString + ")");
@@ -47,13 +47,19 @@ let AutomationSessionProxy = class AutomationSessionProxy
             throw new TypeError("Script did not evaluate to a function.");
 
         let argumentValues = argumentStrings.map(this._jsonParse, this);
-        let callback = (result) => resultCallback(frameID, callbackID, this._jsonStringify(result));
+
+        let timeoutIdentifier = 0;
+
+        let reportResult = (result) => { clearTimeout(timeoutIdentifier); resultCallback(frameID, callbackID, this._jsonStringify(result), false); }
+        let reportTimeoutError = () => { clearTimeout(timeoutIdentifier); resultCallback(frameID, callbackID, "JavaScriptTimeout", true); }
 
         if (expectsImplicitCallbackArgument) {
-            argumentValues.push(callback);
+            timeoutIdentifier = setTimeout(reportTimeoutError, callbackTimeout);
+
+            argumentValues.push(reportResult);
             functionValue.apply(null, argumentValues);
         } else
-            callback(functionValue.apply(null, argumentValues));
+            reportResult(functionValue.apply(null, argumentValues));
     }
 
     nodeForIdentifier(identifier)

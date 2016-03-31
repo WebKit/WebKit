@@ -58,7 +58,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
 
     // Called by WebAutomationSessionProxy messages
-    void evaluateJavaScriptFunction(uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, uint64_t callbackID);
+    void evaluateJavaScriptFunction(uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID);
     void resolveChildFrameWithOrdinal(uint64_t frameID, uint32_t ordinal, uint64_t callbackID);
     void resolveChildFrameWithNodeHandle(uint64_t frameID, const String& nodeHandle, uint64_t callbackID);
     void resolveChildFrameWithName(uint64_t frameID, const String& name, uint64_t callbackID);

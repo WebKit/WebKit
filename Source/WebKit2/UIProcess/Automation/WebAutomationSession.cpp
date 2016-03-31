@@ -395,7 +395,7 @@ void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorSt
     page->reload(reloadFromOrigin, contentBlockersEnabled);
 }
 
-void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, bool expectsImplicitCallbackArgument, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
+void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
@@ -414,10 +414,13 @@ void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& er
         argumentsVector.uncheckedAppend(argumentString);
     }
 
+    bool expectsImplicitCallbackArgument = optionalExpectsImplicitCallbackArgument ? *optionalExpectsImplicitCallbackArgument : false;
+    int callbackTimeout = optionalCallbackTimeout ? *optionalCallbackTimeout : 0;
+
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(frame->frameID(), function, argumentsVector, expectsImplicitCallbackArgument, callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(frame->frameID(), function, argumentsVector, expectsImplicitCallbackArgument, callbackTimeout, callbackID), 0);
 }
 
 void WebAutomationSession::didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType)

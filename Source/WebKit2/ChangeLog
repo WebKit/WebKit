@@ -1,3 +1,27 @@
+2016-03-30  Timothy Hatcher  <timothy@apple.com>
+
+        Web Automation: Add support for script timeouts to the evaluateJavaScriptFunction command
+
+        https://bugs.webkit.org/show_bug.cgi?id=156052
+        rdar://problem/25457151
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Automation/Automation.json: Added callbackTimeout to evaluateJavaScriptFunction.
+        Also made expectsImplicitCallbackArgument optional, since it is not required. Added JavaScriptTimeout error.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction): Added callbackTimeout.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::evaluateJavaScriptCallback): Send JavaScriptTimeout error if the timeout fired.
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction): Added callbackTimeout.
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (AutomationSessionProxy.prototype.evaluateJavaScriptFunction): Set a timeout to fire if the
+        callback is not called, then return an error.
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+        (EvaluateJavaScriptFunction): Added callbackTimeout parameter.
+
 2016-03-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebKit should set Original URL of a download request correctly

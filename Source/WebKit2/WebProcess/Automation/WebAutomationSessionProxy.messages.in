@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebAutomationSessionProxy {
-    EvaluateJavaScriptFunction(uint64_t frameID, String function, Vector<String> arguments, bool expectsImplicitCallbackArgument, uint64_t callbackID)
+    EvaluateJavaScriptFunction(uint64_t frameID, String function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID)
 
     ResolveChildFrameWithOrdinal(uint64_t frameID, uint32_t ordinal, uint64_t callbackID)
     ResolveChildFrameWithNodeHandle(uint64_t frameID, String nodeHandle, uint64_t callbackID)

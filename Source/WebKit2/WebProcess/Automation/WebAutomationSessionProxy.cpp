@@ -126,10 +126,11 @@ static JSValueRef createUUID(JSContextRef context, JSObjectRef function, JSObjec
 
 static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    ASSERT_ARG(argumentCount, argumentCount == 3);
+    ASSERT_ARG(argumentCount, argumentCount == 4);
     ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[0]));
     ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[1]));
     ASSERT_ARG(arguments, JSValueIsString(context, arguments[2]));
+    ASSERT_ARG(arguments, JSValueIsBoolean(context, arguments[3]));
 
     auto automationSessionProxy = WebProcess::singleton().automationSessionProxy();
     if (!automationSessionProxy)
@@ -139,7 +140,19 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
     uint64_t callbackID = JSValueToNumber(context, arguments[1], exception);
     JSRetainPtr<JSStringRef> result(Adopt, JSValueToStringCopy(context, arguments[2], exception));
 
-    automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result->string(), String());
+    bool resultIsErrorName = JSValueToBoolean(context, arguments[3]);
+
+    if (resultIsErrorName) {
+        if (result->string() == "JavaScriptTimeout") {
+            String errorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptTimeout);
+            automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, String(), errorType);
+        } else {
+            ASSERT_NOT_REACHED();
+            String errorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
+            automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, String(), errorType);
+        }
+    } else
+        automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result->string(), String());
 
     return JSValueMakeUndefined(context);
 }
@@ -212,7 +225,7 @@ void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, String(), errorType), 0);
 }
 
-void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, uint64_t callbackID)
+void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
@@ -225,8 +238,6 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t frameID, con
     JSValueRef exception = nullptr;
     JSGlobalContextRef context = frame->jsContext();
 
-    JSObjectRef callbackFunction = JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback);
-
     if (expectsImplicitCallbackArgument) {
         auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, Vector<uint64_t>());
         result.iterator->value.append(callbackID);
@@ -238,7 +249,8 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t frameID, con
         JSValueMakeBoolean(context, expectsImplicitCallbackArgument),
         JSValueMakeNumber(context, frameID),
         JSValueMakeNumber(context, callbackID),
-        callbackFunction
+        JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
+        JSValueMakeNumber(context, callbackTimeout)
     };
 
     callPropertyFunction(context, scriptObject, ASCIILiteral("evaluateJavaScriptFunction"), WTF_ARRAY_LENGTH(functionArguments), functionArguments, &exception);

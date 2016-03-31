@@ -103,7 +103,7 @@ public:
     void goBackInBrowsingContext(Inspector::ErrorString&, const String&) override;
     void goForwardInBrowsingContext(Inspector::ErrorString&, const String&) override;
     void reloadBrowsingContext(Inspector::ErrorString&, const String&) override;
-    void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, bool expectsImplicitCallbackArgument, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
+    void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
     void performMouseInteraction(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& requestedPosition, const String& mouseButton, const String& mouseInteraction, const Inspector::InspectorArray& keyModifiers, RefPtr<Inspector::Protocol::Automation::Point>& updatedPosition) override;
     void performKeyboardInteractions(Inspector::ErrorString&, const String& handle, const Inspector::InspectorArray& interactions) override;
     void takeScreenshot(Inspector::ErrorString&, const String& handle, Ref<Inspector::AutomationBackendDispatcherHandler::TakeScreenshotCallback>&&) override;

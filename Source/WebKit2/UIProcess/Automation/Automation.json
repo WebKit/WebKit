@@ -48,6 +48,7 @@
             "enum": [
                 "InternalError",
                 "JavaScriptError",
+                "JavaScriptTimeout",
                 "WindowNotFound",
                 "FrameNotFound",
                 "NodeNotFound",
@@ -280,7 +281,8 @@
                 { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame the script should be evaluated. The main frame is used if this parameter empty string or excluded." },
                 { "name": "function", "type": "string", "description": "The script to evaluate in the browsing context. It must be a function result." },
                 { "name": "arguments", "type": "array", "items": { "type": "string" }, "description": "The arguments to pass to the function when called. They will be parsed as JSON before calling the function." },
-                { "name": "expectsImplicitCallbackArgument", "type": "boolean", "description": "The function expects a callback function as the last argument. It is expected to call this callback with a result." }
+                { "name": "expectsImplicitCallbackArgument", "type": "boolean", "optional": true, "description": "The function expects a callback function as the last argument. It is expected to call this callback with a result." },
+                { "name": "callbackTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the implicit callback is expected to be called in, otherwise a <code>JavaScriptTimeout</code> error is returned." }
             ],
             "returns": [
                 { "name": "result", "type": "string", "description": "The result returned by the called function. It is JSON encoded after the function returns or calls the callback." }
