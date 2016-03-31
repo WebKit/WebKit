@@ -1,3 +1,11 @@
+2016-03-30  Alex Christensen  <achristensen@webkit.org>
+
+        Speculative Yosemite fix after r198872.
+
+        * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+        Yosemite didn't like _Nullable.
+
 2016-03-30  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Need to expose makeAllShadowRootsOpen in WKWebProcessPlugInScriptWorld.
