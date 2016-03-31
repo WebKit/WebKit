@@ -746,11 +746,12 @@ void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString,
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
 
     // Validate all of the parameters before performing any interactions with the browsing context under test.
-    Vector<std::function<void()>> actionsToPerform(interactions.length());
+    Vector<std::function<void()>> actionsToPerform;
+    actionsToPerform.reserveCapacity(interactions.length());
 
-    for (auto it = interactions.begin(); it != interactions.end(); ++it) {
+    for (auto interaction : interactions) {
         RefPtr<InspectorObject> interactionObject;
-        if (!it->get()->asObject(interactionObject))
+        if (!interaction->asObject(interactionObject))
             FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
 
         String interactionTypeString;
@@ -767,7 +768,7 @@ void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString,
             if (!virtualKey)
                 FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
 
-            actionsToPerform.append([this, page, interactionType, virtualKey] {
+            actionsToPerform.uncheckedAppend([this, page, interactionType, virtualKey] {
                 platformSimulateKeyStroke(*page, interactionType.value(), virtualKey.value());
             });
         }
@@ -782,7 +783,7 @@ void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString,
                 FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
 
             case Inspector::Protocol::Automation::KeyboardInteractionType::InsertByKey:
-                actionsToPerform.append([this, page, keySequence] {
+                actionsToPerform.uncheckedAppend([this, page, keySequence] {
                     platformSimulateKeySequence(*page, keySequence);
                 });
                 break;
@@ -791,11 +792,12 @@ void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString,
 
         if (!foundVirtualKey && !foundKeySequence)
             FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
-
-        ASSERT(actionsToPerform.size());
-        for (auto& action : actionsToPerform)
-            action();
     }
+
+    ASSERT(actionsToPerform.size());
+    for (auto& action : actionsToPerform)
+        action();
+
 #endif // USE(APPKIT)
 }
 

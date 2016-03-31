@@ -1,3 +1,15 @@
+2016-03-31  Brian Burg  <bburg@apple.com>
+
+        Web Automation: the interaction queue in WebAutomationSession::performKeyInteractions doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=156083
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        Use Vector::reserveCapacity instead of the size constructor since we use append.
+        Empty the interaction queue outside of loops so all interactions are performed once.
+
 2016-03-31  Timothy Hatcher  <timothy@apple.com>
 
         Web Automation: Add support for script timeouts to the evaluateJavaScriptFunction command
