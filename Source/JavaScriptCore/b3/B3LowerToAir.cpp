@@ -715,8 +715,13 @@ private:
         // over three operand forms.
 
         if (left != right) {
+            ArgPromise leftAddr = loadPromise(left);
+            if (isValidForm(opcode, leftAddr.kind(), Arg::Tmp, Arg::Tmp)) {
+                append(opcode, leftAddr.consume(*this), tmp(right), result);
+                return;
+            }
+
             if (commutativity == Commutative) {
-                ArgPromise leftAddr = loadPromise(left);
                 if (isValidForm(opcode, leftAddr.kind(), Arg::Tmp)) {
                     append(relaxedMoveForType(m_value->type()), tmp(right), result);
                     append(opcode, leftAddr.consume(*this), result);
@@ -725,6 +730,10 @@ private:
             }
 
             ArgPromise rightAddr = loadPromise(right);
+            if (isValidForm(opcode, Arg::Tmp, rightAddr.kind(), Arg::Tmp)) {
+                append(opcode, tmp(left), rightAddr.consume(*this), result);
+                return;
+            }
             if (isValidForm(opcode, rightAddr.kind(), Arg::Tmp)) {
                 append(relaxedMoveForType(m_value->type()), tmp(left), result);
                 append(opcode, rightAddr.consume(*this), result);

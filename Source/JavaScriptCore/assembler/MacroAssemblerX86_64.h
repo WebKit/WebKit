@@ -922,16 +922,21 @@ public:
         return branchAdd64(cond, src1, dest);
     }
 
-    Jump branchAdd64(ResultCondition cond, Address src1, RegisterID src2, RegisterID dest)
+    Jump branchAdd64(ResultCondition cond, Address op1, RegisterID op2, RegisterID dest)
     {
-        move(src2, dest);
-        return branchAdd64(cond, src1, dest);
+        if (op2 == dest)
+            return branchAdd64(cond, op1, dest);
+        if (op1.base == dest) {
+            load32(op1, dest);
+            return branchAdd64(cond, op2, dest);
+        }
+        move(op2, dest);
+        return branchAdd64(cond, op1, dest);
     }
 
     Jump branchAdd64(ResultCondition cond, RegisterID src1, Address src2, RegisterID dest)
     {
-        move(src1, dest);
-        return branchAdd64(cond, src2, dest);
+        return branchAdd64(cond, src2, src1, dest);
     }
 
     Jump branchAdd64(ResultCondition cond, RegisterID src, RegisterID dest)

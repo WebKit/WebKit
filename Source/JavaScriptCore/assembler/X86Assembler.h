@@ -305,6 +305,17 @@ private:
         OP3_MFENCE           = 0xF0,
     } ThreeByteOpcodeID;
 
+    struct VexPrefix {
+        enum : uint8_t {
+            TwoBytes = 0xC5,
+            ThreeBytes = 0xC4
+        };
+    };
+    enum class VexImpliedBytes : uint8_t {
+        TwoBytesOp = 1,
+        ThreeBytesOp38 = 2,
+        ThreeBytesOp3A = 3
+    };
     
     TwoByteOpcodeID cmovcc(Condition cond)
     {
@@ -2087,10 +2098,20 @@ public:
         m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
+    void vaddsd_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_F2, OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
+    }
+
     void addsd_mr(int offset, RegisterID base, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void vaddsd_mr(int offset, RegisterID base, XMMRegisterID b, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F2, OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)b, base, offset);
     }
 
     void addss_rr(XMMRegisterID src, XMMRegisterID dst)
@@ -2099,10 +2120,20 @@ public:
         m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
+    void vaddss_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_F3, OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
+    }
+
     void addss_mr(int offset, RegisterID base, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F3);
         m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void vaddss_mr(int offset, RegisterID base, XMMRegisterID b, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F3, OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)b, base, offset);
     }
 
 #if !CPU(X86_64)
@@ -2295,10 +2326,20 @@ public:
         m_formatter.twoByteOp(OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
+    void vmulsd_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_F2, OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
+    }
+
     void mulsd_mr(int offset, RegisterID base, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_MULSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void vmulsd_mr(int offset, RegisterID base, XMMRegisterID b, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F2, OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)b, base, offset);
     }
 
     void mulss_rr(XMMRegisterID src, XMMRegisterID dst)
@@ -2307,10 +2348,20 @@ public:
         m_formatter.twoByteOp(OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
+    void vmulss_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_F3, OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
+    }
+
     void mulss_mr(int offset, RegisterID base, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F3);
         m_formatter.twoByteOp(OP2_MULSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void vmulss_mr(int offset, RegisterID base, XMMRegisterID b, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F3, OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)b, base, offset);
     }
 
     void pextrw_irr(int whichWord, XMMRegisterID src, RegisterID dst)
@@ -3068,6 +3119,46 @@ private:
                 putIntUnchecked(reinterpret_cast<int32_t>(address));
             }
 #endif
+            ALWAYS_INLINE void twoBytesVex(OneByteOpcodeID simdPrefix, RegisterID inOpReg, RegisterID r)
+            {
+                putByteUnchecked(VexPrefix::TwoBytes);
+
+                uint8_t secondByte = vexEncodeSimdPrefix(simdPrefix);
+                secondByte |= (~inOpReg & 0xf) << 3;
+                secondByte |= !regRequiresRex(r) << 7;
+                putByteUnchecked(secondByte);
+            }
+
+            ALWAYS_INLINE void threeBytesVexNds(OneByteOpcodeID simdPrefix, VexImpliedBytes impliedBytes, RegisterID r, RegisterID inOpReg, RegisterID b)
+            {
+                putByteUnchecked(VexPrefix::ThreeBytes);
+
+                uint8_t secondByte = static_cast<uint8_t>(impliedBytes);
+                secondByte |= !regRequiresRex(r) << 7;
+                secondByte |= 1 << 6; // REX.X
+                secondByte |= !regRequiresRex(b) << 5;
+                putByteUnchecked(secondByte);
+
+                uint8_t thirdByte = vexEncodeSimdPrefix(simdPrefix);
+                thirdByte |= (~inOpReg & 0xf) << 3;
+                putByteUnchecked(thirdByte);
+            }
+        private:
+            uint8_t vexEncodeSimdPrefix(OneByteOpcodeID simdPrefix)
+            {
+                switch (simdPrefix) {
+                case 0x66:
+                    return 1;
+                case 0xF3:
+                    return 2;
+                case 0xF2:
+                    return 3;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+                return 0;
+            }
+
         };
 
         // Word-sized operands / no operand instruction formatters.
@@ -3189,6 +3280,32 @@ private:
             writer.memoryModRM(reg, address);
         }
 #endif
+        void vexNdsLigWigCommutativeTwoByteOp(OneByteOpcodeID simdPrefix, TwoByteOpcodeID opcode, RegisterID dest, RegisterID a, RegisterID b)
+        {
+            SingleInstructionBufferWriter writer(m_buffer);
+
+            // Since this is a commutative operation, we can try switching the arguments.
+            if (regRequiresRex(b))
+                std::swap(a, b);
+
+            if (regRequiresRex(b))
+                writer.threeBytesVexNds(simdPrefix, VexImpliedBytes::TwoBytesOp, dest, a, b);
+            else
+                writer.twoBytesVex(simdPrefix, a, dest);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(dest, b);
+        }
+
+        void vexNdsLigWigTwoByteOp(OneByteOpcodeID simdPrefix, TwoByteOpcodeID opcode, RegisterID dest, RegisterID a, RegisterID base, int offset)
+        {
+            SingleInstructionBufferWriter writer(m_buffer);
+            if (regRequiresRex(base))
+                writer.threeBytesVexNds(simdPrefix, VexImpliedBytes::TwoBytesOp, dest, a, base);
+            else
+                writer.twoBytesVex(simdPrefix, a, dest);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(dest, base, offset);
+        }
 
         void threeByteOp(TwoByteOpcodeID twoBytePrefix, ThreeByteOpcodeID opcode)
         {

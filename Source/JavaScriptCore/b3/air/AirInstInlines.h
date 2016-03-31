@@ -180,14 +180,21 @@ inline Optional<unsigned> Inst::shouldTryAliasingDef()
     case Or64:
     case Xor32:
     case Xor64:
-    case AddDouble:
-    case AddFloat:
     case AndFloat:
     case AndDouble:
-    case MulDouble:
-    case MulFloat:
     case XorDouble:
     case XorFloat:
+        if (args.size() == 3)
+            return 2;
+        break;
+    case AddDouble:
+    case AddFloat:
+    case MulDouble:
+    case MulFloat:
+#if CPU(X86) || CPU(X86_64)
+        if (MacroAssembler::supportsAVX())
+            return Nullopt;
+#endif
         if (args.size() == 3)
             return 2;
         break;

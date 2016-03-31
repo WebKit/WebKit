@@ -1,3 +1,90 @@
+2016-03-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC][x86] Add the 3 operands forms of floating point addition and multiplication
+        https://bugs.webkit.org/show_bug.cgi?id=156043
+
+        Reviewed by Geoffrey Garen.
+
+        When they are available, VADD and VMUL are better options to lower
+        floating point addition and multiplication.
+
+        In the simple cases when one of the operands is aliased to the destination,
+        those forms have the same size or 1 byte shorter depending on the registers.
+
+        In the more advanced cases, we gain nice advantages with the new forms:
+        -We can get rid of the MoveDouble in front the instruction when we cannot
+         alias.
+        -We can disable aliasing entirely in Air. That is useful for latency
+         since computing coalescing is not exactly cheap.
+
+        * assembler/MacroAssemblerX86Common.cpp:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::and32):
+        (JSC::MacroAssemblerX86Common::mul32):
+        (JSC::MacroAssemblerX86Common::or32):
+        (JSC::MacroAssemblerX86Common::xor32):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        The change in B3LowerToAir exposed a bug in the fake 3 operands
+        forms of those instructions. If the address is equal to
+        the destination, we were nuking the address.
+
+        For example,
+            Add32([%r11], %eax, %r11)
+        would generate:
+            move %eax, %r11
+            add32 [%r11], %r11
+        which crashes.
+
+        I updated codegen of those cases to support that case through
+            load32 [%r11], %r11
+            add32 %eax, %r11
+
+        The weird case were all arguments have the same registers
+        is handled too.
+
+        (JSC::MacroAssemblerX86Common::addDouble):
+        (JSC::MacroAssemblerX86Common::addFloat):
+        (JSC::MacroAssemblerX86Common::mulDouble):
+        (JSC::MacroAssemblerX86Common::mulFloat):
+        (JSC::MacroAssemblerX86Common::supportsFloatingPointRounding):
+        (JSC::MacroAssemblerX86Common::supportsAVX):
+        (JSC::MacroAssemblerX86Common::updateEax1EcxFlags):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchAdd64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::vaddsd_rr):
+        (JSC::X86Assembler::vaddsd_mr):
+        (JSC::X86Assembler::vaddss_rr):
+        (JSC::X86Assembler::vaddss_mr):
+        (JSC::X86Assembler::vmulsd_rr):
+        (JSC::X86Assembler::vmulsd_mr):
+        (JSC::X86Assembler::vmulss_rr):
+        (JSC::X86Assembler::vmulss_mr):
+        (JSC::X86Assembler::X86InstructionFormatter::SingleInstructionBufferWriter::memoryModRM):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        Add the 3 operand forms so that we lower Add and Mul
+        to the best form directly.
+
+        I will change how we lower the fake 3 operands instructions
+        but the codegen should end up the same in most cases.
+        The new codegen is the load32 + op above.
+
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::shouldTryAliasingDef):
+        * b3/air/testair.cpp:
+        (JSC::B3::Air::testX86VMULSD):
+        (JSC::B3::Air::testX86VMULSDDestRex):
+        (JSC::B3::Air::testX86VMULSDOp1DestRex):
+        (JSC::B3::Air::testX86VMULSDOp2DestRex):
+        (JSC::B3::Air::testX86VMULSDOpsDestRex):
+        (JSC::B3::Air::testX86VMULSDAddr):
+        (JSC::B3::Air::testX86VMULSDAddrOpRexAddr):
+        (JSC::B3::Air::testX86VMULSDDestRexAddr):
+        (JSC::B3::Air::testX86VMULSDRegOpDestRexAddr):
+        (JSC::B3::Air::testX86VMULSDAddrOpDestRexAddr):
+        Make sure we have some coverage for AVX encoding of instructions.
+
 2016-03-30  Saam Barati  <sbarati@apple.com>
 
         Change some release asserts in CodeBlock linking into debug asserts

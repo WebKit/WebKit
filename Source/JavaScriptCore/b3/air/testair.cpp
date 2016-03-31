@@ -1633,6 +1633,151 @@ void testShuffleShiftDouble()
     CHECK(things[3] == 3);
 }
 
+#if CPU(X86) || CPU(X86_64)
+void testX86VMULSD()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(MulDouble, nullptr, Tmp(FPRInfo::argumentFPR0), Tmp(FPRInfo::argumentFPR1), Tmp(FPRInfo::argumentFPR2));
+    root->append(MoveDouble, nullptr, Tmp(FPRInfo::argumentFPR2), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    CHECK(compileAndRun<double>(proc, 2.4, 4.2, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDDestRex()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(MulDouble, nullptr, Tmp(FPRInfo::argumentFPR0), Tmp(FPRInfo::argumentFPR1), Tmp(X86Registers::xmm15));
+    root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    CHECK(compileAndRun<double>(proc, 2.4, 4.2, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDOp1DestRex()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(MoveDouble, nullptr, Tmp(FPRInfo::argumentFPR0), Tmp(X86Registers::xmm14));
+    root->append(MulDouble, nullptr, Tmp(X86Registers::xmm14), Tmp(FPRInfo::argumentFPR1), Tmp(X86Registers::xmm15));
+    root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    CHECK(compileAndRun<double>(proc, 2.4, 4.2, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDOp2DestRex()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(MoveDouble, nullptr, Tmp(FPRInfo::argumentFPR1), Tmp(X86Registers::xmm14));
+    root->append(MulDouble, nullptr, Tmp(FPRInfo::argumentFPR0), Tmp(X86Registers::xmm14), Tmp(X86Registers::xmm15));
+    root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    CHECK(compileAndRun<double>(proc, 2.4, 4.2, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDOpsDestRex()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(MoveDouble, nullptr, Tmp(FPRInfo::argumentFPR0), Tmp(X86Registers::xmm14));
+    root->append(MoveDouble, nullptr, Tmp(FPRInfo::argumentFPR1), Tmp(X86Registers::xmm13));
+    root->append(MulDouble, nullptr, Tmp(X86Registers::xmm14), Tmp(X86Registers::xmm13), Tmp(X86Registers::xmm15));
+    root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    CHECK(compileAndRun<double>(proc, 2.4, 4.2, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDAddr()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(MulDouble, nullptr, Tmp(FPRInfo::argumentFPR0), Arg::addr(Tmp(GPRInfo::argumentGPR0), - 16), Tmp(FPRInfo::argumentFPR2));
+    root->append(MoveDouble, nullptr, Tmp(FPRInfo::argumentFPR2), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    double secondArg = 4.2;
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg + 2, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDAddrOpRexAddr()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR0), Tmp(X86Registers::r13));
+    root->append(MulDouble, nullptr, Tmp(FPRInfo::argumentFPR0), Arg::addr(Tmp(X86Registers::r13), - 16), Tmp(FPRInfo::argumentFPR2));
+    root->append(MoveDouble, nullptr, Tmp(FPRInfo::argumentFPR2), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    double secondArg = 4.2;
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg + 2, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDDestRexAddr()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(MulDouble, nullptr, Tmp(FPRInfo::argumentFPR0), Arg::addr(Tmp(GPRInfo::argumentGPR0), 16), Tmp(X86Registers::xmm15));
+    root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    double secondArg = 4.2;
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 2, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDRegOpDestRexAddr()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(MoveDouble, nullptr, Tmp(FPRInfo::argumentFPR0), Tmp(X86Registers::xmm14));
+    root->append(MulDouble, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR0)), Tmp(X86Registers::xmm14), Tmp(X86Registers::xmm15));
+    root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    double secondArg = 4.2;
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDAddrOpDestRexAddr()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR0), Tmp(X86Registers::r13));
+    root->append(MulDouble, nullptr, Tmp(FPRInfo::argumentFPR0), Arg::addr(Tmp(X86Registers::r13), 8), Tmp(X86Registers::xmm15));
+    root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    double secondArg = 4.2;
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 1, pureNaN()) == 2.4 * 4.2);
+}
+
+#endif
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -1692,6 +1837,20 @@ void run(const char* filter)
     RUN(testShuffleRotateMemoryAllRegsMixedWidth());
     RUN(testShuffleSwapDouble());
     RUN(testShuffleShiftDouble());
+
+#if CPU(X86) || CPU(X86_64)
+    RUN(testX86VMULSD());
+    RUN(testX86VMULSDDestRex());
+    RUN(testX86VMULSDOp1DestRex());
+    RUN(testX86VMULSDOp2DestRex());
+    RUN(testX86VMULSDOpsDestRex());
+
+    RUN(testX86VMULSDAddr());
+    RUN(testX86VMULSDAddrOpRexAddr());
+    RUN(testX86VMULSDDestRexAddr());
+    RUN(testX86VMULSDRegOpDestRexAddr());
+    RUN(testX86VMULSDAddrOpDestRexAddr());
+#endif
 
     if (tasks.isEmpty())
         usage();
