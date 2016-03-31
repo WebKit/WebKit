@@ -1,5 +1,19 @@
 2016-03-31  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r196854.
+
+        We do not need those assertions anymore as it seems
+        <rdar://problem/24457478> is fixed
+
+        Reverted changeset:
+
+        "Land release assertions to help track down a possible
+        HTMLCollection lifetime bug"
+        https://bugs.webkit.org/show_bug.cgi?id=154490
+        http://trac.webkit.org/changeset/196854
+
+2016-03-31  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Both WebPage's volatility timer and WebProcess's processSuspensionCleanupTimer are trying to make surfaces volatile with very short interval
         https://bugs.webkit.org/show_bug.cgi?id=156065
         <rdar://problem/25452004>
