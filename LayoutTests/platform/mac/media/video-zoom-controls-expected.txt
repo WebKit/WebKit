@@ -6,77 +6,47 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 776x28
         RenderText {#text} at (0,0) size 278x28
           text run at (0,0) width 278: "Zoomed video with controls."
-layer at (57,85) size 240x180
+layer at (57,85) size 240x180 isolatesBlending
   RenderVideo {VIDEO} at (45,73) size 240x180
 layer at (57,85) size 240x180
   RenderFlexibleBox {DIV} at (0,0) size 240x180
-layer at (57,228) size 240x37
-  RenderFlexibleBox {DIV} at (0,142) size 240x38
-layer at (66,234) size 24x24
-  RenderButton {BUTTON} at (9,6) size 24x25 [color=#FFFFFF]
-layer at (105,235) size 24x24
-  RenderButton {BUTTON} at (48,7) size 24x25 [color=#FFFFFF]
-layer at (131,239) size 85x17
-  RenderFlexibleBox {DIV} at (73,11) size 86x17
-layer at (131,239) size 68x17 backgroundClip at (131,239) size 67x17 clip at (131,239) size 67x17
-  RenderFlexibleBox {DIV} at (0,0) size 68x17 [color=#FFFFFF]
-    RenderBlock (anonymous) at (15,0) size 38x17
-      RenderText {#text} at (0,0) size 37x17
-        text run at (0,0) width 37: "00:00"
-layer at (204,239) size 67x17
-  RenderFlexibleBox {DIV} at (73,0) size 68x17 [color=#FFFFFF]
-    RenderBlock (anonymous) at (12,0) size 43x17
-      RenderText {#text} at (0,0) size 43x17
-        text run at (0,0) width 43: "-00:06"
-layer at (201,243) size 9x9
-  RenderBlock {DIV} at (0,0) size 9x9 [bgcolor=#FFFFFF]
-layer at (216,231) size 33x33
-  RenderFlexibleBox {DIV} at (159,3) size 33x33
-layer at (216,231) size 3x33
-  RenderFlexibleBox {DIV} at (0,0) size 3x33 [border: (1.50px solid #000000F3)]
-    RenderSlider {INPUT} at (-11,9) size 4x15 [color=#909090] [border: (1.50px solid #000000DF)]
-      RenderFlexibleBox {DIV} at (1,1) size 0x13
-        RenderBlock {DIV} at (0,0) size 0x12
-layer at (195,241) size 12x12
-  RenderBlock {DIV} at (-12,0) size 12x12
-layer at (221,235) size 24x24
-  RenderButton {BUTTON} at (4,4) size 25x25 [color=#FFFFFF]
-layer at (263,235) size 24x24
-  RenderButton {BUTTON} at (205,7) size 25x25 [color=#FFFFFF]
-layer at (57,310) size 240x180
+layer at (57,198) size 240x67
+  RenderFlexibleBox {DIV} at (0,112) size 240x68
+layer at (57,198) size 240x68 isolatesBlending
+  RenderBlock (positioned) {DIV} at (0,0) size 240x68
+layer at (57,198) size 240x68
+  RenderBlock (positioned) {DIV} at (0,0) size 240x68 [bgcolor=#1E1E1E73]
+layer at (57,198) size 240x68 blendMode: lighten
+  RenderBlock (positioned) {DIV} at (0,0) size 240x68 [bgcolor=#292929]
+layer at (69,235) size 18x22 blendMode: plus-lighter
+  RenderButton {BUTTON} at (12,37) size 18x23 [color=#FFFFFF]
+layer at (111,234) size 24x22 blendMode: plus-lighter
+  RenderButton {BUTTON} at (54,36) size 24x24 [color=#FFFFFF]
+layer at (221,228) size 21x38
+  RenderFlexibleBox {DIV} at (163,30) size 22x38
+layer at (221,235) size 21x22 blendMode: plus-lighter
+  RenderButton {BUTTON} at (0,7) size 21x23 [color=#FFFFFF]
+layer at (266,235) size 21x22 blendMode: plus-lighter
+  RenderButton {BUTTON} at (208,37) size 22x23 [color=#FFFFFF]
+layer at (57,310) size 240x180 isolatesBlending
   RenderVideo {VIDEO} at (45,298) size 240x180
 layer at (57,310) size 240x180
   RenderFlexibleBox {DIV} at (0,0) size 240x180
-layer at (57,453) size 240x37
-  RenderFlexibleBox {DIV} at (0,142) size 240x38
-layer at (66,459) size 24x24
-  RenderButton {BUTTON} at (9,6) size 24x25 [color=#FFFFFF]
-layer at (105,460) size 24x24
-  RenderButton {BUTTON} at (48,7) size 24x25 [color=#FFFFFF]
-layer at (131,464) size 85x17
-  RenderFlexibleBox {DIV} at (73,11) size 86x17
-layer at (131,464) size 68x17 backgroundClip at (131,464) size 67x17 clip at (131,464) size 67x17
-  RenderFlexibleBox {DIV} at (0,0) size 68x17 [color=#FFFFFF]
-    RenderBlock (anonymous) at (15,0) size 38x17
-      RenderText {#text} at (0,0) size 37x17
-        text run at (0,0) width 37: "00:00"
-layer at (204,464) size 67x17
-  RenderFlexibleBox {DIV} at (73,0) size 68x17 [color=#FFFFFF]
-    RenderBlock (anonymous) at (12,0) size 43x17
-      RenderText {#text} at (0,0) size 43x17
-        text run at (0,0) width 43: "-00:06"
-layer at (201,468) size 9x9
-  RenderBlock {DIV} at (0,0) size 9x9 [bgcolor=#FFFFFF]
-layer at (216,456) size 33x33
-  RenderFlexibleBox {DIV} at (159,3) size 33x33
-layer at (216,456) size 3x33
-  RenderFlexibleBox {DIV} at (0,0) size 3x33 [border: (1.50px solid #000000F3)]
-    RenderSlider {INPUT} at (-11,9) size 4x15 [color=#909090] [border: (1.50px solid #000000DF)]
-      RenderFlexibleBox {DIV} at (1,1) size 0x13
-        RenderBlock {DIV} at (0,0) size 0x12
-layer at (195,466) size 12x12
-  RenderBlock {DIV} at (-12,0) size 12x12
-layer at (221,460) size 24x24
-  RenderButton {BUTTON} at (4,4) size 25x25 [color=#FFFFFF]
-layer at (263,460) size 24x24
-  RenderButton {BUTTON} at (205,7) size 25x25 [color=#FFFFFF]
+layer at (57,423) size 240x67
+  RenderFlexibleBox {DIV} at (0,112) size 240x68
+layer at (57,423) size 240x68 isolatesBlending
+  RenderBlock (positioned) {DIV} at (0,0) size 240x68
+layer at (57,423) size 240x68
+  RenderBlock (positioned) {DIV} at (0,0) size 240x68 [bgcolor=#1E1E1E73]
+layer at (57,423) size 240x68 blendMode: lighten
+  RenderBlock (positioned) {DIV} at (0,0) size 240x68 [bgcolor=#292929]
+layer at (69,460) size 18x22 blendMode: plus-lighter
+  RenderButton {BUTTON} at (12,37) size 18x23 [color=#FFFFFF]
+layer at (111,459) size 24x22 blendMode: plus-lighter
+  RenderButton {BUTTON} at (54,36) size 24x24 [color=#FFFFFF]
+layer at (221,453) size 21x38
+  RenderFlexibleBox {DIV} at (163,30) size 22x38
+layer at (221,460) size 21x22 blendMode: plus-lighter
+  RenderButton {BUTTON} at (0,7) size 21x23 [color=#FFFFFF]
+layer at (266,460) size 21x22 blendMode: plus-lighter
+  RenderButton {BUTTON} at (208,37) size 22x23 [color=#FFFFFF]

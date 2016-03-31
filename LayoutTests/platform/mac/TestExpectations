@@ -1144,29 +1144,6 @@ webkit.org/b/141534 [ Yosemite ] media/video-load-networkState.html [ Pass Crash
 
 webkit.org/b/142726 [ Yosemite+ ] fast/images/animated-png.html [ ImageOnlyFailure ]
 
-# Skip media control tests until new controls are finalized
-webkit.org/b/142142 media/video-no-audio.html [ Skip ]
-webkit.org/b/142142 media/controls-strict.html [ Skip ]
-webkit.org/b/142142 media/video-volume-slider.html [ Skip ]
-webkit.org/b/142142 media/controls-styling.html [ Skip ]
-webkit.org/b/142142 media/video-display-toggle.html [ Skip ]
-webkit.org/b/142142 media/audio-controls-rendering.html [ Skip ]
-webkit.org/b/142142 media/video-zoom-controls.html [ Skip ]
-webkit.org/b/142142 fast/hidpi/video-controls-in-hidpi.html [ Skip ]
-webkit.org/b/142142 media/video-controls-rendering.html [ Skip ]
-webkit.org/b/142142 accessibility/media-element.html [ Skip ]
-webkit.org/b/142142 media/controls-without-preload.html [ Skip ]
-webkit.org/b/142142 media/media-controls-clone.html [ Skip ]
-webkit.org/b/142142 fast/layers/video-layer.html [ Skip ]
-webkit.org/b/142142 media/video-empty-source.html [ Skip ]
-webkit.org/b/142142 media/audio-delete-while-slider-thumb-clicked.html [ Skip ]
-webkit.org/b/142142 media/controls-after-reload.html [ Skip ]
-webkit.org/b/142142 media/nodesFromRect-shadowContent.html [ Skip ]
-webkit.org/b/142142 media/video-initially-hidden-volume-slider-up.html [ Skip ]
-webkit.org/b/142142 fullscreen/video-controls-override.html [ Skip ]
-webkit.org/b/142142 http/tests/media/hls/video-controls-live-stream.html [ Skip ]
-webkit.org/b/142142 media/video-volume-slider-drag.html [ Skip ]
-
 # Fails when an actual AppleTV is nearby.
 webkit.org/b/148912 media/controls/airplay-picker.html [ Pass Failure ]
 

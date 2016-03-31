@@ -6,7 +6,7 @@ EXPECTED (shadowRoot = internals.shadowRoot(video) != 'null') OK
 EXPECTED (panel = mediaControlsElement(shadowRoot.firstChild, '-webkit-media-controls-panel') != 'null') OK
 EXPECTED (internals.shadowPseudoId(panel) == '-webkit-media-controls-panel') OK
 EXPECTED (document.defaultView.getComputedStyle(panel)['display'] != 'none') OK
-EXPECTED (document.defaultView.getComputedStyle(panel)['height'] >= '20px') OK
+EXPECTED (parseInt(document.defaultView.getComputedStyle(panel)['height']) >= '20') OK
 EVENT(webkitfullscreenchange)
 EXPECTED (document.defaultView.getComputedStyle(panel)['display'] == 'none'), OBSERVED '' FAIL
 END OF TEST

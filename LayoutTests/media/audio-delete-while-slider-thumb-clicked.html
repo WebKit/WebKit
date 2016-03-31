@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <style>
+            audio { width: 400px; }
+        </style>
         <script src=media-file.js></script>
         <script src=video-test.js></script>
         <script src=media-controls.js></script>
@@ -84,7 +87,7 @@
             {
                 setSrcByTagName("audio", findMediaFile("audio", "content/test"));
 
-                // Remove the element after seeking started
+                audio.addEventListener("canplaythrough", drag);
                 audio.addEventListener("seeking", deleteAudio);
             }
 
@@ -95,7 +98,7 @@
         <br>
         <input type="button" id="button" value="Click Me!" onmouseup="log('button click!')"> 
         <br>
-        <audio id="audio" autoplay onplaying="drag()" controls></audio><br><br>
+        <audio id="audio" controls></audio><br><br>
         <div id="console"></div>
     </body>
 </html>

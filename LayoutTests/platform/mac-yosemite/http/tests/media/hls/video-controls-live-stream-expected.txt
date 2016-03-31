@@ -10,7 +10,7 @@ EXPECTED (video.duration == 'Infinity') OK
 -webkit-media-controls-wireless-playback-text-bottom: classes: []
 -webkit-media-controls-panel: classes: [show paused]
 -webkit-media-controls-panel-background-container: classes: []
--webkit-media-controls-panel-background: classes: [show paused]
+-webkit-media-controls-panel-background: classes: [paused show]
 -webkit-media-controls-panel-tint: classes: []
 -webkit-media-controls-play-button: classes: [paused]
 -webkit-media-controls-status-display: classes: []

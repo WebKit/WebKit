@@ -8,26 +8,30 @@
 
             function start() {
                 video = document.getElementById('video');
+                waitForEvent('canplaythrough', function() { video.play(); });
                 waitForEvent('play', playing);
                 waitForEventAndFail('stalled');
                 video.src = "../resources/hls/test-live.php";
             }
 
             function playing() {
-                testExpected('video.duration', Infinity);
+                video.pause();
+                setTimeout(function() {
+                    testExpected('video.duration', Infinity);
 
-                controls = internals.shadowRoot(video).firstChild.firstChild;
-                dumpMediaControlsTree(controls);
+                    controls = internals.shadowRoot(video).firstChild.firstChild;
+                    dumpMediaControlsTree(controls);
 
-                timeline = mediaControlsElement(controls, "-webkit-media-controls-timeline");
-                test('timeline == null || timeline.disabled', false);
+                    timeline = mediaControlsElement(controls, "-webkit-media-controls-timeline");
+                    test('timeline == null || timeline.disabled', false);
 
-                endTest();
+                    endTest()
+                }, 200);
             }
 
         </script>
     </head>
     <body onload="start()">
-        <video id="video" autoplay controls></video>
+        <video id="video" controls></video>
     </body>
 </html>

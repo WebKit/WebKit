@@ -8,17 +8,27 @@ layer at (0,0) size 800x600
           text run at (0,0) width 551: "This test passes if the video controls are non-blurry and properly positioned in HiDPI."
       RenderBlock (anonymous) at (0,18) size 784x150
         RenderText {#text} at (0,0) size 0x0
-layer at (8,26) size 300x150
+layer at (8,26) size 300x150 isolatesBlending
   RenderVideo {VIDEO} at (0,0) size 300x150
 layer at (8,26) size 300x150
   RenderFlexibleBox {DIV} at (0,0) size 300x150
-layer at (8,151) size 300x25
-  RenderFlexibleBox {DIV} at (0,125) size 300x25
-layer at (14,156) size 16x16
-  RenderButton {BUTTON} at (6,4) size 16x17 [color=#FFFFFF]
-layer at (40,156) size 16x16
-  RenderButton {BUTTON} at (32,5) size 16x16 [color=#FFFFFF]
-layer at (195,160) size 113x9
-  RenderFlexibleBox {DIV} at (186,8) size 114x10
-layer at (197,160) size 110x9
-  RenderFlexibleBox {DIV} at (2,0) size 110x9
+layer at (8,131) size 300x45
+  RenderFlexibleBox {DIV} at (0,105) size 300x45
+layer at (8,131) size 300x45 isolatesBlending
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45
+layer at (8,131) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#1E1E1E73]
+layer at (8,131) size 300x45 blendMode: lighten
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#292929]
+layer at (16,156) size 12x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (44,156) size 16x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (185,155) size 93x17
+  RenderFlexibleBox {DIV} at (177,24) size 93x17
+layer at (187,155) size 89x17
+  RenderFlexibleBox {DIV} at (2,0) size 89x17
+layer at (286,151) size 14x25
+  RenderFlexibleBox {DIV} at (278,20) size 14x25
+layer at (286,156) size 14x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]

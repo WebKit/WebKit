@@ -14,11 +14,23 @@ State at 'canplaythrough' event:
         role: AXRole: AXToolbar
 
 
-            description: AXDescription: Rewind 30 Seconds
-            role: AXRole: AXButton
+            description: AXDescription: 
+            role: AXRole: AXGroup
+
+
+                description: AXDescription: 
+                role: AXRole: AXGroup
+
+
+                description: AXDescription: 
+                role: AXRole: AXGroup
 
 
             description: AXDescription: Play
+            role: AXRole: AXButton
+
+
+            description: AXDescription: Rewind 30 Seconds
             role: AXRole: AXButton
 
 
@@ -54,6 +66,14 @@ State at 'canplaythrough' event:
 
                     description: AXDescription: 
                     role: AXRole: AXStaticText
+
+
+            description: AXDescription: 
+            role: AXRole: AXGroup
+
+
+            description: AXDescription: 
+            role: AXRole: AXGroup
 
 
             description: AXDescription: Volume

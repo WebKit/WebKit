@@ -1,3 +1,58 @@
+2016-03-31  Eric Carlson  <eric.carlson@apple.com>
+
+        Rebaseline media control tests when new media control appearances are finalized
+        https://bugs.webkit.org/show_bug.cgi?id=142142
+
+        Reviewed by Brent Fulgham.
+
+        * fullscreen/video-controls-override.html: Test height as an integer.
+        * http/tests/media/hls/video-controls-live-stream.html: Start playback explicitly instead of 
+          using autoplay, and pause playback before dumping controls state to make the test results
+          more deterministic.
+        * media/audio-delete-while-slider-thumb-clicked.html: Make the <audio> element wide enough
+          that it will always have a timeline scrubber. Trigger test on 'canplaythrough' instead of
+          autoplay + 'playing' to simplify the test slightly.
+        * media/nodesFromRect-shadowContent.html: Test for controls panel-background instead 
+          timeline-container because of changes to the controls structure.
+        * platform/mac-mavericks/media/audio-controls-rendering-expected.png: Removed.
+        * platform/mac-mavericks/media/audio-controls-rendering-expected.txt: Removed.
+        * platform/mac-mavericks/media/video-volume-slider-expected.txt: Removed.
+        * platform/mac-wk1/media/controls-styling-expected.txt: Removed.
+        * platform/mac-yosemite/http/tests/media/hls/video-controls-live-stream-expected.txt: Added
+        * platform/mac-yosemite/media: Added.
+        * platform/mac-yosemite/media/controls-styling-expected.txt: Added.
+        * platform/mac/TestExpectations: Unskip some tests.
+        * platform/mac/accessibility/media-element-expected.txt: Update results.
+        * platform/mac/fast/layers/video-layer-expected.png: Ditto.
+        * platform/mac/fast/layers/video-layer-expected.txt: Ditto.
+        * platform/mac/fullscreen/video-controls-override-expected.txt: Ditto.
+        * platform/mac/http/tests/media/hls/video-controls-live-stream-expected.txt: Ditto.
+        * platform/mac/media/audio-controls-rendering-expected.png: Ditto.
+        * platform/mac/media/audio-controls-rendering-expected.txt: Ditto.
+        * platform/mac/media/controls-after-reload-expected.png: Ditto.
+        * platform/mac/media/controls-after-reload-expected.txt: Ditto.
+        * platform/mac/media/controls-strict-expected.png: Ditto.
+        * platform/mac/media/controls-strict-expected.txt: Ditto.
+        * platform/mac/media/controls-styling-expected.png: Ditto.
+        * platform/mac/media/controls-styling-expected.txt: Ditto.
+        * platform/mac/media/controls-without-preload-expected.png: Ditto.
+        * platform/mac/media/controls-without-preload-expected.txt: Ditto.
+        * platform/mac/media/media-controls-clone-expected.png: Ditto.
+        * platform/mac/media/media-controls-clone-expected.txt: Ditto.
+        * platform/mac/media/media-document-audio-repaint-expected.png: Ditto.
+        * platform/mac/media/video-controls-rendering-expected.png: Ditto.
+        * platform/mac/media/video-controls-rendering-expected.txt: Ditto.
+        * platform/mac/media/video-display-toggle-expected.png: Ditto.
+        * platform/mac/media/video-display-toggle-expected.txt: Ditto.
+        * platform/mac/media/video-empty-source-expected.png: Ditto.
+        * platform/mac/media/video-empty-source-expected.txt: Ditto.
+        * platform/mac/media/video-no-audio-expected.png: Ditto.
+        * platform/mac/media/video-no-audio-expected.txt: Ditto.
+        * platform/mac/media/video-volume-slider-expected.png: Ditto.
+        * platform/mac/media/video-volume-slider-expected.txt: Ditto.
+        * platform/mac/media/video-zoom-controls-expected.png: Ditto.
+        * platform/mac/media/video-zoom-controls-expected.txt: Ditto.
+
 2016-03-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Moving a few skipped tests from ios-simulator-wk2 to ios-simulator TestExpectations file.

@@ -23,7 +23,7 @@
                 testExpected("panel = mediaControlsElement(shadowRoot.firstChild, '-webkit-media-controls-panel')", null, "!=");
                 testExpected("internals.shadowPseudoId(panel)", "-webkit-media-controls-panel");
                 testExpected("document.defaultView.getComputedStyle(panel)['display']", 'none', "!=");
-                testExpected("document.defaultView.getComputedStyle(panel)['height']", '20px', ">=");
+                testExpected("parseInt(document.defaultView.getComputedStyle(panel)['height'])", '20', ">=");
             }
             else
                 logResult(false, "window.internals == undefined");

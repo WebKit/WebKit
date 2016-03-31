@@ -8,21 +8,31 @@ layer at (0,0) size 800x600
           text run at (0,0) width 437: "Slider drawing with no source. The controls should render correctly."
       RenderBlock (anonymous) at (0,34) size 784x152
         RenderText {#text} at (0,0) size 0x0
-layer at (8,42) size 302x152
+layer at (8,42) size 302x152 isolatesBlending
   RenderVideo {VIDEO} at (0,0) size 302x152 [border: (1px solid #000000)]
 layer at (9,43) size 300x150
   RenderFlexibleBox {DIV} at (1,1) size 300x150
-layer at (9,168) size 300x25
-  RenderFlexibleBox {DIV} at (0,125) size 300x25
-layer at (58,169) size 138x25
-  RenderBlock {DIV} at (49,0) size 138x26 [color=#FFFFFF]
-    RenderText {#text} at (12,7) size 22x11
-      text run at (12,7) width 22: "Error"
-layer at (15,173) size 16x16
-  RenderButton {BUTTON} at (6,4) size 16x17 [color=#FFFFFF]
-layer at (41,173) size 16x16
-  RenderButton {BUTTON} at (32,5) size 16x16 [color=#FFFFFF]
-layer at (196,177) size 113x9
-  RenderFlexibleBox {DIV} at (186,8) size 114x10
-layer at (198,177) size 110x9
-  RenderFlexibleBox {DIV} at (2,0) size 110x9
+layer at (9,148) size 300x45
+  RenderFlexibleBox {DIV} at (0,105) size 300x45
+layer at (9,148) size 300x45 isolatesBlending
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45
+layer at (9,148) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#1E1E1E73]
+layer at (9,148) size 300x45 blendMode: lighten
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#292929]
+layer at (17,173) size 12x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (45,173) size 16x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (69,168) size 117x25 blendMode: plus-lighter
+  RenderBlock {DIV} at (60,20) size 117x25 [color=#FFFFFF]
+    RenderText {#text} at (12,6) size 26x13
+      text run at (12,6) width 26: "Error"
+layer at (186,172) size 93x17
+  RenderFlexibleBox {DIV} at (177,24) size 93x17
+layer at (188,172) size 89x17
+  RenderFlexibleBox {DIV} at (2,0) size 89x17
+layer at (287,168) size 14x25
+  RenderFlexibleBox {DIV} at (278,20) size 14x25
+layer at (287,173) size 14x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
