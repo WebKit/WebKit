@@ -1,3 +1,13 @@
+2016-03-31  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Roll out r191180. rdar://problem/25448882
+
+        Landed on behalf of Chris Dumez.
+
+        * fast/preloader/frame-src-expected.txt: Removed.
+        * fast/preloader/frame-src.html: Removed.
+        * fast/preloader/resources/testFrame.html: Removed.
+
 2016-03-30  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r198687. rdar://problem/25448871

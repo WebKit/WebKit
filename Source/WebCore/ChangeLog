@@ -1,3 +1,17 @@
+2016-03-31  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Roll out r191180. rdar://problem/25448882
+
+        Landed on behalf of Chris Dumez.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::shouldPreload):
+        (WebCore::TokenPreloadScanner::tagIdFor): Deleted.
+        (WebCore::TokenPreloadScanner::initiatorFor): Deleted.
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute): Deleted.
+        (WebCore::TokenPreloadScanner::StartTagScanner::resourceType): Deleted.
+        * html/parser/HTMLPreloadScanner.h:
+
 2016-03-30  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r198687. rdar://problem/25448871
