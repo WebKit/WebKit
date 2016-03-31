@@ -319,7 +319,7 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 if (USE_EGL)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/surfaces/egl"
     )
 endif ()

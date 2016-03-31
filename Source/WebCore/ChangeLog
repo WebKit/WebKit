@@ -1,3 +1,16 @@
+2016-03-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL][CMake] WebKit include path has been added to system include path
+        https://bugs.webkit.org/show_bug.cgi?id=156019
+
+        Reviewed by Darin Adler.
+
+        Fix wrong include path addition.
+
+        * PlatformEfl.cmake:
+
+            Add ${WEBCORE_DIR}/platform/graphics/surfaces/egl to WebCore include directory path.
+
 2016-03-30  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Update handling of SVG elements with presentational role
