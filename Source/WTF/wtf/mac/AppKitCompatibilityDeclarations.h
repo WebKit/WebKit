@@ -69,6 +69,7 @@ static const NSEventModifierFlags NSEventModifierFlagDeviceIndependentFlagsMask 
 static const NSEventModifierFlags NSEventModifierFlagFunction = NSFunctionKeyMask;
 static const NSEventModifierFlags NSEventModifierFlagNumericPad = NSNumericPadKeyMask;
 static const NSEventModifierFlags NSEventModifierFlagShift = NSShiftKeyMask;
+static const NSEventModifierFlags NSEventModifierFlagHelp = NSHelpKeyMask;
 
 static const NSEventType NSEventTypeFlagsChanged = NSFlagsChanged;
 static const NSEventType NSEventTypeKeyDown = NSKeyDown;

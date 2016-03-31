@@ -1,3 +1,15 @@
+2016-03-30  Brian Burg  <bburg@apple.com>
+
+        Web Automation: Add Automation.performKeyboardInteractions
+        https://bugs.webkit.org/show_bug.cgi?id=155990
+        <rdar://problem/25426408>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a missing NSEventType declaration.
+
+        * wtf/mac/AppKitCompatibilityDeclarations.h:
+
 2016-03-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [WTF] Removing a smart pointer from HashTable issues two stores to the same location

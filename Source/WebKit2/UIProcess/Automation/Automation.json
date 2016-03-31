@@ -103,6 +103,88 @@
                 "Meta",
                 "Alt"
             ]
+        },
+        {
+            "id": "VirtualKey",
+            "type": "string",
+            "description": "Enumerates different platform-independent virtual keys on a physical keyboard whose input via keyboard may or may not produce characters.",
+            "enum": [
+                "Shift",
+                "Control",
+                "Alternate",
+                "Meta",
+                "Command",
+                "Cancel",
+                "Help",
+                "Backspace",
+                "Tab",
+                "Clear",
+                "Enter",
+                "Pause",
+                "Escape",
+                "PageUp",
+                "PageDown",
+                "End",
+                "Home",
+                "LeftArrow",
+                "UpArrow",
+                "RightArrow",
+                "DownArrow",
+                "Insert",
+                "Delete",
+                "Space",
+                "Semicolon",
+                "Equals",
+                "Return",
+                "NumberPad0",
+                "NumberPad1",
+                "NumberPad2",
+                "NumberPad3",
+                "NumberPad4",
+                "NumberPad5",
+                "NumberPad6",
+                "NumberPad7",
+                "NumberPad8",
+                "NumberPad9",
+                "NumberPadMultiply",
+                "NumberPadAdd",
+                "NumberPadSeparator",
+                "NumberPadSubtract",
+                "NumberPadDecimal",
+                "NumberPadDivide",
+                "Function1",
+                "Function2",
+                "Function3",
+                "Function4",
+                "Function5",
+                "Function6",
+                "Function7",
+                "Function8",
+                "Function9",
+                "Function10",
+                "Function11",
+                "Function12"
+            ]
+        },
+        {
+            "id": "KeyboardInteractionType",
+            "type": "string",
+            "description": "Enumerates different ways of interacting with a keyboard device. 'InsertByKey' implies that a separate KeyDown and KeyUp event are produced for each combining character sequence, regardless of the actual keystrokes required to produce the character sequence.",
+            "enum": [
+                "KeyPress",
+                "KeyRelease",
+                "InsertByKey"
+            ]
+        },
+        {
+            "id": "KeyboardInteraction",
+            "type": "object",
+            "description": "A single step in a key sequence. A step can contain a key up/down of a virtual key, or a sequence of Unicode code points that are delivered to the page at grapheme cluster boundaries. Either a 'key' or 'text' property must be specified.",
+            "properties": [
+                { "name": "type", "$ref": "KeyboardInteractionType", "description": "The type of interaction to be performed by a step." },
+                { "name": "key", "$ref": "VirtualKey", "optional": true, "description": "A virtual key to be used to perform the specified interaction." },
+                { "name": "text", "type": "string", "optional": true, "description": "A unicode string to be delivered to the page. The sequence of key events is determined by splitting the string at grapheme cluster boundaries." }
+            ]
         }
     ],
     "commands": [
@@ -217,6 +299,14 @@
             ],
             "returns": [
                 { "name": "position", "$ref": "Point", "description": "The updated position of the mouse cursor, specified in viewport coordinates." }
+            ]
+        },
+        {
+            "name": "performKeyboardInteractions",
+            "description": "Simulates delivering the results of pressing one or more keyboard keys together or successively.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context which should recieve key." },
+                { "name": "interactions", "type": "array", "items": { "$ref": "KeyboardInteraction" }, "description": "An ordered list of key sequences to be delivered using native key events." }
             ]
         },
         {

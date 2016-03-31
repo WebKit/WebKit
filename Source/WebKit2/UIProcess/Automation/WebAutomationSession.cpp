@@ -708,8 +708,83 @@ void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& error
 #endif // USE(APPKIT)
 }
 
+void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString, const String& handle, const Inspector::InspectorArray& interactions)
+{
+#if !USE(APPKIT)
+    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+#else
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    if (!interactions.length())
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
+
+    // Validate all of the parameters before performing any interactions with the browsing context under test.
+    Vector<std::function<void()>> actionsToPerform(interactions.length());
+
+    for (auto it = interactions.begin(); it != interactions.end(); ++it) {
+        RefPtr<InspectorObject> interactionObject;
+        if (!it->get()->asObject(interactionObject))
+            FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
+
+        String interactionTypeString;
+        if (!interactionObject->getString(ASCIILiteral("type"), interactionTypeString))
+            FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
+        auto interactionType = Inspector::Protocol::parseEnumValueFromString<Inspector::Protocol::Automation::KeyboardInteractionType>(interactionTypeString);
+        if (!interactionType)
+            FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
+
+        String virtualKeyString;
+        bool foundVirtualKey = interactionObject->getString(ASCIILiteral("key"), virtualKeyString);
+        if (foundVirtualKey) {
+            auto virtualKey = Inspector::Protocol::parseEnumValueFromString<Inspector::Protocol::Automation::VirtualKey>(virtualKeyString);
+            if (!virtualKey)
+                FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
+
+            actionsToPerform.append([this, page, interactionType, virtualKey] {
+                platformSimulateKeyStroke(*page, interactionType.value(), virtualKey.value());
+            });
+        }
+
+        String keySequence;
+        bool foundKeySequence = interactionObject->getString(ASCIILiteral("text"), keySequence);
+        if (foundKeySequence) {
+            switch (interactionType.value()) {
+            case Inspector::Protocol::Automation::KeyboardInteractionType::KeyPress:
+            case Inspector::Protocol::Automation::KeyboardInteractionType::KeyRelease:
+                // 'KeyPress' and 'KeyRelease' are meant for a virtual key and are not supported for a string (sequence of codepoints).
+                FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InvalidParameter);
+
+            case Inspector::Protocol::Automation::KeyboardInteractionType::InsertByKey:
+                actionsToPerform.append([this, page, keySequence] {
+                    platformSimulateKeySequence(*page, keySequence);
+                });
+                break;
+            }
+        }
+
+        if (!foundVirtualKey && !foundKeySequence)
+            FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+        ASSERT(actionsToPerform.size());
+        for (auto& action : actionsToPerform)
+            action();
+    }
+
+#endif // USE(APPKIT)
+}
+
 #if !USE(APPKIT)
 void WebAutomationSession::platformSimulateMouseInteraction(WebKit::WebPageProxy&, const WebCore::IntPoint&, Inspector::Protocol::Automation::MouseInteraction, Inspector::Protocol::Automation::MouseButton, WebEvent::Modifiers)
+{
+}
+
+void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy&, Inspector::Protocol::Automation::KeyboardInteractionType, Inspector::Protocol::Automation::VirtualKey)
+{
+}
+
+void WebAutomationSession::platformSimulateKeySequence(WebPageProxy&, const String&)
 {
 }
 #endif // !USE(APPKIT)

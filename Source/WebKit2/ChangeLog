@@ -1,3 +1,45 @@
+2016-03-30  Brian Burg  <bburg@apple.com>
+
+        Web Automation: Add Automation.performKeyboardInteractions
+        https://bugs.webkit.org/show_bug.cgi?id=155990
+        <rdar://problem/25426408>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a command that allows automation to simulate single
+        key strokes or insertion of an entire string, character
+        by character.
+
+        * UIProcess/Automation/Automation.json: Add new command.
+        Add a large enumeration of all virtual keys that exist
+        on a US 109-key keyboard layout. Add an interaction object.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        Added. This method validates the incoming key interactions
+        from the protocol and makes a list of simulated interactions
+        to perform. If everything validates, then delegate the key
+        interaction simulations to platform-specific methods.
+
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke):
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+        Add stubs for other platforms.
+
+        * UIProcess/Automation/WebAutomationSession.h: Add new
+        protocol command handler and platform simulation methods.
+
+        * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke):
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+        These methods implement keyboard simulation for AppKit, used
+        by the Mac port. In the keystroke case, figure out the AppKit
+        keyCode for the key as well as any key modifiers that should
+        be included with the key event. Keep track of sticky modifiers
+        and update the session state appropriately. In the key sequence
+        case, split the string into combining character sequences and
+        send a 'key up/down'. This is a weird way to send non-ASCII
+        text, so a better alternative should be explored in the future.
+
 2016-03-30  Brady Eidson  <beidson@apple.com>
 
         Make BlobData use ThreadSafeSharedBuffer instead of RawData.
