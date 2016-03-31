@@ -1,3 +1,15 @@
+2016-03-30  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Quantified unicode regular expressions do not work for counts greater than 1
+        https://bugs.webkit.org/show_bug.cgi?id=156044
+
+        Reviewed by Mark Lam.
+
+        Added new test cases.
+
+        * js/regexp-unicode-expected.txt:
+        * js/script-tests/regexp-unicode.js:
+
 2016-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] [RTL Scrollbars] Overlay RTL scrollbars animate in from the wrong side

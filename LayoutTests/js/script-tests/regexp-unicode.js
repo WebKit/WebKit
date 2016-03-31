@@ -92,6 +92,13 @@ shouldBeTrue('re2.test("\u{12345}")');
 // shouldBeNull('/\uD803\u{10c01}/u.exec("\uD803")');
 // shouldBe('"\uD803\u{10c01}".match(/\uD803\u{10c01}/u)[0].length', '3');
 
+// Check quantified matches
+shouldBeTrue('/\u{1d306}{2}/u.test("\u{1d306}\u{1d306}")');
+shouldBeTrue('/\uD834\uDF06{2}/u.test("\uD834\uDF06\uD834\uDF06")');
+shouldBe('"\u{10401}\u{10401}\u{10400}".match(/\u{10401}{1,3}/u)[0]', '"\u{10401}\u{10401}"');
+shouldBe('"\u{10401}\u{10429}".match(/\u{10401}{1,3}/iu)[0]', '"\u{10401}\u{10429}"');
+shouldBe('"\u{10401}\u{10429}\u{1042a}\u{10429}".match(/\u{10401}{1,}/iu)[0]', '"\u{10401}\u{10429}"');
+
 // Check back tracking on partial matches
 shouldBe('"\u{10311}\u{10311}\u{10311}".match(/\u{10311}*a|\u{10311}*./u)[0]', '"\u{10311}\u{10311}\u{10311}"');
 shouldBe('"a\u{10311}\u{10311}".match(/a\u{10311}*?$/u)[0]', '"a\u{10311}\u{10311}"');

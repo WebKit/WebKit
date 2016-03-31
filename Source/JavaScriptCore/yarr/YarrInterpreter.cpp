@@ -1224,7 +1224,7 @@ public:
             if (unicode) {
                 if (!U_IS_BMP(currentTerm().atom.patternCharacter)) {
                     for (unsigned matchAmount = 0; matchAmount < currentTerm().atom.quantityCount; ++matchAmount) {
-                        if (!checkSurrogatePair(currentTerm().atom.patternCharacter, currentTerm().inputPosition - matchAmount)) {
+                        if (!checkSurrogatePair(currentTerm().atom.patternCharacter, currentTerm().inputPosition - 2 * matchAmount)) {
                             BACKTRACK();
                         }
                     }

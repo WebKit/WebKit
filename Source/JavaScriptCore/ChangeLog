@@ -1,3 +1,17 @@
+2016-03-30  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Quantified unicode regular expressions do not work for counts greater than 1
+        https://bugs.webkit.org/show_bug.cgi?id=156044
+
+        Reviewed by Mark Lam.
+
+        Fixed incorrect indexing of non-BMP characters in fixed patterns.  The old code
+        was indexing by character units, a single JS character, instead of code points
+        which is 2 JS characters.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchDisjunction):
+
 2016-03-30  Mark Lam  <mark.lam@apple.com>
 
         Make the $vm debugging tools available to builtins as @$vm.

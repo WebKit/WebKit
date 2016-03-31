@@ -57,6 +57,11 @@ PASS re1.test("𐐀") is false
 PASS re2.test("A") is true
 PASS re2.test("￿") is false
 PASS re2.test("𒍅") is true
+PASS /𝌆{2}/u.test("𝌆𝌆") is true
+PASS /𝌆{2}/u.test("𝌆𝌆") is true
+PASS "𐐁𐐁𐐀".match(/𐐁{1,3}/u)[0] is "𐐁𐐁"
+PASS "𐐁𐐩".match(/𐐁{1,3}/iu)[0] is "𐐁𐐩"
+PASS "𐐁𐐩𐐪𐐩".match(/𐐁{1,}/iu)[0] is "𐐁𐐩"
 PASS "𐌑𐌑𐌑".match(/𐌑*a|𐌑*./u)[0] is "𐌑𐌑𐌑"
 PASS "a𐌑𐌑".match(/a𐌑*?$/u)[0] is "a𐌑𐌑"
 PASS "a𐌑𐌑𐌑c".match(/a𐌑*cd|a𐌑*c/u)[0] is "a𐌑𐌑𐌑c"
