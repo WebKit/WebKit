@@ -500,7 +500,7 @@ void NetworkProcess::pendingDownloadCanceled(DownloadID downloadID)
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler completionHandler)
 {
     uint64_t destinationID = networkDataTask.pendingDownloadID().downloadID();
-    downloadProxyConnection()->send(Messages::DownloadProxy::DidStart(networkDataTask.currentRequest()), destinationID);
+    downloadProxyConnection()->send(Messages::DownloadProxy::DidStart(networkDataTask.currentRequest(), String()), destinationID);
     
     downloadManager().willDecidePendingDownloadDestination(networkDataTask, completionHandler);
     downloadProxyConnection()->send(Messages::DownloadProxy::DecideDestinationWithSuggestedFilenameAsync(networkDataTask.pendingDownloadID(), networkDataTask.suggestedFilename()), destinationID);
