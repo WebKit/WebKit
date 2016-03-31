@@ -1,3 +1,14 @@
+2016-03-31  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed leftovers of ENABLE(INSPECTOR) and ENABLE(VIEWPORT).
+        https://bugs.webkit.org/show_bug.cgi?id=156064
+
+        Reviewed by Csaba Osztrogonác.
+
+        This ifdef guards were removed in r178820 and r147714, respectively.
+
+        * wtf/FeatureDefines.h:
+
 2016-03-31  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] Support download attribute feature

@@ -537,10 +537,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 #endif
 
-#if !defined(ENABLE_INSPECTOR)
-#define ENABLE_INSPECTOR 1
-#endif
-
 #if !defined(ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS)
 #define ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS 0
 #endif
@@ -741,10 +737,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_DATACUE_VALUE)
 #define ENABLE_DATACUE_VALUE 0
-#endif
-
-#if !defined(ENABLE_VIEWPORT)
-#define ENABLE_VIEWPORT 0
 #endif
 
 #if !defined(ENABLE_VIEW_MODE_CSS_MEDIA)
