@@ -122,6 +122,9 @@ public:
     void reset() { m_isFirstTime = true; } // for de-zippering
 
     // Copies the samples from the source bus to this one.
+    void copyFromRange(const AudioBus& sourceBus, unsigned startFrame, unsigned endFrame);
+
+    // Copies the samples from the source bus to this one.
     // This is just a simple per-channel copy if the number of channels match, otherwise an up-mix or down-mix is done.
     void copyFrom(const AudioBus& sourceBus, ChannelInterpretation = Speakers);
 
