@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,9 +76,9 @@ class Download : public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download);
 public:
 #if USE(NETWORK_SESSION) && PLATFORM(COCOA)
-    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*);
+    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, const String& suggestedFilename = { });
 #else
-    Download(DownloadManager&, DownloadID, const WebCore::ResourceRequest&);
+    Download(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
 #endif
     ~Download();
 
@@ -144,6 +144,7 @@ private:
     std::unique_ptr<WebCore::ResourceHandleClient> m_downloadClient;
     RefPtr<WebCore::ResourceHandle> m_resourceHandle;
 #endif
+    String m_suggestedName;
 };
 
 } // namespace WebKit

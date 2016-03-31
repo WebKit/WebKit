@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,57 +48,68 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
     return NavigationType::Other;
 }
 
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
     : m_resourceRequest(resourceRequest)
     , m_type(type)
     , m_event(event)
     , m_processingUserGesture(ScriptController::processingUserGesture())
     , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
+    , m_downloadAttribute(downloadAttribute)
 {
 }
 
 NavigationAction::NavigationAction()
-    : NavigationAction(ResourceRequest(), NavigationType::Other, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+    : NavigationAction(ResourceRequest(), NavigationType::Other, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow, nullAtom)
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest)
-    : NavigationAction(resourceRequest, NavigationType::Other, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+    : NavigationAction(resourceRequest, NavigationType::Other, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow, nullAtom)
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
-    : NavigationAction(resourceRequest, NavigationType::Other, nullptr, shouldOpenExternalURLsPolicy)
+    : NavigationAction(resourceRequest, NavigationType::Other, nullptr, shouldOpenExternalURLsPolicy, nullAtom)
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type)
-    : NavigationAction(resourceRequest, type, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+    : NavigationAction(resourceRequest, type, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow, nullAtom)
+{
+}
+
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+    : NavigationAction(resourceRequest, type, event, shouldOpenExternalURLsPolicy, nullAtom)
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission)
-    : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, 0), nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+    : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, 0), nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow, nullAtom)
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, Event* event)
-    : NavigationAction(resourceRequest, type, event, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+    : NavigationAction(resourceRequest, type, event, ShouldOpenExternalURLsPolicy::ShouldNotAllow, nullAtom)
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
-    : NavigationAction(resourceRequest, type, nullptr, shouldOpenExternalURLsPolicy)
+    : NavigationAction(resourceRequest, type, nullptr, shouldOpenExternalURLsPolicy, nullAtom)
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, Event* event)
-    : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, event), event, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+    : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, event), event, ShouldOpenExternalURLsPolicy::ShouldNotAllow, nullAtom)
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
-    : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, event), event, shouldOpenExternalURLsPolicy)
+    : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, event), event, shouldOpenExternalURLsPolicy, nullAtom)
+{
+}
+
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
+    : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, event), event, shouldOpenExternalURLsPolicy, downloadAttribute)
 {
 }
 

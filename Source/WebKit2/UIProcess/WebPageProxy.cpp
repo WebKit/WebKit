@@ -2048,6 +2048,11 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     if (action == PolicyIgnore)
         m_pageLoadState.clearPendingAPIRequestURL(transaction);
 
+#if ENABLE(DOWNLOAD_ATTRIBUTE)
+    if (m_syncNavigationActionHasDownloadAttribute && action == PolicyUse)
+        action = PolicyDownload;
+#endif
+
     DownloadID downloadID = { };
     if (action == PolicyDownload) {
         // Create a download proxy.
@@ -3344,6 +3349,9 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
 
     m_inDecidePolicyForNavigationAction = true;
     m_syncNavigationActionPolicyActionIsValid = false;
+#if ENABLE(DOWNLOAD_ATTRIBUTE)
+    m_syncNavigationActionHasDownloadAttribute = !navigationActionData.downloadAttribute.isNull();
+#endif
 
     if (m_navigationClient) {
         RefPtr<API::FrameInfo> destinationFrameInfo;

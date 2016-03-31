@@ -673,83 +673,83 @@ PASS a.target: IDL set to object "test-toString" followed by IDL get
 PASS a.target: IDL set to object "test-valueOf" should not throw 
 PASS a.target: IDL set to object "test-valueOf" followed by getAttribute() 
 PASS a.target: IDL set to object "test-valueOf" followed by IDL get 
-FAIL a.download: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL a.download: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
+PASS a.download: typeof IDL attribute 
+PASS a.download: IDL get with DOM attribute unset 
 PASS a.download: setAttribute() to "" followed by getAttribute() 
-FAIL a.download: setAttribute() to "" followed by IDL get assert_equals: expected (string) "" but got (undefined) undefined
+PASS a.download: setAttribute() to "" followed by IDL get 
 PASS a.download: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL a.download: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected (string) " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got (undefined) undefined
+PASS a.download: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS a.download: setAttribute() to undefined followed by getAttribute() 
-FAIL a.download: setAttribute() to undefined followed by IDL get assert_equals: expected (string) "undefined" but got (undefined) undefined
+PASS a.download: setAttribute() to undefined followed by IDL get 
 PASS a.download: setAttribute() to 7 followed by getAttribute() 
-FAIL a.download: setAttribute() to 7 followed by IDL get assert_equals: expected (string) "7" but got (undefined) undefined
+PASS a.download: setAttribute() to 7 followed by IDL get 
 PASS a.download: setAttribute() to 1.5 followed by getAttribute() 
-FAIL a.download: setAttribute() to 1.5 followed by IDL get assert_equals: expected (string) "1.5" but got (undefined) undefined
+PASS a.download: setAttribute() to 1.5 followed by IDL get 
 PASS a.download: setAttribute() to true followed by getAttribute() 
-FAIL a.download: setAttribute() to true followed by IDL get assert_equals: expected (string) "true" but got (undefined) undefined
+PASS a.download: setAttribute() to true followed by IDL get 
 PASS a.download: setAttribute() to false followed by getAttribute() 
-FAIL a.download: setAttribute() to false followed by IDL get assert_equals: expected (string) "false" but got (undefined) undefined
+PASS a.download: setAttribute() to false followed by IDL get 
 PASS a.download: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL a.download: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected (string) "[object Object]" but got (undefined) undefined
+PASS a.download: setAttribute() to object "[object Object]" followed by IDL get 
 PASS a.download: setAttribute() to NaN followed by getAttribute() 
-FAIL a.download: setAttribute() to NaN followed by IDL get assert_equals: expected (string) "NaN" but got (undefined) undefined
+PASS a.download: setAttribute() to NaN followed by IDL get 
 PASS a.download: setAttribute() to Infinity followed by getAttribute() 
-FAIL a.download: setAttribute() to Infinity followed by IDL get assert_equals: expected (string) "Infinity" but got (undefined) undefined
+PASS a.download: setAttribute() to Infinity followed by IDL get 
 PASS a.download: setAttribute() to -Infinity followed by getAttribute() 
-FAIL a.download: setAttribute() to -Infinity followed by IDL get assert_equals: expected (string) "-Infinity" but got (undefined) undefined
+PASS a.download: setAttribute() to -Infinity followed by IDL get 
 PASS a.download: setAttribute() to "\0" followed by getAttribute() 
-FAIL a.download: setAttribute() to "\0" followed by IDL get assert_equals: expected (string) "\0" but got (undefined) undefined
+PASS a.download: setAttribute() to "\0" followed by IDL get 
 PASS a.download: setAttribute() to null followed by getAttribute() 
-FAIL a.download: setAttribute() to null followed by IDL get assert_equals: expected (string) "null" but got (undefined) undefined
+PASS a.download: setAttribute() to null followed by IDL get 
 PASS a.download: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL a.download: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected (string) "test-toString" but got (undefined) undefined
+PASS a.download: setAttribute() to object "test-toString" followed by IDL get 
 PASS a.download: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL a.download: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected (string) "test-valueOf" but got (undefined) undefined
+PASS a.download: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS a.download: IDL set to "" should not throw 
-FAIL a.download: IDL set to "" followed by getAttribute() assert_equals: expected "" but got "test-valueOf"
+PASS a.download: IDL set to "" followed by getAttribute() 
 PASS a.download: IDL set to "" followed by IDL get 
 PASS a.download: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " should not throw 
-FAIL a.download: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() assert_equals: expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
+PASS a.download: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS a.download: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS a.download: IDL set to undefined should not throw 
-FAIL a.download: IDL set to undefined followed by getAttribute() assert_equals: expected "undefined" but got "test-valueOf"
-FAIL a.download: IDL set to undefined followed by IDL get assert_equals: expected (string) "undefined" but got (undefined) undefined
+PASS a.download: IDL set to undefined followed by getAttribute() 
+PASS a.download: IDL set to undefined followed by IDL get 
 PASS a.download: IDL set to 7 should not throw 
-FAIL a.download: IDL set to 7 followed by getAttribute() assert_equals: expected "7" but got "test-valueOf"
-FAIL a.download: IDL set to 7 followed by IDL get assert_equals: expected (string) "7" but got (number) 7
+PASS a.download: IDL set to 7 followed by getAttribute() 
+PASS a.download: IDL set to 7 followed by IDL get 
 PASS a.download: IDL set to 1.5 should not throw 
-FAIL a.download: IDL set to 1.5 followed by getAttribute() assert_equals: expected "1.5" but got "test-valueOf"
-FAIL a.download: IDL set to 1.5 followed by IDL get assert_equals: expected (string) "1.5" but got (number) 1.5
+PASS a.download: IDL set to 1.5 followed by getAttribute() 
+PASS a.download: IDL set to 1.5 followed by IDL get 
 PASS a.download: IDL set to true should not throw 
-FAIL a.download: IDL set to true followed by getAttribute() assert_equals: expected "true" but got "test-valueOf"
-FAIL a.download: IDL set to true followed by IDL get assert_equals: expected (string) "true" but got (boolean) true
+PASS a.download: IDL set to true followed by getAttribute() 
+PASS a.download: IDL set to true followed by IDL get 
 PASS a.download: IDL set to false should not throw 
-FAIL a.download: IDL set to false followed by getAttribute() assert_equals: expected "false" but got "test-valueOf"
-FAIL a.download: IDL set to false followed by IDL get assert_equals: expected (string) "false" but got (boolean) false
+PASS a.download: IDL set to false followed by getAttribute() 
+PASS a.download: IDL set to false followed by IDL get 
 PASS a.download: IDL set to object "[object Object]" should not throw 
-FAIL a.download: IDL set to object "[object Object]" followed by getAttribute() assert_equals: expected "[object Object]" but got "test-valueOf"
-FAIL a.download: IDL set to object "[object Object]" followed by IDL get assert_equals: expected (string) "[object Object]" but got (object) object "[object Object]"
+PASS a.download: IDL set to object "[object Object]" followed by getAttribute() 
+PASS a.download: IDL set to object "[object Object]" followed by IDL get 
 PASS a.download: IDL set to NaN should not throw 
-FAIL a.download: IDL set to NaN followed by getAttribute() assert_equals: expected "NaN" but got "test-valueOf"
-FAIL a.download: IDL set to NaN followed by IDL get assert_equals: expected (string) "NaN" but got (number) NaN
+PASS a.download: IDL set to NaN followed by getAttribute() 
+PASS a.download: IDL set to NaN followed by IDL get 
 PASS a.download: IDL set to Infinity should not throw 
-FAIL a.download: IDL set to Infinity followed by getAttribute() assert_equals: expected "Infinity" but got "test-valueOf"
-FAIL a.download: IDL set to Infinity followed by IDL get assert_equals: expected (string) "Infinity" but got (number) Infinity
+PASS a.download: IDL set to Infinity followed by getAttribute() 
+PASS a.download: IDL set to Infinity followed by IDL get 
 PASS a.download: IDL set to -Infinity should not throw 
-FAIL a.download: IDL set to -Infinity followed by getAttribute() assert_equals: expected "-Infinity" but got "test-valueOf"
-FAIL a.download: IDL set to -Infinity followed by IDL get assert_equals: expected (string) "-Infinity" but got (number) -Infinity
+PASS a.download: IDL set to -Infinity followed by getAttribute() 
+PASS a.download: IDL set to -Infinity followed by IDL get 
 PASS a.download: IDL set to "\0" should not throw 
-FAIL a.download: IDL set to "\0" followed by getAttribute() assert_equals: expected "\0" but got "test-valueOf"
+PASS a.download: IDL set to "\0" followed by getAttribute() 
 PASS a.download: IDL set to "\0" followed by IDL get 
 PASS a.download: IDL set to null should not throw 
-FAIL a.download: IDL set to null followed by getAttribute() assert_equals: expected "null" but got "test-valueOf"
-FAIL a.download: IDL set to null followed by IDL get assert_equals: expected (string) "null" but got (object) null
+PASS a.download: IDL set to null followed by getAttribute() 
+PASS a.download: IDL set to null followed by IDL get 
 PASS a.download: IDL set to object "test-toString" should not throw 
-FAIL a.download: IDL set to object "test-toString" followed by getAttribute() assert_equals: expected "test-toString" but got "test-valueOf"
-FAIL a.download: IDL set to object "test-toString" followed by IDL get assert_equals: expected (string) "test-toString" but got (object) object "test-toString"
+PASS a.download: IDL set to object "test-toString" followed by getAttribute() 
+PASS a.download: IDL set to object "test-toString" followed by IDL get 
 PASS a.download: IDL set to object "test-valueOf" should not throw 
 PASS a.download: IDL set to object "test-valueOf" followed by getAttribute() 
-FAIL a.download: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected (string) "test-valueOf" but got (object) object "test-valueOf"
+PASS a.download: IDL set to object "test-valueOf" followed by IDL get 
 PASS a.ping: typeof IDL attribute 
 PASS a.ping: IDL get with DOM attribute unset 
 PASS a.ping: setAttribute() to "" followed by getAttribute() 

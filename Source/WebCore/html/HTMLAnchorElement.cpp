@@ -562,22 +562,12 @@ void HTMLAnchorElement::handleClick(Event* event)
     URL kurl = document().completeURL(url.toString());
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
-    if (hasAttribute(downloadAttr)) {
-        ResourceRequest request(kurl);
-
-        // FIXME: Why are we not calling addExtraFieldsToMainResourceRequest() if this check fails? It sets many important header fields.
-        if (!hasRel(RelationNoReferrer)) {
-            String referrer = SecurityPolicy::generateReferrerHeader(document().referrerPolicy(), kurl, frame->loader().outgoingReferrer());
-            if (!referrer.isEmpty())
-                request.setHTTPReferrer(referrer);
-            frame->loader().addExtraFieldsToMainResourceRequest(request);
-        }
-
-        frame->loader().client().startDownload(request, fastGetAttribute(downloadAttr));
-    } else
+    auto downloadAttribute = fastGetAttribute(downloadAttr);
+#else
+    auto downloadAttribute = nullAtom;
 #endif
 
-    frame->loader().urlSelected(kurl, target(), event, LockHistory::No, LockBackForwardList::No, hasRel(RelationNoReferrer) ? NeverSendReferrer : MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());
+    frame->loader().urlSelected(kurl, target(), event, LockHistory::No, LockBackForwardList::No, hasRel(RelationNoReferrer) ? NeverSendReferrer : MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), downloadAttribute);
 
     sendPings(kurl);
 }

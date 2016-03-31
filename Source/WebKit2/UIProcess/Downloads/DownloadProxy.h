@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
 
     // Message handlers.
-    void didStart(const WebCore::ResourceRequest&);
+    void didStart(const WebCore::ResourceRequest&, const AtomicString& suggestedFilename);
     void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&, uint64_t challengeID);
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(uint64_t length);
@@ -101,6 +101,7 @@ private:
 
     RefPtr<API::Data> m_resumeData;
     WebCore::ResourceRequest m_request;
+    AtomicString m_suggestedFilename;
 };
 
 } // namespace WebKit

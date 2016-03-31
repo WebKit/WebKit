@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -747,6 +747,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
     navigationActionData.isProcessingUserGesture = navigationAction.processingUserGesture();
     navigationActionData.canHandleRequest = webPage->canHandleRequest(request);
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
+    navigationActionData.downloadAttribute = navigationAction.downloadAttribute();
 
     WebCore::Frame* coreFrame = m_frame ? m_frame->coreFrame() : nullptr;
     webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), navigationActionData, request, frameName, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
@@ -812,6 +813,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     navigationActionData.isProcessingUserGesture = navigationAction.processingUserGesture();
     navigationActionData.canHandleRequest = webPage->canHandleRequest(request);
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
+    navigationActionData.downloadAttribute = navigationAction.downloadAttribute();
 
     WebCore::Frame* coreFrame = m_frame->coreFrame();
     WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader());
@@ -910,9 +912,9 @@ void WebFrameLoaderClient::setMainFrameDocumentReady(bool)
     notImplemented();
 }
 
-void WebFrameLoaderClient::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
+void WebFrameLoaderClient::startDownload(const ResourceRequest& request, const String& suggestedName)
 {
-    m_frame->startDownload(request);
+    m_frame->startDownload(request, suggestedName);
 }
 
 void WebFrameLoaderClient::willChangeTitle(DocumentLoader*)

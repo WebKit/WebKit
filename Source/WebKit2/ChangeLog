@@ -1,3 +1,57 @@
+2016-03-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Support download attribute feature
+        https://bugs.webkit.org/show_bug.cgi?id=102914
+        <rdar://problem/13177492>
+
+        Reviewed by Darin Adler.
+
+        A first draft implementation of this feature.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::Download): Update to accept default filename.
+        (WebKit::Download::didStart): Send default filename in message.
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload): Expect a default filename argument.
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::startDownload): Expect a default
+        filename argument.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in: Update messages to
+        expect a default filename argument.
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode): Handle the download attribute flag and
+        the default filename.
+        (WebKit::NavigationActionData::decode): Ditto.
+        * Shared/NavigationActionData.h:
+        * UIProcess/API/APINavigationAction.h:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didStart): Expect a default filename argument.
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename): Use the suggested
+        filename if the client delegate does not override it.
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in: Include a default filename value.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision): If the feature is enabled, and
+        the load was started with a download attribute, convert a "PolicyUse" decision
+        to "PolicyDownload".
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Remember if the load
+        is happening due to a 'download' attribute link.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow): Populate the navigationActionData object
+        with any download attribute and suggested filename.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction): Populate the
+        navigationActionData object with any download attribute and suggested filename.
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Ditto.
+        (WebKit::WebFrameLoaderClient::startDownload): Expect a suggested filename argument.
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload): Expect a suggested filename argument.
+        * WebProcess/WebPage/WebFrame.h:
+
 2016-03-30  Alex Christensen  <achristensen@webkit.org>
 
         CMake build fix.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -117,6 +117,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
 #endif
 
     m_delegateIsDecidingNavigationPolicy = true;
+    m_suggestedFilename = action.downloadAttribute();
     m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, formState, [this](PolicyAction action) {
         continueAfterNavigationPolicy(action);
     });
@@ -185,7 +186,7 @@ void PolicyChecker::continueAfterNavigationPolicy(PolicyAction policy)
         case PolicyDownload: {
             ResourceRequest request = callback.request();
             m_frame.loader().setOriginalURLForDownloadRequest(request);
-            m_frame.loader().client().startDownload(request);
+            m_frame.loader().client().startDownload(request, m_suggestedFilename);
             callback.clearRequest();
             break;
         }

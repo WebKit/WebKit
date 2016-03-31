@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,9 +91,10 @@ void DownloadProxy::processDidClose()
     m_processPool->downloadClient().processDidCrash(m_processPool.get(), this);
 }
 
-void DownloadProxy::didStart(const ResourceRequest& request)
+void DownloadProxy::didStart(const ResourceRequest& request, const AtomicString& suggestedFilename)
 {
     m_request = request;
+    m_suggestedFilename = suggestedFilename;
 
     if (!m_processPool)
         return;
@@ -196,7 +197,11 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filenam
     if (!m_processPool)
         return;
 
-    destination = m_processPool->downloadClient().decideDestinationWithSuggestedFilename(m_processPool.get(), this, filename, allowOverwrite);
+    String suggestedFilename = filename;
+    if (!m_suggestedFilename.isNull())
+        suggestedFilename = m_suggestedFilename;
+    
+    destination = m_processPool->downloadClient().decideDestinationWithSuggestedFilename(m_processPool.get(), this, suggestedFilename, allowOverwrite);
 
     if (!destination.isNull())
         SandboxExtension::createHandle(destination, SandboxExtension::ReadWrite, sandboxExtensionHandle);

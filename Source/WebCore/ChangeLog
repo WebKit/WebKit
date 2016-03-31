@@ -1,3 +1,46 @@
+2016-03-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Support download attribute feature
+        https://bugs.webkit.org/show_bug.cgi?id=102914
+        <rdar://problem/13177492>
+
+        Reviewed by Darin Adler.
+
+        Tested by imported/w3c/web-platform-tests/html/dom/interfaces.html
+                  imported/w3c/web-platform-tests/html/dom/reflection-text.html
+
+        A first draft implementation of this feature.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick): If the anchor has the 'download'
+        attribute, pass along the information to the rest of the load system.
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest): Create new overload that
+        accepts a download attribute flag and a suggested filename.
+        (WebCore::FrameLoadRequest::hasDownloadAttribute): Added.
+        (WebCore::FrameLoadRequest::suggestedFilename): Added.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected): Expand to accept the download attribute
+        flag and suggested filename.
+        (WebCore::FrameLoader::loadURL): Populate the NavigationAction with the new
+        download attribute flag and suggested filename.
+        (WebCore::FrameLoader::loadPostRequest): Ditto.
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h: Add new 'HasDownloadAttribute' enum.
+        * loader/NavigationAction.cpp:
+        (WebCore::navigationType):
+        (WebCore::NavigationAction::NavigationAction): Update to accept new download
+        attribute flag and suggested filename.
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::hasDownloadAttribute): Added.
+        (WebCore::NavigationAction::suggestedFilename): Added.
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy): Pass more information to
+        'continueAfterNavigationPolicy'
+        (WebCore::PolicyChecker::continueAfterNavigationPolicy): Accept suggested
+        filename
+        * loader/PolicyChecker.h:
+
 2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Add basic loading of resources for Workers

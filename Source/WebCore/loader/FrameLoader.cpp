@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
@@ -342,11 +342,18 @@ void FrameLoader::changeLocation(const FrameLoadRequest& request)
     urlSelected(request, nullptr);
 }
 
+void FrameLoader::urlSelected(const URL& url, const String& passedTarget, Event* triggeringEvent, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
+{
+    NewFrameOpenerPolicy newFrameOpenerPolicy = shouldSendReferrer == NeverSendReferrer ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow;
+
+    urlSelected(FrameLoadRequest(m_frame.document()->securityOrigin(), ResourceRequest(url), passedTarget, lockHistory, lockBackForwardList, shouldSendReferrer, AllowNavigationToInvalidURL::Yes, newFrameOpenerPolicy, DoNotReplaceDocumentIfJavaScriptURL, shouldOpenExternalURLsPolicy, downloadAttribute), triggeringEvent);
+}
+
 void FrameLoader::urlSelected(const URL& url, const String& passedTarget, Event* triggeringEvent, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
     NewFrameOpenerPolicy newFrameOpenerPolicy = shouldSendReferrer == NeverSendReferrer ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow;
 
-    urlSelected(FrameLoadRequest(m_frame.document()->securityOrigin(), ResourceRequest(url), passedTarget, lockHistory, lockBackForwardList, shouldSendReferrer, AllowNavigationToInvalidURL::Yes, newFrameOpenerPolicy, DoNotReplaceDocumentIfJavaScriptURL, shouldOpenExternalURLsPolicy), triggeringEvent);
+    urlSelected(FrameLoadRequest(m_frame.document()->securityOrigin(), ResourceRequest(url), passedTarget, lockHistory, lockBackForwardList, shouldSendReferrer, AllowNavigationToInvalidURL::Yes, newFrameOpenerPolicy, DoNotReplaceDocumentIfJavaScriptURL, shouldOpenExternalURLsPolicy, nullAtom), triggeringEvent);
 }
 
 void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, Event* triggeringEvent)
@@ -1206,7 +1213,7 @@ void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String
     if (m_pageDismissalEventBeingDispatched != PageDismissalType::None)
         return;
 
-    NavigationAction action(request, newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy());
+    NavigationAction action(request, newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy(), frameLoadRequest.downloadAttribute());
 
     if (!targetFrame && !frameName.isEmpty()) {
         action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest.shouldOpenExternalURLsPolicy()));
@@ -2692,7 +2699,7 @@ void FrameLoader::loadPostRequest(const FrameLoadRequest& request, const String&
     workingResourceRequest.setHTTPContentType(contentType);
     addExtraFieldsToRequest(workingResourceRequest, loadType, true);
 
-    NavigationAction action(workingResourceRequest, loadType, true, event, request.shouldOpenExternalURLsPolicy());
+    NavigationAction action(workingResourceRequest, loadType, true, event, request.shouldOpenExternalURLsPolicy(), request.downloadAttribute());
 
     if (!frameName.isEmpty()) {
         // The search for a target frame is done earlier in the case of form submission.

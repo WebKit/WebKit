@@ -436,7 +436,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_DOWNLOAD_ATTRIBUTE)
-#define ENABLE_DOWNLOAD_ATTRIBUTE 0
+#define ENABLE_DOWNLOAD_ATTRIBUTE 1
 #endif
 
 #if !defined(ENABLE_DRAG_SUPPORT)

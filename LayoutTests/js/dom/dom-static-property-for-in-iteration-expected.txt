@@ -11,6 +11,7 @@ PASS a["hock"] is 5
 PASS a["snood"] is 6
 PASS a["charset"] is 
 PASS a["coords"] is 
+PASS a["download"] is 
 PASS a["hreflang"] is 
 PASS a["name"] is 
 PASS a["ping"] is 
@@ -49,7 +50,7 @@ PASS a["attributes"] is [object NamedNodeMap]
 PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["id"] is foo
 PASS a["offsetLeft"] is 8
-PASS a["offsetTop"] is 774
+PASS a["offsetTop"] is 789
 PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18
 PASS a["clientLeft"] is 0

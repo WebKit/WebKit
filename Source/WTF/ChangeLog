@@ -1,3 +1,14 @@
+2016-03-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Support download attribute feature
+        https://bugs.webkit.org/show_bug.cgi?id=102914
+        <rdar://problem/13177492>
+
+        Reviewed by Darin Adler.
+
+        * wtf/FeatureDefines.h: Turn the ENABLE_DOWNLOAD_ATTRIBUTE flag
+        on to see what happens.
+
 2016-03-30  Brian Burg  <bburg@apple.com>
 
         Web Automation: Add Automation.performKeyboardInteractions

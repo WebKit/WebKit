@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -246,7 +246,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
     function(action);
 }
 
-void WebFrame::startDownload(const WebCore::ResourceRequest& request)
+void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)
 {
     ASSERT(m_policyDownloadID.downloadID());
 
@@ -255,7 +255,7 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
 
     auto& webProcess = WebProcess::singleton();
     SessionID sessionID = page() ? page()->sessionID() : SessionID::defaultSessionID();
-    webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(sessionID, policyDownloadID, request), 0);
+    webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(sessionID, policyDownloadID, request, suggestedName), 0);
 }
 
 void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response)

@@ -1,3 +1,17 @@
+2016-03-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Support download attribute feature
+        https://bugs.webkit.org/show_bug.cgi?id=102914
+        <rdar://problem/13177492>
+
+        Reviewed by Darin Adler.
+
+        * imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Update for
+        <a download>.
+        * imported/w3c/web-platform-tests/html/dom/reflection-text-expected.txt: Ditto.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt: Ditto.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Ditto.
+
 2016-03-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking three js/regress/string-repeat-* tests as flaky timeouts on Mac

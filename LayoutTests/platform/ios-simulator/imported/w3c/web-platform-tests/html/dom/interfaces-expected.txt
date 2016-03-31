@@ -1592,7 +1592,7 @@ PASS HTMLAnchorElement interface object name
 PASS HTMLAnchorElement interface: existence and properties of interface prototype object 
 PASS HTMLAnchorElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLAnchorElement interface: attribute target 
-FAIL HTMLAnchorElement interface: attribute download assert_true: The prototype object must have a property "download" expected true got false
+PASS HTMLAnchorElement interface: attribute download 
 PASS HTMLAnchorElement interface: attribute ping 
 PASS HTMLAnchorElement interface: attribute rel 
 PASS HTMLAnchorElement interface: attribute relList 
@@ -1618,7 +1618,7 @@ PASS HTMLAnchorElement interface: attribute hash
 PASS HTMLAnchorElement must be primary interface of document.createElement("a") 
 PASS Stringification of document.createElement("a") 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "target" with the proper type (0) 
-FAIL HTMLAnchorElement interface: document.createElement("a") must inherit property "download" with the proper type (1) assert_inherits: property "download" not found in prototype chain
+PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "download" with the proper type (1) 
 FAIL HTMLAnchorElement interface: document.createElement("a") must inherit property "ping" with the proper type (2) assert_true: wrong type: not object or function expected true got false
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "rel" with the proper type (3) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "relList" with the proper type (4) 

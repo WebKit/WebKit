@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> DownloadProxy {
-    DidStart(WebCore::ResourceRequest request)
+    DidStart(WebCore::ResourceRequest request, AtomicString suggestedFilename)
     DidReceiveAuthenticationChallenge(WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
 #if USE(NETWORK_SESSION)
     WillSendRequest(WebCore::ResourceRequest redirectRequest, WebCore::ResourceResponse redirectResponse));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ public:
     void invalidatePolicyListener();
     void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, DownloadID);
 
-    void startDownload(const WebCore::ResourceRequest&);
+    void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, WebCore::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     String source() const;

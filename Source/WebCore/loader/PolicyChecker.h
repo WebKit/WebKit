@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,8 @@ public:
     FrameLoadType loadType() const { return m_loadType; }
     void setLoadType(FrameLoadType loadType) { m_loadType = loadType; }
 
+    void setSuggestedFilename(const String& suggestedFilename) { m_suggestedFilename = suggestedFilename; }
+
     bool delegateIsDecidingNavigationPolicy() const { return m_delegateIsDecidingNavigationPolicy; }
     bool delegateIsHandlingUnimplementablePolicy() const { return m_delegateIsHandlingUnimplementablePolicy; }
 
@@ -100,6 +102,7 @@ private:
     // on navigation action delegate callbacks.
     FrameLoadType m_loadType;
     PolicyCallback m_callback;
+    String m_suggestedFilename;
 
 #if ENABLE(CONTENT_FILTERING)
     ContentFilterUnblockHandler m_contentFilterUnblockHandler;

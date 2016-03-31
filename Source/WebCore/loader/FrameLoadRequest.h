@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@ struct FrameLoadRequest {
 public:
     FrameLoadRequest(SecurityOrigin* requester, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
         : m_requester(requester)
-        , m_shouldCheckNewWindowPolicy(false)
         , m_lockHistory(lockHistory)
         , m_lockBackForwardList(lockBackForwardList)
         , m_shouldSendReferrer(shouldSendReferrer)
@@ -52,7 +51,6 @@ public:
     FrameLoadRequest(SecurityOrigin* requester, const ResourceRequest& resourceRequest, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
         : m_requester(requester)
         , m_resourceRequest(resourceRequest)
-        , m_shouldCheckNewWindowPolicy(false)
         , m_lockHistory(lockHistory)
         , m_lockBackForwardList(lockBackForwardList)
         , m_shouldSendReferrer(shouldSendReferrer)
@@ -67,7 +65,6 @@ public:
         : m_requester(requester)
         , m_resourceRequest(resourceRequest)
         , m_frameName(frameName)
-        , m_shouldCheckNewWindowPolicy(false)
         , m_lockHistory(lockHistory)
         , m_lockBackForwardList(lockBackForwardList)
         , m_shouldSendReferrer(shouldSendReferrer)
@@ -82,7 +79,6 @@ public:
         : m_requester(requester)
         , m_resourceRequest(resourceRequest)
         , m_frameName(frameName)
-        , m_shouldCheckNewWindowPolicy(false)
         , m_lockHistory(lockHistory)
         , m_lockBackForwardList(lockBackForwardList)
         , m_shouldSendReferrer(shouldSendReferrer)
@@ -90,6 +86,21 @@ public:
         , m_newFrameOpenerPolicy(newFrameOpenerPolicy)
         , m_shouldReplaceDocumentIfJavaScriptURL(shouldReplaceDocumentIfJavaScriptURL)
         , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
+    {
+    }
+
+    FrameLoadRequest(SecurityOrigin* requester, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
+        : m_requester(requester)
+        , m_resourceRequest(resourceRequest)
+        , m_frameName(frameName)
+        , m_lockHistory(lockHistory)
+        , m_lockBackForwardList(lockBackForwardList)
+        , m_shouldSendReferrer(shouldSendReferrer)
+        , m_allowNavigationToInvalidURL(allowNavigationToInvalidURL)
+        , m_newFrameOpenerPolicy(newFrameOpenerPolicy)
+        , m_shouldReplaceDocumentIfJavaScriptURL(shouldReplaceDocumentIfJavaScriptURL)
+        , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
+        , m_downloadAttribute(downloadAttribute)
     {
     }
 
@@ -125,11 +136,13 @@ public:
     void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy policy) { m_shouldOpenExternalURLsPolicy = policy; }
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_shouldOpenExternalURLsPolicy; }
 
+    const AtomicString& downloadAttribute() const { return m_downloadAttribute; }
+
 private:
     RefPtr<SecurityOrigin> m_requester;
     ResourceRequest m_resourceRequest;
     String m_frameName;
-    bool m_shouldCheckNewWindowPolicy;
+    bool m_shouldCheckNewWindowPolicy { false };
     SubstituteData m_substituteData;
 
     LockHistory m_lockHistory;
@@ -139,6 +152,7 @@ private:
     NewFrameOpenerPolicy m_newFrameOpenerPolicy;
     ShouldReplaceDocumentIfJavaScriptURL m_shouldReplaceDocumentIfJavaScriptURL;
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+    AtomicString m_downloadAttribute;
 };
 
 }

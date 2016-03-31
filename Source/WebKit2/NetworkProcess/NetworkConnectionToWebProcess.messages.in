@@ -29,7 +29,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     SetDefersLoading(uint64_t resourceLoadIdentifier, bool defers)
     PrefetchDNS(String hostname)
 
-    StartDownload(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
+    StartDownload(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedName)
     ConvertMainResourceLoadToDownload(WebCore::SessionID sessionID, uint64_t mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)
 
     CookiesForDOM(WebCore::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (String result)

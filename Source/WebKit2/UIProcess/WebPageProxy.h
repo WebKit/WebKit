@@ -1808,6 +1808,10 @@ private:
     bool m_hasDeferredStartAssistingNode { false };
     std::unique_ptr<NodeAssistanceArguments> m_deferredNodeAssistanceArguments;
 #endif
+
+#if ENABLE(DOWNLOAD_ATTRIBUTE)
+    bool m_syncNavigationActionHasDownloadAttribute { false };
+#endif
 };
 
 } // namespace WebKit
