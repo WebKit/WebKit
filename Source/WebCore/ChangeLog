@@ -1,3 +1,19 @@
+2016-03-31  Nan Wang  <n_wang@apple.com>
+
+        AX: aria-hidden=false causes video fallback content to be exposed to AX API
+        https://bugs.webkit.org/show_bug.cgi?id=149278
+
+        Reviewed by Chris Fleizach.
+
+        The comment says when aria-hidden="false" and object is not rendered, we should
+        check each parent's aria-hidden status until we encounter a rendered object. So 
+        added a check for the rendered parent in order to break out of the loop earlier.
+
+        Test case covered in modified accessibility/aria-hidden-negates-no-visibility.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::isNodeAriaVisible):
+
 2016-03-31  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] Support download attribute feature

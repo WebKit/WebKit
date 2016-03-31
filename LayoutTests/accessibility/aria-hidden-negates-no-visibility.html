@@ -16,6 +16,12 @@
 <div hidden aria-hidden="false" id="hiddenDiv">HiddenText1</div>
 <input type="text" aria-labelledby="hiddenDiv" id="textFieldWithHiddenLabeller">
 
+<div aria-hidden="false">
+<video id="video">
+Hidden content
+</video>
+</div>
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -54,6 +60,10 @@
         // The aria-labelledby attribute should work even though hidden.
         var textField = accessibilityController.accessibleElementById("textFieldWithHiddenLabeller");
         debug("Textfield Title: " + textField.title);
+        
+        // aria-hidden="false" need to be on each parent, including rendered parents.
+        var video = accessibilityController.accessibleElementById("video");
+        shouldBe("video.childrenCount", "0");
     }
 
 </script>
