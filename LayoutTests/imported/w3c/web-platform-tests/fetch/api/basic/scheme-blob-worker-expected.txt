@@ -1,5 +1,5 @@
 
-FAIL Fetching [GET] URL.createObjectURL(blob) is OK promise_test: Unhandled rejection with value: "Fetch is not yet implemented"
-FAIL Fetching [GET] blob:http://www.localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching [POST] URL.createObjectURL(blob) is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+PASS Fetching [GET] URL.createObjectURL(blob) is OK 
+PASS Fetching [GET] blob:http://www.localhost:8800/ is KO 
+FAIL Fetching [POST] URL.createObjectURL(blob) is KO assert_unreached: Should have rejected. Reached unreachable code
 

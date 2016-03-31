@@ -6,6 +6,6 @@ PASS Fetch with PUT without body
 PASS Fetch with PUT with body 
 PASS Fetch with POST without body 
 PASS Fetch with POST with body 
-FAIL Fetch with Chicken assert_equals: Request has header content-length: null expected (object) null but got (string) "0"
+PASS Fetch with Chicken 
 PASS Fetch with Chicken with body 
 

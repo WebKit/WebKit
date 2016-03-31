@@ -1,5 +1,26 @@
 2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Fetch API] Add basic loading of resources for Workers
+        https://bugs.webkit.org/show_bug.cgi?id=155886
+
+        Reviewed by Alex Christensen.
+
+        Updating test expectations as new tests are passing.
+
+        * web-platform-tests/fetch/api/basic/accept-header-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/integrity-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-no-cors-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-data-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-others-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/stream-response-worker-expected.txt:
+
+2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Fetch API] Update web-platform-test fetch API tests
         https://bugs.webkit.org/show_bug.cgi?id=155969
 

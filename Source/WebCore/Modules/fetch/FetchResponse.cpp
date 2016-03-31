@@ -33,6 +33,7 @@
 
 #include "Dictionary.h"
 #include "ExceptionCode.h"
+#include "FetchRequest.h"
 #include "JSFetchResponse.h"
 #include "ScriptExecutionContext.h"
 
@@ -153,7 +154,7 @@ JSC::JSValue JSFetchResponse::body(JSC::ExecState&) const
     return JSC::jsNull();
 }
 
-void FetchResponse::fetch(ScriptExecutionContext& context, const FetchRequest& request, FetchPromise&& promise)
+void FetchResponse::startFetching(ScriptExecutionContext& context, const FetchRequest& request, FetchPromise&& promise)
 {
     Ref<FetchResponse> response = adoptRef(*new FetchResponse(context, Type::Basic, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
 
@@ -163,6 +164,30 @@ void FetchResponse::fetch(ScriptExecutionContext& context, const FetchRequest& r
     response->m_bodyLoader = BodyLoader(response.get(), WTFMove(promise));
     if (!response->m_bodyLoader->start(context, request))
         response->m_bodyLoader = Nullopt;
+}
+
+void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& input, const Dictionary& dictionary, FetchPromise&& promise)
+{
+    ExceptionCode ec = 0;
+    RefPtr<FetchRequest> fetchRequest = FetchRequest::create(context, input, dictionary, ec);
+    if (ec) {
+        promise.reject(ec);
+        return;
+    }
+    ASSERT(fetchRequest);
+    startFetching(context, *fetchRequest, WTFMove(promise));
+}
+
+void FetchResponse::fetch(ScriptExecutionContext& context, const String& url, const Dictionary& dictionary, FetchPromise&& promise)
+{
+    ExceptionCode ec = 0;
+    RefPtr<FetchRequest> fetchRequest = FetchRequest::create(context, url, dictionary, ec);
+    if (ec) {
+        promise.reject(ec);
+        return;
+    }
+    ASSERT(fetchRequest);
+    startFetching(context, *fetchRequest, WTFMove(promise));
 }
 
 void FetchResponse::BodyLoader::didSucceed()

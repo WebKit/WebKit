@@ -1,5 +1,40 @@
 2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Fetch API] Add basic loading of resources for Workers
+        https://bugs.webkit.org/show_bug.cgi?id=155886
+
+        Reviewed by Alex Christensen.
+
+        Adding impplementation to WorkerGlobalScopeFetch::fetch similarly to DOMWindowFetch::fetch.
+        Refactored code in FetchResponse to share code between the two.
+
+        Updated WorkerThreadableLoader to cope with an ASSERT.
+        The ASSERT ensures that a DocumentThreadableLoader::create returns non null. 
+        In our case, it might happen as all cross origin fetch requests are denied at the moment.
+        This leads to calling didFail in DocumentThreadableLoader::create call and DocumentThreadableLoader::create to return null.
+        Updated the ASSERT to ensures that either the load is finished or DocumentThreadableLoader::create does not return null.
+
+        Covered by rebased tests.
+
+        * Modules/fetch/DOMWindowFetch.cpp:
+        (WebCore::DOMWindowFetch::fetch):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::startFetching):
+        (WebCore::FetchResponse::fetch):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/WorkerGlobalScopeFetch.cpp:
+        (WebCore::WorkerGlobalScopeFetch::fetch):
+        * Modules/fetch/WorkerGlobalScopeFetch.h:
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck):
+        * loader/WorkerThreadableLoader.h:
+
+2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Fetch API] Move isDisturbed handling to FetchBodyOwner
         https://bugs.webkit.org/show_bug.cgi?id=155968
 

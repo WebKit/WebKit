@@ -41,32 +41,14 @@ void DOMWindowFetch::fetch(DOMWindow& window, FetchRequest& input, const Diction
 {
     if (!window.scriptExecutionContext())
         return;
-    ScriptExecutionContext& context = *window.scriptExecutionContext();
-
-    ExceptionCode ec = 0;
-    RefPtr<FetchRequest> fetchRequest = FetchRequest::create(context, input, dictionary, ec);
-    if (ec) {
-        promise.reject(ec);
-        return;
-    }
-    ASSERT(fetchRequest);
-    FetchResponse::fetch(context, *fetchRequest, WTFMove(promise));
+    FetchResponse::fetch(*window.scriptExecutionContext(), input, dictionary, WTFMove(promise));
 }
 
 void DOMWindowFetch::fetch(DOMWindow& window, const String& url, const Dictionary& dictionary, DeferredWrapper&& promise)
 {
     if (!window.scriptExecutionContext())
         return;
-    ScriptExecutionContext& context = *window.scriptExecutionContext();
-    
-    ExceptionCode ec = 0;
-    RefPtr<FetchRequest> fetchRequest = FetchRequest::create(context, url, dictionary, ec);
-    if (ec) {
-        promise.reject(ec);
-        return;
-    }
-    ASSERT(fetchRequest);
-    FetchResponse::fetch(context, *fetchRequest, WTFMove(promise));
+    FetchResponse::fetch(*window.scriptExecutionContext(), url, dictionary, WTFMove(promise));
 }
 
 } // namespace WebCore

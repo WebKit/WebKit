@@ -1,18 +1,18 @@
 
-FAIL Fetching aaa://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching cap://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching cid://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching dav://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching dict://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching dns://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching geo://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching im://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching imap://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching ipp://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching ldap://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching mailto://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching nfs://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching pop://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching rtsp://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
-FAIL Fetching snmp://localhost:8800/ is KO assert_throws: function "function () { throw e }" threw "Fetch is not yet implemented" (undefined) expected object "TypeError" ("TypeError")
+PASS Fetching aaa://localhost:8800/ is KO 
+PASS Fetching cap://localhost:8800/ is KO 
+PASS Fetching cid://localhost:8800/ is KO 
+PASS Fetching dav://localhost:8800/ is KO 
+PASS Fetching dict://localhost:8800/ is KO 
+PASS Fetching dns://localhost:8800/ is KO 
+PASS Fetching geo://localhost:8800/ is KO 
+PASS Fetching im://localhost:8800/ is KO 
+PASS Fetching imap://localhost:8800/ is KO 
+PASS Fetching ipp://localhost:8800/ is KO 
+PASS Fetching ldap://localhost:8800/ is KO 
+PASS Fetching mailto://localhost:8800/ is KO 
+PASS Fetching nfs://localhost:8800/ is KO 
+PASS Fetching pop://localhost:8800/ is KO 
+PASS Fetching rtsp://localhost:8800/ is KO 
+PASS Fetching snmp://localhost:8800/ is KO 
 

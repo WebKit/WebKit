@@ -31,16 +31,23 @@
 
 #if ENABLE(FETCH_API)
 
+#include "FetchResponse.h"
+#include "WorkerGlobalScope.h"
+
 namespace WebCore {
 
-void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope&, FetchRequest&, const Dictionary&, FetchPromise&& promise)
+void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest& input, const Dictionary& dictionary, DeferredWrapper&& promise)
 {
-    promise.reject(ASCIILiteral("Fetch is not yet implemented"));
+    if (!scope.scriptExecutionContext())
+        return;
+    FetchResponse::fetch(*scope.scriptExecutionContext(), input, dictionary, WTFMove(promise));
 }
 
-void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope&, const String&, const Dictionary&, FetchPromise&& promise)
+void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, const String& url, const Dictionary& dictionary, DeferredWrapper&& promise)
 {
-    promise.reject(ASCIILiteral("Fetch is not yet implemented"));
+    if (!scope.scriptExecutionContext())
+        return;
+    FetchResponse::fetch(*scope.scriptExecutionContext(), url, dictionary, WTFMove(promise));
 }
 
 } // namespace WebCore

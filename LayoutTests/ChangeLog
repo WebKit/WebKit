@@ -1,5 +1,16 @@
 2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Fetch API] Add basic loading of resources for Workers
+        https://bugs.webkit.org/show_bug.cgi?id=155886
+
+        Reviewed by Alex Christensen.
+
+        Soup and Mac HTTP backends differ on Content-Length header handling.
+
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-worker-expected.txt: Added.
+
+2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Remove forEach use from Fetch Headers builtin constructor
         https://bugs.webkit.org/show_bug.cgi?id=155967
 

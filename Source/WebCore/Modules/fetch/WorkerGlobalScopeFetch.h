@@ -31,20 +31,19 @@
 #if ENABLE(FETCH_API)
 
 #include "JSDOMPromise.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
+class WorkerGlobalScope;
+class DeferredWrapper;
 class Dictionary;
 class FetchRequest;
-class FetchResponse;
-class ScriptExecutionContext;
-class WorkerGlobalScope;
 
 class WorkerGlobalScopeFetch {
 public:
-    using FetchPromise = DOMPromise<RefPtr<FetchResponse>, String>;
-    static void fetch(WorkerGlobalScope&, FetchRequest&, const Dictionary&, FetchPromise&&);
-    static void fetch(WorkerGlobalScope&, const String&, const Dictionary&, FetchPromise&&);
+    static void fetch(WorkerGlobalScope&, FetchRequest&, const Dictionary&, DeferredWrapper&&);
+    static void fetch(WorkerGlobalScope&, const String&, const Dictionary&, DeferredWrapper&&);
 };
 
 } // namespace WebCore

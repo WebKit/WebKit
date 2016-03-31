@@ -55,7 +55,8 @@ public:
     static RefPtr<FetchResponse> redirect(ScriptExecutionContext& context, const String& url, ExceptionCode& ec) { return redirect(context, url, 302, ec); }
 
     using FetchPromise = DOMPromise<RefPtr<FetchResponse>, ExceptionCode>;
-    static void fetch(ScriptExecutionContext&, const FetchRequest&, FetchPromise&&);
+    static void fetch(ScriptExecutionContext&, FetchRequest&, const Dictionary&, FetchPromise&&);
+    static void fetch(ScriptExecutionContext&, const String&, const Dictionary&, FetchPromise&&);
 
     void initializeWith(const Dictionary&, ExceptionCode&);
 
@@ -73,6 +74,8 @@ private:
     enum class Type { Basic, Cors, Default, Error, Opaque, OpaqueRedirect };
 
     FetchResponse(ScriptExecutionContext&, Type, FetchBody&&, Ref<FetchHeaders>&&, ResourceResponse&&);
+
+    static void startFetching(ScriptExecutionContext&, const FetchRequest&, FetchPromise&&);
 
     // ActiveDOMObject API
     void stop() final;

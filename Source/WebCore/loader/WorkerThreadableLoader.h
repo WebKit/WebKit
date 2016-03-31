@@ -111,6 +111,7 @@ namespace WebCore {
 
             // Only to be used on the main thread.
             RefPtr<ThreadableLoader> m_mainThreadLoader;
+            bool m_loadingFinished { false };
 
             // ThreadableLoaderClientWrapper is to be used on the worker context thread.
             // The ref counting is done on either thread.
