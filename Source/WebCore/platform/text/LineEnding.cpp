@@ -39,7 +39,7 @@ namespace {
 
 class OutputBuffer {
 public:
-    virtual char* allocate(size_t size) = 0;
+    virtual uint8_t* allocate(size_t size) = 0;
     virtual void copy(const CString&) = 0;
     virtual ~OutputBuffer() { }
 };
@@ -52,11 +52,11 @@ public:
     }
     virtual ~CStringBuffer() { }
 
-    char* allocate(size_t size) override
+    uint8_t* allocate(size_t size) override
     {
         char* ptr;
         m_buffer = CString::newUninitialized(size, ptr);
-        return ptr;
+        return reinterpret_cast<uint8_t*>(ptr);
     }
 
     void copy(const CString& source) override
@@ -128,7 +128,7 @@ void internalNormalizeLineEndingsToCRLF(const CString& from, OutputBuffer& buffe
     }
 
     p = from.data();
-    char* q = buffer.allocate(newLen);
+    uint8_t* q = buffer.allocate(newLen);
 
     // Make a copy of the string.
     while (p < from.data() + from.length()) {

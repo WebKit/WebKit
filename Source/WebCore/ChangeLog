@@ -1,5 +1,12 @@
 2016-03-30  Alex Christensen  <achristensen@webkit.org>
 
+        Fix Windows build.
+
+        * platform/text/LineEnding.cpp:
+        make the char's and uint8_t's compile.
+
+2016-03-30  Alex Christensen  <achristensen@webkit.org>
+
         Build fix.
 
         * platform/text/LineEnding.cpp:
