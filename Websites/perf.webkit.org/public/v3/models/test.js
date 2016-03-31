@@ -1,21 +1,28 @@
 'use strict';
 
 class Test extends LabeledObject {
-    constructor(id, object, isTopLevel)
+    constructor(id, object)
     {
         super(id, object);
         this._url = object.url; // FIXME: Unused
-        this._parent = null;
+        this._parentId = object.parentId;
         this._childTests = [];
         this._metrics = [];
 
-        if (isTopLevel)
+        if (!this._parentId)
             this.ensureNamedStaticMap('topLevelTests')[id] = this;
+        else {
+            var childMap = this.ensureNamedStaticMap('childTestMap');
+            if (!childMap[this._parentId])
+                childMap[this._parentId] = [this];
+            else
+                childMap[this._parentId].push(this);
+        }
     }
 
     static topLevelTests() { return this.sortByName(this.listForStaticMap('topLevelTests')); }
 
-    parentTest() { return this._parent; }
+    parentTest() { return Test.findById(this._parentId); }
 
     path()
     {
@@ -28,17 +35,15 @@ class Test extends LabeledObject {
         return path;
     }
 
-    onlyContainsSingleMetric() { return !this._childTests.length && this._metrics.length == 1; }
+    onlyContainsSingleMetric() { return !this.childTests().length && this._metrics.length == 1; }
 
-    // FIXME: We should store the child test order in the server.
-    childTests() { return this._childTests; }
-    metrics() { return this._metrics; }
-
-    setParentTest(parent)
+    childTests()
     {
-        parent.addChildTest(this);
-        this._parent = parent;
+        var childMap = this.namedStaticMap('childTestMap');
+        return childMap && this.id() in childMap ? childMap[this.id()] : [];
     }
+
+    metrics() { return this._metrics; }
 
     addChildTest(test) { this._childTests.push(test); }
     addMetric(metric) { this._metrics.push(metric); }

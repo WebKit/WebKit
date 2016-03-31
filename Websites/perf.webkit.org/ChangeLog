@@ -1,5 +1,28 @@
 2016-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Simplify API of Test model by removing Test.setParentTest
+        https://bugs.webkit.org/show_bug.cgi?id=156055
+
+        Reviewed by Joseph Pecoraro.
+
+        Removed Test.setParentTest. Keep track of the child-parent relationship using the static map instead.
+
+        Now each test only stores parent's id and uses the ID static map in Test.parentTest().
+
+        * public/v3/models/manifest.js:
+        (Manifest._didFetchManifest.buildObjectsFromIdMap): Removed the code to create the map of child-parent
+        relationship and call setParentTest.
+        * public/v3/models/test.js:
+        (Test): Updated a static map by the name of "childTestMap" to store itself. We should probably sort
+        child tests using some fixed criteria in the future instead of relying on the creation order but
+        preserve the old code's ordering for now.
+        (Test.prototype.parentTest): Look up the static map by the parent test's id.
+        (Test.prototype.onlyContainsSingleMetric):
+        (Test.prototype.setParentTest): Deleted.
+        (Test.prototype.childTests): Look up the child test map.
+
+2016-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         BuildRequest should have associated platform and test
         https://bugs.webkit.org/show_bug.cgi?id=156054
 
