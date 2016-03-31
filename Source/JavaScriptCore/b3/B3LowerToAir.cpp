@@ -734,6 +734,14 @@ private:
                 append(opcode, tmp(left), rightAddr.consume(*this), result);
                 return;
             }
+
+            if (commutativity == Commutative) {
+                if (isValidForm(opcode, rightAddr.kind(), Arg::Tmp, Arg::Tmp)) {
+                    append(opcode, rightAddr.consume(*this), tmp(left), result);
+                    return;
+                }
+            }
+
             if (isValidForm(opcode, rightAddr.kind(), Arg::Tmp)) {
                 append(relaxedMoveForType(m_value->type()), tmp(left), result);
                 append(opcode, rightAddr.consume(*this), result);

@@ -147,6 +147,7 @@ AddDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp
     x86: Addr, Tmp, Tmp
     x86: Tmp, Addr, Tmp
+    x86: Index, Tmp, Tmp
 
 x86: AddDouble U:F:64, UD:F:64
     Tmp, Tmp
@@ -156,6 +157,7 @@ AddFloat U:F:32, U:F:32, D:F:32
     Tmp, Tmp, Tmp
     x86: Addr, Tmp, Tmp
     x86: Tmp, Addr, Tmp
+    x86: Index, Tmp, Tmp
 
 x86: AddFloat U:F:32, UD:F:32
     Tmp, Tmp
@@ -243,6 +245,7 @@ MulDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp
     x86: Addr, Tmp, Tmp
     x86: Tmp, Addr, Tmp
+    x86: Index, Tmp, Tmp
 
 x86: MulDouble U:F:64, UD:F:64
     Tmp, Tmp
@@ -252,6 +255,7 @@ MulFloat U:F:32, U:F:32, D:F:32
     Tmp, Tmp, Tmp
     x86: Addr, Tmp, Tmp
     x86: Tmp, Addr, Tmp
+    x86: Index, Tmp, Tmp
 
 x86: MulFloat U:F:32, UD:F:32
     Tmp, Tmp

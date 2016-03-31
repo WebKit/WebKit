@@ -1776,6 +1776,55 @@ void testX86VMULSDAddrOpDestRexAddr()
     CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 1, pureNaN()) == 2.4 * 4.2);
 }
 
+void testX86VMULSDBaseNeedsRex()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR0), Tmp(X86Registers::r13));
+    root->append(MulDouble, nullptr, Arg::index(Tmp(X86Registers::r13), Tmp(GPRInfo::argumentGPR1)), Tmp(FPRInfo::argumentFPR0), Tmp(X86Registers::xmm0));
+    root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm0), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    double secondArg = 4.2;
+    uint64_t index = 8;
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 1, index, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDIndexNeedsRex()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR1), Tmp(X86Registers::r13));
+    root->append(MulDouble, nullptr, Arg::index(Tmp(GPRInfo::argumentGPR0), Tmp(X86Registers::r13)), Tmp(FPRInfo::argumentFPR0), Tmp(X86Registers::xmm0));
+    root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm0), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    double secondArg = 4.2;
+    uint64_t index = - 8;
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg + 1, index, pureNaN()) == 2.4 * 4.2);
+}
+
+void testX86VMULSDBaseIndexNeedRex()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR0), Tmp(X86Registers::r12));
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR1), Tmp(X86Registers::r13));
+    root->append(MulDouble, nullptr, Arg::index(Tmp(X86Registers::r12), Tmp(X86Registers::r13)), Tmp(FPRInfo::argumentFPR0), Tmp(X86Registers::xmm0));
+    root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm0), Tmp(FPRInfo::returnValueFPR));
+    root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
+
+    double secondArg = 4.2;
+    uint64_t index = 16;
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 2, index, pureNaN()) == 2.4 * 4.2);
+}
+
 #endif
 
 #define RUN(test) do {                          \
@@ -1850,6 +1899,10 @@ void run(const char* filter)
     RUN(testX86VMULSDDestRexAddr());
     RUN(testX86VMULSDRegOpDestRexAddr());
     RUN(testX86VMULSDAddrOpDestRexAddr());
+
+    RUN(testX86VMULSDBaseNeedsRex());
+    RUN(testX86VMULSDIndexNeedsRex());
+    RUN(testX86VMULSDBaseIndexNeedRex());
 #endif
 
     if (tasks.isEmpty())

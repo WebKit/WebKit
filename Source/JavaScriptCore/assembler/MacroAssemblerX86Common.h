@@ -1134,6 +1134,21 @@ public:
         addDouble(op2, op1, dest);
     }
 
+    void addDouble(BaseIndex op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        if (supportsAVX())
+            m_assembler.vaddsd_mr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
+        else {
+            ASSERT(isSSE2Present());
+            if (op2 == dest) {
+                m_assembler.addsd_mr(op1.offset, op1.base, op1.index, op1.scale, dest);
+                return;
+            }
+            loadDouble(op1, dest);
+            addDouble(op2, dest);
+        }
+    }
+
     void addFloat(FPRegisterID src, FPRegisterID dest)
     {
         addFloat(src, dest, dest);
@@ -1178,6 +1193,21 @@ public:
     void addFloat(FPRegisterID op1, Address op2, FPRegisterID dest)
     {
         addFloat(op2, op1, dest);
+    }
+
+    void addFloat(BaseIndex op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        if (supportsAVX())
+            m_assembler.vaddss_mr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
+        else {
+            ASSERT(isSSE2Present());
+            if (op2 == dest) {
+                m_assembler.addss_mr(op1.offset, op1.base, op1.index, op1.scale, dest);
+                return;
+            }
+            loadFloat(op1, dest);
+            addFloat(op2, dest);
+        }
     }
 
     void divDouble(FPRegisterID src, FPRegisterID dest)
@@ -1291,6 +1321,21 @@ public:
         return mulDouble(op2, op1, dest);
     }
 
+    void mulDouble(BaseIndex op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        if (supportsAVX())
+            m_assembler.vmulsd_mr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
+        else {
+            ASSERT(isSSE2Present());
+            if (op2 == dest) {
+                m_assembler.mulsd_mr(op1.offset, op1.base, op1.index, op1.scale, dest);
+                return;
+            }
+            loadDouble(op1, dest);
+            mulDouble(op2, dest);
+        }
+    }
+
     void mulFloat(FPRegisterID src, FPRegisterID dest)
     {
         mulFloat(src, dest, dest);
@@ -1334,6 +1379,21 @@ public:
     void mulFloat(FPRegisterID op1, Address op2, FPRegisterID dest)
     {
         mulFloat(op2, op1, dest);
+    }
+
+    void mulFloat(BaseIndex op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        if (supportsAVX())
+            m_assembler.vmulss_mr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
+        else {
+            ASSERT(isSSE2Present());
+            if (op2 == dest) {
+                m_assembler.mulss_mr(op1.offset, op1.base, op1.index, op1.scale, dest);
+                return;
+            }
+            loadFloat(op1, dest);
+            mulFloat(op2, dest);
+        }
     }
 
     void andDouble(FPRegisterID src, FPRegisterID dst)

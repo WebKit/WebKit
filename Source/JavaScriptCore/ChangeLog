@@ -1,3 +1,47 @@
+2016-03-31  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC][x86] Add the indexed forms of floating point addition and multiplication
+        https://bugs.webkit.org/show_bug.cgi?id=156058
+
+        Reviewed by Geoffrey Garen.
+
+        B3 supports lowering [base, index] addresses into
+        arbitrary instructions but we were not using that feature.
+
+        This patch adds the missing support for the lowering
+        of Add and Mul.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::addDouble):
+        (JSC::MacroAssemblerX86Common::addFloat):
+        (JSC::MacroAssemblerX86Common::mulDouble):
+        (JSC::MacroAssemblerX86Common::mulFloat):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::addsd_mr):
+        (JSC::X86Assembler::vaddsd_mr):
+        (JSC::X86Assembler::addss_mr):
+        (JSC::X86Assembler::vaddss_mr):
+        (JSC::X86Assembler::mulsd_mr):
+        (JSC::X86Assembler::vmulsd_mr):
+        (JSC::X86Assembler::mulss_mr):
+        (JSC::X86Assembler::vmulss_mr):
+        (JSC::X86Assembler::X86InstructionFormatter::SingleInstructionBufferWriter::memoryModRM):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        Unlike the Addr form, we never need to transform a Tmp
+        into an Index for spilling.
+
+        Instead of duplicating all the code in MacroAssembler, I can
+        just have the lowering phase try using addresses for the first
+        argument when possible.
+
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/testair.cpp:
+        (JSC::B3::Air::testX86VMULSDBaseNeedsRex):
+        (JSC::B3::Air::testX86VMULSDIndexNeedsRex):
+        (JSC::B3::Air::testX86VMULSDBaseIndexNeedRex):
+        (JSC::B3::Air::run):
+
 2016-03-31  Saam barati  <sbarati@apple.com>
 
         DFG JIT bug in typeof constant folding where the input to typeof is an object or function
