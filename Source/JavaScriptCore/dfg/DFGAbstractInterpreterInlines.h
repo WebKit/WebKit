@@ -1170,7 +1170,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
         // FIXME: We could use the masquerades-as-undefined watchpoint here.
         // https://bugs.webkit.org/show_bug.cgi?id=144456
-        if (!(abstractChild.m_type & ~(SpecObject - SpecObjectOther))) {
+        if (!(abstractChild.m_type & ~(SpecObject - SpecObjectOther - SpecFunction))) {
             setConstant(node, *m_graph.freeze(vm->smallStrings.objectString()));
             break;
         }

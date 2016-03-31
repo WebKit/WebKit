@@ -1,3 +1,25 @@
+2016-03-31  Saam barati  <sbarati@apple.com>
+
+        DFG JIT bug in typeof constant folding where the input to typeof is an object or function
+        https://bugs.webkit.org/show_bug.cgi?id=156034
+        <rdar://problem/25446785>
+
+        Reviewed by Ryosuke Niwa.
+
+        AI would constant fold TypeOf to the string "object" if it saw that
+        its input type didn't expand past the types contained in the set 
+        "SpecObject - SpecObjectOther". But, SpecObject contains SpecFunction.
+        And typeof of a function should return "function". This patch fixes
+        this bug by making sure we constant fold to object iff the type
+        doesn't expand past the set "SpecObject - SpecObjectOther - SpecFunction".
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * tests/stress/typeof-dfg-function-or-object.js: Added.
+        (assert):
+        (foo.else.o):
+        (foo):
+
 2016-03-31  Mark Lam  <mark.lam@apple.com>
 
         Gardening: Build and logic fix after r198873.
