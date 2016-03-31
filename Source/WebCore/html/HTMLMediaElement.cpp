@@ -6187,10 +6187,10 @@ RefPtr<PlatformMediaResourceLoader> HTMLMediaElement::mediaPlayerCreateResourceL
 
 bool HTMLMediaElement::mediaPlayerShouldUsePersistentCache() const
 {
-    if (!document().page())
-        return false;
+    if (Page* page = document().page())
+        return !page->usesEphemeralSession() && !page->isResourceCachingDisabled();
 
-    return document().page()->chrome().client().mediaShouldUsePersistentCache();
+    return false;
 }
 
 bool HTMLMediaElement::mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge& challenge)

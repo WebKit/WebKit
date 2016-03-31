@@ -931,8 +931,6 @@ public:
 
     void didRestoreScrollPosition();
 
-    bool mediaShouldUsePersistentCache() const { return m_mediaShouldUsePersistentCache; }
-
     bool isControlledByAutomation() const;
     void setControlledByAutomation(bool);
 
@@ -1455,8 +1453,6 @@ private:
 #if USE(OS_STATE)
     std::chrono::system_clock::time_point m_loadCommitTime;
 #endif
-
-    bool m_mediaShouldUsePersistentCache;
 };
 
 } // namespace WebKit

@@ -1,3 +1,18 @@
+2016-03-31  Jeremy Jones  <jeremyj@apple.com>
+
+        mediaShouldUsePersistentCache() is redundant. Use Page::usesEphemeralSession() instead.
+        https://bugs.webkit.org/show_bug.cgi?id=155924
+
+        Reviewed by Simon Fraser.
+
+        No new tests because there is no behavior change.
+
+        Remove machinery for mediaShouldUsePersistentCache() adopt usesEphemeralSession().
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerShouldUsePersistentCache):
+        * page/ChromeClient.h: remove mediaShouldUsePersistentCache()
+
 2016-03-30  Ada Chan  <adachan@apple.com>
 
         Add the new "toggle enhanced fullscreen" context menu item to the video context menu on supporting platforms.

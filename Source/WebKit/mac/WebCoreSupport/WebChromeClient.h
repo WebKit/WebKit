@@ -218,8 +218,6 @@ public:
     void setMockMediaPlaybackTargetPickerEnabled(bool) override;
     void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::State) override;
 #endif
-    
-    bool mediaShouldUsePersistentCache() const override;
 
 private:
     WebView *m_webView;

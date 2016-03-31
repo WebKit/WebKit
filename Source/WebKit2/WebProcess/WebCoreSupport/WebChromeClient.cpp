@@ -1147,10 +1147,5 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
 {
     m_page->findController().didInvalidateDocumentMarkerRects();
 }
-    
-bool WebChromeClient::mediaShouldUsePersistentCache() const
-{
-    return m_page->mediaShouldUsePersistentCache();
-}
 
 } // namespace WebKit
