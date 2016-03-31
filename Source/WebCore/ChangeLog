@@ -1,5 +1,11 @@
 2016-03-30  Alex Christensen  <achristensen@webkit.org>
 
+        Build fix.
+
+        * platform/text/LineEnding.cpp:
+
+2016-03-30  Alex Christensen  <achristensen@webkit.org>
+
         Fix GTK and Windows builds after r198869.
 
         * platform/network/soup/ResourceHandleSoup.cpp:

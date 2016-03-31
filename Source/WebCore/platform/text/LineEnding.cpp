@@ -70,6 +70,7 @@ private:
     CString m_buffer;
 };
 
+#if OS(WINDOWS)
 class VectorCharAppendBuffer : public OutputBuffer {
 public:
     VectorCharAppendBuffer(Vector<uint8_t>& buffer)
@@ -78,7 +79,7 @@ public:
     }
     virtual ~VectorCharAppendBuffer() { }
 
-    char* allocate(size_t size) override
+    uint8_t* allocate(size_t size) override
     {
         size_t oldSize = m_buffer.size();
         m_buffer.grow(oldSize + size);
@@ -93,6 +94,7 @@ public:
 private:
     Vector<uint8_t>& m_buffer;
 };
+#endif
 
 void internalNormalizeLineEndingsToCRLF(const CString& from, OutputBuffer& buffer)
 {
