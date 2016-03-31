@@ -769,30 +769,30 @@ static bool addFileToSoupMessageBody(SoupMessage* message, const String& fileNam
 
 static bool blobIsOutOfDate(const BlobDataItem& blobItem)
 {
-    ASSERT(blobItem.type == BlobDataItem::File);
-    if (!isValidFileTime(blobItem.file->expectedModificationTime()))
+    ASSERT(blobItem.type == BlobDataItem::Type::File);
+    if (!isValidFileTime(blobItem.file()->expectedModificationTime()))
         return false;
 
     time_t fileModificationTime;
-    if (!getFileModificationTime(blobItem.file->path(), fileModificationTime))
+    if (!getFileModificationTime(blobItem.file()->path(), fileModificationTime))
         return true;
 
-    return fileModificationTime != static_cast<time_t>(blobItem.file->expectedModificationTime());
+    return fileModificationTime != static_cast<time_t>(blobItem.file()->expectedModificationTime());
 }
 
 static void addEncodedBlobItemToSoupMessageBody(SoupMessage* message, const BlobDataItem& blobItem, unsigned long& totalBodySize)
 {
-    if (blobItem.type == BlobDataItem::Data) {
+    if (blobItem.type() == BlobDataItem::Type::Data) {
         totalBodySize += blobItem.length();
-        soup_message_body_append(message->request_body, SOUP_MEMORY_TEMPORARY, blobItem.data->data() + blobItem.offset(), blobItem.length());
+        soup_message_body_append(message->request_body, SOUP_MEMORY_TEMPORARY, blobItem.data().data()->data() + blobItem.offset(), blobItem.length());
         return;
     }
 
-    ASSERT(blobItem.type == BlobDataItem::File);
+    ASSERT(blobItem.type == BlobDataItem::Type::File);
     if (blobIsOutOfDate(blobItem))
         return;
 
-    addFileToSoupMessageBody(message, blobItem.file->path(), blobItem.offset(), blobItem.length() == BlobDataItem::toEndOfFile ? 0 : blobItem.length(),  totalBodySize);
+    addFileToSoupMessageBody(message, blobItem.file()->path(), blobItem.offset(), blobItem.length() == BlobDataItem::toEndOfFile ? 0 : blobItem.length(),  totalBodySize);
 }
 
 static void addEncodedBlobToSoupMessageBody(SoupMessage* message, const FormDataElement& element, unsigned long& totalBodySize)

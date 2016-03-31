@@ -141,8 +141,8 @@ Vector<RefPtr<BlobDataFileReference>> NetworkBlobRegistry::filesInBlob(NetworkCo
 
     Vector<RefPtr<BlobDataFileReference>> result;
     for (const BlobDataItem& item : blobData->items()) {
-        if (item.type == BlobDataItem::File)
-            result.append(item.file);
+        if (item.type() == BlobDataItem::Type::File)
+            result.append(item.file());
     }
 
     return result;

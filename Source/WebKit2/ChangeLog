@@ -1,3 +1,15 @@
+2016-03-30  Brady Eidson  <beidson@apple.com>
+
+        Make BlobData use ThreadSafeSharedBuffer instead of RawData.
+        https://bugs.webkit.org/show_bug.cgi?id=156041
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::filesInBlob):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<BlobPart>::decode):
+
 2016-03-30  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r198856.

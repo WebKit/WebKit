@@ -44,7 +44,7 @@ class BlobData;
 class FileStream;
 class ResourceHandleClient;
 class ResourceRequest;
-struct BlobDataItem;
+class BlobDataItem;
 
 class BlobResourceHandle final : public FileStreamClient, public ResourceHandle  {
 public:

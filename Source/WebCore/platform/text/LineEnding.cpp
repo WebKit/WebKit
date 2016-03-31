@@ -153,10 +153,8 @@ void internalNormalizeLineEndingsToCRLF(const CString& from, OutputBuffer& buffe
 
 namespace WebCore {
 
-void normalizeToCROrLF(const CString& from, Vector<char>& result, bool toCR);
-
 // Normalize all line-endings to CR or LF.
-void normalizeToCROrLF(const CString& from, Vector<char>& result, bool toCR)
+static void normalizeToCROrLF(const CString& from, Vector<uint8_t>& result, bool toCR)
 {
     // Compute the new length.
     size_t newLen = 0;
@@ -181,7 +179,7 @@ void normalizeToCROrLF(const CString& from, Vector<char>& result, bool toCR)
     p = from.data();
     size_t oldResultSize = result.size();
     result.grow(oldResultSize + newLen);
-    char* q = result.data() + oldResultSize;
+    uint8_t* q = result.data() + oldResultSize;
 
     // If no need to fix the string, just copy the string over.
     if (!needFix) {
@@ -214,23 +212,13 @@ CString normalizeLineEndingsToCRLF(const CString& from)
     return buffer.buffer();
 }
 
-void normalizeLineEndingsToCR(const CString& from, Vector<char>& result)
-{
-    normalizeToCROrLF(from, result, true);
-}
-
-void normalizeLineEndingsToLF(const CString& from, Vector<char>& result)
-{
-    normalizeToCROrLF(from, result, false);
-}
-
-void normalizeLineEndingsToNative(const CString& from, Vector<char>& result)
+void normalizeLineEndingsToNative(const CString& from, Vector<uint8_t>& result)
 {
 #if OS(WINDOWS)
     VectorCharAppendBuffer buffer(result);
     internalNormalizeLineEndingsToCRLF(from, buffer);
 #else
-    normalizeLineEndingsToLF(from, result);
+    normalizeToCROrLF(from, result, false);
 #endif
 }
 

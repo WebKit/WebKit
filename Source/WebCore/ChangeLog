@@ -1,3 +1,83 @@
+2016-03-30  Brady Eidson  <beidson@apple.com>
+
+        Make BlobData use ThreadSafeSharedBuffer instead of RawData.
+        https://bugs.webkit.org/show_bug.cgi?id=156041
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No change in behavior).
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::consumeText):
+        (WebCore::FetchBody::extractFromText):
+        (WebCore::blobFromArrayBuffer):
+        * Modules/fetch/FetchBody.h:
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveBinaryData):
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::processFrame):
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WebSocketChannelClient.h:
+        (WebCore::WebSocketChannelClient::didReceiveBinaryData):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * fileapi/Blob.h:
+        (WebCore::Blob::create):
+        * fileapi/WebKitBlobBuilder.h:
+        * platform/network/BlobData.cpp:
+        (WebCore::BlobData::BlobData):
+        (WebCore::BlobDataItem::length):
+        (WebCore::BlobData::appendData):
+        (WebCore::BlobData::setContentType): Deleted.
+        * platform/network/BlobData.h:
+        (WebCore::BlobDataItem::type):
+        (WebCore::BlobDataItem::data):
+        (WebCore::BlobDataItem::file):
+        (WebCore::BlobDataItem::BlobDataItem):
+        (WebCore::BlobData::create):
+        (WebCore::RawData::create): Deleted.
+        (WebCore::RawData::data): Deleted.
+        (WebCore::RawData::length): Deleted.
+        (WebCore::RawData::RawData): Deleted.
+        * platform/network/BlobPart.h:
+        (WebCore::BlobPart::BlobPart):
+        (WebCore::BlobPart::data):
+        (WebCore::BlobPart::moveData):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::appendStorageItems):
+        (WebCore::BlobRegistryImpl::registerFileBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURLForSlice):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::getSizeForNext):
+        (WebCore::BlobResourceHandle::readSync):
+        (WebCore::BlobResourceHandle::readDataSync):
+        (WebCore::BlobResourceHandle::readFileSync):
+        (WebCore::BlobResourceHandle::readAsync):
+        (WebCore::BlobResourceHandle::readDataAsync):
+        (WebCore::BlobResourceHandle::readFileAsync):
+        * platform/network/BlobResourceHandle.h:
+        * platform/network/FormData.cpp:
+        (WebCore::appendBlobResolved):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::blobIsOutOfDate):
+        (WebCore::addEncodedBlobItemToSoupMessageBody):
+        * platform/text/LineEnding.cpp:
+        (WebCore::normalizeToCROrLF):
+        (WebCore::normalizeLineEndingsToNative):
+        (WebCore::normalizeLineEndingsToCR): Deleted.
+        (WebCore::normalizeLineEndingsToLF): Deleted.
+        * platform/text/LineEnding.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseBlob):
+
 2016-03-30  Enrica Casucci  <enrica@apple.com>
 
         Add a style for Data Detectors links.

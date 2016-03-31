@@ -201,7 +201,7 @@ void FetchBody::consumeText(Consumer::Type type, DeferredWrapper& promise)
     ASSERT(type == Consumer::Type::ArrayBuffer || type == Consumer::Type::Blob);
 
     if (type == Consumer::Type::ArrayBuffer) {
-        Vector<char> data = extractFromText();
+        Vector<uint8_t> data = extractFromText();
         fulfillPromiseWithArrayBuffer(promise, data.data(), data.size());
         return;
     }
@@ -232,12 +232,12 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Consumer::Type type, Deferred
     owner.loadBlob(*m_blob, loadingType(type));
 }
 
-Vector<char> FetchBody::extractFromText() const
+Vector<uint8_t> FetchBody::extractFromText() const
 {
     ASSERT(m_type == Type::Text);
     // FIXME: This double allocation is not efficient. Might want to fix that at WTFString level.
     CString data = m_text.utf8();
-    Vector<char> value(data.length());
+    Vector<uint8_t> value(data.length());
     memcpy(value.data(), data.data(), data.length());
     return value;
 }
@@ -245,10 +245,10 @@ Vector<char> FetchBody::extractFromText() const
 static inline RefPtr<Blob> blobFromArrayBuffer(ArrayBuffer* buffer, const String& contentType)
 {
     if (!buffer)
-        return Blob::create(Vector<char>(), contentType);
+        return Blob::create(Vector<uint8_t>(), contentType);
 
     // FIXME: We should try to move buffer to Blob without doing this copy.
-    Vector<char> value(buffer->byteLength());
+    Vector<uint8_t> value(buffer->byteLength());
     memcpy(value.data(), buffer->data(), buffer->byteLength());
     return Blob::create(WTFMove(value), contentType);
 }

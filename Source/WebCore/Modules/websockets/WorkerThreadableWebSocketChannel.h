@@ -100,7 +100,7 @@ public:
         // WebSocketChannelClient functions.
         void didConnect() override;
         void didReceiveMessage(const String& message) override;
-        void didReceiveBinaryData(Vector<char>&&) override;
+        void didReceiveBinaryData(Vector<uint8_t>&&) override;
         void didUpdateBufferedAmount(unsigned long bufferedAmount) override;
         void didStartClosingHandshake() override;
         void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) override;

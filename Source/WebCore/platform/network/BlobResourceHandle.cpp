@@ -253,16 +253,16 @@ void BlobResourceHandle::getSizeForNext()
     }
 
     const BlobDataItem& item = m_blobData->items().at(m_sizeItemCount);
-    switch (item.type) {
-    case BlobDataItem::Data:
+    switch (item.type()) {
+    case BlobDataItem::Type::Data:
         didGetSize(item.length());
         break;
-    case BlobDataItem::File:
+    case BlobDataItem::Type::File:
         // Files know their sizes, but asking the stream to verify that the file wasn't modified.
         if (m_async)
-            m_asyncStream->getSize(item.file->path(), item.file->expectedModificationTime());
+            m_asyncStream->getSize(item.file()->path(), item.file()->expectedModificationTime());
         else
-            didGetSize(m_stream->getSize(item.file->path(), item.file->expectedModificationTime()));
+            didGetSize(m_stream->getSize(item.file()->path(), item.file()->expectedModificationTime()));
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -351,9 +351,9 @@ int BlobResourceHandle::readSync(char* buf, int length)
         
         const BlobDataItem& item = m_blobData->items().at(m_readItemCount);
         int bytesRead = 0;
-        if (item.type == BlobDataItem::Data)
+        if (item.type() == BlobDataItem::Type::Data)
             bytesRead = readDataSync(item, buf + offset, remaining);
-        else if (item.type == BlobDataItem::File)
+        else if (item.type() == BlobDataItem::Type::File)
             bytesRead = readFileSync(item, buf + offset, remaining);
         else
             ASSERT_NOT_REACHED();
@@ -389,7 +389,7 @@ int BlobResourceHandle::readDataSync(const BlobDataItem& item, char* buf, int le
     int bytesToRead = (length > remaining) ? static_cast<int>(remaining) : length;
     if (bytesToRead > m_totalRemainingSize)
         bytesToRead = static_cast<int>(m_totalRemainingSize);
-    memcpy(buf, item.data->data() + item.offset() + m_currentItemReadSize, bytesToRead);
+    memcpy(buf, item.data().data() + item.offset() + m_currentItemReadSize, bytesToRead);
     m_totalRemainingSize -= bytesToRead;
 
     m_currentItemReadSize += bytesToRead;
@@ -411,7 +411,7 @@ int BlobResourceHandle::readFileSync(const BlobDataItem& item, char* buf, int le
         long long bytesToRead = m_itemLengthList[m_readItemCount] - m_currentItemReadSize;
         if (bytesToRead > m_totalRemainingSize)
             bytesToRead = m_totalRemainingSize;
-        bool success = m_stream->openForRead(item.file->path(), item.offset() + m_currentItemReadSize, bytesToRead);
+        bool success = m_stream->openForRead(item.file()->path(), item.offset() + m_currentItemReadSize, bytesToRead);
         m_currentItemReadSize = 0;
         if (!success) {
             m_errorCode = notReadableError;
@@ -452,9 +452,9 @@ void BlobResourceHandle::readAsync()
     }
 
     const BlobDataItem& item = m_blobData->items().at(m_readItemCount);
-    if (item.type == BlobDataItem::Data)
+    if (item.type() == BlobDataItem::Type::Data)
         readDataAsync(item);
-    else if (item.type == BlobDataItem::File)
+    else if (item.type() == BlobDataItem::Type::File)
         readFileAsync(item);
     else
         ASSERT_NOT_REACHED();
@@ -464,12 +464,14 @@ void BlobResourceHandle::readDataAsync(const BlobDataItem& item)
 {
     ASSERT(isMainThread());
     ASSERT(m_async);
+    ASSERT(item.data().data());
+
     Ref<BlobResourceHandle> protect(*this);
 
     long long bytesToRead = item.length() - m_currentItemReadSize;
     if (bytesToRead > m_totalRemainingSize)
         bytesToRead = m_totalRemainingSize;
-    consumeData(item.data->data() + item.offset() + m_currentItemReadSize, static_cast<int>(bytesToRead));
+    consumeData(reinterpret_cast<const char*>(item.data().data()->data()) + item.offset() + m_currentItemReadSize, static_cast<int>(bytesToRead));
     m_currentItemReadSize = 0;
 }
 
@@ -486,7 +488,7 @@ void BlobResourceHandle::readFileAsync(const BlobDataItem& item)
     long long bytesToRead = m_itemLengthList[m_readItemCount] - m_currentItemReadSize;
     if (bytesToRead > m_totalRemainingSize)
         bytesToRead = static_cast<int>(m_totalRemainingSize);
-    m_asyncStream->openForRead(item.file->path(), item.offset() + m_currentItemReadSize, bytesToRead);
+    m_asyncStream->openForRead(item.file()->path(), item.offset() + m_currentItemReadSize, bytesToRead);
     m_fileOpened = true;
     m_currentItemReadSize = 0;
 }
