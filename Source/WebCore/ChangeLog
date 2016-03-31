@@ -1,5 +1,42 @@
 2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Fetch API] Move isDisturbed handling to FetchBodyOwner
+        https://bugs.webkit.org/show_bug.cgi?id=155968
+
+        Reviewed by Darin Adler.
+
+        Moved isDisturbed handling in FetchBodyOwner.
+        This includes promise rejection in case of disturbed bodies.
+
+        No behavior change observable from user scripts.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::arrayBuffer):
+        (WebCore::FetchBody::blob):
+        (WebCore::FetchBody::json):
+        (WebCore::FetchBody::text):
+        (WebCore::FetchBody::extractFromBody):
+        (WebCore::FetchBody::consume):
+        (WebCore::FetchBody::consumeArrayBuffer):
+        (WebCore::FetchBody::processIfEmptyOrDisturbed): Deleted.
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::isEmpty): Deleted.
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::arrayBuffer):
+        (WebCore::FetchBodyOwner::blob):
+        (WebCore::FetchBodyOwner::formData):
+        (WebCore::FetchBodyOwner::json):
+        (WebCore::FetchBodyOwner::text):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::isDisturbed):
+        (WebCore::FetchBodyOwner::setDisturbed):
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::create):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::clone):
+
+2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Remove forEach use from Fetch Headers builtin constructor
         https://bugs.webkit.org/show_bug.cgi?id=155967
 

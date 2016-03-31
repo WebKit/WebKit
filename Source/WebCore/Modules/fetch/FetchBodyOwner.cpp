@@ -31,7 +31,9 @@
 
 #if ENABLE(FETCH_API)
 
+#include "ExceptionCode.h"
 #include "FetchLoader.h"
+#include "JSBlob.h"
 #include "ResourceResponse.h"
 
 namespace WebCore {
@@ -53,10 +55,80 @@ void FetchBodyOwner::stop()
     ASSERT(!m_blobLoader);
 }
 
+void FetchBodyOwner::arrayBuffer(DeferredWrapper&& promise)
+{
+    if (m_body.isEmpty()) {
+        fulfillPromiseWithArrayBuffer(promise, nullptr, 0);
+        return;
+    }
+    if (isDisturbed()) {
+        promise.reject<ExceptionCode>(TypeError);
+        return;
+    }
+    m_isDisturbed = true;
+    m_body.arrayBuffer(*this, WTFMove(promise));
+}
+
+void FetchBodyOwner::blob(DeferredWrapper&& promise)
+{
+    if (m_body.isEmpty()) {
+        promise.resolve<RefPtr<Blob>>(Blob::create());
+        return;
+    }
+    if (isDisturbed()) {
+        promise.reject<ExceptionCode>(TypeError);
+        return;
+    }
+    m_isDisturbed = true;
+    m_body.blob(*this, WTFMove(promise));
+}
+
+void FetchBodyOwner::formData(DeferredWrapper&& promise)
+{
+    if (m_body.isEmpty()) {
+        promise.reject<ExceptionCode>(0);
+        return;
+    }
+    if (isDisturbed()) {
+        promise.reject<ExceptionCode>(TypeError);
+        return;
+    }
+    m_isDisturbed = true;
+    m_body.formData(*this, WTFMove(promise));
+}
+
+void FetchBodyOwner::json(DeferredWrapper&& promise)
+{
+    if (m_body.isEmpty()) {
+        promise.reject<ExceptionCode>(SYNTAX_ERR);
+        return;
+    }
+    if (isDisturbed()) {
+        promise.reject<ExceptionCode>(TypeError);
+        return;
+    }
+    m_isDisturbed = true;
+    m_body.json(*this, WTFMove(promise));
+}
+
+void FetchBodyOwner::text(DeferredWrapper&& promise)
+{
+    if (m_body.isEmpty()) {
+        promise.resolve(String());
+        return;
+    }
+    if (isDisturbed()) {
+        promise.reject<ExceptionCode>(TypeError);
+        return;
+    }
+    m_isDisturbed = true;
+    m_body.text(*this, WTFMove(promise));
+}
+
 void FetchBodyOwner::loadBlob(Blob& blob, FetchLoader::Type type)
 {
     // Can only be called once for a body instance.
-    ASSERT(m_body.isDisturbed());
+    ASSERT(isDisturbed());
     ASSERT(!m_blobLoader);
 
     if (!scriptExecutionContext()) {

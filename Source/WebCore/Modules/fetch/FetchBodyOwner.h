@@ -43,12 +43,13 @@ public:
     FetchBodyOwner(ScriptExecutionContext&, FetchBody&&);
 
     // Exposed Body API
-    bool isDisturbed() const { return m_body.isDisturbed(); }
-    void arrayBuffer(DeferredWrapper&& promise) { m_body.arrayBuffer(*this, WTFMove(promise)); }
-    void blob(DeferredWrapper&& promise) { m_body.blob(*this, WTFMove(promise)); }
-    void formData(DeferredWrapper&& promise) { m_body.formData(*this, WTFMove(promise)); }
-    void json(DeferredWrapper&& promise) { m_body.json(*this, WTFMove(promise)); }
-    void text(DeferredWrapper&& promise) { m_body.text(*this, WTFMove(promise)); }
+    bool isDisturbed() const { return m_isDisturbed; }
+
+    void arrayBuffer(DeferredWrapper&&);
+    void blob(DeferredWrapper&&);
+    void formData(DeferredWrapper&&);
+    void json(DeferredWrapper&&);
+    void text(DeferredWrapper&&);
 
     void loadBlob(Blob&, FetchLoader::Type);
 
@@ -60,6 +61,8 @@ protected:
 
     // ActiveDOMObject API
     void stop() override;
+
+    void setDisturbed() { m_isDisturbed = true; }
 
 private:
     // Blob loading routines
@@ -85,6 +88,7 @@ private:
 
 protected:
     FetchBody m_body;
+    bool m_isDisturbed { false };
 
 private:
     Optional<BlobLoader> m_blobLoader;

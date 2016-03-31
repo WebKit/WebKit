@@ -295,6 +295,9 @@ RefPtr<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, Fetch
         return nullptr;
     }
 
+    if (!input.m_body.isEmpty())
+        input.setDisturbed();
+
     return adoptRef(*new FetchRequest(context, WTFMove(body), headers.releaseNonNull(), WTFMove(internalRequest)));
 }
 

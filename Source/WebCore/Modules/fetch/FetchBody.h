@@ -54,7 +54,6 @@ public:
     void text(FetchBodyOwner&, DeferredWrapper&&);
     void formData(FetchBodyOwner&, DeferredWrapper&& promise) { promise.reject<ExceptionCode>(0); }
 
-    bool isDisturbed() const { return m_isDisturbed; }
     bool isEmpty() const { return m_type == Type::None; }
 
     void setMimeType(const String& mimeType) { m_mimeType = mimeType; }
@@ -88,7 +87,6 @@ private:
     void consume(FetchBodyOwner&, Consumer::Type, DeferredWrapper&&);
 
     Vector<uint8_t> extractFromText() const;
-    bool processIfEmptyOrDisturbed(Consumer::Type, DeferredWrapper&);
     void consumeArrayBuffer(Consumer::Type, DeferredWrapper&);
     void consumeText(Consumer::Type, DeferredWrapper&);
     void consumeBlob(FetchBodyOwner&, Consumer::Type, DeferredWrapper&&);
@@ -98,7 +96,6 @@ private:
 
     Type m_type { Type::None };
     String m_mimeType;
-    bool m_isDisturbed { false };
 
     // FIXME: Add support for BufferSource and URLSearchParams.
     RefPtr<Blob> m_blob;

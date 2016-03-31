@@ -118,7 +118,7 @@ FetchResponse::FetchResponse(ScriptExecutionContext& context, Type type, FetchBo
 
 RefPtr<FetchResponse> FetchResponse::clone(ScriptExecutionContext& context, ExceptionCode& ec)
 {
-    if (m_body.isDisturbed() || m_isLocked) {
+    if (isDisturbed() || m_isLocked) {
         ec = TypeError;
         return nullptr;
     }
