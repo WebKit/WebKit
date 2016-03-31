@@ -239,7 +239,13 @@ IOSurface::IOSurface(IOSurfaceRef surface, ColorSpace colorSpace)
 
 IntSize IOSurface::maximumSize()
 {
-    return IntSize(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth), IOSurfaceGetPropertyMaximum(kIOSurfaceHeight));
+    IntSize maxSize(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth), IOSurfaceGetPropertyMaximum(kIOSurfaceHeight));
+#if PLATFORM(IOS)
+    // Match limits imposed by CA. FIXME: should have API for this <rdar://problem/25454148>
+    const int iOSMaxSurfaceDimension = 8 * 1024;
+    maxSize = maxSize.shrunkTo({ iOSMaxSurfaceDimension, iOSMaxSurfaceDimension });
+#endif
+    return maxSize;
 }
 
 MachSendRight IOSurface::createSendRight() const
@@ -288,7 +294,7 @@ CGContextRef IOSurface::ensurePlatformContext()
     case Format::RGB10:
     case Format::RGB10A8:
         // A half-float format will be used if CG needs to read back the IOSurface contents,
-        // but for an IOSurface-to-IOSurface copy, there shoud be no conversion.
+        // but for an IOSurface-to-IOSurface copy, there should be no conversion.
         bitsPerComponent = 16;
         bitsPerPixel = 64;
         bitmapInfo = kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder16Host | kCGBitmapFloatComponents;

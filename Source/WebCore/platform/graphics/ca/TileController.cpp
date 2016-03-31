@@ -36,6 +36,10 @@
 #include <utility>
 #include <wtf/MainThread.h>
 
+#if USE(IOSURFACE)
+#include "IOSurface.h"
+#endif
+
 #if PLATFORM(IOS)
 #include "MemoryPressureHandler.h"
 #include "TileControllerMemoryHandlerIOS.h"
@@ -489,16 +493,23 @@ IntSize TileController::tileSize() const
     if (m_inLiveResize || m_tileSizeLocked)
         return tileGrid().tileSize();
 
+    IntSize maxTileSize(kGiantTileSize, kGiantTileSize);
+#if USE(IOSURFACE)
+    IntSize surfaceSizeLimit = IOSurface::maximumSize();
+    surfaceSizeLimit.scale(1 / m_deviceScaleFactor);
+    maxTileSize = maxTileSize.shrunkTo(surfaceSizeLimit);
+#endif
+    
     if (owningGraphicsLayer()->platformCALayerUseGiantTiles())
-        return IntSize(kGiantTileSize, kGiantTileSize);
+        return maxTileSize;
 
     IntSize tileSize(kDefaultTileSize, kDefaultTileSize);
 
     if (m_scrollability == NotScrollable) {
         IntSize scaledSize = expandedIntSize(boundsWithoutMargin().size() * tileGrid().scale());
-        tileSize = scaledSize.constrainedBetween(IntSize(kDefaultTileSize, kDefaultTileSize), IntSize(kGiantTileSize, kGiantTileSize));
+        tileSize = scaledSize.constrainedBetween(IntSize(kDefaultTileSize, kDefaultTileSize), maxTileSize);
     } else if (m_scrollability == VerticallyScrollable)
-        tileSize.setWidth(std::min(std::max<int>(ceilf(boundsWithoutMargin().width() * tileGrid().scale()), kDefaultTileSize), kGiantTileSize));
+        tileSize.setWidth(std::min(std::max<int>(ceilf(boundsWithoutMargin().width() * tileGrid().scale()), kDefaultTileSize), maxTileSize.width()));
 
     LOG_WITH_STREAM(Scrolling, stream << "TileController::tileSize newSize=" << tileSize);
 

@@ -1,3 +1,23 @@
+2016-03-30  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Avoid creating tiles that are too large for rendering
+        https://bugs.webkit.org/show_bug.cgi?id=156050
+        rdar://problem/25424541
+
+        Reviewed by Darin Adler.
+
+        In the case of a WKWebView which is sized large enough to show an entire document
+        (for example, when enclosed inside a UIScrollView), we would create tiles that were
+        larger than CoreAnimation was willing to deal with.
+        
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::tileSize): Take the device scale, and the max IOSurface size
+        into account when computing the max tile size.
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::maximumSize): CoreAnimation imposes limits in addition to the size reported
+        by IOSurfaceGetPropertyMaximum(), namely an 8k cap, so mimic that here.
+        (IOSurface::ensurePlatformContext): Typo.
+
 2016-03-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL][CMake] WebKit include path has been added to system include path
