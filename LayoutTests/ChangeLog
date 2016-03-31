@@ -1,3 +1,14 @@
+2016-03-30  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fixed typo in fast/css/viewport-vmin-border test.
+        https://bugs.webkit.org/show_bug.cgi?id=156028
+
+        Reviewed by Darin Adler.
+
+        * fast/css/viewport-vmin-border.html: Test should should say "vmin" instead of
+        "vmax".
+        * fast/css/viewport-vmin-border-expected.txt: Adjust expectation.
+
 2016-03-30  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Update handling of SVG elements with presentational role

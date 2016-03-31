@@ -1,4 +1,4 @@
-Tests that vmax unit works for border-width property
+Tests that vmin unit works for border-width property
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
