@@ -350,7 +350,8 @@ class Driver(object):
         self._driver_user_directory_suffix = os.path.basename(str(self._driver_tempdir))
         user_cache_directory = self._port._path_to_user_cache_directory(self._driver_user_directory_suffix)
         if user_cache_directory:
-            self._driver_user_cache_directory = self._port._filesystem.maybe_make_directory(user_cache_directory)
+            self._port._filesystem.maybe_make_directory(user_cache_directory)
+            self._driver_user_cache_directory = user_cache_directory
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
         environment = self._setup_environ_for_driver(environment)

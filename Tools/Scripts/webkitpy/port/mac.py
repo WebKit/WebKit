@@ -118,12 +118,19 @@ class MacPort(ApplePort):
         self._filesystem.rmtree(os.path.expanduser('~/Library/WebKit/' + self.driver_name()))
 
     def _path_to_user_cache_directory(self, suffix=None):
-        DIRHELPER_USER_DIR_SUFFIX = "DIRHELPER_USER_DIR_SUFFIX"
+        DIRHELPER_USER_DIR_SUFFIX = 'DIRHELPER_USER_DIR_SUFFIX'
+        CS_DARWIN_USER_CACHE_DIR = 65538
+
+        # The environment variable DIRHELPER_USER_DIR_SUFFIX is only honored on systems with
+        # System Integrity Protection disabled or with an Apple-Internal OS. To make this code
+        # work for all system configurations we compute the path with respect to the suffix
+        # by hand and temporarily unset the environment variable DIRHELPER_USER_DIR_SUFFIX (if set)
+        # to avoid it influencing confstr() on systems that honor DIRHELPER_USER_DIR_SUFFIX.
         saved_suffix = None
-        if suffix is not None:
-            saved_suffix = os.environ.get(DIRHELPER_USER_DIR_SUFFIX)
-            os.environ[DIRHELPER_USER_DIR_SUFFIX] = suffix
-        result = os.confstr(65538)  # _CS_DARWIN_USER_CACHE_DIR
+        if DIRHELPER_USER_DIR_SUFFIX in os.environ:
+            saved_suffix = os.environ[DIRHELPER_USER_DIR_SUFFIX]
+            del os.environ[DIRHELPER_USER_DIR_SUFFIX]
+        result = os.path.join(os.confstr(CS_DARWIN_USER_CACHE_DIR), suffix or '')
         if saved_suffix is not None:
             os.environ[DIRHELPER_USER_DIR_SUFFIX] = saved_suffix
         return result
