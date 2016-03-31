@@ -1,3 +1,42 @@
+2016-03-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Automation: Add Automation.screenshot
+        https://bugs.webkit.org/show_bug.cgi?id=156073
+        <rdar://problem/25468646>
+
+        Reviewed by Timothy Hatcher and Brian Burg.
+
+        * UIProcess/Automation/Automation.json:
+        Add Automation.screenshot which returns base64 encoded PNG data.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::screenshot):
+        (WebKit::WebAutomationSession::didTakeScreenshot):
+        (WebKit::WebAutomationSession::platformGetBase64EncodedPNGData):
+        Send a message to the WebPage to get an Image of the page
+        and handle the response.
+
+        * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::platformGetBase64EncodedPNGData):
+        Convert the bitmap data to a base64 encoded PNG.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.messages.in:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::evaluateJavaScriptCallback):
+        (WebKit::WebAutomationSessionProxy::didClearWindowObjectForFrame):
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithOrdinal):
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithNodeHandle):
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithName):
+        (WebKit::WebAutomationSessionProxy::resolveParentFrame):
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+        Use null string where possible for efficiency.
+
+        (WebKit::WebAutomationSessionProxy::takeScreenshot):
+        Take an image of the entire page and pass back to the UIProcess.
+
 2016-03-31  Timothy Hatcher  <timothy@apple.com>
 
         Web Automation: Handle undefined when calling a function that has no result

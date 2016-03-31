@@ -31,6 +31,7 @@
 #include "WebAutomationSessionProxyMessages.h"
 #include "WebAutomationSessionProxyScriptSource.h"
 #include "WebFrame.h"
+#include "WebImage.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/APICast.h>
@@ -138,7 +139,7 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
     uint64_t callbackID = JSValueToNumber(context, arguments[1], exception);
     JSRetainPtr<JSStringRef> result(Adopt, JSValueToStringCopy(context, arguments[2], exception));
 
-    automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result->string(), emptyString());
+    automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result->string(), String());
 
     return JSValueMakeUndefined(context);
 }
@@ -208,7 +209,7 @@ void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 
     auto pendingFrameCallbacks = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frameID);
     for (uint64_t callbackID : pendingFrameCallbacks)
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, emptyString(), errorType), 0);
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, String(), errorType), 0);
 }
 
 void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, uint64_t callbackID)
@@ -303,7 +304,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(uint64_t frameID, u
         return;
     }
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, childFrame->frameID(), emptyString()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, childFrame->frameID(), String()), 0);
 }
 
 void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(uint64_t frameID, const String& nodeHandle, uint64_t callbackID)
@@ -334,7 +335,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(uint64_t frameID
         return;
     }
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, frameFromElement->frameID(), emptyString()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, frameFromElement->frameID(), String()), 0);
 }
 
 void WebAutomationSessionProxy::resolveChildFrameWithName(uint64_t frameID, const String& name, uint64_t callbackID)
@@ -365,7 +366,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithName(uint64_t frameID, cons
         return;
     }
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, childFrame->frameID(), emptyString()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveChildFrame(callbackID, childFrame->frameID(), String()), 0);
 }
 
 void WebAutomationSessionProxy::resolveParentFrame(uint64_t frameID, uint64_t callbackID)
@@ -384,7 +385,7 @@ void WebAutomationSessionProxy::resolveParentFrame(uint64_t frameID, uint64_t ca
         return;
     }
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveParentFrame(callbackID, parentFrame->frameID(), emptyString()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidResolveParentFrame(callbackID, parentFrame->frameID(), String()), 0);
 }
 
 void WebAutomationSessionProxy::focusFrame(uint64_t frameID)
@@ -446,7 +447,37 @@ void WebAutomationSessionProxy::computeElementLayout(uint64_t frameID, String no
         rect = coreFrameView->rootViewToContents(rect);
     }
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, rect, emptyString()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, rect, String()), 0);
+}
+
+void WebAutomationSessionProxy::takeScreenshot(uint64_t pageID, uint64_t callbackID)
+{
+    ShareableBitmap::Handle handle;
+    String windowNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
+
+    WebPage* page = WebProcess::singleton().webPage(pageID);
+    if (!page) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, windowNotFoundErrorType), 0);
+        return;
+    }
+
+    WebCore::FrameView* frameView = page->mainFrameView();
+    if (!frameView) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, String()), 0);
+        return;
+    }
+
+    WebCore::IntRect snapshotRect = WebCore::IntRect(WebCore::IntPoint(0, 0), frameView->contentsSize());
+    if (snapshotRect.isEmpty()) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, String()), 0);
+        return;
+    }
+
+    RefPtr<WebImage> image = page->scaledSnapshotWithOptions(snapshotRect, 1, SnapshotOptionsShareable);
+    if (image)
+        image->bitmap()->createHandle(handle, SharedMemory::Protection::ReadOnly);
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, String()), 0);    
 }
 
 } // namespace WebKit

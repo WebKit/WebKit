@@ -305,9 +305,20 @@
             "name": "performKeyboardInteractions",
             "description": "Simulates delivering the results of pressing one or more keyboard keys together or successively.",
             "parameters": [
-                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context which should recieve key." },
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context which should receive key." },
                 { "name": "interactions", "type": "array", "items": { "$ref": "KeyboardInteraction" }, "description": "An ordered list of key sequences to be delivered using native key events." }
             ]
+        },
+        {
+            "name": "takeScreenshot",
+            "description": "Take a screenshot of the current page in a browsing context.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to take a screenshot of." }
+            ],
+            "returns": [
+                { "name": "data", "type": "string", "description": "Base64-encoded image data (PNG)." }
+            ],
+            "async": true
         },
         {
             "name": "resolveChildFrameHandle",

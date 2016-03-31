@@ -65,6 +65,7 @@ private:
     void resolveParentFrame(uint64_t frameID, uint64_t callbackID);
     void focusFrame(uint64_t frameID);
     void computeElementLayout(uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool useViewportCoordinates, uint64_t callbackID);
+    void takeScreenshot(uint64_t pageID, uint64_t callbackID);
 
     String m_sessionIdentifier;
 

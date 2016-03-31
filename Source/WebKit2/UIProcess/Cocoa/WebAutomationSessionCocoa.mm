@@ -454,6 +454,21 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }
 
+String WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
+{
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
+    RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();
+    RetainPtr<NSMutableData> imageData = adoptNS([[NSMutableData alloc] init]);
+    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), kUTTypePNG, 1, 0));
+    if (!destination)
+        return String();
+
+    CGImageDestinationAddImage(destination.get(), cgImage.get(), 0);
+    CGImageDestinationFinalize(destination.get());
+
+    return [imageData base64EncodedStringWithOptions:0];
+}
+
 #endif // USE(APPKIT)
 
 } // namespace WebKit

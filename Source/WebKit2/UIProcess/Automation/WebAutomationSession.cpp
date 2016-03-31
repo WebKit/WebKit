@@ -771,8 +771,39 @@ void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString,
         for (auto& action : actionsToPerform)
             action();
     }
-
 #endif // USE(APPKIT)
+}
+
+void WebAutomationSession::takeScreenshot(ErrorString& errorString, const String& handle, Ref<TakeScreenshotCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    uint64_t callbackID = m_nextScreenshotCallbackID++;
+    m_screenshotCallbacks.set(callbackID, WTFMove(callback));
+
+    page->process().send(Messages::WebAutomationSessionProxy::TakeScreenshot(page->pageID(), callbackID), 0);
+}
+
+void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const ShareableBitmap::Handle& imageDataHandle, const String& errorType)
+{
+    auto callback = m_screenshotCallbacks.take(callbackID);
+    if (!callback)
+        return;
+
+    if (!errorType.isEmpty()) {
+        callback->sendFailure(errorType);
+        return;
+    }
+
+    String base64EncodedData = platformGetBase64EncodedPNGData(imageDataHandle);
+    if (base64EncodedData.isEmpty()) {
+        callback->sendFailure(Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError));
+        return;
+    }
+
+    callback->sendSuccess(base64EncodedData);
 }
 
 #if !USE(APPKIT)
@@ -786,6 +817,11 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy&, Inspector::P
 
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy&, const String&)
 {
+}
+
+String WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&)
+{
+    return String();
 }
 #endif // !USE(APPKIT)
 
