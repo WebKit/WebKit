@@ -88,6 +88,9 @@
 		52B8CF9815868D9100281053 /* SetDocumentURI.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 52B8CF9415868CF000281053 /* SetDocumentURI.html */; };
 		52D673EE1AFB127300FA19FE /* WKPageCopySessionStateWithFiltering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D673EC1AFB126800FA19FE /* WKPageCopySessionStateWithFiltering.cpp */; };
 		52E5CE4914D21EAB003B2BD8 /* ParentFrame_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52E5CE4814D21EAB003B2BD8 /* ParentFrame_Bundle.cpp */; };
+		5714ECB91CA8B5B000051AC8 /* DownloadRequestOriginalURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5714ECB81CA8B58800051AC8 /* DownloadRequestOriginalURL.html */; };
+		5714ECBB1CA8BFE400051AC8 /* DownloadRequestOriginalURLFrame.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */; };
+		5714ECBD1CA8C22A00051AC8 /* DownloadRequestOriginalURL2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5714ECBC1CA8C21800051AC8 /* DownloadRequestOriginalURL2.html */; };
 		57F10D931C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57F10D921C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm */; };
 		57F56A5C1C7F8CC100F31D7E /* IsNavigationActionTrusted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */; };
 		764322D71B61CCC30024F801 /* WordBoundaryTypingAttributes.mm in Sources */ = {isa = PBXBuildFile; fileRef = 764322D51B61CCA40024F801 /* WordBoundaryTypingAttributes.mm */; };
@@ -408,6 +411,9 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				5714ECBD1CA8C22A00051AC8 /* DownloadRequestOriginalURL2.html in Copy Resources */,
+				5714ECBB1CA8BFE400051AC8 /* DownloadRequestOriginalURLFrame.html in Copy Resources */,
+				5714ECB91CA8B5B000051AC8 /* DownloadRequestOriginalURL.html in Copy Resources */,
 				CD9E292E1C90C33F000BB800 /* audio-only.html in Copy Resources */,
 				51BCEE4E1C84F53B0042C82E /* IndexedDBMultiProcess-1.html in Copy Resources */,
 				51BCEE4F1C84F53B0042C82E /* IndexedDBMultiProcess-2.html in Copy Resources */,
@@ -647,6 +653,9 @@
 		52D673EC1AFB126800FA19FE /* WKPageCopySessionStateWithFiltering.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageCopySessionStateWithFiltering.cpp; sourceTree = "<group>"; };
 		52E5CE4514D21E9D003B2BD8 /* ParentFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParentFrame.cpp; sourceTree = "<group>"; };
 		52E5CE4814D21EAB003B2BD8 /* ParentFrame_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParentFrame_Bundle.cpp; sourceTree = "<group>"; };
+		5714ECB81CA8B58800051AC8 /* DownloadRequestOriginalURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DownloadRequestOriginalURL.html; sourceTree = "<group>"; };
+		5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DownloadRequestOriginalURLFrame.html; sourceTree = "<group>"; };
+		5714ECBC1CA8C21800051AC8 /* DownloadRequestOriginalURL2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DownloadRequestOriginalURL2.html; sourceTree = "<group>"; };
 		57F10D921C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IsNavigationActionTrusted.mm; sourceTree = "<group>"; };
 		57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IsNavigationActionTrusted.html; sourceTree = "<group>"; };
 		7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCacheAddImageToCacheIOS.mm; sourceTree = "<group>"; };
@@ -1110,6 +1119,9 @@
 			isa = PBXGroup;
 			children = (
 				A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */,
+				5714ECB81CA8B58800051AC8 /* DownloadRequestOriginalURL.html */,
+				5714ECBC1CA8C21800051AC8 /* DownloadRequestOriginalURL2.html */,
+				5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */,
 				51BCEE4C1C84F52C0042C82E /* IndexedDBMultiProcess-1.html */,
 				51BCEE4D1C84F52C0042C82E /* IndexedDBMultiProcess-2.html */,
 				51B1EE941C80FADD0064FB98 /* IndexedDBPersistence-1.html */,

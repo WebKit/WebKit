@@ -788,8 +788,14 @@ DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const Reso
     SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : SessionID::defaultSessionID();
 
     if (networkProcess()) {
-        // FIXME (NetworkProcess): Replicate whatever FrameLoader::setOriginalURLForDownloadRequest does with the request here.
-        networkProcess()->send(Messages::NetworkProcess::DownloadRequest(sessionID, downloadProxy->downloadID(), request), 0);
+        ResourceRequest updatedRequest(request);
+        // Request's firstPartyForCookies will be used as Original URL of the download request.
+        // We set the value to top level document's URL.
+        if (initiatingPage)
+            updatedRequest.setFirstPartyForCookies(URL(URL(), initiatingPage->pageLoadState().url()));
+        else
+            updatedRequest.setFirstPartyForCookies(URL());
+        networkProcess()->send(Messages::NetworkProcess::DownloadRequest(sessionID, downloadProxy->downloadID(), updatedRequest), 0);
         return downloadProxy;
     }
 

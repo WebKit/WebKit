@@ -206,7 +206,7 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(SessionID 
     }
 
 #if USE(NETWORK_SESSION)
-    loader->networkLoad()->convertTaskToDownload(downloadID);
+    loader->networkLoad()->convertTaskToDownload(downloadID, request);
 #else
     networkProcess.downloadManager().convertHandleToDownload(downloadID, loader->networkLoad()->handle(), request, response);
 

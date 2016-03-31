@@ -2350,58 +2350,17 @@ void FrameLoader::continueLoadAfterWillSubmitForm()
     m_provisionalDocumentLoader->startLoadingMainResource();
 }
 
-static URL originatingURLFromBackForwardList(Page* page)
-{
-    // FIXME: Can this logic be replaced with m_frame.document()->firstPartyForCookies()?
-    // It has the same meaning of "page a user thinks is the current one".
-
-    URL originalURL;
-    int backCount = page->backForward().backCount();
-    for (int backIndex = 0; backIndex <= backCount; backIndex++) {
-        // FIXME: At one point we had code here to check a "was user gesture" flag.
-        // Do we need to restore that logic?
-        HistoryItem* historyItem = page->backForward().itemAtIndex(-backIndex);
-        if (!historyItem)
-            continue;
-
-        originalURL = historyItem->originalURL(); 
-        if (!originalURL.isNull()) 
-            return originalURL;
-    }
-
-    return URL();
-}
-
 void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
 {
-    URL originalURL;
-    
-    // If there is no referrer, assume that the download was initiated directly, so current document is
-    // completely unrelated to it. See <rdar://problem/5294691>.
-    // FIXME: Referrer is not sent in many other cases, so we will often miss this important information.
-    // Find a better way to decide whether the download was unrelated to current document.
-    if (!request.httpReferrer().isNull()) {
-        // find the first item in the history that was originated by the user
-        originalURL = originatingURLFromBackForwardList(m_frame.page());
-    }
-
-    if (originalURL.isNull())
-        originalURL = request.url();
-
-    if (!originalURL.protocol().isEmpty() && !originalURL.host().isEmpty()) {
-        unsigned port = originalURL.port();
-
-        // Original URL is needed to show the user where a file was downloaded from. We should make a URL that won't result in downloading the file again.
-        // FIXME: Using host-only URL is a very heavy-handed approach. We should attempt to provide the actual page where the download was initiated from, as a reminder to the user.
-        String hostOnlyURLString;
-        if (port)
-            hostOnlyURLString = makeString(originalURL.protocol(), "://", originalURL.host(), ':', String::number(port));
-        else
-            hostOnlyURLString = makeString(originalURL.protocol(), "://", originalURL.host());
-
-        // FIXME: Rename firstPartyForCookies back to mainDocumentURL. It was a mistake to think that it was only used for cookies.
-        request.setFirstPartyForCookies(URL(URL(), hostOnlyURLString));
-    }
+    // FIXME: Rename firstPartyForCookies back to mainDocumentURL. It was a mistake to think that it was only used for cookies.
+    // The originalURL is defined as the URL of the page where the download was initiated.
+    URL originalURL = m_frame.document() ? m_frame.document()->firstPartyForCookies() : URL();
+    // If the originalURL is the same as the requested URL, we are processing a download
+    // initiated directly without a page and do not need to specify the originalURL.
+    if (originalURL == request.url())
+        request.setFirstPartyForCookies(URL());
+    else
+        request.setFirstPartyForCookies(originalURL);
 }
 
 void FrameLoader::didLayout(LayoutMilestones milestones)

@@ -1,3 +1,28 @@
+2016-03-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit should set Original URL of a download request correctly
+        https://bugs.webkit.org/show_bug.cgi?id=155914
+        <rdar://problem/10473811>
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::convertTaskToDownload):
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        * NetworkProcess/NetworkProcess.h:
+        Add logic to set the original URL of a download request when a main resource load
+        is converted to a download.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download):
+        * UIProcess/WebProcessPool.h:
+        Add logic to set the original URL of a download request during a context menu:
+        Download Linked File action.
+
 2016-03-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Automation: Add Automation.screenshot

@@ -1,3 +1,21 @@
+2016-03-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit should set Original URL of a download request correctly
+        https://bugs.webkit.org/show_bug.cgi?id=155914
+        <rdar://problem/10473811>
+
+        Reviewed by Anders Carlsson.
+
+        Added API tests.
+
+        Replace the old logic for identifying the Original URL of a download request
+        with a new method based on the logic from Document::firstPartyForCookies, which
+        does a much better job determining the URL a user actually visited.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setOriginalURLForDownloadRequest):
+        (WebCore::originatingURLFromBackForwardList): Deleted.
+
 2016-03-31  Antonio Gomes  <tonikitoo@webkit.org>
 
         eventMayStartDrag() does not check for shiftKey or isOverLink

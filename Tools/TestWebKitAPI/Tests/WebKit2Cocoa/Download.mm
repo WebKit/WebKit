@@ -265,5 +265,78 @@ TEST(_WKDownload, OriginatingWebView)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+@interface DownloadRequestOriginalURLDelegate : NSObject <_WKDownloadDelegate>
+- (instancetype)initWithExpectedOriginalURL:(NSURL *)expectOriginalURL;
+@end
+
+@implementation DownloadRequestOriginalURLDelegate {
+    NSURL *_expectedOriginalURL;
+}
+
+- (instancetype)initWithExpectedOriginalURL:(NSURL *)expectedOriginalURL
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _expectedOriginalURL = expectedOriginalURL;
+    return self;
+}
+
+- (void)_downloadDidStart:(_WKDownload *)download
+{
+    if ([_expectedOriginalURL isEqual:sourceURL])
+        EXPECT_TRUE(!download.request.mainDocumentURL);
+    else
+        EXPECT_TRUE([_expectedOriginalURL isEqual:download.request.mainDocumentURL]);
+    isDone = true;
+}
+
+@end
+
+@interface DownloadRequestOriginalURLNavigationDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation DownloadRequestOriginalURLNavigationDelegate
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    if ([navigationAction.request.URL isEqual:sourceURL])
+        decisionHandler(_WKNavigationActionPolicyDownload);
+    else
+        decisionHandler(WKNavigationActionPolicyAllow);
+}
+@end
+
+TEST(_WKDownload, DownloadRequestOriginalURL)
+{
+    NSURL *originalURL = [[NSBundle mainBundle] URLForResource:@"DownloadRequestOriginalURL" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    runTest(adoptNS([[DownloadRequestOriginalURLNavigationDelegate alloc] init]).get(), adoptNS([[DownloadRequestOriginalURLDelegate alloc] initWithExpectedOriginalURL:originalURL]).get(), originalURL);
+}
+
+TEST(_WKDownload, DownloadRequestOriginalURLFrame)
+{
+    NSURL *originalURL = [[NSBundle mainBundle] URLForResource:@"DownloadRequestOriginalURL2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    runTest(adoptNS([[DownloadRequestOriginalURLNavigationDelegate alloc] init]).get(), adoptNS([[DownloadRequestOriginalURLDelegate alloc] initWithExpectedOriginalURL:originalURL]).get(), originalURL);
+}
+
+TEST(_WKDownload, DownloadRequestOriginalURLDirectDownload)
+{
+    runTest(adoptNS([[DownloadRequestOriginalURLNavigationDelegate alloc] init]).get(), adoptNS([[DownloadRequestOriginalURLDelegate alloc] initWithExpectedOriginalURL:sourceURL]).get(), sourceURL);
+}
+
+TEST(_WKDownload, DownloadRequestOriginalURLDirectDownloadWithLoadedContent)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setNavigationDelegate:[[DownloadRequestOriginalURLNavigationDelegate alloc] init]];
+    [[[webView configuration] processPool] _setDownloadDelegate:[[DownloadRequestOriginalURLDelegate alloc] initWithExpectedOriginalURL:sourceURL]];
+
+    NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    // Here is to test if the original URL can be set correctly when the current document
+    // is completely unrelated to the download.
+    [webView loadRequest:[NSURLRequest requestWithURL:contentURL]];
+    [webView loadRequest:[NSURLRequest requestWithURL:sourceURL]];
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+}
+
 #endif
 #endif

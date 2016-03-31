@@ -1,3 +1,21 @@
+2016-03-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit should set Original URL of a download request correctly
+        https://bugs.webkit.org/show_bug.cgi?id=155914
+        <rdar://problem/10473811>
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[DownloadRequestOriginalURLDelegate initWithExpectOriginalURL:]):
+        (-[DownloadRequestOriginalURLDelegate _downloadDidStart:]):
+        (-[DownloadRequestOriginalURLNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/DownloadRequestOriginalURL.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/DownloadRequestOriginalURL2.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/DownloadRequestOriginalURLFrame.html: Added.
+
 2016-03-30  Dewei Zhu  <dewei_zhu@apple.com>
 
         Extend animometer timeout for slow CPUs.
