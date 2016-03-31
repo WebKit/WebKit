@@ -1,3 +1,16 @@
+2016-03-31  Timothy Hatcher  <timothy@apple.com>
+
+        Web Automation: Handle undefined when calling a function that has no result
+
+        https://bugs.webkit.org/show_bug.cgi?id=156075
+        rdar://problem/25468907
+
+        Reviewed by Brian Burg.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (let.AutomationSessionProxy.prototype._jsonParse): Return undefined for empty string.
+        (let.AutomationSessionProxy.prototype._jsonStringify): Always return a string.
+
 2016-03-31  Jeremy Jones  <jeremyj@apple.com>
 
         mediaShouldUsePersistentCache() is redundant. Use Page::usesEphemeralSession() instead.

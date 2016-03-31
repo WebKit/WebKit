@@ -69,12 +69,14 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     _jsonParse(string)
     {
+        if (!string)
+            return undefined;
         return JSON.parse(string, (key, value) => this._reviveJSONValue(key, value));
     }
 
     _jsonStringify(original)
     {
-        return JSON.stringify(original, (key, value) => this._replaceJSONValue(key, value));
+        return JSON.stringify(original, (key, value) => this._replaceJSONValue(key, value)) || "";
     }
 
     _reviveJSONValue(key, value)
