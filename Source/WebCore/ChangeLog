@@ -1,5 +1,43 @@
 2016-03-31  Antonio Gomes  <tonikitoo@webkit.org>
 
+        eventMayStartDrag() does not check for shiftKey or isOverLink
+        https://bugs.webkit.org/show_bug.cgi?id=155746
+
+        Reviewed by Darin Adler.
+
+        There is currently a mismatch between the logic that checks whether
+        an event can start a dragging action in EventHandler::handleMousePressEvent
+        and in EventHandler::eventMayStartDrag
+        Basically the former checks for event's count, type, button, target and modifier.
+        The later, on the other hand, only checks for event's button and count.
+
+        In order to sync them up again, as per the comment in the code,
+        patch factors out the logic in ::handleMousePressEvent into a helper function,
+        and ultimately reuses it in ::eventMayStartDrag.
+
+        No new tests for two reasons:
+
+        1) ::handleMousePressEvent will not have any behavior change. Code is factored out
+        into a helper.
+
+        2) The callees of ::eventMayStartDrag are currently WebPage::shouldDelayWindowOrderingEvent
+        and ::acceptsFirstMouse. Based on my understanding of [1], these methods
+        are called when there is a (say) browser window in background with some text selected,
+        and user starts to drag the selected content. Dragging happens without bringing the window
+        foreground. This is called "non-activating click".
+        Such behavior will not change with the patch.
+
+        [1] https://bugs.webkit.org/show_bug.cgi?id=55053 - "Implement non-activating clicks to allow dragging out of a background window"
+
+        * page/EventHandler.cpp:
+        (WebCore::isSingleMouseDownOnLinkOrImage):
+        (WebCore::canMouseEventStartDragInternal):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::documentPointForWindowPoint): Moved up in the file to be used elsewhere.
+        (WebCore::EventHandler::eventMayStartDrag):
+
+2016-03-31  Antonio Gomes  <tonikitoo@webkit.org>
+
         SelectionController::positionForPlatform should ask EditingBehavior for platform specific behavior
         https://bugs.webkit.org/show_bug.cgi?id=41976
 
