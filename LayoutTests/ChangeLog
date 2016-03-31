@@ -1,3 +1,24 @@
+2016-03-31  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Skip INTL related tests.
+        https://bugs.webkit.org/show_bug.cgi?id=156074
+
+        Reviewed by Alex Christensen.
+
+        Temporarily skip failing INTL related tests, because AppleWin currently
+        does not have INTL enabled.
+
+        * js/script-tests/array-toLocaleString.js:
+        * js/script-tests/date-toLocaleString.js:
+        * js/script-tests/intl-collator.js:
+        * js/script-tests/intl-datetimeformat.js:
+        * js/script-tests/intl-numberformat.js:
+        * js/script-tests/intl.js:
+        * js/script-tests/number-toLocaleString.js:
+        * js/script-tests/string-toLocaleLowerCase.js:
+        * js/script-tests/string-toLocaleUpperCase.js:
+        * platform/win/TestExpectations:
+
 2016-03-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ScriptSyntaxTree doesn't handle RestElement AST nodes

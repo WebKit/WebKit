@@ -1,3 +1,4 @@
+//@ skip if $hostOS == "windows"
 description("This test checks the behavior of Array.prototype.toLocaleString as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).");
 
 shouldBe("Array.prototype.toLocaleString.length", "0");

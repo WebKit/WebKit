@@ -2460,6 +2460,17 @@ webkit.org/b/140947 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Skip
 # The following fails due to DOM exception 18.
 js/dom/callback-function-with-handle-event.html [ Skip ] #  [ Timeout ]
 
+# Skip INTL related tests since AppleWin currently does not have INTL enabled.
+js/array-toLocaleString.html [ Skip ]
+js/date-toLocaleString.html [ Skip ]
+js/intl-collator.html [ Skip ]
+js/intl-datetimeformat.html [ Skip ]
+js/intl-numberformat.html [ Skip ]
+js/intl.html [ Skip ]
+js/number-toLocaleString.html [ Skip ]
+js/string-toLocaleLowerCase.html [ Skip ]
+js/string-toLocaleUpperCase.html [ Skip ]
+
 webkit.org/b/151027 jquery/manipulation.html [ Pass Timeout ]
 ################################################################################
 #################        End JavaScript Issues           #######################

@@ -1,3 +1,4 @@
+//@ skip if $hostOS == "windows"
 description("This test checks String.prototype.toLocaleLowerCase().");
 
 shouldBe("String.prototype.toLocaleLowerCase.length", "0");
