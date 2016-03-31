@@ -1,3 +1,12 @@
+2016-03-31  Jon Davis  <jond@apple.com>
+
+        Fix download links for desktops with small resolutions
+        https://bugs.webkit.org/show_bug.cgi?id=156081
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/downloads.php:
+
 2016-03-29  Jon Davis  <jond@apple.com>
 
         Fixed a property access error by removing the lamda function for updates

@@ -70,18 +70,6 @@ add_filter('wp_head', function() { ?>
         width: 100%;
     }
 }
-
-@media only screen and (min-device-width: 768px) and (max-device-width: 1366px) {
-    .bodycopy div p:nth-child(3) {
-        display: none;
-    }
-}
-
-@media only screen and (max-device-width: 736px) {
-    .bodycopy div p:nth-child(3) {
-        display: none;
-    }
-}
 </style>
 <?php
 });
