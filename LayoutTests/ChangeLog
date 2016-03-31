@@ -1,3 +1,17 @@
+2016-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Three js/regress/string-repeat-* are flaky timeouts on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=156062
+
+        Reviewed by Saam Barati.
+
+        Reduce the test cases to avoid timeouts.
+
+        * js/regress/script-tests/string-repeat-resolving-no-inline.js:
+        * js/regress/script-tests/string-repeat-resolving.js:
+        * js/regress/script-tests/string-repeat-small-resolving.js:
+        * platform/mac/TestExpectations:
+
 2016-03-31  Zalan Bujtas  <zalan@apple.com>
 
         Add a -mismatch test case for r198785.

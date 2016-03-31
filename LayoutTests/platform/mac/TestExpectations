@@ -1349,7 +1349,3 @@ webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/use
 webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 
 webkit.org/b/154688 inspector/controller/runtime-controller.html [ Pass Timeout ]
-
-webkit.org/b/156062 js/regress/string-repeat-resolving-no-inline.html [ Pass Timeout ]
-webkit.org/b/156062 js/regress/string-repeat-resolving.html [ Pass Timeout ]
-webkit.org/b/156062 js/regress/string-repeat-small-resolving.html [ Pass Timeout ]
