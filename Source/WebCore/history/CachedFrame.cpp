@@ -33,7 +33,6 @@
 #include "DocumentLoader.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "FocusController.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -146,9 +145,6 @@ CachedFrame::CachedFrame(Frame& frame)
     ASSERT(m_document);
     ASSERT(m_documentLoader);
     ASSERT(m_view);
-
-    if (frame.page()->focusController().focusedFrame() == &frame)
-        frame.page()->focusController().setFocusedFrame(&frame.mainFrame());
 
     // Custom scrollbar renderers will get reattached when the document comes out of the page cache
     m_view->detachCustomScrollbars();

@@ -1,3 +1,19 @@
+2016-03-31  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r195605): ASSERTION FAILED: !NoEventDispatchAssertion::isEventDispatchForbidden()
+        when pressing the back button on a page with a focused subframe
+        https://bugs.webkit.org/show_bug.cgi?id=156033
+        <rdar://problem/25446561>
+
+        Reviewed by Chris Dumez.
+
+        Add a test to ensure that when navigating back from a page with a focused <iframe> f, a DOM
+        blur event is dispatched to f, a DOM focus event is dispatched at the main frame and that
+        an assertion failure does not occur (only applicable in a debug build).
+
+        * fast/history/back-from-page-with-focused-iframe-expected.txt: Added.
+        * fast/history/back-from-page-with-focused-iframe.html: Added.
+
 2016-03-31  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r191180): Safari does not send Referer Header to iframe src in certain situations
