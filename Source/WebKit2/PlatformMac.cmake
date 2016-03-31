@@ -400,6 +400,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/mac"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore"
 )
 
 # This is needed because of a naming conflict with DiagnosticLoggingClient.h.

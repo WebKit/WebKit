@@ -1,5 +1,11 @@
 2016-03-30  Alex Christensen  <achristensen@webkit.org>
 
+        CMake build fix.
+
+        * PlatformMac.cmake:
+
+2016-03-30  Alex Christensen  <achristensen@webkit.org>
+
         Speculative Yosemite fix after r198872.
 
         * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
