@@ -37,24 +37,17 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
     // Public
 
     get type() { return this._type; }
-    get totalExecutionTime() { return this._totalExecutionTime; }
     get totalNumberOfSamples() { return this._totalNumberOfSamples; }
 
     reset()
     {
         this._root = new WebInspector.CCTNode(-1, -1, -1, "<root>", null);
-        this._totalExecutionTime = 0;
         this._totalNumberOfSamples = 0;
     }
 
     totalDurationInTimeRange(startTime, endTime)
     {
         return this._root.filteredTimestampsAndDuration(startTime, endTime).duration;
-    }
-
-    increaseExecutionTime(executionTime)
-    {
-        this._totalExecutionTime += executionTime;
     }
 
     updateTreeWithStackTrace({timestamp, stackFrames}, duration)

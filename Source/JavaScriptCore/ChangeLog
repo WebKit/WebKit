@@ -1,3 +1,22 @@
+2016-03-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unused ScriptProfiler.Samples.totalTime
+        https://bugs.webkit.org/show_bug.cgi?id=156002
+
+        Reviewed by Saam Barati.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::buildSamples):
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        * inspector/protocol/ScriptProfiler.json:
+        Remove totalTime.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::SamplingProfiler): Deleted.
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::totalTime): Deleted.
+        Remove now unused m_totalTime.
+
 2016-03-30  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Quantified unicode regular expressions do not work for counts greater than 1

@@ -157,7 +157,7 @@ void InspectorScriptProfilerAgent::addEvent(double startTime, double endTime, Pr
 }
 
 #if ENABLE(SAMPLING_PROFILER)
-static Ref<Protocol::ScriptProfiler::Samples> buildSamples(VM& vm, Vector<SamplingProfiler::StackTrace>&& samplingProfilerStackTraces, double totalTime)
+static Ref<Protocol::ScriptProfiler::Samples> buildSamples(VM& vm, Vector<SamplingProfiler::StackTrace>&& samplingProfilerStackTraces)
 {
     Ref<Protocol::Array<Protocol::ScriptProfiler::StackTrace>> stackTraces = Protocol::Array<Protocol::ScriptProfiler::StackTrace>::create();
     for (SamplingProfiler::StackTrace& stackTrace : samplingProfilerStackTraces) {
@@ -190,7 +190,6 @@ static Ref<Protocol::ScriptProfiler::Samples> buildSamples(VM& vm, Vector<Sampli
 
     return Protocol::ScriptProfiler::Samples::create()
         .setStackTraces(WTFMove(stackTraces))
-        .setTotalTime(totalTime)
         .release();
 }
 #endif // ENABLE(SAMPLING_PROFILER)
@@ -205,7 +204,7 @@ void InspectorScriptProfilerAgent::trackingComplete()
         LockHolder locker(samplingProfiler->getLock());
         samplingProfiler->stop(locker);
         Vector<SamplingProfiler::StackTrace> stackTraces = samplingProfiler->releaseStackTraces(locker);
-        Ref<Protocol::ScriptProfiler::Samples> samples = buildSamples(m_environment.scriptDebugServer().vm(), WTFMove(stackTraces), samplingProfiler->totalTime(locker));
+        Ref<Protocol::ScriptProfiler::Samples> samples = buildSamples(m_environment.scriptDebugServer().vm(), WTFMove(stackTraces));
 
         locker.unlockEarly();
 

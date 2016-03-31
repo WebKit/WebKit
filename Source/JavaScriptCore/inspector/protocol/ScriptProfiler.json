@@ -48,7 +48,6 @@
             "id": "Samples",
             "type": "object",
             "properties": [
-                { "name": "totalTime", "type": "number", "description": "Total execution time of the profiler's data. (Note: not total elapsed time.)" },
                 { "name": "stackTraces", "type": "array", "items": { "$ref": "StackTrace" } }
             ]
         }

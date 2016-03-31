@@ -186,7 +186,6 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     : m_vm(vm)
     , m_stopwatch(WTFMove(stopwatch))
     , m_timingInterval(std::chrono::microseconds(1000))
-    , m_totalTime(0)
     , m_timerQueue(WorkQueue::create("jsc.sampling-profiler.queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
     , m_jscExecutionThread(nullptr)
     , m_isActive(false)
@@ -278,8 +277,6 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
 
                     if (didRunOutOfVectorSpace)
                         m_currentFrames.grow(m_currentFrames.size() * 1.25);
-
-                    m_totalTime += nowTime - m_lastTime;
                 }
             }
         }

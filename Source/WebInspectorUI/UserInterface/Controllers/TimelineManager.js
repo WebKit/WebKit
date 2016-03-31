@@ -773,7 +773,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         console.assert(!this._webTimelineScriptRecordsExpectingScriptProfilerEvents || this._scriptProfilerRecords.length >= this._webTimelineScriptRecordsExpectingScriptProfilerEvents.length);
 
         if (samples) {
-            let {totalTime: totalExecutionTime, stackTraces} = samples;
+            let {stackTraces} = samples;
             let topDownCallingContextTree = this.activeRecording.topDownCallingContextTree;
             let bottomUpCallingContextTree = this.activeRecording.bottomUpCallingContextTree;
 
@@ -808,9 +808,6 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             // Use a default duration for timestamps recorded outside of ScriptProfiler events.
             if (timestampIndex < timestampCount)
                 sampleDurations.fill(defaultDuration, sampleDurationIndex);
-
-            topDownCallingContextTree.increaseExecutionTime(totalExecutionTime);
-            bottomUpCallingContextTree.increaseExecutionTime(totalExecutionTime);
 
             for (let i = 0; i < stackTraces.length; i++) {
                 topDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);

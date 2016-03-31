@@ -136,7 +136,6 @@ public:
     JS_EXPORT_PRIVATE void noticeCurrentThreadAsJSCExecutionThread();
     void noticeCurrentThreadAsJSCExecutionThread(const LockHolder&);
     void processUnverifiedStackTraces(); // You should call this only after acquiring the lock.
-    double totalTime(const LockHolder&) { return m_totalTime; }
     void setStopWatch(const LockHolder&, Ref<Stopwatch>&& stopwatch) { m_stopwatch = WTFMove(stopwatch); }
 
 private:
@@ -151,7 +150,6 @@ private:
     Vector<UnprocessedStackTrace> m_unprocessedStackTraces;
     std::chrono::microseconds m_timingInterval;
     double m_lastTime;
-    double m_totalTime;
     Ref<WorkQueue> m_timerQueue;
     std::function<void ()> m_handler;
     Lock m_lock;
