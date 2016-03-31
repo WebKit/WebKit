@@ -1,3 +1,16 @@
+2016-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Fails to build in Linux / PowerPC due to different ucontext_t definition
+        https://bugs.webkit.org/show_bug.cgi?id=156015
+
+        Reviewed by Michael Catanzaro.
+
+        PPC does not have mcontext_t in ucontext_t::uc_mcontext.
+        So we take the special way to retrieve mcontext_t in PPC.
+
+        * heap/MachineStackMarker.cpp:
+        (pthreadSignalHandlerSuspendResume):
+
 2016-03-31  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC][x86] Add the indexed forms of floating point addition and multiplication
