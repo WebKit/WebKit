@@ -1,3 +1,19 @@
+2016-03-31  Antonio Gomes  <tonikitoo@webkit.org>
+
+        SelectionController::positionForPlatform should ask EditingBehavior for platform specific behavior
+        https://bugs.webkit.org/show_bug.cgi?id=41976
+
+        Reviewed by Darin Adler.
+
+        SSIA.
+
+        No new tests needed.
+
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldAlwaysExtendSelectionFromExtentEndpoint):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::positionForPlatform):
+
 2016-03-31  Jeremy Jones  <jeremyj@apple.com>
 
         mediaShouldUsePersistentCache() is redundant. Use Page::usesEphemeralSession() instead.

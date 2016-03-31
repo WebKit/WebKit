@@ -91,6 +91,9 @@ public:
 
     bool shouldSelectBasedOnDictionaryLookup() const { return m_type == EditingMacBehavior; }
 
+    // Linux and Windows always extend selections from the extent endpoint.
+    bool shouldAlwaysExtendSelectionFromExtentEndpoint() const { return m_type != EditingMacBehavior && m_type != EditingIOSBehavior; }
+
 private:
     EditingBehaviorType m_type;
 };
