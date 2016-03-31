@@ -1,3 +1,14 @@
+2016-03-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ScriptSyntaxTree doesn't handle RestElement AST nodes
+        https://bugs.webkit.org/show_bug.cgi?id=156085
+
+        Reviewed by Saam Barati.
+
+        * inspector/model/parse-script-syntax-tree-expected.txt:
+        * inspector/model/parse-script-syntax-tree.html:
+        Add a test for a RestElement.
+
 2016-03-31  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r195605): ASSERTION FAILED: !NoEventDispatchAssertion::isEventDispatchForbidden()

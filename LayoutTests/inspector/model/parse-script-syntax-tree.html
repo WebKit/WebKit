@@ -321,6 +321,13 @@ function test()
     InspectorTest.assert(node.right.properties[0].key.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.log("passed Property");
 
+    node = makeNode("function foo(...things) { return things; }", false);    
+    InspectorTest.assert(node.params.length === 1);
+    InspectorTest.assert(node.params[0].type === WebInspector.ScriptSyntaxTree.NodeType.RestElement);
+    InspectorTest.assert(node.params[0].argument.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.params[0].argument.name === "things");
+    InspectorTest.log("passed RestStatement");
+
     node = makeNode("function foo() { return 20; }", false);
     InspectorTest.assert(node.body.body[0].type === WebInspector.ScriptSyntaxTree.NodeType.ReturnStatement);
     InspectorTest.assert(node.body.body[0].argument.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);

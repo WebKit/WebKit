@@ -26,6 +26,7 @@ passed MemberExpression
 passed NewExpression
 passed ObjectExpression
 passed Property
+passed RestStatement
 passed ReturnStatement
 passed SequenceExpression
 passed SwitchStatement
