@@ -357,42 +357,64 @@ void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& e
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(InternalError);
 }
 
-void WebAutomationSession::navigateBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const String& url)
+void WebAutomationSession::navigateBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const String& url, Ref<NavigateBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page->pageID()))
+        callback->sendFailure(Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::Timeout));
+    m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page->pageID(), WTFMove(callback));
 
     page->loadRequest(WebCore::URL(WebCore::URL(), url));
 }
 
-void WebAutomationSession::goBackInBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
+void WebAutomationSession::goBackInBrowsingContext(Inspector::ErrorString& errorString, const String& handle, Ref<GoBackInBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page->pageID()))
+        callback->sendFailure(Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::Timeout));
+    m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page->pageID(), WTFMove(callback));
 
     page->goBack();
 }
 
-void WebAutomationSession::goForwardInBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
+void WebAutomationSession::goForwardInBrowsingContext(Inspector::ErrorString& errorString, const String& handle, Ref<GoForwardInBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page->pageID()))
+        callback->sendFailure(Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::Timeout));
+    m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page->pageID(), WTFMove(callback));
 
     page->goForward();
 }
 
-void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
+void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorString, const String& handle, Ref<ReloadBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
 
+    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page->pageID()))
+        callback->sendFailure(Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::Timeout));
+    m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page->pageID(), WTFMove(callback));
+
     const bool reloadFromOrigin = false;
     const bool contentBlockersEnabled = true;
     page->reload(reloadFromOrigin, contentBlockersEnabled);
+}
+
+void WebAutomationSession::navigationOccurredForPage(const WebPageProxy& page)
+{
+    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page.pageID()))
+        callback->sendSuccess(InspectorObject::create());
 }
 
 void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)

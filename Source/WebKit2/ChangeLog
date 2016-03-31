@@ -1,3 +1,28 @@
+2016-03-31  Timothy Hatcher  <timothy@apple.com>
+
+        Web Automation: Navigation commands should not return until page loads or fails
+
+        https://bugs.webkit.org/show_bug.cgi?id=156063
+        rdar://problem/25464373
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Automation/Automation.json: Make navigation commands async.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::navigateBrowsingContext): Save callback and timeout previous.
+        (WebKit::WebAutomationSession::goBackInBrowsingContext): Ditto.
+        (WebKit::WebAutomationSession::goForwardInBrowsingContext): Ditto.
+        (WebKit::WebAutomationSession::reloadBrowsingContext): Ditto.
+        (WebKit::WebAutomationSession::navigationOccuredForPage): Added. Fire callback for page.
+        * UIProcess/Automation/WebAutomationSession.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishLoadForFrame): Call WebAutomationSession::navigationOccuredForPage.
+        (WebKit::WebPageProxy::didFailLoadForFrame): Ditto.
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame): Ditto.
+
+        * UIProcess/WebProcessPool.h: Added automationSession() getter.
+
 2016-03-30  Timothy Hatcher  <timothy@apple.com>
 
         Web Automation: Add support for script timeouts to the evaluateJavaScriptFunction command

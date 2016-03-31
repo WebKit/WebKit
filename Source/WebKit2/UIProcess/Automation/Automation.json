@@ -47,6 +47,7 @@
             "description": "This enum contains predefined error messages that can be used to signal a well-defined error condition, such as a missing implementation, unknown window handle, and so forth. The backend signals one of these errors by using it as a prefix of the commands's error message (the errorString argument in generated C++ backend dispatchers). This will be reported to the frontend as a protocol error with a JSON-RPC error code of 'ServerError'. It is up to the frontend whether and how to deal with errors.",
             "enum": [
                 "InternalError",
+                "Timeout",
                 "JavaScriptError",
                 "JavaScriptTimeout",
                 "WindowNotFound",
@@ -250,28 +251,32 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
                 { "name": "url", "type": "string", "description": "The URL to load in the browsing context." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "goBackInBrowsingContext",
             "description": "Navigates a browsing context to go back one page in history.",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "goForwardInBrowsingContext",
             "description": "Navigates a browsing context to got forward one page in history.",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "reloadBrowsingContext",
             "description": "Reloads the current page in a browsing context.",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be reloaded." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "evaluateJavaScriptFunction",

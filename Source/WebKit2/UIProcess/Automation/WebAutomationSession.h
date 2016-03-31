@@ -83,6 +83,8 @@ public:
     WebProcessPool* processPool() const { return m_processPool; }
     void setProcessPool(WebProcessPool*);
 
+    void navigationOccurredForPage(const WebPageProxy&);
+
 #if ENABLE(REMOTE_INSPECTOR)
     // Inspector::RemoteAutomationTarget API
     String name() const override { return m_sessionIdentifier; }
@@ -99,10 +101,10 @@ public:
     void switchToBrowsingContext(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle) override;
     void resizeWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& size) override;
     void moveWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& position) override;
-    void navigateBrowsingContext(Inspector::ErrorString&, const String& handle, const String& url) override;
-    void goBackInBrowsingContext(Inspector::ErrorString&, const String&) override;
-    void goForwardInBrowsingContext(Inspector::ErrorString&, const String&) override;
-    void reloadBrowsingContext(Inspector::ErrorString&, const String&) override;
+    void navigateBrowsingContext(Inspector::ErrorString&, const String& handle, const String& url, Ref<NavigateBrowsingContextCallback>&&) override;
+    void goBackInBrowsingContext(Inspector::ErrorString&, const String&, Ref<GoBackInBrowsingContextCallback>&&) override;
+    void goForwardInBrowsingContext(Inspector::ErrorString&, const String&, Ref<GoForwardInBrowsingContextCallback>&&) override;
+    void reloadBrowsingContext(Inspector::ErrorString&, const String&, Ref<ReloadBrowsingContextCallback>&&) override;
     void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
     void performMouseInteraction(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& requestedPosition, const String& mouseButton, const String& mouseInteraction, const Inspector::InspectorArray& keyModifiers, RefPtr<Inspector::Protocol::Automation::Point>& updatedPosition) override;
     void performKeyboardInteractions(Inspector::ErrorString&, const String& handle, const Inspector::InspectorArray& interactions) override;
@@ -166,6 +168,8 @@ private:
 
     HashMap<uint64_t, String> m_webFrameHandleMap;
     HashMap<String, uint64_t> m_handleWebFrameMap;
+
+    HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingNavigationInBrowsingContextCallbacksPerPage;
 
     uint64_t m_nextEvaluateJavaScriptCallbackID { 1 };
     HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>> m_evaluateJavaScriptFunctionCallbacks;
