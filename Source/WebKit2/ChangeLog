@@ -1,3 +1,48 @@
+2016-03-31  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Both WebPage's volatility timer and WebProcess's processSuspensionCleanupTimer are trying to make surfaces volatile with very short interval
+        https://bugs.webkit.org/show_bug.cgi?id=156065
+        <rdar://problem/25452004>
+
+        Reviewed by Simon Fraser.
+
+        Upon process suspension, both the WebPage's volatility timer and
+        WebProcess' processSuspensionCleanupTimer are trying to make surfaces
+        volatile with a very short interval. This is overly aggressive given
+        that this operation normally succeeds very quickly or does not (due
+        to underlying bugs).
+
+        This patch does the following:
+        - Drop the WebProcess' processSuspensionCleanupTimer and have the
+          WebProcess drive the WebPages' volatility timer instead.
+        - Update the WebPages' volatility timer to do exponential back off.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::layerVolatilityTimerFired):
+        (WebKit::WebPage::markLayersVolatileImmediatelyIfPossible):
+        (WebKit::WebPage::markLayersVolatile):
+        (WebKit::WebPage::cancelMarkLayersVolatile):
+        (WebKit::WebPage::isAlwaysOnLoggingAllowed):
+        (WebKit::WebPage::setLayerTreeStateIsFrozen): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::markLayersVolatile):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationDidEnterBackground):
+        (WebKit::WebPage::applicationWillEnterForeground):
+        (WebKit::WebPage::applicationDidBecomeActive): Deleted.
+        (WebKit::adjustVelocityDataForBoundedScale): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::actualPrepareToSuspend):
+        (WebKit::WebProcess::processWillSuspendImminently):
+        (WebKit::WebProcess::prepareToSuspend):
+        (WebKit::WebProcess::cancelPrepareToSuspend):
+        (WebKit::WebProcess::markAllLayersVolatile):
+        (WebKit::WebProcess::cancelMarkAllLayersVolatile):
+        (WebKit::WebProcess::setAllLayerTreeStatesFrozen):
+        (WebKit::WebProcess::processDidResume):
+        (WebKit::WebProcess::WebProcess): Deleted.
+        * WebProcess/WebProcess.h:
+
 2016-03-31  Brian Burg  <bburg@apple.com>
 
         Web Automation: the interaction queue in WebAutomationSession::performKeyInteractions doesn't work

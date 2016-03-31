@@ -186,9 +186,6 @@ public:
     void processWillSuspendImminently(bool& handled);
     void prepareToSuspend();
     void cancelPrepareToSuspend();
-    bool markAllLayersVolatileIfPossible();
-    void setAllLayerTreeStatesFrozen(bool);
-    void processSuspensionCleanupTimerFired();
     void processDidResume();
 
 #if PLATFORM(IOS)
@@ -223,6 +220,11 @@ private:
 #if USE(OS_STATE)
     void registerWithStateDumper();
 #endif
+
+    void markAllLayersVolatile(std::function<void()> completionHandler);
+    void cancelMarkAllLayersVolatile();
+    void setAllLayerTreeStatesFrozen(bool);
+    void processSuspensionCleanupTimerFired();
 
     void clearCachedCredentials();
 
@@ -327,7 +329,6 @@ private:
 #if PLATFORM(IOS)
     RefPtr<ViewUpdateDispatcher> m_viewUpdateDispatcher;
 #endif
-    WebCore::Timer m_processSuspensionCleanupTimer;
 
     bool m_inDidClose;
 
@@ -386,7 +387,7 @@ private:
 
     Ref<WebCore::ResourceLoadStatisticsStore> m_resourceLoadStatisticsStorage;
 
-    ShouldAcknowledgeWhenReadyToSuspend m_shouldAcknowledgeWhenReadyToSuspend;
+    unsigned m_pagesMarkingLayersAsVolatile { 0 };
     bool m_suppressMemoryPressureHandler { false };
 };
 

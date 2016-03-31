@@ -1,3 +1,15 @@
+2016-03-31  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Both WebPage's volatility timer and WebProcess's processSuspensionCleanupTimer are trying to make surfaces volatile with very short interval
+        https://bugs.webkit.org/show_bug.cgi?id=156065
+        <rdar://problem/25452004>
+
+        Reviewed by Simon Fraser.
+
+        Export a symbol so it can be used from WebKit2.
+
+        * page/Page.h:
+
 2016-03-31  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r195605): ASSERTION FAILED: !NoEventDispatchAssertion::isEventDispatchForbidden()

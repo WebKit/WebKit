@@ -509,7 +509,7 @@ public:
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool controlled) { m_controlledByAutomation = controlled; }
 
-    bool isAlwaysOnLoggingAllowed() const;
+    WEBCORE_EXPORT bool isAlwaysOnLoggingAllowed() const;
 
     String captionUserPreferencesStyleSheet();
     void setCaptionUserPreferencesStyleSheet(const String&);
