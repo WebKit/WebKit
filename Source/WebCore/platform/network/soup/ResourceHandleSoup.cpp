@@ -769,7 +769,7 @@ static bool addFileToSoupMessageBody(SoupMessage* message, const String& fileNam
 
 static bool blobIsOutOfDate(const BlobDataItem& blobItem)
 {
-    ASSERT(blobItem.type == BlobDataItem::Type::File);
+    ASSERT(blobItem.type() == BlobDataItem::Type::File);
     if (!isValidFileTime(blobItem.file()->expectedModificationTime()))
         return false;
 
@@ -788,7 +788,7 @@ static void addEncodedBlobItemToSoupMessageBody(SoupMessage* message, const Blob
         return;
     }
 
-    ASSERT(blobItem.type == BlobDataItem::Type::File);
+    ASSERT(blobItem.type() == BlobDataItem::Type::File);
     if (blobIsOutOfDate(blobItem))
         return;
 

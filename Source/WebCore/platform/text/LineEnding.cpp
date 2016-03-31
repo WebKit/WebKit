@@ -72,7 +72,7 @@ private:
 
 class VectorCharAppendBuffer : public OutputBuffer {
 public:
-    VectorCharAppendBuffer(Vector<char>& buffer)
+    VectorCharAppendBuffer(Vector<uint8_t>& buffer)
         : m_buffer(buffer)
     {
     }
@@ -91,7 +91,7 @@ public:
     }
 
 private:
-    Vector<char>& m_buffer;
+    Vector<uint8_t>& m_buffer;
 };
 
 void internalNormalizeLineEndingsToCRLF(const CString& from, OutputBuffer& buffer)
