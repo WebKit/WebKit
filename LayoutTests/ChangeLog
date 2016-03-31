@@ -1,3 +1,12 @@
+2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Update web-platform-test fetch API tests
+        https://bugs.webkit.org/show_bug.cgi?id=155969
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: Marking imported/w3c/web-platform-tests/fetch/api/request/request-cache.html as timing out.
+
 2016-03-30  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed typo in fast/css/viewport-vmin-border test.

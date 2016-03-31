@@ -31,7 +31,7 @@ PASS Request interface: new Request("") must inherit property "headers" with the
 PASS Request interface: new Request("") must inherit property "type" with the proper type (3) 
 PASS Request interface: new Request("") must inherit property "destination" with the proper type (4) 
 PASS Request interface: new Request("") must inherit property "referrer" with the proper type (5) 
-FAIL Request interface: new Request("") must inherit property "referrerPolicy" with the proper type (6) Unrecognized type ReferrerPolicy
+PASS Request interface: new Request("") must inherit property "referrerPolicy" with the proper type (6) 
 PASS Request interface: new Request("") must inherit property "mode" with the proper type (7) 
 PASS Request interface: new Request("") must inherit property "credentials" with the proper type (8) 
 PASS Request interface: new Request("") must inherit property "cache" with the proper type (9) 

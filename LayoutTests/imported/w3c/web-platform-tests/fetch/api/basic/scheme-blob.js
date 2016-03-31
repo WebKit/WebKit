@@ -14,12 +14,13 @@ function checkFetchResponse(url, data, mime, size, desc) {
       return resp.text();
     }).then(function(bodyAsText) {
       assert_equals(bodyAsText, data, "Response's body is " + data);
-    })
+    });
   }, desc);
 }
 
 var blob = new Blob(["Blob's data"], { "type" : "text/plain" });
-checkFetchResponse(URL.createObjectURL(blob), "Blob's data", "text/plain",  blob.size, "Regular Blob loading");
+checkFetchResponse(URL.createObjectURL(blob), "Blob's data", "text/plain",  blob.size,
+                  "Fetching [GET] URL.createObjectURL(blob) is OK");
 
 function checkKoUrl(url, method, desc) {
   promise_test(function(test) {
@@ -29,7 +30,9 @@ function checkKoUrl(url, method, desc) {
 }
 
 var blob2 = new Blob(["Blob's data"], { "type" : "text/plain" });
-checkKoUrl("blob:http://{{domains[www]}}:{{ports[http][0]}}/", "GET", "Loading an erroneous blob scheme URL");
-checkKoUrl(URL.createObjectURL(blob2), "POST", "Loading a blob URL using POST");
+checkKoUrl("blob:http://{{domains[www]}}:{{ports[http][0]}}/", "GET",
+          "Fetching [GET] blob:http://{{domains[www]}}:{{ports[http][0]}}/ is KO");
+checkKoUrl(URL.createObjectURL(blob2), "POST",
+           "Fetching [POST] URL.createObjectURL(blob) is KO");
 
 done();

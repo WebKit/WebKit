@@ -1,3 +1,37 @@
+2016-03-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Update web-platform-test fetch API tests
+        https://bugs.webkit.org/show_bug.cgi?id=155969
+
+        Reviewed by Darin Adler.
+
+        Resyncing tests and updated expectations.
+        New test web-platform-tests/fetch/api/request/request-cache.html is timing out.
+
+        * web-platform-tests/fetch/api/basic/scheme-blob-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob.js:
+        (checkFetchResponse):
+        * web-platform-tests/fetch/api/headers/headers-basic.html:
+        * web-platform-tests/fetch/api/request/request-cache-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-cache.html: Added.
+        * web-platform-tests/fetch/api/request/request-consume-empty.html:
+        * web-platform-tests/fetch/api/request/request-consume.html:
+        * web-platform-tests/fetch/api/request/request-idl-expected.txt:
+        * web-platform-tests/fetch/api/request/request-idl.html:
+        * web-platform-tests/fetch/api/request/request-init-002-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-002.html:
+        * web-platform-tests/fetch/api/request/resources/cache.py: Added.
+        (main):
+        * web-platform-tests/fetch/api/resources/utils.js:
+        (stringToArray):
+        (validateBufferFromString):
+        (validateStreamFromString):
+        * web-platform-tests/fetch/api/response/response-clone.html:
+        * web-platform-tests/fetch/api/response/response-consume-empty.html:
+        * web-platform-tests/fetch/api/response/response-consume.html:
+        * web-platform-tests/fetch/api/response/response-init-002.html:
+
 2016-03-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Add basic loading of resources

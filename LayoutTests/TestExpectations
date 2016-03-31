@@ -317,6 +317,8 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ Skip ]
 
+imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Timeout ]
+
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 

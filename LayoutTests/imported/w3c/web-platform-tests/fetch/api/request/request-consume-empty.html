@@ -12,7 +12,7 @@
   <body>
     <script>
     function checkBodyText(request) {
-      return request.text().then( function(bodyAsText) {
+      return request.text().then(function(bodyAsText) {
         assert_equals(bodyAsText, "", "Resolved value should be empty");
         assert_false(request.bodyUsed);
       });
@@ -20,7 +20,7 @@
 
     function checkBodyBlob(request) {
       return request.blob().then(function(bodyAsBlob) {
-        var promise = new Promise(function (resolve, reject) {
+        var promise = new Promise(function(resolve, reject) {
           var reader = new FileReader();
           reader.onload = function(evt) {
             resolve(reader.result)
@@ -38,7 +38,7 @@
     }
 
     function checkBodyArrayBuffer(request) {
-      return request.arrayBuffer().then( function(bodyAsArrayBuffer) {
+      return request.arrayBuffer().then(function(bodyAsArrayBuffer) {
         assert_equals(bodyAsArrayBuffer.byteLength, 0, "Resolved value should be empty");
         assert_false(request.bodyUsed);
       });
@@ -46,10 +46,10 @@
 
     function checkBodyJSON(request) {
       return request.json().then(
-        (bodyAsJSON) => {
+        function(bodyAsJSON) {
           assert_unreached("JSON parsing should fail");
         },
-        () => {
+        function() {
           assert_false(request.bodyUsed);
         });
     }
@@ -78,7 +78,7 @@
 
     function checkRequestWithEmptyBody(bodyType, body, asText) {
       promise_test(function(test) {
-        var request = new Request("", {"method": "POST", "body" : body});
+        var request = new Request("", {"method": "POST", "body": body});
         assert_false(request.bodyUsed, "bodyUsed is false at init");
         if (asText) {
           return request.text().then(function(bodyAsString) {

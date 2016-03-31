@@ -1,5 +1,7 @@
 
 PASS Initialize Request with headers values 
+PASS Initialize Request's body with undefined 
+PASS Initialize Request's body with null 
 PASS Initialize Request's body with application/octet-binary 
 FAIL Initialize Request's body with multipart/form-data promise_test: Unhandled rejection with value: undefined
 PASS Initialize Request's body with text/plain;charset=UTF-8 
