@@ -38,6 +38,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property (nonatomic, readonly, copy) NSString *name;
 
 - (void)clearWrappers;
+- (void)makeAllShadowRootsOpen WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @end
 

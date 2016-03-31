@@ -56,6 +56,11 @@ using namespace WebKit;
     _world->clearWrappers();
 }
 
+- (void)makeAllShadowRootsOpen
+{
+    _world->makeAllShadowRootsOpen();
+}
+
 - (NSString *)name
 {
     return _world->name();
