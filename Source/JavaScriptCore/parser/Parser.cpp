@@ -1168,8 +1168,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         if (hasAnyAssignments) {
             if (isOfEnumeration)
                 internalFailWithMessage(false, "Cannot assign to the loop variable inside a for-of loop header");
-            if (strictMode() || (isLetDeclaration || isConstDeclaration) || !context.isBindingNode(forInTarget))
-                internalFailWithMessage(false, "Cannot assign to the loop variable inside a for-in loop header");
+            internalFailWithMessage(false, "Cannot assign to the loop variable inside a for-in loop header");
         }
         TreeExpression expr = parseExpression(context);
         failIfFalse(expr, "Expected expression to enumerate");
