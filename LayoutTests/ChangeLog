@@ -1,3 +1,18 @@
+2016-03-30  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Update handling of SVG elements with presentational role
+        https://bugs.webkit.org/show_bug.cgi?id=156042
+
+        Reviewed by Chris Fleizach.
+
+        The expectations needed to be updated to reflect the elements which are
+        now being included in the accessibility tree. Also added several new test
+        cases with presentational elements that lack global ARIA attributes.
+
+        * accessibility/w3c-svg-presentational-role.html: Added several new test cases.
+        * platform/gtk/accessibility/w3c-svg-presentational-role-expected.txt: Updated.
+        * platform/mac/accessibility/w3c-svg-presentational-role-expected.txt: Updated
+
 2016-03-30  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Quantified unicode regular expressions do not work for counts greater than 1

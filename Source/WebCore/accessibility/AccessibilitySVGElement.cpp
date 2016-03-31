@@ -246,25 +246,6 @@ bool AccessibilitySVGElement::inheritsPresentationalRole() const
     return false;
 }
 
-AccessibilityRole AccessibilitySVGElement::determineAriaRoleAttribute() const
-{
-    // Presentational roles are normally invalidated by the presence of ARIA attributes
-    // if the element is focusable. As a result, an UnknownRole might be an invalidated
-    // PresentationalRole. We need to check because in SVG the PresentationalRole is
-    // expected to trump ARIA attributes.
-    // See https://github.com/w3c/aria/issues/136#issuecomment-170557956.
-
-    AccessibilityRole role = AccessibilityRenderObject::determineAriaRoleAttribute();
-    if (role != UnknownRole || canSetFocusAttribute())
-        return role;
-
-    const AtomicString& ariaRole = getAttribute(HTMLNames::roleAttr);
-    if (ariaRole.isNull() || ariaRole.isEmpty())
-        return UnknownRole;
-
-    return ariaRoleToWebCoreRole(ariaRole);
-}
-
 AccessibilityRole AccessibilitySVGElement::determineAccessibilityRole()
 {
     if ((m_ariaRole = determineAriaRoleAttribute()) != UnknownRole)

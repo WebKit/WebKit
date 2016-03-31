@@ -47,7 +47,6 @@ protected:
 private:
     void accessibilityText(Vector<AccessibilityText>&) final;
     AccessibilityRole determineAccessibilityRole() final;
-    virtual AccessibilityRole determineAriaRoleAttribute() const;
     bool inheritsPresentationalRole() const final;
     bool isAccessibilitySVGElement() const final { return true; }
     bool computeAccessibilityIsIgnored() const final;

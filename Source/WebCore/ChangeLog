@@ -1,3 +1,25 @@
+2016-03-30  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Update handling of SVG elements with presentational role
+        https://bugs.webkit.org/show_bug.cgi?id=156042
+
+        Reviewed by Chris Fleizach.
+
+        Because the new expected behavior is to treat SVG elements with a
+        presentational role just like we treat other host language elements
+        with a presentational role, delete AccessibilitySVGElement's
+        determineAriaRoleAttribute().
+
+        No new test files. The expectations for w3c-svg-presentational-role.html
+        were updated because the presentational elements which have global ARIA
+        attributes are now being included in the accessibility tree. In addition,
+        several new test cases were added to this layout test so that we have
+        coverage for more presentational elements which lack global ARIA attributes.
+
+        * accessibility/AccessibilitySVGElement.cpp:
+        (WebCore::AccessibilitySVGElement::determineAriaRoleAttribute): Deleted.
+        * accessibility/AccessibilitySVGElement.h:
+
 2016-03-30  Brady Eidson  <beidson@apple.com>
 
         Make BlobData use ThreadSafeSharedBuffer instead of RawData.

@@ -3,34 +3,40 @@ This tests that SVG elements with role presentation are not exposed.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-test1: Element not exposed
+test1: AXRole: AXGroup
 test2: Element not exposed
 test3: Element not exposed
 test4: Element not exposed
-test5: Element not exposed
+test5: AXRole: AXImage
 test6: Element not exposed
-test7: Element not exposed
+test7: AXRole: AXImage
 test8: Element not exposed
-test9: Element not exposed
-test10: Element not exposed
+test9: AXRole: AXImage
+test10: AXRole: AXImage
 test11: Element not exposed
 test12: Element not exposed
 test13: Element not exposed
 test14: Element not exposed
-test15: Element not exposed
+test15: AXRole: AXGroup
 test16: Element not exposed
 test17: Element not exposed
 test18: Element not exposed
-test19: Element not exposed
+test19: AXRole: AXImage
 test20: Element not exposed
-test21: Element not exposed
+test21: AXRole: AXImage
 test22: Element not exposed
-test23: Element not exposed
-test24: Element not exposed
+test23: AXRole: AXImage
+test24: AXRole: AXImage
 test25: Element not exposed
 test26: Element not exposed
 test27: Element not exposed
 test28: Element not exposed
+test29: Element not exposed
+test30: Element not exposed
+test31: Element not exposed
+test32: Element not exposed
+test33: Element not exposed
+test34: Element not exposed
 PASS successfullyParsed is true
 
 TEST COMPLETE
