@@ -1363,13 +1363,6 @@ platform/ios-simulator/ios/fast/coordinates/mouse-event.html
 platform/ios-simulator/ios/fast/coordinates/touch-event-zoomed.html
 platform/ios-simulator/ios/fast/coordinates/touch-event.html
 
-platform/ios-simulator/ios/fast/forms/range-input-container-touches.html
-platform/ios-simulator/ios/fast/forms/range-input-readonly-and-disabled.html
-platform/ios-simulator/ios/fast/forms/range-input-touches.html
-platform/ios-simulator/ios/fast/html/textarea-auto-sizing-disable.html
-platform/ios-simulator/ios/fast/text/data-detectors/phone-disabled.html
-platform/ios-simulator/ios/fast/text/data-detectors/phone.html
-
 # Flaky tests:
 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure Pass ]
 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Failure Pass ]
