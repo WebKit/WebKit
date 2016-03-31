@@ -1,3 +1,15 @@
+2016-03-31  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: Build and logic fix after r198873.
+        https://bugs.webkit.org/show_bug.cgi?id=156043
+
+        Not reviewed.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::addFloat):
+        - 2 args were meant to be ordered differently in order to call the other addFloat.
+          Instead, there was an infinite recursion bug.  This is now fixed.
+
 2016-03-30  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC][x86] Add the 3 operands forms of floating point addition and multiplication

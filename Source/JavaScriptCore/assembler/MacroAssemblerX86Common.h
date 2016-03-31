@@ -1177,7 +1177,7 @@ public:
 
     void addFloat(FPRegisterID op1, Address op2, FPRegisterID dest)
     {
-        addFloat(op1, op2, dest);
+        addFloat(op2, op1, dest);
     }
 
     void divDouble(FPRegisterID src, FPRegisterID dest)
