@@ -1,3 +1,81 @@
+2016-03-31  Saam barati  <sbarati@apple.com>
+
+        parsing arrow function expressions slows down the parser by 8% lets recoup some loss
+        https://bugs.webkit.org/show_bug.cgi?id=155988
+
+        Reviewed by Benjamin Poulain.
+
+        We used to eagerly check if we're parsing an arrow function.
+        We did this inside parseAssignmentExpression(), and it was
+        very costly. The reason it was costly is that arrow functions
+        might start with an identifier. This means anytime we saw an
+        identifier we would have to do a lookahead, and then most likely
+        backtrack because more often than not, we wouldn't see "=>"
+        as the next token.
+
+        In this patch I implement a new approach. We just parse
+        the lhs of an assignment expression eagerly without doing any
+        lookahead. Retroactively, if we see that we might have started
+        with an arrow function, and we don't have a valid lhs or the
+        next token is a "=>", we try to parse as an arrow function.
+
+        Here are a few examples motivating why this is valid:
+
+        `x => x`
+        In this example:
+        - "x" is a valid arrow function starting point.
+        - "x" also happens to be a valid lhs
+        - because we see "=>" as the next token, we parse as an arrow function and succeed.
+
+        `(x) => x`
+        In this example:
+        - "(" is a valid arrow function starting point.
+        - "(x)" also happens to be a valid lhs
+        - because we see "=>" as the next token, we parse as an arrow function and succeed.
+
+        `({x = 30}) => x;`
+        In this example:
+        - "(" is a valid arrow function starting point.
+        - "({x = 30})" is NOT a valid lhs. Because of this, we try to parse it as an arrow function and succeed.
+
+        There is one interesting implementation detail where we might
+        parse something that is both a valid LHS but happens
+        to actually be the arrow function parameters. The valid LHS
+        parsing might declare such variables as "uses" which would cause 
+        weird capture analysis. This patch also introduces a mechanism
+        to backtrack on used variable analysis.
+
+        This is a 3.5%-4.5% octane code load speedup.
+
+        * parser/Lexer.h:
+        (JSC::Lexer::sawError):
+        (JSC::Lexer::setSawError):
+        (JSC::Lexer::getErrorMessage):
+        (JSC::Lexer::setErrorMessage):
+        (JSC::Lexer::sourceURL):
+        (JSC::Lexer::sourceMappingURL):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::startSwitch):
+        (JSC::Scope::declareParameter):
+        (JSC::Scope::usedVariablesContains):
+        (JSC::Scope::useVariable):
+        (JSC::Scope::pushUsedVariableSet):
+        (JSC::Scope::currentUsedVariablesSize):
+        (JSC::Scope::revertToPreviousUsedVariables):
+        (JSC::Scope::setNeedsFullActivation):
+        (JSC::Scope::needsFullActivation):
+        (JSC::Scope::isArrowFunctionBoundary):
+        (JSC::Scope::setInnerArrowFunctionUsesEvalAndUseArgumentsIfNeeded):
+        (JSC::Scope::collectFreeVariables):
+        (JSC::Scope::fillParametersForSourceProviderCache):
+        (JSC::Scope::restoreFromSourceProviderCache):
+        (JSC::Scope::setIsModule):
+
 2016-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Fails to build in Linux / PowerPC due to different ucontext_t definition

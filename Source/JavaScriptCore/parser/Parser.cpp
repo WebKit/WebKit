@@ -60,7 +60,6 @@
 #define semanticFailIfTrue(cond, ...) do { if (cond) internalFailWithMessage(false, __VA_ARGS__); } while (0)
 #define semanticFailIfFalse(cond, ...) do { if (!(cond)) internalFailWithMessage(false, __VA_ARGS__); } while (0)
 #define regexFail(failure) do { setErrorMessage(failure); return 0; } while (0)
-#define restoreSavePointAndFail(savePoint, message) do { restoreSavePointWithError(savePoint, message); return 0; } while (0)
 #define failDueToUnexpectedToken() do {\
         logError(true);\
     return 0;\
@@ -359,17 +358,13 @@ void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, Declara
 template <typename LexerType>
 bool Parser<LexerType>::isArrowFunctionParameters()
 {
-    bool isArrowFunction = false;
-
-    if (match(EOFTOK))
-        return false;
-    
     bool isOpenParen = match(OPENPAREN);
     bool isIdent = match(IDENT);
     
     if (!isOpenParen && !isIdent)
         return false;
 
+    bool isArrowFunction = false;
     SavePoint saveArrowFunctionPoint = createSavePoint();
         
     if (isIdent) {
@@ -2990,30 +2985,64 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     int initialAssignmentCount = m_parserState.assignmentCount;
     int initialNonLHSCount = m_parserState.nonLHSCount;
     bool maybeAssignmentPattern = match(OPENBRACE) || match(OPENBRACKET);
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    bool wasOpenParen = match(OPENPAREN);
+    bool isValidArrowFunctionStart = match(OPENPAREN) || match(IDENT);
     SavePoint savePoint = createSavePoint();
+    size_t usedVariablesSize;
+    if (wasOpenParen) {
+        usedVariablesSize = currentScope()->currentUsedVariablesSize();
+        currentScope()->pushUsedVariableSet();
+    }
+#endif
 
 #if ENABLE(ES6_GENERATORS)
     if (match(YIELD) && !isYIELDMaskedAsIDENT(currentScope()->isGenerator()))
         return parseYieldExpression(context);
 #endif
 
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
-    if (isArrowFunctionParameters())
-        return parseArrowFunctionExpression(context);
-#endif
-    
     TreeExpression lhs = parseConditionalExpression(context);
+
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    if (isValidArrowFunctionStart && !match(EOFTOK)) {
+        bool isArrowFunctionToken = match(ARROWFUNCTION);
+        if (!lhs || isArrowFunctionToken) {
+            SavePoint errorRestorationSavePoint = createSavePointForError();
+            String oldErrorMessage = m_errorMessage;
+            String oldLexerErrorMessage = m_lexer->getErrorMessage();
+            bool hasLexerError = m_lexer->sawError();
+            restoreSavePoint(savePoint);
+            if (isArrowFunctionParameters()) {
+                if (wasOpenParen)
+                    currentScope()->revertToPreviousUsedVariables(usedVariablesSize);
+                return parseArrowFunctionExpression(context);
+            }
+            restoreSavePointWithError(errorRestorationSavePoint, oldErrorMessage);
+            m_lexer->setErrorMessage(oldLexerErrorMessage);
+            m_lexer->setSawError(hasLexerError);
+            if (isArrowFunctionToken)
+                failDueToUnexpectedToken();
+        }
+    }
+
+#endif
 
     if (!lhs && (!maybeAssignmentPattern || !classifier.indicatesPossiblePattern()))
         propagateError();
 
     if (maybeAssignmentPattern && (!lhs || (context.isObjectOrArrayLiteral(lhs) && match(EQUAL)))) {
         String expressionError = m_errorMessage;
+        String oldLexerErrorMessage = m_lexer->getErrorMessage();
+        bool hasLexerError = m_lexer->sawError();
         SavePoint expressionErrorLocation = createSavePointForError();
         restoreSavePoint(savePoint);
         auto pattern = tryParseDestructuringPatternExpression(context, AssignmentContext::AssignmentExpression);
-        if (classifier.indicatesPossiblePattern() && (!pattern || !match(EQUAL)))
-            restoreSavePointAndFail(expressionErrorLocation, expressionError);
+        if (classifier.indicatesPossiblePattern() && (!pattern || !match(EQUAL))) {
+            restoreSavePointWithError(expressionErrorLocation, expressionError);
+            m_lexer->setErrorMessage(oldLexerErrorMessage);
+            m_lexer->setSawError(hasLexerError);
+            return 0;
+        }
         failIfFalse(pattern, "Cannot parse assignment pattern");
         consumeOrFail(EQUAL, "Expected '=' following assignment pattern");
         auto rhs = parseAssignmentExpression(context);
@@ -3666,6 +3695,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         const Identifier* ident = m_token.m_data.ident;
         JSTokenLocation location(tokenLocation());
         next();
+        if (UNLIKELY(match(ARROWFUNCTION)))
+            return 0;
         currentScope()->useVariable(ident, m_vm->propertyNames->eval == *ident);
         m_parserState.lastIdentifier = ident;
         return context.createResolve(location, *ident, start, lastTokenEndPosition());

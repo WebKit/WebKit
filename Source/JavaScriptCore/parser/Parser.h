@@ -43,16 +43,6 @@
 #include <wtf/SmallPtrSet.h>
 
 namespace JSC {
-struct Scope;
-}
-
-namespace WTF {
-template <> struct VectorTraits<JSC::Scope> : VectorTraitsBase</* is pod */ false, void> {
-    static const bool canMoveWithMemcpy = true;
-};
-}
-
-namespace JSC {
 
 class ExecState;
 class FunctionMetadataNode;
@@ -190,6 +180,44 @@ public:
         , m_loopDepth(0)
         , m_switchDepth(0)
         , m_innerArrowFunctionFeatures(0)
+    {
+        m_usedVariables.append(UniquedStringImplPtrSet());
+    }
+
+    Scope(Scope&& other)
+        : m_vm(other.m_vm)
+        , m_shadowsArguments(other.m_shadowsArguments)
+        , m_usesEval(other.m_usesEval)
+        , m_needsFullActivation(other.m_needsFullActivation)
+        , m_hasDirectSuper(other.m_hasDirectSuper)
+        , m_needsSuperBinding(other.m_needsSuperBinding)
+        , m_allowsVarDeclarations(other.m_allowsVarDeclarations)
+        , m_allowsLexicalDeclarations(other.m_allowsLexicalDeclarations)
+        , m_strictMode(other.m_strictMode)
+        , m_isFunction(other.m_isFunction)
+        , m_isGenerator(other.m_isGenerator)
+        , m_isGeneratorBoundary(other.m_isGeneratorBoundary)
+        , m_isArrowFunction(other.m_isArrowFunction)
+        , m_isArrowFunctionBoundary(other.m_isArrowFunctionBoundary)
+        , m_isLexicalScope(other.m_isLexicalScope)
+        , m_isFunctionBoundary(other.m_isFunctionBoundary)
+        , m_isValidStrictMode(other.m_isValidStrictMode)
+        , m_hasArguments(other.m_hasArguments)
+        , m_isEvalContext(other.m_isEvalContext)
+        , m_constructorKind(other.m_constructorKind)
+        , m_expectedSuperBinding(other.m_expectedSuperBinding)
+        , m_loopDepth(other.m_loopDepth)
+        , m_switchDepth(other.m_switchDepth)
+        , m_innerArrowFunctionFeatures(other.m_innerArrowFunctionFeatures)
+        , m_labels(WTFMove(other.m_labels))
+        , m_declaredParameters(WTFMove(other.m_declaredParameters))
+        , m_declaredVariables(WTFMove(other.m_declaredVariables))
+        , m_lexicalVariables(WTFMove(other.m_lexicalVariables))
+        , m_usedVariables(WTFMove(other.m_usedVariables))
+        , m_closedVariableCandidates(WTFMove(other.m_closedVariableCandidates))
+        , m_writtenVariables(WTFMove(other.m_writtenVariables))
+        , m_moduleScopeData(WTFMove(other.m_moduleScopeData))
+        , m_functionDeclarations(WTFMove(other.m_functionDeclarations))
     {
     }
 
@@ -462,12 +490,28 @@ public:
         return result;
     }
     
-    bool usedVariablesContains(UniquedStringImpl* impl) const { return m_usedVariables.contains(impl); }
+    bool usedVariablesContains(UniquedStringImpl* impl) const
+    { 
+        for (const UniquedStringImplPtrSet& set : m_usedVariables) {
+            if (set.contains(impl))
+                return true;
+        }
+        return false;
+    }
     void useVariable(const Identifier* ident, bool isEval)
     {
-        m_usesEval |= isEval;
-        m_usedVariables.add(ident->impl());
+        useVariable(ident->impl(), isEval);
     }
+    void useVariable(UniquedStringImpl* impl, bool isEval)
+    {
+        m_usesEval |= isEval;
+        m_usedVariables.last().add(impl);
+    }
+
+    void pushUsedVariableSet() { m_usedVariables.append(UniquedStringImplPtrSet()); }
+    size_t currentUsedVariablesSize() { return m_usedVariables.size(); }
+
+    void revertToPreviousUsedVariables(size_t size) { m_usedVariables.resize(size); }
 
     void setNeedsFullActivation() { m_needsFullActivation = true; }
     bool needsFullActivation() const { return m_needsFullActivation; }
@@ -504,7 +548,7 @@ public:
         if (m_usesEval)
             setInnerArrowFunctionUsesEval();
         
-        if (m_usedVariables.contains(m_vm->propertyNames->arguments.impl()))
+        if (usedVariablesContains(m_vm->propertyNames->arguments.impl()))
             setInnerArrowFunctionUsesArguments();
     }
     
@@ -514,20 +558,23 @@ public:
             m_usesEval = true;
 
         {
-            for (UniquedStringImpl* impl : nestedScope->m_usedVariables) {
-                if (nestedScope->m_declaredVariables.contains(impl) || nestedScope->m_lexicalVariables.contains(impl))
-                    continue;
+            UniquedStringImplPtrSet& destinationSet = m_usedVariables.last();
+            for (const UniquedStringImplPtrSet& usedVariablesSet : nestedScope->m_usedVariables) {
+                for (UniquedStringImpl* impl : usedVariablesSet) {
+                    if (nestedScope->m_declaredVariables.contains(impl) || nestedScope->m_lexicalVariables.contains(impl))
+                        continue;
 
-                // "arguments" reference should be resolved at function boudary.
-                if (nestedScope->isFunctionBoundary() && nestedScope->hasArguments() && impl == m_vm->propertyNames->arguments.impl() && !nestedScope->isArrowFunctionBoundary())
-                    continue;
+                    // "arguments" reference should be resolved at function boudary.
+                    if (nestedScope->isFunctionBoundary() && nestedScope->hasArguments() && impl == m_vm->propertyNames->arguments.impl() && !nestedScope->isArrowFunctionBoundary())
+                        continue;
 
-                m_usedVariables.add(impl);
-                // We don't want a declared variable that is used in an inner scope to be thought of as captured if
-                // that inner scope is both a lexical scope and not a function. Only inner functions and "catch" 
-                // statements can cause variables to be captured.
-                if (shouldTrackClosedVariables && (nestedScope->m_isFunctionBoundary || !nestedScope->m_isLexicalScope))
-                    m_closedVariableCandidates.add(impl);
+                    destinationSet.add(impl);
+                    // We don't want a declared variable that is used in an inner scope to be thought of as captured if
+                    // that inner scope is both a lexical scope and not a function. Only inner functions and "catch" 
+                    // statements can cause variables to be captured.
+                    if (shouldTrackClosedVariables && (nestedScope->m_isFunctionBoundary || !nestedScope->m_isLexicalScope))
+                        m_closedVariableCandidates.add(impl);
+                }
             }
         }
         // Propagate closed variable candidates downwards within the same function.
@@ -602,7 +649,8 @@ public:
         parameters.needsFullActivation = m_needsFullActivation;
         parameters.innerArrowFunctionFeatures = m_innerArrowFunctionFeatures;
         copyCapturedVariablesToVector(m_writtenVariables, parameters.writtenVariables);
-        copyCapturedVariablesToVector(m_usedVariables, parameters.usedVariables);
+        for (const UniquedStringImplPtrSet& set : m_usedVariables)
+            copyCapturedVariablesToVector(set, parameters.usedVariables);
     }
 
     void restoreFromSourceProviderCache(const SourceProviderCacheItem* info)
@@ -612,8 +660,9 @@ public:
         m_strictMode = info->strictMode;
         m_innerArrowFunctionFeatures = info->innerArrowFunctionFeatures;
         m_needsFullActivation = info->needsFullActivation;
+        UniquedStringImplPtrSet& destSet = m_usedVariables.last();
         for (unsigned i = 0; i < info->usedVariablesCount; ++i)
-            m_usedVariables.add(info->usedVariables()[i]);
+            destSet.add(info->usedVariables()[i]);
         for (unsigned i = 0; i < info->writtenVariablesCount; ++i)
             m_writtenVariables.add(info->writtenVariables()[i]);
     }
@@ -657,9 +706,6 @@ private:
         m_moduleScopeData = ModuleScopeData::create();
     }
 
-    // All the fields in Scope must be able to use memcpy as their
-    // move operation. If you add a field that violates this, make sure
-    // to remove this comment and update WTF::VectorTraits<JSC::Scope>.
     const VM* m_vm;
     bool m_shadowsArguments;
     bool m_usesEval;
@@ -690,7 +736,7 @@ private:
     UniquedStringImplPtrSet m_declaredParameters;
     VariableEnvironment m_declaredVariables;
     VariableEnvironment m_lexicalVariables;
-    UniquedStringImplPtrSet m_usedVariables;
+    Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
     IdentifierSet m_closedVariableCandidates;
     UniquedStringImplPtrSet m_writtenVariables;
     RefPtr<ModuleScopeData> m_moduleScopeData;
