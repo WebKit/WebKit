@@ -50,8 +50,8 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
         let timeoutIdentifier = 0;
 
-        let reportResult = (result) => { clearTimeout(timeoutIdentifier); resultCallback(frameID, callbackID, this._jsonStringify(result), false); }
-        let reportTimeoutError = () => { clearTimeout(timeoutIdentifier); resultCallback(frameID, callbackID, "JavaScriptTimeout", true); }
+        let reportResult = (result) => { clearTimeout(timeoutIdentifier); resultCallback(frameID, callbackID, this._jsonStringify(result), false); };
+        let reportTimeoutError = () => { resultCallback(frameID, callbackID, "JavaScriptTimeout", true); };
 
         if (expectsImplicitCallbackArgument) {
             timeoutIdentifier = setTimeout(reportTimeoutError, callbackTimeout);
