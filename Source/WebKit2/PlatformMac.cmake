@@ -670,6 +670,7 @@ set(WebCoreForwardingHeaders
     DOMHTMLTitleElement.h
     DOMHTMLUListElement.h
     DOMHTMLVideoElement.h
+    DOMImplementation.h
     DOMKeyboardEvent.h
     DOMMediaError.h
     DOMMediaList.h
