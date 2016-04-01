@@ -65,7 +65,7 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForFrameAncestor(const Frame&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForImage(const URL&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForMedia(const URL&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForObjectSource(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForObjectSource(const URL&, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForPluginType(const String& type, const String& typeAttribute) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForScript(const URL&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForStyle(const URL&) const;

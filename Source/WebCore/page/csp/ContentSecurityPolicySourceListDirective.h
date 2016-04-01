@@ -38,7 +38,8 @@ class ContentSecurityPolicySourceListDirective : public ContentSecurityPolicyDir
 public:
     ContentSecurityPolicySourceListDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
 
-    bool allows(const URL&);
+    enum class ShouldAllowEmptyURLIfSourceListIsNotNone { No, Yes };
+    bool allows(const URL&, ShouldAllowEmptyURLIfSourceListIsNotNone);
     bool allows(const ContentSecurityPolicyHash&) const;
     bool allows(const String& nonce) const;
     bool allowInline() const { return m_sourceList.allowInline(); }

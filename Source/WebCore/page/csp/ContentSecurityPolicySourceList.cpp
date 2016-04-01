@@ -119,9 +119,10 @@ ContentSecurityPolicySourceList::ContentSecurityPolicySourceList(const ContentSe
 
 void ContentSecurityPolicySourceList::parse(const String& value)
 {
-    // We represent 'none' as an empty m_list.
-    if (isSourceListNone(value))
+    if (isSourceListNone(value)) {
+        m_isNone = true;
         return;
+    }
     auto characters = StringView(value).upconvertedCharacters();
     parse(characters, characters + value.length());
 }

@@ -1,3 +1,23 @@
+2016-03-31  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r197724): <object>/<embed> with no URL does not match source *
+        https://bugs.webkit.org/show_bug.cgi?id=156079
+        <rdar://problem/25470805>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests to ensure that HTML object and embed elements are allowed by source *.
+
+        * platform/ios-simulator/TestExpectations: Skip added tests as plugins are not supported on iOS.
+        * http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-default-src-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-default-src-star.html: Added.
+        * http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-star.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-default-src-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-default-src-star.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-star-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-star.html: Added.
+
 2016-03-31  Saam barati  <sbarati@apple.com>
 
         [ES6] Disallow var assignments in for-in loops

@@ -61,9 +61,9 @@ static inline bool checkInline(ContentSecurityPolicySourceListDirective* directi
     return !directive || directive->allowInline();
 }
 
-static inline bool checkSource(ContentSecurityPolicySourceListDirective* directive, const URL& url)
+static inline bool checkSource(ContentSecurityPolicySourceListDirective* directive, const URL& url, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone shouldAllowEmptyURLIfSourceListEmpty = ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No)
 {
-    return !directive || directive->allows(url);
+    return !directive || directive->allows(url, shouldAllowEmptyURLIfSourceListEmpty);
 }
 
 static inline bool checkHash(ContentSecurityPolicySourceListDirective* directive, const ContentSecurityPolicyHash& hash)
@@ -81,7 +81,7 @@ static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective*
     if (!directive)
         return true;
     for (Frame* current = frame.tree().parent(); current; current = current->tree().parent()) {
-        if (!directive->allows(current->document()->url()))
+        if (!directive->allows(current->document()->url(), ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
             return false;
     }
     return true;
@@ -257,12 +257,12 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForObjectSource(const URL& url) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForObjectSource(const URL& url, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone shouldAllowEmptyURLIfSourceListEmpty) const
 {
     if (url.isBlankURL())
         return nullptr;
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_objectSrc.get());
-    if (checkSource(operativeDirective, url))
+    if (checkSource(operativeDirective, url, shouldAllowEmptyURLIfSourceListEmpty))
         return nullptr;
     return operativeDirective;
 }

@@ -1,3 +1,44 @@
+2016-03-31  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r197724): <object>/<embed> with no URL does not match source *
+        https://bugs.webkit.org/show_bug.cgi?id=156079
+        <rdar://problem/25470805>
+
+        Reviewed by Brent Fulgham.
+
+        Fixes an issue where HTML object and embed elements that are not associated with a URL are
+        allowed to load when object-src/default-src contains source *. More generally, we allow
+        such elements to load so long as object-src/default-src is not 'none' per section object-src
+        of the Content Security Policy Level 3 spec., <http://w3c.github.io/webappsec-csp> (Editor's Draft, 29 February 2016).
+
+        Tests: http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-default-src-star.html
+               http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-star.html
+               http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-default-src-star.html
+               http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-star.html
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource): Modified to call violatedDirectiveInAnyPolicy() passing
+        ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::Yes.
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::checkSource): Modified to take argument of type ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone (defaults to false)
+        and pass it through to ContentSecurityPolicySourceListDirective.
+        (WebCore::checkFrameAncestors): Explicitly pass ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No
+        to avoid URL from having the compiler implicitly convert it to a String and selecting override ContentSecurityPolicySourceListDirective::allows(const String&),
+        which will lead to incorrect results. We will look to make this code less error prone in <https://bugs.webkit.org/show_bug.cgi?id=156086>.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForObjectSource): Modified to take argument of type
+        ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone and pass it through.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::parse): Set instance variable m_isNone to true so that we can differentiate
+        a source list with value 'none' from a source list that lists one or more sources or non-none keywords.
+        * page/csp/ContentSecurityPolicySourceList.h:
+        (WebCore::ContentSecurityPolicySourceList::isNone): Added.
+        * page/csp/ContentSecurityPolicySourceListDirective.cpp:
+        (WebCore::ContentSecurityPolicySourceListDirective::allows): Modified to take argument of type ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone
+        and updated code to return true for an empty URL only if this argument is ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::Yes and
+        the source list does not have value 'none'.
+        * page/csp/ContentSecurityPolicySourceListDirective.h:
+
 2016-03-31  Saam barati  <sbarati@apple.com>
 
         Revert rewrite const as var workaround
