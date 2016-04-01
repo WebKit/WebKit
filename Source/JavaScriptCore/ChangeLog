@@ -1,3 +1,29 @@
+2016-04-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC][x86] Add the 3 operands form of floating point substraction
+        https://bugs.webkit.org/show_bug.cgi?id=156095
+
+        Reviewed by Geoffrey Garen.
+
+        Same old, same old. Add the AVX form of subsd and subss.
+
+        Unfortunately, we cannot benefit from the 3 register form
+        in B3 yet because the Air script does not support CPU flags yet.
+        That can be fixed later.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::subDouble):
+        (JSC::MacroAssemblerX86Common::subFloat):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::vsubsd_rr):
+        (JSC::X86Assembler::subsd_mr):
+        (JSC::X86Assembler::vsubsd_mr):
+        (JSC::X86Assembler::vsubss_rr):
+        (JSC::X86Assembler::subss_mr):
+        (JSC::X86Assembler::vsubss_mr):
+        (JSC::X86Assembler::X86InstructionFormatter::SingleInstructionBufferWriter::memoryModRM):
+        * b3/air/AirOpcode.opcodes:
+
 2016-04-01  Alberto Garcia  <berto@igalia.com>
 
         [JSC] Missing PATH_MAX definition

@@ -177,15 +177,19 @@ Sub32 U:G:32, UZD:G:32
     x86: Addr, Tmp
     x86: Tmp, Addr
 
-arm64: SubDouble U:F:64, U:F:64, D:F:64
-    Tmp, Tmp, Tmp
+SubDouble U:F:64, U:F:64, D:F:64
+    arm64: Tmp, Tmp, Tmp
+    x86: Tmp, Addr, Tmp
+    x86: Tmp, Index, Tmp
 
 x86: SubDouble U:F:64, UD:F:64
     Tmp, Tmp
     Addr, Tmp
 
-arm64: SubFloat U:F:32, U:F:32, D:F:32
-    Tmp, Tmp, Tmp
+SubFloat U:F:32, U:F:32, D:F:32
+    arm64: Tmp, Tmp, Tmp
+    x86: Tmp, Addr, Tmp
+    x86: Tmp, Index, Tmp
 
 x86: SubFloat U:F:32, UD:F:32
     Tmp, Tmp

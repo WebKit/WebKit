@@ -2441,10 +2441,31 @@ public:
         m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
+    void vsubsd_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F2, OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
+    }
+
     void subsd_mr(int offset, RegisterID base, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void subsd_mr(int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, dst, base, index, scale, offset);
+    }
+
+    void vsubsd_mr(XMMRegisterID b, int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F2, OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)b, base, offset);
+    }
+
+    void vsubsd_mr(XMMRegisterID b, int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F2, OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)b, offset, base, index, scale);
     }
 
     void subss_rr(XMMRegisterID src, XMMRegisterID dst)
@@ -2453,10 +2474,31 @@ public:
         m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
+    void vsubss_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F3, OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
+    }
+
     void subss_mr(int offset, RegisterID base, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F3);
         m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void subss_mr(int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, dst, base, index, scale, offset);
+    }
+
+    void vsubss_mr(XMMRegisterID b, int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F3, OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)b, base, offset);
+    }
+
+    void vsubss_mr(XMMRegisterID b, int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F3, OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)b, offset, base, index, scale);
     }
 
     void ucomisd_rr(XMMRegisterID src, XMMRegisterID dst)
@@ -3339,20 +3381,23 @@ private:
             writer.memoryModRM(reg, address);
         }
 #endif
-        void vexNdsLigWigCommutativeTwoByteOp(OneByteOpcodeID simdPrefix, TwoByteOpcodeID opcode, RegisterID dest, RegisterID a, RegisterID b)
+        void vexNdsLigWigTwoByteOp(OneByteOpcodeID simdPrefix, TwoByteOpcodeID opcode, RegisterID dest, RegisterID a, RegisterID b)
         {
             SingleInstructionBufferWriter writer(m_buffer);
-
-            // Since this is a commutative operation, we can try switching the arguments.
-            if (regRequiresRex(b))
-                std::swap(a, b);
-
             if (regRequiresRex(b))
                 writer.threeBytesVexNds(simdPrefix, VexImpliedBytes::TwoBytesOp, dest, a, b);
             else
                 writer.twoBytesVex(simdPrefix, a, dest);
             writer.putByteUnchecked(opcode);
             writer.registerModRM(dest, b);
+        }
+
+        void vexNdsLigWigCommutativeTwoByteOp(OneByteOpcodeID simdPrefix, TwoByteOpcodeID opcode, RegisterID dest, RegisterID a, RegisterID b)
+        {
+            // Since this is a commutative operation, we can try switching the arguments.
+            if (regRequiresRex(b))
+                std::swap(a, b);
+            vexNdsLigWigTwoByteOp(simdPrefix, opcode, dest, a, b);
         }
 
         void vexNdsLigWigTwoByteOp(OneByteOpcodeID simdPrefix, TwoByteOpcodeID opcode, RegisterID dest, RegisterID a, RegisterID base, int offset)

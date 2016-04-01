@@ -1245,35 +1245,89 @@ public:
 
     void subDouble(FPRegisterID src, FPRegisterID dest)
     {
-        ASSERT(isSSE2Present());
-        m_assembler.subsd_rr(src, dest);
+        subDouble(dest, src, dest);
     }
 
     void subDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
-        // B := A - B is invalid.
-        ASSERT(op1 == dest || op2 != dest);
+        if (supportsAVX())
+            m_assembler.vsubsd_rr(op1, op2, dest);
+        else {
+            ASSERT(isSSE2Present());
 
-        moveDouble(op1, dest);
-        subDouble(op2, dest);
+            // B := A - B is invalid.
+            ASSERT(op1 == dest || op2 != dest);
+            moveDouble(op1, dest);
+            m_assembler.subsd_rr(op2, dest);
+        }
+    }
+
+    void subDouble(FPRegisterID op1, Address op2, FPRegisterID dest)
+    {
+        if (supportsAVX())
+            m_assembler.vsubsd_mr(op1, op2.offset, op2.base, dest);
+        else {
+            moveDouble(op1, dest);
+            m_assembler.subsd_mr(op2.offset, op2.base, dest);
+        }
+    }
+
+    void subDouble(FPRegisterID op1, BaseIndex op2, FPRegisterID dest)
+    {
+        if (supportsAVX())
+            m_assembler.vsubsd_mr(op1, op2.offset, op2.base, op2.index, op2.scale, dest);
+        else {
+            moveDouble(op1, dest);
+            m_assembler.subsd_mr(op2.offset, op2.base, op2.index, op2.scale, dest);
+        }
     }
 
     void subDouble(Address src, FPRegisterID dest)
     {
-        ASSERT(isSSE2Present());
-        m_assembler.subsd_mr(src.offset, src.base, dest);
+        subDouble(dest, src, dest);
     }
 
     void subFloat(FPRegisterID src, FPRegisterID dest)
     {
-        ASSERT(isSSE2Present());
-        m_assembler.subss_rr(src, dest);
+        subFloat(dest, src, dest);
+    }
+
+    void subFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        if (supportsAVX())
+            m_assembler.vsubss_rr(op1, op2, dest);
+        else {
+            ASSERT(isSSE2Present());
+            // B := A - B is invalid.
+            ASSERT(op1 == dest || op2 != dest);
+            moveDouble(op1, dest);
+            m_assembler.subss_rr(op2, dest);
+        }
+    }
+
+    void subFloat(FPRegisterID op1, Address op2, FPRegisterID dest)
+    {
+        if (supportsAVX())
+            m_assembler.vsubss_mr(op1, op2.offset, op2.base, dest);
+        else {
+            moveDouble(op1, dest);
+            m_assembler.subss_mr(op2.offset, op2.base, dest);
+        }
+    }
+
+    void subFloat(FPRegisterID op1, BaseIndex op2, FPRegisterID dest)
+    {
+        if (supportsAVX())
+            m_assembler.vsubss_mr(op1, op2.offset, op2.base, op2.index, op2.scale, dest);
+        else {
+            moveDouble(op1, dest);
+            m_assembler.subss_mr(op2.offset, op2.base, op2.index, op2.scale, dest);
+        }
     }
 
     void subFloat(Address src, FPRegisterID dest)
     {
-        ASSERT(isSSE2Present());
-        m_assembler.subss_mr(src.offset, src.base, dest);
+        subFloat(dest, src, dest);
     }
 
     void mulDouble(FPRegisterID src, FPRegisterID dest)
