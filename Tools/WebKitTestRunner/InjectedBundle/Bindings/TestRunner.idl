@@ -29,6 +29,7 @@ interface TestRunner {
     void dumpChildFramesAsText();
     void waitForPolicyDelegate();
     void waitUntilDone();
+    void waitUntilDownloadFinished();
     void notifyDone();
     double preciseTime();
 

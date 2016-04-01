@@ -1,3 +1,38 @@
+2016-04-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Confirm <a download> satisfies specification criteria
+        https://bugs.webkit.org/show_bug.cgi?id=156057
+
+        Reviewed by Andy Estes.
+
+        Revise WebKitTestRunner:
+        (1) Provide a download client delegate.
+        (2) Teach WKTR to wait to finish a test until a download finishes.
+        (3) Allow WKTR to notify the current TestRunner that it can finish.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage): Update to recognize a new
+        message "NotifyDownloadDone".
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::decidePolicyForNavigationAction): Handle 'download'
+        attribute case.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::waitUntilDownload): Added.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::shouldFinishAfterDownload): Added.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions): Set up the download client.
+        (WTR::TestController::downloadDidStart): Added.
+        (WTR::TestController::decideDestinationWithSuggestedFilename): Added.
+        (WTR::TestController::downloadDidFinish): Added.
+        (WTR::TestController::downloadDidFail): Added.
+        (WTR::TestController::downloadDidCancel): Added.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::notifyDownloadDone): Added.
+        * WebKitTestRunner/TestInvocation.h:
+
 2016-04-01  Alex Christensen  <achristensen@webkit.org>
 
         Compile DumpRenderTree with CMake on Mac

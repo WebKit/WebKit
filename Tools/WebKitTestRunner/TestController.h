@@ -203,6 +203,19 @@ private:
     static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef userData, const void*);
     void didFinishNavigation(WKPageRef, WKNavigationRef);
 
+    
+    // WKContextDownloadClient
+    static void downloadDidStart(WKContextRef, WKDownloadRef, const void*);
+    void downloadDidStart(WKContextRef, WKDownloadRef);
+    static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef, WKStringRef filename, bool* allowOverwrite, const void *clientInfo);
+    WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef, WKStringRef filename, bool*& allowOverwrite);
+    static void downloadDidFinish(WKContextRef, WKDownloadRef, const void*);
+    void downloadDidFinish(WKContextRef, WKDownloadRef);
+    static void downloadDidFail(WKContextRef, WKDownloadRef, WKErrorRef, const void*);
+    void downloadDidFail(WKContextRef, WKDownloadRef, WKErrorRef);
+    static void downloadDidCancel(WKContextRef, WKDownloadRef, const void*);
+    void downloadDidCancel(WKContextRef, WKDownloadRef);
+    
     static void processDidCrash(WKPageRef, const void* clientInfo);
     void processDidCrash();
 

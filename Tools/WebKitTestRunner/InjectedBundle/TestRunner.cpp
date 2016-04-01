@@ -141,6 +141,12 @@ void TestRunner::waitForPolicyDelegate()
     waitUntilDone();
 }
 
+void TestRunner::waitUntilDownloadFinished()
+{
+    m_shouldFinishAfterDownload = true;
+    waitUntilDone();
+}
+
 void TestRunner::waitUntilDone()
 {
     m_waitToDump = true;

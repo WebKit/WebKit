@@ -58,6 +58,7 @@ public:
 
     bool shouldOpenExternalURLs() const { return m_shouldOpenExternalURLs; }
     bool shouldTryAppLinks() const { return m_shouldTryAppLinks; }
+    AtomicString downloadAttribute() const { return m_downloadAttribute; }
 
 private:
     InjectedBundleNavigationAction(WebFrame*, const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>);
@@ -67,6 +68,7 @@ private:
     WebMouseEvent::Button m_mouseButton;
     RefPtr<InjectedBundleHitTestResult> m_hitTestResult;
     RefPtr<InjectedBundleNodeHandle> m_formElement;
+    AtomicString m_downloadAttribute;
     bool m_shouldOpenExternalURLs;
     bool m_shouldTryAppLinks;
 };

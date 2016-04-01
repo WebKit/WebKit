@@ -34,6 +34,7 @@ extern "C" {
 
 WK_EXPORT bool WKBundleNavigationActionGetShouldOpenExternalURLs(WKBundleNavigationActionRef);
 WK_EXPORT bool WKBundleNavigationActionGetShouldTryAppLinks(WKBundleNavigationActionRef);
+WK_EXPORT WKStringRef WKBundleNavigationActionCopyDownloadAttribute(WKBundleNavigationActionRef);
 
 #ifdef __cplusplus
 }

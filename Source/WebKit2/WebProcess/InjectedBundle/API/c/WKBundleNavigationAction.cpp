@@ -76,3 +76,8 @@ bool WKBundleNavigationActionGetShouldTryAppLinks(WKBundleNavigationActionRef na
 {
     return toImpl(navigationActionRef)->shouldTryAppLinks();
 }
+
+WKStringRef WKBundleNavigationActionCopyDownloadAttribute(WKBundleNavigationActionRef navigationActionRef)
+{
+    return toCopiedAPI(toImpl(navigationActionRef)->downloadAttribute());
+}

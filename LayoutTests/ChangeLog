@@ -1,3 +1,36 @@
+2016-04-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Confirm <a download> satisfies specification criteria
+        https://bugs.webkit.org/show_bug.cgi?id=156057
+
+        Reviewed by Andy Estes.
+
+        Import <a download> tests from the Blink project.
+
+        Based on a Blink change (patch by <asanka@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?revision=172767&view=revision>
+
+        * TestExpectations: Mark two expected failures with the new tests.
+        * fast/dom/HTMLAnchorElement/anchor-download-expected.txt: Updated for
+        expected output (blob URL currently not working).
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set-expected.txt: Ditto.
+        * http/tests/security/anchor-download-allow-blob-expected.txt: Added.
+        * http/tests/security/anchor-download-allow-blob.html: Added.
+        * http/tests/security/anchor-download-allow-data-expected.txt: Added.
+        * http/tests/security/anchor-download-allow-data.html: Added.
+        * http/tests/security/anchor-download-allow-sameorigin-expected.txt: Added.
+        * http/tests/security/anchor-download-allow-sameorigin.html: Added.
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt: Added.
+        * http/tests/security/anchor-download-block-crossorigin.html: Added.
+        * http/tests/security/resources/attachment.php: Added.
+        * platform/ios-simulator-wk1/TestExpectations: Disable download tests until WK1 support
+        is implemented.
+        * platform/ios-simulator-wk2/TestExpectations: Disable download tests until
+        NETWORK_SESSION support exists.
+        * platform/mac/TestExpectations: Reactivate the HTMLAnchorElement tests.
+        * platform/mac-wk1/TestExpectations: Disable download tests until WK1 support
+        is implemented.
+
 2016-04-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline tests added with r198951

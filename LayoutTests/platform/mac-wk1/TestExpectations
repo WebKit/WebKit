@@ -201,3 +201,11 @@ fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
 
 # This hit-test test doesn't work on DRT
 webkit.org/b/156084 accessibility/mac/video-tag-hit-test.html [ Skip ]
+
+# <a download> is not support in WK1 yet.
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
+webkit.org/b/156069 http/tests/security/anchor-download-allow-blob.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-allow-data.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-block-crossorigin.html [ Skip ]

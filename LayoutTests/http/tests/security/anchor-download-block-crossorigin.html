@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDownloadFinished();
+</script>
+</head>
+<body>
+<p>
+Tests that a suggested filename on a download attribute is ignored if 
+<a id="dl" href="http://localhost:8080/security/resources/attachment.php" download="foo.pdf">the link</a> is cross origin.
+<p>
+The suggested filename at the top should be empty.
+<script>
+    function click(elmt)
+    {
+        if (!window.eventSender)
+            return;
+
+        eventSender.mouseMoveTo(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    function runTest()
+    {
+        var link = document.getElementById("dl");
+        click(link);
+    }
+    runTest();
+</script>
+</body>
+</html>

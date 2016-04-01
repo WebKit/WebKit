@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDownloadFinished();
+</script>
+</head>
+<body>
+<p>
+Tests that a suggested filename on a download attribute is allowed if
+<a id="dl" download="foo.pdf">the link</a> is a blob URL.
+<p>The suggested filename at the top should be foo.pdf.</p>
+<div id="console"></div>    
+<script>
+    function click(elmt)
+    {
+        if (!window.eventSender)
+            return;
+
+        eventSender.mouseMoveTo(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    function runTest()
+    {
+        var blob = new Blob(["Hello world!"], {type: "application/octet-stream"});
+        var link = document.getElementById("dl");
+        link.href = window.URL.createObjectURL(blob);
+        click(link);
+    }
+    runTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

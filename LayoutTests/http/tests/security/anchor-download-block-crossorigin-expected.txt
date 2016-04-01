@@ -1,0 +1,4 @@
+Downloading URL with suggested filename ""
+Tests that a suggested filename on a download attribute is ignored if the link is cross origin.
+
+The suggested filename at the top should be empty.
