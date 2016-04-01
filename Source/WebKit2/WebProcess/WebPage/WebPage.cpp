@@ -2039,7 +2039,7 @@ void WebPage::layerVolatilityTimerFired()
     }
 
     auto newInterval = std::min(2 * m_layerVolatilityTimer.repeatIntervalMS(), std::chrono::duration_cast<std::chrono::milliseconds>(maximumLayerVolatilityTimerInterval));
-    WEBPAGE_LOG_ALWAYS_ERROR("%p - WebPage - Failed to mark all layers as volatile, will retry in %lld ms", this, newInterval.count());
+    WEBPAGE_LOG_ALWAYS_ERROR("%p - WebPage - Failed to mark all layers as volatile, will retry in %lld ms", this, static_cast<long long>(newInterval.count()));
     m_layerVolatilityTimer.startRepeating(newInterval);
 }
 

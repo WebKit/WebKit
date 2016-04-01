@@ -1,3 +1,10 @@
+2016-03-31  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL build fix caused by r198929.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::layerVolatilityTimerFired): Need to use type casting in WEBPAGE_LOG_ALWAYS_ERROR() log.
+
 2016-03-31  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r194660): Navigating to HTTPS sites may fail with error
