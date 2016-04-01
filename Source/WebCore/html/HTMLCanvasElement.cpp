@@ -306,9 +306,13 @@ void HTMLCanvasElement::didDraw(const FloatRect& rect)
 {
     clearCopiedImage();
 
+    FloatRect dirtyRect = rect;
     if (RenderBox* ro = renderBox()) {
         FloatRect destRect = ro->contentBoxRect();
-        FloatRect r = mapRect(rect, FloatRect(0, 0, size().width(), size().height()), destRect);
+        // Inflate dirty rect to cover antialiasing on image buffers.
+        if (drawingContext() && drawingContext()->shouldAntialias())
+            dirtyRect.inflate(1);
+        FloatRect r = mapRect(dirtyRect, FloatRect(0, 0, size().width(), size().height()), destRect);
         r.intersect(destRect);
         if (r.isEmpty() || m_dirtyRect.contains(r))
             return;
@@ -316,8 +320,7 @@ void HTMLCanvasElement::didDraw(const FloatRect& rect)
         m_dirtyRect.unite(r);
         ro->repaintRectangle(enclosingIntRect(m_dirtyRect));
     }
-
-    notifyObserversCanvasChanged(rect);
+    notifyObserversCanvasChanged(dirtyRect);
 }
 
 void HTMLCanvasElement::notifyObserversCanvasChanged(const FloatRect& rect)

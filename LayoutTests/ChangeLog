@@ -1,3 +1,16 @@
+2016-03-31  Zalan Bujtas  <zalan@apple.com>
+
+        putImageData leaves visible artifacts on retina display
+        https://bugs.webkit.org/show_bug.cgi?id=156039
+        <rdar://problem/25482243>
+
+        Reviewed by Simon Fraser.
+
+        Inflate the repaint rect to cover anti-aliasing bits.
+
+        * fast/canvas/hidpi-repaint-on-retina-leaves-bits-behind-expected.html: Added.
+        * fast/canvas/hidpi-repaint-on-retina-leaves-bits-behind.html: Added.
+
 2016-04-01  Brent Fulgham  <bfulgham@apple.com>
 
         Confirm <a download> satisfies specification criteria
