@@ -1327,3 +1327,7 @@ webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/use
 webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 
 webkit.org/b/154688 inspector/controller/runtime-controller.html [ Pass Timeout ]
+
+webkit.org/b/156112 [ ElCapitan ] media/audio-controls-rendering.html [ Pass Failure ]
+webkit.org/b/156112 [ ElCapitan ] media/controls-strict.html [ Pass Failure ]
+webkit.org/b/156112 [ ElCapitan ] media/controls-without-preload.html [ Pass Failure ]
