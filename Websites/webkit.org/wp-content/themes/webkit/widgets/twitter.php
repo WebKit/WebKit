@@ -111,6 +111,13 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
 
     function tweet () {
 
+        // Prefer pushed tweet
+        if ( class_exists('TweetListener') ) {
+            $TweetListener = TweetListener::object();
+            return $TweetListener->tweet();
+        }
+
+        // Poll for tweet
         if ( false !== ( $cached = get_transient(self::CACHEKEY) ) )
             return json_decode($cached);
 

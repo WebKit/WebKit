@@ -1,5 +1,15 @@
 2016-03-31  Jon Davis  <jond@apple.com>
 
+        Show tweets by @webkit in the Twitter tile on webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=156093
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/plugins/tweet-listener.php: Added.
+        * wp-content/themes/webkit/widgets/twitter.php:
+
+2016-03-31  Jon Davis  <jond@apple.com>
+
         Fix download links for desktops with small resolutions
         https://bugs.webkit.org/show_bug.cgi?id=156081
 
