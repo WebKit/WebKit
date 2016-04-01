@@ -724,6 +724,9 @@
 /* An ARIA accessibility group that acts as an article. */
 "article" = "article";
 
+/* accessibility role description for an attachment element */
+"attachment" = "attachment";
+
 /* accessibility help text for audio element controller */
 "audio element playback controls and status display" = "audio element playback controls and status display";
 

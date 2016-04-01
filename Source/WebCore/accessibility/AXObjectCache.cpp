@@ -35,6 +35,7 @@
 #include "AccessibilityARIAGrid.h"
 #include "AccessibilityARIAGridCell.h"
 #include "AccessibilityARIAGridRow.h"
+#include "AccessibilityAttachment.h"
 #include "AccessibilityImageMapLink.h"
 #include "AccessibilityList.h"
 #include "AccessibilityListBox.h"
@@ -71,6 +72,7 @@
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "Page.h"
+#include "RenderAttachment.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
 #include "RenderMeter.h"
@@ -428,6 +430,10 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
         if (is<RenderProgress>(cssBox))
             return AccessibilityProgressIndicator::create(&downcast<RenderProgress>(cssBox));
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+        if (is<RenderAttachment>(cssBox))
+            return AccessibilityAttachment::create(&downcast<RenderAttachment>(cssBox));
+#endif
 #if ENABLE(METER_ELEMENT)
         if (is<RenderMeter>(cssBox))
             return AccessibilityProgressIndicator::create(&downcast<RenderMeter>(cssBox));

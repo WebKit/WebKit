@@ -189,13 +189,27 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
     
     Vector<AccessibilityText> textOrder;
     m_object->accessibilityText(textOrder);
-    
+
+    NSMutableString *returnText = [NSMutableString string];
     bool visibleTextAvailable = false;
     for (const auto& text : textOrder) {
-        if (text.textSource == AlternativeText)
-            return text.text;
+        if (text.textSource == AlternativeText) {
+            [returnText appendString:text.text];
+            break;
+        }
         
         switch (text.textSource) {
+        // These are sub-components of one element (Attachment) that are re-combined in OSX and iOS.
+        case TitleText:
+        case SubtitleText:
+        case ActionText: {
+            if (!text.text.length())
+                break;
+            if ([returnText length])
+                [returnText appendString:@", "];
+            [returnText appendString:text.text];
+            break;
+        }
         case VisibleText:
         case ChildrenText:
         case LabelByElementText:
@@ -205,11 +219,13 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
             break;
         }
         
-        if (text.textSource == TitleTagText && !visibleTextAvailable)
-            return text.text;
+        if (text.textSource == TitleTagText && !visibleTextAvailable) {
+            [returnText appendString:text.text];
+            break;
+        }
     }
     
-    return [NSString string];
+    return returnText;
 }
 
 - (NSString *)baseAccessibilityHelpText

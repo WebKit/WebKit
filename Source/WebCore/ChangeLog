@@ -1,3 +1,47 @@
+2016-03-31  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <attachment> element not accessible
+        https://bugs.webkit.org/show_bug.cgi?id=156045
+
+        Reviewed by Joanmarie Diggs.
+
+        Make this element accessible by exposing title, subtitle, action, progress to accessibility.
+
+        Test: accessibility/attachment-element.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::createFromRenderer):
+        * accessibility/AccessibilityAttachment.cpp: Added.
+        (WebCore::AccessibilityAttachment::AccessibilityAttachment):
+        (WebCore::AccessibilityAttachment::create):
+        (WebCore::AccessibilityAttachment::hasProgress):
+        (WebCore::AccessibilityAttachment::valueForRange):
+        (WebCore::AccessibilityAttachment::attachmentElement):
+        (WebCore::AccessibilityAttachment::roleDescription):
+        (WebCore::AccessibilityAttachment::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityAttachment::accessibilityText):
+        (WebCore::AccessibilityAttachment::accessibilityDescription):
+        * accessibility/AccessibilityAttachment.h: Added.
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::hasHighlighting):
+        (WebCore::AccessibilityObject::roleDescription):
+        (WebCore::AccessibilityObject::supportsRangeValue):
+        (WebCore::AccessibilityObject::supportsARIASetSize):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isAttachmentElement):
+        (WebCore::AccessibilityObject::isHeading):
+        (WebCore::AccessibilityObject::isLink):
+        (WebCore::AccessibilityObject::isImage):
+        (WebCore::AccessibilityObject::isRadioButton):
+        (WebCore::AccessibilityObject::isListBox):
+        (WebCore::AccessibilityObject::isListBoxOption):
+        (WebCore::AccessibilityObject::isAttachment):
+        (WebCore::AccessibilityObject::isMediaTimeline):
+        (WebCore::AccessibilityObject::isMenuRelated):
+        (WebCore::AccessibilityObject::isMenu):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityValue]):
+
 2016-03-31  Nan Wang  <n_wang@apple.com>
 
         AX: AX hit-testing does not work on WebKit video playback buttons

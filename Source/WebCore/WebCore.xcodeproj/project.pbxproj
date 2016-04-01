@@ -1084,6 +1084,8 @@
 		26FAE4CD1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 26FAE4C91852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h */; };
 		26FAE4CE1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26FAE4CA1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp */; };
 		26FAE4CF1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 26FAE4CB1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h */; };
+		2914E3071CAB5A440049966F /* AccessibilityAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2914E3051CAB5A440049966F /* AccessibilityAttachment.cpp */; };
+		2914E3081CAB5A440049966F /* AccessibilityAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 2914E3061CAB5A440049966F /* AccessibilityAttachment.h */; };
 		2917B5611473496C0052C9D0 /* LayerFlushScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */; };
 		2917B5621473496C0052C9D0 /* LayerFlushScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2917B5631473496C0052C9D0 /* LayerFlushSchedulerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2917B5601473496C0052C9D0 /* LayerFlushSchedulerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8529,6 +8531,8 @@
 		26FAE4C91852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandleCFURLConnectionDelegate.h; sourceTree = "<group>"; };
 		26FAE4CA1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SynchronousResourceHandleCFURLConnectionDelegate.cpp; sourceTree = "<group>"; };
 		26FAE4CB1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynchronousResourceHandleCFURLConnectionDelegate.h; sourceTree = "<group>"; };
+		2914E3051CAB5A440049966F /* AccessibilityAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityAttachment.cpp; sourceTree = "<group>"; };
+		2914E3061CAB5A440049966F /* AccessibilityAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityAttachment.h; sourceTree = "<group>"; };
 		2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayerFlushScheduler.cpp; sourceTree = "<group>"; };
 		2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushScheduler.h; sourceTree = "<group>"; };
 		2917B5601473496C0052C9D0 /* LayerFlushSchedulerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushSchedulerClient.h; sourceTree = "<group>"; };
@@ -16441,6 +16445,8 @@
 				29A812100FBB9C1D00510293 /* AccessibilityARIAGridCell.h */,
 				2981CA9F131822EC00D12F2A /* AccessibilityARIAGridRow.cpp */,
 				29A812150FBB9C1D00510293 /* AccessibilityARIAGridRow.h */,
+				2914E3051CAB5A440049966F /* AccessibilityAttachment.cpp */,
+				2914E3061CAB5A440049966F /* AccessibilityAttachment.h */,
 				2981CAA0131822EC00D12F2A /* AccessibilityImageMapLink.cpp */,
 				29A8121D0FBB9C1D00510293 /* AccessibilityImageMapLink.h */,
 				2981CAA1131822EC00D12F2A /* AccessibilityList.cpp */,
@@ -26028,6 +26034,7 @@
 				C58361A91744523F00173511 /* FontServicesIOS.h in Headers */,
 				C2015C0A1BE6FEB200822389 /* FontVariantBuilder.h in Headers */,
 				4A0DA2FF129B241900AB61E1 /* FormAssociatedElement.h in Headers */,
+				2914E3081CAB5A440049966F /* AccessibilityAttachment.h in Headers */,
 				D05CED2A0A40BB2C00C5AF38 /* FormatBlockCommand.h in Headers */,
 				7CE6CBFB187F370700D46BF5 /* FormatConverter.h in Headers */,
 				F50664F8157F52DC00AC226F /* FormController.h in Headers */,
@@ -31844,6 +31851,7 @@
 				F55B3DDD1251F12D003EF269 /* URLInputType.cpp in Sources */,
 				6593923A09AE435C002C531F /* URLMac.mm in Sources */,
 				A769E96A16689D0C005D4529 /* UserActionElementSet.cpp in Sources */,
+				2914E3071CAB5A440049966F /* AccessibilityAttachment.cpp in Sources */,
 				868160D418766A0A0021E79D /* UserActivity.cpp in Sources */,
 				868160D518766A0E0021E79D /* UserActivityMac.mm in Sources */,
 				5D5975B71963637B00D00878 /* UserAgent.mm in Sources */,

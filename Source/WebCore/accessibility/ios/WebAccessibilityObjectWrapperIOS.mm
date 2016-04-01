@@ -28,6 +28,7 @@
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
 
+#import "AccessibilityAttachment.h"
 #import "AccessibilityRenderObject.h"
 #import "AccessibilityScrollView.h"
 #import "AccessibilityTable.h"
@@ -1252,6 +1253,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return [NSString stringWithFormat:@"%.2f", m_object->valueForRange()];
     }
 
+    if (is<AccessibilityAttachment>(m_object) && downcast<AccessibilityAttachment>(m_object)->hasProgress())
+        return [NSString stringWithFormat:@"%.2f", m_object->valueForRange()];
+    
     if (m_object->isHeading())
         return [NSString stringWithFormat:@"%d", m_object->headingLevel()];
     

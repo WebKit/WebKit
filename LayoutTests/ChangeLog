@@ -1,3 +1,15 @@
+2016-03-31  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <attachment> element not accessible
+        https://bugs.webkit.org/show_bug.cgi?id=156045
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/attachment-element-expected.txt: Added.
+        * accessibility/attachment-element.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2016-03-31  Nan Wang  <n_wang@apple.com>
 
         AX: AX hit-testing does not work on WebKit video playback buttons

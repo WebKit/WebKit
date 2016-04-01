@@ -2153,7 +2153,7 @@ bool AccessibilityObject::hasHighlighting() const
     return false;
 }
 
-const AtomicString& AccessibilityObject::roleDescription() const
+String AccessibilityObject::roleDescription() const
 {
     return getAttribute(aria_roledescriptionAttr);
 }
@@ -2347,7 +2347,8 @@ bool AccessibilityObject::supportsRangeValue() const
     return isProgressIndicator()
         || isSlider()
         || isScrollbar()
-        || isSpinButton();
+        || isSpinButton()
+        || isAttachmentElement();
 }
     
 bool AccessibilityObject::supportsARIASetSize() const
