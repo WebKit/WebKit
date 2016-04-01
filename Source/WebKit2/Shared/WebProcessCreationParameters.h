@@ -112,7 +112,6 @@ struct WebProcessCreationParameters {
     Vector<String> fontWhitelist;
 
     bool iconDatabaseEnabled;
-    bool shouldRewriteConstAsVar { false };
 
     double terminationTimeout;
 

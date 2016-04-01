@@ -264,11 +264,6 @@ VM& JSDOMWindowBase::commonVM()
         vm->heap.machineThreads().addCurrentThread();
 #endif
 
-#if PLATFORM(MAC)
-        if (MacApplication::isITunes() || MacApplication::isIBooks() || Settings::shouldRewriteConstAsVar())
-            vm->setShouldRewriteConstAsVar(true);
-#endif
-
         initNormalWorldClientData(vm);
     }
 

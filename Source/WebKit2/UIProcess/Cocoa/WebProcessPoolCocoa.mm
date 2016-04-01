@@ -172,10 +172,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.shouldEnableMemoryPressureReliefLogging = [defaults boolForKey:@"LogMemoryJetsamDetails"];
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
 
-#if PLATFORM(MAC)
-    parameters.shouldRewriteConstAsVar = MacApplication::isIBooks();
-#endif
-
 #if HAVE(HOSTED_CORE_ANIMATION)
 #if !PLATFORM(IOS)
     parameters.acceleratedCompositingPort = MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);

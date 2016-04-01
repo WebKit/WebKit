@@ -1,5 +1,19 @@
 2016-03-31  Saam barati  <sbarati@apple.com>
 
+        Revert rewrite const as var workaround
+        https://bugs.webkit.org/show_bug.cgi?id=155393
+
+        Reviewed by Mark Lam.
+
+        * parser/Parser.h:
+        (JSC::Parser::next):
+        (JSC::Parser::nextExpectIdentifier):
+        * runtime/VM.h:
+        (JSC::VM::setShouldRewriteConstAsVar): Deleted.
+        (JSC::VM::shouldRewriteConstAsVar): Deleted.
+
+2016-03-31  Saam barati  <sbarati@apple.com>
+
         [ES6] Disallow var assignments in for-in loops
         https://bugs.webkit.org/show_bug.cgi?id=155451
 
