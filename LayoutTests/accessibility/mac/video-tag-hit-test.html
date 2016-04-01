@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+div.absolute {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 400px;
+    height: 200px;
+    border: 1px solid #73AD21;
+}
+</style>
+</head>
+<body id="body">
+
+<div class="absolute" id="container" tabindex=0 id="region" title="region">
+<video id="video" width="400" height="200" controls>
+  <source src="" type="video/mp4">
+  Test Video.
+</video>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that hit testing works on video tag.");
+
+    if (window.accessibilityController) {
+    
+          var element = accessibilityController.elementAtPoint(10, 185);
+          shouldBe("element.role", "'AXRole: AXButton'");
+          shouldBe("element.description", "'AXDescription: Play'");
+          shouldBe("element.parentElement().role", "'AXRole: AXToolbar'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -198,3 +198,6 @@ inspector/unit-tests/heap-snapshot.html [ Skip ]
 
 # This test checks ScrollAnimator events only for main frame scrollbars that use native widgets in WK1.
 fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
+
+# This hit-test test doesn't work on DRT
+webkit.org/b/156084 accessibility/mac/video-tag-hit-test.html [ Skip ]

@@ -1,0 +1,13 @@
+
+This tests that hit testing works on video tag.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element.role is 'AXRole: AXButton'
+PASS element.description is 'AXDescription: Play'
+PASS element.parentElement().role is 'AXRole: AXToolbar'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

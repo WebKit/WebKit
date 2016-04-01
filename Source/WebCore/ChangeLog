@@ -1,3 +1,19 @@
+2016-03-31  Nan Wang  <n_wang@apple.com>
+
+        AX: AX hit-testing does not work on WebKit video playback buttons
+        https://bugs.webkit.org/show_bug.cgi?id=156084
+
+        Reviewed by Darin Adler.
+
+        Use the element at point instead of the shadow host for hit testing on video tags.
+
+        Test: accessibility/mac/video-tag-hit-test.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::elementAccessibilityHitTest):
+        (WebCore::shouldUseShadowHostForHitTesting):
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest):
+
 2016-03-31  Alexey Proskuryakov  <ap@apple.com>
 
         Page overlay tests sometimes crash under MockPageOverlayClient::uninstallAllOverlays()
