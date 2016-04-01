@@ -76,5 +76,7 @@ This tests removing underline from stylesheet (.editing has underline). Because 
 | "xxxxxx "
 | "<#selection-anchor>xxxxxx<#selection-focus>"
 | " xxxxxx"
+| "
+"
 | <span>
 |   id="test"

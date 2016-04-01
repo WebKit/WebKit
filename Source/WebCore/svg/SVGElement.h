@@ -183,11 +183,12 @@ protected:
     void updateRelativeLengthsInformation() { updateRelativeLengthsInformation(selfHasRelativeLengths(), this); }
     void updateRelativeLengthsInformation(bool hasRelativeLengths, SVGElement*);
 
+    bool willRecalcStyle(Style::Change) override;
+
     class InstanceInvalidationGuard;
 
 private:
     RenderStyle* computedStyle(PseudoId = NOPSEUDO) final;
-    bool willRecalcStyle(Style::Change) override;
 
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 

@@ -772,6 +772,10 @@ void Node::setNeedsStyleRecalc(StyleChangeType changeType)
     if (!inRenderedDocument())
         return;
 
+    // FIXME: This should eventually be an ASSERT.
+    if (document().inRenderTreeUpdate())
+        return;
+
     StyleChangeType existingChangeType = styleChangeType();
     if (changeType > existingChangeType)
         setStyleChange(changeType);

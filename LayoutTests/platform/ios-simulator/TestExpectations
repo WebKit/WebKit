@@ -2053,6 +2053,7 @@ fast/regions/percentage-margins-mixed-ltr-dominant-regions.html [ ImageOnlyFailu
 fast/regions/percentage-margins-mixed-rtl-dominant-regions.html [ ImageOnlyFailure ]
 fast/regions/percentage-margins-rtl-variable-width-regions.html [ ImageOnlyFailure ]
 fast/regions/percentage-margins-variable-width-regions.html [ ImageOnlyFailure ]
+fast/regions/position-writing-modes-in-variable-width-regions.html [ ImageOnlyFailure ]
 fast/regions/positioning/fixed-in-named-flow-position-changed.html [ ImageOnlyFailure ]
 fast/regions/positioning/fixed-inside-fixed-in-named-flow.html [ ImageOnlyFailure ]
 fast/regions/positioning/fixed-inside-named-flow-zIndex.html [ ImageOnlyFailure ]

@@ -2627,12 +2627,14 @@ set(WebCore_SOURCES
     style/IdChangeInvalidation.cpp
     style/InlineTextBoxStyle.cpp
     style/RenderTreePosition.cpp
+    style/RenderTreeUpdater.cpp
     style/StyleChange.cpp
     style/StyleFontSizeFunctions.cpp
     style/StyleRelations.cpp
     style/StyleResolveForDocument.cpp
     style/StyleSharingResolver.cpp
     style/StyleTreeResolver.cpp
+    style/StyleUpdate.cpp
 
     svg/SVGAElement.cpp
     svg/SVGAltGlyphDefElement.cpp

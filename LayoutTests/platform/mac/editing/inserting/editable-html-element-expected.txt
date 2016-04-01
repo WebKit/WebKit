@@ -22,7 +22,6 @@ layer at (0,0) size 800x600
           text run at (0,18) width 767: "inserting a paragraph separator doesn't split the body (inserting a paragraph separator usually splits/clones the enclosing"
           text run at (766,18) width 5: " "
           text run at (0,36) width 132: "block flow element)."
-        RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,54) size 784x18
         RenderBR {BR} at (0,0) size 0x18
 caret: position 0 of child 0 {BR} of child 2 {DIV} of body

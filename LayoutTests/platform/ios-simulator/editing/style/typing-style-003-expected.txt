@@ -52,10 +52,10 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 xxxxxxxxxxxxxxx
 execTypeCharacterCommand: x <span id="test"></span>
-execTypeCharacterCommand: xx <span id="test"></span>
-execTypeCharacterCommand: xxx <span id="test"></span>
-execBoldCommand: xxx <span id="test"></span>
-execTypeCharacterCommand: xxx<b>x</b> <span id="test"></span>
+execTypeCharacterCommand: xx<span id="test"></span>
+execTypeCharacterCommand: xxx<span id="test"></span>
+execBoldCommand: xxx<span id="test"></span>
+execTypeCharacterCommand: xxx<b>x</b><span id="test"></span>
 execTypeCharacterCommand: xxx<b>xx</b><span id="test"></span>
 execTypeCharacterCommand: xxx<b>xxx</b><span id="test"></span>
 execItalicCommand: xxx<b>xxx</b><span id="test"></span>

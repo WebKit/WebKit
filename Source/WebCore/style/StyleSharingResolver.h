@@ -42,11 +42,13 @@ class StyledElement;
 
 namespace Style {
 
+class Update;
+
 class SharingResolver {
 public:
     SharingResolver(const Document&, const DocumentRuleSets&, const SelectorFilter&);
 
-    RefPtr<RenderStyle> resolve(const Element&);
+    RefPtr<RenderStyle> resolve(const Element&, const Update&);
 
 private:
     struct Context;

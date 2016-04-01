@@ -27,6 +27,7 @@
 #include "RenderTreePosition.h"
 
 #include "ComposedTreeIterator.h"
+#include "HTMLSlotElement.h"
 #include "PseudoElement.h"
 #include "RenderObject.h"
 #include "ShadowRoot.h"
@@ -82,13 +83,22 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
     if (node.isAfterPseudoElement())
         return nullptr;
 
-    auto composedChildren = composedTreeChildren(*parentElement);
+    auto composedDescendants = composedTreeDescendants(*parentElement);
+    auto it = node.isBeforePseudoElement() ? composedDescendants.begin() : composedDescendants.at(node);
+    auto end = composedDescendants.end();
 
-    auto it = node.isBeforePseudoElement() ? composedChildren.begin() : composedChildren.at(node);
-    for (auto end = composedChildren.end(); it != end; ++it) {
-        RenderObject* renderer = it->renderer();
+    while (it != end) {
+        auto& node = *it;
+        bool hasDisplayContents = is<HTMLSlotElement>(node);
+        if (hasDisplayContents) {
+            it.traverseNext();
+            continue;
+        }
+        RenderObject* renderer = node.renderer();
         if (renderer && !isRendererReparented(*renderer))
             return renderer;
+        
+        it.traverseNextSkippingChildren();
     }
     if (PseudoElement* after = parentElement->afterPseudoElement())
         return after->renderer();

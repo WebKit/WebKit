@@ -50,9 +50,6 @@ public:
     // continue even if the style isn't different from the current style.
     void setStyle(Ref<RenderStyle>&&, StyleDifference minimalStyleDifference = StyleDifferenceEqual);
 
-    // Called to update a style that is allowed to trigger animations.
-    void setAnimatableStyle(Ref<RenderStyle>&&, StyleDifference minimalStyleDifference);
-
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
     // any pseudo classes (and therefore has no concept of changing state).
     RenderStyle* getCachedPseudoStyle(PseudoId, RenderStyle* parentStyle = nullptr) const;
@@ -342,15 +339,6 @@ private:
     static bool s_affectsParentBlock;
     static bool s_noLongerAffectsParentBlock;
 };
-
-inline void RenderElement::setAnimatableStyle(Ref<RenderStyle>&& style, StyleDifference minimalStyleDifference)
-{
-    Ref<RenderStyle> animatedStyle = WTFMove(style);
-    if (animation().updateAnimations(*this, animatedStyle, animatedStyle))
-        minimalStyleDifference = std::max(minimalStyleDifference, StyleDifferenceRecompositeLayer);
-    
-    setStyle(WTFMove(animatedStyle), minimalStyleDifference);
-}
 
 inline void RenderElement::setAncestorLineBoxDirty(bool f)
 {
