@@ -512,7 +512,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             RELEASE_ASSERT(block->ssa);
             out.print("  Availability: ", block->ssa->availabilityAtHead, "\n");
             out.print("  Live: ", nodeListDump(block->ssa->liveAtHead), "\n");
-            out.print("  Values: ", nodeMapDump(block->ssa->valuesAtHead, context), "\n");
+            out.print("  Values: ", nodeValuePairListDump(block->ssa->valuesAtHead, context), "\n");
             break;
         } }
         for (size_t i = 0; i < block->size(); ++i) {

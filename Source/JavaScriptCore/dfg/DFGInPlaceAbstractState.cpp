@@ -63,7 +63,7 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
     
     if (m_graph.m_form == SSA) {
         for (auto& entry : basicBlock->ssa->valuesAtHead)
-            forNode(entry.key) = entry.value;
+            forNode(entry.node) = entry.value;
     }
     basicBlock->cfaShouldRevisit = false;
     basicBlock->cfaHasVisited = true;
@@ -82,6 +82,14 @@ static void setLiveValues(HashMap<Node*, AbstractValue>& values, HashSet<Node*>&
     HashSet<Node*>::iterator end = live.end();
     for (; iter != end; ++iter)
         values.add(*iter, AbstractValue());
+}
+
+static void setLiveValues(Vector<BasicBlock::SSAData::NodeAbstractValuePair>& values, HashSet<Node*>& live)
+{
+    values.resize(0);
+    values.reserveCapacity(live.size());
+    for (Node* node : live)
+        values.uncheckedAppend(BasicBlock::SSAData::NodeAbstractValuePair { node, AbstractValue() });
 }
 
 void InPlaceAbstractState::initialize()
@@ -300,7 +308,7 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
             changed |= to->valuesAtHead[i].merge(from->valuesAtTail[i]);
 
         for (auto& entry : to->ssa->valuesAtHead) {
-            Node* node = entry.key;
+            Node* node = entry.node;
             if (verbose)
                 dataLog("      Merging for ", node, ": from ", from->ssa->valuesAtTail.find(node)->value, " to ", entry.value, "\n");
             changed |= entry.value.merge(

@@ -2341,6 +2341,25 @@ CString nodeMapDump(const T& nodeMap, DumpContext* context = 0)
     return out.toCString();
 }
 
+template<typename IteratorType>
+inline bool nodeValuePairComparator(IteratorType a, IteratorType b)
+{
+    return nodeComparator(a.node, b.node);
+}
+
+template<typename T>
+CString nodeValuePairListDump(const T& nodeValuePairList, DumpContext* context = 0)
+{
+    T sortedList = nodeValuePairList;
+    std::sort(sortedList.begin(), sortedList.end(), nodeValuePairComparator<decltype(*sortedList.begin())>);
+
+    StringPrintStream out;
+    CommaPrinter comma;
+    for (const auto& pair : sortedList)
+        out.print(comma, pair.node, "=>", inContext(pair.value, context));
+    return out.toCString();
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {

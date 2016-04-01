@@ -245,7 +245,11 @@ struct BasicBlock : RefCounted<BasicBlock> {
         bool liveAtTailIsDirty { false };
         HashSet<Node*> liveAtTail;
         HashSet<Node*> liveAtHead;
-        HashMap<Node*, AbstractValue> valuesAtHead;
+        struct NodeAbstractValuePair {
+            Node* node;
+            AbstractValue value;
+        };
+        Vector<NodeAbstractValuePair> valuesAtHead;
         HashMap<Node*, AbstractValue> valuesAtTail;
         
         SSAData(BasicBlock*);
