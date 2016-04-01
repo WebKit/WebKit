@@ -1,3 +1,14 @@
+2016-03-31  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Bump EFL version to 1.17.0
+        https://bugs.webkit.org/show_bug.cgi?id=153008
+
+        Reviewed by Michael Catanzaro.
+
+        Original author is Csaba Osztrogonác  <ossy@webkit.org>
+
+        * efl/jhbuild.modules:
+
 2016-03-31  Daniel Bates  <dabates@apple.com>
 
         run-webkit-tests fails to create user's cache directory when System Integrity Protection is enabled

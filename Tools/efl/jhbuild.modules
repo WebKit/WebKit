@@ -168,15 +168,15 @@
  </autotools>
 
   <autotools id="efl" autogen-sh="configure"
-             autogenargs="--disable-fribidi --disable-audio --disable-libmount --disable-physics --enable-lua-old --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba">
+             autogenargs="--disable-fribidi --disable-audio --disable-libmount --disable-physics --enable-lua-old --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb">
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="rel/libs/efl/efl-1.16.1.tar.gz" version="1.16.1"
+    <branch module="rel/libs/efl/efl-1.17.0.tar.gz" version="1.17.0"
             repo="download.enlightenment.org"
-            hash="sha256:acdff08f72f62bb838f2412de29d0828f9884c30033a3e873902709c78a06198">
+            hash="sha256:046ff2c5fe769d749278f9d3e5b85e25cb4d1070bd1b8b54ee6831d81739f3c5">
       <patch file="ecore_remove_warnings.patch" strip="1"/>
     </branch>
   </autotools>
@@ -184,9 +184,9 @@
   <autotools id="elementary"
              autogen-sh="configure"
              autogenargs="--disable-emap --disable-eweather --with-elementary-web-backend=none">
-    <branch module="rel/libs/elementary/elementary-1.16.1.tar.gz" version="1.16.1"
+    <branch module="rel/libs/elementary/elementary-1.17.0.tar.gz" version="1.17.0"
             repo="download.enlightenment.org"
-            hash="sha256:0707b14d4330b2305ef28ca4387036013a0047a0471b9f36cbaccc89a19113c6">
+            hash="sha256:0004a3038968073f3e7599294933fab72226162d0436dce35d9ec4d3b0478267">
     </branch>
     <dependencies>
         <dep package="efl"/>
