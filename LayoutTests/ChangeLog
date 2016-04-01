@@ -1,3 +1,13 @@
+2016-04-01  Ada Chan  <adachan@apple.com>
+
+        Add a way to reset the eventTrigger in ControlsTest in LayoutTests/media/controls/controls-test-helpers.js
+        https://bugs.webkit.org/show_bug.cgi?id=154616
+
+        Reviewed by Dean Jackson.
+
+        * media/controls/controls-test-helpers.js:
+        (ControlsTest.prototype.resetEventTrigger):
+
 2016-04-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking three media controls tests as flaky on El Capitan

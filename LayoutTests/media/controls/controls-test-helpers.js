@@ -21,6 +21,19 @@ ControlsTest = class ControlsTest {
         return this;
     }
 
+    resetEventTrigger(eventTrigger)
+    {
+        if (this.eventTrigger && this.media)
+            this.media.removeEventListener(this.eventTrigger, this, false);
+
+        this.eventTrigger = eventTrigger;
+        if (!this.media)
+            return null;
+
+        this.media.addEventListener(this.eventTrigger, this, false);
+        return this;
+    }
+
     get currentState()
     {
         if (!this.media)
