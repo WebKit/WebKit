@@ -1,3 +1,22 @@
+2016-04-01  Daniel Bates  <dabates@apple.com>
+
+        CSP: child-src violations reported as frame-src violation
+        https://bugs.webkit.org/show_bug.cgi?id=156092
+        <rdar://problem/25478509>
+
+        Reviewed by Andy Estes.
+
+        * TestExpectations: Mark the newly added tests as PASS so that we run them.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-blocked-expected.txt: Substitute "child-src" for "frame-src" in the
+        expected console warning.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-redirect-blocked-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-child-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-child-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-default-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-default-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-frame-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-frame-src.html: Added.
+
 2016-04-01  Ada Chan  <adachan@apple.com>
 
         Add a way to reset the eventTrigger in ControlsTest in LayoutTests/media/controls/controls-test-helpers.js

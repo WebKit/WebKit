@@ -405,8 +405,9 @@ bool ContentSecurityPolicy::allowChildFrameFromSource(const URL& url, bool overr
     const ContentSecurityPolicyDirective* violatedDirective = violatedDirectiveInAnyPolicy(&ContentSecurityPolicyDirectiveList::violatedDirectiveForFrame, url);
     if (!violatedDirective)
         return true;
-    String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::frameSrc, *violatedDirective, url, "Refused to load");
-    reportViolation(ContentSecurityPolicyDirectiveNames::frameSrc, *violatedDirective, url, consoleMessage, String(), TextPosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber()));
+    const char* effectiveViolatedDirective = violatedDirective->name() == ContentSecurityPolicyDirectiveNames::frameSrc ? ContentSecurityPolicyDirectiveNames::frameSrc : ContentSecurityPolicyDirectiveNames::childSrc;
+    String consoleMessage = consoleMessageForViolation(effectiveViolatedDirective, *violatedDirective, url, "Refused to load");
+    reportViolation(effectiveViolatedDirective, *violatedDirective, url, consoleMessage, String(), TextPosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber()));
     return violatedDirective->directiveList().isReportOnly();
 }
 
