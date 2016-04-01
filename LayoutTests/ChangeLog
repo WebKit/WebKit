@@ -1,3 +1,15 @@
+2016-04-01  Frederic Wang  <fwang@igalia.com>
+
+        Reset CSS spacing rules on the <math> element.
+        https://bugs.webkit.org/show_bug.cgi?id=155433
+
+        Reviewed by Brent Fulgham.
+
+        We import a test from Mozilla to ensure that CSS spacing rules line-height, word-spacing and letter-spacing are by default reset to normal on the <math> element.
+
+        * mathml/presentation/css-spacing-expected.html: Added.
+        * mathml/presentation/css-spacing.html: Added.
+
 2016-04-01  Daniel Bates  <dabates@apple.com>
 
         CSP: child-src violations reported as frame-src violation

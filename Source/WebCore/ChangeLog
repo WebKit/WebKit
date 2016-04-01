@@ -1,3 +1,18 @@
+2016-04-01  Frederic Wang  <fwang@igalia.com>
+
+        Reset CSS spacing rules on the <math> element.
+        https://bugs.webkit.org/show_bug.cgi?id=155433
+
+        Reviewed by Brent Fulgham.
+
+        Test: mathml/presentation/css-spacing.html
+
+        When the authors has changed some CSS spacing rules on a page, they are currently inherited on MathML too, potentially causing broken math rendering.
+        For example, this caused a bug in Firefox on Wikipedia in the past. Hence we align on Gecko and just reset the CSS spacing rules by default. We also import Mozilla's test.
+
+        * css/mathml.css:
+        (math): Set line-height, word-spacing and letter-spacing to normal.
+
 2016-04-01  Daniel Bates  <dabates@apple.com>
 
         CSP: child-src violations reported as frame-src violation

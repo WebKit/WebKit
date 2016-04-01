@@ -3,6 +3,9 @@
 math {
     -webkit-line-box-contain: glyphs replaced;
     text-indent: 0;
+    line-height: normal;
+    word-spacing: normal;
+    letter-spacing: normal;
     direction: ltr;
 }
 mtext {
