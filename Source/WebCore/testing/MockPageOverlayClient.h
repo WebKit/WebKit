@@ -60,7 +60,7 @@ private:
     bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&) override;
     Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */) override;
 
-    HashSet<MockPageOverlay*> m_overlays;
+    HashSet<RefPtr<MockPageOverlay>> m_overlays;
 };
 
 }

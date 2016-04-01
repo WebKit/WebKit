@@ -61,7 +61,7 @@ Ref<MockPageOverlay> MockPageOverlayClient::installOverlay(MainFrame& mainFrame,
 void MockPageOverlayClient::uninstallAllOverlays()
 {
     while (!m_overlays.isEmpty()) {
-        MockPageOverlay* mockOverlay = m_overlays.takeAny();
+        RefPtr<MockPageOverlay> mockOverlay = m_overlays.takeAny();
         PageOverlayController* overlayController = mockOverlay->overlay()->controller();
         ASSERT(overlayController);
         overlayController->uninstallPageOverlay(mockOverlay->overlay(), PageOverlay::FadeMode::DoNotFade);
@@ -75,6 +75,9 @@ String MockPageOverlayClient::layerTreeAsText(MainFrame& mainFrame)
 
 void MockPageOverlayClient::pageOverlayDestroyed(PageOverlay& overlay)
 {
+    // FIXME: This is dead code, nothing ever calls this function. It's not clear to me what the intention was,
+    // since MockPageOverlayClient has references to MockPageOverlays, not to PageOverlays.
+    // Also, iterating over a set while modifying it is not good.
     for (auto& mockOverlay : m_overlays) {
         if (mockOverlay->overlay() == &overlay) {
             m_overlays.remove(mockOverlay);
