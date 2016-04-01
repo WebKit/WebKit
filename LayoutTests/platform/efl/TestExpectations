@@ -1600,6 +1600,7 @@ webkit.org/b/155875 svg/W3C-SVG-1.1/paths-data-10-t.svg [ Pass ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/paths-data-14-t.svg [ Pass ]
 
 # RTL Scrollbars are only implemented on certain versions of OS X though, EFL port spits pass on layout test.
+fast/scrolling/rtl-scrollbars-animation-property.html
 fast/scrolling/rtl-scrollbars-iframe-offset.html
 fast/scrolling/rtl-scrollbars-iframe-scrolled.html
 fast/scrolling/rtl-scrollbars-overflow-contents.html

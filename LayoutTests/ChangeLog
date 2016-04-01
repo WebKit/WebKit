@@ -1,3 +1,11 @@
+2016-04-01  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed EFL gardening about new RTL scrollbar testcase
+        This testcase has been added in r198859.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/scrolling/rtl-scrollbars-animation-property-expected.txt: Added.
+
 2016-03-31  Antti Koivisto  <antti@apple.com>
 
         Separate render tree updating from style resolve
