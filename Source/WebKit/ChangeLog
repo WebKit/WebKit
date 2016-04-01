@@ -1,3 +1,12 @@
+2016-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Compile DumpRenderTree with CMake on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=156088
+
+        Reviewed by Brent Fulgham.
+
+        * PlatformMac.cmake:
+
 2016-03-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix Ninja build on Mac

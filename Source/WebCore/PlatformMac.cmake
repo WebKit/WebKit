@@ -647,6 +647,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform/graphics/cocoa
     platform/graphics/cg
     platform/graphics/filters
+    platform/graphics/opentype
     platform/graphics/mac
     platform/graphics/transforms
 
@@ -923,3 +924,13 @@ GENERATE_BINDINGS(WebCore_DERIVED_SOURCES
     ${IDL_ATTRIBUTES_FILE}
     ${SUPPLEMENTAL_DEPENDENCY_FILE}
     ${ADDITIONAL_BINDINGS_DEPENDENCIES})
+
+set(WebCoreTestSupport_LIBRARY_TYPE SHARED)
+list(APPEND WebCoreTestSupport_LIBRARIES WebCore)
+list(APPEND WebCoreTestSupport_SOURCES
+    bindings/js/JSMockContentFilterSettingsCustom.cpp
+
+    testing/Internals.mm
+    testing/MockContentFilter.cpp
+    testing/MockContentFilterSettings.cpp
+)

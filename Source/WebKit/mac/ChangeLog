@@ -1,3 +1,13 @@
+2016-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Compile DumpRenderTree with CMake on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=156088
+
+        Reviewed by Brent Fulgham.
+
+        * Misc/WebKit.h:
+        Alphabetize headers.
+
 2016-03-31  Jeremy Jones  <jeremyj@apple.com>
 
         mediaShouldUsePersistentCache() is redundant. Use Page::usesEphemeralSession() instead.

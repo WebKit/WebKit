@@ -75,7 +75,7 @@ static id convertAEDescToObject(NSAppleEventDescriptor *aeDesc)
                 value = [NSString stringWithFormat:@"%016llX", (unsigned long long)d];
             }
             break;
-        case typeAEList:
+        case typeAEList: {
             value = [NSMutableString stringWithString:@"("];
             int numItems = [aeDesc numberOfItems];
             for (int i = 0; i < numItems; ++i) {
@@ -86,6 +86,7 @@ static id convertAEDescToObject(NSAppleEventDescriptor *aeDesc)
             }
             [(NSMutableString*)value appendString:@")"];
             break;
+        }
         case typeType: {
             OSType type = [aeDesc typeCodeValue];
 

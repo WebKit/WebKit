@@ -23,6 +23,10 @@ set(DumpRenderTreeLib_SOURCES
     win/WorkQueueItemWin.cpp
 )
 
+list(APPEND TestNetscapePlugin_LIBRARIES
+    WebKit
+)
+
 set(DumpRenderTree_SOURCES
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
 )

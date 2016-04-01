@@ -1,3 +1,14 @@
+2016-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Compile DumpRenderTree with CMake on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=156088
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * UIProcess/API/Cocoa/WebKitLegacy.h: Added.
+
 2016-03-31  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed EFL build fix caused by r198929.

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #if PLATFORM(MAC)
 
 #include "DumpRenderTreeMac.h"

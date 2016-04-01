@@ -234,8 +234,6 @@ set(WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES
     mac/WebCoreSupport
     mac/WebInspector
     mac/WebView
-    ${WEBCORE_DIR}/bindings/objc
-    ${WEBCORE_DIR}/plugins
 )
 
 set(WebKitLegacy_FORWARDING_HEADERS_FILES
@@ -325,6 +323,7 @@ file(COPY
     mac/Plugins/Hosted/WebKitPluginHostTypes.defs
     mac/Plugins/Hosted/WebKitPluginHostTypes.h
 DESTINATION ${DERIVED_SOURCES_WEBKITLEGACY_DIR})
+
 add_custom_command(
     OUTPUT
         ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentReplyServer.c
@@ -353,6 +352,22 @@ list(APPEND WebKit_SOURCES
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKitLegacy DIRECTORIES ${WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES})
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKit DIRECTORIES ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy)
+
+# FIXME: Forwarding headers should be copies of actual headers.
+file(GLOB ObjCHeaders ${WEBCORE_DIR}/bindings/objc/*.h)
+foreach (_file ${ObjCHeaders})
+    get_filename_component(_name ${_file} NAME)
+    if (NOT EXISTS ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name})
+        file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name} "#import <WebCore/${_name}>")
+    endif ()
+endforeach ()
+file(GLOB ObjCHeaders ${WEBCORE_DIR}/plugins/*.h)
+foreach (_file ${ObjCHeaders})
+    get_filename_component(_name ${_file} NAME)
+    if (NOT EXISTS ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name})
+        file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name} "#import <WebCore/${_name}>")
+    endif ()
+endforeach ()
 
 set(WebKit_OUTPUT_NAME WebKitLegacy)
 

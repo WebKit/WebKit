@@ -20,7 +20,7 @@
         return;
     }
 
-    WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+    WebNavigationType navType = (WebNavigationType)[[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
     if (navType == WebNavigationTypePlugInRequest) {
         [listener use];
         return;
