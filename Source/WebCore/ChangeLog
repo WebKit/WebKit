@@ -1,3 +1,19 @@
+2016-04-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit should dispatchDidFailProvisionalLoad while loading invalid URLs
+        https://bugs.webkit.org/show_bug.cgi?id=155995
+        <rdar://problem/14967004>
+
+        Reviewed by Andy Estes.
+
+        Added API Tests.
+
+        If a loading request contains an invalid URL, DocumentLoader will now dispatch
+        cannotShowURLError to the clients.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+
 2016-04-01  Frederic Wang  <fwang@igalia.com>
 
         Reset CSS spacing rules on the <math> element.

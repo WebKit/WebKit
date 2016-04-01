@@ -30,10 +30,12 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import <WebCore/WebCoreNSURLExtras.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool isDone;
+static int provisionalLoadCount;
 
 @interface LoadAlternateHTMLStringFromProvisionalLoadErrorController : NSObject <WKNavigationDelegate>
 @end
@@ -42,12 +44,18 @@ static bool isDone;
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    [webView _loadAlternateHTMLString:@"error page" baseURL:nil forUnreachableURL:[NSURL URLWithString:@"data:"]];
+    if (error.code != NSURLErrorCancelled)
+        [webView _loadAlternateHTMLString:@"error page" baseURL:nil forUnreachableURL:error.userInfo[@"NSErrorFailingURLKey"]];
 }
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     isDone = true;
+}
+
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
+{
+    provisionalLoadCount++;
 }
 
 @end
@@ -91,6 +99,26 @@ TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadError)
     EXPECT_EQ((NSUInteger)0, list.forwardList.count);
     EXPECT_STREQ([[list.backList.firstObject URL] absoluteString].UTF8String, unloadableURL.UTF8String);
     EXPECT_STREQ([[list.currentItem URL] absoluteString].UTF8String, loadableURL.UTF8String);
+}
+
+TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadErrorBackToBack)
+{
+    @autoreleasepool {
+        RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+        RetainPtr<LoadAlternateHTMLStringFromProvisionalLoadErrorController> delegate = adoptNS([[LoadAlternateHTMLStringFromProvisionalLoadErrorController alloc] init]);
+        [webView setNavigationDelegate:delegate.get()];
+
+        char literal[] = "https://www.example.com<>/";
+        NSURL* targetURL = WebCore::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
+        [webView loadRequest:[NSURLRequest requestWithURL:targetURL]];
+        [webView loadRequest:[NSURLRequest requestWithURL:targetURL]];
+
+        isDone = false;
+        TestWebKitAPI::Util::run(&isDone);
+        // In success, we should only start 3 provisional loads: 2 for the loadRequest, and *only 1* for the _loadAlternateHTMLString.
+        EXPECT_EQ(3, provisionalLoadCount);
+    }
 }
 
 #endif

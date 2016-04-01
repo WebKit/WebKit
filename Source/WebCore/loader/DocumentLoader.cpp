@@ -1511,6 +1511,11 @@ void DocumentLoader::startLoadingMainResource()
 #endif
 
     if (!m_mainResource) {
+        if (!m_request.url().isValid()) {
+            cancelMainResourceLoad(frameLoader()->client().cannotShowURLError(m_request));
+            return;
+        }
+
         setRequest(ResourceRequest());
         // If the load was aborted by clearing m_request, it's possible the ApplicationCacheHost
         // is now in a state where starting an empty load will be inconsistent. Replace it with

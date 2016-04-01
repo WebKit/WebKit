@@ -2206,6 +2206,10 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 
     switch (m_state) {
         case FrameStateProvisional: {
+            // FIXME: Prohibiting any provisional load failures from being sent to clients
+            // while handling provisional load failures is too heavy. For example, the current
+            // load will fail to cancel another ongoing load. That might prevent clients' page
+            // load state being handled properly.
             if (!m_provisionalLoadErrorBeingHandledURL.isEmpty())
                 return;
 

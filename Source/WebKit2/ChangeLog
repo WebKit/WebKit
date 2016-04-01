@@ -1,3 +1,19 @@
+2016-04-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit should dispatchDidFailProvisionalLoad while loading invalid URLs
+        https://bugs.webkit.org/show_bug.cgi?id=155995
+        <rdar://problem/14967004>
+
+        Reviewed by Andy Estes.
+
+        Ensure that alternative HTML string will not be loaded back to back for
+        failing provisional loads.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+
 2016-04-01  Brent Fulgham  <bfulgham@apple.com>
 
         Confirm <a download> satisfies specification criteria
