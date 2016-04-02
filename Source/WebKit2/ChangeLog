@@ -1,3 +1,15 @@
+2016-04-02  Daniel Bates  <dabates@apple.com>
+
+        Another attempt to fix the Apple Internal Yosemite and El Capitan builds following
+        <http://trac.webkit.org/changeset/198933> (https://bugs.webkit.org/show_bug.cgi?id=155455)
+
+        Similar to the sandbox policy for WebProcess and NetworkProcess, grant a Database process
+        access to the passed user's cache directory and passed user's temporary directory so that
+        the Security framework can verify the code signature of the app that launched it when the
+        Database process is itself code signed.
+
+        * DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in:
+
 2016-04-01  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Apple Internal Yosemite and El Capitan builds following

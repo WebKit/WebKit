@@ -37,6 +37,13 @@
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
+;; For code signing verification
+(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
+    (allow file* (subpath (param "DARWIN_USER_CACHE_DIR"))))
+
+(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
+    (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
+
 ;; Read-only preferences and data
 (allow file-read*
     ;; Basic system paths
