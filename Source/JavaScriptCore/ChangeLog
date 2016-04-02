@@ -1,5 +1,27 @@
 2016-04-02  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Initialize SSA's live values at tail lazily
+        https://bugs.webkit.org/show_bug.cgi?id=156126
+
+        Reviewed by Mark Lam.
+
+        Setting up the clean state early looks harmless but it is
+        actually quite expensive.
+
+        The problem is AbstractValue is gigantic, you really want
+        to minimize how much you touch that memory.
+
+        By removing the initialization, most blocks only
+        get 2 or 3 accesses. Once to setup the value, and a few
+        queries for merging the current block with the successors.
+
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+        (JSC::DFG::setLiveValues): Deleted.
+        (JSC::DFG::InPlaceAbstractState::initialize): Deleted.
+
+2016-04-02  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Add an option to avoid disassembling baseline code for the JSC Profiler
         https://bugs.webkit.org/show_bug.cgi?id=156127
 
