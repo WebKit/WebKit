@@ -1,3 +1,17 @@
+2016-04-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add an option to avoid disassembling baseline code for the JSC Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=156127
+
+        Reviewed by Mark Lam.
+
+        The profiler run out of memory on big programs if you dump
+        the baseline disassembly.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * runtime/Options.h:
+
 2016-04-02  Dan Bernstein  <mitz@apple.com>
 
         jsc binary embedded in relocatable JavaScriptCore.framework links against system JavaScriptCore.framework

@@ -515,7 +515,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     if (m_vm->typeProfiler())
         m_vm->typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for JIT compilation."));
     
-    if (Options::dumpDisassembly() || m_vm->m_perBytecodeProfiler)
+    if (Options::dumpDisassembly() || (m_vm->m_perBytecodeProfiler && Options::disassembleBaselineForProfiler()))
         m_disassembler = std::make_unique<JITDisassembler>(m_codeBlock);
     if (m_vm->m_perBytecodeProfiler) {
         m_compilation = adoptRef(
@@ -716,7 +716,8 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         patchBuffer.didAlreadyDisassemble();
     }
     if (m_compilation) {
-        m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
+        if (Options::disassembleBaselineForProfiler())
+            m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
         m_vm->m_perBytecodeProfiler->addCompilation(m_compilation);
     }
 

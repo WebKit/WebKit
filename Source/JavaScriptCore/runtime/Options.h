@@ -208,6 +208,7 @@ typedef const char* optionString;
     v(int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), nullptr) \
     \
     v(bool, useProfiler, false, nullptr) \
+    v(bool, disassembleBaselineForProfiler, true, nullptr) \
     \
     v(bool, useArchitectureSpecificOptimizations, true, nullptr) \
     \
