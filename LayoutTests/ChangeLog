@@ -1,3 +1,14 @@
+2016-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Backdrop Filter should repaint when changed via script
+        https://bugs.webkit.org/show_bug.cgi?id=149319
+        rdar://problem/22749892
+
+        Reviewed by Tim Horton.
+
+        * css3/filters/backdrop/dynamic-backdrop-filter-change-expected.html: Added.
+        * css3/filters/backdrop/dynamic-backdrop-filter-change.html: Added.
+
 2016-03-31  Zalan Bujtas  <zalan@apple.com>
 
         putImageData leaves visible artifacts on retina display

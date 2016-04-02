@@ -789,6 +789,13 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, unsigned&
         // Don't return; keep looking for another change.
     }
 
+#if ENABLE(FILTERS_LEVEL_2)
+    if (rareNonInheritedData->m_backdropFilter != other.rareNonInheritedData->m_backdropFilter) {
+        changedContextSensitiveProperties |= ContextSensitivePropertyFilter;
+        // Don't return; keep looking for another change.
+    }
+#endif
+
     if (rareNonInheritedData->m_mask != other.rareNonInheritedData->m_mask
         || rareNonInheritedData->m_maskBoxImage != other.rareNonInheritedData->m_maskBoxImage)
         return true;

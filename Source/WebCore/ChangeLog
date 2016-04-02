@@ -1,3 +1,20 @@
+2016-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Backdrop Filter should repaint when changed via script
+        https://bugs.webkit.org/show_bug.cgi?id=149319
+        rdar://problem/22749892
+
+        Reviewed by Tim Horton.
+
+        When backdrop filters change, we need to trigger a recomposite, just as we do
+        for filters. It's ok to re-use ContextSensitivePropertyFilter because
+        adjustStyleDifference() does the right thing.
+
+        Test: css3/filters/backdrop/dynamic-backdrop-filter-change.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayerRepaint):
+
 2016-03-31  Zalan Bujtas  <zalan@apple.com>
 
         putImageData leaves visible artifacts on retina display

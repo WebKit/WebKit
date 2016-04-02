@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .background {
+            height: 100px;
+            width: 100px;
+            padding: 50px;
+            background-image: repeating-linear-gradient(black 0px, black 25px, white 25px, white 50px);
+            border: 1px solid black;
+        }
+        
+        #box {
+            height: 100px;
+            width: 100px;
+            -webkit-backdrop-filter: blur(0px);
+        }
+        
+        #box.changed {
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.notifyDone();
+
+        window.addEventListener('load', function() {
+            window.setTimeout(function() {
+                document.getElementById('box').classList.add('changed');
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+<div class="background">
+    <div id="box">
+    </div>
+</div>
+</body>
+</html>
