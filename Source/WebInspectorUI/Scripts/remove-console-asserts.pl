@@ -36,8 +36,6 @@ sub removeConsoleAssertsInFile($$)
     my $inputScriptFilename = shift;
     my $outputScriptFilename = shift;
 
-    print "STRIPPING: $inputScriptFilename\n";
-
     open IN, $inputScriptFilename or die "Couldn't open $inputScriptFilename: $!";
     my ($out, $tempFilename) = tempfile(UNLINK => 0) or die;
 
