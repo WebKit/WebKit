@@ -208,13 +208,11 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
         exit(EX_NOPERM);
     }
 
+    if (willUseUserDirectorySuffixInitializationParameter)
+        return;
     error = noErr;
     String clientCodeSigningIdentifier = codeSigningIdentifierForProcess(xpc_connection_get_pid(parameters.connectionIdentifier.xpcConnection.get()), error);
     bool isClientCodeSigned = !clientCodeSigningIdentifier.isNull();
-    if (isClientCodeSigned && willUseUserDirectorySuffixInitializationParameter) {
-        WTFLogAlways("%s: Only unsigned clients can specify parameter user-directory-suffix\n", getprogname());
-        exit(EX_NOPERM);
-    }
     if (isClientCodeSigned && clientCodeSigningIdentifier != parameters.clientIdentifier) {
         WTFLogAlways("%s: Code signing identifier of client differs from passed client identifier: %ld\n", getprogname(), static_cast<long>(error));
         exit(EX_NOPERM);

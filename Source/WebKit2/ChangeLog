@@ -1,3 +1,17 @@
+2016-04-01  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Apple Internal Yosemite and El Capitan builds following
+        <http://trac.webkit.org/changeset/198933> (https://bugs.webkit.org/show_bug.cgi?id=155455)
+        <rdar://problem/25502181>
+
+        Only check the code signature of the client app if the "user-directory-suffix" sandbox
+        initialization parameter will not be used. This parameter is only used/passed as an
+        initialization parameter if the client app is not sandboxed, which seems sufficient
+        criterion to determine whether it is safe to honor it.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+
 2016-04-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebKit should dispatchDidFailProvisionalLoad while loading invalid URLs
