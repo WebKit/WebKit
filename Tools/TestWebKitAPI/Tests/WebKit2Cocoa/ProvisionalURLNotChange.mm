@@ -34,22 +34,27 @@
 
 static bool isDone;
 
-@interface ProvisionalURLChangeController : NSObject <WKNavigationDelegate>
+@interface ProvisionalURLNotChangeController : NSObject <WKNavigationDelegate>
 @end
 
-@implementation ProvisionalURLChangeController
+@implementation ProvisionalURLNotChangeController
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     isDone = true;
 }
 
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    isDone = true;
+}
+
 @end
 
-TEST(WKWebView, ProvisionalURLChange)
+TEST(WKWebView, ProvisionalURLNotChange)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
-    auto controller = adoptNS([[ProvisionalURLChangeController alloc] init]);
+    auto controller = adoptNS([[ProvisionalURLNotChangeController alloc] init]);
     [webView setNavigationDelegate:controller.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,start"]]];
@@ -60,7 +65,7 @@ TEST(WKWebView, ProvisionalURLChange)
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-    EXPECT_STREQ([webView URL].absoluteString.UTF8String, "about:blank");
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, "data:text/html,start");
 }
 
 #endif

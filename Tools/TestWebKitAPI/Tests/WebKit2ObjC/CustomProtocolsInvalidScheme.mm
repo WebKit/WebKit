@@ -36,6 +36,18 @@
 
 static bool testFinished = false;
 
+@interface LoadInvalidSchemeDelegate : NSObject <WKBrowsingContextLoadDelegate>
+@end
+
+@implementation LoadInvalidSchemeDelegate
+
+- (void)browsingContextController:(WKBrowsingContextController *)sender didFailProvisionalLoadWithError:(NSError *)error
+{
+    testFinished = true;
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 TEST(WebKit2CustomProtocolsTest, RegisterNilScheme)
@@ -50,9 +62,7 @@ TEST(WebKit2CustomProtocolsTest, LoadInvalidScheme)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("CustomProtocolInvalidSchemeTest"));
     PlatformWebView webView(context.get());
 
-    webView.platformView().browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        testFinished = true;
-    }];
+    webView.platformView().browsingContextController.loadDelegate = [[LoadInvalidSchemeDelegate alloc] init];
     [webView.platformView().browsingContextController loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ht'tp://www.webkit.org"]]];
     
     Util::run(&testFinished);
