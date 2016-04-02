@@ -242,6 +242,9 @@ if ($shouldCombineMain) {
     # Copy the Protocol/Legacy and Workers directories.
     ditto(File::Spec->catfile($uiRoot, 'Protocol', 'Legacy'), File::Spec->catfile($protocolDir, 'Legacy'));
     ditto(File::Spec->catfile($uiRoot, 'Workers'), $workersDir);
+
+    # Remove console.assert calls from the Worker js files.
+    system(File::Spec->catfile($scriptsRoot, 'remove-console-asserts.pl'), '--input-directory', $workersDir);
 } else {
     # Keep the files separate for engineering builds.
     ditto($uiRoot, $targetResourcePath);
