@@ -32,9 +32,8 @@ class BidiRunList {
     WTF_MAKE_NONCOPYABLE(BidiRunList);
 public:
     BidiRunList()
-        : m_firstRun(0)
-        , m_lastRun(0)
-        , m_logicallyLastRun(0)
+        : m_lastRun(nullptr)
+        , m_logicallyLastRun(nullptr)
         , m_runCount(0)
     {
     }
@@ -42,18 +41,18 @@ public:
     // FIXME: Once BidiResolver no longer owns the BidiRunList,
     // then ~BidiRunList should call deleteRuns() automatically.
 
-    Run* firstRun() const { return m_firstRun; }
+    Run* firstRun() const { return m_firstRun.get(); }
     Run* lastRun() const { return m_lastRun; }
     Run* logicallyLastRun() const { return m_logicallyLastRun; }
     unsigned runCount() const { return m_runCount; }
 
-    void addRun(Run*);
-    void prependRun(Run*);
+    void appendRun(std::unique_ptr<Run>&&);
+    void prependRun(std::unique_ptr<Run>&&);
 
     void moveRunToEnd(Run*);
     void moveRunToBeginning(Run*);
 
-    void deleteRuns();
+    void clear();
     void reverseRuns(unsigned start, unsigned end);
     void reorderRunsFromLevels();
 
@@ -62,35 +61,38 @@ public:
     void replaceRunWithRuns(Run* toReplace, BidiRunList<Run>& newRuns);
 
 private:
-    void clearWithoutDestroyingRuns();
 
-    Run* m_firstRun;
+    // The runs form a singly-linked-list, where the links (Run::m_next) imply ownership (and are of type std::unique_ptr).
+    // The raw pointers below point into the singly-linked-list.
+    std::unique_ptr<Run> m_firstRun; // The head of the list
     Run* m_lastRun;
     Run* m_logicallyLastRun;
     unsigned m_runCount;
 };
 
 template <class Run>
-inline void BidiRunList<Run>::addRun(Run* run)
+inline void BidiRunList<Run>::appendRun(std::unique_ptr<Run>&& run)
 {
-    if (!m_firstRun)
-        m_firstRun = run;
-    else
-        m_lastRun->m_next = run;
-    m_lastRun = run;
+    if (!m_firstRun) {
+        m_firstRun = WTFMove(run);
+        m_lastRun = m_firstRun.get();
+    } else {
+        m_lastRun->setNext(WTFMove(run));
+        m_lastRun = m_lastRun->next();
+    }
     m_runCount++;
 }
 
 template <class Run>
-inline void BidiRunList<Run>::prependRun(Run* run)
+inline void BidiRunList<Run>::prependRun(std::unique_ptr<Run>&& run)
 {
-    ASSERT(!run->m_next);
+    ASSERT(!run->next());
 
     if (!m_lastRun)
-        m_lastRun = run;
+        m_lastRun = run.get();
     else
-        run->m_next = m_firstRun;
-    m_firstRun = run;
+        run->setNext(WTFMove(m_firstRun));
+    m_firstRun = WTFMove(run);
     m_runCount++;
 }
 
@@ -99,23 +101,25 @@ inline void BidiRunList<Run>::moveRunToEnd(Run* run)
 {
     ASSERT(m_firstRun);
     ASSERT(m_lastRun);
-    ASSERT(run->m_next);
+    ASSERT(run->next());
 
-    Run* current = 0;
-    Run* next = m_firstRun;
-    while (next != run) {
-        current = next;
-        next = current->next();
+    Run* previous = nullptr;
+    Run* current = m_firstRun.get();
+    while (current != run) {
+        previous = current;
+        current = previous->next();
     }
 
-    if (!current)
-        m_firstRun = run->next();
-    else
-        current->m_next = run->m_next;
-
-    run->m_next = 0;
-    m_lastRun->m_next = run;
-    m_lastRun = run;
+    if (!previous) {
+        ASSERT(m_firstRun.get() == run);
+        std::unique_ptr<Run> originalFirstRun = WTFMove(m_firstRun);
+        m_firstRun = originalFirstRun->takeNext();
+        m_lastRun->setNext(WTFMove(originalFirstRun));
+    } else {
+        std::unique_ptr<Run> target = previous->takeNext();
+        previous->setNext(current->takeNext());
+        m_lastRun->setNext(WTFMove(target));
+    }
 }
 
 template <class Run>
@@ -123,21 +127,22 @@ inline void BidiRunList<Run>::moveRunToBeginning(Run* run)
 {
     ASSERT(m_firstRun);
     ASSERT(m_lastRun);
-    ASSERT(run != m_firstRun);
+    ASSERT(run != m_firstRun.get());
 
-    Run* current = m_firstRun;
-    Run* next = current->next();
-    while (next != run) {
-        current = next;
-        next = current->next();
+    Run* previous = m_firstRun.get();
+    Run* current = previous->next();
+    while (current != run) {
+        previous = current;
+        current = previous->next();
     }
 
-    current->m_next = run->m_next;
+    std::unique_ptr<Run> target = previous->takeNext();
+    previous->setNext(run->takeNext());
     if (run == m_lastRun)
-        m_lastRun = current;
+        m_lastRun = previous;
 
-    run->m_next = m_firstRun;
-    m_firstRun = run;
+    target->setNext(WTFMove(m_firstRun));
+    m_firstRun = WTFMove(target);
 }
 
 template <class Run>
@@ -147,53 +152,39 @@ void BidiRunList<Run>::replaceRunWithRuns(Run* toReplace, BidiRunList<Run>& newR
     ASSERT(m_firstRun);
     ASSERT(toReplace);
 
-    if (m_firstRun == toReplace)
-        m_firstRun = newRuns.firstRun();
-    else {
-        // Find the run just before "toReplace" in the list of runs.
-        Run* previousRun = m_firstRun;
-        while (previousRun->next() != toReplace)
-            previousRun = previousRun->next();
-        ASSERT(previousRun);
-        previousRun->setNext(newRuns.firstRun());
-    }
+    m_runCount += newRuns.runCount() - 1; // We are adding the new runs and removing toReplace.
 
-    newRuns.lastRun()->setNext(toReplace->next());
-
-    // Fix up any of other pointers which may now be stale.
+    // Fix up any pointers which may end up stale.
     if (m_lastRun == toReplace)
         m_lastRun = newRuns.lastRun();
     if (m_logicallyLastRun == toReplace)
         m_logicallyLastRun = newRuns.logicallyLastRun();
-    m_runCount += newRuns.runCount() - 1; // We added the new runs and removed toReplace.
 
-    delete toReplace;
-    newRuns.clearWithoutDestroyingRuns();
-}
+    if (m_firstRun.get() == toReplace) {
+        newRuns.m_lastRun->setNext(m_firstRun->takeNext());
+        m_firstRun = WTFMove(newRuns.m_firstRun);
+    } else {
+        // Find the run just before "toReplace" in the list of runs.
+        Run* previousRun = m_firstRun.get();
+        while (previousRun->next() != toReplace)
+            previousRun = previousRun->next();
+        ASSERT(previousRun);
 
-template <class Run>
-void BidiRunList<Run>::clearWithoutDestroyingRuns()
-{
-    m_firstRun = 0;
-    m_lastRun = 0;
-    m_logicallyLastRun = 0;
-    m_runCount = 0;
-}
-
-template <class Run>
-void BidiRunList<Run>::deleteRuns()
-{
-    if (!m_firstRun)
-        return;
-
-    Run* curr = m_firstRun;
-    while (curr) {
-        Run* s = curr->next();
-        delete curr;
-        curr = s;
+        std::unique_ptr<Run> target = previousRun->takeNext();
+        previousRun->setNext(WTFMove(newRuns.m_firstRun));
+        newRuns.m_lastRun->setNext(target->takeNext());
     }
 
-    clearWithoutDestroyingRuns();
+    newRuns.clear();
+}
+
+template <class Run>
+void BidiRunList<Run>::clear()
+{
+    m_firstRun = nullptr;
+    m_lastRun = nullptr;
+    m_logicallyLastRun = nullptr;
+    m_runCount = 0;
 }
 
 template <class Run>
@@ -206,44 +197,35 @@ void BidiRunList<Run>::reverseRuns(unsigned start, unsigned end)
 
     // Get the item before the start of the runs to reverse and put it in
     // |beforeStart|. |curr| should point to the first run to reverse.
-    Run* curr = m_firstRun;
-    Run* beforeStart = 0;
+    Run* curr = m_firstRun.get();
+    Run* beforeStart = nullptr;
     unsigned i = 0;
-    while (i < start) {
-        i++;
+    for (; i < start; ++i) {
         beforeStart = curr;
         curr = curr->next();
     }
-
     Run* startRun = curr;
-    while (i < end) {
-        i++;
+
+    for (; i < end; ++i)
         curr = curr->next();
-    }
-    Run* endRun = curr;
-    Run* afterEnd = curr->next();
 
-    i = start;
-    curr = startRun;
-    Run* newNext = afterEnd;
-    while (i <= end) {
-        // Do the reversal.
-        Run* next = curr->next();
-        curr->m_next = newNext;
-        newNext = curr;
-        curr = next;
-        i++;
-    }
-
-    // Now hook up beforeStart and afterEnd to the startRun and endRun.
-    if (beforeStart)
-        beforeStart->m_next = endRun;
-    else
-        m_firstRun = endRun;
-
-    startRun->m_next = afterEnd;
-    if (!afterEnd)
+    if (!curr->next())
         m_lastRun = startRun;
+
+    // Standard "sliding window" of 3 pointers
+    std::unique_ptr<Run> previous = curr->takeNext();
+    std::unique_ptr<Run> current = beforeStart ? beforeStart->takeNext() : WTFMove(m_firstRun);
+    while (current) {
+        std::unique_ptr<Run> next = current->takeNext();
+        current->setNext(WTFMove(previous));
+        previous = WTFMove(current);
+        current = WTFMove(next);
+    }
+
+    if (beforeStart)
+        beforeStart->setNext(WTFMove(previous));
+    else
+        m_firstRun = WTFMove(previous);
 }
 
 } // namespace WebCore

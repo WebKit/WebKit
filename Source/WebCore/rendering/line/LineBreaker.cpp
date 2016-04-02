@@ -62,7 +62,7 @@ void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& 
         if (object.isOutOfFlowPositioned()) {
             setStaticPositions(m_block, downcast<RenderBox>(object), width.shouldIndentText());
             if (object.style().isOriginalDisplayInlineType()) {
-                resolver.runs().addRun(new BidiRun(0, 1, object, resolver.context(), resolver.dir()));
+                resolver.runs().appendRun(std::make_unique<BidiRun>(0, 1, object, resolver.context(), resolver.dir()));
                 lineInfo.incrementRunsFromLeadingWhitespace();
             }
         } else if (object.isFloating())

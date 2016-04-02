@@ -37,7 +37,8 @@ struct BidiRun : BidiCharacterRun {
     BidiRun(int start, int stop, RenderObject&, BidiContext*, UCharDirection);
     ~BidiRun();
 
-    BidiRun* next() { return static_cast<BidiRun*>(m_next); }
+    BidiRun* next() { return static_cast<BidiRun*>(BidiCharacterRun::next()); }
+    std::unique_ptr<BidiRun> takeNext();
     RenderObject& renderer() { return m_renderer; }
     InlineBox* box() { return m_box; }
     void setBox(InlineBox& box) { m_box = &box; }

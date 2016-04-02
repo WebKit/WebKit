@@ -697,7 +697,7 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
         bidiRun = bidiRun->next();
     }
 
-    bidiRuns.deleteRuns();
+    bidiRuns.clear();
 }
 
 void GraphicsContext::drawImage(Image& image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)

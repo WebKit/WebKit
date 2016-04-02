@@ -1,3 +1,50 @@
+2016-04-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate BidiRunList and BidiRun to automatic memory management
+        https://bugs.webkit.org/show_bug.cgi?id=156123
+
+        Reviewed by Simon Fraser.
+
+        BidiRunList, BidiRun, and BidiCharacterRun have all been doing manual
+        "new"s and "delete"s for years. This patch migrates those classes to
+        using std::unique_ptr.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawBidiText):
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiCharacterRun::BidiCharacterRun):
+        (WebCore::BidiCharacterRun::next):
+        (WebCore::BidiCharacterRun::takeNext):
+        (WebCore::BidiCharacterRun::setNext):
+        (WebCore::Subclass>::appendRunInternal):
+        * platform/text/BidiRunList.h:
+        (WebCore::BidiRunList::BidiRunList):
+        (WebCore::BidiRunList::firstRun):
+        (WebCore::BidiRunList<Run>::appendRun):
+        (WebCore::BidiRunList<Run>::prependRun):
+        (WebCore::BidiRunList<Run>::moveRunToEnd):
+        (WebCore::BidiRunList<Run>::moveRunToBeginning):
+        (WebCore::BidiRunList<Run>::replaceRunWithRuns):
+        (WebCore::BidiRunList<Run>::clear):
+        (WebCore::BidiRunList<Run>::reverseRuns):
+        (WebCore::BidiRunList<Run>::clearWithoutDestroyingRuns): Deleted.
+        (WebCore::BidiRunList<Run>::deleteRuns): Deleted.
+        * rendering/BidiRun.cpp:
+        (WebCore::BidiRun::takeNext):
+        * rendering/BidiRun.h:
+        (WebCore::BidiRun::next):
+        (WebCore::BidiRun::takeNext):
+        * rendering/InlineIterator.h:
+        (WebCore::addPlaceholderRunForIsolatedInline):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::createRun):
+        (WebCore::RenderBlockFlow::handleTrailingSpaces):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+
 2016-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Backdrop Filter should repaint when changed via script

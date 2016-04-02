@@ -155,10 +155,9 @@ struct BidiCharacterRun {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     BidiCharacterRun(int start, int stop, BidiContext* context, UCharDirection direction)
-        : m_override(context->override())
-        , m_next(0)
-        , m_start(start)
+        : m_start(start)
         , m_stop(stop)
+        , m_override(context->override())
     {
         if (direction == U_OTHER_NEUTRAL)
             direction = context->dir();
@@ -183,16 +182,19 @@ public:
     bool reversed(bool visuallyOrdered) { return m_level % 2 && !visuallyOrdered; }
     bool dirOverride(bool visuallyOrdered) { return m_override || visuallyOrdered; }
 
-    BidiCharacterRun* next() const { return m_next; }
-    void setNext(BidiCharacterRun* next) { m_next = next; }
+    BidiCharacterRun* next() const { return m_next.get(); }
+    std::unique_ptr<BidiCharacterRun> takeNext() { return WTFMove(m_next); }
+    void setNext(std::unique_ptr<BidiCharacterRun>&& next) { m_next = WTFMove(next); }
 
-    // Do not add anything apart from bitfields until after m_next. See https://bugs.webkit.org/show_bug.cgi?id=100173
-    bool m_override : 1;
-    bool m_hasHyphen : 1; // Used by BidiRun subclass which is a layering violation but enables us to save 8 bytes per object on 64-bit.
-    unsigned char m_level;
-    BidiCharacterRun* m_next;
+private:
+    std::unique_ptr<BidiCharacterRun> m_next;
+
+public:
     int m_start;
     int m_stop;
+    unsigned char m_level;
+    bool m_override : 1;
+    bool m_hasHyphen : 1; // Used by BidiRun subclass which is a layering violation but enables us to save 8 bytes per object on 64-bit.
 };
 
 enum VisualDirectionOverride {
@@ -341,7 +343,7 @@ void BidiResolverBase<Iterator, Run, Subclass>::appendRunInternal()
         }
 
         if (endOffset >= startOffset)
-            m_runs.addRun(new Run(startOffset, endOffset + 1, context(), m_direction));
+            m_runs.appendRun(std::make_unique<Run>(startOffset, endOffset + 1, context(), m_direction));
 
         m_eor.increment();
         m_sor = m_eor;

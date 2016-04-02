@@ -53,4 +53,12 @@ BidiRun::~BidiRun()
 #endif
 }
 
+std::unique_ptr<BidiRun> BidiRun::takeNext()
+{
+    std::unique_ptr<BidiCharacterRun> next = BidiCharacterRun::takeNext();
+    BidiCharacterRun* raw = next.release();
+    std::unique_ptr<BidiRun> result = std::unique_ptr<BidiRun>(static_cast<BidiRun*>(raw));
+    return result;
+}
+
 }
