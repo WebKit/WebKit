@@ -1,3 +1,31 @@
+2016-04-02  Sam Weinig  <sam@webkit.org>
+
+        Cleanup DataDetection.mm a little bit
+        https://bugs.webkit.org/show_bug.cgi?id=156128
+
+        Reviewed by Dan Bernstein.
+
+        * html/HTMLAttributeNames.in:
+        Add x-apple-data-detectors, x-apple-data-detectors-type, x-apple-data-detectors-result
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::requiresExtendedContext):
+        (WebCore::DataDetection::dataDetectorIdentifier):
+        (WebCore::DataDetection::shouldCancelDefaultAction):
+        (WebCore::removeResultLinksFromAnchor):
+        (WebCore::searchForLinkRemovingExistingDDLinks):
+        Use new generated qualified name attributes, switch to using fastGetAttribute and 
+        equalIgnoringASCIICase, and fix the position of some *s.
+
+        (WebCore::dataDetectorStringForPath):
+        Fix some *s and switch to using StringBuilder.
+
+        (WebCore::buildQuery):
+        Fix some *s.
+
+        (WebCore::DataDetection::detectContentInRange):
+        Use new generated qualified name attributes.
+
 2016-04-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate BidiRunList and BidiRun to automatic memory management

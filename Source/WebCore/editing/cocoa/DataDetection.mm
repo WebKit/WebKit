@@ -28,10 +28,10 @@
 
 #import "Attr.h"
 #import "CSSStyleDeclaration.h"
-#import "DataDetectorsCoreSoftLink.h"
 #import "DataDetectorsSPI.h"
 #import "FrameView.h"
 #import "HTMLAnchorElement.h"
+#import "HTMLNames.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
 #import "Node.h"
@@ -44,17 +44,19 @@
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
 #import "htmlediting.h"
+#import <wtf/text/StringBuilder.h>
+
+#import "DataDetectorsCoreSoftLink.h"
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/DataDetectorsAdditions.h>
 #endif
 
-const char* dataDetectorsURLScheme = "x-apple-data-detectors";
-const char* dataDetectorsAttributeTypeKey = "x-apple-data-detectors-type";
-const char* dataDetectorsAttributeResultKey = "x-apple-data-detectors-result";
 const char* dataDetectorsLinkStyle = "-webkit-text-decoration-color:rgb(199, 199, 204); color:initial;";
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 #if PLATFORM(MAC)
 
@@ -160,12 +162,12 @@ bool DataDetection::isDataDetectorLink(Element& element)
 
 bool DataDetection::requiresExtendedContext(Element& element)
 {
-    return equalIgnoringASCIICase(element.fastGetAttribute(QualifiedName(nullAtom, dataDetectorsAttributeTypeKey, nullAtom)), "calendar-event");
+    return equalIgnoringASCIICase(element.fastGetAttribute(x_apple_data_detectors_typeAttr), "calendar-event");
 }
 
 String DataDetection::dataDetectorIdentifier(Element& element)
 {
-    return element.fastGetAttribute(QualifiedName(nullAtom, dataDetectorsAttributeResultKey, nullAtom));
+    return element.fastGetAttribute(x_apple_data_detectors_resultAttr);
 }
 
 bool DataDetection::shouldCancelDefaultAction(Element& element)
@@ -176,7 +178,7 @@ bool DataDetection::shouldCancelDefaultAction(Element& element)
     if (softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForURL(downcast<HTMLAnchorElement>(element).href()))
         return true;
     
-    const AtomicString& resultAttribute = element.fastGetAttribute(QualifiedName(nullAtom, dataDetectorsAttributeResultKey, nullAtom));
+    const AtomicString& resultAttribute = element.fastGetAttribute(x_apple_data_detectors_resultAttr);
     if (resultAttribute.isEmpty())
         return false;
     NSArray *results = element.document().frame()->dataDetectionResults();
@@ -238,12 +240,12 @@ static void removeResultLinksFromAnchor(Node* node, Node* nodeParent)
     if (!node)
         return;
     
-    BOOL nodeIsDDAnchor = is<HTMLAnchorElement>(*node) && downcast<Element>(*node).getAttribute(dataDetectorsURLScheme) == "true";
+    BOOL nodeIsDDAnchor = is<HTMLAnchorElement>(*node) && equalIgnoringASCIICase(downcast<Element>(*node).fastGetAttribute(x_apple_data_detectorsAttr), "true");
     
     RefPtr<NodeList> children = node->childNodes();
     unsigned childCount = children->length();
     for (size_t i = 0; i < childCount; i++) {
-        Node *child = children->item(i);
+        Node* child = children->item(i);
         if (is<Element>(*child))
             removeResultLinksFromAnchor(child, node);
     }
@@ -255,32 +257,32 @@ static void removeResultLinksFromAnchor(Node* node, Node* nodeParent)
         // Iterate over the children and move them all onto the same level as this anchor.
         // Remove the anchor afterwards.
         for (size_t i = 0; i < childCount; i++) {
-            Node *child = children->item(0);
+            Node* child = children->item(0);
             nodeParent->insertBefore(child, node, ASSERT_NO_EXCEPTION);
         }
         nodeParent->removeChild(node, ASSERT_NO_EXCEPTION);
     }
 }
 
-static bool searchForLinkRemovingExistingDDLinks(Node* startNode, Node* endNode, bool &didModifyDOM)
+static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode, bool& didModifyDOM)
 {
     didModifyDOM = false;
-    Node *node = startNode;
+    Node* node = &startNode;
     while (node) {
         if (is<HTMLAnchorElement>(*node)) {
-            if (downcast<Element>(*node).getAttribute(dataDetectorsURLScheme) != "true")
+            if (!equalIgnoringASCIICase(downcast<Element>(*node).fastGetAttribute(x_apple_data_detectorsAttr), "true"))
                 return true;
             removeResultLinksFromAnchor(node, node->parentElement());
             didModifyDOM = true;
         }
         
-        if (node == endNode) {
+        if (node == &endNode) {
             // If we found the end node and no link, return false unless an ancestor node is a link.
             // The only ancestors not tested at this point are in the direct line from self's parent to the top.
-            node = startNode->parentNode();
+            node = startNode.parentNode();
             while (node) {
                 if (is<HTMLAnchorElement>(*node)) {
-                    if (downcast<Element>(*node).getAttribute(dataDetectorsURLScheme) != "true")
+                    if (!equalIgnoringASCIICase(downcast<Element>(*node).fastGetAttribute(x_apple_data_detectorsAttr), "true"))
                         return true;
                     removeResultLinksFromAnchor(node, node->parentElement());
                     didModifyDOM = true;
@@ -294,8 +296,8 @@ static bool searchForLinkRemovingExistingDDLinks(Node* startNode, Node* endNode,
         if (childNodes->length())
             node = childNodes->item(0);
         else {
-            Node *newNode = node->nextSibling();
-            Node *parentNode = node;
+            Node* newNode = node->nextSibling();
+            Node* parentNode = node;
             while (!newNode) {
                 parentNode = parentNode->parentNode();
                 if (!parentNode)
@@ -326,30 +328,32 @@ static NSString *dataDetectorTypeForCategory(DDResultCategory category)
     }
 }
 
-static String dataDetectorStringForPath(NSIndexPath* path)
+static String dataDetectorStringForPath(NSIndexPath *path)
 {
     NSUInteger length = path.length;
     
     switch (length) {
     case 0:
-        return String();
-        
+        return { };
     case 1:
-        return String::format("%lu", (unsigned long)[path indexAtPosition:0]);
-        
-    case 2:
-        return String::format("%lu/%lu", (unsigned long)[path indexAtPosition:0], (unsigned long)[path indexAtPosition:1]);
-        
-    default:
-        {
-            String componentsString = String::format("%lu", (unsigned long)[path indexAtPosition:0]);
-            for (NSUInteger i = 1 ; i < length ; i++) {
-                componentsString.append("/");
-                componentsString.append(String::format("%lu", (unsigned long)[path indexAtPosition:i]));
-            }
-
-            return componentsString;
+        return String::number((unsigned long)[path indexAtPosition:0]);
+    case 2: {
+        StringBuilder stringBuilder;
+        stringBuilder.appendNumber((unsigned long)[path indexAtPosition:0]);
+        stringBuilder.append('/');
+        stringBuilder.appendNumber((unsigned long)[path indexAtPosition:1]);
+        return stringBuilder.toString();
+    }
+    default: {
+        StringBuilder stringBuilder;
+        stringBuilder.appendNumber((unsigned long)[path indexAtPosition:0]);
+        for (NSUInteger i = 1 ; i < length ; i++) {
+            stringBuilder.append('/');
+            stringBuilder.appendNumber((unsigned long)[path indexAtPosition:i]);
         }
+
+        return stringBuilder.toString();
+    }
     }
 }
 
@@ -380,7 +384,7 @@ static void buildQuery(DDScanQueryRef scanQuery, Range* contextRange)
             continue;
         }
         // Test for white space nodes, we're coalescing them.
-        const UniChar *currentCharPtr = iterator.text().upconvertedCharacters();
+        const UniChar* currentCharPtr = iterator.text().upconvertedCharacters();
         
         bool containsOnlyWhiteSpace = true;
         bool hasTab = false;
@@ -535,7 +539,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
     Text* lastTextNodeToUpdate = nullptr;
     String lastNodeContent;
     size_t contentOffset = 0;
-    DDQueryOffset lastModifiedQueryOffset = {-1, 0};
+    DDQueryOffset lastModifiedQueryOffset = { -1, 0 };
     
     // For each result add the link.
     // Since there could be multiple results in the same text node, the node is only modified when
@@ -564,7 +568,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         for (auto& range : resultRanges)
             rangeBoundaries.append(std::make_pair(range->startPosition(), range->endPosition()));
 
-        if (!correspondingURL || searchForLinkRemovingExistingDDLinks(&resultRanges.first()->startContainer(), &resultRanges.last()->endContainer(), didModifyDOM))
+        if (!correspondingURL || searchForLinkRemovingExistingDDLinks(resultRanges.first()->startContainer(), resultRanges.last()->endContainer(), didModifyDOM))
             continue;
         
         if (didModifyDOM) {
@@ -617,9 +621,9 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
             anchorElement->Node::appendChild(newNode, ASSERT_NO_EXCEPTION);
             parentNode->insertBefore(anchorElement, &currentTextNode, ASSERT_NO_EXCEPTION);
             // Add a special attribute to mark this URLification as the result of data detectors.
-            anchorElement->setAttribute(QualifiedName(nullAtom, dataDetectorsURLScheme, nullAtom), "true");
-            anchorElement->setAttribute(QualifiedName(nullAtom, dataDetectorsAttributeTypeKey, nullAtom), dataDetectorTypeForCategory(softLink_DataDetectorsCore_DDResultGetCategory(coreResult)));
-            anchorElement->setAttribute(QualifiedName(nullAtom, dataDetectorsAttributeResultKey, nullAtom), identifier);
+            anchorElement->setAttribute(x_apple_data_detectorsAttr, "true");
+            anchorElement->setAttribute(x_apple_data_detectors_typeAttr, dataDetectorTypeForCategory(softLink_DataDetectorsCore_DDResultGetCategory(coreResult)));
+            anchorElement->setAttribute(x_apple_data_detectors_resultAttr, identifier);
             contentOffset = range->endOffset();
             
             lastNodeContent = currentTextNode.substringData(range->endOffset(), currentTextNode.length() - range->endOffset(), ASSERT_NO_EXCEPTION);
