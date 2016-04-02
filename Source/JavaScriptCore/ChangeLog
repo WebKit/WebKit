@@ -1,3 +1,16 @@
+2016-04-02  Dan Bernstein  <mitz@apple.com>
+
+        jsc binary embedded in relocatable JavaScriptCore.framework links against system JavaScriptCore.framework
+        https://bugs.webkit.org/show_bug.cgi?id=156134
+        <rdar://problem/25443824>
+
+        Reviewed by Mark Lam.
+
+        * Configurations/JSC.xcconfig: Define WK_RELOCATABLE_FRAMEWORKS_LDFLAGS when building
+          relocatable frameworks to include a -dyld_env option setting DYLD_FRAMEWORK_PATH to point
+          to the directory containing JavaScript.framework, and add
+          WK_RELOCATABLE_FRAMEWORKS_LDFLAGS to OTHER_LDFLAGS.
+
 2016-04-01  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC][x86] Add the 3 operands form of floating point substraction
