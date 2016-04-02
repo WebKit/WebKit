@@ -23,11 +23,15 @@
     </style>
     <script>
         if (window.testRunner)
-            testRunner.notifyDone();
+            testRunner.waitUntilDone();
 
         window.addEventListener('load', function() {
             window.setTimeout(function() {
                 document.getElementById('box').classList.add('changed');
+                window.setTimeout(function() {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 0);
             }, 0);
         }, false);
     </script>
