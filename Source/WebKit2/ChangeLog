@@ -1,5 +1,19 @@
 2016-04-02  Daniel Bates  <dabates@apple.com>
 
+        REGRESSION (r198933): Web Inspector and inspected page hang in local builds
+        https://bugs.webkit.org/show_bug.cgi?id=156138
+        <rdar://problem/25507724>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Similar to the sandbox policy for WebProcess and NetworkProcess, grant a Database process
+        read-only filesystem access and mach lookup capability to various Security framework files
+        and SecurityServer, respectively.
+
+        * DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in:
+
+2016-04-02  Daniel Bates  <dabates@apple.com>
+
         Another attempt to fix the Apple Internal Yosemite and El Capitan builds following
         <http://trac.webkit.org/changeset/198933> (https://bugs.webkit.org/show_bug.cgi?id=155455)
 
