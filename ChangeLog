@@ -1,3 +1,9 @@
+2016-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Bump GTK+ versions numbers.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-03-31  Daniel Bates  <dabates@apple.com>
 
         tool tip/alt. text appears when mouse is no longer hovering over link
