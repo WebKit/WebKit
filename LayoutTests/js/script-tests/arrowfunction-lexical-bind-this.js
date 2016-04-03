@@ -98,4 +98,17 @@ var fooObject = new foo();
 shouldBe("fooObject.arr()", 'internal_value_1');
 shouldBe("fooObject._id", 'internal_value_2');
 
+function boo() {
+    let arr = () => {
+        with ({'this': 40}) {
+            return this;
+        }
+    }
+    return arr();
+}
+
+let o1 = {'this': 20};
+
+shouldBe('boo.call(o1)', 'o1');
+
 var successfullyParsed = true;
