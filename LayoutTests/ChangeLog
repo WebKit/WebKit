@@ -1,3 +1,14 @@
+2016-04-03  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r198859): fast/scrolling/rtl-scrollbars-animation-property.html fails on non-Mac platforms
+        <http://webkit.org/b/155962>
+
+        Unreviewed; land platform-specific test results.
+
+        * platform/gtk/fast/scrolling/rtl-scrollbars-animation-property-expected.txt: Added.
+        * platform/ios-simulator/fast/scrolling/rtl-scrollbars-animation-property-expected.txt: Added.
+        * platform/win/fast/scrolling/rtl-scrollbars-animation-property-expected.txt: Added.
+
 2016-04-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add truncate operation (rounding to zero)
