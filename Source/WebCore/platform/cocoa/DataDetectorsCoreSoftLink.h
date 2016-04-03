@@ -48,10 +48,12 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDResultHasProperties,
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDResultGetSubResults, CFArrayRef, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDResultGetQueryRangeForURLification, DDQueryRange, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDURLStringForResult, NSString *, (DDResultRef currentResult, NSString * resultIdentifier, DDURLifierPhoneNumberDetectionTypes includingTelGroups, NSDate * referenceDate, NSTimeZone * referenceTimeZone), (currentResult, resultIdentifier, includingTelGroups, referenceDate, referenceTimeZone))
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDURLTapAndHoldSchemes, NSArray *, (), ())
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDShouldImmediatelyShowActionSheetForURL, BOOL, (NSURL *url), (url))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDShouldImmediatelyShowActionSheetForResult, BOOL, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDShouldUseLightLinksForResult, BOOL, (DDResultRef result, BOOL extractedFromSignature), (result, extractedFromSignature))
+#endif
 SOFT_LINK_POINTER_FOR_HEADER(WebCore, DataDetectorsCore, DDBinderHttpURLKey, CFStringRef)
 SOFT_LINK_POINTER_FOR_HEADER(WebCore, DataDetectorsCore, DDBinderWebURLKey, CFStringRef)
 SOFT_LINK_POINTER_FOR_HEADER(WebCore, DataDetectorsCore, DDBinderMailURLKey, CFStringRef)

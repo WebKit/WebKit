@@ -1,3 +1,32 @@
+2016-04-03  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r198653, r198864): http/tests/contentdispositionattachmentsandbox/referer-header-stripped*.html tests crashing due to unavailable SPI
+        <http://webkit.org/b/156145>
+
+        Reviewed by Tim Horton.
+
+        Covered by existing tests under GuardMalloc:
+
+            http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html
+            http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default.html
+            http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-never.html
+            http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer-when-downgrade.html
+            http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer.html
+            http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-origin.html
+            http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-unsafe-url.html
+            http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::isDataDetectorLink):
+        (WebCore::DataDetection::shouldCancelDefaultAction):
+        - Restore iOS 9.x code.
+        (WebCore::DataDetection::detectContentInRange):
+        - Guard new SPI with version macros.
+
+        * platform/cocoa/DataDetectorsCoreSoftLink.h:
+        * platform/cocoa/DataDetectorsCoreSoftLink.mm:
+        - Guard new SPI with version macros.
+
 2016-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Replace all RenderTheme::popupInternalPadding methods with a single one returning a LengthBox

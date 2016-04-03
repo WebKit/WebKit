@@ -156,8 +156,15 @@ bool DataDetection::isDataDetectorLink(Element& element)
 {
     if (!is<HTMLAnchorElement>(element))
         return false;
-    
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     return [softLink_DataDetectorsCore_DDURLTapAndHoldSchemes() containsObject:(NSString *)downcast<HTMLAnchorElement>(element).href().protocol().convertToASCIILowercase()];
+#else
+    if (equalIgnoringASCIICase(element.fastGetAttribute(x_apple_data_detectorsAttr), "true"))
+        return true;
+    URL url = downcast<HTMLAnchorElement>(element).href();
+    return url.protocolIs("mailto") || url.protocolIs("tel");
+#endif
 }
 
 bool DataDetection::requiresExtendedContext(Element& element)
@@ -172,6 +179,7 @@ String DataDetection::dataDetectorIdentifier(Element& element)
 
 bool DataDetection::shouldCancelDefaultAction(Element& element)
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     if (!isDataDetectorLink(element))
         return false;
     
@@ -193,6 +201,16 @@ bool DataDetection::shouldCancelDefaultAction(Element& element)
         result = (DDResultRef)[results objectAtIndex:resultIndices[i].toInt()];
     }
     return softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForResult(result);
+#else
+    if (!is<HTMLAnchorElement>(element))
+        return false;
+    if (!equalIgnoringASCIICase(element.fastGetAttribute(x_apple_data_detectorsAttr), "true"))
+        return false;
+    String type = element.getAttribute(x_apple_data_detectors_typeAttr).convertToASCIILowercase();
+    if (type == "misc" || type == "calendar-event" || type == "telephone")
+        return true;
+    return false;
+#endif
 }
 
 static BOOL resultIsURL(DDResultRef result)
@@ -580,7 +598,11 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         }
         
         lastModifiedQueryOffset = queryRange.end;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
         BOOL shouldUseLightLinks = softLink_DataDetectorsCore_DDShouldUseLightLinksForResult(coreResult, [indexPaths[resultIndex] length] > 1);
+#else
+        BOOL shouldUseLightLinks = NO;
+#endif
 
         for (auto& range : resultRanges) {
             Node* parentNode = range->startContainer().parentNode();
