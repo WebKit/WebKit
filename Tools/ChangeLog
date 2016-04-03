@@ -1,3 +1,12 @@
+2016-04-03  Dan Bernstein  <mitz@apple.com>
+
+        Made bisect-builds work again.
+
+        Rubber-stamped by Sam Weinig.
+
+        * Scripts/bisect-builds:
+        Changed to use HTTPS to access nightly.webkit.org, and added a minimum revision for OS X 10.11.
+
 2016-04-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Build fix for r198956.

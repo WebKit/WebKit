@@ -132,7 +132,7 @@ $safariPath = glob($safariPath) if $safariPath =~ /^~/;
 $safariPath = safariPathFromSafariBundle($safariPath) if $safariPath =~ m#\.app/*#;
 $applicationPath = $applicationPath ? File::Spec->rel2abs($applicationPath) : $safariPath;
 
-my $nightlyWebSite = "http://nightly.webkit.org";
+my $nightlyWebSite = "https://nightly.webkit.org";
 my $nightlyBuildsURLBase = $nightlyWebSite . File::Spec->catdir("/builds", $branch, "mac");
 my $nightlyFilesURLBase = $nightlyWebSite . File::Spec->catdir("/files", $branch, "mac");
 
@@ -354,7 +354,9 @@ sub makeNightlyList($$$$)
     my $osxVersion = eval("v$osxVersionString");
     my $safariVersion = eval("v$safariVersionString");
 
-    if ($osxVersion ge v10.10 && $osxVersion lt v10.11) {
+    if ($osxVersion ge v10.11 && $osxVersion lt v10.12) {
+        @files = grep { $_->{rev} >= 186671 } @files;
+    } elsif ($osxVersion ge v10.10 && $osxVersion lt v10.11) {
         @files = grep { $_->{rev} >= 174650 } @files;
     } elsif ($osxVersion ge v10.9 && $osxVersion lt v10.10) {
         @files = grep { $_->{rev} >= 157846 } @files;
