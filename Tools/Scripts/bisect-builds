@@ -355,7 +355,7 @@ sub makeNightlyList($$$$)
     my $safariVersion = eval("v$safariVersionString");
 
     if ($osxVersion ge v10.11 && $osxVersion lt v10.12) {
-        @files = grep { $_->{rev} >= 186671 } @files;
+        @files = grep { $_->{rev} >= 189183 } @files;
     } elsif ($osxVersion ge v10.10 && $osxVersion lt v10.11) {
         @files = grep { $_->{rev} >= 174650 } @files;
     } elsif ($osxVersion ge v10.9 && $osxVersion lt v10.10) {
