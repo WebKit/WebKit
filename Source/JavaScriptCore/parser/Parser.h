@@ -40,7 +40,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
-#include <wtf/SmallPtrSet.h>
 
 namespace JSC {
 
@@ -51,8 +50,6 @@ class Identifier;
 class VM;
 class ProgramNode;
 class SourceCode;
-
-typedef SmallPtrSet<UniquedStringImpl*> UniquedStringImplPtrSet;
 
 // Macros to make the more common TreeBuilder types a little less verbose
 #define TreeStatement typename TreeBuilder::Statement
@@ -369,7 +366,7 @@ public:
         return result;
     }
 
-    DeclarationResultMask declareFunction(const Identifier* ident, bool declareAsVar)
+    DeclarationResultMask declareFunction(const Identifier* ident, bool declareAsVar, bool isSloppyModeHoistingCandidate)
     {
         ASSERT(m_allowsVarDeclarations || m_allowsLexicalDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
@@ -378,7 +375,8 @@ public:
             result |= DeclarationResult::InvalidStrictMode;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         auto addResult = declareAsVar ? m_declaredVariables.add(ident->impl()) : m_lexicalVariables.add(ident->impl());
-        addResult.iterator->value.setIsFunction();
+        if (isSloppyModeHoistingCandidate)
+            addResult.iterator->value.setIsSloppyModeHoistingCandidate();
         if (declareAsVar) {
             addResult.iterator->value.setIsVar();
             if (m_lexicalVariables.contains(ident->impl()))
@@ -386,10 +384,21 @@ public:
         } else {
             addResult.iterator->value.setIsLet();
             ASSERT_WITH_MESSAGE(!m_declaredVariables.size(), "We should only declare a function as a lexically scoped variable in scopes where var declarations aren't allowed. I.e, in strict mode and not at the top-level scope of a function or program.");
-            if (!addResult.isNewEntry) 
-                result |= DeclarationResult::InvalidDuplicateDeclaration;
+            if (!addResult.isNewEntry) {
+                if (!isSloppyModeHoistingCandidate || !addResult.iterator->value.isFunction())
+                    result |= DeclarationResult::InvalidDuplicateDeclaration;
+            }
         }
+
+        addResult.iterator->value.setIsFunction();
+
         return result;
+    }
+
+    void addSloppyModeHoistableFunctionCandidate(const Identifier* ident)
+    {
+        ASSERT(m_allowsVarDeclarations);
+        m_sloppyModeHoistableFunctionCandidates.add(ident->impl());
     }
 
     void appendFunction(FunctionMetadataNode* node)
@@ -478,6 +487,7 @@ public:
         bool isArgumentsIdent = isArguments(m_vm, ident);
         auto addResult = m_declaredVariables.add(ident->impl());
         addResult.iterator->value.clearIsVar();
+        addResult.iterator->value.setIsParameter();
         bool isValidStrictMode = addResult.isNewEntry && m_vm->propertyNames->eval != *ident && !isArgumentsIdent;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         m_declaredParameters.add(ident->impl());
@@ -603,6 +613,25 @@ public:
         m_innerArrowFunctionFeatures = m_innerArrowFunctionFeatures | arrowFunctionCodeFeatures;
     }
     
+    void getSloppyModeHoistedFunctions(UniquedStringImplPtrSet& sloppyModeHoistedFunctions)
+    {
+        for (UniquedStringImpl* function : m_sloppyModeHoistableFunctionCandidates) {
+            // ES6 Annex B.3.3. The only time we can't hoist a function is if a syntax error would
+            // be caused by declaring a var with that function's name or if we have a parameter with
+            // that function's name. Note that we would only cause a syntax error if we had a let/const/class
+            // variable with the same name.
+            if (!m_lexicalVariables.contains(function)) {
+                auto iter = m_declaredVariables.find(function);
+                bool isParameter = iter != m_declaredVariables.end() && iter->value.isParameter();
+                if (!isParameter) {
+                    auto addResult = m_declaredVariables.add(function);
+                    addResult.iterator->value.setIsVar();
+                    sloppyModeHoistedFunctions.add(function);
+                }
+            }
+        }
+    }
+
     void getCapturedVars(IdentifierSet& capturedVariables, bool& modifiedParameter, bool& modifiedArguments)
     {
         if (m_needsFullActivation || m_usesEval) {
@@ -742,6 +771,7 @@ private:
     VariableEnvironment m_declaredVariables;
     VariableEnvironment m_lexicalVariables;
     Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
+    UniquedStringImplPtrSet m_sloppyModeHoistableFunctionCandidates;
     IdentifierSet m_closedVariableCandidates;
     UniquedStringImplPtrSet m_writtenVariables;
     RefPtr<ModuleScopeData> m_moduleScopeData;
@@ -768,6 +798,17 @@ struct ScopeRef {
     {
         ASSERT(hasContainingScope());
         return ScopeRef(m_scopeStack, m_index - 1);
+    }
+
+    bool operator==(const ScopeRef& other)
+    {
+        ASSERT(other.m_scopeStack == m_scopeStack);
+        return m_index == other.m_index;
+    }
+
+    bool operator!=(const ScopeRef& other)
+    {
+        return !(*this == other);
     }
 
 private:
@@ -1076,18 +1117,40 @@ private:
 
     std::pair<DeclarationResultMask, ScopeRef> declareFunction(const Identifier* ident)
     {
-        if (m_statementDepth == 1 || !strictMode()) {
+        if (m_statementDepth == 1 || (!strictMode() && !currentScope()->isFunction())) {
             // Functions declared at the top-most scope (both in sloppy and strict mode) are declared as vars
             // for backwards compatibility. This allows us to declare functions with the same name more than once.
             // In sloppy mode, we always declare functions as vars.
             bool declareAsVar = true;
+            bool isSloppyModeHoistingCandidate = false;
             ScopeRef variableScope = currentVariableScope();
-            return std::make_pair(variableScope->declareFunction(ident, declareAsVar), variableScope);
+            return std::make_pair(variableScope->declareFunction(ident, declareAsVar, isSloppyModeHoistingCandidate), variableScope);
+        }
+
+        if (!strictMode()) {
+            ASSERT(currentScope()->isFunction());
+
+            // Functions declared inside a function inside a nested block scope in sloppy mode are subject to this
+            // crazy rule defined inside Annex B.3.3 in the ES6 spec. It basically states that we will create
+            // the function as a local block scoped variable, but when we evaluate the block that the function is
+            // contained in, we will assign the function to a "var" variable only if declaring such a "var" wouldn't
+            // be a syntax error and if there isn't a parameter with the same name. (It would only be a syntax error if
+            // there are is a let/class/const with the same name). Note that this mean we only do the "var" hoisting 
+            // binding if the block evaluates. For example, this means we wont won't perform the binding if it's inside
+            // the untaken branch of an if statement.
+            bool declareAsVar = false;
+            bool isSloppyModeHoistingCandidate = true;
+            ScopeRef lexicalVariableScope = currentLexicalDeclarationScope();
+            ScopeRef varScope = currentVariableScope();
+            varScope->addSloppyModeHoistableFunctionCandidate(ident);
+            ASSERT(varScope != lexicalVariableScope);
+            return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar, isSloppyModeHoistingCandidate), lexicalVariableScope);
         }
 
         bool declareAsVar = false;
+        bool isSloppyModeHoistingCandidate = false;
         ScopeRef lexicalVariableScope = currentLexicalDeclarationScope();
-        return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar), lexicalVariableScope);
+        return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar, isSloppyModeHoistingCandidate), lexicalVariableScope);
     }
 
     NEVER_INLINE bool hasDeclaredVariable(const Identifier& ident)
@@ -1134,7 +1197,7 @@ private:
     Parser();
     String parseInner(const Identifier&, SourceParseMode);
 
-    void didFinishParsing(SourceElements*, DeclarationStacks::FunctionStack&&, VariableEnvironment&, CodeFeatures, int);
+    void didFinishParsing(SourceElements*, DeclarationStacks::FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, CodeFeatures, int);
 
     // Used to determine type of error to report.
     bool isFunctionMetadataNode(ScopeNode*) { return false; }
@@ -1349,7 +1412,7 @@ private:
     template <class TreeBuilder> TreeStatement parseTryStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseDebuggerStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseExpressionStatement(TreeBuilder&);
-    template <class TreeBuilder> TreeStatement parseExpressionOrLabelStatement(TreeBuilder&);
+    template <class TreeBuilder> TreeStatement parseExpressionOrLabelStatement(TreeBuilder&, bool allowFunctionDeclarationAsStatement);
     template <class TreeBuilder> TreeStatement parseIfStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseBlockStatement(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseExpression(TreeBuilder&);
@@ -1544,10 +1607,12 @@ private:
     ThisTDZMode m_thisTDZMode;
     VariableEnvironment m_varDeclarations;
     DeclarationStacks::FunctionStack m_funcDeclarations;
+    UniquedStringImplPtrSet m_sloppyModeHoistedFunctions;
     CodeFeatures m_features;
     int m_numConstants;
     ExpressionErrorClassifier* m_expressionErrorClassifier;
     bool m_isEvalContext;
+    bool m_immediateParentAllowsFunctionDeclarationInStatement;
     
     struct DepthManager {
         DepthManager(int* depth)
@@ -1617,6 +1682,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     m_varDeclarations,
                                     WTFMove(m_funcDeclarations),
                                     currentScope()->finalizeLexicalEnvironment(),
+                                    WTFMove(m_sloppyModeHoistedFunctions),
                                     m_parameters,
                                     *m_source,
                                     m_features,

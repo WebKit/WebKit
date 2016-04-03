@@ -32,7 +32,6 @@
 #include "SourceCode.h"
 #include "SourceCodeKey.h"
 #include "Strong.h"
-#include "VariableEnvironment.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Forward.h>
 #include <wtf/RandomNumber.h>
@@ -57,6 +56,7 @@ class UnlinkedProgramCodeBlock;
 class VM;
 class SourceCode;
 class SourceProvider;
+class VariableEnvironment;
 
 struct SourceCodeValue {
     SourceCodeValue()

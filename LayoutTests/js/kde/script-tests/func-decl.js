@@ -17,17 +17,14 @@ f = "global";
 
 function test() {
   try {
-    shouldBeOfType("Function declaration takes effect at entry", f, "function");
+    shouldBeOfType("Function declaration takes effect at declaration block", f, "undefined");
   }
   catch (e) {
     testFailed("Scoping very broken!");
   }
 
   for (var i = 0; i < 3; ++i) {
-    if (i == 0)
-      shouldBeOfType("Decl not yet overwritten", f, 'function');
-    else
-      shouldBeOfType("Decl already overwritten", f, 'number');
+    shouldBeOfType("Decl already overwritten", f, 'function');
 
     f = 3;
     shouldBeVal("After assign ("+i+")", f, 3);

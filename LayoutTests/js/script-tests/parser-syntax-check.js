@@ -43,6 +43,18 @@ function valid(_a)
     runTest("function f() { " + _a + " }", false);
 }
 
+function onlyValidGlobally(_a)
+{
+    runTest(_a, false);
+    runTest("function f() { " + _a + " }", true);
+}
+
+function onlyInvalidGlobally(_a)
+{
+    runTest(_a, true);
+    runTest("function f() { " + _a + " }", false);
+}
+
 function invalid(_a)
 {
     // Test both the grammar and the syntax checker
@@ -226,7 +238,7 @@ valid  ("do if (a) with (b) continue; else debugger; while (false)");
 invalid("do if (a) while (false) else debugger");
 invalid("while if (a) ;");
 valid  ("if (a) function f() {} else function g() {}");
-valid  ("if (a()) while(0) function f() {} else function g() {}");
+invalid("if (a()) while(0) function f() {} else function g() {}");
 invalid("if (a()) function f() { else function g() }");
 invalid("if (a) if (b) ; else function f {}");
 invalid("if (a) if (b) ; else function (){}");
@@ -428,11 +440,28 @@ invalid("'use strict'; { function f1(a) {}; let f1; }")
 invalid("'use strict'; let f1; function f1(a) {};")
 invalid("'use strict'; function f1(a) {}; let f1; ")
 invalid("let f1; function f1(a) {};")
-invalid("let f1; { function f1(a) {}; }")
-invalid("{ function f1(a) {}; } let f1;")
-valid("{ let f1; function f1(a) {}; }")
-valid("{  function f1(a) {}; let f1; }")
+valid("function foo() { let f1; { function f1(a) {}; } }")
+valid("function foo() { { function f1(a) {}; } let f1; }")
+valid("function foo() { { function foo() { }; function foo() { } } }")
+invalid("function foo() { 'use strict'; { function foo() { }; function foo() { } } }")
+invalid("function foo() { let f1; function f1(a) {}; }")
+invalid("let f1; function f1(a) {};")
+onlyValidGlobally("{ function f1(a) {}; let f1; }")
+onlyValidGlobally("{ function f1(a) {}; const f1 = 25; }")
+onlyValidGlobally("{ function f1(a) {}; class f1{}; }")
+invalid("function foo() { { let bar; function bar() { } } }")
+invalid("function foo() { { function bar() { }; let bar; } }")
+invalid("function foo() { { const bar; function bar() { } } }")
+invalid("function foo() { { function bar() { }; const bar; } }")
+invalid("function foo() { { class bar{}; function bar() { } } }")
+invalid("function foo() { { function bar() { }; class bar{}; } }")
 valid("switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; }")
+onlyValidGlobally("switch('foo') { case 1: let foo; function foo() {}; break; case 2: function foo() {}; break; }")
+onlyValidGlobally("switch('foo') { case 1: function foo() {}; let foo; break; case 2: function foo() {}; break; }")
+onlyValidGlobally("switch('foo') { case 1: function foo() {}; const foo = 25; break; case 2: function foo() {}; break; }")
+onlyValidGlobally("switch('foo') { case 1: function foo() {}; class foo {} ; break; case 2: function foo() {}; break; }")
+onlyValidGlobally("switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; case 3: let foo; }")
+valid("function foo() { switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; case 3: { let foo; } } }")
 invalid("'use strict'; switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; }");
 invalid("'use strict'; switch('foo') { case 1: function foo() {}; break; case 2: let foo; break; }");
 invalid("'use strict'; switch('foo') { case 1: let foo; break; case 2: function foo() {}; break; }");
@@ -440,6 +469,40 @@ valid("'use strict'; switch('foo') { case 1: { let foo; break; } case 2: functio
 valid("'use strict'; switch('foo') { case 1: { function foo() { }; break; } case 2: function foo() {}; break; }");
 invalid("'use strict'; if (true) function foo() { }; ");
 valid("if (true) function foo() { }; ");
+onlyInvalidGlobally(" let foo; if (true) function foo() { };");
+valid("function baz() { let foo; if (true) function foo() { }; }");
+onlyInvalidGlobally("if (true) function foo() { }; let foo;");
+onlyInvalidGlobally("{ if (true) function foo() { }; } let foo;");
+invalid("let foo; while (false) function foo() { }; ");
+invalid("let foo;  { while (false) function foo() { }; } ");
+invalid("while (false) function foo() { }; let foo;");
+invalid("let foo; while (false) label: function foo() { }; ");
+invalid("while (false) label: function foo() { }; let foo;");
+invalid("'use strict'; while (false) function foo() { }; ");
+invalid("'use strict'; if (false) function foo() { }; ");
+invalid("'use strict'; do function foo() { } while (false); ");
+invalid("while (false) function foo() { }; ");
+valid("if (false) function foo() { }; ");
+invalid("do function foo() { } while (false); ");
+invalid("if (cond) label: function foo() { }");
+invalid("while (true) { while (true) function bar() { } }");
+invalid("with ({}) function bar() { }");
+valid("function bar() { label: function baz() { } }");
+valid("function bar() { let: function baz() { } }");
+invalid("function bar() { 'use strict'; let: function baz() { } }");
+valid("function bar() { yield: function baz() { } }");
+valid("function bar() { label: label2: function baz() { } }");
+valid("function bar() { label: label2: label3: function baz() { } }");
+invalid("function bar() { label: label2: label weird: function baz() { } }");
+valid("function bar() { label: label2: label3: function baz() { } }");
+invalid("function bar() { 'use strict'; label: label2: label 3: function baz() { } }");
+invalid("function bar() { if (cond) label: function foo() { } }");
+invalid("function bar() { while (cond) label: function foo() { } }");
+valid("label: function foo() { }");
+valid("let: function foo() { }");
+valid("yield: function foo() { }");
+valid("yield: let: function foo() { }");
+invalid("'use strict'; yield: let: function foo() { }");
 
 valid("var str = \"'use strict'; function f1(a) { function f2(b) { return b; } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
 valid("var str = \"'use strict'; function f1(a) { function f2(b) { function f3(c) { return c; } return f3(b); } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")

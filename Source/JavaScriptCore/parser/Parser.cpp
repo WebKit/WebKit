@@ -203,6 +203,7 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode 
     , m_superBinding(superBinding)
     , m_defaultConstructorKind(defaultConstructorKind)
     , m_thisTDZMode(thisTDZMode)
+    , m_immediateParentAllowsFunctionDeclarationInStatement(false)
 {
     m_lexer = std::make_unique<LexerType>(vm, builtinMode);
     m_lexer->setCode(source, &m_parserArena);
@@ -304,9 +305,11 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
     }
 
     IdentifierSet capturedVariables;
+    UniquedStringImplPtrSet sloppyModeHoistedFunctions;
     bool modifiedParameter = false;
     bool modifiedArguments = false;
-    scope->getCapturedVars(capturedVariables, modifiedParameter, modifiedArguments);
+    scope->getSloppyModeHoistedFunctions(sloppyModeHoistedFunctions);
+    scope->getCapturedVars(capturedVariables,  modifiedParameter, modifiedArguments);
 
     VariableEnvironment& varDeclarations = scope->declaredVariables();
     for (auto& entry : capturedVariables)
@@ -341,19 +344,20 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
         }
     }
 #endif // NDEBUG
-    didFinishParsing(sourceElements, scope->takeFunctionDeclarations(), varDeclarations, features, context.numConstants());
+    didFinishParsing(sourceElements, scope->takeFunctionDeclarations(), varDeclarations, WTFMove(sloppyModeHoistedFunctions), features, context.numConstants());
 
     return parseError;
 }
 
 template <typename LexerType>
 void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, DeclarationStacks::FunctionStack&& funcStack, 
-    VariableEnvironment& varDeclarations, CodeFeatures features, int numConstants)
+    VariableEnvironment& varDeclarations, UniquedStringImplPtrSet&& sloppyModeHoistedFunctions, CodeFeatures features, int numConstants)
 {
     m_sourceElements = sourceElements;
     m_funcDeclarations = WTFMove(funcStack);
     m_varDeclarations.swap(varDeclarations);
     m_features = features;
+    m_sloppyModeHoistedFunctions = WTFMove(sloppyModeHoistedFunctions);
     m_numConstants = numConstants;
 }
 
@@ -562,8 +566,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
         }
         if (shouldParseVariableDeclaration)
             result = parseVariableDeclaration(context, DeclarationType::LetDeclaration);
-        else
-            result = parseExpressionOrLabelStatement(context); // Treat this as an IDENT. This is how ::parseStatement() handles IDENT.
+        else {
+            bool allowFunctionDeclarationAsStatement = true;
+            result = parseExpressionOrLabelStatement(context, allowFunctionDeclarationAsStatement);
+        }
 
         break;
     }
@@ -575,6 +581,16 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
     case FUNCTION:
         result = parseFunctionDeclaration(context);
         break;
+    case IDENT:
+    case YIELD: {
+        // This is a convenient place to notice labeled statements
+        // (even though we also parse them as normal statements)
+        // because we allow the following type of code in sloppy mode:
+        // ``` function foo() { label: function bar() { } } ```
+        bool allowFunctionDeclarationAsStatement = true;
+        result = parseExpressionOrLabelStatement(context, allowFunctionDeclarationAsStatement);
+        break;
+    }
     default:
         m_statementDepth--; // parseStatement() increments the depth.
         result = parseStatement(context, directive, directiveLiteralLength);
@@ -1603,6 +1619,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     failIfStackOverflow();
     TreeStatement result = 0;
     bool shouldSetEndOffset = true;
+    bool parentAllowsFunctionDeclarationAsStatement = m_immediateParentAllowsFunctionDeclarationInStatement;
+    m_immediateParentAllowsFunctionDeclarationInStatement = false;
 
     switch (m_token.m_type) {
     case OPENBRACE:
@@ -1612,12 +1630,46 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     case VAR:
         result = parseVariableDeclaration(context, DeclarationType::VarDeclaration);
         break;
-    case FUNCTION:
-        if (!strictMode())
-            result = parseFunctionDeclaration(context);
-        else
+    case FUNCTION: {
+        if (!strictMode()) {
+            failIfFalse(parentAllowsFunctionDeclarationAsStatement, "Function declarations are only allowed inside block statements or at the top level of a program");
+            if (currentScope()->isFunction()) {
+                // Any function declaration that isn't in a block is a syntax error unless it's
+                // in an if/else statement. If it's in an if/else statement, we will magically
+                // treat it as if the if/else statement is inside a block statement.
+                // to the very top like a "var". For example:
+                // function a() {
+                //     if (cond) function foo() { }
+                // }
+                // will be rewritten as:
+                // function a() {
+                //     if (cond) { function foo() { } }
+                // }
+                AutoPopScopeRef blockScope(this, pushScope());
+                blockScope->setIsLexicalScope();
+                blockScope->preventVarDeclarations();
+                JSTokenLocation location(tokenLocation());
+                int start = tokenLine();
+
+                TreeStatement function = parseFunctionDeclaration(context);
+                propagateError();
+                failIfFalse(function, "Expected valid function statement after 'function' keyword");
+                TreeSourceElements sourceElements = context.createSourceElements();
+                context.appendStatement(sourceElements, function);
+                result = context.createBlockStatement(location, sourceElements, start, m_lastTokenEndPosition.line, currentScope()->finalizeLexicalEnvironment(), currentScope()->takeFunctionDeclarations());
+                popScope(blockScope, TreeBuilder::NeedsFreeVariableInfo);
+            } else {
+                // We only implement annex B.3.3 if we're in function mode. Otherwise, we fall back
+                // to hoisting behavior.
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=155813
+                DepthManager statementDepth(&m_statementDepth);
+                m_statementDepth = 1;
+                result = parseFunctionDeclaration(context);
+            }
+        } else
             failWithMessage("Function declarations are only allowed inside blocks or switch statements in strict mode");
         break;
+    }
     case SEMICOLON: {
         JSTokenLocation location(tokenLocation());
         next();
@@ -1667,9 +1719,11 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         // These tokens imply the end of a set of source elements
         return 0;
     case IDENT:
-    case YIELD:
-        result = parseExpressionOrLabelStatement(context);
+    case YIELD: {
+        bool allowFunctionDeclarationAsStatement = false;
+        result = parseExpressionOrLabelStatement(context, allowFunctionDeclarationAsStatement);
         break;
+    }
     case STRING:
         directive = m_token.m_data.ident;
         if (directiveLiteralLength)
@@ -2372,7 +2426,7 @@ struct LabelInfo {
 };
 
 template <typename LexerType>
-template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrLabelStatement(TreeBuilder& context)
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrLabelStatement(TreeBuilder& context, bool allowFunctionDeclarationAsStatement)
 {
     
     /* Expression and Label statements are ambiguous at LL(1), so we have a
@@ -2423,6 +2477,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
         for (size_t i = 0; i < labels.size(); i++)
             pushLabel(labels[i].m_ident, isLoop);
     }
+    m_immediateParentAllowsFunctionDeclarationInStatement = allowFunctionDeclarationAsStatement;
     TreeStatement statement = parseStatement(context, unused);
     if (!m_syntaxAlreadyValidated) {
         for (size_t i = 0; i < labels.size(); i++)
@@ -2475,6 +2530,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
     handleProductionOrFail(CLOSEPAREN, ")", "end", "'if' condition");
 
     const Identifier* unused = 0;
+    m_immediateParentAllowsFunctionDeclarationInStatement = true;
     TreeStatement trueBlock = parseStatement(context, unused);
     failIfFalse(trueBlock, "Expected a statement as the body of an if block");
 
@@ -2491,6 +2547,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         next();
         if (!match(IF)) {
             const Identifier* unused = 0;
+            m_immediateParentAllowsFunctionDeclarationInStatement = true;
             TreeStatement block = parseStatement(context, unused);
             failIfFalse(block, "Expected a statement as the body of an else block");
             statementStack.append(block);
@@ -2507,6 +2564,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         int innerEnd = tokenLine();
         handleProductionOrFail(CLOSEPAREN, ")", "end", "'if' condition");
         const Identifier* unused = 0;
+        m_immediateParentAllowsFunctionDeclarationInStatement = true;
         TreeStatement innerTrueBlock = parseStatement(context, unused);
         failIfFalse(innerTrueBlock, "Expected a statement as the body of an if block");
         tokenLocationStack.append(tempLocation);

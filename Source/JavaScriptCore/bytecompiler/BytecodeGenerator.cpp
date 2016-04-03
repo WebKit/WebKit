@@ -861,6 +861,8 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
         pushScopedControlFlowContext();
     m_symbolTableStack.append(SymbolTableStackEntry{ Strong<SymbolTable>(*m_vm, functionSymbolTable), m_lexicalEnvironmentRegister, false, symbolTableConstantIndex });
 
+    m_varScopeSymbolTableIndex = m_symbolTableStack.size() - 1;
+
     // This completes step 28 of section 9.2.12.
     for (unsigned i = 0; i < valuesToMoveIntoVars.size(); i++) {
         ASSERT(!isSimpleParameterList);
@@ -1931,6 +1933,18 @@ void BytecodeGenerator::initializeBlockScopedFunctions(VariableEnvironment& envi
         emitNewFunctionExpressionCommon(temp.get(), function);
         bool isLexicallyScoped = true;
         emitPutToScope(scope, variableForLocalEntry(name, entry, symbolTableIndex, isLexicallyScoped), temp.get(), DoNotThrowIfNotFound, Initialization);
+
+        if (iter->value.isSloppyModeHoistingCandidate() && m_scopeNode->hasSloppyModeHoistedFunction(name.impl())) {
+            ASSERT(m_varScopeSymbolTableIndex);
+            ASSERT(*m_varScopeSymbolTableIndex < m_symbolTableStack.size());
+            SymbolTableStackEntry& varScope = m_symbolTableStack[*m_varScopeSymbolTableIndex];
+            SymbolTable* varSymbolTable = varScope.m_symbolTable.get();
+            RELEASE_ASSERT(varSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope);
+            SymbolTableEntry entry = varSymbolTable->get(name.impl());
+            RELEASE_ASSERT(!entry.isNull());
+            bool isLexicallyScoped = false;
+            emitPutToScope(varScope.m_scope, variableForLocalEntry(name, entry, varScope.m_symbolTableConstantIndex, isLexicallyScoped), temp.get(), DoNotThrowIfNotFound, Initialization);
+        }
     }
 }
 

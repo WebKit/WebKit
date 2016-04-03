@@ -28,12 +28,12 @@
 
 #include "GetPutInfo.h"
 #include "JSObject.h"
-#include "VariableEnvironment.h"
 
 namespace JSC {
 
 class ScopeChainIterator;
 class WatchpointSet;
+class VariableEnvironment;
 
 class JSScope : public JSNonFinalObject {
 public:

@@ -881,7 +881,7 @@
 - path: es6/new.target_assignment_is_an_early_error.js
   cmd: runES6 :normal
 - path: es6/non-strict_function_semantics_hoisted_block-level_function_declaration.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Promise_is_subclassable_Promise.all.js
   cmd: runES6 :fail
 - path: es6/Promise_is_subclassable_Promise.race.js

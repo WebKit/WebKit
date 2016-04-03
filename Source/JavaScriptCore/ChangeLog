@@ -1,3 +1,138 @@
+2016-04-03  Saam barati  <sbarati@apple.com>
+
+        Implement Annex B.3.3 function hoisting rules for function code
+        https://bugs.webkit.org/show_bug.cgi?id=155672
+
+        Reviewed by Geoffrey Garen.
+
+        The spec states that functions declared inside a function
+        inside a block scope are subject to the rules of Annex B.3.3:
+        https://tc39.github.io/ecma262/#sec-block-level-function-declarations-web-legacy-compatibility-semantics
+
+        The rule states that functions declared in such blocks should
+        be local bindings of the block. If declaring the function's name
+        as a "var" in the function would not lead to a syntax error (i.e,
+        if we don't have a let/const/class variable with the same name)
+        and if we don't have a parameter with the same name, then we
+        implictly also declare the funcion name as a "var". When evaluating
+        the block statement we bind the hoisted "var" to be the value
+        of the local function binding.
+
+        There is one more thing we do for web compatibility. We allow
+        function declarations inside if/else statements that aren't
+        blocks. For such statements, we transform the code as if the
+        function were declared inside a block statement. For example:
+        ``` function foo() { if (cond) function baz() { } }```
+        is transformed into:
+        ``` function foo() { if (cond) { function baz() { } } }```
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::initializeBlockScopedFunctions):
+        * bytecompiler/BytecodeGenerator.h:
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ModuleProgramNode::ModuleProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionNode::FunctionNode):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::hasCapturedVariables):
+        (JSC::ScopeNode::captures):
+        (JSC::ScopeNode::hasSloppyModeHoistedFunction):
+        (JSC::ScopeNode::varDeclarations):
+        (JSC::ProgramNode::startColumn):
+        (JSC::ProgramNode::endColumn):
+        (JSC::EvalNode::startColumn):
+        (JSC::EvalNode::endColumn):
+        (JSC::ModuleProgramNode::startColumn):
+        (JSC::ModuleProgramNode::endColumn):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::didFinishParsing):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseIfStatement):
+        * parser/Parser.h:
+        (JSC::Scope::declareVariable):
+        (JSC::Scope::declareFunction):
+        (JSC::Scope::addSloppyModeHoistableFunctionCandidate):
+        (JSC::Scope::appendFunction):
+        (JSC::Scope::declareParameter):
+        (JSC::Scope::mergeInnerArrowFunctionFeatures):
+        (JSC::Scope::getSloppyModeHoistedFunctions):
+        (JSC::Scope::getCapturedVars):
+        (JSC::ScopeRef::containingScope):
+        (JSC::ScopeRef::operator==):
+        (JSC::ScopeRef::operator!=):
+        (JSC::Parser::declareFunction):
+        (JSC::Parser::hasDeclaredVariable):
+        (JSC::Parser::isFunctionMetadataNode):
+        (JSC::Parser::DepthManager::DepthManager):
+        (JSC::Parser<LexerType>::parse):
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironmentEntry::isImported):
+        (JSC::VariableEnvironmentEntry::isImportedNamespace):
+        (JSC::VariableEnvironmentEntry::isFunction):
+        (JSC::VariableEnvironmentEntry::isParameter):
+        (JSC::VariableEnvironmentEntry::isSloppyModeHoistingCandidate):
+        (JSC::VariableEnvironmentEntry::setIsCaptured):
+        (JSC::VariableEnvironmentEntry::setIsConst):
+        (JSC::VariableEnvironmentEntry::setIsImported):
+        (JSC::VariableEnvironmentEntry::setIsImportedNamespace):
+        (JSC::VariableEnvironmentEntry::setIsFunction):
+        (JSC::VariableEnvironmentEntry::setIsParameter):
+        (JSC::VariableEnvironmentEntry::setIsSloppyModeHoistingCandidate):
+        (JSC::VariableEnvironmentEntry::clearIsVar):
+        * runtime/CodeCache.h:
+        (JSC::SourceCodeValue::SourceCodeValue):
+        * runtime/JSScope.cpp:
+        * runtime/JSScope.h:
+        * tests/es6.yaml:
+        * tests/stress/sloppy-mode-function-hoisting.js: Added.
+        (assert):
+        (test):
+        (falsey):
+        (truthy):
+        (test.):
+        (test.a):
+        (test.f):
+        (test.let.funcs.f):
+        (test.catch.f):
+        (test.foo):
+        (test.bar):
+        (test.switch.case.0):
+        (test.else.f):
+        (test.b):
+        (test.c):
+        (test.d):
+        (test.e):
+        (test.g):
+        (test.h):
+        (test.i):
+        (test.j):
+        (test.k):
+        (test.l):
+        (test.m):
+        (test.n):
+        (test.o):
+        (test.p):
+        (test.q):
+        (test.r):
+        (test.s):
+        (test.t):
+        (test.u):
+        (test.v):
+        (test.w):
+        (test.x):
+        (test.y):
+        (test.z):
+        (foo):
+        (bar):
+        (falsey.bar):
+        (baz):
+        (falsey.baz):
+
 2016-04-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, turn ES6 for-in loop test success

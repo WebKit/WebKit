@@ -3,8 +3,8 @@ KDE JS Test
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Function declaration takes effect at entry
-PASS Decl not yet overwritten
+PASS Function declaration takes effect at declaration block
+PASS Decl already overwritten
 PASS After assign (0)
 PASS function decls have no execution content
 PASS After assign #2 (0)

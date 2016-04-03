@@ -32,6 +32,7 @@
 #include "JSModuleRecord.h"
 #include "JSWithScope.h"
 #include "JSCInlines.h"
+#include "VariableEnvironment.h"
 
 namespace JSC {
 

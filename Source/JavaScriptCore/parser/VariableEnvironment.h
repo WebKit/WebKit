@@ -41,6 +41,8 @@ public:
     ALWAYS_INLINE bool isImported() const { return m_bits & IsImported; }
     ALWAYS_INLINE bool isImportedNamespace() const { return m_bits & IsImportedNamespace; }
     ALWAYS_INLINE bool isFunction() const { return m_bits & IsFunction; }
+    ALWAYS_INLINE bool isParameter() const { return m_bits & IsParameter; }
+    ALWAYS_INLINE bool isSloppyModeHoistingCandidate() const { return m_bits & IsSloppyModeHoistingCandidate; }
 
     ALWAYS_INLINE void setIsCaptured() { m_bits |= IsCaptured; }
     ALWAYS_INLINE void setIsConst() { m_bits |= IsConst; }
@@ -50,11 +52,13 @@ public:
     ALWAYS_INLINE void setIsImported() { m_bits |= IsImported; }
     ALWAYS_INLINE void setIsImportedNamespace() { m_bits |= IsImportedNamespace; }
     ALWAYS_INLINE void setIsFunction() { m_bits |= IsFunction; }
+    ALWAYS_INLINE void setIsParameter() { m_bits |= IsParameter; }
+    ALWAYS_INLINE void setIsSloppyModeHoistingCandidate() { m_bits |= IsSloppyModeHoistingCandidate; }
 
     ALWAYS_INLINE void clearIsVar() { m_bits &= ~IsVar; }
 
 private:
-    enum Traits : uint8_t {
+    enum Traits : uint16_t {
         IsCaptured = 1 << 0,
         IsConst = 1 << 1,
         IsVar = 1 << 2,
@@ -62,9 +66,11 @@ private:
         IsExported = 1 << 4,
         IsImported = 1 << 5,
         IsImportedNamespace = 1 << 6,
-        IsFunction = 1 << 7
+        IsFunction = 1 << 7,
+        IsParameter = 1 << 8,
+        IsSloppyModeHoistingCandidate = 1 << 9
     };
-    uint8_t m_bits { 0 };
+    uint16_t m_bits { 0 };
 };
 
 struct VariableEnvironmentEntryHashTraits : HashTraits<VariableEnvironmentEntry> {

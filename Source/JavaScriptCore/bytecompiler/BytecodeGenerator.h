@@ -863,6 +863,7 @@ namespace JSC {
         };
         Vector<SymbolTableStackEntry> m_symbolTableStack;
         Vector<std::pair<VariableEnvironment, TDZCheckOptimization>> m_TDZStack;
+        Optional<size_t> m_varScopeSymbolTableIndex;
         void pushTDZVariables(VariableEnvironment, TDZCheckOptimization);
 
         ScopeNode* const m_scopeNode;
