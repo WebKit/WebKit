@@ -1,3 +1,157 @@
+2016-04-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Rebaseline many SVG tests after r197814 and mark new reported failures.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-24-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-light-04-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/render-elems-06-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/render-elems-07-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/render-elems-08-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/text-align-08-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/text-align-08-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/text-fonts-03-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/text-fonts-03-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/text-intro-01-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/text-intro-01-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/text-intro-02-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/text-intro-02-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/text-intro-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/text-intro-03-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/text-intro-04-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/text-intro-04-t-expected.txt: Added.
+        * platform/gtk/svg/batik/text/textEffect-expected.png:
+        * platform/gtk/svg/batik/text/textEffect-expected.txt: Added.
+        * platform/gtk/svg/batik/text/textEffect3-expected.png:
+        * platform/gtk/svg/batik/text/textEffect3-expected.txt: Added.
+        * platform/gtk/svg/batik/text/textPosition2-expected.png:
+        * platform/gtk/svg/batik/text/textPosition2-expected.txt:
+        * platform/gtk/svg/custom/glyph-selection-arabic-forms-expected.png:
+        * platform/gtk/svg/custom/glyph-selection-arabic-forms-expected.txt:
+        * platform/gtk/svg/custom/glyph-selection-non-bmp-expected.png:
+        * platform/gtk/svg/custom/glyph-selection-non-bmp-expected.txt:
+        * platform/gtk/svg/custom/glyph-setting-d-attribute-expected.txt: Added.
+        * platform/gtk/svg/custom/glyph-transformation-with-hkern-expected.png:
+        * platform/gtk/svg/custom/glyph-transformation-with-hkern-expected.txt: Added.
+        * platform/gtk/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/gtk/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/gtk/svg/custom/svg-fonts-in-text-controls-expected.txt: Added.
+        * platform/gtk/svg/custom/svg-fonts-no-latin-glyph-expected.txt: Added.
+        * platform/gtk/svg/custom/svg-fonts-segmented-expected.png:
+        * platform/gtk/svg/custom/svg-fonts-segmented-expected.txt:
+        * platform/gtk/svg/custom/svg-fonts-with-no-element-reference-expected.png:
+        * platform/gtk/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Added.
+        * platform/gtk/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/gtk/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/gtk/svg/custom/svg-fonts-word-spacing-expected.png:
+        * platform/gtk/svg/custom/svg-fonts-word-spacing-expected.txt:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.txt: Added.
+        * platform/gtk/svg/text/text-overflow-ellipsis-svgfont-expected.png:
+        * platform/gtk/svg/text/text-overflow-ellipsis-svgfont-expected.txt:
+        * platform/gtk/svg/text/text-text-05-t-expected.png:
+        * platform/gtk/svg/text/text-text-05-t-expected.txt: Added.
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.txt: Added.
+        * platform/gtk/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/gtk/svg/wicd/test-rightsizing-b-expected.txt:
+
 2016-04-03  Antti Koivisto  <antti@apple.com>
 
         Shadow DOM: Slot style is not computed

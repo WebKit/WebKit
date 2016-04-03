@@ -692,9 +692,31 @@ webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks.html [ Timeout Failure
 webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-has-audio.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/media/hls/hls-accessiblity-describes-video.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/media/hls/video-cookie.html [ Failure ]
+webkit.org/b/154390 http/tests/security/local-video-source-from-remote.html [ Timeout Pass ]
 
 webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
 webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
+
+# Custom Elements API still not enabled/tested on GTK+
+webkit.org/b/156108 fast/custom-elements [ Skip ]
+
+webkit.org/b/137096 svg/W3C-SVG-1.1/text-altglyph-01-b.svg [ Failure ]
+webkit.org/b/137096 svg/custom/altglyph.svg [ Failure ]
+webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
+webkit.org/b/137096 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
+
+webkit.org/b/156148 fast/text/svg-font-face-with-kerning.html [ Failure ]
+webkit.org/b/156148 svg/W3C-SVG-1.1-SE/types-dom-06-f.svg [ Failure ]
+webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-05-t.svg [ Failure ]
+webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]
+webkit.org/b/156148 svg/custom/glyph-selection-lang-attribute.svg [ Failure ]
+webkit.org/b/156148 svg/text/kerning.svg [ Failure ]
+webkit.org/b/156148 svg/text/multichar-glyph.svg [ Failure ]
+webkit.org/b/156148 svg/text/text-hkern.svg [ Failure ]
+webkit.org/b/156148 svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html [ Failure ]
+webkit.org/b/156148 svg/text/text-text-04-t.svg [ Failure ]
+webkit.org/b/156148 svg/text/text-text-06-t.svg [ Failure ]
+webkit.org/b/156148 svg/text/text-vkern.svg [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -1565,6 +1587,9 @@ webkit.org/b/153944 plugins/get-url-notify-with-url-that-fails-to-load.html [ Ti
 webkit.org/b/153946 imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html [ Timeout Pass ]
 
 webkit.org/b/153949 media/media-volume-slider-rendered-normal.html [ Timeout Pass ]
+
+webkit.org/b/156109 http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout ]
+webkit.org/b/156109 http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out

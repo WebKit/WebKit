@@ -1,0 +1,37 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (43,38) size 288x240
+      RenderSVGContainer {g} at (70,92) size 149x132
+        RenderSVGText {text} at (70,92) size 149x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 149x22
+            chunk 1 text run 1 at (70.00,110.00) startOffset 0 endOffset 18 width 149.00: "Text from 0s to 3s"
+        RenderSVGText {text} at (100,167) size 80x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 80x22
+            chunk 1 text run 1 at (100.00,185.00) startOffset 0 endOffset 10 width 80.00: "Text at 6s"
+        RenderSVGText {text} at (100,202) size 80x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 80x22
+            chunk 1 text run 1 at (100.00,220.00) startOffset 0 endOffset 10 width 80.00: "Text at 9s"
+      RenderSVGContainer {g} at (43,38) size 288x240
+        RenderSVGText {text} at (0,-14) size 78x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x17
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 11 width 78.00: "It's alive!"
+        RenderSVGText {text} at (0,-28) size 153x34 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 153x34
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 11 width 153.00: "It's alive!"
+        RenderSVGText {text} at (100,228) size 231x50 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 231x50
+            chunk 1 text run 1 at (100.00,270.00) startOffset 0 endOffset 11 width 231.00: "It's alive!"
+      RenderSVGContainer {g} at (43,38) size 77x55 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,90.00)}]
+        RenderSVGText {text} at (0,-14) size 78x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x17
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 11 width 78.00: "It's alive!"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

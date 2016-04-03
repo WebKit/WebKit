@@ -13,17 +13,17 @@ layer at (0,0) size 800x282
         RenderText {#text} at (0,0) size 506x17
           text run at (0,0) width 506: "Following text should be rendered as usual. Only \"A\" has a glyph in SVG Font."
       RenderBlock {p} at (0,90) size 784x19
-        RenderText {#text} at (0,1) size 35x16
-          text run at (0,1) width 35: "XXA"
+        RenderText {#text} at (0,0) size 35x17
+          text run at (0,0) width 35: "XXA"
       RenderBlock {p} at (0,124) size 784x19
-        RenderText {#text} at (0,1) size 35x16
-          text run at (0,1) width 35: "XAX"
+        RenderText {#text} at (0,0) size 35x17
+          text run at (0,0) width 35: "XAX"
       RenderBlock {p} at (0,158) size 784x19
-        RenderText {#text} at (0,1) size 35x16
-          text run at (0,1) width 35: "AXX"
+        RenderText {#text} at (0,0) size 35x17
+          text run at (0,0) width 35: "AXX"
       RenderBlock {p} at (0,192) size 784x19
-        RenderText {#text} at (0,1) size 33x16
-          text run at (0,1) width 33: "XXX"
+        RenderText {#text} at (0,0) size 33x17
+          text run at (0,0) width 33: "XXX"
       RenderBlock {p} at (0,226) size 784x19
-        RenderText {#text} at (0,1) size 39x16
-          text run at (0,1) width 39: "AAA"
+        RenderText {#text} at (0,0) size 39x17
+          text run at (0,0) width 39: "AAA"
