@@ -187,8 +187,18 @@ JSValue eval(CallFrame* callFrame)
                 ? DerivedContextType::DerivedConstructorContext
                 : DerivedContextType::DerivedMethodContext;
         }
+        
+        EvalContextType evalContextType;
+        
+        if (isFunctionParseMode(callerUnlinkedCodeBlock->parseMode()))
+            evalContextType = EvalContextType::FunctionEvalContext;
+        else if (callerUnlinkedCodeBlock->codeType() == EvalCode)
+            evalContextType = callerUnlinkedCodeBlock->evalContextType();
+        else
+            evalContextType = EvalContextType::None;
 
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, derivedContextType, isArrowFunctionContext, programSource, callerScopeChain);
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, derivedContextType, isArrowFunctionContext, evalContextType, programSource, callerScopeChain);
+
         if (!eval)
             return jsUndefined();
     }

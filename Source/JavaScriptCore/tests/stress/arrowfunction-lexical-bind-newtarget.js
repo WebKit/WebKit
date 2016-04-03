@@ -138,3 +138,57 @@ for (var i = 0; i < 1000; i++) {
     var parentNewTarget = e.getParentNewTarget();
     testCase(parentNewTarget, undefined, "Error: new.target is not lexically binded inside of the arrow function #5");
 }
+
+
+class F {
+  constructor() {
+    let c;
+    eval('c=(()=>new.target===F)()');
+    this.result = c;
+  }
+  getNewTargetFromEval() {
+      return eval('(()=>new.target===F)()');
+  }
+}
+
+var f = new F();
+
+testCase(f.result, true, "Error: new.target is not lexically binded inside of the arrow function #6");
+testCase(f.getNewTargetFromEval(), false, "Error: new.target is not lexically binded inside of the arrow function #7");
+
+class G extends A {
+  constructor() {
+     var arr;
+     super();
+     eval('arr = () => new.target');
+     this.arrow = arr;
+  }
+}
+
+let g = new G();
+
+testCase(g.arrow(), G, "Error: new.target is not lexically binded inside of the arrow function #8");
+
+class H extends A {
+  constructor() {
+     var arr;
+     super();
+     eval('arr = () => eval("(() => new.target)()")');
+     this.arrow = arr;
+  }
+}
+
+let h = new H();
+
+testCase(h.arrow(), H, "Error: new.target is not lexically binded inside of the arrow function #9");
+
+class J extends A {
+    constructor() {
+        super();
+        this.result = eval('eval("(() => new.target)()")');
+    }
+}
+
+let j = new J();
+
+testCase(j.result, J, "Error: new.target is not lexically binded inside of the arrow function #10");

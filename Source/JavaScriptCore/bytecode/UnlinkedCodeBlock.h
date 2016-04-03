@@ -120,6 +120,7 @@ public:
     SourceParseMode parseMode() const { return m_parseMode; }
     bool isArrowFunction() const { return m_parseMode == SourceParseMode::ArrowFunctionMode; }
     DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
+    EvalContextType evalContextType() const { return static_cast<EvalContextType>(m_evalContextType); }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
     bool isClassContext() const { return m_isClassContext; }
 
@@ -397,6 +398,7 @@ private:
     unsigned m_constructorKind : 2;
     unsigned m_superBinding : 1;
     unsigned m_derivedContextType : 2;
+    unsigned m_evalContextType : 2;
     unsigned m_isArrowFunctionContext : 1;
     unsigned m_isClassContext : 1;
     unsigned m_firstLine;
