@@ -1,5 +1,38 @@
 2016-04-03  Antti Koivisto  <antti@apple.com>
 
+        Tighten ComposedTreeAncestorIterator to return Elements
+        https://bugs.webkit.org/show_bug.cgi?id=150324
+
+        Reviewed by Andreas Kling.
+
+        Only other thing it could credibly return was Document. We can exclude it from the composed tree and avoid some casting.
+
+        * dom/ComposedTreeAncestorIterator.h:
+        (WebCore::ComposedTreeAncestorIterator::operator*):
+        (WebCore::ComposedTreeAncestorIterator::operator->):
+        (WebCore::ComposedTreeAncestorIterator::operator==):
+        (WebCore::ComposedTreeAncestorIterator::operator!=):
+        (WebCore::ComposedTreeAncestorIterator::operator++):
+        (WebCore::ComposedTreeAncestorIterator::get):
+        (WebCore::ComposedTreeAncestorIterator::ComposedTreeAncestorIterator):
+        (WebCore::ComposedTreeAncestorIterator::traverseParent):
+        (WebCore::ComposedTreeAncestorAdapter::begin):
+        (WebCore::ComposedTreeAncestorAdapter::end):
+        (WebCore::ComposedTreeAncestorAdapter::first):
+        * dom/Element.cpp:
+        (WebCore::Element::resolveComputedStyle):
+        * dom/Node.cpp:
+        (WebCore::Node::updateAncestorsForStyleRecalc):
+        (WebCore::Node::setNeedsStyleRecalc):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::isChildAllowed):
+        (WebCore::RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded):
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::findRenderingRoot):
+        (WebCore::RenderTreeUpdater::commit):
+
+2016-04-03  Antti Koivisto  <antti@apple.com>
+
         Shadow DOM: Slot style is not computed
         https://bugs.webkit.org/show_bug.cgi?id=156144
 

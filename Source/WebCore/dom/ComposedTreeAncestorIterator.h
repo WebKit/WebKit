@@ -36,48 +36,38 @@ class HTMLSlotElement;
 
 class ComposedTreeAncestorIterator {
 public:
-    ComposedTreeAncestorIterator(ContainerNode& root);
-    ComposedTreeAncestorIterator(ContainerNode& root, Node& current);
+    ComposedTreeAncestorIterator();
+    ComposedTreeAncestorIterator(Node& current);
 
-    ContainerNode& operator*() { return get(); }
-    ContainerNode* operator->() { return &get(); }
+    Element& operator*() { return get(); }
+    Element* operator->() { return &get(); }
 
     bool operator==(const ComposedTreeAncestorIterator& other) const { return m_current == other.m_current; }
     bool operator!=(const ComposedTreeAncestorIterator& other) const { return m_current != other.m_current; }
 
     ComposedTreeAncestorIterator& operator++() { return traverseParent(); }
 
-    ContainerNode& get() { return downcast<ContainerNode>(*m_current); }
+    Element& get() { return downcast<Element>(*m_current); }
     ComposedTreeAncestorIterator& traverseParent();
 
 private:
     void traverseParentInShadowTree();
 
-    ContainerNode& m_root;
     Node* m_current { 0 };
 };
 
-inline ComposedTreeAncestorIterator::ComposedTreeAncestorIterator(ContainerNode& root)
-    : m_root(root)
+inline ComposedTreeAncestorIterator::ComposedTreeAncestorIterator()
 {
-    ASSERT(!is<ShadowRoot>(m_root));
 }
 
-inline ComposedTreeAncestorIterator::ComposedTreeAncestorIterator(ContainerNode& root, Node& current)
-    : m_root(root)
-    , m_current(&current)
+inline ComposedTreeAncestorIterator::ComposedTreeAncestorIterator(Node& current)
+    : m_current(&current)
 {
-    ASSERT(!is<ShadowRoot>(m_root));
     ASSERT(!is<ShadowRoot>(m_current));
 }
 
 inline ComposedTreeAncestorIterator& ComposedTreeAncestorIterator::traverseParent()
 {
-    if (m_current == &m_root) {
-        m_current = nullptr;
-        return *this;
-    }
-
     auto* parent = m_current->parentNode();
     if (!parent) {
         m_current = nullptr;
@@ -87,6 +77,10 @@ inline ComposedTreeAncestorIterator& ComposedTreeAncestorIterator::traverseParen
         m_current = downcast<ShadowRoot>(*parent).host();
         return *this;
     }
+    if (!is<Element>(*parent)) {
+        m_current = nullptr;
+        return *this;
+    };
 
     if (auto* shadowRoot = parent->shadowRoot()) {
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
@@ -113,16 +107,16 @@ public:
     iterator begin()
     {
         if (is<ShadowRoot>(m_node))
-            return iterator(m_node.document(), *downcast<ShadowRoot>(m_node).host());
+            return iterator(*downcast<ShadowRoot>(m_node).host());
         if (is<PseudoElement>(m_node))
-            return iterator(m_node.document(), *downcast<PseudoElement>(m_node).hostElement());
-        return iterator(m_node.document(), m_node).traverseParent();
+            return iterator(*downcast<PseudoElement>(m_node).hostElement());
+        return iterator(m_node).traverseParent();
     }
     iterator end()
     {
-        return iterator(m_node.document());
+        return iterator();
     }
-    ContainerNode* first()
+    Element* first()
     {
         auto it = begin();
         if (it == end())

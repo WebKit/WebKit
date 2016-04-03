@@ -746,7 +746,7 @@ inline void Node::updateAncestorsForStyleRecalc()
     if (it != end) {
         it->setDirectChildNeedsStyleRecalc();
 
-        if (is<Element>(*it) && downcast<Element>(*it).childrenAffectedByPropertyBasedBackwardPositionalRules()) {
+        if (it->childrenAffectedByPropertyBasedBackwardPositionalRules()) {
             if (it->styleChangeType() < FullStyleChange)
                 it->setStyleChange(FullStyleChange);
         }
@@ -761,9 +761,13 @@ inline void Node::updateAncestorsForStyleRecalc()
         }
     }
 
-    Document& document = this->document();
-    if (document.childNeedsStyleRecalc())
-        document.scheduleStyleRecalc();
+    auto* documentElement = document().documentElement();
+    if (!documentElement)
+        return;
+    if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
+        return;
+    document().setChildNeedsStyleRecalc();
+    document().scheduleStyleRecalc();
 }
 
 void Node::setNeedsStyleRecalc(StyleChangeType changeType)

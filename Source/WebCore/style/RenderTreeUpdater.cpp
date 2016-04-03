@@ -63,14 +63,15 @@ RenderTreeUpdater::RenderTreeUpdater(Document& document)
 
 static ContainerNode& findRenderingRoot(ContainerNode& node)
 {
-    auto& document = node.document();
-    for (ComposedTreeAncestorIterator it(document, node), end(document); it != end; ++it) {
-        if (it->renderer())
-            return *it;
-        ASSERT(hasImplicitDisplayContents(downcast<Element>(*it)));
+    if (node.renderer())
+        return node;
+    for (auto& ancestor : composedTreeAncestors(node)) {
+        if (ancestor.renderer())
+            return ancestor;
+        ASSERT(hasImplicitDisplayContents(ancestor));
     }
     ASSERT_NOT_REACHED();
-    return document;
+    return node.document();
 }
 
 void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)

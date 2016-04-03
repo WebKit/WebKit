@@ -548,10 +548,10 @@ bool RenderNamedFlowThread::isChildAllowed(const RenderObject& child, const Rend
     ASSERT(is<Element>(*child.node()));
 
     auto* originalParent = composedTreeAncestors(*child.node()).first();
-    if (!is<Element>(originalParent) || !originalParent->renderer())
+    if (!originalParent || !originalParent->renderer())
         return true;
 
-    return downcast<Element>(*originalParent).renderer()->isChildAllowed(child, style);
+    return originalParent->renderer()->isChildAllowed(child, style);
 }
 
 void RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded()
