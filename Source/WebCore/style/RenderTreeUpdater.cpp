@@ -61,19 +61,13 @@ RenderTreeUpdater::RenderTreeUpdater(Document& document)
 {
 }
 
-// Slots have implicit display:contents until it is supported for reals.
-static bool hasDisplayContents(const Node& node)
-{
-    return is<HTMLSlotElement>(node);
-}
-
 static ContainerNode& findRenderingRoot(ContainerNode& node)
 {
     auto& document = node.document();
     for (ComposedTreeAncestorIterator it(document, node), end(document); it != end; ++it) {
         if (it->renderer())
             return *it;
-        ASSERT(hasDisplayContents(*it));
+        ASSERT(hasImplicitDisplayContents(downcast<Element>(*it)));
     }
     ASSERT_NOT_REACHED();
     return document;
@@ -137,29 +131,20 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
         auto& element = downcast<Element>(node);
 
         auto* elementUpdate = m_styleUpdate->elementUpdate(element);
-
-        auto changeType = Style::NoChange;
-        if (elementUpdate) {
-            if (hasDisplayContents(element)) {
-                if (!shouldCreateRenderer(element, renderTreePosition().parent())) {
-                    it.traverseNextSkippingChildren();
-                    continue;
-                }
-                pushParent(element, parent().styleChange);
-                it.traverseNext();
-                continue;
-            }
-
-            updateElementRenderer(element, *elementUpdate);
-            changeType = elementUpdate->change;
-        }
-
-        if (!element.renderer() || !elementUpdate) {
+        if (!elementUpdate) {
             it.traverseNextSkippingChildren();
             continue;
         }
 
-        pushParent(element, changeType);
+        updateElementRenderer(element, *elementUpdate);
+
+        bool mayHaveRenderedDescendants = element.renderer() || (hasImplicitDisplayContents(element) && shouldCreateRenderer(element, renderTreePosition().parent()));
+        if (!mayHaveRenderedDescendants) {
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+
+        pushParent(element, elementUpdate ? elementUpdate->change : Style::NoChange);
 
         it.traverseNext();
     }
@@ -246,7 +231,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     if (shouldTearDownRenderers)
         detachRenderTree(element, Style::ReattachDetach);
 
-    bool shouldCreateNewRenderer = !element.renderer() && update.style;
+    bool shouldCreateNewRenderer = !element.renderer() && update.style && !hasImplicitDisplayContents(element);
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();

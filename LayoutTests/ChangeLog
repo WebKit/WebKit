@@ -1,3 +1,13 @@
+2016-04-03  Antti Koivisto  <antti@apple.com>
+
+        Shadow DOM: Slot style is not computed
+        https://bugs.webkit.org/show_bug.cgi?id=156144
+
+        Reviewed by Darin Adler.
+
+        * fast/shadow-dom/css-scoping-shadow-slot-style-expected.html: Added.
+        * fast/shadow-dom/css-scoping-shadow-slot-style.html: Added.
+
 2016-04-03  Saam barati  <sbarati@apple.com>
 
         Implement Annex B.3.3 function hoisting rules for function code

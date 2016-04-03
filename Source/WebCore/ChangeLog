@@ -1,3 +1,55 @@
+2016-04-03  Antti Koivisto  <antti@apple.com>
+
+        Shadow DOM: Slot style is not computed
+        https://bugs.webkit.org/show_bug.cgi?id=156144
+
+        Reviewed by Darin Adler.
+
+        We don’t currently compute style for active slots. While slots have have implicit display:contents and don’t create
+        boxes themselves the style should still inherit to slotted children.
+
+        Basically
+
+        <slot style=“color:red”></slot>
+
+        should work as expected.
+
+        The implementation falls out from the new style resolve architecture and this patch mostly just removes the special
+        case code that prevented this from working.
+
+        Test: fast/shadow-dom/css-scoping-shadow-slot-style.html
+
+        * html/HTMLSlotElement.h:
+        (WebCore::hasImplicitDisplayContents):
+
+            Move to a shared location.
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::RenderTreeUpdater):
+        (WebCore::findRenderingRoot):
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+
+            Remove the special case code. What remains is a display:contents test for rendererless elements.
+
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+
+            Don't create renderers for (implicit) display:contents.
+
+        (WebCore::hasDisplayContents): Deleted.
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::detachRenderTree):
+        (WebCore::Style::affectsRenderedSubtree):
+
+            Factor into a function.
+
+        (WebCore::Style::TreeResolver::resolveElement):
+
+            Remove the special case code.
+
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
+            Always resolve slots as we don't currently save their style.
+
 2016-04-03  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r198653, r198864): http/tests/contentdispositionattachmentsandbox/referer-header-stripped*.html tests crashing due to unavailable SPI

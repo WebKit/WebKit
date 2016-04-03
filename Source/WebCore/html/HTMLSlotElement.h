@@ -53,6 +53,17 @@ private:
     bool m_hasEnqueuedSlotChangeEvent { false };
 };
 
+// Slots have implicit display:contents until it is supported for reals.
+inline bool hasImplicitDisplayContents(const Element& element) { return is<HTMLSlotElement>(element); }
+
+}
+
+#else
+
+namespace WebCore {
+
+inline bool hasImplicitDisplayContents(const Element&) { return false; }
+
 }
 
 #endif

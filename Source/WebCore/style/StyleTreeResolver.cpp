@@ -385,14 +385,29 @@ void detachRenderTree(Element& current, DetachType detachType)
         current.didDetachRenderers();
 }
 
+static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle)
+{
+    if (element.renderer())
+        return true;
+    if (newStyle.display() != NONE)
+        return true;
+    // FIXME: Make 'contents' an actual display property value.
+    if (hasImplicitDisplayContents(element))
+        return true;
+    if (element.rendererIsNeeded(newStyle))
+        return true;
+    if (element.shouldMoveToFlowThread(newStyle))
+        return true;
+    return false;
+}
+
 ElementUpdate TreeResolver::resolveElement(Element& element)
 {
     auto newStyle = styleForElement(element, parent().style);
 
     auto* renderer = element.renderer();
 
-    bool affectsRenderedSubtree = renderer || newStyle->display() != NONE || element.rendererIsNeeded(newStyle) || element.shouldMoveToFlowThread(newStyle);
-    if (!affectsRenderedSubtree)
+    if (!affectsRenderedSubtree(element, newStyle.get()))
         return { };
 
     ElementUpdate update;
@@ -599,7 +614,7 @@ void TreeResolver::resolveComposedTree()
         ElementUpdate update;
         update.style = element.renderStyle();
 
-        bool shouldResolve = parent.change >= Inherit || element.needsStyleRecalc() || shouldResolveForPseudoElement || affectedByPreviousSibling;
+        bool shouldResolve = parent.change >= Inherit || element.needsStyleRecalc() || shouldResolveForPseudoElement || affectedByPreviousSibling || hasImplicitDisplayContents(element);
         if (shouldResolve) {
 #if PLATFORM(IOS)
             CheckForVisibilityChangeOnRecalcStyle checkForVisibilityChange(&element, element.renderStyle());
@@ -627,21 +642,6 @@ void TreeResolver::resolveComposedTree()
             element.clearNeedsStyleRecalc();
         }
 
-
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-        if (is<HTMLSlotElement>(element)) {
-            // FIXME: We should compute style for the slot and use it as parent style.
-            // Duplicate the style from the parent context.
-            ElementUpdate slotUpdate;
-            slotUpdate.style = parent.style.ptr();
-            slotUpdate.change = update.change;
-            if (!shouldResolve)
-                m_update->addElement(element, parent.element, update);
-            pushParent(element, slotUpdate);
-            it.traverseNext();
-            continue;
-        }
-#endif
         if (!update.style) {
             resetStyleForNonRenderedDescendants(element);
             element.clearChildNeedsStyleRecalc();
