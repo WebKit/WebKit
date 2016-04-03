@@ -123,10 +123,7 @@ void RenderMenuList::adjustInnerStyle()
         innerStyle.setAlignSelfPosition(ItemPositionFlexStart);
     }
 
-    innerStyle.setPaddingLeft(Length(theme().popupInternalPaddingLeft(style()), Fixed));
-    innerStyle.setPaddingRight(Length(theme().popupInternalPaddingRight(style()), Fixed));
-    innerStyle.setPaddingTop(Length(theme().popupInternalPaddingTop(style()), Fixed));
-    innerStyle.setPaddingBottom(Length(theme().popupInternalPaddingBottom(style()), Fixed));
+    innerStyle.setPaddingBox(theme().popupInternalPaddingBox(style()));
 
     if (document().page()->chrome().selectItemWritingDirectionIsNatural()) {
         // Items in the popup will not respect the CSS text-align and direction properties,

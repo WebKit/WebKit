@@ -1365,43 +1365,23 @@ void RenderThemeMac::adjustMenuListStyle(StyleResolver& styleResolver, RenderSty
     style.setBoxShadow(nullptr);
 }
 
-int RenderThemeMac::popupInternalPaddingLeft(const RenderStyle& style) const
+LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) const
 {
-    if (style.appearance() == MenulistPart)
-        return popupButtonPadding(controlSizeForFont(style))[leftPadding] * style.effectiveZoom();
-    if (style.appearance() == MenulistButtonPart)
-        return styledPopupPaddingLeft * style.effectiveZoom();
-    return 0;
-}
-
-int RenderThemeMac::popupInternalPaddingRight(const RenderStyle& style) const
-{
-    if (style.appearance() == MenulistPart)
-        return popupButtonPadding(controlSizeForFont(style))[rightPadding] * style.effectiveZoom();
-    if (style.appearance() == MenulistButtonPart) {
-        float fontScale = style.fontSize() / baseFontSize;
-        float arrowWidth = baseArrowWidth * fontScale;
-        return static_cast<int>(ceilf(arrowWidth + (arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator) * style.effectiveZoom()));
+    if (style.appearance() == MenulistPart) {
+        return { static_cast<int>(popupButtonPadding(controlSizeForFont(style))[topPadding] * style.effectiveZoom()),
+            static_cast<int>(popupButtonPadding(controlSizeForFont(style))[rightPadding] * style.effectiveZoom()),
+            static_cast<int>(popupButtonPadding(controlSizeForFont(style))[bottomPadding] * style.effectiveZoom()),
+            static_cast<int>(popupButtonPadding(controlSizeForFont(style))[leftPadding] * style.effectiveZoom()) };
     }
-    return 0;
-}
 
-int RenderThemeMac::popupInternalPaddingTop(const RenderStyle& style) const
-{
-    if (style.appearance() == MenulistPart)
-        return popupButtonPadding(controlSizeForFont(style))[topPadding] * style.effectiveZoom();
-    if (style.appearance() == MenulistButtonPart)
-        return styledPopupPaddingTop * style.effectiveZoom();
-    return 0;
-}
+    if (style.appearance() == MenulistButtonPart) {
+        float arrowWidth = baseArrowWidth * (style.fontSize() / baseFontSize);
+        return { static_cast<int>(styledPopupPaddingTop * style.effectiveZoom()),
+            static_cast<int>(ceilf(arrowWidth + (arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator) * style.effectiveZoom())),
+            static_cast<int>(styledPopupPaddingBottom * style.effectiveZoom()), static_cast<int>(styledPopupPaddingLeft * style.effectiveZoom()) };
+    }
 
-int RenderThemeMac::popupInternalPaddingBottom(const RenderStyle& style) const
-{
-    if (style.appearance() == MenulistPart)
-        return popupButtonPadding(controlSizeForFont(style))[bottomPadding] * style.effectiveZoom();
-    if (style.appearance() == MenulistButtonPart)
-        return styledPopupPaddingBottom * style.effectiveZoom();
-    return 0;
+    return { 0, 0, 0, 0 };
 }
 
 PopupMenuStyle::PopupMenuSize RenderThemeMac::popupMenuSize(const RenderStyle& style, IntRect& rect) const

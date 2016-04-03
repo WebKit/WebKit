@@ -40,7 +40,7 @@ class RenderThemeIOS final : public RenderTheme {
 public:
     static Ref<RenderTheme> create();
 
-    int popupInternalPaddingRight(const RenderStyle&) const override;
+    LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
 
     static void adjustRoundBorderRadius(RenderStyle&, RenderBox&);
 

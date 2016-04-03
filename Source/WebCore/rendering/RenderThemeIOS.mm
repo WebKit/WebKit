@@ -528,11 +528,11 @@ const float MenuListArrowWidth = 7;
 const float MenuListArrowHeight = 6;
 const float MenuListButtonPaddingRight = 19;
 
-int RenderThemeIOS::popupInternalPaddingRight(const RenderStyle& style) const
+LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) const
 {
     if (style.appearance() == MenulistButtonPart)
-        return MenuListButtonPaddingRight + style.borderTopWidth();
-    return 0;
+        return { 0, static_cast<int>(MenuListButtonPaddingRight + style.borderTopWidth()), 0, 0 };
+    return { 0, 0, 0, 0 };
 }
 
 void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)

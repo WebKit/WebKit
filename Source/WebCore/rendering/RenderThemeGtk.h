@@ -119,10 +119,7 @@ private:
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    int popupInternalPaddingLeft(const RenderStyle&) const override;
-    int popupInternalPaddingRight(const RenderStyle&) const override;
-    int popupInternalPaddingTop(const RenderStyle&) const override;
-    int popupInternalPaddingBottom(const RenderStyle&) const override;
+    LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
 
     // The Mac port differentiates between the "menu list" and the "menu list button."
     // The former is used when a menu list button has been styled. This is used to ensure

@@ -75,10 +75,7 @@ public:
     int sliderTickOffsetFromTrackCenter() const override;
 #endif
 
-    int popupInternalPaddingLeft(const RenderStyle&) const override;
-    int popupInternalPaddingRight(const RenderStyle&) const override;
-    int popupInternalPaddingTop(const RenderStyle&) const override;
-    int popupInternalPaddingBottom(const RenderStyle&) const override;
+    LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
     PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle&, IntRect&) const override;
 
     bool popsMenuByArrowKeys() const override { return true; }

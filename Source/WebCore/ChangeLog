@@ -1,3 +1,42 @@
+2016-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Replace all RenderTheme::popupInternalPadding methods with a single one returning a LengthBox
+        https://bugs.webkit.org/show_bug.cgi?id=156098
+
+        Reviewed by Darin Adler.
+
+        The caller always wants all padding sides, so we can simplify both the caller and the implementations by using a
+        single method. It's also more efficient for the GTK+ port that creates and destroys the same style contexts on
+        every call.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::popupInternalPaddingBox):
+        (WebCore::RenderTheme::popupInternalPaddingLeft): Deleted.
+        (WebCore::RenderTheme::popupInternalPaddingRight): Deleted.
+        (WebCore::RenderTheme::popupInternalPaddingTop): Deleted.
+        (WebCore::RenderTheme::popupInternalPaddingBottom): Deleted.
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::popupInternalPaddingBox):
+        (WebCore::getComboBoxMetrics): Deleted.
+        (WebCore::RenderThemeGtk::popupInternalPaddingLeft): Deleted.
+        (WebCore::RenderThemeGtk::popupInternalPaddingRight): Deleted.
+        (WebCore::RenderThemeGtk::popupInternalPaddingTop): Deleted.
+        (WebCore::RenderThemeGtk::popupInternalPaddingBottom): Deleted.
+        * rendering/RenderThemeGtk.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::popupInternalPaddingBox):
+        (WebCore::RenderThemeIOS::popupInternalPaddingRight): Deleted.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::popupInternalPaddingBox):
+        (WebCore::RenderThemeMac::popupInternalPaddingLeft): Deleted.
+        (WebCore::RenderThemeMac::popupInternalPaddingRight): Deleted.
+        (WebCore::RenderThemeMac::popupInternalPaddingTop): Deleted.
+        (WebCore::RenderThemeMac::popupInternalPaddingBottom): Deleted.
+
 2016-04-02  Sam Weinig  <sam@webkit.org>
 
         Cleanup DataDetection.mm a little bit
