@@ -2373,8 +2373,6 @@ public:
     void compileArithMod(Node*);
     void compileArithPow(Node*);
     void compileArithRounding(Node*);
-    void compileArithFloor(Node*);
-    void compileArithCeil(Node*);
     void compileArithRandom(Node*);
     void compileArithSqrt(Node*);
     void compileArithLog(Node*);

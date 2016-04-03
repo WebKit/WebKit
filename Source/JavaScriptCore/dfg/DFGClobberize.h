@@ -305,6 +305,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithRound:
     case ArithFloor:
     case ArithCeil:
+    case ArithTrunc:
         def(PureValue(node, static_cast<uintptr_t>(node->arithRoundingMode())));
         return;
 

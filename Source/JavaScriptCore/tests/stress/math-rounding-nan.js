@@ -21,8 +21,15 @@ function testCeil(value)
 }
 noInline(testCeil);
 
+function testTrunc(value)
+{
+    return Math.trunc(value);
+}
+noInline(testTrunc);
+
 for (var i = 0; i < 1e4; ++i) {
     shouldBe(Number.isNaN(testRound(NaN)), true);
     shouldBe(Number.isNaN(testFloor(NaN)), true);
     shouldBe(Number.isNaN(testCeil(NaN)), true);
+    shouldBe(Number.isNaN(testTrunc(NaN)), true);
 }

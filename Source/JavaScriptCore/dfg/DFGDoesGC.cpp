@@ -90,6 +90,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArithRound:
     case ArithFloor:
     case ArithCeil:
+    case ArithTrunc:
     case ArithFRound:
     case ArithSin:
     case ArithCos:

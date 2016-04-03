@@ -315,6 +315,7 @@
     macro(InternalPromise) \
     macro(abs) \
     macro(floor) \
+    macro(trunc) \
     macro(isFinite) \
     macro(isNaN) \
     macro(create) \

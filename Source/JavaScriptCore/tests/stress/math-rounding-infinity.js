@@ -21,6 +21,12 @@ function testCeil(value)
 }
 noInline(testCeil);
 
+function testTrunc(value)
+{
+    return Math.trunc(value);
+}
+noInline(testTrunc);
+
 for (var i = 0; i < 1e4; ++i) {
     shouldBe(testRound(Infinity), Infinity);
     shouldBe(testRound(-Infinity), -Infinity);
@@ -28,4 +34,6 @@ for (var i = 0; i < 1e4; ++i) {
     shouldBe(testFloor(-Infinity), -Infinity);
     shouldBe(testCeil(Infinity), Infinity);
     shouldBe(testCeil(-Infinity), -Infinity);
+    shouldBe(testTrunc(Infinity), Infinity);
+    shouldBe(testTrunc(-Infinity), -Infinity);
 }

@@ -146,6 +146,22 @@ LValue Output::doubleToUInt(LValue value)
     return result;
 }
 
+LValue Output::doubleTrunc(LValue value)
+{
+    if (MacroAssembler::supportsFloatingPointRounding()) {
+        PatchpointValue* result = patchpoint(Double);
+        result->append(value, ValueRep::SomeRegister);
+        result->setGenerator(
+            [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                jit.roundTowardZeroDouble(params[1].fpr(), params[0].fpr());
+            });
+        result->effects = Effects::none();
+        return result;
+    }
+    double (*truncDouble)(double) = trunc;
+    return callWithoutSideEffects(Double, truncDouble, value);
+}
+
 LValue Output::unsignedToDouble(LValue value)
 {
     return intToDouble(zeroExt(value, Int64));

@@ -34,11 +34,7 @@ function toInteger(target)
     // isNaN(numberValue)
     if (numberValue !== numberValue)
         return 0;
-
-    if (numberValue === 0 || !@isFinite(numberValue))
-        return numberValue;
-
-    return (numberValue > 0 ? 1 : -1) * @floor(@abs(numberValue));
+    return @trunc(numberValue);
 }
 
 function toLength(target)

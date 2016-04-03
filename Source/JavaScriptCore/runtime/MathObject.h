@@ -53,6 +53,7 @@ protected:
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncAbs(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(ExecState*);
+EncodedJSValue JSC_HOST_CALL mathProtoFuncTrunc(ExecState*);
 
 } // namespace JSC
 

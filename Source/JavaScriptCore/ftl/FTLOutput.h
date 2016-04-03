@@ -156,6 +156,7 @@ public:
     LValue doubleAbs(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::Abs, origin(), value); }
     LValue doubleCeil(LValue operand) { return m_block->appendNew<B3::Value>(m_proc, B3::Ceil, origin(), operand); }
     LValue doubleFloor(LValue operand) { return m_block->appendNew<B3::Value>(m_proc, B3::Floor, origin(), operand); }
+    LValue doubleTrunc(LValue);
 
     LValue doubleSin(LValue value)
     {

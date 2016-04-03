@@ -186,6 +186,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ArithRound:
     case ArithFloor:
     case ArithCeil:
+    case ArithTrunc:
     case ArithSin:
     case ArithCos:
     case ArithLog:

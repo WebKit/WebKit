@@ -735,6 +735,26 @@ public:
         m_assembler.roundss_mr(src.offset, src.base, dst, X86Assembler::RoundingType::TowardNegativeInfiniti);
     }
 
+    void roundTowardZeroDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.roundsd_rr(src, dst, X86Assembler::RoundingType::TowardZero);
+    }
+
+    void roundTowardZeroDouble(Address src, FPRegisterID dst)
+    {
+        m_assembler.roundsd_mr(src.offset, src.base, dst, X86Assembler::RoundingType::TowardZero);
+    }
+
+    void roundTowardZeroFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.roundss_rr(src, dst, X86Assembler::RoundingType::TowardZero);
+    }
+
+    void roundTowardZeroFloat(Address src, FPRegisterID dst)
+    {
+        m_assembler.roundss_mr(src.offset, src.base, dst, X86Assembler::RoundingType::TowardZero);
+    }
+
     // Memory access operations:
     //
     // Loads are of the form load(address, destination) and stores of the form

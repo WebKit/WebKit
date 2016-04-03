@@ -1,3 +1,24 @@
+2016-04-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add truncate operation (rounding to zero)
+        https://bugs.webkit.org/show_bug.cgi?id=156072
+
+        Reviewed by Saam Barati.
+
+        * js/regress/many-foreach-calls-expected.txt: Added.
+        * js/regress/many-foreach-calls.html: Added.
+        * js/regress/math-trunc-expected.txt: Added.
+        * js/regress/math-trunc.html: Added.
+        * js/regress/script-tests/many-foreach-calls.js: Added.
+        forEach calls @toInteger. It includes @trunc now.
+        (i.array.forEach):
+        * js/regress/script-tests/math-trunc.js: Added.
+        Call Math.trunc repeatedly.
+        (mathTruncInt):
+        (mathTruncDouble):
+        (mathTruncMixed):
+        (mathTruncDoubleDoesNotCareNegativeZero):
+
 2016-04-02  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Add missed test for using 'with' and 'this' in arrow function.

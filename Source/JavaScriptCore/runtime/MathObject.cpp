@@ -67,7 +67,6 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncSinh(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncSqrt(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncTan(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncTanh(ExecState*);
-EncodedJSValue JSC_HOST_CALL mathProtoFuncTrunc(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(ExecState*);
 
 }
@@ -129,7 +128,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "sqrt"), 1, mathProtoFuncSqrt, SqrtIntrinsic, DontEnum);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "tan"), 1, mathProtoFuncTan, NoIntrinsic, DontEnum);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "tanh"), 1, mathProtoFuncTanh, NoIntrinsic, DontEnum);
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "trunc"), 1, mathProtoFuncTrunc, NoIntrinsic, DontEnum);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "trunc"), 1, mathProtoFuncTrunc, TruncIntrinsic, DontEnum);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "imul"), 2, mathProtoFuncIMul, IMulIntrinsic, DontEnum);
 }
 

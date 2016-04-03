@@ -1500,6 +1500,16 @@ public:
         m_assembler.frintm<32>(dest, src);
     }
 
+    void roundTowardZeroDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.frintz<64>(dest, src);
+    }
+
+    void roundTowardZeroFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.frintz<32>(dest, src);
+    }
+
     // Convert 'src' to an integer, and places the resulting 'dest'.
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits

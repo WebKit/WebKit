@@ -850,7 +850,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case ArithRound:
     case ArithFloor:
-    case ArithCeil: {
+    case ArithCeil:
+    case ArithTrunc: {
         JSValue operand = forNode(node->child1()).value();
         if (operand && operand.isNumber()) {
             double roundedValue = 0;
@@ -858,9 +859,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 roundedValue = jsRound(operand.asNumber());
             else if (node->op() == ArithFloor)
                 roundedValue = floor(operand.asNumber());
-            else {
-                ASSERT(node->op() == ArithCeil);
+            else if (node->op() == ArithCeil)
                 roundedValue = ceil(operand.asNumber());
+            else {
+                ASSERT(node->op() == ArithTrunc);
+                roundedValue = trunc(operand.asNumber());
             }
 
             if (producesInteger(node->arithRoundingMode())) {

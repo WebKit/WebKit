@@ -1,3 +1,113 @@
+2016-04-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add truncate operation (rounding to zero)
+        https://bugs.webkit.org/show_bug.cgi?id=156072
+
+        Reviewed by Saam Barati.
+
+        Add TruncIntrinsic for Math.trunc. DFG handles it as ArithTrunc.
+        In DFG, ArithTrunc behaves similar to ArithRound, ArithCeil, and ArithFloor.
+        ArithTrunc rounds the value towards zero.
+
+        And we rewrite @toInteger to use @trunc instead of @abs, @floor, negation and branch.
+        This is completely the same to what we do in JSValue::toInteger.
+
+        Since DFG recognize it, DFG can convert ArithTrunc to Identity if the given argument is Int32.
+        This is useful because almost all the argument is Int32 in @toLength -> @toInteger -> @trunc case.
+        In such cases, we can eliminate trunc() call.
+
+        As a bonus, to speed up Math.trunc operation, we use x86 SSE round and frintz in ARM64 for ArithRound.
+        In DFG, we emit these instructions. In FTL, we use Patchpoint to emit these instructions to avoid adding a new B3 IR.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::roundTowardZeroDouble):
+        (JSC::MacroAssemblerARM64::roundTowardZeroFloat):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::roundTowardZeroDouble):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::roundTowardZeroDouble):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::roundTowardZeroDouble):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::roundTowardZeroDouble):
+        (JSC::MacroAssemblerX86Common::roundTowardZeroFloat):
+        * builtins/GlobalObject.js:
+        (toInteger):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::roundShouldSpeculateInt32):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::arithNodeFlags):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasArithRoundingMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithTrunc):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::doubleTrunc):
+        * ftl/FTLOutput.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::truncThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        * runtime/MathObject.h:
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+        * tests/stress/math-rounding-infinity.js:
+        (testTrunc):
+        * tests/stress/math-rounding-nan.js:
+        (testTrunc):
+        * tests/stress/math-rounding-negative-zero.js:
+        (testTrunc):
+        * tests/stress/math-trunc-arith-rounding-mode.js: Added.
+        (firstCareAboutZeroSecondDoesNot):
+        (firstDoNotCareAboutZeroSecondDoes):
+        (warmup):
+        (verifyNegativeZeroIsPreserved):
+        * tests/stress/math-trunc-basics.js: Added.
+        (mathTruncOnIntegers):
+        (mathTruncOnDoubles):
+        (mathTruncOnBooleans):
+        (uselessMathTrunc):
+        (mathTruncWithOverflow):
+        (mathTruncConsumedAsDouble):
+        (mathTruncDoesNotCareAboutMinusZero):
+        (mathTruncNoArguments):
+        (mathTruncTooManyArguments):
+        (testMathTruncOnConstants):
+        (mathTruncStructTransition):
+        (Math.trunc):
+        * tests/stress/math-trunc-should-be-truncate.js: Added.
+        (mathTrunc):
+
 2016-04-03  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Class syntax. Access to new.target inside of the eval should not lead to SyntaxError

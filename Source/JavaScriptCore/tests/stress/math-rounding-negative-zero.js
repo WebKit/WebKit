@@ -67,4 +67,13 @@ for (var i = 0; i < 1e4; ++i) {
     shouldBe(1 / testRoundNonNegativeZero2(0.1), Infinity);
 }
 
+function testTrunc(value)
+{
+    return Math.trunc(value);
+}
+noInline(testTrunc);
 
+for (var i = 0; i < 1e4; ++i) {
+    shouldBe(1 / testTrunc(0.0), Infinity);
+    shouldBe(1 / testTrunc(-0.0), -Infinity);
+}

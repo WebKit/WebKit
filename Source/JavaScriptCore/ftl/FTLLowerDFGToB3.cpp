@@ -532,6 +532,9 @@ private:
         case ArithCeil:
             compileArithCeil();
             break;
+        case ArithTrunc:
+            compileArithTrunc();
+            break;
         case ArithSqrt:
             compileArithSqrt();
             break;
@@ -1974,6 +1977,16 @@ private:
             setInt32(convertDoubleToInt32(integerValue, shouldCheckNegativeZero(m_node->arithRoundingMode())));
         else
             setDouble(integerValue);
+    }
+
+    void compileArithTrunc()
+    {
+        LValue value = lowDouble(m_node->child1());
+        LValue result = m_out.doubleTrunc(value);
+        if (producesInteger(m_node->arithRoundingMode()))
+            setInt32(convertDoubleToInt32(result, shouldCheckNegativeZero(m_node->arithRoundingMode())));
+        else
+            setDouble(result);
     }
 
     void compileArithSqrt() { setDouble(m_out.doubleSqrt(lowDouble(m_node->child1()))); }

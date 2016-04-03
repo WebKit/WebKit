@@ -4505,6 +4505,14 @@ void SpeculativeJIT::compileArithRounding(Node* node)
             return;
         }
 
+        case ArithTrunc: {
+            FPRTemporary rounded(this);
+            FPRReg resultFPR = rounded.fpr();
+            m_jit.roundTowardZeroDouble(valueFPR, resultFPR);
+            setResult(resultFPR);
+            return;
+        }
+
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -4516,9 +4524,11 @@ void SpeculativeJIT::compileArithRounding(Node* node)
             callOperation(jsRound, resultFPR, valueFPR);
         else if (node->op() == ArithFloor)
             callOperation(floor, resultFPR, valueFPR);
-        else {
-            ASSERT(node->op() == ArithCeil);
+        else if (node->op() == ArithCeil)
             callOperation(ceil, resultFPR, valueFPR);
+        else {
+            ASSERT(node->op() == ArithTrunc);
+            callOperation(trunc, resultFPR, valueFPR);
         }
         m_jit.exceptionCheck();
         setResult(resultFPR);

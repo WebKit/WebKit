@@ -479,6 +479,8 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return floorThunkGenerator;
     case CeilIntrinsic:
         return ceilThunkGenerator;
+    case TruncIntrinsic:
+        return truncThunkGenerator;
     case RoundIntrinsic:
         return roundThunkGenerator;
     case ExpIntrinsic:

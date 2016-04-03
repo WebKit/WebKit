@@ -56,6 +56,7 @@ enum JS_EXPORT_PRIVATE Intrinsic {
     IMulIntrinsic,
     RandomIntrinsic,
     FRoundIntrinsic,
+    TruncIntrinsic,
 
     // Getter intrinsics.
     TypedArrayLengthIntrinsic,
