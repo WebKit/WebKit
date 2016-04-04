@@ -31,7 +31,7 @@
 #ifndef RTCSessionDescriptionRequest_h
 #define RTCSessionDescriptionRequest_h
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -66,6 +66,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCSessionDescriptionRequest_h

@@ -31,7 +31,7 @@
 #ifndef RTCTrackEvent_h
 #define RTCTrackEvent_h
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include "Event.h"
 #include <wtf/text/AtomicString.h>
@@ -66,6 +66,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCTrackEvent_h

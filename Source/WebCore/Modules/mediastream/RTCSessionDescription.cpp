@@ -31,7 +31,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include "RTCSessionDescription.h"
 
@@ -89,4 +89,4 @@ void RTCSessionDescription::setType(const String& type, ExceptionCode& ec)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)

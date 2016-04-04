@@ -1,3 +1,49 @@
+2016-04-04  Alejandro G. Castro  <alex@igalia.com>
+
+        REGRESSION(r198492): [GTK] The WEB_RTC flag was not correctly added in some situations
+        https://bugs.webkit.org/show_bug.cgi?id=156164
+
+        Reviewed by Philippe Normand.
+
+        Replace WEBRTC with WEB_RTC, in the idls add the new option
+        UsePointersEvenForNonNullableObjectArguments to fix compilation.
+
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        * Modules/mediastream/RTCRtpReceiver.h:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSenderReceiverBase.h:
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        * Modules/mediastream/RTCSessionDescription.h:
+        * Modules/mediastream/RTCStatsReport.cpp:
+        * Modules/mediastream/RTCStatsResponse.cpp:
+        * Modules/mediastream/RTCTrackEvent.cpp:
+        * Modules/mediastream/RTCTrackEvent.h:
+        * Modules/mediastream/SDPProcessor.cpp:
+        * Modules/mediastream/SDPProcessor.h:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * bindings/js/WebCoreJSBuiltinInternals.cpp:
+        (WebCore::JSBuiltinInternalFunctions::JSBuiltinInternalFunctions):
+        (WebCore::JSBuiltinInternalFunctions::visit):
+        (WebCore::JSBuiltinInternalFunctions::initialize):
+        * bindings/js/WebCoreJSBuiltinInternals.h:
+        * bindings/js/WebCoreJSBuiltins.h:
+        (WebCore::JSBuiltinFunctions::JSBuiltinFunctions):
+        * platform/mediastream/RTCSessionDescriptionDescriptor.cpp:
+        * platform/mediastream/RTCSessionDescriptionDescriptor.h:
+        * platform/mediastream/RTCSessionDescriptionRequest.h:
+        * platform/mediastream/RTCStatsRequest.h:
+        * platform/mediastream/RTCStatsResponseBase.h:
+        * platform/mediastream/RTCVoidRequest.h:
+        * platform/mediastream/SDPProcessorScriptResource.cpp:
+        * platform/mediastream/SDPProcessorScriptResource.h:
+        * platform/mock/TimerEventBasedMock.h:
+
 2016-04-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r198792): [GTK] Inspector crashes in Inspector::Protocol::getEnumConstantValue since r198792

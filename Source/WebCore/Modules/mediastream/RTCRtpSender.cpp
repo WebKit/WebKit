@@ -31,7 +31,7 @@
 #include "config.h"
 #include "RTCRtpSender.h"
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include "DOMError.h"
 #include "ExceptionCode.h"
@@ -70,4 +70,4 @@ void RTCRtpSender::replaceTrack(MediaStreamTrack* withTrack, PeerConnection::Voi
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)

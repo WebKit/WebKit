@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 #include "SDPProcessor.h"
 
 #include "Document.h"
@@ -538,4 +538,4 @@ bool SDPProcessor::callScript(const String& functionName, const String& argument
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)

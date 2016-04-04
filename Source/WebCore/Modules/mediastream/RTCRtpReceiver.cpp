@@ -31,7 +31,7 @@
 #include "config.h"
 #include "RTCRtpReceiver.h"
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 
 namespace WebCore {
 
@@ -42,4 +42,4 @@ RTCRtpReceiver::RTCRtpReceiver(RefPtr<MediaStreamTrack>&& track)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)

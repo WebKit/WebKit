@@ -37,6 +37,7 @@
     ConstructorCallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     InterfaceName=webkitRTCPeerConnection,
+    UsePointersEvenForNonNullableObjectArguments,
 ] interface RTCPeerConnection : EventTarget {
 
     // Private functions called by runQueuedOperation() (RTCPeerConnectionInternals.js)

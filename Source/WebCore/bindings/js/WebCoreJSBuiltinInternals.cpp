@@ -40,7 +40,7 @@ namespace WebCore {
 
 JSBuiltinInternalFunctions::JSBuiltinInternalFunctions(JSC::VM& v)
     : vm(v)
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
     , m_rtcPeerConnectionInternalsFunctions(vm)
 #endif
 #if ENABLE(STREAMS_API)
@@ -53,7 +53,7 @@ JSBuiltinInternalFunctions::JSBuiltinInternalFunctions(JSC::VM& v)
 
 void JSBuiltinInternalFunctions::visit(JSC::SlotVisitor& visitor)
 {
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
     m_rtcPeerConnectionInternalsFunctions.visit(visitor);
 #endif
 #if ENABLE(STREAMS_API)
@@ -61,14 +61,14 @@ void JSBuiltinInternalFunctions::visit(JSC::SlotVisitor& visitor)
     m_streamInternalsFunctions.visit(visitor);
     m_writableStreamInternalsFunctions.visit(visitor);
 #endif
-#if !ENABLE(STREAMS_API) && !ENABLE(WEBRTC)
+#if !ENABLE(STREAMS_API) && !ENABLE(WEB_RTC)
     UNUSED_PARAM(visitor);
 #endif
 }
 
 void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject, VM& vm)
 {
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
     m_rtcPeerConnectionInternalsFunctions.init(globalObject);
 #endif
 #if ENABLE(STREAMS_API)
@@ -77,11 +77,11 @@ void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject, VM&
     m_writableStreamInternalsFunctions.init(globalObject);
 #endif
 
-#if ENABLE(STREAMS_API) || ENABLE(WEBRTC)
+#if ENABLE(STREAMS_API) || ENABLE(WEB_RTC)
     JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
 
     JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 #define DECLARE_GLOBAL_STATIC(name)\
         JSDOMGlobalObject::GlobalPropertyInfo(\
             clientData.builtinFunctions().rtcPeerConnectionInternalsBuiltins().name##PrivateName(), rtcPeerConnectionInternals().m_##name##Function.get() , DontDelete | ReadOnly),
@@ -109,7 +109,7 @@ void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject, VM&
 
     globalObject.addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
 #endif
-#if !ENABLE(STREAMS_API) && !ENABLE(WEBRTC)
+#if !ENABLE(STREAMS_API) && !ENABLE(WEB_RTC)
     UNUSED_PARAM(globalObject);
     UNUSED_PARAM(vm);
 #endif

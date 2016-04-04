@@ -106,6 +106,7 @@ my (
     $mediaSourceSupport,
     $mediaStatisticsSupport,
     $mediaStreamSupport,
+    $webRTCSupport,
     $meterElementSupport,
     $mhtmlSupport,
     $modulesSupport,
@@ -336,6 +337,9 @@ my @features = (
 
     { option => "media-stream", desc => "Toggle Media Stream support",
       define => "ENABLE_MEDIA_STREAM", default => (isGtk()), value => \$mediaStreamSupport },
+
+    { option => "web-rtc", desc => "Toggle WebRTC support",
+      define => "ENABLE_WEB_RTC", default => (isGtk()), value => \$webRTCSupport },
 
     { option => "meter-element", desc => "Toggle Meter Element support",
       define => "ENABLE_METER_ELEMENT", default => !isAppleWinWebKit(), value => \$meterElementSupport },

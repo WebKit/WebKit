@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include "RTCStatsResponse.h"
 
@@ -67,4 +67,4 @@ void RTCStatsResponse::addStatistic(size_t report, String name, String value)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)

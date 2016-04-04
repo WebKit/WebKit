@@ -31,7 +31,7 @@
 #ifndef RTCSessionDescription_h
 #define RTCSessionDescription_h
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include "ExceptionCode.h"
 #include "ScriptWrappable.h"
@@ -65,6 +65,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)
 
 #endif // RTCSessionDescription_h

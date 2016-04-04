@@ -29,7 +29,8 @@
  */
 
 [
-    Conditional=WEB_RTC
+    Conditional=WEB_RTC,
+    UsePointersEvenForNonNullableObjectArguments,
 ] interface RTCRtpSender {
     readonly attribute MediaStreamTrack track;
 

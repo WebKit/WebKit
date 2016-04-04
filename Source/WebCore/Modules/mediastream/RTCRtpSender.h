@@ -31,7 +31,7 @@
 #ifndef RTCRtpSender_h
 #define RTCRtpSender_h
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include "PeerConnectionBackend.h"
 #include "RTCRtpSenderReceiverBase.h"
@@ -70,6 +70,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
-
+#endif // ENABLE(WEB_RTC)
 #endif // RTCRtpSender_h

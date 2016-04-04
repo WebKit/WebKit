@@ -134,7 +134,7 @@ public:
     bool webkitGetUserMediaEnabled() const { return m_isMediaStreamEnabled; }
     bool webkitMediaStreamEnabled() const { return m_isMediaStreamEnabled; }
 #endif
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
     bool peerConnectionEnabled() const { return m_isMediaStreamEnabled && m_isPeerConnectionEnabled; }
     void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
     bool webkitRTCPeerConnectionEnabled() const { return peerConnectionEnabled(); }
@@ -246,7 +246,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     bool m_isMediaStreamEnabled;
 #endif
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
     bool m_isPeerConnectionEnabled;
 #endif
 

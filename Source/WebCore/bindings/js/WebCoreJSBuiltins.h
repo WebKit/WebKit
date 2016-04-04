@@ -69,7 +69,7 @@ public:
         , m_mediaDevicesBuiltins(&vm)
         , m_navigatorUserMediaBuiltins(&vm)
 #endif
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
         , m_rtcPeerConnectionBuiltins(&vm)
         , m_rtcPeerConnectionInternalsBuiltins(&vm)
 #endif
@@ -79,7 +79,7 @@ public:
         m_streamInternalsBuiltins.exportNames();
         m_writableStreamInternalsBuiltins.exportNames();
 #endif
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
         m_rtcPeerConnectionInternalsBuiltins.exportNames();
 #endif
     }
@@ -102,7 +102,7 @@ public:
     MediaDevicesBuiltinsWrapper& mediaDevicesBuiltins() { return m_mediaDevicesBuiltins; }
     NavigatorUserMediaBuiltinsWrapper& navigatorUserMediaBuiltins() { return m_navigatorUserMediaBuiltins;}
 #endif
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
     RTCPeerConnectionBuiltinsWrapper& rtcPeerConnectionBuiltins() { return m_rtcPeerConnectionBuiltins; }
     RTCPeerConnectionInternalsBuiltinsWrapper& rtcPeerConnectionInternalsBuiltins() { return m_rtcPeerConnectionInternalsBuiltins; }
 #endif
@@ -128,7 +128,7 @@ private:
     MediaDevicesBuiltinsWrapper m_mediaDevicesBuiltins;
     NavigatorUserMediaBuiltinsWrapper m_navigatorUserMediaBuiltins;
 #endif
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
     RTCPeerConnectionBuiltinsWrapper m_rtcPeerConnectionBuiltins;
     RTCPeerConnectionInternalsBuiltinsWrapper m_rtcPeerConnectionInternalsBuiltins;
 #endif

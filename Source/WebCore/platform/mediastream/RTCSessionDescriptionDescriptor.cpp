@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include "RTCSessionDescriptionDescriptor.h"
 
@@ -53,4 +53,4 @@ RTCSessionDescriptionDescriptor::~RTCSessionDescriptionDescriptor()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)

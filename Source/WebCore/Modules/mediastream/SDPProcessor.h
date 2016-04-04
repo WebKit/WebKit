@@ -31,7 +31,7 @@
 #ifndef SDPProcessor_h
 #define SDPProcessor_h
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include "ContextDestructionObserver.h"
 #include "IceCandidate.h"
@@ -68,6 +68,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)
 
 #endif // SDPProcessor_h

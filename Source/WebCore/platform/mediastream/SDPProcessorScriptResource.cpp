@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBRTC)
+#if ENABLE(WEB_RTC)
 #include "SDPProcessorScriptResource.h"
 
 namespace WebCore {
@@ -46,4 +46,4 @@ const String& scriptString()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBRTC)
+#endif // ENABLE(WEB_RTC)
