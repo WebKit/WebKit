@@ -1,3 +1,20 @@
+2016-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        CopiedBlock should be 16kB
+        https://bugs.webkit.org/show_bug.cgi?id=156168
+
+        Reviewed by Mark Lam.
+
+        MarkedBlock is 16kB, and bmalloc's largest fast-path allocation is 16kB,
+        and the largest page size on Apple devices is 16kB -- so this change
+        should improve sharing and recycling and keep us on the fast path more.
+
+        32kB is also super aggro. At 16kB, we support allocations up to 8kB,
+        which covers 99.3% of allocations on facebook.com. The 32kB block size
+        only covered an additional 0.2% of allocations.
+
+        * heap/CopiedBlock.h:
+
 2016-04-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r198792): [GTK] Inspector crashes in Inspector::Protocol::getEnumConstantValue since r198792

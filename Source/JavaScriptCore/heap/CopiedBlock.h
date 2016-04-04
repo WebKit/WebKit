@@ -79,7 +79,7 @@ public:
     size_t size();
     size_t capacity();
 
-    static const size_t blockSize = 32 * KB;
+    static const size_t blockSize = 16 * KB;
 
     bool hasWorkList();
     CopyWorkList& workList();
