@@ -76,21 +76,6 @@ static EncodedJSValue jsDOMWindowWebKit(ExecState* exec, EncodedJSValue thisValu
 }
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
-static EncodedJSValue jsDOMWindowIndexedDB(ExecState* exec, EncodedJSValue thisValue, PropertyName)
-{
-    UNUSED_PARAM(exec);
-    auto* castedThis = toJSDOMWindow(JSValue::decode(thisValue));
-    if (!RuntimeEnabledFeatures::sharedFeatures().indexedDBEnabled())
-        return JSValue::encode(jsUndefined());
-    if (!castedThis || !BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->wrapped()))
-        return JSValue::encode(jsUndefined());
-    auto& impl = castedThis->wrapped();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(DOMWindowIndexedDatabase::indexedDB(&impl)));
-    return JSValue::encode(result);
-}
-#endif
-
 static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObject, Frame* frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot, String& errorMessage)
 {
     // Allow access to toString() cross-domain, but always Object.prototype.toString.
@@ -287,16 +272,6 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     if (getStaticPropertySlot<JSDOMWindow, Base>(exec, *JSDOMWindow::info()->staticPropHashTable, thisObject, propertyName, slot))
         return true;
 
-#if ENABLE(INDEXED_DATABASE)
-    // FIXME: With generated JS bindings built on static property tables there is no way to
-    // completely remove a generated property at runtime. So to completely disable IndexedDB
-    // at runtime we have to not generate these accessors and have to handle them specially here.
-    // Once https://webkit.org/b/145669 is resolved, they can once again be auto generated.
-    if (RuntimeEnabledFeatures::sharedFeatures().indexedDBEnabled() && (propertyName == exec->propertyNames().indexedDB || propertyName == exec->propertyNames().webkitIndexedDB)) {
-        slot.setCustom(thisObject, DontDelete | ReadOnly | CustomAccessor, jsDOMWindowIndexedDB);
-        return true;
-    }
-#endif
 #if ENABLE(USER_MESSAGE_HANDLERS)
     if (propertyName == exec->propertyNames().webkit && thisObject->wrapped().shouldHaveWebKitNamespaceForWorld(thisObject->world())) {
         slot.setCacheableCustom(thisObject, DontDelete | ReadOnly, jsDOMWindowWebKit);

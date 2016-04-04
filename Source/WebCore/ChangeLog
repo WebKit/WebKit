@@ -1,3 +1,64 @@
+2016-04-04  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r196145): Crash in getOwnPropertyDescriptor on http://www.history.com/shows/vikings
+        https://bugs.webkit.org/show_bug.cgi?id=156136
+        <rdar://problem/25410767>
+
+        Reviewed by Ryosuke Niwa.
+
+        The page was crashing when doing the following:
+        Object.getOwnPropertyDescriptor(window, "indexedDB")
+
+        getOwnPropertyDescriptor() expected getDirect() to return a CustomGetterSetter for
+        CustomAccessors but it was not the case for window.indexedDB. The reason was that
+        window.indexedDB was a special property, which is not part of the static table but
+        returned by GetOwnPropertySlot() if IndexedDB feature is enabled. This weirdness
+        was due to our bindings generator not having proper support for [EnabledAtRuntime]
+        properties on Window.
+
+        This patch adds support for [EnabledAtRuntime] properties on Window by omitting
+        these properties from the static property table and then setting them at runtime
+        in JSDOMWindow::finishCreation() if the corresponding feature is enabled.
+        window.indexedDB now looks like a regular property when IndexedDB is enabled
+        and getOwnPropertyDescriptor() works as expected for this property.
+
+        Test: storage/indexeddb/indexeddb-getownpropertyDescriptor.html
+
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::indexedDB):
+        * Modules/indexeddb/DOMWindowIndexedDatabase.h:
+        The generated bindings pass DOMWindow by reference instead of pointer so update
+        the implementation accordingly.
+
+        * Modules/indexeddb/DOMWindowIndexedDatabase.idl:
+        Add 'indexedDB' and 'webkitIndexedDB' properties and mark them as
+        [EnabledAtRuntime]. Now that the bindings generator correctly handles
+        [EnabledAtRuntime] properties on the Window, there is no need to
+        custom-handle them in JSDOMWindowCustom.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        Drop custom handling for 'indexedDB' and 'webkitIndexedDB' properties
+        in getOwnPropertySlot(). The generated bindings code now makes sure to
+        only set those properties on the Window if IndexedDB is enabled so we
+        can let the regular code path look up those properties.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetJSCAttributesForAttribute):
+        (GenerateHeader):
+        (GeneratePropertiesHashTable):
+        (GenerateImplementation):
+        Add support for [EnabledAtRuntime] properties on DOMWindow. For such
+        properties, we do the following:
+        1. Omit them from the static property table
+        2. In JSDOMWindow::finishCreation(), dynamically add those properties
+           at runtime if the corresponding feature is enabled.
+
+        Note that this works for constructors as well.
+
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::assertIDBFactory):
+        Pass Window by reference instead of pointer.
+
 2016-04-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Addressing post-review feedback on r198970

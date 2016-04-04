@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests using getOwnPropertyDescriptor() on window.indexedDB");
+
+evalAndLog("desc = Object.getOwnPropertyDescriptor(window, 'indexedDB')");
+shouldBeType("desc.get", "Function");
+shouldBeUndefined("desc.set");
+shouldBeTrue("desc.enumerable");
+shouldBeTrue("desc.configurable");
+</script>
+</body>

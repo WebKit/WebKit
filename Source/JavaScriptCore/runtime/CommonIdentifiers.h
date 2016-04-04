@@ -28,18 +28,37 @@
 // MarkedArgumentBuffer of property names, passed to a macro so we can do set them up various
 // ways without repeating the list.
 #define JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
+    macro(AnimationTimeline) \
     macro(Array) \
     macro(ArrayBuffer) \
     macro(ArrayIterator) \
+    macro(Audio) \
     macro(BYTES_PER_ELEMENT) \
     macro(Boolean) \
     macro(Collator) \
     macro(Date) \
     macro(DateTimeFormat) \
+    macro(DocumentTimeline) \
     macro(Error) \
     macro(EvalError) \
     macro(Function) \
+    macro(Gamepad) \
+    macro(GamepadButton) \
+    macro(GamepadEvent) \
     macro(GeneratorFunction) \
+    macro(HTMLAudioElement) \
+    macro(HTMLSlotElement) \
+    macro(IDBCursor) \
+    macro(IDBCursorWithValue) \
+    macro(IDBDatabase) \
+    macro(IDBFactory) \
+    macro(IDBIndex) \
+    macro(IDBKeyRange) \
+    macro(IDBObjectStore) \
+    macro(IDBOpenDBRequest) \
+    macro(IDBRequest) \
+    macro(IDBTransaction) \
+    macro(IDBVersionChangeEvent) \
     macro(Infinity) \
     macro(Intl) \
     macro(JSON) \
@@ -59,6 +78,7 @@
     macro(RegExp) \
     macro(Set)\
     macro(SetIterator)\
+    macro(ShadowRoot) \
     macro(String) \
     macro(Symbol) \
     macro(SyntaxError) \
@@ -67,6 +87,7 @@
     macro(UTC) \
     macro(WeakMap)\
     macro(WeakSet)\
+    macro(WebSocket) \
     macro(__defineGetter__) \
     macro(__defineSetter__) \
     macro(__lookupGetter__) \
@@ -218,6 +239,14 @@
     macro(valueOf) \
     macro(values) \
     macro(webkit) \
+    macro(webkitIDBCursor) \
+    macro(webkitIDBDatabase) \
+    macro(webkitIDBFactory) \
+    macro(webkitIDBIndex) \
+    macro(webkitIDBKeyRange) \
+    macro(webkitIDBObjectStore) \
+    macro(webkitIDBRequest) \
+    macro(webkitIDBTransaction) \
     macro(webkitIndexedDB) \
     macro(weekday) \
     macro(window) \
