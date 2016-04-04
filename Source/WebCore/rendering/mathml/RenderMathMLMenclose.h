@@ -36,15 +36,18 @@ public:
     RenderMathMLMenclose(Element&, Ref<RenderStyle>&&);
 
 private:
-    const char* renderName() const override { return "RenderMathMLMenclose"; }
-    void paint(PaintInfo&, const LayoutPoint&) override;
+    bool isRenderMathMLMenclose() const final { return true; }
+    const char* renderName() const final { return "RenderMathMLMenclose"; }
+    void paint(PaintInfo&, const LayoutPoint&) final;
     void updateLogicalHeight() override;
     void addChild(RenderObject* newChild, RenderObject* beforeChild = nullptr) override;
-    void computePreferredLogicalWidths() override;
+    void computePreferredLogicalWidths() final;
     bool checkNotationalValuesValidity(const Vector<String>&) const;
 };
     
 }
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLMenclose, isRenderMathMLMenclose())
 
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLMenclose_h

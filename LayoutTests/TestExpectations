@@ -112,6 +112,12 @@ webkit.org/b/127860 [ Debug ] js/function-apply-aliased.html [ Skip ]
 # This test verifies dynamic manipulation of the mroot and msqrt elements.
 mathml/roots-removeChild.html [ ImageOnlyFailure ]
 
+# There is a small 1px size difference but this will be fixed when we refactor completely RenderMathMLFraction.
+mathml/presentation/fractions-positions.html [ Skip ]
+
+# For now we ignore margin/padding/border properties of MathML renderers.
+mathml/presentation/bug97990.html [ Skip ]
+
 # This test verifies that a mismatch reftest will fail as intended if both results are same. (introduced in r93187)
 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 

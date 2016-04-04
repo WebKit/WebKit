@@ -1,3 +1,40 @@
+2016-04-04  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLRow layout functions to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=153208
+
+        Reviewed by Martin Robinson.
+
+        This is the first patch to rewrite MathML layout without relying on
+        flexboxes or anonymous renderers.
+        We have done some temporary changes to allow overriding of
+        layoutBlock and to implement paintChildren, but this will be remove in a
+        follow-up patch. We also implement firstLineBaseline,
+        computePreferredLogicalWidths and layoutBlock of RenderMathMLRow without
+        using any flexbox functions. We adjust a bit the MathML CSS to take into
+        account these changes. Finally, we delete the unused helper function to
+        create anonymous RenderMathMLRow.
+
+        * css/mathml.css:
+        (ms, mtext, mi, mn, mo, annotation, mtd): Prevent linebreaking inside token elements and table cells, otherwise this cause test failures with the new implementation of RenderMathMLRow.
+        (math, mrow, mfenced, merror, mphantom, mstyle, menclose): Deleted. We no longer rely on flexbox for baseline alignment of RenderMathMLRow.
+        * rendering/RenderFlexibleBox.h: Allow overrider of the LayoutBlock for the moment.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderMathMLMenclose): Add helper function.
+        * rendering/mathml/RenderMathMLMenclose.h: ditto.
+        * rendering/mathml/RenderMathMLBlock.h:
+        (WebCore::ascentForChild): Add helper function to easily compute the ascent of a child.
+        * rendering/mathml/RenderMathMLRow.cpp: Reimplement the class without using the flexbox layout.
+        (WebCore::RenderMathMLRow::firstLineBaseline): Implement the function to determine the baseline.
+        (WebCore::RenderMathMLRow::computeLineVerticalStretch): Add a function that browses non-stretchy children to determine the desired vertical stretch metrics.
+        (WebCore::RenderMathMLRow::computePreferredLogicalWidths): Implement the function to determine the preferred widths of the RenderMathMLRow.
+        (WebCore::RenderMathMLRow::layoutRowItems): Helper function that layouts children (stretching vertical operators if needed), calculate the exact logical width and position children.
+        (WebCore::RenderMathMLRow::layoutBlock): Implement the function to do the actual layout, which essentially calls layoutRowItems.
+        (WebCore::RenderMathMLRow::paintChildren): Temporarily implement this function, which just calls paintChild on each child.
+        (WebCore::RenderMathMLRow::createAnonymousWithParentRenderer): Deleted. We actually don't create anonymous RenderMathMLRow at the moment.
+        (WebCore::RenderMathMLRow::layout): Deleted.
+        * rendering/mathml/RenderMathMLRow.h: Update declarations of functions.
+
 2016-04-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Consolidate radio button group member code with that in HTMLElement derivatives

@@ -40,8 +40,8 @@ ms, mi, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescript
     display: -webkit-inline-flex !important;
 }
 
-math, mrow, mfenced, merror, mphantom, mstyle, menclose {
-    align-items: baseline;
+ms, mtext, mi, mn, mo, annotation, mtd {
+    white-space: nowrap !important;
 }
 
 mo, mfrac, munder, mover, munderover {

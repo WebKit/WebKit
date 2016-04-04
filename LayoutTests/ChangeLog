@@ -1,3 +1,20 @@
+2016-04-04  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLRow layout functions to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=153208
+
+        Reviewed by Martin Robinson.
+
+        Apply some small adjustments to MathML tests after the refactoring of RenderMathMLRow.
+
+        * TestExpectations: Skip fractions-positions reftest for now. The small difference will be fixed after refactoring completely RenderMathMLFraction.
+          We also ignore a test for margin/padding on MathML renderers.
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.png: Update reference to take into account small changes in stretch size.
+        The intended test behavior (reading variants and construction from the MATH table) is preserved.
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.txt: ditto.
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.png: ditto.
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt: ditto.
+
 2016-04-04  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Unreviewed EFL Gardening on 4th Apr.

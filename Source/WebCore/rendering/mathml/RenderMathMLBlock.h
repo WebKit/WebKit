@@ -64,6 +64,12 @@ public:
     // Create a new RenderMathMLBlock, with a new style inheriting from this->style().
     RenderPtr<RenderMathMLBlock> createAnonymousMathMLBlock();
     
+protected:
+    static LayoutUnit ascentForChild(const RenderBox& child)
+    {
+        return child.firstLineBaseline().valueOr(child.logicalHeight());
+    }
+
 private:
     bool isRenderMathMLBlock() const final { return true; }
     const char* renderName() const override;

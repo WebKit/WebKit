@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Alex Milowski (alex@milowski.com). All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,13 +49,6 @@ RenderMathMLRow::RenderMathMLRow(Document& document, Ref<RenderStyle>&& style)
 {
 }
 
-RenderPtr<RenderMathMLRow> RenderMathMLRow::createAnonymousWithParentRenderer(RenderMathMLRoot& parent)
-{
-    RenderPtr<RenderMathMLRow> newMRow = createRenderer<RenderMathMLRow>(parent.document(), RenderStyle::createAnonymousStyleWithDisplay(&parent.style(), FLEX));
-    newMRow->initializeStyle();
-    return newMRow;
-}
-
 void RenderMathMLRow::updateOperatorProperties()
 {
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
@@ -66,44 +60,150 @@ void RenderMathMLRow::updateOperatorProperties()
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-void RenderMathMLRow::layout()
+
+Optional<int> RenderMathMLRow::firstLineBaseline() const
 {
-    int stretchHeightAboveBaseline = 0, stretchDepthBelowBaseline = 0;
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->needsLayout())
-            downcast<RenderElement>(*child).layout();
-        if (is<RenderMathMLBlock>(*child)) {
-            // We skip the stretchy operators as they must not be included in the computation of the stretch size.
-            auto* renderOperator = downcast<RenderMathMLBlock>(*child).unembellishedOperator();
+    RenderBox* baselineChild = firstChildBox();
+    if (!baselineChild)
+        return Optional<int>();
+
+    return Optional<int>(static_cast<int>(lroundf(ascentForChild(*baselineChild) + baselineChild->logicalTop())));
+}
+
+void RenderMathMLRow::computeLineVerticalStretch(int& stretchHeightAboveBaseline, int& stretchDepthBelowBaseline)
+{
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (is<RenderMathMLBlock>(child)) {
+            auto* renderOperator = downcast<RenderMathMLBlock>(child)->unembellishedOperator();
             if (renderOperator && renderOperator->hasOperatorFlag(MathMLOperatorDictionary::Stretchy))
                 continue;
         }
-        LayoutUnit childHeightAboveBaseline = 0, childDepthBelowBaseline = 0;
-        if (is<RenderMathMLBlock>(*child)) {
-            RenderMathMLBlock& mathmlChild = downcast<RenderMathMLBlock>(*child);
-            childHeightAboveBaseline = mathmlChild.firstLineBaseline().valueOr(mathmlChild.logicalHeight());
-            childDepthBelowBaseline = mathmlChild.logicalHeight() - childHeightAboveBaseline;
-        } else if (is<RenderMathMLTable>(*child)) {
-            RenderMathMLTable& tableChild = downcast<RenderMathMLTable>(*child);
-            childHeightAboveBaseline = tableChild.firstLineBaseline().valueOr(-1);
-            childDepthBelowBaseline = tableChild.logicalHeight() - childHeightAboveBaseline;
-        } else if (is<RenderBox>(*child)) {
-            childHeightAboveBaseline = downcast<RenderBox>(*child).logicalHeight();
-            childDepthBelowBaseline = 0;
-        }
+
+        child->layoutIfNeeded();
+
+        LayoutUnit childHeightAboveBaseline = ascentForChild(*child);
+        LayoutUnit childDepthBelowBaseline = child->logicalHeight() - childHeightAboveBaseline;
+
         stretchHeightAboveBaseline = std::max<LayoutUnit>(stretchHeightAboveBaseline, childHeightAboveBaseline);
         stretchDepthBelowBaseline = std::max<LayoutUnit>(stretchDepthBelowBaseline, childDepthBelowBaseline);
     }
-    if (stretchHeightAboveBaseline + stretchDepthBelowBaseline <= 0)
+
+    // We ensure a minimal stretch size.
+    if (stretchHeightAboveBaseline + stretchDepthBelowBaseline <= 0) {
         stretchHeightAboveBaseline = style().fontSize();
-    
-    // Set the sizes of (possibly embellished) stretchy operator children.
-    for (auto& child : childrenOfType<RenderMathMLBlock>(*this)) {
-        if (auto renderOperator = child.unembellishedOperator())
-            renderOperator->stretchTo(stretchHeightAboveBaseline, stretchDepthBelowBaseline);
+        stretchDepthBelowBaseline = 0;
+    }
+}
+
+void RenderMathMLRow::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
+
+    LayoutUnit preferredWidth = 0;
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox())
+        preferredWidth += child->maxPreferredLogicalWidth() + child->marginLogicalWidth();
+
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth + borderAndPaddingLogicalWidth();
+
+    setPreferredLogicalWidthsDirty(false);
+}
+
+void RenderMathMLRow::layoutRowItems(int stretchHeightAboveBaseline, int stretchDepthBelowBaseline)
+{
+    // We first stretch the vertical operators.
+    // For inline formulas, we can then calculate the logical width.
+    LayoutUnit width = borderAndPaddingStart();
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned())
+            continue;
+
+        if (is<RenderMathMLBlock>(child)) {
+            if (auto renderOperator = downcast<RenderMathMLBlock>(child)->unembellishedOperator())
+                renderOperator->stretchTo(stretchHeightAboveBaseline, stretchDepthBelowBaseline);
+        }
+
+        child->layoutIfNeeded();
+
+        width += child->marginStart() + child->logicalWidth() + child->marginEnd();
     }
 
-    RenderMathMLBlock::layout();
+    width += borderEnd() + paddingEnd();
+    // FIXME: RenderMathMLRoot and RenderMathMLEnclose classes should also recalculate the exact logical width instead of using the preferred width.
+    // See https://bugs.webkit.org/show_bug.cgi?id=130326
+    if ((!isRenderMathMLMath() || style().display() == INLINE) && !isRenderMathMLRoot() && !isRenderMathMLMenclose())
+        setLogicalWidth(width);
+
+    LayoutUnit verticalOffset = borderTop() + paddingTop();
+    LayoutUnit maxAscent = 0, maxDescent = 0; // Used baseline alignment.
+    LayoutUnit horizontalOffset = borderAndPaddingStart();
+    bool shouldFlipHorizontal = !style().isLeftToRightDirection();
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned()) {
+            child->containingBlock()->insertPositionedObject(*child);
+            continue;
+        }
+        LayoutUnit childHorizontalExtent = child->logicalWidth();
+        LayoutUnit ascent = ascentForChild(*child);
+        LayoutUnit descent = child->verticalMarginExtent() + child->logicalHeight() - ascent;
+        maxAscent = std::max(maxAscent, ascent);
+        maxDescent = std::max(maxDescent, descent);
+        LayoutUnit childVerticalMarginBoxExtent = maxAscent + maxDescent;
+
+        horizontalOffset += child->marginStart();
+
+        setLogicalHeight(std::max(logicalHeight(), verticalOffset + borderBottom() + paddingBottom() + childVerticalMarginBoxExtent + horizontalScrollbarHeight()));
+
+        LayoutPoint childLocation(shouldFlipHorizontal ? logicalWidth() - horizontalOffset - childHorizontalExtent : horizontalOffset, verticalOffset + child->marginTop());
+        child->setLocation(childLocation);
+
+        horizontalOffset += childHorizontalExtent + child->marginEnd();
+    }
+
+    LayoutUnit centerBlockOffset = 0;
+    // FIXME: Remove the FLEX when it is not required by the css.
+    if (style().display() == BLOCK || style().display() == FLEX)
+        centerBlockOffset = std::max<LayoutUnit>(0, (logicalWidth() - (horizontalOffset + borderEnd() + paddingEnd())) / 2);
+
+    if (shouldFlipHorizontal && centerBlockOffset > 0)
+        centerBlockOffset = -centerBlockOffset;
+
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        LayoutUnit ascent = ascentForChild(*child);
+        LayoutUnit startOffset = maxAscent - ascent;
+        child->setLocation(child->location() + LayoutPoint(centerBlockOffset, startOffset));
+    }
+}
+
+void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
+{
+    ASSERT(needsLayout());
+
+    if (!relayoutChildren && simplifiedLayout())
+        return;
+
+    int stretchHeightAboveBaseline = 0;
+    int stretchDepthBelowBaseline = 0;
+    computeLineVerticalStretch(stretchHeightAboveBaseline, stretchDepthBelowBaseline);
+
+    recomputeLogicalWidth();
+
+    setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
+
+    layoutRowItems(stretchHeightAboveBaseline, stretchDepthBelowBaseline);
+
+    updateLogicalHeight();
+
+    clearNeedsLayout();
+}
+
+void RenderMathMLRow::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
+{
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (!paintChild(*child, paintInfo, paintOffset, paintInfoForChild, usePrintRect, PaintAsInlineBlock))
+            return;
+    }
 }
 
 }

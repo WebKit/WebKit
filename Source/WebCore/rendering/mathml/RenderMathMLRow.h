@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Alex Milowski (alex@milowski.com). All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,15 +40,19 @@ public:
     RenderMathMLRow(Element&, Ref<RenderStyle>&&);
     RenderMathMLRow(Document&, Ref<RenderStyle>&&);
 
-    static RenderPtr<RenderMathMLRow> createAnonymousWithParentRenderer(RenderMathMLRoot&);
     void updateOperatorProperties();
 
-protected:
-    void layout() override;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
+    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
+    Optional<int> firstLineBaseline() const final;
 
 private:
     bool isRenderMathMLRow() const final { return true; }
     const char* renderName() const override { return isAnonymous() ? "RenderMathMLRow (anonymous)" : "RenderMathMLRow"; }
+
+    void layoutRowItems(int stretchHeightAboveBaseline, int stretchDepthBelowBaseline);
+    void computeLineVerticalStretch(int& stretchHeightAboveBaseline, int& stretchDepthBelowBaseline);
+    void computePreferredLogicalWidths() override;
 };
 
 } // namespace WebCore
