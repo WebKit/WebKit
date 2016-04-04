@@ -1,3 +1,11 @@
+2016-04-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/scrolling/rtl-scrollbars-animation-property.html for Windows
+
+        Unreviewed test gardening
+
+        * platform/win/fast/scrolling/rtl-scrollbars-animation-property-expected.txt:
+
 2016-04-04  Frederic Wang  <fwang@igalia.com>
 
         Refactor RenderMathMLRow layout functions to avoid using flexbox
