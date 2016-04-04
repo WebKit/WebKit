@@ -45,6 +45,7 @@ static inline bool featureWithCSSValueID(const AtomicString& mediaFeature, const
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
         || mediaFeature == MediaFeatureNames::view_modeMediaFeature
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
+        || mediaFeature == MediaFeatureNames::color_gamutMediaFeature
         || mediaFeature == MediaFeatureNames::any_hoverMediaFeature
         || mediaFeature == MediaFeatureNames::any_pointerMediaFeature
         || mediaFeature == MediaFeatureNames::hoverMediaFeature

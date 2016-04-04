@@ -1,0 +1,16 @@
+<html>
+<head>
+<title>CSS4 media query test: color-gamut.</title>
+<style type="text/css">
+#a { background-color: green; }
+#b { background-color: blue; }
+#c { background-color: green; }
+</style>
+</head>
+<body>
+  <p id="a">This paragraph should have a green background.</p>
+  <p id="b">This paragraph should have a blue background on a device with a display that supports something close to sRGB, which is nearly all displays. Otherwise the background should be green.</p>
+  <p id="c">This paragraph should have a blue background on a device with a display that supports something close to P3. Otherwise the background should be green.</p>
+  <p>Note that the expected results of this test assume a display that is not significantly wider than sRGB.</p>
+</body>
+</html>

@@ -36,6 +36,7 @@ namespace WebCore {
     macro(any_pointer, "any-pointer") \
     macro(color, "color") \
     macro(color_index, "color-index") \
+    macro(color_gamut, "color-gamut") \
     macro(grid, "grid") \
     macro(monochrome, "monochrome") \
     macro(height, "height") \

@@ -250,6 +250,28 @@ static bool color_indexMediaFeatureEval(CSSValue* value, const CSSToLengthConver
     return numberValue(value, number) && compareValue(0, static_cast<int>(number), op);
 }
 
+static bool color_gamutMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix)
+{
+    if (!value)
+        return true;
+
+    switch (downcast<CSSPrimitiveValue>(*value).getValueID()) {
+    case CSSValueSrgb:
+        return true;
+    case CSSValueP3:
+        // FIXME: For the moment we'll just assume an "extended
+        // color" display is at least as good as P3.
+        return screenSupportsExtendedColor();
+    case CSSValueRec2020:
+        // FIXME: At some point we should start detecting displays that
+        // support more colors.
+        return false;
+    default:
+        ASSERT_NOT_REACHED();
+        return true;
+    }
+}
+
 static bool monochromeMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix op)
 {
     if (!screenIsMonochrome(frame->page()->mainFrame().view())) {

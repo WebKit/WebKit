@@ -1,3 +1,16 @@
+2016-04-04  Dean Jackson  <dino@apple.com>
+
+        Add color-gamut media query support
+        https://bugs.webkit.org/show_bug.cgi?id=155994
+        <rdar://problem/23282326>
+
+        Reviewed by Darin Adler.
+
+        New test for color-gamut.
+
+        * fast/media/mq-color-gamut-expected.html: Added.
+        * fast/media/mq-color-gamut.html: Added.
+
 2016-04-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping crashing test fast/loader/opaque-base-url.html on Debug
