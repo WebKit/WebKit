@@ -1,3 +1,21 @@
+2016-04-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] Crash when trying to re-convert a previously-failed font conversion
+        https://bugs.webkit.org/show_bug.cgi?id=156175
+        <rdar://problem/25130547>
+
+        Reviewed by David Kilzer.
+
+        m_externalSVGFontElement points inside the document owned by m_externalSVGDocument.
+        However, when the m_externalSVGDocument is destroyed (due to a failed conversion),
+        we weren't resetting m_externalSVGFontElement. Then, when trying to re-convert, we
+        were using the fact that m_externalSVGFontElement is non-null to mean it's valid.
+
+        Test: fast/text/svg-font-invalid-glyph-path-failure.html (Under GuardMalloc)
+
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::ensureCustomFontData):
+
 2016-04-04  Anders Carlsson  <andersca@apple.com>
 
         Properly generate static functions that return Promises

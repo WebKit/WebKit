@@ -85,6 +85,7 @@ bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)
             m_convertedFont = SharedBuffer::adoptVector(convertedFont.value());
         else {
             m_externalSVGDocument = nullptr;
+            m_externalSVGFontElement = nullptr;
             return false;
         }
     }
