@@ -1,3 +1,9 @@
+2016-04-04  Alex Christensen  <achristensen@webkit.org>
+
+        CMake build fix.
+
+        * PlatformMac.cmake:
+
 2016-04-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         Tapping on tabs in webpages caused WK crash at WebKit: WebKit::WebFrame::didReceivePolicyDecision

@@ -531,6 +531,7 @@ set(WebKitLegacyForwardingHeaders
     WebDocument.h
     WebDocumentPrivate.h
     WebDynamicScrollBarsView.h
+    WebEditingDelegate.h
     WebFrame.h
     WebFramePrivate.h
     WebFrameViewPrivate.h
