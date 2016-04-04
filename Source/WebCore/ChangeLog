@@ -1,5 +1,15 @@
 2016-04-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Addressing post-review feedback on r198970
+        https://bugs.webkit.org/show_bug.cgi?id=156123
+
+        Unreviewed.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiCharacterRun::~BidiCharacterRun):
+
+2016-04-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [SVG -> OTF Converter] Crash when trying to re-convert a previously-failed font conversion
         https://bugs.webkit.org/show_bug.cgi?id=156175
         <rdar://problem/25130547>

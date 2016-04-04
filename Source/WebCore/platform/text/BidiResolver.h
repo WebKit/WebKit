@@ -176,6 +176,14 @@ public:
         }
     }
 
+    ~BidiCharacterRun()
+    {
+        // Delete the linked list in a loop to prevent destructor recursion.
+        auto next = WTFMove(m_next);
+        while (next)
+            next = WTFMove(next->m_next);
+    }
+
     int start() const { return m_start; }
     int stop() const { return m_stop; }
     unsigned char level() const { return m_level; }
