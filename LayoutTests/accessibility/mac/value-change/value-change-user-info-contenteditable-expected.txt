@@ -1,0 +1,44 @@
+223
+This tests value change notifications user info data.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addedNotification is true
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex] is expectedValues[resultIndex]
+PASS actualEditTypes[resultIndex] is "Typing"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex] is expectedValues[resultIndex]
+PASS actualEditTypes[resultIndex] is "Delete"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex] is expectedValues[resultIndex]
+PASS actualEditTypes[resultIndex] is "Typing"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex] is expectedValues[resultIndex]
+PASS actualEditTypes[resultIndex] is "Delete"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex][0] is expectedValues[resultIndex][0]
+PASS actualEditTypes[resultIndex][0] is "Delete"
+PASS actualChangeValues[resultIndex][1] is expectedValues[resultIndex][1]
+PASS actualEditTypes[resultIndex][1] is "Typing"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex] is expectedValues[resultIndex]
+PASS actualEditTypes[resultIndex] is "Cut"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex] is expectedValues[resultIndex]
+PASS actualEditTypes[resultIndex] is "Paste"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex][0] is expectedValues[resultIndex][0]
+PASS actualEditTypes[resultIndex][0] is "Delete"
+PASS actualChangeValues[resultIndex][1] is expectedValues[resultIndex][1]
+PASS actualEditTypes[resultIndex][1] is "Paste"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex][0] is expectedValues[resultIndex][0]
+PASS actualEditTypes[resultIndex][0] is "Delete"
+PASS actualChangeValues[resultIndex][1] is expectedValues[resultIndex][1]
+PASS actualEditTypes[resultIndex][1] is "Typing"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

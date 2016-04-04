@@ -64,9 +64,6 @@ void InsertIntoTextNodeCommand::doApply()
     }
 
     m_node->insertData(m_offset, m_text, IGNORE_EXCEPTION);
-
-    if (shouldPostAccessibilityNotification())
-        notifyAccessibilityForTextChange(m_node.get(), applyEditType(), m_text, VisiblePosition(Position(m_node, m_offset)));
 }
 
 #if PLATFORM(IOS)
@@ -81,10 +78,6 @@ void InsertIntoTextNodeCommand::doUnapply()
 {
     if (!m_node->hasEditableStyle())
         return;
-        
-    // Need to notify this before actually deleting the text
-    if (shouldPostAccessibilityNotification())
-        notifyAccessibilityForTextChange(m_node.get(), unapplyEditType(), m_text, VisiblePosition(Position(m_node, m_offset)));
 
     m_node->deleteData(m_offset, m_text.length(), IGNORE_EXCEPTION);
 }

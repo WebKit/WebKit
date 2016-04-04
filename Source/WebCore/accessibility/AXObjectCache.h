@@ -97,6 +97,28 @@ private:
     HashMap<AXID, CachedAXObjectAttributes> m_idMapping;
 };
 
+struct VisiblePositionIndex {
+    int value = -1;
+    RefPtr<ContainerNode> scope;
+};
+
+struct VisiblePositionIndexRange {
+    VisiblePositionIndex startIndex;
+    VisiblePositionIndex endIndex;
+    bool isNull() const { return startIndex.value == -1 || endIndex.value == -1; }
+};
+
+class AccessibilityReplacedText {
+public:
+    AccessibilityReplacedText() { }
+    AccessibilityReplacedText(const VisibleSelection&);
+    void postTextStateChangeNotification(AXObjectCache*, AXTextEditType, const String&, const VisibleSelection&);
+    const VisiblePositionIndexRange& replacedRange() { return m_replacedRange; }
+protected:
+    String m_replacedText;
+    VisiblePositionIndexRange m_replacedRange;
+};
+
 #if !PLATFORM(COCOA)
 enum AXTextChange { AXTextInserted, AXTextDeleted, AXTextAttributesChanged };
 #endif

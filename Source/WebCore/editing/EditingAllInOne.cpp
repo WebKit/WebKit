@@ -59,8 +59,6 @@
 #include <RemoveNodeCommand.cpp>
 #include <RemoveNodePreservingChildrenCommand.cpp>
 #include <RenderedPosition.cpp>
-#include <ReplaceDeleteFromTextNodeCommand.cpp>
-#include <ReplaceInsertIntoTextNodeCommand.cpp>
 #include <ReplaceNodeWithSpanCommand.cpp>
 #include <ReplaceSelectionCommand.cpp>
 #include <SetNodeAttributeCommand.cpp>

@@ -39,7 +39,7 @@ public:
     virtual ~TextInsertionBaseCommand() { };
 
 protected:
-    explicit TextInsertionBaseCommand(Document&);
+    explicit TextInsertionBaseCommand(Document&, EditAction = EditActionUnspecified);
     static void applyTextInsertionCommand(Frame*, TextInsertionBaseCommand&, const VisibleSelection& selectionForInsertion, const VisibleSelection& endingSelection);
 };
 

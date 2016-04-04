@@ -39,8 +39,6 @@ public:
         return adoptRef(*new DeleteFromTextNodeCommand(WTFMove(node), offset, count, editingAction));
     }
 
-    const String& deletedText();
-
 protected:
     DeleteFromTextNodeCommand(RefPtr<Text>&&, unsigned offset, unsigned count, EditAction);
 
@@ -57,11 +55,6 @@ private:
     unsigned m_count;
     String m_text;
 };
-
-inline const String& DeleteFromTextNodeCommand::deletedText()
-{
-    return m_text;
-}
 
 } // namespace WebCore
 

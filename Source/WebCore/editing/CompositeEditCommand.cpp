@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CompositeEditCommand.h"
 
+#include "AXObjectCache.h"
 #include "AppendNodeCommand.h"
 #include "ApplyStyleCommand.h"
 #include "BreakBlockquoteCommand.h"
@@ -59,8 +60,6 @@
 #include "RenderBlockFlow.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
-#include "ReplaceDeleteFromTextNodeCommand.h"
-#include "ReplaceInsertIntoTextNodeCommand.h"
 #include "ReplaceNodeWithSpanCommand.h"
 #include "ReplaceSelectionCommand.h"
 #include "ScopedEventQueue.h"
@@ -79,6 +78,119 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+int AccessibilityUndoReplacedText::indexForVisiblePosition(const VisiblePosition& position, RefPtr<ContainerNode>& scope) const
+{
+    if (position.deepEquivalent().isNull())
+        return -1;
+    return WebCore::indexForVisiblePosition(position, scope);
+}
+
+void AccessibilityUndoReplacedText::confgureTextToBeDeletedByUnapplyIndexesWithEditCommandEndingSelection(const VisibleSelection& selection)
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    if (selection.isRange() && m_textDeletedByUnapplyRange.startIndex.value == -1)
+        m_textDeletedByUnapplyRange.startIndex.value = indexForVisiblePosition(selection.start(), m_textDeletedByUnapplyRange.startIndex.scope);
+    if (m_textDeletedByUnapplyRange.endIndex.value == -1)
+        m_textDeletedByUnapplyRange.endIndex.value = indexForVisiblePosition(selection.start(), m_textDeletedByUnapplyRange.endIndex.scope);
+}
+
+void AccessibilityUndoReplacedText::confgureTextToBeDeletedByUnapplyStartIndexWithEditCommandStartingSelection(const VisibleSelection& selection)
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    if (m_textDeletedByUnapplyRange.startIndex.value == -1)
+        m_textDeletedByUnapplyRange.startIndex.value = indexForVisiblePosition(selection.start(), m_textDeletedByUnapplyRange.startIndex.scope);
+    if (selection.isRange() && m_textDeletedByUnapplyRange.endIndex.value == -1)
+        m_textDeletedByUnapplyRange.endIndex.value = indexForVisiblePosition(selection.end(), m_textDeletedByUnapplyRange.endIndex.scope);
+}
+
+void AccessibilityUndoReplacedText::setTextInsertedByUnapplyRange(const VisiblePositionIndexRange& range)
+{
+    m_textInsertedByUnapplyRange = range;
+}
+
+void AccessibilityUndoReplacedText::captureTextToBeDeletedByUnapply()
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    m_replacedText = textInsertedByReapply();
+}
+
+void AccessibilityUndoReplacedText::captureTextToBeDeletedByReapply()
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    m_replacedText = textInsertedByUnapply();
+}
+
+static String stringForVisiblePositionIndexRange(const VisiblePositionIndexRange& range)
+{
+    if (range.isNull())
+        return String();
+    VisiblePosition start = visiblePositionForIndex(range.startIndex.value, range.startIndex.scope.get());
+    VisiblePosition end = visiblePositionForIndex(range.endIndex.value, range.endIndex.scope.get());
+    return AccessibilityObject::stringForVisiblePositionRange(VisiblePositionRange(start, end));
+}
+
+String AccessibilityUndoReplacedText::textInsertedByUnapply()
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return String();
+    return stringForVisiblePositionIndexRange(m_textInsertedByUnapplyRange);
+}
+
+String AccessibilityUndoReplacedText::textInsertedByReapply()
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return String();
+    return stringForVisiblePositionIndexRange(m_textDeletedByUnapplyRange);
+}
+
+static void postTextStateChangeNotification(AXObjectCache* cache, const VisiblePosition& position, const String& deletedText, const String& insertedText)
+{
+    ASSERT(cache);
+    Node* node = highestEditableRoot(position.deepEquivalent(), HasEditableAXRole);
+    if (!node)
+        return;
+    if (insertedText.length() && deletedText.length())
+        cache->postTextReplacementNotification(node, AXTextEditTypeDelete, insertedText, AXTextEditTypeInsert, deletedText, position);
+    else if (deletedText.length())
+        cache->postTextStateChangeNotification(node, AXTextEditTypeInsert, deletedText, position);
+    else if (insertedText.length())
+        cache->postTextStateChangeNotification(node, AXTextEditTypeDelete, insertedText, position);
+}
+
+void AccessibilityUndoReplacedText::postTextStateChangeNotificationForUnapply(AXObjectCache* cache)
+{
+    if (!cache)
+        return;
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    if (m_textInsertedByUnapplyRange.isNull())
+        return;
+    VisiblePosition position = visiblePositionForIndex(m_textInsertedByUnapplyRange.endIndex.value, m_textInsertedByUnapplyRange.endIndex.scope.get());
+    if (position.isNull())
+        return;
+    postTextStateChangeNotification(cache, position, textInsertedByUnapply(), m_replacedText);
+    m_replacedText = String();
+}
+
+void AccessibilityUndoReplacedText::postTextStateChangeNotificationForReapply(AXObjectCache* cache)
+{
+    if (!cache)
+        return;
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    if (m_textDeletedByUnapplyRange.isNull())
+        return;
+    VisiblePosition position = visiblePositionForIndex(m_textDeletedByUnapplyRange.startIndex.value, m_textDeletedByUnapplyRange.startIndex.scope.get());
+    if (position.isNull())
+        return;
+    postTextStateChangeNotification(cache, position, m_replacedText, textInsertedByReapply());
+    m_replacedText = String();
+}
+
 Ref<EditCommandComposition> EditCommandComposition::create(Document& document,
     const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction editAction)
 {
@@ -93,6 +205,7 @@ EditCommandComposition::EditCommandComposition(Document& document, const Visible
     , m_endingRootEditableElement(endingSelection.rootEditableElement())
     , m_editAction(editAction)
 {
+    m_replacedText.confgureTextToBeDeletedByUnapplyStartIndexWithEditCommandStartingSelection(startingSelection);
 }
 
 void EditCommandComposition::unapply()
@@ -100,6 +213,8 @@ void EditCommandComposition::unapply()
     ASSERT(m_document);
     RefPtr<Frame> frame = m_document->frame();
     ASSERT(frame);
+
+    m_replacedText.captureTextToBeDeletedByUnapply();
 
     // Changes to the document may have been made since the last editing operation that require a layout, as in <rdar://problem/5658603>.
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
@@ -119,6 +234,9 @@ void EditCommandComposition::unapply()
         m_commands[i - 1]->doUnapply();
 
     frame->editor().unappliedEditing(this);
+
+    if (AXObjectCache::accessibilityEnabled())
+        m_replacedText.postTextStateChangeNotificationForUnapply(m_document->existingAXObjectCache());
 }
 
 void EditCommandComposition::reapply()
@@ -126,6 +244,8 @@ void EditCommandComposition::reapply()
     ASSERT(m_document);
     RefPtr<Frame> frame = m_document->frame();
     ASSERT(frame);
+
+    m_replacedText.captureTextToBeDeletedByReapply();
 
     // Changes to the document may have been made since the last editing operation that require a layout, as in <rdar://problem/5658603>.
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
@@ -136,6 +256,9 @@ void EditCommandComposition::reapply()
         command->doReapply();
 
     frame->editor().reappliedEditing(this);
+
+    if (AXObjectCache::accessibilityEnabled())
+        m_replacedText.postTextStateChangeNotificationForReapply(m_document->existingAXObjectCache());
 }
 
 void EditCommandComposition::append(SimpleEditCommand* command)
@@ -147,12 +270,19 @@ void EditCommandComposition::setStartingSelection(const VisibleSelection& select
 {
     m_startingSelection = selection;
     m_startingRootEditableElement = selection.rootEditableElement();
+    m_replacedText.confgureTextToBeDeletedByUnapplyStartIndexWithEditCommandStartingSelection(selection);
 }
 
 void EditCommandComposition::setEndingSelection(const VisibleSelection& selection)
 {
     m_endingSelection = selection;
     m_endingRootEditableElement = selection.rootEditableElement();
+    m_replacedText.confgureTextToBeDeletedByUnapplyIndexesWithEditCommandEndingSelection(selection);
+}
+
+void EditCommandComposition::setTextInsertedByUnapplyRange(const VisiblePositionIndexRange& range)
+{
+    m_replacedText.setTextInsertedByUnapplyRange(range);
 }
 
 #ifndef NDEBUG
@@ -162,24 +292,6 @@ void EditCommandComposition::getNodesInCommand(HashSet<Node*>& nodes)
         command->getNodesInCommand(nodes);
 }
 #endif
-
-AXTextEditType EditCommandComposition::unapplyEditType() const
-{
-    switch (editingAction()) {
-    case EditActionCut:
-    case EditActionDelete:
-        return AXTextEditTypeInsert;
-    case EditActionDictation:
-    case EditActionInsert:
-    case EditActionPaste:
-    case EditActionTyping:
-        return AXTextEditTypeDelete;
-    // Include default case for unhandled EditAction cases.
-    default:
-        break;
-    }
-    return AXTextEditTypeUnknown;
-}
 
 void applyCommand(PassRefPtr<CompositeEditCommand> command)
 {
@@ -414,7 +526,7 @@ void CompositeEditCommand::removeNode(PassRefPtr<Node> node, ShouldAssumeContent
 {
     if (!node || !node->nonShadowBoundaryParentNode())
         return;
-    applyCommandToComposite(RemoveNodeCommand::create(*node, shouldAssumeContentIsAlwaysEditable));
+    applyCommandToComposite(RemoveNodeCommand::create(*node, shouldAssumeContentIsAlwaysEditable, editingAction()));
 }
 
 void CompositeEditCommand::removeNodePreservingChildren(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
@@ -558,10 +670,9 @@ void CompositeEditCommand::deleteTextFromNode(PassRefPtr<Text> node, unsigned of
 void CompositeEditCommand::replaceTextInNode(PassRefPtr<Text> prpNode, unsigned offset, unsigned count, const String& replacementText)
 {
     RefPtr<Text> node(prpNode);
-    RefPtr<DeleteFromTextNodeCommand> deleteCommand = ReplaceDeleteFromTextNodeCommand::create(WTFMove(node), offset, count);
-    applyCommandToComposite(deleteCommand);
+    applyCommandToComposite(DeleteFromTextNodeCommand::create(WTFMove(node), offset, count));
     if (!replacementText.isEmpty())
-        applyCommandToComposite(ReplaceInsertIntoTextNodeCommand::create(WTFMove(node), offset, replacementText, deleteCommand->deletedText(), editingAction()));
+        applyCommandToComposite(InsertIntoTextNodeCommand::create(WTFMove(node), offset, replacementText, editingAction()));
 }
 
 Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
@@ -638,10 +749,20 @@ void CompositeEditCommand::insertNodeAtTabSpanPosition(PassRefPtr<Node> node, co
     insertNodeAt(node, positionOutsideTabSpan(pos));
 }
 
+static EditAction deleteSelectionEditingActionForEditingAction(EditAction editingAction)
+{
+    switch (editingAction) {
+    case EditActionCut:
+        return EditActionCut;
+    default:
+        return EditActionDelete;
+    }
+}
+
 void CompositeEditCommand::deleteSelection(bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup)
 {
     if (endingSelection().isRange())
-        applyCommandToComposite(DeleteSelectionCommand::create(document(), smartDelete, mergeBlocksAfterDelete, replace, expandForSpecialElements, sanitizeMarkup));
+        applyCommandToComposite(DeleteSelectionCommand::create(document(), smartDelete, mergeBlocksAfterDelete, replace, expandForSpecialElements, sanitizeMarkup, deleteSelectionEditingActionForEditingAction(editingAction())));
 }
 
 void CompositeEditCommand::deleteSelection(const VisibleSelection &selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup)

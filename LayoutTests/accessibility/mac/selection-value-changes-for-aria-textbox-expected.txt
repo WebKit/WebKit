@@ -11,5 +11,6 @@ TEST COMPLETE
 Successfully received AXSelectedTextChanged
 Successfully received AXSelectedTextChanged
 Successfully received AXSelectedTextChanged
+Successfully received AXSelectedTextChanged
 Successfully received AXValueChanged
 

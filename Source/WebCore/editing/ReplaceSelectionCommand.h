@@ -53,6 +53,8 @@ public:
         return adoptRef(*new ReplaceSelectionCommand(document, WTFMove(fragment), options, editingAction));
     }
 
+    VisibleSelection visibleSelectionForInsertedText() const { return m_visibleSelectionForInsertedText; }
+
 private:
     ReplaceSelectionCommand(Document&, RefPtr<DocumentFragment>&&, CommandOptions, EditAction);
 
@@ -110,6 +112,7 @@ private:
 
     bool performTrivialReplace(const ReplacementFragment&);
 
+    VisibleSelection m_visibleSelectionForInsertedText;
     Position m_startOfInsertedContent;
     Position m_endOfInsertedContent;
     RefPtr<EditingStyle> m_insertionStyle;

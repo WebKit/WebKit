@@ -482,7 +482,7 @@ private:
     enum SetCompositionMode { ConfirmComposition, CancelComposition };
     void setComposition(const String&, SetCompositionMode);
 
-    void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions, AXTextStateChangeIntent = AXTextStateChangeIntent());
+    void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions);
 
     enum EditorActionSpecifier { CutAction, CopyAction };
     void performCutOrCopy(EditorActionSpecifier);
@@ -500,6 +500,8 @@ private:
     RefPtr<DocumentFragment> createFragmentAndAddResources(NSAttributedString *);
     void fillInUserVisibleForm(PasteboardURL&);
 #endif
+
+    void postTextStateChangeNotificationForCut(const String&, const VisibleSelection&);
 
     Frame& m_frame;
     RefPtr<CompositeEditCommand> m_lastEditCommand;

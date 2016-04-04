@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ReplaceSelectionCommand.h"
 
+#include "AXObjectCache.h"
 #include "ApplyStyleCommand.h"
 #include "BeforeTextInsertedEvent.h"
 #include "BreakBlockquoteCommand.h"
@@ -47,8 +48,6 @@
 #include "RenderInline.h"
 #include "RenderObject.h"
 #include "RenderText.h"
-#include "ReplaceDeleteFromTextNodeCommand.h"
-#include "ReplaceInsertIntoTextNodeCommand.h"
 #include "SimplifyMarkupCommand.h"
 #include "SmartReplace.h"
 #include "StyleProperties.h"
@@ -960,7 +959,8 @@ void ReplaceSelectionCommand::doApply()
         bool mergeBlocksAfterDelete = shouldHandleMailBlockquote || isEndOfParagraph(visibleEnd) || isStartOfBlock(visibleStart);
         // FIXME: We should only expand to include fully selected special elements if we are copying a 
         // selection and pasting it on top of itself.
-        deleteSelection(false, mergeBlocksAfterDelete, true, false);
+        // FIXME: capturing the content of this delete would allow a replace accessibility notification instead of a simple insert
+        deleteSelection(false, mergeBlocksAfterDelete, true, false, true);
         visibleStart = endingSelection().visibleStart();
         if (fragment.hasInterchangeNewlineAtStart()) {
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
@@ -1367,6 +1367,9 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
     else
         return;
 
+    if (AXObjectCache::accessibilityEnabled() && editingAction() == EditActionPaste)
+        m_visibleSelectionForInsertedText = VisibleSelection(start, end);
+
     if (m_selectReplacement)
         setEndingSelection(VisibleSelection(start, end, SEL_DEFAULT_AFFINITY, endingSelection().isDirectional()));
     else
@@ -1511,6 +1514,9 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
         removeNodeAndPruneAncestors(nodeAfterInsertionPos.get());
 
     VisibleSelection selectionAfterReplace(m_selectReplacement ? start : end, end);
+
+    if (AXObjectCache::accessibilityEnabled() && editingAction() == EditActionPaste)
+        m_visibleSelectionForInsertedText = VisibleSelection(start, end);
 
     setEndingSelection(selectionAfterReplace);
 

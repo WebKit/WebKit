@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TypingCommand.h"
 
+#include "AXObjectCache.h"
 #include "BreakBlockquoteCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -75,7 +76,7 @@ private:
 };
 
 TypingCommand::TypingCommand(Document& document, ETypingCommand commandType, const String &textToInsert, Options options, TextGranularity granularity, TextCompositionType compositionType)
-    : TextInsertionBaseCommand(document)
+    : TextInsertionBaseCommand(document, EditActionTyping)
     , m_commandType(commandType)
     , m_textToInsert(textToInsert)
     , m_openForMoreTyping(true)
@@ -182,7 +183,7 @@ void TypingCommand::insertText(Document& document, const String& text, const Vis
         lastTypingCommand->setCompositionType(compositionType);
         lastTypingCommand->setShouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator);
         lastTypingCommand->setShouldPreventSpellChecking(options & PreventSpellChecking);
-        lastTypingCommand->insertText(newText, options & SelectInsertedText);
+        lastTypingCommand->insertTextAndNotifyAccessibility(newText, options & SelectInsertedText);
         return;
     }
 
@@ -194,7 +195,7 @@ void TypingCommand::insertLineBreak(Document& document, Options options)
 {
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*document.frame())) {
         lastTypingCommand->setShouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator);
-        lastTypingCommand->insertLineBreak();
+        lastTypingCommand->insertLineBreakAndNotifyAccessibility();
         return;
     }
 
@@ -204,7 +205,7 @@ void TypingCommand::insertLineBreak(Document& document, Options options)
 void TypingCommand::insertParagraphSeparatorInQuotedContent(Document& document)
 {
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*document.frame())) {
-        lastTypingCommand->insertParagraphSeparatorInQuotedContent();
+        lastTypingCommand->insertParagraphSeparatorInQuotedContentAndNotifyAccessibility();
         return;
     }
 
@@ -215,7 +216,7 @@ void TypingCommand::insertParagraphSeparator(Document& document, Options options
 {
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*document.frame())) {
         lastTypingCommand->setShouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator);
-        lastTypingCommand->insertParagraphSeparator();
+        lastTypingCommand->insertParagraphSeparatorAndNotifyAccessibility();
         return;
     }
 
@@ -247,6 +248,17 @@ void TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(
 }
 #endif
 
+void TypingCommand::postTextStateChangeNotificationForDeletion(const VisibleSelection& selection)
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    postTextStateChangeNotification(AXTextEditTypeDelete, AccessibilityObject::stringForVisiblePositionRange(selection), selection.start());
+    VisiblePositionIndexRange range;
+    range.startIndex.value = indexForVisiblePosition(selection.start(), range.startIndex.scope);
+    range.endIndex.value = indexForVisiblePosition(selection.end(), range.endIndex.scope);
+    composition()->setTextInsertedByUnapplyRange(range);
+}
+
 void TypingCommand::doApply()
 {
     if (!endingSelection().isNonOrphanedCaretOrRange())
@@ -267,25 +279,20 @@ void TypingCommand::doApply()
         forwardDeleteKeyPressed(m_granularity, m_shouldAddToKillRing);
         return;
     case InsertLineBreak:
-        insertLineBreak();
+        insertLineBreakAndNotifyAccessibility();
         return;
     case InsertParagraphSeparator:
-        insertParagraphSeparator();
+        insertParagraphSeparatorAndNotifyAccessibility();
         return;
     case InsertParagraphSeparatorInQuotedContent:
-        insertParagraphSeparatorInQuotedContent();
+        insertParagraphSeparatorInQuotedContentAndNotifyAccessibility();
         return;
     case InsertText:
-        insertText(m_textToInsert, m_selectInsertedText);
+        insertTextAndNotifyAccessibility(m_textToInsert, m_selectInsertedText);
         return;
     }
 
     ASSERT_NOT_REACHED();
-}
-
-EditAction TypingCommand::editingAction() const
-{
-    return EditActionTyping;
 }
 
 void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
@@ -371,6 +378,14 @@ void TypingCommand::insertText(const String &text, bool selectInsertedText)
     forEachLineInString(text, operation);
 }
 
+void TypingCommand::insertTextAndNotifyAccessibility(const String &text, bool selectInsertedText)
+{
+    AccessibilityReplacedText replacedText(frame().selection().selection());
+    insertText(text, selectInsertedText);
+    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, text, frame().selection().selection());
+    composition()->setTextInsertedByUnapplyRange(replacedText.replacedRange());
+}
+
 void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool selectInsertedText)
 {
     RefPtr<InsertTextCommand> command = InsertTextCommand::create(document(), text, selectInsertedText,
@@ -390,6 +405,14 @@ void TypingCommand::insertLineBreak()
     typingAddedToOpenCommand(InsertLineBreak);
 }
 
+void TypingCommand::insertLineBreakAndNotifyAccessibility()
+{
+    AccessibilityReplacedText replacedText(frame().selection().selection());
+    insertLineBreak();
+    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, "\n", frame().selection().selection());
+    composition()->setTextInsertedByUnapplyRange(replacedText.replacedRange());
+}
+
 void TypingCommand::insertParagraphSeparator()
 {
     if (!canAppendNewLineFeedToSelection(endingSelection()))
@@ -397,6 +420,14 @@ void TypingCommand::insertParagraphSeparator()
 
     applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), false, false, EditActionTyping));
     typingAddedToOpenCommand(InsertParagraphSeparator);
+}
+
+void TypingCommand::insertParagraphSeparatorAndNotifyAccessibility()
+{
+    AccessibilityReplacedText replacedText(frame().selection().selection());
+    insertParagraphSeparator();
+    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, "\n", frame().selection().selection());
+    composition()->setTextInsertedByUnapplyRange(replacedText.replacedRange());
 }
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent()
@@ -410,6 +441,14 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent()
         
     applyCommandToComposite(BreakBlockquoteCommand::create(document()));
     typingAddedToOpenCommand(InsertParagraphSeparatorInQuotedContent);
+}
+
+void TypingCommand::insertParagraphSeparatorInQuotedContentAndNotifyAccessibility()
+{
+    AccessibilityReplacedText replacedText(frame().selection().selection());
+    insertParagraphSeparatorInQuotedContent();
+    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, "\n", frame().selection().selection());
+    composition()->setTextInsertedByUnapplyRange(replacedText.replacedRange());
 }
 
 bool TypingCommand::makeEditableRootEmpty()
@@ -532,6 +571,10 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
     
     if (shouldAddToKillRing)
         frame.editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange().get(), Editor::KillRingInsertionMode::PrependText);
+
+    // Post the accessibility notification before actually deleting the content while selectionToDelete is still valid
+    postTextStateChangeNotificationForDeletion(selectionToDelete);
+
     // Make undo select everything that has been deleted, unless an undo will undo more than just this deletion.
     // FIXME: This behaves like TextEdit except for the case where you open with text insertion and then delete
     // more text than you insert.  In that case all of the text that was around originally should be selected.
@@ -628,6 +671,9 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
     if (selectionToDelete.isCaret() || !frame.selection().shouldDeleteSelection(selectionToDelete))
         return;
         
+    // Post the accessibility notification before actually deleting the content while selectionToDelete is still valid
+    postTextStateChangeNotificationForDeletion(selectionToDelete);
+
     if (shouldAddToKillRing)
         frame.editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange().get(), Editor::KillRingInsertionMode::AppendText);
     // make undo select what was deleted

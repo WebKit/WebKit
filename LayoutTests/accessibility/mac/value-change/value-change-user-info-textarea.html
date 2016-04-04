@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../editing/editing.js"></script>
+    <script src="value-change-helpers.js"></script>
+</head>
+<body id="body">
+
+    <textarea id="textbox">456</textarea>
+
+    <p id="description"></p>
+    <div id="console"></div>
+    <div id="notifications"></div>
+
+    <script>
+
+        description("This tests value change notifications user info data.");
+
+        var webArea = 0;
+        var count = 0;
+
+        var resultIndex = -1;
+
+        var actualChangeTypes = [];
+        var actualChangeValues = [];
+        var actualEditTypes = [];
+
+        var expectedValues = [];
+
+        function notificationCallback(notification, userInfo) {
+            if (notification == "AXValueChanged") {
+
+                actualChangeTypes[count] = userInfo["AXTextStateChangeType"];
+                var changes = userInfo["AXTextChangeValues"];
+                if (changes && changes.length == 1) {
+                    var change = changes[0];
+                    actualChangeValues[count] = change["AXTextChangeValue"];
+                    actualEditTypes[count] = stringForEditType(change["AXTextEditType"])
+                } else if (changes && changes.length == 2) {
+                    var change1 = changes[0];
+                    var change2 = changes[1];
+                    actualChangeValues[count] = [change1["AXTextChangeValue"], change2["AXTextChangeValue"]];
+                    actualEditTypes[count] = [stringForEditType(change1["AXTextEditType"]), stringForEditType(change2["AXTextEditType"])];
+                }
+
+                count++;
+
+                var expectedCount = 9;
+                if (count == expectedCount) {
+
+                    shouldBeTyping("3");
+                    shouldBeDelete("3");
+                    shouldBeTyping("\n");
+                    shouldBeDelete("\n");
+                    shouldBeTypingReplace("4", "5");
+                    shouldBeCut("5");
+                    shouldBePaste("5");
+                    shouldBePasteReplace("6", "5");
+                    shouldBeTypingReplace("5", "6");
+
+                    webArea.removeNotificationListener();
+                    window.testRunner.notifyDone();
+                }
+            }
+        }
+
+        if (window.accessibilityController) {
+             window.testRunner.waitUntilDone();
+
+            accessibilityController.enableEnhancedAccessibility(true);
+
+            webArea = accessibilityController.rootElement.childAtIndex(0);
+            var addedNotification = webArea.addNotificationListener(notificationCallback);
+            shouldBe("addedNotification", "true");
+
+            var textbox = document.getElementById("textbox");
+            textbox.focus();
+
+            eventSender.keyDown("3");
+            deleteCommand();
+
+            eventSender.keyDown("\n");
+            deleteCommand();
+
+            execExtendSelectionRightByCharacterCommand();
+            eventSender.keyDown("5");
+
+            execExtendSelectionRightByCharacterCommand();
+            cutCommand();
+
+            pasteCommand();
+
+            execExtendSelectionRightByCharacterCommand();
+            pasteCommand();
+
+            execExtendSelectionLeftByCharacterCommand();
+            eventSender.keyDown("6");
+        }
+    </script>
+
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

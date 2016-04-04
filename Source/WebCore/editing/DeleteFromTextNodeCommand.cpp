@@ -55,10 +55,6 @@ void DeleteFromTextNodeCommand::doApply()
     m_text = m_node->substringData(m_offset, m_count, ec);
     if (ec)
         return;
-    
-    // Need to notify this before actually deleting the text
-    if (shouldPostAccessibilityNotification())
-        notifyAccessibilityForTextChange(m_node.get(), applyEditType(), m_text, VisiblePosition(Position(m_node, m_offset)));
 
     m_node->deleteData(m_offset, m_count, ec);
 }
@@ -71,9 +67,6 @@ void DeleteFromTextNodeCommand::doUnapply()
         return;
 
     m_node->insertData(m_offset, m_text, IGNORE_EXCEPTION);
-
-    if (shouldPostAccessibilityNotification())
-        notifyAccessibilityForTextChange(m_node.get(), unapplyEditType(), m_text, VisiblePosition(Position(m_node, m_offset)));
 }
 
 #ifndef NDEBUG

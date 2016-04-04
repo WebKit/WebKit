@@ -525,6 +525,10 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
     if (selection.isNone() || !selection.isContentEditable() || !fragment)
         return;
 
+    AccessibilityReplacedText replacedText;
+    if (AXObjectCache::accessibilityEnabled() && editingAction == EditActionPaste)
+        replacedText = AccessibilityReplacedText(selection);
+
     ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::PreventNesting | ReplaceSelectionCommand::SanitizeFragment;
     if (selectReplacement)
         options |= ReplaceSelectionCommand::SelectReplacement;
@@ -535,12 +539,23 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
     if (mailBlockquoteHandling == MailBlockquoteHandling::IgnoreBlockquote)
         options |= ReplaceSelectionCommand::IgnoreMailBlockquote;
 
-    applyCommand(ReplaceSelectionCommand::create(document(), fragment, options, editingAction));
+    RefPtr<ReplaceSelectionCommand> command = ReplaceSelectionCommand::create(document(), fragment, options, editingAction);
+    applyCommand(command);
     revealSelectionAfterEditingOperation();
 
     selection = m_frame.selection().selection();
-    if (selection.isInPasswordField() || !isContinuousSpellCheckingEnabled())
+    if (selection.isInPasswordField())
         return;
+
+    if (AXObjectCache::accessibilityEnabled() && editingAction == EditActionPaste) {
+        String text = AccessibilityObject::stringForVisiblePositionRange(command->visibleSelectionForInsertedText());
+        replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypePaste, text, m_frame.selection().selection());
+        command->composition()->setTextInsertedByUnapplyRange(replacedText.replacedRange());
+    }
+
+    if (!isContinuousSpellCheckingEnabled())
+        return;
+
     Node* nodeToCheck = selection.rootEditableElement();
     if (!nodeToCheck)
         return;
@@ -1030,7 +1045,7 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
     // Don't clear the typing style with this selection change.  We do those things elsewhere if necessary.
     FrameSelection::SetSelectionOptions options = cmd->isDictationCommand() ? FrameSelection::DictationTriggered : 0;
     
-    changeSelectionAfterCommand(newSelection, options, cmd->applyEditType());
+    changeSelectionAfterCommand(newSelection, options);
     dispatchEditableContentChangedEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement());
 
     updateEditorUINowIfScheduled();
@@ -1061,7 +1076,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
     notifyTextFromControls(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
 
     VisibleSelection newSelection(cmd->startingSelection());
-    changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions(), cmd->unapplyEditType());
+    changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
     dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
 
     updateEditorUINowIfScheduled();
@@ -1266,6 +1281,18 @@ void Editor::copy()
     performCutOrCopy(CopyAction);
 }
 
+void Editor::postTextStateChangeNotificationForCut(const String& text, const VisibleSelection& selection)
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    if (!text.length())
+        return;
+    AXObjectCache* cache = document().existingAXObjectCache();
+    if (!cache)
+        return;
+    cache->postTextStateChangeNotification(selection.start().anchorNode(), AXTextEditTypeCut, text, selection.start());
+}
+
 void Editor::performCutOrCopy(EditorActionSpecifier action)
 {
     RefPtr<Range> selection = selectedRange();
@@ -1301,8 +1328,14 @@ void Editor::performCutOrCopy(EditorActionSpecifier action)
     }
 
     didWriteSelectionToPasteboard();
-    if (action == CutAction)
+    if (action == CutAction) {
+        String text;
+        if (AXObjectCache::accessibilityEnabled())
+            text = AccessibilityObject::stringForVisiblePositionRange(m_frame.selection().selection());
         deleteSelectionWithSmartDelete(canSmartCopyOrDelete(), EditActionCut);
+        if (AXObjectCache::accessibilityEnabled())
+            postTextStateChangeNotificationForCut(text, m_frame.selection().selection());
+    }
 }
 
 void Editor::paste()
@@ -2895,7 +2928,7 @@ void Editor::dismissCorrectionPanelAsIgnored()
     m_alternativeTextController->dismiss(ReasonForDismissingAlternativeTextIgnored);
 }
 
-void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions options, AXTextStateChangeIntent intent)
+void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions options)
 {
     // If the new selection is orphaned, then don't update the selection.
     if (newSelection.start().isOrphan() || newSelection.end().isOrphan())
@@ -2907,7 +2940,7 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, F
     // See <rdar://problem/5729315> Some shouldChangeSelectedDOMRange contain Ranges for selections that are no longer valid
     bool selectionDidNotChangeDOMPosition = newSelection == m_frame.selection().selection();
     if (selectionDidNotChangeDOMPosition || m_frame.selection().shouldChangeSelection(newSelection))
-        m_frame.selection().setSelection(newSelection, options, intent);
+        m_frame.selection().setSelection(newSelection, options);
 
     // Some editing operations change the selection visually without affecting its position within the DOM.
     // For example when you press return in the following (the caret is marked by ^):

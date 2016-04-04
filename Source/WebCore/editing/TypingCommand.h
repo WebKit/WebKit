@@ -105,7 +105,6 @@ private:
     static RefPtr<TypingCommand> lastTypingCommandIfStillOpenForTyping(Frame&);
 
     virtual void doApply();
-    virtual EditAction editingAction() const;
     virtual bool isTypingCommand() const;
     virtual bool preservesTypingStyle() const { return m_preservesTypingStyle; }
     virtual bool shouldRetainAutocorrectionIndicator() const
@@ -123,6 +122,12 @@ private:
     void markMisspellingsAfterTyping(ETypingCommand);
     void typingAddedToOpenCommand(ETypingCommand);
     bool makeEditableRootEmpty();
+
+    void postTextStateChangeNotificationForDeletion(const VisibleSelection&);
+    void insertTextAndNotifyAccessibility(const String &text, bool selectInsertedText);
+    void insertLineBreakAndNotifyAccessibility();
+    void insertParagraphSeparatorInQuotedContentAndNotifyAccessibility();
+    void insertParagraphSeparatorAndNotifyAccessibility();
 
     ETypingCommand m_commandType;
     String m_textToInsert;

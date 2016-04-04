@@ -112,80 +112,24 @@ void EditCommand::setParent(CompositeEditCommand* parent)
     }
 }
 
-AXTextEditType EditCommand::applyEditType() const
+void EditCommand::postTextStateChangeNotification(AXTextEditType type, const String& text)
 {
-    switch (editingAction()) {
-    case EditActionCut:
-        return AXTextEditTypeCut;
-    case EditActionDelete:
-        return AXTextEditTypeDelete;
-    case EditActionDictation:
-        return AXTextEditTypeDictation;
-    case EditActionInsert:
-        return AXTextEditTypeInsert;
-    case EditActionPaste:
-        return AXTextEditTypePaste;
-    case EditActionTyping:
-        return AXTextEditTypeTyping;
-    case EditActionSetColor:
-    case EditActionSetBackgroundColor:
-    case EditActionTurnOffKerning:
-    case EditActionTightenKerning:
-    case EditActionLoosenKerning:
-    case EditActionUseStandardKerning:
-    case EditActionTurnOffLigatures:
-    case EditActionUseStandardLigatures:
-    case EditActionUseAllLigatures:
-    case EditActionRaiseBaseline:
-    case EditActionLowerBaseline:
-    case EditActionSetTraditionalCharacterShape:
-    case EditActionSetFont:
-    case EditActionChangeAttributes:
-    case EditActionAlignLeft:
-    case EditActionAlignRight:
-    case EditActionCenter:
-    case EditActionJustify:
-    case EditActionSetWritingDirection:
-    case EditActionSubscript:
-    case EditActionSuperscript:
-    case EditActionUnderline:
-    case EditActionOutline:
-    case EditActionUnscript:
-    case EditActionBold:
-    case EditActionItalics:
-    case EditActionFormatBlock:
-    case EditActionIndent:
-    case EditActionOutdent:
-        return AXTextEditTypeAttributesChange;
-    // Include default case for unhandled EditAction cases.
-    default:
-        break;
-    }
-    return AXTextEditTypeUnknown;
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    postTextStateChangeNotification(type, text, frame().selection().selection().start());
 }
 
-AXTextEditType EditCommand::unapplyEditType() const
+void EditCommand::postTextStateChangeNotification(AXTextEditType type, const String& text, const VisiblePosition& position)
 {
-    switch (applyEditType()) {
-    case AXTextEditTypeUnknown:
-        return AXTextEditTypeUnknown;
-    case AXTextEditTypeDelete:
-    case AXTextEditTypeCut:
-        return AXTextEditTypeInsert;
-    case AXTextEditTypeInsert:
-    case AXTextEditTypeTyping:
-    case AXTextEditTypeDictation:
-    case AXTextEditTypePaste:
-        return AXTextEditTypeDelete;
-    case AXTextEditTypeAttributesChange:
-        return AXTextEditTypeAttributesChange;
-    }
-    return AXTextEditTypeUnknown;
-}
-
-bool EditCommand::shouldPostAccessibilityNotification() const
-{
-    return AXObjectCache::accessibilityEnabled() && editingAction() != EditActionUnspecified;
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    if (!text.length())
+        return;
+    AXObjectCache* cache = document().existingAXObjectCache();
+    if (!cache)
+        return;
+    Node* node = highestEditableRoot(position.deepEquivalent(), HasEditableAXRole);
+    cache->postTextStateChangeNotification(node, type, text, position);
 }
 
 SimpleEditCommand::SimpleEditCommand(Document& document, EditAction editingAction)
@@ -205,15 +149,5 @@ void SimpleEditCommand::addNodeAndDescendants(Node* startNode, HashSet<Node*>& n
         nodes.add(node);
 }
 #endif
-
-void SimpleEditCommand::notifyAccessibilityForTextChange(Node* node, AXTextEditType type, const String& text, const VisiblePosition& position)
-{
-    if (!AXObjectCache::accessibilityEnabled())
-        return;
-    AXObjectCache* cache = document().existingAXObjectCache();
-    if (!cache)
-        return;
-    cache->postTextStateChangeNotification(node, type, text, position);
-}
 
 } // namespace WebCore

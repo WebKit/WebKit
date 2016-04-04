@@ -26,6 +26,7 @@
 #ifndef CompositeEditCommand_h
 #define CompositeEditCommand_h
 
+#include "AXObjectCache.h"
 #include "EditCommand.h"
 #include "CSSPropertyNames.h"
 #include "UndoStep.h"
@@ -38,9 +39,32 @@ class HTMLElement;
 class StyledElement;
 class Text;
 
+class AccessibilityUndoReplacedText {
+public:
+    AccessibilityUndoReplacedText() { }
+    void confgureTextToBeDeletedByUnapplyStartIndexWithEditCommandStartingSelection(const VisibleSelection&);
+    void confgureTextToBeDeletedByUnapplyIndexesWithEditCommandEndingSelection(const VisibleSelection&);
+    void setTextInsertedByUnapplyRange(const VisiblePositionIndexRange&);
+
+    void captureTextToBeDeletedByUnapply();
+    void captureTextToBeDeletedByReapply();
+
+    void postTextStateChangeNotificationForUnapply(AXObjectCache*);
+    void postTextStateChangeNotificationForReapply(AXObjectCache*);
+
+private:
+    int indexForVisiblePosition(const VisiblePosition&, RefPtr<ContainerNode>&) const;
+    String textInsertedByUnapply();
+    String textInsertedByReapply();
+
+    String m_replacedText;
+    VisiblePositionIndexRange m_textDeletedByUnapplyRange;
+    VisiblePositionIndexRange m_textInsertedByUnapplyRange;
+};
+
 class EditCommandComposition : public UndoStep {
 public:
-    static Ref<EditCommandComposition> create(Document&, const VisibleSelection&, const VisibleSelection&, EditAction);
+    static Ref<EditCommandComposition> create(Document&, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction);
 
     void unapply() override;
     void reapply() override;
@@ -54,12 +78,11 @@ public:
     void setEndingSelection(const VisibleSelection&);
     Element* startingRootEditableElement() const { return m_startingRootEditableElement.get(); }
     Element* endingRootEditableElement() const { return m_endingRootEditableElement.get(); }
+    void setTextInsertedByUnapplyRange(const VisiblePositionIndexRange&);
 
 #ifndef NDEBUG
     virtual void getNodesInCommand(HashSet<Node*>&);
 #endif
-
-    AXTextEditType unapplyEditType() const;
 
 private:
     EditCommandComposition(Document&, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction);
@@ -70,6 +93,7 @@ private:
     Vector<RefPtr<SimpleEditCommand>> m_commands;
     RefPtr<Element> m_startingRootEditableElement;
     RefPtr<Element> m_endingRootEditableElement;
+    AccessibilityUndoReplacedText m_replacedText;
     EditAction m_editAction;
 };
 

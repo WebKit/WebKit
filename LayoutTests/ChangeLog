@@ -1,3 +1,37 @@
+2016-04-04  Doug Russell  <d_russell@apple.com>
+
+        AX: new lines in content editable elements don't notify accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=153361
+
+        Reviewed by Ryosuke Niwa.
+
+        Relocate accessibility edit notification logic into higher level logic.
+        Typing notifications relocated into TypingCommand.
+        Cut & Paste notifications relocated into Editor.
+        Undo relocated into EditCommandComposition.
+
+        * accessibility/mac/selection-value-changes-for-aria-textbox-expected.txt:
+        * accessibility/mac/value-change-userinfo-expected.txt: Removed.
+        * accessibility/mac/value-change-userinfo.html: Removed.
+        * accessibility/mac/value-change/value-change-helpers.js: Added.
+        (stringForEditType):
+        (bump):
+        (shouldBeInsert):
+        (shouldBeTyping):
+        (shouldBeDelete):
+        (shouldBeCut):
+        (shouldBePaste):
+        (shouldBeReplace):
+        (shouldBePasteReplace):
+        (shouldBeTypingReplace):
+        (shouldBeInsertReplace):
+        * accessibility/mac/value-change/value-change-user-info-contenteditable-expected.txt: Added.
+        * accessibility/mac/value-change/value-change-user-info-contenteditable.html: Added.
+        * accessibility/mac/value-change/value-change-user-info-textarea-expected.txt: Added.
+        * accessibility/mac/value-change/value-change-user-info-textarea.html: Added.
+        * accessibility/mac/value-change/value-change-user-info-textfield-expected.txt: Added.
+        * accessibility/mac/value-change/value-change-user-info-textfield.html: Added.
+
 2016-04-04  Dean Jackson  <dino@apple.com>
 
         Add color-gamut media query support
