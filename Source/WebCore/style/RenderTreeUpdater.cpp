@@ -109,9 +109,6 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
     auto it = descendants.begin();
     auto end = descendants.end();
 
-    // FIXME: SVG <use> element may cause tree mutations during style recalc.
-    it.dropAssertions();
-
     while (it != end) {
         popParentsToDepth(it.depth());
 

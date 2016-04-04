@@ -31,6 +31,7 @@
 
 #include "FontDescription.h"
 #include "FontPlatformData.h"
+#include "NoEventDispatchAssertion.h"
 #include "SVGDocument.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
@@ -64,9 +65,16 @@ FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription
 bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)
 {
     if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
+        // We may get here during render tree updates when events are forbidden.
+        // Frameless document can't run scripts or call back to the client so this is safe.
+        auto count = NoEventDispatchAssertion::dropTemporarily();
+
         m_externalSVGDocument = SVGDocument::create(nullptr, URL());
         RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("application/xml");
         m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
+
+        NoEventDispatchAssertion::restoreDropped(count);
+
         if (decoder->sawError())
             m_externalSVGDocument = nullptr;
         if (m_externalSVGDocument)

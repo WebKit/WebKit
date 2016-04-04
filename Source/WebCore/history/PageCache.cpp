@@ -46,6 +46,7 @@
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MemoryPressureHandler.h"
+#include "NoEventDispatchAssertion.h"
 #include "Page.h"
 #include "Settings.h"
 #include "SubframeLoader.h"

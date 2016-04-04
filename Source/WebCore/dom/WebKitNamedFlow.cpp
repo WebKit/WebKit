@@ -31,6 +31,7 @@
 #include "WebKitNamedFlow.h"
 
 #include "NamedFlowCollection.h"
+#include "NoEventDispatchAssertion.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"

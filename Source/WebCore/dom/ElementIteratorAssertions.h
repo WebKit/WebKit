@@ -27,6 +27,7 @@
 #define ElementIteratorAssertions_h
 
 #include "Element.h"
+#include "NoEventDispatchAssertion.h"
 
 namespace WebCore {
 

@@ -34,6 +34,7 @@
 
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
+#include "NoEventDispatchAssertion.h"
 #include "ScriptController.h"
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"

@@ -1,3 +1,43 @@
+2016-04-04  Antti Koivisto  <antti@apple.com>
+
+        Enable assertions against DOM mutations in RenderTreeUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=156156
+
+        Reviewed by Andreas Kling.
+
+        Ensure we don't mutate DOM or dispatch events during render tree updates.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ContainerNode.cpp:
+        * dom/ContainerNode.h:
+        (WebCore::NoEventDispatchAssertion::NoEventDispatchAssertion): Deleted.
+        (WebCore::NoEventDispatchAssertion::~NoEventDispatchAssertion): Deleted.
+        (WebCore::NoEventDispatchAssertion::isEventDispatchForbidden): Deleted.
+
+            Move NoEventDispatchAssertion to a header of its own.
+
+        * dom/NoEventDispatchAssertion.h: Added.
+        (WebCore::NoEventDispatchAssertion::NoEventDispatchAssertion):
+        (WebCore::NoEventDispatchAssertion::~NoEventDispatchAssertion):
+        (WebCore::NoEventDispatchAssertion::isEventDispatchForbidden):
+        (WebCore::NoEventDispatchAssertion::dropTemporarily):
+        (WebCore::NoEventDispatchAssertion::restoreDropped):
+
+            Add a way to disable event assertions temporarily.
+
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::ensureCustomFontData):
+
+            Temporary SVG font document may get constructed during render tree update. These can't run scripts or generally
+            affect anything outside the font document as it does not have a frame. Disable event assertions temporarily.
+
+            Tested by svg/W3C-SVG-1.1/fonts-elem-07-b.svg
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+
+            Enable assertions.
+
 2016-04-04  Emanuele Aina  <emanuele.aina@collabora.com>
 
         [TexMap] Trim redundant guards

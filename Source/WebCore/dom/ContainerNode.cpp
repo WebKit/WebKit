@@ -42,6 +42,7 @@
 #include "LabelsNodeList.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
+#include "NoEventDispatchAssertion.h"
 #include "NodeOrString.h"
 #include "NodeRareData.h"
 #include "NodeRenderStyle.h"

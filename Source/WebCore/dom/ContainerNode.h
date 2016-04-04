@@ -34,49 +34,6 @@ class HTMLCollection;
 class RadioNodeList;
 class RenderElement;
 
-class NoEventDispatchAssertion {
-public:
-    NoEventDispatchAssertion()
-    {
-#if !ASSERT_DISABLED
-        if (!isMainThread())
-            return;
-        ++s_count;
-#endif
-    }
-
-    NoEventDispatchAssertion(const NoEventDispatchAssertion&)
-        : NoEventDispatchAssertion()
-    {
-    }
-
-    ~NoEventDispatchAssertion()
-    {
-#if !ASSERT_DISABLED
-        if (!isMainThread())
-            return;
-        ASSERT(s_count);
-        s_count--;
-#endif
-    }
-
-    static bool isEventDispatchForbidden()
-    {
-#if ASSERT_DISABLED
-        return false;
-#else
-        return isMainThread() && s_count;
-#endif
-    }
-
-#if !ASSERT_DISABLED
-
-private:
-    WEBCORE_EXPORT static unsigned s_count;
-
-#endif
-};
-
 class ContainerNode : public Node {
 public:
     virtual ~ContainerNode();

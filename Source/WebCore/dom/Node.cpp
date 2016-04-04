@@ -51,6 +51,7 @@
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MutationEvent.h"
+#include "NoEventDispatchAssertion.h"
 #include "NodeOrString.h"
 #include "NodeRenderStyle.h"
 #include "ProcessingInstruction.h"

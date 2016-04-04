@@ -116,6 +116,7 @@
 #include "MutationEvent.h"
 #include "NameNodeList.h"
 #include "NestingLevelIncrementer.h"
+#include "NoEventDispatchAssertion.h"
 #include "NodeIterator.h"
 #include "NodeRareData.h"
 #include "NodeWithIndex.h"

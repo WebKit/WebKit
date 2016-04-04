@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ContainerNodeAlgorithms.h"
 
+#include "NoEventDispatchAssertion.h"
 
 namespace WebCore {
 
