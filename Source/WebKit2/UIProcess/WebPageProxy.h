@@ -1020,7 +1020,10 @@ public:
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, uint64_t);
     WebCore::MediaProducer::MediaStateFlags mediaStateFlags() const { return m_mediaState; }
 
-    bool isPlayingVideoWithAudio() const;
+#if PLATFORM(MAC)
+    void videoControlsManagerDidChange();
+    bool hasActiveVideoForControlsManager() const;
+#endif
 
 #if ENABLE(MEDIA_SESSION)
     void hasMediaSessionWithActiveMediaElementsDidChange(bool);

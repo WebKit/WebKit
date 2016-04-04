@@ -412,8 +412,22 @@ void WebVideoFullscreenManagerProxy::setUpVideoControlsManagerWithID(uint64_t co
     m_controlsManagerContextId = contextId;
     ensureInterface(m_controlsManagerContextId).ensureControlsManager();
     addClientForContext(m_controlsManagerContextId);
+
+    m_page->videoControlsManagerDidChange();
 #else
     UNUSED_PARAM(contextId);
+#endif
+}
+
+void WebVideoFullscreenManagerProxy::clearVideoControlsManager()
+{
+#if PLATFORM(MAC)
+    if (!m_controlsManagerContextId)
+        return;
+
+    removeClientForContext(m_controlsManagerContextId);
+    m_controlsManagerContextId = 0;
+    m_page->videoControlsManagerDidChange();
 #endif
 }
 

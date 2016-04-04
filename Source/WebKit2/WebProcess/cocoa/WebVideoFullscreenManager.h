@@ -118,6 +118,7 @@ public:
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void setUpVideoControlsManager(WebCore::HTMLVideoElement&);
+    void clearVideoControlsManager();
     
 protected:
     friend class WebVideoFullscreenInterfaceContext;

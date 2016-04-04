@@ -6025,20 +6025,26 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
     MediaProducer::MediaStateFlags oldState = m_mediaState;
     m_mediaState = state;
 
-#if PLATFORM(MAC)
-    if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
-        m_pageClient.isPlayingMediaDidChange();
-#endif
-
     playingMediaMask |= MediaProducer::HasActiveMediaCaptureDevice;
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
         m_uiClient->isPlayingAudioDidChange(*this);
 }
 
-bool WebPageProxy::isPlayingVideoWithAudio() const
+#if PLATFORM(MAC)
+void WebPageProxy::videoControlsManagerDidChange()
 {
-    return m_mediaState & MediaProducer::IsPlayingAudio && m_mediaState & MediaProducer::IsPlayingVideo;
+    m_pageClient.videoControlsManagerDidChange();
 }
+
+bool WebPageProxy::hasActiveVideoForControlsManager() const
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    return m_videoFullscreenManager && m_videoFullscreenManager->controlsManagerInterface() && m_mediaState & MediaProducer::HasAudioOrVideo;
+#else
+    return false;
+#endif
+}
+#endif
 
 #if ENABLE(MEDIA_SESSION)
 void WebPageProxy::hasMediaSessionWithActiveMediaElementsDidChange(bool state)

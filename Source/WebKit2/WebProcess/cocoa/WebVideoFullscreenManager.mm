@@ -344,6 +344,18 @@ void WebVideoFullscreenManager::setUpVideoControlsManager(WebCore::HTMLVideoElem
 #endif
 }
 
+void WebVideoFullscreenManager::clearVideoControlsManager()
+{
+#if PLATFORM(MAC)
+    if (!m_controlsManagerContextId)
+        return;
+
+    removeClientForContext(m_controlsManagerContextId);
+    m_controlsManagerContextId = 0;
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::ClearVideoControlsManager(), m_page->pageID());
+#endif
+}
+
 void WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)

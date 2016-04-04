@@ -861,6 +861,11 @@ void WebChromeClient::setUpVideoControlsManager(WebCore::HTMLVideoElement& video
     m_page->videoFullscreenManager()->setUpVideoControlsManager(videoElement);
 }
 
+void WebChromeClient::clearVideoControlsManager()
+{
+    m_page->videoFullscreenManager()->clearVideoControlsManager();
+}
+
 void WebChromeClient::enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);

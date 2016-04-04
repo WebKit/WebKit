@@ -342,6 +342,7 @@ public:
 #if ENABLE(VIDEO)
     virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement&, HTMLMediaElementEnums::VideoFullscreenMode) { }
     virtual void setUpVideoControlsManager(HTMLVideoElement&) { }
+    virtual void clearVideoControlsManager() { }
 #endif
     virtual void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) { }
     virtual void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, HTMLMediaElementEnums::VideoFullscreenMode /*targetMode*/) { }

@@ -2389,7 +2389,7 @@ void WebViewImpl::didHandleAcceptedCandidate()
     m_isHandlingAcceptedCandidate = false;
 }
 
-void WebViewImpl::isPlayingMediaDidChange()
+void WebViewImpl::videoControlsManagerDidChange()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     updateWebViewImplAdditions();

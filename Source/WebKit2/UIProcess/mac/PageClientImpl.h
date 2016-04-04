@@ -211,7 +211,7 @@ private:
 
     void didHandleAcceptedCandidate() override;
 
-    void isPlayingMediaDidChange() override;
+    void videoControlsManagerDidChange() override;
 
     void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) override;
 

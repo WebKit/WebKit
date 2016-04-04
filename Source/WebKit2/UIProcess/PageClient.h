@@ -346,7 +346,7 @@ public:
 
     virtual void didHandleAcceptedCandidate() = 0;
 
-    virtual void isPlayingMediaDidChange() = 0;
+    virtual void videoControlsManagerDidChange() = 0;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)

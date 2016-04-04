@@ -779,9 +779,9 @@ void PageClientImpl::didHandleAcceptedCandidate()
     m_impl->didHandleAcceptedCandidate();
 }
 
-void PageClientImpl::isPlayingMediaDidChange()
+void PageClientImpl::videoControlsManagerDidChange()
 {
-    m_impl->isPlayingMediaDidChange();
+    m_impl->videoControlsManagerDidChange();
 }
 
 void PageClientImpl::showPlatformContextMenu(NSMenu *menu, IntPoint location)

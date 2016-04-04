@@ -1,3 +1,51 @@
+2016-04-04  Beth Dakin  <bdakin@apple.com>
+
+        Add some logic to decide when a video can control the videoControlsManager
+        https://bugs.webkit.org/show_bug.cgi?id=156089
+        -and corresponding-
+        rdar://problem/23833752
+
+        Reviewed by Eric Carlson and Tim Horton.
+
+        With this patch, a video can take over the videoControlsManager if all of 
+        these conditions are met:
+        -Playback is permitted
+        -The video has a renderer
+        -The video is 400x300 or larger
+        AND
+        -The video has both audio and video
+
+        If those criteria are not met the video will still be allowed to take over 
+        the videoControlsManager if:
+        -Playback is permitted
+        -The video has a renderer
+        -The video started playing because of a user gesture.
+
+        If multiple videos meet this criteria, then the video that most recently 
+        started playing will take over the videoControlsManager.
+
+        We might consider more restrictions in the future, but this seems like a good 
+        place to start.
+
+        Move all decisions about the videoControlsManager to updatePlayState() 
+        instead of playInternal().
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::playInternal):
+
+        If the video will play after updatePlayState, then invoke 
+        setUpVideoControlsManager() if canControlControlsManager() is true. If the 
+        video will not be playing after updatePlayState, then check to see if 
+        endedPlayback() is true. If it is, then invoke clearVideoControlsManager().
+        (WebCore::HTMLMediaElement::updatePlayState):
+
+        The logic for the heuristic is here:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canControlControlsManager):
+        * html/MediaElementSession.h:
+
+        New ChromeClient function clearVideoControlsManager().
+        * page/ChromeClient.h:
+
 2016-04-03  Sam Weinig  <sam@webkit.org>
 
         Add SPI to allow install script message handlers in isolated worlds

@@ -1,3 +1,57 @@
+2016-04-04  Beth Dakin  <bdakin@apple.com>
+
+        Add some logic to decide when a video can control the videoControlsManager
+        https://bugs.webkit.org/show_bug.cgi?id=156089
+        -and corresponding-
+        rdar://problem/23833752
+
+        Reviewed by Eric Carlson and Tim Horton.
+
+        The biggest change in WebKit2 is to push all of the logic for the 
+        videoControlsManager into WebCore. With this change, WebCore will invoke 
+        setUpVideoControlsManager() when there is a video to control the manager, and 
+        it will call clearVideoControlsManager() when there is not.
+
+        Add clearVideoControlsManager().
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::clearVideoControlsManager):
+
+        Re-name isPlayingMediaDidChange() to videoControlsManagerDidChange(). This 
+        ties the logic to the lifetime of the videoControlsManager instead of 
+        figuring it out in the UIProcess based on the media state.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::videoControlsManagerDidChange):
+        (WebKit::WebViewImpl::isPlayingMediaDidChange): Deleted.
+        * UIProcess/PageClient.h:
+
+        Also change isPlayingVideoWithAudio() into hasActiveVideoForControlsManager() 
+        Again, this ties the logic to the lifetime of the videoControlsManager 
+        instead of figuring it out in the UIProcess based on the media state.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+        (WebKit::WebPageProxy::videoControlsManagerDidChange):
+        (WebKit::WebPageProxy::hasActiveVideoForControlsManager):
+        (WebKit::WebPageProxy::isPlayingVideoWithAudio): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::videoControlsManagerDidChange):
+        (WebKit::PageClientImpl::isPlayingMediaDidChange): Deleted.
+
+        New WebChromeClient function clearVideoControlsManager().
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::clearVideoControlsManager):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        Do the work to clear the videoControlsManager.
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::clearVideoControlsManager):
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation):
+
 2016-04-04  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r198955): com.apple.WebKit.Networking.Development crashed in WebKit::NetworkLoad::setPendingDownloadID + 11

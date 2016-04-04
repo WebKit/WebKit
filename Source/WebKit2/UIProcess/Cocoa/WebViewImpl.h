@@ -324,7 +324,7 @@ public:
     void completeImmediateActionAnimation();
     void didChangeContentSize(CGSize);
     void didHandleAcceptedCandidate();
-    void isPlayingMediaDidChange();
+    void videoControlsManagerDidChange();
 
     void setIgnoresNonWheelEvents(bool);
     bool ignoresNonWheelEvents() const { return m_ignoresNonWheelEvents; }

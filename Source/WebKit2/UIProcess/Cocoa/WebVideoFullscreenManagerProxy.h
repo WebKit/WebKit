@@ -138,6 +138,7 @@ private:
     // Messages from WebVideoFullscreenManager
     void setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture);
     void setUpVideoControlsManagerWithID(uint64_t contextId);
+    void clearVideoControlsManager();
     void resetMediaState(uint64_t contextId);
     void setCurrentTime(uint64_t contextId, double currentTime, double hostTime);
     void setBufferedTime(uint64_t contextId, double bufferedTime);
