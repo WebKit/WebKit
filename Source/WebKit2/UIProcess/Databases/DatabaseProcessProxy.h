@@ -80,8 +80,6 @@ private:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
-    void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
-
     WebProcessPool* m_processPool;
 
     unsigned m_numPendingConnectionRequests;

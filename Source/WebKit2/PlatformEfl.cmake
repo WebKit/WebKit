@@ -126,8 +126,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/CoordinatedGraphics/PageViewportController.cpp
     UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp
 
-    UIProcess/Databases/efl/DatabaseProcessProxyEfl.cpp
-
     UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp
 
     UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp
@@ -137,8 +135,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp
     UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp
     UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp
-
-    UIProcess/Network/soup/NetworkProcessProxySoup.cpp
 
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
     UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
@@ -178,7 +174,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/WebPopupMenuProxyEfl.cpp
     UIProcess/efl/WebPreferencesEfl.cpp
     UIProcess/efl/WebProcessPoolEfl.cpp
-    UIProcess/efl/WebProcessProxyEfl.cpp
     UIProcess/efl/WebView.cpp
     UIProcess/efl/WebViewClient.cpp
 

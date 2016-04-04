@@ -54,12 +54,6 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
 {
     launchOptions.processType = ProcessLauncher::ProcessType::Plugin64;
 
-#if PLATFORM(EFL) && !defined(NDEBUG)
-    const char* commandPrefix = getenv("PLUGIN_PROCESS_COMMAND_PREFIX");
-    if (commandPrefix && *commandPrefix)
-        launchOptions.processCmdPrefix = String::fromUTF8(commandPrefix);
-#endif
-
     launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);
 #if PLATFORM(GTK)
     if (pluginProcessAttributes.moduleInfo.requiresGtk2)

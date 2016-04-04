@@ -1,3 +1,46 @@
+2016-04-04  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        Fix WEB_PROCESS_CMD_PREFIX and NETWORK_PROCESS_CMD_PREFIX after r196500
+        https://bugs.webkit.org/show_bug.cgi?id=156060
+
+        Reviewed by Darin Adler.
+
+        Commit r196500 was a bit too eager in removing the
+        platformGetLaunchOptions() callsites as non-mac platform still use
+        that in debug builds to attach debugging tools to spawned
+        subprocesses (eg. gdbserver).
+
+        Instead of reinstating them and relying on each subprocess type to
+        implement its own platformGetLaunchOptions() version (all alike),
+        avoid duplication and check the *_PROCESS_CMD_PREFIX environment
+        variables in a single place, ChildProcessProxy::getLaunchOptions().
+
+        Doing so also improves consistency in *_PROCESS_CMD_PREFIX support:
+        only WEB_PROCESS_CMD_PREFIX and NETWORK_PROCESS_CMD_PREFIX worked with
+        both the GTK and EFL ports while PLUGIN_PROCESS_CMD_PREFIX only
+        worked for EFL and there was no corresponding
+        DATABASE_PROCESS_CMD_PREFIX implementation.
+
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::getLaunchOptions): Check the
+        appropriate *_PROCESS_CMD_PREFIX environment variable.
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions): Drop
+        check for PLUGIN_PROCESS_COMMAND_PREFIX, now handled by
+        ChildProcessProxy::getLaunchOptions().
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessProxy.h: Drop platformGetLaunchOptions()
+        prototypes.
+        * UIProcess/Network/soup/NetworkProcessProxySoup.cpp:
+        * UIProcess/Databases/efl/DatabaseProcessProxyEfl.cpp:
+        * UIProcess/Databases/gtk/DatabaseProcessProxyGtk.cpp:
+        * UIProcess/efl/WebProcessProxyEfl.cpp:
+        * UIProcess/gtk/WebProcessProxyGtk.cpp: Removed, they only contained
+        platformGetLaunchOptions() implementations.
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake: Drop removed files.
+
 2016-04-02  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r198933): Web Inspector and inspected page hang in local builds
