@@ -8,8 +8,8 @@ layer at (0,0) size 785x2404
           text run at (0,1) width 138: "word-spacing"
       RenderBlock (floating) {PRE} at (0,60) size 1004x169
         RenderBlock {H3} at (0,15) size 1004x18
-          RenderText {#text} at (0,0) size 204x17
-            text run at (0,0) width 204: "In a floated pre"
+          RenderText {#text} at (0,0) size 144x17
+            text run at (0,0) width 144: "In a floated pre"
         RenderBlock (anonymous) at (0,47) size 1004x121
           RenderText {#text} at (0,0) size 260x30
             text run at (0,0) width 0: " "
@@ -148,8 +148,8 @@ layer at (0,0) size 785x2404
         RenderBR {BR} at (1004,0) size 0x17
       RenderBlock {PRE} at (0,256) size 769x153
         RenderBlock {H3} at (0,0) size 769x17
-          RenderText {#text} at (0,0) size 240x17
-            text run at (0,0) width 240: "In an un-floated pre"
+          RenderText {#text} at (0,0) size 180x17
+            text run at (0,0) width 180: "In an un-floated pre"
         RenderBlock (anonymous) at (0,32) size 769x121
           RenderText {#text} at (0,0) size 260x30
             text run at (0,0) width 0: " "
@@ -895,8 +895,8 @@ layer at (0,0) size 785x2404
           text run at (0,1) width 131: "both-spacing"
       RenderBlock (floating) {PRE} at (0,1608) size 1469x168
         RenderBlock {H3} at (0,15) size 1469x18
-          RenderText {#text} at (0,0) size 284x17
-            text run at (0,0) width 284: "In a floated pre"
+          RenderText {#text} at (0,0) size 224x17
+            text run at (0,0) width 224: "In a floated pre"
         RenderBlock (anonymous) at (0,47) size 1469x121
           RenderText {#text} at (0,0) size 543x30
             text run at (0,0) width 0: " "
@@ -1035,8 +1035,8 @@ layer at (0,0) size 785x2404
         RenderBR {BR} at (1469,0) size 0x17
       RenderBlock {PRE} at (0,1803) size 769x153
         RenderBlock {H3} at (0,0) size 769x17
-          RenderText {#text} at (0,0) size 340x17
-            text run at (0,0) width 340: "In an un-floated pre"
+          RenderText {#text} at (0,0) size 280x17
+            text run at (0,0) width 280: "In an un-floated pre"
         RenderBlock (anonymous) at (0,32) size 769x121
           RenderText {#text} at (0,0) size 543x30
             text run at (0,0) width 0: " "

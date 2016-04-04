@@ -1,3 +1,21 @@
+2016-04-04  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Unreviewed EFL Gardening on 4th Apr.
+
+        Rebaseline some unexpected failures.
+
+        * platform/efl/editing/execCommand/5481523-expected.txt: Rebaseline after r195740
+        * platform/efl/fast/css/layerZOrderCrash-expected.txt: Rebaseline after r195740
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Rebaseline after r187380
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt: Rebaseline after r187380
+        * platform/efl/fast/css/word-space-extra-expected.txt: Rebaseline after r192660
+        * platform/efl/fast/table/click-near-anonymous-table-expected.txt: Rebaseline after r195740
+        * platform/efl/fast/text/svg-font-face-with-kerning-expected.txt: Added. Rebaseline after r182620
+        * platform/efl/fast/text/textIteratorNilRenderer-expected.txt: Rebaseline after r195740
+        * platform/efl/fast/text/trak-optimizeLegibility-expected.txt: Added. Rebaseline after r191623
+        * platform/efl/fast/transforms/bounding-rect-zoom-expected.txt: Rebaseline after r191623
+        * platform/efl/svg/wicd/test-rightsizing-b-expected.txt: Rebaseline after r182620
+
 2016-04-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.
