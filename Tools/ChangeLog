@@ -1,3 +1,13 @@
+2016-04-03  Sam Weinig  <sam@webkit.org>
+
+        Add SPI to allow install script message handlers in isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=156153
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentController.mm:
+        Add new test, WKUserContentController.ScriptMessageHandlerBasicPostIsolatedWorld
+
 2016-04-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         Build fix for r198956.

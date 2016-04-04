@@ -101,7 +101,7 @@ class EmptyUserContentProvider final : public UserContentProvider {
     void forEachUserScript(const std::function<void(DOMWrapperWorld&, const UserScript&)>&) const override { }
     void forEachUserStyleSheet(const std::function<void(const UserStyleSheet&)>&) const override { }
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    const UserMessageHandlerDescriptorMap& userMessageHandlerDescriptors() const override { static NeverDestroyed<UserMessageHandlerDescriptorMap> map; return map.get(); }
+    void forEachUserMessageHandler(const std::function<void(const UserMessageHandlerDescriptor&)>&) const override { }
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
     ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() override { static NeverDestroyed<ContentExtensions::ContentExtensionsBackend> backend; return backend.get(); };

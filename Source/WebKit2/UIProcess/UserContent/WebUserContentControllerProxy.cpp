@@ -91,10 +91,10 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
         userStyleSheets.append({ userStyleSheet->identifier(), userStyleSheet->userContentWorld().identifier(), userStyleSheet->userStyleSheet() });
     webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserStyleSheets(userStyleSheets), m_identifier);
 
-    Vector<WebScriptMessageHandlerHandle> messageHandlerHandles;
+    Vector<WebScriptMessageHandlerData> messageHandlers;
     for (auto& handler : m_scriptMessageHandlers.values())
-        messageHandlerHandles.append(handler->handle());
-    webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserScriptMessageHandlers(messageHandlerHandles), m_identifier);
+        messageHandlers.append({ handler->identifier(), handler->userContentWorld().identifier(), handler->name() });
+    webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserScriptMessageHandlers(messageHandlers), m_identifier);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     Vector<std::pair<String, WebCompiledContentExtensionData>> userContentExtensions;
@@ -270,31 +270,55 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets()
     removeUserContentWorldUses(worlds);
 }
 
-bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessageHandler* handler)
+bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessageHandler& handler)
 {
+    Ref<API::UserContentWorld> world = handler.userContentWorld();
+
     for (auto& existingHandler : m_scriptMessageHandlers.values()) {
-        if (existingHandler->name() == handler->name())
+        if (existingHandler->name() == handler.name() && &existingHandler->userContentWorld() == world.ptr())
             return false;
     }
 
-    m_scriptMessageHandlers.add(handler->identifier(), handler);
+    addUserContentWorldUse(world.get());
+
+    m_scriptMessageHandlers.add(handler.identifier(), &handler);
 
     for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::AddUserScriptMessageHandlers({ handler->handle() }), m_identifier);
+        process->connection()->send(Messages::WebUserContentController::AddUserScriptMessageHandlers({ { handler.identifier(), world->identifier(), handler.name() } }), m_identifier);
     
     return true;
 }
 
-void WebUserContentControllerProxy::removeUserMessageHandlerForName(const String& name)
+void WebUserContentControllerProxy::removeUserMessageHandlerForName(const String& name, API::UserContentWorld& world)
 {
     for (auto it = m_scriptMessageHandlers.begin(), end = m_scriptMessageHandlers.end(); it != end; ++it) {
-        if (it->value->name() == name) {
+        if (it->value->name() == name && &it->value->userContentWorld() == &world) {
             for (WebProcessProxy* process : m_processes)
-                process->connection()->send(Messages::WebUserContentController::RemoveUserScriptMessageHandler(it->value->identifier()), m_identifier);
+                process->connection()->send(Messages::WebUserContentController::RemoveUserScriptMessageHandler(world.identifier(), it->value->identifier()), m_identifier);
+
             m_scriptMessageHandlers.remove(it);
+
+            removeUserContentWorldUses(world, 1);
             return;
         }
     }
+}
+
+void WebUserContentControllerProxy::removeAllUserMessageHandlers(API::UserContentWorld& world)
+{
+    for (WebProcessProxy* process : m_processes)
+        process->connection()->send(Messages::WebUserContentController::RemoveAllUserScriptMessageHandlers({ world.identifier() }), m_identifier);
+
+    unsigned numberRemoved = 0;
+    m_scriptMessageHandlers.removeIf([&](HashMap<uint64_t, RefPtr<WebScriptMessageHandler>>::KeyValuePairType& entry) {
+        if (&entry.value->userContentWorld() == &world) {
+            ++numberRemoved;
+            return true;
+        }
+        return false;
+    });
+
+    removeUserContentWorldUses(world, numberRemoved);
 }
 
 void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, uint64_t pageID, uint64_t frameID, const WebCore::SecurityOriginData& securityOrigin, uint64_t messageHandlerID, const IPC::DataReference& dataReference)
@@ -315,8 +339,7 @@ void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, 
     if (!handler)
         return;
 
-    handler->client().didPostMessage(*page, *frame, securityOrigin,
-        WebCore::SerializedScriptValue::adopt(dataReference.vector()));
+    handler->client().didPostMessage(*page, *frame, securityOrigin, WebCore::SerializedScriptValue::adopt(dataReference.vector()));
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

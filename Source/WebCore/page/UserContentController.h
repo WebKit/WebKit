@@ -45,17 +45,6 @@ public:
 
     WEBCORE_EXPORT void removeAllUserContent();
 
-#if ENABLE(USER_MESSAGE_HANDLERS)
-    WEBCORE_EXPORT void addUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
-    WEBCORE_EXPORT void removeUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
-#endif
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    WEBCORE_EXPORT void addUserContentExtension(const String& name, RefPtr<ContentExtensions::CompiledContentExtension>);
-    WEBCORE_EXPORT void removeUserContentExtension(const String& name);
-    WEBCORE_EXPORT void removeAllUserContentExtensions();
-#endif
-
 private:
     UserContentController();
 
@@ -63,7 +52,7 @@ private:
     void forEachUserScript(const std::function<void(DOMWrapperWorld&, const UserScript&)>&) const override;
     void forEachUserStyleSheet(const std::function<void(const UserStyleSheet&)>&) const override;
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    const UserMessageHandlerDescriptorMap& userMessageHandlerDescriptors() const override { return m_userMessageHandlerDescriptors; }
+    void forEachUserMessageHandler(const std::function<void(const UserMessageHandlerDescriptor&)>&) const override;
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
     ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() override { return m_contentExtensionBackend; }
@@ -71,9 +60,6 @@ private:
 
     UserScriptMap m_userScripts;
     UserStyleSheetMap m_userStyleSheets;
-#if ENABLE(USER_MESSAGE_HANDLERS)
-    UserMessageHandlerDescriptorMap m_userMessageHandlerDescriptors;
-#endif
 #if ENABLE(CONTENT_EXTENSIONS)
     ContentExtensions::ContentExtensionsBackend m_contentExtensionBackend;
 #endif

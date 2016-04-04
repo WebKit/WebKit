@@ -32,10 +32,6 @@
 #include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
 
-#if ENABLE(USER_MESSAGE_HANDLERS)
-#include "UserMessageHandlerDescriptor.h"
-#endif
-
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "CompiledContentExtension.h"
 #endif
@@ -71,6 +67,12 @@ void UserContentController::forEachUserStyleSheet(const std::function<void(const
             functor(*styleSheet);
     }
 }
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+void UserContentController::forEachUserMessageHandler(const std::function<void(const UserMessageHandlerDescriptor&)>&) const
+{
+}
+#endif
 
 void UserContentController::addUserScript(DOMWrapperWorld& world, std::unique_ptr<UserScript> userScript)
 {
@@ -140,35 +142,6 @@ void UserContentController::removeUserStyleSheets(DOMWrapperWorld& world)
 
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
-
-#if ENABLE(USER_MESSAGE_HANDLERS)
-void UserContentController::addUserMessageHandlerDescriptor(UserMessageHandlerDescriptor& descriptor)
-{
-    m_userMessageHandlerDescriptors.add(std::make_pair(descriptor.name(), &descriptor.world()), &descriptor);
-}
-
-void UserContentController::removeUserMessageHandlerDescriptor(UserMessageHandlerDescriptor& descriptor)
-{
-    m_userMessageHandlerDescriptors.remove(std::make_pair(descriptor.name(), &descriptor.world()));
-}
-#endif
-
-#if ENABLE(CONTENT_EXTENSIONS)
-void UserContentController::addUserContentExtension(const String& name, RefPtr<ContentExtensions::CompiledContentExtension> contentExtension)
-{
-    m_contentExtensionBackend.addContentExtension(name, contentExtension);
-}
-
-void UserContentController::removeUserContentExtension(const String& name)
-{
-    m_contentExtensionBackend.removeContentExtension(name);
-}
-
-void UserContentController::removeAllUserContentExtensions()
-{
-    m_contentExtensionBackend.removeAllContentExtensions();
-}
-#endif
 
 void UserContentController::removeAllUserContent()
 {

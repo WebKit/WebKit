@@ -26,32 +26,24 @@
 #ifndef WebScriptMessageHandler_h
 #define WebScriptMessageHandler_h
 
-#include <wtf/PassRefPtr.h>
+#include "WebUserContentControllerDataTypes.h"
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
-
-namespace IPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
-}
 
 namespace WebCore {
 struct SecurityOriginData;
 class SerializedScriptValue;
 }
 
+namespace API {
+class UserContentWorld;
+}
+
 namespace WebKit {
 
 class WebPageProxy;
 class WebFrameProxy;
-
-struct WebScriptMessageHandlerHandle {
-    void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebScriptMessageHandlerHandle&);
-
-    uint64_t identifier;
-    String name;
-};
 
 class WebScriptMessageHandler : public RefCounted<WebScriptMessageHandler> {
 public:
@@ -61,23 +53,25 @@ public:
         virtual void didPostMessage(WebPageProxy&, WebFrameProxy&, const WebCore::SecurityOriginData&, WebCore::SerializedScriptValue&) = 0;
     };
 
-    static PassRefPtr<WebScriptMessageHandler> create(std::unique_ptr<Client>, const String& name);    
+    static Ref<WebScriptMessageHandler> create(std::unique_ptr<Client>, const String& name, API::UserContentWorld&);
     virtual ~WebScriptMessageHandler();
-
-    WebScriptMessageHandlerHandle handle() { return { m_identifier, m_name }; }
 
     uint64_t identifier() const { return m_identifier; }
     String name() const { return m_name; }
 
+    const API::UserContentWorld& userContentWorld() const { return m_world; }
+    API::UserContentWorld& userContentWorld() { return m_world; }
+
     Client& client() const { return *m_client; }
 
 private:
-    WebScriptMessageHandler(std::unique_ptr<Client>, const String&);
+    WebScriptMessageHandler(std::unique_ptr<Client>, const String&, API::UserContentWorld&);
     
     uint64_t m_identifier;
 
     std::unique_ptr<Client> m_client;
     String m_name;
+    Ref<API::UserContentWorld> m_world;
 };
 
 } // namespace API

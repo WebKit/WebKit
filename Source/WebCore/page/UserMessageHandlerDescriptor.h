@@ -28,44 +28,30 @@
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class Frame;
 class DOMWrapperWorld;
-class UserMessageHandler;
 class SerializedScriptValue;
+class UserMessageHandler;
 
 class UserMessageHandlerDescriptor : public RefCounted<UserMessageHandlerDescriptor> {
 public:
-    class Client {
-    public:
-        virtual ~Client() { }
-        virtual void didPostMessage(UserMessageHandler&, SerializedScriptValue*) = 0;
-    };
+    WEBCORE_EXPORT explicit UserMessageHandlerDescriptor(const AtomicString&, DOMWrapperWorld&);
+    WEBCORE_EXPORT virtual ~UserMessageHandlerDescriptor();
 
-    static Ref<UserMessageHandlerDescriptor> create(const AtomicString& name, DOMWrapperWorld& world, Client& client)
-    {
-        return adoptRef(*new UserMessageHandlerDescriptor(name, world, client));
-    }
-    WEBCORE_EXPORT ~UserMessageHandlerDescriptor();
-
-    WEBCORE_EXPORT const AtomicString& name();
+    WEBCORE_EXPORT const AtomicString& name() const;
     WEBCORE_EXPORT DOMWrapperWorld& world();
+    WEBCORE_EXPORT const DOMWrapperWorld& world() const;
 
-    Client* client() const { return m_client; }
-    void invalidateClient() { m_client = nullptr; }
+    virtual void didPostMessage(UserMessageHandler&, SerializedScriptValue*) = 0;
 
 private:
-    WEBCORE_EXPORT explicit UserMessageHandlerDescriptor(const AtomicString&, DOMWrapperWorld&, Client&);
-
     AtomicString m_name;
     Ref<DOMWrapperWorld> m_world;
-    Client* m_client;
 };
 
 } // namespace WebCore

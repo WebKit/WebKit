@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "APISerializedScriptValue.h"
+#import "APIUserContentWorld.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNSArray.h"
 #import "WKScriptMessageHandler.h"
@@ -118,14 +119,14 @@ private:
 
 - (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name
 {
-    RefPtr<WebKit::WebScriptMessageHandler> handler = WebKit::WebScriptMessageHandler::create(std::make_unique<ScriptMessageHandlerDelegate>(self, scriptMessageHandler, name), name);
+    auto handler = WebKit::WebScriptMessageHandler::create(std::make_unique<ScriptMessageHandlerDelegate>(self, scriptMessageHandler, name), name, API::UserContentWorld::normalWorld());
     if (!_userContentControllerProxy->addUserScriptMessageHandler(handler.get()))
         [NSException raise:NSInvalidArgumentException format:@"Attempt to add script message handler with name '%@' when one already exists.", name];
 }
 
 - (void)removeScriptMessageHandlerForName:(NSString *)name
 {
-    _userContentControllerProxy->removeUserMessageHandlerForName(name);
+    _userContentControllerProxy->removeUserMessageHandlerForName(name, API::UserContentWorld::normalWorld());
 }
 
 #pragma mark WKObject protocol implementation
@@ -193,6 +194,23 @@ private:
 - (void)_removeAllUserStyleSheetsAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     _userContentControllerProxy->removeAllUserStyleSheets(*userContentWorld->_userContentWorld);
+}
+
+- (void)_addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name userContentWorld:(_WKUserContentWorld *)userContentWorld
+{
+    auto handler = WebKit::WebScriptMessageHandler::create(std::make_unique<ScriptMessageHandlerDelegate>(self, scriptMessageHandler, name), name, *userContentWorld->_userContentWorld);
+    if (!_userContentControllerProxy->addUserScriptMessageHandler(handler.get()))
+        [NSException raise:NSInvalidArgumentException format:@"Attempt to add script message handler with name '%@' when one already exists.", name];
+}
+
+- (void)_removeScriptMessageHandlerForName:(NSString *)name userContentWorld:(_WKUserContentWorld *)userContentWorld
+{
+    _userContentControllerProxy->removeUserMessageHandlerForName(name, *userContentWorld->_userContentWorld);
+}
+
+- (void)_removeAllScriptMessageHandlersAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld
+{
+    _userContentControllerProxy->removeAllUserMessageHandlers(*userContentWorld->_userContentWorld);
 }
 
 @end

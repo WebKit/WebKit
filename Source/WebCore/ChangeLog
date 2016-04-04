@@ -1,3 +1,92 @@
+2016-04-03  Sam Weinig  <sam@webkit.org>
+
+        Add SPI to allow install script message handlers in isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=156153
+
+        Reviewed by Anders Carlsson.
+
+        Added API Test: WKUserContentController.ScriptMessageHandlerBasicPostIsolatedWorld
+
+        - Changes the signature of the method in UserContentProvider to get UserMessageHandlerDescriptors
+          to match that of UserScripts and UserStyleSheets.
+        - Removes the need for UserMessageHandlerDescriptor::Client by making UserMessageHandlerDescriptor
+          directly subclassable.
+        - Changes invalidation model of UserMessageHandlersNamespace to be more direct by allowing it to
+          register for invalidation notifications, rather than always checking if handler has been removed
+          on each invocation.
+
+        * loader/EmptyClients.cpp:
+        Update for new signature.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::shouldHaveWebKitNamespaceForWorld):
+        Switch to using forEachUserMessageHandler.
+
+        (WebCore::DOMWindow::webkitNamespace):
+        Pass the UserContentProvider to the namespace on creation, so the UserMessageHandlersNamespace
+        can use it to register to listen for UserMessageHandler changes.
+
+        * page/UserContentController.h:
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::forEachUserStyleSheet):
+        (WebCore::UserContentController::forEachUserMessageHandler):
+        (WebCore::UserContentController::addUserScript):
+        (WebCore::UserContentController::removeUserStyleSheets):
+        (WebCore::UserContentController::removeAllUserContent):
+        (WebCore::UserContentController::addUserMessageHandlerDescriptor): Deleted.
+        (WebCore::UserContentController::removeUserMessageHandlerDescriptor): Deleted.
+        (WebCore::UserContentController::addUserContentExtension): Deleted.
+        (WebCore::UserContentController::removeUserContentExtension): Deleted.
+        (WebCore::UserContentController::removeAllUserContentExtensions): Deleted.
+        Removed unused functions, all the UserMessageHandler and UserContentExtension ones. UserContentController
+        is only used for Legacy WebKit where those features are not exposed.
+
+        * page/UserContentProvider.h:
+        * page/UserContentProvider.cpp:
+        (WebCore::UserContentProvider::registerForUserMessageHandlerInvalidation):
+        (WebCore::UserContentProvider::unregisterForUserMessageHandlerInvalidation):
+        (WebCore::UserContentProvider::invalidateAllRegisteredUserMessageHandlerInvalidationClients):
+        (WebCore::UserContentProviderInvalidationClient::~UserContentProviderInvalidationClient):
+        Update signature for UserMessageHandlerDescriptor access to match UserScript and UserStyleSheet.
+        Adds explicit invalidation for UserMessageHandlers.
+
+        * page/UserMessageHandler.cpp:
+        (WebCore::UserMessageHandler::UserMessageHandler):
+        (WebCore::UserMessageHandler::postMessage):
+        (WebCore::UserMessageHandler::name): Deleted.
+        (WebCore::UserMessageHandler::world): Deleted.
+        * page/UserMessageHandler.h:
+        (WebCore::UserMessageHandler::descriptor):
+        (WebCore::UserMessageHandler::invalidateDescriptor):
+        * page/UserMessageHandlerDescriptor.cpp:
+        (WebCore::UserMessageHandlerDescriptor::UserMessageHandlerDescriptor):
+        (WebCore::UserMessageHandlerDescriptor::~UserMessageHandlerDescriptor):
+        (WebCore::UserMessageHandlerDescriptor::name):
+        (WebCore::UserMessageHandlerDescriptor::world):
+        * page/UserMessageHandlerDescriptor.h:
+        (WebCore::UserMessageHandlerDescriptor::Client::~Client): Deleted.
+        (WebCore::UserMessageHandlerDescriptor::create): Deleted.
+        (WebCore::UserMessageHandlerDescriptor::client): Deleted.
+        (WebCore::UserMessageHandlerDescriptor::invalidateClient): Deleted.
+        Simplify by removing the Client. Now, when the UserMessageHandlerDescriptor is no longer
+        active, it gets nulled out in the UserMessageHandler.
+
+        * page/UserMessageHandlersNamespace.cpp:
+        (WebCore::UserMessageHandlersNamespace::UserMessageHandlersNamespace):
+        (WebCore::UserMessageHandlersNamespace::~UserMessageHandlersNamespace):
+        (WebCore::UserMessageHandlersNamespace::didInvalidate):
+        (WebCore::UserMessageHandlersNamespace::handler):
+        * page/UserMessageHandlersNamespace.h:
+        Change the logic to listen for invalidations of the UserMessageHandlerDescriptor map. When it
+        is invalidated, re-build the map of cached UserMessageHandlers from the UserContentProvider,
+        and invalidate any remaining UserMessageHandlers that no longer exist in the UserContentProvider.
+
+        * page/WebKitNamespace.cpp:
+        (WebCore::WebKitNamespace::WebKitNamespace):
+        * page/WebKitNamespace.h:
+        (WebCore::WebKitNamespace::create):
+        Pass through the UserContentProvider.
+
 2016-04-04  Chris Dumez  <cdumez@apple.com>
 
         Regression(r196145): Crash in getOwnPropertyDescriptor on http://www.history.com/shows/vikings

@@ -66,4 +66,24 @@ bool WebUserStyleSheetData::decode(IPC::ArgumentDecoder& decoder, WebUserStyleSh
     return true;
 }
 
+
+void WebScriptMessageHandlerData::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << identifier;
+    encoder << worldIdentifier;
+    encoder << name;
+}
+
+bool WebScriptMessageHandlerData::decode(IPC::ArgumentDecoder& decoder, WebScriptMessageHandlerData& data)
+{
+    if (!decoder.decode(data.identifier))
+        return false;
+    if (!decoder.decode(data.worldIdentifier))
+        return false;
+    if (!decoder.decode(data.name))
+        return false;
+
+    return true;
+}
+
 } // namespace WebKit

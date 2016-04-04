@@ -61,6 +61,26 @@ void UserContentProvider::removePage(Page& page)
     m_pages.remove(&page);
 }
 
+void UserContentProvider::registerForUserMessageHandlerInvalidation(UserContentProviderInvalidationClient& invalidationClient)
+{
+    ASSERT(!m_userMessageHandlerInvalidationClients.contains(&invalidationClient));
+
+    m_userMessageHandlerInvalidationClients.add(&invalidationClient);
+}
+
+void UserContentProvider::unregisterForUserMessageHandlerInvalidation(UserContentProviderInvalidationClient& invalidationClient)
+{
+    ASSERT(m_userMessageHandlerInvalidationClients.contains(&invalidationClient));
+
+    m_userMessageHandlerInvalidationClients.remove(&invalidationClient);
+}
+
+void UserContentProvider::invalidateAllRegisteredUserMessageHandlerInvalidationClients()
+{
+    for (auto& client : m_userMessageHandlerInvalidationClients)
+        client->didInvalidate(*this);
+}
+
 void UserContentProvider::invalidateInjectedStyleSheetCacheInAllFramesInAllPages()
 {
     for (auto& page : m_pages)

@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-WebKitNamespace::WebKitNamespace(Frame& frame)
+WebKitNamespace::WebKitNamespace(Frame& frame, UserContentProvider& userContentProvider)
     : DOMWindowProperty(&frame)
-    , m_messageHandlerNamespace(UserMessageHandlersNamespace::create(frame))
+    , m_messageHandlerNamespace(UserMessageHandlersNamespace::create(frame, userContentProvider))
 {
 }
 

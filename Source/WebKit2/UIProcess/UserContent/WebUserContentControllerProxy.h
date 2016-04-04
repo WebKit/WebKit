@@ -88,8 +88,9 @@ public:
     void removeAllUserContent(API::UserContentWorld&);
 
     // Returns false if there was a name conflict.
-    bool addUserScriptMessageHandler(WebScriptMessageHandler*);
-    void removeUserMessageHandlerForName(const String&);
+    bool addUserScriptMessageHandler(WebScriptMessageHandler&);
+    void removeUserMessageHandlerForName(const String&, API::UserContentWorld&);
+    void removeAllUserMessageHandlers(API::UserContentWorld&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void addUserContentExtension(API::UserContentExtension&);

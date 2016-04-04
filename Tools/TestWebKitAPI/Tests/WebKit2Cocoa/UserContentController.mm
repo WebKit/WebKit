@@ -95,6 +95,55 @@ TEST(WKUserContentController, ScriptMessageHandlerBasicPost)
     EXPECT_WK_STREQ(@"Hello", (NSString *)[lastScriptMessage body]);
 }
 
+TEST(WKUserContentController, ScriptMessageHandlerBasicPostIsolatedWorld)
+{
+    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+
+    RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
+    RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"window.webkit.messageHandlers.testHandler.postMessage('Hello')" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] _addScriptMessageHandler:handler.get() name:@"testHandler" userContentWorld:world.get()];
+    [[configuration userContentController] addUserScript:userScript.get()];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    isDoneWithNavigation = false;
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+
+    EXPECT_WK_STREQ(@"Hello", (NSString *)[lastScriptMessage body]);
+
+    if (!isDoneWithNavigation)
+        TestWebKitAPI::Util::run(&isDoneWithNavigation);
+
+    __block bool isDoneEvaluatingScript = false;
+    __block NSString *resultValue = @"";
+    [webView evaluateJavaScript:
+        @"var result;"
+         "if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.testHandler) {"
+         "    result = { 'result': 'FAIL' };"
+         "} else {"
+         "    result = { 'result': 'PASS' };"
+         "} " 
+         "result;"
+         completionHandler:^(id value, NSError *error) {
+            resultValue = [((NSDictionary *)value)[@"result"] copy];
+            isDoneEvaluatingScript = true;
+        }];
+
+    TestWebKitAPI::Util::run(&isDoneEvaluatingScript);
+
+    EXPECT_WK_STREQ(@"PASS", resultValue);
+}
+
 TEST(WKUserContentController, ScriptMessageHandlerBasicRemove)
 {
     RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);

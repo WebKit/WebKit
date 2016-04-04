@@ -35,8 +35,9 @@ messages -> WebUserContentController {
     RemoveUserStyleSheet(uint64_t worldIdentifier, uint64_t identifier);
     RemoveAllUserStyleSheets(Vector<uint64_t> worldIdentifiers);
 
-    AddUserScriptMessageHandlers(Vector<WebKit::WebScriptMessageHandlerHandle> scriptMessageHandlers);
-    RemoveUserScriptMessageHandler(uint64_t identifier);
+    AddUserScriptMessageHandlers(Vector<struct WebKit::WebScriptMessageHandlerData> scriptMessageHandlers);
+    RemoveUserScriptMessageHandler(uint64_t worldIdentifier, uint64_t identifier);
+    RemoveAllUserScriptMessageHandlers(Vector<uint64_t> worldIdentifiers);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     AddUserContentExtensions(Vector<std::pair<String, WebKit::WebCompiledContentExtensionData>> userContentFilters);

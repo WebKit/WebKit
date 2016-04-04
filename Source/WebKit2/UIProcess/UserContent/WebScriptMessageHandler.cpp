@@ -26,26 +26,9 @@
 #include "config.h"
 #include "WebScriptMessageHandler.h"
 
-#include "ArgumentCoders.h"
+#include "APIUserContentWorld.h"
 
 namespace WebKit {
-
-void WebScriptMessageHandlerHandle::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << identifier;
-    encoder << name;
-}
-
-bool WebScriptMessageHandlerHandle::decode(IPC::ArgumentDecoder& decoder, WebScriptMessageHandlerHandle& handle)
-{
-    if (!decoder.decode(handle.identifier))
-        return false;
-
-    if (!decoder.decode(handle.name))
-        return false;
-
-    return true;
-}
 
 static uint64_t generateIdentifier()
 {
@@ -54,15 +37,16 @@ static uint64_t generateIdentifier()
     return ++identifier;
 }
 
-PassRefPtr<WebScriptMessageHandler> WebScriptMessageHandler::create(std::unique_ptr<Client> client, const String& name)
+Ref<WebScriptMessageHandler> WebScriptMessageHandler::create(std::unique_ptr<Client> client, const String& name, API::UserContentWorld& world)
 {
-    return adoptRef(new WebScriptMessageHandler(WTFMove(client), name));
+    return adoptRef(*new WebScriptMessageHandler(WTFMove(client), name, world));
 }
 
-WebScriptMessageHandler::WebScriptMessageHandler(std::unique_ptr<Client> client, const String& name)
+WebScriptMessageHandler::WebScriptMessageHandler(std::unique_ptr<Client> client, const String& name, API::UserContentWorld& world)
     : m_identifier(generateIdentifier())
     , m_client(WTFMove(client))
     , m_name(name)
+    , m_world(world)
 {
 }
 

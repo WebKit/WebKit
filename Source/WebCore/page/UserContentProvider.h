@@ -58,6 +58,17 @@ class ContentExtensionsBackend;
 struct Action;
 }
 
+class UserContentProvider;
+
+class UserContentProviderInvalidationClient {
+public:
+    virtual ~UserContentProviderInvalidationClient()
+    {
+    }
+    
+    virtual void didInvalidate(UserContentProvider&) = 0;
+};
+
 class UserContentProvider : public RefCounted<UserContentProvider> {
 public:
     WEBCORE_EXPORT UserContentProvider();
@@ -65,18 +76,18 @@ public:
 
     virtual void forEachUserScript(const std::function<void(DOMWrapperWorld&, const UserScript&)>&) const = 0;
     virtual void forEachUserStyleSheet(const std::function<void(const UserStyleSheet&)>&) const = 0;
-
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    virtual const UserMessageHandlerDescriptorMap& userMessageHandlerDescriptors() const = 0;
+    virtual void forEachUserMessageHandler(const std::function<void(const UserMessageHandlerDescriptor&)>&) const = 0;
 #endif
-
 #if ENABLE(CONTENT_EXTENSIONS)
     virtual ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() = 0;
 #endif
 
+    void registerForUserMessageHandlerInvalidation(UserContentProviderInvalidationClient&);
+    void unregisterForUserMessageHandlerInvalidation(UserContentProviderInvalidationClient&);
+
     void addPage(Page&);
     void removePage(Page&);
-
 
 #if ENABLE(CONTENT_EXTENSIONS)
     // FIXME: These don't really belong here. They should probably bundled up in the ContentExtensionsBackend
@@ -86,10 +97,12 @@ public:
 #endif
 
 protected:
+    WEBCORE_EXPORT void invalidateAllRegisteredUserMessageHandlerInvalidationClients();
     WEBCORE_EXPORT void invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 
 private:
     HashSet<Page*> m_pages;
+    HashSet<UserContentProviderInvalidationClient*> m_userMessageHandlerInvalidationClients;
 };
 
 } // namespace WebCore

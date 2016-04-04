@@ -171,6 +171,8 @@ void WebUserContentController::addUserStyleSheets(const Vector<WebUserStyleSheet
         UserStyleSheet sheet = userStyleSheetData.userStyleSheet;
         addUserStyleSheetInternal(*it->value.first, userStyleSheetData.identifier, WTFMove(sheet));
     }
+
+    invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
 void WebUserContentController::removeUserStyleSheet(uint64_t worldIdentifier, uint64_t userStyleSheetIdentifier)
@@ -186,6 +188,7 @@ void WebUserContentController::removeUserStyleSheet(uint64_t worldIdentifier, ui
 
 void WebUserContentController::removeAllUserStyleSheets(const Vector<uint64_t>& worldIdentifiers)
 {
+    bool sheetsChanged = false;
     for (auto& worldIdentifier : worldIdentifiers) {
         auto it = worldMap().find(worldIdentifier);
         if (it == worldMap().end()) {
@@ -193,25 +196,38 @@ void WebUserContentController::removeAllUserStyleSheets(const Vector<uint64_t>& 
             return;
         }
 
-        removeUserStyleSheets(*it->value.first);
+        if (m_userStyleSheets.remove(it->value.first.get()))
+            sheetsChanged = true;
     }
+
+    if (sheetsChanged)
+        invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-class WebUserMessageHandlerDescriptorProxy : public RefCounted<WebUserMessageHandlerDescriptorProxy>, public WebCore::UserMessageHandlerDescriptor::Client {
+class WebUserMessageHandlerDescriptorProxy : public WebCore::UserMessageHandlerDescriptor {
 public:
-    static PassRefPtr<WebUserMessageHandlerDescriptorProxy> create(WebUserContentController* controller, const String& name, uint64_t identifier)
+    static PassRefPtr<WebUserMessageHandlerDescriptorProxy> create(WebUserContentController* controller, const String& name, InjectedBundleScriptWorld& world, uint64_t identifier)
     {
-        return adoptRef(new WebUserMessageHandlerDescriptorProxy(controller, name, identifier));
+        return adoptRef(new WebUserMessageHandlerDescriptorProxy(controller, name, world, identifier));
     }
 
     virtual ~WebUserMessageHandlerDescriptorProxy()
     {
-        m_descriptor->invalidateClient();
     }
 
-    // WebCore::UserMessageHandlerDescriptor::Client
-    virtual void didPostMessage(WebCore::UserMessageHandler& handler, WebCore::SerializedScriptValue* value)
+    uint64_t identifier() { return m_identifier; }
+
+private:
+    WebUserMessageHandlerDescriptorProxy(WebUserContentController* controller, const String& name, InjectedBundleScriptWorld& world, uint64_t identifier)
+        : WebCore::UserMessageHandlerDescriptor(name, world.coreWorld())
+        , m_controller(controller)
+        , m_identifier(identifier)
+    {
+    }
+
+    // WebCore::UserMessageHandlerDescriptor
+    void didPostMessage(WebCore::UserMessageHandler& handler, WebCore::SerializedScriptValue* value) override
     {
         WebCore::Frame* frame = handler.frame();
         if (!frame)
@@ -228,53 +244,98 @@ public:
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->pageID(), webFrame->frameID(), SecurityOriginData::fromFrame(frame), m_identifier, IPC::DataReference(value->data())), m_controller->identifier());
     }
 
-    WebCore::UserMessageHandlerDescriptor& descriptor() { return *m_descriptor; }
-    uint64_t identifier() { return m_identifier; }
-
-private:
-    WebUserMessageHandlerDescriptorProxy(WebUserContentController* controller, const String& name, uint64_t identifier)
-        : m_controller(controller)
-        , m_descriptor(UserMessageHandlerDescriptor::create(name, mainThreadNormalWorld(), *this))
-        , m_identifier(identifier)
-    {
-    }
-
     RefPtr<WebUserContentController> m_controller;
-    RefPtr<WebCore::UserMessageHandlerDescriptor> m_descriptor;
     uint64_t m_identifier;
 };
 #endif
 
-void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>& scriptMessageHandlers)
+void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerData>& scriptMessageHandlers)
 {
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    for (auto& handle : scriptMessageHandlers) {
-        RefPtr<WebUserMessageHandlerDescriptorProxy> descriptor = WebUserMessageHandlerDescriptorProxy::create(this, handle.name, handle.identifier);
+    for (auto& handler : scriptMessageHandlers) {
+        auto it = worldMap().find(handler.worldIdentifier);
+        if (it == worldMap().end()) {
+            WTFLogAlways("Trying to add a UserScriptMessageHandler to a UserContentWorld (id=%" PRIu64 ") that does not exist.", handler.worldIdentifier);
+            continue;
+        }
 
-        m_userMessageHandlerDescriptors.add(descriptor->identifier(), descriptor);
-
-        auto& coreDescriptor = descriptor->descriptor();
-        m_userMessageHandlerDescriptorsMap.add(std::make_pair(coreDescriptor.name(), &coreDescriptor.world()), &coreDescriptor);
+        addUserScriptMessageHandlerInternal(*it->value.first, handler.identifier, handler.name);
     }
 #else
     UNUSED_PARAM(scriptMessageHandlers);
 #endif
 }
 
-void WebUserContentController::removeUserScriptMessageHandler(uint64_t identifier)
+void WebUserContentController::removeUserScriptMessageHandler(uint64_t worldIdentifier, uint64_t userScriptMessageHandlerIdentifier)
 {
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    auto it = m_userMessageHandlerDescriptors.find(identifier);
-    ASSERT(it != m_userMessageHandlerDescriptors.end());
+    auto it = worldMap().find(worldIdentifier);
+    if (it == worldMap().end()) {
+        WTFLogAlways("Trying to remove a UserScriptMessageHandler from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+        return;
+    }
 
-    auto& coreDescriptor = it->value->descriptor();
-    m_userMessageHandlerDescriptorsMap.remove(std::make_pair(coreDescriptor.name(), &coreDescriptor.world()));
-
-    m_userMessageHandlerDescriptors.remove(it);
+    removeUserScriptMessageHandlerInternal(*it->value.first, userScriptMessageHandlerIdentifier);
 #else
-    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(worldIdentifier);
+    UNUSED_PARAM(userScriptMessageHandlerIdentifier);
 #endif
 }
+
+void WebUserContentController::removeAllUserScriptMessageHandlers(const Vector<uint64_t>& worldIdentifiers)
+{
+#if ENABLE(USER_MESSAGE_HANDLERS)
+    bool userMessageHandlersChanged = false;
+    for (auto& worldIdentifier : worldIdentifiers) {
+        auto it = worldMap().find(worldIdentifier);
+        if (it == worldMap().end()) {
+            WTFLogAlways("Trying to remove all UserScriptMessageHandler from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+            return;
+        }
+
+        if (m_userMessageHandlers.remove(it->value.first.get()))
+            userMessageHandlersChanged = true;
+    }
+
+    if (userMessageHandlersChanged)
+        invalidateAllRegisteredUserMessageHandlerInvalidationClients();
+#else
+    UNUSED_PARAM(worldIdentifiers);
+#endif
+}
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+void WebUserContentController::addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, uint64_t userScriptMessageHandlerIdentifier, const String& name)
+{
+    auto& messageHandlersInWorld = m_userMessageHandlers.ensure(&world, [] { return Vector<RefPtr<WebUserMessageHandlerDescriptorProxy>>(); }).iterator->value;
+    messageHandlersInWorld.append(WebUserMessageHandlerDescriptorProxy::create(this, name, world, userScriptMessageHandlerIdentifier));
+}
+
+void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, uint64_t userScriptMessageHandlerIdentifier)
+{
+    auto it = m_userMessageHandlers.find(&world);
+    if (it == m_userMessageHandlers.end())
+        return;
+
+    auto& userMessageHandlers = it->value;
+
+    bool userMessageHandlersChanged = false;
+    for (int i = userMessageHandlers.size() - 1; i >= 0; --i) {
+        if (userMessageHandlers[i]->identifier() == userScriptMessageHandlerIdentifier) {
+            userMessageHandlers.remove(i);
+            userMessageHandlersChanged = true;
+        }
+    }
+
+    if (!userMessageHandlersChanged)
+        return;
+
+    if (userMessageHandlers.isEmpty())
+        m_userMessageHandlers.remove(it);
+
+    invalidateAllRegisteredUserMessageHandlerInvalidationClients();
+}
+#endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebUserContentController::addUserContentExtensions(const Vector<std::pair<String, WebCompiledContentExtensionData>>& userContentExtensions)
@@ -297,8 +358,6 @@ void WebUserContentController::removeAllUserContentExtensions()
     m_contentExtensionBackend.removeAllContentExtensions();
 }
 #endif
-
-
 
 void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, uint64_t userScriptIdentifier, UserScript&& userScript)
 {
@@ -352,13 +411,12 @@ void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWor
 {
     auto& styleSheetsInWorld = m_userStyleSheets.ensure(&world, [] { return Vector<std::pair<uint64_t, WebCore::UserStyleSheet>>(); }).iterator->value;
     styleSheetsInWorld.append(std::make_pair(userStyleSheetIdentifier, WTFMove(userStyleSheet)));
-
-    invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
 void WebUserContentController::addUserStyleSheet(InjectedBundleScriptWorld& world, UserStyleSheet&& userStyleSheet)
 {
     addUserStyleSheetInternal(world, 0, WTFMove(userStyleSheet));
+    invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
 void WebUserContentController::removeUserStyleSheetWithURL(InjectedBundleScriptWorld& world, const URL& url)
@@ -445,5 +503,15 @@ void WebUserContentController::forEachUserStyleSheet(const std::function<void(co
             functor(identifierUserStyleSheetPair.second);
     }
 }
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+void WebUserContentController::forEachUserMessageHandler(const std::function<void(const WebCore::UserMessageHandlerDescriptor&)>& functor) const
+{
+    for (const auto& userMessageHandlerVector : m_userMessageHandlers.values()) {
+        for (const auto& userMessageHandler : userMessageHandlerVector)
+            functor(*userMessageHandler.get());
+    }
+}
+#endif
 
 } // namespace WebKit

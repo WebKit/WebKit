@@ -1,3 +1,83 @@
+2016-04-03  Sam Weinig  <sam@webkit.org>
+
+        Add SPI to allow install script message handlers in isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=156153
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebUserContentControllerDataTypes.cpp:
+        (WebKit::WebScriptMessageHandlerData::encode):
+        (WebKit::WebScriptMessageHandlerData::decode):
+        * Shared/WebUserContentControllerDataTypes.h:
+        Add WebKit::WebScriptMessageHandlerData, matching WebKit::WebUserScriptData and
+        WebKit::WebUserStyleSheetData.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController addScriptMessageHandler:name:]):
+        (-[WKUserContentController removeScriptMessageHandlerForName:]):
+        (-[WKUserContentController _removeAllUserStyleSheetsAssociatedWithUserContentWorld:]):
+        (-[WKUserContentController _addScriptMessageHandler:name:userContentWorld:]):
+        (-[WKUserContentController _removeScriptMessageHandlerForName:userContentWorld:]):
+        (-[WKUserContentController _removeAllScriptMessageHandlersAssociatedWithUserContentWorld:]):
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        Add SPI for adding and removing ScriptMessageHandlers associated with a world.
+
+        * UIProcess/UserContent/WebScriptMessageHandler.cpp:
+        (WebKit::WebScriptMessageHandler::create):
+        (WebKit::WebScriptMessageHandler::WebScriptMessageHandler):
+        (WebKit::WebScriptMessageHandlerHandle::encode): Deleted.
+        (WebKit::WebScriptMessageHandlerHandle::decode): Deleted.
+        * UIProcess/UserContent/WebScriptMessageHandler.h:
+        (WebKit::WebScriptMessageHandler::identifier):
+        (WebKit::WebScriptMessageHandler::name):
+        (WebKit::WebScriptMessageHandler::userContentWorld):
+        (WebKit::WebScriptMessageHandler::client):
+        (WebKit::WebScriptMessageHandler::handle): Deleted.
+        Add the world and move the data object to WebUserContentControllerDataTypes.h
+
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addUserScriptMessageHandler):
+        (WebKit::WebUserContentControllerProxy::removeUserMessageHandlerForName):
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        Update for worlds, matching UserScript/UserStyleSheet model.
+
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserMessageHandlerDescriptorProxy::WebUserMessageHandlerDescriptorProxy):
+        Change to inherit directly from WebCore::UserMessageHandlerDescriptor.
+
+        (WebKit::WebUserContentController::addUserScriptMessageHandlers):
+        (WebKit::WebUserContentController::removeUserScriptMessageHandler):
+        (WebKit::WebUserContentController::removeAllUserScriptMessageHandlers):
+        (WebKit::WebUserContentController::addUserScriptMessageHandlerInternal):
+        (WebKit::WebUserContentController::removeUserScriptMessageHandlerInternal):
+        Add support for worlds, matching UserScript/UserStyleSheet model.
+
+        (WebKit::WebUserContentController::addUserStyleSheets):
+        Add missing call to invalidateInjectedStyleSheetCacheInAllFramesInAllPages()
+
+        (WebKit::WebUserContentController::removeAllUserStyleSheets):
+        Switch to only calling invalidateInjectedStyleSheetCacheInAllFramesInAllPages() once
+        after the loop and only if any stylesheets were removed.
+        
+        (WebKit::WebUserContentController::addUserStyleSheetInternal):
+        Remove call to invalidateInjectedStyleSheetCacheInAllFramesInAllPages(), make
+        callers call it. This allows us to avoid calling it repeatedly in removeAllUserStyleSheets().
+
+        (WebKit::WebUserContentController::addUserStyleSheet):
+        Call invalidateInjectedStyleSheetCacheInAllFramesInAllPages() explicitly since it
+        is no longer called in addUserStyleSheetInternal().
+
+        (WebKit::WebUserContentController::forEachUserMessageHandler):
+        Implement by iterating the m_userMessageHandlers map.
+
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+        Update for worlds, matching UserScript/UserStyleSheet model.
+
 2016-04-04  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix build break since r198800

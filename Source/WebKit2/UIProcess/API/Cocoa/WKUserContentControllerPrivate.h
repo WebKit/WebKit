@@ -47,6 +47,10 @@
 - (void)_removeAllUserStyleSheets WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 - (void)_removeAllUserStyleSheetsAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+- (void)_addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name userContentWorld:(_WKUserContentWorld *)userContentWorld;
+- (void)_removeScriptMessageHandlerForName:(NSString *)name userContentWorld:(_WKUserContentWorld *)userContentWorld;
+- (void)_removeAllScriptMessageHandlersAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld;
+
 @end
 
 #endif

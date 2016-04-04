@@ -761,20 +761,26 @@ bool DOMWindow::shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld& world)
     if (!page)
         return false;
 
-    for (auto& descriptor : page->userContentProvider().userMessageHandlerDescriptors().values()) {
-        if (&descriptor->world() == &world)
-            return true;
-    }
+    bool hasUserMessageHandler = false;
+    page->userContentProvider().forEachUserMessageHandler([&](const UserMessageHandlerDescriptor& descriptor) {
+        if (&descriptor.world() == &world) {
+            hasUserMessageHandler = true;
+            return;
+        }
+    });
 
-    return false;
+    return hasUserMessageHandler;
 }
 
 WebKitNamespace* DOMWindow::webkitNamespace() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
+    auto* page = m_frame->page();
+    if (!page)
+        return nullptr;
     if (!m_webkitNamespace)
-        m_webkitNamespace = WebKitNamespace::create(*m_frame);
+        m_webkitNamespace = WebKitNamespace::create(*m_frame, page->userContentProvider());
     return m_webkitNamespace.get();
 }
 #endif

@@ -54,6 +54,15 @@ struct WebUserStyleSheetData {
     WebCore::UserStyleSheet userStyleSheet;
 };
 
+struct WebScriptMessageHandlerData {
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, WebScriptMessageHandlerData&);
+
+    uint64_t identifier;
+    uint64_t worldIdentifier;
+    String name;
+};
+
 } // namespace WebKit
 
 #endif // WebUserContentControllerDataTypes_h

@@ -377,9 +377,9 @@ def headers_for_type(type):
         'WebKit::WebMouseEvent': ['"WebEvent.h"'],
         'WebKit::WebTouchEvent': ['"WebEvent.h"'],
         'WebKit::WebWheelEvent': ['"WebEvent.h"'],
-        'WebKit::WebScriptMessageHandlerHandle': ['"WebScriptMessageHandler.h"'],
         'struct WebKit::WebUserScriptData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
+        'struct WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
         'std::chrono::system_clock::time_point': ['<chrono>'],
     }
 
