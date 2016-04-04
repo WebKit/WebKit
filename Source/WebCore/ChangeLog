@@ -1,3 +1,25 @@
+2016-04-04  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        Rely on PlatformLayer to choose the TextureMapperPlatformLayer impl
+        https://bugs.webkit.org/show_bug.cgi?id=155926
+
+        Reviewed by Žan Doberšek.
+
+        Use PlatformLayer to replace a bunch of subtly different #ifdef
+        scattered over the codebase to choose between TextureMapperPlatformLayer
+        and TextureMapperPlatformLayerProxyProvider.
+
+        * platform/graphics/GraphicsContext3DPrivate.h:
+        * platform/graphics/cairo/ImageBufferDataCairo.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h: Use
+        PlatformLayer.h an inherit from PlatformLayer instead of choosing the
+        right implementation every time.
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h: Add
+        TEXTURE_MAPPER guards to make it unconditionally usable.
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h: Add
+        COORDINATED_GRAPHICS_THREADED guards to make it unconditionally
+        usable.
+
 2016-04-04  Frederic Wang  <fwang@igalia.com>
 
         Refactor RenderMathMLRow layout functions to avoid using flexbox

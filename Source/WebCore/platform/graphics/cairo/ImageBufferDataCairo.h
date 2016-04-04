@@ -32,12 +32,10 @@
 #include "RefPtrCairo.h"
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
+#include "PlatformLayer.h"
 #include "TextureMapper.h"
-#if USE(COORDINATED_GRAPHICS_THREADED)
-#include "TextureMapperPlatformLayerProxy.h"
-#else
 #include "TextureMapperPlatformLayer.h"
-#endif
+#include "TextureMapperPlatformLayerProxy.h"
 #endif
 
 namespace WebCore {
@@ -46,11 +44,7 @@ class IntSize;
 
 class ImageBufferData
 #if ENABLE(ACCELERATED_2D_CANVAS)
-#if USE(COORDINATED_GRAPHICS_THREADED)
-    : public TextureMapperPlatformLayerProxyProvider
-#else
-    : public TextureMapperPlatformLayer
-#endif
+    : public PlatformLayer
 #endif
 {
 public:

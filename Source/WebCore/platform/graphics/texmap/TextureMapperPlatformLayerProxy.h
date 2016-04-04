@@ -26,6 +26,8 @@
 #ifndef TextureMapperPlatformLayerProxy_h
 #define TextureMapperPlatformLayerProxy_h
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
+
 #include "GraphicsTypes3D.h"
 #include "TextureMapper.h"
 #include "TransformationMatrix.h"
@@ -102,5 +104,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // USE(COORDINATED_GRAPHICS_THREADED)
 
 #endif // TextureMapperPlatformLayerProxy_h

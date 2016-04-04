@@ -20,6 +20,8 @@
 #ifndef TextureMapperPlatformLayer_h
 #define TextureMapperPlatformLayer_h
 
+#if USE(TEXTURE_MAPPER)
+
 #if USE(GRAPHICS_SURFACE)
 #include "GraphicsSurface.h"
 #endif
@@ -64,5 +66,7 @@ private:
 };
 
 };
+
+#endif // USE(TEXTURE_MAPPER)
 
 #endif // TextureMapperPlatformLayer_h
