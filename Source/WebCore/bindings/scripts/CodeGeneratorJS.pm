@@ -3595,7 +3595,13 @@ sub GenerateReturnParameters
     my $function = shift;
     my @arguments;
 
-    push(@arguments, "DeferredWrapper(state, castedThis->globalObject(), promiseDeferred)") if IsReturningPromise($function);
+    if (IsReturningPromise($function)) {
+        if ($function->isStatic) {
+            push(@arguments, "DeferredWrapper(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), promiseDeferred)");
+        } else {
+            push(@arguments, "DeferredWrapper(state, castedThis->globalObject(), promiseDeferred)");
+        }
+    }
     push(@arguments, "ec") if $function->signature->extendedAttributes->{"RaisesException"} || $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"};
     return @arguments;
 }

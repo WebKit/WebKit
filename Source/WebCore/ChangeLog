@@ -1,3 +1,19 @@
+2016-04-04  Anders Carlsson  <andersca@apple.com>
+
+        Properly generate static functions that return Promises
+        https://bugs.webkit.org/show_bug.cgi?id=156169
+
+        Reviewed by Sam Weinig.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateReturnParameters):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjConstructorFunctionTestStaticPromiseFunction):
+        (WebCore::jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise):
+        (WebCore::jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException):
+        (WebCore::jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionPromise):
+        * bindings/scripts/test/TestObj.idl:
+
 2016-04-04  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix build break since r198800

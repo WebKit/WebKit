@@ -189,6 +189,8 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionW
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithException(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseOverloadedFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNeedsLifecycleProcessingStack(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSymbolIterator(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEntries(JSC::ExecState*);
@@ -466,6 +468,8 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
+    { "testStaticPromiseFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionTestStaticPromiseFunction), (intptr_t) (0) } },
+    { "testStaticPromiseFunctionWithException", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException), (intptr_t) (0) } },
 };
 
 
@@ -5152,6 +5156,32 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     if (argsCount < 1)
         return throwVMError(state, createNotEnoughArgumentsError(state));
     return throwVMTypeError(state);
+}
+
+static EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise(ExecState*, JSPromiseDeferred*);
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseFunction(ExecState* state)
+{
+    return JSValue::encode(callPromiseFunction(*state, jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise));
+}
+
+static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise(ExecState* state, JSPromiseDeferred* promiseDeferred)
+{
+    TestObj::testStaticPromiseFunction(DeferredWrapper(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), promiseDeferred));
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionPromise(ExecState*, JSPromiseDeferred*);
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException(ExecState* state)
+{
+    return JSValue::encode(callPromiseFunction(*state, jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionPromise));
+}
+
+static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionPromise(ExecState* state, JSPromiseDeferred* promiseDeferred)
+{
+    ExceptionCode ec = 0;
+    TestObj::testStaticPromiseFunctionWithException(DeferredWrapper(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), promiseDeferred), ec);
+    setDOMException(state, ec);
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNeedsLifecycleProcessingStack(ExecState* state)
