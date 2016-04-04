@@ -35,7 +35,7 @@ ObjectType objectType(void* object)
     if (isXLarge(object))
         return ObjectType::XLarge;
     
-    return Object(object).page()->objectType();
+    return Object(object).chunk()->objectType();
 }
 
 } // namespace bmalloc

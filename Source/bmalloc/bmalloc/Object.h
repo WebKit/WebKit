@@ -36,18 +36,37 @@ class Object {
 public:
     Object(void*);
     Object(Chunk*, void*);
+    Object(Chunk* chunk, size_t offset)
+        : m_chunk(chunk)
+        , m_offset(offset)
+    {
+    }
     
     Chunk* chunk() { return m_chunk; }
-    void* begin();
-    void* pageBegin();
+    size_t offset() { return m_offset; }
+    char* begin();
 
     SmallLine* line();
     SmallPage* page();
+    
+    Object operator+(size_t);
+    bool operator<=(const Object&);
 
 private:
     Chunk* m_chunk;
     size_t m_offset;
 };
+
+inline Object Object::operator+(size_t offset)
+{
+    return Object(m_chunk, m_offset + offset);
+}
+
+inline bool Object::operator<=(const Object& other)
+{
+    BASSERT(m_chunk == other.m_chunk);
+    return m_offset <= other.m_offset;
+}
 
 }; // namespace bmalloc
 

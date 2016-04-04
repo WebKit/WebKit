@@ -29,9 +29,17 @@
 namespace bmalloc {
 
 struct LineMetadata {
-    unsigned short startOffset;
-    unsigned short objectCount;
+    unsigned char startOffset;
+    unsigned char objectCount;
 };
+
+static_assert(
+    smallLineSize - alignment <= std::numeric_limits<unsigned char>::max(),
+    "maximum object offset must fit in LineMetadata::startOffset");
+
+static_assert(
+    smallLineSize / alignment <= std::numeric_limits<unsigned char>::max(),
+    "maximum object count must fit in LineMetadata::objectCount");
 
 } // namespace bmalloc
 

@@ -88,6 +88,9 @@ public:
 
         next->prev = prev;
         prev->next = next;
+        
+        node->prev = node;
+        node->next = node;
     }
 
 private:
