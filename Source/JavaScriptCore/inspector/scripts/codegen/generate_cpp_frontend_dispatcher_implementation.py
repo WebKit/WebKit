@@ -85,7 +85,7 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
             if parameter.is_optional and not CppGenerator.should_pass_by_copy_for_return_type(parameter.type):
                 parameter_value = '*' + parameter_value
             if parameter.type.is_enum():
-                parameter_value = 'Inspector::Protocol::getEnumConstantValue(%s)' % parameter_value
+                parameter_value = 'Inspector::Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), parameter_value)
 
             parameter_args = {
                 'parameterType': CppGenerator.cpp_type_for_stack_out_parameter(parameter),

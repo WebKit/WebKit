@@ -375,9 +375,9 @@ void DatabaseBackendDispatcher::executeNoOptionalParameters(long requestId, RefP
         result->setValue(ASCIILiteral("payload"), out_payload);
         result->setInteger(ASCIILiteral("databaseId"), out_databaseId);
         result->setObject(ASCIILiteral("sqlError"), out_sqlError);
-        result->setString(ASCIILiteral("screenColor"), Inspector::Protocol::getEnumConstantValue(out_screenColor));
+        result->setString(ASCIILiteral("screenColor"), Inspector::Protocol::TestHelpers::getEnumConstantValue(out_screenColor));
         result->setArray(ASCIILiteral("alternateColors"), out_alternateColors);
-        result->setString(ASCIILiteral("printColor"), Inspector::Protocol::getEnumConstantValue(out_printColor));
+        result->setString(ASCIILiteral("printColor"), Inspector::Protocol::TestHelpers::getEnumConstantValue(out_printColor));
     }
     if (!error.length())
         m_backendDispatcher->sendResponse(requestId, WTFMove(result));
@@ -534,12 +534,16 @@ typedef Inspector::Protocol::Array<Inspector::Protocol::Database::PrimaryColors>
 } // Database
 // End of typedefs.
 
+namespace TestHelpers {
+
 String getEnumConstantValue(int code);
 
 template<typename T> String getEnumConstantValue(T enumValue)
 {
     return getEnumConstantValue(static_cast<int>(enumValue));
 }
+
+} // namespace TestHelpers
 
 namespace Database {
 /*  */
@@ -617,12 +621,16 @@ public:
 
 
 
+namespace TestHelpers {
+
 template<typename ProtocolEnumType>
 Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Database' Domain
 template<>
 Optional<Inspector::Protocol::Database::PrimaryColors> parseEnumValueFromString<Inspector::Protocol::Database::PrimaryColors>(const String&);
+
+} // namespace TestHelpers
 
 } // namespace Protocol
 
@@ -670,6 +678,8 @@ namespace Inspector {
 
 namespace Protocol {
 
+namespace TestHelpers {
+
 static const char* const enum_constant_values[] = {
     "red",
     "green",
@@ -700,6 +710,8 @@ Optional<Inspector::Protocol::Database::PrimaryColors> parseEnumValueFromString<
     return Nullopt;
 }
 
+
+} // namespace TestHelpers
 
 
 

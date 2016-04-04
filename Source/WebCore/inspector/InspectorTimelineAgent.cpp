@@ -477,7 +477,7 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
 void InspectorTimelineAgent::addRecordToTimeline(RefPtr<InspectorObject>&& record, TimelineRecordType type)
 {
     ASSERT_ARG(record, record);
-    record->setString("type", Inspector::Protocol::getEnumConstantValue(toProtocol(type)));
+    record->setString("type", Inspector::Protocol::InspectorHelpers::getEnumConstantValue(toProtocol(type)));
 
     if (m_recordStack.isEmpty()) {
         auto recordObject = BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(WTFMove(record));

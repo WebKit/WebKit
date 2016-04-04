@@ -338,12 +338,16 @@ typedef Inspector::Protocol::Array<Inspector::Protocol::Debugger::Reason> StopRe
 } // Runtime
 // End of typedefs.
 
+namespace TestHelpers {
+
 String getEnumConstantValue(int code);
 
 template<typename T> String getEnumConstantValue(T enumValue)
 {
     return getEnumConstantValue(static_cast<int>(enumValue));
 }
+
+} // namespace TestHelpers
 
 namespace Debugger {
 /*  */
@@ -356,12 +360,16 @@ enum class Reason {
 
 
 
+namespace TestHelpers {
+
 template<typename ProtocolEnumType>
 Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Debugger' Domain
 template<>
 Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String&);
+
+} // namespace TestHelpers
 
 } // namespace Protocol
 
@@ -409,6 +417,8 @@ namespace Inspector {
 
 namespace Protocol {
 
+namespace TestHelpers {
+
 static const char* const enum_constant_values[] = {
     "Died",
     "Fainted",
@@ -435,6 +445,8 @@ Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspect
     return Nullopt;
 }
 
+
+} // namespace TestHelpers
 
 
 

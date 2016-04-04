@@ -322,17 +322,7 @@ typedef int RemoteObjectId;
 } // Runtime
 // End of typedefs.
 
-String getEnumConstantValue(int code);
 
-template<typename T> String getEnumConstantValue(T enumValue)
-{
-    return getEnumConstantValue(static_cast<int>(enumValue));
-}
-
-
-
-template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 } // namespace Protocol
 
@@ -379,13 +369,6 @@ Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 namespace Inspector {
 
 namespace Protocol {
-
-static const char* const enum_constant_values[] = {
-};
-
-String getEnumConstantValue(int code) {
-    return enum_constant_values[code];
-}
 
 
 

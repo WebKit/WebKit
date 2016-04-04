@@ -145,6 +145,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 'parameterKey': parameter.parameter_name,
                 'parameterName': parameter.parameter_name,
                 'parameterType': CppGenerator.cpp_type_for_stack_in_parameter(parameter),
+                'helpersNamespace': self.helpers_namespace(),
             }
 
             formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_formal_async_parameter(parameter), parameter.parameter_name))
@@ -157,7 +158,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                     out_parameter_assignments.append('    if (%(parameterName)s)' % param_args)
                     out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), %(parameterName)s);' % param_args)
             elif parameter.type.is_enum():
-                out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), Inspector::Protocol::getEnumConstantValue(%(parameterName)s));' % param_args)
+                out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(%(parameterName)s));' % param_args)
             else:
                 out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), %(parameterName)s);' % param_args)
 
@@ -238,7 +239,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                     'parameterKey': parameter.parameter_name,
                     'parameterName': parameter.parameter_name,
                     'keyedSetMethod': CppGenerator.cpp_setter_method_for_type(parameter.type),
-
+                    'helpersNamespace': self.helpers_namespace(),
                 }
 
                 out_parameter_declarations.append('    %(parameterType)s out_%(parameterName)s;' % param_args)
@@ -250,7 +251,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                         out_parameter_assignments.append('        if (out_%(parameterName)s)' % param_args)
                         out_parameter_assignments.append('            result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), out_%(parameterName)s);' % param_args)
                 elif parameter.type.is_enum():
-                    out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), Inspector::Protocol::getEnumConstantValue(out_%(parameterName)s));' % param_args)
+                    out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(out_%(parameterName)s));' % param_args)
                 else:
                     out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), out_%(parameterName)s);' % param_args)
 

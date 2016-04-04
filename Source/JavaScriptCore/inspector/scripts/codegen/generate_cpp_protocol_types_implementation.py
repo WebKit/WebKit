@@ -63,9 +63,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         sections.append(self.generate_license())
         sections.append(Template(CppTemplates.ImplementationPrelude).substitute(None, **header_args))
         sections.append('namespace Protocol {')
-        sections.append(self._generate_enum_mapping())
-        enum_parser_sections = map(self._generate_enum_conversion_methods_for_domain, domains)
-        sections.extend(filter(lambda section: len(section) > 0, enum_parser_sections))
+        sections.extend(self._generate_enum_mapping_and_conversion_methods(domains))
         sections.append(self._generate_open_field_names())
         builder_sections = map(self._generate_builders_for_domain, domains)
         sections.extend(filter(lambda section: len(section) > 0, builder_sections))
@@ -77,6 +75,9 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
     # Private methods.
 
     def _generate_enum_mapping(self):
+        if not self.assigned_enum_values():
+            return []
+
         lines = []
         lines.append('static const char* const enum_constant_values[] = {')
         lines.extend(['    "%s",' % enum_value for enum_value in self.assigned_enum_values()])
@@ -85,7 +86,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         lines.append('String getEnumConstantValue(int code) {')
         lines.append('    return enum_constant_values[code];')
         lines.append('}')
-        return '\n'.join(lines)
+        return ['\n'.join(lines)]
 
     def _generate_enum_conversion_methods_for_domain(self, domain):
 
@@ -141,6 +142,18 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             return ''  # No real declarations to emit, just the domain comment.
 
         return self.wrap_with_guard_for_domain(domain, '\n'.join(lines))
+
+    def _generate_enum_mapping_and_conversion_methods(self, domains):
+        sections = []
+        sections.append('namespace %s {' % self.helpers_namespace())
+        sections.extend(self._generate_enum_mapping())
+        enum_parser_sections = map(self._generate_enum_conversion_methods_for_domain, domains)
+        sections.extend(filter(lambda section: len(section) > 0, enum_parser_sections))
+        if len(sections) == 1:
+            return []  # No declarations to emit, just the namespace.
+
+        sections.append('} // namespace %s' % self.helpers_namespace())
+        return sections
 
     def _generate_open_field_names(self):
         lines = []

@@ -327,12 +327,16 @@ enum class TwoLeggedAnimals;
 
 
 
+namespace TestHelpers {
+
 String getEnumConstantValue(int code);
 
 template<typename T> String getEnumConstantValue(T enumValue)
 {
     return getEnumConstantValue(static_cast<int>(enumValue));
 }
+
+} // namespace TestHelpers
 
 namespace Runtime {
 /*  */
@@ -353,6 +357,8 @@ enum class TwoLeggedAnimals {
 
 
 
+namespace TestHelpers {
+
 template<typename ProtocolEnumType>
 Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
@@ -361,6 +367,8 @@ template<>
 Optional<Inspector::Protocol::Runtime::FarmAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::FarmAnimals>(const String&);
 template<>
 Optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::TwoLeggedAnimals>(const String&);
+
+} // namespace TestHelpers
 
 } // namespace Protocol
 
@@ -407,6 +415,8 @@ Optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromStrin
 namespace Inspector {
 
 namespace Protocol {
+
+namespace TestHelpers {
 
 static const char* const enum_constant_values[] = {
     "Pigs",
@@ -455,6 +465,8 @@ Optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromStrin
     return Nullopt;
 }
 
+
+} // namespace TestHelpers
 
 
 

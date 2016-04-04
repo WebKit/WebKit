@@ -144,11 +144,11 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
 
     if (resultIsErrorName) {
         if (result->string() == "JavaScriptTimeout") {
-            String errorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptTimeout);
+            String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptTimeout);
             automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, String(), errorType);
         } else {
             ASSERT_NOT_REACHED();
-            String errorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
+            String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
             automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, String(), errorType);
         }
     } else
@@ -218,7 +218,7 @@ void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
         JSValueUnprotect(frame.jsContext(), scriptObject);
 
     String errorMessage = ASCIILiteral("Callback was not called before the unload event.");
-    String errorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
+    String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
 
     auto pendingFrameCallbacks = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frameID);
     for (uint64_t callbackID : pendingFrameCallbacks)
@@ -258,14 +258,14 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t frameID, con
     if (!exception)
         return;
 
-    String errorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
+    String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
 
     JSRetainPtr<JSStringRef> exceptionMessage;
     if (JSValueIsObject(context, exception)) {
         JSValueRef nameValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), toJSString(ASCIILiteral("name")).get(), nullptr);
         JSRetainPtr<JSStringRef> exceptionName(Adopt, JSValueToStringCopy(context, nameValue, nullptr));
         if (exceptionName->string() == "NodeNotFound")
-            errorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
+            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
 
         JSValueRef messageValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), toJSString(ASCIILiteral("message")).get(), nullptr);
         exceptionMessage.adopt(JSValueToStringCopy(context, messageValue, nullptr));
@@ -290,7 +290,7 @@ void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(uint64_t frameID, 
 
 void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(uint64_t frameID, uint32_t ordinal, uint64_t callbackID)
 {
-    String frameNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+    String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
 
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame) {
@@ -321,7 +321,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(uint64_t frameID, u
 
 void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(uint64_t frameID, const String& nodeHandle, uint64_t callbackID)
 {
-    String frameNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+    String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
 
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame) {
@@ -352,7 +352,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(uint64_t frameID
 
 void WebAutomationSessionProxy::resolveChildFrameWithName(uint64_t frameID, const String& name, uint64_t callbackID)
 {
-    String frameNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+    String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
 
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame) {
@@ -383,7 +383,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithName(uint64_t frameID, cons
 
 void WebAutomationSessionProxy::resolveParentFrame(uint64_t frameID, uint64_t callbackID)
 {
-    String frameNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+    String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
 
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame) {
@@ -423,8 +423,8 @@ void WebAutomationSessionProxy::focusFrame(uint64_t frameID)
 
 void WebAutomationSessionProxy::computeElementLayout(uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool useViewportCoordinates, uint64_t callbackID)
 {
-    String frameNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
-    String nodeNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
+    String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+    String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
 
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame) {
@@ -465,7 +465,7 @@ void WebAutomationSessionProxy::computeElementLayout(uint64_t frameID, String no
 void WebAutomationSessionProxy::takeScreenshot(uint64_t pageID, uint64_t callbackID)
 {
     ShareableBitmap::Handle handle;
-    String windowNotFoundErrorType = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
+    String windowNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
 
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {

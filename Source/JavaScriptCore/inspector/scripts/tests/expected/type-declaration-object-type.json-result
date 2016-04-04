@@ -334,13 +334,6 @@ typedef Inspector::Protocol::Array<Inspector::Protocol::Database::Error> ErrorLi
 } // Database
 // End of typedefs.
 
-String getEnumConstantValue(int code);
-
-template<typename T> String getEnumConstantValue(T enumValue)
-{
-    return getEnumConstantValue(static_cast<int>(enumValue));
-}
-
 namespace Database {
 /* Database error. */
 class Error : public Inspector::InspectorObjectBase {
@@ -796,9 +789,6 @@ public:
 
 
 
-template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
-
 } // namespace Protocol
 
 } // namespace Inspector
@@ -844,13 +834,6 @@ Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 namespace Inspector {
 
 namespace Protocol {
-
-static const char* const enum_constant_values[] = {
-};
-
-String getEnumConstantValue(int code) {
-    return enum_constant_values[code];
-}
 
 
 

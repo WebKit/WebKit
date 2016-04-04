@@ -55,17 +55,10 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             '<wtf/Assertions.h>',
         ])
 
-        export_macro = self.model().framework.setting('export_macro', None)
-
         header_args = {
             'includes': '\n'.join(['#include ' + header for header in sorted(headers)]),
             'typedefs': '',
         }
-
-        return_type = 'String'
-        return_type_with_export_macro = [return_type]
-        if export_macro is not None:
-            return_type_with_export_macro[:0] = [export_macro]
 
         sections = []
         sections.append(self.generate_license())
@@ -73,17 +66,11 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         sections.append('namespace Protocol {')
         sections.append(self._generate_forward_declarations(domains))
         sections.append(self._generate_typedefs(domains))
-        sections.append('%s getEnumConstantValue(int code);' % ' '.join(return_type_with_export_macro))
-        sections.append('\n'.join([
-            'template<typename T> %s getEnumConstantValue(T enumValue)' % return_type,
-            '{',
-            '    return getEnumConstantValue(static_cast<int>(enumValue));',
-            '}']))
-
+        sections.extend(self._generate_enum_constant_value_conversion_methods())
         builder_sections = map(self._generate_builders_for_domain, domains)
         sections.extend(filter(lambda section: len(section) > 0, builder_sections))
         sections.append(self._generate_forward_declarations_for_binding_traits())
-        sections.append(self._generate_declarations_for_enum_conversion_methods())
+        sections.extend(self._generate_declarations_for_enum_conversion_methods())
         sections.append('} // namespace Protocol')
         sections.append(Template(CppTemplates.HeaderPostlude).substitute(None, **header_args))
         return "\n\n".join(sections)
@@ -161,6 +148,29 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         lines.append('\n'.join(sections))
         lines.append('} // %s' % domain.domain_name)
         return self.wrap_with_guard_for_domain(domain, '\n'.join(lines))
+
+    def _generate_enum_constant_value_conversion_methods(self):
+        if not self.assigned_enum_values():
+            return []
+
+        return_type = 'String'
+        return_type_with_export_macro = [return_type]
+        export_macro = self.model().framework.setting('export_macro', None)
+        if export_macro is not None:
+            return_type_with_export_macro[:0] = [export_macro]
+
+        lines = []
+        lines.append('namespace %s {' % self.helpers_namespace())
+        lines.append('\n'.join([
+            '%s getEnumConstantValue(int code);' % ' '.join(return_type_with_export_macro),
+            '',
+            'template<typename T> %s getEnumConstantValue(T enumValue)' % return_type,
+            '{',
+            '    return getEnumConstantValue(static_cast<int>(enumValue));',
+            '}',
+        ]))
+        lines.append('} // namespace %s' % self.helpers_namespace())
+        return lines
 
     def _generate_builders_for_domain(self, domain):
         sections = []
@@ -281,7 +291,8 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             'camelName': ucfirst(type_member.member_name),
             'keyedSet': CppGenerator.cpp_setter_method_for_type(type_member.type),
             'name': type_member.member_name,
-            'parameterType': CppGenerator.cpp_type_for_type_member(type_member)
+            'parameterType': CppGenerator.cpp_type_for_type_member(type_member),
+            'helpersNamespace': self.helpers_namespace(),
         }
 
         lines = []
@@ -291,7 +302,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         lines.append('            COMPILE_ASSERT(!(STATE & %(camelName)sSet), property_%(name)s_already_set);' % setter_args)
 
         if isinstance(type_member.type, EnumType):
-            lines.append('            m_result->%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::getEnumConstantValue(static_cast<int>(value)));' % setter_args)
+            lines.append('            m_result->%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(value));' % setter_args)
         else:
             lines.append('            m_result->%(keyedSet)s(ASCIILiteral("%(name)s"), value);' % setter_args)
         lines.append('            return castState<%(camelName)sSet>();' % setter_args)
@@ -303,7 +314,8 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             'camelName': ucfirst(type_member.member_name),
             'keyedSet': CppGenerator.cpp_setter_method_for_type(type_member.type),
             'name': type_member.member_name,
-            'parameterType': CppGenerator.cpp_type_for_type_member(type_member)
+            'parameterType': CppGenerator.cpp_type_for_type_member(type_member),
+            'helpersNamespace': self.helpers_namespace(),
         }
 
         lines = []
@@ -311,7 +323,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         lines.append('    void set%(camelName)s(%(parameterType)s value)' % setter_args)
         lines.append('    {')
         if isinstance(type_member.type, EnumType):
-            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::getEnumConstantValue(static_cast<int>(value)));' % setter_args)
+            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(value));' % setter_args)
         elif CppGenerator.should_use_references_for_type(type_member.type):
             lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), WTFMove(value));' % setter_args)
         else:
@@ -355,6 +367,8 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
     def _generate_declarations_for_enum_conversion_methods(self):
         sections = []
         sections.append('\n'.join([
+            'namespace %s {' % self.helpers_namespace(),
+            '',
             'template<typename ProtocolEnumType>',
             'Optional<ProtocolEnumType> parseEnumValueFromString(const String&);',
         ]))
@@ -362,6 +376,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         def return_type_with_export_macro(cpp_protocol_type):
             enum_return_type = 'Optional<%s>' % cpp_protocol_type
             result_terms = [enum_return_type]
+            export_macro = self.model().framework.setting('export_macro', None)
             if export_macro is not None:
                 result_terms[:0] = [export_macro]
             return ' '.join(result_terms)
@@ -381,7 +396,6 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
 
             domain_lines = []
             domain_lines.append("// Enums in the '%s' Domain" % domain.domain_name)
-            export_macro = self.model().framework.setting('export_macro', None)
             for enum_type in enum_types:
                 cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type(enum_type)
                 domain_lines.append('template<>')
@@ -398,4 +412,9 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
 
             sections.append(self.wrap_with_guard_for_domain(domain, '\n'.join(domain_lines)))
 
-        return '\n\n'.join(sections)
+        if len(sections) == 1:
+            return [] # No real sections to emit, just the namespace and template declaration. Skip.
+
+        sections.append('} // namespace %s' % self.helpers_namespace())
+
+        return ['\n\n'.join(sections)]

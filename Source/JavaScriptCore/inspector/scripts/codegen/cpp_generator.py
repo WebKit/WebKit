@@ -50,6 +50,9 @@ class CppGenerator(Generator):
     def protocol_name(self):
         return self.model().framework.setting('protocol_group', '')
 
+    def helpers_namespace(self):
+        return '%sHelpers' % self.protocol_name()
+
     # Miscellaneous text manipulation routines.
     @staticmethod
     def cpp_getter_method_for_type(_type):

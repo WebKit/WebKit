@@ -335,12 +335,16 @@ typedef int UncastedObjectId;
 } // Test
 // End of typedefs.
 
+namespace TestHelpers {
+
 String getEnumConstantValue(int code);
 
 template<typename T> String getEnumConstantValue(T enumValue)
 {
     return getEnumConstantValue(static_cast<int>(enumValue));
 }
+
+} // namespace TestHelpers
 
 namespace Test {
 /* A dummy type that requires runtime casts, and forces non-primitive referenced types to also emit runtime cast helpers. */
@@ -391,7 +395,7 @@ public:
         Builder<STATE | AnimalsSet>& setAnimals(Inspector::Protocol::Test::CastedAnimals value)
         {
             COMPILE_ASSERT(!(STATE & AnimalsSet), property_animals_already_set);
-            m_result->setString(ASCIILiteral("animals"), Inspector::Protocol::getEnumConstantValue(static_cast<int>(value)));
+            m_result->setString(ASCIILiteral("animals"), Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
             return castState<AnimalsSet>();
         }
 
@@ -575,6 +579,8 @@ static void assertValueHasExpectedType(Inspector::InspectorValue*);
 #endif // !ASSERT_DISABLED
 };
 
+namespace TestHelpers {
+
 template<typename ProtocolEnumType>
 Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
@@ -583,6 +589,8 @@ template<>
 Optional<Inspector::Protocol::Test::UncastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::UncastedAnimals>(const String&);
 template<>
 Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::CastedAnimals>(const String&);
+
+} // namespace TestHelpers
 
 } // namespace Protocol
 
@@ -629,6 +637,8 @@ Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Insp
 namespace Inspector {
 
 namespace Protocol {
+
+namespace TestHelpers {
 
 static const char* const enum_constant_values[] = {
     "Ducks",
@@ -677,6 +687,8 @@ Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Insp
     return Nullopt;
 }
 
+
+} // namespace TestHelpers
 
 
 

@@ -270,7 +270,7 @@ void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, 
     m_agent->commandWithEnumReturnValue(error, &out_returnValue);
 
     if (!error.length())
-        result->setString(ASCIILiteral("returnValue"), Inspector::Protocol::getEnumConstantValue(out_returnValue));
+        result->setString(ASCIILiteral("returnValue"), Inspector::Protocol::TestHelpers::getEnumConstantValue(out_returnValue));
 
     if (!error.length())
         m_backendDispatcher->sendResponse(requestId, WTFMove(result));
@@ -384,7 +384,7 @@ void EventDomainFrontendDispatcher::eventWithEnumParameter(Parameter parameter)
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
     Ref<InspectorObject> paramsObject = InspectorObject::create();
-    paramsObject->setString(ASCIILiteral("parameter"), Inspector::Protocol::getEnumConstantValue(parameter));
+    paramsObject->setString(ASCIILiteral("parameter"), Inspector::Protocol::TestHelpers::getEnumConstantValue(parameter));
     jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));
 
     m_frontendRouter.sendEvent(jsonMessage->toJSONString());
@@ -445,12 +445,16 @@ enum class TypeDomainEnum;
 
 
 
+namespace TestHelpers {
+
 String getEnumConstantValue(int code);
 
 template<typename T> String getEnumConstantValue(T enumValue)
 {
     return getEnumConstantValue(static_cast<int>(enumValue));
 }
+
+} // namespace TestHelpers
 
 namespace TypeDomain {
 /*  */
@@ -464,12 +468,16 @@ enum class TypeDomainEnum {
 
 
 
+namespace TestHelpers {
+
 template<typename ProtocolEnumType>
 Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'TypeDomain' Domain
 template<>
 Optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String&);
+
+} // namespace TestHelpers
 
 } // namespace Protocol
 
@@ -517,6 +525,8 @@ namespace Inspector {
 
 namespace Protocol {
 
+namespace TestHelpers {
+
 static const char* const enum_constant_values[] = {
     "shared",
     "red",
@@ -550,6 +560,8 @@ Optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromStri
     return Nullopt;
 }
 
+
+} // namespace TestHelpers
 
 
 

@@ -1,3 +1,60 @@
+2016-04-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r198792): [GTK] Inspector crashes in Inspector::Protocol::getEnumConstantValue since r198792
+        https://bugs.webkit.org/show_bug.cgi?id=155745
+        <rdar://problem/25289456>
+
+        Reviewed by Brian Burg.
+
+        The problem is that we are generating the Inspector::Protocol::getEnumConstantValue() method and the
+        enum_constant_values array for every framework that has enum values. So, in case of GTK port we have two
+        implementations, one for the inspector in JavaScriptCore and another one for Web Automation in WebKit2, but when
+        using the inspector in WebKit2 we always end up using the one in WebKit2. Since the enum_constant_values array
+        is smaller in WebKit2 than the one in JavaScriptCore, we crash every time we receive an enum value higher than
+        the array size. We need to disambiguate the getEnumConstantValue() generated and used for every framework, so we
+        can use a specific namespace for the enum conversion methods.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::breakpointActionTypeForString): Use Inspector::Protocol::InspectorHelpers.
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.helpers_namespace): Return the namespace name that should be used for the helper methods.
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator._generate_async_dispatcher_class_for_domain): Use
+        CppGenerator.helpers_namespace() to use the right namespace when using getEnumConstantValue().
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command): Ditto.
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_event): Ditto.
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator.generate_output): Move declaration of getEnumConstantValue to a helper function.
+        (_generate_enum_constant_value_conversion_methods): Do not emit any code if there aren't enums and ensure all
+        conversion methods are declared inside the helpers namespace.
+        (_generate_builder_setter_for_member): Use CppGenerator.helpers_namespace() to use the right namespace when
+        using getEnumConstantValue().
+        (_generate_unchecked_setter_for_member): Ditto.
+        (_generate_declarations_for_enum_conversion_methods): Return a list instead of a string so that we can return an
+        empty list in case of not emitting any code. The caller will use extend() that has no effect when an empty list
+        is passed.
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator.generate_output): Use the new helper function to generate both the enum
+        mapping and conversion methods inside the helpers namespace.
+        (CppProtocolTypesImplementationGenerator._generate_enum_mapping): Return a list instead of a string so that we
+        can return an empty list in case of not emitting any code.
+        (CppProtocolTypesImplementationGenerator._generate_enum_mapping_and_conversion_methods): Ensure we only emit
+        code when there are enum values, and it's generated inside the helpers namespace.
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-04-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed ARM buildfix after r198981.
