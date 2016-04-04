@@ -1,3 +1,17 @@
+2016-04-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Tapping on tabs in webpages caused WK crash at WebKit: WebKit::WebFrame::didReceivePolicyDecision
+        https://bugs.webkit.org/show_bug.cgi?id=156119
+        <rdar://problem/20732167>
+
+        Reviewed by Andy Estes.
+
+        Protect the m_frame so that it is present for completion handlers.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2016-04-04  Beth Dakin  <bdakin@apple.com>
 
         Add some logic to decide when a video can control the videoControlsManager
