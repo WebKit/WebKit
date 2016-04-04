@@ -613,6 +613,7 @@ sub generateNewChangeLogs($$$$$$$$$$$$$$)
                 $endl = "$1";
             }
             open CHANGE_LOG, "> ${changeLogPath}" or die "Could not write ${changeLogPath}\n.";
+            binmode(CHANGE_LOG);
         } else {
             open CHANGE_LOG, ">-" or die "Could not write to STDOUT\n.";
             print substr($prefix, 0, length($prefix) - 1) . ":\n\n" unless (scalar @$prefixes) == 1 && !$delimiters;
