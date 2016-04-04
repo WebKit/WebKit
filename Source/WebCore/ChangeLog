@@ -1,5 +1,25 @@
 2016-04-04  Antti Koivisto  <antti@apple.com>
 
+        Avoid double traversal in RenderTreeUpdater for slot roots
+        https://bugs.webkit.org/show_bug.cgi?id=156110
+
+        Reviewed by Andreas Kling.
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::hasDisplayContents):
+        (WebCore::findRenderingRoot):
+        (WebCore::findRenderingRoots):
+        (WebCore::RenderTreeUpdater::commit):
+
+            If there are multiple roots that are slots we may end up updating the same rendering root multiple times.
+            Fix by deduplicating the roots.
+
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+
+            Some cleanups.
+
+2016-04-04  Antti Koivisto  <antti@apple.com>
+
         Enable assertions against DOM mutations in RenderTreeUpdater
         https://bugs.webkit.org/show_bug.cgi?id=156156
 

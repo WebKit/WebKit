@@ -61,17 +61,29 @@ RenderTreeUpdater::RenderTreeUpdater(Document& document)
 {
 }
 
-static ContainerNode& findRenderingRoot(ContainerNode& node)
+static ContainerNode* findRenderingRoot(ContainerNode& node)
 {
     if (node.renderer())
-        return node;
+        return &node;
     for (auto& ancestor : composedTreeAncestors(node)) {
         if (ancestor.renderer())
-            return ancestor;
-        ASSERT(hasImplicitDisplayContents(ancestor));
+            return &ancestor;
+        if (!hasImplicitDisplayContents(ancestor))
+            return nullptr;
     }
-    ASSERT_NOT_REACHED();
-    return node.document();
+    return &node.document();
+}
+
+static ListHashSet<ContainerNode*> findRenderingRoots(const Style::Update& update)
+{
+    ListHashSet<ContainerNode*> renderingRoots;
+    for (auto* root : update.roots()) {
+        auto* renderingRoot = findRenderingRoot(*root);
+        if (!renderingRoot)
+            continue;
+        renderingRoots.add(renderingRoot);
+    }
+    return renderingRoots;
 }
 
 void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
@@ -83,8 +95,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
 
     m_styleUpdate = WTFMove(styleUpdate);
 
-    for (auto* root : m_styleUpdate->roots())
-        updateRenderTree(findRenderingRoot(*root));
+    for (auto* root : findRenderingRoots(*m_styleUpdate))
+        updateRenderTree(*root);
 
     m_styleUpdate = nullptr;
 }
