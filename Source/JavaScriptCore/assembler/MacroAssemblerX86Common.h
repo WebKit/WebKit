@@ -2228,7 +2228,7 @@ public:
 
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        ASSERT(!(right.m_value & 0xFFFFFF00));
+        ASSERT(std::numeric_limits<int8_t>::min() <= right.m_value && right.m_value <= std::numeric_limits<int8_t>::max());
 
         m_assembler.cmpb_im(right.m_value, left.offset, left.base, left.index, left.scale);
         return Jump(m_assembler.jCC(x86Condition(cond)));
