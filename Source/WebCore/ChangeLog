@@ -1,3 +1,13 @@
+2016-04-04  Antti Koivisto  <antti@apple.com>
+
+        Re-disable event dispatch assertions in RenderTreeUpdater::updateRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=156172
+
+        Some ruby tests on iOS hit these.
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+
 2016-04-04  Alejandro G. Castro  <alex@igalia.com>
 
         REGRESSION(r198492): [GTK] The WEB_RTC flag was not correctly added in some situations

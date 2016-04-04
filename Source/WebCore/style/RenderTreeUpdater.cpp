@@ -121,6 +121,9 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
     auto it = descendants.begin();
     auto end = descendants.end();
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=156172
+    it.dropAssertions();
+
     while (it != end) {
         popParentsToDepth(it.depth());
 
