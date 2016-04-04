@@ -54,10 +54,11 @@ static NSURL *literalURL(const char* literal)
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    if ([error.domain isEqual:@"WebKitErrorDomain"]
-        && error.code == WebKitErrorCannotShowURL
-        && [error.userInfo[@"NSErrorFailingURLKey"] isEqual:literalURL(literal)])
-        didFailProvisionalLoad = true;
+    EXPECT_WK_STREQ(error.domain, @"WebKitErrorDomain");
+    EXPECT_EQ(error.code, WebKitErrorCannotShowURL);
+    EXPECT_TRUE([error.userInfo[@"NSErrorFailingURLKey"] isEqual:literalURL(literal)]);
+
+    didFailProvisionalLoad = true;
     didFinishTest = true;
 }
 

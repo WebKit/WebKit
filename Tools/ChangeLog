@@ -1,3 +1,14 @@
+2016-04-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Build fix for r198956.
+
+        Unreviewed.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LoadInvalidURLRequest.mm:
+        (-[LoadInvalidURLNavigationActionDelegate webView:didFailProvisionalNavigation:withError:]):
+        * TestWebKitAPI/Tests/mac/LoadInvalidURLRequest.mm:
+        (-[LoadInvalidURLWebFrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+
 2016-04-04  Bill Ming  <mbbill@gmail.com>
 
         [win] prepare-ChangeLog should treat windows path differently.
