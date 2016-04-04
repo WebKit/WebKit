@@ -1,3 +1,12 @@
+2016-04-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skipping crashing test fast/loader/opaque-base-url.html on Debug
+        https://bugs.webkit.org/show_bug.cgi?id=156179
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2016-04-04  Chris Dumez  <cdumez@apple.com>
 
         Regression(r196145): Crash in getOwnPropertyDescriptor on http://www.history.com/shows/vikings
