@@ -24,6 +24,7 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -42,7 +43,8 @@ public:
     void removeButton(HTMLInputElement*);
     HTMLInputElement* checkedButtonForGroup(const AtomicString& groupName) const;
     bool isInRequiredGroup(HTMLInputElement*) const;
-
+    Vector<HTMLInputElement*> groupMembers(const HTMLInputElement&) const;
+    
 private:
     typedef HashMap<AtomicStringImpl*, std::unique_ptr<RadioButtonGroup>> NameToGroupMap;
     std::unique_ptr<NameToGroupMap> m_nameToGroupMap;

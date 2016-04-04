@@ -271,6 +271,7 @@ public:
     void listAttributeTargetChanged();
 #endif
 
+    Vector<HTMLInputElement*> radioButtonGroup() const;
     HTMLInputElement* checkedRadioButtonForGroup() const;
     bool isInRequiredRadioButtonGroup();
 

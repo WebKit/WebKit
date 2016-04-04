@@ -182,6 +182,11 @@ WEBCORE_EXPORT Ref<Range> rangeOfContents(Node&);
 WEBCORE_EXPORT bool areRangesEqual(const Range*, const Range*);
 bool rangesOverlap(const Range*, const Range*);
 
+inline bool documentOrderComparator(const Node* a, const Node* b)
+{
+    return Range::compareBoundaryPoints(const_cast<Node*>(a), 0, const_cast<Node*>(b), 0, ASSERT_NO_EXCEPTION) < 0;
+}
+
 } // namespace
 
 #if ENABLE(TREE_DEBUGGING)

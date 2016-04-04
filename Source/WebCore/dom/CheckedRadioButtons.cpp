@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include "CheckedRadioButtons.h"
+#include "Range.h"
 
 #include "HTMLInputElement.h"
 #include <wtf/HashSet.h>
@@ -38,7 +39,8 @@ public:
     void requiredAttributeChanged(HTMLInputElement*);
     void remove(HTMLInputElement*);
     bool contains(HTMLInputElement*) const;
-
+    Vector<HTMLInputElement*> members() const;
+    
 private:
     void updateValidityForAllButtons();
     bool isValid() const;
@@ -60,6 +62,14 @@ inline bool RadioButtonGroup::isValid() const
     return !isRequired() || m_checkedButton;
 }
 
+Vector<HTMLInputElement*> RadioButtonGroup::members() const
+{
+    Vector<HTMLInputElement*> members;
+    copyToVector(m_members, members);
+    std::sort(members.begin(), members.end(), documentOrderComparator);
+    return members;
+}
+    
 void RadioButtonGroup::setCheckedButton(HTMLInputElement* button)
 {
     HTMLInputElement* oldCheckedButton = m_checkedButton;
@@ -189,6 +199,22 @@ void CheckedRadioButtons::addButton(HTMLInputElement* element)
     group->add(element);
 }
 
+Vector<HTMLInputElement*> CheckedRadioButtons::groupMembers(const HTMLInputElement& element) const
+{
+    ASSERT(element.isRadioButton());
+    if (!element.isRadioButton())
+        return { };
+    
+    auto* name = element.name().impl();
+    if (!name)
+        return { };
+
+    auto* group = m_nameToGroupMap->get(name);
+    if (!group)
+        return { };
+    return group->members();
+}
+    
 void CheckedRadioButtons::updateCheckedState(HTMLInputElement* element)
 {
     ASSERT(element->isRadioButton());

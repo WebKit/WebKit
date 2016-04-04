@@ -1,3 +1,31 @@
+2016-04-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Consolidate radio button group member code with that in HTMLElement derivatives
+        https://bugs.webkit.org/show_bug.cgi?id=155696
+        <rdar://problem/25260379>
+
+        Reviewed by Darin Adler.
+
+        Behavior covered by existing tests.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::RadioButtonGroup::isValid):
+        (WebCore::RadioButtonGroup::members):
+        (WebCore::RadioButtonGroup::setCheckedButton):
+        (WebCore::CheckedRadioButtons::addButton):
+        (WebCore::CheckedRadioButtons::groupMembers):
+        (WebCore::CheckedRadioButtons::updateCheckedState):
+        * dom/CheckedRadioButtons.h:
+        * dom/Range.h:
+        (WebCore::documentOrderComparator):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isInRequiredRadioButtonGroup):
+        (WebCore::HTMLInputElement::radioButtonGroup):
+        (WebCore::HTMLInputElement::checkedRadioButtonForGroup):
+        * html/HTMLInputElement.h:
+
 2016-04-03  Darin Adler  <darin@apple.com>
 
         Remove unneeded UsePointersEvenForNonNullableObjectArguments in WebKitCSSMatrix.idl
