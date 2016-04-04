@@ -832,6 +832,10 @@ WEBKIT_FRAMEWORK(WebKit2)
 add_dependencies(WebKit2 WebCore ${WEBKIT2_EXTRA_DEPENDENCIES})
 add_webkit2_prefix_header(WebKit2)
 
+if (NOT APPLE)
+    target_link_libraries(WebKit2 -Wl,--start-group WebCore WebCoreDerivedSources -Wl,--end-group)
+endif ()
+
 # Suppress unused parameter warnings for sources in WebKit2.
 ADD_TARGET_PROPERTIES(WebKit2 COMPILE_FLAGS "-Wno-unused-parameter")
 
