@@ -406,17 +406,16 @@
     {
         "name": "Download Attribute",
         "status": {
-            "status": "Under Consideration"
+            "status": "In Development"
         },
         "url": "https://html.spec.whatwg.org/multipage/semantics.html#downloading-resources",
         "webkit-url": "https://webkit.org/b/102914",
         "specification": "HTML5",
-        "description": "An attribute to an <a> or <area> element to indicate that a resource is intended to be downloaded for use later rather than immediately.",
-        "comment": "This feature currently has a patch that needs corrected before it can be accepted.",
+        "description": "An attribute to an anchor or area element to indicate that a resource is intended to be downloaded for use later rather than immediately.",
         "contact": {
-            "name": "Jonathan Davis",
-            "email": "web-evangelist@apple.com",
-            "twitter": "@jonathandavis"
+            "name": "Brent Fulgham",
+            "email": "bfulgham@apple.com",
+            "twitter": "@bfulgham"
         }
     },
     {
