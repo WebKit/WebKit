@@ -1,3 +1,12 @@
+2016-04-04  Bill Ming  <mbbill@gmail.com>
+
+        [win] prepare-ChangeLog should treat windows path differently.
+        https://bugs.webkit.org/show_bug.cgi?id=156120
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/prepare-ChangeLog:
+
 2016-04-04  Alejandro G. Castro  <alex@igalia.com>
 
         REGRESSION(r198492): [GTK] The WEB_RTC flag was not correctly added in some situations

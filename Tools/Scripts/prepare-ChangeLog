@@ -486,7 +486,11 @@ sub findChangeLogs($$)
         my $prefix = $file;
         my $has_log = 0;
         while ($prefix) {
-            $prefix =~ s-/[^/]+/?$-/- or $prefix = "";
+            if ($^O eq "MSWin32") {
+                $prefix =~ s-\\[^\\]+\\?$-\\- or $prefix = "";
+            } else {
+                $prefix =~ s-/[^/]+/?$-/- or $prefix = "";
+            }
             $has_log = $has_log{$prefix};
             if (!defined $has_log) {
                 $has_log = -f "${prefix}ChangeLog";
