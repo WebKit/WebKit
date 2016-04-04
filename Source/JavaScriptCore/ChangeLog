@@ -1,3 +1,10 @@
+2016-04-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed ARM buildfix after r198981.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::roundTowardZeroDouble):
+
 2016-04-03  Saam barati  <sbarati@apple.com>
 
         Implement Annex B.3.3 function hoisting rules for function code

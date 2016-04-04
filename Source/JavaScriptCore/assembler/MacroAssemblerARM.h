@@ -1174,6 +1174,12 @@ public:
         CRASH();
     }
 
+    NO_RETURN_DUE_TO_CRASH void roundTowardZeroDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT(!supportsFloatingPointRounding());
+        CRASH();
+    }
+
     void storeFloat(FPRegisterID src, BaseIndex address)
     {
         m_assembler.baseIndexTransferFloat(ARMAssembler::StoreFloat, src, address.base, address.index, static_cast<int>(address.scale), address.offset);
