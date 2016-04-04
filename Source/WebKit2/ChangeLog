@@ -1,3 +1,19 @@
+2016-04-04  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r198955): com.apple.WebKit.Networking.Development crashed in WebKit::NetworkLoad::setPendingDownloadID + 11
+        https://bugs.webkit.org/show_bug.cgi?id=156177
+        <rdar://problem/25508037>
+
+        Reviewed by Alex Christensen.
+
+        We do not currently create a NetworkDataTask when we encounter a BLOB URL when building with
+        NETWORK_SESSION enabled. This causes us to crash when the download system attempts to work
+        with a BLOB URL.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::setPendingDownloadID): Add null check for m_task.
+        (WebKit::NetworkLoad::setPendingDownload): Ditto.
+
 2016-04-03  Sam Weinig  <sam@webkit.org>
 
         Add SPI to allow install script message handlers in isolated worlds
