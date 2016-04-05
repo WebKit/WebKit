@@ -1,5 +1,22 @@
 2016-04-05  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Make the Timelines sidebar wider
+
+        https://bugs.webkit.org/show_bug.cgi?id=156257
+        rdar://problem/25564218
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview): Added. Set define --timeline-sidebar-width.
+        (.timeline-overview > .navigation-bar.timelines): Use --timeline-sidebar-width.
+        (.timeline-overview > .tree-outline.timelines): Ditto.
+        (.timeline-overview > .scroll-container): Ditto.
+        (.timeline-overview > .timeline-ruler): Ditto.
+        (.timeline-overview > .graphs-container): Ditto.
+
+2016-04-05  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Command-Option-R opens Inspector details sidebar or Responsive Design Mode, should only do one
 
         https://bugs.webkit.org/show_bug.cgi?id=156258
