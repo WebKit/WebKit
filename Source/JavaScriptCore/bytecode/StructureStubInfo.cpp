@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,13 +104,13 @@ void StructureStubInfo::aboutToDie()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-MacroAssemblerCodePtr StructureStubInfo::addAccessCase(
+AccessGenerationResult StructureStubInfo::addAccessCase(
     CodeBlock* codeBlock, const Identifier& ident, std::unique_ptr<AccessCase> accessCase)
 {
     VM& vm = *codeBlock->vm();
     
     if (!accessCase)
-        return MacroAssemblerCodePtr();
+        return AccessGenerationResult::MadeNoChanges;
     
     if (cacheType == CacheType::Stub)
         return u.stub->regenerateWithCase(vm, codeBlock, *this, ident, WTFMove(accessCase));
@@ -126,11 +126,11 @@ MacroAssemblerCodePtr StructureStubInfo::addAccessCase(
 
     accessCases.append(WTFMove(accessCase));
 
-    MacroAssemblerCodePtr result =
+    AccessGenerationResult result =
         access->regenerateWithCases(vm, codeBlock, *this, ident, WTFMove(accessCases));
 
-    if (!result)
-        return MacroAssemblerCodePtr();
+    if (!result.generatedNewCode())
+        return result;
 
     initStub(codeBlock, WTFMove(access));
     return result;

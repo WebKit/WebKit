@@ -419,6 +419,42 @@ void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, Trust
 #endif
 }
 
+void AssemblyHelpers::loadProperty(GPRReg object, GPRReg offset, JSValueRegs result)
+{
+    Jump isInline = branch32(LessThan, offset, TrustedImm32(firstOutOfLineOffset));
+    
+    loadPtr(Address(object, JSObject::butterflyOffset()), result.payloadGPR());
+    neg32(offset);
+    signExtend32ToPtr(offset, offset);
+    Jump ready = jump();
+    
+    isInline.link(this);
+    addPtr(
+        TrustedImm32(
+            static_cast<int32_t>(sizeof(JSObject)) -
+            (static_cast<int32_t>(firstOutOfLineOffset) - 2) * static_cast<int32_t>(sizeof(EncodedJSValue))),
+        object, result.payloadGPR());
+    
+    ready.link(this);
+    
+    loadValue(
+        BaseIndex(
+            result.payloadGPR(), offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)),
+        result);
+}
+
+void AssemblyHelpers::emitLoadStructure(RegisterID source, RegisterID dest, RegisterID scratch)
+{
+#if USE(JSVALUE64)
+    load32(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
+    loadPtr(vm()->heap.structureIDTable().base(), scratch);
+    loadPtr(MacroAssembler::BaseIndex(scratch, dest, MacroAssembler::TimesEight), dest);
+#else
+    UNUSED_PARAM(scratch);
+    loadPtr(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
+#endif
+}
+
 #if USE(JSVALUE64)
 template<typename LoadFromHigh, typename StoreToHigh, typename LoadFromLow, typename StoreToLow>
 void emitRandomThunkImpl(AssemblyHelpers& jit, GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, FPRReg result, const LoadFromHigh& loadFromHigh, const StoreToHigh& storeToHigh, const LoadFromLow& loadFromLow, const StoreToLow& storeToLow)

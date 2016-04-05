@@ -420,6 +420,11 @@ public:
     {
         return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::indexingTypeOffset();
     }
+    
+    static ptrdiff_t propertyTableUnsafeOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_propertyTableUnsafe);
+    }
 
     static Structure* createStructure(VM&);
         

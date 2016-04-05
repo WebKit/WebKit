@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -161,6 +161,8 @@ static void resetPutByIDCheckAndLoad(StructureStubInfo& stubInfo)
 
 static void replaceWithJump(StructureStubInfo& stubInfo, const MacroAssemblerCodePtr target)
 {
+    RELEASE_ASSERT(target);
+    
     if (MacroAssembler::canJumpReplacePatchableBranch32WithPatch()) {
         MacroAssembler::replaceWithJump(
             MacroAssembler::startOfPatchableBranch32WithPatchOnAddress(
@@ -315,13 +317,15 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         }
     }
 
-    MacroAssemblerCodePtr codePtr =
-        stubInfo.addAccessCase(codeBlock, propertyName, WTFMove(newCase));
+    AccessGenerationResult result = stubInfo.addAccessCase(codeBlock, propertyName, WTFMove(newCase));
 
-    if (!codePtr)
+    if (result.gaveUp())
         return GiveUpOnCache;
-
-    replaceWithJump(stubInfo, codePtr);
+    if (result.madeNoChanges())
+        return RetryCacheLater;
+    
+    RELEASE_ASSERT(result.code());
+    replaceWithJump(stubInfo, result.code());
     
     return RetryCacheLater;
 }
@@ -457,16 +461,19 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         }
     }
 
-    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(codeBlock, ident, WTFMove(newCase));
+    AccessGenerationResult result = stubInfo.addAccessCase(codeBlock, ident, WTFMove(newCase));
     
-    if (!codePtr)
+    if (result.gaveUp())
         return GiveUpOnCache;
+    if (result.madeNoChanges())
+        return RetryCacheLater;
 
+    RELEASE_ASSERT(result.code());
     resetPutByIDCheckAndLoad(stubInfo);
     MacroAssembler::repatchJump(
         stubInfo.callReturnLocation.jumpAtOffset(
             stubInfo.patch.deltaCallToJump),
-        CodeLocationLabel(codePtr));
+        CodeLocationLabel(result.code()));
     
     return RetryCacheLater;
 }
@@ -514,13 +521,16 @@ static InlineCacheAction tryRepatchIn(
     std::unique_ptr<AccessCase> newCase = AccessCase::in(
         vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, structure, conditionSet);
 
-    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(codeBlock, ident, WTFMove(newCase));
-    if (!codePtr)
+    AccessGenerationResult result = stubInfo.addAccessCase(codeBlock, ident, WTFMove(newCase));
+    if (result.gaveUp())
         return GiveUpOnCache;
+    if (result.madeNoChanges())
+        return RetryCacheLater;
 
+    RELEASE_ASSERT(result.code());
     MacroAssembler::repatchJump(
         stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToJump),
-        CodeLocationLabel(codePtr));
+        CodeLocationLabel(result.code()));
     
     return RetryCacheLater;
 }

@@ -77,6 +77,8 @@ public:
     
     bool uses(GPRReg gpr) const { return m_gpr == gpr; }
     
+    void dump(PrintStream&) const;
+    
 private:
     GPRReg m_gpr;
 };
@@ -201,6 +203,8 @@ public:
     }
 
     bool uses(GPRReg gpr) const { return m_tagGPR == gpr || m_payloadGPR == gpr; }
+    
+    void dump(PrintStream&) const;
     
 private:
     int8_t m_tagGPR;

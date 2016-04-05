@@ -1,3 +1,120 @@
+2016-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        PolymorphicAccess should have a MegamorphicLoad case
+        https://bugs.webkit.org/show_bug.cgi?id=156182
+
+        Reviewed by Geoffrey Garen and Keith Miller.
+
+        This introduces a new case to PolymorphicAccess called MegamorphicLoad. This inlines the lookup in
+        the PropertyTable. It's cheaper than switching on a huge number of cases and it's cheaper than
+        calling into C++ to do the same job - particularly since inlining the lookup into an access means
+        that we can precompute the hash code.
+
+        When writing the inline code for the hashtable lookup, I found that our hashing algorithm was not
+        optimal. It used a double-hashing method for reducing collision pathologies. This is great for
+        improving the performance of some worst-case scenarios. But this misses the point of a hashtable: we
+        want to optimize the average-case performance. When optimizing for average-case, we can choose to
+        either focus on maximizing the likelihood of the fast case happening, or to minimize the cost of the
+        worst-case, or to minimize the cost of the fast case. Even a very basic hashtable will achieve a high
+        probability of hitting the fast case. So, doing work to reduce the likelihood of a worst-case
+        pathology only makes sense if it also preserves the good performance of the fast case, or reduces the
+        likelihood of the worst-case by so much that it's a win for the average case even with a slow-down in
+        the fast case.
+
+        I don't believe, based on looking at how the double-hashing is implemented, that it's possible that
+        this preserves the good performance of the fast case. It requires at least one more value to be live
+        around the loop, and dramatically increases the register pressure at key points inside the loop. The
+        biggest offender is the doubleHash() method itself. There is no getting around how bad this is: if
+        the compiler live-range-splits that method to death to avoid degrading register pressure elsewhere
+        then we will pay a steep price anytime we take the second iteration around the loop; but if the
+        compiler doesn't split around the call then the hashtable lookup fast path will be full of spills on
+        some architectures (I performed biological register allocation and found that I needed 9 registers
+        for complete lookup, while x86-64 has only 6 callee-saves; OTOH ARM64 has 10 callee-saves so it might
+        be better off).
+
+        Hence, this patch changes the hashtable lookup to use simple linear probing. This was not a slow-down
+        on anything, and it made MegamorphicLoad much more sensible since it is less likely to have to spill.
+
+        There are some other small changes in this patch, like rationalizing the IC's choice between giving
+        up after a repatch (i.e. never trying again) and just pretending that nothing happened (so we can
+        try to repatch again in the future). It looked like the code in Repatch.cpp was set up to be able to
+        choose between those options, but we weren't fully taking advantage of it because the
+        regenerateWithCase() method just returned null for any failure, and didn't say whether it was the
+        sort of failure that renders the inline cache unrepatchable (like memory allocation failure). Now
+        this is all made explicit. I wanted to make sure this change happened in this patch since the
+        MegamorphicLoad code automagically generates a MegamorphicLoad case by coalescing other cases. Since
+        this is intended to avoid blowing out the cache and making it unrepatchable, I wanted to make sure
+        that the rules for giving up were something that made sense to me.
+        
+        This is a big win on microbenchmarks. It's neutral on traditional JS benchmarks. It's a slight
+        speed-up for page loading, because many real websites like to have megamorphic property accesses.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationResult::dump):
+        (JSC::AccessGenerationState::addWatchpoint):
+        (JSC::AccessCase::get):
+        (JSC::AccessCase::megamorphicLoad):
+        (JSC::AccessCase::replace):
+        (JSC::AccessCase::guardedByStructureCheck):
+        (JSC::AccessCase::couldStillSucceed):
+        (JSC::AccessCase::canBeReplacedByMegamorphicLoad):
+        (JSC::AccessCase::canReplace):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generate):
+        (JSC::PolymorphicAccess::PolymorphicAccess):
+        (JSC::PolymorphicAccess::~PolymorphicAccess):
+        (JSC::PolymorphicAccess::regenerateWithCases):
+        (JSC::PolymorphicAccess::regenerateWithCase):
+        (WTF::printInternal):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessCase::isGet):
+        (JSC::AccessCase::isPut):
+        (JSC::AccessCase::isIn):
+        (JSC::AccessGenerationResult::AccessGenerationResult):
+        (JSC::AccessGenerationResult::operator==):
+        (JSC::AccessGenerationResult::operator!=):
+        (JSC::AccessGenerationResult::operator bool):
+        (JSC::AccessGenerationResult::kind):
+        (JSC::AccessGenerationResult::code):
+        (JSC::AccessGenerationResult::madeNoChanges):
+        (JSC::AccessGenerationResult::gaveUp):
+        (JSC::AccessGenerationResult::generatedNewCode):
+        (JSC::PolymorphicAccess::isEmpty):
+        (JSC::AccessGenerationState::AccessGenerationState):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::aboutToDie):
+        (JSC::StructureStubInfo::addAccessCase):
+        * bytecode/StructureStubInfo.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        (JSC::AssemblyHelpers::loadProperty):
+        (JSC::emitRandomThunkImpl):
+        (JSC::AssemblyHelpers::emitRandomThunk):
+        (JSC::AssemblyHelpers::emitLoadStructure):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::loadValue):
+        (JSC::AssemblyHelpers::moveValueRegs):
+        (JSC::AssemblyHelpers::argumentsStart):
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        (JSC::AssemblyHelpers::emitLoadStructure): Deleted.
+        * jit/GPRInfo.cpp:
+        (JSC::JSValueRegs::dump):
+        * jit/GPRInfo.h:
+        (JSC::JSValueRegs::uses):
+        * jit/Repatch.cpp:
+        (JSC::replaceWithJump):
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryRepatchIn):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        * runtime/Options.h:
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::begin):
+        (JSC::PropertyTable::find):
+        (JSC::PropertyTable::get):
+        * runtime/Structure.h:
+
 2016-04-05  Antoine Quint  <graouts@apple.com>
 
         [WebGL2] Turn the ENABLE_WEBGL2 flag on

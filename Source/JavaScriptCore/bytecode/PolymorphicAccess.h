@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,7 @@ class AccessCase {
 public:
     enum AccessType {
         Load,
+        MegamorphicLoad,
         Transition,
         Replace,
         Miss,
@@ -81,6 +82,7 @@ public:
         case InMiss:
             return false;
         case Load:
+        case MegamorphicLoad:
         case Miss:
         case Getter:
         case CustomValueGetter:
@@ -96,6 +98,7 @@ public:
     {
         switch (type) {
         case Load:
+        case MegamorphicLoad:
         case Miss:
         case Getter:
         case CustomValueGetter:
@@ -119,6 +122,7 @@ public:
     {
         switch (type) {
         case Load:
+        case MegamorphicLoad:
         case Miss:
         case Getter:
         case CustomValueGetter:
@@ -145,7 +149,9 @@ public:
         WatchpointSet* additionalSet = nullptr,
         PropertySlot::GetValueFunc = nullptr,
         JSObject* customSlotBase = nullptr);
-
+    
+    static std::unique_ptr<AccessCase> megamorphicLoad(VM&, JSCell* owner);
+    
     static std::unique_ptr<AccessCase> replace(VM&, JSCell* owner, Structure*, PropertyOffset);
 
     static std::unique_ptr<AccessCase> transition(
@@ -247,13 +253,15 @@ public:
 
     // Is it still possible for this case to ever be taken?
     bool couldStillSucceed() const;
-
+    
     static bool canEmitIntrinsicGetter(JSFunction*, Structure*);
+
+    bool canBeReplacedByMegamorphicLoad() const;
 
     // If this method returns true, then it's a good idea to remove 'other' from the access once 'this'
     // is added. This method assumes that in case of contradictions, 'this' represents a newer, and so
     // more useful, truth. This method can be conservative; it will return false when it doubt.
-    bool canReplace(const AccessCase& other);
+    bool canReplace(const AccessCase& other) const;
 
     void dump(PrintStream& out) const;
     
@@ -308,6 +316,61 @@ private:
     std::unique_ptr<RareData> m_rareData;
 };
 
+class AccessGenerationResult {
+public:
+    enum Kind {
+        MadeNoChanges,
+        GaveUp,
+        GeneratedNewCode
+    };
+    
+    AccessGenerationResult()
+    {
+    }
+    
+    AccessGenerationResult(Kind kind)
+        : m_kind(kind)
+    {
+        ASSERT(kind != GeneratedNewCode);
+    }
+    
+    AccessGenerationResult(MacroAssemblerCodePtr code)
+        : m_kind(GeneratedNewCode)
+        , m_code(code)
+    {
+        RELEASE_ASSERT(code);
+    }
+    
+    bool operator==(const AccessGenerationResult& other) const
+    {
+        return m_kind == other.m_kind && m_code == other.m_code;
+    }
+    
+    bool operator!=(const AccessGenerationResult& other) const
+    {
+        return !(*this == other);
+    }
+    
+    explicit operator bool() const
+    {
+        return *this != AccessGenerationResult();
+    }
+    
+    Kind kind() const { return m_kind; }
+    
+    const MacroAssemblerCodePtr& code() const { return m_code; }
+    
+    bool madeNoChanges() const { return m_kind == MadeNoChanges; }
+    bool gaveUp() const { return m_kind == GaveUp; }
+    bool generatedNewCode() const { return m_kind == GeneratedNewCode; }
+    
+    void dump(PrintStream&) const;
+    
+private:
+    Kind m_kind;
+    MacroAssemblerCodePtr m_code;
+};
+
 class PolymorphicAccess {
     WTF_MAKE_NONCOPYABLE(PolymorphicAccess);
     WTF_MAKE_FAST_ALLOCATED;
@@ -318,10 +381,10 @@ public:
     // This may return null, in which case the old stub routine is left intact. You are required to
     // pass a vector of non-null access cases. This will prune the access cases by rejecting any case
     // in the list that is subsumed by a later case in the list.
-    MacroAssemblerCodePtr regenerateWithCases(
+    AccessGenerationResult regenerateWithCases(
         VM&, CodeBlock*, StructureStubInfo&, const Identifier&, Vector<std::unique_ptr<AccessCase>>);
 
-    MacroAssemblerCodePtr regenerateWithCase(
+    AccessGenerationResult regenerateWithCase(
         VM&, CodeBlock*, StructureStubInfo&, const Identifier&, std::unique_ptr<AccessCase>);
     
     bool isEmpty() const { return m_list.isEmpty(); }
@@ -362,9 +425,9 @@ private:
 
 struct AccessGenerationState {
     AccessGenerationState()
-    : m_calculatedRegistersForCallAndExceptionHandling(false)
-    , m_needsToRestoreRegistersIfException(false)
-    , m_calculatedCallSiteIndex(false)
+        : m_calculatedRegistersForCallAndExceptionHandling(false)
+        , m_needsToRestoreRegistersIfException(false)
+        , m_calculatedCallSiteIndex(false)
     {
     }
     CCallHelpers* jit { nullptr };
@@ -441,6 +504,7 @@ private:
 
 namespace WTF {
 
+void printInternal(PrintStream&, JSC::AccessGenerationResult::Kind);
 void printInternal(PrintStream&, JSC::AccessCase::AccessType);
 
 } // namespace WTF

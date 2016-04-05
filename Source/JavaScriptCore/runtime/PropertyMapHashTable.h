@@ -191,6 +191,12 @@ public:
     size_t sizeInMemory();
     void checkConsistency();
 #endif
+    
+    static ptrdiff_t offsetOfIndexSize() { return OBJECT_OFFSETOF(PropertyTable, m_indexSize); }
+    static ptrdiff_t offsetOfIndexMask() { return OBJECT_OFFSETOF(PropertyTable, m_indexMask); }
+    static ptrdiff_t offsetOfIndex() { return OBJECT_OFFSETOF(PropertyTable, m_index); }
+
+    static const unsigned EmptyEntryIndex = 0;
 
 private:
     PropertyTable(VM&, unsigned initialCapacity);
@@ -244,7 +250,6 @@ private:
     std::unique_ptr<Vector<PropertyOffset>> m_deletedOffsets;
 
     static const unsigned MinimumTableSize = 16;
-    static const unsigned EmptyEntryIndex = 0;
 };
 
 inline PropertyTable::iterator PropertyTable::begin()
@@ -272,7 +277,6 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
     ASSERT(key);
     ASSERT(key->isAtomic() || key->isSymbol());
     unsigned hash = IdentifierRepHash::hash(key);
-    unsigned step = 0;
 
 #if DUMP_PROPERTYMAP_STATS
     ++propertyMapHashTableStats->numFinds;
@@ -285,19 +289,16 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
         if (key == table()[entryIndex - 1].key)
             return std::make_pair(&table()[entryIndex - 1], hash & m_indexMask);
 
-        if (!step)
-            step = WTF::doubleHash(IdentifierRepHash::hash(key)) | 1;
-
 #if DUMP_PROPERTYMAP_STATS
         ++propertyMapHashTableStats->numCollisions;
 #endif
 
 #if DUMP_PROPERTYMAP_COLLISIONS
-        dataLog("PropertyTable collision for ", key, " (", hash, ") with step ", step, "\n");
+        dataLog("PropertyTable collision for ", key, " (", hash, ")\n");
         dataLog("Collided with ", table()[entryIndex - 1].key, "(", IdentifierRepHash::hash(table()[entryIndex - 1].key), ")\n");
 #endif
 
-        hash += step;
+        hash++;
     }
 }
 
@@ -310,7 +311,6 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
         return nullptr;
 
     unsigned hash = IdentifierRepHash::hash(key);
-    unsigned step = 0;
 
 #if DUMP_PROPERTYMAP_STATS
     ++propertyMapHashTableStats->numLookups;
@@ -327,9 +327,7 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
         ++propertyMapHashTableStats->numLookupProbing;
 #endif
 
-        if (!step)
-            step = WTF::doubleHash(IdentifierRepHash::hash(key)) | 1;
-        hash += step;
+        hash++;
     }
 }
 

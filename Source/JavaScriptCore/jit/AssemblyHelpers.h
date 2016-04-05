@@ -149,6 +149,9 @@ public:
         }
 #endif
     }
+    
+    // Note that this clobbers offset.
+    void loadProperty(GPRReg object, GPRReg offset, JSValueRegs result);
 
     void moveValueRegs(JSValueRegs srcRegs, JSValueRegs destRegs)
     {
@@ -1209,29 +1212,7 @@ public:
         return argumentsStart(codeOrigin.inlineCallFrame);
     }
     
-    void emitLoadStructure(RegisterID source, RegisterID dest, RegisterID scratch)
-    {
-#if USE(JSVALUE64)
-        load32(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
-        loadPtr(vm()->heap.structureIDTable().base(), scratch);
-        loadPtr(MacroAssembler::BaseIndex(scratch, dest, MacroAssembler::TimesEight), dest);
-#else
-        UNUSED_PARAM(scratch);
-        loadPtr(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
-#endif
-    }
-
-    static void emitLoadStructure(AssemblyHelpers& jit, RegisterID base, RegisterID dest, RegisterID scratch)
-    {
-#if USE(JSVALUE64)
-        jit.load32(MacroAssembler::Address(base, JSCell::structureIDOffset()), dest);
-        jit.loadPtr(jit.vm()->heap.structureIDTable().base(), scratch);
-        jit.loadPtr(MacroAssembler::BaseIndex(scratch, dest, MacroAssembler::TimesEight), dest);
-#else
-        UNUSED_PARAM(scratch);
-        jit.loadPtr(MacroAssembler::Address(base, JSCell::structureIDOffset()), dest);
-#endif
-    }
+    void emitLoadStructure(RegisterID source, RegisterID dest, RegisterID scratch);
 
     void emitStoreStructureWithTypeInfo(TrustedImmPtr structure, RegisterID dest, RegisterID)
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,13 @@
 namespace JSC {
 
 static const bool verbose = false;
+
+void AccessGenerationResult::dump(PrintStream& out) const
+{
+    out.print(m_kind);
+    if (m_code)
+        out.print(":", m_code);
+}
 
 Watchpoint* AccessGenerationState::addWatchpoint(const ObjectPropertyCondition& condition)
 {
@@ -172,6 +179,21 @@ std::unique_ptr<AccessCase> AccessCase::get(
         result->m_rareData->customSlotBase.setMayBeNull(vm, owner, customSlotBase);
     }
 
+    return result;
+}
+
+std::unique_ptr<AccessCase> AccessCase::megamorphicLoad(VM& vm, JSCell* owner)
+{
+    UNUSED_PARAM(vm);
+    UNUSED_PARAM(owner);
+    
+    if (GPRInfo::numberOfRegisters < 9)
+        return nullptr;
+    
+    std::unique_ptr<AccessCase> result(new AccessCase());
+    
+    result->m_type = MegamorphicLoad;
+    
     return result;
 }
 
@@ -322,6 +344,7 @@ bool AccessCase::guardedByStructureCheck() const
         return false;
 
     switch (m_type) {
+    case MegamorphicLoad:
     case ArrayLength:
     case StringLength:
         return false;
@@ -342,9 +365,21 @@ bool AccessCase::couldStillSucceed() const
     return m_conditionSet.structuresEnsureValidityAssumingImpurePropertyWatchpoint();
 }
 
-bool AccessCase::canReplace(const AccessCase& other)
+bool AccessCase::canBeReplacedByMegamorphicLoad() const
+{
+    return type() == Load
+        && !viaProxy()
+        && conditionSet().isEmpty()
+        && !additionalSet()
+        && !customSlotBase();
+}
+
+bool AccessCase::canReplace(const AccessCase& other) const
 {
     // We could do a lot better here, but for now we just do something obvious.
+    
+    if (type() == MegamorphicLoad && other.canBeReplacedByMegamorphicLoad())
+        return true;
 
     if (!guardedByStructureCheck() || !other.guardedByStructureCheck()) {
         // FIXME: Implement this!
@@ -407,17 +442,25 @@ void AccessCase::generateWithGuard(
     AccessGenerationState& state, CCallHelpers::JumpList& fallThrough)
 {
     CCallHelpers& jit = *state.jit;
+    VM& vm = *jit.vm();
+    const Identifier& ident = *state.ident;
+    StructureStubInfo& stubInfo = *state.stubInfo;
+    JSValueRegs valueRegs = state.valueRegs;
+    GPRReg baseGPR = state.baseGPR;
+    GPRReg scratchGPR = state.scratchGPR;
+    
+    UNUSED_PARAM(vm);
 
     switch (m_type) {
     case ArrayLength: {
         ASSERT(!viaProxy());
-        jit.load8(CCallHelpers::Address(state.baseGPR, JSCell::indexingTypeOffset()), state.scratchGPR);
+        jit.load8(CCallHelpers::Address(baseGPR, JSCell::indexingTypeOffset()), scratchGPR);
         fallThrough.append(
             jit.branchTest32(
-                CCallHelpers::Zero, state.scratchGPR, CCallHelpers::TrustedImm32(IsArray)));
+                CCallHelpers::Zero, scratchGPR, CCallHelpers::TrustedImm32(IsArray)));
         fallThrough.append(
             jit.branchTest32(
-                CCallHelpers::Zero, state.scratchGPR, CCallHelpers::TrustedImm32(IndexingShapeMask)));
+                CCallHelpers::Zero, scratchGPR, CCallHelpers::TrustedImm32(IndexingShapeMask)));
         break;
     }
 
@@ -426,9 +469,124 @@ void AccessCase::generateWithGuard(
         fallThrough.append(
             jit.branch8(
                 CCallHelpers::NotEqual,
-                CCallHelpers::Address(state.baseGPR, JSCell::typeInfoTypeOffset()),
+                CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
                 CCallHelpers::TrustedImm32(StringType)));
         break;
+    }
+        
+    case MegamorphicLoad: {
+        UniquedStringImpl* key = ident.impl();
+        unsigned hash = IdentifierRepHash::hash(key);
+        
+        ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
+        allocator.lock(baseGPR);
+#if USE(JSVALUE32_64)
+        allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseTagGPR));
+#endif
+        allocator.lock(valueRegs);
+        allocator.lock(scratchGPR);
+        
+        GPRReg intermediateGPR = scratchGPR;
+        GPRReg maskGPR = allocator.allocateScratchGPR();
+        GPRReg maskedHashGPR = allocator.allocateScratchGPR();
+        GPRReg indexGPR = allocator.allocateScratchGPR();
+        GPRReg offsetGPR = allocator.allocateScratchGPR();
+        
+        if (verbose) {
+            dataLog("baseGPR = ", baseGPR, "\n");
+            dataLog("valueRegs = ", valueRegs, "\n");
+            dataLog("scratchGPR = ", scratchGPR, "\n");
+            dataLog("intermediateGPR = ", intermediateGPR, "\n");
+            dataLog("maskGPR = ", maskGPR, "\n");
+            dataLog("maskedHashGPR = ", maskedHashGPR, "\n");
+            dataLog("indexGPR = ", indexGPR, "\n");
+            dataLog("offsetGPR = ", offsetGPR, "\n");
+        }
+
+        ScratchRegisterAllocator::PreservedState preservedState =
+            allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+
+        CCallHelpers::JumpList myFailAndIgnore;
+        CCallHelpers::JumpList myFallThrough;
+        
+        jit.emitLoadStructure(baseGPR, intermediateGPR, maskGPR);
+        jit.loadPtr(
+            CCallHelpers::Address(intermediateGPR, Structure::propertyTableUnsafeOffset()),
+            intermediateGPR);
+        
+        myFailAndIgnore.append(jit.branchTestPtr(CCallHelpers::Zero, intermediateGPR));
+        
+        jit.load32(CCallHelpers::Address(intermediateGPR, PropertyTable::offsetOfIndexMask()), maskGPR);
+        jit.loadPtr(CCallHelpers::Address(intermediateGPR, PropertyTable::offsetOfIndex()), indexGPR);
+        jit.load32(
+            CCallHelpers::Address(intermediateGPR, PropertyTable::offsetOfIndexSize()),
+            intermediateGPR);
+
+        jit.move(maskGPR, maskedHashGPR);
+        jit.and32(CCallHelpers::TrustedImm32(hash), maskedHashGPR);
+        jit.lshift32(CCallHelpers::TrustedImm32(2), intermediateGPR);
+        jit.addPtr(indexGPR, intermediateGPR);
+        
+        CCallHelpers::Label loop = jit.label();
+        
+        jit.load32(CCallHelpers::BaseIndex(indexGPR, maskedHashGPR, CCallHelpers::TimesFour), offsetGPR);
+        
+        myFallThrough.append(
+            jit.branch32(
+                CCallHelpers::Equal,
+                offsetGPR,
+                CCallHelpers::TrustedImm32(PropertyTable::EmptyEntryIndex)));
+        
+        jit.sub32(CCallHelpers::TrustedImm32(1), offsetGPR);
+        jit.mul32(CCallHelpers::TrustedImm32(sizeof(PropertyMapEntry)), offsetGPR, offsetGPR);
+        jit.addPtr(intermediateGPR, offsetGPR);
+        
+        CCallHelpers::Jump collision =  jit.branchPtr(
+            CCallHelpers::NotEqual,
+            CCallHelpers::Address(offsetGPR, OBJECT_OFFSETOF(PropertyMapEntry, key)),
+            CCallHelpers::TrustedImmPtr(key));
+        
+        // offsetGPR currently holds a pointer to the PropertyMapEntry, which has the offset and attributes.
+        // Check them and then attempt the load.
+        
+        myFallThrough.append(
+            jit.branchTest32(
+                CCallHelpers::NonZero,
+                CCallHelpers::Address(offsetGPR, OBJECT_OFFSETOF(PropertyMapEntry, attributes)),
+                CCallHelpers::TrustedImm32(Accessor | CustomAccessor)));
+        
+        jit.load32(CCallHelpers::Address(offsetGPR, OBJECT_OFFSETOF(PropertyMapEntry, offset)), offsetGPR);
+        
+        jit.loadProperty(baseGPR, offsetGPR, valueRegs);
+        
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        state.succeed();
+        
+        collision.link(&jit);
+
+        jit.add32(CCallHelpers::TrustedImm32(1), maskedHashGPR);
+        
+        // FIXME: We could be smarter about this. Currently we're burning a GPR for the mask. But looping
+        // around isn't super common so we could, for example, recompute the mask from the difference between
+        // the table and index. But before we do that we should probably make it easier to multiply and
+        // divide by the size of PropertyMapEntry. That probably involves making PropertyMapEntry be arranged
+        // to have a power-of-2 size.
+        jit.and32(maskGPR, maskedHashGPR);
+        jit.jump().linkTo(loop, &jit);
+        
+        if (allocator.didReuseRegisters()) {
+            myFailAndIgnore.link(&jit);
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            state.failAndIgnore.append(jit.jump());
+            
+            myFallThrough.link(&jit);
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            fallThrough.append(jit.jump());
+        } else {
+            state.failAndIgnore.append(myFailAndIgnore);
+            fallThrough.append(myFallThrough);
+        }
+        return;
     }
 
     default: {
@@ -436,23 +594,21 @@ void AccessCase::generateWithGuard(
             fallThrough.append(
                 jit.branch8(
                     CCallHelpers::NotEqual,
-                    CCallHelpers::Address(state.baseGPR, JSCell::typeInfoTypeOffset()),
+                    CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
                     CCallHelpers::TrustedImm32(PureForwardingProxyType)));
 
-            jit.loadPtr(
-                CCallHelpers::Address(state.baseGPR, JSProxy::targetOffset()),
-                state.scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
 
             fallThrough.append(
                 jit.branchStructure(
                     CCallHelpers::NotEqual,
-                    CCallHelpers::Address(state.scratchGPR, JSCell::structureIDOffset()),
+                    CCallHelpers::Address(scratchGPR, JSCell::structureIDOffset()),
                     structure()));
         } else {
             fallThrough.append(
                 jit.branchStructure(
                     CCallHelpers::NotEqual,
-                    CCallHelpers::Address(state.baseGPR, JSCell::structureIDOffset()),
+                    CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()),
                     structure()));
         }
         break;
@@ -1091,7 +1247,14 @@ void AccessCase::generate(AccessGenerationState& state)
 
         emitIntrinsicGetter(state);
         return;
-    } }
+    }
+    
+    case MegamorphicLoad:
+        // These need to be handled by generateWithGuard(), since the guard is part of the megamorphic load
+        // algorithm. We can be sure that nobody will call generate() directly for MegamorphicLoad since
+        // MegamorphicLoad is not guarded by a structure check.
+        RELEASE_ASSERT_NOT_REACHED();
+    }
     
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -1099,7 +1262,7 @@ void AccessCase::generate(AccessGenerationState& state)
 PolymorphicAccess::PolymorphicAccess() { }
 PolymorphicAccess::~PolymorphicAccess() { }
 
-MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
+AccessGenerationResult PolymorphicAccess::regenerateWithCases(
     VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
     Vector<std::unique_ptr<AccessCase>> originalCasesToAdd)
 {
@@ -1114,8 +1277,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
     //   and the previous stub are kept intact and the new cases are destroyed. It's OK to attempt to
     //   add more things after failure.
     
-    // First, verify that we can generate code for all of the new cases while eliminating any of the
-    // new cases that replace each other.
+    // First ensure that the originalCasesToAdd doesn't contain duplicates.
     Vector<std::unique_ptr<AccessCase>> casesToAdd;
     for (unsigned i = 0; i < originalCasesToAdd.size(); ++i) {
         std::unique_ptr<AccessCase> myCase = WTFMove(originalCasesToAdd[i]);
@@ -1142,7 +1304,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
     // new stub that will be identical to the old one. Returning null should tell the caller to just
     // keep doing what they were doing before.
     if (casesToAdd.isEmpty())
-        return MacroAssemblerCodePtr();
+        return AccessGenerationResult::MadeNoChanges;
 
     // Now construct the list of cases as they should appear if we are successful. This means putting
     // all of the previous cases in this list in order but excluding those that can be replaced, and
@@ -1171,22 +1333,43 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
 
     if (verbose)
         dataLog("newCases: ", listDump(newCases), "\n");
+    
+    // See if we are close to having too many cases and if some of those cases can be subsumed by a
+    // megamorphic load.
+    if (newCases.size() >= Options::maxAccessVariantListSize()) {
+        unsigned numSelfLoads = 0;
+        for (auto& newCase : newCases) {
+            if (newCase->canBeReplacedByMegamorphicLoad())
+                numSelfLoads++;
+        }
+        
+        if (numSelfLoads >= Options::megamorphicLoadCost()) {
+            if (auto mega = AccessCase::megamorphicLoad(vm, codeBlock)) {
+                newCases.removeAllMatching(
+                    [&] (std::unique_ptr<AccessCase>& newCase) -> bool {
+                        return newCase->canBeReplacedByMegamorphicLoad();
+                    });
+                
+                newCases.append(WTFMove(mega));
+            }
+        }
+    }
 
     if (newCases.size() > Options::maxAccessVariantListSize()) {
         if (verbose)
             dataLog("Too many cases.\n");
-        return MacroAssemblerCodePtr();
+        return AccessGenerationResult::GaveUp;
     }
 
     MacroAssemblerCodePtr result = regenerate(vm, codeBlock, stubInfo, ident, newCases);
     if (!result)
-        return MacroAssemblerCodePtr();
+        return AccessGenerationResult::GaveUp;
 
     m_list = WTFMove(newCases);
     return result;
 }
 
-MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCase(
+AccessGenerationResult PolymorphicAccess::regenerateWithCase(
     VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
     std::unique_ptr<AccessCase> newAccess)
 {
@@ -1403,11 +1586,31 @@ namespace WTF {
 
 using namespace JSC;
 
+void printInternal(PrintStream& out, AccessGenerationResult::Kind kind)
+{
+    switch (kind) {
+    case AccessGenerationResult::MadeNoChanges:
+        out.print("MadeNoChanges");
+        return;
+    case AccessGenerationResult::GaveUp:
+        out.print("GaveUp");
+        return;
+    case AccessGenerationResult::GeneratedNewCode:
+        out.print("GeneratedNewCode");
+        return;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void printInternal(PrintStream& out, AccessCase::AccessType type)
 {
     switch (type) {
     case AccessCase::Load:
         out.print("Load");
+        return;
+    case AccessCase::MegamorphicLoad:
+        out.print("MegamorphicLoad");
         return;
     case AccessCase::Transition:
         out.print("Transition");

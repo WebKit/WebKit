@@ -1,3 +1,16 @@
+2016-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        PolymorphicAccess should have a MegamorphicLoad case
+        https://bugs.webkit.org/show_bug.cgi?id=156182
+
+        Reviewed by Geoffrey Garen and Keith Miller.
+
+        * js/regress/megamorphic-load-expected.txt: Added.
+        * js/regress/megamorphic-load.html: Added.
+        * js/regress/script-tests/megamorphic-load.js: Added.
+        * js/regress/string-repeat-not-resolving-no-inline-expected.txt: Added.
+        * js/regress/string-repeat-not-resolving-no-inline.html: Added.
+
 2016-04-05  Antti Koivisto  <antti@apple.com>
 
         Un-marking plugins/focus.html as flaky on mac
