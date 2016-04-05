@@ -1689,15 +1689,6 @@
             "silverroots"
          ]
       },
-      "Keith Miller" : {
-         "emails" : [
-            "keith_miller@apple.com"
-         ],
-         "nicks" : [
-            "keith_miller",
-            "keith_miller_"
-         ]
-      },
       "Keith Rollin" : {
          "emails" : [
             "krollin@apple.com"
@@ -4442,6 +4433,16 @@
          "expertise" : "Multipart Mixed Replace, HTML Editing",
          "nicks" : [
             "justing"
+         ]
+      },
+      "Keith Miller" : {
+         "emails" : [
+            "keith_miller@apple.com"
+         ],
+         "expertise" : "JavaScript/ECMAScript",
+         "nicks" : [
+            "keith_miller",
+            "keith_miller_"
          ]
       },
       "Ken Kocienda" : {
