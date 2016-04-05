@@ -1095,6 +1095,14 @@ void CodeBlock::dumpBytecode(
             printBinaryOp(out, exec, location, it, "in");
             break;
         }
+        case op_try_get_by_id: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int id0 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "try_get_by_id");
+            out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data());
+            break;
+        }
         case op_get_by_id:
         case op_get_array_length: {
             printGetByIdOp(out, exec, location, it);

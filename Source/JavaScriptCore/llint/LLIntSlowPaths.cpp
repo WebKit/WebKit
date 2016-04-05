@@ -544,6 +544,19 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof_custom)
     LLINT_RETURN(result);
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
+{
+    LLINT_BEGIN();
+    CodeBlock* codeBlock = exec->codeBlock();
+    const Identifier& ident = codeBlock->identifier(pc[3].u.operand);
+    JSValue baseValue = LLINT_OP_C(2).jsValue();
+    PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::VMInquiry);
+
+    baseValue.getPropertySlot(exec, ident, slot);
+
+    LLINT_RETURN(slot.getPureResult());
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
 {
     LLINT_BEGIN();
