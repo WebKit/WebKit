@@ -1,3 +1,19 @@
+2016-04-05  Antti Koivisto  <antti@apple.com>
+
+        Shadow DOM: :host() From The First Shadow Context Should Not Style All Shadow Context
+        https://bugs.webkit.org/show_bug.cgi?id=156235
+        <rdar://problem/24668206>
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/shadow-dom/host-style-sharing.html
+
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::resolve):
+        (WebCore::Style::SharingResolver::canShareStyleWithElement):
+
+            Disallow style sharing for shadow hosts affected by :host pseudo class rules.
+
 2016-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Speculative build fix after r199043

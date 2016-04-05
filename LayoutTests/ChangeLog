@@ -1,5 +1,16 @@
 2016-04-05  Antti Koivisto  <antti@apple.com>
 
+        Shadow DOM: :host() From The First Shadow Context Should Not Style All Shadow Context
+        https://bugs.webkit.org/show_bug.cgi?id=156235
+        <rdar://problem/24668206>
+
+        Reviewed by Andreas Kling.
+
+        * fast/shadow-dom/host-style-sharing-expected.html: Added.
+        * fast/shadow-dom/host-style-sharing.html: Added.
+
+2016-04-05  Antti Koivisto  <antti@apple.com>
+
         Use RenderTreeUpdater for text node mutations
         https://bugs.webkit.org/show_bug.cgi?id=156107
 

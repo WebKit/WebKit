@@ -33,6 +33,7 @@
 #include "NodeRenderStyle.h"
 #include "RenderStyle.h"
 #include "SVGElement.h"
+#include "ShadowRoot.h"
 #include "StyleUpdate.h"
 #include "StyledElement.h"
 #include "VisitedLinkState.h"
@@ -95,6 +96,10 @@ RefPtr<RenderStyle> SharingResolver::resolve(const Element& searchElement, const
         return nullptr;
     if (elementHasDirectionAuto(element))
         return nullptr;
+#if ENABLE(SHADOW_DOM)
+    if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle()->hostPseudoClassRules().isEmpty())
+        return nullptr;
+#endif
 
     Context context {
         update,
@@ -277,6 +282,11 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
 
     if (element.matchesInvalidPseudoClass() != element.matchesValidPseudoClass())
         return false;
+
+#if ENABLE(SHADOW_DOM)
+    if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle()->hostPseudoClassRules().isEmpty())
+        return nullptr;
+#endif
 
 #if ENABLE(VIDEO_TRACK)
     // Deny sharing styles between WebVTT and non-WebVTT nodes.
