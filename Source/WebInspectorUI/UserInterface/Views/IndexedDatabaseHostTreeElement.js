@@ -32,6 +32,7 @@ WebInspector.IndexedDatabaseHostTreeElement = class IndexedDatabaseHostTreeEleme
         this._host = host;
 
         this.hasChildren = true;
+        this.expanded = true;
     }
 
     // Public

@@ -32,6 +32,7 @@ WebInspector.DatabaseHostTreeElement = class DatabaseHostTreeElement extends Web
         this._host = host;
 
         this.hasChildren = true;
+        this.expanded = true;
     }
 
     // Public

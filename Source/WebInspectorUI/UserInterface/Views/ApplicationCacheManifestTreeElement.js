@@ -30,6 +30,9 @@ WebInspector.ApplicationCacheManifestTreeElement = class ApplicationCacheManifes
         console.assert(representedObject instanceof WebInspector.ApplicationCacheManifest);
 
         super("application-cache-manifest", "", representedObject);
+
+        this.hasChildren = true;
+        this.expanded = true;
     }
 
     // Public

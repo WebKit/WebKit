@@ -674,6 +674,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         return treeElement instanceof WebInspector.FolderTreeElement
             || treeElement instanceof WebInspector.DatabaseHostTreeElement
             || treeElement instanceof WebInspector.IndexedDatabaseHostTreeElement
+            || treeElement instanceof WebInspector.ApplicationCacheManifestTreeElement
             || typeof treeElement.representedObject === "string"
             || treeElement.representedObject instanceof String;
     }

@@ -1,5 +1,29 @@
 2016-04-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Uncaught Exception: Error: Can't make a ContentView for an unknown representedObject (ApplicationCacheManifest)
+        https://bugs.webkit.org/show_bug.cgi?id=156139
+        <rdar://problem/25511926>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        Improve the error message to get the name of the represented object.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._isTreeElementWithoutRepresentedObject):
+        Treat ApplicationCacheManifestTreeElement like other Host elements. Nothing to save/show.
+
+        * UserInterface/Views/ApplicationCacheManifestTreeElement.js:
+        (WebInspector.ApplicationCacheManifestTreeElement):
+        * UserInterface/Views/DatabaseHostTreeElement.js:
+        (WebInspector.DatabaseHostTreeElement):
+        * UserInterface/Views/IndexedDatabaseHostTreeElement.js:
+        (WebInspector.IndexedDatabaseHostTreeElement):
+        Auto-expand these folders, as they are not useful when collapsed.
+
+2016-04-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught exception in CSS with string "constructor" (WebInspector.Color.fromString())
         https://bugs.webkit.org/show_bug.cgi?id=156183
         <rdar://problem/25539279>
