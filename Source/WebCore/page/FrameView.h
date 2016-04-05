@@ -543,7 +543,7 @@ public:
     // clipping by other UI elements), whereas visibleContentRect is
     // internal to WebCore and doesn't respect those things.
     WEBCORE_EXPORT void setExposedRect(FloatRect);
-    FloatRect exposedRect() const { return m_exposedRect; }
+    Optional<FloatRect> exposedRect() const { return m_exposedRect; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateSnapOffsets() override;
@@ -754,7 +754,7 @@ private:
 
     bool m_shouldUpdateWhileOffscreen;
 
-    FloatRect m_exposedRect;
+    Optional<FloatRect> m_exposedRect;
 
     unsigned m_deferSetNeedsLayoutCount;
     bool m_setNeedsLayoutWasDeferred;

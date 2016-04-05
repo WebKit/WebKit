@@ -207,7 +207,6 @@ FrameView::FrameView(Frame& frame)
     , m_delayedScrollEventTimer(*this, &FrameView::sendScrollEvent)
     , m_isTrackingRepaints(false)
     , m_shouldUpdateWhileOffscreen(true)
-    , m_exposedRect(FloatRect::infiniteRect())
     , m_deferSetNeedsLayoutCount(0)
     , m_setNeedsLayoutWasDeferred(false)
     , m_speculativeTilingEnabled(false)
@@ -4910,8 +4909,9 @@ void FrameView::notifyWidgets(WidgetNotification notification)
 
 void FrameView::setExposedRect(FloatRect exposedRect)
 {
-    if (m_exposedRect == exposedRect)
+    if (m_exposedRect && m_exposedRect.value() == exposedRect)
         return;
+
     m_exposedRect = exposedRect;
 
     // FIXME: We should support clipping to the exposed rect for subframes as well.

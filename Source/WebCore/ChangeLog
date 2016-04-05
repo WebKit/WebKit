@@ -1,5 +1,23 @@
 2016-04-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Make FrameView's exposedRect an Optional<>
+        https://bugs.webkit.org/show_bug.cgi?id=156189
+
+        Reviewed by Tim Horton.
+
+        Instead of testing against isInfinite(), make FrameView::exposedRect() and the
+        member variable an Optional<FloatRect>.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setExposedRect):
+        * page/FrameView.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::computeTileCoverage):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+
+2016-04-04  Simon Fraser  <simon.fraser@apple.com>
+
         Don't crash when rendering form controls with Display List Drawing enabled
         https://bugs.webkit.org/show_bug.cgi?id=156122
 
