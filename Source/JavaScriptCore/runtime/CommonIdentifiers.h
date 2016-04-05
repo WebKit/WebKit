@@ -87,6 +87,8 @@
     macro(UTC) \
     macro(WeakMap)\
     macro(WeakSet)\
+    macro(WebGL2RenderingContext) \
+    macro(WebGLVertexArrayObject) \
     macro(WebSocket) \
     macro(__defineGetter__) \
     macro(__defineSetter__) \

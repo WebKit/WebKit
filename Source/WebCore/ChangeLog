@@ -1,3 +1,42 @@
+2016-04-05  Antoine Quint  <graouts@apple.com>
+
+        [WebGL2] Turn the ENABLE_WEBGL2 flag on
+        https://bugs.webkit.org/show_bug.cgi?id=156061
+        <rdar://problem/25463193>
+
+        Reviewed by Alex Christensen.
+
+        Conditionalize the definition of the WebGL2RenderingContext and WebGLVertexArrayObject globals
+        based on the new WebGL2 runtime flag we introduced in https://webkit.org/b/156166.
+
+        Turning the ENABLE_WEBGL2 flag on caused a host of build errors which we fix here. A non-obvious
+        error was in code generated from the html/canvas/WebGL2RenderingContext.idl file which was solved
+        by updating the getBufferSubData() method to the current signature as of the March 29 Editor's
+        Draft of the WebGL 2 Specification (https://www.khronos.org/registry/webgl/specs/latest/2.0/).
+        Missing JSC headers in WebGL2RenderingContext.cpp also caused some linking errors in Release builds.
+
+        Tests: webgl/webgl-vertex-array-object-defined.html
+               webgl/webgl2-rendering-context-defined.html
+               webgl/webgl2-rendering-context-obtain.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp:
+        (WebCore::JSWebGL2RenderingContext::getInternalformatParameter):
+        (WebCore::JSWebGL2RenderingContext::getQueryParameter):
+        (WebCore::JSWebGL2RenderingContext::getSamplerParameter):
+        (WebCore::JSWebGL2RenderingContext::getSyncParameter):
+        (WebCore::JSWebGL2RenderingContext::getIndexedParameter):
+        (WebCore::JSWebGL2RenderingContext::getActiveUniformBlockParameter):
+        (WebCore::JSWebGL2RenderingContext::getActiveUniformBlockName):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::is3dType):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getBufferSubData): Deleted.
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        * html/canvas/WebGLVertexArrayObject.idl:
+
 2016-04-05  Antti Koivisto  <antti@apple.com>
 
         Shadow DOM: :host() From The First Shadow Context Should Not Style All Shadow Context

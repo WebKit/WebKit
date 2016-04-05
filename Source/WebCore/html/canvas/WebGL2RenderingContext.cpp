@@ -54,6 +54,8 @@
 #include "WebGLSync.h"
 #include "WebGLTransformFeedback.h"
 #include "WebGLVertexArrayObject.h"
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 
 namespace WebCore {
 
@@ -93,13 +95,6 @@ void WebGL2RenderingContext::copyBufferSubData(GC3Denum readTarget, GC3Denum wri
     UNUSED_PARAM(readOffset);
     UNUSED_PARAM(writeOffset);
     UNUSED_PARAM(size);
-}
-
-void WebGL2RenderingContext::getBufferSubData(GC3Denum target, GC3Dint64 offset, ArrayBufferView* returnedData)
-{
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(returnedData);
 }
 
 void WebGL2RenderingContext::getBufferSubData(GC3Denum target, GC3Dint64 offset, ArrayBuffer* returnedData)

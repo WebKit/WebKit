@@ -24,6 +24,7 @@
  */
 
 [
-    Conditional=WEBGL2
+    Conditional=WEBGL2,
+    EnabledAtRuntime=WebGL2
 ] interface WebGLVertexArrayObject {
 };

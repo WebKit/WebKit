@@ -1,3 +1,16 @@
+2016-04-05  Antoine Quint  <graouts@apple.com>
+
+        [WebGL2] Turn the ENABLE_WEBGL2 flag on
+        https://bugs.webkit.org/show_bug.cgi?id=156061
+        <rdar://problem/25463193>
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * runtime/CommonIdentifiers.h:
+
+        Define the conditionalized classes WebGL2RenderingContext and WebGLVertexArrayObject. 
+
 2016-04-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Add missing EABI_32BIT_DUMMY_ARG arguments for some callOperation(J_JITOperation_EGReoJ, ...) overloads

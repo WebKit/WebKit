@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL) && ENABLE(WEBGL2)
 #include "JSWebGL2RenderingContext.h"
 
+#include <runtime/Error.h>
 #include "NotImplemented.h"
 #include "WebGL2RenderingContext.h"
 
@@ -70,53 +71,53 @@ void JSWebGL2RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
     visitor.addOpaqueRoot(&wrapped());
 }
 
-JSValue JSWebGL2RenderingContext::getInternalformatParameter(ExecState* exec)
+JSValue JSWebGL2RenderingContext::getInternalformatParameter(ExecState& exec)
 {
     UNUSED_PARAM(exec);
     return jsUndefined();
 }
 
-JSValue JSWebGL2RenderingContext::getQueryParameter(ExecState* exec)
+JSValue JSWebGL2RenderingContext::getQueryParameter(ExecState& exec)
 {
     UNUSED_PARAM(exec);
     return jsUndefined();
 }
 
-JSValue JSWebGL2RenderingContext::getSamplerParameter(ExecState* exec)
+JSValue JSWebGL2RenderingContext::getSamplerParameter(ExecState& exec)
 {
     UNUSED_PARAM(exec);
     return jsUndefined();
 }
 
-JSValue JSWebGL2RenderingContext::getSyncParameter(ExecState* exec)
+JSValue JSWebGL2RenderingContext::getSyncParameter(ExecState& exec)
 {
     UNUSED_PARAM(exec);
     return jsUndefined();
 }
 
-JSValue JSWebGL2RenderingContext::getIndexedParameter(ExecState* exec)
+JSValue JSWebGL2RenderingContext::getIndexedParameter(ExecState& exec)
 {
-    if (exec->argumentCount() != 2)
-        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
+    if (exec.argumentCount() != 2)
+        return exec.vm().throwException(&exec, createNotEnoughArgumentsError(&exec));
 
     WebGL2RenderingContext& context = wrapped();
-    unsigned pname = exec->uncheckedArgument(0).toInt32(exec);
-    if (exec->hadException())
+    unsigned pname = exec.uncheckedArgument(0).toInt32(&exec);
+    if (exec.hadException())
         return jsUndefined();
-    unsigned index = exec->uncheckedArgument(1).toInt32(exec);
-    if (exec->hadException())
+    unsigned index = exec.uncheckedArgument(1).toInt32(&exec);
+    if (exec.hadException())
         return jsUndefined();
     WebGLGetInfo info = context.getIndexedParameter(pname, index);
-    return toJS(exec, globalObject(), info);
+    return toJS(&exec, globalObject(), info);
 }
 
-JSValue JSWebGL2RenderingContext::getActiveUniformBlockParameter(ExecState* exec)
+JSValue JSWebGL2RenderingContext::getActiveUniformBlockParameter(ExecState& exec)
 {
     UNUSED_PARAM(exec);
     return jsUndefined();
 }
 
-JSValue JSWebGL2RenderingContext::getActiveUniformBlockName(ExecState* exec)
+JSValue JSWebGL2RenderingContext::getActiveUniformBlockName(ExecState& exec)
 {
     UNUSED_PARAM(exec);
     return jsUndefined();

@@ -42,6 +42,7 @@ typedef unrestricted float GLclampf;
 
 [
     Conditional=WEBGL2,
+    EnabledAtRuntime=WebGL2,
     JSCustomMarkFunction,
     DoNotCheckConstants,
 ] interface WebGL2RenderingContext : WebGLRenderingContextBase {
@@ -335,8 +336,7 @@ typedef unrestricted float GLclampf;
     // MapBufferRange, in particular its read-only and write-only modes,
     // can not be exposed safely to JavaScript. GetBufferSubData
     // replaces it for the purpose of fetching data back from the GPU.
-    [StrictTypeChecking] void getBufferSubData(GLenum target, GLintptr offset, ArrayBufferView returnedData);
-    [StrictTypeChecking] void getBufferSubData(GLenum target, GLintptr offset, ArrayBuffer returnedData);
+    [StrictTypeChecking] void getBufferSubData(GLenum target, GLintptr offset, ArrayBuffer? returnedData);
 
     /* Framebuffer objects */
     [StrictTypeChecking] void blitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);

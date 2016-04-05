@@ -1,3 +1,33 @@
+2016-04-05  Antoine Quint  <graouts@apple.com>
+
+        [WebGL2] Turn the ENABLE_WEBGL2 flag on
+        https://bugs.webkit.org/show_bug.cgi?id=156061
+        <rdar://problem/25463193>
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
+        The WebGL2RenderingContext and WebGLVertexArrayObject classes are now defined
+        so expectations for this test which lists the configuration of global constructors
+        needed to be updated.
+
+        * webgl/webgl-vertex-array-object-defined-expected.txt: Added.
+        * webgl/webgl-vertex-array-object-defined.html: Added.
+
+        Test checking that WebGLVertexArrayObject is defined.
+
+        * webgl/webgl2-rendering-context-defined-expected.txt: Added.
+        * webgl/webgl2-rendering-context-defined.html: Added.
+
+        Test checking that WebGL2RenderingContext is defined.
+
+        * webgl/webgl2-rendering-context-obtain-expected.txt: Added.
+        * webgl/webgl2-rendering-context-obtain.html: Added.
+
+        Test checking that asking for a "webgl2" context returns a WebGL2RenderingContext.
+
 2016-04-05  Chris Dumez  <cdumez@apple.com>
 
         We sometimes fail to remove outdated entry from the disk cache after revalidation and when the resource is no longer cacheable
