@@ -27,6 +27,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ThreadSafeDataBuffer.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -36,16 +37,21 @@ class IDBValue {
 public:
     WEBCORE_EXPORT IDBValue();
     IDBValue(const SerializedScriptValue&);
+    IDBValue(const SerializedScriptValue&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
 
     IDBValue isolatedCopy() const;
 
     const ThreadSafeDataBuffer& data() const { return m_data; }
+    const Vector<String>& blobURLs() const { return m_blobURLs; }
+    const Vector<String>& blobFilePaths() const { return m_blobFilePaths; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, IDBValue&);
 
 private:
     ThreadSafeDataBuffer m_data;
+    Vector<String> m_blobURLs;
+    Vector<String> m_blobFilePaths;
 };
 
 
@@ -53,12 +59,20 @@ template<class Encoder>
 void IDBValue::encode(Encoder& encoder) const
 {
     encoder << m_data;
+    encoder << m_blobURLs;
+    encoder << m_blobFilePaths;
 }
 
 template<class Decoder>
 bool IDBValue::decode(Decoder& decoder, IDBValue& result)
 {
     if (!decoder.decode(result.m_data))
+        return false;
+
+    if (!decoder.decode(result.m_blobURLs))
+        return false;
+
+    if (!decoder.decode(result.m_blobFilePaths))
         return false;
 
     return true;

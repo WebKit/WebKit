@@ -1,3 +1,40 @@
+2016-04-05  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Get blob URLs/files all the way to the IDB backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=156248
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No change in behavior).
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::putOrAddOnServer):
+
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+        (WebCore::IDBValue::isolatedCopy):
+        * Modules/indexeddb/IDBValue.h:
+        (WebCore::IDBValue::blobURLs):
+        (WebCore::IDBValue::blobFilePaths):
+        (WebCore::IDBValue::encode):
+        (WebCore::IDBValue::decode):
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::addRecord):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+
 2016-03-19  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should use a shadow stack version of CHICKEN so that debuggers have the option of retrieving tail-deleted frames

@@ -2751,16 +2751,22 @@ uint32_t SerializedScriptValue::wireFormatVersion()
 void SerializedScriptValue::writeBlobsToDiskForIndexedDB(std::function<void (const IDBValue&)> completionHandler)
 {
     ASSERT(isMainThread());
-
-    if (m_blobURLs.isEmpty()) {
-        completionHandler({ });
-        return;
-    }
+    ASSERT(hasBlobURLs());
 
     RefPtr<SerializedScriptValue> protector(this);
-    blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler, this, protector](const Vector<String>&) {
-        // FIXME: Return an IDBValue that contains both the SerializedScriptValue data and all blob file data.
-        completionHandler({ });
+    blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler, this, protector](const Vector<String>& blobFilePaths) {
+        ASSERT(isMainThread());
+
+        if (blobFilePaths.isEmpty()) {
+            // We should have successfully written blobs to temporary files.
+            // If we failed, then we can't successfully store this record.
+            completionHandler({ });
+            return;
+        }
+
+        ASSERT(m_blobURLs.size() == blobFilePaths.size());
+        
+        completionHandler({ *this, m_blobURLs, blobFilePaths });
     });
 }
 #endif
