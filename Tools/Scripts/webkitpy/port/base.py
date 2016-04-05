@@ -854,6 +854,7 @@ class Port(object):
             'PATH',
             'SYSTEMDRIVE',
             'SYSTEMROOT',
+            'WEBKIT_LIBRARIES',
 
             # Most ports (?):
             'WEBKIT_TESTFONTS',
