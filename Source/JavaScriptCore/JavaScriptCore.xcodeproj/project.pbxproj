@@ -1996,7 +1996,6 @@
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E124A8F60E555775003091F1 /* OpaqueJSString.cpp */; };
 		E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E3A570DF9278C00D90B34 /* VM.cpp */; };
-		E30677981B8BC6F5003F87F0 /* ModuleLoaderObject.js in Resources */ = {isa = PBXBuildFile; fileRef = E30677971B8BC6F5003F87F0 /* ModuleLoaderObject.js */; };
 		E318CBC01B8AEF5100A2929D /* JSModuleNamespaceObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E318CBBE1B8AEF5100A2929D /* JSModuleNamespaceObject.cpp */; };
 		E318CBC11B8AEF5100A2929D /* JSModuleNamespaceObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CBBF1B8AEF5100A2929D /* JSModuleNamespaceObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33637A51B63220200EE0840 /* ReflectObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33637A31B63220200EE0840 /* ReflectObject.cpp */; };
@@ -8291,7 +8290,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A53F1AC018C90F8F0072EB6D /* framework.sb in Resources */,
-				E30677981B8BC6F5003F87F0 /* ModuleLoaderObject.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
