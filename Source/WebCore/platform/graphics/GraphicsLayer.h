@@ -666,7 +666,7 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
     static bool isType(const WebCore::GraphicsLayer& layer) { return layer.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer);
 #endif

@@ -1,5 +1,21 @@
 2016-04-04  Zan Dobersek  <zdobersek@igalia.com>
 
+        Guard showGraphicsLayerTree() with ENABLE(TREE_DEBUGGING)
+        https://bugs.webkit.org/show_bug.cgi?id=156157
+
+        Reviewed by Simon Fraser.
+
+        Mimic r181166 and guard the showGraphicsLayerTree() function with
+        ENABLE(TREE_DEBUGGING) guards, instead of !defined(NDEBUG). This
+        would enable invoking the function in release builds when the
+        ENABLE_TREE_DEBUGGING option is enabled, not limiting the function
+        to only debug builds.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/GraphicsLayer.h:
+
+2016-04-04  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Improve viewport array access in TextureMapperGL::bindDefaultSurface()
         https://bugs.webkit.org/show_bug.cgi?id=156159
 
