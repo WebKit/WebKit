@@ -1,3 +1,11 @@
+2016-04-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK build fix after r199020
+
+        * UIProcess/API/gtk/WebKitUserContentManager.cpp:
+        (webkit_user_content_manager_register_script_message_handler):
+        (webkit_user_content_manager_unregister_script_message_handler):
+
 2016-04-04  Alex Christensen  <achristensen@webkit.org>
 
         CMake build fix.
