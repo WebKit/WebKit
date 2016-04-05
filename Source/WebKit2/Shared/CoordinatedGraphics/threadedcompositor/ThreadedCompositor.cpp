@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-
-#if USE(COORDINATED_GRAPHICS_THREADED)
 #include "ThreadedCompositor.h"
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
+
+#include "CompositingRunLoop.h"
 #include <WebCore/TransformationMatrix.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 
@@ -42,72 +42,6 @@
 using namespace WebCore;
 
 namespace WebKit {
-
-class CompositingRunLoop {
-    WTF_MAKE_NONCOPYABLE(CompositingRunLoop);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    enum UpdateTiming {
-        Immediate,
-        WaitUntilNextFrame,
-    };
-
-    CompositingRunLoop(std::function<void()>&& updateFunction)
-        : m_runLoop(RunLoop::current())
-        , m_updateTimer(m_runLoop, this, &CompositingRunLoop::updateTimerFired)
-        , m_updateFunction(WTFMove(updateFunction))
-        , m_lastUpdateTime(0)
-    {
-    }
-
-    void callOnCompositingRunLoop(std::function<void()>&& function)
-    {
-        if (&m_runLoop == &RunLoop::current()) {
-            function();
-            return;
-        }
-
-        m_runLoop.dispatch(WTFMove(function));
-    }
-
-    void setUpdateTimer(UpdateTiming timing = Immediate)
-    {
-        if (m_updateTimer.isActive())
-            return;
-
-        const static double targetFPS = 60;
-        double nextUpdateTime = 0;
-        if (timing == WaitUntilNextFrame)
-            nextUpdateTime = std::max((1 / targetFPS) - (monotonicallyIncreasingTime() - m_lastUpdateTime), 0.0);
-
-        m_updateTimer.startOneShot(nextUpdateTime);
-    }
-
-    void stopUpdateTimer()
-    {
-        if (m_updateTimer.isActive())
-            m_updateTimer.stop();
-    }
-
-    RunLoop& runLoop()
-    {
-        return m_runLoop;
-    }
-
-private:
-
-    void updateTimerFired()
-    {
-        m_updateFunction();
-        m_lastUpdateTime = monotonicallyIncreasingTime();
-    }
-
-    RunLoop& m_runLoop;
-    RunLoop::Timer<CompositingRunLoop> m_updateTimer;
-    std::function<void()> m_updateFunction;
-
-    double m_lastUpdateTime;
-};
 
 Ref<ThreadedCompositor> ThreadedCompositor::create(Client* client)
 {

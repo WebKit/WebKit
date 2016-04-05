@@ -44,10 +44,10 @@ struct CoordinatedGraphicsState;
 }
 
 namespace WebKit {
-class CoordinatedGraphicsScene;
-class CoordinatedGraphicsSceneClient;
 
 class CompositingRunLoop;
+class CoordinatedGraphicsScene;
+class CoordinatedGraphicsSceneClient;
 
 class ThreadedCompositor : public SimpleViewportController::Client, public CoordinatedGraphicsSceneClient, public ThreadSafeRefCounted<ThreadedCompositor> {
     WTF_MAKE_NONCOPYABLE(ThreadedCompositor);

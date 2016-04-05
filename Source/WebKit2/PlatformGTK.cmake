@@ -847,6 +847,7 @@ if (ENABLE_THREADED_COMPOSITOR)
         Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
         Shared/CoordinatedGraphics/SimpleViewportController.cpp
 
+        Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
         Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.cpp
         Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
 

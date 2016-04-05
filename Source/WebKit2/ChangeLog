@@ -1,3 +1,35 @@
+2016-04-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [ThreadedCompositor] Move CompositingRunLoop class into a separate file
+        https://bugs.webkit.org/show_bug.cgi?id=156170
+
+        Reviewed by Michael Catanzaro.
+
+        Move the CompositingRunLoop class from the ThreadedCompositor.cpp file
+        into its own implementation file, with the class declaration placed
+        into the accompanying header file. This follows the general rule of
+        keeping different class implementations in separate files.
+
+        No change in behavior, just refactoring.
+
+        * PlatformGTK.cmake:
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp: Added.
+        (WebKit::CompositingRunLoop::CompositingRunLoop):
+        (WebKit::CompositingRunLoop::callOnCompositingRunLoop):
+        (WebKit::CompositingRunLoop::setUpdateTimer):
+        (WebKit::CompositingRunLoop::stopUpdateTimer):
+        (WebKit::CompositingRunLoop::updateTimerFired):
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h: Added.
+        (WebKit::CompositingRunLoop::runLoop):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::CompositingRunLoop::CompositingRunLoop): Deleted.
+        (WebKit::CompositingRunLoop::callOnCompositingRunLoop): Deleted.
+        (WebKit::CompositingRunLoop::setUpdateTimer): Deleted.
+        (WebKit::CompositingRunLoop::stopUpdateTimer): Deleted.
+        (WebKit::CompositingRunLoop::runLoop): Deleted.
+        (WebKit::CompositingRunLoop::updateTimerFired): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2016-04-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Dump blobs to disk before storing them in an object store.
