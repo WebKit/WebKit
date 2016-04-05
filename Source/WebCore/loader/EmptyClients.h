@@ -468,6 +468,7 @@ public:
     void willWriteSelectionToPasteboard(Range*) override { }
     void didWriteSelectionToPasteboard() override { }
     void getClientPasteboardDataForRange(Range*, Vector<String>&, Vector<RefPtr<SharedBuffer>>&) override { }
+    void requestCandidatesForSelection(const VisibleSelection&) override { }
 
     void registerUndoStep(PassRefPtr<UndoStep>) override;
     void registerRedoStep(PassRefPtr<UndoStep>) override;
