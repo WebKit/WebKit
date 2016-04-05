@@ -1,3 +1,15 @@
+2016-04-05  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [Curl][Soup] Fix the build after r199039
+        https://bugs.webkit.org/show_bug.cgi?id=156229 
+
+        Reviewed by Žan Doberšek.
+
+        * platform/network/curl/SocketStreamHandle.h:
+        (WebCore::SocketStreamHandle::create):
+        * platform/network/soup/SocketStreamHandle.h:
+        (WebCore::SocketStreamHandle::create):
+
 2016-04-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Guard showGraphicsLayerTree() with ENABLE(TREE_DEBUGGING)

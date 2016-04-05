@@ -50,7 +50,7 @@ namespace WebCore {
 
     class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
     public:
-        static PassRefPtr<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client, NetworkingContext&) { return adoptRef(new SocketStreamHandle(url, client)); }
+        static PassRefPtr<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client, NetworkingContext&, bool) { return adoptRef(new SocketStreamHandle(url, client)); }
         static PassRefPtr<SocketStreamHandle> create(GSocketConnection* socketConnection, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(socketConnection, client)); }
 
         virtual ~SocketStreamHandle();
