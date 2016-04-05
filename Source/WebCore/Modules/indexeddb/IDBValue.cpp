@@ -28,10 +28,24 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "SerializedScriptValue.h"
+
 namespace WebCore {
 
 IDBValue::IDBValue()
 {
+}
+
+IDBValue::IDBValue(const SerializedScriptValue& scriptValue)
+    : m_data(ThreadSafeDataBuffer::copyVector(scriptValue.data()))
+{
+}
+
+IDBValue IDBValue::isolatedCopy() const
+{
+    IDBValue result;
+    result.m_data = m_data;
+    return result;
 }
 
 } // namespace WebCore

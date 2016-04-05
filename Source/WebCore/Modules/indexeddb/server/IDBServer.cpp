@@ -238,7 +238,7 @@ void IDBServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectSt
     transaction->deleteIndex(requestData, objectStoreIdentifier, indexName);
 }
 
-void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBServer::putOrAdd");
 
@@ -246,7 +246,7 @@ void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& ke
     if (!transaction)
         return;
 
-    transaction->putOrAdd(requestData, keyData, valueData, overwriteMode);
+    transaction->putOrAdd(requestData, keyData, value, overwriteMode);
 }
 
 void IDBServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)

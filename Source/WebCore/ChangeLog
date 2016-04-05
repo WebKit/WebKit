@@ -1,3 +1,55 @@
+2016-04-05  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Replace use of SerializedScriptValue with IDBValue.
+        https://bugs.webkit.org/show_bug.cgi?id=156242
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No change in behavior).
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::putOrAddOnServer):
+
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+        (WebCore::IDBValue::isolatedCopy):
+        * Modules/indexeddb/IDBValue.h:
+        (WebCore::IDBValue::data):
+        (WebCore::IDBValue::encode):
+        (WebCore::IDBValue::decode):
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::putOrAdd):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::putOrAdd):
+        * Modules/indexeddb/server/IDBServer.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::putOrAdd):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::putOrAdd):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::IDBValue>::copy):
+        * platform/CrossThreadCopier.h:
+
+        * platform/ThreadSafeDataBuffer.h:
+        (WebCore::ThreadSafeDataBuffer::encode):
+        (WebCore::ThreadSafeDataBuffer::decode):
+
 2016-04-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Avoid context save/restore in GraphicsContext::drawNativeImage 

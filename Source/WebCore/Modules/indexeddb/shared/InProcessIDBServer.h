@@ -65,7 +65,7 @@ public:
     void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) final;
     void createIndex(const IDBRequestData&, const IDBIndexInfo&) final;
     void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) final;
-    void putOrAdd(const IDBRequestData&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode) final;
+    void putOrAdd(const IDBRequestData&, IDBKey*, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode) final;
     void getRecord(const IDBRequestData&, const IDBKeyRangeData&) final;
     void getCount(const IDBRequestData&, const IDBKeyRangeData&) final;
     void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) final;

@@ -35,6 +35,7 @@
 #include "IDBOpenDBRequest.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
+#include "IDBValue.h"
 #include "Logging.h"
 #include <wtf/RunLoop.h>
 
@@ -287,14 +288,13 @@ void InProcessIDBServer::deleteIndex(const IDBRequestData& requestData, uint64_t
     });
 }
 
-void InProcessIDBServer::putOrAdd(const IDBRequestData& requestData, IDBKey* key, SerializedScriptValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void InProcessIDBServer::putOrAdd(const IDBRequestData& requestData, IDBKey* key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     RefPtr<InProcessIDBServer> self(this);
     IDBKeyData keyData(key);
-    auto valueData = ThreadSafeDataBuffer::copyVector(value.data());
 
-    RunLoop::current().dispatch([this, self, requestData, keyData, valueData, overwriteMode] {
-        m_server->putOrAdd(requestData, keyData, valueData, overwriteMode);
+    RunLoop::current().dispatch([this, self, requestData, keyData, value, overwriteMode] {
+        m_server->putOrAdd(requestData, keyData, value, overwriteMode);
     });
 }
 

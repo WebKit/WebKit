@@ -54,7 +54,7 @@ public:
     void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier) final;
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&) final;
     void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) final;
-    void putOrAdd(const WebCore::IDBRequestData&, WebCore::IDBKey*, WebCore::SerializedScriptValue&, const WebCore::IndexedDB::ObjectStoreOverwriteMode) final;
+    void putOrAdd(const WebCore::IDBRequestData&, WebCore::IDBKey*, const WebCore::IDBValue&, const WebCore::IndexedDB::ObjectStoreOverwriteMode) final;
     void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) final;
     void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) final;
     void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) final;

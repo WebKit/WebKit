@@ -1,3 +1,19 @@
+2016-04-05  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Replace use of SerializedScriptValue with IDBValue.
+        https://bugs.webkit.org/show_bug.cgi?id=156242
+
+        Reviewed by Alex Christensen.
+
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::putOrAdd):
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in:
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::putOrAdd):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+
 2016-04-05  Antoine Quint  <graouts@apple.com>
 
         [WebGL2] Turn the ENABLE_WEBGL2 flag on

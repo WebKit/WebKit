@@ -34,6 +34,7 @@
 #include "WebIDBConnectionToServerMessages.h"
 #include <WebCore/IDBError.h>
 #include <WebCore/IDBResultData.h>
+#include <WebCore/IDBValue.h>
 #include <WebCore/ThreadSafeDataBuffer.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 
@@ -214,7 +215,7 @@ void WebIDBConnectionToClient::deleteIndex(const IDBRequestData& request, uint64
     DatabaseProcess::singleton().idbServer().deleteIndex(request, objectStoreIdentifier, name);
 }
 
-void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDBKeyData& key, const IPC::DataReference& data, unsigned overwriteMode)
+void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDBKeyData& key, const IDBValue& value, unsigned overwriteMode)
 {
     if (overwriteMode != static_cast<unsigned>(IndexedDB::ObjectStoreOverwriteMode::NoOverwrite)
         && overwriteMode != static_cast<unsigned>(IndexedDB::ObjectStoreOverwriteMode::Overwrite)
@@ -225,9 +226,8 @@ void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDB
     }
 
     IndexedDB::ObjectStoreOverwriteMode mode = static_cast<IndexedDB::ObjectStoreOverwriteMode>(overwriteMode);
-    auto buffer = ThreadSafeDataBuffer::copyVector(data.vector());
 
-    DatabaseProcess::singleton().idbServer().putOrAdd(request, key, buffer, mode);
+    DatabaseProcess::singleton().idbServer().putOrAdd(request, key, value, mode);
 }
 
 void WebIDBConnectionToClient::getRecord(const IDBRequestData& request, const IDBKeyRangeData& range)

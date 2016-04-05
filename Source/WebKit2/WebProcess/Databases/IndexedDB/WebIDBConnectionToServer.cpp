@@ -44,6 +44,7 @@
 #include <WebCore/IDBResourceIdentifier.h>
 #include <WebCore/IDBResultData.h>
 #include <WebCore/IDBTransactionInfo.h>
+#include <WebCore/IDBValue.h>
 
 using namespace WebCore;
 
@@ -128,11 +129,10 @@ void WebIDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, ui
     send(Messages::WebIDBConnectionToClient::DeleteIndex(requestData, objectStoreIdentifier, indexName));
 }
 
-void WebIDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, IDBKey* key, SerializedScriptValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
+void WebIDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, IDBKey* key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
 {
     IDBKeyData keyData(key);
-    IPC::DataReference valueData(value.data());
-    send(Messages::WebIDBConnectionToClient::PutOrAdd(requestData, keyData, valueData, static_cast<unsigned>(mode)));
+    send(Messages::WebIDBConnectionToClient::PutOrAdd(requestData, keyData, value, static_cast<unsigned>(mode)));
 }
 
 void WebIDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& range)

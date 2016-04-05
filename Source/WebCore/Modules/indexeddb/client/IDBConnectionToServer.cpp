@@ -171,7 +171,7 @@ void IDBConnectionToServer::didDeleteIndex(const IDBResultData& resultData)
     completeOperation(resultData);
 }
 
-void IDBConnectionToServer::putOrAdd(TransactionOperation& operation, IDBKey* key, SerializedScriptValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void IDBConnectionToServer::putOrAdd(TransactionOperation& operation, IDBKey* key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBConnectionToServer::putOrAdd");
 

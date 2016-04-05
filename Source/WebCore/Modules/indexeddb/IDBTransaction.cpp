@@ -42,6 +42,7 @@
 #include "IDBOpenDBRequest.h"
 #include "IDBRequest.h"
 #include "IDBResultData.h"
+#include "IDBValue.h"
 #include "JSDOMWindowBase.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
@@ -868,6 +869,11 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
 
     ASSERT(!isReadOnly());
     ASSERT(value);
+
+    if (!value->hasBlobURLs()) {
+        serverConnection().putOrAdd(operation, key.get(), *value, overwriteMode);
+        return;
+    }
 
     RefPtr<IDBTransaction> protector(this);
     RefPtr<IDBClient::TransactionOperation> operationRef(&operation);

@@ -26,12 +26,43 @@
 #pragma once
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ThreadSafeDataBuffer.h"
+
 namespace WebCore {
+
+class SerializedScriptValue;
 
 class IDBValue {
 public:
-    IDBValue();
+    WEBCORE_EXPORT IDBValue();
+    IDBValue(const SerializedScriptValue&);
+
+    IDBValue isolatedCopy() const;
+
+    const ThreadSafeDataBuffer& data() const { return m_data; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBValue&);
+
+private:
+    ThreadSafeDataBuffer m_data;
 };
+
+
+template<class Encoder>
+void IDBValue::encode(Encoder& encoder) const
+{
+    encoder << m_data;
+}
+
+template<class Decoder>
+bool IDBValue::decode(Decoder& decoder, IDBValue& result)
+{
+    if (!decoder.decode(result.m_data))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 

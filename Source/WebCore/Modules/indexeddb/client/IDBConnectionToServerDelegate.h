@@ -40,7 +40,7 @@ class IDBObjectStoreInfo;
 class IDBRequestData;
 class IDBResourceIdentifier;
 class IDBTransactionInfo;
-class SerializedScriptValue;
+class IDBValue;
 
 namespace IndexedDB {
 enum class ObjectStoreOverwriteMode;
@@ -65,7 +65,7 @@ public:
     virtual void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) = 0;
     virtual void createIndex(const IDBRequestData&, const IDBIndexInfo&) = 0;
     virtual void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) = 0;
-    virtual void putOrAdd(const IDBRequestData&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode) = 0;
+    virtual void putOrAdd(const IDBRequestData&, IDBKey*, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode) = 0;
     virtual void getRecord(const IDBRequestData&, const IDBKeyRangeData&) = 0;
     virtual void getCount(const IDBRequestData&, const IDBKeyRangeData&) = 0;
     virtual void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) = 0;

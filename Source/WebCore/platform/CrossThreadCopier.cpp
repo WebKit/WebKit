@@ -54,6 +54,7 @@
 #include "IDBObjectStoreInfo.h"
 #include "IDBResourceIdentifier.h"
 #include "IDBTransactionInfo.h"
+#include "IDBValue.h"
 #endif
 
 namespace WebCore {
@@ -163,6 +164,11 @@ CrossThreadCopierBase<false, false, IDBIndexInfo>::Type CrossThreadCopierBase<fa
 CrossThreadCopierBase<false, false, IDBCursorInfo>::Type CrossThreadCopierBase<false, false, IDBCursorInfo>::copy(const IDBCursorInfo& info)
 {
     return info.isolatedCopy();
+}
+
+CrossThreadCopierBase<false, false, IDBValue>::Type CrossThreadCopierBase<false, false, IDBValue>::copy(const IDBValue& value)
+{
+    return value.isolatedCopy();
 }
 
 #endif // ENABLE(INDEXED_DATABASE)

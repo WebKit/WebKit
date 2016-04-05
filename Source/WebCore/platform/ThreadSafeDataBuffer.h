@@ -71,6 +71,9 @@ public:
         return m_impl ? &m_impl->m_data : nullptr;
     }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, ThreadSafeDataBuffer&);
+
 private:
     explicit ThreadSafeDataBuffer(Vector<uint8_t>& data, ThreadSafeDataBufferImpl::AdoptVectorTag tag)
     {
@@ -84,6 +87,34 @@ private:
 
     RefPtr<ThreadSafeDataBufferImpl> m_impl;
 };
+
+template<class Encoder>
+void ThreadSafeDataBuffer::encode(Encoder& encoder) const
+{
+    bool hasData = m_impl;
+    encoder << hasData;
+
+    if (hasData)
+        encoder << m_impl->m_data;
+}
+
+template<class Decoder>
+bool ThreadSafeDataBuffer::decode(Decoder& decoder, ThreadSafeDataBuffer& result)
+{
+    bool hasData;
+    if (!decoder.decode(hasData))
+        return false;
+
+    if (hasData) {
+        Vector<uint8_t> data;
+        if (!decoder.decode(data))
+            return false;
+
+        result = ThreadSafeDataBuffer::adoptVector(data);
+    }
+
+    return true;
+}
 
 } // namespace WebCore
 

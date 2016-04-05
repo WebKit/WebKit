@@ -227,6 +227,12 @@ namespace WebCore {
         static Type copy(const IDBCursorInfo&);
     };
 
+    class IDBValue;
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBValue> {
+        typedef IDBValue Type;
+        static Type copy(const IDBValue&);
+    };
+
 #endif
 
     template<typename T>

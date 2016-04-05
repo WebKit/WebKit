@@ -39,6 +39,7 @@ class IDBKeyData;
 class IDBObjectStoreInfo;
 class IDBRequestData;
 class IDBTransactionInfo;
+class IDBValue;
 class SerializedScriptValue;
 struct IDBKeyRangeData;
 }
@@ -90,7 +91,7 @@ public:
     void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier);
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
     void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
-    void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const IPC::DataReference& value, unsigned overwriteMode);
+    void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, unsigned overwriteMode);
     void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
     void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
     void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
