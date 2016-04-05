@@ -238,7 +238,7 @@ void TextureMapperLayer::setAnimatedFilters(const FilterOperations& filters)
     m_currentFilters = filters;
 }
 
-static void resolveOverlaps(Region newRegion, Region& overlapRegion, Region& nonOverlapRegion)
+static void resolveOverlaps(Region& newRegion, Region& overlapRegion, Region& nonOverlapRegion)
 {
     Region newOverlapRegion(newRegion);
     newOverlapRegion.intersect(nonOverlapRegion);

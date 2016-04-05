@@ -1,3 +1,16 @@
+2016-04-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] resolveOverlaps() should be passed-in the first Region parameter via a reference
+        https://bugs.webkit.org/show_bug.cgi?id=156158
+
+        Reviewed by Antonio Gomes.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::resolveOverlaps): Don't copy the Region object that's passed through
+        the first parameter by accepting a reference to the object instead. This does
+        modify the passed-in object, but these modifications don't have any effect on
+        any state via the call sites in TextureMapperLayer::computeOverlapRegions().
+
 2016-04-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Dump blobs to disk before storing them in an object store.
