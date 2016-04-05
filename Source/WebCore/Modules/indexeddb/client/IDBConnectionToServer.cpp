@@ -171,12 +171,12 @@ void IDBConnectionToServer::didDeleteIndex(const IDBResultData& resultData)
     completeOperation(resultData);
 }
 
-void IDBConnectionToServer::putOrAdd(TransactionOperation& operation, RefPtr<IDBKey>& key, RefPtr<SerializedScriptValue>& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void IDBConnectionToServer::putOrAdd(TransactionOperation& operation, IDBKey* key, SerializedScriptValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBConnectionToServer::putOrAdd");
 
     saveOperation(operation);
-    m_delegate->putOrAdd(IDBRequestData(operation), key.get(), *value, overwriteMode);
+    m_delegate->putOrAdd(IDBRequestData(operation), key, value, overwriteMode);
 }
 
 void IDBConnectionToServer::didPutOrAdd(const IDBResultData& resultData)

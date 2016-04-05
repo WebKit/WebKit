@@ -117,6 +117,11 @@ uint64_t NetworkBlobRegistry::blobSize(NetworkConnectionToWebProcess* connection
     return blobRegistry().blobSize(url);
 }
 
+void NetworkBlobRegistry::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, std::function<void(const Vector<String>&)> completionHandler)
+{
+    blobRegistry().writeBlobsToTemporaryFiles(blobURLs, completionHandler);
+}
+
 void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebProcess* connection)
 {
     if (!m_blobsForConnection.contains(connection))

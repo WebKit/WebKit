@@ -45,5 +45,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RegisterBlobURLForSlice(WebCore::URL url, WebCore::URL srcURL, int64_t start, int64_t end)
     UnregisterBlobURL(WebCore::URL url)
     BlobSize(WebCore::URL url) -> (uint64_t resultSize)
+    WriteBlobsToTemporaryFiles(Vector<String> blobURLs, uint64_t requestIdentifier)
+
     EnsureLegacyPrivateBrowsingSession()
 }

@@ -850,6 +850,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBRequest.cpp
     Modules/indexeddb/IDBRequestCompletionEvent.cpp
     Modules/indexeddb/IDBTransaction.cpp
+    Modules/indexeddb/IDBValue.cpp
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
 

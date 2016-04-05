@@ -38,6 +38,7 @@ public:
     void unregisterBlobURL(const WebCore::URL&) override;
     void registerBlobURLForSlice(const WebCore::URL&, const WebCore::URL& srcURL, long long start, long long end) override;
     unsigned long long blobSize(const WebCore::URL&) override;
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, std::function<void (const Vector<String>& filePaths)> completionHandler) override;
 };
 
 }

@@ -58,6 +58,8 @@ public:
 
     void didReceiveNetworkProcessConnectionMessage(IPC::Connection&, IPC::MessageDecoder&);
 
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, std::function<void (const Vector<String>& filePaths)> completionHandler);
+
 private:
     NetworkProcessConnection(IPC::Connection::Identifier);
 
@@ -69,6 +71,8 @@ private:
     IPC::ProcessType localProcessType() override { return IPC::ProcessType::Web; }
     IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Network; }
 
+    void didWriteBlobsToTemporaryFiles(uint64_t requestIdentifier, const Vector<String>& filenames);
+
 #if ENABLE(SHAREABLE_RESOURCE)
     // Message handlers.
     void didCacheResource(const WebCore::ResourceRequest&, const ShareableResource::Handle&, WebCore::SessionID);
@@ -76,6 +80,8 @@ private:
 
     // The connection from the web process to the network process.
     RefPtr<IPC::Connection> m_connection;
+
+    HashMap<uint64_t, std::function<void (const Vector<String>&)>> m_writeBlobToFileCompletionHandlers;
 };
 
 } // namespace WebKit

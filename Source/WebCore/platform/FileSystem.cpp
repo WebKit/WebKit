@@ -27,6 +27,7 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include "ScopeGuard.h"
 #include <wtf/HexNumber.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -127,6 +128,37 @@ String encodeForFileName(const String& inputString)
     }
 
     return result.toString();
+}
+
+bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& target)
+{
+    auto source = openFile(path, OpenForRead);
+
+    if (!isHandleValid(source))
+        return false;
+
+    static int bufferSize = 1 << 19;
+    Vector<char> buffer(bufferSize);
+
+    ScopeGuard fileCloser([source]() {
+        PlatformFileHandle handle = source;
+        closeFile(handle);
+    });
+
+    do {
+        int readBytes = readFromFile(source, buffer.data(), bufferSize);
+        
+        if (readBytes < 0)
+            return false;
+
+        if (writeToFile(target, buffer.data(), readBytes) != readBytes)
+            return false;
+
+        if (readBytes < bufferSize)
+            return true;
+    } while (true);
+
+    ASSERT_NOT_REACHED();
 }
 
 #if !PLATFORM(MAC)

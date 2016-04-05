@@ -30,11 +30,13 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
+#include "NetworkProcessConnectionMessages.h"
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkResourceLoaderMessages.h"
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PingHandle.h>
 #include <WebCore/PlatformCookieJar.h>
@@ -277,6 +279,28 @@ void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)
 void NetworkConnectionToWebProcess::blobSize(const URL& url, uint64_t& resultSize)
 {
     resultSize = NetworkBlobRegistry::singleton().blobSize(this, url);
+}
+
+void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, uint64_t requestIdentifier)
+{
+    RefPtr<NetworkConnectionToWebProcess> protector(this);
+
+    Vector<RefPtr<WebCore::BlobDataFileReference>> fileReferences;
+    for (auto& url : blobURLs)
+        fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(*this, { ParsedURLString, url }));
+
+    for (auto& file : fileReferences)
+        file->prepareForFileAccess();
+
+    NetworkBlobRegistry::singleton().writeBlobsToTemporaryFiles(blobURLs, [this, protector, requestIdentifier, fileReferences](const Vector<String>& fileNames) {
+        for (auto& file : fileReferences)
+            file->revokeFileAccess();
+
+        if (!m_connection || !m_connection->isValid())
+            return;
+
+        m_connection->send(Messages::NetworkProcessConnection::DidWriteBlobsToTemporaryFiles(requestIdentifier, fileNames), 0);
+    });
 }
 
 void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()

@@ -67,6 +67,8 @@ private:
 
     unsigned long long blobSize(const URL&) override;
 
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, std::function<void (const Vector<String>& filePaths)> completionHandler) override;
+
     HashMap<String, RefPtr<BlobData>> m_blobs;
 };
 

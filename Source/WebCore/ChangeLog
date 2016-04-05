@@ -1,3 +1,46 @@
+2016-04-04  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Dump blobs to disk before storing them in an object store.
+        https://bugs.webkit.org/show_bug.cgi?id=156068
+        
+        Reviewed by Alex Christensen.
+
+        No new tests (Under development, no observable change in behavior yet).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::putOrAddOnServer):
+        
+        * Modules/indexeddb/IDBValue.cpp: Copied from Source/WebCore/platform/ScopeGuard.h.
+        (WebCore::IDBValue::IDBValue):
+        * Modules/indexeddb/IDBValue.h: Copied from Source/WebCore/platform/ScopeGuard.h.
+        
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::putOrAdd):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        
+        * Modules/indexeddb/client/TransactionOperation.h:
+        
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+        (WebCore::SerializedScriptValue::addBlobURL): Deleted.
+        * bindings/js/SerializedScriptValue.h:
+        
+        * platform/FileSystem.cpp:
+        (WebCore::appendFileContentsToFileHandle):
+        * platform/FileSystem.h:
+        
+        * platform/ScopeGuard.h:
+        
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::blobUtilityQueue):
+        (WebCore::BlobRegistryImpl::writeBlobsToTemporaryFiles):
+        * platform/network/BlobRegistryImpl.h:
+
 2016-04-04  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Crash when playing <video> after playing Web Audio

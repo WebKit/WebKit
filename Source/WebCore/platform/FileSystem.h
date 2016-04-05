@@ -176,6 +176,11 @@ bool truncateFile(PlatformFileHandle, long long offset);
 WEBCORE_EXPORT int writeToFile(PlatformFileHandle, const char* data, int length);
 // Returns number of bytes actually written if successful, -1 otherwise.
 int readFromFile(PlatformFileHandle, char* data, int length);
+
+// Appends the contents of the file found at 'path' to the open PlatformFileHandle.
+// Returns true if the write was successful, false if it was not.
+bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle&);
+
 #if USE(FILE_LOCK)
 bool lockFile(PlatformFileHandle, FileLockMode);
 bool unlockFile(PlatformFileHandle);

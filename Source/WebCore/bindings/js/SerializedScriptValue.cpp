@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "SerializedScriptValue.h"
 
 #include "Blob.h"
+#include "BlobRegistry.h"
 #include "CryptoKeyAES.h"
 #include "CryptoKeyDataOctetSequence.h"
 #include "CryptoKeyDataRSAComponents.h"
@@ -36,6 +37,7 @@
 #include "ExceptionCode.h"
 #include "File.h"
 #include "FileList.h"
+#include "IDBValue.h"
 #include "ImageData.h"
 #include "JSBlob.h"
 #include "JSCryptoKey.h"
@@ -75,6 +77,7 @@
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/TypedArrays.h>
 #include <wtf/HashTraits.h>
+#include <wtf/MainThread.h>
 #include <wtf/Vector.h>
 
 using namespace JSC;
@@ -2582,15 +2585,6 @@ error:
     return std::make_pair(JSValue(), ValidationError);
 }
 
-void SerializedScriptValue::addBlobURL(const String& string)
-{
-    m_blobURLs.append(Vector<uint16_t>());
-    m_blobURLs.last().reserveCapacity(string.length());
-    for (size_t i = 0; i < string.length(); i++)
-        m_blobURLs.last().append(string.characterAt(i));
-    m_blobURLs.last().resize(m_blobURLs.last().size());
-}
-
 SerializedScriptValue::~SerializedScriptValue()
 {
 }
@@ -2600,19 +2594,15 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer)
 {
 }
 
-SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, const Vector<String>& blobURLs)
-    : m_data(WTFMove(buffer))
-{
-    for (auto& string : blobURLs)
-        addBlobURL(string);
-}
-
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, const Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray>&& arrayBufferContentsArray)
     : m_data(WTFMove(buffer))
     , m_arrayBufferContentsArray(WTFMove(arrayBufferContentsArray))
 {
-    for (auto& string : blobURLs)
-        addBlobURL(string);
+    // Since this SerializedScriptValue is meant to be passed between threads, its String data members
+    // need to be isolatedCopies so we don't run into thread safety issues for the StringImpls.
+    m_blobURLs.reserveInitialCapacity(blobURLs.size());
+    for (auto& url : blobURLs)
+        m_blobURLs.append(url.isolatedCopy());
 }
 
 std::unique_ptr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(
@@ -2757,4 +2747,20 @@ uint32_t SerializedScriptValue::wireFormatVersion()
     return CurrentVersion;
 }
 
+void SerializedScriptValue::writeBlobsToDiskForIndexedDB(std::function<void (const IDBValue&)> completionHandler)
+{
+    ASSERT(isMainThread());
+
+    if (m_blobURLs.isEmpty()) {
+        completionHandler({ });
+        return;
+    }
+
+    RefPtr<SerializedScriptValue> protector(this);
+    blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler, this, protector](const Vector<String>&) {
+        // FIXME: Return an IDBValue that contains both the SerializedScriptValue data and all blob file data.
+        completionHandler({ });
+    });
 }
+
+} // namespace WebCore

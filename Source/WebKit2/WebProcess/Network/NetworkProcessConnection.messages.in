@@ -26,4 +26,5 @@ messages -> NetworkProcessConnection LegacyReceiver {
     DidCacheResource(WebCore::ResourceRequest request, WebKit::ShareableResource::Handle resource, WebCore::SessionID sessionID)
 #endif
 
+    DidWriteBlobsToTemporaryFiles(uint64_t requestIdentifier, Vector<String> filenames)
 }

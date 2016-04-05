@@ -72,10 +72,33 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
 {
     // The NetworkProcess probably crashed.
     WebProcess::singleton().networkProcessConnectionClosed(this);
+
+    Vector<String> dummyFilenames;
+    for (auto handler : m_writeBlobToFileCompletionHandlers.values())
+        handler(dummyFilenames);
+
+    m_writeBlobToFileCompletionHandlers.clear();
 }
 
 void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
+}
+
+void NetworkProcessConnection::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, std::function<void (const Vector<String>& filePaths)> completionHandler)
+{
+    static uint64_t writeBlobToFileIdentifier;
+    uint64_t requestIdentifier = ++writeBlobToFileIdentifier;
+
+    m_writeBlobToFileCompletionHandlers.set(requestIdentifier, completionHandler);
+
+    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFiles(blobURLs, requestIdentifier), 0);
+}
+
+void NetworkProcessConnection::didWriteBlobsToTemporaryFiles(uint64_t requestIdentifier, const Vector<String>& filenames)
+{
+    auto handler = m_writeBlobToFileCompletionHandlers.take(requestIdentifier);
+    if (handler)
+        handler(filenames);
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)

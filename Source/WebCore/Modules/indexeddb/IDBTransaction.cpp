@@ -867,8 +867,14 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
     LOG(IndexedDB, "IDBTransaction::putOrAddOnServer");
 
     ASSERT(!isReadOnly());
+    ASSERT(value);
 
-    serverConnection().putOrAdd(operation, key, value, overwriteMode);
+    RefPtr<IDBTransaction> protector(this);
+    RefPtr<IDBClient::TransactionOperation> operationRef(&operation);
+    value->writeBlobsToDiskForIndexedDB([protector, this, operationRef, key, value, overwriteMode](const IDBValue&) {
+        // FIXME: Send the passed in IDBValue to the IDB server instead of the SerializedScriptValue.
+        serverConnection().putOrAdd(*operationRef, key.get(), *value, overwriteMode);
+    });
 }
 
 void IDBTransaction::didPutOrAddOnServer(IDBRequest& request, const IDBResultData& resultData)

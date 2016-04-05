@@ -77,7 +77,7 @@ public:
     void deleteIndex(TransactionOperation&, uint64_t objectStoreIdentifier, const String& indexName);
     WEBCORE_EXPORT void didDeleteIndex(const IDBResultData&);
 
-    void putOrAdd(TransactionOperation&, RefPtr<IDBKey>&, RefPtr<SerializedScriptValue>&, const IndexedDB::ObjectStoreOverwriteMode);
+    void putOrAdd(TransactionOperation&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode);
     WEBCORE_EXPORT void didPutOrAdd(const IDBResultData&);
 
     void getRecord(TransactionOperation&, const IDBKeyRangeData&);

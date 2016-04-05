@@ -22,44 +22,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef ScopeGuard_h
-#define ScopeGuard_h
 
-#include <functional>
+#pragma once
+#if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class ScopeGuard {
+class IDBValue {
 public:
-    ScopeGuard()
-    {
-    }
-
-    ScopeGuard(std::function<void()> function)
-        : m_function(WTFMove(function))
-    {
-    }
-
-    ~ScopeGuard()
-    {
-        if (m_function)
-            m_function();
-    }
-
-    void enable(std::function<void()> function)
-    {
-        m_function = WTFMove(function);
-    }
-
-    void disable()
-    {
-        m_function = nullptr;
-    }
-
-private:
-    std::function<void()> m_function { nullptr };
+    IDBValue();
 };
 
 } // namespace WebCore
 
-#endif // ScopeGuard_h
+#endif // ENABLE(INDEXED_DATABASE)
