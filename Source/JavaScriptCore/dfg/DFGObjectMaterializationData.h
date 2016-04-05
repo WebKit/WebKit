@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGPromotedHeapLocation.h"
 #include <limits.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
@@ -35,38 +36,11 @@
 
 namespace JSC { namespace DFG {
 
-struct PhantomPropertyValue {
-    PhantomPropertyValue()
-        : m_identifierNumber(UINT_MAX)
-    {
-    }
-    
-    PhantomPropertyValue(unsigned identifierNumber)
-        : m_identifierNumber(identifierNumber)
-    {
-    }
-    
-    unsigned m_identifierNumber;
-    
-    bool operator==(const PhantomPropertyValue& other) const
-    {
-        return m_identifierNumber == other.m_identifierNumber;
-    }
-    
-    void dump(PrintStream&) const;
-};
-
 struct ObjectMaterializationData {
     // Determines the meaning of the passed nodes.
-    Vector<PhantomPropertyValue> m_properties;
+    Vector<PromotedLocationDescriptor> m_properties;
     
     void dump(PrintStream&) const;
-    
-    // The fraction of my properties that the other data has.
-    float oneWaySimilarityScore(const ObjectMaterializationData&) const;
-    
-    // The minimum of the two possible one-way scores.
-    float similarityScore(const ObjectMaterializationData&) const;
 };
 
 } } // namespace JSC::DFG

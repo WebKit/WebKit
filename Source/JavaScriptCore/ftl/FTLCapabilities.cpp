@@ -228,6 +228,7 @@ inline CapabilityLevel canCompile(Node* node)
     case StringReplace:
     case GetRegExpObjectLastIndex:
     case SetRegExpObjectLastIndex:
+    case RecordRegExpCachedResult:
     case SetFunctionName:
         // These are OK.
         break;

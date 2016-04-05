@@ -1522,6 +1522,9 @@ public:
         if (!input.isAvailableInput(0))
             return offsetNoMatch;
 
+        if (pattern->m_lock)
+            pattern->m_lock->lock();
+        
         for (unsigned i = 0; i < pattern->m_body->m_numSubpatterns + 1; ++i)
             output[i << 1] = offsetNoMatch;
 
@@ -1541,6 +1544,10 @@ public:
         pattern->m_allocator->stopAllocator();
 
         ASSERT((result == JSRegExpMatch) == (output[0] != offsetNoMatch));
+
+        if (pattern->m_lock)
+            pattern->m_lock->unlock();
+        
         return output[0];
     }
 
@@ -1581,13 +1588,13 @@ public:
         m_currentAlternativeIndex = 0;
     }
 
-    std::unique_ptr<BytecodePattern> compile(BumpPointerAllocator* allocator)
+    std::unique_ptr<BytecodePattern> compile(BumpPointerAllocator* allocator, ConcurrentJITLock* lock)
     {
         regexBegin(m_pattern.m_numSubpatterns, m_pattern.m_body->m_callFrameSize, m_pattern.m_body->m_alternatives[0]->onceThrough());
         emitDisjunction(m_pattern.m_body);
         regexEnd();
 
-        return std::make_unique<BytecodePattern>(WTFMove(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator);
+        return std::make_unique<BytecodePattern>(WTFMove(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator, lock);
     }
 
     void checkInput(unsigned count)
@@ -2032,9 +2039,9 @@ private:
     Vector<std::unique_ptr<ByteDisjunction>> m_allParenthesesInfo;
 };
 
-std::unique_ptr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocator* allocator)
+std::unique_ptr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocator* allocator, ConcurrentJITLock* lock)
 {
-    return ByteCompiler(pattern).compile(allocator);
+    return ByteCompiler(pattern).compile(allocator, lock);
 }
 
 unsigned interpret(BytecodePattern* bytecode, const String& input, unsigned start, unsigned* output)

@@ -1955,6 +1955,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case SetRegExpObjectLastIndex:
+    case RecordRegExpCachedResult:
         break;
         
     case GetFromArguments:

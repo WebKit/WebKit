@@ -941,6 +941,9 @@ private:
         case SetRegExpObjectLastIndex:
             compileSetRegExpObjectLastIndex();
             break;
+        case RecordRegExpCachedResult:
+            compileRecordRegExpCachedResult();
+            break;
 
         case PhantomLocal:
         case LoopHint:
@@ -3724,32 +3727,8 @@ private:
             
             m_out.store32(publicLength, butterfly, m_heaps.Butterfly_publicLength);
             m_out.store32(vectorLength, butterfly, m_heaps.Butterfly_vectorLength);
-            
-            if (hasDouble(m_node->indexingType())) {
-                LBasicBlock initLoop = m_out.newBlock();
-                LBasicBlock initDone = m_out.newBlock();
-                
-                ValueFromBlock originalIndex = m_out.anchor(vectorLength);
-                ValueFromBlock originalPointer = m_out.anchor(butterfly);
-                m_out.branch(
-                    m_out.notZero32(vectorLength), unsure(initLoop), unsure(initDone));
-                
-                LBasicBlock initLastNext = m_out.appendTo(initLoop, initDone);
-                LValue index = m_out.phi(m_out.int32, originalIndex);
-                LValue pointer = m_out.phi(m_out.intPtr, originalPointer);
-                
-                m_out.store64(
-                    m_out.constInt64(bitwise_cast<int64_t>(PNaN)),
-                    TypedPointer(m_heaps.indexedDoubleProperties.atAnyIndex(), pointer));
-                
-                LValue nextIndex = m_out.sub(index, m_out.int32One);
-                m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
-                m_out.addIncomingToPhi(pointer, m_out.anchor(m_out.add(pointer, m_out.intPtrEight)));
-                m_out.branch(
-                    m_out.notZero32(nextIndex), unsure(initLoop), unsure(initDone));
-                
-                m_out.appendTo(initDone, initLastNext);
-            }
+
+            initializeArrayElements(m_node->indexingType(), vectorLength, butterfly);
             
             ValueFromBlock fastResult = m_out.anchor(object);
             m_out.jump(continuation);
@@ -6294,11 +6273,21 @@ private:
         // Lower the values first, to avoid creating values inside a control flow diamond.
         
         Vector<LValue, 8> values;
-        for (unsigned i = 0; i < data.m_properties.size(); ++i)
-            values.append(lowJSValue(m_graph.varArgChild(m_node, 1 + i)));
+        for (unsigned i = 0; i < data.m_properties.size(); ++i) {
+            Edge edge = m_graph.varArgChild(m_node, 1 + i);
+            switch (data.m_properties[i].kind()) {
+            case PublicLengthPLoc:
+            case VectorLengthPLoc:
+                values.append(lowInt32(edge));
+                break;
+            default:
+                values.append(lowJSValue(edge));
+                break;
+            }
+        }
         
         const StructureSet& set = m_node->structureSet();
-        
+
         Vector<LBasicBlock, 1> blocks(set.size());
         for (unsigned i = set.size(); i--;)
             blocks[i] = m_out.newBlock();
@@ -6323,21 +6312,51 @@ private:
             LValue object;
             LValue butterfly;
             
-            if (structure->outOfLineCapacity()) {
+            if (structure->outOfLineCapacity() || hasIndexedProperties(structure->indexingType())) {
                 size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
                 MarkedAllocator* allocator = &vm().heap.allocatorForObjectWithoutDestructor(allocationSize);
+
+                bool hasIndexingHeader = hasIndexedProperties(structure->indexingType());
+                unsigned indexingHeaderSize = 0;
+                LValue indexingPayloadSizeInBytes = m_out.intPtrZero;
+                LValue vectorLength = m_out.int32Zero;
+                LValue publicLength = m_out.int32Zero;
+                if (hasIndexingHeader) {
+                    indexingHeaderSize = sizeof(IndexingHeader);
+                    for (unsigned i = data.m_properties.size(); i--;) {
+                        PromotedLocationDescriptor descriptor = data.m_properties[i];
+                        switch (descriptor.kind()) {
+                        case PublicLengthPLoc:
+                            publicLength = values[i];
+                            break;
+                        case VectorLengthPLoc:
+                            vectorLength = values[i];
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                    indexingPayloadSizeInBytes =
+                        m_out.mul(m_out.zeroExtPtr(vectorLength), m_out.intPtrEight);
+                }
+
+                LValue butterflySize = m_out.add(
+                    m_out.constIntPtr(
+                        structure->outOfLineCapacity() * sizeof(JSValue) + indexingHeaderSize),
+                    indexingPayloadSizeInBytes);
                 
                 LBasicBlock slowPath = m_out.newBlock();
                 LBasicBlock continuation = m_out.newBlock();
                 
                 LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
                 
-                LValue endOfStorage = allocateBasicStorageAndGetEnd(
-                    m_out.constIntPtr(structure->outOfLineCapacity() * sizeof(JSValue)),
-                    slowPath);
-                
+                LValue endOfStorage = allocateBasicStorageAndGetEnd(butterflySize, slowPath);
+
                 LValue fastButterflyValue = m_out.add(
-                    m_out.constIntPtr(sizeof(IndexingHeader)), endOfStorage);
+                    m_out.sub(endOfStorage, indexingPayloadSizeInBytes),
+                    m_out.constIntPtr(sizeof(IndexingHeader) - indexingHeaderSize));
+
+                m_out.store32(vectorLength, fastButterflyValue, m_heaps.Butterfly_vectorLength);
                 
                 LValue fastObjectValue = allocateObject(
                     m_out.constIntPtr(allocator), structure, fastButterflyValue, slowPath);
@@ -6348,12 +6367,24 @@ private:
                 
                 m_out.appendTo(slowPath, continuation);
 
-                LValue slowObjectValue = lazySlowPath(
-                    [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                        return createLazyCallGenerator(
-                            operationNewObjectWithButterfly, locations[0].directGPR(),
-                            CCallHelpers::TrustedImmPtr(structure));
-                    });
+                LValue slowObjectValue;
+                if (hasIndexingHeader) {
+                    slowObjectValue = lazySlowPath(
+                        [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                            return createLazyCallGenerator(
+                                operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength,
+                                locations[0].directGPR(), CCallHelpers::TrustedImmPtr(structure),
+                                locations[1].directGPR());
+                        },
+                        vectorLength);
+                } else {
+                    slowObjectValue = lazySlowPath(
+                        [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                            return createLazyCallGenerator(
+                                operationNewObjectWithButterfly, locations[0].directGPR(),
+                                CCallHelpers::TrustedImmPtr(structure));
+                        });
+                }
                 ValueFromBlock slowObject = m_out.anchor(slowObjectValue);
                 ValueFromBlock slowButterfly = m_out.anchor(
                     m_out.loadPtr(slowObjectValue, m_heaps.JSObject_butterfly));
@@ -6364,6 +6395,111 @@ private:
                 
                 object = m_out.phi(m_out.intPtr, fastObject, slowObject);
                 butterfly = m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
+
+                m_out.store32(publicLength, butterfly, m_heaps.Butterfly_publicLength);
+
+                initializeArrayElements(structure->indexingType(), vectorLength, butterfly);
+
+                HashMap<int32_t, LValue, DefaultHash<int32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<int32_t>> indexMap;
+                Vector<int32_t> indices;
+                for (unsigned i = data.m_properties.size(); i--;) {
+                    PromotedLocationDescriptor descriptor = data.m_properties[i];
+                    if (descriptor.kind() != IndexedPropertyPLoc)
+                        continue;
+                    int32_t index = static_cast<int32_t>(descriptor.info());
+                    
+                    auto result = indexMap.add(index, values[i]);
+                    DFG_ASSERT(m_graph, m_node, result); // Duplicates are illegal.
+
+                    indices.append(index);
+                }
+
+                if (!indices.isEmpty()) {
+                    std::sort(indices.begin(), indices.end());
+                    
+                    Vector<LBasicBlock> blocksWithStores(indices.size());
+                    Vector<LBasicBlock> blocksWithChecks(indices.size());
+                    
+                    for (unsigned i = indices.size(); i--;) {
+                        blocksWithStores[i] = m_out.newBlock();
+                        blocksWithChecks[i] = m_out.newBlock(); // blocksWithChecks[0] is the continuation.
+                    }
+
+                    LBasicBlock indexLastNext = m_out.m_nextBlock;
+                    
+                    for (unsigned i = indices.size(); i--;) {
+                        int32_t index = indices[i];
+                        LValue value = indexMap.get(index);
+                        
+                        m_out.branch(
+                            m_out.below(m_out.constInt32(index), publicLength),
+                            unsure(blocksWithStores[i]), unsure(blocksWithChecks[i]));
+
+                        m_out.appendTo(blocksWithStores[i], blocksWithChecks[i]);
+
+                        // This has to type-check and convert its inputs, but it cannot do so in a
+                        // way that updates AI. That's a bit annoying, but if you think about how
+                        // sinking works, it's actually not a bad thing. We are virtually guaranteed
+                        // that these type checks will not fail, since the type checks that guarded
+                        // the original stores to the array are still somewhere above this point.
+                        Output::StoreType storeType;
+                        IndexedAbstractHeap* heap;
+                        switch (structure->indexingType()) {
+                        case ALL_INT32_INDEXING_TYPES:
+                            // FIXME: This could use the proven type if we had the Edge for the
+                            // value. https://bugs.webkit.org/show_bug.cgi?id=155311
+                            speculate(BadType, noValue(), nullptr, isNotInt32(value));
+                            storeType = Output::Store64;
+                            heap = &m_heaps.indexedInt32Properties;
+                            break;
+
+                        case ALL_DOUBLE_INDEXING_TYPES: {
+                            // FIXME: If the source is ValueRep, we should avoid emitting any
+                            // checks. We could also avoid emitting checks if we had the Edge of
+                            // this value. https://bugs.webkit.org/show_bug.cgi?id=155311
+
+                            LBasicBlock intCase = m_out.newBlock();
+                            LBasicBlock doubleCase = m_out.newBlock();
+                            LBasicBlock continuation = m_out.newBlock();
+
+                            m_out.branch(isInt32(value), unsure(intCase), unsure(doubleCase));
+
+                            LBasicBlock lastNext = m_out.appendTo(intCase, doubleCase);
+
+                            ValueFromBlock intResult =
+                                m_out.anchor(m_out.intToDouble(unboxInt32(value)));
+                            m_out.jump(continuation);
+
+                            m_out.appendTo(doubleCase, continuation);
+
+                            speculate(BadType, noValue(), nullptr, isNumber(value));
+                            ValueFromBlock doubleResult = m_out.anchor(unboxDouble(value));
+                            m_out.jump(continuation);
+
+                            m_out.appendTo(continuation, lastNext);
+                            value = m_out.phi(Double, intResult, doubleResult);
+                            storeType = Output::StoreDouble;
+                            heap = &m_heaps.indexedDoubleProperties;
+                            break;
+                        }
+
+                        case ALL_CONTIGUOUS_INDEXING_TYPES:
+                            storeType = Output::Store64;
+                            heap = &m_heaps.indexedContiguousProperties;
+                            break;
+
+                        default:
+                            DFG_CRASH(m_graph, m_node, "Invalid indexing type");
+                            break;
+                        }
+                        
+                        m_out.store(value, m_out.address(butterfly, heap->at(index)), storeType);
+
+                        m_out.jump(blocksWithChecks[i]);
+                        m_out.appendTo(
+                            blocksWithChecks[i], i ? blocksWithStores[i - 1] : indexLastNext);
+                    }
+                }
             } else {
                 // In the easy case where we can do a one-shot allocation, we simply allocate the
                 // object to directly have the desired structure.
@@ -6373,12 +6509,14 @@ private:
             
             for (PropertyMapEntry entry : structure->getPropertiesConcurrently()) {
                 for (unsigned i = data.m_properties.size(); i--;) {
-                    PhantomPropertyValue value = data.m_properties[i];
-                    if (m_graph.identifiers()[value.m_identifierNumber] != entry.key)
+                    PromotedLocationDescriptor descriptor = data.m_properties[i];
+                    if (descriptor.kind() != NamedPropertyPLoc)
+                        continue;
+                    if (m_graph.identifiers()[descriptor.info()] != entry.key)
                         continue;
                     
                     LValue base = isInlineOffset(entry.offset) ? object : butterfly;
-                    storeProperty(values[i], base, value.m_identifierNumber, entry.offset);
+                    storeProperty(values[i], base, descriptor.info(), entry.offset);
                     break;
                 }
             }
@@ -6443,9 +6581,11 @@ private:
         LValue activation = m_out.phi(m_out.intPtr, fastResult, slowResult);
         RELEASE_ASSERT(data.m_properties.size() == table->scopeSize());
         for (unsigned i = 0; i < data.m_properties.size(); ++i) {
-            m_out.store64(values[i],
-                activation,
-                m_heaps.JSEnvironmentRecord_variables[data.m_properties[i].m_identifierNumber]);
+            PromotedLocationDescriptor descriptor = data.m_properties[i];
+            ASSERT(descriptor.kind() == ClosureVarPLoc);
+            m_out.store64(
+                values[i], activation,
+                m_heaps.JSEnvironmentRecord_variables[descriptor.info()]);
         }
 
         if (validationEnabled()) {
@@ -6454,7 +6594,9 @@ private:
             for (auto iter = table->begin(locker), end = table->end(locker); iter != end; ++iter) {
                 bool found = false;
                 for (unsigned i = 0; i < data.m_properties.size(); ++i) {
-                    if (iter->value.scopeOffset().offset() == data.m_properties[i].m_identifierNumber) {
+                    PromotedLocationDescriptor descriptor = data.m_properties[i];
+                    ASSERT(descriptor.kind() == ClosureVarPLoc);
+                    if (iter->value.scopeOffset().offset() == descriptor.info()) {
                         found = true;
                         break;
                     }
@@ -6625,6 +6767,29 @@ private:
             m_out.isZero32(m_out.load8ZeroExt32(regExp, m_heaps.RegExpObject_lastIndexIsWritable)));
         
         m_out.store64(value, regExp, m_heaps.RegExpObject_lastIndex);
+    }
+
+    void compileRecordRegExpCachedResult()
+    {
+        Edge constructorEdge = m_graph.varArgChild(m_node, 0);
+        Edge regExpEdge = m_graph.varArgChild(m_node, 1);
+        Edge stringEdge = m_graph.varArgChild(m_node, 2);
+        Edge startEdge = m_graph.varArgChild(m_node, 3);
+        Edge endEdge = m_graph.varArgChild(m_node, 4);
+        
+        LValue constructor = lowCell(constructorEdge);
+        LValue regExp = lowCell(regExpEdge);
+        LValue string = lowCell(stringEdge);
+        LValue start = lowInt32(startEdge);
+        LValue end = lowInt32(endEdge);
+
+        m_out.storePtr(regExp, constructor, m_heaps.RegExpConstructor_cachedResult_lastRegExp);
+        m_out.storePtr(string, constructor, m_heaps.RegExpConstructor_cachedResult_lastInput);
+        m_out.store32(start, constructor, m_heaps.RegExpConstructor_cachedResult_result_start);
+        m_out.store32(end, constructor, m_heaps.RegExpConstructor_cachedResult_result_end);
+        m_out.store32As8(
+            m_out.constInt32(0),
+            m_out.address(constructor, m_heaps.RegExpConstructor_cachedResult_reified));
     }
 
     LValue didOverflowStack()
@@ -6983,6 +7148,39 @@ private:
         emitStoreBarrier(object);
         
         return result;
+    }
+
+    void initializeArrayElements(IndexingType indexingType, LValue vectorLength, LValue butterfly)
+    {
+        if (!hasDouble(indexingType)) {
+            // The GC already initialized everything to JSValue() for us.
+            return;
+        }
+
+        // Doubles must be initialized to PNaN.
+        LBasicBlock initLoop = m_out.newBlock();
+        LBasicBlock initDone = m_out.newBlock();
+        
+        ValueFromBlock originalIndex = m_out.anchor(vectorLength);
+        ValueFromBlock originalPointer = m_out.anchor(butterfly);
+        m_out.branch(
+            m_out.notZero32(vectorLength), unsure(initLoop), unsure(initDone));
+        
+        LBasicBlock initLastNext = m_out.appendTo(initLoop, initDone);
+        LValue index = m_out.phi(m_out.int32, originalIndex);
+        LValue pointer = m_out.phi(m_out.intPtr, originalPointer);
+        
+        m_out.store64(
+            m_out.constInt64(bitwise_cast<int64_t>(PNaN)),
+            TypedPointer(m_heaps.indexedDoubleProperties.atAnyIndex(), pointer));
+        
+        LValue nextIndex = m_out.sub(index, m_out.int32One);
+        m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
+        m_out.addIncomingToPhi(pointer, m_out.anchor(m_out.add(pointer, m_out.intPtrEight)));
+        m_out.branch(
+            m_out.notZero32(nextIndex), unsure(initLoop), unsure(initDone));
+        
+        m_out.appendTo(initDone, initLastNext);
     }
     
     LValue allocatePropertyStorage(LValue object, Structure* previousStructure)
@@ -9167,7 +9365,7 @@ private:
             return proven;
         return m_out.testNonZero64(jsValue, m_tagTypeNumber);
     }
-    
+
     LValue unboxDouble(LValue jsValue)
     {
         return m_out.bitCast(m_out.add(jsValue, m_tagTypeNumber), m_out.doubleType);

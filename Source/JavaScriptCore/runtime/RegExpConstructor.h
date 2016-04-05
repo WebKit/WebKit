@@ -69,6 +69,8 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
+    static ptrdiff_t offsetOfCachedResult() { return OBJECT_OFFSETOF(RegExpConstructor, m_cachedResult); }
+
 protected:
     void finishCreation(VM&, RegExpPrototype*, GetterSetter* species);
 

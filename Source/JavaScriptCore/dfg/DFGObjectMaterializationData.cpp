@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,30 +32,9 @@
 
 namespace JSC { namespace DFG {
 
-void PhantomPropertyValue::dump(PrintStream& out) const
-{
-    out.print("id", m_identifierNumber);
-}
-
 void ObjectMaterializationData::dump(PrintStream& out) const
 {
     out.print("[", listDump(m_properties), "]");
-}
-
-float ObjectMaterializationData::oneWaySimilarityScore(
-    const ObjectMaterializationData& other) const
-{
-    unsigned numHits = 0;
-    for (PhantomPropertyValue value : m_properties) {
-        if (other.m_properties.contains(value))
-            numHits++;
-    }
-    return static_cast<float>(numHits) / static_cast<float>(m_properties.size());
-}
-
-float ObjectMaterializationData::similarityScore(const ObjectMaterializationData& other) const
-{
-    return std::min(oneWaySimilarityScore(other), other.oneWaySimilarityScore(*this));
 }
 
 } } // namespace JSC::DFG

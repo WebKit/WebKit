@@ -1974,7 +1974,7 @@ private:
 
                 case NamedPropertyPLoc: {
                     ASSERT(location.base() == allocation.identifier());
-                    data.m_properties.append(PhantomPropertyValue(location.info()));
+                    data.m_properties.append(location.descriptor());
                     Node* value = resolve(block, location);
                     if (m_sinkCandidates.contains(value))
                         m_graph.m_varArgChildren.append(m_bottom);
@@ -2024,7 +2024,7 @@ private:
 
                 case ClosureVarPLoc: {
                     ASSERT(location.base() == allocation.identifier());
-                    data.m_properties.append(PhantomPropertyValue(location.info()));
+                    data.m_properties.append(location.descriptor());
                     Node* value = resolve(block, location);
                     if (m_sinkCandidates.contains(value))
                         m_graph.m_varArgChildren.append(m_bottom);

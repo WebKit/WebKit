@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2004, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora Ltd.
@@ -30,6 +29,7 @@
 #include "RegularExpression.h"
 
 #include "Yarr.h"
+#include "YarrInterpreter.h"
 #include <wtf/Assertions.h>
 #include <wtf/BumpPointerAllocator.h>
 

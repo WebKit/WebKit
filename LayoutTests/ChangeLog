@@ -1,3 +1,23 @@
+2016-03-19  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG and FTL should constant-fold RegExpExec
+        https://bugs.webkit.org/show_bug.cgi?id=155270
+
+        Reviewed by Saam Barati.
+
+        * js/regress/script-tests/simple-regexp-exec-folding-fail.js: Added.
+        * js/regress/script-tests/simple-regexp-exec-folding.js: Added.
+        * js/regress/script-tests/simple-regexp-test-folding-fail.js: Added.
+        * js/regress/script-tests/simple-regexp-test-folding.js: Added.
+        * js/regress/simple-regexp-exec-folding-expected.txt: Added.
+        * js/regress/simple-regexp-exec-folding-fail-expected.txt: Added.
+        * js/regress/simple-regexp-exec-folding-fail.html: Added.
+        * js/regress/simple-regexp-exec-folding.html: Added.
+        * js/regress/simple-regexp-test-folding-expected.txt: Added.
+        * js/regress/simple-regexp-test-folding-fail-expected.txt: Added.
+        * js/regress/simple-regexp-test-folding-fail.html: Added.
+        * js/regress/simple-regexp-test-folding.html: Added.
+
 2016-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         PolymorphicAccess should have a MegamorphicLoad case

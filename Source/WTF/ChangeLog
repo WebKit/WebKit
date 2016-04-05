@@ -1,3 +1,16 @@
+2016-03-19  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG and FTL should constant-fold RegExpExec
+        https://bugs.webkit.org/show_bug.cgi?id=155270
+
+        Reviewed by Saam Barati.
+
+        Make executeInsertions() return the amount by which the vector increased in size. This is a
+        convenient feature that I use in DFG::InsertionSet.
+
+        * wtf/Insertion.h:
+        (WTF::executeInsertions):
+
 2016-04-05  Antoine Quint  <graouts@apple.com>
 
         [WebGL2] Allow enabling WebGL2 with a runtime flag

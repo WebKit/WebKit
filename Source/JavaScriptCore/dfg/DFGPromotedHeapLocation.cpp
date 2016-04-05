@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,6 +74,10 @@ void printInternal(PrintStream& out, PromotedLocationKind kind)
     case NamedPropertyPLoc:
         out.print("NamedPropertyPLoc");
         return;
+
+    case IndexedPropertyPLoc:
+        out.print("IndexedPropertyPLoc");
+        return;
         
     case ArgumentPLoc:
         out.print("ArgumentPLoc");
@@ -101,6 +105,14 @@ void printInternal(PrintStream& out, PromotedLocationKind kind)
 
     case ClosureVarPLoc:
         out.print("ClosureVarPLoc");
+        return;
+
+    case PublicLengthPLoc:
+        out.print("PublicLengthPLoc");
+        return;
+
+    case VectorLengthPLoc:
+        out.print("VectorLengthPLoc");
         return;
     }
     

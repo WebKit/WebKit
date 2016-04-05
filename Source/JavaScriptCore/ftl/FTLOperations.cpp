@@ -41,19 +41,6 @@ namespace JSC { namespace FTL {
 
 using namespace JSC::DFG;
 
-extern "C" JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState* exec, Structure* structure)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    
-    Butterfly* butterfly = Butterfly::create(
-        vm, nullptr, 0, structure->outOfLineCapacity(), false, IndexingHeader(), 0);
-    
-    JSObject* result = JSFinalObject::create(exec, structure, butterfly);
-    result->butterfly(); // Ensure that the butterfly is in to-space.
-    return result;
-}
-
 extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
     ExecState* exec, ExitTimeObjectMaterialization* materialization,
     EncodedJSValue* encodedValue, EncodedJSValue* values)

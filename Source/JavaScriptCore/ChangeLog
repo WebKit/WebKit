@@ -1,3 +1,171 @@
+2016-03-19  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG and FTL should constant-fold RegExpExec, RegExpTest, and StringReplace
+        https://bugs.webkit.org/show_bug.cgi?id=155270
+
+        Reviewed by Saam Barati.
+
+        This enables constant-folding of RegExpExec, RegExpTest, and StringReplace.
+
+        It's now possible to run Yarr on the JIT threads. Since previous work on constant-folding
+        strings gave the DFG an API for reasoning about JSString constants in terms of
+        JIT-thread-local WTF::Strings, it's now super easy to just pass strings to Yarr and build IR
+        based on the results.
+
+        But RegExpExec is hard: the folded version still must allocate a RegExpMatchesArray. We must
+        use the same Structure that the code would have used or else we'll pollute the program's
+        inline caches. Also, RegExpMatchesArray.h|cpp will allocate the array and its named
+        properties in one go - we don't want to lose that optimization. So, this patch enables
+        MaterializeNewObject to allocate objects or arrays with any number of indexed or named
+        properties. Previously it could only handle objects (but not arrays) and named properties
+        (but not indexed ones).
+
+        This also adds a few minor things for setting the RegExpConstructor cached result.
+
+        This is about a 2x speed-up on microbenchmarks when we fold a match success and about a
+        8x speed-up when we fold a match failure. It's a 10% speed-up on Octane/regexp.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGInsertionSet.cpp:
+        (JSC::DFG::InsertionSet::insertSlow):
+        (JSC::DFG::InsertionSet::execute):
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertCheck):
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::tryGetString):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGNode.h:
+        (JSC::DFG::StackAccessData::flushedAt):
+        (JSC::DFG::OpInfo::OpInfo): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGObjectMaterializationData.cpp:
+        (JSC::DFG::ObjectMaterializationData::dump):
+        (JSC::DFG::PhantomPropertyValue::dump): Deleted.
+        (JSC::DFG::ObjectMaterializationData::oneWaySimilarityScore): Deleted.
+        (JSC::DFG::ObjectMaterializationData::similarityScore): Deleted.
+        * dfg/DFGObjectMaterializationData.h:
+        (JSC::DFG::PhantomPropertyValue::PhantomPropertyValue): Deleted.
+        (JSC::DFG::PhantomPropertyValue::operator==): Deleted.
+        * dfg/DFGOpInfo.h: Added.
+        (JSC::DFG::OpInfo::OpInfo):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::~SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::emitGetLength):
+        (JSC::DFG::SpeculativeJIT::compileLazyJSConstant):
+        (JSC::DFG::SpeculativeJIT::compileMaterializeNewObject):
+        (JSC::DFG::SpeculativeJIT::compileRecordRegExpCachedResult):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSArray): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateDestructibleObject):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::StrengthReductionPhase):
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        (JSC::DFG::StrengthReductionPhase::handleCommutativity):
+        (JSC::DFG::StrengthReductionPhase::executeInsertionSet):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::validateCPS):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetRegExpObjectLastIndex):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRecordRegExpCachedResult):
+        (JSC::FTL::DFG::LowerDFGToB3::didOverflowStack):
+        (JSC::FTL::DFG::LowerDFGToB3::storageForTransition):
+        (JSC::FTL::DFG::LowerDFGToB3::initializeArrayElements):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotCellOrMisc):
+        (JSC::FTL::DFG::LowerDFGToB3::unboxDouble):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationNewObjectWithButterfly): Deleted.
+        * ftl/FTLOperations.h:
+        * inspector/ContentSearchUtilities.cpp:
+        * runtime/JSObject.h:
+        (JSC::JSObject::createRawObject):
+        (JSC::JSFinalObject::create):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::match):
+        (JSC::RegExp::matchConcurrently):
+        (JSC::RegExp::compileMatchOnly):
+        (JSC::RegExp::deleteCode):
+        * runtime/RegExp.h:
+        * runtime/RegExpCachedResult.h:
+        (JSC::RegExpCachedResult::offsetOfLastRegExp):
+        (JSC::RegExpCachedResult::offsetOfLastInput):
+        (JSC::RegExpCachedResult::offsetOfResult):
+        (JSC::RegExpCachedResult::offsetOfReified):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::offsetOfCachedResult):
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::hasCodeFor):
+        (JSC::RegExp::compileIfNecessary):
+        (JSC::RegExp::matchInline):
+        (JSC::RegExp::hasMatchOnlyCodeFor):
+        (JSC::RegExp::compileIfNecessaryMatchOnly):
+        * runtime/RegExpObjectInlines.h:
+        (JSC::RegExpObject::execInline):
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+        (JSC::substituteBackreferencesInline):
+        (JSC::substituteBackreferences):
+        (JSC::StringRange::StringRange):
+        * runtime/StringPrototype.h:
+        * runtime/VM.h:
+        * tests/stress/simple-regexp-exec-folding-fail.js: Added.
+        (foo):
+        * tests/stress/simple-regexp-exec-folding.js: Added.
+        (foo):
+        * tests/stress/simple-regexp-test-folding-fail.js: Added.
+        (foo):
+        * tests/stress/simple-regexp-test-folding.js: Added.
+        (foo):
+        * yarr/RegularExpression.cpp:
+        * yarr/Yarr.h:
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::interpret):
+        (JSC::Yarr::ByteCompiler::ByteCompiler):
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::ByteCompiler::checkInput):
+        (JSC::Yarr::byteCompile):
+        (JSC::Yarr::interpret):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+
 2016-04-05  Keith Miller  <keith_miller@apple.com>
 
         We should support the ability to do a non-effectful getById

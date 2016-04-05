@@ -26,6 +26,7 @@
 #include "RegExp.h"
 #include "JSCInlines.h"
 #include "Yarr.h"
+#include "YarrInterpreter.h"
 #include "YarrJIT.h"
 
 #define REGEXP_FUNC_TEST_DATA_GEN 0
@@ -67,20 +68,27 @@ private:
 };
 #endif // REGEXP_FUNC_TEST_DATA_GEN
 
-ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::YarrCharSize charSize)
+ALWAYS_INLINE bool RegExp::hasCodeFor(Yarr::YarrCharSize charSize)
 {
     if (hasCode()) {
 #if ENABLE(YARR_JIT)
         if (m_state != JITCode)
-            return;
+            return true;
         if ((charSize == Yarr::Char8) && (m_regExpJITCode.has8BitCode()))
-            return;
+            return true;
         if ((charSize == Yarr::Char16) && (m_regExpJITCode.has16BitCode()))
-            return;
+            return true;
 #else
-        return;
+        return true;
 #endif
     }
+    return false;
+}
+
+ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::YarrCharSize charSize)
+{
+    if (hasCodeFor(charSize))
+        return;
 
     compile(&vm, charSize);
 }
@@ -152,20 +160,28 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
     return result;
 }
 
-ALWAYS_INLINE void RegExp::compileIfNecessaryMatchOnly(VM& vm, Yarr::YarrCharSize charSize)
+ALWAYS_INLINE bool RegExp::hasMatchOnlyCodeFor(Yarr::YarrCharSize charSize)
 {
     if (hasCode()) {
 #if ENABLE(YARR_JIT)
         if (m_state != JITCode)
-            return;
+            return true;
         if ((charSize == Yarr::Char8) && (m_regExpJITCode.has8BitCodeMatchOnly()))
-            return;
+            return true;
         if ((charSize == Yarr::Char16) && (m_regExpJITCode.has16BitCodeMatchOnly()))
-            return;
+            return true;
 #else
-        return;
+        return true;
 #endif
     }
+
+    return false;
+}
+
+ALWAYS_INLINE void RegExp::compileIfNecessaryMatchOnly(VM& vm, Yarr::YarrCharSize charSize)
+{
+    if (hasMatchOnlyCodeFor(charSize))
+        return;
 
     compileMatchOnly(&vm, charSize);
 }

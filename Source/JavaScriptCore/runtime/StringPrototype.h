@@ -27,6 +27,7 @@
 namespace JSC {
 
 class ObjectPrototype;
+class RegExp;
 class RegExpObject;
 
 class StringPrototype : public StringObject {
@@ -61,6 +62,8 @@ EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
 
 EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
     ExecState*, JSString* thisValue, RegExpObject* searchValue, JSString* replaceValue);
+
+String substituteBackreferences(const String& replacement, StringView source, const int* ovector, RegExp* reg);
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState*);
 

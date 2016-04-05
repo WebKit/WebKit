@@ -129,7 +129,7 @@ public:
         return nullptr;
     }
     
-    void execute(BasicBlock* block);
+    size_t execute(BasicBlock* block);
 
 private:
     void insertSlow(const Insertion&);

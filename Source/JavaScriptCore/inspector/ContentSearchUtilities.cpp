@@ -32,6 +32,7 @@
 #include "InspectorValues.h"
 #include "RegularExpression.h"
 #include "Yarr.h"
+#include "YarrInterpreter.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>

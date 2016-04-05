@@ -22,6 +22,7 @@
 #ifndef RegExp_h
 #define RegExp_h
 
+#include "ConcurrentJITLock.h"
 #include "ExecutableAllocator.h"
 #include "MatchResult.h"
 #include "RegExpKey.h"
@@ -56,6 +57,7 @@ public:
     bool ignoreCase() const { return m_flags & FlagIgnoreCase; }
     bool multiline() const { return m_flags & FlagMultiline; }
     bool sticky() const { return m_flags & FlagSticky; }
+    bool globalOrSticky() const { return global() || sticky(); }
     bool unicode() const { return m_flags & FlagUnicode; }
 
     const String& pattern() const { return m_patternString; }
@@ -64,7 +66,13 @@ public:
     const char* errorMessage() const { return m_constructionError; }
 
     JS_EXPORT_PRIVATE int match(VM&, const String&, unsigned startOffset, Vector<int, 32>& ovector);
+
+    // Returns false if we couldn't run the regular expression for any reason.
+    bool matchConcurrently(VM&, const String&, unsigned startOffset, int& position, Vector<int, 32>& ovector);
+    
     JS_EXPORT_PRIVATE MatchResult match(VM&, const String&, unsigned startOffset);
+
+    bool matchConcurrently(VM&, const String&, unsigned startOffset, MatchResult&);
 
     // Call these versions of the match functions if you're desperate for performance.
     int matchInline(VM&, const String&, unsigned startOffset, Vector<int, 32>& ovector);
@@ -76,6 +84,9 @@ public:
     {
         return m_state != NotCompiled;
     }
+
+    bool hasCodeFor(Yarr::YarrCharSize);
+    bool hasMatchOnlyCodeFor(Yarr::YarrCharSize);
 
     void deleteCode();
 
@@ -132,6 +143,7 @@ private:
     unsigned m_rtMatchCallCount;
     unsigned m_rtMatchFoundCount;
 #endif
+    ConcurrentJITLock m_lock;
 
 #if ENABLE(YARR_JIT)
     Yarr::YarrCodeBlock m_regExpJITCode;

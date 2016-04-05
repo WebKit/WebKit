@@ -37,8 +37,6 @@ class LazySlowPath;
 
 extern "C" {
 
-JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState*, Structure*) WTF_INTERNAL;
-
 JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
     ExecState*, ExitTimeObjectMaterialization*, EncodedJSValue*) WTF_INTERNAL;
 

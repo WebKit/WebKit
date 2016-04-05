@@ -253,11 +253,19 @@ private:
                 break;
             }
                 
+            case PutById:
+            case PutByIdFlush:
+            case PutByIdDirect:
             case PutStructure: {
                 considerBarrier(m_node->child1());
                 break;
             }
-                
+
+            case RecordRegExpCachedResult: {
+                considerBarrier(m_graph.varArgChild(m_node, 0));
+                break;
+            }
+
             case PutClosureVar:
             case PutToArguments:
             case SetRegExpObjectLastIndex:
@@ -266,13 +274,6 @@ private:
                 break;
             }
                 
-            case PutById:
-            case PutByIdFlush:
-            case PutByIdDirect: {
-                considerBarrier(m_node->child1());
-                break;
-            }
-
             case PutByOffset: {
                 considerBarrier(m_node->child2(), m_node->child3());
                 break;

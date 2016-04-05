@@ -917,6 +917,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(RegExpObject_lastIndex);
         def(HeapLocation(RegExpObjectLastIndexLoc, RegExpObject_lastIndex, node->child1()), LazyNode(node->child2().node()));
         return;
+
+    case RecordRegExpCachedResult:
+        write(RegExpState);
+        return;
         
     case GetFromArguments: {
         AbstractHeap heap(DirectArgumentsProperties, node->capturedArgumentsOffset().offset());
@@ -1080,7 +1084,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         if (node->child2().useKind() == RegExpObjectUse
             && node->child3().useKind() == StringUse) {
             read(RegExpState);
+            read(RegExpObject_lastIndex);
             write(RegExpState);
+            write(RegExpObject_lastIndex);
             return;
         }
         read(World);
@@ -1092,7 +1098,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             && node->child2().useKind() == RegExpObjectUse
             && node->child3().useKind() == StringUse) {
             read(RegExpState);
+            read(RegExpObject_lastIndex);
             write(RegExpState);
+            write(RegExpObject_lastIndex);
             return;
         }
         read(World);

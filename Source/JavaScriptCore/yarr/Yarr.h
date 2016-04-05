@@ -28,7 +28,6 @@
 #ifndef Yarr_h
 #define Yarr_h
 
-#include "YarrInterpreter.h"
 #include "YarrPattern.h"
 
 namespace JSC { namespace Yarr {
@@ -62,6 +61,8 @@ enum YarrCharSize {
     Char8,
     Char16
 };
+
+struct BytecodePattern;
 
 } } // namespace JSC::Yarr
 

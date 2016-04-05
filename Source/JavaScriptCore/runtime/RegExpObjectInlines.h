@@ -63,7 +63,7 @@ JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalObject, 
     String input = string->value(exec); // FIXME: Handle errors. https://bugs.webkit.org/show_bug.cgi?id=155145
     VM& vm = globalObject->vm();
 
-    bool globalOrSticky = regExp->global() || regExp->sticky();
+    bool globalOrSticky = regExp->globalOrSticky();
 
     unsigned lastIndex;
     if (globalOrSticky) {

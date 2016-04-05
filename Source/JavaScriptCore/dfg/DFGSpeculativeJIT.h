@@ -2410,6 +2410,8 @@ public:
     void compileGetRegExpObjectLastIndex(Node*);
     void compileSetRegExpObjectLastIndex(Node*);
     void compileLazyJSConstant(Node*);
+    void compileMaterializeNewObject(Node*);
+    void compileRecordRegExpCachedResult(Node*);
     
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);
@@ -2525,7 +2527,7 @@ public:
         m_jit.storePtr(TrustedImmPtr(structure->classInfo()), MacroAssembler::Address(resultGPR, JSDestructibleObject::classInfoOffset()));
     }
 
-    void emitAllocateJSArray(GPRReg resultGPR, Structure*, GPRReg storageGPR, unsigned numElements);
+    void emitAllocateRawObject(GPRReg resultGPR, Structure*, GPRReg storageGPR, unsigned numElements, unsigned vectorLength);
     
     void emitGetLength(InlineCallFrame*, GPRReg lengthGPR, bool includeThis = false);
     void emitGetLength(CodeOrigin, GPRReg lengthGPR, bool includeThis = false);

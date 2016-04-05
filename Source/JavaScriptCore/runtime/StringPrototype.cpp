@@ -282,13 +282,18 @@ static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, 
     return substitutedReplacement.toString();
 }
 
-static inline String substituteBackreferences(const String& replacement, StringView source, const int* ovector, RegExp* reg)
+inline String substituteBackreferencesInline(const String& replacement, StringView source, const int* ovector, RegExp* reg)
 {
     size_t i = replacement.find('$');
     if (UNLIKELY(i != notFound))
         return substituteBackreferencesSlow(replacement, source, ovector, reg, i);
 
     return replacement;
+}
+
+String substituteBackreferences(const String& replacement, StringView source, const int* ovector, RegExp* reg)
+{
+    return substituteBackreferencesInline(replacement, source, ovector, reg);
 }
 
 struct StringRange {

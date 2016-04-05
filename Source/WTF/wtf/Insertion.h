@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,14 +55,15 @@ private:
 };
 
 template<typename TargetVectorType, typename InsertionVectorType>
-void executeInsertions(TargetVectorType& target, InsertionVectorType& insertions)
+size_t executeInsertions(TargetVectorType& target, InsertionVectorType& insertions)
 {
-    if (!insertions.size())
-        return;
-    target.grow(target.size() + insertions.size());
+    size_t numInsertions = insertions.size();
+    if (!numInsertions)
+        return 0;
+    target.grow(target.size() + numInsertions);
     size_t lastIndex = target.size();
     size_t originalTargetSize = target.size();
-    for (size_t indexInInsertions = insertions.size(); indexInInsertions--;) {
+    for (size_t indexInInsertions = numInsertions; indexInInsertions--;) {
         ASSERT(!indexInInsertions || insertions[indexInInsertions].index() >= insertions[indexInInsertions - 1].index());
         ASSERT_UNUSED(originalTargetSize, insertions[indexInInsertions].index() < originalTargetSize);
         size_t firstIndex = insertions[indexInInsertions].index() + indexInInsertions;
@@ -73,6 +74,7 @@ void executeInsertions(TargetVectorType& target, InsertionVectorType& insertions
         lastIndex = firstIndex;
     }
     insertions.resize(0);
+    return numInsertions;
 }
 
 } // namespace WTF

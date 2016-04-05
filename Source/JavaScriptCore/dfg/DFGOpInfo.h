@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGInsertionSet.h"
+#ifndef DFGOpInfo_h
+#define DFGOpInfo_h
+
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {
 
-void InsertionSet::insertSlow(const Insertion& insertion)
-{
-    ASSERT(!m_insertions.isEmpty());
-    ASSERT(m_insertions.last().index() > insertion.index());
-    
-    for (size_t index = m_insertions.size() - 1; index--;) {
-        if (m_insertions[index].index() <= insertion.index()) {
-            m_insertions.insert(index + 1, insertion);
-            return;
-        }
-    }
-
-    m_insertions.insert(0, insertion);
-}
-
-size_t InsertionSet::execute(BasicBlock* block)
-{
-    return executeInsertions(*block, m_insertions);
-}
+// This type used in passing an immediate argument to Node constructor;
+// distinguishes an immediate value (typically an index into a CodeBlock data structure - 
+// a constant index, argument, or identifier) from a Node*.
+struct OpInfo {
+    OpInfo() : m_value(0) { }
+    explicit OpInfo(int32_t value) : m_value(static_cast<uintptr_t>(value)) { }
+    explicit OpInfo(uint32_t value) : m_value(static_cast<uintptr_t>(value)) { }
+#if OS(DARWIN) || USE(JSVALUE64)
+    explicit OpInfo(size_t value) : m_value(static_cast<uintptr_t>(value)) { }
+#endif
+    explicit OpInfo(void* value) : m_value(reinterpret_cast<uintptr_t>(value)) { }
+    uintptr_t m_value;
+};
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGOpInfo_h
 

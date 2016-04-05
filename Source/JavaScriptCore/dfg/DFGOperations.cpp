@@ -1397,6 +1397,60 @@ size_t JIT_OPERATION operationDefaultHasInstance(ExecState* exec, JSCell* value,
     return 0;
 }
 
+char* JIT_OPERATION operationNewRawObject(ExecState* exec, Structure* structure, int32_t length)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    Butterfly* butterfly;
+    if (structure->outOfLineCapacity() || hasIndexedProperties(structure->indexingType())) {
+        IndexingHeader header;
+        header.setVectorLength(length);
+        header.setPublicLength(0);
+        
+        butterfly = Butterfly::create(
+            vm, nullptr, 0, structure->outOfLineCapacity(),
+            hasIndexedProperties(structure->indexingType()), header,
+            length * sizeof(EncodedJSValue));
+    } else
+        butterfly = nullptr;
+
+    JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
+    result->butterfly(); // Ensure that the butterfly is in to-space.
+    return bitwise_cast<char*>(result);
+}
+
+JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState* exec, Structure* structure)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    
+    Butterfly* butterfly = Butterfly::create(
+        vm, nullptr, 0, structure->outOfLineCapacity(), false, IndexingHeader(), 0);
+    
+    JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
+    result->butterfly(); // Ensure that the butterfly is in to-space.
+    return result;
+}
+
+JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(ExecState* exec, Structure* structure, unsigned length)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    IndexingHeader header;
+    header.setVectorLength(length);
+    header.setPublicLength(0);
+    Butterfly* butterfly = Butterfly::create(
+        vm, nullptr, 0, structure->outOfLineCapacity(), true, header,
+        sizeof(EncodedJSValue) * length);
+
+    // Paradoxically this may allocate a JSArray. That's totally cool.
+    JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
+    result->butterfly(); // Ensure that the butterfly is in to-space.
+    return result;
+}
+
 void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState* exec) 
 {
     exec->vm().typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside DFG."));

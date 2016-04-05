@@ -3188,6 +3188,11 @@ void SpeculativeJIT::compile(Node* node)
         compileSetRegExpObjectLastIndex(node);
         break;
     }
+
+    case RecordRegExpCachedResult: {
+        compileRecordRegExpCachedResult(node);
+        break;
+    }
         
     case ArrayPush: {
         ASSERT(node->arrayMode().isJSArray());
@@ -3559,7 +3564,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg resultGPR = result.gpr();
             GPRReg storageGPR = storage.gpr();
 
-            emitAllocateJSArray(resultGPR, structure, storageGPR, numElements);
+            emitAllocateRawObject(resultGPR, structure, storageGPR, numElements, numElements);
             
             // At this point, one way or another, resultGPR and storageGPR have pointers to
             // the JSArray and the Butterfly, respectively.
@@ -3795,7 +3800,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg resultGPR = result.gpr();
             GPRReg storageGPR = storage.gpr();
 
-            emitAllocateJSArray(resultGPR, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), storageGPR, numElements);
+            emitAllocateRawObject(resultGPR, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), storageGPR, numElements, numElements);
             
             DFG_ASSERT(m_jit.graph(), node, indexingType & IsArray);
             JSValue* data = m_jit.codeBlock()->constantBuffer(node->startConstant());
@@ -4989,6 +4994,10 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case MaterializeNewObject:
+        compileMaterializeNewObject(node);
+        break;
+
 #if ENABLE(FTL_JIT)        
     case CheckTierUpInLoop: {
         MacroAssembler::Jump done = m_jit.branchAdd32(
@@ -5079,7 +5088,6 @@ void SpeculativeJIT::compile(Node* node)
     case GetMyArgumentByVal:
     case PutHint:
     case CheckStructureImmediate:
-    case MaterializeNewObject:
     case MaterializeCreateActivation:
     case PutStack:
     case KillStack:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,25 +28,41 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGNode.h"
+#include "DFGEdge.h"
+#include "DFGNodeOrigin.h"
+#include "DFGOpInfo.h"
+#include <wtf/HashTable.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC { namespace DFG {
 
+struct Node;
+
+// Promoted locations are like heap locations but are meant to be more precise. A heap location is
+// applicable to CSE scenarios, where it makes sense to speak of a location very abstractly. A
+// promoted heap location is for cases where we speak of a specific object and the compiler knows
+// this object's identity - for example, the object allocation has been eliminated and we turned the
+// fields into local variables. Because these two cases have subtly different needs, we use subtly
+// different structures. One of the really significant differences is that promoted locations can be
+// spoken of using either a descriptor which does not refer to any Node*'s or with a heap location,
+// which is a descriptor with a Node* base.
+
 enum PromotedLocationKind {
     InvalidPromotedLocationKind,
     
-    StructurePLoc,
-    ActivationSymbolTablePLoc,
-    NamedPropertyPLoc,
-    ArgumentPLoc,
-    ArgumentCountPLoc,
-    ArgumentsCalleePLoc,
-
-    FunctionExecutablePLoc,
-    FunctionActivationPLoc,
     ActivationScopePLoc,
-    ClosureVarPLoc
+    ActivationSymbolTablePLoc,
+    ArgumentCountPLoc,
+    ArgumentPLoc,
+    ArgumentsCalleePLoc,
+    ClosureVarPLoc,
+    FunctionActivationPLoc,
+    FunctionExecutablePLoc,
+    IndexedPropertyPLoc,
+    NamedPropertyPLoc,
+    PublicLengthPLoc,
+    StructurePLoc,
+    VectorLengthPLoc
 };
 
 class PromotedLocationDescriptor {

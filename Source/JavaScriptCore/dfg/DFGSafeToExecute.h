@@ -336,6 +336,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case StringReplace:
     case GetRegExpObjectLastIndex:
     case SetRegExpObjectLastIndex:
+    case RecordRegExpCachedResult:
         return true;
 
     case BottomValue:

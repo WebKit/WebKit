@@ -131,6 +131,7 @@ ExitMode mayExit(Graph& graph, Node* node)
     case StoreBarrier:
     case PutByOffset:
     case PutClosureVar:
+    case RecordRegExpCachedResult:
         break;
 
     case StrCat:
