@@ -1152,6 +1152,11 @@ inline bool RenderObject::backgroundIsKnownToBeObscured(const LayoutPoint& paint
     return m_bitfields.boxDecorationState() == HasBoxDecorationsAndBackgroundIsKnownToBeObscured;
 }
 
+#if ENABLE(TREE_DEBUGGING)
+void printRenderTreeForLiveDocuments();
+void printLayerTreeForLiveDocuments();
+#endif
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(ToValueTypeName, predicate) \

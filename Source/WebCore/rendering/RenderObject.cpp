@@ -43,7 +43,6 @@
 #include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
 #include "HitTestResult.h"
-#include "Logging.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "MainFrame.h"
 #include "Page.h"
@@ -84,7 +83,6 @@ namespace WebCore {
 using namespace HTMLNames;
 
 #ifndef NDEBUG
-void printRenderTreeForLiveDocuments();
 
 RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScope(RenderObject* renderObject, bool isForbidden)
     : m_renderObject(renderObject)
@@ -128,10 +126,6 @@ RenderObject::RenderObject(Node& node)
         renderView->didCreateRenderer();
 #ifndef NDEBUG
     renderObjectCounter.increment();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
-    });
 #endif
 }
 
@@ -2277,7 +2271,8 @@ void RenderObject::removeRareData()
     setHasRareData(false);
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
+
 void printRenderTreeForLiveDocuments()
 {
     for (const auto* document : Document::allDocuments()) {
@@ -2289,7 +2284,21 @@ void printRenderTreeForLiveDocuments()
         showRenderTree(document->renderView());
     }
 }
-#endif
+
+void printLayerTreeForLiveDocuments()
+{
+    for (const auto* document : Document::allDocuments()) {
+        if (!document->renderView() || document->inPageCache())
+            continue;
+        if (document->frame() && document->frame()->isMainFrame())
+            fprintf(stderr, "----------------------main frame--------------------------\n");
+        fprintf(stderr, "%s", document->url().string().utf8().data());
+        showLayerTree(document->renderView());
+    }
+}
+
+#endif // ENABLE(TREE_DEBUGGING)
+
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

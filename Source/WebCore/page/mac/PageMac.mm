@@ -32,7 +32,9 @@
 #import "DocumentLoader.h"
 #import "FrameLoader.h"
 #import "FrameTree.h"
+#import "Logging.h"
 #import "MainFrame.h"
+#import "RenderObject.h"
 
 #if PLATFORM(IOS)
 #import "WebCoreThread.h"
@@ -50,6 +52,14 @@ void Page::platformInitialize()
 #endif // USE(CFNETWORK)
 #else
     addSchedulePair(SchedulePair::create([NSRunLoop currentRunLoop], kCFRunLoopCommonModes));
+#endif
+
+#if ENABLE(TREE_DEBUGGING)
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
+        registerNotifyCallback("com.apple.WebKit.showLayerTree", printLayerTreeForLiveDocuments);
+    });
 #endif
 }
 
