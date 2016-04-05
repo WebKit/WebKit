@@ -87,6 +87,8 @@ WebInspector.TimelineTreeElement = class TimelineTreeElement extends WebInspecto
         checkboxElement.checked = !this._placeholder;
 
         let button = new WebInspector.TreeElementStatusButton(checkboxElement);
+        checkboxElement.addEventListener("change", () => { this._dispatchEnabledDidChangeEvent(); });
+
         this.status = checkboxElement;
     }
 
@@ -104,5 +106,15 @@ WebInspector.TimelineTreeElement = class TimelineTreeElement extends WebInspecto
             return;
 
         this.status.checked = !this.status.checked;
+        this._dispatchEnabledDidChangeEvent();
     }
+
+    _dispatchEnabledDidChangeEvent()
+    {
+        this.dispatchEventToListeners(WebInspector.TimelineTreeElement.Event.EnabledDidChange);
+    }
+};
+
+WebInspector.TimelineTreeElement.Event = {
+    EnabledDidChange: "timeline-tree-element-enabled-did-change"
 };

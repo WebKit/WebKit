@@ -876,6 +876,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
             }
 
             treeElement.editing = true;
+            treeElement.addEventListener(WebInspector.TimelineTreeElement.Event.EnabledDidChange, this._timelineTreeElementEnabledDidChange, this);
         }
 
         this._editingInstrumentsDidChange();
@@ -892,6 +893,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         for (let treeElement of this._treeElementsByTypeMap.values()) {
             if (treeElement.status.checked) {
                 treeElement.editing = false;
+                treeElement.removeEventListener(WebInspector.TimelineTreeElement.Event.EnabledDidChange, this._timelineTreeElementEnabledDidChange, this);
                 continue;
             }
 
@@ -943,6 +945,16 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         let aTimelineIndex = this._instrumentTypes.indexOf(aTimelineType);
         let bTimelineIndex = this._instrumentTypes.indexOf(bTimelineType);
         return aTimelineIndex - bTimelineIndex;
+    }
+
+    _timelineTreeElementEnabledDidChange(event)
+    {
+        let enabled = this._timelinesTreeOutline.children.some((treeElement) => {
+            let timelineType = treeElement.representedObject.type;
+            return this._canShowTimelineType(timelineType) && treeElement.status.checked;
+        });
+
+        this._editInstrumentsButton.enabled = enabled;
     }
 };
 

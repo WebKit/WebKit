@@ -1,3 +1,31 @@
+2016-04-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Should not allow selecting no Timelines when editing in Timeline tab
+        https://bugs.webkit.org/show_bug.cgi?id=156223
+        <rdar://problem/25552221>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype._startEditingInstruments):
+        Register EnabledDidChange event handler for all tree elements.
+
+        (WebInspector.TimelineOverview.prototype._stopEditingInstruments):
+        Unregister event handler for enabled tree elements. The rest are removed
+        from the tree outline once editing has completed.
+
+        (WebInspector.TimelineOverview.prototype._timelineTreeElementEnabledDidChange):
+        Enable "Done" button if at least one timeline is enabled.
+
+        * UserInterface/Views/TimelineTreeElement.js:
+        Dispatch a new event, EnabledDidChange, when the checkbox state changes.
+
+        (WebInspector.TimelineTreeElement.prototype._showCheckbox):
+        (WebInspector.TimelineTreeElement.prototype._clickHandler):
+        (WebInspector.TimelineTreeElement.prototype._dispatchEnabledDidChangeEvent):
+        (WebInspector.TimelineTreeElement):
+
 2016-04-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: Error: Can't make a ContentView for an unknown representedObject (ApplicationCacheManifest)
