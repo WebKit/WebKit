@@ -242,7 +242,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
 {
     bool shouldTearDownRenderers = update.change == Style::Detach && (element.renderer() || element.isNamedFlowContentNode());
     if (shouldTearDownRenderers)
-        detachRenderTree(element, Style::ReattachDetach);
+        tearDownRenderers(element, TeardownType::KeepHoverAndActive);
 
     bool shouldCreateNewRenderer = !element.renderer() && update.style && !hasImplicitDisplayContents(element);
     if (shouldCreateNewRenderer) {
@@ -409,7 +409,7 @@ void RenderTreeUpdater::updateTextRenderer(Text& text)
     if (hasRenderer) {
         if (needsRenderer)
             return;
-        Style::detachTextRenderer(text);
+        tearDownRenderer(text);
         invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(text);
         return;
     }
@@ -504,6 +504,61 @@ void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, Pseud
         pseudoElement->didAttachRenderers();
     else
         pseudoElement->didRecalcStyle(elementUpdate.change);
+}
+
+void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType)
+{
+    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+
+    Vector<Element*, 30> teardownStack;
+
+    auto push = [&] (Element& element) {
+        if (element.hasCustomStyleResolveCallbacks())
+            element.willDetachRenderers();
+        if (teardownType != TeardownType::KeepHoverAndActive)
+            element.clearHoverAndActiveStatusBeforeDetachingRenderer();
+        element.clearStyleDerivedDataBeforeDetachingRenderer();
+
+        teardownStack.append(&element);
+    };
+
+    auto pop = [&] (unsigned depth) {
+        while (teardownStack.size() > depth) {
+            auto& element = *teardownStack.takeLast();
+
+            if (auto* renderer = element.renderer()) {
+                renderer->destroyAndCleanupAnonymousWrappers();
+                element.setRenderer(nullptr);
+            }
+            if (element.hasCustomStyleResolveCallbacks())
+                element.didDetachRenderers();
+        }
+    };
+
+    push(root);
+
+    auto descendants = composedTreeDescendants(root);
+    for (auto it = descendants.begin(), end = descendants.end(); it != end; ++it) {
+        pop(it.depth());
+
+        if (is<Text>(*it)) {
+            tearDownRenderer(downcast<Text>(*it));
+            continue;
+        }
+
+        push(downcast<Element>(*it));
+    }
+
+    pop(0);
+}
+
+void RenderTreeUpdater::tearDownRenderer(Text& text)
+{
+    auto* renderer = text.renderer();
+    if (!renderer)
+        return;
+    renderer->destroyAndCleanupAnonymousWrappers();
+    text.setRenderer(nullptr);
 }
 
 }

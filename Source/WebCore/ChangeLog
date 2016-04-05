@@ -1,3 +1,53 @@
+2016-04-05  Antti Koivisto  <antti@apple.com>
+
+        Render tree teardown should be iterative
+        https://bugs.webkit.org/show_bug.cgi?id=156233
+
+        Reviewed by Andreas Kling.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::destroyRenderTreeIfNeeded):
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+        * dom/Element.cpp:
+        (WebCore::disconnectPseudoElement):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::prepareForDocumentSuspension):
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::updateSelectedChild):
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        (WebCore::RenderTreeUpdater::updateTextRenderer):
+        (WebCore::RenderTreeUpdater::updateBeforeOrAfterPseudoElement):
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+
+            Tear down render tree using ComposedTreeIterator for traversal.
+
+        (WebCore::RenderTreeUpdater::tearDownRenderer):
+
+        * style/RenderTreeUpdater.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::ensurePlaceholderStyle):
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        (WebCore::Style::affectsRenderedSubtree):
+        (WebCore::Style::SelectorFilterPusher::SelectorFilterPusher): Deleted.
+        (WebCore::Style::SelectorFilterPusher::push): Deleted.
+        (WebCore::Style::SelectorFilterPusher::~SelectorFilterPusher): Deleted.
+
+            Unused class.
+
+        (WebCore::Style::detachTextRenderer): Deleted.
+        (WebCore::Style::detachChildren): Deleted.
+        (WebCore::Style::detachShadowRoot): Deleted.
+        (WebCore::Style::detachSlotAssignees): Deleted.
+        (WebCore::Style::detachRenderTree): Deleted.
+
+            Remove the old recursive code.
+
+        * style/StyleTreeResolver.h:
+
 2016-04-05  Antoine Quint  <graouts@apple.com>
 
         [WebGL2] Allow enabling WebGL2 with a runtime flag

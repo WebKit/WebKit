@@ -75,6 +75,7 @@
 #include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderTheme.h"
+#include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SVGDocumentExtensions.h"
@@ -2703,7 +2704,7 @@ static void disconnectPseudoElement(PseudoElement* pseudoElement)
     if (!pseudoElement)
         return;
     if (pseudoElement->renderer())
-        Style::detachRenderTree(*pseudoElement);
+        RenderTreeUpdater::tearDownRenderers(*pseudoElement);
     ASSERT(pseudoElement->hostElement());
     pseudoElement->clearHostElement();
 }

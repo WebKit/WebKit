@@ -43,6 +43,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderSnapshottedPlugIn.h"
+#include "RenderTreeUpdater.h"
 #include "SchemeRegistry.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
@@ -322,7 +323,7 @@ void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
 void HTMLPlugInImageElement::prepareForDocumentSuspension()
 {
     if (renderer())
-        Style::detachRenderTree(*this);
+        RenderTreeUpdater::tearDownRenderers(*this);
 
     HTMLPlugInElement::prepareForDocumentSuspension();
 }

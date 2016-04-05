@@ -50,6 +50,10 @@ public:
 
     void commit(std::unique_ptr<const Style::Update>);
 
+    enum class TeardownType { Normal, KeepHoverAndActive };
+    static void tearDownRenderers(Element&, TeardownType = TeardownType::Normal);
+    static void tearDownRenderer(Text&);
+
 private:
     void updateRenderTree(ContainerNode& root);
     void updateTextRenderer(Text&);

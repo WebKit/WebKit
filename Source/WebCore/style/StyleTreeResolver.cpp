@@ -50,37 +50,6 @@ namespace WebCore {
 
 namespace Style {
 
-class SelectorFilterPusher {
-public:
-    enum PushMode { Push, NoPush };
-    SelectorFilterPusher(SelectorFilter& selectorFilter, Element& parent, PushMode pushMode = Push)
-        : m_selectorFilter(selectorFilter)
-        , m_parent(parent)
-    {
-        if (pushMode == Push)
-            push();
-    }
-    void push()
-    {
-        if (m_didPush)
-            return;
-        m_didPush = true;
-        m_selectorFilter.pushParent(&m_parent);
-    }
-    ~SelectorFilterPusher()
-    {
-        if (!m_didPush)
-            return;
-        m_selectorFilter.popParent();
-    }
-    
-private:
-    SelectorFilter& m_selectorFilter;
-    Element& m_parent;
-    bool m_didPush { false };
-};
-
-
 static RenderStyle* placeholderStyle;
 
 static void ensurePlaceholderStyle(Document& document)
@@ -176,13 +145,6 @@ Ref<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& in
     return WTFMove(elementStyle.renderStyle);
 }
 
-void detachTextRenderer(Text& textNode)
-{
-    if (textNode.renderer())
-        textNode.renderer()->destroyAndCleanupAnonymousWrappers();
-    textNode.setRenderer(0);
-}
-
 static void resetStyleForNonRenderedDescendants(Element& current)
 {
     // FIXME: This is not correct with shadow trees. This should be done with ComposedTreeIterator.
@@ -202,72 +164,6 @@ static void resetStyleForNonRenderedDescendants(Element& current)
             child.clearChildNeedsStyleRecalc();
         }
     }
-}
-
-static void detachChildren(ContainerNode& current, DetachType detachType)
-{
-    for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
-        if (is<Text>(*child))
-            detachTextRenderer(downcast<Text>(*child));
-        else if (is<Element>(*child))
-            detachRenderTree(downcast<Element>(*child), detachType);
-    }
-    current.clearChildNeedsStyleRecalc();
-}
-
-static void detachShadowRoot(ShadowRoot& shadowRoot, DetachType detachType)
-{
-    detachChildren(shadowRoot, detachType);
-}
-
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-static void detachSlotAssignees(HTMLSlotElement& slot, DetachType detachType)
-{
-    ASSERT(!slot.renderer());
-    if (auto* assignedNodes = slot.assignedNodes()) {
-        for (auto* child : *assignedNodes) {
-            if (is<Text>(*child))
-                detachTextRenderer(downcast<Text>(*child));
-            else if (is<Element>(*child))
-                detachRenderTree(downcast<Element>(*child), detachType);
-        }
-    } else
-        detachChildren(slot, detachType);
-
-    slot.clearNeedsStyleRecalc();
-    slot.clearChildNeedsStyleRecalc();
-}
-#endif
-
-void detachRenderTree(Element& current, DetachType detachType)
-{
-    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-
-    if (current.hasCustomStyleResolveCallbacks())
-        current.willDetachRenderers();
-
-    current.clearStyleDerivedDataBeforeDetachingRenderer();
-
-    // Do not remove the element's hovered and active status
-    // if performing a reattach.
-    if (detachType != ReattachDetach)
-        current.clearHoverAndActiveStatusBeforeDetachingRenderer();
-
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-    if (is<HTMLSlotElement>(current))
-        detachSlotAssignees(downcast<HTMLSlotElement>(current), detachType);
-#endif
-    else if (ShadowRoot* shadowRoot = current.shadowRoot())
-        detachShadowRoot(*shadowRoot, detachType);
-
-    detachChildren(current, detachType);
-
-    if (current.renderer())
-        current.renderer()->destroyAndCleanupAnonymousWrappers();
-    current.setRenderer(nullptr);
-
-    if (current.hasCustomStyleResolveCallbacks())
-        current.didDetachRenderers();
 }
 
 static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle)

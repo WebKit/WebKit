@@ -2353,7 +2353,7 @@ void Document::destroyRenderTree()
     m_activeElement = nullptr;
 
     if (m_documentElement)
-        Style::detachRenderTree(*m_documentElement);
+        RenderTreeUpdater::tearDownRenderers(*m_documentElement);
 
     clearChildNeedsStyleRecalc();
 
