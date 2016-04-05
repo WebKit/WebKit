@@ -1,3 +1,41 @@
+2016-04-05  Antti Koivisto  <antti@apple.com>
+
+        Use RenderTreeUpdater for text node mutations
+        https://bugs.webkit.org/show_bug.cgi?id=156107
+
+        Reviewed by Andreas Kling.
+
+        Use the new mechanism for updating render tree after text node content changes.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        (WebCore::CharacterData::setDataAndUpdate):
+        * dom/Text.cpp:
+        (WebCore::Text::createWithLengthLimit):
+        (WebCore::Text::updateRendererAfterContentChange):
+
+            Update using RenderTreeUpdater.
+
+        (WebCore::Text::formatForDebugger):
+        * dom/Text.h:
+        (WebCore::Text::Text):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::elementImplicitVisibility):
+        (WebCore::Style::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded): Deleted.
+        (WebCore::Style::textRendererIsNeeded): Deleted.
+        (WebCore::Style::createTextRendererIfNeeded): Deleted.
+        (WebCore::Style::attachTextRenderer): Deleted.
+        (WebCore::Style::detachTextRenderer): Deleted.
+        (WebCore::Style::updateTextRendererAfterContentChange): Deleted.
+        (WebCore::Style::resolveTextNode): Deleted.
+
+            Kill the old code paths.
+
+        * style/StyleTreeResolver.h:
+
 2016-04-05  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [Curl][Soup] Fix the build after r199039

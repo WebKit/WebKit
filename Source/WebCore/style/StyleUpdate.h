@@ -66,6 +66,7 @@ public:
 
     void addElement(Element&, Element* parent, ElementUpdate&);
     void addText(Text&, Element* parent);
+    void addText(Text&);
 
 private:
     void addPossibleRoot(Element*);

@@ -1,3 +1,22 @@
+2016-04-05  Antti Koivisto  <antti@apple.com>
+
+        Use RenderTreeUpdater for text node mutations
+        https://bugs.webkit.org/show_bug.cgi?id=156107
+
+        Reviewed by Andreas Kling.
+
+        Mostly just revert non-rendered whitespace related changes from the earlier patches.
+
+        * editing/style/remove-underline-from-stylesheet-expected.txt:
+        * editing/style/typing-style-003-expected.txt:
+        * platform/ios-simulator/editing/style/typing-style-003-expected.txt: Removed.
+        * platform/mac-wk2/editing/mac/spelling/autocorrection-contraction-expected.txt:
+        * platform/mac/editing/inserting/editable-html-element-expected.txt:
+        * platform/mac/editing/inserting/editing-empty-divs-expected.txt:
+        * platform/mac/editing/inserting/insert-at-end-02-expected.txt:
+        * platform/mac/editing/pasteboard/4989774-expected.txt:
+        * platform/mac/editing/selection/4983858-expected.txt:
+
 2016-04-04  Zalan Bujtas  <zalan@apple.com>
 
         CSS Triangles Rendering Regression affecting CSS Ribbons.

@@ -112,8 +112,6 @@ enum DetachType { NormalDetach, ReattachDetach };
 void detachRenderTree(Element&, DetachType = NormalDetach);
 void detachTextRenderer(Text&);
 
-void updateTextRendererAfterContentChange(Text&, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
-
 void queuePostResolutionCallback(std::function<void ()>);
 bool postResolutionCallbacksAreSuspended();
 

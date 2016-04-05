@@ -90,7 +90,7 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
 {
     ASSERT(&m_document == &styleUpdate->document());
 
-    if (!m_document.shouldCreateRenderers())
+    if (!m_document.shouldCreateRenderers() || !m_document.renderView())
         return;
 
     m_styleUpdate = WTFMove(styleUpdate);

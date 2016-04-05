@@ -63,7 +63,7 @@ RenderStyle* Update::elementStyle(const Element& element) const
 void Update::addElement(Element& element, Element* parent, ElementUpdate& change)
 {
     ASSERT(!m_elements.contains(&element));
-    ASSERT(!parent || composedTreeAncestors(element).first() == parent);
+    ASSERT(composedTreeAncestors(element).first() == parent);
 
     addPossibleRoot(parent);
     m_elements.add(&element, change);
@@ -72,10 +72,15 @@ void Update::addElement(Element& element, Element* parent, ElementUpdate& change
 void Update::addText(Text& text, Element* parent)
 {
     ASSERT(!m_texts.contains(&text));
-    ASSERT(!parent || composedTreeAncestors(text).first() == parent);
+    ASSERT(composedTreeAncestors(text).first() == parent);
 
     addPossibleRoot(parent);
     m_texts.add(&text);
+}
+
+void Update::addText(Text& text)
+{
+    addText(text, composedTreeAncestors(text).first());
 }
 
 void Update::addPossibleRoot(Element* element)

@@ -32,7 +32,6 @@
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
-#include "StyleTreeResolver.h"
 #include "TextBreakIterator.h"
 #include <wtf/Ref.h>
 
@@ -89,8 +88,8 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
         m_data.append(string.characters16() + offset, characterLengthLimit);
 
     ASSERT(!renderer() || is<Text>(*this));
-    if (is<Text>(*this))
-        Style::updateTextRendererAfterContentChange(downcast<Text>(*this), oldLength, 0);
+    if (is<Text>(*this) && parentNode())
+        downcast<Text>(*this).updateRendererAfterContentChange(oldLength, 0);
 
     document().incDOMTreeVersion();
     // We don't call dispatchModifiedEvent here because we don't want the
@@ -188,8 +187,8 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     m_data = newData;
 
     ASSERT(!renderer() || is<Text>(*this));
-    if (is<Text>(*this))
-        Style::updateTextRendererAfterContentChange(downcast<Text>(*this), offsetOfReplacedData, oldLength);
+    if (is<Text>(*this) && parentNode())
+        downcast<Text>(*this).updateRendererAfterContentChange(offsetOfReplacedData, oldLength);
 
     if (is<ProcessingInstruction>(*this))
         downcast<ProcessingInstruction>(*this).checkStyleSheet();

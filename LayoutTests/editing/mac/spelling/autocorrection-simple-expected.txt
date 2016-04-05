@@ -137,4 +137,4 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,42) size 756x28
           RenderText {#text} at (0,0) size 138x28
             text run at (0,0) width 138: "the notational,"
-caret: position 15 of child 0 {#text} of child 3 {DIV} of child 7 {DIV} of body
+caret: position 15 of child 0 {#text} of child 2 {DIV} of child 7 {DIV} of body
