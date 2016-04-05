@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CCallHelpers.h"
 
+#if ENABLE(JIT)
+
 #include "ShadowChicken.h"
 
 namespace JSC {
@@ -64,3 +66,4 @@ void CCallHelpers::setupShadowChickenPacket()
 
 } // namespace JSC
 
+#endif // ENABLE(JIT)

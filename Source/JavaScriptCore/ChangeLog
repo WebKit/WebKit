@@ -1,3 +1,9 @@
+2016-04-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix cloop.
+
+        * jit/CCallHelpers.cpp:
+
 2016-03-18  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should use a shadow stack version of CHICKEN so that debuggers have the option of retrieving tail-deleted frames
