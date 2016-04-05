@@ -1,3 +1,15 @@
+2016-04-05  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Command-Option-R opens Inspector details sidebar or Responsive Design Mode, should only do one
+
+        https://bugs.webkit.org/show_bug.cgi?id=156258
+        rdar://problem/25483871
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded): Change shortcuts to Command-Option-0 and Command-Shift-0.
+
 2016-04-05  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Should not allow selecting no Timelines when editing in Timeline tab
