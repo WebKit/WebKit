@@ -1,3 +1,23 @@
+2016-04-04  Zalan Bujtas  <zalan@apple.com>
+
+        CSS Triangles Rendering Regression affecting CSS Ribbons.
+        https://bugs.webkit.org/show_bug.cgi?id=156121
+
+        Reviewed by Simon Fraser.
+
+        We use floored border width values for painting (see BorderEdge).
+        However border-box sizing is based on rounded border values. This mismatch could result in a 2 device pixel
+        gap when both top and bottom (or left and right) borders are present.
+        
+        This patch applies flooring on the computed border width value.
+
+        It matches FireFox (44.0.2) behaviour (both by inspecting box-sizing visually and through getComputedStyle() values on border-width).
+    
+        Covered by existing tests.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertLineWidth):
+
 2016-04-04  Doug Russell  <d_russell@apple.com>
 
         AX: new lines in content editable elements don't notify accessibility

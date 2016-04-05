@@ -40,6 +40,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSReflectValue.h"
 #include "Frame.h"
+#include "LayoutUnit.h"
 #include "Length.h"
 #include "LengthRepeat.h"
 #include "Pair.h"
@@ -254,7 +255,7 @@ inline T StyleBuilderConverter::convertLineWidth(StyleResolver& styleResolver, C
         float minimumLineWidth = 1 / styleResolver.document().deviceScaleFactor();
         if (result > 0 && result < minimumLineWidth)
             return minimumLineWidth;
-        return result;
+        return floorToDevicePixel(result, styleResolver.document().deviceScaleFactor());
     }
     default:
         ASSERT_NOT_REACHED();
