@@ -49,7 +49,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle>, public SocketStreamHandleBase, public AuthenticationClient {
 public:
-    static PassRefPtr<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client, NetworkingContext& networkingContext) { return adoptRef(new SocketStreamHandle(url, client, networkingContext)); }
+    static PassRefPtr<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client, NetworkingContext& networkingContext, bool usesEphemeralSession) { return adoptRef(new SocketStreamHandle(url, client, networkingContext, usesEphemeralSession)); }
 
     virtual ~SocketStreamHandle();
 
@@ -60,7 +60,7 @@ private:
     virtual int platformSend(const char* data, int length);
     virtual void platformClose();
 
-    SocketStreamHandle(const URL&, SocketStreamHandleClient*, NetworkingContext&);
+    SocketStreamHandle(const URL&, SocketStreamHandleClient*, NetworkingContext&, bool usesEphemeralSession);
     void createStreams();
     void scheduleStreams();
     void chooseProxy();

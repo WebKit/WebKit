@@ -60,9 +60,13 @@
 extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 #endif
 
+#if PLATFORM(COCOA)
+#import <CFNetworkSPI.h>
+#endif
+
 namespace WebCore {
 
-SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient* client, NetworkingContext& networkingContext)
+SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient* client, NetworkingContext& networkingContext, bool usesEphemeralSession)
     : SocketStreamHandleBase(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
@@ -75,6 +79,17 @@ SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient*
 
     URL httpsURL(URL(), "https://" + m_url.host());
     m_httpsURL = httpsURL.createCFURL();
+
+#if PLATFORM(COCOA)
+    // Don't check for HSTS violation for ephemeral sessions since
+    // HSTS state should not transfer between regular and private browsing.
+    if (url.protocolIs("ws")
+        && !usesEphemeralSession
+        && _CFNetworkIsKnownHSTSHostWithSession(m_httpsURL.get(), nullptr)) {
+        m_client->didFailSocketStream(this, SocketStreamError(0, m_url.string(), "WebSocket connection failed because it violates HTTP Strict Transport Security."));
+        return;
+    }
+#endif
 
     createStreams();
     ASSERT(!m_readStream == !m_writeStream);

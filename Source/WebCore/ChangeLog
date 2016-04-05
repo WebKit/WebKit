@@ -1,3 +1,23 @@
+2016-04-04  John Wilander  <wilander@apple.com>
+
+        Block plaintext WebSocket requests to domains under HSTS.
+        https://bugs.webkit.org/show_bug.cgi?id=156049
+        <rdar://problem/13820000>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests because the way TLS is setup for layout tests doesn't allow the server to set HSTS for 127.0.0.1 nor localhost. This is tracked in <rdar://problem/25467825>.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+            - Now sends usesEphemeralSession to SocketStreamHandle::create.
+        * platform/network/cf/SocketStreamHandle.h:
+        (WebCore::SocketStreamHandle::create):
+            - Added parameter usesEphemeralSession which it passes on to the SocketStreamHandle constructor.
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+            - Now blocks plaintext WebSocket connections for domains under HSTS if not in an ephemeral session.
+
 2016-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         Make FrameView's exposedRect an Optional<>
