@@ -143,6 +143,7 @@ CGCompositeOperation CGContextGetCompositeOperation(CGContextRef);
 CGColorRef CGContextGetFillColorAsColor(CGContextRef);
 CGFloat CGContextGetLineWidth(CGContextRef);
 bool CGContextGetShouldSmoothFonts(CGContextRef);
+bool CGContextGetShouldAntialias(CGContextRef);
 void CGContextSetBaseCTM(CGContextRef, CGAffineTransform);
 void CGContextSetCTM(CGContextRef, CGAffineTransform);
 void CGContextSetCompositeOperation(CGContextRef, CGCompositeOperation);

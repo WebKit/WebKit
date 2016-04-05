@@ -1,3 +1,20 @@
+2016-04-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Avoid context save/restore in GraphicsContext::drawNativeImage 
+        https://bugs.webkit.org/show_bug.cgi?id=156173
+
+        Reviewed by Simon Fraser.
+
+        CG save/restore is a costly operation. Try to avoid it, if possible, in
+        GraphicsContext::drawNativeImage. If no clipping is involved, don't save/
+        save/restore the GraphicsContext.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        * platform/graphics/cg/GraphicsContextCG.h:
+        (WebCore::CGContextStateSaver::didSave):
+        * platform/spi/cg/CoreGraphicsSPI.h:
+
 2016-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Add a "notifyutil" callback for dumping the RenderLayer tree, and move the registration to Page code

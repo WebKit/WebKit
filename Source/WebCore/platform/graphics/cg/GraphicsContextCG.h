@@ -85,6 +85,11 @@ public:
         m_saveAndRestore = false;
     }
     
+    bool didSave() const
+    {
+        return m_saveAndRestore;
+    }
+    
 private:
     CGContextRef m_context;
     bool m_saveAndRestore;

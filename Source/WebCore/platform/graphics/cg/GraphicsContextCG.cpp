@@ -179,13 +179,9 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
         return;
 
     CGContextRef context = platformContext();
-    CGContextStateSaver stateSaver(context);
-
-#if PLATFORM(IOS)
-    // Anti-aliasing is on by default on the iPhone. Need to turn it off when drawing images.
-    CGContextSetShouldAntialias(context, false);
-#endif
-
+    CGAffineTransform transform = CGContextGetCTM(context);
+    CGContextStateSaver stateSaver(context, false);
+    
     bool shouldUseSubimage = false;
 
     // If the source rect is a subportion of the image, then we compute an inflated destination rect that will hold the entire image
@@ -229,8 +225,10 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
             adjustedDestRect.setSize(FloatSize(imageSize.width() / xScale, imageSize.height() / yScale));
         }
 
-        if (!destRect.contains(adjustedDestRect))
+        if (!destRect.contains(adjustedDestRect)) {
+            stateSaver.save();
             CGContextClipToRect(context, destRect);
+        }
     }
 
     // If the image is only partially loaded, then shrink the destination rect that we're drawing into accordingly.
@@ -238,6 +236,10 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
         adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / imageSize.height());
 
 #if PLATFORM(IOS)
+    bool wasAntialiased = CGContextGetShouldAntialias(context);
+    // Anti-aliasing is on by default on the iPhone. Need to turn it off when drawing images.
+    CGContextSetShouldAntialias(context, false);
+
     // Align to pixel boundaries
     adjustedDestRect = roundToDevicePixels(adjustedDestRect);
 #endif
@@ -263,6 +265,13 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
 
     // Draw the image.
     CGContextDrawImage(context, adjustedDestRect, subImage.get());
+    
+    if (!stateSaver.didSave()) {
+        CGContextSetCTM(context, transform);
+#if PLATFORM(IOS)
+        CGContextSetShouldAntialias(context, wasAntialiased);
+#endif
+    }
 }
 
 static void drawPatternCallback(void* info, CGContextRef context)
