@@ -1,3 +1,11 @@
+2016-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Speculative build fix after r199043
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+        Explicitly call constructor instead of using an initializer list.
+
 2016-04-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed build fix with GSTREAMER_GL active.

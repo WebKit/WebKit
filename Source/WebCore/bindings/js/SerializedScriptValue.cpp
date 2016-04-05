@@ -2752,14 +2752,14 @@ void SerializedScriptValue::writeBlobsToDiskForIndexedDB(std::function<void (con
     ASSERT(isMainThread());
 
     if (m_blobURLs.isEmpty()) {
-        completionHandler({ });
+        completionHandler(IDBValue());
         return;
     }
 
     RefPtr<SerializedScriptValue> protector(this);
     blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler, this, protector](const Vector<String>&) {
         // FIXME: Return an IDBValue that contains both the SerializedScriptValue data and all blob file data.
-        completionHandler({ });
+        completionHandler(IDBValue());
     });
 }
 
