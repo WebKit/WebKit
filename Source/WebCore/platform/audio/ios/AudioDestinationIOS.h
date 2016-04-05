@@ -66,8 +66,8 @@ private:
     AudioIOCallback& m_callback;
     RefPtr<AudioBus> m_renderBus;
     RefPtr<AudioBus> m_spareBus;
-    unsigned m_firstSpareFrame { 0 };
-    unsigned m_lastSpareFrame { 0 };
+    unsigned m_startSpareFrame { 0 };
+    unsigned m_endSpareFrame { 0 };
 
     double m_sampleRate;
     bool m_isPlaying;
