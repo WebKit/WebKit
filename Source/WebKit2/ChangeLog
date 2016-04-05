@@ -1,3 +1,19 @@
+2016-04-04  Chelsea Pugh  <cpugh@apple.com>
+
+        [iOS] Allow clients in the bundle to know whether a field was focused by user interaction        
+        https://bugs.webkit.org/show_bug.cgi?id=156118
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h: Add delegate method that takes userIsInteracting bool so that bundle clients get this information.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm: Call API with userIsInteracting property if delegate implements it, otherwise call existing API if
+        userIsInteracting is true, as we previously did in WebKit::WebPage::elementDidFocus. Move FIXME from WebKit::WebPage::elementDidFocus to here, since we are checking userIsInteracting.
+        * WebProcess/InjectedBundle/APIInjectedBundleFormClient.h:
+        (API::InjectedBundle::FormClient::willBeginInputSession): Add userIsInteracting bool to arguments so we can use it for call to the new API as well as preserving behavior of the old API.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::elementDidFocus): Remove check if user is interacting and call willBeginInputSession unconditionally. Move FIXME to where we check
+        userIsInteracting. Pass m_userIsInteracting to willBeginInputSession so we can use it there.
+
 2016-04-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK build fix after r199020

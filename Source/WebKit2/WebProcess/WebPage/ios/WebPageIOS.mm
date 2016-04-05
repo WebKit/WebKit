@@ -2548,12 +2548,7 @@ void WebPage::elementDidFocus(WebCore::Node* node)
         getAssistedNodeInformation(information);
         RefPtr<API::Object> userData;
 
-        // FIXME: We check m_userIsInteracting so that we don't begin an input session for a
-        // programmatic focus that doesn't cause the keyboard to appear. But this misses the case of
-        // a programmatic focus happening while the keyboard is already shown. Once we have a way to
-        // know the keyboard state in the Web Process, we should refine the condition.
-        if (m_userIsInteracting)
-            m_formClient->willBeginInputSession(this, downcast<Element>(node), WebFrame::fromCoreFrame(*node->document().frame()), userData);
+        m_formClient->willBeginInputSession(this, downcast<Element>(node), WebFrame::fromCoreFrame(*node->document().frame()), userData, m_userIsInteracting);
 
         send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, m_hasPendingBlurNotification, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
         m_hasPendingBlurNotification = false;

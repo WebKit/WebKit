@@ -515,15 +515,21 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
                 [formDelegate _webProcessPlugInBrowserContextController:m_controller textDidChangeInTextField:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)) inFrame:wrapper(*frame) initiatedByUserTyping:initiatedByUserTyping];
         }
 
-        void willBeginInputSession(WebPage*, Element* element, WebFrame* frame, RefPtr<API::Object>& userData) override
+        void willBeginInputSession(WebPage*, Element* element, WebFrame* frame, RefPtr<API::Object>& userData, bool userIsInteracting) override
         {
             auto formDelegate = m_controller->_formDelegate.get();
 
-            if (![formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willBeginInputSessionForElement:inFrame:)])
-                return;
-
-            NSObject <NSSecureCoding> *userObject = [formDelegate _webProcessPlugInBrowserContextController:m_controller willBeginInputSessionForElement:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(element)) inFrame:wrapper(*frame)];
-            encodeUserObject(userObject, userData);
+            if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willBeginInputSessionForElement:inFrame:userIsInteracting:)]) {
+                NSObject<NSSecureCoding> *userObject = [formDelegate _webProcessPlugInBrowserContextController:m_controller willBeginInputSessionForElement:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(element)) inFrame:wrapper(*frame) userIsInteracting:userIsInteracting];
+                encodeUserObject(userObject, userData);
+            } else if (userIsInteracting && [formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willBeginInputSessionForElement:inFrame:)]) {
+                // FIXME: We check userIsInteracting so that we don't begin an input session for a
+                // programmatic focus that doesn't cause the keyboard to appear. But this misses the case of
+                // a programmatic focus happening while the keyboard is already shown. Once we have a way to
+                // know the keyboard state in the Web Process, we should refine the condition.
+                NSObject<NSSecureCoding> *userObject = [formDelegate _webProcessPlugInBrowserContextController:m_controller willBeginInputSessionForElement:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(element)) inFrame:wrapper(*frame)];
+                encodeUserObject(userObject, userData);
+            }
         }
 
         bool shouldNotifyOnFormChanges(WebKit::WebPage*) override
