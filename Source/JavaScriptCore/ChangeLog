@@ -1,3 +1,15 @@
+2016-04-05  Saam barati  <sbarati@apple.com>
+
+        jsc-layout-tests.yaml/js/script-tests/regress-141098.js failing on Yosemite Debug after r198989
+        https://bugs.webkit.org/show_bug.cgi?id=156187
+
+        Reviewed by Filip Pizlo.
+
+        This is a speculative fix. Lets see if the prevents the timeout.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseStatementListItem):
+
 2016-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         PolymorphicAccess should have a MegamorphicLoad case

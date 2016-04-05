@@ -542,6 +542,9 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
 {
     // The grammar is documented here:
     // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-statements
+
+    failIfStackOverflow();
+
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth++;
     TreeStatement result = 0;
