@@ -1,3 +1,22 @@
+2016-04-05  Antoine Quint  <graouts@apple.com>
+
+        [WebGL2] Allow enabling WebGL2 with a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=156166
+        <rdar://problem/25526929>
+
+        Set the WebGL2 runtime flag based on preferences, disabled by default.
+
+        Reviewed by Dean Jackson.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences webGL2Enabled]):
+        (-[WebPreferences setWebGL2Enabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2016-04-01  Alex Christensen  <achristensen@webkit.org>
 
         Compile DumpRenderTree with CMake on Mac

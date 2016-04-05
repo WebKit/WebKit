@@ -1,3 +1,17 @@
+2016-04-05  Antoine Quint  <graouts@apple.com>
+
+        [WebGL2] Allow enabling WebGL2 with a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=156166
+        <rdar://problem/25526929>
+
+        Added new runtime flags for WebGL2.
+
+        Reviewed by Dean Jackson.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebGL2Enabled):
+        (WebCore::RuntimeEnabledFeatures::webGL2Enabled):
+
 2016-04-05  Antti Koivisto  <antti@apple.com>
 
         Use RenderTreeUpdater for text node mutations

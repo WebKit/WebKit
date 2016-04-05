@@ -1,3 +1,15 @@
+2016-04-05  Antoine Quint  <graouts@apple.com>
+
+        [WebGL2] Allow enabling WebGL2 with a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=156166
+        <rdar://problem/25526929>
+
+        Removed the manual overrides of ENABLE_WEBGL2.
+
+        Reviewed by Dean Jackson.
+
+        * wtf/FeatureDefines.h:
+
 2016-03-31  Konstantin Tokarev  <annulen@yandex.ru>
 
         Removed leftovers of ENABLE(INSPECTOR) and ENABLE(VIEWPORT).

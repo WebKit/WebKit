@@ -217,6 +217,11 @@ public:
     bool customElementsEnabled() const { return m_areCustomElementsEnabled; }
 #endif
 
+#if ENABLE(WEBGL2)
+    void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
+    bool webGL2Enabled() const { return m_isWebGL2Enabled; }
+#endif
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -308,6 +313,10 @@ private:
 
 #if ENABLE(CUSTOM_ELEMENTS)
     bool m_areCustomElementsEnabled;
+#endif
+
+#if ENABLE(WEBGL2)
+    bool m_isWebGL2Enabled;
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

@@ -459,6 +459,16 @@ bool WKPreferencesGetWebGLEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webGLEnabled();
 }
 
+void WKPreferencesSetWebGL2Enabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setWebGL2Enabled(flag);
+}
+
+bool WKPreferencesGetWebGL2Enabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->webGL2Enabled();
+}
+
 void WKPreferencesSetForceSoftwareWebGLRendering(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setForceSoftwareWebGLRendering(flag);

@@ -610,6 +610,9 @@ public:
 #if ENABLE(CUSTOM_ELEMENTS)
         [NSNumber numberWithBool:NO], WebKitCustomElementsEnabledPreferenceKey,
 #endif
+#if ENABLE(WEBGL2)
+        [NSNumber numberWithBool:NO], WebKitWebGL2EnabledPreferenceKey,
+#endif
         nil];
 
 #if !PLATFORM(IOS)
@@ -1946,6 +1949,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setWebGLEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitWebGLEnabledPreferenceKey];
+}
+
+- (BOOL)webGL2Enabled
+{
+    return [self _boolValueForKey:WebKitWebGL2EnabledPreferenceKey];
+}
+
+- (void)setWebGL2Enabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitWebGL2EnabledPreferenceKey];
 }
 
 - (BOOL)forceSoftwareWebGLRendering

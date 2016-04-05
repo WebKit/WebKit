@@ -227,6 +227,7 @@
     macro(MockCaptureDevicesEnabled, mockCaptureDevicesEnabled, Bool, bool, false) \
     macro(ShadowDOMEnabled, shadowDOMEnabled, Bool, bool, true) \
     macro(CustomElementsEnabled, customElementsEnabled, Bool, bool, false) \
+    macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false) \
     FOR_EACH_ADDITIONAL_WEBKIT_BOOL_PREFERENCE(macro) \
     \
 

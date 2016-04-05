@@ -747,10 +747,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_WEBGL 0
 #endif
 
-#if !defined(ENABLE_WEBGL2)
-#define ENABLE_WEBGL2 0
-#endif
-
 #if !defined(ENABLE_GRAPHICS_CONTEXT_3D)
 #define ENABLE_GRAPHICS_CONTEXT_3D ENABLE_WEBGL
 #endif
