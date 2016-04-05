@@ -1,3 +1,11 @@
+2016-04-05  Antti Koivisto  <antti@apple.com>
+
+        Un-marking plugins/focus.html as flaky on mac
+
+        It hasn't flaked after https://trac.webkit.org/r199054
+
+        * platform/mac/TestExpectations:
+
 2016-04-05  Antoine Quint  <graouts@apple.com>
 
         [WebGL2] Turn the ENABLE_WEBGL2 flag on
