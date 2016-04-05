@@ -1,3 +1,21 @@
+2016-04-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add missing EABI_32BIT_DUMMY_ARG arguments for some callOperation(J_JITOperation_EGReoJ, ...) overloads
+        https://bugs.webkit.org/show_bug.cgi?id=156161
+
+        Reviewed by Yusuke Suzuki.
+
+        r197641 added a couple of callOperation(J_JITOperation_EGReoJ, ...) overloads
+        that handle arguments split into the tag and the payload. The two were split
+        between the last argument register and the stack on 32-bit ARM EABI systems,
+        causing incorrect behavior.
+
+        Adding EABI_32BIT_DUMMY_ARG pushes the tag and payload together onto the
+        stack, removing the issue.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+
 2016-04-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Avoid copying ModuleLoaderObject.js to resources bundle
