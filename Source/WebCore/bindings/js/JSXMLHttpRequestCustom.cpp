@@ -113,7 +113,7 @@ public:
     unsigned column() const { return m_column; }
     String url() const { return m_url; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
@@ -130,10 +130,10 @@ public:
     }
 
 private:
-    bool m_hasSkippedFirstFrame;
-    unsigned m_line;
-    unsigned m_column;
-    String m_url;
+    mutable bool m_hasSkippedFirstFrame;
+    mutable unsigned m_line;
+    mutable unsigned m_column;
+    mutable String m_url;
 };
 
 JSValue JSXMLHttpRequest::send(ExecState& state)
@@ -158,6 +158,9 @@ JSValue JSXMLHttpRequest::send(ExecState& state)
     } else
         wrapped().send(val.toString(&state)->value(&state), ec);
 
+    // FIXME: This should probably use ShadowChicken so that we get the right frame even when it did
+    // a tail call.
+    // https://bugs.webkit.org/show_bug.cgi?id=155688
     SendFunctor functor;
     state.iterate(functor);
     wrapped().setLastSendLineAndColumnNumber(functor.line(), functor.column());

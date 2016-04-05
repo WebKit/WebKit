@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012, 2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -794,7 +794,7 @@ public:
 
     EncodedJSValue result() { return m_result; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
@@ -809,9 +809,9 @@ public:
 
 private:
     ExecState* m_exec;
-    bool m_hasSkippedFirstFrame;
+    mutable bool m_hasSkippedFirstFrame;
     JSObject* m_thisObject;
-    EncodedJSValue m_result;
+    mutable EncodedJSValue m_result;
 };
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
@@ -847,7 +847,7 @@ public:
 
     bool allowsAccess() const { return m_allowsAccess; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
@@ -859,8 +859,8 @@ public:
     }
 
 private:
-    bool m_hasSkippedFirstFrame;
-    bool m_allowsAccess;
+    mutable bool m_hasSkippedFirstFrame;
+    mutable bool m_allowsAccess;
     JSObject* m_thisObject;
 };
 

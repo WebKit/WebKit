@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,8 @@ void computeUsesForBytecodeOffset(
     case op_create_cloned_arguments:
     case op_get_rest_length:
     case op_watchdog:
+    case op_log_shadow_chicken_prologue:
+    case op_log_shadow_chicken_tail:
         return;
     case op_assert:
     case op_get_scope:
@@ -326,6 +328,8 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_put_to_arguments:
     case op_set_function_name:
     case op_watchdog:
+    case op_log_shadow_chicken_prologue:
+    case op_log_shadow_chicken_tail:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);
 #undef LLINT_HELPER_OPCODES

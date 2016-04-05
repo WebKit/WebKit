@@ -45,6 +45,7 @@
 #include "JSLock.h"
 #include "JSVirtualMachineInternal.h"
 #include "SamplingProfiler.h"
+#include "ShadowChicken.h"
 #include "Tracing.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
@@ -597,6 +598,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
         visitStrongHandles(heapRootVisitor);
         visitHandleStack(heapRootVisitor);
         visitSamplingProfiler();
+        visitShadowChicken();
         traceCodeBlocksAndJITStubRoutines();
         converge();
     }
@@ -899,6 +901,11 @@ void Heap::visitSamplingProfiler()
 #endif // ENABLE(SAMPLING_PROFILER)
 }
 
+void Heap::visitShadowChicken()
+{
+    m_vm->shadowChicken().visitChildren(m_slotVisitor);
+}
+
 void Heap::traceCodeBlocksAndJITStubRoutines()
 {
     GCPHASE(TraceCodeBlocksAndJITStubRoutines);
@@ -1123,7 +1130,9 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
         DeferGCForAWhile awhile(*this);
         vm()->typeProfilerLog()->processLogEntries(ASCIILiteral("GC"));
     }
-    
+
+    vm()->shadowChicken().update(*vm(), vm()->topCallFrame);
+
     RELEASE_ASSERT(!m_deferralDepth);
     ASSERT(vm()->currentThreadIsHoldingAPILock());
     RELEASE_ASSERT(vm()->atomicStringTable() == wtfThreadData().atomicStringTable());

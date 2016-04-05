@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2205,6 +2205,15 @@ public:
         // Ready for a jump!
         move(newFramePointer, stackPointerRegister);
     }
+    
+    // These operations clobber all volatile registers. They assume that there is room on the top of
+    // stack to marshall call arguments.
+    void logShadowChickenProloguePacket();
+    void logShadowChickenTailPacket();
+
+private:
+    // Leaves behind a pointer to the Packet we should write to in regT1.
+    void setupShadowChickenPacket();
 };
 
 } // namespace JSC

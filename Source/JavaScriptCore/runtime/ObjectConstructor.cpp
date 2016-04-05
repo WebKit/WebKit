@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -162,7 +162,7 @@ public:
 
     JSValue result() const { return m_result; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
@@ -176,9 +176,9 @@ public:
 
 private:
     ExecState* m_exec;
-    bool m_hasSkippedFirstFrame;
+    mutable bool m_hasSkippedFirstFrame;
     JSObject* m_object;
-    JSValue m_result;
+    mutable JSValue m_result;
 };
 
 JSValue objectConstructorGetPrototypeOf(ExecState* exec, JSObject* object)

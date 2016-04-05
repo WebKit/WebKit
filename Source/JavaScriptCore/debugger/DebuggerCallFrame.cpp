@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,9 +42,12 @@
 
 namespace JSC {
 
+// FIXME: Make this use ShadowChicken so that it sees tail-deleted frames.
+// https://bugs.webkit.org/show_bug.cgi?id=155690
+
 class LineAndColumnFunctor {
 public:
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         visitor->computeLineAndColumn(m_line, m_column);
         return StackVisitor::Done;
@@ -54,8 +57,8 @@ public:
     unsigned column() const { return m_column; }
 
 private:
-    unsigned m_line;
-    unsigned m_column;
+    mutable unsigned m_line;
+    mutable unsigned m_column;
 };
 
 class FindCallerMidStackFunctor {
@@ -65,7 +68,7 @@ public:
         , m_callerFrame(nullptr)
     { }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (visitor->callFrame() == m_callFrame) {
             m_callerFrame = visitor->callerFrame();
@@ -78,7 +81,7 @@ public:
 
 private:
     CallFrame* m_callFrame;
-    CallFrame* m_callerFrame;
+    mutable CallFrame* m_callerFrame;
 };
 
 DebuggerCallFrame::DebuggerCallFrame(CallFrame* callFrame)

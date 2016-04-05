@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,13 @@
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "Interpreter.h"
+#include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "LLIntData.h"
 #include "LLIntOpcode.h"
 #include "LLIntThunks.h"
 #include "Opcode.h"
-#include "JSCInlines.h"
+#include "ShadowChicken.h"
 #include "VM.h"
 
 namespace JSC {
@@ -49,6 +50,8 @@ void genericUnwind(VM* vm, ExecState* callFrame, UnwindStart unwindStart)
             dataLog("In call frame ", RawPointer(callFrame), " with null CodeBlock\n");
         CRASH();
     }
+    
+    vm->shadowChicken().log(*vm, callFrame, ShadowChicken::Packet::throwPacket());
     
     Exception* exception = vm->exception();
     RELEASE_ASSERT(exception);

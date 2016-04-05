@@ -49,6 +49,9 @@ namespace JSC {
 
 JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 {
+    // FIXME: This should be able to log ShadowChicken prologue packets.
+    // https://bugs.webkit.org/show_bug.cgi?id=155689
+    
     Call nativeCall;
 
     emitFunctionPrologue();

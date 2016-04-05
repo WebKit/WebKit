@@ -234,6 +234,8 @@ bool doesGC(Graph& graph, Node* node)
     case GetFromArguments:
     case PutToArguments:
     case CopyRest:
+    case LogShadowChickenPrologue:
+    case LogShadowChickenTail:
         return false;
 
     case CreateActivation:

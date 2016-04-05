@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007, 2008, 2011, 2013-2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2011, 2013-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -245,9 +245,10 @@ namespace JSC  {
         String friendlyFunctionName();
 
         // CallFrame::iterate() expects a Functor that implements the following method:
-        //     StackVisitor::Status operator()(StackVisitor&);
-
-        template <typename Functor> void iterate(Functor& functor)
+        //     StackVisitor::Status operator()(StackVisitor&) const;
+        // FIXME: This method is improper. We rely on the fact that we can call it with a null
+        // receiver. We should always be using StackVisitor directly.
+        template <typename Functor> void iterate(const Functor& functor)
         {
             StackVisitor::visit<Functor>(this, functor);
         }

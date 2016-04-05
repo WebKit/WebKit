@@ -878,6 +878,10 @@ def runDFGMaximalFlushPhase
     run("dfg-maximal-flush-validate-no-cjit", "--validateGraph=true", "--useMaximalFlushInsertionPhase=true", *NO_CJIT_OPTIONS)
 end
 
+def runShadowChicken
+    run("shadow-chicken", "--useDFGJIT=false", "--alwaysUseShadowChicken=true")
+end
+
 def defaultRun
     if $quickMode
         defaultQuickRun

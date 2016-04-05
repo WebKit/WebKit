@@ -53,6 +53,7 @@
 #include "LowLevelInterpreter.h"
 #include "ObjectConstructor.h"
 #include "ProtoCallFrame.h"
+#include "ShadowChicken.h"
 #include "StructureRareDataInlines.h"
 #include "VMInlines.h"
 #include <wtf/StringPrintStream.h>
@@ -1512,6 +1513,25 @@ LLINT_SLOW_PATH_DECL(slow_path_check_if_exception_is_uncatchable_and_notify_prof
     if (isTerminatedExecutionException(vm.exception()))
         LLINT_RETURN_TWO(pc, bitwise_cast<void*>(static_cast<uintptr_t>(1)));
     LLINT_RETURN_TWO(pc, 0);
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_prologue)
+{
+    LLINT_BEGIN();
+    
+    vm.shadowChicken().log(
+        vm, exec, ShadowChicken::Packet::prologue(exec->callee(), exec, exec->callerFrame()));
+    
+    LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_tail)
+{
+    LLINT_BEGIN();
+    
+    vm.shadowChicken().log(vm, exec, ShadowChicken::Packet::tail(exec));
+    
+    LLINT_END();
 }
 
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* protoFrame)

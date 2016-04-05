@@ -250,7 +250,7 @@ public:
 
     JSValue result() const { return m_result; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         JSObject* callee = visitor->callee();
         if (callee != m_targetCallee)
@@ -262,7 +262,7 @@ public:
 
 private:
     JSObject* m_targetCallee;
-    JSValue m_result;
+    mutable JSValue m_result;
 };
 
 static JSValue retrieveArguments(ExecState* exec, JSFunction* functionObj)
@@ -292,7 +292,7 @@ public:
 
     JSValue result() const { return m_result; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         JSObject* callee = visitor->callee();
 
@@ -315,9 +315,9 @@ public:
 
 private:
     JSObject* m_targetCallee;
-    bool m_hasFoundFrame;
-    bool m_hasSkippedToCallerFrame;
-    JSValue m_result;
+    mutable bool m_hasFoundFrame;
+    mutable bool m_hasSkippedToCallerFrame;
+    mutable JSValue m_result;
 };
 
 static JSValue retrieveCallerFunction(ExecState* exec, JSFunction* functionObj)

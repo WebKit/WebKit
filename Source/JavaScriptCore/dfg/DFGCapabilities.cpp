@@ -225,6 +225,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_catch:
     case op_copy_rest:
     case op_get_rest_length:
+    case op_log_shadow_chicken_prologue:
+    case op_log_shadow_chicken_tail:
         return CanCompileAndInline;
 
     case op_put_to_scope: {

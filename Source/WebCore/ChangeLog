@@ -1,3 +1,26 @@
+2016-03-19  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should use a shadow stack version of CHICKEN so that debuggers have the option of retrieving tail-deleted frames
+        https://bugs.webkit.org/show_bug.cgi?id=155598
+
+        Reviewed by Saam Barati.
+
+        Fixed some uses of the stack walking functor to obey the new lambda-friendly API, which
+        requires that operator() is const.
+
+        No new tests because no change in behavior.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::SendFunctor::column):
+        (WebCore::SendFunctor::url):
+        (WebCore::SendFunctor::operator()):
+        (WebCore::JSXMLHttpRequest::send):
+        * testing/Internals.cpp:
+        (WebCore::GetCallerCodeBlockFunctor::GetCallerCodeBlockFunctor):
+        (WebCore::GetCallerCodeBlockFunctor::operator()):
+        (WebCore::GetCallerCodeBlockFunctor::codeBlock):
+        (WebCore::Internals::parserMetaData):
+
 2016-04-05  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Replace use of SerializedScriptValue with IDBValue.

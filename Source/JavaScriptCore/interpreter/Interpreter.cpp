@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -353,7 +353,7 @@ public:
     {
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
@@ -369,7 +369,7 @@ public:
     }
 
 private:
-    bool m_hasSkippedFirstFrame;
+    mutable bool m_hasSkippedFirstFrame;
     const Register*& m_it;
 };
 
@@ -543,7 +543,7 @@ public:
     {
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         VM& vm = m_vm;
         if (m_remainingCapacityForFrameCapture) {
@@ -578,7 +578,7 @@ public:
 private:
     VM& m_vm;
     Vector<StackFrame>& m_results;
-    size_t m_remainingCapacityForFrameCapture;
+    mutable size_t m_remainingCapacityForFrameCapture;
 };
 
 void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t maxStackSize)
@@ -630,7 +630,7 @@ public:
 
     HandlerInfo* handler() { return m_handler; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         visitor.unwindToMachineCodeBlockFrame();
 
@@ -646,7 +646,7 @@ public:
     }
 
 private:
-    HandlerInfo* m_handler;
+    mutable HandlerInfo* m_handler;
 };
 
 ALWAYS_INLINE static void notifyDebuggerOfUnwinding(CallFrame* callFrame)
@@ -671,7 +671,7 @@ public:
     {
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         visitor.unwindToMachineCodeBlockFrame();
         VM& vm = m_callFrame->vm();
@@ -705,7 +705,7 @@ public:
     }
 
 private:
-    void copyCalleeSavesToVMCalleeSavesBuffer(StackVisitor& visitor)
+    void copyCalleeSavesToVMCalleeSavesBuffer(StackVisitor& visitor) const
     {
 #if ENABLE(JIT) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 

@@ -134,6 +134,9 @@ typedef const char* optionString;
     \
     v(bool, useFunctionDotArguments, true, nullptr) \
     v(bool, useTailCalls, true, nullptr) \
+    v(bool, alwaysUseShadowChicken, false, nullptr) \
+    v(unsigned, shadowChickenLogSize, 1000, nullptr) \
+    v(unsigned, shadowChickenStackSizeLimit, 100000, nullptr) \
     \
     /* dumpDisassembly implies dumpDFGDisassembly. */ \
     v(bool, dumpDisassembly, false, "dumps disassembly of all JIT compiled code upon compilation") \

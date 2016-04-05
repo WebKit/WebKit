@@ -137,7 +137,9 @@
             { "name" : "op_get_rest_length", "length": 3 },
             { "name" : "op_save", "length" : 4 },
             { "name" : "op_resume", "length" : 3 },
-            { "name" : "op_watchdog", "length" : 1 }
+            { "name" : "op_watchdog", "length" : 1 },
+            { "name" : "op_log_shadow_chicken_prologue", "length" : 1},
+            { "name" : "op_log_shadow_chicken_tail", "length" : 1}
         ]
     },
     {

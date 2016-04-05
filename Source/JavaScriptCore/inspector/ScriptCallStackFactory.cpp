@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  * Copyright (c) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
@@ -59,7 +59,7 @@ public:
     {
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (m_needToSkipAFrame) {
             m_needToSkipAFrame = false;
@@ -84,9 +84,9 @@ public:
     }
 
 private:
-    bool m_needToSkipAFrame;
+    mutable bool m_needToSkipAFrame;
     Vector<ScriptCallFrame>& m_frames;
-    size_t m_remainingCapacityForFrameCapture;
+    mutable size_t m_remainingCapacityForFrameCapture;
 };
 
 Ref<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)

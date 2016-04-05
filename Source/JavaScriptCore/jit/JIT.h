@@ -595,6 +595,8 @@ namespace JSC {
         void emit_op_enumerator_structure_pname(Instruction*);
         void emit_op_enumerator_generic_pname(Instruction*);
         void emit_op_to_index_string(Instruction*);
+        void emit_op_log_shadow_chicken_prologue(Instruction*);
+        void emit_op_log_shadow_chicken_tail(Instruction*);
 
         void emitSlow_op_add(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_bitand(Instruction*, Vector<SlowCaseEntry>::iterator&);

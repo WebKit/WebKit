@@ -1159,6 +1159,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(InternalState);
         return;
         
+    case LogShadowChickenPrologue:
+    case LogShadowChickenTail:
+        write(SideState);
+        return;
+        
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();
         return;

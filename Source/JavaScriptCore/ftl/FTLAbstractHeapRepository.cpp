@@ -43,6 +43,7 @@
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
+#include "ShadowChicken.h"
 
 namespace JSC { namespace FTL {
 

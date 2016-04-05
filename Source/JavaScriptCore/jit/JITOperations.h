@@ -394,6 +394,7 @@ EncodedJSValue JIT_OPERATION operationNextEnumeratorPname(ExecState*, JSCell*, i
 JSCell* JIT_OPERATION operationToIndexString(ExecState*, int32_t);
 
 void JIT_OPERATION operationProcessTypeProfilerLog(ExecState*) WTF_INTERNAL;
+void JIT_OPERATION operationProcessShadowChickenLog(ExecState*) WTF_INTERNAL;
 
 } // extern "C"
 

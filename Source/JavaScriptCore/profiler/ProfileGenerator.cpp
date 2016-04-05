@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2014, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +72,7 @@ public:
 
     bool foundParent() const { return m_foundParent; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
@@ -92,8 +92,8 @@ public:
 
 private:
     ExecState* m_exec;
-    bool m_hasSkippedFirstFrame;
-    bool m_foundParent;
+    mutable bool m_hasSkippedFirstFrame;
+    mutable bool m_foundParent;
     RefPtr<ProfileNode>& m_rootNode;
     RefPtr<ProfileNode>& m_currentNode;
     double m_startTime;

@@ -57,6 +57,7 @@
 #include "PropertyName.h"
 #include "Repatch.h"
 #include "ScopedArguments.h"
+#include "ShadowChicken.h"
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
@@ -2118,7 +2119,16 @@ JSCell* JIT_OPERATION operationToIndexString(ExecState* exec, int32_t index)
 
 void JIT_OPERATION operationProcessTypeProfilerLog(ExecState* exec)
 {
-    exec->vm().typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside baseline JIT"));
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    vm.typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside baseline JIT"));
+}
+
+void JIT_OPERATION operationProcessShadowChickenLog(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    vm.shadowChicken().update(vm, exec);
 }
 
 int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(ExecState* exec)

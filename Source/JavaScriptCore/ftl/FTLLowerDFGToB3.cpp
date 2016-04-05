@@ -68,6 +68,7 @@
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
 #include "ScratchRegisterAllocator.h"
+#include "ShadowChicken.h"
 #include "SetupVarargsFrame.h"
 #include "VirtualRegister.h"
 #include "Watchdog.h"
@@ -940,6 +941,12 @@ private:
             break;
         case SetRegExpObjectLastIndex:
             compileSetRegExpObjectLastIndex();
+            break;
+        case LogShadowChickenPrologue:
+            compileLogShadowChickenPrologue();
+            break;
+        case LogShadowChickenTail:
+            compileLogShadowChickenTail();
             break;
         case RecordRegExpCachedResult:
             compileRecordRegExpCachedResult();
@@ -6768,6 +6775,23 @@ private:
         
         m_out.store64(value, regExp, m_heaps.RegExpObject_lastIndex);
     }
+    
+    void compileLogShadowChickenPrologue()
+    {
+        LValue packet = setupShadowChickenPacket();
+        
+        m_out.storePtr(m_callFrame, packet, m_heaps.ShadowChicken_Packet_frame);
+        m_out.storePtr(m_out.loadPtr(addressFor(0)), packet, m_heaps.ShadowChicken_Packet_callerFrame);
+        m_out.storePtr(m_out.loadPtr(payloadFor(JSStack::Callee)), packet, m_heaps.ShadowChicken_Packet_callee);
+    }
+    
+    void compileLogShadowChickenTail()
+    {
+        LValue packet = setupShadowChickenPacket();
+        
+        m_out.storePtr(m_callFrame, packet, m_heaps.ShadowChicken_Packet_frame);
+        m_out.storePtr(m_out.constIntPtr(ShadowChicken::Packet::tailMarker()), packet, m_heaps.ShadowChicken_Packet_callee);
+    }
 
     void compileRecordRegExpCachedResult()
     {
@@ -7990,6 +8014,37 @@ private:
         return ArrayValues(
             m_out.phi(m_out.intPtr, fastArray, slowArray),
             m_out.phi(m_out.intPtr, fastButterfly, slowButterfly));
+    }
+    
+    LValue setupShadowChickenPacket()
+    {
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        
+        TypedPointer addressOfLogCursor = m_out.absolute(vm().shadowChicken().addressOfLogCursor());
+        LValue logCursor = m_out.loadPtr(addressOfLogCursor);
+        
+        ValueFromBlock fastResult = m_out.anchor(logCursor);
+        
+        m_out.branch(
+            m_out.below(logCursor, m_out.constIntPtr(vm().shadowChicken().logEnd())),
+            usually(continuation), rarely(slowCase));
+        
+        LBasicBlock lastNext = m_out.appendTo(slowCase, continuation);
+        
+        vmCall(Void, m_out.operation(operationProcessShadowChickenLog), m_callFrame);
+        
+        ValueFromBlock slowResult = m_out.anchor(m_out.loadPtr(addressOfLogCursor));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        LValue result = m_out.phi(pointerType(), fastResult, slowResult);
+        
+        m_out.storePtr(
+            m_out.add(result, m_out.constIntPtr(sizeof(ShadowChicken::Packet))),
+            addressOfLogCursor);
+        
+        return result;
     }
     
     LValue boolify(Edge edge)

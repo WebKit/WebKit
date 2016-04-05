@@ -1450,6 +1450,18 @@ void JIT::emit_op_resume(Instruction* currentInstruction)
     slowPathCall.call();
 }
 
+void JIT::emit_op_log_shadow_chicken_prologue(Instruction*)
+{
+    updateTopCallFrame();
+    logShadowChickenProloguePacket();
+}
+
+void JIT::emit_op_log_shadow_chicken_tail(Instruction*)
+{
+    updateTopCallFrame();
+    logShadowChickenTailPacket();
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

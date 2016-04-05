@@ -326,6 +326,9 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_enumerator_structure_pname)
         DEFINE_OP(op_enumerator_generic_pname)
         DEFINE_OP(op_to_index_string)
+            
+        DEFINE_OP(op_log_shadow_chicken_prologue)
+        DEFINE_OP(op_log_shadow_chicken_tail)
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }

@@ -230,6 +230,8 @@ inline CapabilityLevel canCompile(Node* node)
     case SetRegExpObjectLastIndex:
     case RecordRegExpCachedResult:
     case SetFunctionName:
+    case LogShadowChickenPrologue:
+    case LogShadowChickenTail:
         // These are OK.
         break;
 

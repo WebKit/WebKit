@@ -1456,6 +1456,42 @@ _llint_op_watchdog:
     jmp _llint_throw_from_slow_path_trampoline
 
 
+# Returns the packet pointer in t0.
+macro acquireShadowChickenPacket(slow)
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_vm[t1], t1
+    loadp VM::m_shadowChicken[t1], t2
+    loadp ShadowChicken::m_logCursor[t2], t0
+    bpaeq t0, ShadowChicken::m_logEnd[t2], slow
+    addp sizeof ShadowChicken::Packet, t0, t1
+    storep t1, ShadowChicken::m_logCursor[t2]
+end
+
+_llint_op_log_shadow_chicken_prologue:
+    traceExecution()
+    acquireShadowChickenPacket(.opLogShadowChickenPrologueSlow)
+    storep cfr, ShadowChicken::Packet::frame[t0]
+    loadp CallerFrame[cfr], t1
+    storep t1, ShadowChicken::Packet::callerFrame[t0]
+    loadp Callee + PayloadOffset[cfr], t1
+    storep t1, ShadowChicken::Packet::callee[t0]
+    dispatch(1)
+.opLogShadowChickenPrologueSlow:
+    callSlowPath(_llint_slow_path_log_shadow_chicken_prologue)
+    dispatch(1)
+
+
+_llint_op_log_shadow_chicken_tail:
+    traceExecution()
+    acquireShadowChickenPacket(.opLogShadowChickenTailSlow)
+    storep cfr, ShadowChicken::Packet::frame[t0]
+    storep 0x7a11, ShadowChicken::Packet::callee[t0]
+    dispatch(1)
+.opLogShadowChickenTailSlow:
+    callSlowPath(_llint_slow_path_log_shadow_chicken_tail)
+    dispatch(1)
+
+
 _llint_op_switch_string:
     traceExecution()
     callSlowPath(_llint_slow_path_switch_string)

@@ -223,6 +223,7 @@ sub runJSCStressTests
             "Source/JavaScriptCore/tests/executableAllocationFuzz.yaml",
             "Source/JavaScriptCore/tests/exceptionFuzz.yaml",
             "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",
+            "PerformanceTests/SunSpider/shadow-chicken.yaml",
             "PerformanceTests/SunSpider/tests/v8-v6",
             "Source/JavaScriptCore/tests/mozilla/mozilla-tests.yaml",
             "Source/JavaScriptCore/tests/stress",

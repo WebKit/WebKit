@@ -82,6 +82,7 @@
 #include "RegisterAtOffsetList.h"
 #include "RuntimeType.h"
 #include "SamplingProfiler.h"
+#include "ShadowChicken.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
 #include "StackVisitor.h"
@@ -197,6 +198,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_builtinExecutables(std::make_unique<BuiltinExecutables>(*this))
     , m_typeProfilerEnabledCount(0)
     , m_controlFlowProfilerEnabledCount(0)
+    , m_shadowChicken(std::make_unique<ShadowChicken>())
 {
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();
@@ -767,7 +769,7 @@ void VM::addImpureProperty(const String& propertyName)
 
 class SetEnabledProfilerFunctor {
 public:
-    bool operator()(CodeBlock* codeBlock)
+    bool operator()(CodeBlock* codeBlock) const
     {
         if (JITCode::isOptimizingJIT(codeBlock->jitType()))
             codeBlock->jettison(Profiler::JettisonDueToLegacyProfiler);

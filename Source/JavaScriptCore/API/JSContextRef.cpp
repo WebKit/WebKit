@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -255,7 +255,7 @@ public:
     {
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (m_remainingCapacityForFrameCapture) {
             // If callee is unknown, but we've not added any frame yet, we should
@@ -292,7 +292,7 @@ public:
 
 private:
     StringBuilder& m_builder;
-    unsigned m_remainingCapacityForFrameCapture;
+    mutable unsigned m_remainingCapacityForFrameCapture;
 };
 
 JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)

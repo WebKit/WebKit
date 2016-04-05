@@ -143,6 +143,10 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
     uint32_t locationBits = CallSiteIndex(m_bytecodeOffset + 1).bits();
 #endif
     store32(TrustedImm32(locationBits), intTagFor(JSStack::ArgumentCount));
+    
+    // FIXME: It's not clear that this is needed. JITOperations tend to update the top call frame on
+    // the C++ side.
+    // https://bugs.webkit.org/show_bug.cgi?id=155693
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 }
 

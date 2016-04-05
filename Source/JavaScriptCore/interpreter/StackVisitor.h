@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,14 +63,16 @@ public:
         JSObject* callee() const { return m_callee; }
         CodeBlock* codeBlock() const { return m_codeBlock; }
         unsigned bytecodeOffset() const { return m_bytecodeOffset; }
+        InlineCallFrame* inlineCallFrame() const {
 #if ENABLE(DFG_JIT)
-        InlineCallFrame* inlineCallFrame() const { return m_inlineCallFrame; }
+            return m_inlineCallFrame;
+#else
+            return nullptr;
 #endif
+        }
 
         bool isJSFrame() const { return !!codeBlock(); }
-#if ENABLE(DFG_JIT)
-        bool isInlinedFrame() const { return !!m_inlineCallFrame; }
-#endif
+        bool isInlinedFrame() const { return !!inlineCallFrame(); }
 
         JS_EXPORT_PRIVATE String functionName();
         JS_EXPORT_PRIVATE String sourceURL();
@@ -115,10 +117,10 @@ public:
     };
 
     // StackVisitor::visit() expects a Functor that implements the following method:
-    //     Status operator()(StackVisitor&);
+    //     Status operator()(StackVisitor&) const;
 
     template <typename Functor>
-    static void visit(CallFrame* startFrame, Functor& functor)
+    static void visit(CallFrame* startFrame, const Functor& functor)
     {
         StackVisitor visitor(startFrame);
         while (visitor->callFrame()) {
@@ -157,7 +159,7 @@ public:
 
     CallFrame* callerFrame() const { return m_callerFrame; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor)
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
@@ -169,8 +171,8 @@ public:
     }
     
 private:
-    bool m_hasSkippedFirstFrame;
-    CallFrame* m_callerFrame;
+    mutable bool m_hasSkippedFirstFrame;
+    mutable CallFrame* m_callerFrame;
 };
 
 } // namespace JSC

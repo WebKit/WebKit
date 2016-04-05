@@ -765,6 +765,8 @@ private:
         case Check:
         case PutGlobalVariable:
         case CheckWatchdogTimer:
+        case LogShadowChickenPrologue:
+        case LogShadowChickenTail:
         case Unreachable:
         case LoopHint:
         case NotifyWrite:

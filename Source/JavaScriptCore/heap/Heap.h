@@ -317,6 +317,7 @@ private:
     void visitStrongHandles(HeapRootVisitor&);
     void visitHandleStack(HeapRootVisitor&);
     void visitSamplingProfiler();
+    void visitShadowChicken();
     void traceCodeBlocksAndJITStubRoutines();
     void converge();
     void visitWeakHandles(HeapRootVisitor&);

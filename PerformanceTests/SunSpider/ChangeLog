@@ -1,3 +1,12 @@
+2016-03-21 Filip Pizlo <fpizlo@apple.com>
+
+        JSC should use a shadow stack version of CHICKEN so that debuggers have the option of retrieving tail-deleted frames
+        https://bugs.webkit.org/show_bug.cgi?id=155598
+
+        Reviewed by Saam Barati.
+
+        * shadow-chicken.yaml: Added.
+
 2015-03-30  Michael Saboff  <msaboff@apple.com>
 
         Fix failing v8-deltablue.js for ARM

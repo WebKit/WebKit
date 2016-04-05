@@ -4993,6 +4993,24 @@ void SpeculativeJIT::compile(Node* node)
         noResult(node);
         break;
     }
+        
+    case LogShadowChickenPrologue: {
+        flushRegisters();
+        prepareForExternalCall();
+        m_jit.emitStoreCodeOrigin(node->origin.semantic);
+        m_jit.logShadowChickenProloguePacket();
+        noResult(node);
+        break;
+    }
+
+    case LogShadowChickenTail: {
+        flushRegisters();
+        prepareForExternalCall();
+        m_jit.emitStoreCodeOrigin(node->origin.semantic);
+        m_jit.logShadowChickenTailPacket();
+        noResult(node);
+        break;
+    }
 
     case MaterializeNewObject:
         compileMaterializeNewObject(node);

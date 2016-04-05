@@ -1,3 +1,313 @@
+2016-03-18  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should use a shadow stack version of CHICKEN so that debuggers have the option of retrieving tail-deleted frames
+        https://bugs.webkit.org/show_bug.cgi?id=155598
+
+        Reviewed by Saam Barati.
+        
+        JSC is the first JSVM to have proper tail calls. This means that error.stack and the
+        debugger will appear to "delete" strict mode stack frames, if the call that this frame made
+        was in tail position. This is exactly what functional programmers expect - they don't want
+        the VM to waste resources on tail-deleted frames to ensure that it's legal to loop forever
+        using tail calls. It's also something that non-functional programmers fear. It's not clear
+        that tail-deleted frames would actually degrade the debugging experience, but the fear is
+        real, so it's worthwhile to do something about it.
+
+        It turns out that there is at least one tail call implementation that doesn't suffer from
+        this problem. It implements proper tail calls in the sense that you won't run out of memory
+        by tail-looping. It also has the power to show you tail-deleted frames in a backtrace, so
+        long as you haven't yet run out of memory. It's called CHICKEN Scheme, and it's one of my
+        favorite hacks:
+        
+        http://www.more-magic.net/posts/internals-gc.html
+
+        CHICKEN does many awesome things. The intuition from CHICKEN that we use here is a simple
+        one: what if a tail call still kept the tail-deleted frame, and the GC actually deleted that
+        frame only once we proved that there was insufficient memory to keep it around.
+        
+        CHICKEN does this by reshaping the C stack with longjmp/setjmp. We can't do that because we
+        can have arbitrary native code, and that native code does not have relocatable stack frames.
+        
+        But we can do something almost like CHICKEN on a shadow stack. It's a common trick to have a
+        VM maintain two stacks - the actual execution stack plus a shadow stack that has some extra
+        information. The shadow stack can be reshaped, moved, etc, since the VM tightly controls its
+        layout. The main stack can then continue to obey ABI rules.
+
+        This patch implements a mechanism for being able to display stack traces that include
+        tail-deleted frames. It uses a shadow stack that behaves like a CHICKEN stack: it has all
+        frames all the time, though we will collect the tail-deleted ones if the stack gets too big.
+        This new mechanism is called ShadowChicken, obviously: it's CHICKEN on a shadow stack.
+        
+        ShadowChicken is always on, but individual CodeBlocks may make their own choices about
+        whether to opt into it. They will do that at bytecompile time based on the debugger mode on
+        their global object.
+
+        When no CodeBlock opts in, there is no overhead, since ShadowChicken ends up doing nothing
+        in that case. Well, except when exceptions are thrown. Then it might do some work, but it's
+        minor.
+
+        When all CodeBlocks opt in, there is about 6% overhead. That's too much overhead to enable
+        this all the time, but it's low enough to justify enabling in the Inspector. It's currently
+        enabled on all CodeBlocks only when you use an Option. Otherwise it will auto-enable if the
+        debugger is on.
+
+        Note that ShadowChicken attempts to gracefully handle the presence of stack frames that have
+        no logging. This is essential since we *can* have debugging enabled in one GlobalObject and
+        disabled in another. Also, some frames don't do ShadowChicken because they just haven't been
+        hacked to do it yet. Native frames fall into this category, as do the VM entry frames.
+
+        This doesn't yet wire ShadowChicken into DebuggerCallFrame. That will take more work. It
+        just makes a ShadowChicken stack walk function available to jsc. It's used from the
+        shadow-chicken tests.
+
+        * API/JSContextRef.cpp:
+        (BacktraceFunctor::BacktraceFunctor):
+        (BacktraceFunctor::operator()):
+        (JSContextCreateBacktrace):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::RecursionCheckFunctor::RecursionCheckFunctor):
+        (JSC::RecursionCheckFunctor::operator()):
+        (JSC::CodeBlock::noticeIncomingCall):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEnter):
+        (JSC::BytecodeGenerator::emitCallInTailPosition):
+        (JSC::BytecodeGenerator::emitCallVarargsInTailPosition):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitLogShadowChickenPrologueIfNecessary):
+        (JSC::BytecodeGenerator::emitLogShadowChickenTailIfNecessary):
+        (JSC::BytecodeGenerator::emitCallDefineProperty):
+        * bytecompiler/BytecodeGenerator.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::LineAndColumnFunctor::operator()):
+        (JSC::LineAndColumnFunctor::column):
+        (JSC::FindCallerMidStackFunctor::FindCallerMidStackFunctor):
+        (JSC::FindCallerMidStackFunctor::operator()):
+        (JSC::DebuggerCallFrame::DebuggerCallFrame):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetRegExpObjectLastIndex):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLogShadowChickenPrologue):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLogShadowChickenTail):
+        (JSC::FTL::DFG::LowerDFGToB3::didOverflowStack):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::setupShadowChickenPacket):
+        (JSC::FTL::DFG::LowerDFGToB3::boolify):
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::visitSamplingProfiler):
+        (JSC::Heap::visitShadowChicken):
+        (JSC::Heap::traceCodeBlocksAndJITStubRoutines):
+        (JSC::Heap::collectImpl):
+        * heap/Heap.h:
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::CreateScriptCallStackFunctor::CreateScriptCallStackFunctor):
+        (Inspector::CreateScriptCallStackFunctor::operator()):
+        (Inspector::createScriptCallStack):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::iterate):
+        * interpreter/Interpreter.cpp:
+        (JSC::DumpRegisterFunctor::DumpRegisterFunctor):
+        (JSC::DumpRegisterFunctor::operator()):
+        (JSC::GetStackTraceFunctor::GetStackTraceFunctor):
+        (JSC::GetStackTraceFunctor::operator()):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::GetCatchHandlerFunctor::handler):
+        (JSC::GetCatchHandlerFunctor::operator()):
+        (JSC::notifyDebuggerOfUnwinding):
+        (JSC::UnwindFunctor::UnwindFunctor):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::UnwindFunctor::copyCalleeSavesToVMCalleeSavesBuffer):
+        * interpreter/ShadowChicken.cpp: Added.
+        (JSC::ShadowChicken::Packet::dump):
+        (JSC::ShadowChicken::Frame::dump):
+        (JSC::ShadowChicken::ShadowChicken):
+        (JSC::ShadowChicken::~ShadowChicken):
+        (JSC::ShadowChicken::log):
+        (JSC::ShadowChicken::update):
+        (JSC::ShadowChicken::visitChildren):
+        (JSC::ShadowChicken::reset):
+        (JSC::ShadowChicken::dump):
+        (JSC::ShadowChicken::functionsOnStack):
+        * interpreter/ShadowChicken.h: Added.
+        (JSC::ShadowChicken::Packet::Packet):
+        (JSC::ShadowChicken::Packet::tailMarker):
+        (JSC::ShadowChicken::Packet::throwMarker):
+        (JSC::ShadowChicken::Packet::prologue):
+        (JSC::ShadowChicken::Packet::tail):
+        (JSC::ShadowChicken::Packet::throwPacket):
+        (JSC::ShadowChicken::Packet::operator bool):
+        (JSC::ShadowChicken::Packet::isPrologue):
+        (JSC::ShadowChicken::Packet::isTail):
+        (JSC::ShadowChicken::Packet::isThrow):
+        (JSC::ShadowChicken::Frame::Frame):
+        (JSC::ShadowChicken::Frame::operator==):
+        (JSC::ShadowChicken::Frame::operator!=):
+        (JSC::ShadowChicken::log):
+        (JSC::ShadowChicken::logSize):
+        (JSC::ShadowChicken::addressOfLogCursor):
+        (JSC::ShadowChicken::logEnd):
+        * interpreter/ShadowChickenInlines.h: Added.
+        (JSC::ShadowChicken::iterate):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Frame::callee):
+        (JSC::StackVisitor::Frame::codeBlock):
+        (JSC::StackVisitor::Frame::bytecodeOffset):
+        (JSC::StackVisitor::Frame::inlineCallFrame):
+        (JSC::StackVisitor::Frame::isJSFrame):
+        (JSC::StackVisitor::Frame::isInlinedFrame):
+        (JSC::StackVisitor::visit):
+        * jit/CCallHelpers.cpp: Added.
+        (JSC::CCallHelpers::logShadowChickenProloguePacket):
+        (JSC::CCallHelpers::logShadowChickenTailPacket):
+        (JSC::CCallHelpers::setupShadowChickenPacket):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resume):
+        (JSC::JIT::emit_op_log_shadow_chicken_prologue):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (FunctionJSCStackFunctor::FunctionJSCStackFunctor):
+        (FunctionJSCStackFunctor::operator()):
+        (functionClearSamplingFlags):
+        (functionShadowChickenFunctionsOnStack):
+        (functionReadline):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::llint_throw_stack_overflow_error):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * profiler/ProfileGenerator.cpp:
+        (JSC::AddParentForConsoleStartFunctor::foundParent):
+        (JSC::AddParentForConsoleStartFunctor::operator()):
+        * runtime/Error.cpp:
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::FindFirstCallerFrameWithCodeblockFunctor):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::operator()):
+        (JSC::addErrorInfoAndGetBytecodeOffset):
+        * runtime/JSFunction.cpp:
+        (JSC::RetrieveArgumentsFunctor::result):
+        (JSC::RetrieveArgumentsFunctor::operator()):
+        (JSC::retrieveArguments):
+        (JSC::RetrieveCallerFunctionFunctor::result):
+        (JSC::RetrieveCallerFunctionFunctor::operator()):
+        (JSC::retrieveCallerFunction):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::GlobalFuncProtoGetterFunctor::result):
+        (JSC::GlobalFuncProtoGetterFunctor::operator()):
+        (JSC::globalFuncProtoGetter):
+        (JSC::GlobalFuncProtoSetterFunctor::allowsAccess):
+        (JSC::GlobalFuncProtoSetterFunctor::operator()):
+        * runtime/NullSetterFunction.cpp:
+        (JSC::GetCallerStrictnessFunctor::GetCallerStrictnessFunctor):
+        (JSC::GetCallerStrictnessFunctor::operator()):
+        (JSC::GetCallerStrictnessFunctor::callerIsStrict):
+        (JSC::callerIsStrict):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::result):
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::operator()):
+        (JSC::objectConstructorGetPrototypeOf):
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::SetEnabledProfilerFunctor::operator()):
+        * runtime/VM.h:
+        (JSC::VM::shouldBuilderPCToCodeOriginMapping):
+        (JSC::VM::bytecodeIntrinsicRegistry):
+        (JSC::VM::shadowChicken):
+        * tests/stress/resources/shadow-chicken-support.js: Added.
+        (describeFunction):
+        (describeArray):
+        (expectStack):
+        (initialize):
+        * tests/stress/shadow-chicken-disabled.js: Added.
+        (test1.foo):
+        (test1.bar):
+        (test1.baz):
+        (test1):
+        (test2.foo):
+        (test2.bar):
+        (test2.baz):
+        (test2):
+        (test3.foo):
+        (test3.bar):
+        (test3.baz):
+        (test3):
+        * tests/stress/shadow-chicken-enabled.js: Added.
+        (test1.foo):
+        (test1.bar):
+        (test1.baz):
+        (test1):
+        (test2.foo):
+        (test2.bar):
+        (test2.baz):
+        (test2):
+        (test3.bob):
+        (test3.thingy):
+        (test3.foo):
+        (test3.bar):
+        (test3.baz):
+        (test3):
+        (test4.bob):
+        (test4.thingy):
+        (test4.foo):
+        (test4.bar):
+        (test4.baz):
+        (test4):
+        (test5.foo):
+        (test5):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::CallerFrameJITTypeFunctor::CallerFrameJITTypeFunctor):
+        (JSC::CallerFrameJITTypeFunctor::operator()):
+        (JSC::CallerFrameJITTypeFunctor::jitType):
+        (JSC::functionLLintTrue):
+        (JSC::CellAddressCheckFunctor::CellAddressCheckFunctor):
+        (JSC::CellAddressCheckFunctor::operator()):
+        (JSC::JSDollarVMPrototype::isValidCell):
+        (JSC::JSDollarVMPrototype::isValidCodeBlock):
+        (JSC::JSDollarVMPrototype::codeBlockForFrame):
+        (JSC::PrintFrameFunctor::PrintFrameFunctor):
+        (JSC::PrintFrameFunctor::operator()):
+        (JSC::printCallFrame):
+
 2016-03-19  Filip Pizlo  <fpizlo@apple.com>
 
         DFG and FTL should constant-fold RegExpExec, RegExpTest, and StringReplace
