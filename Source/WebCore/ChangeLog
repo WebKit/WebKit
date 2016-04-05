@@ -1,3 +1,24 @@
+2016-04-04  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Crash when playing <video> after playing Web Audio
+        https://bugs.webkit.org/show_bug.cgi?id=156185
+        <rdar://problem/10177005>
+
+        Reviewed by Eric Carlson.
+
+        Off-by-one error in AudioDestinationIOS::render. The ivars m_firstSpareFrame and m_lastSpareFrame imply that
+        the sample range is inclusive, i.e. [m_firstSpareFrame .. m_lastSpareFrame], but the length of the range was
+        being calculated as if m_lastSpareFrame was exclusive; when the two were equal, the length was calculated as
+        0, rather than 1. This was caught by an ASSERT (and would have been caught by a downstream ASSERT had that one
+        not been present).
+
+        Fix the off-by-one by treating them as inclusive/exclusive--similar to C++ iterators--and renaming them to reflect
+        this: [m_startSpareFrame .. m_endSpareFrame). This corrects the "length" math which caused the crash.
+
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::render):
+        * platform/audio/ios/AudioDestinationIOS.h:
+
 2016-04-04  John Wilander  <wilander@apple.com>
 
         Block plaintext WebSocket requests to domains under HSTS.
