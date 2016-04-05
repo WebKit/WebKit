@@ -1,5 +1,13 @@
 2016-04-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix cloop some more.
+
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::hasCodeFor):
+        (JSC::RegExp::hasMatchOnlyCodeFor):
+
+2016-04-05  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix cloop.
 
         * jit/CCallHelpers.cpp:

@@ -79,6 +79,7 @@ ALWAYS_INLINE bool RegExp::hasCodeFor(Yarr::YarrCharSize charSize)
         if ((charSize == Yarr::Char16) && (m_regExpJITCode.has16BitCode()))
             return true;
 #else
+        UNUSED_PARAM(charSize);
         return true;
 #endif
     }
@@ -171,6 +172,7 @@ ALWAYS_INLINE bool RegExp::hasMatchOnlyCodeFor(Yarr::YarrCharSize charSize)
         if ((charSize == Yarr::Char16) && (m_regExpJITCode.has16BitCodeMatchOnly()))
             return true;
 #else
+        UNUSED_PARAM(charSize);
         return true;
 #endif
     }
