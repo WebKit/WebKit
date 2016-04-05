@@ -79,7 +79,7 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
 
             </div>
             <ul class="twitter-controls">
-                <li><a href="https://twitter.com/intent/follow?screen_name=webkit" target="twitter-modal"><span class="twitter-icon">Twitter</span> @webkit</a></li>
+                <li><a href="https://twitter.com/webkit" target="twitter-modal"><span class="twitter-icon">Twitter</span> @webkit</a></li>
                 <li><a href="https://twitter.com/intent/tweet?in-reply-to=<?php echo esc_attr($Tweet->id); ?>" class="twitter-icon reply-icon" target="twitter-modal">Reply</a></li>
                 <li><a href="https://twitter.com/intent/retweet?tweet_id=<?php echo esc_attr($Tweet->id); ?>" class="twitter-icon retweet-icon" target="twitter-modal">Retweet</a></li>
                 <li><a href="https://twitter.com/intent/favorite?tweet_id=<?php echo esc_attr($Tweet->id); ?>" class="twitter-icon favorite-icon" target="twitter-modal">Favorite</a></li>
