@@ -46,6 +46,7 @@
     macro(GamepadButton) \
     macro(GamepadEvent) \
     macro(GeneratorFunction) \
+    macro(Headers) \
     macro(HTMLAudioElement) \
     macro(HTMLSlotElement) \
     macro(IDBCursor) \
@@ -76,6 +77,8 @@
     macro(ReferenceError) \
     macro(Reflect) \
     macro(RegExp) \
+    macro(Response) \
+    macro(Request) \
     macro(Set)\
     macro(SetIterator)\
     macro(ShadowRoot) \

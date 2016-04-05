@@ -102,6 +102,7 @@ public:
     void setShadowDOMEnabled(bool);
     void setCustomElementsEnabled(bool);
     void setWebGL2Enabled(bool);
+    void setFetchAPIEnabled(bool);
     void setAllowUniversalAccessFromFileURLs(bool);
     void setAllowFileAccessFromFileURLs(bool);
     void setPluginsEnabled(bool);

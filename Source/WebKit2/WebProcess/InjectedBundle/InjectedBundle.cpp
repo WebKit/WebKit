@@ -208,6 +208,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(enabled);
 #endif
 
+#if ENABLE(FETCH_API)
+    if (preference == "WebKitFetchAPIEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(enabled);
+#endif
+
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
 #define FOR_EACH_OVERRIDE_BOOL_PREFERENCE(macro) \
     macro(WebKitAcceleratedCompositingEnabled, AcceleratedCompositingEnabled, acceleratedCompositingEnabled) \

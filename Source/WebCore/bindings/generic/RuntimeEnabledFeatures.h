@@ -222,6 +222,11 @@ public:
     bool webGL2Enabled() const { return m_isWebGL2Enabled; }
 #endif
 
+#if ENABLE(FETCH_API)
+    void setFetchAPIEnabled(bool isEnabled) { m_isFetchAPIEnabled = isEnabled; }
+    bool fetchAPIEnabled() const { return m_isFetchAPIEnabled; }
+#endif
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -317,6 +322,10 @@ private:
 
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled;
+#endif
+
+#if ENABLE(FETCH_API)
+    bool m_isFetchAPIEnabled { false };
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

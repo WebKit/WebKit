@@ -37,6 +37,7 @@ enum ReferrerPolicy { "", "no-referrer",  "no-referrer-when-downgrade", "origin-
 [
     ActiveDOMObject,
     Conditional=FETCH_API,
+    EnabledAtRuntime=FetchAPI,
     ConstructorCallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     Constructor(FetchRequest input, [Default=Undefined] optional Dictionary init),

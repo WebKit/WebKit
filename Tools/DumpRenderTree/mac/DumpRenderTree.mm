@@ -989,6 +989,8 @@ static void resetWebPreferencesToConsistentValues()
 
     [preferences setWebGL2Enabled:YES];
 
+    [preferences setFetchAPIEnabled:YES];
+
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
 

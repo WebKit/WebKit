@@ -28,6 +28,7 @@
 
 [
     Conditional=FETCH_API,
+    EnabledAtRuntime=FetchAPI,
 ] partial interface WorkerGlobalScope {
     Promise fetch(DOMString input, optional Dictionary init);
     Promise fetch(FetchRequest input, optional Dictionary init);

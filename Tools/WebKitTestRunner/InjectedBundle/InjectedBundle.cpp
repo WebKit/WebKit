@@ -315,6 +315,8 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     m_testRunner->setWebGL2Enabled(true);
 
+    m_testRunner->setFetchAPIEnabled(true);
+
     m_testRunner->setCloseRemainingWindowsWhenComplete(false);
     m_testRunner->setAcceptsEditing(true);
     m_testRunner->setTabKeyCyclesThroughElements(true);

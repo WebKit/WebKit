@@ -30,6 +30,7 @@ enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredire
 [
     ActiveDOMObject,
     Conditional=FETCH_API,
+    EnabledAtRuntime=FetchAPI,
     ConstructorCallWith=ScriptExecutionContext,
     GlobalContext=DOMWindow&WorkerGlobalScope,
     InterfaceName=Response,

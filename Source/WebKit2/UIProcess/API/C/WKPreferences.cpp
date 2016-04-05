@@ -1516,3 +1516,13 @@ bool WKPreferencesGetCustomElementsEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->shadowDOMEnabled();
 }
+
+void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setFetchAPIEnabled(flag);
+}
+
+bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->fetchAPIEnabled();
+}

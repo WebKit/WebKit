@@ -89,6 +89,7 @@ public:
     void queueReload();
     void removeAllVisitedLinks();
     void setAcceptsEditing(bool);
+    void setFetchAPIEnabled(bool);
     void setAllowUniversalAccessFromFileURLs(bool);
     void setAllowFileAccessFromFileURLs(bool);
     void setAppCacheMaximumSize(unsigned long long quota);
