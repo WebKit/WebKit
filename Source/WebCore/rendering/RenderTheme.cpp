@@ -275,6 +275,9 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     if (paintInfo.context().paintingDisabled())
         return false;
 
+    if (UNLIKELY(paintInfo.context().isRecording()))
+        return false;
+
     ControlPart part = box.style().appearance();
     IntRect integralSnappedRect = snappedIntRect(rect);
     float deviceScaleFactor = box.document().deviceScaleFactor();

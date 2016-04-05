@@ -1,3 +1,16 @@
+2016-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't crash when rendering form controls with Display List Drawing enabled
+        https://bugs.webkit.org/show_bug.cgi?id=156122
+
+        Reviewed by Sam Weinig.
+        
+        Don't attempt to paint form controls if display-list drawing is enabled, since
+        doing so attempts to get at a CGContextRef that doens't exist.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+
 2016-04-04  Zalan Bujtas  <zalan@apple.com>
 
         CSS Triangles Rendering Regression affecting CSS Ribbons.
