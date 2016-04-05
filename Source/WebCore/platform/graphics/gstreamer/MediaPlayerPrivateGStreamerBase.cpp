@@ -662,7 +662,7 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper& textur
 #endif
 
 #if USE(GSTREAMER_GL)
-PassNativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
+NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
 {
 #if !USE(CAIRO) || !ENABLE(ACCELERATED_2D_CANVAS)
     return nullptr;

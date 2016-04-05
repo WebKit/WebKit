@@ -1,3 +1,13 @@
+2016-04-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed build fix with GSTREAMER_GL active.
+
+        Caused by r198655.
+
+        (WebCore::MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp: Changed return type.
+
 2016-04-05  Antti Koivisto  <antti@apple.com>
 
         Render tree teardown should be iterative
