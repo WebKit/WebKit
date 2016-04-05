@@ -1,3 +1,16 @@
+2016-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling out r199016.
+        https://bugs.webkit.org/show_bug.cgi?id=156140
+
+        "Regressed Octane and Kraken on the perf bots."
+
+        Reverted changeset:
+
+        CopiedBlock should be 16kB
+        https://bugs.webkit.org/show_bug.cgi?id=156168
+        http://trac.webkit.org/changeset/199016
+
 2016-04-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC][x86] Fix an assertion in MacroAssembler::branch8()
