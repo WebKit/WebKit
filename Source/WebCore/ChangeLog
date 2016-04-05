@@ -1,5 +1,18 @@
 2016-04-04  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] Improve viewport array access in TextureMapperGL::bindDefaultSurface()
+        https://bugs.webkit.org/show_bug.cgi?id=156159
+
+        Reviewed by Antonio Gomes.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::bindDefaultSurface): Create a reference to the
+        viewport array in the TextureMapperGLData object. Inline the IntSize constructor
+        for the object that's passed to createProjectionMatrix(), and use the reference
+        to access all four elements of the array as necessary.
+
+2016-04-04  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] resolveOverlaps() should be passed-in the first Region parameter via a reference
         https://bugs.webkit.org/show_bug.cgi?id=156158
 
