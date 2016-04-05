@@ -3,6 +3,19 @@
         Speculative build fix after r199043
 
         * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::wireFormatVersion):
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::data):
+        (WebCore::SerializedScriptValue::hasBlobURLs):
+        (WebCore::SerializedScriptValue::createFromWireBytes):
+        Initializer lists weren't the problem.  Missing precompiler macros was.
+
+2016-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Speculative build fix after r199043
+
+        * bindings/js/SerializedScriptValue.cpp:
         (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
         Explicitly call constructor instead of using an initializer list.
 

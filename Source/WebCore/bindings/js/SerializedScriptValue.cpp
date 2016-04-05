@@ -2747,20 +2747,22 @@ uint32_t SerializedScriptValue::wireFormatVersion()
     return CurrentVersion;
 }
 
+#if ENABLE(INDEXED_DATABASE)
 void SerializedScriptValue::writeBlobsToDiskForIndexedDB(std::function<void (const IDBValue&)> completionHandler)
 {
     ASSERT(isMainThread());
 
     if (m_blobURLs.isEmpty()) {
-        completionHandler(IDBValue());
+        completionHandler({ });
         return;
     }
 
     RefPtr<SerializedScriptValue> protector(this);
     blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler, this, protector](const Vector<String>&) {
         // FIXME: Return an IDBValue that contains both the SerializedScriptValue data and all blob file data.
-        completionHandler(IDBValue());
+        completionHandler({ });
     });
 }
+#endif
 
 } // namespace WebCore
