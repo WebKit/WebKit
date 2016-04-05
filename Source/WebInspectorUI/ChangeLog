@@ -1,3 +1,34 @@
+2016-04-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception in CSS with string "constructor" (WebInspector.Color.fromString())
+        https://bugs.webkit.org/show_bug.cgi?id=156183
+        <rdar://problem/25539279>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/Color.js:
+        (WebInspector.Color.fromString):
+        Fix the uncaught exception issue. Only look at own properties of
+        our keyword map to avoid values like "toString" and "constructor".
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (handleError):
+        (handleUncaughtException):
+        (handleUncaughtExceptionRecord):
+        Generalize uncaught exception handler error sheet to get
+        exception records from both uncaught exceptions (window.onerror)
+        and general Runtime Error objects (TypeError, etc).
+
+        * UserInterface/Base/Utilities.js:
+        (window.promiseLogError.window.promiseLogError):
+        Add a fallback log exception helper.
+
+        * UserInterface/Controllers/AnalyzerManager.js:
+        (WebInspector.AnalyzerManager.prototype.getAnalyzerMessagesForSourceCode):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        Add catch handlers to Promises to log exceptions.
+
 2016-04-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed follow-up to r198968. Remove debug statements.

@@ -96,7 +96,7 @@ WebInspector.AnalyzerManager = class AnalyzerManager extends WebInspector.Object
                 resolve(analyzerMessages);
             }
 
-            sourceCode.requestContent().then(retrieveAnalyzerMessages.bind(this));
+            sourceCode.requestContent().then(retrieveAnalyzerMessages.bind(this)).catch(handlePromiseException);
         }.bind(this));
     }
 

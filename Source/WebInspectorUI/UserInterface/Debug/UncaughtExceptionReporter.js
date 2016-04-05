@@ -50,14 +50,25 @@ function unblockEventHandlers() {
         document.removeEventListener(name, stopEventPropagation, true);
 }
 
+function handleError(error) {
+    handleUncaughtExceptionRecord({
+        message: error.message,
+        url: parseURL(error.sourceURL).lastPathComponent,
+        lineNumber: error.line,
+        columnNumber: error.column,
+    });
+}
+
 function handleUncaughtException(event) {
-    let exceptionRecord = {
+    handleUncaughtExceptionRecord({
         message: event.message,
         url: parseURL(event.filename).lastPathComponent,
         lineNumber: event.lineno,
-        columnNumber: event.colno
-    };
+        columnNumber: event.colno,
+    });
+}
 
+function handleUncaughtExceptionRecord(exceptionRecord) {
     if (!window.__uncaughtExceptions)
         window.__uncaughtExceptions = [];
 
@@ -199,5 +210,6 @@ Document any additional information that might be useful in resolving the proble
 }
 
 window.addEventListener("error", handleUncaughtException);
+window.handlePromiseException = handleError;
 
 })();

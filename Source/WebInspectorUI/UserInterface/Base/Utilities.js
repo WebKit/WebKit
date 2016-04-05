@@ -1244,3 +1244,10 @@ function timestamp()
 {
     return window.performance ? performance.now() : Date.now();
 }
+
+if (!window.handlePromiseException) {
+    window.handlePromiseException = function handlePromiseException(error)
+    {
+        console.error("Uncaught exception in Promise", error);
+    };
+}

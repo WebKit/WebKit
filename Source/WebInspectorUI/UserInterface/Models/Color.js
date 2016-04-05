@@ -103,7 +103,7 @@ WebInspector.Color = class Color
                 ]);
             } else if (match[3]) { // keyword
                 let keyword = match[3].toLowerCase();
-                if (!WebInspector.Color.Keywords[keyword])
+                if (!WebInspector.Color.Keywords.hasOwnProperty(keyword))
                     return null;
                 let color = new WebInspector.Color(WebInspector.Color.Format.Keyword, WebInspector.Color.Keywords[keyword].concat(1));
                 color.keyword = keyword;
