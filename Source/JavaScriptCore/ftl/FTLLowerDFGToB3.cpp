@@ -7331,7 +7331,7 @@ private:
                 auto generator = Box<JITGetByIdGenerator>::create(
                     jit.codeBlock(), node->origin.semantic, callSiteIndex,
                     params.unavailableRegisters(), JSValueRegs(params[1].gpr()),
-                    JSValueRegs(params[0].gpr()), AccessType::Get);
+                    JSValueRegs(params[0].gpr()));
 
                 generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();

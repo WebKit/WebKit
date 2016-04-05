@@ -23,7 +23,6 @@
 #include "config.h"
 
 #include "ArrayPrototype.h"
-#include "BuiltinExecutables.h"
 #include "ButterflyInlines.h"
 #include "BytecodeGenerator.h"
 #include "CodeBlock.h"
@@ -33,7 +32,6 @@
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
-#include "GetterSetter.h"
 #include "HeapProfiler.h"
 #include "HeapSnapshotBuilder.h"
 #include "HeapStatistics.h"
@@ -554,7 +552,6 @@ static EncodedJSValue JSC_HOST_CALL functionCreateProxy(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateRuntimeArray(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateImpureGetter(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateCustomGetterObject(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState*);
 
 static EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState*);
@@ -575,7 +572,6 @@ static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionForceGCSlowPaths(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionAddressOf(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionGetGetterSetter(ExecState*);
 #ifndef NDEBUG
 static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState*);
 #endif
@@ -747,7 +743,6 @@ protected:
         addFunction(vm, "forceGCSlowPaths", functionForceGCSlowPaths, 0);
         addFunction(vm, "gcHeapSize", functionHeapSize, 0);
         addFunction(vm, "addressOf", functionAddressOf, 1);
-        addFunction(vm, "getGetterSetter", functionGetGetterSetter, 2);
 #ifndef NDEBUG
         addFunction(vm, "dumpCallFrame", functionDumpCallFrame, 0);
 #endif
@@ -797,7 +792,6 @@ protected:
 
         addFunction(vm, "createImpureGetter", functionCreateImpureGetter, 1);
         addFunction(vm, "createCustomGetterObject", functionCreateCustomGetterObject, 0);
-        addFunction(vm, "createBuiltin", functionCreateBuiltin, 2);
         addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
 
         addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 0);
@@ -1338,30 +1332,6 @@ EncodedJSValue JSC_HOST_CALL functionAddressOf(ExecState* exec)
     return returnValue;
 }
 
-static EncodedJSValue JSC_HOST_CALL functionGetGetterSetter(ExecState* exec)
-{
-    JSValue value = exec->argument(0);
-    if (!value.isObject())
-        return JSValue::encode(jsUndefined());
-
-    JSValue property = exec->argument(1);
-    if (!property.isString())
-        return JSValue::encode(jsUndefined());
-
-    Identifier ident = Identifier::fromString(&exec->vm(), property.toString(exec)->value(exec));
-
-    PropertySlot slot(value, PropertySlot::InternalMethodType::VMInquiry);
-    value.getPropertySlot(exec, ident, slot);
-
-    JSValue result;
-    if (slot.isCacheableGetter())
-        result = slot.getterSetter();
-    else
-        result = jsNull();
-
-    return JSValue::encode(result);
-}
-
 EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*)
 {
     // We need this function for compatibility with the Mozilla JS tests but for now
@@ -1749,22 +1719,6 @@ EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
     if (error)
         return JSValue::encode(exec->vm().throwException(exec, error));
     return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState* exec)
-{
-    if (exec->argumentCount() < 1 || !exec->argument(0).isString())
-        return JSValue::encode(jsUndefined());
-
-    String functionText = exec->argument(0).toString(exec)->value(exec);
-    if (exec->hadException())
-        return JSValue::encode(JSValue());
-
-    VM& vm = exec->vm();
-    const SourceCode& source = makeSource(functionText);
-    JSFunction* func = JSFunction::createBuiltinFunction(vm, BuiltinExecutables::createExecutable(vm, source, Identifier::fromString(&vm, "foo"), ConstructorKind::None, ConstructAbility::CannotConstruct)->link(vm, source), exec->lexicalGlobalObject());
-
-    return JSValue::encode(func);
 }
 
 EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)

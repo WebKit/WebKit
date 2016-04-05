@@ -93,7 +93,7 @@ static void repatchCall(CodeBlock* codeBlock, CodeLocationCall call, FunctionPtr
 
 static void repatchByIdSelfAccess(
     CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure,
-    PropertyOffset offset, const FunctionPtr& slowPathFunction,
+    PropertyOffset offset, const FunctionPtr &slowPathFunction,
     bool compact)
 {
     // Only optimize once!
@@ -213,21 +213,7 @@ static bool forceICFailure(ExecState*)
     return Options::forceICFailure();
 }
 
-inline J_JITOperation_ESsiJI appropriateOptimizingGetByIdFunction(GetByIDKind kind)
-{
-    if (kind == GetByIDKind::Normal)
-        return operationGetByIdOptimize;
-    return operationTryGetByIdOptimize;
-}
-
-inline J_JITOperation_ESsiJI appropriateGenericGetByIdFunction(GetByIDKind kind)
-{
-    if (kind == GetByIDKind::Normal)
-        return operationGetById;
-    return operationTryGetById;
-}
-
-static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo, GetByIDKind kind)
+static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     if (forceICFailure(exec))
         return GiveUpOnCache;
@@ -276,7 +262,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             && !structure->needImpurePropertyWatchpoint()
             && !loadTargetFromProxy) {
             structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
-            repatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), appropriateOptimizingGetByIdFunction(kind), true);
+            repatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), operationGetByIdOptimize, true);
             stubInfo.initGetByIdSelf(codeBlock, structure, slot.cachedOffset());
             return RetryCacheLater;
         }
@@ -309,19 +295,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         if (slot.isCacheableGetter())
             getter = jsDynamicCast<JSFunction*>(slot.getterSetter()->getter());
 
-        if (kind == GetByIDKind::Pure) {
-            AccessCase::AccessType type;
-            if (slot.isCacheableValue())
-                type = AccessCase::Load;
-            else if (slot.isUnset())
-                type = AccessCase::Miss;
-            else if (slot.isCacheableGetter())
-                type = AccessCase::GetGetter;
-            else
-                RELEASE_ASSERT_NOT_REACHED();
-
-            newCase = AccessCase::tryGet(vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet());
-        } else if (!loadTargetFromProxy && getter && AccessCase::canEmitIntrinsicGetter(getter, structure))
+        if (!loadTargetFromProxy && getter && AccessCase::canEmitIntrinsicGetter(getter, structure))
             newCase = AccessCase::getIntrinsic(vm, codeBlock, getter, slot.cachedOffset(), structure, conditionSet);
         else {
             AccessCase::AccessType type;
@@ -356,12 +330,12 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
     return RetryCacheLater;
 }
 
-void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo, GetByIDKind kind)
+void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
-    if (tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo, kind) == GiveUpOnCache)
-        repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericGetByIdFunction(kind));
+    if (tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo) == GiveUpOnCache)
+        repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
 static V_JITOperation_ESsiJJI appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
@@ -936,9 +910,9 @@ void linkPolymorphicCall(
         callLinkInfo.remove();
 }
 
-void resetGetByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByIDKind kind)
+void resetGetByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
-    repatchCall(codeBlock, stubInfo.callReturnLocation, appropriateOptimizingGetByIdFunction(kind));
+    repatchCall(codeBlock, stubInfo.callReturnLocation, operationGetByIdOptimize);
     resetGetByIDCheckAndLoad(stubInfo);
     MacroAssembler::repatchJump(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToJump), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase));
 }

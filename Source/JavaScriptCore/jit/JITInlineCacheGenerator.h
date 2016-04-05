@@ -96,7 +96,7 @@ public:
 
     JITGetByIdGenerator(
         CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base,
-        JSValueRegs value, AccessType);
+        JSValueRegs value);
     
     void generateFastPath(MacroAssembler&);
 };

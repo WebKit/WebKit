@@ -35,12 +35,7 @@
 
 namespace JSC {
 
-enum class GetByIDKind {
-    Normal,
-    Pure
-};
-
-void repatchGetByID(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&, GetByIDKind);
+void repatchGetByID(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
 void buildGetByIDList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
 void buildGetByIDProtoList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
 void repatchPutByID(ExecState*, JSValue, Structure*, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
@@ -51,7 +46,7 @@ void linkSlowFor(ExecState*, CallLinkInfo&);
 void unlinkFor(VM&, CallLinkInfo&);
 void linkVirtualFor(ExecState*, CallLinkInfo&);
 void linkPolymorphicCall(ExecState*, CallLinkInfo&, CallVariant);
-void resetGetByID(CodeBlock*, StructureStubInfo&, GetByIDKind);
+void resetGetByID(CodeBlock*, StructureStubInfo&);
 void resetPutByID(CodeBlock*, StructureStubInfo&);
 void resetIn(CodeBlock*, StructureStubInfo&);
 

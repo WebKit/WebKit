@@ -39,21 +39,4 @@ JSValue PropertySlot::customGetter(ExecState* exec, PropertyName propertyName) c
     return JSValue::decode(m_data.custom.getValue(exec, JSValue::encode(thisValue), propertyName));
 }
 
-JSValue PropertySlot::getPureResult() const
-{
-    JSValue result;
-    if (isTaintedByProxy())
-        result = jsNull();
-    else if (isCacheableValue())
-        result = JSValue::decode(m_data.value);
-    else if (isCacheableGetter())
-        result = getterSetter();
-    else if (isUnset())
-        result = jsUndefined();
-    else
-        result = jsNull();
-    
-    return result;
-}
-
 } // namespace JSC

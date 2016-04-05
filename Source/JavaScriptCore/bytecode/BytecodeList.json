@@ -57,7 +57,6 @@
             { "name" : "op_is_object_or_null", "length" : 3 },
             { "name" : "op_is_function", "length" : 3 },
             { "name" : "op_in", "length" : 4 },
-            { "name" : "op_try_get_by_id", "length" : 4 },
             { "name" : "op_get_by_id", "length" : 9  },
             { "name" : "op_get_array_length", "length" : 9 },
             { "name" : "op_put_by_id", "length" : 9 },

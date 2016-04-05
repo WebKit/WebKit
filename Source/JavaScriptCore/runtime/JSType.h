@@ -35,6 +35,7 @@ enum JSType : uint8_t {
     StringType,
     SymbolType,
 
+    GetterSetterType,
     CustomGetterSetterType,
     APIValueWrapperType,
 
@@ -74,7 +75,6 @@ enum JSType : uint8_t {
     Float64ArrayType,
     DataViewType,
 
-    GetterSetterType,
     GlobalObjectType,
     LexicalEnvironmentType,
     GlobalLexicalEnvironmentType,

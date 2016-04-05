@@ -326,9 +326,9 @@ const SlowPutArrayStorageShape = 30
 # Type constants.
 const StringType = 6
 const SymbolType = 7
-const ObjectType = 20
-const FinalObjectType = 21
-const JSFunctionType = 23
+const ObjectType = 21
+const FinalObjectType = 22
+const JSFunctionType = 24
 
 # Type flags constants.
 const MasqueradesAsUndefined = 1
@@ -1298,12 +1298,6 @@ _llint_op_is_function:
 _llint_op_in:
     traceExecution()
     callSlowPath(_slow_path_in)
-    dispatch(4)
-
-
-_llint_op_try_get_by_id:
-    traceExecution()
-    callSlowPath(_llint_slow_path_try_get_by_id)
     dispatch(4)
 
 
