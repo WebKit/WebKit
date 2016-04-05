@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<body>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+description("Make sure that we properly remove cached entry if the entry is no longer cacheable after revalidation");
+jsTestIsAsync = true;
+
+var id = Math.floor((Math.random() * 1000000000000));
+var bugReproduced = true;
+
+function fetch(url) {
+  return new Promise(function (resolve, reject) {
+    var xhr = new XMLHttpRequest(url);
+    xhr.onerror = reject;
+    xhr.onload = function () {
+      resolve({status: xhr.status, body: JSON.parse(xhr.responseText)});
+    };
+    xhr.open('GET', url);
+    xhr.send();
+  })
+}
+
+function fetchResource() {
+  return fetch('resources/json.php?id=' + id).then(function (resp) {
+    if (resp.body.version === 2) {
+      bugReproduced = false;
+    }
+    debug(resp.status + ': ' + JSON.stringify(resp.body));
+  });
+}
+
+onload = function() {
+  fetchResource()
+    .then(fetchResource)
+    .then(fetchResource)
+    .then(fetchResource)
+    .then(fetchResource)
+    .then(function () {
+      shouldBeFalse("bugReproduced");
+      finishJSTest();
+    })
+    .catch(console.log.bind(console));
+}
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>

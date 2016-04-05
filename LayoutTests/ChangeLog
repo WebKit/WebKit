@@ -1,3 +1,17 @@
+2016-04-05  Chris Dumez  <cdumez@apple.com>
+
+        We sometimes fail to remove outdated entry from the disk cache after revalidation and when the resource is no longer cacheable
+        https://bugs.webkit.org/show_bug.cgi?id=156048
+        <rdar://problem/25514480>
+
+        Reviewed by Antti Koivisto.
+
+        Add test coverage for the bug.
+
+        * http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html: Added.
+        * http/tests/cache/disk-cache/resources/json.php: Added.
+
 2016-04-05  Antti Koivisto  <antti@apple.com>
 
         Shadow DOM: :host() From The First Shadow Context Should Not Style All Shadow Context
