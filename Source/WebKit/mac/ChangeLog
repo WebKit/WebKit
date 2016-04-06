@@ -1,3 +1,12 @@
+2016-04-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=156305
+
+        Reviewed by Daniel Bates.
+
+        * WebKitPrefix.h:
+
 2016-04-05  Beth Dakin  <bdakin@apple.com>
 
         Make requestCandidatesForSelection available on any EditorClient

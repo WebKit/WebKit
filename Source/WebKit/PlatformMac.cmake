@@ -15,6 +15,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bridge/jsc"
     "${WEBCORE_DIR}/bridge/objc"
     "${WEBCORE_DIR}/ForwardingHeaders/inspector"
+    "${WEBCORE_DIR}/html/track"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/loader/cf"
     "${WEBCORE_DIR}/loader/mac"
@@ -38,6 +39,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/text/cf"
     "${WEBCORE_DIR}/platform/text/mac"
     "${WEBCORE_DIR}/plugins/mac"
+    "${WEBCORE_DIR}/rendering/shapes"
     "${WTF_DIR}"
     ../../WebKitLibraries
 )
@@ -148,6 +150,7 @@ list(APPEND WebKit_SOURCES
 
     mac/Storage/WebDatabaseManager.mm
     mac/Storage/WebDatabaseManagerClient.mm
+    mac/Storage/WebDatabaseProvider.mm
     mac/Storage/WebDatabaseQuotaManager.mm
     mac/Storage/WebStorageManager.mm
     mac/Storage/WebStorageTrackerClient.mm
@@ -176,6 +179,7 @@ list(APPEND WebKit_SOURCES
     mac/WebCoreSupport/WebPlatformStrategies.mm
     mac/WebCoreSupport/WebProgressTrackerClient.mm
     mac/WebCoreSupport/WebSecurityOrigin.mm
+    mac/WebCoreSupport/WebSelectionServiceController.mm
     mac/WebCoreSupport/WebSystemInterface.mm
     mac/WebCoreSupport/WebUserMediaClient.mm
     mac/WebCoreSupport/WebVisitedLinkStore.mm
