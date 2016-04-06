@@ -4917,9 +4917,10 @@ void FrameView::setViewExposedRect(Optional<FloatRect> viewExposedRect)
     // FIXME: We should support clipping to the exposed rect for subframes as well.
     if (!frame().isMainFrame())
         return;
+
     if (TiledBacking* tiledBacking = this->tiledBacking()) {
         adjustTiledBackingCoverage();
-        tiledBacking->setTiledScrollingIndicatorPosition(m_viewExposedRect.value().location());
+        tiledBacking->setTiledScrollingIndicatorPosition(m_viewExposedRect ? m_viewExposedRect.value().location() : FloatPoint());
     }
 
     if (auto* view = renderView())
