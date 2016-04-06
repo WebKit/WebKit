@@ -60,6 +60,8 @@ public:
     void load(const String& url) override;
     void cancelLoad() override;
 
+    void prepareToPlay() override;
+
     void play() override;
     void pause() override;
 
@@ -109,7 +111,9 @@ private:
     bool m_paused;
     bool m_hasAudio;
     bool m_hasVideo;
+    bool m_preparingToPlay;
     HWND m_hwndVideo;
+    MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     FloatRect m_lastPaintRect;
 
@@ -126,6 +130,7 @@ private:
     COMPtr<IMFVideoDisplayControl> m_videoDisplay;
 
     bool createSession();
+    bool startSession();
     bool endSession();
     bool startCreateMediaSource(const String& url);
     bool endCreatedMediaSource(IMFAsyncResult*);
@@ -135,10 +140,15 @@ private:
     bool createOutputNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>&);
     bool createSourceStreamNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>&);
 
+    void updateReadyState();
+
     COMPtr<IMFVideoDisplayControl> videoDisplay();
 
     void onCreatedMediaSource();
     void onTopologySet();
+    void onBufferingStarted();
+    void onBufferingStopped();
+    void onSessionEnded();
 
     LPCWSTR registerVideoWindowClass();
     void createVideoWindow();

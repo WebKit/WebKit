@@ -1,3 +1,31 @@
+2016-04-06  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][MediaFoundation] Videos are always autoplaying.
+        https://bugs.webkit.org/show_bug.cgi?id=156284
+
+        Reviewed by Alex Christensen.
+
+        Videos are autoplaying because the MediaFoundation implementation always starts playback
+        after the load method has been called. When the load method has been called, we should
+        only start buffering data, not automatically start the playback. This has been fixed by
+        implementing the prepareToPlay method, and calling this instead of the play method.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation):
+        (WebCore::MediaPlayerPrivateMediaFoundation::load):
+        (WebCore::MediaPlayerPrivateMediaFoundation::prepareToPlay):
+        (WebCore::MediaPlayerPrivateMediaFoundation::play):
+        (WebCore::MediaPlayerPrivateMediaFoundation::networkState):
+        (WebCore::MediaPlayerPrivateMediaFoundation::startSession):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endGetEvent):
+        (WebCore::MediaPlayerPrivateMediaFoundation::updateReadyState):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onTopologySet):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onBufferingStarted):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onBufferingStopped):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onSessionEnded):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::updateDestRect):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2016-04-06  Zalan Bujtas  <zalan@apple.com>
 
         Add ASSERT_WITH_SECURITY_IMPLICATION when a float box is referenced by multiple RootInlineBoxes.
