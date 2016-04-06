@@ -1,3 +1,135 @@
+2016-04-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New buildbot syncing scripts that supports multiple builders and slaves
+        https://bugs.webkit.org/show_bug.cgi?id=156269
+
+        Reviewed by Chris Dumez.
+
+        Add sync-buildbot.js that supports scheduling A/B testing jobs on multiple builders and slaves.
+        The old python script (sync-with-buildbot.py) could only support a single builder and slave
+        for each platform, test pair.
+
+        The main logic is implemented in BuildbotTriggerable.syncOnce. Various helper methods are added
+        throughout the codebase and tests have been refactored.
+
+        BuildbotSyncer has been updated to support multiple platform, test pairs. It's now responsible
+        for syncing everything on each builder (on a buildbot).
+
+        Added more unit tests for BuildbotSyncer and server tests for BuildbotTriggerable, and refactored
+        test helpers and mocks as needed.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.status): Added.
+        (BuildRequest.prototype.isScheduled): Added.
+        * public/v3/models/metric.js:
+        (Metric.prototype.fullName): Added.
+        * public/v3/models/platform.js:
+        (Platform): Added the map based on platform name.
+        (Platform.findByName): Added.
+        * public/v3/models/test.js:
+        (Test.topLevelTests):
+        (Test.findByPath): Added. Finds a test based on an array of test names; e.g. ['A', 'B'] would
+        find the test whose name is "B" which has a parent test named "A".
+        (Test.prototype.fullName): Added.
+        * server-tests/api-build-requests-tests.js:
+        (addMockData): Moved to resources/mock-data.js.
+        (addAnotherMockTestGroup): Ditto.
+        * server-tests/resources/mock-data.js: Added.
+        (MockData.resetV3Models): Added.
+        (MockData.addMockData): Moved from api-build-requests-tests.js.
+        (MockData.addAnotherMockTestGroup): Ditto.
+        (MockData.mockTestSyncConfigWithSingleBuilder): Added.
+        (MockData.mockTestSyncConfigWithTwoBuilders): Added.
+        (MockData.pendingBuild): Added.
+        (MockData.runningBuild): Added.
+        (MockData.finishedBuild): Added.
+        * server-tests/resources/test-server.js:
+        (TestServer):
+        (TestServer.prototype.remoteAPI):
+        (TestServer.prototype._ensureTestDatabase): Don't fail even if the test database doesn't exit.
+        (TestServer.prototype._startApache): Create a RemoteAPI instance to access the test sever.
+        (TestServer.prototype._waitForPid): Increase the timeout.
+        (TestServer.prototype.inject): Replace global.RemoteAPI during the test and restore it afterwards.
+        * server-tests/tools-buildbot-triggerable-tests.js: Added. Tests BuildbotTriggerable.syncOnce.
+        (MockLogger): Added.
+        (MockLogger.prototype.log): Added.
+        (MockLogger.prototype.error): Added.
+        * tools/detect-changes.js:
+        (parseArgument): Moved to js/parse-arguments.js.
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry):
+        (BuildbotBuildEntry.prototype.syncer): Added.
+        (BuildbotBuildEntry.prototype.buildRequestStatusIfUpdateIsNeeded): Added. Returns a new status
+        for a build request (of the matching build request ID) if it needs to be updated in the server.
+        (BuildbotSyncer): This class 
+        (BuildbotSyncer.prototype.addTestConfiguration): Added.
+        (BuildbotSyncer.prototype.testConfigurations): Returns the list of test configurations.
+        (BuildbotSyncer.prototype.matchesConfiguration): Returns true iff the request can be scheduled on
+        this builder.
+        (BuildbotSyncer.prototype.scheduleRequest): Added. Schedules a new job on buildbot for a request.
+        (BuildbotSyncer.prototype.scheduleFirstRequestInGroupIfAvailable): Added. Schedules a new job for
+        the specified build request on the first slave that's available.
+        (BuildbotSyncer.prototype.pullBuildbot): Return a list of BuildbotBuildEntry instead of an object.
+        Also store it on an instance variable so that scheduleFirstRequestInGroupIfAvailable could use it.
+        (BuildbotSyncer.prototype._pullRecentBuilds):
+        (BuildbotSyncer.prototype.pathForPendingBuildsJSON): Renamed from urlForPendingBuildsJSON and now
+        only returns the path instead of the full URL since RemoteAPI takes a path, not full URL.
+        (BuildbotSyncer.prototype.pathForBuildJSON): Ditto from pathForBuildJSON.
+        (BuildbotSyncer.prototype.pathForForceBuild): Added.
+        (BuildbotSyncer.prototype.url): Use RemoteAPI's url method instead of manually constructing URL.
+        (BuildbotSyncer.prototype.urlForBuildNumber): Ditto.
+        (BuildbotSyncer.prototype._propertiesForBuildRequest): Now that each syncer can have multiple test
+        configurations associated with it, find the one matching for this request.
+        (BuildbotSyncer._loadConfig): Create a syncer per builder and add all test configurations to it.
+        (BuildbotSyncer._validateAndMergeConfig): Added the support for 'SlaveList', which is a list of
+        slave names present on this builder.
+        * tools/js/buildbot-triggerable.js: Added.
+        (BuildbotTriggerable): Added.
+        (BuildbotTriggerable.prototype.name): Added.
+        (BuildbotTriggerable.prototype.syncOnce): Added. The main logic for the syncing script. It pulls
+        existing build requests from the perf dashboard, pulls buildbot for pending and running/completed
+        builds on each builder (represented by each syncer), schedules build requests on buildbot if there
+        is any builder/slave available, and updates the status of build requests in the database.
+        (BuildbotTriggerable.prototype._validateRequests): Added.
+        (BuildbotTriggerable.prototype._pullBuildbotOnAllSyncers): Added.
+        (BuildbotTriggerable.prototype._scheduleNextRequestInGroupIfSlaveIsAvailable): Added.
+        (BuildbotTriggerable._testGroupMapForBuildRequests): Added.
+        * tools/js/database.js:
+        * tools/js/parse-arguments.js: Added. Extracted out of tools/detect-changes.js.
+        (parseArguments):
+        * tools/js/remote.js:
+        (RemoteAPI): Now optionally takes the server configuration.
+        (RemoteAPI.prototype.url): Added.
+        (RemoteAPI.prototype.getJSON): Removed the code for specifying request content.
+        (RemoteAPI.prototype.getJSONWithStatus): Ditto.
+        (RemoteAPI.prototype.postJSON): Added.
+        (RemoteAPI.prototype.postFormUrlencodedData): Added.
+        (RemoteAPI.prototype.sendHttpRequest): Fixed the code to specify auth.
+        * tools/js/v3-models.js: Don't include RemoteAPI here as they require a configuration for each host.
+        * tools/sync-buildbot.js: Added.
+        (main): Added. Parse the arguments and start the loop.
+        (syncLoop): Added.
+        * unit-tests/buildbot-syncer-tests.js: Added tests for pullBuildbot, scheduleRequest, as well as
+        scheduleFirstRequestInGroupIfAvailable. Refactored helper functions as needed.
+        (sampleiOSConfig):
+        (smallConfiguration): Added.
+        (smallPendingBuild): Added.
+        (smallInProgressBuild): Added.
+        (smallFinishedBuild): Added.
+        (createSampleBuildRequest): Create a unique build request for each platform.
+        (samplePendingBuild): Optionally specify build time and slave name.
+        (sampleInProgressBuild): Optionally specify slave name.
+        (sampleFinishedBuild): Ditto.
+        * unit-tests/resources/mock-remote-api.js:
+        (assert.notReached.assert.notReached):
+        (MockRemoteAPI.url): Added.
+        (MockRemoteAPI.postFormUrlencodedData): Added.
+        (MockRemoteAPI._addRequest): Extracted from getJSONWithStatus.
+        (MockRemoteAPI.waitForRequest): Extracted from inject. For tools-buildbot-triggerable-tests.js, we
+        need to instantiate a RemoteAPI for buildbot without replacing global.RemoteAPI.
+        (MockRemoteAPI.inject):
+        (MockRemoteAPI.reset): Added.
+
 2016-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Simplify API of Test model by removing Test.setParentTest

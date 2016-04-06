@@ -26,6 +26,8 @@ let TestServer = (new class TestServer {
         this._databaseHost = Config.value('database.host');
         this._databasePort = Config.value('database.port');
         this._database = null;
+
+        this._remote = null
     }
 
     start()
@@ -48,9 +50,8 @@ let TestServer = (new class TestServer {
 
     remoteAPI()
     {
-        assert(this._server);
-        RemoteAPI.configure(this._server);
-        return RemoteAPI;
+        assert(this._remote);
+        return this._remote;
     }
 
     database()
@@ -112,7 +113,9 @@ let TestServer = (new class TestServer {
 
     _ensureTestDatabase()
     {
-        this._executePgsqlCommand('dropdb');
+        try {
+            this._executePgsqlCommand('dropdb');
+        } catch (error) { }
         this._executePgsqlCommand('createdb');
         this._executePgsqlCommand('psql', ['--command', `grant all privileges on database "${this._databaseName}" to "${this._databaseUser}";`]);
         this.initDatabase();
@@ -181,6 +184,9 @@ let TestServer = (new class TestServer {
         }
         this._pidWaitStart = Date.now();
         this._pidFile = pidFile;
+
+        this._remote = new RemoteAPI(this._server);
+
         return new Promise(this._waitForPid.bind(this, true));
     }
 
@@ -202,7 +208,7 @@ let TestServer = (new class TestServer {
     _waitForPid(shouldExist, resolve, reject)
     {
         if (fs.existsSync(this._pidFile) != shouldExist) {
-            if (Date.now() - this._pidWaitStart > 5000)
+            if (Date.now() - this._pidWaitStart > 8000)
                 reject();
             else
                 setTimeout(this._waitForPid.bind(this, shouldExist, resolve, reject), 100);
@@ -215,18 +221,23 @@ let TestServer = (new class TestServer {
     {
         let self = this;
         before(function () {
-            this.timeout(5000);
+            this.timeout(10000);
             return self.start();
         });
+
+        let originalRemote;
 
         beforeEach(function () {
             this.timeout(10000);
             self.initDatabase();
             self.cleanDataDirectory();
+            originalRemote = global.RemoteAPI;
+            global.RemoteAPI = self._remote;
         });
 
         after(function () {
-            this.timeout(5000);
+            this.timeout(10000);
+            global.RemoteAPI = originalRemote;
             return self.stop();
         });
     }

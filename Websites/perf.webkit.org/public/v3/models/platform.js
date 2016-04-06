@@ -8,8 +8,16 @@ class Platform extends LabeledObject {
         this._lastModifiedByMetric = object.lastModifiedByMetric;
         this._containingTests = null;
 
+        this.ensureNamedStaticMap('name')[object.name] = this;
+
         for (var metric of this._metrics)
             metric.addPlatform(this);
+    }
+
+    static findByName(name)
+    {
+        var map = this.namedStaticMap('name');
+        return map ? map[name] : null;
     }
 
     hasTest(test)

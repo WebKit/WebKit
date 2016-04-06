@@ -33,10 +33,7 @@ class Metric extends LabeledObject {
 
     path() { return this._test.path().concat([this]); }
 
-    fullName()
-    {
-        return this._test.path().map(function (test) { return test.label(); }).join(' \u220B ') + ' : ' + this.label();
-    }
+    fullName() { return this._test.fullName() + ' : ' + this.label(); }
 
     label()
     {

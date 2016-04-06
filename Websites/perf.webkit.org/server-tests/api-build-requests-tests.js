@@ -2,8 +2,7 @@
 
 let assert = require('assert');
 
-require('../tools/js/v3-models.js');
-
+let MockData = require('./resources/mock-data.js');
 let TestServer = require('./resources/test-server.js');
 
 describe('/api/build-requests', function () {
@@ -11,17 +10,8 @@ describe('/api/build-requests', function () {
     TestServer.inject();
 
     beforeEach(function () {
-        AnalysisTask._fetchAllPromise = null;
-        AnalysisTask.clearStaticMap();
-        BuildRequest.clearStaticMap();
-        CommitLog.clearStaticMap();
-        Metric.clearStaticMap();
-        Platform.clearStaticMap();
-        Repository.clearStaticMap();
-        RootSet.clearStaticMap();
-        Test.clearStaticMap();
-        TestGroup.clearStaticMap();
-    })
+        MockData.resetV3Models();
+    });
 
     it('should return "TriggerableNotFound" when the database is empty', function (done) {
         TestServer.remoteAPI().getJSON('/api/build-requests/build-webkit').then(function (content) {
@@ -45,53 +35,10 @@ describe('/api/build-requests', function () {
         }).catch(done);
     });
 
-    function addMockData(db, statusList)
-    {
-        if (!statusList)
-            statusList = ['pending', 'pending', 'pending', 'pending'];
-        return Promise.all([
-            db.insert('build_triggerables', {id: 1, name: 'build-webkit'}),
-            db.insert('repositories', {id: 9, name: 'OS X'}),
-            db.insert('repositories', {id: 11, name: 'WebKit'}),
-            db.insert('commits', {id: 87832, repository: 9, revision: '10.11 15A284'}),
-            db.insert('commits', {id: 93116, repository: 11, revision: '191622', time: (new Date(1445945816878)).toISOString()}),
-            db.insert('commits', {id: 96336, repository: 11, revision: '192736', time: (new Date(1448225325650)).toISOString()}),
-            db.insert('platforms', {id: 65, name: 'some platform'}),
-            db.insert('tests', {id: 200, name: 'some test'}),
-            db.insert('test_metrics', {id: 300, test: 200, name: 'some metric'}),
-            db.insert('test_configurations', {id: 301, metric: 300, platform: 65, type: 'current'}),
-            db.insert('root_sets', {id: 401}),
-            db.insert('roots', {set: 401, commit: 87832}),
-            db.insert('roots', {set: 401, commit: 93116}),
-            db.insert('root_sets', {id: 402}),
-            db.insert('roots', {set: 402, commit: 87832}),
-            db.insert('roots', {set: 402, commit: 96336}),
-            db.insert('analysis_tasks', {id: 500, platform: 65, metric: 300, name: 'some task'}),
-            db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group'}),
-            db.insert('build_requests', {id: 700, status: statusList[0], triggerable: 1, platform: 65, test: 200, group: 600, order: 0, root_set: 401}),
-            db.insert('build_requests', {id: 701, status: statusList[1], triggerable: 1, platform: 65, test: 200, group: 600, order: 1, root_set: 402}),
-            db.insert('build_requests', {id: 702, status: statusList[2], triggerable: 1, platform: 65, test: 200, group: 600, order: 2, root_set: 401}),
-            db.insert('build_requests', {id: 703, status: statusList[3], triggerable: 1, platform: 65, test: 200, group: 600, order: 3, root_set: 402}),
-        ]);
-    }
-
-    function addAnotherMockTestGroup(db, statusList)
-    {
-        if (!statusList)
-            statusList = ['pending', 'pending', 'pending', 'pending'];
-        return Promise.all([
-            db.insert('analysis_test_groups', {id: 599, task: 500, name: 'another test group'}),
-            db.insert('build_requests', {id: 713, status: statusList[3], triggerable: 1, platform: 65, test: 200, group: 599, order: 3, root_set: 402}),
-            db.insert('build_requests', {id: 710, status: statusList[0], triggerable: 1, platform: 65, test: 200, group: 599, order: 0, root_set: 401}),
-            db.insert('build_requests', {id: 712, status: statusList[2], triggerable: 1, platform: 65, test: 200, group: 599, order: 2, root_set: 401}),
-            db.insert('build_requests', {id: 711, status: statusList[1], triggerable: 1, platform: 65, test: 200, group: 599, order: 1, root_set: 402}),
-        ]);
-    }
-
     it('should return build requets associated with a given triggerable with appropriate roots and rootSets', function (done) {
         let db = TestServer.database();
         db.connect().then(function () {
-            return addMockData(db);
+            return MockData.addMockData(db);
         }).then(function () {
             return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
         }).then(function (content) {
@@ -149,7 +96,7 @@ describe('/api/build-requests', function () {
     it('should support useLegacyIdResolution option', function (done) {
         let db = TestServer.database();
         db.connect().then(function () {
-            return addMockData(db);
+            return MockData.addMockData(db);
         }).then(function () {
             return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit?useLegacyIdResolution=true');
         }).then(function (content) {
@@ -207,7 +154,7 @@ describe('/api/build-requests', function () {
     it('should be fetchable by BuildRequest.fetchForTriggerable', function (done) {
         let db = TestServer.database();
         db.connect().then(function () {
-            return addMockData(db);
+            return MockData.addMockData(db);
         }).then(function () {
             return Manifest.fetch();
         }).then(function () {
@@ -302,7 +249,7 @@ describe('/api/build-requests', function () {
     it('should not include a build request if all requests in the same group had been completed', function (done) {
         let db = TestServer.database();
         db.connect().then(function () {
-            return addMockData(db, ['completed', 'completed', 'completed', 'completed']);
+            return MockData.addMockData(db, ['completed', 'completed', 'completed', 'completed']);
         }).then(function () {
             return Manifest.fetch();
         }).then(function () {
@@ -316,7 +263,7 @@ describe('/api/build-requests', function () {
     it('should not include a build request if all requests in the same group had been failed or cancled', function (done) {
         let db = TestServer.database();
         db.connect().then(function () {
-            return addMockData(db, ['failed', 'failed', 'canceled', 'canceled']);
+            return MockData.addMockData(db, ['failed', 'failed', 'canceled', 'canceled']);
         }).then(function () {
             return Manifest.fetch();
         }).then(function () {
@@ -330,7 +277,7 @@ describe('/api/build-requests', function () {
     it('should include all build requests of a test group if one of the reqeusts in the group had not been finished', function (done) {
         let db = TestServer.database();
         db.connect().then(function () {
-            return addMockData(db, ['completed', 'completed', 'scheduled', 'pending']);
+            return MockData.addMockData(db, ['completed', 'completed', 'scheduled', 'pending']);
         }).then(function () {
             return Manifest.fetch();
         }).then(function () {
@@ -356,7 +303,7 @@ describe('/api/build-requests', function () {
     it('should include all build requests of a test group if one of the reqeusts in the group is still running', function (done) {
         let db = TestServer.database();
         db.connect().then(function () {
-            return addMockData(db, ['completed', 'completed', 'completed', 'running']);
+            return MockData.addMockData(db, ['completed', 'completed', 'completed', 'running']);
         }).then(function () {
             return Manifest.fetch();
         }).then(function () {
@@ -382,7 +329,7 @@ describe('/api/build-requests', function () {
     it('should order build requests based on test group and order', function (done) {
         let db = TestServer.database();
         db.connect().then(function () {
-            return Promise.all([addMockData(db), addAnotherMockTestGroup(db)])
+            return Promise.all([MockData.addMockData(db), MockData.addAnotherMockTestGroup(db)])
         }).then(function () {
             return Manifest.fetch();
         }).then(function () {

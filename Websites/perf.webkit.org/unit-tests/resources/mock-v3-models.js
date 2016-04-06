@@ -7,6 +7,8 @@ var MockModels = {
             AnalysisTask.clearStaticMap();
             CommitLog.clearStaticMap();
             Metric.clearStaticMap();
+            Platform.clearStaticMap();
+            Repository.clearStaticMap();
             RootSet.clearStaticMap();
             Test.clearStaticMap();
             TestGroup.clearStaticMap();

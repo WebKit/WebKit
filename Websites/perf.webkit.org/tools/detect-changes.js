@@ -7,12 +7,13 @@ var data = require('../public/v2/data.js');
 var RunsData = data.RunsData;
 var Statistics = require('../public/shared/statistics.js');
 var StatisticsStrategies = require('../public/v2/statistics-strategies.js');
+var parseArguments = require('./js/parse-arguments.js').parseArguments;
 
 // FIXME: We shouldn't use a global variable like this.
 var settings;
 function main(argv)
 {
-    var options = parseArgument(argv, [
+    var options = parseArguments(argv, [
         {name: '--server-config-json', required: true},
         {name: '--change-detection-config-json', required: true},
         {name: '--seconds-to-sleep', type: parseFloat, default: 1200},
@@ -24,37 +25,6 @@ function main(argv)
     settings.secondsToSleep = options['--seconds-to-sleep'];
 
     fetchManifestAndAnalyzeData(options['--server-config-json']);
-}
-
-function parseArgument(argv, acceptedOptions) {
-    var args = argv.slice(2);
-    var options = {}
-    for (var i = 0; i < args.length; i += 2) {
-        var current = args[i];
-        var next = args[i + 1];
-        for (var option of acceptedOptions) {
-            if (current == option['name']) {
-                options[option['name']] = next;
-                next = null;
-                break;
-            }
-        }
-        if (next) {
-            console.error('Invalid argument:', current);
-            return null;
-        }
-    }
-    for (var option of acceptedOptions) {
-        var name = option['name'];
-        if (option['required'] && !(name in options)) {
-            console.log('Required argument', name, 'is missing');
-            return null;
-        }
-        var value = options[name] || option['default'];
-        var converter = option['type'];
-        options[name] = converter ? converter(value) : value;
-    }
-    return options;
 }
 
 function fetchManifestAndAnalyzeData(serverConfigJSON)

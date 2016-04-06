@@ -85,6 +85,7 @@ let tableToPrefixMap = {
     'bug_trackers': 'tracker',
     'build_triggerables': 'triggerable',
     'build_requests': 'request',
+    'build_slaves': 'slave',
     'builders': 'builder',
     'commits': 'commit',
     'test_configurations': 'config',

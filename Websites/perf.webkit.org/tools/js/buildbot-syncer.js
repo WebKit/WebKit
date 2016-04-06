@@ -26,6 +26,7 @@ class BuildbotBuildEntry {
         }
     }
 
+    syncer() { return this._syncer; }
     buildNumber() { return this._buildNumber; }
     slaveName() { return this._slaveName; }
     buildRequestId() { return this._buildRequestId; }
@@ -33,31 +34,106 @@ class BuildbotBuildEntry {
     isInProgress() { return this._isInProgress; }
     hasFinished() { return !this.isPending() && !this.isInProgress(); }
     url() { return this.isPending() ? this._syncer.url() : this._syncer.urlForBuildNumber(this._buildNumber); }
+
+    buildRequestStatusIfUpdateIsNeeded(request)
+    {
+        assert.equal(request.id(), this._buildRequestId);
+        if (!request)
+            return null;
+        if (this.isPending()) {
+            if (request.isPending())
+                return 'scheduled';
+        } else if (this.isInProgress()) {
+            if (!request.hasStarted())
+                return 'running';
+        } else if (this.hasFinished()) {
+            if (!request.hasFinished())
+                return 'failedIfNotCompleted';
+        }
+        return null;
+    }
 }
+
 
 class BuildbotSyncer {
 
-    constructor(url, object)
+    constructor(remote, object)
     {
-        this._url = url;
+        this._remote = remote;
+        this._testConfigurations = [];
         this._builderName = object.builder;
-        this._platformName = object.platform;
-        this._testPath = object.test;
-        this._propertiesTemplate = object.properties;
         this._slavePropertyName = object.slaveArgument;
+        this._slaveList = object.slaveList;
         this._buildRequestPropertyName = object.buildRequestArgument;
+        this._entryList = null;
     }
 
-    testPath() { return this._testPath }
     builderName() { return this._builderName; }
-    platformName() { return this._platformName; }
+
+    addTestConfiguration(test, platform, propertiesTemplate)
+    {
+        assert(test instanceof Test);
+        assert(platform instanceof Platform);
+        this._testConfigurations.push({test: test, platform: platform, propertiesTemplate: propertiesTemplate});
+    }
+    testConfigurations() { return this._testConfigurations; }
+
+    matchesConfiguration(request)
+    {
+        for (let config of this._testConfigurations) {
+            if (config.platform == request.platform() && config.test == request.test())
+                return true;
+        }
+        return false;
+    }
+
+    scheduleRequest(newRequest, slaveName)
+    {
+        let properties = this._propertiesForBuildRequest(newRequest);
+
+        assert.equal(!this._slavePropertyName, !slaveName);
+        if (this._slavePropertyName)
+            properties[this._slavePropertyName] = slaveName;
+
+        return this._remote.postFormUrlencodedData(this.pathForForceBuild(), properties);
+    }
+
+    scheduleFirstRequestInGroupIfAvailable(newRequest)
+    {
+        assert(newRequest instanceof BuildRequest);
+
+        if (!this.matchesConfiguration(newRequest))
+            return null;
+
+        let hasPendingBuildsWithoutSlaveNameSpecified = false;
+        let usedSlaves = new Set;
+        for (let entry of this._entryList) {
+            if (entry.isPending()) {
+                if (!entry.slaveName())
+                    hasPendingBuildsWithoutSlaveNameSpecified = true;
+                usedSlaves.add(entry.slaveName());
+            }
+        }
+
+        if (!this._slaveList || hasPendingBuildsWithoutSlaveNameSpecified) {
+            if (usedSlaves.size)
+                return null;
+            return this.scheduleRequest(newRequest, null);
+        }
+
+        for (let slaveName of this._slaveList) {
+            if (!usedSlaves.has(slaveName))
+                return this.scheduleRequest(newRequest, slaveName);
+        }
+
+        return null;
+    }
 
     pullBuildbot(count)
     {
         let self = this;
-        return RemoteAPI.getJSON(this.urlForPendingBuildsJSON()).then(function (content) {
+        return this._remote.getJSON(this.pathForPendingBuildsJSON()).then(function (content) {
             let pendingEntries = content.map(function (entry) { return new BuildbotBuildEntry(self, entry); });
-
             return self._pullRecentBuilds(count).then(function (entries) {
                 let entryByRequest = {};
 
@@ -67,7 +143,13 @@ class BuildbotSyncer {
                 for (let entry of entries)
                     entryByRequest[entry.buildRequestId()] = entry;
 
-                return entryByRequest;
+                let entryList = [];
+                for (let id in entryByRequest)
+                    entryList.push(entryByRequest[id]);
+
+                self._entryList = entryList;
+
+                return entryList;
             });
         });
     }
@@ -82,8 +164,8 @@ class BuildbotSyncer {
             selectedBuilds[i] = -i - 1;
 
         let self = this;
-        return RemoteAPI.getJSON(this.urlForBuildJSON(selectedBuilds)).then(function (content) {
-            let entries = [];
+        return this._remote.getJSON(this.pathForBuildJSON(selectedBuilds)).then(function (content) {
+            var entries = [];
             for (let index of selectedBuilds) {
                 let entry = content[index];
                 if (entry && !entry['error'])
@@ -93,30 +175,38 @@ class BuildbotSyncer {
         });
     }
 
-    urlForPendingBuildsJSON() { return `${this._url}/json/builders/${this._builderName}/pendingBuilds`; }
-    urlForBuildJSON(selectedBuilds)
+    pathForPendingBuildsJSON() { return `/json/builders/${this._builderName}/pendingBuilds`; }
+    pathForBuildJSON(selectedBuilds)
     {
-        return `${this._url}/json/builders/${this._builderName}/builds/?`
+        return `/json/builders/${this._builderName}/builds/?`
             + selectedBuilds.map(function (number) { return 'select=' + number; }).join('&');
     }
+    pathForForceBuild() { return `/builders/${this._builderName}/force`; }
 
-    url() { return `${this._url}/builders/${this._builderName}/`; }
-    urlForBuildNumber(number) { return `${this._url}/builders/${this._builderName}/builds/${number}`; }
+    url() { return this._remote.url(`/builders/${this._builderName}/`); }
+    urlForBuildNumber(number) { return this._remote.url(`/builders/${this._builderName}/builds/${number}`); }
 
     _propertiesForBuildRequest(buildRequest)
     {
-        console.assert(buildRequest instanceof BuildRequest);
+        assert(buildRequest instanceof BuildRequest);
 
         let rootSet = buildRequest.rootSet();
-        console.assert(rootSet instanceof RootSet);
+        assert(rootSet instanceof RootSet);
 
         let repositoryByName = {};
         for (let repository of rootSet.repositories())
             repositoryByName[repository.name()] = repository;
 
+        let propertiesTemplate = null;
+        for (let config of this._testConfigurations) {
+            if (config.platform == buildRequest.platform() && config.test == buildRequest.test())
+                propertiesTemplate = config.propertiesTemplate;
+        }
+        assert(propertiesTemplate);
+
         let properties = {};
-        for (let key in this._propertiesTemplate) {
-            let value = this._propertiesTemplate[key];
+        for (let key in propertiesTemplate) {
+            let value = propertiesTemplate[key];
             if (typeof(value) != 'object')
                 properties[key] = value;
             else if ('root' in value) {
@@ -152,13 +242,13 @@ class BuildbotSyncer {
         return revisionSet;
     }
 
-    static _loadConfig(url, config)
+    static _loadConfig(remote, config)
     {
         let shared = config['shared'] || {};
         let types = config['types'] || {};
         let builders = config['builders'] || {};
 
-        let syncers = [];
+        let syncerByBuilder = new Map;
         for (let entry of config['configurations']) {
             let newConfig = {};
             this._validateAndMergeConfig(newConfig, shared);
@@ -180,10 +270,22 @@ class BuildbotSyncer {
             assert('builder' in newConfig, 'configuration must specify a builder');
             assert('properties' in newConfig, 'configuration must specify arguments to post on a builder');
             assert('buildRequestArgument' in newConfig, 'configuration must specify buildRequestArgument');
-            syncers.push(new BuildbotSyncer(url, newConfig));
+
+            let test = Test.findByPath(newConfig.test);
+            assert(test, `${newConfig.test} is not a valid test path`);
+
+            let platform = Platform.findByName(newConfig.platform);
+            assert(platform, `${newConfig.platform} is not a valid platform name`);
+
+            let syncer = syncerByBuilder.get(newConfig.builder);
+            if (!syncer) {
+                syncer = new BuildbotSyncer(remote, newConfig);
+                syncerByBuilder.set(newConfig.builder, syncer);
+            }
+            syncer.addTestConfiguration(test, platform, newConfig.properties);
         }
 
-        return syncers;
+        return Array.from(syncerByBuilder.values());
     }
 
     static _validateAndMergeConfig(config, valuesToMerge)
@@ -201,6 +303,11 @@ class BuildbotSyncer {
                 assert(value instanceof Array, 'test should be an array');
                 assert(value.every(function (part) { return typeof part == 'string'; }), 'test should be an array of strings');
                 config[name] = value.slice();
+                break;
+            case 'slaveList':
+                assert(value instanceof Array, 'slaveList should be an array');
+                assert(value.every(function (part) { return typeof part == 'string'; }), 'slaveList should be an array of strings');
+                config[name] = value;
                 break;
             case 'type': // fallthrough
             case 'builder': // fallthrough

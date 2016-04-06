@@ -22,6 +22,25 @@ class Test extends LabeledObject {
 
     static topLevelTests() { return this.sortByName(this.listForStaticMap('topLevelTests')); }
 
+    static findByPath(path)
+    {
+        var matchingTest = null;
+        var testList = this.topLevelTests();
+        for (var part of path) {
+            matchingTest = null;
+            for (var test of testList) {
+                if (part == test.name()) {
+                    matchingTest = test;
+                    break;
+                }
+            }
+            if (!matchingTest)
+                return null;
+            testList = matchingTest.childTests();
+        }
+        return matchingTest;
+    }
+
     parentTest() { return Test.findById(this._parentId); }
 
     path()
@@ -34,6 +53,8 @@ class Test extends LabeledObject {
         }
         return path;
     }
+
+    fullName() { return this.path().map(function (test) { return test.label(); }).join(' \u220B '); }
 
     onlyContainsSingleMetric() { return !this.childTests().length && this._metrics.length == 1; }
 

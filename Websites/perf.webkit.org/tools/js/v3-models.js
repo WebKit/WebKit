@@ -29,7 +29,4 @@ importFromV3('models/test-group.js', 'TestGroup');
 
 importFromV3('instrumentation.js', 'Instrumentation');
 
-// RemoteAPI has a different implementation in node since XHR isn't available.
-global.RemoteAPI = require('./remote.js').RemoteAPI;
-
 global.Statistics = require('../../public/shared/statistics.js');
