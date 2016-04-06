@@ -1,3 +1,22 @@
+2016-04-06  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in AudioDestinationNode::render()
+        https://bugs.webkit.org/show_bug.cgi?id=156308
+        <rdar://problem/25468815>
+
+        Reviewed by Eric Carlson.
+
+        
+        AudioDestinationNode::render() will crash when passed in a zero-length frame count. Rather than get into
+        this bad state, ASSERT() and bail out early in this case.
+
+        Also, address the situation in AudioDestinationIOS::render which can cause this 0-frame count to occur.
+
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::render):
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::render):
+
 2016-04-06  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][MediaFoundation] Videos are always autoplaying.
