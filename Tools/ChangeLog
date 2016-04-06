@@ -1,3 +1,13 @@
+2016-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement operator== and operator!= for Optional<>
+        https://bugs.webkit.org/show_bug.cgi?id=156266
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WTF/Optional.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Make CMake-generated binaries on Mac able to run

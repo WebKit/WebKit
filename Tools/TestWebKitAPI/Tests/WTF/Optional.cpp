@@ -93,4 +93,58 @@ TEST(WTF_Optional, Callback)
     EXPECT_EQ(result, 250);
 }
 
+TEST(WTF_Optional, Equality)
+{
+    Optional<int> unengaged1;
+    Optional<int> unengaged2;
+
+    Optional<int> engaged1 { 1 };
+    Optional<int> engaged2 { 2 };
+    Optional<int> engagedx2 { 2 };
+
+    EXPECT_TRUE(unengaged1 == unengaged2);
+    EXPECT_FALSE(engaged1 == engaged2);
+    EXPECT_FALSE(engaged1 == unengaged1);
+    EXPECT_TRUE(engaged2 == engagedx2);
+
+    EXPECT_TRUE(unengaged1 == Nullopt);
+    EXPECT_FALSE(engaged1 == Nullopt);
+    EXPECT_TRUE(Nullopt == unengaged1);
+    EXPECT_FALSE(Nullopt == engaged1);
+
+    EXPECT_TRUE(engaged1 == 1);
+    EXPECT_TRUE(1 == engaged1);
+    EXPECT_FALSE(unengaged1 == 1);
+    EXPECT_FALSE(1 == unengaged1);
+}
+
+TEST(WTF_Optional, Inequality)
+{
+    Optional<int> unengaged1;
+    Optional<int> unengaged2;
+
+    Optional<int> engaged1 { 1 };
+    Optional<int> engaged2 { 2 };
+    Optional<int> engagedx2 { 2 };
+
+    EXPECT_FALSE(unengaged1 != unengaged2);
+    EXPECT_TRUE(engaged1 != engaged2);
+    EXPECT_TRUE(engaged1 != unengaged1);
+    EXPECT_FALSE(engaged2 != engagedx2);
+
+    EXPECT_FALSE(unengaged1 != Nullopt);
+    EXPECT_TRUE(engaged1 != Nullopt);
+    EXPECT_FALSE(Nullopt != unengaged1);
+    EXPECT_TRUE(Nullopt != engaged1);
+
+    EXPECT_FALSE(engaged1 != 1);
+    EXPECT_TRUE(engaged1 != 2);
+    EXPECT_FALSE(1 != engaged1);
+    EXPECT_TRUE(2 != engaged1);
+
+    EXPECT_TRUE(unengaged1 != 1);
+    EXPECT_TRUE(1 != unengaged1);
+}
+
+
 } // namespace TestWebKitAPI
