@@ -1,3 +1,60 @@
+2016-04-05  Saam barati  <sbarati@apple.com>
+
+        JSC SamplingProfiler: Use a thread + sleep loop instead of WTF::WorkQueue for taking samples
+        https://bugs.webkit.org/show_bug.cgi?id=154017
+
+        Reviewed by Geoffrey Garen.
+
+        By moving to an explicitly created seperate thread + sample-then-sleep
+        loop, we can remove a lot of the crufty code around WorkQueue.
+        We're also getting sample rates that are much closer to what we're
+        asking the OS for. When the sampling handler was built off of WorkQueue,
+        we'd often get sample rates much higher than the 1ms we asked for. On Kraken,
+        we would average about 1.7ms sample rates, even though we'd ask for a 1ms rate.
+        Now, on Kraken, we're getting about 1.2ms rates. Because we're getting
+        higher rates, this patch is a performance regression. It's slower because
+        we're sampling more frequently.
+
+        Before this patch, the sampling profiler had the following overhead:
+        - 10% on Kraken
+        - 12% on octane
+        - 15% on AsmBench
+
+        With this patch, the sampling profiler has the following overhead:
+        - 16% on Kraken
+        - 17% on Octane
+        - 30% on AsmBench
+
+        Comparatively, this new patch has the following overhead over the old sampling profiler:
+        - 5% on Kraken
+        - 3.5% on Octane
+        - 13% slower on AsmBench
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::SamplingProfiler):
+        (JSC::SamplingProfiler::~SamplingProfiler):
+        (JSC::SamplingProfiler::createThreadIfNecessary):
+        (JSC::SamplingProfiler::timerLoop):
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::tryGetBytecodeIndex):
+        (JSC::SamplingProfiler::shutdown):
+        (JSC::SamplingProfiler::start):
+        (JSC::SamplingProfiler::pause):
+        (JSC::SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread):
+        (JSC::SamplingProfiler::noticeJSLockAcquisition):
+        (JSC::SamplingProfiler::noticeVMEntry):
+        (JSC::SamplingProfiler::clearData):
+        (JSC::SamplingProfiler::stop): Deleted.
+        (JSC::SamplingProfiler::dispatchIfNecessary): Deleted.
+        (JSC::SamplingProfiler::dispatchFunction): Deleted.
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::setTimingInterval):
+        (JSC::SamplingProfiler::setStopWatch):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2016-04-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199073.

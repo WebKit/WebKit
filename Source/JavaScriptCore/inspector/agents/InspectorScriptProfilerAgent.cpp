@@ -202,7 +202,7 @@ void InspectorScriptProfilerAgent::trackingComplete()
         SamplingProfiler* samplingProfiler = m_environment.scriptDebugServer().vm().samplingProfiler();
         RELEASE_ASSERT(samplingProfiler);
         LockHolder locker(samplingProfiler->getLock());
-        samplingProfiler->stop(locker);
+        samplingProfiler->pause(locker);
         Vector<SamplingProfiler::StackTrace> stackTraces = samplingProfiler->releaseStackTraces(locker);
         Ref<Protocol::ScriptProfiler::Samples> samples = buildSamples(m_environment.scriptDebugServer().vm(), WTFMove(stackTraces));
 

@@ -129,20 +129,19 @@ public:
     void setTimingInterval(std::chrono::microseconds interval) { m_timingInterval = interval; }
     JS_EXPORT_PRIVATE void start();
     void start(const LockHolder&);
-    void stop();
-    void stop(const LockHolder&);
     Vector<StackTrace> releaseStackTraces(const LockHolder&);
     JS_EXPORT_PRIVATE String stackTracesAsJSON();
     JS_EXPORT_PRIVATE void noticeCurrentThreadAsJSCExecutionThread();
     void noticeCurrentThreadAsJSCExecutionThread(const LockHolder&);
     void processUnverifiedStackTraces(); // You should call this only after acquiring the lock.
     void setStopWatch(const LockHolder&, Ref<Stopwatch>&& stopwatch) { m_stopwatch = WTFMove(stopwatch); }
+    void pause(const LockHolder&);
 
 private:
-    void dispatchIfNecessary(const LockHolder&);
-    void dispatchFunction(const LockHolder&);
-    void pause();
     void clearData(const LockHolder&);
+    void createThreadIfNecessary(const LockHolder&);
+    void timerLoop();
+    void takeSample(const LockHolder&, std::chrono::microseconds& stackTraceProcessingTime);
 
     VM& m_vm;
     RefPtr<Stopwatch> m_stopwatch;
@@ -150,13 +149,11 @@ private:
     Vector<UnprocessedStackTrace> m_unprocessedStackTraces;
     std::chrono::microseconds m_timingInterval;
     double m_lastTime;
-    Ref<WorkQueue> m_timerQueue;
-    std::function<void ()> m_handler;
     Lock m_lock;
+    ThreadIdentifier m_threadIdentifier;
     MachineThreads::Thread* m_jscExecutionThread;
-    bool m_isActive;
     bool m_isPaused;
-    bool m_hasDispatchedFunction;
+    bool m_isShutDown;
     HashSet<JSCell*> m_liveCellPointers;
     Vector<UnprocessedStackFrame> m_currentFrames;
 };

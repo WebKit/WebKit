@@ -318,7 +318,9 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(SAMPLING_PROFILER)
     if (Options::useSamplingProfiler()) {
         setShouldBuildPCToCodeOriginMapping();
-        m_samplingProfiler = adoptRef(new SamplingProfiler(*this, Stopwatch::create()));
+        Ref<Stopwatch> stopwatch = Stopwatch::create();
+        stopwatch->start();
+        m_samplingProfiler = adoptRef(new SamplingProfiler(*this, WTFMove(stopwatch)));
         m_samplingProfiler->start();
     }
 #endif // ENABLE(SAMPLING_PROFILER)

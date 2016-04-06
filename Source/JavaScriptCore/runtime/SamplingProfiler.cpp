@@ -186,11 +186,10 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     : m_vm(vm)
     , m_stopwatch(WTFMove(stopwatch))
     , m_timingInterval(std::chrono::microseconds(1000))
-    , m_timerQueue(WorkQueue::create("jsc.sampling-profiler.queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
+    , m_threadIdentifier(0)
     , m_jscExecutionThread(nullptr)
-    , m_isActive(false)
     , m_isPaused(false)
-    , m_hasDispatchedFunction(false)
+    , m_isShutDown(false)
 {
     if (sReportStats) {
         sNumTotalWalks = 0;
@@ -198,97 +197,124 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     }
 
     m_currentFrames.grow(256);
-
-    m_handler = [this] () {
-        LockHolder samplingProfilerLocker(m_lock);
-        if (!m_isActive || !m_jscExecutionThread || m_isPaused) {
-            m_hasDispatchedFunction = false;
-            deref();
-            return;
-        }
-
-        if (m_vm.entryScope) {
-            double nowTime = m_stopwatch->elapsedTime();
-
-            LockHolder machineThreadsLocker(m_vm.heap.machineThreads().getLock());
-            LockHolder codeBlockSetLocker(m_vm.heap.codeBlockSet().getLock());
-            LockHolder executableAllocatorLocker(m_vm.executableAllocator.getLock());
-
-            bool didSuspend = m_jscExecutionThread->suspend();
-            if (didSuspend) {
-                // While the JSC thread is suspended, we can't do things like malloc because the JSC thread
-                // may be holding the malloc lock.
-                ExecState* callFrame;
-                void* machinePC;
-                bool topFrameIsLLInt = false;
-                void* llintPC;
-                {
-                    MachineThreads::Thread::Registers registers;
-                    m_jscExecutionThread->getRegisters(registers);
-                    callFrame = static_cast<ExecState*>(registers.framePointer());
-                    machinePC = registers.instructionPointer();
-                    llintPC = registers.llintPC();
-                    m_jscExecutionThread->freeRegisters(registers);
-                }
-                // FIXME: Lets have a way of detecting when we're parsing code.
-                // https://bugs.webkit.org/show_bug.cgi?id=152761
-                if (m_vm.executableAllocator.isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
-                    if (m_vm.isExecutingInRegExpJIT) {
-                        // FIXME: We're executing a regexp. Lets gather more intersting data.
-                        // https://bugs.webkit.org/show_bug.cgi?id=152729
-                        callFrame = m_vm.topCallFrame; // We need to do this or else we'd fail our backtrace validation b/c this isn't a JS frame.
-                    }
-                } else if (LLInt::isLLIntPC(machinePC)) {
-                    topFrameIsLLInt = true;
-                    // We're okay to take a normal stack trace when the PC
-                    // is in LLInt code.
-                } else {
-                    // We resort to topCallFrame to see if we can get anything
-                    // useful. We usually get here when we're executing C code.
-                    callFrame = m_vm.topCallFrame;
-                }
-
-                size_t walkSize;
-                bool wasValidWalk;
-                bool didRunOutOfVectorSpace;
-                {
-                    FrameWalker walker(callFrame, m_vm, codeBlockSetLocker, machineThreadsLocker);
-                    walkSize = walker.walk(m_currentFrames, didRunOutOfVectorSpace);
-                    wasValidWalk = walker.wasValidWalk();
-                }
-
-                m_jscExecutionThread->resume();
-
-                // We can now use data structures that malloc, and do other interesting things, again.
-
-                // FIXME: It'd be interesting to take data about the program's state when
-                // we fail to take a stack trace: https://bugs.webkit.org/show_bug.cgi?id=152758
-                if (wasValidWalk && walkSize) {
-                    if (sReportStats)
-                        sNumTotalStackTraces++;
-                    Vector<UnprocessedStackFrame> stackTrace;
-                    stackTrace.reserveInitialCapacity(walkSize);
-                    for (size_t i = 0; i < walkSize; i++) {
-                        UnprocessedStackFrame frame = m_currentFrames[i];
-                        stackTrace.uncheckedAppend(frame);
-                    }
-
-                    m_unprocessedStackTraces.append(UnprocessedStackTrace { nowTime, machinePC, topFrameIsLLInt, llintPC, WTFMove(stackTrace) });
-
-                    if (didRunOutOfVectorSpace)
-                        m_currentFrames.grow(m_currentFrames.size() * 1.25);
-                }
-            }
-        }
-
-        m_lastTime = m_stopwatch->elapsedTime();
-
-        dispatchFunction(samplingProfilerLocker);
-    };
 }
 
 SamplingProfiler::~SamplingProfiler()
 {
+}
+
+void SamplingProfiler::createThreadIfNecessary(const LockHolder&)
+{
+    ASSERT(m_lock.isLocked());
+
+    if (m_threadIdentifier)
+        return;
+
+    RefPtr<SamplingProfiler> profiler = this;
+    m_threadIdentifier = createThread("jsc.sampling-profiler.thread", [profiler] {
+        profiler->timerLoop();
+    });
+}
+
+void SamplingProfiler::timerLoop()
+{
+    while (true) {
+        std::chrono::microseconds stackTraceProcessingTime = std::chrono::microseconds(0);
+        {
+            LockHolder locker(m_lock);
+            if (UNLIKELY(m_isShutDown))
+                return;
+
+            if (!m_isPaused && m_jscExecutionThread)
+                takeSample(locker, stackTraceProcessingTime);
+
+            m_lastTime = m_stopwatch->elapsedTime();
+        }
+
+        std::this_thread::sleep_for(m_timingInterval - std::min(m_timingInterval, stackTraceProcessingTime));
+    }
+}
+
+void SamplingProfiler::takeSample(const LockHolder&, std::chrono::microseconds& stackTraceProcessingTime)
+{
+    ASSERT(m_lock.isLocked());
+    if (m_vm.entryScope) {
+        double nowTime = m_stopwatch->elapsedTime();
+
+        LockHolder machineThreadsLocker(m_vm.heap.machineThreads().getLock());
+        LockHolder codeBlockSetLocker(m_vm.heap.codeBlockSet().getLock());
+        LockHolder executableAllocatorLocker(m_vm.executableAllocator.getLock());
+
+        bool didSuspend = m_jscExecutionThread->suspend();
+        if (didSuspend) {
+            // While the JSC thread is suspended, we can't do things like malloc because the JSC thread
+            // may be holding the malloc lock.
+            ExecState* callFrame;
+            void* machinePC;
+            bool topFrameIsLLInt = false;
+            void* llintPC;
+            {
+                MachineThreads::Thread::Registers registers;
+                m_jscExecutionThread->getRegisters(registers);
+                callFrame = static_cast<ExecState*>(registers.framePointer());
+                machinePC = registers.instructionPointer();
+                llintPC = registers.llintPC();
+                m_jscExecutionThread->freeRegisters(registers);
+            }
+            // FIXME: Lets have a way of detecting when we're parsing code.
+            // https://bugs.webkit.org/show_bug.cgi?id=152761
+            if (m_vm.executableAllocator.isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
+                if (m_vm.isExecutingInRegExpJIT) {
+                    // FIXME: We're executing a regexp. Lets gather more intersting data.
+                    // https://bugs.webkit.org/show_bug.cgi?id=152729
+                    callFrame = m_vm.topCallFrame; // We need to do this or else we'd fail our backtrace validation b/c this isn't a JS frame.
+                }
+            } else if (LLInt::isLLIntPC(machinePC)) {
+                topFrameIsLLInt = true;
+                // We're okay to take a normal stack trace when the PC
+                // is in LLInt code.
+            } else {
+                // We resort to topCallFrame to see if we can get anything
+                // useful. We usually get here when we're executing C code.
+                callFrame = m_vm.topCallFrame;
+            }
+
+            size_t walkSize;
+            bool wasValidWalk;
+            bool didRunOutOfVectorSpace;
+            {
+                FrameWalker walker(callFrame, m_vm, codeBlockSetLocker, machineThreadsLocker);
+                walkSize = walker.walk(m_currentFrames, didRunOutOfVectorSpace);
+                wasValidWalk = walker.wasValidWalk();
+            }
+
+            m_jscExecutionThread->resume();
+
+            auto startTime = std::chrono::steady_clock::now();
+            // We can now use data structures that malloc, and do other interesting things, again.
+
+            // FIXME: It'd be interesting to take data about the program's state when
+            // we fail to take a stack trace: https://bugs.webkit.org/show_bug.cgi?id=152758
+            if (wasValidWalk && walkSize) {
+                if (sReportStats)
+                    sNumTotalStackTraces++;
+                Vector<UnprocessedStackFrame> stackTrace;
+                stackTrace.reserveInitialCapacity(walkSize);
+                for (size_t i = 0; i < walkSize; i++) {
+                    UnprocessedStackFrame frame = m_currentFrames[i];
+                    stackTrace.uncheckedAppend(frame);
+                }
+
+                m_unprocessedStackTraces.append(UnprocessedStackTrace { nowTime, machinePC, topFrameIsLLInt, llintPC, WTFMove(stackTrace) });
+
+                if (didRunOutOfVectorSpace)
+                    m_currentFrames.grow(m_currentFrames.size() * 1.25);
+            }
+
+            auto endTime = std::chrono::steady_clock::now();
+            stackTraceProcessingTime = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
+        }
+    }
 }
 
 static ALWAYS_INLINE unsigned tryGetBytecodeIndex(unsigned llintPC, CodeBlock* codeBlock, bool& isValid)
@@ -486,7 +512,8 @@ void SamplingProfiler::visit(SlotVisitor& slotVisitor)
 
 void SamplingProfiler::shutdown()
 {
-    stop();
+    LockHolder locker(m_lock);
+    m_isShutDown = true;
 }
 
 void SamplingProfiler::start()
@@ -498,26 +525,13 @@ void SamplingProfiler::start()
 void SamplingProfiler::start(const LockHolder& locker)
 {
     ASSERT(m_lock.isLocked());
-    m_isActive = true;
-    dispatchIfNecessary(locker);
+    m_isPaused = false;
+    createThreadIfNecessary(locker);
 }
 
-void SamplingProfiler::stop()
-{
-    LockHolder locker(m_lock);
-    stop(locker);
-}
-
-void SamplingProfiler::stop(const LockHolder&)
+void SamplingProfiler::pause(const LockHolder&)
 {
     ASSERT(m_lock.isLocked());
-    m_isActive = false;
-    reportStats();
-}
-
-void SamplingProfiler::pause()
-{
-    LockHolder locker(m_lock);
     m_isPaused = true;
     reportStats();
 }
@@ -534,22 +548,6 @@ void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread()
     noticeCurrentThreadAsJSCExecutionThread(locker);
 }
 
-void SamplingProfiler::dispatchIfNecessary(const LockHolder& locker)
-{
-    if (m_isActive && !m_hasDispatchedFunction && m_jscExecutionThread && m_vm.entryScope) {
-        ref(); // Matching deref() is inside m_handler when m_handler stops recursing.
-        dispatchFunction(locker);
-    }
-}
-
-void SamplingProfiler::dispatchFunction(const LockHolder&)
-{
-    m_hasDispatchedFunction = true;
-    m_isPaused = false;
-    m_lastTime = m_stopwatch->elapsedTime();
-    m_timerQueue->dispatchAfter(m_timingInterval, m_handler);
-}
-
 void SamplingProfiler::noticeJSLockAcquisition()
 {
     LockHolder locker(m_lock);
@@ -562,7 +560,7 @@ void SamplingProfiler::noticeVMEntry()
     ASSERT(m_vm.entryScope);
     noticeCurrentThreadAsJSCExecutionThread(locker);
     m_lastTime = m_stopwatch->elapsedTime();
-    dispatchIfNecessary(locker);
+    createThreadIfNecessary(locker);
 }
 
 void SamplingProfiler::clearData(const LockHolder&)
