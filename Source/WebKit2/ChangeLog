@@ -1,3 +1,79 @@
+2016-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename exposedRect to viewExposedRect and propagate it as Optional<> through WK2
+        https://bugs.webkit.org/show_bug.cgi?id=156274
+
+        Reviewed by Tim Horton.
+
+        DrawingArea and FrameView have an "exposedRect" property that is used by applications
+        on Mac, like Mail, that embed web views inside scroll views. However, this name is very
+        similar to the "exposedContentRect" that is used on iOS to denote the part of the view
+        whose pixels are visible, including through blurring overlaid UI.
+        
+        To disambiguate these two, rename the Mac "exposedRect" to "viewExposedRect" to
+        emphasize that it's a rect that takes into account clipping in the native view
+        hierarchy.
+        
+        Also make this rect Optional<> through the DrawingArea, removing comparisons against
+        FloatRect::infiniteRect().
+        
+        Do some other minor renaming in VisibleContentRectUpdateInfo.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp: Rename "exposedRect" and "unobscuredRect" to
+        have "Content" in the names.
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::exposedContentRect):
+        (WebKit::VisibleContentRectUpdateInfo::unobscuredContentRect):
+        (WebKit::operator==):
+        (WebKit::VisibleContentRectUpdateInfo::exposedRect): Deleted.
+        (WebKit::VisibleContentRectUpdateInfo::unobscuredRect): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateViewExposedRect):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::setViewExposedRect):
+        (WebKit::DrawingAreaProxy::viewExposedRectChangedTimerFired):
+        (WebKit::DrawingAreaProxy::setExposedRect): Deleted.
+        (WebKit::DrawingAreaProxy::exposedRectChangedTimerFired): Deleted.
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::viewExposedRect):
+        (WebKit::DrawingAreaProxy::exposedRect): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::exposedContentRect):
+        (WebKit::WebPageProxy::unobscuredContentRect):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::setViewExposedRect):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::indicatorLocation):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::scaledExposedRect): Deleted.
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::setExposedRect): Deleted. This was only used
+        to position the indicator, and confusingly used either exposedContentRect() or viewExposedRect()
+        depending on platform.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setViewExposedRect):
+        (WebKit::RemoteLayerTreeDrawingArea::updateScrolledExposedRect):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea): Deleted.
+        (WebKit::RemoteLayerTreeDrawingArea::setExposedRect): Deleted.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::setViewExposedRect):
+        (WebKit::TiledCoreAnimationDrawingArea::updateScrolledExposedRect):
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::setExposedRect): Deleted.
+
 2016-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Make CMake-generated binaries on Mac able to run

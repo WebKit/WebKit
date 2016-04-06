@@ -88,8 +88,8 @@ private:
     void forceRepaint() override;
     bool forceRepaintAsync(uint64_t) override { return false; }
 
-    void setExposedRect(const WebCore::FloatRect&) override;
-    WebCore::FloatRect exposedRect() const override { return m_scrolledExposedRect; }
+    void setViewExposedRect(Optional<WebCore::FloatRect>) override;
+    Optional<WebCore::FloatRect> viewExposedRect() const override { return m_scrolledViewExposedRect; }
 
     void acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime) override;
     void acceleratedAnimationDidEnd(uint64_t layerID, const String& key) override;
@@ -146,8 +146,8 @@ private:
 
     WebCore::IntSize m_viewSize;
 
-    WebCore::FloatRect m_exposedRect;
-    WebCore::FloatRect m_scrolledExposedRect;
+    Optional<WebCore::FloatRect> m_viewExposedRect;
+    Optional<WebCore::FloatRect> m_scrolledViewExposedRect;
 
     WebCore::Timer m_layerFlushTimer;
     bool m_isFlushingSuspended;

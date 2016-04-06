@@ -39,9 +39,9 @@ class VisibleContentRectUpdateInfo {
 public:
     VisibleContentRectUpdateInfo() = default;
 
-    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate, uint64_t lastLayerTreeTransactionId)
-        : m_exposedRect(exposedRect)
-        , m_unobscuredRect(unobscuredRect)
+    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate, uint64_t lastLayerTreeTransactionId)
+        : m_exposedContentRect(exposedContentRect)
+        , m_unobscuredContentRect(unobscuredContentRect)
         , m_unobscuredRectInScrollViewCoordinates(unobscuredRectInScrollViewCoordinates)
         , m_customFixedPositionRect(customFixedPositionRect)
         , m_lastLayerTreeTransactionID(lastLayerTreeTransactionId)
@@ -56,8 +56,8 @@ public:
     {
     }
 
-    const WebCore::FloatRect& exposedRect() const { return m_exposedRect; }
-    const WebCore::FloatRect& unobscuredRect() const { return m_unobscuredRect; }
+    const WebCore::FloatRect& exposedContentRect() const { return m_exposedContentRect; }
+    const WebCore::FloatRect& unobscuredContentRect() const { return m_unobscuredContentRect; }
     const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates() const { return m_unobscuredRectInScrollViewCoordinates; }
     const WebCore::FloatRect& customFixedPositionRect() const { return m_customFixedPositionRect; }
     double scale() const { return m_scale; }
@@ -76,8 +76,8 @@ public:
     static bool decode(IPC::ArgumentDecoder&, VisibleContentRectUpdateInfo&);
 
 private:
-    WebCore::FloatRect m_exposedRect;
-    WebCore::FloatRect m_unobscuredRect;
+    WebCore::FloatRect m_exposedContentRect;
+    WebCore::FloatRect m_unobscuredContentRect;
     WebCore::FloatRect m_unobscuredRectInScrollViewCoordinates;
     WebCore::FloatRect m_customFixedPositionRect;
     uint64_t m_lastLayerTreeTransactionID { 0 };
@@ -95,8 +95,8 @@ inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleConte
 {
     // Note: the comparison doesn't include timestamp and velocity since we care about equality based on the other data.
     return a.scale() == b.scale()
-        && a.exposedRect() == b.exposedRect()
-        && a.unobscuredRect() == b.unobscuredRect()
+        && a.exposedContentRect() == b.exposedContentRect()
+        && a.unobscuredContentRect() == b.unobscuredContentRect()
         && a.customFixedPositionRect() == b.customFixedPositionRect()
         && a.horizontalVelocity() == b.horizontalVelocity()
         && a.verticalVelocity() == b.verticalVelocity()

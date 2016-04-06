@@ -72,8 +72,8 @@ private:
     void updatePreferences(const WebPreferencesStore&) override;
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
 
-    void setExposedRect(const WebCore::FloatRect&) override;
-    WebCore::FloatRect exposedRect() const override { return m_scrolledExposedRect; }
+    void setViewExposedRect(Optional<WebCore::FloatRect>) override;
+    Optional<WebCore::FloatRect> viewExposedRect() const override { return m_scrolledViewExposedRect; }
 
     bool supportsAsyncScrolling() override { return true; }
 
@@ -133,8 +133,8 @@ private:
 
     bool m_isPaintingSuspended;
 
-    WebCore::FloatRect m_exposedRect;
-    WebCore::FloatRect m_scrolledExposedRect;
+    Optional<WebCore::FloatRect> m_viewExposedRect;
+    Optional<WebCore::FloatRect> m_scrolledViewExposedRect;
 
     WebCore::IntSize m_lastSentIntrinsicContentSize;
     bool m_inUpdateGeometry;

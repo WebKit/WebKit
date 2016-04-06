@@ -1,3 +1,37 @@
+2016-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename exposedRect to viewExposedRect and propagate it as Optional<> through WK2
+        https://bugs.webkit.org/show_bug.cgi?id=156274
+
+        Reviewed by Tim Horton.
+
+        DrawingArea and FrameView have an "exposedRect" property that is used by applications
+        on Mac, like Mail, that embed web views inside scroll views. However, this name is very
+        similar to the "exposedContentRect" that is used on iOS to denote the part of the view
+        whose pixels are visible, including through blurring overlaid UI.
+        
+        To disambiguate these two, rename the Mac "exposedRect" to "viewExposedRect" to
+        emphasize that it's a rect that takes into account clipping in the native view
+        hierarchy.
+        
+        Also make this rect Optional<> through the DrawingArea, removing comparisons against
+        FloatRect::infiniteRect().
+        
+        Do some other minor renaming in VisibleContentRectUpdateInfo.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setViewExposedRect): This now takes an Optional<> because WebViewImpl::updateViewExposedRect()
+        can clear it.
+        * page/FrameView.h:
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::didChangeViewExposedRect):
+        (WebCore::PageOverlayController::didChangeExposedRect): Deleted.
+        * page/PageOverlayController.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::computeTileCoverage):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+
 2016-04-06  Joanmarie Diggs  <jdiggs@igalia.com>
 
         REGRESSION(r195463): [GTK] accessibility/roles-computedRoleString.html and accessibility/roles-exposed.html failing

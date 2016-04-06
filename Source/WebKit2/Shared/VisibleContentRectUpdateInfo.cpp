@@ -32,8 +32,8 @@ namespace WebKit {
 
 void VisibleContentRectUpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
 {
-    encoder << m_exposedRect;
-    encoder << m_unobscuredRect;
+    encoder << m_exposedContentRect;
+    encoder << m_unobscuredContentRect;
     encoder << m_unobscuredRectInScrollViewCoordinates;
     encoder << m_customFixedPositionRect;
     encoder << m_lastLayerTreeTransactionID;
@@ -49,9 +49,9 @@ void VisibleContentRectUpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
 
 bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, VisibleContentRectUpdateInfo& result)
 {
-    if (!decoder.decode(result.m_exposedRect))
+    if (!decoder.decode(result.m_exposedContentRect))
         return false;
-    if (!decoder.decode(result.m_unobscuredRect))
+    if (!decoder.decode(result.m_unobscuredContentRect))
         return false;
     if (!decoder.decode(result.m_unobscuredRectInScrollViewCoordinates))
         return false;

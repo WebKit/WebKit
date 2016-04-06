@@ -157,18 +157,6 @@ void RemoteLayerTreeDrawingAreaProxy::didUpdateGeometry()
         sendUpdateGeometry();
 }
 
-FloatRect RemoteLayerTreeDrawingAreaProxy::scaledExposedRect() const
-{
-#if PLATFORM(IOS)
-    return m_webPageProxy.exposedContentRect();
-#else
-    FloatRect scaledExposedRect = exposedRect();
-    float scale = 1 / m_webPageProxy.pageScaleFactor();
-    scaledExposedRect.scale(scale, scale);
-    return scaledExposedRect;
-#endif
-}
-
 void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
 {
     m_lastSentSize = m_size;
@@ -259,9 +247,9 @@ void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(uint64_t layerI
 static const float indicatorInset = 10;
 
 #if PLATFORM(MAC)
-void RemoteLayerTreeDrawingAreaProxy::setExposedRect(const WebCore::FloatRect& r)
+void RemoteLayerTreeDrawingAreaProxy::setViewExposedRect(Optional<WebCore::FloatRect> viewExposedRect)
 {
-    DrawingAreaProxy::setExposedRect(r);
+    DrawingAreaProxy::setViewExposedRect(viewExposedRect);
     updateDebugIndicatorPosition();
 }
 #endif
@@ -274,7 +262,10 @@ FloatPoint RemoteLayerTreeDrawingAreaProxy::indicatorLocation() const
         float absoluteInset = indicatorInset / m_webPageProxy.displayedContentScale();
         tiledMapLocation += FloatSize(absoluteInset, absoluteInset);
 #else
-        FloatPoint tiledMapLocation = exposedRect().location();
+        FloatPoint tiledMapLocation;
+        if (viewExposedRect())
+            tiledMapLocation = viewExposedRect().value().location();
+
         tiledMapLocation += FloatSize(indicatorInset, indicatorInset);
         float scale = 1 / m_webPageProxy.pageScaleFactor();
         tiledMapLocation.scale(scale, scale);
@@ -339,7 +330,15 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
     [m_exposedRectIndicatorLayer setBorderWidth:counterScaledBorder];
 
     if (m_webPageProxy.delegatesScrolling()) {
-        FloatRect scaledExposedRect = this->scaledExposedRect();
+        FloatRect scaledExposedRect;
+#if PLATFORM(IOS)
+        scaledExposedRect = m_webPageProxy.exposedContentRect();
+#else
+        if (viewExposedRect())
+            scaledExposedRect = viewExposedRect().value();
+        float scale = 1 / m_webPageProxy.pageScaleFactor();
+        scaledExposedRect.scale(scale, scale);
+#endif
         [m_exposedRectIndicatorLayer setPosition:scaledExposedRect.location()];
         [m_exposedRectIndicatorLayer setBounds:FloatRect(FloatPoint(), scaledExposedRect.size())];
     } else {

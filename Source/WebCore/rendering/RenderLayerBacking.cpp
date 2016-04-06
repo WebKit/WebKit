@@ -226,7 +226,7 @@ static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backin
     TiledBacking::TileCoverage tileCoverage = TiledBacking::CoverageForVisibleArea;
     bool useMinimalTilesDuringLiveResize = frameView.inLiveResize();
     if (frameView.speculativeTilingEnabled() && !useMinimalTilesDuringLiveResize) {
-        bool clipsToExposedRect = static_cast<bool>(frameView.exposedRect());
+        bool clipsToExposedRect = static_cast<bool>(frameView.viewExposedRect());
         if (frameView.horizontalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForHorizontalScrolling;
 

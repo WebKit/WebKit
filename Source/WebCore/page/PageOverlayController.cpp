@@ -243,7 +243,7 @@ void PageOverlayController::didChangeDeviceScaleFactor()
         graphicsLayer->setNeedsDisplay();
 }
 
-void PageOverlayController::didChangeExposedRect()
+void PageOverlayController::didChangeViewExposedRect()
 {
     m_mainFrame.page()->chrome().client().scheduleCompositingLayerFlush();
 }

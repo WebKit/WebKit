@@ -58,8 +58,6 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
     , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), *this))
-    , m_exposedRect(FloatRect::infiniteRect())
-    , m_scrolledExposedRect(FloatRect::infiniteRect())
     , m_layerFlushTimer(*this, &RemoteLayerTreeDrawingArea::flushLayers)
     , m_isFlushingSuspended(false)
     , m_hasDeferredFlush(false)
@@ -231,9 +229,9 @@ void RemoteLayerTreeDrawingArea::acceleratedAnimationDidEnd(uint64_t layerID, co
     m_remoteLayerTreeContext->animationDidEnd(layerID, key);
 }
 
-void RemoteLayerTreeDrawingArea::setExposedRect(const FloatRect& exposedRect)
+void RemoteLayerTreeDrawingArea::setViewExposedRect(Optional<WebCore::FloatRect> viewExposedRect)
 {
-    m_exposedRect = exposedRect;
+    m_viewExposedRect = viewExposedRect;
     updateScrolledExposedRect();
 }
 
@@ -266,16 +264,16 @@ void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
     if (!frameView)
         return;
 
-    m_scrolledExposedRect = m_exposedRect;
+    m_scrolledViewExposedRect = m_viewExposedRect;
 
 #if !PLATFORM(IOS)
-    if (!m_exposedRect.isInfinite()) {
+    if (m_viewExposedRect) {
         ScrollOffset scrollOffset = frameView->scrollOffsetFromPosition(frameView->scrollPosition());
-        m_scrolledExposedRect.moveBy(scrollOffset);
+        m_scrolledViewExposedRect.value().moveBy(scrollOffset);
     }
 #endif
 
-    frameView->setExposedRect(m_scrolledExposedRect);
+    frameView->setViewExposedRect(m_scrolledViewExposedRect);
 }
 
 TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
@@ -355,9 +353,10 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     m_webPage.layoutIfNeeded();
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
-    visibleRect.intersect(m_scrolledExposedRect);
+    if (m_scrolledViewExposedRect)
+        visibleRect.intersect(m_scrolledViewExposedRect.value());
 
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     RefPtr<WebPage> retainedPage = &m_webPage;
     [CATransaction addCommitHandler:[retainedPage] {
         if (Page* corePage = retainedPage->corePage()) {

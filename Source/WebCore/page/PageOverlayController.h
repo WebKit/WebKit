@@ -65,7 +65,7 @@ public:
     void didChangeDocumentSize();
     void didChangeSettings();
     void didChangeDeviceScaleFactor();
-    void didChangeExposedRect();
+    void didChangeViewExposedRect();
     void didScrollFrame(Frame&);
 
     void didChangeOverlayFrame(PageOverlay&);

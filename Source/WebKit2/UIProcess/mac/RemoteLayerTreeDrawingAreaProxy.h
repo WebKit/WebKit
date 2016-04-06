@@ -63,10 +63,8 @@ private:
     // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
     void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
 
-    WebCore::FloatRect scaledExposedRect() const;
-
 #if PLATFORM(MAC)
-    void setExposedRect(const WebCore::FloatRect&) override;
+    void setViewExposedRect(Optional<WebCore::FloatRect>) override;
 #endif
 
     float indicatorScale(WebCore::IntSize contentsSize) const;

@@ -78,8 +78,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     , m_layerTreeStateIsFrozen(false)
     , m_layerFlushScheduler(this)
     , m_isPaintingSuspended(!(parameters.viewState & ViewState::IsVisible))
-    , m_exposedRect(FloatRect::infiniteRect())
-    , m_scrolledExposedRect(FloatRect::infiniteRect())
     , m_transientZoomScale(1)
     , m_sendDidUpdateViewStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired)
     , m_wantsDidUpdateViewState(false)
@@ -413,7 +411,8 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         }
 
         FloatRect visibleRect = [m_hostingLayer frame];
-        visibleRect.intersect(m_scrolledExposedRect);
+        if (m_scrolledViewExposedRect)
+            visibleRect.intersect(m_scrolledViewExposedRect.value());
 
         // Because our view-relative overlay root layer is not attached to the main GraphicsLayer tree, we need to flush it manually.
         if (m_viewOverlayRootLayer)
@@ -496,9 +495,9 @@ void TiledCoreAnimationDrawingArea::resumePainting()
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_hostingLayer.get() forKey:@"layer"]];
 }
 
-void TiledCoreAnimationDrawingArea::setExposedRect(const FloatRect& exposedRect)
+void TiledCoreAnimationDrawingArea::setViewExposedRect(Optional<WebCore::FloatRect> viewExposedRect)
 {
-    m_exposedRect = exposedRect;
+    m_viewExposedRect = viewExposedRect;
     updateScrolledExposedRect();
 }
 
@@ -508,16 +507,16 @@ void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
     if (!frameView)
         return;
 
-    m_scrolledExposedRect = m_exposedRect;
+    m_scrolledViewExposedRect = m_viewExposedRect;
 
 #if !PLATFORM(IOS)
-    if (!m_exposedRect.isInfinite()) {
+    if (m_viewExposedRect) {
         ScrollOffset scrollOffset = frameView->scrollOffsetFromPosition(frameView->scrollPosition());
-        m_scrolledExposedRect.moveBy(scrollOffset);
+        m_scrolledViewExposedRect.value().moveBy(scrollOffset);
     }
 #endif
 
-    frameView->setExposedRect(m_scrolledExposedRect);
+    frameView->setViewExposedRect(m_scrolledViewExposedRect);
 }
 
 void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition, bool flushSynchronously, const WebCore::MachSendRight& fencePort)
