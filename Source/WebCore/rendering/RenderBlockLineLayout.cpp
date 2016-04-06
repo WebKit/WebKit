@@ -1518,18 +1518,39 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
             markLinesDirtyInBlockRange(lastRootBox()->lineBottomWithLeading(), lineBox->lineBottomWithLeading(), lineBox);
         }
     }
-
     clearDidBreakAtLineToAvoidWidow();
+}
+
+void RenderBlockFlow::reattachCleanLineFloats(RootInlineBox& cleanLine, LayoutUnit delta, bool isFirstCleanLine)
+{
+    auto* cleanLineFloats = cleanLine.floatsPtr();
+    if (!cleanLineFloats)
+        return;
+
+    for (auto* floatingBox : *cleanLineFloats) {
+        auto* floatingObject = insertFloatingObject(*floatingBox);
+        if (isFirstCleanLine && floatingObject->originatingLine()) {
+            // Float box does not belong to this line anymore.
+            ASSERT(cleanLine.prevRootBox() == floatingObject->originatingLine());
+            cleanLine.removeFloat(*floatingBox);
+            continue;
+        }
+        ASSERT(!floatingObject->originatingLine());
+        floatingObject->setOriginatingLine(&cleanLine);
+        setLogicalHeight(logicalTopForChild(*floatingBox) - marginBeforeForChild(*floatingBox) + delta);
+        positionNewFloats();
+    }
 }
 
 void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
 {
-    if (layoutState.endLine()) {
+    auto* firstCleanLine = layoutState.endLine();
+    if (firstCleanLine) {
         if (layoutState.endLineMatched()) {
             bool paginated = view().layoutState() && view().layoutState()->isPaginated();
             // Attach all the remaining lines, and then adjust their y-positions as needed.
             LayoutUnit delta = logicalHeight() - layoutState.endLineLogicalTop();
-            for (RootInlineBox* line = layoutState.endLine(); line; line = line->nextRootBox()) {
+            for (auto* line = firstCleanLine; line; line = line->nextRootBox()) {
                 line->attachLine();
                 if (paginated) {
                     delta -= line->paginationStrut();
@@ -1542,16 +1563,7 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                 }
                 if (layoutState.flowThread())
                     updateRegionForLine(line);
-                if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
-                    for (auto it = cleanLineFloats->begin(), end = cleanLineFloats->end(); it != end; ++it) {
-                        RenderBox* floatingBox = *it;
-                        FloatingObject* floatingObject = insertFloatingObject(*floatingBox);
-                        ASSERT(!floatingObject->originatingLine());
-                        floatingObject->setOriginatingLine(line);
-                        setLogicalHeight(logicalTopForChild(*floatingBox) - marginBeforeForChild(*floatingBox) + delta);
-                        positionNewFloats();
-                    }
-                }
+                reattachCleanLineFloats(*line, delta, line == firstCleanLine);
             }
             setLogicalHeight(lastRootBox()->lineBottomWithLeading());
         } else {
