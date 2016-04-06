@@ -82,12 +82,6 @@
         }
     },
     {
-        "name": "CSS Shapes Level 1",
-        "url": "http://www.w3.org/TR/css-shapes-1/",
-        "keywords": ["css shapes", "shapes"],
-        "category": "css"
-    },
-    {
         "name": "CSS Variables",
         "status": {
             "status": "Done",
@@ -374,6 +368,16 @@
         }
     },
     {
+        "name": "CSS Shapes Level 1",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": true
+        },
+        "url": "http://www.w3.org/TR/css-shapes-1/",
+        "description": "CSS Shapes describe geometric shapes for use in CSS. For Level 1, CSS Shapes can be applied to floats.",
+        "comment": "The implementation is feature complete and shipping, but is -webkit prefixed."
+    },
+    {
         "name": "Case-insensitive attribute selectors",
         "status": {
             "status": "Done",
@@ -561,17 +565,6 @@
             "twitter": "@RyosukeNiwa",
             "email": "rniwa@webkit.org"
         }
-    },
-    {
-        "name": "Shape outside for floats",
-        "status": {
-            "status": "In Development",
-            "enabled-by-default": true
-        },
-        "url": "http://www.w3.org/TR/css-shapes-1/",
-        "specification": "CSS Shapes Level 1",
-        "description": "CSS Shapes describe geometric shapes for use in CSS. For Level 1, CSS Shapes can be applied to floats.",
-        "comment": "The implementation is feature complete and shipping, but is -webkit prefixed."
     },
     {
         "name": "Shared Web Workers",
