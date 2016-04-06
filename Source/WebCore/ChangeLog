@@ -1,3 +1,10 @@
+2016-04-06  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
+        * DerivedSources.cpp:
+        * css/CSSAllInOne.cpp:
+
 2016-04-06  Jer Noble  <jer.noble@apple.com>
 
         CRASH in AudioDestinationNode::render()

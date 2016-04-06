@@ -91,7 +91,7 @@
 #include "CSSValuePool.cpp"
 #include "CSSVariableDependentValue.cpp"
 #include "CSSVariableValue.cpp"
-#include "DOMWindowCSS.cpp"
+#include "DOMCSSNamespace.cpp"
 #include "DocumentRuleSets.cpp"
 #include "ElementRuleCollector.cpp"
 #include "FontFace.cpp"
