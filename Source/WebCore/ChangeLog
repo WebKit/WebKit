@@ -1,3 +1,32 @@
+2016-04-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix positioned children in RTL
+        https://bugs.webkit.org/show_bug.cgi?id=156162
+
+        Reviewed by Sergio Villar Senin.
+
+        This patch fixes a problem affecting the items without
+        a static inline position (i.e. "left" and/or "right" properties
+        are not "auto"). In this particular case we need to compute
+        the "offset" from the left, so we need a specific condition
+        and computation.
+
+        Let's use an example to understand what it's fixing:
+        <div style="display: grid; grid-template-columns: 100px 50px; width: 300px;
+                    position: relative; direction: rtl;">
+            <div style="position: absolute; left: 0; grid-column: 1 / 2;">item</div>
+        </div>
+
+        In this case the item has to be placed in the first column
+        (the one on the right as we're in RTL).
+        For this we need to calculate the offset from the left, which is 200px:
+        150px (alignment offset) + 50px (offset from line 3 to 2).
+
+        Test: fast/css-grid-layout/grid-positioned-items-background-rtl.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+
 2016-04-06  Antti Koivisto  <antti@apple.com>
 
         ComposedTreeIterator may crash when first child of shadow root is a comment node
