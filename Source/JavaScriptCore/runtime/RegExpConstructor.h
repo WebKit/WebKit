@@ -87,7 +87,7 @@ private:
 
 RegExpConstructor* asRegExpConstructor(JSValue);
 
-JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&, JSValue newTarget = jsUndefined());
+JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&, JSObject* callee = nullptr, JSValue newTarget = jsUndefined());
 
 inline RegExpConstructor* asRegExpConstructor(JSValue value)
 {

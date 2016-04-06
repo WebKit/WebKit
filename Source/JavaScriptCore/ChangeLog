@@ -1,5 +1,28 @@
 2016-04-06  Keith Miller  <keith_miller@apple.com>
 
+        RegExp constructor should use Symbol.match and other properties
+        https://bugs.webkit.org/show_bug.cgi?id=155873
+
+        Reviewed by Michael Saboff.
+
+        This patch updates the behavior of the RegExp constructor. Now the constructor
+        should get the Symbol.match property and check if it exists to decide if something
+        should be constructed like a regexp object.
+
+        * runtime/RegExpConstructor.cpp:
+        (JSC::toFlags):
+        (JSC::constructRegExp):
+        (JSC::constructWithRegExpConstructor):
+        (JSC::callRegExpConstructor):
+        * runtime/RegExpConstructor.h:
+        * tests/stress/regexp-constructor.js: Added.
+        (assert):
+        (throw.new.Error.get let):
+        (throw.new.Error.):
+        (throw.new.Error.get re):
+
+2016-04-06  Keith Miller  <keith_miller@apple.com>
+
         We should support the ability to do a non-effectful getById
         https://bugs.webkit.org/show_bug.cgi?id=156116
 
