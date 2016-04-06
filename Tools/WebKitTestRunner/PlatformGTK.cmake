@@ -31,6 +31,7 @@ list(APPEND WebKitTestRunner_LIBRARIES
     ${GTK3_LIBRARIES}
     ${GLIB_LIBRARIES}
     WTF
+    WebCore
     WebCorePlatformGTK
 )
 

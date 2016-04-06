@@ -23,7 +23,6 @@ set(WebKitTestRunner_SOURCES
 
 set(WebKitTestRunner_LIBRARIES
     JavaScriptCore
-    WebCore
     WebCoreTestSupport
     WebKit2
 )
@@ -124,4 +123,6 @@ target_link_libraries(TestRunnerInjectedBundle ${WebKitTestRunner_LIBRARIES})
 add_executable(WebKitTestRunner ${WebKitTestRunner_SOURCES})
 target_link_libraries(WebKitTestRunner ${WebKitTestRunner_LIBRARIES})
 
-add_dependencies(WebKit2 ${ForwardingHeadersForWebKitTestRunner_NAME})
+if (NOT APPLE)
+    add_dependencies(WebKit2 ${ForwardingHeadersForWebKitTestRunner_NAME})
+endif ()

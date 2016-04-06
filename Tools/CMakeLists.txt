@@ -35,6 +35,7 @@ endif ()
 
 if (APPLE)
     add_subdirectory(DumpRenderTree)
+    add_subdirectory(WebKitTestRunner)
 endif ()
 
 if (ENABLE_WEBKIT2 AND ENABLE_API_TESTS)

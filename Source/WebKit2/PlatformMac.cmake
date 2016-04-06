@@ -159,6 +159,9 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/APIUserStyleSheet.cpp
     UIProcess/API/APIWebsiteDataRecord.cpp
 
+    UIProcess/API/C/mac/WKContextPrivateMac.mm
+    UIProcess/API/C/mac/WKPagePrivateMac.mm
+
     UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
     UIProcess/API/Cocoa/APIUserContentExtensionStoreCocoa.mm
     UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm
@@ -492,6 +495,8 @@ set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
     UIProcess/Cocoa
 
     UIProcess/API/C
+
+    UIProcess/API/C/mac
     UIProcess/API/cpp
 
     WebProcess/WebPage
@@ -515,6 +520,8 @@ endforeach ()
 
 # FIXME: Forwarding headers should be complete copies of the header.
 set(WebKitLegacyForwardingHeaders
+    DOM.h
+    DOMCore.h
     DOMElement.h
     DOMException.h
     DOMObject.h
@@ -522,6 +529,7 @@ set(WebKitLegacyForwardingHeaders
     WebApplicationCache.h
     WebCache.h
     WebCoreStatistics.h
+    WebDOMOperations.h
     WebDOMOperationsPrivate.h
     WebDataSource.h
     WebDataSourcePrivate.h
@@ -714,6 +722,7 @@ foreach (_file ${WebCoreForwardingHeaders})
 endforeach ()
 
 # FIXME: These should not be necessary.
+file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/WKImageCG.h "#import <WebKit2/Shared/API/c/cg/WKImageCG.h>")
 file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/WebStorageManagerPrivate.h "#import <WebKit/mac/Storage/WebStorageManagerPrivate.h>")
 file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/WebDatabaseManagerPrivate.h "#import <WebKit/mac/Storage/WebDatabaseManagerPrivate.h>")
 

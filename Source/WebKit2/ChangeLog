@@ -1,3 +1,12 @@
+2016-04-06  Alex Christensen  <achristensen@webkit.org>
+
+        Compile WebKitTestRunner with CMake on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=156310
+
+        Reviewed by Daniel Bates.
+
+        * PlatformMac.cmake:
+
 2016-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Rename exposedRect to viewExposedRect and propagate it as Optional<> through WK2
