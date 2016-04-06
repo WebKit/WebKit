@@ -1,3 +1,16 @@
+2016-04-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Do not create CodeMirror color/gradient markers in JavaScript resources
+        https://bugs.webkit.org/show_bug.cgi?id=156278
+        <rdar://problem/25570404>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._hasStyleSheetContents):
+        (WebInspector.SourceCodeTextEditor.prototype._updateEditableMarkers):
+        Only spend the time to create style markers for style sheet contents.
+
 2016-04-05  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Make the Timelines sidebar wider

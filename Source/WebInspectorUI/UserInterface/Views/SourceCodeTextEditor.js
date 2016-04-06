@@ -1573,11 +1573,22 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         this._mouseIsOverPopover = this._popover.element.contains(event.relatedTarget);
     }
 
+    _hasStyleSheetContents()
+    {
+        let mimeType = this.mimeType;
+        return mimeType === "text/css"
+            || mimeType === "text/x-less"
+            || mimeType === "text/x-sass"
+            || mimeType === "text/x-scss";
+    }
+
     _updateEditableMarkers(range)
     {
-        this.createColorMarkers(range);
-        this.createGradientMarkers(range);
-        this.createCubicBezierMarkers(range);
+        if (this._hasStyleSheetContents()) {
+            this.createColorMarkers(range);
+            this.createGradientMarkers(range);
+            this.createCubicBezierMarkers(range);
+        }
 
         this._updateTokenTrackingControllerState();
     }
