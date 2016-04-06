@@ -61,7 +61,8 @@ struct RuleFeatureSet {
     HashMap<AtomicStringImpl*, std::unique_ptr<Vector<RuleFeature>>> ancestorClassRules;
 
     struct AttributeRules {
-        HashMap<std::pair<AtomicStringImpl*, unsigned>, const CSSSelector*> selectors;
+        using SelectorKey = std::pair<AtomicStringImpl*, std::pair<AtomicStringImpl*, unsigned>>;
+        HashMap<SelectorKey, const CSSSelector*> selectors;
         Vector<RuleFeature> features;
     };
     HashMap<AtomicStringImpl*, std::unique_ptr<AttributeRules>> ancestorAttributeRulesForHTML;

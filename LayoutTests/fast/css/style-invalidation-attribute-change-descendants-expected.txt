@@ -154,6 +154,11 @@ PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root",
 PASS testStyleChangeType("target", "InlineStyleChange") is true
 PASS testStyleChangeType("inert", "NoStyleChange") is true
 PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'value11'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

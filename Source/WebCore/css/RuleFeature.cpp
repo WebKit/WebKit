@@ -84,11 +84,11 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
     } while (selector);
 }
 
-static std::pair<AtomicStringImpl*, unsigned> makeAttributeSelectorKey(const CSSSelector& selector)
+static RuleFeatureSet::AttributeRules::SelectorKey makeAttributeSelectorKey(const CSSSelector& selector)
 {
     bool caseInsensitive = selector.attributeValueMatchingIsCaseInsensitive();
     unsigned matchAndCase = static_cast<unsigned>(selector.match()) << 1 | caseInsensitive;
-    return std::make_pair(selector.attributeCanonicalLocalName().impl(), matchAndCase);
+    return std::make_pair(selector.attributeCanonicalLocalName().impl(), std::make_pair(selector.value().impl(), matchAndCase));
 }
 
 void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
@@ -100,16 +100,16 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
     if (ruleData.containsUncommonAttributeSelector())
         uncommonAttributeRules.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
     for (auto* className : selectorFeatures.classesMatchingAncestors) {
-        auto addResult = ancestorClassRules.add(className, nullptr);
-        if (addResult.isNewEntry)
-            addResult.iterator->value = std::make_unique<Vector<RuleFeature>>();
+        auto addResult = ancestorClassRules.ensure(className, [] {
+            return std::make_unique<Vector<RuleFeature>>();
+        });
         addResult.iterator->value->append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
     }
     for (auto* selector : selectorFeatures.attributeSelectorsMatchingAncestors) {
         // Hashing by attributeCanonicalLocalName makes this HTML specific.
-        auto addResult = ancestorAttributeRulesForHTML.add(selector->attributeCanonicalLocalName().impl(), nullptr);
-        if (addResult.isNewEntry)
-            addResult.iterator->value = std::make_unique<AttributeRules>();
+        auto addResult = ancestorAttributeRulesForHTML.ensure(selector->attributeCanonicalLocalName().impl(), [] {
+            return std::make_unique<AttributeRules>();
+        });
         auto& rules = *addResult.iterator->value;
         rules.features.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
         // Deduplicate selectors.
@@ -127,16 +127,15 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     siblingRules.appendVector(other.siblingRules);
     uncommonAttributeRules.appendVector(other.uncommonAttributeRules);
     for (auto& keyValuePair : other.ancestorClassRules) {
-        auto addResult = ancestorClassRules.add(keyValuePair.key, nullptr);
-        if (addResult.isNewEntry)
-            addResult.iterator->value = std::make_unique<Vector<RuleFeature>>(*keyValuePair.value);
-        else
-            addResult.iterator->value->appendVector(*keyValuePair.value);
+        auto addResult = ancestorClassRules.ensure(keyValuePair.key, [] {
+            return std::make_unique<Vector<RuleFeature>>();
+        });
+        addResult.iterator->value->appendVector(*keyValuePair.value);
     }
     for (auto& keyValuePair : other.ancestorAttributeRulesForHTML) {
-        auto addResult = ancestorAttributeRulesForHTML.add(keyValuePair.key, nullptr);
-        if (addResult.isNewEntry)
-            addResult.iterator->value = std::make_unique<AttributeRules>();
+        auto addResult = ancestorAttributeRulesForHTML.ensure(keyValuePair.key, [] {
+            return std::make_unique<AttributeRules>();
+        });
         auto& rules = *addResult.iterator->value;
         rules.features.appendVector(keyValuePair.value->features);
         for (auto& selectorPair : keyValuePair.value->selectors)
