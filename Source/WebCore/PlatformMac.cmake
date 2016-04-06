@@ -926,7 +926,7 @@ GENERATE_BINDINGS(WebCore_DERIVED_SOURCES
     ${ADDITIONAL_BINDINGS_DEPENDENCIES})
 
 set(WebCoreTestSupport_LIBRARY_TYPE SHARED)
-list(APPEND WebCoreTestSupport_LIBRARIES WebCore)
+list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)
 list(APPEND WebCoreTestSupport_SOURCES
     bindings/js/JSMockContentFilterSettingsCustom.cpp
 

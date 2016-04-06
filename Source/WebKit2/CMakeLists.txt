@@ -740,13 +740,20 @@ set(NetworkProcess_LIBRARIES
 )
 
 set(DatabaseProcess_LIBRARIES
-  WebKit2
+    WebKit2
 )
 
-set(WebKit2_LIBRARIES
-    JavaScriptCore
-    WebCore
-)
+if (APPLE)
+    set(WebKit2_LIBRARIES
+        PRIVATE WebCore
+        PUBLIC JavaScriptCore
+    )
+else ()
+    set(WebKit2_LIBRARIES
+        JavaScriptCore
+        WebCore
+    )
+endif ()
 
 set(PluginProcess_LIBRARIES
     WebKit2

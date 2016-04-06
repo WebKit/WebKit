@@ -15,7 +15,6 @@ set(DumpRenderTree_LIBRARIES
     JavaScriptCore
     WTF
     WebCoreTestSupport
-    WebKit
 )
 
 set(DumpRenderTree_INCLUDE_DIRECTORIES
@@ -103,7 +102,6 @@ set(TestNetscapePlugin_LIBRARIES
     JavaScriptCore
     WTF
     WebCoreTestSupport
-    WebKit
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

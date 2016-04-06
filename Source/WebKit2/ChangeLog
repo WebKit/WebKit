@@ -1,3 +1,13 @@
+2016-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Make CMake-generated binaries on Mac able to run
+        https://bugs.webkit.org/show_bug.cgi?id=156268
+
+        Reviewed by Daniel Bates.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
 2016-04-05  Brian Burg  <bburg@apple.com>
 
         Web Automation: add support for getting, deleting, and adding cookies

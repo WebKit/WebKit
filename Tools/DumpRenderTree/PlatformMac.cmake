@@ -3,12 +3,25 @@ find_library(CARBON_LIBRARY Carbon)
 find_library(CORESERVICES_LIBRARY CoreServices)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks -iframework ${CORESERVICES_LIBRARY}/Frameworks)
 
+if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
+elif ("${CURRENT_OSX_VERSION}" MATCHES "10.10")
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceYosemite.a)
+else ()
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceElCapitan.a)
+endif ()
+link_directories(../../WebKitLibraries)
+
 list(APPEND TestNetscapePlugin_LIBRARIES
     ${QUARTZ_LIBRARY}
+    WebKit2
 )
 
 list(APPEND DumpRenderTree_LIBRARIES
     ${CARBON_LIBRARY}
+    ${QUARTZ_LIBRARY}
+    ${WEBKITSYSTEMINTERFACE_LIBRARY}
+    WebKit2
 )
 
 add_definitions("-ObjC++ -std=c++11")
@@ -82,3 +95,23 @@ list(APPEND DumpRenderTree_SOURCES
     mac/WebArchiveDumpSupportMac.mm
     mac/WorkQueueItemMac.mm
 )
+
+set(DumpRenderTree_RESOURCES
+    AHEM____.TTF
+    FontWithFeatures.otf
+    FontWithFeatures.ttf
+    WebKitWeightWatcher100.ttf
+    WebKitWeightWatcher200.ttf
+    WebKitWeightWatcher300.ttf
+    WebKitWeightWatcher400.ttf
+    WebKitWeightWatcher500.ttf
+    WebKitWeightWatcher600.ttf
+    WebKitWeightWatcher700.ttf
+    WebKitWeightWatcher800.ttf
+    WebKitWeightWatcher900.ttf
+)
+
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DumpRenderTree.resources)
+foreach (_file ${DumpRenderTree_RESOURCES})
+    file(COPY ${TOOLS_DIR}/DumpRenderTree/fonts/${_file} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DumpRenderTree.resources)
+endforeach ()

@@ -55,6 +55,7 @@ endif ()
 list(APPEND TestNetscapePlugin_LIBRARIES
     Msimg32
     Shlwapi
+    WebKit
 )
 
 set(ImageDiff_SOURCES
@@ -78,6 +79,7 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
 )
 
 list(APPEND DumpRenderTree_LIBRARIES
+    WebKit
     shlwapi
 )
 

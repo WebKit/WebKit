@@ -10,7 +10,7 @@ add_definitions(-iframework ${CARBON_LIBRARY}/Frameworks)
 add_definitions(-DWK_XPC_SERVICE_SUFFIX=".Development")
 
 list(APPEND WebKit2_LIBRARIES
-    WebKit
+    PRIVATE WebKit
     ${APPLICATION_SERVICES_LIBRARY}
 )
 
@@ -716,6 +716,8 @@ endforeach ()
 # FIXME: These should not be necessary.
 file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/WebStorageManagerPrivate.h "#import <WebKit/mac/Storage/WebStorageManagerPrivate.h>")
 file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/WebDatabaseManagerPrivate.h "#import <WebKit/mac/Storage/WebDatabaseManagerPrivate.h>")
+
+set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
 
 set(WebKit2_OUTPUT_NAME WebKit)
 

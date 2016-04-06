@@ -50,3 +50,7 @@ add_dependencies(WebKit WebCore)
 if (WIN32)
     add_dependencies(WebKit WebKitGUID)
 endif ()
+
+if (APPLE)
+    set_target_properties(WebKit PROPERTIES LINK_FLAGS "-umbrella WebKit")
+endif ()
