@@ -1,3 +1,42 @@
+2016-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: handle aligned allocations on the fast path
+        https://bugs.webkit.org/show_bug.cgi?id=156302
+
+        Reviewed by Michael Saboff.
+
+        This helps keep the JavaScriptCore GC on the fast path, and it also
+        helps avoid fragmentation on our website stress test:
+
+            nimlang                      209,584kB            198,076kB      ^ 1.06x smaller
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocate): Because we arrange for power-of-two size
+        classes to allocate at power-of-two alignments, we can allocate any
+        small aligned request on the small path.
+
+        * bmalloc/Chunk.h:
+        (bmalloc::Chunk::bytes):
+        (bmalloc::Chunk::lines):
+        (bmalloc::Chunk::pages):
+        (bmalloc::Chunk::boundaryTags):
+        (bmalloc::Chunk::objectType): Moved some code around to provide better
+        API.
+
+        (bmalloc::Chunk::Chunk): Moved this code to VMHeap.
+
+        (bmalloc::Chunk::offset):
+        (bmalloc::Chunk::object): Use our new bytes() helper function.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::allocateChunk): Moved code here from Chunk.
+
+        (bmalloc::VMHeap::allocateSmallChunk): Ensure that power-of-two page
+        sizes always begin allocation at the same alignment. Power-of-two object
+        sizes always request power-of-two page sizes (since that's the least
+        wasteful option), so if we also ensure that power-of-two page sizes get
+        power-of-two alignment, then everything is aligned for all small objects.
+
 2016-04-03  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: segregate small and large objects again, and allocate more objects on the small path

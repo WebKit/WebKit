@@ -44,7 +44,35 @@ LargeObject VMHeap::allocateChunk(std::lock_guard<StaticMutex>& lock)
     m_zone.addChunk(chunk);
 #endif
 
-    return LargeObject(chunk->begin());
+    size_t alignment = largeAlignment;
+    size_t metadataSize = roundUpToMultipleOf(alignment, sizeof(Chunk));
+
+    Range range(chunk->bytes() + metadataSize, chunkSize - metadataSize);
+    BASSERT(range.size() <= largeObjectMax);
+
+    BeginTag* beginTag = Chunk::beginTag(range.begin());
+    beginTag->setRange(range);
+    beginTag->setFree(true);
+    beginTag->setVMState(VMState::Virtual);
+
+    EndTag* endTag = Chunk::endTag(range.begin(), range.size());
+    endTag->init(beginTag);
+
+    // Mark the left and right edges of our range as allocated. This naturally
+    // prevents merging logic from overflowing left (into metadata) or right
+    // (beyond our chunk), without requiring special-case checks.
+
+    EndTag* leftSentinel = beginTag->prev();
+    BASSERT(leftSentinel >= chunk->boundaryTags().begin());
+    BASSERT(leftSentinel < chunk->boundaryTags().end());
+    leftSentinel->initSentinel();
+
+    BeginTag* rightSentinel = endTag->next();
+    BASSERT(rightSentinel >= chunk->boundaryTags().begin());
+    BASSERT(rightSentinel < chunk->boundaryTags().end());
+    rightSentinel->initSentinel();
+
+    return LargeObject(range.begin());
 }
 
 void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageClass)
@@ -59,8 +87,15 @@ void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageC
     size_t pageSize = bmalloc::pageSize(pageClass);
     size_t smallPageCount = pageSize / smallPageSize;
 
-    Object begin(chunk->begin());
-    Object end(begin + chunk->size());
+    // If our page size is a power of two, we align to it in order to guarantee
+    // that we can service aligned allocation requests at the same power of two.
+    size_t alignment = vmPageSizePhysical();
+    if (isPowerOfTwo(pageSize))
+        alignment = pageSize;
+    size_t metadataSize = roundUpToMultipleOf(alignment, sizeof(Chunk));
+
+    Object begin(chunk, metadataSize);
+    Object end(chunk, chunkSize);
 
     for (Object it = begin; it + pageSize <= end; it = it + pageSize) {
         SmallPage* page = it.page();
