@@ -1,3 +1,22 @@
+2016-04-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test listbox clipping to contents rect
+        https://bugs.webkit.org/show_bug.cgi?id=156265
+
+        Reviewed by Simon Fraser.
+
+        These tests create some <select><option></option></select>s with padding.
+        These list boxes use the zapfino "f" character (because it draws wildly
+        far outside of its layout box) to create a case where text inside the list
+        box would naturally intersect with the padding. This overflow should be
+        clipped so that the padding is undisturbed.
+
+        * fast/forms/listbox-padding-clip-expected.html: Added.
+        * fast/forms/listbox-padding-clip-overlay-expected.html: Added.
+        * fast/forms/listbox-padding-clip-overlay.html: Added.
+        * fast/forms/listbox-padding-clip.html: Added.
+        * platform/ios-simulator/TestExpectations: Skip on iOS
+
 2016-03-19  Filip Pizlo  <fpizlo@apple.com>
 
         DFG and FTL should constant-fold RegExpExec

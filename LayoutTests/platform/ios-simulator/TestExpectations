@@ -3020,3 +3020,7 @@ fast/scrolling/rtl-scrollbars-sticky-document-2.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-sticky-document.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-sticky-iframe-2.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-sticky-iframe.html [ ImageOnlyFailure ]
+
+# iOS list box controls are not drawn in the standard way.
+fast/forms/listbox-padding-clip.html [ ImageOnlyFailure ]
+fast/forms/listbox-padding-clip-overlay.html [ ImageOnlyFailure ]

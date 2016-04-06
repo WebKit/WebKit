@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.item {
+	position: relative;
+	display: inline-block;
+	width: 50px;
+	height: 400px;
+	overflow: hidden;
+}
+
+.listBox {
+	font: 50px Zapfino;
+	margin: 0px;
+	border: 0px solid black;
+	padding: 0px;
+	padding-left: 50px;
+	background: green;
+}
+</style>
+<script>
+if (window.internals)
+	internals.setUsesOverlayScrollbars(true);
+</script>
+</head>
+<body>
+<p>This test makes sure that the contents of list boxes do not intrude upon their padding. The test passes if you see a tall green box below (and not a single black pixel anywhere inside it)<p>
+<div class="item">
+    <select multiple="multiple" class="listBox">
+        <option>f</option>
+        <option>f</option>
+        <option>f</option>
+        <option>f</option>
+        <option>f</option>
+    </select>
+</div><div class="item">
+    <select multiple="multiple" class="listBox" style="padding-right: 50px; position: absolute; right: 0px; top: 0px;">
+        <option>f</option>
+        <option>f</option>
+        <option>f</option>
+        <option>f</option>
+        <option>f</option>
+    </select>
+</div>
+</body>
+</html>
