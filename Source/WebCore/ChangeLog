@@ -1,3 +1,20 @@
+2016-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        Add ASSERT_WITH_SECURITY_IMPLICATION when a float box is referenced by multiple RootInlineBoxes.
+        https://bugs.webkit.org/show_bug.cgi?id=156297
+        <rdar://problem/25580844>
+
+        Reviewed by Brent Fulgham.
+
+        See http://trac.webkit.org/changeset/199101
+
+        No change in functionality.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::appendFloatingObjectToLastLine):
+        (WebCore::RenderBlockFlow::reattachCleanLineFloats):
+        (WebCore::RenderBlockFlow::determineStartPosition):
+
 2016-04-06  Sam Weinig  <sam@webkit.org>
 
         window.CSS should be a constructor with static functions
