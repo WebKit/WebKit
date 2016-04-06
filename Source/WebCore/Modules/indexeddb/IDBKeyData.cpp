@@ -133,7 +133,7 @@ void IDBKeyData::encode(KeyedEncoder& encoder) const
     if (m_isNull)
         return;
 
-    encoder.encodeEnum("m_type", m_type);
+    encoder.encodeEnum("type", m_type);
 
     switch (m_type) {
     case KeyType::Invalid:
@@ -175,7 +175,7 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
             || value == KeyType::Number
             || value == KeyType::Min;
     };
-    if (!decoder.decodeEnum("m_type", result.m_type, enumFunction))
+    if (!decoder.decodeEnum("type", result.m_type, enumFunction))
         return false;
 
     if (result.m_type == KeyType::Invalid)

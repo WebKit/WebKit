@@ -109,6 +109,23 @@ static const String& v2RecordsTableSchemaAlternate()
     return v2RecordsTableSchemaString;
 }
 
+static const String v3RecordsTableSchema(const String& tableName)
+{
+    return makeString("CREATE TABLE ", tableName, " (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL, recordID INTEGER PRIMARY KEY)");
+}
+
+static const String& v3RecordsTableSchema()
+{
+    static NeverDestroyed<WTF::String> v3RecordsTableSchemaString(v3RecordsTableSchema("Records"));
+    return v3RecordsTableSchemaString;
+}
+
+static const String& v3RecordsTableSchemaAlternate()
+{
+    static NeverDestroyed<WTF::String> v3RecordsTableSchemaString(v3RecordsTableSchema("\"Records\""));
+    return v3RecordsTableSchemaString;
+}
+
 static const String v1IndexRecordsTableSchema(const String& tableName)
 {
     return makeString("CREATE TABLE ", tableName, " (indexID INTEGER NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL)");
@@ -201,7 +218,7 @@ static bool createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
 
         // If there is no Records table at all, create it and then bail.
         if (sqliteResult == SQLITE_DONE) {
-            if (!database.executeCommand(v2RecordsTableSchema())) {
+            if (!database.executeCommand(v3RecordsTableSchema())) {
                 LOG_ERROR("Could not create Records table in database (%i) - %s", database.lastError(), database.lastErrorMsg());
                 return false;
             }
@@ -220,24 +237,25 @@ static bool createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
     ASSERT(!currentSchema.isEmpty());
 
     // If the schema in the backing store is the current schema, we're done.
-    if (currentSchema == v2RecordsTableSchema() || currentSchema == v2RecordsTableSchemaAlternate())
+    if (currentSchema == v3RecordsTableSchema() || currentSchema == v3RecordsTableSchemaAlternate())
         return true;
 
     // If the record table is not the current schema then it must be one of the previous schemas.
     // If it is not then the database is in an unrecoverable state and this should be considered a fatal error.
-    if (currentSchema != v1RecordsTableSchema() && currentSchema != v1RecordsTableSchemaAlternate())
+    if (currentSchema != v1RecordsTableSchema() && currentSchema != v1RecordsTableSchemaAlternate()
+        && currentSchema != v2RecordsTableSchema() && currentSchema != v2RecordsTableSchemaAlternate())
         RELEASE_ASSERT_NOT_REACHED();
 
     SQLiteTransaction transaction(database);
     transaction.begin();
 
     // Create a temporary table with the correct schema and migrate all existing content over.
-    if (!database.executeCommand(v2RecordsTableSchema("_Temp_Records"))) {
+    if (!database.executeCommand(v3RecordsTableSchema("_Temp_Records"))) {
         LOG_ERROR("Could not create temporary records table in database (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
 
-    if (!database.executeCommand("INSERT INTO _Temp_Records SELECT * FROM Records")) {
+    if (!database.executeCommand("INSERT INTO _Temp_Records (objectStoreID, key, value) SELECT objectStoreID, CAST(key AS TEXT), value FROM Records")) {
         LOG_ERROR("Could not migrate existing Records content (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
@@ -1306,7 +1324,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize IDBKey to be stored in an object store") };
     }
     {
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO Records VALUES (?, CAST(? AS TEXT), ?);"));
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO Records VALUES (?, CAST(? AS TEXT), ?, NULL);"));
         if (sql.prepare() != SQLITE_OK
             || sql.bindInt64(1, objectStoreInfo.identifier()) != SQLITE_OK
             || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK

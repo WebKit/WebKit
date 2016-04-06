@@ -1,3 +1,22 @@
+2016-04-06  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Make sure SQLite backing store records have a INTEGER PRIMARY KEY column.
+        https://bugs.webkit.org/show_bug.cgi?id=156264
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No testable change in behavior yet, current tests pass).
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::encode): Fix the key name for backwards compatibility.
+        (WebCore::IDBKeyData::decode): Ditto.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::v3RecordsTableSchema): Added v3 Records schema that includes a primary key column.
+        (WebCore::IDBServer::v3RecordsTableSchemaAlternate):
+        (WebCore::IDBServer::createOrMigrateRecordsTableIfNecessary): Upgrade to v3 instead of v2.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+
 2016-04-06  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid using an unengaged Optional<FloatRect> when positioning the tiled scrolling indicator
