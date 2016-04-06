@@ -35,6 +35,8 @@
 
 namespace JSC {
 
+static UnlinkedFunctionExecutable* createExecutableInternal(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);
+
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
 #define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, length) , m_##name##Source(makeSource(StringImpl::createFromLiteral(s_##name, length)))
@@ -52,9 +54,9 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
     case ConstructorKind::None:
         break;
     case ConstructorKind::Base:
-        return createExecutable(m_vm, makeSource(baseConstructorCode), name, constructorKind, ConstructAbility::CanConstruct);
+        return createExecutableInternal(m_vm, makeSource(baseConstructorCode), name, constructorKind, ConstructAbility::CanConstruct);
     case ConstructorKind::Derived:
-        return createExecutable(m_vm, makeSource(derivedConstructorCode), name, constructorKind, ConstructAbility::CanConstruct);
+        return createExecutableInternal(m_vm, makeSource(derivedConstructorCode), name, constructorKind, ConstructAbility::CanConstruct);
     }
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -62,15 +64,15 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
 
 UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const SourceCode& code, const Identifier& name, ConstructAbility constructAbility)
 {
-    return createExecutable(m_vm, code, name, ConstructorKind::None, constructAbility);
+    return createExecutableInternal(m_vm, code, name, ConstructorKind::None, constructAbility);
 }
 
 UnlinkedFunctionExecutable* createBuiltinExecutable(VM& vm, const SourceCode& code, const Identifier& name, ConstructAbility constructAbility)
 {
-    return BuiltinExecutables::createExecutable(vm, code, name, ConstructorKind::None, constructAbility);
+    return createExecutableInternal(vm, code, name, ConstructorKind::None, constructAbility);
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
+UnlinkedFunctionExecutable* createExecutableInternal(VM& vm, const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
 {
     JSTextPosition positionBeforeLastNewline;
     ParserError error;

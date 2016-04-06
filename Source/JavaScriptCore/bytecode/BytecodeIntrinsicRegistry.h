@@ -41,7 +41,6 @@ class Identifier;
 #define JSC_COMMON_BYTECODE_INTRINSIC_FUNCTIONS_EACH_NAME(macro) \
     macro(assert) \
     macro(isObject) \
-    macro(tryGetById) \
     macro(putByValDirect) \
     macro(toString)
 
