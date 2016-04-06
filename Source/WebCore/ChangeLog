@@ -1,3 +1,86 @@
+2016-04-06  Chris Dumez  <cdumez@apple.com>
+
+        [IDL] Extend support for [EnabledAtRuntime] attributes / operations to all global objects, not just Window
+        https://bugs.webkit.org/show_bug.cgi?id=156291
+
+        Reviewed by Alex Christensen.
+
+        Extend support for [EnabledAtRuntime] attributes / operations to all
+        global objects, not just Window. This is needed by the Fetch API which
+        is enabled at runtime and exposed on both Window and WorkerGlobalScope.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsDOMGlobalObject):
+        (OperationShouldBeOnInstance):
+        (GenerateHeader):
+        (GeneratePropertiesHashTable):
+        (GenerateImplementation):
+        * bindings/scripts/test/GObject/WebKitDOMTestGlobalObject.cpp: Added.
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestGlobalObject):
+        (webkit_dom_test_global_object_finalize):
+        (webkit_dom_test_global_object_set_property):
+        (webkit_dom_test_global_object_get_property):
+        (webkit_dom_test_global_object_constructor):
+        (webkit_dom_test_global_object_class_init):
+        (webkit_dom_test_global_object_init):
+        (webkit_dom_test_global_object_regular_operation):
+        (webkit_dom_test_global_object_enabled_at_runtime_operation):
+        (webkit_dom_test_global_object_get_regular_attribute):
+        (webkit_dom_test_global_object_set_regular_attribute):
+        (webkit_dom_test_global_object_get_enabled_at_runtime_attribute):
+        (webkit_dom_test_global_object_set_enabled_at_runtime_attribute):
+        * bindings/scripts/test/GObject/WebKitDOMTestGlobalObject.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestGlobalObjectPrivate.h: Added.
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp: Added.
+        (WebCore::JSTestGlobalObjectConstructor::prototypeForStructure):
+        (WebCore::JSTestGlobalObjectConstructor::initializeProperties):
+        (WebCore::JSTestGlobalObjectPrototype::getOwnPropertySlot):
+        (WebCore::JSTestGlobalObject::JSTestGlobalObject):
+        (WebCore::JSTestGlobalObject::finishCreation):
+        (WebCore::JSTestGlobalObject::destroy):
+        (WebCore::JSTestGlobalObject::getOwnPropertySlot):
+        (WebCore::jsTestGlobalObjectRegularAttribute):
+        (WebCore::jsTestGlobalObjectEnabledAtRuntimeAttribute):
+        (WebCore::jsTestGlobalObjectConstructor):
+        (WebCore::setJSTestGlobalObjectConstructor):
+        (WebCore::setJSTestGlobalObjectRegularAttribute):
+        (WebCore::setJSTestGlobalObjectEnabledAtRuntimeAttribute):
+        (WebCore::JSTestGlobalObject::getConstructor):
+        (WebCore::jsTestGlobalObjectInstanceFunctionRegularOperation):
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1):
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2):
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation):
+        (WebCore::JSTestGlobalObjectOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSTestGlobalObjectOwner::finalize):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestGlobalObject::toWrapped):
+        * bindings/scripts/test/JS/JSTestGlobalObject.h: Added.
+        (WebCore::JSTestGlobalObject::create):
+        (WebCore::JSTestGlobalObject::createStructure):
+        (WebCore::JSTestGlobalObject::finishCreation):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperKey):
+        (WebCore::toJS):
+        (WebCore::JSTestGlobalObjectPrototype::create):
+        (WebCore::JSTestGlobalObjectPrototype::createStructure):
+        (WebCore::JSTestGlobalObjectPrototype::JSTestGlobalObjectPrototype):
+        * bindings/scripts/test/ObjC/DOMTestGlobalObject.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestGlobalObject.mm: Added.
+        (-[DOMTestGlobalObject dealloc]):
+        (-[DOMTestGlobalObject regularAttribute]):
+        (-[DOMTestGlobalObject setRegularAttribute:]):
+        (-[DOMTestGlobalObject enabledAtRuntimeAttribute]):
+        (-[DOMTestGlobalObject setEnabledAtRuntimeAttribute:]):
+        (-[DOMTestGlobalObject regularOperation:]):
+        (-[DOMTestGlobalObject enabledAtRuntimeOperation:]):
+        (core):
+        (kit):
+        * bindings/scripts/test/ObjC/DOMTestGlobalObjectInternal.h: Added.
+        * bindings/scripts/test/TestGlobalObject.idl: Added.
+
 2016-04-06  Brady Eidson  <beidson@apple.com>
 
         Update IndexedDB feature status to the much more correct "In Development"

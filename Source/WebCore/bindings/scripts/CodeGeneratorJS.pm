@@ -378,7 +378,7 @@ sub GetCustomIsReachable
 sub IsDOMGlobalObject
 {
     my $interface = shift;
-    return $interface->name eq "DOMWindow" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope");
+    return $interface->name eq "DOMWindow" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $interface->name eq "TestGlobalObject";
 }
 
 sub GenerateGetOwnPropertySlotBody
@@ -721,10 +721,10 @@ sub OperationShouldBeOnInstance
     my $interface = shift;
     my $function = shift;
 
-    # FIXME: The bindings generator does not support putting runtime-enabled on the instance yet (except for Window).
-    return 0 if $function->signature->extendedAttributes->{"EnabledAtRuntime"} && $interface->name ne "DOMWindow";
-
     return 1 if IsDOMGlobalObject($interface);
+
+    # FIXME: The bindings generator does not support putting runtime-enabled on the instance yet (except for global objects).
+    return 0 if $function->signature->extendedAttributes->{"EnabledAtRuntime"};
 
     # [Unforgeable] operations should be on the instance.
     # https://heycam.github.io/webidl/#Unforgeable
@@ -1247,7 +1247,6 @@ sub GenerateHeader
     # Constructor
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    $className(JSC::VM&, JSC::Structure*, Ref<$implType>&&, JSDOMWindowShell*);\n");
-        push(@headerContent, "    void finishCreation(JSC::VM&, JSDOMWindowShell*);\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
         push(@headerContent, "    $className(JSC::VM&, JSC::Structure*, Ref<$implType>&&);\n");
     } elsif (!NeedsImplementationClass($interface)) {
@@ -1259,6 +1258,14 @@ sub GenerateHeader
         push(@headerContent, "        Base::finishCreation(vm);\n");
         push(@headerContent, "        ASSERT(inherits(info()));\n");
         push(@headerContent, "    }\n\n");
+    }
+
+    if (IsDOMGlobalObject($interface)) {
+        if ($interfaceName eq "DOMWindow") {
+            push(@headerContent, "    void finishCreation(JSC::VM&, JSDOMWindowShell*);\n");
+        } else {
+            push(@headerContent, "    void finishCreation(JSC::VM&);\n");
+        }
     }
 
     # Index setter
@@ -1411,8 +1418,8 @@ sub GeneratePropertiesHashTable
         next if ($attribute->isStatic);
         next if AttributeShouldBeOnInstance($interface, $attribute) != $isInstance;
 
-        # DOMWindow adds RuntimeEnabled attributes after creation so do not add them to the static table.
-        if ($interfaceName eq "DOMWindow" && $attribute->signature->extendedAttributes->{"EnabledAtRuntime"}) {
+        # Global objects add RuntimeEnabled attributes after creation so do not add them to the static table.
+        if (IsDOMGlobalObject($interface) && $attribute->signature->extendedAttributes->{"EnabledAtRuntime"}) {
             $propertyCount -= 1;
             next;
         }
@@ -1448,8 +1455,8 @@ sub GeneratePropertiesHashTable
         next if OperationShouldBeOnInstance($interface, $function) != $isInstance;
         next if $function->signature->name eq "[Symbol.Iterator]";
 
-        # DOMWindow adds RuntimeEnabled operations after creation so do not add them to the static table.
-        if ($interfaceName eq "DOMWindow" && $function->signature->extendedAttributes->{"EnabledAtRuntime"}) {
+        # Global objects add RuntimeEnabled operations after creation so do not add them to the static table.
+        if (IsDOMGlobalObject($interface) && $function->signature->extendedAttributes->{"EnabledAtRuntime"}) {
             $propertyCount -= 1;
             next;
         }
@@ -1472,7 +1479,7 @@ sub GeneratePropertiesHashTable
 
         if ($function->signature->extendedAttributes->{"EnabledAtRuntime"}) {
             if ($isInstance) {
-                die "We currently do not support [EnabledAtRuntime] operations on the instance.";
+                die "We currently do not support [EnabledAtRuntime] operations on the instance (except for global objects).";
             } else {
                 push(@$runtimeEnabledFunctions, $function);
             }
@@ -2197,11 +2204,33 @@ sub GenerateImplementation
         push(@implContent, "    : $parentClassName(vm, structure, WTFMove(impl), shell)\n");
         push(@implContent, "{\n");
         push(@implContent, "}\n\n");
-
-        push(@implContent, "void ${className}::finishCreation(VM& vm, JSDOMWindowShell* shell)\n");
+    } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
+        AddIncludesForTypeInImpl($interfaceName);
+        push(@implContent, "${className}::$className(VM& vm, Structure* structure, Ref<$implType>&& impl)\n");
+        push(@implContent, "    : $parentClassName(vm, structure, WTFMove(impl))\n");
         push(@implContent, "{\n");
-        push(@implContent, "    Base::finishCreation(vm, shell);\n\n");
-        # Support for RuntimeEnabled attributes on DOMWindow.
+        push(@implContent, "}\n\n");
+    } elsif (!NeedsImplementationClass($interface)) {
+        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject& globalObject)\n");
+        push(@implContent, "    : $parentClassName(structure, globalObject) { }\n\n");
+    } else {
+        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject& globalObject, Ref<$implType>&& impl)\n");
+        push(@implContent, "    : $parentClassName(structure, globalObject, WTFMove(impl))\n");
+        push(@implContent, "{\n");
+        push(@implContent, "}\n\n");
+    }
+
+    if (IsDOMGlobalObject($interface)) {
+        if ($interfaceName eq "DOMWindow") {
+            push(@implContent, "void ${className}::finishCreation(VM& vm, JSDOMWindowShell* shell)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    Base::finishCreation(vm, shell);\n\n");
+        } else {
+            push(@implContent, "void ${className}::finishCreation(VM& vm)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    Base::finishCreation(vm);\n\n");
+        }
+        # Support for RuntimeEnabled attributes on global objects.
         foreach my $attribute (@{$interface->attributes}) {
             next unless $attribute->signature->extendedAttributes->{"EnabledAtRuntime"};
 
@@ -2219,7 +2248,7 @@ sub GenerateImplementation
             push(@implContent, "    }\n");
             push(@implContent, "#endif\n") if $conditionalString;
         }
-        # Support for RuntimeEnabled operations on DOMWindow.
+        # Support for RuntimeEnabled operations on global objects.
         foreach my $function (@{$interface->functions}) {
             next unless $function->signature->extendedAttributes->{"EnabledAtRuntime"};
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
@@ -2237,23 +2266,7 @@ sub GenerateImplementation
             push(@implContent, "#endif\n") if $conditionalString;
         }
         push(@implContent, "}\n\n");
-    } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
-        AddIncludesForTypeInImpl($interfaceName);
-        push(@implContent, "${className}::$className(VM& vm, Structure* structure, Ref<$implType>&& impl)\n");
-        push(@implContent, "    : $parentClassName(vm, structure, WTFMove(impl))\n");
-        push(@implContent, "{\n");
-        push(@implContent, "}\n\n");
-    } elsif (!NeedsImplementationClass($interface)) {
-        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject& globalObject)\n");
-        push(@implContent, "    : $parentClassName(structure, globalObject) { }\n\n");
     } else {
-        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject& globalObject, Ref<$implType>&& impl)\n");
-        push(@implContent, "    : $parentClassName(structure, globalObject, WTFMove(impl))\n");
-        push(@implContent, "{\n");
-        push(@implContent, "}\n\n");
-    }
-
-    unless (IsDOMGlobalObject($interface)) {
         push(@implContent, "JSObject* ${className}::createPrototype(VM& vm, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
