@@ -60,20 +60,25 @@ void WebsiteDataStore::platformInitialize()
         NSString *notificationName = UIApplicationWillTerminateNotification;
 #endif
         terminationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:notificationName object:nil queue:nil usingBlock:^(NSNotification *note) {
-            for (auto& dataStore : dataStoresWithStorageManagers())
+            for (auto& dataStore : dataStoresWithStorageManagers()) {
                 dataStore->m_storageManager->applicationWillTerminate();
-
-            m_resourceLoadStatistics->applicationWillTerminate();
+                if (dataStore->m_resourceLoadStatistics)
+                    dataStore->m_resourceLoadStatistics->applicationWillTerminate();
+            }
         }];
     }
 
     ASSERT(!dataStoresWithStorageManagers().contains(this));
     dataStoresWithStorageManagers().append(this);
-    m_resourceLoadStatistics->readDataFromDiskIfNeeded();
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->readDataFromDiskIfNeeded();
 }
 
 void WebsiteDataStore::platformDestroy()
 {
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->applicationWillTerminate();
+
     if (!m_storageManager)
         return;
 
