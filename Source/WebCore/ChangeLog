@@ -1,3 +1,22 @@
+2016-04-06  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in -[WebCoreNSURLSession taskCompleted:]
+        https://bugs.webkit.org/show_bug.cgi?id=156290
+
+        Reviewed by Eric Carlson.
+
+        Fixes currently flakily crashing http/tests/media tests.
+
+        Protect against -taskCompleted: being called multiple times by only calling
+        -taskCompleted: if the task's state is not yet NSURLSessionTaskStateCompleted.
+        Additionally, make sure to clear the task's session pointer when removing it
+        from _dataTasks, as this ensures a task that outlives its session does not
+        keep a pointer to a dealloc'd object.
+
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession taskCompleted:]):
+        (-[WebCoreNSURLSessionDataTask _resource:loadFinishedWithError:]):
+
 2016-04-06  Chris Dumez  <cdumez@apple.com>
 
         [IDL] Extend support for [EnabledAtRuntime] attributes / operations to all global objects, not just Window
