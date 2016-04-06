@@ -1,3 +1,15 @@
+2016-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Add support for [EnabledAtRuntime] operations on DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=156272
+
+        Reviewed by Alex Christensen.
+
+        Add identifier for 'fetch' so it can be used from the generated
+        bindings.
+
+        * runtime/CommonIdentifiers.h:
+
 2016-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Make CMake-generated binaries on Mac able to run

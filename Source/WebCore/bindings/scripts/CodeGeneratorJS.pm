@@ -721,8 +721,8 @@ sub OperationShouldBeOnInstance
     my $interface = shift;
     my $function = shift;
 
-    # FIXME: The bindings generator does not support putting runtime-enabled on the instance yet.
-    return 0 if $function->signature->extendedAttributes->{"EnabledAtRuntime"};
+    # FIXME: The bindings generator does not support putting runtime-enabled on the instance yet (except for Window).
+    return 0 if $function->signature->extendedAttributes->{"EnabledAtRuntime"} && $interface->name ne "DOMWindow";
 
     return 1 if IsDOMGlobalObject($interface);
 
@@ -1447,6 +1447,12 @@ sub GeneratePropertiesHashTable
         next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
         next if OperationShouldBeOnInstance($interface, $function) != $isInstance;
         next if $function->signature->name eq "[Symbol.Iterator]";
+
+        # DOMWindow adds RuntimeEnabled operations after creation so do not add them to the static table.
+        if ($interfaceName eq "DOMWindow" && $function->signature->extendedAttributes->{"EnabledAtRuntime"}) {
+            $propertyCount -= 1;
+            next;
+        }
 
         my $name = $function->signature->name;
         push(@$hashKeys, $name);
@@ -2211,6 +2217,23 @@ sub GenerateImplementation
             my $jscAttributes = GetJSCAttributesForAttribute($interface, $attribute);
             push(@implContent, "        putDirectCustomAccessor(vm, vm.propertyNames->$attributeName, customGetterSetter, attributesForStructure($jscAttributes));\n");
             push(@implContent, "    }\n");
+            push(@implContent, "#endif\n") if $conditionalString;
+        }
+        # Support for RuntimeEnabled operations on DOMWindow.
+        foreach my $function (@{$interface->functions}) {
+            next unless $function->signature->extendedAttributes->{"EnabledAtRuntime"};
+            next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
+
+            AddToImplIncludes("RuntimeEnabledFeatures.h");
+            my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
+            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+            my $enable_function = GetRuntimeEnableFunctionName($function->signature);
+            my $functionName = $function->signature->name;
+            my $implementationFunction = GetFunctionName($interface, $className, $function);
+            my $functionLength = GetFunctionLength($function);
+            my $jsAttributes = ComputeFunctionSpecial($interface, $function);
+            push(@implContent, "    if (${enable_function}())\n");
+            push(@implContent, "        putDirectNativeFunction(vm, this, vm.propertyNames->$functionName, $functionLength, $implementationFunction, NoIntrinsic, attributesForStructure($jsAttributes));\n");
             push(@implContent, "#endif\n") if $conditionalString;
         }
         push(@implContent, "}\n\n");

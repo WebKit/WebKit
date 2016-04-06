@@ -112,15 +112,6 @@ void JSDOMGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 {
     Base::finishCreation(vm, thisValue);
     ASSERT(inherits(info()));
-
-#if ENABLE(FETCH_API)
-    // FIXME: Modify the bindings generator so this was never added in the first place.
-    if (!RuntimeEnabledFeatures::sharedFeatures().fetchAPIEnabled()) {
-        JSObject* prototype = getPrototypeDirect().getObject();
-        ASSERT(prototype);
-        prototype->putDirect(vm, Identifier::fromString(&vm, "fetch"), jsUndefined());
-    }
-#endif
     
     addBuiltinGlobals(vm);
 }

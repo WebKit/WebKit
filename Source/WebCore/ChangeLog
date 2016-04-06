@@ -1,3 +1,28 @@
+2016-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Add support for [EnabledAtRuntime] operations on DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=156272
+
+        Reviewed by Alex Christensen.
+
+        Add support for [EnabledAtRuntime] operations on DOMWindow by omitting
+        such operations from the static table and add them at run-time in
+        JSDOMWindow::finishCreation() if the corresponding feature is enabled.
+
+        This was needed for window.fetch() for which a hack was temporarily
+        landed in r199081. This patch drops this hack now that the generated
+        bindings do the right thing.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::scriptExecutionContext):
+        Drop hack landed in r199081.
+        
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (OperationShouldBeOnInstance):
+        (GeneratePropertiesHashTable):
+        (GenerateImplementation):
+        Add support for [EnabledAtRuntime] operations on DOMWindow.
+
 2016-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Make CMake-generated binaries on Mac able to run

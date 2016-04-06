@@ -143,6 +143,7 @@
     macro(exec) \
     macro(executionCount) \
     macro(exitKind) \
+    macro(fetch) \
     macro(flags) \
     macro(focus) \
     macro(forEach) \
