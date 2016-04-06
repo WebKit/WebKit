@@ -35,6 +35,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSExceptionBase.h"
 #include "SecurityOrigin.h"
+#include <bytecode/CodeBlock.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <interpreter/Interpreter.h>
@@ -555,6 +556,40 @@ uint64_t toUInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration
     unsigned long long n;
     doubleToInteger(x, n);
     return n;
+}
+
+class GetCallerGlobalObjectFunctor {
+public:
+    GetCallerGlobalObjectFunctor() = default;
+
+    StackVisitor::Status operator()(StackVisitor& visitor) const
+    {
+        if (!m_hasSkippedFirstFrame) {
+            m_hasSkippedFirstFrame = true;
+            return StackVisitor::Continue;
+        }
+
+        if (auto* codeBlock = visitor->codeBlock())
+            m_globalObject = codeBlock->globalObject();
+        else {
+            ASSERT(visitor->callee());
+            m_globalObject = visitor->callee()->globalObject();
+        }
+        return StackVisitor::Done;
+    }
+
+    JSGlobalObject* globalObject() const { return m_globalObject; }
+
+private:
+    mutable bool m_hasSkippedFirstFrame { false };
+    mutable JSGlobalObject* m_globalObject { nullptr };
+};
+
+DOMWindow& callerDOMWindow(ExecState* exec)
+{
+    GetCallerGlobalObjectFunctor iter;
+    exec->iterate(iter);
+    return iter.globalObject() ? asJSDOMWindow(iter.globalObject())->wrapped() : firstDOMWindow(exec);
 }
 
 DOMWindow& activeDOMWindow(ExecState* exec)

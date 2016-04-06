@@ -1,3 +1,30 @@
+2016-04-05  Chris Dumez  <cdumez@apple.com>
+
+        MessageEvent.source window is incorrect once window has been reified
+        https://bugs.webkit.org/show_bug.cgi?id=156227
+        <rdar://problem/25545831>
+
+        Reviewed by Mark Lam.
+
+        Add tests that cover using MessageEvent.source Window for messaging
+        using postMessage(). There are 2 versions of the test, one where the
+        main window is reified and one where it is not. The test that has a
+        reified main window was failing because this fix.
+
+        * fast/dom/Window/delete-operations-expected.txt: Added.
+        * fast/dom/Window/delete-operations.html: Added.
+        Make sure that operations on Window are indeed deletable. Previously,
+        it would be impossible to delete postMessage, blur, focus and close.
+
+        * fast/dom/Window/messageevent-source-postmessage-expected.txt: Added.
+        * fast/dom/Window/messageevent-source-postmessage-reified-expected.txt: Added.
+        * fast/dom/Window/messageevent-source-postmessage-reified.html: Added.
+        * fast/dom/Window/messageevent-source-postmessage.html: Added.
+        * fast/dom/Window/messageevent-source-postmessage2.html: Added.
+        * fast/dom/Window/resources/messageevent-source-postmessage-frame.html: Added.
+        * fast/dom/Window/post-message-crash2-expected.txt: Added.
+        * fast/dom/Window/post-message-crash2.html: Added.
+
 2016-04-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test listbox clipping to contents rect

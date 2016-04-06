@@ -1,3 +1,53 @@
+2016-04-05  Chris Dumez  <cdumez@apple.com>
+
+        MessageEvent.source window is incorrect once window has been reified
+        https://bugs.webkit.org/show_bug.cgi?id=156227
+        <rdar://problem/25545831>
+
+        Reviewed by Mark Lam.
+
+        MessageEvent.source window was incorrect once window had been reified.
+
+        If the Window had not been reified, we kept constructing new
+        postMessage() functions when calling window.postMessage(). We used to
+        pass activeDOMWindow(execState) as source Window to
+        DOMWindow::postMessage(). activeDOMWindow() uses
+        exec->lexicalGlobalObject() which did the right thing because we
+        used to construct a new postMessage() function in the caller's context.
+
+        However, after reification, due to the way JSDOMWindow::getOwnPropertySlot()
+        was implemented, we would stop constructing new postMessage() functions
+        when calling window.postMessage(). As a result, the source window would
+        become incorrect because exec->lexicalGlobalObject() would return the
+        target Window instead.
+
+        In this patch, the following is done:
+        1. Stop constructing a new function every time in the same origin case
+           for postMessage, blur, focus and close. This was inefficient and lead
+           to incorrect behavior:
+           - The behavior would differ depending if the Window is reified or not
+           - It would be impossible to delete those operations, which is
+             incompatible with the specification and other browsers (tested
+             Firefox and Chrome).
+        2. Use callerDOMWindow(execState) instead of activeDOMWindow(execState)
+           as source Window in JSDOMWindow::handlePostMessage(). callerDOMWindow()
+           is a new utility function that returns the caller's Window object.
+
+        Tests: fast/dom/Window/delete-operations.html
+               fast/dom/Window/messageevent-source-postmessage-reified.html
+               fast/dom/Window/messageevent-source-postmessage.html
+               fast/dom/Window/messageevent-source-postmessage2.html
+               fast/dom/Window/window-postmessage-clone-frames.html
+               fast/dom/Window/post-message-crash2.html
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::GetCallerCodeBlockFunctor::operator()):
+        (WebCore::GetCallerCodeBlockFunctor::codeBlock):
+        (WebCore::callerDOMWindow):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::handlePostMessage):
+
 2016-04-05  Beth Dakin  <bdakin@apple.com>
 
         Make requestCandidatesForSelection available on any EditorClient

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Checks that MessageEvent.source window is correct when postMessage() is called cross-frame via a function in the other frame.");
+jsTestIsAsync = true;
+
+window.onmessage = function(e) {
+    messageEvent = e;
+    shouldBeEqualToString("messageEvent.data", "msg");
+    shouldBe("messageEvent.source", "frames[0]");
+    finishJSTest();
+}
+
+onload = function()
+{
+    frames[0].sendMessage();
+}
+</script>
+<iframe srcdoc="<script>function sendMessage() { parent.postMessage('msg', '*'); }</script>"></iframe>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -78,6 +78,7 @@ struct ExceptionDetails {
 
 typedef int ExceptionCode;
 
+DOMWindow& callerDOMWindow(JSC::ExecState*);
 DOMWindow& activeDOMWindow(JSC::ExecState*);
 DOMWindow& firstDOMWindow(JSC::ExecState*);
 

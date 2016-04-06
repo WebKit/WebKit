@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body onload="runTest()">
+<script>
+description("Tests that MessageEvent.source is correct and can be used for messaging (reified Window case).");
+jsTestIsAsync = true;
+
+// Reify the window.
+window.test = 1;
+delete window.test;
+
+if (window.testRunner)
+    testRunner.dumpChildFramesAsText();
+
+counter = 1;
+
+window.onmessage = function(e) {
+    debug("* Parent received message " + e.data + " from child");
+    messageEvent = e;
+    shouldBe("messageEvent.source", "frames[0]");
+    shouldBe("messageEvent.data", "counter + 1");
+    if (messageEvent.data > 5) {
+        finishJSTest();
+        return;
+    }
+    counter = messageEvent.data + 1;
+    debug("* Sending message " + counter + " to child");
+    messageEvent.source.postMessage(counter, "*");
+}
+
+function runTest()
+{
+    debug("* Sending message " + counter + " to child");
+    frames[0].postMessage(counter, "*");
+}
+
+</script>
+<iframe src="resources/messageevent-source-postmessage-frame.html"></iframe>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
