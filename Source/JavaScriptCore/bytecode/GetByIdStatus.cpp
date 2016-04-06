@@ -350,6 +350,22 @@ bool GetByIdStatus::makesCalls() const
     return false;
 }
 
+void GetByIdStatus::filter(const StructureSet& set)
+{
+    if (m_state != Simple)
+        return;
+    
+    // FIXME: We could also filter the variants themselves.
+    
+    m_variants.removeAllMatching(
+        [&] (GetByIdVariant& variant) -> bool {
+            return !variant.structureSet().overlaps(set);
+        });
+    
+    if (m_variants.isEmpty())
+        m_state = NoInformation;
+}
+
 void GetByIdStatus::dump(PrintStream& out) const
 {
     out.print("(");

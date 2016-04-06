@@ -101,6 +101,8 @@ public:
     
     bool couldTakeSlowPath() const { return m_couldTakeSlowPath; }
     
+    void setCouldTakeSlowPath(bool value) { m_couldTakeSlowPath = value; }
+    
     CallVariantList variants() const { return m_variants; }
     unsigned size() const { return m_variants.size(); }
     CallVariant at(unsigned i) const { return m_variants[i]; }

@@ -1,3 +1,59 @@
+2016-04-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Improve some other cases of context-sensitive inlining
+        https://bugs.webkit.org/show_bug.cgi?id=156277
+
+        Reviewed by Benjamin Poulain.
+        
+        This implements some improvements for inlining:
+
+        - We no longer do guarded inlining when the profiling doesn't come from a stub. Doing so would have
+          been risky, and according to benchmarks, it wasn't common enough to matter. I think it's better to
+          err on the side of not inlining.
+        
+        - The jneq_ptr pattern for variadic calls no longer breaks the basic block. Not breaking the block
+          increases the chances of the parser seeing the callee constant. While inlining doesn't require a
+          callee constant, sometimes it makes a difference. Note that we were previously breaking the block
+          for no reason at all: if the boundary after jneq_ptr is a jump target from some other jump, then
+          the parser will automatically break the block for us. There is no reason to add any block breaking
+          ourselves since we implement jneq_ptr by ignoring the affirmative jump destination and inserting a
+          check and falling through.
+        
+        - get_by_id handling now tries to apply some common sense to its status object. In particular, if
+          the source is a NewObject and there was no interfering operation that could clobber the structure,
+          then we know which case of a polymorphic GetByIdStatus we would take. This arises in some
+          constructor patterns.
+        
+        Long term, we should address all of these cases comprehensively by having a late inliner. The inliner
+        being part of the bytecode parser means that there is a lot of complexity in the parser and it
+        prevents us from inlining upon learning new information from static analysis. But for now, I think
+        it's fine to experiment with one-off hacks, if only to learn what the possibilities are.
+        
+        This is a 14% speed-up on Octane/raytrace.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::dump):
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::couldTakeSlowPath):
+        (JSC::CallLinkStatus::setCouldTakeSlowPath):
+        (JSC::CallLinkStatus::variants):
+        (JSC::CallLinkStatus::size):
+        (JSC::CallLinkStatus::at):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::makesCalls):
+        (JSC::GetByIdStatus::filter):
+        (JSC::GetByIdStatus::dump):
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::wasSeenInJIT):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::refineStatically):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * runtime/Options.h:
+
 2016-04-05  Saam barati  <sbarati@apple.com>
 
         JSC SamplingProfiler: Use a thread + sleep loop instead of WTF::WorkQueue for taking samples

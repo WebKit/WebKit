@@ -92,6 +92,9 @@ public:
     
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }
     
+    // Attempts to reduce the set of variants to fit the given structure set. This may be approximate.
+    void filter(const StructureSet&);
+    
     void dump(PrintStream&) const;
     
 private:
