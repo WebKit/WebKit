@@ -177,7 +177,7 @@
     {
         "name": "IndexedDB",
         "status": {
-            "status": "Partial Support"
+            "status": "In Development"
         },
         "url": "http://www.w3.org/TR/IndexedDB/",
         "keywords": ["indexeddb", "index db"],

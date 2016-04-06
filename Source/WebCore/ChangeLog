@@ -1,3 +1,11 @@
+2016-04-06  Brady Eidson  <beidson@apple.com>
+
+        Update IndexedDB feature status to the much more correct "In Development"
+
+        Reviewed by Tim Hatcher.
+
+        * features.json:
+
 2016-04-06  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !floatingObject->originatingLine() in WebCore::RenderBlockFlow::linkToEndLineIfNeeded
