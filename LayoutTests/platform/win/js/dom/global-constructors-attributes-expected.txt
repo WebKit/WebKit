@@ -53,6 +53,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'CDATASection').hasOwnProperty('get
 PASS Object.getOwnPropertyDescriptor(global, 'CDATASection').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CDATASection').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'CDATASection').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'CSS').value is CSS
+PASS Object.getOwnPropertyDescriptor(global, 'CSS').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CSS').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CSS').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'CSS').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CSSCharsetRule').value is CSSCharsetRule
 PASS Object.getOwnPropertyDescriptor(global, 'CSSCharsetRule').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSCharsetRule').hasOwnProperty('set') is false

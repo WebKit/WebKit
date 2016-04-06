@@ -44,7 +44,6 @@
 #include "DOMTimer.h"
 #include "DOMTokenList.h"
 #include "DOMURL.h"
-#include "DOMWindowCSS.h"
 #include "DOMWindowExtension.h"
 #include "DOMWindowNotifications.h"
 #include "DeviceMotionController.h"
@@ -1669,13 +1668,6 @@ void DOMWindow::cancelAnimationFrame(int id)
         d->cancelAnimationFrame(id);
 }
 #endif
-
-DOMWindowCSS* DOMWindow::css()
-{
-    if (!m_css)
-        m_css = DOMWindowCSS::create();
-    return m_css.get();
-}
 
 static void didAddStorageEventListener(DOMWindow* window)
 {

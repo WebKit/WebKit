@@ -247,7 +247,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/css/CSSValue.idl \
     $(WebCore)/css/CSSValueList.idl \
     $(WebCore)/css/Counter.idl \
-    $(WebCore)/css/DOMWindowCSS.idl \
+    $(WebCore)/css/DOMCSSNamespace.idl \
     $(WebCore)/css/FontFace.idl \
     $(WebCore)/css/FontFaceSet.idl \
     $(WebCore)/css/MediaList.idl \

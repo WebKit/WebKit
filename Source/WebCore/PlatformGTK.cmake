@@ -545,7 +545,7 @@ list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
 
     Modules/webdatabase/Database.idl
 
-    css/DOMWindowCSS.idl
+    css/DOMCSSNamespace.idl
     css/MediaQueryList.idl
     css/StyleMedia.idl
 

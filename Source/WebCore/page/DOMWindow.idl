@@ -179,8 +179,6 @@
     [Conditional=REQUEST_ANIMATION_FRAME, ImplementedAs=cancelAnimationFrame] void webkitCancelAnimationFrame(long id);
     [Conditional=REQUEST_ANIMATION_FRAME, ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
 
-    [Replaceable] readonly attribute DOMWindowCSS CSS;
-
     void captureEvents(/*in long eventFlags*/);
     void releaseEvents(/*in long eventFlags*/);
 

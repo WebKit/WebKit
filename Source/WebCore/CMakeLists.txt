@@ -334,7 +334,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSValue.idl
     css/CSSValueList.idl
     css/Counter.idl
-    css/DOMWindowCSS.idl
+    css/DOMCSSNamespace.idl
     css/FontFace.idl
     css/FontFaceSet.idl
     css/MediaList.idl
@@ -1340,7 +1340,7 @@ set(WebCore_SOURCES
     css/CSSValuePool.cpp
     css/CSSVariableDependentValue.cpp
     css/CSSVariableValue.cpp
-    css/DOMWindowCSS.cpp
+    css/DOMCSSNamespace.cpp
     css/DocumentRuleSets.cpp
     css/ElementRuleCollector.cpp
     css/FontVariantBuilder.cpp

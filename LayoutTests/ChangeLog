@@ -1,3 +1,18 @@
+2016-04-06  Sam Weinig  <sam@webkit.org>
+
+        window.CSS should be a constructor with static functions
+        <rdar://problem/25580516>
+        https://bugs.webkit.org/show_bug.cgi?id=156294
+
+        Reviewed by Chris Dumez.
+
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        Update for new CSS constructor property.
+
 2016-04-06  Joanmarie Diggs  <jdiggs@igalia.com>
 
         REGRESSION(r195463): [GTK] accessibility/roles-computedRoleString.html and accessibility/roles-exposed.html failing

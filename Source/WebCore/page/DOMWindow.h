@@ -50,7 +50,6 @@ namespace WebCore {
     class DOMApplicationCache;
     class DOMSelection;
     class DOMURL;
-    class DOMWindowCSS;
     class DOMWindowProperty;
     class DOMWrapperWorld;
     class Database;
@@ -272,8 +271,6 @@ namespace WebCore {
         void cancelAnimationFrame(int id);
 #endif
 
-        DOMWindowCSS* css();
-
         // Events
         // EventTarget API
         bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
@@ -416,8 +413,6 @@ namespace WebCore {
 #if ENABLE(WEB_TIMING)
         mutable RefPtr<Performance> m_performance;
 #endif
-
-        mutable RefPtr<DOMWindowCSS> m_css;
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
         mutable RefPtr<WebKitNamespace> m_webkitNamespace;

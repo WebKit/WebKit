@@ -1,3 +1,38 @@
+2016-04-06  Sam Weinig  <sam@webkit.org>
+
+        window.CSS should be a constructor with static functions
+        <rdar://problem/25580516>
+        https://bugs.webkit.org/show_bug.cgi?id=156294
+
+        Reviewed by Chris Dumez.
+
+        Rename DOMWindowCSS to DOMCSSNamespace to avoid name collisions, DOMWindow prefixed
+        classes cause collisions in JSDOMWindow.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Update for renames.
+
+        * css/DOMCSSNamespace.cpp: Copied from Source/WebCore/css/DOMWindowCSS.cpp.
+        (WebCore::valueWithoutImportant):
+        (WebCore::DOMCSSNamespace::supports):
+        (WebCore::DOMWindowCSS::create): Deleted.
+        (WebCore::DOMWindowCSS::supports): Deleted.
+        * css/DOMCSSNamespace.h: Copied from Source/WebCore/css/DOMWindowCSS.h.
+        (WebCore::DOMWindowCSS::DOMWindowCSS): Deleted.
+        Rename DOMWindowCSS to DOMCSSNamespace and turn functions into static functions.
+
+        * css/DOMCSSNamespace.idl: Copied from Source/WebCore/css/DOMWindowCSS.idl.
+        Remove NoInterfaceObject, to inject a constructor, and turn functions into
+        static functions matching spec.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::css): Deleted.
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        Remove CSS property. Constructor will be implicitly added.
+
 2016-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Rename exposedRect to viewExposedRect and propagate it as Optional<> through WK2

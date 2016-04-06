@@ -27,28 +27,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMWindowCSS_h
-#define DOMWindowCSS_h
-
-#include <wtf/Forward.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-class DOMWindowCSS : public RefCounted<DOMWindowCSS> {
-public:
-    WEBCORE_EXPORT static Ref<DOMWindowCSS> create();
-
-    bool supports(const String& property, const String& value) const;
-    bool supports(const String& conditionText) const;
-
-private:
-    DOMWindowCSS()
-    {
-    }
+[
+    InterfaceName=CSS,
+    ImplementationLacksVTable,
+] interface DOMCSSNamespace {
+    static boolean supports(DOMString property, DOMString value);
+    static boolean supports(DOMString conditionText);
 };
-
-}
-
-#endif
