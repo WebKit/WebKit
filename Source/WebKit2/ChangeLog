@@ -1,3 +1,38 @@
+2016-04-05  Brian Burg  <bburg@apple.com>
+
+        Web Automation: add support for getting, deleting, and adding cookies
+        https://bugs.webkit.org/show_bug.cgi?id=156090
+        <rdar://problem/25477678>
+
+        Reviewed by Timothy Hatcher.
+
+        Add protocol commands for manipulating cookies with respect to a given page.
+        Implement all but the addSingleCookie command, which needs a new WebCore API.
+
+        * UIProcess/Automation/Automation.json:
+        Copy the Page domain Cookie object. Add new commands.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::getAllCookies):
+        (WebKit::buildObjectForCookie): Copied from InspectorPageAgent.
+        (WebKit::buildArrayForCookies): Copied from InspectorPageAgent.
+        (WebKit::WebAutomationSession::didGetCookiesForFrame):
+        (WebKit::WebAutomationSession::deleteSingleCookie):
+        (WebKit::WebAutomationSession::didDeleteCookie):
+        (WebKit::WebAutomationSession::addSingleCookie): Added a stub for now.
+        (WebKit::WebAutomationSession::deleteAllCookies):
+        This command can use the WebCookieManager supplement directly instead of
+        proxying through AutomationSession. It doesn't block until the delete is
+        performed like the other methods do, but this shouldn't be a problem.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.messages.in:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::getCookiesForFrame):
+        (WebKit::WebAutomationSessionProxy::deleteCookie):
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+
 2016-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix Range requests when not using the NetworkCache with NetworkSession

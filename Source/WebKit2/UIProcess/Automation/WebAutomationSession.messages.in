@@ -29,4 +29,7 @@ messages -> WebAutomationSession {
     DidComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, String errorType)
 
     DidTakeScreenshot(uint64_t callbackID, WebKit::ShareableBitmap::Handle imageDataHandle, String errorType)
+
+    DidGetCookiesForFrame(uint64_t callbackID, Vector<WebCore::Cookie> cookies, String errorType)
+    DidDeleteCookie(uint64_t callbackID, String errorType)
 }

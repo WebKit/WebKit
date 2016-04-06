@@ -46,11 +46,10 @@ class FrontendRouter;
 }
 
 namespace WebCore {
-class IntRect;
-}
-
-namespace WebCore {
 class IntPoint;
+class IntRect;
+
+struct Cookie;
 }
 
 #if USE(APPKIT)
@@ -117,7 +116,10 @@ public:
     void acceptCurrentJavaScriptDialog(Inspector::ErrorString&, const String& browsingContextHandle) override;
     void messageOfCurrentJavaScriptDialog(Inspector::ErrorString&, const String& browsingContextHandle, String* text) override;
     void setUserInputForCurrentJavaScriptPrompt(Inspector::ErrorString&, const String& browsingContextHandle, const String& text) override;
-
+    void getAllCookies(Inspector::ErrorString&, const String& browsingContextHandle, Ref<GetAllCookiesCallback>&&) override;
+    void deleteSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&&) override;
+    void addSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const Inspector::InspectorObject& cookie, Ref<AddSingleCookieCallback>&&) override;
+    void deleteAllCookies(Inspector::ErrorString&, const String& browsingContextHandle, Ref<DeleteAllCookiesCallback>&&) override;
 #if USE(APPKIT)
     bool wasEventSynthesizedForAutomation(NSEvent *);
 #endif
@@ -140,6 +142,8 @@ private:
     void didResolveParentFrame(uint64_t callbackID, uint64_t frameID, const String& errorType);
     void didComputeElementLayout(uint64_t callbackID, WebCore::IntRect, const String& errorType);
     void didTakeScreenshot(uint64_t callbackID, const ShareableBitmap::Handle&, const String& errorType);
+    void didGetCookiesForFrame(uint64_t callbackID, Vector<WebCore::Cookie>, const String& errorType);
+    void didDeleteCookie(uint64_t callbackID, const String& errorType);
 
     // Platform-specific helper methods.
     void platformSimulateMouseInteraction(WebPageProxy&, const WebCore::IntPoint& viewPosition, Inspector::Protocol::Automation::MouseInteraction, Inspector::Protocol::Automation::MouseButton, WebEvent::Modifiers);
@@ -185,6 +189,12 @@ private:
 
     uint64_t m_nextScreenshotCallbackID { 1 };
     HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::TakeScreenshotCallback>> m_screenshotCallbacks;
+
+    uint64_t m_nextGetCookiesCallbackID { 1 };
+    HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::GetAllCookiesCallback>> m_getCookieCallbacks;
+
+    uint64_t m_nextDeleteCookieCallbackID { 1 };
+    HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::DeleteSingleCookieCallback>> m_deleteCookieCallbacks;
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };

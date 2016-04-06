@@ -30,6 +30,7 @@
 #include "AutomationProtocolObjects.h"
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
+#include "WebCookieManagerProxy.h"
 #include "WebProcessPool.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
@@ -655,6 +656,118 @@ void WebAutomationSession::setUserInputForCurrentJavaScriptPrompt(Inspector::Err
         FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NoJavaScriptDialog);
 
     m_client->setUserInputForCurrentJavaScriptPromptOnPage(this, page, promptValue);
+}
+
+void WebAutomationSession::getAllCookies(ErrorString& errorString, const String& browsingContextHandle, Ref<GetAllCookiesCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    WebFrameProxy* mainFrame = page->mainFrame();
+    ASSERT(mainFrame);
+    if (!mainFrame)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    uint64_t callbackID = m_nextGetCookiesCallbackID++;
+    m_getCookieCallbacks.set(callbackID, WTFMove(callback));
+
+    page->process().send(Messages::WebAutomationSessionProxy::GetCookiesForFrame(mainFrame->frameID(), callbackID), 0);
+}
+
+static Ref<Inspector::Protocol::Automation::Cookie> buildObjectForCookie(const WebCore::Cookie& cookie)
+{
+    return Inspector::Protocol::Automation::Cookie::create()
+        .setName(cookie.name)
+        .setValue(cookie.value)
+        .setDomain(cookie.domain)
+        .setPath(cookie.path)
+        .setExpires(cookie.expires)
+        .setSize((cookie.name.length() + cookie.value.length()))
+        .setHttpOnly(cookie.httpOnly)
+        .setSecure(cookie.secure)
+        .setSession(cookie.session)
+        .release();
+}
+
+static Ref<Inspector::Protocol::Array<Inspector::Protocol::Automation::Cookie>> buildArrayForCookies(Vector<WebCore::Cookie>& cookiesList)
+{
+    auto cookies = Inspector::Protocol::Array<Inspector::Protocol::Automation::Cookie>::create();
+
+    for (const auto& cookie : cookiesList)
+        cookies->addItem(buildObjectForCookie(cookie));
+
+    return cookies;
+}
+
+void WebAutomationSession::didGetCookiesForFrame(uint64_t callbackID, Vector<WebCore::Cookie> cookies, const String& errorType)
+{
+    auto callback = m_getCookieCallbacks.take(callbackID);
+    if (!callback)
+        return;
+
+    if (!errorType.isEmpty()) {
+        callback->sendFailure(errorType);
+        return;
+    }
+
+    callback->sendSuccess(buildArrayForCookies(cookies));
+}
+
+void WebAutomationSession::deleteSingleCookie(ErrorString& errorString, const String& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    WebFrameProxy* mainFrame = page->mainFrame();
+    ASSERT(mainFrame);
+    if (!mainFrame)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    uint64_t callbackID = m_nextDeleteCookieCallbackID++;
+    m_deleteCookieCallbacks.set(callbackID, WTFMove(callback));
+
+    page->process().send(Messages::WebAutomationSessionProxy::DeleteCookie(mainFrame->frameID(), cookieName, callbackID), 0);
+}
+
+void WebAutomationSession::didDeleteCookie(uint64_t callbackID, const String& errorType)
+{
+    auto callback = m_deleteCookieCallbacks.take(callbackID);
+    if (!callback)
+        return;
+
+    if (!errorType.isEmpty()) {
+        callback->sendFailure(errorType);
+        return;
+    }
+
+    callback->sendSuccess();
+}
+
+void WebAutomationSession::addSingleCookie(ErrorString& errorString, const String& browsingContextHandle, const Inspector::InspectorObject& cookie, Ref<AddSingleCookieCallback>&& callback)
+{
+    // FIXME: Implementing this command requires a new CookieJar API <https://webkit.org/b/156091>
+    UNUSED_PARAM(browsingContextHandle);
+    // FIXME: if the incoming cookie's domain is the string '(inherit)',
+    // then it should be inherited from the main frame's domain.
+    UNUSED_PARAM(cookie);
+    UNUSED_PARAM(callback);
+
+    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+}
+
+void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const String& browsingContextHandle, Ref<DeleteAllCookiesCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
+
+    WebCore::URL activeURL = WebCore::URL(WebCore::URL(), page->pageLoadState().activeURL());
+    ASSERT(activeURL.isValid());
+
+    WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
+    cookieManager->deleteCookiesForHostname(activeURL.host());
 }
 
 #if USE(APPKIT)

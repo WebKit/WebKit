@@ -39,6 +39,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefPrivate.h>
 #include <JavaScriptCore/OpaqueJSString.h>
+#include <WebCore/CookieJar.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameTree.h>
@@ -490,6 +491,40 @@ void WebAutomationSessionProxy::takeScreenshot(uint64_t pageID, uint64_t callbac
         image->bitmap()->createHandle(handle, SharedMemory::Protection::ReadOnly);
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, String()), 0);    
+}
+
+void WebAutomationSessionProxy::getCookiesForFrame(uint64_t frameID, uint64_t callbackID)
+{
+    String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame || !frame->coreFrame() || !frame->coreFrame()->document()) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidGetCookiesForFrame(callbackID, Vector<WebCore::Cookie>(), frameNotFoundErrorType), 0);
+        return;
+    }
+
+    // This returns the same list of cookies as when evaluating `document.cookies` in JavaScript.
+    WebCore::Document* document = frame->coreFrame()->document();
+    Vector<WebCore::Cookie> foundCookies;
+    WebCore::getRawCookies(document, document->cookieURL(), foundCookies);
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidGetCookiesForFrame(callbackID, foundCookies, String()), 0);
+}
+
+void WebAutomationSessionProxy::deleteCookie(uint64_t frameID, String cookieName, uint64_t callbackID)
+{
+    String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame || !frame->coreFrame() || !frame->coreFrame()->document()) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidDeleteCookie(callbackID, frameNotFoundErrorType), 0);
+        return;
+    }
+
+    WebCore::Document* document = frame->coreFrame()->document();
+    WebCore::deleteCookie(document, document->cookieURL(), cookieName);
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidDeleteCookie(callbackID, String()), 0);
 }
 
 } // namespace WebKit

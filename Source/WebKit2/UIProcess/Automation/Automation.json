@@ -187,6 +187,21 @@
                 { "name": "key", "$ref": "VirtualKey", "optional": true, "description": "A virtual key to be used to perform the specified interaction." },
                 { "name": "text", "type": "string", "optional": true, "description": "A unicode string to be delivered to the page. The sequence of key events is determined by splitting the string at grapheme cluster boundaries." }
             ]
+        },
+        {
+            "id": "Cookie",
+            "type": "object",
+            "properties": [
+                { "name": "name", "type": "string", "description": "Cookie name." },
+                { "name": "value", "type": "string", "description": "Cookie value." },
+                { "name": "domain", "type": "string", "description": "Cookie domain. If empty, the domain is inherited from the relevant browsing context." },
+                { "name": "path", "type": "string", "description": "Cookie path." },
+                { "name": "expires", "type": "number", "description": "Cookie expires." },
+                { "name": "size", "type": "integer", "description": "Cookie size." },
+                { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
+                { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
+                { "name": "session", "type": "boolean", "description": "True in case of session cookie." }
+            ]
         }
     ],
     "commands": [
@@ -410,6 +425,43 @@
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
                 { "name": "userInput", "type": "string", "description": "The text to enter in the prompt." }
             ]
+        },
+        {
+            "name": "getAllCookies",
+            "description": "Returns all cookies visible to the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ],
+            "returns": [
+                { "name": "cookies", "type": "array", "items": { "$ref": "Cookie" }, "description": "Array of cookie objects." }
+            ],
+            "async": true
+        },
+        {
+            "name": "deleteSingleCookie",
+            "description": "Deletes a cookie with the given name if visible to the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." }
+            ],
+            "async": true
+        },
+        {
+            "name": "addSingleCookie",
+            "description": "Add a cookie to cookie storage for the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "cookie", "$ref": "Cookie", "description": "The cookie that should be added to storage." }
+            ],
+            "async": true
+        },
+        {
+            "name": "deleteAllCookies",
+            "description": "Delete all cookies that are visible to the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ],
+            "async": true
         }
     ]
 }
