@@ -1,3 +1,28 @@
+2016-04-06  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        REGRESSION(r195463): [GTK] accessibility/roles-computedRoleString.html and accessibility/roles-exposed.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=153696
+
+        Reviewed by Chris Fleizach.
+
+        The failures were due to always mapping style format groups to GroupRole, even for
+        RenderInline objects. The fix is to expose inline style format groups as InlineRole,
+        add handling of GroupRole style groups to the ATK code, and InlineRole style groups
+        to the Mac code.
+
+        No new tests because we have sufficient coverage. Updated roles-computedRoleString.html
+        to reflect new exposure.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+
 2016-04-06  Jer Noble  <jer.noble@apple.com>
 
         CRASH in -[WebCoreNSURLSession taskCompleted:]

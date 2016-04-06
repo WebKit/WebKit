@@ -2662,9 +2662,6 @@ webkit.org/b/153602 fast/table/003.html [ Failure ]
 webkit.org/b/153602 fast/text/emoji.html [ Failure ]
 webkit.org/b/153602 tables/mozilla_expected_failures/bugs/bug89315.html [ Failure ]
 
-webkit.org/b/153696 accessibility/roles-computedRoleString.html [ Failure ]
-webkit.org/b/153696 accessibility/roles-exposed.html [ Failure ]
-
 webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-archive-codebase.html [ Failure ]
 webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-archive.html [ Failure ]
 webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase.html [ Failure ]

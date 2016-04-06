@@ -42,7 +42,7 @@ PASS: input[type='text'] -> .
 PASS: input[type='time'] -> . 
 PASS: input[type='url'] -> . 
 PASS: input[type='week'] -> . 
-PASS: ins -> group. 
+PASS: ins -> . 
 PASS: math -> math. 
 PASS: meter -> progressbar. 
 PASS: nav -> navigation. 
@@ -51,7 +51,7 @@ PASS: li -> listitem.
 PASS: p -> . 
 PASS: pre -> group. 
 PASS: progress -> progressbar. 
-PASS: samp -> group. 
+PASS: samp -> . 
 PASS: section -> region. 
 PASS: select:not([multiple]) -> . 
 PASS: select[multiple] -> listbox. 
@@ -76,7 +76,7 @@ PASS: td[role="gridcell"] -> gridcell.
 PASS: textarea -> textbox. 
 PASS: ul -> list. 
 PASS: li -> listitem. 
-PASS: var -> group. 
+PASS: var -> . 
 PASS: div[role="command"] -> . 
 PASS: div[role="composite"] -> . 
 PASS: div[role="input"] -> . 

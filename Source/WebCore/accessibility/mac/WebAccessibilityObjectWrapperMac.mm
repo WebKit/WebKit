@@ -2207,6 +2207,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { SVGTextPathRole, NSAccessibilityGroupRole },
         { SVGTextRole, NSAccessibilityGroupRole },
         { SVGTSpanRole, NSAccessibilityGroupRole },
+        { InlineRole, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -2394,7 +2395,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isSwitch())
         return NSAccessibilitySwitchSubrole;
 
-    if (role == GroupRole) {
+    if (m_object->isStyleFormatGroup()) {
         if (Node* node = m_object->node()) {
             if (node->hasTagName(kbdTag))
                 return @"AXKeyboardInputStyleGroup";
