@@ -41,20 +41,20 @@ class JSObject;
 // that if a property holding a GetterSetter reference is constant-inferred and
 // that constant is observed to have a non-null setter (or getter) then we can
 // constant fold that setter (or getter).
-class GetterSetter final : public JSCell {
+class GetterSetter final : public JSNonFinalObject {
     friend class JIT;
-
+    typedef JSNonFinalObject Base;
 private:
     GetterSetter(VM& vm, JSGlobalObject* globalObject)
-        : JSCell(vm, vm.getterSetterStructure.get())
+        : Base(vm, vm.getterSetterStructure.get())
     {
         m_getter.set(vm, this, globalObject->nullGetterFunction());
         m_setter.set(vm, this, globalObject->nullSetterFunction());
     }
 
 public:
-    typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | StructureIsImmortal;
 
     static GetterSetter* create(VM& vm, JSGlobalObject* globalObject)
     {
@@ -128,7 +128,12 @@ public:
         return OBJECT_OFFSETOF(GetterSetter, m_setter);
     }
 
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
+
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool deleteProperty(JSCell*, ExecState*, PropertyName) { RELEASE_ASSERT_NOT_REACHED(); return false; }
 
 private:
     WriteBarrier<JSObject> m_getter;

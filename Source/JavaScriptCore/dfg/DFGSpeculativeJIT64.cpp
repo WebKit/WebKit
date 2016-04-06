@@ -164,7 +164,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     }
     JITGetByIdGenerator gen(
         m_jit.codeBlock(), codeOrigin, callSite, usedRegisters, JSValueRegs(baseGPR),
-        JSValueRegs(resultGPR));
+        JSValueRegs(resultGPR), AccessType::Get);
     gen.generateFastPath(m_jit);
     
     JITCompiler::JumpList slowCases;

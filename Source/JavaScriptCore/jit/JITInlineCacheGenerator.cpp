@@ -104,9 +104,9 @@ void JITByIdGenerator::generateFastPathChecks(MacroAssembler& jit)
 
 JITGetByIdGenerator::JITGetByIdGenerator(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
-    JSValueRegs base, JSValueRegs value)
+    JSValueRegs base, JSValueRegs value, AccessType accessType)
     : JITByIdGenerator(
-        codeBlock, codeOrigin, callSite, AccessType::Get, usedRegisters, base, value)
+        codeBlock, codeOrigin, callSite, accessType, usedRegisters, base, value)
 {
     RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
 }

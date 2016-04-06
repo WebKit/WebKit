@@ -143,6 +143,7 @@ void computeUsesForBytecodeOffset(
     case op_resolve_scope:
     case op_get_from_scope:
     case op_to_primitive:
+    case op_try_get_by_id:
     case op_get_by_id:
     case op_get_array_length:
     case op_typeof:
@@ -367,6 +368,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_tail_call:
     case op_call_eval:
     case op_construct:
+    case op_try_get_by_id:
     case op_get_by_id:
     case op_get_array_length:
     case op_overrides_has_instance:
