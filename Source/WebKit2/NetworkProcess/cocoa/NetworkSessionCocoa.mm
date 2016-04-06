@@ -31,6 +31,7 @@
 #import "CustomProtocolManager.h"
 #import "DataReference.h"
 #import "Download.h"
+#import "NetworkCache.h"
 #import "NetworkLoad.h"
 #import "NetworkProcess.h"
 #import "SessionTracker.h"
@@ -123,6 +124,16 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         ASSERT_NOT_REACHED();
         completionHandler(nil);
     }
+}
+
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask willCacheResponse:(NSCachedURLResponse *)proposedResponse completionHandler:(void (^)(NSCachedURLResponse * _Nullable cachedResponse))completionHandler
+{
+    // FIXME: remove if <rdar://problem/20001985> is ever resolved.
+    if ([proposedResponse.response respondsToSelector:@selector(allHeaderFields)]
+        && [[(id)proposedResponse.response allHeaderFields] objectForKey:@"Content-Range"])
+        completionHandler(nil);
+    else
+        completionHandler(proposedResponse);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
@@ -312,6 +323,9 @@ NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID, CustomPr
 
     NSURLSessionConfiguration *configuration = configurationForType(type);
 
+    if (NetworkCache::singleton().isEnabled())
+        configuration.URLCache = nil;
+    
     if (auto& data = globalSourceApplicationAuditTokenData())
         configuration._sourceApplicationAuditTokenData = (NSData *)data.get();
     
