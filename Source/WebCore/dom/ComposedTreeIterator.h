@@ -36,7 +36,8 @@ class HTMLSlotElement;
 class ComposedTreeIterator {
 public:
     ComposedTreeIterator();
-    ComposedTreeIterator(ContainerNode& root);
+    enum FirstChildTag { FirstChild };
+    ComposedTreeIterator(ContainerNode& root, FirstChildTag);
     ComposedTreeIterator(ContainerNode& root, Node& current);
 
     Node& operator*() { return current(); }
@@ -68,7 +69,7 @@ private:
 
     struct Context {
         Context();
-        explicit Context(ContainerNode& root);
+        Context(ContainerNode& root, FirstChildTag);
         Context(ContainerNode& root, Node& node);
 
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
@@ -156,7 +157,7 @@ public:
         : m_parent(parent)
     { }
 
-    ComposedTreeIterator begin() { return ComposedTreeIterator(m_parent); }
+    ComposedTreeIterator begin() { return ComposedTreeIterator(m_parent, ComposedTreeIterator::FirstChild); }
     ComposedTreeIterator end() { return { }; }
     ComposedTreeIterator at(const Node& child) { return ComposedTreeIterator(m_parent, const_cast<Node&>(child)); }
     
@@ -170,7 +171,7 @@ public:
     public:
         Iterator() = default;
         explicit Iterator(ContainerNode& root)
-            : ComposedTreeIterator(root)
+            : ComposedTreeIterator(root, ComposedTreeIterator::FirstChild)
         { }
         Iterator(ContainerNode& root, Node& current)
             : ComposedTreeIterator(root, current)

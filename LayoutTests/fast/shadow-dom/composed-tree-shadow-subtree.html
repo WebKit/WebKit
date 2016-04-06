@@ -6,11 +6,19 @@ if (window.testRunner)
 
 <template id=shadow1></template>
 <template id=shadow2><slot><div></div></slot></template>
+<template id=shadow3><!--comment--><slot><div></div></slot></template>
 
-<template test=1><div shadow=shadow1></div></template>
-<template test=2><div shadow=shadow1>text</div></template>
-<template test=3><div shadow=shadow2></div></template>
-<template test=4><div shadow=shadow2>text</div></template>
+<template test=1.1><div shadow=shadow1></div></template>
+<template test=1.2><div shadow=shadow1>text</div></template>
+<template test=1.3><div shadow=shadow1><!--comment-->text</div></template>
+
+<template test=2.1><div shadow=shadow2></div></template>
+<template test=2.2><div shadow=shadow2>text</div></template>
+<template test=2.3><div shadow=shadow2><!--comment-->text</div></template>
+
+<template test=3.1><div shadow=shadow3></div></template>
+<template test=3.2><div shadow=shadow3>text</div></template>
+<template test=3.3><div shadow=shadow3><!--comment-->text</div></template>
 
 <body>
 <pre id=console></pre>

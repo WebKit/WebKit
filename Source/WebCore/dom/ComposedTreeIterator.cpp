@@ -35,8 +35,8 @@ ComposedTreeIterator::Context::Context()
 {
 }
 
-ComposedTreeIterator::Context::Context(ContainerNode& root)
-    : iterator(root)
+ComposedTreeIterator::Context::Context(ContainerNode& root, FirstChildTag)
+    : iterator(root, ElementAndTextDescendantIterator::FirstChild)
 {
 }
 
@@ -54,7 +54,7 @@ ComposedTreeIterator::Context::Context(ContainerNode& root, Node& node, SlottedT
 }
 #endif
 
-ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root)
+ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root, FirstChildTag)
 {
     ASSERT(!is<ShadowRoot>(root));
 
@@ -68,12 +68,12 @@ ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root)
     }
 #endif
     if (auto* shadowRoot = root.shadowRoot()) {
-        auto* firstChild = shadowRoot->firstChild();
+        ElementAndTextDescendantIterator firstChild(*shadowRoot, ElementAndTextDescendantIterator::FirstChild);
         initializeContextStack(root, firstChild ? *firstChild : root);
         return;
     }
 
-    m_contextStack.uncheckedAppend(Context(root));
+    m_contextStack.uncheckedAppend(Context(root, FirstChild));
 }
 
 ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root, Node& current)
@@ -148,7 +148,7 @@ void ComposedTreeIterator::dropAssertions()
 
 void ComposedTreeIterator::traverseShadowRoot(ShadowRoot& shadowRoot)
 {
-    Context shadowContext(shadowRoot);
+    Context shadowContext(shadowRoot, FirstChild);
     if (!shadowContext.iterator) {
         // Empty shadow root.
         traverseNextSkippingChildren();

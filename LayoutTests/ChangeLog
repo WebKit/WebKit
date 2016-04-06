@@ -1,3 +1,13 @@
+2016-04-06  Antti Koivisto  <antti@apple.com>
+
+        ComposedTreeIterator may crash when first child of shadow root is a comment node
+        https://bugs.webkit.org/show_bug.cgi?id=156281
+
+        Reviewed by Andreas Kling.
+
+        * fast/shadow-dom/composed-tree-shadow-subtree-expected.txt:
+        * fast/shadow-dom/composed-tree-shadow-subtree.html:
+
 2016-04-05  Chris Dumez  <cdumez@apple.com>
 
         MessageEvent.source window is incorrect once window has been reified
