@@ -1,0 +1,214 @@
+Testing WebInspector.ResourceQueryController.
+
+
+== Running test suite: ResourceQueryController
+-- Running test case: FindSpecialCharacterIndices
+PASS: Result should match expected special indices.
+PASS: Result should match expected special indices.
+PASS: Result should match expected special indices.
+PASS: Result should match expected special indices.
+PASS: Result should match expected special indices.
+PASS: Result should match expected special indices.
+PASS: Result should match expected special indices.
+PASS: Result should match expected special indices.
+PASS: Result should match expected special indices.
+
+-- Running test case: ExecuteQueryAgainstNoResources
+PASS: Should return no results.
+
+-- Running test case: ExecuteWhitespaceQueryOrEmptyQuery
+PASS: Whitespace query should return no results.
+PASS: Whitespace query should return no results.
+PASS: Whitespace query should return no results.
+PASS: Whitespace query should return no results.
+PASS: Empty query should return no results.
+
+-- Running test case: ExecuteQueryContainingWhitespace
+PASS: Should match one result.
+PASS: Should match one result.
+PASS: Should match one result.
+PASS: Should match one result.
+PASS: Should match one result.
+
+-- Running test case: ExecuteQueryMatchNone
+PASS: Query "abcde" shouldn't match "abcd".
+PASS: Query "abcd-" shouldn't match "abcde".
+PASS: Query "abcde" shouldn't match "abced".
+
+-- Running test case: ExecuteQueryMatchesExpectedCharacters
+PASS: Query "abcd" should match "abcd" in "abcde".
+PASS: Query " abcd" should match "abcd" in "abcde".
+PASS: Query "abcd " should match "abcd" in "abcde".
+PASS: Query "a b c d" should match "abcd" in "abcde".
+PASS: Query "a-bcde" should match "a    - bcde" in "abcde-abcde".
+PASS: Query "abcde" should match "A B C D E" in "AaBbCcDdEe".
+PASS: Query "abcde" should match "A   B  C De" in "AbcdBcdCdDe".
+PASS: Query "abcdex" should match "A B C d ex" in "AxBxCxdxexDxyxEF".
+PASS: Query "bc" should match " bC" in "abCd".
+
+-- Running test case: ExecuteQueryShouldIgnoreCase
+All case permutations of query "abcd" should match "abcd" in "abcde".
+PASS: Permutation "abcd".
+PASS: Permutation "Abcd".
+PASS: Permutation "aBcd".
+PASS: Permutation "ABcd".
+PASS: Permutation "abCd".
+PASS: Permutation "AbCd".
+PASS: Permutation "aBCd".
+PASS: Permutation "ABCd".
+PASS: Permutation "abcD".
+PASS: Permutation "AbcD".
+PASS: Permutation "aBcD".
+PASS: Permutation "ABcD".
+PASS: Permutation "abCD".
+PASS: Permutation "AbCD".
+PASS: Permutation "aBCD".
+PASS: Permutation "ABCD".
+All case permutations of query "abcde" should match "A B C D E" in "AaBbCcDdEe".
+PASS: Permutation "abcde".
+PASS: Permutation "Abcde".
+PASS: Permutation "aBcde".
+PASS: Permutation "ABcde".
+PASS: Permutation "abCde".
+PASS: Permutation "AbCde".
+PASS: Permutation "aBCde".
+PASS: Permutation "ABCde".
+PASS: Permutation "abcDe".
+PASS: Permutation "AbcDe".
+PASS: Permutation "aBcDe".
+PASS: Permutation "ABcDe".
+PASS: Permutation "abCDe".
+PASS: Permutation "AbCDe".
+PASS: Permutation "aBCDe".
+PASS: Permutation "ABCDe".
+PASS: Permutation "abcdE".
+PASS: Permutation "AbcdE".
+PASS: Permutation "aBcdE".
+PASS: Permutation "ABcdE".
+PASS: Permutation "abCdE".
+PASS: Permutation "AbCdE".
+PASS: Permutation "aBCdE".
+PASS: Permutation "ABCdE".
+PASS: Permutation "abcDE".
+PASS: Permutation "AbcDE".
+PASS: Permutation "aBcDE".
+PASS: Permutation "ABcDE".
+PASS: Permutation "abCDE".
+PASS: Permutation "AbCDE".
+PASS: Permutation "aBCDE".
+PASS: Permutation "ABCDE".
+All case permutations of query "abcde" should match "A   B  C De" in "AbcdBcdCdDe".
+PASS: Permutation "abcde".
+PASS: Permutation "Abcde".
+PASS: Permutation "aBcde".
+PASS: Permutation "ABcde".
+PASS: Permutation "abCde".
+PASS: Permutation "AbCde".
+PASS: Permutation "aBCde".
+PASS: Permutation "ABCde".
+PASS: Permutation "abcDe".
+PASS: Permutation "AbcDe".
+PASS: Permutation "aBcDe".
+PASS: Permutation "ABcDe".
+PASS: Permutation "abCDe".
+PASS: Permutation "AbCDe".
+PASS: Permutation "aBCDe".
+PASS: Permutation "ABCDe".
+PASS: Permutation "abcdE".
+PASS: Permutation "AbcdE".
+PASS: Permutation "aBcdE".
+PASS: Permutation "ABcdE".
+PASS: Permutation "abCdE".
+PASS: Permutation "AbCdE".
+PASS: Permutation "aBCdE".
+PASS: Permutation "ABCdE".
+PASS: Permutation "abcDE".
+PASS: Permutation "AbcDE".
+PASS: Permutation "aBcDE".
+PASS: Permutation "ABcDE".
+PASS: Permutation "abCDE".
+PASS: Permutation "AbCDE".
+PASS: Permutation "aBCDE".
+PASS: Permutation "ABCDE".
+All case permutations of query "abcdex" should match "A B C d ex" in "AxBxCxdxexDxyxEF".
+PASS: Permutation "abcdex".
+PASS: Permutation "Abcdex".
+PASS: Permutation "aBcdex".
+PASS: Permutation "ABcdex".
+PASS: Permutation "abCdex".
+PASS: Permutation "AbCdex".
+PASS: Permutation "aBCdex".
+PASS: Permutation "ABCdex".
+PASS: Permutation "abcDex".
+PASS: Permutation "AbcDex".
+PASS: Permutation "aBcDex".
+PASS: Permutation "ABcDex".
+PASS: Permutation "abCDex".
+PASS: Permutation "AbCDex".
+PASS: Permutation "aBCDex".
+PASS: Permutation "ABCDex".
+PASS: Permutation "abcdEx".
+PASS: Permutation "AbcdEx".
+PASS: Permutation "aBcdEx".
+PASS: Permutation "ABcdEx".
+PASS: Permutation "abCdEx".
+PASS: Permutation "AbCdEx".
+PASS: Permutation "aBCdEx".
+PASS: Permutation "ABCdEx".
+PASS: Permutation "abcDEx".
+PASS: Permutation "AbcDEx".
+PASS: Permutation "aBcDEx".
+PASS: Permutation "ABcDEx".
+PASS: Permutation "abCDEx".
+PASS: Permutation "AbCDEx".
+PASS: Permutation "aBCDEx".
+PASS: Permutation "ABCDEx".
+PASS: Permutation "abcdeX".
+PASS: Permutation "AbcdeX".
+PASS: Permutation "aBcdeX".
+PASS: Permutation "ABcdeX".
+PASS: Permutation "abCdeX".
+PASS: Permutation "AbCdeX".
+PASS: Permutation "aBCdeX".
+PASS: Permutation "ABCdeX".
+PASS: Permutation "abcDeX".
+PASS: Permutation "AbcDeX".
+PASS: Permutation "aBcDeX".
+PASS: Permutation "ABcDeX".
+PASS: Permutation "abCDeX".
+PASS: Permutation "AbCDeX".
+PASS: Permutation "aBCDeX".
+PASS: Permutation "ABCDeX".
+PASS: Permutation "abcdEX".
+PASS: Permutation "AbcdEX".
+PASS: Permutation "aBcdEX".
+PASS: Permutation "ABcdEX".
+PASS: Permutation "abCdEX".
+PASS: Permutation "AbCdEX".
+PASS: Permutation "aBCdEX".
+PASS: Permutation "ABCdEX".
+PASS: Permutation "abcDEX".
+PASS: Permutation "AbcDEX".
+PASS: Permutation "aBcDEX".
+PASS: Permutation "ABcDEX".
+PASS: Permutation "abCDEX".
+PASS: Permutation "AbCDEX".
+PASS: Permutation "aBCDEX".
+PASS: Permutation "ABCDEX".
+All case permutations of query "bc" should match " bC" in "abCd".
+PASS: Permutation "bc".
+PASS: Permutation "Bc".
+PASS: Permutation "bC".
+PASS: Permutation "BC".
+
+-- Running test case: ExecuteQueryGeneralRankings
+PASS: Results should be ranked by descending relevancy.
+
+-- Running test case: ExecuteQueryPositionRankings
+PASS: Results should be ranked by descending relevancy.
+
+-- Running test case: GetMatchingTextRanges
+PASS: Result TextRanges should match the expected ranges.
+PASS: Result TextRanges should match the expected ranges.
+PASS: Result TextRanges should match the expected ranges.
+

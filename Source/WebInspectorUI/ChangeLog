@@ -1,3 +1,132 @@
+2016-04-06  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Improve filtering in OpenResourceDialog
+        https://bugs.webkit.org/show_bug.cgi?id=155324
+        <rdar://problem/25094504>
+
+        Reviewed by Joseph Pecoraro and Timothy Hatcher.
+
+        * UserInterface/Base/Utilities.js:
+        (value):
+        Added String methods isLowerCase, isUpperCase, removeWhitespace.
+
+        * UserInterface/Controllers/ResourceQueryController.js: Added.
+        (WebInspector.ResourceQueryController):
+        (WebInspector.ResourceQueryController.prototype.addResource):
+        (WebInspector.ResourceQueryController.prototype.removeResource):
+        Add and remove the resources to be queried.
+
+        (WebInspector.ResourceQueryController.prototype.reset):
+        Reset controller state. Current just clears resources.
+
+        (WebInspector.ResourceQueryController.prototype.executeQuery):
+        Executes a query against the list of resources and returns a list of
+        QueryResult objects, with at most one result per resource, ordered by
+        descending rank.
+
+        The query string is stripped of whitespace characters and lowercased
+        before use. Prior to running the query, resources undergo a one-time
+        pre-processing step to locate special characters.
+
+        (WebInspector.ResourceQueryController.prototype._findQueryMatches.pushMatch):
+        (WebInspector.ResourceQueryController.prototype._findQueryMatches.matchNextSpecialCharacter):
+        (WebInspector.ResourceQueryController.prototype._findQueryMatches.backtrack):
+        (WebInspector.ResourceQueryController.prototype._findQueryMatches):
+        Returns a list of query matches for a single resource, along with metadata
+        which is used to rank the matches. The algorithm attempts to match the
+        entire query, first comparing each query character against "special" characters
+        in the resource (commonly used filename separators, the first character,
+        and camel-case word boundaries).
+
+        If there are remaining query characters after exhausting special characters,
+        regular characters are matched starting from the last matched special
+        character. Failing that, the algorithm attempts to find a match by backtracking.
+        To backtrack, the last match is discarded and the query position decremented.
+        If a special match is now the last match, matching starts again from the
+        next character in the filename after the match. If a normal match is now
+        the last match, keep discarding until a special match is found or no matches
+        remain. The query fails if no matches remain. For example, consider:
+
+           Query: "abcd"
+           Filename: "AxBcdCx"
+
+        The capital A, B, and C are all special characters, and are successfully
+        matched with the first three query characters. Having exhausted the special
+        characters the "d" at the end of the query is compared with the "x" at
+        the end of the filename, and fails to match. Backtracking then kicks in.
+        The last match, "C", is discarded and the search position in the query
+        decremented. The search resumes after the next to last match, "B", and now
+        matches the non-special characters "cd", yielding the following: "A Bcd  ".
+
+        (WebInspector.ResourceQueryController.prototype._findSpecialCharacterIndices):
+        Pre-processing step for resources. Locates the positions of special
+        characters in the resource filename. Special characters are defined as:
+
+           1. The first character
+           2. Common filename separators, and the character immediately following.
+           3. A capital letter that follows a lowercase character.
+
+        * UserInterface/Models/ResourceQueryMatch.js: Added.
+        Helper class used internally by the controller and QueryResult classes.
+        (WebInspector.ResourceQueryMatch):
+        (WebInspector.ResourceQueryMatch.prototype.get type):
+        (WebInspector.ResourceQueryMatch.prototype.get index):
+        (WebInspector.ResourceQueryMatch.prototype.get queryIndex):
+
+        * UserInterface/Models/ResourceQueryResult.js: Added.
+        Holds a resource that matched the executed query.
+        (WebInspector.ResourceQueryResult):
+        (WebInspector.ResourceQueryResult.prototype.get resource):
+        (WebInspector.ResourceQueryResult.prototype.get rank):
+        Ranking relative to other results returned by the query. Used by
+        the ResourceQueryController to sort results.
+
+        (WebInspector.ResourceQueryResult.prototype.get matchingTextRanges):
+        Get TextRanges for matching substrings in the resource display name.
+
+        (WebInspector.ResourceQueryResult.prototype._calculateRank):
+        Calculate the rank of the result. Matches are scored based on the type
+        of match (Special vs. Normal), the location of the match within the filename
+        (matches closer to the beginning are scored higher), and whether the match
+        is adjacent to the previous match.
+
+        Values assigned to each ranking criteria are somewhat arbitrary, and may
+        be fine-tuned over time to produce better results.
+
+        (WebInspector.ResourceQueryResult.prototype._createMatchingTextRanges):
+        (WebInspector.ResourceQueryResult.prototype.__test_createMatchesMask):
+        Test API for visualizing matches. For a result returned from the query
+        "abce", run against a filename "abcde", the mask is "a c e".
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        New files.
+
+        * UserInterface/Views/Dialog.js:
+        (WebInspector.Dialog.prototype.dismiss):
+        (WebInspector.Dialog.prototype.didDismissDialog):
+        Add hook for subclasses to perform actions after on dialog dismissal.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WebInspector.OpenResourceDialog):
+        (WebInspector.OpenResourceDialog.prototype._populateResourceTreeOutline.createHighlightedTitleFragment):
+        (WebInspector.OpenResourceDialog.prototype._populateResourceTreeOutline):
+        Add tree elements for each QueryResult returned by the last query, creating
+        titles with contiguous matching query characters wrapped in highlight spans.
+
+        (WebInspector.OpenResourceDialog.prototype.didDismissDialog):
+        Clear resources from the ResourceQueryController.
+        (WebInspector.OpenResourceDialog.prototype.didPresentDialog):
+        Add resources to the ResourceQueryController.
+        (WebInspector.OpenResourceDialog.prototype._updateFilter):
+        Execute the filter text as a resource query.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline.large .item .titles): Deleted.
+        Line height too small, hid the bottom border of highlighted matches in
+        tree element title spans. Removing the style had no negative visual impact
+        on the Quick Open or Timelines tree outlines (the only "large" trees).
+
 2016-04-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Do not create CodeMirror color/gradient markers in JavaScript resources

@@ -82,9 +82,16 @@ WebInspector.Dialog = class Dialog extends WebInspector.View
             this._delegate.dialogWasDismissed(this);
 
         this._dismissing = false;
+
+        this.didDismissDialog();
     }
 
     // Protected
+
+    didDismissDialog()
+    {
+        // Implemented by subclasses.
+    }
 
     didPresetDialog()
     {

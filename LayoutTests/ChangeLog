@@ -1,3 +1,16 @@
+2016-04-06  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Improve filtering in OpenResourceDialog
+        https://bugs.webkit.org/show_bug.cgi?id=155324
+        <rdar://problem/25094504>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add test coverage for ResourceQueryController.
+
+        * inspector/unit-tests/resource-query-controller-expected.txt: Added.
+        * inspector/unit-tests/resource-query-controller.html: Added.
+
 2016-04-06  Saam barati  <sbarati@apple.com>
 
         jsc-layout-tests.yaml/js/script-tests/regress-141098.js failing on Yosemite Debug after r198989

@@ -1,0 +1,328 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("ResourceQueryController");
+
+    suite.addTestCase({
+        name: "FindSpecialCharacterIndices",
+        description: "Should correctly find special filename characters.",
+        test: function() {
+            let matcher = new WebInspector.ResourceQueryController;
+            let tests = [
+                {
+                    filename: "Abcd",
+                    expected: "^"
+                },
+                {
+                    filename: "ABCDE",
+                    expected: "^"
+                },
+                {
+                    filename: "abcdef",
+                    expected: "^",
+                },
+                {
+                    filename: "abc-def",
+                    expected: "^  ^^",
+                },
+                {
+                    filename: "abc---def",
+                    expected: "^  ^^^^",
+                },
+                {
+                    filename: "a-bc_de.f",
+                    expected: "^^^ ^^ ^^",
+                },
+                {
+                    filename: "AxBxCxDxExFx",
+                    expected: "^ ^ ^ ^ ^ ^",
+                },
+                {
+                    filename: "ab-c_d.ef",
+                    expected: "^ ^^^^^^",
+                },
+                {
+                    filename: "AxBxCxdxexDxyxEF",
+                    expected: "^ ^ ^     ^   ^",
+                },
+            ];
+
+            function createSpecialMask(filename, specialIndices) {
+                let mask = " ".repeat(filename.length);
+                specialIndices.forEach((index) => {
+                    mask = mask.substr(0, index) + "^" + mask.substr(index + 1);
+                });
+                return mask.trim();
+            }
+
+            for (let {filename, expected} of tests) {
+                let actual = createSpecialMask(filename, matcher._findSpecialCharacterIndices(filename));
+                InspectorTest.expectThat(actual === expected, "Result should match expected special indices.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryAgainstNoResources",
+        description: "Should return no results if no resources were added to the controller.",
+        test: function() {
+            let matcher = new WebInspector.ResourceQueryController;
+            let results = matcher.executeQuery("abcde");
+            InspectorTest.expectThat(!results.length, "Should return no results.")
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteWhitespaceQueryOrEmptyQuery",
+        description: "Empty queries and queries containing only whitespace should return no results.",
+        test: function() {
+            const whitespaceCharacters = " \t\r\n";
+            let matcher = new WebInspector.ResourceQueryController;
+            matcher.addResource(new WebInspector.Resource("abcde"));
+
+            for (let query of whitespaceCharacters) {
+                let results = matcher.executeQuery(query);
+                InspectorTest.expectThat(!results.length, "Whitespace query should return no results.");
+            }
+
+            let results = matcher.executeQuery("");
+            InspectorTest.expectThat(!results.length, "Empty query should return no results.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryContainingWhitespace",
+        description: "Whitespace within a query should be ignored.",
+        test: function() {
+            let matcher = new WebInspector.ResourceQueryController;
+            matcher.addResource(new WebInspector.Resource("abcde"));
+
+            for (let query of [" abcde", "abcde ", " abcde ", "a b c d e", "a  b  c  d  e"]) {
+                let results = matcher.executeQuery(query);
+                InspectorTest.expectThat(results.length === 1, "Should match one result.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryMatchNone",
+        description: "Should not find a match.",
+        test: function() {
+            let matcher = new WebInspector.ResourceQueryController;
+            let tests = [
+                {query: "abcde", filename: "abcd"},
+                {query: "abcd-", filename: "abcde"},
+                {query: "abcde", filename: "abced"},
+            ];
+
+            for (let {query, filename} of tests) {
+                matcher.reset();
+                matcher.addResource(new WebInspector.Resource(filename));
+                let results = matcher.executeQuery(query);
+                InspectorTest.expectThat(!results.length, `Query "${query}" shouldn't match "${filename}".`);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryMatchesExpectedCharacters",
+        description: "Should match the expected query characters.",
+        test: function() {
+            let matcher = new WebInspector.ResourceQueryController;
+            let tests = [
+                {
+                    query: "abcd",
+                    filename: "abcde",
+                    expected: "abcd"
+                },
+                {
+                    query: " abcd",
+                    filename: "abcde",
+                    expected: "abcd"
+                },
+                {
+                    query: "abcd ",
+                    filename: "abcde",
+                    expected: "abcd"
+                },
+                {
+                    query: "a b c d",
+                    filename: "abcde",
+                    expected: "abcd"
+                },
+                {
+                    query: "a-bcde",
+                    filename: "abcde-abcde",
+                    expected: "a    - bcde"
+                },
+                {
+                    query: "abcde",
+                    filename: "AaBbCcDdEe",
+                    expected: "A B C D E"
+                },
+                {
+                    query: "abcde",
+                    filename: "AbcdBcdCdDe",
+                    expected: "A   B  C De"
+                },
+                {
+                    query: "abcdex",
+                    filename: "AxBxCxdxexDxyxEF",
+                    expected: "A B C d ex"
+                },
+                {
+                    query: "bc",
+                    filename: "abCd",
+                    expected: " bC"
+                },
+            ];
+
+            for (let {query, filename, expected} of tests) {
+                matcher.reset();
+                matcher.addResource(new WebInspector.Resource(filename));
+
+                let results = matcher.executeQuery(query);
+                InspectorTest.assert(results.length === 1, "Should return exactly one match.");
+                let actual = results[0].__test_createMatchesMask();
+                InspectorTest.expectThat(actual === expected, `Query "${query}" should match "${expected}" in "${filename}".`);
+            }
+        }
+    });
+
+    // Generator for creating a sequence of case permutations for a string.
+    // Example: "xx" => ["xx", "Xx", "xX", "XX"]
+    function *casePermutations(string) {
+        let permutationCount = Math.pow(2, string.length);
+        InspectorTest.assert(permutationCount !== Infinity, "String length exceeds permutations limit.");
+        if (permutationCount === Infinity)
+            return;
+
+        let index = 0;
+        while (index < permutationCount) {
+            let result = "";
+            for (let i = 0; i < string.length; ++i)
+                result += (index & (1 << i)) ? string[i].toUpperCase() : string[i].toLowerCase();
+
+            index++;
+            yield result;
+        }
+
+        return;
+    }
+
+    suite.addTestCase({
+        name: "ExecuteQueryShouldIgnoreCase",
+        description: "Queries that differ only in case should return identical results.",
+        test: function() {
+            let matcher = new WebInspector.ResourceQueryController;
+            let tests = [
+                {
+                    query: "abcd",
+                    filename: "abcde",
+                    expected: "abcd"
+                },
+                {
+                    query: "abcde",
+                    filename: "AaBbCcDdEe",
+                    expected: "A B C D E"
+                },
+                {
+                    query: "abcde",
+                    filename: "AbcdBcdCdDe",
+                    expected: "A   B  C De"
+                },
+                {
+                    query: "abcdex",
+                    filename: "AxBxCxdxexDxyxEF",
+                    expected: "A B C d ex"
+                },
+                {
+                    query: "bc",
+                    filename: "abCd",
+                    expected: " bC"
+                },
+            ];
+
+            for (let {query, filename, expected} of tests) {
+                InspectorTest.log(`All case permutations of query "${query}" should match "${expected}" in "${filename}".`);
+
+                matcher.reset();
+                matcher.addResource(new WebInspector.Resource(filename));
+
+                for (let queryPermutation of casePermutations(query)) {
+                    let results = matcher.executeQuery(queryPermutation);
+                    let actual = results.length === 1 ? results[0].__test_createMatchesMask() : "";
+                    InspectorTest.expectThat(expected === actual, `Permutation "${queryPermutation}".`);
+                }
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryGeneralRankings",
+        description: "Check that query results are ranked by descending relevance.",
+        test: function() {
+            let filenames = ["AxBxCxDxEx", "AbCdE", "AbcDe", "AxbcDe", "AxbxcDe", "abcde", "xabcde"]; // Filenames in order of descending rank.
+            let matcher = new WebInspector.ResourceQueryController;
+            filenames.forEach((filename) => matcher.addResource(new WebInspector.Resource(filename)));
+
+            let query = "abcde";
+            let results = matcher.executeQuery(query);
+            let resultFilenames = results.map((filename) => filename.resource.displayName);
+            InspectorTest.expectThat(Object.shallowEqual(resultFilenames, filenames), "Results should be ranked by descending relevancy.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryPositionRankings",
+        description: "Check that matches close to the beginning of the filename rank higher.",
+        test: function() {
+            let filenames = ["BxCxDx", "AxBxCxDx", "xxxAxxxBxxxCxxxD", "bcd", "abcd"]; // Filenames in order of descending rank.
+            let matcher = new WebInspector.ResourceQueryController;
+            filenames.forEach((filename) => matcher.addResource(new WebInspector.Resource(filename)));
+
+            let query = "bcd";
+            let results = matcher.executeQuery(query);
+            let resultFilenames = results.map((result) => result.resource.displayName);
+            InspectorTest.expectThat(Object.shallowEqual(resultFilenames, filenames), "Results should be ranked by descending relevancy.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "GetMatchingTextRanges",
+        description: "Check that query result TextRanges are correct.",
+        test: function() {
+            function textRange(start, end) {
+                return new WebInspector.TextRange(0, start, 0, end);
+            }
+
+            let matcher = new WebInspector.ResourceQueryController;
+            let tests = [
+                {filename: "a", ranges: []},
+                {filename: "abcde", ranges: [textRange(0, 5)]},
+                {filename: "AxBxCxDe", ranges: [textRange(0, 1), textRange(2, 3), textRange(4, 5), textRange(6, 8)]},
+            ];
+
+            for (let {filename, ranges} of tests) {
+                matcher.reset();
+                matcher.addResource(new WebInspector.Resource(filename));
+
+                let results = matcher.executeQuery("abcde");
+                let resultTextRanges = results.length ? results[0].matchingTextRanges : [];
+                InspectorTest.expectThat(JSON.stringify(resultTextRanges) === JSON.stringify(ranges), "Result TextRanges should match the expected ranges.");
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing WebInspector.ResourceQueryController.</p>
+</body>
+</html>
