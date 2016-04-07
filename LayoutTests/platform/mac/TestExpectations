@@ -426,10 +426,6 @@ editing/pasteboard/paste-TIFF.html [ Skip ]
 editing/mac/pasteboard/dataTransfer-set-data-file-url.html [ Skip ]
 webkit.org/b/147674 editing/mac/pasteboard/5583362.html [ Skip ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=94458
-# Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
-http/tests/security/MessagePort/event-listener-context.html [ Skip ]
-
 webkit.org/b/112620 [ Debug ] svg/custom/image-with-attr-change-after-delete-crash.html [ Crash Pass ]
 
 # Assorted failures that need investigation

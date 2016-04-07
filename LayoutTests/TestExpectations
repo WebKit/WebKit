@@ -905,9 +905,10 @@ loader/stateobjects/replacestate-size.html [ Slow ]
 imported/blink/fast/multicol/outlines-at-column-boundaries.html [ ImageOnlyFailure ]
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]
 
-webkit.org/b/94458 http/tests/security/aboutBlank/security-context-write.html [ Skip ]
-
 webkit.org/b/156179 [ Debug ] fast/loader/opaque-base-url.html [ Skip ]
+
+# Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
+webkit.org/b/94458 http/tests/security/MessagePort/event-listener-context.html [ Skip ]
 
 ########################################
 ### START OF IndexedDB failures

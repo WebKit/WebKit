@@ -1,3 +1,17 @@
+2016-04-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Test expectation gardening for
+        Assertion failure in MessagePort::contextDestroyed in http/tests/security/MessagePort/event-listener-context.html,
+        usually attributed to later tests
+        https://bugs.webkit.org/show_bug.cgi?id=94458
+
+        http/tests/security/MessagePort/event-listener-context.html is the only culprit,
+        so it should be skipped everywhere, and subsequent tests shouldn't be marked.
+
+        * TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-04-07  Brent Fulgham  <bfulgham@apple.com>
 
         Wheel event callback removing the window causes crash in WebCore.
