@@ -52,6 +52,7 @@ const SourceCode& name##Source() { return m_##name##Source; }
 
     UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, const Identifier& name);
 
+    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);
 private:
     void finalize(Handle<Unknown>, void* context) override;
 

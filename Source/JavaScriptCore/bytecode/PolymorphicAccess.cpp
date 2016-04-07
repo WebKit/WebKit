@@ -159,6 +159,26 @@ AccessCase::AccessCase()
 {
 }
 
+std::unique_ptr<AccessCase> AccessCase::tryGet(
+    VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure,
+    const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet)
+{
+    std::unique_ptr<AccessCase> result(new AccessCase());
+
+    result->m_type = type;
+    result->m_offset = offset;
+    result->m_structure.set(vm, owner, structure);
+    result->m_conditionSet = conditionSet;
+
+    if (viaProxy || additionalSet) {
+        result->m_rareData = std::make_unique<RareData>();
+        result->m_rareData->viaProxy = viaProxy;
+        result->m_rareData->additionalSet = additionalSet;
+    }
+
+    return result;
+}
+
 std::unique_ptr<AccessCase> AccessCase::get(
     VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure,
     const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet,
@@ -685,6 +705,7 @@ void AccessCase::generate(AccessGenerationState& state)
         return;
 
     case Load:
+    case GetGetter:
     case Getter:
     case Setter:
     case CustomValueGetter:
@@ -720,7 +741,7 @@ void AccessCase::generate(AccessGenerationState& state)
 
         GPRReg loadedValueGPR = InvalidGPRReg;
         if (m_type != CustomValueGetter && m_type != CustomAccessorGetter && m_type != CustomValueSetter && m_type != CustomAccessorSetter) {
-            if (m_type == Load)
+            if (m_type == Load || m_type == GetGetter)
                 loadedValueGPR = valueRegs.payloadGPR();
             else
                 loadedValueGPR = scratchGPR;
@@ -739,7 +760,7 @@ void AccessCase::generate(AccessGenerationState& state)
             jit.load64(
                 CCallHelpers::Address(storageGPR, offsetRelativeToBase(m_offset)), loadedValueGPR);
 #else
-            if (m_type == Load) {
+            if (m_type == Load || m_type == GetGetter) {
                 jit.load32(
                     CCallHelpers::Address(storageGPR, offsetRelativeToBase(m_offset) + TagOffset),
                     valueRegs.tagGPR());
@@ -750,7 +771,7 @@ void AccessCase::generate(AccessGenerationState& state)
 #endif
         }
 
-        if (m_type == Load) {
+        if (m_type == Load || m_type == GetGetter) {
             state.succeed();
             return;
         }
@@ -1566,6 +1587,9 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
         return;
     case AccessCase::Miss:
         out.print("Miss");
+        return;
+    case AccessCase::GetGetter:
+        out.print("GetGetter");
         return;
     case AccessCase::Getter:
         out.print("Getter");

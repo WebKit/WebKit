@@ -57,6 +57,7 @@ public:
         Transition,
         Replace,
         Miss,
+        GetGetter,
         Getter,
         Setter,
         CustomValueGetter,
@@ -70,77 +71,11 @@ public:
         StringLength
     };
 
-    static bool isGet(AccessType type)
-    {
-        switch (type) {
-        case Transition:
-        case Replace:
-        case Setter:
-        case CustomValueSetter:
-        case CustomAccessorSetter:
-        case InHit:
-        case InMiss:
-            return false;
-        case Load:
-        case MegamorphicLoad:
-        case Miss:
-        case Getter:
-        case CustomValueGetter:
-        case CustomAccessorGetter:
-        case IntrinsicGetter:
-        case ArrayLength:
-        case StringLength:
-            return true;
-        }
-    }
-
-    static bool isPut(AccessType type)
-    {
-        switch (type) {
-        case Load:
-        case MegamorphicLoad:
-        case Miss:
-        case Getter:
-        case CustomValueGetter:
-        case CustomAccessorGetter:
-        case IntrinsicGetter:
-        case InHit:
-        case InMiss:
-        case ArrayLength:
-        case StringLength:
-            return false;
-        case Transition:
-        case Replace:
-        case Setter:
-        case CustomValueSetter:
-        case CustomAccessorSetter:
-            return true;
-        }
-    }
-
-    static bool isIn(AccessType type)
-    {
-        switch (type) {
-        case Load:
-        case MegamorphicLoad:
-        case Miss:
-        case Getter:
-        case CustomValueGetter:
-        case CustomAccessorGetter:
-        case IntrinsicGetter:
-        case Transition:
-        case Replace:
-        case Setter:
-        case CustomValueSetter:
-        case CustomAccessorSetter:
-        case ArrayLength:
-        case StringLength:
-            return false;
-        case InHit:
-        case InMiss:
-            return true;
-        }
-    }
+    static std::unique_ptr<AccessCase> tryGet(
+        VM&, JSCell* owner, AccessType, PropertyOffset, Structure*,
+        const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
+        bool viaProxy = false,
+        WatchpointSet* additionalSet = nullptr);
 
     static std::unique_ptr<AccessCase> get(
         VM&, JSCell* owner, AccessType, PropertyOffset, Structure*,

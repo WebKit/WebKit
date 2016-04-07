@@ -156,6 +156,36 @@ int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
     return missingArgCount;
 }
 
+EncodedJSValue JIT_OPERATION operationTryGetById(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    Identifier ident = Identifier::fromUid(vm, uid);
+    stubInfo->tookSlowPath = true;
+
+    JSValue baseValue = JSValue::decode(base);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
+    baseValue.getPropertySlot(exec, ident, slot);
+
+    return JSValue::encode(slot.getPureResult());
+}
+
+EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    Identifier ident = Identifier::fromUid(vm, uid);
+
+    JSValue baseValue = JSValue::decode(base);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
+
+    baseValue.getPropertySlot(exec, ident, slot);
+    if (stubInfo->considerCaching() && !slot.isTaintedByProxy() && (slot.isCacheableValue() || slot.isCacheableGetter() || slot.isUnset()))
+        repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Pure);
+
+    return JSValue::encode(slot.getPureResult());
+}
+
 EncodedJSValue JIT_OPERATION operationGetById(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
 {
     VM* vm = &exec->vm();
@@ -195,7 +225,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
     
     bool hasResult = baseValue.getPropertySlot(exec, ident, slot);
     if (stubInfo->considerCaching())
-        repatchGetByID(exec, baseValue, ident, slot, *stubInfo);
+        repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Normal);
     
     return JSValue::encode(hasResult? slot.getValue(exec, ident) : jsUndefined());
 }
