@@ -1,3 +1,31 @@
+2016-04-07  Daniel Bates  <dabates@apple.com>
+
+        CSP: Should only honor CSP policy delivered in meta tag that is a descendent of <head>
+        https://bugs.webkit.org/show_bug.cgi?id=59858
+        <rdar://problem/25603538>
+
+        Reviewed by Brent Fulgham.
+
+        Ignore the Content Security Policy meta tag if it is not a descendent of <head> as per
+        section HTML meta Element of the Content Security Policy Level 2 spec., <https://w3c.github.io/webappsec-csp/2/>
+        (Editor's Draft, 29 August 2015).
+
+        Tests: http/tests/security/contentSecurityPolicy/meta-tag-ignored-if-not-in-head.html
+               http/tests/security/contentSecurityPolicy/meta-tag-ignored-if-not-in-head2.html
+               http/tests/security/contentSecurityPolicy/report-only-meta-tag-ignored-if-not-in-head.html
+               http/tests/security/contentSecurityPolicy/report-only-meta-tag-ignored-if-not-in-head2.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Modified to take a boolean argument whether the http-equiv
+        meta tag is a descendent of <head> and to parse the value of a Content Security Policy http-equiv
+        only if the http-equiv meta tag is a descendent of <head>.
+        * dom/Document.h: Add parameter isInDocument to processHttpEquiv(). Remove javadoc-style parameters
+        from processHttpEquiv() comment as we do not document parameters for non-API functions using such style.
+        Also write the comment for processHttpEquiv() using C++ style comments instead of a C-style comment.
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::process): Pass whether this element is a descendent of <head>. Additionally
+        update stale comment and move it closer to the code it refers to.
+
 2016-04-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Output WebCore.pdb to the same location as WebCore.lib

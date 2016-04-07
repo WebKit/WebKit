@@ -1,3 +1,23 @@
+2016-04-07  Daniel Bates  <dabates@apple.com>
+
+        CSP: Should only honor CSP policy delivered in meta tag that is a descendent of <head>
+        https://bugs.webkit.org/show_bug.cgi?id=59858
+        <rdar://problem/25603538>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests to ensure that we ignore the meta tags for Content-Security-Policy, Content-Security-Policy-Report-Only,
+        X-WebKit-CSP, and X-WebKit-CSP-Report-Only if it is not a descendent of <head>.
+
+        * http/tests/security/contentSecurityPolicy/meta-tag-ignored-if-not-in-head-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/meta-tag-ignored-if-not-in-head.html: Added.
+        * http/tests/security/contentSecurityPolicy/meta-tag-ignored-if-not-in-head2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/meta-tag-ignored-if-not-in-head2.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-meta-tag-ignored-if-not-in-head-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-meta-tag-ignored-if-not-in-head.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-meta-tag-ignored-if-not-in-head2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-meta-tag-ignored-if-not-in-head2.html: Added.
+
 2016-04-06  Sam Weinig  <sam@webkit.org>
 
         window.Crypto is missing

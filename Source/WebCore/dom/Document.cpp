@@ -3219,9 +3219,10 @@ bool Document::usesStyleBasedEditability() const
     return authorSheets.usesStyleBasedEditability();
 }
 
-void Document::processHttpEquiv(const String& equiv, const String& content)
+void Document::processHttpEquiv(const String& equiv, const String& content, bool isInDocumentHead)
 {
-    ASSERT(!equiv.isNull() && !content.isNull());
+    ASSERT(!equiv.isNull());
+    ASSERT(!content.isNull());
 
     HttpEquivPolicy policy = httpEquivPolicy();
     if (policy != HttpEquivPolicy::Enabled) {
@@ -3316,19 +3317,23 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         break;
 
     case HTTPHeaderName::ContentSecurityPolicy:
-        contentSecurityPolicy()->processHTTPEquiv(content, ContentSecurityPolicyHeaderType::Enforce);
+        if (isInDocumentHead)
+            contentSecurityPolicy()->processHTTPEquiv(content, ContentSecurityPolicyHeaderType::Enforce);
         break;
 
     case HTTPHeaderName::ContentSecurityPolicyReportOnly:
-        contentSecurityPolicy()->processHTTPEquiv(content, ContentSecurityPolicyHeaderType::Report);
+        if (isInDocumentHead)
+            contentSecurityPolicy()->processHTTPEquiv(content, ContentSecurityPolicyHeaderType::Report);
         break;
 
     case HTTPHeaderName::XWebKitCSP:
-        contentSecurityPolicy()->processHTTPEquiv(content, ContentSecurityPolicyHeaderType::PrefixedEnforce);
+        if (isInDocumentHead)
+            contentSecurityPolicy()->processHTTPEquiv(content, ContentSecurityPolicyHeaderType::PrefixedEnforce);
         break;
 
     case HTTPHeaderName::XWebKitCSPReportOnly:
-        contentSecurityPolicy()->processHTTPEquiv(content, ContentSecurityPolicyHeaderType::PrefixedReport);
+        if (isInDocumentHead)
+            contentSecurityPolicy()->processHTTPEquiv(content, ContentSecurityPolicyHeaderType::PrefixedReport);
         break;
 
     default:

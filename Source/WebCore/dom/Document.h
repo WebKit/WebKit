@@ -826,16 +826,11 @@ public:
 
     CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
 
-    /**
-     * Handles a HTTP header equivalent set by a meta tag using <meta http-equiv="..." content="...">. This is called
-     * when a meta tag is encountered during document parsing, and also when a script dynamically changes or adds a meta
-     * tag. This enables scripts to use meta tags to perform refreshes and set expiry dates in addition to them being
-     * specified in a HTML file.
-     *
-     * @param equiv The http header name (value of the meta tag's "equiv" attribute)
-     * @param content The header value (value of the meta tag's "content" attribute)
-     */
-    void processHttpEquiv(const String& equiv, const String& content);
+    // Handles an HTTP header equivalent set by a meta tag using <meta http-equiv="..." content="...">. This is called
+    // when a meta tag is encountered during document parsing, and also when a script dynamically changes or adds a meta
+    // tag. This enables scripts to use meta tags to perform refreshes and set expiry dates in addition to them being
+    // specified in an HTML file.
+    void processHttpEquiv(const String& equiv, const String& content, bool isInDocumentHead);
 
 #if PLATFORM(IOS)
     void processFormatDetection(const String&);
