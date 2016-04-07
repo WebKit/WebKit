@@ -1,3 +1,22 @@
+2016-04-06  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC test stress/arrowfunction-lexical-bind-superproperty.js failing
+        https://bugs.webkit.org/show_bug.cgi?id=156309
+
+        Reviewed by Saam Barati.
+
+        Just be honest about the fact that the ArgumentCount and Callee parts of inline callframe runtime
+        meta-data can be read at any time.
+        
+        We only have to say this for the inline callframe forms of ArgumentCount and Callee because we don't
+        sink any part of the machine prologue. This change just prevents us from sinking the pseudoprologue
+        of inlined varargs or closure calls.
+
+        Shockingly, this is not a regression on anything.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2016-03-29  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for Symbol.isConcatSpreadable.
