@@ -1034,7 +1034,8 @@ void AccessCase::generate(AccessGenerationState& state)
         } else if (verbose)
             dataLog("Don't have type.\n");
         
-        CCallHelpers::JumpList slowPath;
+        bool allocating = newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity();
+        bool reallocating = allocating && structure()->outOfLineCapacity();
 
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
         allocator.lock(baseGPR);
@@ -1046,25 +1047,23 @@ void AccessCase::generate(AccessGenerationState& state)
 
         GPRReg scratchGPR2 = allocator.allocateScratchGPR();
         GPRReg scratchGPR3;
-        if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()
-            && structure()->outOfLineCapacity())
+        if (allocating)
             scratchGPR3 = allocator.allocateScratchGPR();
         else
             scratchGPR3 = InvalidGPRReg;
 
         ScratchRegisterAllocator::PreservedState preservedState =
             allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+        
+        CCallHelpers::JumpList slowPath;
 
         ASSERT(structure()->transitionWatchpointSetHasBeenInvalidated());
 
-        bool scratchGPRHasStorage = false;
-        bool needsToMakeRoomOnStackForCCall = !preservedState.numberOfBytesPreserved && codeBlock->jitType() == JITCode::FTLJIT;
-
-        if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()) {
+        if (allocating) {
             size_t newSize = newStructure()->outOfLineCapacity() * sizeof(JSValue);
             CopiedAllocator* copiedAllocator = &vm.heap.storageAllocator();
 
-            if (!structure()->outOfLineCapacity()) {
+            if (!reallocating) {
                 jit.loadPtr(&copiedAllocator->m_currentRemaining, scratchGPR);
                 slowPath.append(
                     jit.branchSubPtr(
@@ -1104,15 +1103,7 @@ void AccessCase::generate(AccessGenerationState& state)
                             -static_cast<ptrdiff_t>(offset + sizeof(JSValue) + sizeof(void*))));
                 }
             }
-
-            jit.storePtr(scratchGPR, CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()));
-            scratchGPRHasStorage = true;
         }
-
-        uint32_t structureBits = bitwise_cast<uint32_t>(newStructure()->id());
-        jit.store32(
-            CCallHelpers::TrustedImm32(structureBits),
-            CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()));
 
         if (isInlineOffset(m_offset)) {
             jit.storeValue(
@@ -1122,100 +1113,55 @@ void AccessCase::generate(AccessGenerationState& state)
                     JSObject::offsetOfInlineStorage() +
                     offsetInInlineStorage(m_offset) * sizeof(JSValue)));
         } else {
-            if (!scratchGPRHasStorage)
+            if (!allocating)
                 jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
             jit.storeValue(
                 valueRegs,
                 CCallHelpers::Address(scratchGPR, offsetInButterfly(m_offset) * sizeof(JSValue)));
         }
-
-        ScratchBuffer* scratchBuffer = nullptr;
-        if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity())
-            scratchBuffer = vm.scratchBufferForSize(allocator.desiredScratchBufferSizeForCall());
-
-        if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()) {
-            CCallHelpers::Call callFlushWriteBarrierBuffer;
+        
+        if (allocating) {
             CCallHelpers::Jump ownerIsRememberedOrInEden = jit.jumpIfIsRememberedOrInEden(baseGPR);
             WriteBarrierBuffer& writeBarrierBuffer = jit.vm()->heap.writeBarrierBuffer();
             jit.load32(writeBarrierBuffer.currentIndexAddress(), scratchGPR2);
-            CCallHelpers::Jump needToFlush =
+            slowPath.append(
                 jit.branch32(
                     CCallHelpers::AboveOrEqual, scratchGPR2,
-                    CCallHelpers::TrustedImm32(writeBarrierBuffer.capacity()));
+                    CCallHelpers::TrustedImm32(writeBarrierBuffer.capacity())));
 
             jit.add32(CCallHelpers::TrustedImm32(1), scratchGPR2);
             jit.store32(scratchGPR2, writeBarrierBuffer.currentIndexAddress());
 
-            jit.move(CCallHelpers::TrustedImmPtr(writeBarrierBuffer.buffer()), scratchGPR);
+            jit.move(CCallHelpers::TrustedImmPtr(writeBarrierBuffer.buffer()), scratchGPR3);
             // We use an offset of -sizeof(void*) because we already added 1 to scratchGPR2.
             jit.storePtr(
                 baseGPR,
                 CCallHelpers::BaseIndex(
-                    scratchGPR, scratchGPR2, CCallHelpers::ScalePtr,
+                    scratchGPR3, scratchGPR2, CCallHelpers::ScalePtr,
                     static_cast<int32_t>(-sizeof(void*))));
-
-            CCallHelpers::Jump doneWithBarrier = jit.jump();
-            needToFlush.link(&jit);
-
-            // FIXME: We should restoreReusedRegistersByPopping() before this. Then, we wouldn't need
-            // padding in preserveReusedRegistersByPushing(). Or, maybe it would be even better if the
-            // barrier slow path was just the normal slow path, below.
-            // https://bugs.webkit.org/show_bug.cgi?id=149030
-            allocator.preserveUsedRegistersToScratchBufferForCall(jit, scratchBuffer, scratchGPR2);
-            if (needsToMakeRoomOnStackForCCall)
-                jit.makeSpaceOnStackForCCall();
-            jit.setupArgumentsWithExecState(baseGPR);
-            callFlushWriteBarrierBuffer = jit.call();
-            if (needsToMakeRoomOnStackForCCall)
-                jit.reclaimSpaceOnStackForCCall();
-            allocator.restoreUsedRegistersFromScratchBufferForCall(
-                jit, scratchBuffer, scratchGPR2);
-
-            doneWithBarrier.link(&jit);
             ownerIsRememberedOrInEden.link(&jit);
-
-            state.callbacks.append(
-                [=] (LinkBuffer& linkBuffer) {
-                    linkBuffer.link(callFlushWriteBarrierBuffer, operationFlushWriteBarrierBuffer);
-                });
         }
         
+        // We set the new butterfly and the structure last. Doing it this way ensures that whatever
+        // we had done up to this point is forgotten if we choose to branch to slow path.
+        
+        if (allocating)
+            jit.storePtr(scratchGPR, CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()));
+        
+        uint32_t structureBits = bitwise_cast<uint32_t>(newStructure()->id());
+        jit.store32(
+            CCallHelpers::TrustedImm32(structureBits),
+            CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()));
+
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
         state.succeed();
-
-        if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()) {
+        
+        if (allocator.didReuseRegisters()) {
             slowPath.link(&jit);
             allocator.restoreReusedRegistersByPopping(jit, preservedState);
-            allocator.preserveUsedRegistersToScratchBufferForCall(jit, scratchBuffer, scratchGPR);
-            if (needsToMakeRoomOnStackForCCall)
-                jit.makeSpaceOnStackForCCall();
-            jit.store32(
-                CCallHelpers::TrustedImm32(state.originalCallSiteIndex().bits()),
-                CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
-#if USE(JSVALUE64)
-            jit.setupArgumentsWithExecState(
-                baseGPR,
-                CCallHelpers::TrustedImmPtr(newStructure()),
-                CCallHelpers::TrustedImm32(m_offset),
-                valueRegs.gpr());
-#else
-            jit.setupArgumentsWithExecState(
-                baseGPR,
-                CCallHelpers::TrustedImmPtr(newStructure()),
-                CCallHelpers::TrustedImm32(m_offset),
-                valueRegs.payloadGPR(), valueRegs.tagGPR());
-#endif
-            CCallHelpers::Call operationCall = jit.call();
-            if (needsToMakeRoomOnStackForCCall)
-                jit.reclaimSpaceOnStackForCCall();
-            allocator.restoreUsedRegistersFromScratchBufferForCall(jit, scratchBuffer, scratchGPR);
-            state.succeed();
-
-            state.callbacks.append(
-                [=] (LinkBuffer& linkBuffer) {
-                    linkBuffer.link(operationCall, operationReallocateStorageAndFinishPut);
-                });
-        }
+            state.failAndIgnore.append(jit.jump());
+        } else
+            state.failAndIgnore.append(slowPath);
         return;
     }
 

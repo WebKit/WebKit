@@ -1,3 +1,15 @@
+2016-04-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Rationalize the handling of PutById transitions a bit
+        https://bugs.webkit.org/show_bug.cgi?id=156330
+
+        Reviewed by Mark Lam.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate): Get rid of the specialized slow calls. We can just use the failAndIgnore jump target. We just need to make sure that we don't make observable effects until we're done with all of the fast path checks.
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase): MadeNoChanges indicates that we should keep trying to repatch. Currently PutById transitions might trigger the case that addAccessCase() sees null, if the transition involves an indexing header. Doing repatching in that case is probably not good. But, we should just fix this the right way eventually.
+
 2016-04-07  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Fix for JSC stress test failures.

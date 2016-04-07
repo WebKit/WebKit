@@ -110,7 +110,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     VM& vm = *codeBlock->vm();
     
     if (!accessCase)
-        return AccessGenerationResult::MadeNoChanges;
+        return AccessGenerationResult::GaveUp;
     
     if (cacheType == CacheType::Stub)
         return u.stub->regenerateWithCase(vm, codeBlock, *this, ident, WTFMove(accessCase));
