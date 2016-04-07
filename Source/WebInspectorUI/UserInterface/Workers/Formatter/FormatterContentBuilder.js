@@ -24,9 +24,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FormatterContentBuilder = class FormatterContentBuilder
+FormatterContentBuilder = class FormatterContentBuilder
 {
-    constructor(mapping, originalLineEndings, formattedLineEndings, originalOffset, formattedOffset, indentString)
+    constructor(indentString)
     {
         this._originalContent = null;
         this._formattedContent = [];
@@ -41,11 +41,11 @@ WebInspector.FormatterContentBuilder = class FormatterContentBuilder
         this._indentString = indentString;
         this._indentCache = ["", this._indentString];
 
-        this._mapping = mapping;
-        this._originalLineEndings = originalLineEndings || [];
-        this._formattedLineEndings = formattedLineEndings || [];
-        this._originalOffset = originalOffset || 0;
-        this._formattedOffset = formattedOffset || 0;
+        this._mapping = {original: [0], formatted: [0]};
+        this._originalLineEndings = [];
+        this._formattedLineEndings = [];
+        this._originalOffset = 0;
+        this._formattedOffset = 0;
 
         this._lastOriginalPosition = 0;
         this._lastFormattedPosition = 0;
@@ -60,30 +60,30 @@ WebInspector.FormatterContentBuilder = class FormatterContentBuilder
 
     get formattedContent()
     {
-        var formatted = this._formattedContent.join("");
+        let formatted = this._formattedContent.join("");
         console.assert(formatted.length === this._formattedContentLength);
         return formatted;
     }
 
-    get mapping()
+    get sourceMapData()
     {
-        return this._mapping;
-    }
-
-    get originalLineEndings()
-    {
-        return this._originalLineEndings;
-    }
-
-    get formattedLineEndings()
-    {
-        return this._formattedLineEndings;
+        return {
+            mapping: this._mapping,
+            originalLineEndings: this._originalLineEndings,
+            formattedLineEndings: this._formattedLineEndings,
+        };
     }
 
     setOriginalContent(originalContent)
     {
         console.assert(!this._originalContent);
         this._originalContent = originalContent;
+    }
+
+    setOriginalLineEndings(originalLineEndings)
+    {
+        console.assert(!this._originalLineEndings.length);
+        this._originalLineEndings = originalLineEndings;
     }
 
     appendToken(string, originalPosition)
@@ -111,6 +111,8 @@ WebInspector.FormatterContentBuilder = class FormatterContentBuilder
     appendNewline(force)
     {
         if ((!this.lastTokenWasNewline && !this._startOfLine) || force) {
+            if (this.lastTokenWasWhitespace)
+                this._popFormattedContent();
             this._append("\n");
             this._addFormattedLineEnding();
             this._startOfLine = true;
@@ -124,7 +126,7 @@ WebInspector.FormatterContentBuilder = class FormatterContentBuilder
     {
         console.assert(newlines > 0);
 
-        var wasMultiple = newlines > 1;
+        let wasMultiple = newlines > 1;
 
         while (newlines-- > 0)
             this.appendNewline(true);
@@ -187,7 +189,7 @@ WebInspector.FormatterContentBuilder = class FormatterContentBuilder
 
     _popFormattedContent()
     {
-        var removed = this._formattedContent.pop();
+        let removed = this._formattedContent.pop();
         this._formattedContentLength -= removed.length;
     }
 
@@ -206,13 +208,13 @@ WebInspector.FormatterContentBuilder = class FormatterContentBuilder
         }
 
         // Indent was not in the cache, fill up the cache up with what was needed.
-        var maxCacheIndent = 20;
-        var max = Math.min(this._indent, maxCacheIndent);
-        for (var i = this._indentCache.length; i <= max; ++i)
+        let maxCacheIndent = 20;
+        let max = Math.min(this._indent, maxCacheIndent);
+        for (let i = this._indentCache.length; i <= max; ++i)
             this._indentCache[i] = this._indentCache[i - 1] + this._indentString;
 
         // Append indents as needed.
-        var indent = this._indent;
+        let indent = this._indent;
         do {
             if (indent >= maxCacheIndent)
                 this._append(this._indentCache[maxCacheIndent]);

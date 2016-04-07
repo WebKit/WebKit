@@ -1,3 +1,74 @@
+2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve JavaScript pretty printing
+        https://bugs.webkit.org/show_bug.cgi?id=156178
+        <rdar://problem/25535719>
+
+        Reviewed by Timothy Hatcher.
+
+        Expand the JavaScript formatting tests.
+
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/single-statement-blocks-expected.js:
+        Update output now that the builder removes extra trailing whitespace automatically.
+
+        * inspector/codemirror/resources/prettyprinting/utilities.js:
+        Update due to simplified construction.
+
+        * inspector/formatting/formatting-javascript-expected.txt: Added.
+        * inspector/formatting/formatting-javascript.html: Added.
+        * inspector/formatting/resources/javascript-tests/arrow-functions-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/arrow-functions.js: Added.
+        * inspector/formatting/resources/javascript-tests/classes-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/classes.js: Added.
+        * inspector/formatting/resources/javascript-tests/comments-and-preserve-newlines-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/comments-and-preserve-newlines.js: Added.
+        * inspector/formatting/resources/javascript-tests/comments-only-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/comments-only.js: Added.
+        * inspector/formatting/resources/javascript-tests/do-while-statement-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/do-while-statement.js: Added.
+        * inspector/formatting/resources/javascript-tests/for-statements-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/for-statements.js: Added.
+        * inspector/formatting/resources/javascript-tests/functions-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/functions.js: Added.
+        * inspector/formatting/resources/javascript-tests/generators-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/generators.js: Added.
+        * inspector/formatting/resources/javascript-tests/if-statement-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/if-statement.js: Added.
+        * inspector/formatting/resources/javascript-tests/label-break-continue-block-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/label-break-continue-block.js: Added.
+        * inspector/formatting/resources/javascript-tests/logic-expressions-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/logic-expressions.js: Added.
+        * inspector/formatting/resources/javascript-tests/new-expression-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/new-expression.js: Added.
+        * inspector/formatting/resources/javascript-tests/object-array-literal-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/object-array-literal.js: Added.
+        * inspector/formatting/resources/javascript-tests/return-statement-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/return-statement.js: Added.
+        * inspector/formatting/resources/javascript-tests/sample-jquery-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/sample-jquery.js: Added.
+        * inspector/formatting/resources/javascript-tests/sample-normal-utilities-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/sample-normal-utilities.js: Added.
+        * inspector/formatting/resources/javascript-tests/sample-webinspector-object-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/sample-webinspector-object.js: Added.
+        * inspector/formatting/resources/javascript-tests/switch-case-default-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/switch-case-default.js: Added.
+        * inspector/formatting/resources/javascript-tests/ternary-expressions-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/ternary-expressions.js: Added.
+        * inspector/formatting/resources/javascript-tests/throw-statement-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/throw-statement.js: Added.
+        * inspector/formatting/resources/javascript-tests/try-catch-finally-statements-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/try-catch-finally-statements.js: Added.
+        * inspector/formatting/resources/javascript-tests/unary-binary-expressions-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/unary-binary-expressions.js: Added.
+        * inspector/formatting/resources/javascript-tests/variable-declaration-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/variable-declaration.js: Added.
+        * inspector/formatting/resources/javascript-tests/while-statement-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/while-statement.js: Added.
+        * inspector/formatting/resources/javascript-tests/with-statement-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/with-statement.js: Added.
+        * inspector/formatting/resources/utilities.js: Added.
+        Expanded test coverage for the new formatter.
+
 2016-04-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         Marking storage/indexeddb/modern/autoincrement-abort-private.html as flaky on Macs

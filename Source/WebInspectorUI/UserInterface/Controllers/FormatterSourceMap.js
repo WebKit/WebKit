@@ -36,9 +36,9 @@ WebInspector.FormatterSourceMap = class FormatterSourceMap extends WebInspector.
 
     // Static
 
-    static fromBuilder(builder)
+    static fromSourceMapData({originalLineEndings, formattedLineEndings, mapping})
     {
-        return new WebInspector.FormatterSourceMap(builder.originalLineEndings, builder.formattedLineEndings, builder.mapping);
+        return new WebInspector.FormatterSourceMap(originalLineEndings, formattedLineEndings, mapping);
     }
 
     // Public

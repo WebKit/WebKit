@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EsprimaFormatter Tool</title>
+    <link rel="stylesheet" href="../../UserInterface/External/CodeMirror/codemirror.css">
+    <link rel="stylesheet" href="codemirror-additions.css">
+    <script src="../../UserInterface/External/CodeMirror/codemirror.js"></script>
+    <script src="../../UserInterface/External/CodeMirror/javascript.js"></script>
+
+    <script src="../../UserInterface/External/Esprima/esprima.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/FormatterContentBuilder.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/FormatterUtilities.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/ESTreeWalker.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/EsprimaFormatter.js"></script>
+    <script src="EsprimaFormatterDebug.js"></script>
+</head>
+<body>
+    <h1>Debug EsprimaFormatter</h1>
+
+    <!-- Controls -->
+    <button id="populate">Populate</button>
+    <select id="load-individual-test"><option>-- Load Test --</option></select>
+    <button id="run-tests">Run All Tests</button>
+    <button id="clear">Clear</button>
+    <button id="select-output">Select Output</button>
+    <button id="run-again">Run Again</button>
+    <button id="save-as-url">Save URL</button>
+    <small id="time"></small>
+    <br><br>
+
+    <!-- Editor -->
+    <textarea id="code" name="code"></textarea>
+
+    <!-- Output -->
+    <pre id="pretty"></pre>
+    <pre id="debug"></pre>
+
+    <script>
+    const testURLPrefix = "../../../../LayoutTests/inspector/formatting/resources/javascript-tests/";
+
+    let tests = [
+        "if-statement.js",
+        "for-statements.js",
+        "while-statement.js",
+        "do-while-statement.js",
+        "try-catch-finally-statements.js",
+        "switch-case-default.js",
+        "object-array-literal.js",
+        "unary-binary-expressions.js",
+        "logic-expressions.js",
+        "ternary-expressions.js",
+        "new-expression.js",
+        "label-break-continue-block.js",
+        "with-statement.js",
+        "throw-statement.js",
+        "return-statement.js",
+        "variable-declaration.js",
+        "functions.js",
+        "classes.js",
+        "arrow-functions.js",
+        "generators.js",
+        "comments-and-preserve-newlines.js",
+        "comments-only.js",
+        "sample-webinspector-object.js",
+        "sample-normal-utilities.js",
+        "sample-jquery.js",
+        // FIXME: Add a modules test when we support testing module source code.
+    ];
+
+    // Initial values from URL.
+    let queryParams = {};
+    if (window.location.search.length > 0) {
+        let searchString = window.location.search.substring(1);
+        let groups = searchString.split("&");
+        for (let i = 0; i < groups.length; ++i) {
+            let pair = groups[i].split("=");
+            queryParams[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+        }
+    }
+
+    // Initial content.
+    let content = "(function(){let a=1;return a+1;})();";
+    if (queryParams.content)
+        content = queryParams.content || "";
+
+    // Setup CodeMirror.
+    let cm = CodeMirror.fromTextArea(document.getElementById("code"), {lineNumbers: true});
+    cm.setValue(content);
+    cm.setOption("mode", "text/javascript");
+
+    // Populate button to populate with some canned content.
+    document.getElementById("populate").addEventListener("click", function(event) {
+        loadIndividualTest("sample-jquery.js");
+    });
+
+    // Fill the individual tests button.
+    let testSelectElement = document.getElementById("load-individual-test");
+    testSelectElement.addEventListener("change", function(event) {
+        let selectedOption = testSelectElement.selectedOptions[0];
+        let test = selectedOption.value;
+        loadIndividualTest(test);
+        testSelectElement.selectedIndex = 0;
+    });
+
+    // Load up the known tests.
+    for (let test of tests) {
+        let option = testSelectElement.appendChild(document.createElement("option"));
+        option.textContent = test;
+        option.value = test;
+    }
+
+    // Run Tests button.
+    document.getElementById("run-tests").addEventListener("click", function(event) {
+        cm.setValue("/* Running Tests... */");
+        refresh();
+        runAllTests();
+    });
+
+    // Clear button.
+    document.getElementById("clear").addEventListener("click", function(event) {
+        cm.setValue("");
+        refresh();
+    });
+
+    // Select output button.
+    document.getElementById("select-output").addEventListener("click", function(event) {
+        let range = document.createRange();
+        range.selectNodeContents(document.getElementById("pretty"));
+        let selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    });
+
+    // Run again button.
+    document.getElementById("run-again").addEventListener("click", function(event) {
+        refresh();
+    });
+
+    // Save as URL button.
+    document.getElementById("save-as-url").addEventListener("click", function(event) {
+        let content = cm.getValue();
+        window.location.search = "?content=" + window.encodeURIComponent(content);
+    });
+
+    // Refresh after changes after a short delay.
+    let timer = null;
+    cm.on("change", function(codeMirror, change) {
+        if (timer)
+            clearTimeout(timer)
+        timer = setTimeout(function() {
+            clearTimeout(timer);
+            timer = null;
+            refresh();
+        }, 500);
+    });
+
+    // Output elements.
+    let timeOutput = document.getElementById("time");
+    let prettyPre = document.getElementById("pretty");
+    let debugPre = document.getElementById("debug");
+
+    function refresh() {
+        if (timer)
+            clearTimeout(timer);
+
+        // Time the formatter.
+        let startTime = Date.now();
+        let formatter = new EsprimaFormatter(cm.getValue());
+        let endTime = Date.now();
+
+        // Show debug info.
+        let debugText;
+        try {
+            let debugFormatter = new EsprimaFormatterDebug(cm.getValue());
+            debugText = debugFormatter.debugText;
+        } catch (error) {
+            debugText = "Parse error";
+        }
+
+        // Output the results.
+        timeOutput.innerText = (endTime - startTime) + "ms";
+        prettyPre.innerText = formatter.formattedText;
+        debugPre.innerText = debugText;
+    }
+
+    setTimeout(refresh);
+
+    // Testing.
+
+    function loadIndividualTest(test) {
+        let testURL = testURLPrefix + test;
+        let xhr = new XMLHttpRequest;
+        xhr.open("GET", testURL, true);
+        xhr.onload = () => { cm.setValue(xhr.responseText); setTimeout(refresh); }
+        xhr.send();
+    }
+
+    function runAllTests() {
+        let index = -1;
+        let results = [];
+        setTimeout(runNextTest, 0);
+
+        function runNextTest() {
+            // Next test.
+            index++;
+
+            // Done.
+            if (index >= tests.length) {
+                printResults();
+                return;
+            }
+
+            // Load test and expected results.
+            let test = tests[index];
+            let testURL = testURLPrefix + test;
+            let expectedURL = testURL.replace(/\.([^\.]+)$/, "-expected.$1");
+            let xhr1 = new XMLHttpRequest;
+            xhr1.open("GET", testURL, false);
+            xhr1.send();
+            let xhr2 = new XMLHttpRequest;
+            xhr2.open("GET", expectedURL, false);
+            xhr2.send();
+            let testData = xhr1.responseText;
+            let expectedData = xhr2.responseText;
+
+            // Run the test.
+            let formatter = new EsprimaFormatter(testData);
+
+            // Compare results.
+            let pass = formatter.formattedText === expectedData;
+            results.push("/* " + (pass ? "PASS" : "FAIL") + ": " + test + " */");
+
+            // Output failures to console.
+            if (!pass) {
+                console.log("Test", test);
+                console.log("Formatted Output", formatter.formattedText.length);
+                console.log(formatter.formattedText);
+                console.log("Expected Output", expectedData.length);
+                console.log(expectedData);
+            }
+
+            runNextTest();
+        }
+
+        function printResults() {
+            cm.setValue(results.join("\n"));
+            cm.refresh();
+        }
+    }
+    </script>
+</body>
+</html>

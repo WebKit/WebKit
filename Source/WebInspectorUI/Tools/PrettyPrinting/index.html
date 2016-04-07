@@ -12,7 +12,7 @@
     <script src="../../UserInterface/Views/CodeMirrorAdditions.js"></script>
     <script src="../../UserInterface/Controllers/Formatter.js"></script>
     <script src="FormatterDebug.js"></script>
-    <script src="../../UserInterface/Controllers/FormatterContentBuilder.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/FormatterContentBuilder.js"></script>
     <script src="../../UserInterface/Views/CodeMirrorFormatters.js"></script>
 </head>
 <body>
@@ -106,7 +106,7 @@
     document.getElementById("populate").addEventListener("click", function(event) {
         switch (modePicker.value) {
             case "text/javascript":
-                var url = "populate/jquery.min.js";
+                var url = "../../../../LayoutTests/inspector/formatting/resources/javascript-tests/sample-jquery.js";
                 break;
             case "text/css":
                 var url = "populate/apple.css";
@@ -124,7 +124,7 @@
 
     // Run Tests button.
     document.getElementById("run-tests").addEventListener("click", function(event) {
-        cm.setValue("Running Tests...");
+        cm.setValue("/* Running Tests... */");
         refresh();
         runTests();
     });
@@ -207,10 +207,7 @@
 
         // Setup.
         const indentString = "    ";
-        var originalLineEndings = [];
-        var formattedLineEndings = [];
-        var mapping = {original: [0], formatted: [0]};
-        var builder = new WebInspector.FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
+        var builder = new FormatterContentBuilder(indentString);
         var formatter = new WebInspector.Formatter(cm, builder);
 
         // Time the formatter.
@@ -330,10 +327,7 @@
             const start = {line: 0, ch: 0};
             const end = {line: editor.lineCount() - 1};
             const indentString = "    ";
-            var originalLineEndings = [];
-            var formattedLineEndings = [];
-            var mapping = {original: [0], formatted: [0]};
-            var builder = new WebInspector.FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
+            var builder = new FormatterContentBuilder(indentString);
             var formatter = new WebInspector.Formatter(editor, builder);
             formatter.format(start, end);
 
@@ -343,7 +337,7 @@
 
             // Output failures to console.
             if (!pass) {
-                console.log("Test", test, "Expected", expected);
+                console.log("Test", test);
                 console.log("Formatted Output", builder.formattedContent.length);
                 console.log(builder.formattedContent);
                 console.log("Expected Output", expectedData.length);

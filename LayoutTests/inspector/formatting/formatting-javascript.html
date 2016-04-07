@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("EsprimaFormatter.JavaScript");
+
+    addFormattingTests(suite, "text/javascript", [
+        "resources/javascript-tests/arrow-functions.js",
+        "resources/javascript-tests/classes.js",
+        "resources/javascript-tests/comments-and-preserve-newlines.js",
+        "resources/javascript-tests/comments-only.js",
+        "resources/javascript-tests/do-while-statement.js",
+        "resources/javascript-tests/for-statements.js",
+        "resources/javascript-tests/functions.js",
+        "resources/javascript-tests/generators.js",
+        "resources/javascript-tests/if-statement.js",
+        "resources/javascript-tests/label-break-continue-block.js",
+        "resources/javascript-tests/logic-expressions.js",
+        "resources/javascript-tests/new-expression.js",
+        "resources/javascript-tests/object-array-literal.js",
+        "resources/javascript-tests/return-statement.js",
+        "resources/javascript-tests/sample-jquery.js",
+        "resources/javascript-tests/sample-normal-utilities.js",
+        "resources/javascript-tests/sample-webinspector-object.js",
+        "resources/javascript-tests/switch-case-default.js",
+        "resources/javascript-tests/ternary-expressions.js",
+        "resources/javascript-tests/throw-statement.js",
+        "resources/javascript-tests/try-catch-finally-statements.js",
+        "resources/javascript-tests/unary-binary-expressions.js",
+        "resources/javascript-tests/variable-declaration.js",
+        "resources/javascript-tests/while-statement.js",
+        "resources/javascript-tests/with-statement.js",
+    ]);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test JavaScript formatting tests.</p>
+</body>
+</html>

@@ -1,0 +1,79 @@
+Test JavaScript formatting tests.
+
+
+== Running test suite: EsprimaFormatter.JavaScript
+-- Running test case: EsprimaFormatter.JavaScript.arrow-functions.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.classes.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.comments-and-preserve-newlines.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.comments-only.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.do-while-statement.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.for-statements.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.functions.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.generators.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.if-statement.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.label-break-continue-block.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.logic-expressions.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.new-expression.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.object-array-literal.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.return-statement.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.sample-jquery.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.sample-normal-utilities.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.sample-webinspector-object.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.switch-case-default.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.ternary-expressions.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.throw-statement.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.try-catch-finally-statements.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.unary-binary-expressions.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.variable-declaration.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.while-statement.js
+PASS
+
+-- Running test case: EsprimaFormatter.JavaScript.with-statement.js
+PASS
+

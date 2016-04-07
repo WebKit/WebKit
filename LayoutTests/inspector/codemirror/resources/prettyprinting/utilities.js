@@ -20,10 +20,7 @@ TestPage.registerInitializer(function() {
             const start = {line: 0, ch: 0};
             const end = {line: editor.lineCount() - 1};
             const indentString = "    ";
-            let originalLineEndings = [];
-            let formattedLineEndings = [];
-            let mapping = {original: [0], formatted: [0]};
-            let builder = new WebInspector.FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
+            let builder = new FormatterContentBuilder(indentString);
             let formatter = new WebInspector.Formatter(editor, builder);
             formatter.format(start, end);
 
@@ -56,7 +53,9 @@ TestPage.registerInitializer(function() {
             let testURL = testPageResourcesURL + "/" + test;
             suite.addTestCase({
                 name: suite.name + "." + testName,
-                test: (resolve, reject) => { runPrettyPrintingTest(mode, testName, testURL).then(resolve).catch(reject); }
+                test: (resolve, reject) => { 
+                    runPrettyPrintingTest(mode, testName, testURL).then(resolve).catch(reject);
+                }
             });
         }
     };

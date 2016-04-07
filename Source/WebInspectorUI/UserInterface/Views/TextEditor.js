@@ -736,14 +736,11 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
             if (pretty) {
                 // <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
                 var indentString = "    ";
-                var originalLineEndings = [];
-                var formattedLineEndings = [];
-                var mapping = {original: [0], formatted: [0]};
-                var builder = new WebInspector.FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
+                var builder = new FormatterContentBuilder(indentString);
                 var formatter = new WebInspector.Formatter(this._codeMirror, builder);
                 formatter.format(start, end);
 
-                this._formatterSourceMap = WebInspector.FormatterSourceMap.fromBuilder(builder);
+                this._formatterSourceMap = WebInspector.FormatterSourceMap.fromSourceMapData(builder.sourceMapData);
 
                 this._codeMirror.setValue(builder.formattedContent);
 

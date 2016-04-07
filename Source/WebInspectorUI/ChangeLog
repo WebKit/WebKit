@@ -1,3 +1,142 @@
+2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve JavaScript pretty printing
+        https://bugs.webkit.org/show_bug.cgi?id=156178
+        <rdar://problem/25535719>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new EsprimaFormatter which pretty prints JavaScript source text
+        using the Esprima AST and Tokens. Currently we use CodeMirror's
+        tokenizer for pretty printing. By moving to Esprima for pretty
+        printing we get a few advantages: (1) can be used within a Worker
+        as there are no dependencies on DOM objects, (2) a full featured AST
+        gives more context to handling individual tokens. One disadvantage
+        is that Esprima requires valid input, so scripts with syntax errors
+        will not work.
+
+        EsprimaFormatter works by:
+        - Getting the Esprima AST and token stream.
+        - Walk all AST nodes:
+          - when entering an AST node, handle any tokens before the start of this node
+          - when leaving an AST node, handle any tokens that were inside the node
+        - Whenever we handle a new node or token check if we should preserve any
+          newlines or comments that do not show up in the AST or token stream.
+
+        This allows us to handle any token based on its context. Currently the
+        formatter prefers to operate on tokens based on their context. So the
+        formatter has a case for each AST node type and handles the tokens
+        within that AST node. A small exception is made to special case the
+        handling of semicolons.
+
+        * Scripts/copy-user-interface-resources-dryrun.rb:
+        Add a generic check for -h, -help, --help to print usage.
+
+        * Tools/Formatting/EsprimaFormatterDebug.js: Added.
+        (EsprimaFormatterDebug):
+        (EsprimaFormatterDebug.prototype.get debugText):
+        (EsprimaFormatterDebug.prototype._pad):
+        (EsprimaFormatterDebug.prototype._debugHeader):
+        (EsprimaFormatterDebug.prototype._debugFooter):
+        (EsprimaFormatterDebug.prototype._debug):
+        (EsprimaFormatterDebug.prototype._debugComments):
+        (EsprimaFormatterDebug.prototype._debugAfterProgramNode):
+        (EsprimaFormatterDebug.prototype._before):
+        (EsprimaFormatterDebug.prototype._after):
+        * Tools/Formatting/codemirror-additions.css: Copied from Source/WebInspectorUI/Tools/PrettyPrinting/codemirror-additions.css.
+        * Tools/Formatting/index.html: Added.
+        * Tools/PrettyPrinting/codemirror-additions.css:
+        (pre): Deleted.
+        (a.download): Deleted.
+        * Tools/PrettyPrinting/index.html:
+        * Tools/PrettyPrinting/populate/jquery.min.js: Removed.
+        Add a Formatter tool that is similiar to the PrettyPrinting tool but
+        outputs debug information for Esprima tokens. This is useful for
+        iterating on tests, performance measurements, and general debugging
+        of token stream for any input.
+
+        * UserInterface/Controllers/FormatterSourceMap.js:
+        (WebInspector.FormatterSourceMap.fromSourceMapData):
+        (WebInspector.FormatterSourceMap.fromBuilder): Deleted.
+        Switch to constructing with a common data objects, instead of a Builder.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        New files and moved files.
+
+        * UserInterface/Proxies/FormatterWorkerProxy.js: Added.
+        (WebInspector.FormatterWorkerProxy):
+        (WebInspector.FormatterWorkerProxy.singleton):
+        (WebInspector.FormatterWorkerProxy.canFormat):
+        (WebInspector.FormatterWorkerProxy.prototype.formatJavaScript):
+        (WebInspector.FormatterWorkerProxy.prototype.performAction):
+        (WebInspector.FormatterWorkerProxy.prototype._postMessage):
+        (WebInspector.FormatterWorkerProxy.prototype._handleMessage):
+        Main world object which provides a static formatJavaScript action.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._formattedContentFromEditor):
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.prettyPrint.prettyPrintAndUpdateEditor):
+        (WebInspector.TextEditor.prototype.prettyPrint):
+        * UserInterface/Workers/Formatter/FormatterContentBuilder.js: Renamed from Source/WebInspectorUI/UserInterface/Controllers/FormatterContentBuilder.js.
+        (FormatterContentBuilder):
+        Simplify construction of a Builder. The constructor objects were always
+        the same and often unnecessary. Also move out of the WebInspector
+        namespace signifying it can be used within a Worker.
+
+        (FormatterContentBuilder.prototype.get originalContent): Deleted.
+        (FormatterContentBuilder.prototype.get formattedContent): Deleted.
+        (FormatterContentBuilder.prototype.get sourceMapData): Added.
+        Simplify getting all the data needed for SourceMaps.
+
+        (FormatterContentBuilder.prototype.setOriginalLineEndings):
+        A client may wish to pre-fill line endings instead of filling
+        while building.
+
+        (FormatterContentBuilder.prototype.appendNewline):
+        Auto-clear trailing whitespace on the previous line.
+
+        * UserInterface/Workers/Formatter/ESTreeWalker.js: Added.
+        (ESTreeWalker):
+        (ESTreeWalker.prototype.walk):
+        (ESTreeWalker.prototype._walk):
+        (ESTreeWalker.prototype._walkArray):
+        (ESTreeWalker.prototype._walkChildren):
+        Walk AST nodes in an ESTree format. Due to the spec's incompleteness
+        this is essentially Esprima's ESTree.
+
+        * UserInterface/Workers/Formatter/EsprimaFormatter.js: Added.
+        (EsprimaFormatter):
+        (EsprimaFormatter.isWhitespace):
+        (EsprimaFormatter.prototype.get formattedText):
+        (EsprimaFormatter.prototype.get sourceMapData):
+        (EsprimaFormatter.prototype._insertNewlinesBeforeToken):
+        (EsprimaFormatter.prototype._insertComment):
+        (EsprimaFormatter.prototype._insertSameLineTrailingComments):
+        (EsprimaFormatter.prototype._insertCommentsAndNewlines):
+        (EsprimaFormatter.prototype._before):
+        (EsprimaFormatter.prototype._after):
+        (EsprimaFormatter.prototype._isInForHeader):
+        (EsprimaFormatter.prototype._isRangeWhitespace):
+        (EsprimaFormatter.prototype._handleTokenAtNode):
+        (EsprimaFormatter.prototype._exitNode):
+        (EsprimaFormatter.prototype._afterProgram):
+        Pretty print source text.
+
+        * UserInterface/Workers/Formatter/FormatterUtilities.js: Added.
+        (Array.prototype.lastValue):
+        (String.prototype.lineEndings):
+        (isECMAScriptWhitespace):
+        (isECMAScriptLineTerminator):
+        Helpers used by the classes in the Worker code.
+        
+        * UserInterface/Workers/Formatter/FormatterWorker.js: Added.
+        (FormatterWorker):
+        (FormatterWorker.prototype.formatJavaScript):
+        (FormatterWorker.prototype._handleMessage):
+        Handle the formatJavaScript action.
+
 2016-04-06  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Improve filtering in OpenResourceDialog

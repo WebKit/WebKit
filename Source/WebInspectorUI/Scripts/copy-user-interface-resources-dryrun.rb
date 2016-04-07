@@ -26,7 +26,7 @@
 require 'fileutils'
 require 'tmpdir'
 
-if ARGV.size != 1
+if ARGV.size != 1 || ARGV[0].include?("-h")
   puts "usage: #{File.basename $0} <output-directory>"
   exit 1
 end
