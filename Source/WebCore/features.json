@@ -509,6 +509,21 @@
         }
     },
     {
+        "name": "ImageBitmap",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/webappapis.html#imagebitmap",
+        "webkit-url": "https://webkit.org/b/",
+        "specification": "HTML5",
+        "description": "An interface for drawing bitmap images to a <canvas> without undue latency.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
         "name": "Initial Letter",
         "status": {
             "status": "Done",

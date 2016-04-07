@@ -1,5 +1,14 @@
 2016-04-07  Jon Davis  <jond@apple.com>
 
+        Add ImageBitmap as under consideration on Feature Status page
+        https://bugs.webkit.org/show_bug.cgi?id=156362
+
+        Reviewed by Timothy Hatcher.
+
+        * features.json:
+
+2016-04-07  Jon Davis  <jond@apple.com>
+
         Include Conical Gradients on the Feature Status page.
         https://bugs.webkit.org/show_bug.cgi?id=156363
 
