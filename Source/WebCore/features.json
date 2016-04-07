@@ -16,6 +16,12 @@
         }
     },
     {
+        "name": "CSS Image Values and Replaced Content Module Level 4",
+        "url": "https://www.w3.org/TR/css4-images/",
+        "keywords": ["css image values","css","image values"],
+        "category": "css"
+    },
+    {
         "name": "CSS Inline Layout Module Level 3",
         "status": {
             "status": "In Development",
@@ -405,6 +411,20 @@
             "name": "Benjamin Poulain",
             "twitter": "@awfulben",
             "email": "benjamin@webkit.org"
+        }
+    },
+    {
+        "name": "Conic Gradients",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://www.w3.org/TR/css4-images/#conic-gradients",
+        "specification": "CSS Image Values and Replaced Content Module Level 4",
+        "description": "Defines gradients wrapped around a central point.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
         }
     },
     {
