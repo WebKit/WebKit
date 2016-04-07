@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
+<style>
+.grid {
+    border: 5px solid magenta;
+    margin-bottom: 25px;
+    -webkit-grid-template-rows: minmax(auto, 0px);
+}
+
+.item {
+    font: 25px/1 Ahem;
+}
+
+.container { width: 150px; }
+.borderPadding {
+    border-width: 2px 3px 5px 9px;
+    border-color: blue;
+    border-style: solid;
+    padding: 4px 9px 12px 20px;
+}
+
+</style>
+
+<script src="../../resources/check-layout.js"></script>
+
+<body onload="checkLayout('.grid')">
+
+<h3>min-height: auto. grid height: auto</h3>
+<div class="container">
+    <div class="grid" data-expected-width="150" data-expected-height="35">
+        <div class="item" data-expected-width="140" data-expected-height="25">XXXX</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="grid" data-expected-width="150" data-expected-height="58">
+        <div class="item borderPadding" data-expected-width="140" data-expected-height="48">XXX</div>
+    </div>
+</div>
+
+<h3>min-height: 0px. grid height: auto</h3>
+<div class="container">
+    <div class="grid" data-expected-width="150" data-expected-height="10">
+        <div class="item" style="min-height: 0px;" data-expected-width="140" data-expected-height="0">XXXX</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="grid" data-expected-width="150" data-expected-height="33">
+        <div class="item borderPadding" style="min-height: 0px;" data-expected-width="140" data-expected-height="23">XXX</div>
+    </div>
+</div>
+
+<h3>NO STRETCH min-height: 0px. grid height: auto</h3>
+<div class="container">
+    <div class="grid" data-expected-width="150" data-expected-height="10">
+        <div class="item alignSelfStart" style="min-height: 0px;" data-expected-width="140" data-expected-height="25">XXXX</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="grid" data-expected-width="150" data-expected-height="33">
+        <div class="item alignSelfStart borderPadding" style="min-height: 0px;" data-expected-width="140" data-expected-height="48">XXX</div>
+    </div>
+</div>
+
+<h3>min-height: 0px. grid height: 15px</h3>
+<div class="container">
+    <div class="grid" style="height: 15px;" data-expected-width="150" data-expected-height="25">
+        <div class="item" style="min-height: 0px;" data-expected-width="140" data-expected-height="0">XXXX</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="grid" style="height: 15px;" data-expected-width="150" data-expected-height="25">
+        <div class="item borderPadding" style="min-height: 0px;" data-expected-width="140" data-expected-height="23">XXX</div>
+    </div>
+</div>
+
+<h3>NO STRETCH min-height: 0px. grid height: 15px</h3>
+<div class="container">
+    <div class="grid" style="height: 15px;" data-expected-width="150" data-expected-height="25">
+        <div class="item alignSelfStart" style="min-height: 0px;" data-expected-width="140" data-expected-height="25">XXXX</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="grid" style="height: 15px;" data-expected-width="150" data-expected-height="25">
+        <div class="item alignSelfStart borderPadding" style="min-height: 0px;" data-expected-width="140" data-expected-height="48">XXX</div>
+    </div>
+</div>
+
+<h3>min-height: 30px. grid height: auto</h3>
+<div class="container">
+    <div class="grid" data-expected-width="150" data-expected-height="40">
+        <div class="item" style="min-height: 30px;" data-expected-width="140" data-expected-height="30">XXXX</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="grid" data-expected-width="150" data-expected-height="63">
+        <div class="item borderPadding" style="min-height: 30px;" data-expected-width="140" data-expected-height="53">XXX</div>
+    </div>
+</div>
+
+<h3>NO STRETCH min-height: 30px. grid height: auto</h3>
+<div class="container">
+    <div class="grid" data-expected-width="150" data-expected-height="40">
+        <div class="item alignSelfStart" style="min-height: 30px;" data-expected-width="140" data-expected-height="30">XXXX</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="grid" data-expected-width="150" data-expected-height="63">
+        <div class="item alignSelfStart borderPadding" style="min-height: 30px;" data-expected-width="140" data-expected-height="53">XXX</div>
+    </div>
+</div>
+
+</body>

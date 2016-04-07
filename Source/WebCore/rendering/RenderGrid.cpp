@@ -750,7 +750,7 @@ LayoutUnit RenderGrid::minSizeForChild(RenderBox& child, GridTrackSizingDirectio
     if (isRowAxis)
         return child.computeLogicalWidthInRegionUsing(MinSize, childMinSize, contentLogicalWidth(), *this, nullptr);
 
-    return child.computeContentAndScrollbarLogicalHeightUsing(MinSize, childMinSize, child.logicalHeight()).valueOr(0);
+    return child.computeLogicalHeightUsing(MinSize, childMinSize, Nullopt).valueOr(0);
 }
 
 LayoutUnit RenderGrid::minContentForChild(RenderBox& child, GridTrackSizingDirection direction, Vector<GridTrack>& columnTracks)

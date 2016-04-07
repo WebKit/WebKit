@@ -1,3 +1,23 @@
+2016-04-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Content box incorrectly used as non-auto min-height
+        https://bugs.webkit.org/show_bug.cgi?id=155946
+
+        Reviewed by Antti Koivisto.
+
+        When computing the minimum height value of grid items with
+        non-auto min-height we used to return the size of the content
+        box meaning that borders and paddings were incorrectly
+        ignored.
+
+        Note that we're also ignoring margins, but as that is a
+        problem also for widths it'll be fixed in a follow up patch.
+
+        Test: fast/css-grid-layout/min-height-border-box.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::minSizeForChild):
+
 2016-04-07  Antti Koivisto  <antti@apple.com>
 
         Reverting previous due to bad LayoutTest ChangeLog.
