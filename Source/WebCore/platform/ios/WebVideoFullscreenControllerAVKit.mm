@@ -550,25 +550,30 @@ void WebVideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& vide
     RetainPtr<UIView> viewRef = view;
     m_videoElement = &videoElement;
 
-    m_interface = WebVideoFullscreenInterfaceAVKit::create();
-    m_interface->setWebVideoFullscreenChangeObserver(this);
-    m_interface->setWebVideoFullscreenModel(this);
-    m_videoFullscreenView = adoptNS([[getUIViewClass() alloc] init]);
-    
     RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this, viewRef, mode] {
-        m_model = WebVideoFullscreenModelVideoElement::create();
-        m_model->setWebVideoFullscreenInterface(this);
-        m_model->setVideoElement(m_videoElement.get());
-        
-        bool allowsPictureInPicture = m_videoElement->mediaSession().allowsPictureInPicture(*m_videoElement.get());
+    dispatch_async(dispatch_get_main_queue(), [strongThis, this, viewRef, mode] {
+        ASSERT(isUIThread());
 
-        IntRect videoElementClientRect = elementRectInWindow(m_videoElement.get());
-        FloatRect videoLayerFrame = FloatRect(FloatPoint(), videoElementClientRect.size());
-        m_model->setVideoLayerFrame(videoLayerFrame);
+        m_interface = WebVideoFullscreenInterfaceAVKit::create();
+        m_interface->setWebVideoFullscreenChangeObserver(this);
+        m_interface->setWebVideoFullscreenModel(this);
+        m_videoFullscreenView = adoptNS([[getUIViewClass() alloc] init]);
         
-        dispatch_async(dispatch_get_main_queue(), [strongThis, this, videoElementClientRect, viewRef, mode, allowsPictureInPicture] {
-            m_interface->setupFullscreen(*m_videoFullscreenView.get(), videoElementClientRect, viewRef.get(), mode, allowsPictureInPicture);
+        RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
+        WebThreadRun([strongThis, this, viewRef, mode] {
+            m_model = WebVideoFullscreenModelVideoElement::create();
+            m_model->setWebVideoFullscreenInterface(this);
+            m_model->setVideoElement(m_videoElement.get());
+            
+            bool allowsPictureInPicture = m_videoElement->mediaSession().allowsPictureInPicture(*m_videoElement.get());
+
+            IntRect videoElementClientRect = elementRectInWindow(m_videoElement.get());
+            FloatRect videoLayerFrame = FloatRect(FloatPoint(), videoElementClientRect.size());
+            m_model->setVideoLayerFrame(videoLayerFrame);
+            
+            dispatch_async(dispatch_get_main_queue(), [strongThis, this, videoElementClientRect, viewRef, mode, allowsPictureInPicture] {
+                m_interface->setupFullscreen(*m_videoFullscreenView.get(), videoElementClientRect, viewRef.get(), mode, allowsPictureInPicture);
+            });
         });
     });
 }

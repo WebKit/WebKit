@@ -742,10 +742,13 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
     CGAffineTransform transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
     [view setTransform:transform];
     
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
-    
-    if (!CGAffineTransformIsIdentity(transform))
-        [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:[CATransaction animationDuration] + 0.1];
+    NSTimeInterval animationDuration = [CATransaction animationDuration];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
+
+        if (!CGAffineTransformIsIdentity(transform))
+            [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:animationDuration + 0.1];
+    });
 }
 
 - (void)resolveBounds

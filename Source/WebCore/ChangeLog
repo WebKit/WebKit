@@ -1,3 +1,19 @@
+2016-04-07  Jeremy Jones  <jeremyj@apple.com>
+
+        In WK1 WebVideoFullscreen interface may be accessed from WK1 main thread instead of UI thread.
+        https://bugs.webkit.org/show_bug.cgi?id=154252
+        rdar://problem/22460539
+
+        Reviewed by Eric Carlson.
+
+        In WebKit1, Javascript can cause enter fullscreen to happen on the main thead, which is not
+        necessarily the UI thread. This can cause autolayout errors. Move this code to the UI thread.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::setUpFullscreen): Move setup to the UI thread.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer layoutSublayers]): Move call to resolveBounds to the UI thread.
+
 2016-04-07  Beth Dakin  <bdakin@apple.com>
 
         Build fix.
