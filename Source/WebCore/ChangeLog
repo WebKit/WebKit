@@ -1,3 +1,84 @@
+2016-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename MidpointState to WhitespaceCollapsingState
+        https://bugs.webkit.org/show_bug.cgi?id=156304
+
+        Reviewed by David Hyatt.
+
+        MidpointState has nothing to do with midpoints.
+
+        An individual midpoint is now known as a "whitespace collapsing transition."
+
+        No new tests because there is no behavior change.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::WhitespaceCollapsingState::reset): (See addMidpoint() below.)
+        Previously, we were using operator= to destroy old Iterators when their
+        storage inside the Vector was reused. Now that we are elliminating
+        m_numMidpoints, we can push destruction earlier to this reset() function.
+        Because the same amount of destruction happens in both cases, this doesn't
+        add additional work. (Vector can destroy its contents without shrinking
+        its storage overcommitment.)
+        (WebCore::WhitespaceCollapsingState::startIgnoringSpaces):
+        (WebCore::WhitespaceCollapsingState::stopIgnoringSpaces):
+        (WebCore::WhitespaceCollapsingState::ensureLineBoxInsideIgnoredSpaces):
+        (WebCore::WhitespaceCollapsingState::decrementTransitionAt):
+        (WebCore::WhitespaceCollapsingState::thresholds): Make the return value
+        const. The only clients of this function which needed mutation were
+        migrated to using decrementTransitionAt().
+        (WebCore::WhitespaceCollapsingState::numTransitions):
+        (WebCore::WhitespaceCollapsingState::currentTransition):
+        (WebCore::WhitespaceCollapsingState::setCurrentTransition):
+        (WebCore::WhitespaceCollapsingState::incrementCurrentTransition):
+        (WebCore::WhitespaceCollapsingState::decrementNumTransitions):
+        (WebCore::WhitespaceCollapsingState::betweenTransitions):
+        (WebCore::BidiResolverBase::whitespaceCollapsingState):
+        (WebCore::Subclass>::setWhitespaceCollapsingTransitionForIsolatedRun):
+        (WebCore::Subclass>::whitespaceCollapsingTransitionForIsolatedRun):
+        (WebCore::MidpointState::MidpointState): Deleted.
+        (WebCore::MidpointState::reset): Deleted.
+        (WebCore::MidpointState::startIgnoringSpaces): Deleted.
+        (WebCore::MidpointState::stopIgnoringSpaces): Deleted.
+        (WebCore::MidpointState::ensureLineBoxInsideIgnoredSpaces): Deleted.
+        (WebCore::MidpointState::midpoints): Deleted.
+        (WebCore::MidpointState::numMidpoints): Deleted.
+        (WebCore::MidpointState::currentMidpoint): Deleted.
+        (WebCore::MidpointState::setCurrentMidpoint): Deleted.
+        (WebCore::MidpointState::incrementCurrentMidpoint): Deleted.
+        (WebCore::MidpointState::decrementNumMidpoints): Deleted.
+        (WebCore::MidpointState::betweenMidpoints): Deleted.
+        (WebCore::MidpointState::addMidpoint): Deleted. This code has been around for 13
+        years (since r3672) where it was using QMemArray. That class doesn't have an
+        append() class, so it was implemented inside this function. Luckily, Vector
+        already overcommits its allocation, so we can elliminate m_numMidpoints entirely.
+        (WebCore::BidiResolverBase::midpointState): Deleted.
+        (WebCore::Subclass>::setMidpointForIsolatedRun): Deleted.
+        (WebCore::Subclass>::midpointForIsolatedRun): Deleted.
+        * rendering/InlineIterator.h:
+        (WebCore::addPlaceholderRunForIsolatedInline):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::appendRunsForObject):
+        (WebCore::setUpResolverToResumeInIsolate):
+        (WebCore::constructBidiRunsForSegment):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::BreakingContext):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::BreakingContext::handleOutOfFlowPositioned):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::BreakingContext::handleEmptyInline):
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::ensureCharacterGetsLineBox):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::checkWhitespaceCollapsingTransitions):
+        (WebCore::BreakingContext::handleEndOfLine):
+        (WebCore::checkMidpoints): Deleted.
+        * rendering/line/TrailingObjects.cpp:
+        (WebCore::TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes):
+        (WebCore::TrailingObjects::updateMidpointsForTrailingBoxes): Deleted.
+        * rendering/line/TrailingObjects.h:
+        (WebCore::TrailingObjects::appendBoxIfNeeded):
+
 2016-04-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove duplicated parsePortFromStringPosition()

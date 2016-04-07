@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All right reserved.
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2016 Apple Inc. All right reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2013 ChangSeok Oh <shivamidow@gmail.com>
  * Copyright (C) 2013 Adobe Systems Inc. All right reserved.
@@ -38,9 +38,9 @@ struct BidiIsolatedRun;
 
 template <class Iterator, class Run> class BidiResolver;
 template <class Iterator, class Run, class IsolateRun> class BidiResolverWithIsolate;
-template <class Iterator> class MidpointState;
+template <class Iterator> class WhitespaceCollapsingState;
 typedef BidiResolverWithIsolate<InlineIterator, BidiRun, BidiIsolatedRun> InlineBidiResolver;
-typedef MidpointState<InlineIterator> LineMidpointState;
+typedef WhitespaceCollapsingState<InlineIterator> LineWhitespaceCollapsingState;
 
 class TrailingObjects {
 public:
@@ -60,7 +60,7 @@ public:
         m_boxes.shrink(0); // Use shrink(0) instead of clear() to retain our capacity.
     }
 
-    void appendBoxIfNeeded(RenderBoxModelObject* box)
+    void appendBoxIfNeeded(RenderBoxModelObject& box)
     {
         if (m_whitespace)
             m_boxes.append(box);
@@ -68,11 +68,11 @@ public:
 
     enum CollapseFirstSpaceOrNot { DoNotCollapseFirstSpace, CollapseFirstSpace };
 
-    void updateMidpointsForTrailingBoxes(LineMidpointState&, const InlineIterator& lBreak, CollapseFirstSpaceOrNot);
+    void updateWhitespaceCollapsingTransitionsForTrailingBoxes(LineWhitespaceCollapsingState&, const InlineIterator& lBreak, CollapseFirstSpaceOrNot);
 
 private:
     RenderText* m_whitespace;
-    Vector<RenderBoxModelObject*, 4> m_boxes;
+    Vector<std::reference_wrapper<RenderBoxModelObject>, 4> m_boxes;
 };
 
 }

@@ -129,7 +129,7 @@ public:
         , m_allowImagesToBreak(!block.document().inQuirksMode() || !block.isTableCell() || !m_blockStyle.logicalWidth().isIntrinsicOrAuto())
         , m_atEnd(false)
         , m_hadUncommittedWidthBeforeCurrent(false)
-        , m_lineMidpointState(resolver.midpointState())
+        , m_lineWhitespaceCollapsingState(resolver.whitespaceCollapsingState())
     {
         m_lineInfo.setPreviousLineBrokeCleanly(false);
     }
@@ -292,7 +292,7 @@ private:
     
     bool m_hangsAtEnd { false };
 
-    LineMidpointState& m_lineMidpointState;
+    LineWhitespaceCollapsingState& m_lineWhitespaceCollapsingState;
 
     TrailingObjects m_trailingObjects;
 };
@@ -334,9 +334,9 @@ inline void BreakingContext::increment()
 inline void BreakingContext::handleBR(EClear& clear)
 {
     if (fitsOnLineOrHangsAtEnd()) {
-        RenderObject* br = m_current.renderer();
+        RenderObject& br = *m_current.renderer();
         m_lineBreakHistory.push([&](InlineIterator& modifyMe) {
-            modifyMe.moveToStartOf(br);
+            modifyMe.moveToStartOf(&br);
             modifyMe.increment();
         });
 
@@ -354,12 +354,12 @@ inline void BreakingContext::handleBR(EClear& clear)
         // need to check for floats to clear - so if we're ignoring spaces, stop ignoring them and add a
         // run for this object.
         if (m_ignoringSpaces && m_currentStyle->clear() != CNONE)
-            m_lineMidpointState.ensureLineBoxInsideIgnoredSpaces(br);
+            m_lineWhitespaceCollapsingState.ensureLineBoxInsideIgnoredSpaces(br);
         // If we were preceded by collapsing space and are in a right-aligned container we need to ensure the space gets
         // collapsed away so that it doesn't push the text out from the container's right-hand edge.
         // FIXME: Do this regardless of the container's alignment - will require rebaselining a lot of test results.
         else if (m_ignoringSpaces && (m_blockStyle.textAlign() == RIGHT || m_blockStyle.textAlign() == WEBKIT_RIGHT))
-            m_lineMidpointState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), m_current.offset()));
+            m_lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), m_current.offset()));
 
         if (!m_lineInfo.isEmpty())
             clear = m_currentStyle->clear();
@@ -438,8 +438,8 @@ inline void BreakingContext::handleOutOfFlowPositioned(Vector<RenderBox*>& posit
     // then start ignoring spaces again.
     if (isInlineType || box.container()->isRenderInline()) {
         if (m_ignoringSpaces)
-            m_lineMidpointState.ensureLineBoxInsideIgnoredSpaces(&box);
-        m_trailingObjects.appendBoxIfNeeded(&box);
+            m_lineWhitespaceCollapsingState.ensureLineBoxInsideIgnoredSpaces(box);
+        m_trailingObjects.appendBoxIfNeeded(box);
     } else
         positionedObjects.append(&box);
 
@@ -469,7 +469,7 @@ inline void BreakingContext::handleFloat()
 
 // This is currently just used for list markers and inline flows that have line boxes. Neither should
 // have an effect on whitespace at the start of the line.
-inline bool shouldSkipWhitespaceAfterStartObject(RenderBlockFlow& block, RenderObject* o, LineMidpointState& lineMidpointState)
+inline bool shouldSkipWhitespaceAfterStartObject(RenderBlockFlow& block, RenderObject* o, LineWhitespaceCollapsingState& lineWhitespaceCollapsingState)
 {
     RenderObject* next = bidiNextSkippingEmptyInlines(block, o);
     while (next && next->isFloatingOrOutOfFlowPositioned())
@@ -479,7 +479,7 @@ inline bool shouldSkipWhitespaceAfterStartObject(RenderBlockFlow& block, RenderO
         RenderText& nextText = downcast<RenderText>(*next);
         UChar nextChar = nextText.characterAt(0);
         if (nextText.style().isCollapsibleWhiteSpace(nextChar)) {
-            lineMidpointState.startIgnoringSpaces(InlineIterator(nullptr, o, 0));
+            lineWhitespaceCollapsingState.startIgnoringSpaces(InlineIterator(nullptr, o, 0));
             return true;
         }
     }
@@ -506,16 +506,16 @@ inline void BreakingContext::handleEmptyInline()
             m_lineInfo.setEmpty(false, &m_block, &m_width);
         if (m_ignoringSpaces) {
             m_trailingObjects.clear();
-            m_lineMidpointState.ensureLineBoxInsideIgnoredSpaces(m_current.renderer());
+            m_lineWhitespaceCollapsingState.ensureLineBoxInsideIgnoredSpaces(*m_current.renderer());
         } else if (m_blockStyle.collapseWhiteSpace() && m_resolver.position().renderer() == m_current.renderer()
-            && shouldSkipWhitespaceAfterStartObject(m_block, m_current.renderer(), m_lineMidpointState)) {
+            && shouldSkipWhitespaceAfterStartObject(m_block, m_current.renderer(), m_lineWhitespaceCollapsingState)) {
             // Like with list markers, we start ignoring spaces to make sure that any
             // additional spaces we see will be discarded.
             m_currentCharacterIsSpace = true;
             m_currentCharacterIsWS = true;
             m_ignoringSpaces = true;
         } else
-            m_trailingObjects.appendBoxIfNeeded(&flowBox);
+            m_trailingObjects.appendBoxIfNeeded(flowBox);
     }
     
     float inlineWidth = inlineLogicalWidth(m_current.renderer()) + borderPaddingMarginStart(flowBox) + borderPaddingMarginEnd(flowBox);
@@ -549,7 +549,7 @@ inline void BreakingContext::handleReplaced()
             m_lineLayoutState.prevFloatBottomFromAnonymousInlineBlock(), m_lineLayoutState.maxFloatBottomFromAnonymousInlineBlock());
 
     if (m_ignoringSpaces)
-        m_lineMidpointState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), 0));
+        m_lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), 0));
 
     m_lineInfo.setEmpty(false, &m_block, &m_width);
     m_ignoringSpaces = false;
@@ -561,7 +561,7 @@ inline void BreakingContext::handleReplaced()
     // item, then this is all moot.
     LayoutUnit replacedLogicalWidth = m_block.logicalWidthForChild(replacedBox) + m_block.marginStartForChild(replacedBox) + m_block.marginEndForChild(replacedBox) + inlineLogicalWidth(m_current.renderer());
     if (is<RenderListMarker>(*m_current.renderer())) {
-        if (m_blockStyle.collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(m_block, m_current.renderer(), m_lineMidpointState)) {
+        if (m_blockStyle.collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(m_block, m_current.renderer(), m_lineWhitespaceCollapsingState)) {
             // Like with inline flows, we start ignoring spaces to make sure that any
             // additional spaces we see will be discarded.
             m_currentCharacterIsSpace = true;
@@ -642,12 +642,12 @@ ALWAYS_INLINE float textWidth(RenderText& text, unsigned from, unsigned len, con
     return font.width(run, &fallbackFonts, &glyphOverflow);
 }
 
-// Adding a pair of midpoints before a character will split it out into a new line box.
-inline void ensureCharacterGetsLineBox(LineMidpointState& lineMidpointState, InlineIterator& textParagraphSeparator)
+// Adding a pair of whitespace collapsing transitions before a character will split it out into a new line box.
+inline void ensureCharacterGetsLineBox(LineWhitespaceCollapsingState& lineWhitespaceCollapsingState, InlineIterator& textParagraphSeparator)
 {
-    InlineIterator midpoint(0, textParagraphSeparator.renderer(), textParagraphSeparator.offset());
-    lineMidpointState.startIgnoringSpaces(InlineIterator(0, textParagraphSeparator.renderer(), textParagraphSeparator.offset() - 1));
-    lineMidpointState.stopIgnoringSpaces(InlineIterator(0, textParagraphSeparator.renderer(), textParagraphSeparator.offset()));
+    InlineIterator transition(0, textParagraphSeparator.renderer(), textParagraphSeparator.offset());
+    lineWhitespaceCollapsingState.startIgnoringSpaces(InlineIterator(0, textParagraphSeparator.renderer(), textParagraphSeparator.offset() - 1));
+    lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(0, textParagraphSeparator.renderer(), textParagraphSeparator.offset()));
 }
 
 inline void tryHyphenating(RenderText& text, const FontCascade& font, const AtomicString& localeIdentifier, unsigned consecutiveHyphenatedLines, int consecutiveHyphenatedLinesLimit, int minimumPrefixLimit, int minimumSuffixLimit, unsigned lastSpace, unsigned pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
@@ -887,7 +887,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     m_ignoringSpaces = false;
                     wordSpacingForWordMeasurement = 0;
                     lastSpace = m_current.offset(); // e.g., "Foo    goo", don't add in any of the ignored spaces.
-                    m_lineMidpointState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), m_current.offset()));
+                    m_lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), m_current.offset()));
                     stoppedIgnoringSpaces = true;
                 } else {
                     // Just keep ignoring these spaces.
@@ -948,7 +948,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     }
                     if (m_lineBreakHistory.atTextParagraphSeparator()) {
                         if (!stoppedIgnoringSpaces && m_current.offset() > 0)
-                            ensureCharacterGetsLineBox(m_lineMidpointState, m_current);
+                            ensureCharacterGetsLineBox(m_lineWhitespaceCollapsingState, m_current);
                         m_lineBreakHistory.increment();
                         m_lineInfo.setPreviousLineBrokeCleanly(true);
                         wordMeasurement.endOffset = m_lineBreakHistory.offset();
@@ -1004,7 +1004,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
 
             if (c == '\n' && m_preservesNewline) {
                 if (!stoppedIgnoringSpaces && m_current.offset())
-                    ensureCharacterGetsLineBox(m_lineMidpointState, m_current);
+                    ensureCharacterGetsLineBox(m_lineWhitespaceCollapsingState, m_current);
                 commitLineBreakAtCurrentWidth(*m_current.renderer(), m_current.offset(), m_current.nextBreakablePosition());
                 m_lineBreakHistory.increment();
                 m_lineInfo.setPreviousLineBrokeCleanly(true);
@@ -1039,10 +1039,10 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     m_ignoringSpaces = true;
 
                     // We just entered a mode where we are ignoring
-                    // spaces. Create a midpoint to terminate the run
+                    // spaces. Create a transition to terminate the run
                     // before the second space.
-                    m_lineMidpointState.startIgnoringSpaces(m_startOfIgnoredSpaces);
-                    m_trailingObjects.updateMidpointsForTrailingBoxes(m_lineMidpointState, InlineIterator(), TrailingObjects::DoNotCollapseFirstSpace);
+                    m_lineWhitespaceCollapsingState.startIgnoringSpaces(m_startOfIgnoredSpaces);
+                    m_trailingObjects.updateWhitespaceCollapsingTransitionsForTrailingBoxes(m_lineWhitespaceCollapsingState, InlineIterator(), TrailingObjects::DoNotCollapseFirstSpace);
                 }
             }
         } else {
@@ -1052,7 +1052,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 lastSpaceWordSpacing = applyWordSpacing ? wordSpacing : 0;
                 wordSpacingForWordMeasurement = (applyWordSpacing && wordMeasurements.last().width) ? wordSpacing : 0;
                 lastSpace = m_current.offset(); // e.g., "Foo    goo", don't add in any of the ignored spaces.
-                m_lineMidpointState.stopIgnoringSpaces(InlineIterator(nullptr, m_current.renderer(), m_current.offset()));
+                m_lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(nullptr, m_current.renderer(), m_current.offset()));
             }
             if (m_hangsAtEnd && !renderText.isHangableStopOrComma(c))
                 m_hangsAtEnd = false;
@@ -1061,7 +1061,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         if (isSVGText && m_current.offset()) {
             // Force creation of new InlineBoxes for each absolute positioned character (those that start new text chunks).
             if (downcast<RenderSVGInlineText>(renderText).characterStartsNewTextChunk(m_current.offset()))
-                ensureCharacterGetsLineBox(m_lineMidpointState, m_current);
+                ensureCharacterGetsLineBox(m_lineWhitespaceCollapsingState, m_current);
         }
 
         if (m_currentCharacterIsSpace && !previousCharacterIsSpace) {
@@ -1074,7 +1074,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 m_startOfIgnoredSpaces.setOffset(m_startOfIgnoredSpaces.offset() - 1);
                 // If there's just a single trailing space start ignoring it now so it collapses away.
                 if (m_current.offset() == renderText.textLength() - 1)
-                    m_lineMidpointState.startIgnoringSpaces(m_startOfIgnoredSpaces);
+                    m_lineWhitespaceCollapsingState.startIgnoringSpaces(m_startOfIgnoredSpaces);
             }
         }
 
@@ -1220,23 +1220,23 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
     }
 }
 
-inline TrailingObjects::CollapseFirstSpaceOrNot checkMidpoints(LineMidpointState& lineMidpointState, const InlineIterator& lBreak)
+inline TrailingObjects::CollapseFirstSpaceOrNot checkWhitespaceCollapsingTransitions(LineWhitespaceCollapsingState& lineWhitespaceCollapsingState, const InlineIterator& lBreak)
 {
-    // Check to see if our last midpoint is a start point beyond the line break. If so,
+    // Check to see if our last transition is a start point beyond the line break. If so,
     // shave it off the list, and shave off a trailing space if the previous end point doesn't
     // preserve whitespace.
-    if (lBreak.renderer() && lineMidpointState.numMidpoints() && !(lineMidpointState.numMidpoints() % 2)) {
-        InlineIterator* midpoints = lineMidpointState.midpoints().data();
-        InlineIterator& endpoint = midpoints[lineMidpointState.numMidpoints() - 2];
-        const InlineIterator& startpoint = midpoints[lineMidpointState.numMidpoints() - 1];
+    if (lBreak.renderer() && lineWhitespaceCollapsingState.numTransitions() && !(lineWhitespaceCollapsingState.numTransitions() % 2)) {
+        const InlineIterator* transitions = lineWhitespaceCollapsingState.transitions().data();
+        const InlineIterator& endpoint = transitions[lineWhitespaceCollapsingState.numTransitions() - 2];
+        const InlineIterator& startpoint = transitions[lineWhitespaceCollapsingState.numTransitions() - 1];
         InlineIterator currpoint = endpoint;
         while (!currpoint.atEnd() && currpoint != startpoint && currpoint != lBreak)
             currpoint.increment();
         if (currpoint == lBreak) {
             // We hit the line break before the start point. Shave off the start point.
-            lineMidpointState.decrementNumMidpoints();
+            lineWhitespaceCollapsingState.decrementNumTransitions();
             if (endpoint.renderer()->style().collapseWhiteSpace() && endpoint.renderer()->isText()) {
-                endpoint.fastDecrement();
+                lineWhitespaceCollapsingState.decrementTransitionAt(lineWhitespaceCollapsingState.numTransitions() - 1);
                 return TrailingObjects::DoNotCollapseFirstSpace;
             }
         }
@@ -1269,10 +1269,10 @@ inline InlineIterator BreakingContext::handleEndOfLine()
         m_lineBreakHistory.increment();
     }
 
-    // Sanity check our midpoints.
-    TrailingObjects::CollapseFirstSpaceOrNot collapsed = checkMidpoints(m_lineMidpointState, m_lineBreakHistory.current());
+    // Sanity check our whitespace collapsing transitions.
+    TrailingObjects::CollapseFirstSpaceOrNot collapsed = checkWhitespaceCollapsingTransitions(m_lineWhitespaceCollapsingState, m_lineBreakHistory.current());
 
-    m_trailingObjects.updateMidpointsForTrailingBoxes(m_lineMidpointState, m_lineBreakHistory.current(), collapsed);
+    m_trailingObjects.updateWhitespaceCollapsingTransitionsForTrailingBoxes(m_lineWhitespaceCollapsingState, m_lineBreakHistory.current(), collapsed);
 
     // We might have made lineBreak an iterator that points past the end
     // of the object. Do this adjustment to make it point to the start

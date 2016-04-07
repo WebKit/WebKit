@@ -495,7 +495,7 @@ static inline void addPlaceholderRunForIsolatedInline(InlineBidiResolver& resolv
     std::unique_ptr<BidiRun> isolatedRun = std::make_unique<BidiRun>(pos, 0, obj, resolver.context(), resolver.dir());
     // FIXME: isolatedRuns() could be a hash of object->run and then we could cheaply
     // ASSERT here that we didn't create multiple objects for the same inline.
-    resolver.setMidpointForIsolatedRun(*isolatedRun, resolver.midpointState().currentMidpoint());
+    resolver.setWhitespaceCollapsingTransitionForIsolatedRun(*isolatedRun, resolver.whitespaceCollapsingState().currentTransition());
     resolver.isolatedRuns().append(BidiIsolatedRun(obj, pos, root, *isolatedRun));
     resolver.runs().appendRun(WTFMove(isolatedRun));
 }

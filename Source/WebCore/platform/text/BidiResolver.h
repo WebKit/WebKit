@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007, 2008 Apple Inc.  All right reserved.
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2016 Apple Inc.  All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,63 +34,50 @@ namespace WebCore {
 
 class RenderObject;
 
-template <class Iterator> class MidpointState {
+template <class Iterator> class WhitespaceCollapsingState {
 public:
-    MidpointState()
-    {
-        reset();
-    }
-    
     void reset()
     {
-        m_numMidpoints = 0;
-        m_currentMidpoint = 0;
+        m_transitions.clear();
+        m_currentTransition = 0;
     }
     
-    void startIgnoringSpaces(const Iterator& midpoint)
+    void startIgnoringSpaces(const Iterator& transition)
     {
-        ASSERT(!(m_numMidpoints % 2));
-        addMidpoint(midpoint);
+        ASSERT(!(m_transitions.size() % 2));
+        m_transitions.append(transition);
     }
 
-    void stopIgnoringSpaces(const Iterator& midpoint)
+    void stopIgnoringSpaces(const Iterator& transition)
     {
-        ASSERT(m_numMidpoints % 2);
-        addMidpoint(midpoint);
+        ASSERT(m_transitions.size() % 2);
+        m_transitions.append(transition);
     }
 
     // When ignoring spaces, this needs to be called for objects that need line boxes such as RenderInlines or
     // hard line breaks to ensure that they're not ignored.
-    void ensureLineBoxInsideIgnoredSpaces(RenderObject* renderer)
+    void ensureLineBoxInsideIgnoredSpaces(RenderObject& renderer)
     {
-        Iterator midpoint(0, renderer, 0);
-        stopIgnoringSpaces(midpoint);
-        startIgnoringSpaces(midpoint);
+        Iterator transition(0, &renderer, 0);
+        stopIgnoringSpaces(transition);
+        startIgnoringSpaces(transition);
     }
 
-    Vector<Iterator>& midpoints() { return m_midpoints; }
-    unsigned numMidpoints() const { return m_numMidpoints; }
-    unsigned currentMidpoint() const { return m_currentMidpoint; }
-    void setCurrentMidpoint(unsigned currentMidpoint) { m_currentMidpoint = currentMidpoint; }
-    void incrementCurrentMidpoint() { ++m_currentMidpoint; }
-    void decrementNumMidpoints() { --m_numMidpoints; }
-    bool betweenMidpoints() const { return m_currentMidpoint % 2; }
+    void decrementTransitionAt(size_t index)
+    {
+        m_transitions[index].fastDecrement();
+    }
+
+    const Vector<Iterator>& transitions() { return m_transitions; }
+    size_t numTransitions() const { return m_transitions.size(); }
+    size_t currentTransition() const { return m_currentTransition; }
+    void setCurrentTransition(size_t currentTransition) { m_currentTransition = currentTransition; }
+    void incrementCurrentTransition() { ++m_currentTransition; }
+    void decrementNumTransitions() { m_transitions.shrink(m_transitions.size() - 1); }
+    bool betweenTransitions() const { return m_currentTransition % 2; }
 private:
-    // The goal is to reuse the line state across multiple
-    // lines so we just keep an array around for midpoints and never clear it across multiple
-    // lines. We track the number of items and position using the two other variables.
-    Vector<Iterator> m_midpoints;
-    unsigned m_numMidpoints;
-    unsigned m_currentMidpoint;
-
-    void addMidpoint(const Iterator& midpoint)
-    {
-        if (m_midpoints.size() <= m_numMidpoints)
-            m_midpoints.grow(m_numMidpoints + 10);
-
-        Iterator* midpointsIterator = m_midpoints.data();
-        midpointsIterator[m_numMidpoints++] = midpoint;
-    }
+    Vector<Iterator> m_transitions;
+    size_t m_currentTransition { 0 };
 };
 
 // The BidiStatus at a given position (typically the end of a line) can
@@ -247,7 +234,7 @@ public:
     const BidiStatus& status() const { return m_status; }
     void setStatus(const BidiStatus s) { m_status = s; }
 
-    MidpointState<Iterator>& midpointState() { return m_midpointState; }
+    WhitespaceCollapsingState<Iterator>& whitespaceCollapsingState() { return m_whitespaceCollapsingState; }
 
     // The current algorithm handles nested isolates one layer of nesting at a time.
     // But when we layout each isolated span, we will walk into (and ignore) all
@@ -267,8 +254,8 @@ public:
     // It's unclear if this is still needed.
     void markCurrentRunEmpty() { m_emptyRun = true; }
 
-    void setMidpointForIsolatedRun(Run&, unsigned);
-    unsigned midpointForIsolatedRun(Run&);
+    void setWhitespaceCollapsingTransitionForIsolatedRun(Run&, size_t);
+    unsigned whitespaceCollapsingTransitionForIsolatedRun(Run&);
 
 protected:
     // FIXME: Instead of InlineBidiResolvers subclassing this method, we should
@@ -292,10 +279,10 @@ protected:
     // into createBidiRunsForLine by the caller.
     BidiRunList<Run> m_runs;
 
-    MidpointState<Iterator> m_midpointState;
+    WhitespaceCollapsingState<Iterator> m_whitespaceCollapsingState;
 
     unsigned m_nestedIsolateCount;
-    HashMap<Run*, unsigned> m_midpointForIsolatedRun;
+    HashMap<Run*, unsigned> m_whitespaceCollapsingTransitionForIsolatedRun;
 
 private:
     void raiseExplicitEmbeddingLevel(UCharDirection from, UCharDirection to);
@@ -982,16 +969,16 @@ void BidiResolverBase<Iterator, Run, Subclass>::createBidiRunsForLine(const Iter
 }
 
 template <class Iterator, class Run, class Subclass>
-void BidiResolverBase<Iterator, Run, Subclass>::setMidpointForIsolatedRun(Run& run, unsigned midpoint)
+void BidiResolverBase<Iterator, Run, Subclass>::setWhitespaceCollapsingTransitionForIsolatedRun(Run& run, size_t transition)
 {
-    ASSERT(!m_midpointForIsolatedRun.contains(&run));
-    m_midpointForIsolatedRun.add(&run, midpoint);
+    ASSERT(!m_whitespaceCollapsingTransitionForIsolatedRun.contains(&run));
+    m_whitespaceCollapsingTransitionForIsolatedRun.add(&run, transition);
 }
 
 template<class Iterator, class Run, class Subclass>
-unsigned BidiResolverBase<Iterator, Run, Subclass>::midpointForIsolatedRun(Run& run)
+unsigned BidiResolverBase<Iterator, Run, Subclass>::whitespaceCollapsingTransitionForIsolatedRun(Run& run)
 {
-    return m_midpointForIsolatedRun.take(&run);
+    return m_whitespaceCollapsingTransitionForIsolatedRun.take(&run);
 }
 
 } // namespace WebCore
