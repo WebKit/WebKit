@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1049,9 +1049,10 @@ static FrameView* frameViewForLatchingState(Frame& frame, ScrollLatchingState* l
 
 bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEvent, ContainerNode* scrollableContainer, ScrollableArea* scrollableArea)
 {
-    // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
-    ASSERT(m_frame.view());
     FrameView* view = m_frame.view();
+    // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
+    if (!view)
+        return false;
 
     ScrollLatchingState* latchingState = m_frame.mainFrame().latchingState();
     if (wheelEvent.useLatchedEventElement() && !latchingIsLockedToAncestorOfThisFrame(m_frame) && latchingState && latchingState->scrollableContainer()) {

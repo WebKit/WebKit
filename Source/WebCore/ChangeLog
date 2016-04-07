@@ -1,3 +1,52 @@
+2016-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Wheel event callback removing the window causes crash in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=150871
+        <rdar://problem/23418283>
+
+        Reviewed by Simon Fraser.
+
+        Null check the FrameView before using it, since the iframe may have been removed
+        from its parent document inside the event handler.
+        
+        The new test triggered a cross-load side-effect, where wheel event filtering wasn't
+        reset between page loads. Fix by calling clearLatchedState() in EventHandler::clear(),
+        which resets the filtering.
+
+        Since the Frame destructor invokes EventHandler::clear, which invokes MainFrame methods,
+        we run the risk of attempting to dereference destroyed MainFrame elements of the current
+        Frame object. Instead, clear the EventHandler in the MainFrame destructor.
+
+        Finally, confirm that the mainFrame member is not being destroyed in the handful of
+        places that might attempt to access the mainFrame during object destruction (essentially
+        cleanup methods).
+
+        Test: fast/events/wheel-event-destroys-frame.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear): Protect against accessing mainFrame content during destruction.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear): Call 'clearLatchedState' instead of endFilteringDeltas.
+        (WebCore::EventHandler::clearLatchedState): Null-check the filter before calling it.
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame): Do not call 'setView' in the destructor for a MainFrame.
+        (WebCore::Frame::setView): Check for a null event handler before invoking it.
+        (WebCore::Frame::setMainFrameWasDestroyed): Added. Mark that the MainFrame
+        member of the Frame is being destroyed (if the current Frame is a MainFrame) and clear
+        the EventHandler member so that it doesn't attempt to access mainFrame content.
+        (WebCore::Frame::mainFrame): When accessing the mainFrame member, assert that the
+        mainFrame is not being destroyed.
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::~MainFrame): Set the m_recentWheelEventDeltaFilter to nullptr to
+        prevent attempts to access it during object destruction. Call the new 'setMainFrameWasDestroyed'
+        method to reset eventHandler and mark the MainFrame as being in the process of destruction.
+        * page/WheelEventDeltaFilter.cpp:
+        (WebCore::WheelEventDeltaFilter::filteredDelta): Add logging.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::platformCompleteWheelEvent): Add null check.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo): Add logging.
+
 2016-04-05  Ada Chan  <adachan@apple.com>
 
         Rename TextTrackRepresentationiOS to TextTrackRepresentationCocoa and enable on Mac

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -2345,6 +2345,8 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
     RenderBox* box = renderBox();
     if (!box)
         return;
+
+    LOG_WITH_STREAM(Scrolling, stream << "RenderLayer::scrollTo " << position);
 
     ScrollPosition newPosition = position;
     if (!box->isHTMLMarquee()) {

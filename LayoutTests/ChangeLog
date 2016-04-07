@@ -1,3 +1,15 @@
+2016-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Wheel event callback removing the window causes crash in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=150871
+        <rdar://problem/23418283>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/wheel-event-destroys-frame-expected.txt: Added.
+        * fast/events/wheel-event-destroys-frame.html: Added.
+        * platform/ios-simulator/TestExpectations: Skip wheel-event test on iOS.
+
 2016-04-07  Saam barati  <sbarati@apple.com>
 
         Initial implementation of annex b.3.3 behavior was incorrect

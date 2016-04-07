@@ -5,7 +5,7 @@
  *                     2000-2001 Simon Hausmann <hausmann@kde.org>
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
@@ -151,6 +151,7 @@ namespace WebCore {
 
         Editor& editor() const;
         EventHandler& eventHandler() const;
+        EventHandler* eventHandlerPtr() const;
         FrameLoader& loader() const;
         NavigationScheduler& navigationScheduler() const;
         FrameSelection& selection() const;
@@ -278,6 +279,7 @@ namespace WebCore {
 
     protected:
         Frame(Page&, HTMLFrameOwnerElement*, FrameLoaderClient&);
+        void setMainFrameWasDestroyed();
 
     private:
         HashSet<FrameDestructionObserver*> m_destructionObservers;
@@ -296,7 +298,6 @@ namespace WebCore {
         const std::unique_ptr<ScriptController> m_script;
         const std::unique_ptr<Editor> m_editor;
         const std::unique_ptr<FrameSelection> m_selection;
-        const std::unique_ptr<EventHandler> m_eventHandler;
         const std::unique_ptr<AnimationController> m_animationController;
 
 #if ENABLE(DATA_DETECTION)
@@ -326,6 +327,10 @@ namespace WebCore {
         float m_textZoomFactor;
 
         int m_activeDOMObjectsAndAnimationsSuspendedCount;
+        bool m_mainFrameWasDestroyed { false };
+
+    protected:
+        std::unique_ptr<EventHandler> m_eventHandler;
     };
 
     inline void Frame::init()
@@ -398,9 +403,20 @@ namespace WebCore {
         return *m_eventHandler;
     }
 
+    inline EventHandler* Frame::eventHandlerPtr() const
+    {
+        return m_eventHandler.get();
+    }
+
     inline MainFrame& Frame::mainFrame() const
     {
+        ASSERT_WITH_SECURITY_IMPLICATION(!m_mainFrameWasDestroyed);
         return m_mainFrame;
+    }
+
+    inline void Frame::setMainFrameWasDestroyed()
+    {
+        m_mainFrameWasDestroyed = false;
     }
 
 } // namespace WebCore

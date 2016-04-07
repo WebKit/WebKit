@@ -604,7 +604,11 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     }
 
     m_frame.selection().prepareForDestruction();
-    m_frame.eventHandler().clear();
+
+    // We may call this code during object destruction, so need to make sure eventHandler is present.
+    if (auto eventHandler = m_frame.eventHandlerPtr())
+        eventHandler->clear();
+
     if (clearFrameView && m_frame.view())
         m_frame.view()->clear();
 
