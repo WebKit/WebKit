@@ -478,6 +478,8 @@ namespace JSC {
             return emitNode(n);
         }
 
+        void hoistSloppyModeFunctionIfNecessary(const Identifier& functionName);
+
     private:
         void emitTypeProfilerExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot);
     public:

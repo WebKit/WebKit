@@ -1934,18 +1934,30 @@ void BytecodeGenerator::initializeBlockScopedFunctions(VariableEnvironment& envi
         emitNewFunctionExpressionCommon(temp.get(), function);
         bool isLexicallyScoped = true;
         emitPutToScope(scope, variableForLocalEntry(name, entry, symbolTableIndex, isLexicallyScoped), temp.get(), DoNotThrowIfNotFound, Initialization);
+    }
+}
 
-        if (iter->value.isSloppyModeHoistingCandidate() && m_scopeNode->hasSloppyModeHoistedFunction(name.impl())) {
-            ASSERT(m_varScopeSymbolTableIndex);
-            ASSERT(*m_varScopeSymbolTableIndex < m_symbolTableStack.size());
-            SymbolTableStackEntry& varScope = m_symbolTableStack[*m_varScopeSymbolTableIndex];
-            SymbolTable* varSymbolTable = varScope.m_symbolTable.get();
-            RELEASE_ASSERT(varSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope);
-            SymbolTableEntry entry = varSymbolTable->get(name.impl());
-            RELEASE_ASSERT(!entry.isNull());
-            bool isLexicallyScoped = false;
-            emitPutToScope(varScope.m_scope, variableForLocalEntry(name, entry, varScope.m_symbolTableConstantIndex, isLexicallyScoped), temp.get(), DoNotThrowIfNotFound, Initialization);
+void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(const Identifier& functionName)
+{
+    if (m_scopeNode->hasSloppyModeHoistedFunction(functionName.impl())) {
+        Variable currentFunctionVariable = variable(functionName);
+        RefPtr<RegisterID> currentValue;
+        if (RegisterID* local = currentFunctionVariable.local())
+            currentValue = local;
+        else {
+            RefPtr<RegisterID> scope = emitResolveScope(nullptr, currentFunctionVariable);
+            currentValue = emitGetFromScope(newTemporary(), scope.get(), currentFunctionVariable, DoNotThrowIfNotFound);
         }
+        
+        ASSERT(m_varScopeSymbolTableIndex);
+        ASSERT(*m_varScopeSymbolTableIndex < m_symbolTableStack.size());
+        SymbolTableStackEntry& varScope = m_symbolTableStack[*m_varScopeSymbolTableIndex];
+        SymbolTable* varSymbolTable = varScope.m_symbolTable.get();
+        ASSERT(varSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope);
+        SymbolTableEntry entry = varSymbolTable->get(functionName.impl());
+        ASSERT(!entry.isNull());
+        bool isLexicallyScoped = false;
+        emitPutToScope(varScope.m_scope, variableForLocalEntry(functionName, entry, varScope.m_symbolTableConstantIndex, isLexicallyScoped), currentValue.get(), DoNotThrowIfNotFound, NotInitialization);
     }
 }
 

@@ -222,9 +222,20 @@ test(function() {
 test(function() {
     assert(foo === undefined);
     while (truthy()) {
+        assert(foo() === 20);
         break;
 
         function foo() { return 20; }
+    }
+    assert(foo === undefined);
+});
+
+test(function() {
+    assert(foo === undefined);
+    while (truthy()) {
+        assert(foo() === 20);
+        function foo() { return 20; }
+        break;
     }
     assert(foo() === 20);
 });
@@ -237,6 +248,18 @@ test(function() {
         break;
 
         function foo() { return 20; }
+    }
+    assert(foo === undefined);
+    assert(bar() === undefined);
+});
+
+test(function() {
+    function bar() { return foo; }
+    assert(foo === undefined);
+    assert(bar() === undefined);
+    while (truthy()) {
+        function foo() { return 20; }
+        break;
     }
     assert(foo() === 20);
     assert(bar()() === 20);
@@ -277,6 +300,21 @@ test(function() {
 test(function() {
     assert(foo === undefined);
     switch(1) {
+    case 0:
+        function foo() { return 20; }
+        break;
+    case 1:
+        assert(foo() === 20);
+        break;
+    }
+    assert(foo === undefined);
+});
+
+test(function() {
+    assert(foo === undefined);
+    switch(1) {
+    case 1:
+        assert(foo() === 20);
     case 0:
         function foo() { return 20; }
         break;
@@ -349,6 +387,39 @@ test(function() {
         let bar = 20;
         assert(foo() === 20);
         break;
+    }
+
+    assert(foo === undefined);
+});
+
+test(function() {
+    function capFoo1() { return foo; }
+    assert(foo === undefined);
+    assert(capFoo1() === undefined);
+    switch(1) {
+    case 0:
+        function foo() { return bar; }
+        function capFoo2() { return foo; }
+    case 1:
+        let bar = 20;
+        assert(foo() === 20);
+        assert(capFoo1() === undefined);
+        assert(capFoo2() === foo);
+        assert(capFoo2()() === 20);
+        break;
+    }
+
+    assert(foo === undefined);
+});
+
+test(function() {
+    assert(foo === undefined);
+    switch(1) {
+    case 1:
+        let bar = 20;
+        assert(foo() === 20);
+    case 0:
+        function foo() { return bar; }
     }
 
     assert(foo() === 20);
@@ -620,6 +691,23 @@ test(function() {
     assert(typeof x === "function");
     assert(typeof y === "function");
     assert(typeof z === "function");
+});
+
+test(function() {
+    function outer() { return f; }
+    assert(outer() === undefined);
+    {
+        assert(outer() === undefined);
+        assert(f() === 2);
+        f = 100
+        assert(outer() === undefined);
+        function f() { return 1 }
+        assert(outer() === 100);
+        f = 200
+        assert(outer() === 100); // 100
+        function f() { return 2 }
+        assert(outer() === 200);
+    }
 });
 
 for (let i = 0; i < 500; i++)

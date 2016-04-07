@@ -3173,8 +3173,9 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
 // ------------------------------ FuncDeclNode ---------------------------------
 
-void FuncDeclNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+void FuncDeclNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
+    generator.hoistSloppyModeFunctionIfNecessary(metadata()->ident());
 }
 
 // ------------------------------ FuncExprNode ---------------------------------

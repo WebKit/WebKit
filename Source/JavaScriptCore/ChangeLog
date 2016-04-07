@@ -1,3 +1,67 @@
+2016-04-07  Saam barati  <sbarati@apple.com>
+
+        Initial implementation of annex b.3.3 behavior was incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=156276
+
+        Reviewed by Keith Miller.
+
+        I almost got annex B.3.3 correct in my first implementation.
+        There is a subtlety here I got wrong. We always create a local binding for
+        a function at the very beginning of execution of a block scope. So we
+        hoist function declarations to their local binding within a given
+        block scope. When we actually evaluate the function declaration statement
+        itself, we must lookup the binding in the current scope, and bind the
+        value to the binding in the "var" scope. We perform the following
+        abstract operations when executing a function declaration statement.
+
+        f = lookupBindingInCurrentScope("func")
+        store(varScope, "func", f)
+
+        I got this wrong by performing the store to the var binding at the beginning
+        of the block scope instead of when we evaluate the function declaration statement.
+        This behavior is observable. For example, a program could change the value
+        of "func" before the actual function declaration statement executes.
+        Consider the following two functions:
+        ```
+        function foo1() {
+            // func === undefined
+            {
+                // typeof func === "function"
+                function func() { } // Executing this statement binds the local "func" binding to the implicit "func" var binding.
+                func = 20 // This sets the local "func" binding to 20.
+            }
+            // typeof func === "function"
+        }
+
+        function foo2() {
+            // func === undefined
+            {
+                // typeof func === "function"
+                func = 20 // This sets the local "func" binding to 20.
+                function func() { } // Executing this statement binds the local "func" binding to the implicit "func" var binding.
+            }
+            // func === 20
+        }
+        ```
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::initializeBlockScopedFunctions):
+        (JSC::BytecodeGenerator::hoistSloppyModeFunctionIfNecessary):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNodeForLeftHandSide):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FuncDeclNode::emitBytecode):
+        * tests/stress/sloppy-mode-function-hoisting.js:
+        (test.foo):
+        (test):
+        (test.):
+        (test.bar):
+        (test.switch.case.0):
+        (test.capFoo1):
+        (test.switch.capFoo2):
+        (test.outer):
+        (foo):
+
 2016-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r199170

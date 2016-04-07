@@ -21,4 +21,4 @@ function t(n) {
 
 shouldBe(t(1), '20');
 shouldBe(t(2), '20');
-shouldBe(t(3), '20');
+shouldBe(t(3), '-1');

@@ -1,3 +1,13 @@
+2016-04-07  Saam barati  <sbarati@apple.com>
+
+        Initial implementation of annex b.3.3 behavior was incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=156276
+
+        Reviewed by Keith Miller.
+
+        * js/function-declarations-in-switch-statement-expected.txt:
+        * js/script-tests/function-declarations-in-switch-statement.js:
+
 2016-04-06  Ada Chan  <adachan@apple.com>
 
         Rename TextTrackRepresentationiOS to TextTrackRepresentationCocoa and enable on Mac

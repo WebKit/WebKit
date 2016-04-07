@@ -3,7 +3,7 @@ PASS 20 is 20
 WARN: shouldBe() expects string arguments
 PASS 20 is 20
 WARN: shouldBe() expects string arguments
-PASS 20 is 20
+PASS -1 is -1
 PASS successfullyParsed is true
 
 TEST COMPLETE
