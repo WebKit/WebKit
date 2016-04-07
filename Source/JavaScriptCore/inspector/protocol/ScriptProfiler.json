@@ -20,8 +20,8 @@
             "id": "ExpressionLocation",
             "type": "object",
             "properties": [
-                { "name": "line", "type": "integer" },
-                { "name": "column", "type": "integer" }
+                { "name": "line", "type": "integer", "description": "1-based." },
+                { "name": "column", "type": "integer", "description": "1-based." }
             ]
         },
         {
@@ -30,8 +30,8 @@
             "properties": [
                 { "name": "sourceID", "$ref": "Debugger.ScriptId", "description": "Unique script identifier." },
                 { "name": "name", "type": "string", "description": "A displayable name for the stack frame. i.e function name, (program), etc." },
-                { "name": "line", "type": "integer" },
-                { "name": "column", "type": "integer" },
+                { "name": "line", "type": "integer", "description": "-1 if unavailable. 1-based if available." },
+                { "name": "column", "type": "integer", "description": "-1 if unavailable. 1-based if available." },
                 { "name": "url", "type": "string" },
                 { "name": "expressionLocation", "$ref": "ExpressionLocation", "optional": true }
             ]

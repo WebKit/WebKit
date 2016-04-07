@@ -1,3 +1,13 @@
+2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ProfileView source links are off by 1 line, worse in pretty printed code
+        https://bugs.webkit.org/show_bug.cgi?id=156371
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/ScriptProfiler.json:
+        Clarify that these locations are 1-based.
+
 2016-04-07  Jon Davis  <jond@apple.com>
 
         Add Web Animations API to Feature Status Page

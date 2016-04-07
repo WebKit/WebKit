@@ -220,7 +220,8 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
 
         let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID);
         if (script && script.url && this._node.line >= 0 && this._node.column >= 0) {
-            let sourceCodeLocation = script.createSourceCodeLocation(this._node.line, this._node.column);
+            // Convert from 1-based line and column to 0-based.
+            let sourceCodeLocation = script.createSourceCodeLocation(this._node.line - 1, this._node.column - 1);
 
             let locationElement = fragment.appendChild(document.createElement("span"));
             locationElement.classList.add("location");
