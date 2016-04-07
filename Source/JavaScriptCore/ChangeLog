@@ -1,5 +1,31 @@
 2016-04-06  Filip Pizlo  <fpizlo@apple.com>
 
+        JSC should have a simple way of gathering IC statistics
+        https://bugs.webkit.org/show_bug.cgi?id=156317
+
+        Reviewed by Benjamin Poulain.
+
+        This adds a cheap, runtime-enabled way of gathering statistics about why we take the slow
+        paths for inline caches. This is complementary to our existing bytecode profiler. Eventually
+        we may want to combine the two things.
+        
+        This is not a slow-down on anything because we only do extra work on IC slow paths and if
+        it's disabled it's just a load-and-branch to skip the stats gathering code.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/ICStats.cpp: Added.
+        * jit/ICStats.h: Added.
+        * jit/JITOperations.cpp:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::inherits):
+        (JSC::JSValue::classInfoOrNull):
+        (JSC::JSValue::toThis):
+        * runtime/Options.h:
+
+2016-04-06  Filip Pizlo  <fpizlo@apple.com>
+
         32-bit JSC stress/multi-put-by-offset-multiple-transitions.js failing
         https://bugs.webkit.org/show_bug.cgi?id=156292
 

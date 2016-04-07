@@ -1999,6 +1999,8 @@
 		DE5A0A001BA3AC3E003D4424 /* IntrinsicEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5A09FF1BA3AC3E003D4424 /* IntrinsicEmitter.cpp */; };
 		DEA7E2441BBC677200D78440 /* JSTypedArrayViewPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */; };
 		DEA7E2451BBC677F00D78440 /* JSTypedArrayViewPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DC2143071CA32E55000A8869 /* ICStats.h in Headers */ = {isa = PBXBuildFile; fileRef = DC2143061CA32E52000A8869 /* ICStats.h */; };
+		DC2143081CA32E58000A8869 /* ICStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC2143051CA32E52000A8869 /* ICStats.cpp */; };
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E124A8F60E555775003091F1 /* OpaqueJSString.cpp */; };
 		E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E3A570DF9278C00D90B34 /* VM.cpp */; };
@@ -4198,6 +4200,8 @@
 		D21202280AD4310C00ED79B6 /* DateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateConversion.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateConversion.h; sourceTree = "<group>"; };
 		DC00039019D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPreciseLocalClobberize.h; path = dfg/DFGPreciseLocalClobberize.h; sourceTree = "<group>"; };
+		DC2143051CA32E52000A8869 /* ICStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ICStats.cpp; sourceTree = "<group>"; };
+		DC2143061CA32E52000A8869 /* ICStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICStats.h; sourceTree = "<group>"; };
 		DC17E8131C9C7FD4008A6AB3 /* ShadowChicken.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowChicken.cpp; sourceTree = "<group>"; };
 		DC17E8141C9C7FD4008A6AB3 /* ShadowChicken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowChicken.h; sourceTree = "<group>"; };
 		DC17E8151C9C7FD4008A6AB3 /* ShadowChickenInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowChickenInlines.h; sourceTree = "<group>"; };
@@ -4994,6 +4998,8 @@
 				0F24E53F17EA9F5900ABB217 /* GPRInfo.h */,
 				0F4680D014BBC5F800BFE272 /* HostCallReturnValue.cpp */,
 				0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */,
+				DC2143051CA32E52000A8869 /* ICStats.cpp */,
+				DC2143061CA32E52000A8869 /* ICStats.h */,
 				DE5A09FF1BA3AC3E003D4424 /* IntrinsicEmitter.cpp */,
 				1429D92D0ED22D7000B89619 /* JIT.cpp */,
 				1429D92E0ED22D7000B89619 /* JIT.h */,
@@ -7924,6 +7930,7 @@
 				A5BA15EB182340B400A82E69 /* RemoteConnectionToTarget.h in Headers */,
 				A5BA15ED182340B400A82E69 /* RemoteInspectorXPCConnection.h in Headers */,
 				0F24E55117EE274900ABB217 /* Repatch.h in Headers */,
+				DC2143071CA32E55000A8869 /* ICStats.h in Headers */,
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 				70B0A9D11A9B66460001306A /* RuntimeFlags.h in Headers */,
 				52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */,
@@ -8849,6 +8856,7 @@
 				FE3A06B11C10CB8400390FDD /* JITBitAndGenerator.cpp in Sources */,
 				0FC09776146943B000CF2442 /* DFGOSRExitCompiler32_64.cpp in Sources */,
 				0FC0977214693AF900CF2442 /* DFGOSRExitCompiler64.cpp in Sources */,
+				DC2143081CA32E58000A8869 /* ICStats.cpp in Sources */,
 				0F7025A91714B0FA00382C0E /* DFGOSRExitCompilerCommon.cpp in Sources */,
 				0F392C891B46188400844728 /* DFGOSRExitFuzz.cpp in Sources */,
 				0FEFC9AA1681A3B300567F53 /* DFGOSRExitJumpPlaceholder.cpp in Sources */,

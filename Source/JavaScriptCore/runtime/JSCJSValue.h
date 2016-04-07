@@ -241,6 +241,7 @@ public:
     bool isCustomGetterSetter() const;
     bool isObject() const;
     bool inherits(const ClassInfo*) const;
+    const ClassInfo* classInfoOrNull() const;
         
     // Extracting the value.
     bool getString(ExecState*, WTF::String&) const;

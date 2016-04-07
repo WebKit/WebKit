@@ -141,6 +141,31 @@ struct ConditionBase {
     {
         return waitForSecondsImpl(lock, absoluteTimeoutSeconds - monotonicallyIncreasingTime());
     }
+    
+    template<typename LockType, typename Functor>
+    bool waitForSeconds(LockType& lock, double relativeTimeoutSeconds, const Functor& predicate)
+    {
+        double relativeTimeoutNanoseconds = relativeTimeoutSeconds * (1000.0 * 1000.0 * 1000.0);
+        
+        if (!(relativeTimeoutNanoseconds > 0)) {
+            // This handles insta-timeouts as well as NaN.
+            lock.unlock();
+            lock.lock();
+            return false;
+        }
+
+        if (relativeTimeoutNanoseconds > static_cast<double>(std::numeric_limits<int64_t>::max())) {
+            // If the timeout in nanoseconds cannot be expressed using a 64-bit integer, then we
+            // might as well wait forever.
+            wait(lock, predicate);
+            return true;
+        }
+        
+        auto relativeTimeout =
+            std::chrono::nanoseconds(static_cast<int64_t>(relativeTimeoutNanoseconds));
+
+        return waitFor(lock, relativeTimeout, predicate);
+    }
 
     // Note that this method is extremely fast when nobody is waiting. It is not necessary to try to
     // avoid calling this method.

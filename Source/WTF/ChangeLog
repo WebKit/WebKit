@@ -1,3 +1,18 @@
+2016-04-06  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should have a simple way of gathering IC statistics
+        https://bugs.webkit.org/show_bug.cgi?id=156317
+
+        Reviewed by Benjamin Poulain.
+        
+        Make it easier to do relative sleeping on a condition. Previously you could do this using
+        std::chrono. I now believe that std::chrono is just a bad decision, and I always want to
+        use doubles instead. This makes it easier to do the right thing and use doubles.
+
+        * wtf/Condition.h:
+        (WTF::ConditionBase::waitUntilMonotonicClockSeconds):
+        (WTF::ConditionBase::waitForSeconds):
+
 2016-04-06  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build by converting clampToInteger() into a template that only

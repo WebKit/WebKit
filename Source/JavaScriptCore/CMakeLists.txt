@@ -524,6 +524,7 @@ set(JavaScriptCore_SOURCES
     jit/GCAwareJITStubRoutine.cpp
     jit/GPRInfo.cpp
     jit/HostCallReturnValue.cpp
+    jit/ICStats.cpp
     jit/IntrinsicEmitter.cpp
     jit/JIT.cpp
     jit/JITAddGenerator.cpp
