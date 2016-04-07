@@ -1,3 +1,16 @@
+2016-03-29  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add support for Symbol.isConcatSpreadable.
+        https://bugs.webkit.org/show_bug.cgi?id=155351
+
+        Reviewed by Saam Barati.
+
+        Fix tests for Symbol.isConcatSpreadable on the Symbol object.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/dom/array-prototype-properties-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2016-04-06  Sam Weinig  <sam@webkit.org>
 
         window.CSS should be a constructor with static functions

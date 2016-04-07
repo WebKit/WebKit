@@ -480,6 +480,9 @@ private:
         case DFG::Check:
             compileNoOp();
             break;
+        case CallObjectConstructor:
+            compileCallObjectConstructor();
+            break;
         case ToThis:
             compileToThis();
             break;
@@ -845,6 +848,15 @@ private:
             break;
         case IsString:
             compileIsString();
+            break;
+        case IsArrayObject:
+            compileIsArrayObject();
+            break;
+        case IsJSArray:
+            compileIsJSArray();
+            break;
+        case IsArrayConstructor:
+            compileIsArrayConstructor();
             break;
         case IsObject:
             compileIsObject();
@@ -1409,6 +1421,28 @@ private:
     void compileNoOp()
     {
         DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, speculate);
+    }
+
+    void compileCallObjectConstructor()
+    {
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(isCell(value, provenType(m_node->child1())), usually(isCellCase), rarely(slowCase));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, slowCase);
+        ValueFromBlock fastResult = m_out.anchor(value);
+        m_out.branch(isObject(value), usually(continuation), rarely(slowCase));
+
+        m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(m_out.int64, m_out.operation(operationToObject), m_callFrame, value));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(m_out.int64, fastResult, slowResult));
     }
     
     void compileToThis()
@@ -5691,6 +5725,55 @@ private:
         setBoolean(m_out.phi(m_out.boolean, notCellResult, cellResult));
     }
 
+    void compileIsArrayObject()
+    {
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock cellCase = m_out.newBlock();
+        LBasicBlock notArrayCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(isCell(value, provenType(m_node->child1())), unsure(cellCase), unsure(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(cellCase, notArrayCase);
+        ValueFromBlock arrayResult = m_out.anchor(m_out.booleanTrue);
+        m_out.branch(isArray(value, provenType(m_node->child1())), unsure(continuation), unsure(notArrayCase));
+
+        m_out.appendTo(notArrayCase, continuation);
+        ValueFromBlock notArrayResult = m_out.anchor(vmCall(m_out.boolean, m_out.operation(operationIsArrayObject), m_callFrame, value));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(m_out.boolean, notCellResult, arrayResult, notArrayResult));
+    }
+
+    void compileIsJSArray()
+    {
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(
+            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
+        ValueFromBlock cellResult = m_out.anchor(isArray(value, provenType(m_node->child1())));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(m_out.boolean, notCellResult, cellResult));
+    }
+
+    void compileIsArrayConstructor()
+    {
+        LValue value = lowJSValue(m_node->child1());
+
+        setBoolean(vmCall(m_out.boolean, m_out.operation(operationIsArrayConstructor), m_callFrame, value));
+    }
+
     void compileIsObject()
     {
         LValue value = lowJSValue(m_node->child1());
@@ -9724,6 +9807,15 @@ private:
             return;
         
         jsValueToStrictInt52(edge, lowJSValue(edge, ManualOperandSpeculation));
+    }
+
+    LValue isArray(LValue cell, SpeculatedType type = SpecFullTop)
+    {
+        if (LValue proven = isProvenValue(type & SpecCell, SpecArray))
+            return proven;
+        return m_out.equal(
+            m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+            m_out.constInt32(ArrayType));
     }
     
     LValue isObject(LValue cell, SpeculatedType type = SpecFullTop)

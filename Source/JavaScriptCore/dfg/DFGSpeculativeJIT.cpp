@@ -1527,7 +1527,7 @@ void SpeculativeJIT::compileCurrentBlock()
             dataLog("\n");
         }
 
-        if (Options::validateDFGExceptionHandling() && mayExit(m_jit.graph(), m_currentNode) != DoesNotExit)
+        if (Options::validateDFGExceptionHandling() && (mayExit(m_jit.graph(), m_currentNode) != DoesNotExit || m_currentNode->isTerminal()))
             m_jit.jitReleaseAssertNoException();
 
         m_jit.pcToCodeOriginMapBuilder().appendItem(m_jit.label(), m_origin.semantic);
@@ -3270,6 +3270,98 @@ void SpeculativeJIT::compileInstanceOfCustom(Node* node)
     addSlowPathGenerator(slowPathCall(slowCase, this, operationInstanceOfCustom, resultGPR, valueRegs, constructorGPR, hasInstanceRegs));
 
     unblessedBooleanResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileIsJSArray(Node* node)
+{
+    JSValueOperand value(this, node->child1());
+    GPRFlushedCallResult result(this);
+
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg resultGPR = result.gpr();
+
+    JITCompiler::Jump isNotCell = m_jit.branchIfNotCell(valueRegs);
+
+    m_jit.compare8(JITCompiler::Equal,
+        JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()),
+        TrustedImm32(ArrayType),
+        resultGPR);
+    blessBoolean(resultGPR);
+    JITCompiler::Jump done = m_jit.jump();
+
+    isNotCell.link(&m_jit);
+    moveFalseTo(resultGPR);
+
+    done.link(&m_jit);
+    blessedBooleanResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileIsArrayObject(Node* node)
+{
+    JSValueOperand value(this, node->child1());
+    GPRFlushedCallResult result(this);
+
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg resultGPR = result.gpr();
+
+    JITCompiler::JumpList done;
+
+    JITCompiler::Jump isNotCell = m_jit.branchIfNotCell(valueRegs);
+
+    JITCompiler::Jump notJSArray = m_jit.branch8(JITCompiler::NotEqual,
+        JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()),
+        TrustedImm32(ArrayType));
+    m_jit.move(TrustedImm32(true), resultGPR);
+    done.append(m_jit.jump());
+
+    notJSArray.link(&m_jit);
+    silentSpillAllRegisters(resultGPR);
+    callOperation(operationIsArrayObject, resultGPR, valueRegs);
+    silentFillAllRegisters(resultGPR);
+    m_jit.exceptionCheck();
+    done.append(m_jit.jump());
+
+    isNotCell.link(&m_jit);
+    m_jit.move(TrustedImm32(false), resultGPR);
+
+    done.link(&m_jit);
+    unblessedBooleanResult(resultGPR, node);
+}
+
+// FIXME: This function should just get the ClassInfo and check if it's == ArrayConstructor::info(). https://bugs.webkit.org/show_bug.cgi?id=155667
+void SpeculativeJIT::compileIsArrayConstructor(Node* node)
+{
+    JSValueOperand value(this, node->child1());
+    GPRFlushedCallResult result(this);
+
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg resultGPR = result.gpr();
+
+    flushRegisters();
+    callOperation(operationIsArrayConstructor, resultGPR, valueRegs);
+    unblessedBooleanResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileCallObjectConstructor(Node* node)
+{
+    RELEASE_ASSERT(node->child1().useKind() == UntypedUse);
+    JSValueOperand value(this, node->child1());
+#if USE(JSVALUE64)
+    GPRTemporary result(this, Reuse, value);
+#else
+    GPRTemporary result(this, Reuse, value, PayloadWord);
+#endif
+
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg resultGPR = result.gpr();
+
+    MacroAssembler::JumpList slowCases;
+    slowCases.append(m_jit.branchIfNotCell(valueRegs));
+    slowCases.append(m_jit.branchIfNotObject(valueRegs.payloadGPR()));
+    m_jit.move(valueRegs.payloadGPR(), resultGPR);
+
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationObjectConstructor, resultGPR, m_jit.globalObjectFor(node->origin.semantic), valueRegs));
+    cellResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileArithAdd(Node* node)
