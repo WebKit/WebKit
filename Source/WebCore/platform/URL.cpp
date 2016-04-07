@@ -491,8 +491,6 @@ void URL::init(const URL& base, const String& relative, const TextEncoding& enco
         str = strBuffer.data();
     } else {
         if (!encodeRelativeString(rel, encoding, strBuffer)) {
-            // FIXME: Instead of assigning the m_string to blankURL(), we should
-            // figure out a proper way to preserve the original malformed URL strings.
             m_string = blankURL();
             invalidate();
             return;
@@ -544,9 +542,7 @@ void URL::init(const URL& base, const String& relative, const TextEncoding& enco
                 appendASCII(base.m_string.left(base.m_queryEnd), str, len, parseBuffer);
                 parse(parseBuffer.data(), &relative);
             } else {
-                // FIXME: Instead of assigning the m_string to blankURL(), we should
-                // figure out a proper way to preserve the original malformed URL strings.
-                m_string = blankURL();
+                m_string = relative;
                 invalidate();
             }
             return;
