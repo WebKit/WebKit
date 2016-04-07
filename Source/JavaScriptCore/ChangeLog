@@ -1,3 +1,43 @@
+2016-04-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Rationalize the makeSpaceForCCall stuff
+        https://bugs.webkit.org/show_bug.cgi?id=156352
+
+        Reviewed by Mark Lam.
+
+        I want to add more code to PolymorphicAccess that makes C calls, so that I can finally fix
+        https://bugs.webkit.org/show_bug.cgi?id=130914 (allow transition caches to handle indexing
+        headers).
+
+        When trying to understand what it takes to make a C call, I came across code that was making
+        room on the stack for spilled arguments. This logic was guarded with some complicated
+        condition. At first, I tried to just refactor the code so that the same ugly condition
+        wouldn't have to be copy-pasted everywhere that we made C calls. But then I started thinking
+        about the condition, and realized that it was probably wrong: if the outer PolymorphicAccess
+        harness decides to reuse a register for the scratchGPR then the top of the stack will store
+        the old value of scratchGPR, but the condition wouldn't necessarily trigger. So if the call
+        then overwrote something on the stack, we'd have a bad time.
+
+        Making room on the stack for a call is a cheap operation. It's orders of magnitude cheaper
+        than the rest of the call. Therefore, I think that it's best to just unconditionally make
+        room on the stack.
+
+        This patch makes us do just that. I also made the relevant helpers not inline, because I
+        think that we have too many inline methods in our assemblers. Now it's much easier to make
+        C calls from PolymorphicAccess because you just call the AssemblyHelper methods for making
+        space. There are no special conditions or anything like that.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadStructure):
+        (JSC::AssemblyHelpers::makeSpaceOnStackForCCall):
+        (JSC::AssemblyHelpers::reclaimSpaceOnStackForCCall):
+        (JSC::emitRandomThunkImpl):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::makeSpaceOnStackForCCall): Deleted.
+        (JSC::AssemblyHelpers::reclaimSpaceOnStackForCCall): Deleted.
+
 2016-04-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199128 and r199141.

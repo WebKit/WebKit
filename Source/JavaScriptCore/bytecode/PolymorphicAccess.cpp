@@ -892,7 +892,7 @@ void AccessCase::generate(AccessGenerationState& state)
 
             done.link(&jit);
 
-            jit.addPtr(CCallHelpers::TrustedImm32((jit.codeBlock()->stackPointerOffset() * sizeof(Register)) - state.preservedReusedRegisterState.numberOfBytesPreserved - state.numberOfStackBytesUsedForRegisterPreservation()),
+            jit.addPtr(CCallHelpers::TrustedImm32((codeBlock->stackPointerOffset() * sizeof(Register)) - state.preservedReusedRegisterState.numberOfBytesPreserved - state.numberOfStackBytesUsedForRegisterPreservation()),
                 GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
             state.restoreLiveRegistersFromStackForCall(isGetter());
 
@@ -908,12 +908,10 @@ void AccessCase::generate(AccessGenerationState& state)
                         CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).code()));
                 });
         } else {
-            // Need to make room for the C call so any of our stack spillage isn't overwritten.
-            // We also need to make room because we may be an inline cache in the FTL and not
-            // have a JIT call frame.
-            bool needsToMakeRoomOnStackForCCall = state.numberOfStackBytesUsedForRegisterPreservation() || codeBlock->jitType() == JITCode::FTLJIT;
-            if (needsToMakeRoomOnStackForCCall)
-                jit.makeSpaceOnStackForCCall();
+            // Need to make room for the C call so any of our stack spillage isn't overwritten. It's
+            // hard to track if someone did spillage or not, so we just assume that we always need
+            // to make some space here.
+            jit.makeSpaceOnStackForCCall();
 
             // getter: EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName);
             // setter: void (*PutValueFunc)(ExecState*, EncodedJSValue thisObject, EncodedJSValue value);
@@ -944,8 +942,7 @@ void AccessCase::generate(AccessGenerationState& state)
             operationCall = jit.call();
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter)
                 jit.setupResults(valueRegs);
-            if (needsToMakeRoomOnStackForCCall)
-                jit.reclaimSpaceOnStackForCCall();
+            jit.reclaimSpaceOnStackForCCall();
 
             CCallHelpers::Jump noException =
                 jit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);

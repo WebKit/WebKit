@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1325,19 +1325,8 @@ public:
 
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
 
-    void makeSpaceOnStackForCCall()
-    {
-        unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), maxFrameExtentForSlowPathCall);
-        if (stackOffset)
-            subPtr(TrustedImm32(stackOffset), stackPointerRegister);
-    }
-
-    void reclaimSpaceOnStackForCCall()
-    {
-        unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), maxFrameExtentForSlowPathCall);
-        if (stackOffset)
-            addPtr(TrustedImm32(stackOffset), stackPointerRegister);
-    }
+    void makeSpaceOnStackForCCall();
+    void reclaimSpaceOnStackForCCall();
 
 #if USE(JSVALUE64)
     void emitRandomThunk(JSGlobalObject*, GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, FPRReg result);

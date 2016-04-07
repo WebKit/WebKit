@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -453,6 +453,20 @@ void AssemblyHelpers::emitLoadStructure(RegisterID source, RegisterID dest, Regi
     UNUSED_PARAM(scratch);
     loadPtr(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
 #endif
+}
+
+void AssemblyHelpers::makeSpaceOnStackForCCall()
+{
+    unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), maxFrameExtentForSlowPathCall);
+    if (stackOffset)
+        subPtr(TrustedImm32(stackOffset), stackPointerRegister);
+}
+
+void AssemblyHelpers::reclaimSpaceOnStackForCCall()
+{
+    unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), maxFrameExtentForSlowPathCall);
+    if (stackOffset)
+        addPtr(TrustedImm32(stackOffset), stackPointerRegister);
 }
 
 #if USE(JSVALUE64)
