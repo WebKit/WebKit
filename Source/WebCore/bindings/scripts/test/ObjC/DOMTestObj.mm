@@ -391,6 +391,20 @@
     IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, newReflectedCustomURLAttr);
 }
 
+#if ENABLE(TEST_FEATURE)
+- (NSString *)enabledAtRuntimeAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->enabledAtRuntimeAttribute();
+}
+
+- (void)setEnabledAtRuntimeAttribute:(NSString *)newEnabledAtRuntimeAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setEnabledAtRuntimeAttribute(newEnabledAtRuntimeAttribute);
+}
+#endif
+
 - (int)attrWithGetterException
 {
     WebCore::JSMainThreadNullState state;
@@ -926,6 +940,26 @@
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->putForwardsNullableAttribute()));
 }
+
+
+#if ENABLE(TEST_FEATURE)
+- (void)enabledAtRuntimeOperation:(NSString *)testParam
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->enabledAtRuntimeOperation(testParam);
+}
+
+#endif
+
+
+#if ENABLE(TEST_FEATURE)
+- (void)enabledAtRuntimeOperation:(int)testParam
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->enabledAtRuntimeOperation(testParam);
+}
+
+#endif
 
 - (void)voidMethod
 {

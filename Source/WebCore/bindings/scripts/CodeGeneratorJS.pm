@@ -696,6 +696,9 @@ sub AttributeShouldBeOnInstance
     my $interface = shift;
     my $attribute = shift;
 
+    # FIXME: The bindings generator does not support putting runtime-enabled attributes on the instance yet (except for global objects).
+    return 0 if $attribute->signature->extendedAttributes->{"EnabledAtRuntime"} && !IsDOMGlobalObject($interface);
+
     return 1 if InterfaceRequiresAttributesOnInstance($interface);
     return 1 if $attribute->signature->type =~ /Constructor$/;
 
@@ -723,7 +726,7 @@ sub OperationShouldBeOnInstance
 
     return 1 if IsDOMGlobalObject($interface);
 
-    # FIXME: The bindings generator does not support putting runtime-enabled on the instance yet (except for global objects).
+    # FIXME: The bindings generator does not support putting runtime-enabled operations on the instance yet (except for global objects).
     return 0 if $function->signature->extendedAttributes->{"EnabledAtRuntime"};
 
     # [Unforgeable] operations should be on the instance.
@@ -1392,7 +1395,7 @@ sub GenerateHeader
 
 sub GeneratePropertiesHashTable
 {
-    my ($object, $interface, $isInstance, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $runtimeEnabledFunctions) = @_;
+    my ($object, $interface, $isInstance, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $runtimeEnabledFunctions, $runtimeEnabledAttributes) = @_;
 
     # FIXME: These should be functions on $interface.
     my $interfaceName = $interface->name;
@@ -1443,6 +1446,14 @@ sub GeneratePropertiesHashTable
         my $conditional = $attribute->signature->extendedAttributes->{"Conditional"};
         if ($conditional) {
             $conditionals->{$name} =  $conditional;
+        }
+
+        if ($attribute->signature->extendedAttributes->{"EnabledAtRuntime"}) {
+            if ($isInstance) {
+                die "We currently do not support [EnabledAtRuntime] attributes on the instance (except for global objects).";
+            } else {
+                push(@$runtimeEnabledAttributes, $attribute);
+            }
         }
     }
 
@@ -1951,12 +1962,13 @@ sub GenerateImplementation
     my %conditionals = ();
     my $hashName = $className . "Table";
     my @runtimeEnabledFunctions = ();
+    my @runtimeEnabledAttributes = ();
 
     # Generate hash table for properties on the instance.
     my $numInstanceProperties = GeneratePropertiesHashTable($object, $interface, 1,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
-        \%conditionals, \@runtimeEnabledFunctions);
+        \%conditionals, \@runtimeEnabledFunctions, \@runtimeEnabledAttributes);
 
     $object->GenerateHashTable($hashName, $numInstanceProperties,
         \@hashKeys, \@hashSpecials,
@@ -2070,12 +2082,13 @@ sub GenerateImplementation
     @hashSpecials = ();
     %conditionals = ();
     @runtimeEnabledFunctions = ();
+    @runtimeEnabledAttributes = ();
 
     # Generate hash table for properties on the prototype.
     my $numPrototypeProperties = GeneratePropertiesHashTable($object, $interface, 0,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
-        \%conditionals, \@runtimeEnabledFunctions);
+        \%conditionals, \@runtimeEnabledFunctions, \@runtimeEnabledAttributes);
     my $hashSize = $numPrototypeProperties;
 
     foreach my $constant (@{$interface->constants}) {
@@ -2134,11 +2147,13 @@ sub GenerateImplementation
             push(@implContent, "    Base::finishCreation(vm);\n");
             push(@implContent, "    reifyStaticProperties(vm, ${className}PrototypeTableValues, *this);\n");
 
-            foreach my $function (@runtimeEnabledFunctions) {
-                my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
+            my @runtimeEnabledProperties = @runtimeEnabledFunctions;
+            push(@runtimeEnabledProperties, @runtimeEnabledAttributes);
+            foreach my $functionOrAttribute (@runtimeEnabledProperties) {
+                my $signature = $functionOrAttribute->signature;
+                my $conditionalString = $codeGenerator->GenerateConditionalString($signature);
                 push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
                 AddToImplIncludes("RuntimeEnabledFeatures.h");
-                my $signature = $function->signature;
                 my $enable_function = GetRuntimeEnableFunctionName($signature);
                 my $name = $signature->name;
                 push(@implContent, "    if (!${enable_function}()) {\n");

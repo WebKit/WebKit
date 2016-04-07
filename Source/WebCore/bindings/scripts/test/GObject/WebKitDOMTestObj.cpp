@@ -104,6 +104,7 @@ enum {
     PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR,
     PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR,
     PROP_REFLECTED_CUSTOM_URL_ATTR,
+    PROP_ENABLED_AT_RUNTIME_ATTRIBUTE,
     PROP_ATTR_WITH_GETTER_EXCEPTION,
     PROP_ATTR_WITH_GETTER_EXCEPTION_WITH_MESSAGE,
     PROP_ATTR_WITH_SETTER_EXCEPTION,
@@ -216,6 +217,9 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
         break;
     case PROP_REFLECTED_CUSTOM_URL_ATTR:
         webkit_dom_test_obj_set_reflected_custom_url_attr(self, g_value_get_string(value));
+        break;
+    case PROP_ENABLED_AT_RUNTIME_ATTRIBUTE:
+        webkit_dom_test_obj_set_enabled_at_runtime_attribute(self, g_value_get_string(value));
         break;
     case PROP_ATTR_WITH_GETTER_EXCEPTION:
         webkit_dom_test_obj_set_attr_with_getter_exception(self, g_value_get_long(value));
@@ -350,6 +354,9 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_REFLECTED_CUSTOM_URL_ATTR:
         g_value_take_string(value, webkit_dom_test_obj_get_reflected_custom_url_attr(self));
+        break;
+    case PROP_ENABLED_AT_RUNTIME_ATTRIBUTE:
+        g_value_take_string(value, webkit_dom_test_obj_get_enabled_at_runtime_attribute(self));
         break;
     case PROP_ATTR_WITH_GETTER_EXCEPTION:
         g_value_set_long(value, webkit_dom_test_obj_get_attr_with_getter_exception(self, nullptr));
@@ -756,6 +763,16 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
+        PROP_ENABLED_AT_RUNTIME_ATTRIBUTE,
+        g_param_spec_string(
+            "enabled-at-runtime-attribute",
+            "TestObj:enabled-at-runtime-attribute",
+            "read-write gchar* TestObj:enabled-at-runtime-attribute",
+            "",
+            WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(
+        gobjectClass,
         PROP_ATTR_WITH_GETTER_EXCEPTION,
         g_param_spec_long(
             "attr-with-getter-exception",
@@ -1150,6 +1167,36 @@ static void webkit_dom_test_obj_init(WebKitDOMTestObj* request)
 {
     WebKitDOMTestObjPrivate* priv = WEBKIT_DOM_TEST_OBJ_GET_PRIVATE(request);
     new (priv) WebKitDOMTestObjPrivate();
+}
+
+void webkit_dom_test_obj_enabled_at_runtime_operation(WebKitDOMTestObj* self, const gchar* testParam)
+{
+#if ENABLE(TEST_FEATURE)
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(testParam);
+    WebCore::TestObj* item = WebKit::core(self);
+    WTF::String convertedTestParam = WTF::String::fromUTF8(testParam);
+    item->enabledAtRuntimeOperation(convertedTestParam);
+#else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(testParam);
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Test Feature")
+#endif /* ENABLE(TEST_FEATURE) */
+}
+
+void webkit_dom_test_obj_enabled_at_runtime_operation(WebKitDOMTestObj* self, glong testParam)
+{
+#if ENABLE(TEST_FEATURE)
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->enabledAtRuntimeOperation(testParam);
+#else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(testParam);
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Test Feature")
+#endif /* ENABLE(TEST_FEATURE) */
 }
 
 void webkit_dom_test_obj_void_method(WebKitDOMTestObj* self)
@@ -2160,6 +2207,37 @@ void webkit_dom_test_obj_set_reflected_custom_url_attr(WebKitDOMTestObj* self, c
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, convertedValue);
+}
+
+gchar* webkit_dom_test_obj_get_enabled_at_runtime_attribute(WebKitDOMTestObj* self)
+{
+#if ENABLE(TEST_FEATURE)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->enabledAtRuntimeAttribute());
+    return result;
+#else
+    UNUSED_PARAM(self);
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Test Feature")
+    return 0;
+#endif /* ENABLE(TEST_FEATURE) */
+}
+
+void webkit_dom_test_obj_set_enabled_at_runtime_attribute(WebKitDOMTestObj* self, const gchar* value)
+{
+#if ENABLE(TEST_FEATURE)
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(value);
+    WebCore::TestObj* item = WebKit::core(self);
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setEnabledAtRuntimeAttribute(convertedValue);
+#else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(value);
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Test Feature")
+#endif /* ENABLE(TEST_FEATURE) */
 }
 
 glong webkit_dom_test_obj_get_attr_with_getter_exception(WebKitDOMTestObj* self, GError** error)

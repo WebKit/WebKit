@@ -1,3 +1,41 @@
+2016-04-07  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Add support for [EnabledAtRuntime] attributes on non-global objects
+        https://bugs.webkit.org/show_bug.cgi?id=156346
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for [EnabledAtRuntime] attributes on non-global objects by
+        using the same approach as for [EnabledAtRuntime] operations. This means
+        we add these attributes to the static property table but they get removed
+        at runtime in JS*Prototype::finishCreation(), if the feature is disabled,
+        after the eager reification of the prototype.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GeneratePropertiesHashTable):
+        (GenerateImplementation):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        (webkit_dom_test_obj_enabled_at_runtime_operation):
+        (webkit_dom_test_obj_get_enabled_at_runtime_attribute):
+        (webkit_dom_test_obj_set_enabled_at_runtime_attribute):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+        (WebCore::jsTestObjEnabledAtRuntimeAttribute):
+        (WebCore::setJSTestObjEnabledAtRuntimeAttribute):
+        (WebCore::jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1):
+        (WebCore::jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2):
+        (WebCore::jsTestObjPrototypeFunctionEnabledAtRuntimeOperation):
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj enabledAtRuntimeAttribute]):
+        (-[DOMTestObj setEnabledAtRuntimeAttribute:]):
+        (-[DOMTestObj enabledAtRuntimeOperation:]):
+        * bindings/scripts/test/TestObj.idl:
+
 2016-04-07  Beth Dakin  <bdakin@apple.com>
 
         Attempted build fix.

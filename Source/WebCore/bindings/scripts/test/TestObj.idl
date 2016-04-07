@@ -80,6 +80,11 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [Reflect=customContentBooleanAttr] attribute boolean reflectedCustomBooleanAttr;
     [Reflect=customContentURLAttr, URL] attribute DOMString reflectedCustomURLAttr;
 
+    // [EnabledAtRuntime] attributes and operations.
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] attribute DOMString enabledAtRuntimeAttribute;
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
+
     // TypedArray attribute
     attribute Float32Array typedArrayAttr;
 

@@ -87,6 +87,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property int reflectedCustomIntegralAttr;
 @property BOOL reflectedCustomBooleanAttr;
 @property (copy) NSString *reflectedCustomURLAttr;
+@property (copy) NSString *enabledAtRuntimeAttribute;
 @property int attrWithGetterException;
 @property int attrWithGetterExceptionWithMessage;
 @property int attrWithSetterException;

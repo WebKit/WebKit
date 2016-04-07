@@ -47,6 +47,7 @@
 #include "JSTestSubObj.h"
 #include "JSbool.h"
 #include "LifecycleCallbackQueue.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
 #include "SVGPoint.h"
 #include "SVGStaticPropertyTearOff.h"
@@ -91,6 +92,9 @@ namespace WebCore {
 
 // Functions
 
+#if ENABLE(TEST_FEATURE)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation(JSC::ExecState*);
+#endif
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(JSC::ExecState*);
@@ -258,6 +262,10 @@ JSC::EncodedJSValue jsTestObjReflectedCustomBooleanAttr(JSC::ExecState*, JSC::En
 bool setJSTestObjReflectedCustomBooleanAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjReflectedCustomURLAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjReflectedCustomURLAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+#if ENABLE(TEST_FEATURE)
+JSC::EncodedJSValue jsTestObjEnabledAtRuntimeAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestObjEnabledAtRuntimeAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+#endif
 JSC::EncodedJSValue jsTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -552,6 +560,11 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "reflectedCustomIntegralAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedCustomIntegralAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjReflectedCustomIntegralAttr) } },
     { "reflectedCustomBooleanAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedCustomBooleanAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjReflectedCustomBooleanAttr) } },
     { "reflectedCustomURLAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedCustomURLAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjReflectedCustomURLAttr) } },
+#if ENABLE(TEST_FEATURE)
+    { "enabledAtRuntimeAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjEnabledAtRuntimeAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjEnabledAtRuntimeAttribute) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
     { "typedArrayAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTypedArrayAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTypedArrayAttr) } },
     { "attrWithGetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttrWithGetterException) } },
     { "attrWithGetterExceptionWithMessage", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithGetterExceptionWithMessage), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttrWithGetterExceptionWithMessage) } },
@@ -619,6 +632,11 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "attributeWithReservedEnumType", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithReservedEnumType), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithReservedEnumType) } },
     { "putForwardsAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjPutForwardsAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjPutForwardsAttribute) } },
     { "putForwardsNullableAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjPutForwardsNullableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjPutForwardsNullableAttribute) } },
+#if ENABLE(TEST_FEATURE)
+    { "enabledAtRuntimeOperation", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionEnabledAtRuntimeOperation), (intptr_t) (1) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
     { "voidMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t) (0) } },
     { "voidMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t) (3) } },
     { "byteMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionByteMethod), (intptr_t) (0) } },
@@ -754,6 +772,18 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestObjPrototypeTableValues, *this);
+#if ENABLE(TEST_FEATURE)
+    if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
+        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledAtRuntimeOperation"), strlen("enabledAtRuntimeOperation"));
+        removeDirect(vm, propertyName);
+    }
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
+        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledAtRuntimeAttribute"), strlen("enabledAtRuntimeAttribute"));
+        removeDirect(vm, propertyName);
+    }
+#endif
     JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
     putDirect(vm, clientData.builtinNames().privateMethodPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestObjPrototypeFunctionPrivateMethod), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral("[Symbol.Iterator]"), jsTestObjPrototypeFunctionSymbolIterator), ReadOnly | DontEnum);
@@ -1287,6 +1317,23 @@ EncodedJSValue jsTestObjReflectedCustomURLAttr(ExecState* state, EncodedJSValue 
     return JSValue::encode(result);
 }
 
+
+#if ENABLE(TEST_FEATURE)
+EncodedJSValue jsTestObjEnabledAtRuntimeAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(thisValue);
+    JSValue decodedThisValue = JSValue::decode(thisValue);
+    auto* castedThis = jsDynamicCast<JSTestObj*>(decodedThisValue);
+    if (UNLIKELY(!castedThis)) {
+        return throwGetterTypeError(*state, "TestObj", "enabledAtRuntimeAttribute");
+    }
+    auto& impl = castedThis->wrapped();
+    JSValue result = jsStringWithCache(state, impl.enabledAtRuntimeAttribute());
+    return JSValue::encode(result);
+}
+
+#endif
 
 EncodedJSValue jsTestObjTypedArrayAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
@@ -2482,6 +2529,25 @@ bool setJSTestObjReflectedCustomURLAttr(ExecState* state, EncodedJSValue thisVal
 }
 
 
+#if ENABLE(TEST_FEATURE)
+bool setJSTestObjEnabledAtRuntimeAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        return throwSetterTypeError(*state, "TestObj", "enabledAtRuntimeAttribute");
+    }
+    auto& impl = castedThis->wrapped();
+    String nativeValue = value.toString(state)->value(state);
+    if (UNLIKELY(state->hadException()))
+        return false;
+    impl.setEnabledAtRuntimeAttribute(nativeValue);
+    return true;
+}
+
+#endif
+
 bool setJSTestObjTypedArrayAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
@@ -3159,6 +3225,64 @@ void JSTestObj::getOwnPropertyNames(JSObject* object, ExecState* state, Property
 JSValue JSTestObj::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
     return getDOMConstructor<JSTestObjConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+}
+
+#if ENABLE(TEST_FEATURE)
+static inline EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "enabledAtRuntimeOperation");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, createNotEnoughArgumentsError(state));
+    String testParam = state->argument(0).toString(state)->value(state);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.enabledAtRuntimeOperation(testParam);
+    return JSValue::encode(jsUndefined());
+}
+
+#endif
+
+#if ENABLE(TEST_FEATURE)
+static inline EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "enabledAtRuntimeOperation");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, createNotEnoughArgumentsError(state));
+    int testParam = toInt32(state, state->argument(0), NormalConversion);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.enabledAtRuntimeOperation(testParam);
+    return JSValue::encode(jsUndefined());
+}
+
+#endif
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation(ExecState* state)
+{
+    size_t argsCount = std::min<size_t>(1, state->argumentCount());
+#if ENABLE(TEST_FEATURE)
+    if (argsCount == 1)
+        return jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1(state);
+#endif
+
+#if ENABLE(TEST_FEATURE)
+    if (argsCount == 1)
+        return jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2(state);
+#endif
+
+    if (argsCount < 1)
+        return throwVMError(state, createNotEnoughArgumentsError(state));
+    return throwVMTypeError(state);
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* state)

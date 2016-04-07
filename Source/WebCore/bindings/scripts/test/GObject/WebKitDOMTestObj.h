@@ -115,6 +115,26 @@ WEBKIT_API GType
 webkit_dom_test_obj_get_type(void);
 
 /**
+ * webkit_dom_test_obj_enabled_at_runtime_operation:
+ * @self: A #WebKitDOMTestObj
+ * @testParam: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_enabled_at_runtime_operation(WebKitDOMTestObj* self, const gchar* testParam);
+
+/**
+ * webkit_dom_test_obj_enabled_at_runtime_operation:
+ * @self: A #WebKitDOMTestObj
+ * @testParam: A #glong
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_enabled_at_runtime_operation(WebKitDOMTestObj* self, glong testParam);
+
+/**
  * webkit_dom_test_obj_void_method:
  * @self: A #WebKitDOMTestObj
  *
@@ -1206,6 +1226,27 @@ webkit_dom_test_obj_get_reflected_custom_url_attr(WebKitDOMTestObj* self);
 **/
 WEBKIT_API void
 webkit_dom_test_obj_set_reflected_custom_url_attr(WebKitDOMTestObj* self, const gchar* value);
+
+/**
+ * webkit_dom_test_obj_get_enabled_at_runtime_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gchar*
+webkit_dom_test_obj_get_enabled_at_runtime_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_enabled_at_runtime_attribute:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_enabled_at_runtime_attribute(WebKitDOMTestObj* self, const gchar* value);
 
 /**
  * webkit_dom_test_obj_get_attr_with_getter_exception:
