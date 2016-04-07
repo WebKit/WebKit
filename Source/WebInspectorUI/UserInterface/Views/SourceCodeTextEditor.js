@@ -80,7 +80,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         else
             this._sourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
 
-        sourceCode.requestContent().then(this._contentAvailable.bind(this)).catch(handlePromiseException);
+        sourceCode.requestContent().then(this._contentAvailable.bind(this));
 
         // FIXME: Cmd+L shortcut doesn't actually work.
         new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Command, "L", this.showGoToLineDialog.bind(this), this.element);

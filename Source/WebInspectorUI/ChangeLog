@@ -1,5 +1,24 @@
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Uncaught Exception: No resource with given URL found
+        https://bugs.webkit.org/show_bug.cgi?id=156259
+        <rdar://problem/25564749>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        SourceCode.prototype.requestContent will reject if it cannot load
+        content for the given resource. In that case, we already have an
+        earlier catch handler that displays an error message in the
+        ContentView, so we shouldn't show an Uncaught Exception page.
+        Really, we should not reject the original promise here, and
+        instead resolve it with an object describing the error, but
+        short term we should remove the uncaught exception handler for
+        this case.
+
+2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Take snapshot navigation button should match navigation button styles
         https://bugs.webkit.org/show_bug.cgi?id=156355
         <rdar://problem/25325172>
