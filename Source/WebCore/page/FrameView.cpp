@@ -4257,7 +4257,8 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
         return true;
 
     // Require the document to grow a bit.
-    static const int documentHeightThreshold = 200;
+    // Using a value of 48 allows the header on Google's search page to render immediately before search results populate later.
+    static const int documentHeightThreshold = 48;
     LayoutRect overflowRect = documentElement->renderBox()->layoutOverflowRect();
     if (snappedIntRect(overflowRect).height() < documentHeightThreshold)
         return false;
