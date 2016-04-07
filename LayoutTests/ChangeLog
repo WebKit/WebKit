@@ -1,3 +1,12 @@
+2016-04-06  Saam barati  <sbarati@apple.com>
+
+        jsc-layout-tests.yaml/js/script-tests/regress-141098.js failing on Yosemite Debug after r198989
+        https://bugs.webkit.org/show_bug.cgi?id=156187
+
+        Reviewed by Keith Miller.
+
+        * js/script-tests/regress-141098.js:
+
 2016-04-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Belatedly rebaseline several test expectations after r196244

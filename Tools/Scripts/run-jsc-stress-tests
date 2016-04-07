@@ -1125,6 +1125,15 @@ def defaultRunLayoutTest
     end
 end
 
+def noEagerNoNoLLIntTestsRunLayoutTest
+    runLayoutTestDefault
+    if $jitTests
+        runLayoutTestNoCJIT
+        runLayoutTestDefaultFTL
+        runLayoutTestFTLNoCJIT
+    end
+end
+
 def noNoLLIntRunLayoutTest
     runLayoutTestDefault
     if $jitTests
