@@ -1,3 +1,9 @@
+2016-04-07  Beth Dakin  <bdakin@apple.com>
+
+        Build fix.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+
 2016-04-07  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Add support for [EnabledAtRuntime] attributes on non-global objects

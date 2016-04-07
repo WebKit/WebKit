@@ -48,7 +48,9 @@ SOFT_LINK_CLASS(AVKit, AVValueTiming)
 
 using namespace WebCore;
 
-@interface WebAVMediaSelectionOptionMac : NSObject
+@interface WebAVMediaSelectionOptionMac : NSObject {
+    NSString *_localizedDisplayName;
+}
 @property (retain) NSString *localizedDisplayName;
 @end
 
@@ -63,6 +65,11 @@ using namespace WebCore;
     NSArray *_seekableTimeRanges;
     BOOL _hasEnabledAudio;
     BOOL _hasEnabledVideo;
+    NSArray<AVMediaSelectionOption *> *_audioMediaSelectionOptions;
+    AVMediaSelectionOption *_currentAudioMediaSelectionOption;
+    NSArray<AVMediaSelectionOption *> *_legibleMediaSelectionOptions;
+    AVMediaSelectionOption *_currentLegibleMediaSelectionOption
+    
     float _rate;
 
 @private
