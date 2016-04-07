@@ -1,3 +1,17 @@
+2016-04-06  Ada Chan  <adachan@apple.com>
+
+        Rename TextTrackRepresentationiOS to TextTrackRepresentationCocoa and enable on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=156245
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+        Skip some tests with assertions after changes in MediaControlsApple.css.
+
+        * platform/mac/media/media-document-audio-repaint-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+        Rebaseline some tests after changes in MediaControlsApple.css.
+
 2016-04-07  Daniel Bates  <dabates@apple.com>
 
         CSP: Remove tests for unimplemented directive referrer

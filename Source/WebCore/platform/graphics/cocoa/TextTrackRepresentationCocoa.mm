@@ -25,27 +25,29 @@
 
 #include "config.h"
 
-#if PLATFORM(IOS) && ENABLE(VIDEO_TRACK)
-
-#include "TextTrackRepresentationIOS.h"
+#if (PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
+#include "TextTrackRepresentationCocoa.h"
 
 #include "FloatRect.h"
 #include "GraphicsContextCG.h"
 #include "IntRect.h"
+
+#if PLATFORM(IOS)
 #include "WebCoreThread.h"
 #include "WebCoreThreadRun.h"
+#endif
 
 using namespace WebCore;
 
-@interface WebCoreTextTrackRepresentationIOSHelper : NSObject {
-    TextTrackRepresentationIOS* _parent;
+@interface WebCoreTextTrackRepresentationCocoaHelper : NSObject {
+    TextTrackRepresentationCocoa* _parent;
 }
-- (id)initWithParent:(TextTrackRepresentationIOS*)parent;
-@property (assign) TextTrackRepresentationIOS* parent;
+- (id)initWithParent:(TextTrackRepresentationCocoa*)parent;
+@property (assign) TextTrackRepresentationCocoa* parent;
 @end
 
-@implementation WebCoreTextTrackRepresentationIOSHelper
-- (id)initWithParent:(TextTrackRepresentationIOS*)parent
+@implementation WebCoreTextTrackRepresentationCocoaHelper
+- (id)initWithParent:(TextTrackRepresentationCocoa*)parent
 {
     if (!(self = [super init]))
         return nil;
@@ -61,7 +63,7 @@ using namespace WebCore;
     [super dealloc];
 }
 
-- (void)setParent:(TextTrackRepresentationIOS*)parent
+- (void)setParent:(TextTrackRepresentationCocoa*)parent
 {
     if (_parent)
         [_parent->platformLayer() removeObserver:self forKeyPath:@"bounds"];
@@ -72,7 +74,7 @@ using namespace WebCore;
         [_parent->platformLayer() addObserver:self forKeyPath:@"bounds" options:0 context:0];
 }
 
-- (TextTrackRepresentationIOS*)parent
+- (TextTrackRepresentationCocoa*)parent
 {
     return _parent;
 }
@@ -81,10 +83,15 @@ using namespace WebCore;
 {
     UNUSED_PARAM(change);
     UNUSED_PARAM(context);
+#if PLATFORM(IOS)
     WebThreadRun(^{
         if (_parent && [keyPath isEqual:@"bounds"] && object == _parent->platformLayer())
             _parent->client().textTrackRepresentationBoundsChanged(_parent->bounds());
     });
+#else
+    if (_parent && [keyPath isEqual:@"bounds"] && object == _parent->platformLayer())
+        _parent->client().textTrackRepresentationBoundsChanged(_parent->bounds());
+#endif
 }
 
 - (id)actionForLayer:(CALayer *)layer forKey:(NSString *)event
@@ -99,38 +106,38 @@ using namespace WebCore;
 
 std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient& client)
 {
-    return std::make_unique<TextTrackRepresentationIOS>(client);
+    return std::make_unique<TextTrackRepresentationCocoa>(client);
 }
 
-TextTrackRepresentationIOS::TextTrackRepresentationIOS(TextTrackRepresentationClient& client)
+TextTrackRepresentationCocoa::TextTrackRepresentationCocoa(TextTrackRepresentationClient& client)
     : m_client(client)
     , m_layer(adoptNS([[CALayer alloc] init]))
-    , m_delegate(adoptNS([[WebCoreTextTrackRepresentationIOSHelper alloc] initWithParent:this]))
+    , m_delegate(adoptNS([[WebCoreTextTrackRepresentationCocoaHelper alloc] initWithParent:this]))
 {
     [m_layer.get() setDelegate:m_delegate.get()];
     [m_layer.get() setContentsGravity:kCAGravityBottom];
 }
 
-TextTrackRepresentationIOS::~TextTrackRepresentationIOS()
+TextTrackRepresentationCocoa::~TextTrackRepresentationCocoa()
 {
     [m_layer.get() setDelegate:nil];
     [m_delegate.get() setParent:nullptr];
 }
 
-void TextTrackRepresentationIOS::update()
+void TextTrackRepresentationCocoa::update()
 {
     if (auto representation = m_client.createTextTrackRepresentationImage())
         [m_layer.get() setContents:(id)representation->getCGImageRef()];
 }
 
-void TextTrackRepresentationIOS::setContentScale(float scale)
+void TextTrackRepresentationCocoa::setContentScale(float scale)
 {
     [m_layer.get() setContentsScale:scale];
 }
 
-IntRect TextTrackRepresentationIOS::bounds() const
+IntRect TextTrackRepresentationCocoa::bounds() const
 {
     return enclosingIntRect(FloatRect([m_layer.get() bounds]));
 }
 
-#endif // PLATFORM(IOS) && ENABLE(VIDEO_TRACK)
+#endif // (PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)

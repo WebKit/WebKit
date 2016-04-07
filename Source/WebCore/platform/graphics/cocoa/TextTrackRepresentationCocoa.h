@@ -23,23 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextTrackRepresentationIOS_h
-#define TextTrackRepresentationIOS_h
+#ifndef TextTrackRepresentationCocoa_h
+#define TextTrackRepresentationCocoa_h
 
-#if PLATFORM(IOS) && ENABLE(VIDEO_TRACK)
+#if (PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
 
 #import "TextTrackRepresentation.h"
 #import <QuartzCore/CALayer.h>
 #import <wtf/RetainPtr.h>
 
-@class WebCoreTextTrackRepresentationIOSHelper;
+@class WebCoreTextTrackRepresentationCocoaHelper;
 
 namespace WebCore {
 
-class TextTrackRepresentationIOS final : public TextTrackRepresentation {
+class TextTrackRepresentationCocoa final : public TextTrackRepresentation {
 public:
-    explicit TextTrackRepresentationIOS(TextTrackRepresentationClient&);
-    virtual ~TextTrackRepresentationIOS();
+    explicit TextTrackRepresentationCocoa(TextTrackRepresentationClient&);
+    virtual ~TextTrackRepresentationCocoa();
 
     TextTrackRepresentationClient& client() const { return m_client; }
 
@@ -52,11 +52,11 @@ private:
 
     TextTrackRepresentationClient& m_client;
     RetainPtr<CALayer> m_layer;
-    RetainPtr<WebCoreTextTrackRepresentationIOSHelper> m_delegate;
+    RetainPtr<WebCoreTextTrackRepresentationCocoaHelper> m_delegate;
 };
 
 }
 
-#endif // PLATFORM(IOS) && ENABLE(VIDEO_TRACK)
+#endif // (PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
 
-#endif // TextTrackRepresentationIOS_h
+#endif // TextTrackRepresentationCocoa_h

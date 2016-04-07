@@ -42,7 +42,7 @@ public:
     virtual IntRect bounds() const { return IntRect(); }
 };
 
-#if !PLATFORM(IOS)
+#if !(PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)))
 
 std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient&)
 {
