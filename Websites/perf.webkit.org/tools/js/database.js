@@ -1,7 +1,7 @@
 "use strict";
 
-var pg = require('pg');
-var config = require('./config.js');
+const pg = require('pg');
+const config = require('./config.js');
 
 class Database {
     constructor(databaseName)
@@ -23,11 +23,8 @@ class Database {
         let connectionString = `tcp://${username}:${password}@${host}:${port}/${this._databaseName}`;
 
         let client = new pg.Client(connectionString);
-        if (!options || !options.keepAlive) {
-            client.on('drain', function () {
-                client.end();
-            });
-        }
+        if (!options || !options.keepAlive)
+            client.on('drain', this.disconnect.bind(this));
 
         this._client = client;
 
@@ -62,6 +59,56 @@ class Database {
         });
     }
 
+    selectAll(table, columnToSortBy)
+    {
+        return this.selectRows(table, {}, {sortBy: columnToSortBy});
+    }
+
+    selectFirstRow(table, params, columnToSortBy)
+    {
+        return this.selectRows(table, params, {sortBy: columnToSortBy, limit: 1}).then(function (rows) {
+            return rows[0];
+        });
+    }
+
+    selectRows(table, params, options)
+    {
+        let prefix = '';
+        if (table in tableToPrefixMap)
+            prefix = tableToPrefixMap[table] + '_';
+
+        options = options || {};
+
+        let columnNames = [];
+        let placeholders = [];
+        let values = [];
+        for (let name in params) {
+            columnNames.push(prefix + name);
+            placeholders.push('$' + columnNames.length);
+            values.push(params[name]);
+        }
+
+        let qualifier = '';
+        if (columnNames.length)
+            qualifier += ` WHERE (${columnNames.join(',')}) = (${placeholders.join(',')})`;
+        qualifier += ` ORDER BY ${prefix}${options.sortBy || 'id'}`;
+        if (options && options.limit)
+            qualifier += ` LIMIT ${options.limit}`;
+
+        return this.query(`SELECT * FROM ${table}${qualifier}`, values).then(function (result) {
+            return result.rows.map(function (row) {
+                let formattedResult = {};
+                for (let columnName in row) {
+                    let formattedName = columnName;
+                    if (formattedName.startsWith(prefix))
+                        formattedName = formattedName.substring(prefix.length);
+                    formattedResult[formattedName] = row[columnName];
+                }
+                return formattedResult;
+            });
+        });
+    }
+
     insert(table, parameters)
     {
         let columnNames = [];
@@ -78,7 +125,7 @@ class Database {
     }
 }
 
-let tableToPrefixMap = {
+const tableToPrefixMap = {
     'aggregators': 'aggregator',
     'analysis_tasks': 'task',
     'analysis_test_groups': 'testgroup',
@@ -86,16 +133,21 @@ let tableToPrefixMap = {
     'build_triggerables': 'triggerable',
     'build_requests': 'request',
     'build_slaves': 'slave',
+    'builds': 'build',
     'builders': 'builder',
     'commits': 'commit',
+    'committers': 'committer',
     'test_configurations': 'config',
     'test_metrics': 'metric',
+    'test_runs': 'run',
     'tests': 'test',
     'tracker_repositories': 'tracrepo',
     'platforms': 'platform',
+    'reports': 'report',
     'repositories': 'repository',
     'root_sets': 'rootset',
     'roots': 'root',
+    'run_iterations': 'iteration',
 }
 
 if (typeof module != 'undefined')

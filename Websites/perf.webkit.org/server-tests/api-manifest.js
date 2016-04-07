@@ -7,16 +7,11 @@ require('../tools/js/v3-models.js');
 let TestServer = require('./resources/test-server.js');
 
 describe('/api/manifest', function () {
-    this.timeout(10000);
+    this.timeout(1000);
     TestServer.inject();
 
     beforeEach(function () {
-        Builder.clearStaticMap();
-        BugTracker.clearStaticMap();
-        Test.clearStaticMap();
-        Metric.clearStaticMap();
-        Platform.clearStaticMap();
-        Repository.clearStaticMap();
+        MockData.resetV3Models();
     });
 
     it("should generate an empty manifest when database is empty", function (done) {

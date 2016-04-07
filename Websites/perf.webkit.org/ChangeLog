@@ -1,3 +1,52 @@
+2016-04-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Migrate legacy perf dashboard tests to mocha.js based tests
+        https://bugs.webkit.org/show_bug.cgi?id=156335
+
+        Reviewed by Chris Dumez.
+
+        Migrated all legacy run-tests.js tests to mocha.js based tests. Since the new harness uses Promise
+        for most of asynchronous operations, refactored the tests to use Promises as well, and added more
+        assertions where appropriate.
+
+        Also consolidated common helper functions into server-tests/resources/common-operations.js.
+        Unfortunately there were multiple inconsistent implementations of addBuilder/addSlave. Some were
+        taking an array of reports while others were taking a single report. New shared implementation in
+        common-operations.js now takes a single report.
+
+        Also decreased the timeout in most tests from 10s to 1s so that tests fail early when they timeout.
+        Most of tests are passing under 100ms on my computer so 1s should be plenty still.
+
+        * run-tests.js: Removed.
+        * server-tests/admin-platforms-tests.js: Moved from tests/admin-platforms.js.
+        (reportsForDifferentPlatforms):
+        * server-tests/admin-reprocess-report-tests.js: Moved from tests/admin-reprocess-report.js.
+        (.addBuilder): Moved to common-operations.js.
+        * server-tests/api-build-requests-tests.js:
+        * server-tests/api-manifest.js: Use MockData.resetV3Models() instead of manually clearing maps.
+        * server-tests/api-measurement-set-tests.js: Moved from tests/api-measurement-set.js.
+        (.queryPlatformAndMetric):
+        (.format):
+        * server-tests/api-report-commits-tests.js: Moved from tests/api-report-commits.js.
+        * server-tests/api-report-tests.js: Moved from tests/api-report.js.
+        (.emptyReport):
+        (.emptySlaveReport):
+        (.reportWithSameSubtestName):
+        * server-tests/resources/common-operations.js: Added.
+        (addBuilderForReport): Extracted from tests.
+        (addSlaveForReport): Ditto.
+        (connectToDatabaseInEveryTest): Added.
+        (submitReport): Extracted from admin-platforms-tests.js.
+        * server-tests/resources/test-server.js:
+        (TestServer): Make TestServer a singleton since it doesn't make any sense for each module to start
+        its own Apache instance (that would certainly will fail).
+        * server-tests/tools-buildbot-triggerable-tests.js:
+        * tests: Removed.
+        * tools/js/database.js:
+        (Database.prototype.selectAll): Added.
+        (Database.prototype.selectFirstRow): Added.
+        (Database.prototype.selectRows): Added. Dynamically construct a query string based on arguments.
+
 2016-04-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         New buildbot syncing scripts that supports multiple builders and slaves

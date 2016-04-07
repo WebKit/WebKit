@@ -9,7 +9,7 @@ let Config = require('../../tools/js/config.js');
 let Database = require('../../tools/js/database.js');
 let RemoteAPI = require('../../tools/js/remote.js').RemoteAPI;
 
-let TestServer = (new class TestServer {
+class TestServer {
     constructor()
     {
         this._pidFile = null;
@@ -241,8 +241,10 @@ let TestServer = (new class TestServer {
             return self.stop();
         });
     }
-});
+}
 
+if (!global.TestServer)
+    global.TestServer = new TestServer;
 
 if (typeof module != 'undefined')
-    module.exports = TestServer;
+    module.exports = global.TestServer;

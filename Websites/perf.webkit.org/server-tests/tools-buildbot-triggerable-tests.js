@@ -18,7 +18,7 @@ class MockLogger {
 }
 
 describe('BuildbotTriggerable', function () {
-    this.timeout(10000);
+    this.timeout(1000);
     TestServer.inject();
 
     beforeEach(function () {

@@ -6,7 +6,7 @@ let MockData = require('./resources/mock-data.js');
 let TestServer = require('./resources/test-server.js');
 
 describe('/api/build-requests', function () {
-    this.timeout(10000);
+    this.timeout(1000);
     TestServer.inject();
 
     beforeEach(function () {
