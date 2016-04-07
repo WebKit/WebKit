@@ -164,6 +164,9 @@ static WebPreferencesStore::ValueMap& defaults()
         FOR_EACH_WEBKIT_PREFERENCE(DEFINE_DEFAULTS)
         FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_DEFAULTS)
 #undef DEFINE_DEFAULTS
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebPreferencesStoreDefaultsAdditions.cpp>
+#endif
     }
 
     return defaults;

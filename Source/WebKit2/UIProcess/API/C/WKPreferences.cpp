@@ -35,6 +35,10 @@
 
 using namespace WebKit;
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WKPreferencesAdditions.cpp>
+#endif
+
 WKTypeID WKPreferencesGetTypeID()
 {
     return toAPI(WebPreferences::APIType);
