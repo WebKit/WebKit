@@ -1,3 +1,16 @@
+2016-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling out r199016.
+        https://bugs.webkit.org/show_bug.cgi?id=156140
+
+        "Perf bots are down, so I can't re-land this right now."
+
+        Reverted changeset:
+
+        CopiedBlock should be 16kB
+        https://bugs.webkit.org/show_bug.cgi?id=156168
+        http://trac.webkit.org/changeset/199016
+
 2016-04-06  Mark Lam  <mark.lam@apple.com>
 
         String.prototype.match() should be calling internal function RegExpCreate.
