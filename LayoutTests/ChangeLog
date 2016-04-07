@@ -1,3 +1,11 @@
+2016-04-07  Ada Chan  <adachan@apple.com>
+
+        Skip a couple more tests that are asserting in FrameView::scheduleRelayoutOfSubtree().
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-04-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         Mark http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html as timeout in ios-simulator-wk2
