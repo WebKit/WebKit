@@ -303,6 +303,7 @@ public:
 
     void setUseFixedLayout(bool useFixedLayout, ExceptionCode&);
     void setFixedLayoutSize(int width, int height, ExceptionCode&);
+    void setViewExposedRect(float left, float top, float width, float height, ExceptionCode&);
 
     void setHeaderHeight(float);
     void setFooterHeight(float);

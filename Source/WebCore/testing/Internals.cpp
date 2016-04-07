@@ -2389,6 +2389,18 @@ void Internals::setFixedLayoutSize(int width, int height, ExceptionCode& ec)
     frameView->setFixedLayoutSize(IntSize(width, height));
 }
 
+void Internals::setViewExposedRect(float x, float y, float width, float height, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->view()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    FrameView* frameView = document->view();
+    frameView->setViewExposedRect(FloatRect(x, y, width, height));
+}
+
 void Internals::setHeaderHeight(float height)
 {
     Document* document = contextDocument();

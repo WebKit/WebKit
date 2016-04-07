@@ -246,6 +246,8 @@ public:
 
     void setWindowIsKey(bool);
 
+    void setViewSize(double width, double height);
+
     void callAddChromeInputFieldCallback();
     void callRemoveChromeInputFieldCallback();
     void callFocusWebViewCallback();

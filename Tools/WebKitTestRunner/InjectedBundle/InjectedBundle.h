@@ -85,6 +85,7 @@ public:
     void postFocusWebView();
     void postSetBackingScaleFactor(double);
     void postSetWindowIsKey(bool);
+    void postSetViewSize(double width, double height);
     void postSimulateWebNotificationClick(uint64_t notificationID);
     void postSetAddsVisitedLinks(bool);
 

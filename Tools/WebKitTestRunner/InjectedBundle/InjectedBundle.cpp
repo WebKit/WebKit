@@ -442,6 +442,24 @@ void InjectedBundle::postSetWindowIsKey(bool isKey)
     WKBundlePagePostSynchronousMessageForTesting(page()->page(), messageName.get(), messageBody.get(), 0);
 }
 
+void InjectedBundle::postSetViewSize(double width, double height)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetViewSize"));
+
+    WKRetainPtr<WKStringRef> widthKey(AdoptWK, WKStringCreateWithUTF8CString("width"));
+    WKRetainPtr<WKStringRef> heightKey(AdoptWK, WKStringCreateWithUTF8CString("height"));
+
+    WKRetainPtr<WKMutableDictionaryRef> messageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKDoubleRef> widthWK(AdoptWK, WKDoubleCreate(width));
+    WKDictionarySetItem(messageBody.get(), widthKey.get(), widthWK.get());
+
+    WKRetainPtr<WKDoubleRef> heightWK(AdoptWK, WKDoubleCreate(height));
+    WKDictionarySetItem(messageBody.get(), heightKey.get(), heightWK.get());
+
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), messageName.get(), messageBody.get(), 0);
+}
+
 void InjectedBundle::postSimulateWebNotificationClick(uint64_t notificationID)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SimulateWebNotificationClick"));

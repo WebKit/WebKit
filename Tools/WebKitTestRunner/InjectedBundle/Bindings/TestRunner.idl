@@ -148,11 +148,11 @@ interface TestRunner {
     void removeChromeInputField(object callback);
     void focusWebView(object callback);
 
-    void clearTestRunnerCallbacks();
-
+    // Window/view state
     void setBackingScaleFactor(double backingScaleFactor, object callback);
 
     void setWindowIsKey(boolean isKey);
+    void setViewSize(double width, double height);
 
     // Cookies testing
     void setAlwaysAcceptCookies(boolean accept);
@@ -220,5 +220,7 @@ interface TestRunner {
 
     // UI Process Testing
     void runUIScript(DOMString script, object callback);
+
+    void clearTestRunnerCallbacks();
 };
 

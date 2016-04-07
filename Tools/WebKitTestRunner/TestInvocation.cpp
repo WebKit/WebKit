@@ -665,6 +665,20 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetViewSize")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> widthKey(AdoptWK, WKStringCreateWithUTF8CString("width"));
+        WKRetainPtr<WKStringRef> heightKey(AdoptWK, WKStringCreateWithUTF8CString("height"));
+
+        WKDoubleRef widthWK = static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, widthKey.get()));
+        WKDoubleRef heightWK = static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, heightKey.get()));
+
+        TestController::singleton().mainWebView()->resizeTo(WKDoubleGetValue(widthWK), WKDoubleGetValue(heightWK));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "IsGeolocationClientActive")) {
         bool isActive = TestController::singleton().isGeolocationProviderActive();
         WKRetainPtr<WKTypeRef> result(AdoptWK, WKBooleanCreate(isActive));

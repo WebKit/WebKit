@@ -894,6 +894,23 @@ void TestRunner::setWindowIsKey(bool flag)
     ::SendMessage(webViewWindow, flag ? WM_SETFOCUS : WM_KILLFOCUS, (WPARAM)::GetDesktopWindow(), 0);
 }
 
+void TestRunner::setViewSize(double width, double height)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate2> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return;
+
+    HWND webViewWindow;
+    if (FAILED(viewPrivate->viewWindow(&webViewWindow)))
+        return;
+
+    ::SetWindowPos(webViewWindow, 0, 0, 0, width, height, SWP_NOMOVE);
+}
+
 static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;
 
 static void CALLBACK waitUntilDoneWatchdogFired(HWND, UINT, UINT_PTR, DWORD)

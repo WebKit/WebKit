@@ -623,6 +623,11 @@ void TestRunner::setWindowIsKey(bool isKey)
     InjectedBundle::singleton().postSetWindowIsKey(isKey);
 }
 
+void TestRunner::setViewSize(double width, double height)
+{
+    InjectedBundle::singleton().postSetViewSize(width, height);
+}
+
 void TestRunner::callAddChromeInputFieldCallback()
 {
     callTestRunnerCallback(AddChromeInputFieldCallbackID);

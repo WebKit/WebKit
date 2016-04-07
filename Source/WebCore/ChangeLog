@@ -1,3 +1,29 @@
+2016-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test effect of view exposed rect on tiled backing
+        https://bugs.webkit.org/show_bug.cgi?id=156365
+
+        Reviewed by Tim Horton.
+
+        Implement Internals::setViewExposedRect().
+
+        When the viewExposedRect is non-null, assume that we're scrollable on both axes
+        to avoid creation of huge tiles in this scenario.
+
+        We also need to call adjustTiledBackingScrollability() when setViewExposedRect()
+        has been called.
+
+        Tests: tiled-drawing/tile-coverage-view-exposed-rect.html
+               tiled-drawing/tile-size-view-exposed-rect.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustTiledBackingScrollability):
+        (WebCore::FrameView::setViewExposedRect):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setViewExposedRect):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-04-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         fast/loader/opaque-base-url.html crashing during mac and ios debug tests

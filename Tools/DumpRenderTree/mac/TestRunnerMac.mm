@@ -616,6 +616,11 @@ void TestRunner::setWindowIsKey(bool windowIsKey)
     [[mainFrame webView] _updateActiveState];
 }
 
+void TestRunner::setViewSize(double width, double height)
+{
+    [[mainFrame webView] setFrameSize:NSMakeSize(width, height)];
+}
+
 static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
 {
     gTestRunner->waitToDumpWatchdogTimerFired();

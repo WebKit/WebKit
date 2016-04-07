@@ -259,6 +259,8 @@ public:
     bool windowIsKey() const { return m_windowIsKey; }
     void setWindowIsKey(bool);
 
+    void setViewSize(double width, double height);
+
     bool alwaysAcceptCookies() const { return m_alwaysAcceptCookies; }
     void setAlwaysAcceptCookies(bool);
     

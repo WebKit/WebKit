@@ -1,3 +1,17 @@
+2016-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test effect of view exposed rect on tiled backing
+        https://bugs.webkit.org/show_bug.cgi?id=156365
+
+        Reviewed by Tim Horton.
+
+        Tests for tile size and tile coverage when we have an exposed view rect.
+
+        * tiled-drawing/tile-coverage-view-exposed-rect-expected.txt: Added.
+        * tiled-drawing/tile-coverage-view-exposed-rect.html: Added.
+        * tiled-drawing/tile-size-view-exposed-rect-expected.txt: Added.
+        * tiled-drawing/tile-size-view-exposed-rect.html: Added.
+
 2016-04-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         fast/loader/opaque-base-url.html crashing during mac and ios debug tests

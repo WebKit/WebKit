@@ -2483,16 +2483,17 @@ void FrameView::adjustTiledBackingScrollability()
     
     bool horizontallyScrollable;
     bool verticallyScrollable;
+    bool clippedByAncestorView = static_cast<bool>(m_viewExposedRect);
 
     if (delegatesScrolling()) {
         IntSize documentSize = contentsSize();
         IntSize visibleSize = this->visibleSize();
         
-        horizontallyScrollable = documentSize.width() > visibleSize.width();
-        verticallyScrollable = documentSize.height() > visibleSize.height();
+        horizontallyScrollable = clippedByAncestorView || documentSize.width() > visibleSize.width();
+        verticallyScrollable = clippedByAncestorView || documentSize.height() > visibleSize.height();
     } else {
-        horizontallyScrollable = horizontalScrollbar();
-        verticallyScrollable = verticalScrollbar();
+        horizontallyScrollable = clippedByAncestorView || horizontalScrollbar();
+        verticallyScrollable = clippedByAncestorView || verticalScrollbar();
     }
 
     TiledBacking::Scrollability scrollability = TiledBacking::NotScrollable;
@@ -4913,6 +4914,9 @@ void FrameView::setViewExposedRect(Optional<FloatRect> viewExposedRect)
     if (m_viewExposedRect == viewExposedRect)
         return;
 
+    LOG_WITH_STREAM(Scrolling, stream << "FrameView " << this << " setViewExposedRect " << (viewExposedRect ? viewExposedRect.value() : FloatRect()));
+
+    bool hasRectChanged = !m_viewExposedRect == !viewExposedRect;
     m_viewExposedRect = viewExposedRect;
 
     // FIXME: We should support clipping to the exposed rect for subframes as well.
@@ -4920,6 +4924,8 @@ void FrameView::setViewExposedRect(Optional<FloatRect> viewExposedRect)
         return;
 
     if (TiledBacking* tiledBacking = this->tiledBacking()) {
+        if (hasRectChanged)
+            adjustTiledBackingScrollability();
         adjustTiledBackingCoverage();
         tiledBacking->setTiledScrollingIndicatorPosition(m_viewExposedRect ? m_viewExposedRect.value().location() : FloatPoint());
     }
